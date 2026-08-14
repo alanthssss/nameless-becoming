@@ -27,7 +27,7 @@
 - [x] 生成 Windows x86_64 调试包；
 - [x] 在 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md) 记录包体积与 SHA-256。
 - [x] macOS 实机检查标题、关卡、能量条、底栏、右栏与寻迹覆盖层的视觉协调；
-- [ ] macOS 与 Windows 构建上传至私有 GitHub `v0.9.4` 预发布版本；
+- [x] macOS 与 Windows 构建上传至私有 GitHub `v0.9.4` 预发布版本；
 
 ## 人工全流程
 
