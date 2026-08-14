@@ -38,3 +38,7 @@ yarn-error.log*
 /.wrangler/
 /outputs/
 /work/
+
+# Godot generated cache
+/godot/.godot/
+/builds/

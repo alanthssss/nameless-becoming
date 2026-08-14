@@ -8,9 +8,9 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-## 当前版本：交互原型 0.2
+## 当前版本：Godot 垂直切片 0.3
 
-玩家直接控制蜜蜂在花田中飞行：
+正式单机方向已转入 Godot 4。玩家直接控制蜜蜂在花田中飞行：
 
 - **搜**：寻找仍有花蜜的花朵，越远通常收益越高；
 - **打**：使用蜂针震开靠近的蚊虫，但会消耗体力；
@@ -22,9 +22,9 @@
 | 操作 | 键盘 | 触摸设备 |
 | --- | --- | --- |
 | 移动 | WASD / 方向键 | 点击花田移动 |
-| 采蜜 | 按住空格 | 按住“采蜜” |
-| 冲刺 | Shift | 按住“振翅” |
-| 蜂针 | J | 点击“蜂针” |
+| 采蜜 | 按住空格 | — |
+| 冲刺 | Shift | — |
+| 蜂针 | J | — |
 
 ## 设计方向
 
@@ -42,7 +42,14 @@
 
 ## 开发
 
-需要 Node.js 22.13 或更高版本。
+正式单机版需要 Godot 4.6 或更高版本：
+
+```bash
+godot --path godot --editor
+godot --path godot --headless --script res://tests/smoke_test.gd
+```
+
+早期网页原型仍可使用 Node.js 22.13 或更高版本运行：
 
 ```bash
 npm install
@@ -52,6 +59,9 @@ npm run build
 
 主要实现位于：
 
+- `godot/`：正式单机版工程；
+- `godot/scripts/main.gd`：Godot 核心游戏循环；
+- `godot/data/seasons.json`：节令数据；
 - `app/page.tsx`：游戏循环、操作、敌人与节令配置；
 - `app/globals.css`：界面、节气色彩和响应式布局；
 - `docs/PROJECT_LOG.md`：策划与版本决策记录。

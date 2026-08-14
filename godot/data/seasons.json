@@ -1,0 +1,54 @@
+[
+  {
+    "name": "春分",
+    "season": "春",
+    "yin": 50,
+    "yang": 50,
+    "goal": 7,
+    "flowers": 8,
+    "enemies": 1,
+    "energy_drain": 1.45,
+    "nectar_scale": 1.0,
+    "colors": ["d9e8c2", "f3d59b", "58784f", "ffe8a3"],
+    "line": "昼夜均分，花潮初醒。"
+  },
+  {
+    "name": "夏至",
+    "season": "夏",
+    "yin": 15,
+    "yang": 85,
+    "goal": 11,
+    "flowers": 8,
+    "enemies": 3,
+    "energy_drain": 1.8,
+    "nectar_scale": 1.25,
+    "colors": ["d8cf76", "e89643", "52663d", "fff0a3"],
+    "line": "阳极而阴生，蚊影藏在盛光之后。"
+  },
+  {
+    "name": "秋分",
+    "season": "秋",
+    "yin": 50,
+    "yang": 50,
+    "goal": 14,
+    "flowers": 7,
+    "enemies": 4,
+    "energy_drain": 2.0,
+    "nectar_scale": 0.85,
+    "colors": ["d7a768", "8f5b43", "4d5435", "f4c879"],
+    "line": "花期将尽，归途比收获更长。"
+  },
+  {
+    "name": "冬至",
+    "season": "冬",
+    "yin": 85,
+    "yang": 15,
+    "goal": 9,
+    "flowers": 6,
+    "enemies": 4,
+    "energy_drain": 2.25,
+    "nectar_scale": 0.7,
+    "colors": ["b8ced0", "586c78", "33494b", "f4d893"],
+    "line": "阴极而阳生，最后一点蜜守着来年的春。"
+  }
+]
