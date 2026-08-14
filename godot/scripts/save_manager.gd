@@ -7,6 +7,7 @@ var best_stage := 0
 var runs_started := 0
 var runs_completed := 0
 var fullscreen := false
+var sound_enabled := true
 
 func load_data() -> void:
 	var config := ConfigFile.new()
@@ -16,6 +17,7 @@ func load_data() -> void:
 	runs_started = int(config.get_value("progress", "runs_started", 0))
 	runs_completed = int(config.get_value("progress", "runs_completed", 0))
 	fullscreen = bool(config.get_value("settings", "fullscreen", false))
+	sound_enabled = bool(config.get_value("settings", "sound_enabled", true))
 
 func save_data() -> Error:
 	var config := ConfigFile.new()
@@ -23,6 +25,7 @@ func save_data() -> Error:
 	config.set_value("progress", "runs_started", runs_started)
 	config.set_value("progress", "runs_completed", runs_completed)
 	config.set_value("settings", "fullscreen", fullscreen)
+	config.set_value("settings", "sound_enabled", sound_enabled)
 	return config.save(SAVE_PATH)
 
 func begin_run() -> void:

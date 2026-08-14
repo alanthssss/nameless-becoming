@@ -6,6 +6,7 @@ const FLOWER_COLORS := [Color("f2d66f"), Color("e9aab1"), Color("a995c9")]
 const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"]
 
 var stages: Array = []
+var balance: Dictionary = {}
 var upgrade_catalog: Array = []
 var chosen_upgrades: Array[String] = []
 var upgrade_counts := {"long_wing": 0, "forager": 0, "guard": 0}
@@ -35,6 +36,7 @@ var flash := 0.0
 var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
 var rng := RandomNumberGenerator.new()
 var save_manager := HiveSaveManager.new()
+var sound := SoundFeedback.new()
 var paused_from_phase := "playing"
 
 var title_label: Label
@@ -52,17 +54,21 @@ var overlay_button: Button
 var upgrade_buttons: Array[Button] = []
 var pause_button: Button
 var fullscreen_button: Button
+var sound_button: Button
 
 func _ready() -> void:
 	rng.randomize()
 	save_manager.load_data()
 	apply_display_settings()
 	load_stage_data()
+	load_balance_data()
 	load_upgrade_data()
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
 	bee.sense_started.connect(on_sense_started)
 	add_child(bee)
+	add_child(sound)
+	sound.set_enabled(save_manager.sound_enabled)
 	build_interface()
 	show_intro()
 	queue_redraw()
@@ -89,6 +95,22 @@ func load_upgrade_data() -> void:
 	else:
 		push_error("蜂巢成长数据格式错误")
 
+func load_balance_data() -> void:
+	var file := FileAccess.open("res://data/balance.json", FileAccess.READ)
+	if file == null:
+		push_error("无法读取平衡参数")
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if parsed is Dictionary:
+		balance = parsed
+	else:
+		push_error("平衡参数格式错误")
+
+func balance_value(section: String, key: String, fallback: float) -> float:
+	if balance.has(section) and balance[section] is Dictionary:
+		return float(balance[section].get(key, fallback))
+	return fallback
+
 func make_label(parent: Node, text: String, position: Vector2, size: Vector2, font_size: int, color := Color("252a22")) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -110,10 +132,15 @@ func build_interface() -> void:
 	term_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	fullscreen_button = Button.new()
-	fullscreen_button.position = Vector2(920, 22)
+	fullscreen_button.position = Vector2(810, 22)
 	fullscreen_button.size = Vector2(100, 36)
 	fullscreen_button.pressed.connect(toggle_fullscreen)
 	ui.add_child(fullscreen_button)
+	sound_button = Button.new()
+	sound_button.position = Vector2(920, 22)
+	sound_button.size = Vector2(100, 36)
+	sound_button.pressed.connect(toggle_sound)
+	ui.add_child(sound_button)
 	var quit_button := Button.new()
 	quit_button.text = "退出"
 	quit_button.position = Vector2(1030, 22)
@@ -201,8 +228,8 @@ func start_game() -> void:
 	chosen_upgrades.clear()
 	upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
 	harvest_multiplier = 1.0
-	sting_range = 88.0
-	sting_cost = 8.0
+	sting_range = balance_value("player", "sting_range", 88.0)
+	sting_cost = balance_value("player", "sting_cost", 8.0)
 	sting_cooldown_multiplier = 1.0
 	extra_nectar = 0
 	bee.reset_upgrades()
@@ -285,20 +312,22 @@ func update_game(delta: float) -> void:
 	var nearby := nearest_flower(46.0)
 	if Input.is_action_pressed("harvest") and nearby >= 0 and bee.energy > 0:
 		harvest_clock += delta
-		bee.energy = maxf(0.0, bee.energy - 3.2 * delta)
-		if harvest_clock >= 0.42 / harvest_multiplier:
+		bee.energy = maxf(0.0, bee.energy - balance_value("player", "harvest_energy_per_second", 3.2) * delta)
+		if harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
 			harvest_clock = 0.0
 			var flower: Dictionary = flowers[nearby]
 			flower.nectar = int(flower.nectar) - 1
 			flowers[nearby] = flower
 			carried += 1
+			sound.play_cue("harvest")
 			spawn_pollen(flower.position)
 			message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
 	else:
 		harvest_clock = 0.0
 
 	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		sting_cooldown = 1.15 * sting_cooldown_multiplier
+		sting_cooldown = balance_value("player", "sting_cooldown", 1.15) * sting_cooldown_multiplier
+		sound.play_cue("sting")
 		for i in mosquitoes.size():
 			var mosquito: Dictionary = mosquitoes[i]
 			if bee.position.distance_to(mosquito.position) < sting_range:
@@ -319,8 +348,9 @@ func update_game(delta: float) -> void:
 		var amount := carried
 		delivered += amount
 		carried = 0
-		bee.energy = minf(100.0, bee.energy + 70.0)
+		bee.energy = minf(100.0, bee.energy + balance_value("player", "home_energy_restore", 70.0))
 		message = "安全归巢，存入 %d 滴蜜。" % amount
+		sound.play_cue("home")
 		flash = 0.32
 		if delivered >= int(data.goal):
 			show_between()
@@ -333,19 +363,20 @@ func update_mosquitoes(delta: float) -> void:
 		mosquito.stunned = maxf(0.0, float(mosquito.stunned) - delta)
 		if mosquito.stunned <= 0.0:
 			var distance_to_player := Vector2(mosquito.position).distance_to(bee.position)
-			if distance_to_player < 330:
+			if distance_to_player < balance_value("mosquito", "sense_range", 330.0):
 				var chase := (bee.position - Vector2(mosquito.position)).normalized()
 				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
-			mosquito.position += Vector2(mosquito.velocity) * 82.0 * delta
+			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * delta
 			mosquito.position.x = clampf(mosquito.position.x, WORLD.position.x + 12, WORLD.end.x - 12)
 			mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
-			if distance_to_player < 26 and hit_cooldown <= 0.0:
+			if distance_to_player < balance_value("mosquito", "impact_range", 26.0) and hit_cooldown <= 0.0:
 				hit_cooldown = 1.05
-				bee.energy = maxf(0.0, bee.energy - 15.0)
-				carried = maxi(0, carried - 2)
+				bee.energy = maxf(0.0, bee.energy - balance_value("mosquito", "energy_damage", 15.0))
+				carried = maxi(0, carried - roundi(balance_value("mosquito", "honey_damage", 2.0)))
 				shake = 7.0
 				flash = 0.48
 				message = "蚊虫刺中了你：体力下降，花蜜洒落。"
+				sound.play_cue("hurt")
 		mosquitoes[i] = mosquito
 
 func update_ants(delta: float) -> void:
@@ -364,16 +395,17 @@ func update_ants(delta: float) -> void:
 			if flower_index >= 0:
 				desired = (Vector2(flowers[flower_index].position) - ant_position).normalized()
 		ant.velocity = Vector2(ant.velocity).lerp(desired * 1.35, delta * 2.2)
-		ant.position += Vector2(ant.velocity) * 58.0 * delta
+		ant.position += Vector2(ant.velocity) * balance_value("ant", "move_speed", 58.0) * delta
 		ant.position.x = clampf(ant.position.x, WORLD.position.x + 14, WORLD.end.x - 14)
 		ant.position.y = clampf(ant.position.y, WORLD.position.y + 14, WORLD.end.y - 14)
-		if ant.flee_time <= 0.0 and ant_position.distance_to(bee.position) < 29 and carried > 0 and ant.steal_cooldown <= 0.0:
+		if ant.flee_time <= 0.0 and ant_position.distance_to(bee.position) < balance_value("ant", "steal_range", 29.0) and carried > 0 and ant.steal_cooldown <= 0.0:
 			carried -= 1
 			ant.steal_cooldown = 1.2
-			ant.flee_time = 1.4
+			ant.flee_time = balance_value("ant", "flee_seconds", 1.4)
 			ant.velocity = (ant_position - bee.position).normalized() * 3.0
 			spawn_pollen(ant_position)
 			message = "掠蜜蚁夺走了一滴花蜜，正试图逃离。"
+			sound.play_cue("hurt")
 			shake = 4.0
 		ants[i] = ant
 
@@ -413,6 +445,7 @@ func on_upgrade_selected(index: int) -> void:
 	if int(upgrade_counts.get(upgrade_id, 0)) >= 2:
 		return
 	chosen_upgrades.append(upgrade_id)
+	sound.play_cue("upgrade")
 	upgrade_counts[upgrade_id] = int(upgrade_counts.get(upgrade_id, 0)) + 1
 	match upgrade_id:
 		"long_wing": bee.apply_upgrade(upgrade_id)
@@ -453,20 +486,22 @@ func update_boss(delta: float) -> void:
 	var to_bee := bee.position - boss_position
 	var orbit := to_bee.normalized().rotated(sin(elapsed * 1.7) * 0.45)
 	boss.velocity = Vector2(boss.velocity).lerp(orbit * 2.2, delta * 1.7)
-	boss.position += Vector2(boss.velocity) * 78.0 * delta
+	boss.position += Vector2(boss.velocity) * balance_value("boss", "move_speed", 78.0) * delta
 	boss.position.x = clampf(boss.position.x, WORLD.position.x + 28, WORLD.end.x - 28)
 	boss.position.y = clampf(boss.position.y, WORLD.position.y + 28, WORLD.end.y - 28)
 
-	if boss_position.distance_to(bee.position) < 39 and boss.hit_cooldown <= 0.0:
+	if boss_position.distance_to(bee.position) < balance_value("boss", "impact_range", 39.0) and boss.hit_cooldown <= 0.0:
 		boss.hit_cooldown = 1.0
-		bee.energy = maxf(0.0, bee.energy - 18.0)
+		bee.energy = maxf(0.0, bee.energy - balance_value("boss", "energy_damage", 18.0))
 		carried = maxi(0, carried - 1)
 		shake = 9.0
+		sound.play_cue("hurt")
 		flash = 0.55
 		message = "失律之蚊夺走一滴蜜。它只知道索取。"
 
 	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		sting_cooldown = 1.15 * sting_cooldown_multiplier
+		sting_cooldown = balance_value("player", "sting_cooldown", 1.15) * sting_cooldown_multiplier
+		sound.play_cue("sting")
 		var bloom_index := nearest_tuning_bloom(boss.position)
 		if bee.position.distance_to(boss.position) < sting_range + 7.0 and bloom_index >= 0:
 			var bloom_position := tuning_blooms[bloom_index]
@@ -476,7 +511,8 @@ func update_boss(delta: float) -> void:
 			spawn_pollen(bloom_position)
 			shake = 7.0
 			message = "共鸣完成：%d / 3。被夺走的蜜重新开始流动。" % int(boss.hits)
-			if int(boss.hits) >= 3:
+			sound.play_cue("tune")
+			if int(boss.hits) >= roundi(balance_value("boss", "required_tunings", 3.0)):
 				show_win()
 		else:
 			message = "蜂针击中了它，却没有花粉共鸣。把它引向发光花团。"
@@ -486,7 +522,7 @@ func update_boss(delta: float) -> void:
 
 func nearest_tuning_bloom(origin: Vector2) -> int:
 	for i in tuning_blooms.size():
-		if origin.distance_to(tuning_blooms[i]) < 82:
+		if origin.distance_to(tuning_blooms[i]) < balance_value("boss", "tuning_radius", 82.0):
 			return i
 	return -1
 
@@ -497,6 +533,7 @@ func show_win() -> void:
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
 	save_manager.record_completion()
+	sound.play_cue("win")
 	overlay_title.text = "冬至一阳生"
 	overlay_body.text = "蜂群熬过了四个压缩节令。\n未来，它们之间将展开为完整的二十四个小关卡。"
 	overlay_button.text = "再走一次四季"
@@ -507,6 +544,7 @@ func show_loss() -> void:
 	overlay.visible = true
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
+	sound.play_cue("loss")
 	overlay_title.text = "这一次没能\n等到春天"
 	overlay_body.text = "远花仍在那里，但带回家的蜜才真正属于蜂群。"
 	overlay_button.text = "重新出巢"
@@ -607,12 +645,20 @@ func toggle_fullscreen() -> void:
 	apply_display_settings()
 	refresh_setting_labels()
 
+func toggle_sound() -> void:
+	save_manager.sound_enabled = not save_manager.sound_enabled
+	save_manager.save_data()
+	sound.set_enabled(save_manager.sound_enabled)
+	refresh_setting_labels()
+
 func apply_display_settings() -> void:
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if save_manager.fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
 
 func refresh_setting_labels() -> void:
 	if fullscreen_button:
 		fullscreen_button.text = "窗口化" if save_manager.fullscreen else "全屏"
+	if sound_button:
+		sound_button.text = "声音：开" if save_manager.sound_enabled else "声音：关"
 
 func progress_name() -> String:
 	if save_manager.best_stage >= 5:

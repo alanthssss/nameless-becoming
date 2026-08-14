@@ -44,6 +44,17 @@ func _init() -> void:
 					if not upgrade.has(key):
 						failures.append("蜂巢成长缺少字段 %s" % key)
 
+	var balance_file := FileAccess.open("res://data/balance.json", FileAccess.READ)
+	if balance_file == null:
+		failures.append("无法读取 balance.json")
+	else:
+		var balance = JSON.parse_string(balance_file.get_as_text())
+		for section in ["player", "mosquito", "ant", "boss"]:
+			if not balance is Dictionary or not balance.has(section) or not balance[section] is Dictionary:
+				failures.append("平衡参数缺少分区 %s" % section)
+		if balance is Dictionary and balance.has("boss") and float(balance.boss.get("required_tunings", 0)) <= 0:
+			failures.append("Boss 调律次数必须为正数")
+
 	var scene := load("res://main.tscn")
 	if scene == null:
 		failures.append("主场景无法加载")
@@ -73,6 +84,9 @@ func _init() -> void:
 		var save_manager = save_script.new()
 		if save_manager.best_stage != 0 or save_manager.fullscreen:
 			failures.append("新存档默认值错误")
+
+	if load("res://scripts/sound_feedback.gd") == null:
+		failures.append("程序化音效脚本无法加载")
 
 	if failures.is_empty():
 		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")
