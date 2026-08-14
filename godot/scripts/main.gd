@@ -59,6 +59,10 @@ var upgrade_buttons: Array[Button] = []
 var pause_button: Button
 var fullscreen_button: Button
 var sound_button: Button
+var sense_button: Button
+var energy_bar: ProgressBar
+var energy_change_label: Label
+var energy_feedback_time := 0.0
 
 func _ready() -> void:
 	rng.randomize()
@@ -69,6 +73,7 @@ func _ready() -> void:
 	load_upgrade_data()
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
+	bee.sense_started.connect(on_sense_started)
 	add_child(bee)
 	add_child(sound)
 	sound.set_enabled(save_manager.sound_enabled)
@@ -161,6 +166,14 @@ func build_interface() -> void:
 	carried_label = make_stat(ui, "携带", Vector2(34, 82))
 	delivered_label = make_stat(ui, "本节储蜜", Vector2(234, 82))
 	energy_label = make_stat(ui, "飞行体力", Vector2(434, 82))
+	energy_bar = ProgressBar.new()
+	energy_bar.position = Vector2(12, 35)
+	energy_bar.size = Vector2(166, 8)
+	energy_bar.max_value = 100.0
+	energy_bar.show_percentage = false
+	energy_label.get_parent().add_child(energy_bar)
+	energy_change_label = make_label(energy_label.get_parent(), "", Vector2(50, 4), Vector2(48, 24), 12, Color("b34b3f"))
+	energy_change_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hive_label = make_stat(ui, "蜂巢呼吸", Vector2(634, 82))
 
 	var side := ColorRect.new()
@@ -176,9 +189,10 @@ func build_interface() -> void:
 	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 412), Vector2(190, 38), 11, Color("556054"))
 	make_mouse_action(side, "按住采蜜", "harvest", Vector2(16, 450), true)
 	make_mouse_action(side, "按住振翅", "dash", Vector2(116, 450), true)
-	make_mouse_action(side, "震翼驱离", "repel", Vector2(66, 492), false)
+	make_mouse_action(side, "震翼惊退 -8", "repel", Vector2(16, 492), false)
+	sense_button = make_mouse_action(side, "触角寻迹", "sense", Vector2(116, 492), false)
 
-	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  震翼驱离", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
+	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  震翼惊退(-8)     E  触角寻迹", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	overlay = ColorRect.new()
@@ -295,7 +309,7 @@ func spawn_stage(index: int) -> void:
 			"id": i,
 			"position": Vector2(rng.randf_range(540, 940), rng.randf_range(210, 610)),
 			"velocity": Vector2.ZERO,
-			"stunned": 0.0
+			"repel_time": 0.0
 		})
 	for i in int(data.ants):
 		ants.append({
@@ -323,6 +337,7 @@ func _process(delta: float) -> void:
 	elapsed += delta
 	shake = maxf(0.0, shake - delta * 18.0)
 	flash = maxf(0.0, flash - delta * 2.5)
+	energy_feedback_time = maxf(0.0, energy_feedback_time - delta)
 	if phase == "playing":
 		run_elapsed += delta
 		update_game(delta)
@@ -355,12 +370,13 @@ func update_game(delta: float) -> void:
 		harvest_clock = 0.0
 
 	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
+		show_energy_change(-sting_cost)
 		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
 		sound.play_cue("sting")
 		for i in mosquitoes.size():
 			var mosquito: Dictionary = mosquitoes[i]
 			if bee.position.distance_to(mosquito.position) < sting_range:
-				mosquito.stunned = balance_value("player", "repel_stun", 3.5)
+				mosquito.repel_time = balance_value("player", "repel_duration", 3.5)
 				mosquito.velocity = (mosquito.position - bee.position).normalized() * 8.0
 				mosquitoes[i] = mosquito
 		for i in ants.size():
@@ -382,18 +398,26 @@ func update_game(delta: float) -> void:
 func update_mosquitoes(delta: float) -> void:
 	for i in mosquitoes.size():
 		var mosquito: Dictionary = mosquitoes[i]
-		mosquito.stunned = maxf(0.0, float(mosquito.stunned) - delta)
-		if mosquito.stunned <= 0.0:
-			var distance_to_player := Vector2(mosquito.position).distance_to(bee.position)
+		mosquito.repel_time = maxf(0.0, float(mosquito.repel_time) - delta)
+		var distance_to_player := Vector2(mosquito.position).distance_to(bee.position)
+		if mosquito.repel_time > 0.0:
+			var away := (Vector2(mosquito.position) - bee.position).normalized()
+			if away.length_squared() < 0.01:
+				away = Vector2.RIGHT
+			mosquito.velocity = Vector2(mosquito.velocity).lerp(away * 3.2, delta * 7.0)
+			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * 1.35 * delta
+		else:
 			if distance_to_player < balance_value("mosquito", "sense_range", 330.0) and bee.position.x > HIVE_SAFE_X:
 				var chase := (bee.position - Vector2(mosquito.position)).normalized()
 				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
 			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * delta
-			mosquito.position.x = clampf(mosquito.position.x, HIVE_SAFE_X, WORLD.end.x - 12)
-			mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
+		mosquito.position.x = clampf(mosquito.position.x, HIVE_SAFE_X, WORLD.end.x - 12)
+		mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
+		if mosquito.repel_time <= 0.0:
 			if distance_to_player < balance_value("mosquito", "impact_range", 26.0) and hit_cooldown <= 0.0:
 				hit_cooldown = 1.05
 				bee.energy = maxf(0.0, bee.energy - balance_value("mosquito", "energy_damage", 15.0))
+				show_energy_change(-balance_value("mosquito", "energy_damage", 15.0))
 				carried = maxi(0, carried - roundi(balance_value("mosquito", "honey_damage", 2.0)))
 				shake = 7.0
 				flash = 0.48
@@ -533,6 +557,7 @@ func update_boss(delta: float) -> void:
 	if boss_position.distance_to(bee.position) < balance_value("boss", "impact_range", 39.0) and boss.hit_cooldown <= 0.0:
 		boss.hit_cooldown = 1.0
 		bee.energy = maxf(0.0, bee.energy - balance_value("boss", "energy_damage", 18.0))
+		show_energy_change(-balance_value("boss", "energy_damage", 18.0))
 		carried = maxi(0, carried - 1)
 		shake = 9.0
 		sound.play_cue("hurt")
@@ -540,6 +565,7 @@ func update_boss(delta: float) -> void:
 		message = "失律之蚊夺走一滴蜜。它只知道索取。"
 
 	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
+		show_energy_change(-sting_cost)
 		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
 		sound.play_cue("sting")
 		var bloom_index := nearest_tuning_bloom(boss.position)
@@ -624,6 +650,11 @@ func spawn_pollen(origin: Vector2) -> void:
 	for i in 6:
 		pollen.append({"position": origin, "velocity": Vector2.from_angle(rng.randf_range(0, TAU)) * rng.randf_range(20, 65), "life": rng.randf_range(0.35, 0.7)})
 
+func show_energy_change(amount: float) -> void:
+	energy_feedback_time = 1.0
+	energy_change_label.text = "%+d" % roundi(amount)
+	energy_change_label.add_theme_color_override("font_color", Color("b53f35") if amount < 0.0 else Color("4f8758"))
+
 func update_pollen(delta: float) -> void:
 	for i in range(pollen.size() - 1, -1, -1):
 		var mote: Dictionary = pollen[i]
@@ -643,6 +674,11 @@ func update_interface() -> void:
 	carried_label.text = str(carried)
 	delivered_label.text = "调律 %d / 3" % int(boss.hits) if phase == "boss" else "%d / %d" % [delivered, int(data.goal)]
 	energy_label.text = str(roundi(bee.energy))
+	energy_bar.value = bee.energy
+	energy_change_label.modulate.a = clampf(energy_feedback_time * 2.0, 0.0, 1.0)
+	if sense_button:
+		sense_button.disabled = bee.sense_cooldown > 0.0
+		sense_button.text = "寻迹 %.1f" % bee.sense_cooldown if bee.sense_cooldown > 0.0 else "触角寻迹"
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	message_label.text = message
 	if phase == "boss":
@@ -660,6 +696,30 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if WORLD.has_point(event.position):
 			bee.set_move_target(event.position)
+
+func on_sense_started() -> void:
+	message = "触角捕捉到蜜量、敌虫警戒范围和一条相对安全的采集方向。"
+
+func best_foraging_target() -> int:
+	var best := -1
+	var best_score := -INF
+	for i in flowers.size():
+		var flower: Dictionary = flowers[i]
+		if int(flower.nectar) <= 0:
+			continue
+		var score := float(flower.nectar) * 42.0 - bee.position.distance_to(flower.position) * 0.12
+		for mosquito in mosquitoes:
+			var danger_distance := Vector2(flower.position).distance_to(mosquito.position)
+			if danger_distance < balance_value("mosquito", "sense_range", 330.0):
+				score -= (330.0 - danger_distance) * 0.35
+		for ant in ants:
+			var ant_distance := Vector2(flower.position).distance_to(ant.position)
+			if ant_distance < 180.0:
+				score -= (180.0 - ant_distance) * 0.18
+		if score > best_score:
+			best_score = score
+			best = i
+	return best
 
 func toggle_pause() -> void:
 	if phase == "paused":
@@ -762,6 +822,22 @@ func _draw() -> void:
 		draw_boss(boss)
 	for mote in pollen:
 		draw_circle(mote.position, 2.5, Color(stage_color(3), clampf(float(mote.life) * 2.0, 0, 1)))
+	if bee.sense_time > 0.0 and (phase == "playing" or phase == "boss"):
+		var recommended := best_foraging_target()
+		for i in flowers.size():
+			var flower: Dictionary = flowers[i]
+			if int(flower.nectar) <= 0:
+				continue
+			var is_best := i == recommended
+			draw_line(bee.position, flower.position, Color("fff0a0", 0.42 if is_best else 0.12), 3.0 if is_best else 1.0)
+			draw_string(ThemeDB.fallback_font, flower.position + Vector2(-9, -28), str(flower.nectar), HORIZONTAL_ALIGNMENT_CENTER, 18, 13, Color("fff4bf"))
+			if is_best:
+				draw_arc(flower.position, 38, 0, TAU, 32, Color("fff0a0", 0.9), 3)
+		for mosquito in mosquitoes:
+			draw_arc(mosquito.position, balance_value("mosquito", "sense_range", 330.0), 0, TAU, 64, Color("9d4238", 0.15), 2)
+		for ant in ants:
+			draw_circle(ant.position, 26, Color("74452d", 0.15), false, 2)
+		draw_line(bee.position, Vector2(HIVE_X, bee.position.y), Color("fff0a0", 0.55), 3)
 	var nearby := nearest_flower(46.0)
 	if nearby >= 0 and phase == "playing":
 		var flower: Dictionary = flowers[nearby]
@@ -785,12 +861,16 @@ func draw_flower(flower: Dictionary) -> void:
 
 func draw_mosquito(mosquito: Dictionary) -> void:
 	var pos: Vector2 = mosquito.position
-	var stunned := float(mosquito.stunned) > 0
-	draw_circle(pos, 9, Color("78908b") if stunned else Color("402e34"))
+	var repelled := float(mosquito.repel_time) > 0.0
+	draw_circle(pos, 9, Color("b77b3e") if repelled else Color("402e34"))
 	draw_line(pos + Vector2(-5, -4), pos + Vector2(-15, -12), Color("f5f2df", 0.7), 3)
 	draw_line(pos + Vector2(5, 4), pos + Vector2(15, 12), Color("f5f2df", 0.7), 3)
-	if stunned:
-		draw_arc(pos, 17, 0, TAU * 0.75, 12, Color("fff0aa"), 2)
+	if repelled:
+		var ratio := clampf(float(mosquito.repel_time) / balance_value("player", "repel_duration", 3.5), 0.0, 1.0)
+		draw_line(pos + Vector2(10, -4), pos + Vector2(25, -4), Color("fff0aa", 0.7), 2)
+		draw_line(pos + Vector2(10, 4), pos + Vector2(25, 4), Color("fff0aa", 0.7), 2)
+		draw_rect(Rect2(pos + Vector2(-18, -27), Vector2(36, 5)), Color("332b27", 0.75))
+		draw_rect(Rect2(pos + Vector2(-17, -26), Vector2(34 * ratio, 3)), Color("e9b84f"))
 
 func draw_ant(ant: Dictionary) -> void:
 	var pos: Vector2 = ant.position
@@ -802,6 +882,10 @@ func draw_ant(ant: Dictionary) -> void:
 	for side in [-1, 1]:
 		draw_line(pos + Vector2(-2, 2 * side), pos + Vector2(-11, 10 * side), color, 2)
 		draw_line(pos + Vector2(5, 2 * side), pos + Vector2(13, 10 * side), color, 2)
+	if fleeing:
+		var ratio := clampf(float(ant.flee_time) / 1.8, 0.0, 1.0)
+		draw_rect(Rect2(pos + Vector2(-18, -24), Vector2(36, 5)), Color("332b27", 0.75))
+		draw_rect(Rect2(pos + Vector2(-17, -23), Vector2(34 * ratio, 3)), Color("e9b84f"))
 
 func draw_tuning_bloom(pos: Vector2) -> void:
 	var pulse := 28.0 + sin(elapsed * 4.0) * 4.0

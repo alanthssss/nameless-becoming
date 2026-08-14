@@ -22,9 +22,15 @@ func run_test() -> void:
 	game.carried = 0
 	game.update_hive_rest(1.0, true)
 	expect(game.bee.energy > 50.0 and game.delivered == 0, "空手归巢没有恢复体力")
-	game.mosquitoes = [{"id": 0, "position": Vector2(210, 410), "velocity": Vector2(-2, 0), "stunned": 0.0}]
+	game.mosquitoes = [{"id": 0, "position": Vector2(210, 410), "velocity": Vector2(-2, 0), "repel_time": 0.0}]
 	game.update_mosquitoes(0.2)
 	expect(float(game.mosquitoes[0].position.x) >= game.HIVE_SAFE_X, "蚊虫越过蜂巢安全边界")
+	game.bee.position = Vector2(280, 410)
+	game.mosquitoes = [{"id": 0, "position": Vector2(320, 410), "velocity": Vector2.ZERO, "repel_time": 1.0}]
+	game.update_mosquitoes(0.2)
+	expect(float(game.mosquitoes[0].position.x) > 320.0, "惊退状态没有让蚊虫实际远离玩家")
+	game.bee.sense_time = 3.0
+	expect(game.best_foraging_target() >= 0, "触角寻迹没有给出采集建议")
 
 	for index in 4:
 		game.delivered = int(game.stages[index].goal)
