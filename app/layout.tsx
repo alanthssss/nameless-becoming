@@ -7,7 +7,19 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "归巢之前｜四季搜打撤",
-  description: "在冬季到来前采蜜、归巢，守住一整个蜂群。",
+  description: "控制蜜蜂飞行、采蜜、击退蚊虫，在体力耗尽前亲自归巢。",
+  metadataBase: new URL("https://hivebound-seasons.alanthssss.chatgpt.site"),
+  openGraph: {
+    title: "归巢之前｜四季搜打撤",
+    description: "再采一朵，还是现在归巢？",
+    images: ["/og.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "归巢之前｜四季搜打撤",
+    description: "再采一朵，还是现在归巢？",
+    images: ["/og.jpg"],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
