@@ -1,14 +1,48 @@
-# vinext-starter
+# 归巢之前 · Hivebound Seasons
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+一款以蜜蜂生态、四季循环与东方节气为核心的轻量“搜、打、撤”肉鸽游戏原型。
 
-## Prerequisites
+> 再采一朵，还是现在归巢？
 
-- Node.js `>=22.13.0`
+## 在线试玩
 
-## Quick Start
+[https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
+
+## 当前版本：交互原型 0.2
+
+玩家直接控制蜜蜂在花田中飞行：
+
+- **搜**：寻找仍有花蜜的花朵，越远通常收益越高；
+- **打**：使用蜂针震开靠近的蚊虫，但会消耗体力；
+- **撤**：在体力耗尽前亲自飞回左侧蜂巢，携带的蜜才会转化为储备；
+- **循环**：依次经历春分、夏至、秋分、冬至四个压缩节令。
+
+### 操作
+
+| 操作 | 键盘 | 触摸设备 |
+| --- | --- | --- |
+| 移动 | WASD / 方向键 | 点击花田移动 |
+| 采蜜 | 按住空格 | 按住“采蜜” |
+| 冲刺 | Shift | 按住“振翅” |
+| 蜂针 | J | 点击“蜂针” |
+
+## 设计方向
+
+游戏不是单纯的昆虫战斗，也不是传统经营模拟。核心张力来自：
+
+```text
+发现稀有花
+→ 停留采集
+→ 危险靠近、体力下降
+→ 决定继续贪、战斗或撤退
+→ 带着资源亲自飞回蜂巢
+```
+
+视觉使用阴阳消长组织明暗、冷暖与节奏，并以二十四节气作为未来关卡骨架。MVP 阶段只开放四个代表性节点：春分、夏至、秋分、冬至。
+
+## 开发
+
+需要 Node.js 22.13 或更高版本。
 
 ```bash
 npm install
@@ -16,85 +50,17 @@ npm run dev
 npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+主要实现位于：
 
-## Included Shape
+- `app/page.tsx`：游戏循环、操作、敌人与节令配置；
+- `app/globals.css`：界面、节气色彩和响应式布局；
+- `docs/PROJECT_LOG.md`：策划与版本决策记录。
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+## 当前验证问题
 
-## Workspace Auth Headers
+1. 飞行与采蜜是否让玩家感觉自己在控制一只蜜蜂？
+2. 蚊虫靠近时，是否会产生“再采一点还是立即撤退”的犹豫？
+3. 四个压缩节令的压力变化是否清晰？
+4. 失败后是否愿意马上再进行一次循环？
 
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
-```
-
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+项目仍处于早期原型阶段。当前代码与美术不代表最终品质，所有系统都服务于验证核心互动。
