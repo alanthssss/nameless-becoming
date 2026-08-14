@@ -1,8 +1,6 @@
 class_name BeePlayer
 extends Node2D
 
-signal sense_started
-
 const WORLD_BOUNDS := Rect2(34, 146, 970, 538)
 
 var energy := 100.0
@@ -15,8 +13,6 @@ var velocity := Vector2.ZERO
 var target := Vector2.ZERO
 var has_target := false
 var active := false
-var sense_time := 0.0
-var sense_cooldown := 0.0
 var facing := 0.0
 var speed_multiplier := 1.0
 var dash_cost_multiplier := 1.0
@@ -39,8 +35,6 @@ func reset_for_expedition(at: Vector2) -> void:
 	target = Vector2.ZERO
 	has_target = false
 	energy = 100.0
-	sense_time = 0.0
-	sense_cooldown = 0.0
 	active = true
 	queue_redraw()
 
@@ -55,8 +49,6 @@ func spend_energy(amount: float) -> bool:
 	return true
 
 func _physics_process(delta: float) -> void:
-	sense_time = maxf(0.0, sense_time - delta)
-	sense_cooldown = maxf(0.0, sense_cooldown - delta)
 	if not active:
 		velocity = velocity.move_toward(Vector2.ZERO, braking * delta)
 		return
@@ -83,10 +75,6 @@ func _physics_process(delta: float) -> void:
 	position.y = clampf(position.y, WORLD_BOUNDS.position.y + 18, WORLD_BOUNDS.end.y - 18)
 	energy = maxf(0.0, energy - drain_rate * delta - (9.5 * dash_cost_multiplier * delta if dashing else 0.0))
 
-	if Input.is_action_just_pressed("sense") and sense_cooldown <= 0.0:
-		sense_time = 2.4
-		sense_cooldown = 6.0
-		sense_started.emit()
 	queue_redraw()
 
 func _draw() -> void:
@@ -99,6 +87,4 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2(3, -11), Vector2(5, 22)), Color("e1aa2c"))
 	draw_circle(Vector2(13, 0), 7, Color("efcf69"))
 	draw_line(Vector2(18, 0), Vector2(24, 0), Color("2b2921"), 2)
-	if sense_time > 0.0:
-		draw_arc(Vector2.ZERO, 27 + sin(Time.get_ticks_msec() * 0.012) * 4, 0, TAU, 28, Color("f1d46d", 0.72), 2)
 	draw_set_transform(Vector2.ZERO)

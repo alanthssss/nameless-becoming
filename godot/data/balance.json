@@ -1,5 +1,5 @@
 {
-  "player": {"harvest_interval":0.42,"harvest_energy_per_second":3.2,"sting_cost":8.0,"sting_range":88.0,"sting_cooldown":1.15,"home_energy_restore":70.0},
+  "player": {"harvest_interval":0.42,"harvest_energy_per_second":3.2,"repel_cost":8.0,"repel_range":88.0,"repel_cooldown":1.15,"repel_stun":3.5,"hive_rest_per_second":36.0},
   "mosquito": {"sense_range":330.0,"move_speed":82.0,"impact_range":26.0,"energy_damage":15.0,"honey_damage":2},
   "ant": {"move_speed":58.0,"steal_range":29.0,"flee_seconds":1.4},
   "boss": {"move_speed":78.0,"impact_range":39.0,"energy_damage":18.0,"tuning_radius":82.0,"required_tunings":3}

@@ -2,6 +2,7 @@ extends Node2D
 
 const WORLD := Rect2(34, 146, 970, 538)
 const HIVE_X := 132.0
+const HIVE_SAFE_X := 225.0
 const FLOWER_COLORS := [Color("f2d66f"), Color("e9aab1"), Color("a995c9")]
 const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"]
 
@@ -25,6 +26,7 @@ var hive_lives := 3
 var harvest_clock := 0.0
 var sting_cooldown := 0.0
 var hit_cooldown := 0.0
+var was_in_hive := false
 var harvest_multiplier := 1.0
 var sting_range := 88.0
 var sting_cost := 8.0
@@ -67,7 +69,6 @@ func _ready() -> void:
 	load_upgrade_data()
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
-	bee.sense_started.connect(on_sense_started)
 	add_child(bee)
 	add_child(sound)
 	sound.set_enabled(save_manager.sound_enabled)
@@ -172,13 +173,12 @@ func build_interface() -> void:
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label = make_label(side, message, Vector2(20, 300), Vector2(190, 135), 13, Color("4c5548"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	make_label(side, "左键点地移动 · 左侧是归巢区", Vector2(20, 412), Vector2(190, 38), 11, Color("556054"))
+	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 412), Vector2(190, 38), 11, Color("556054"))
 	make_mouse_action(side, "按住采蜜", "harvest", Vector2(16, 450), true)
 	make_mouse_action(side, "按住振翅", "dash", Vector2(116, 450), true)
-	make_mouse_action(side, "蜂针", "sting", Vector2(16, 492), false)
-	make_mouse_action(side, "感知", "sense", Vector2(116, 492), false)
+	make_mouse_action(side, "震翼驱离", "repel", Vector2(66, 492), false)
 
-	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  蜂针     E  感知", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
+	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  震翼驱离", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	overlay = ColorRect.new()
@@ -253,8 +253,8 @@ func start_game() -> void:
 	chosen_upgrades.clear()
 	upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
 	harvest_multiplier = 1.0
-	sting_range = balance_value("player", "sting_range", 88.0)
-	sting_cost = balance_value("player", "sting_cost", 8.0)
+	sting_range = balance_value("player", "repel_range", 88.0)
+	sting_cost = balance_value("player", "repel_cost", 8.0)
 	sting_cooldown_multiplier = 1.0
 	extra_nectar = 0
 	bee.reset_upgrades()
@@ -273,6 +273,7 @@ func spawn_stage(index: int) -> void:
 	harvest_clock = 0.0
 	sting_cooldown = 0.0
 	hit_cooldown = 0.0
+	was_in_hive = false
 	flowers.clear()
 	mosquitoes.clear()
 	ants.clear()
@@ -353,13 +354,13 @@ func update_game(delta: float) -> void:
 	else:
 		harvest_clock = 0.0
 
-	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		sting_cooldown = balance_value("player", "sting_cooldown", 1.15) * sting_cooldown_multiplier
+	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
+		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
 		sound.play_cue("sting")
 		for i in mosquitoes.size():
 			var mosquito: Dictionary = mosquitoes[i]
 			if bee.position.distance_to(mosquito.position) < sting_range:
-				mosquito.stunned = 2.1
+				mosquito.stunned = balance_value("player", "repel_stun", 3.5)
 				mosquito.velocity = (mosquito.position - bee.position).normalized() * 8.0
 				mosquitoes[i] = mosquito
 		for i in ants.size():
@@ -368,20 +369,13 @@ func update_game(delta: float) -> void:
 				ant.flee_time = 1.8
 				ant.velocity = (ant.position - bee.position).normalized() * 3.2
 				ants[i] = ant
-		message = "蜂针震开了附近的蚊影。"
+		message = "急促的震翼把附近敌虫推离了航线。"
 
 	update_mosquitoes(delta)
 	update_ants(delta)
-	if bee.position.x < HIVE_X and carried > 0:
-		var amount := carried
-		delivered += amount
-		carried = 0
-		bee.energy = minf(100.0, bee.energy + balance_value("player", "home_energy_restore", 70.0))
-		message = "安全归巢，存入 %d 滴蜜。" % amount
-		sound.play_cue("home")
-		flash = 0.32
-		if delivered >= int(data.goal):
-			show_between()
+	update_hive_rest(delta, true)
+	if delivered >= int(data.goal) and phase == "playing":
+		show_between()
 	if bee.energy <= 0.0:
 		fail_expedition()
 
@@ -391,11 +385,11 @@ func update_mosquitoes(delta: float) -> void:
 		mosquito.stunned = maxf(0.0, float(mosquito.stunned) - delta)
 		if mosquito.stunned <= 0.0:
 			var distance_to_player := Vector2(mosquito.position).distance_to(bee.position)
-			if distance_to_player < balance_value("mosquito", "sense_range", 330.0):
+			if distance_to_player < balance_value("mosquito", "sense_range", 330.0) and bee.position.x > HIVE_SAFE_X:
 				var chase := (bee.position - Vector2(mosquito.position)).normalized()
 				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
 			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * delta
-			mosquito.position.x = clampf(mosquito.position.x, WORLD.position.x + 12, WORLD.end.x - 12)
+			mosquito.position.x = clampf(mosquito.position.x, HIVE_SAFE_X, WORLD.end.x - 12)
 			mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
 			if distance_to_player < balance_value("mosquito", "impact_range", 26.0) and hit_cooldown <= 0.0:
 				hit_cooldown = 1.05
@@ -416,7 +410,7 @@ func update_ants(delta: float) -> void:
 		var desired := Vector2.ZERO
 		if ant.flee_time > 0.0:
 			desired = Vector2(ant.velocity).normalized()
-		elif carried > 0:
+		elif carried > 0 and bee.position.x > HIVE_SAFE_X:
 			desired = (bee.position - ant_position).normalized()
 		else:
 			var flower_index := nearest_flower_to(ant_position)
@@ -424,7 +418,7 @@ func update_ants(delta: float) -> void:
 				desired = (Vector2(flowers[flower_index].position) - ant_position).normalized()
 		ant.velocity = Vector2(ant.velocity).lerp(desired * 1.35, delta * 2.2)
 		ant.position += Vector2(ant.velocity) * balance_value("ant", "move_speed", 58.0) * delta
-		ant.position.x = clampf(ant.position.x, WORLD.position.x + 14, WORLD.end.x - 14)
+		ant.position.x = clampf(ant.position.x, HIVE_SAFE_X, WORLD.end.x - 14)
 		ant.position.y = clampf(ant.position.y, WORLD.position.y + 14, WORLD.end.y - 14)
 		if ant.flee_time <= 0.0 and ant_position.distance_to(bee.position) < balance_value("ant", "steal_range", 29.0) and carried > 0 and ant.steal_cooldown <= 0.0:
 			carried -= 1
@@ -436,6 +430,23 @@ func update_ants(delta: float) -> void:
 			sound.play_cue("hurt")
 			shake = 4.0
 		ants[i] = ant
+
+func update_hive_rest(delta: float, deposit_honey: bool) -> void:
+	var inside := bee.position.x < HIVE_X
+	if not inside:
+		was_in_hive = false
+		return
+	bee.energy = minf(100.0, bee.energy + balance_value("player", "hive_rest_per_second", 36.0) * delta)
+	if deposit_honey and carried > 0:
+		var amount := carried
+		delivered += amount
+		carried = 0
+		message = "安全归巢，存入 %d 滴蜜。蜂群的照料正在恢复体力。" % amount
+		sound.play_cue("home")
+		flash = 0.32
+	elif not was_in_hive:
+		message = "即使空手归来，蜂巢也会接纳你。停留片刻恢复体力。"
+	was_in_hive = true
 
 func fail_expedition() -> void:
 	hive_lives -= 1
@@ -506,7 +517,7 @@ func start_boss() -> void:
 	bee.reset_for_expedition(Vector2(180, 410))
 	carried = 6
 	delivered = 0
-	message = "失律之蚊在吸取花潮。把它引到三处共鸣花粉，再用蜂针完成调律。"
+	message = "失律之蚊在吸取花潮。把它引到三处共鸣花粉，再以震翼完成调律。"
 
 func update_boss(delta: float) -> void:
 	sting_cooldown = maxf(0.0, sting_cooldown - delta)
@@ -516,7 +527,7 @@ func update_boss(delta: float) -> void:
 	var orbit := to_bee.normalized().rotated(sin(elapsed * 1.7) * 0.45)
 	boss.velocity = Vector2(boss.velocity).lerp(orbit * 2.2, delta * 1.7)
 	boss.position += Vector2(boss.velocity) * balance_value("boss", "move_speed", 78.0) * delta
-	boss.position.x = clampf(boss.position.x, WORLD.position.x + 28, WORLD.end.x - 28)
+	boss.position.x = clampf(boss.position.x, HIVE_SAFE_X + 18.0, WORLD.end.x - 28)
 	boss.position.y = clampf(boss.position.y, WORLD.position.y + 28, WORLD.end.y - 28)
 
 	if boss_position.distance_to(bee.position) < balance_value("boss", "impact_range", 39.0) and boss.hit_cooldown <= 0.0:
@@ -528,8 +539,8 @@ func update_boss(delta: float) -> void:
 		flash = 0.55
 		message = "失律之蚊夺走一滴蜜。它只知道索取。"
 
-	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		sting_cooldown = balance_value("player", "sting_cooldown", 1.15) * sting_cooldown_multiplier
+	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
+		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
 		sound.play_cue("sting")
 		var bloom_index := nearest_tuning_bloom(boss.position)
 		if bee.position.distance_to(boss.position) < sting_range + 7.0 and bloom_index >= 0:
@@ -544,7 +555,9 @@ func update_boss(delta: float) -> void:
 			if int(boss.hits) >= roundi(balance_value("boss", "required_tunings", 3.0)):
 				show_win()
 		else:
-			message = "蜂针击中了它，却没有花粉共鸣。把它引向发光花团。"
+			message = "震翼没有引发花粉共鸣。先把它引向发光花团。"
+
+	update_hive_rest(delta, false)
 
 	if bee.energy <= 0.0:
 		show_loss()
@@ -633,7 +646,7 @@ func update_interface() -> void:
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	message_label.text = message
 	if phase == "boss":
-		detail_label.text = "失律之蚊\n\n只索取，\n不流转。\n\n调律  %d / 3\n\n引向花粉团\n再使用蜂针" % int(boss.hits)
+		detail_label.text = "失律之蚊\n\n只索取，\n不流转。\n\n调律  %d / 3\n\n引向花粉团\n再以震翼共鸣" % int(boss.hits)
 	else:
 		detail_label.text = "%s\n\n%s\n\n阴 %d  ·  阳 %d\n目标  %d 滴\n蚊群  %s\n掠蜜蚁  %s" % [data.name, data.line, int(data.yin), int(data.yang), int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants))]
 
@@ -647,9 +660,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if WORLD.has_point(event.position):
 			bee.set_move_target(event.position)
-
-func on_sense_started() -> void:
-	message = "花香、敌意与归巢方向在一瞬间变得清晰。"
 
 func toggle_pause() -> void:
 	if phase == "paused":
@@ -752,18 +762,6 @@ func _draw() -> void:
 		draw_boss(boss)
 	for mote in pollen:
 		draw_circle(mote.position, 2.5, Color(stage_color(3), clampf(float(mote.life) * 2.0, 0, 1)))
-	if bee.sense_time > 0.0 and (phase == "playing" or phase == "boss"):
-		for flower in flowers:
-			if int(flower.nectar) > 0:
-				draw_line(bee.position, flower.position, Color(stage_color(3), 0.12), 1)
-		for mosquito in mosquitoes:
-			draw_circle(mosquito.position, 20, Color("8d3d36", 0.12), false, 2)
-		for ant in ants:
-			draw_circle(ant.position, 20, Color("6b412d", 0.12), false, 2)
-		if phase == "boss":
-			draw_circle(boss.position, 50, Color("8d3d36", 0.16), false, 3)
-		draw_line(bee.position, Vector2(HIVE_X, bee.position.y), Color("fff0a0", 0.42), 2)
-
 	var nearby := nearest_flower(46.0)
 	if nearby >= 0 and phase == "playing":
 		var flower: Dictionary = flowers[nearby]

@@ -17,6 +17,14 @@ func run_test() -> void:
 	game.persistence_enabled = false
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入春分")
+	game.bee.position = Vector2(100, 410)
+	game.bee.energy = 50.0
+	game.carried = 0
+	game.update_hive_rest(1.0, true)
+	expect(game.bee.energy > 50.0 and game.delivered == 0, "空手归巢没有恢复体力")
+	game.mosquitoes = [{"id": 0, "position": Vector2(210, 410), "velocity": Vector2(-2, 0), "stunned": 0.0}]
+	game.update_mosquitoes(0.2)
+	expect(float(game.mosquitoes[0].position.x) >= game.HIVE_SAFE_X, "蚊虫越过蜂巢安全边界")
 
 	for index in 4:
 		game.delivered = int(game.stages[index].goal)
