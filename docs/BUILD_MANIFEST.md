@@ -6,7 +6,7 @@
 
 | 平台 | 文件 | 大小 | SHA-256 | 验证 |
 | --- | --- | ---: | --- | --- |
-| Web | `public/game/index.html` + `.wasm` + `.pck` | 35,749,181-byte WASM / 68,400-byte PCK | WASM `52e3c004…adb4` / PCK `fc84d053…aec4` | Godot Web 导出与 Sites 站点构建成功 |
+| Web | Sites v4（Godot Web release） | WASM 分片 20,971,520 + 16,723,534 bytes / PCK 68,400 bytes | 单一 Godot 导出；WASM 仅在部署阶段分片传输并由加载器重组 | 已部署至在线试玩地址 |
 | macOS universal | `builds/HiveboundSeasons-macOS.zip` | 65,336,790 bytes | `4e738ba6a0f527cc44b0c655e941a5e568cb8331362d9d3dc9fb341bd34c0d8f` | 重新临时签名后通过严格校验；模拟下载隔离后由首次启动脚本解除并成功启动 |
 | Windows x86_64 | `builds/HiveboundSeasons-Windows.exe` | 100,703,552 bytes | `2a8b0e0f6dca8b902ea07c65f786749f36d3679309c6093645f4ec0c030e0e14` | Godot 导出成功；PE32+ 格式确认，PCK 已嵌入 |
 
