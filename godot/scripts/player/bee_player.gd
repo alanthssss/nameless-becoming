@@ -20,6 +20,9 @@ var sense_cooldown := 0.0
 var facing := 0.0
 var speed_multiplier := 1.0
 var dash_cost_multiplier := 1.0
+var evade_time := 0.0
+var evade_cooldown := 0.0
+var invulnerable_time := 0.0
 
 func configure(stage_drain: float) -> void:
 	drain_rate = stage_drain
@@ -41,6 +44,9 @@ func reset_for_expedition(at: Vector2) -> void:
 	energy = 100.0
 	sense_time = 0.0
 	sense_cooldown = 0.0
+	evade_time = 0.0
+	evade_cooldown = 0.0
+	invulnerable_time = 0.0
 	active = true
 	queue_redraw()
 
@@ -54,14 +60,28 @@ func spend_energy(amount: float) -> bool:
 	energy -= amount
 	return true
 
+func try_evade() -> bool:
+	if evade_cooldown > 0.0 or not spend_energy(12.0):
+		return false
+	var direction := velocity.normalized() if velocity.length_squared() > 4.0 else Vector2.from_angle(facing)
+	velocity = direction * 520.0
+	evade_time = 0.18
+	evade_cooldown = 1.6
+	invulnerable_time = 0.34
+	has_target = false
+	return true
+
 func _physics_process(delta: float) -> void:
 	sense_time = maxf(0.0, sense_time - delta)
 	sense_cooldown = maxf(0.0, sense_cooldown - delta)
+	evade_time = maxf(0.0, evade_time - delta)
+	evade_cooldown = maxf(0.0, evade_cooldown - delta)
+	invulnerable_time = maxf(0.0, invulnerable_time - delta)
 	if not active:
 		velocity = velocity.move_toward(Vector2.ZERO, braking * delta)
 		return
 
-	var input_direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var input_direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if input_direction.length_squared() < 0.01 and has_target:
 		var to_target := target - position
 		if to_target.length() > 10.0:
@@ -69,9 +89,11 @@ func _physics_process(delta: float) -> void:
 		else:
 			has_target = false
 
-	var dashing := Input.is_action_pressed("dash") and energy > 8.0
+	var dashing := Input.is_action_pressed("dash") and energy > 8.0 and evade_time <= 0.0
 	var desired_speed := (dash_speed if dashing else base_speed) * speed_multiplier
-	if input_direction.length_squared() > 0.01:
+	if evade_time > 0.0:
+		velocity = velocity.move_toward(velocity.normalized() * 520.0, 180.0 * delta)
+	elif input_direction.length_squared() > 0.01:
 		velocity = velocity.move_toward(input_direction.normalized() * desired_speed, acceleration * delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, braking * delta)

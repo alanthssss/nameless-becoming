@@ -2,6 +2,15 @@ class_name SoundFeedback
 extends Node
 
 const MIX_RATE := 22050.0
+const STEP_SECONDS := 0.42
+const ROOTS := [220.0, 246.94, 196.0, 164.81]
+const MELODIES := [
+	[0, 2, 4, 7, 4, 2, 1, -1, 0, 2, 5, 4, 2, 1, 0, -1],
+	[0, 4, 5, 7, 9, 7, 5, 4, 2, 5, 7, 11, 9, 7, 4, 2],
+	[7, 5, 4, 2, 0, 2, 4, -1, 5, 4, 2, 0, -3, 0, 2, -1],
+	[0, -3, 2, -1, 4, 2, 0, -1, 0, 2, 5, 2, 0, -3, -5, -1]
+]
+const PENTATONIC := [0, 2, 4, 7, 9]
 
 var player: AudioStreamPlayer
 var playback: AudioStreamGeneratorPlayback
@@ -12,15 +21,11 @@ var phase := 0.0
 var frequency := 440.0
 var amplitude := 0.12
 var enabled := true
-var music_phases := [0.0, 0.0, 0.0]
-var music_clock := 0
 var season_index := 0
-var season_chords := [
-	[220.00, 277.18, 329.63],
-	[246.94, 311.13, 369.99],
-	[196.00, 246.94, 293.66],
-	[164.81, 220.00, 246.94]
-]
+var music_frame := 0
+var melody_phase := 0.0
+var bass_phase := 0.0
+var breeze_phase := 0.0
 
 func _ready() -> void:
 	if DisplayServer.get_name() == "headless":
@@ -39,13 +44,14 @@ func _ready() -> void:
 	music_stream.mix_rate = MIX_RATE
 	music_stream.buffer_length = 0.5
 	music_player.stream = music_stream
-	music_player.volume_db = -14.0
+	music_player.volume_db = -18.0
 	add_child(music_player)
 	music_player.play()
 	music_playback = music_player.get_stream_playback()
 
 func set_season(index: int) -> void:
-	season_index = clampi(index, 0, season_chords.size() - 1)
+	season_index = clampi(index, 0, 3)
+	music_frame = 0
 
 func set_enabled(value: bool) -> void:
 	enabled = value
@@ -61,6 +67,8 @@ func play_cue(cue: String) -> void:
 		"harvest": start_tone(620.0, 0.07, 0.08)
 		"home": start_tone(330.0, 0.22, 0.14)
 		"repel": start_tone(190.0, 0.09, 0.13)
+		"evade": start_tone(410.0, 0.08, 0.10)
+		"decoy": start_tone(540.0, 0.16, 0.09)
 		"hurt": start_tone(105.0, 0.18, 0.16)
 		"upgrade": start_tone(520.0, 0.28, 0.12)
 		"tune": start_tone(760.0, 0.32, 0.15)
@@ -89,17 +97,27 @@ func _process(_delta: float) -> void:
 func fill_music_buffer() -> void:
 	if music_playback == null:
 		return
-	var chord: Array = season_chords[season_index]
-	var frames := music_playback.get_frames_available()
-	for frame in frames:
-		var breath := 0.62 + sin(float(music_clock) / MIX_RATE * TAU / 7.0) * 0.18
-		var sample := 0.0
-		for voice in 3:
-			sample += sin(float(music_phases[voice]))
-			music_phases[voice] = fmod(float(music_phases[voice]) + TAU * float(chord[voice]) / MIX_RATE, TAU)
-		sample = sample / 3.0 * 0.075 * breath
+	var frames_per_step := roundi(MIX_RATE * STEP_SECONDS)
+	var melody: Array = MELODIES[season_index]
+	for frame in music_playback.get_frames_available():
+		var step := (music_frame / frames_per_step) % melody.size()
+		var position_in_step := float(music_frame % frames_per_step) / float(frames_per_step)
+		var semitone := int(melody[step])
+		var melody_frequency: float = float(ROOTS[season_index]) * pow(2.0, float(semitone) / 12.0)
+		var bass_degree: int = int(PENTATONIC[(step / 4) % PENTATONIC.size()])
+		var bass_frequency: float = float(ROOTS[season_index]) * 0.5 * pow(2.0, float(bass_degree) / 12.0)
+		var melody_envelope := pow(maxf(0.0, 1.0 - position_in_step), 1.7) * minf(1.0, position_in_step * 24.0)
+		var bass_envelope := 0.35 + 0.25 * pow(maxf(0.0, 1.0 - fmod(position_in_step * 2.0, 1.0)), 2.0)
+		var pulse := 0.035 if music_frame % (frames_per_step * 2) < 240 else 0.0
+		var noise_like := sin(breeze_phase) * sin(breeze_phase * 0.731)
+		var sample := sin(melody_phase) * 0.075 * melody_envelope
+		sample += sin(bass_phase) * 0.045 * bass_envelope
+		sample += noise_like * pulse
 		music_playback.push_frame(Vector2(sample * 0.96, sample))
-		music_clock += 1
+		melody_phase = fmod(melody_phase + TAU * melody_frequency / MIX_RATE, TAU)
+		bass_phase = fmod(bass_phase + TAU * bass_frequency / MIX_RATE, TAU)
+		breeze_phase = fmod(breeze_phase + TAU * 1837.0 / MIX_RATE, TAU)
+		music_frame += 1
 
 func _exit_tree() -> void:
 	if player == null:

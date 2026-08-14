@@ -94,7 +94,7 @@ func _init() -> void:
 	if load("res://scripts/sound_feedback.gd") == null:
 		failures.append("程序化音效脚本无法加载")
 
-	for action in ["harvest", "dash", "repel", "sense"]:
+	for action in ["move_left", "move_right", "move_up", "move_down", "harvest", "dash", "repel", "sense", "evade", "decoy"]:
 		if not InputMap.has_action(action):
 			failures.append("缺少玩家动作映射 %s" % action)
 	if InputMap.has_action("sting"):
@@ -102,6 +102,9 @@ func _init() -> void:
 	for clustered_action in ["harvest", "dash", "sense"]:
 		if InputMap.action_get_events(clustered_action).size() < 2:
 			failures.append("技能区按键没有为 %s 配置兼容映射" % clustered_action)
+	for movement_action in ["move_left", "move_right", "move_up", "move_down"]:
+		if InputMap.action_get_events(movement_action).size() < 2:
+			failures.append("WASD/方向键双映射缺失：%s" % movement_action)
 
 	if failures.is_empty():
 		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")

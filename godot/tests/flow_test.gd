@@ -20,12 +20,31 @@ func run_test() -> void:
 	for stage_index in 4:
 		game.spawn_stage(stage_index)
 		expect(game.total_recoverable_honey() >= int(game.stages[stage_index].goal), "节令 %d 初始总蜜量不足" % stage_index)
+		for flower_index in game.flowers.size():
+			for other_index in range(flower_index + 1, game.flowers.size()):
+				expect(Vector2(game.flowers[flower_index].position).distance_to(Vector2(game.flowers[other_index].position)) >= 81.9, "节令 %d 花朵生成间距不足" % stage_index)
 	game.spawn_stage(0)
+	var movement_start: Vector2 = game.bee.position
+	var d_key := InputEventKey.new()
+	d_key.physical_keycode = KEY_D
+	d_key.pressed = true
+	expect(InputMap.event_is_action(d_key, "move_right"), "物理 D 键没有映射到向右移动")
+	Input.action_press("move_right")
+	game.bee._physics_process(0.1)
+	Input.action_release("move_right")
+	expect(game.bee.position.x > movement_start.x, "WASD 的 D 键动作没有驱动玩家")
+	game.bee.energy = 100.0
+	game.bee.velocity = Vector2.RIGHT
+	expect(game.bee.try_evade() and game.bee.invulnerable_time > 0.0 and game.bee.energy == 88.0, "K 急转没有产生位移防护与体力消耗")
 	var conserved_before: int = game.total_recoverable_honey()
 	game.flowers[0].nectar = int(game.flowers[0].nectar) - 2
 	game.carried = 2
 	game.fail_expedition()
 	expect(game.total_recoverable_honey() == conserved_before, "体力耗尽后花蜜没有回到生态循环")
+	game.carried = 1
+	var before_decoy: int = game.total_recoverable_honey()
+	game.drop_honey_decoy()
+	expect(game.decoys.size() == 1 and game.total_recoverable_honey() == before_decoy, "L 诱饵没有生效或破坏了花蜜守恒")
 	game.bee.position = Vector2(100, 410)
 	game.bee.energy = 50.0
 	game.carried = 0

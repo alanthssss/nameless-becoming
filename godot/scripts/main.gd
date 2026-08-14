@@ -20,6 +20,7 @@ var ants: Array = []
 var tuning_blooms: Array[Vector2] = []
 var boss := {"position": Vector2.ZERO, "velocity": Vector2.ZERO, "hits": 0, "hit_cooldown": 0.0}
 var pollen: Array = []
+var decoys: Array = []
 var recovery_flower_serial := 1000
 var carried := 0
 var delivered := 0
@@ -61,12 +62,14 @@ var pause_button: Button
 var fullscreen_button: Button
 var sound_button: Button
 var sense_button: Button
-var energy_bar: ProgressBar
+var energy_bar: ColorRect
+var energy_bar_fill: ColorRect
 var energy_change_label: Label
 var energy_feedback_time := 0.0
 
 func _ready() -> void:
 	rng.randomize()
+	ensure_keyboard_controls()
 	save_manager.load_data()
 	apply_display_settings()
 	load_stage_data()
@@ -81,6 +84,33 @@ func _ready() -> void:
 	build_interface()
 	show_intro()
 	queue_redraw()
+
+func ensure_keyboard_controls() -> void:
+	var bindings := {
+		"move_left": [KEY_A, KEY_LEFT],
+		"move_right": [KEY_D, KEY_RIGHT],
+		"move_up": [KEY_W, KEY_UP],
+		"move_down": [KEY_S, KEY_DOWN],
+		"harvest": [KEY_I, KEY_SPACE],
+		"dash": [KEY_O, KEY_SHIFT],
+		"repel": [KEY_J],
+		"sense": [KEY_U, KEY_E],
+		"evade": [KEY_K],
+		"decoy": [KEY_L]
+	}
+	for action in bindings:
+		if not InputMap.has_action(action):
+			InputMap.add_action(action)
+		for keycode in bindings[action]:
+			var exists := false
+			for current_event in InputMap.action_get_events(action):
+				if current_event is InputEventKey and current_event.physical_keycode == keycode:
+					exists = true
+					break
+			if not exists:
+				var key_event := InputEventKey.new()
+				key_event.physical_keycode = keycode
+				InputMap.action_add_event(action, key_event)
 
 func load_stage_data() -> void:
 	var file := FileAccess.open("res://data/seasons.json", FileAccess.READ)
@@ -167,26 +197,15 @@ func build_interface() -> void:
 	carried_label = make_stat(ui, "携带", Vector2(34, 82))
 	delivered_label = make_stat(ui, "本节储蜜", Vector2(234, 82))
 	energy_label = make_stat(ui, "飞行体力", Vector2(434, 82))
-	energy_bar = ProgressBar.new()
+	energy_bar = ColorRect.new()
 	energy_bar.position = Vector2(12, 35)
-	energy_bar.size = Vector2(166, 8)
-	energy_bar.max_value = 100.0
-	energy_bar.show_percentage = false
-	var energy_background := StyleBoxFlat.new()
-	energy_background.bg_color = Color("33483d")
-	energy_background.corner_radius_top_left = 4
-	energy_background.corner_radius_top_right = 4
-	energy_background.corner_radius_bottom_left = 4
-	energy_background.corner_radius_bottom_right = 4
-	var energy_fill := StyleBoxFlat.new()
-	energy_fill.bg_color = Color("ddb84c")
-	energy_fill.corner_radius_top_left = 4
-	energy_fill.corner_radius_top_right = 4
-	energy_fill.corner_radius_bottom_left = 4
-	energy_fill.corner_radius_bottom_right = 4
-	energy_bar.add_theme_stylebox_override("background", energy_background)
-	energy_bar.add_theme_stylebox_override("fill", energy_fill)
+	energy_bar.size = Vector2(166, 6)
+	energy_bar.color = Color("33483d")
 	energy_label.get_parent().add_child(energy_bar)
+	energy_bar_fill = ColorRect.new()
+	energy_bar_fill.size = Vector2(166, 6)
+	energy_bar_fill.color = Color("ddb84c")
+	energy_bar.add_child(energy_bar_fill)
 	energy_change_label = make_label(energy_label.get_parent(), "", Vector2(50, 4), Vector2(48, 24), 12, Color("b34b3f"))
 	energy_change_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hive_label = make_stat(ui, "蜂巢呼吸", Vector2(634, 82))
@@ -202,17 +221,19 @@ func build_interface() -> void:
 	message_label = make_label(side, message, Vector2(20, 276), Vector2(190, 125), 13, Color("4c5548"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 405), Vector2(190, 34), 11, Color("556054"))
-	make_mouse_action(side, "I  按住采蜜", "harvest", Vector2(16, 441), true)
-	make_mouse_action(side, "O  按住振翅", "dash", Vector2(116, 441), true)
-	make_mouse_action(side, "J  惊退 -8", "repel", Vector2(16, 486), false)
-	sense_button = make_mouse_action(side, "U  触角寻迹", "sense", Vector2(116, 486), false)
+	sense_button = make_mouse_action(side, "U 寻迹", "sense", Vector2(14, 441), false, Vector2(62, 36))
+	make_mouse_action(side, "I 采蜜", "harvest", Vector2(84, 441), true, Vector2(62, 36))
+	make_mouse_action(side, "O 振翅", "dash", Vector2(154, 441), true, Vector2(62, 36))
+	make_mouse_action(side, "J 惊退", "repel", Vector2(14, 486), false, Vector2(62, 36))
+	make_mouse_action(side, "K 急转", "evade", Vector2(84, 486), false, Vector2(62, 36))
+	make_mouse_action(side, "L 诱饵", "decoy", Vector2(154, 486), false, Vector2(62, 36))
 
 	var tips_background := ColorRect.new()
 	tips_background.color = Color("26392f", 0.96)
 	tips_background.position = Vector2(34, 684)
 	tips_background.size = Vector2(970, 36)
 	ui.add_child(tips_background)
-	var tips := make_label(ui, "WASD 飞行   技能区：U 寻迹 · I 采蜜 · O 振翅 / J 惊退(-8)   兼容 E·空格·Shift", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
+	var tips := make_label(ui, "WASD 飞行  ｜ U 寻迹 · I 采蜜 · O 振翅 ｜ J 惊退 · K 急转(-12) · L 投蜜诱饵(-1蜜)", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	overlay = ColorRect.new()
@@ -253,11 +274,11 @@ func make_stat(parent: Node, caption: String, position: Vector2) -> Label:
 	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	return value
 
-func make_mouse_action(parent: Node, caption: String, action: String, position: Vector2, hold: bool) -> Button:
+func make_mouse_action(parent: Node, caption: String, action: String, position: Vector2, hold: bool, button_size := Vector2(96, 36)) -> Button:
 	var button := Button.new()
 	button.text = caption
 	button.position = position
-	button.size = Vector2(96, 36)
+	button.size = button_size
 	if hold:
 		button.button_down.connect(func(): Input.action_press(action))
 		button.button_up.connect(func(): Input.action_release(action))
@@ -312,15 +333,17 @@ func spawn_stage(index: int) -> void:
 	flowers.clear()
 	mosquitoes.clear()
 	ants.clear()
+	decoys.clear()
 	tuning_blooms.clear()
 	pollen.clear()
 	var data: Dictionary = stages[index]
 	bee.configure(float(data.energy_drain))
 	bee.reset_for_expedition(Vector2(180, 410))
 	for i in int(data.flowers):
+		var flower_position := find_spaced_flower_position(82.0)
 		flowers.append({
 			"id": i,
-			"position": Vector2(rng.randf_range(300, 950), rng.randf_range(205, 620)),
+			"position": flower_position,
 			"nectar": max(2, roundi(rng.randf_range(3, 6) * float(data.nectar_scale))) + extra_nectar,
 			"kind": i % 3,
 			"phase": rng.randf_range(0, TAU),
@@ -375,6 +398,13 @@ func update_game(delta: float) -> void:
 	var data: Dictionary = stages[stage_index]
 	sting_cooldown = maxf(0.0, sting_cooldown - delta)
 	hit_cooldown = maxf(0.0, hit_cooldown - delta)
+	update_decoys(delta)
+	if Input.is_action_just_pressed("evade") and bee.try_evade():
+		show_energy_change(-12.0)
+		sound.play_cue("evade")
+		message = "急转掠过攻击线：短暂避开碰撞。"
+	if Input.is_action_just_pressed("decoy"):
+		drop_honey_decoy()
 
 	var nearby := nearest_flower(46.0)
 	if Input.is_action_pressed("harvest") and nearby >= 0 and bee.energy > 0:
@@ -434,14 +464,18 @@ func update_mosquitoes(delta: float) -> void:
 			mosquito.velocity = Vector2(mosquito.velocity).lerp(away * 3.2, delta * 7.0)
 			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * 1.35 * delta
 		else:
-			if distance_to_player < balance_value("mosquito", "sense_range", 330.0) and bee.position.x > HIVE_SAFE_X:
+			var lure_position := nearest_decoy_position(Vector2(mosquito.position))
+			if lure_position != Vector2.INF:
+				var chase := (lure_position - Vector2(mosquito.position)).normalized()
+				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
+			elif distance_to_player < balance_value("mosquito", "sense_range", 330.0) and bee.position.x > HIVE_SAFE_X:
 				var chase := (bee.position - Vector2(mosquito.position)).normalized()
 				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
 			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * delta
 		mosquito.position.x = clampf(mosquito.position.x, HIVE_SAFE_X, WORLD.end.x - 12)
 		mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
 		if mosquito.repel_time <= 0.0:
-			if distance_to_player < balance_value("mosquito", "impact_range", 26.0) and hit_cooldown <= 0.0:
+			if distance_to_player < balance_value("mosquito", "impact_range", 26.0) and hit_cooldown <= 0.0 and bee.invulnerable_time <= 0.0:
 				hit_cooldown = 1.05
 				bee.energy = maxf(0.0, bee.energy - balance_value("mosquito", "energy_damage", 15.0))
 				show_energy_change(-balance_value("mosquito", "energy_damage", 15.0))
@@ -683,6 +717,46 @@ func spawn_pollen(origin: Vector2) -> void:
 	for i in 6:
 		pollen.append({"position": origin, "velocity": Vector2.from_angle(rng.randf_range(0, TAU)) * rng.randf_range(20, 65), "life": rng.randf_range(0.35, 0.7)})
 
+func find_spaced_flower_position(minimum_distance: float) -> Vector2:
+	var candidate := Vector2.ZERO
+	for attempt in 40:
+		candidate = Vector2(rng.randf_range(300, 950), rng.randf_range(205, 620))
+		var valid := true
+		for flower in flowers:
+			if candidate.distance_to(Vector2(flower.position)) < minimum_distance:
+				valid = false
+				break
+		if valid:
+			return candidate
+	return candidate
+
+func drop_honey_decoy() -> void:
+	if carried <= 0:
+		message = "投蜜诱饵需要至少携带 1 滴蜜。"
+		return
+	carried -= 1
+	decoys.append({"position": bee.position, "life": 5.0})
+	sound.play_cue("decoy")
+	message = "一滴蜜落成诱饵，附近蚊虫会暂时改追它。"
+
+func update_decoys(delta: float) -> void:
+	for i in range(decoys.size() - 1, -1, -1):
+		decoys[i].life = float(decoys[i].life) - delta
+		if float(decoys[i].life) <= 0.0:
+			return_honey_to_field(1, Vector2(decoys[i].position))
+			decoys.remove_at(i)
+
+func nearest_decoy_position(from: Vector2) -> Vector2:
+	var best := Vector2.INF
+	var best_distance := 230.0
+	for decoy in decoys:
+		var candidate: Vector2 = decoy.position
+		var distance_to_decoy := from.distance_to(candidate)
+		if distance_to_decoy < best_distance:
+			best_distance = distance_to_decoy
+			best = candidate
+	return best
+
 func return_honey_to_field(amount: int, origin: Vector2) -> void:
 	if amount <= 0:
 		return
@@ -707,6 +781,7 @@ func total_recoverable_honey() -> int:
 		total += maxi(0, int(flower.nectar))
 	for ant in ants:
 		total += maxi(0, int(ant.get("stolen_honey", 0)))
+	total += decoys.size()
 	return total
 
 func show_energy_change(amount: float) -> void:
@@ -733,11 +808,11 @@ func update_interface() -> void:
 	carried_label.text = str(carried)
 	delivered_label.text = "调律 %d / 3" % int(boss.hits) if phase == "boss" else "%d / %d" % [delivered, int(data.goal)]
 	energy_label.text = str(roundi(bee.energy))
-	energy_bar.value = bee.energy
+	energy_bar_fill.size.x = 166.0 * clampf(bee.energy / 100.0, 0.0, 1.0)
 	energy_change_label.modulate.a = clampf(energy_feedback_time * 2.0, 0.0, 1.0)
 	if sense_button:
 		sense_button.disabled = bee.sense_cooldown > 0.0
-		sense_button.text = "寻迹 %.1f" % bee.sense_cooldown if bee.sense_cooldown > 0.0 else "触角寻迹"
+		sense_button.text = "U %.1f" % bee.sense_cooldown if bee.sense_cooldown > 0.0 else "U 寻迹"
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	message_label.text = message
 	if phase == "boss":
@@ -881,6 +956,10 @@ func _draw() -> void:
 		draw_boss(boss)
 	for mote in pollen:
 		draw_circle(mote.position, 2.5, Color(stage_color(3), clampf(float(mote.life) * 2.0, 0, 1)))
+	for decoy in decoys:
+		var decoy_position: Vector2 = decoy.position
+		draw_circle(decoy_position, 8.0, Color("e8b83f", 0.9))
+		draw_arc(decoy_position, 18.0 + sin(elapsed * 7.0) * 3.0, 0, TAU, 24, Color("fff1a8", 0.75), 2)
 	if bee.sense_time > 0.0 and (phase == "playing" or phase == "boss"):
 		var recommended := best_foraging_target()
 		for i in flowers.size():
