@@ -172,7 +172,11 @@ func build_interface() -> void:
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label = make_label(side, message, Vector2(20, 300), Vector2(190, 135), 13, Color("4c5548"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	make_label(side, "搜  寻找仍有蜜的花\n打  蜂针震开蚊虫\n撤  飞回左侧蜂巢", Vector2(20, 445), Vector2(190, 80), 12, Color("556054"))
+	make_label(side, "左键点地移动 · 左侧是归巢区", Vector2(20, 412), Vector2(190, 38), 11, Color("556054"))
+	make_mouse_action(side, "按住采蜜", "harvest", Vector2(16, 450), true)
+	make_mouse_action(side, "按住振翅", "dash", Vector2(116, 450), true)
+	make_mouse_action(side, "蜂针", "sting", Vector2(16, 492), false)
+	make_mouse_action(side, "感知", "sense", Vector2(116, 492), false)
 
 	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  蜂针     E  感知", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -214,6 +218,24 @@ func make_stat(parent: Node, caption: String, position: Vector2) -> Label:
 	var value := make_label(panel, "0", Vector2(100, 8), Vector2(75, 30), 17, Color("26342b"))
 	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	return value
+
+func make_mouse_action(parent: Node, caption: String, action: String, position: Vector2, hold: bool) -> Button:
+	var button := Button.new()
+	button.text = caption
+	button.position = position
+	button.size = Vector2(96, 36)
+	if hold:
+		button.button_down.connect(func(): Input.action_press(action))
+		button.button_up.connect(func(): Input.action_release(action))
+	else:
+		button.pressed.connect(pulse_action.bind(action))
+	parent.add_child(button)
+	return button
+
+func pulse_action(action: String) -> void:
+	Input.action_press(action)
+	await get_tree().process_frame
+	Input.action_release(action)
 
 func show_intro() -> void:
 	phase = "intro"

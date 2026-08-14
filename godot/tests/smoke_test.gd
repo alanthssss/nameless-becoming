@@ -94,6 +94,10 @@ func _init() -> void:
 	if load("res://scripts/sound_feedback.gd") == null:
 		failures.append("程序化音效脚本无法加载")
 
+	for action in ["harvest", "dash", "sting", "sense"]:
+		if not InputMap.has_action(action):
+			failures.append("缺少玩家动作映射 %s" % action)
+
 	if failures.is_empty():
 		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")
 		quit(0)
