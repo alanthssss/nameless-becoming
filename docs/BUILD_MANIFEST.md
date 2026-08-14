@@ -11,4 +11,4 @@
 
 构建产物不提交 Git；它们保留在本机 `builds/`，可按 [`godot/README.md`](../godot/README.md) 中的命令重建。
 
-两个构建将上传至私有 GitHub 仓库的 `v0.9.2` 预发布版本；远端资产大小须与本表一致后才发布。
+两个构建已上传至私有 GitHub 仓库的 [`v0.9.2` 预发布版本](https://github.com/alanthssss/hivebound-seasons/releases/tag/v0.9.2)，远端资产大小与本表一致。
