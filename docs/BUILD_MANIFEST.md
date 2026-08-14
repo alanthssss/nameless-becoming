@@ -6,9 +6,10 @@
 
 | 平台 | 文件 | 大小 | SHA-256 | 验证 |
 | --- | --- | ---: | --- | --- |
-| macOS universal | `builds/HiveboundSeasons-macOS.zip` | 65,872,332 bytes | `267c2b19ccc3567ec22e98664833e8c8ac67391b516fdebd692f5b42c2b001f5` | 原生程序已启动，并人工检查细体力条、六键按钮与花朵间距 |
+| Web | `public/game/index.html` + `.wasm` + `.pck` | 35,749,181-byte WASM / 68,400-byte PCK | WASM `52e3c004…adb4` / PCK `fc84d053…aec4` | Godot Web 导出与 Sites 站点构建成功 |
+| macOS universal | `builds/HiveboundSeasons-macOS.zip` | 65,336,790 bytes | `4e738ba6a0f527cc44b0c655e941a5e568cb8331362d9d3dc9fb341bd34c0d8f` | 重新临时签名后通过严格校验；模拟下载隔离后由首次启动脚本解除并成功启动 |
 | Windows x86_64 | `builds/HiveboundSeasons-Windows.exe` | 100,703,552 bytes | `2a8b0e0f6dca8b902ea07c65f786749f36d3679309c6093645f4ec0c030e0e14` | Godot 导出成功；PE32+ 格式确认，PCK 已嵌入 |
 
 构建产物不提交 Git；它们保留在本机 `builds/`，可按 [`godot/README.md`](../godot/README.md) 中的命令重建。
 
-两个构建已上传至私有 GitHub 仓库的 [`v0.9.4` 预发布版本](https://github.com/alanthssss/hivebound-seasons/releases/tag/v0.9.4)，远端资产大小与本表一致。
+桌面构建发布于私有 GitHub [`v0.9.4`](https://github.com/alanthssss/hivebound-seasons/releases/tag/v0.9.4)；Web 构建部署至项目在线试玩地址。

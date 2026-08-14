@@ -6,8 +6,8 @@ const serif = Noto_Serif_SC({ variable: "--font-serif", subsets: ["latin"], weig
 const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "归巢之前｜四季搜打撤",
-  description: "控制蜜蜂飞行、采蜜、击退蚊虫，在体力耗尽前亲自归巢。",
+  title: "归巢之前｜Godot 四季搜打撤",
+  description: "与 macOS、Windows 同源的 Godot Web 版：穿越四季，在体力耗尽前采蜜归巢。",
   metadataBase: new URL("https://hivebound-seasons.alanthssss.chatgpt.site"),
   openGraph: {
     title: "归巢之前｜四季搜打撤",

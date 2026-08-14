@@ -27,6 +27,9 @@
 - [x] 生成 Windows x86_64 调试包；
 - [x] 在 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md) 记录包体积与 SHA-256。
 - [x] macOS 实机检查标题、关卡、能量条、底栏、右栏与寻迹覆盖层的视觉协调；
+- [x] macOS 应用重新签名并通过 `codesign --verify --deep --strict`；
+- [x] 模拟浏览器隔离属性后，首次启动脚本可解除隔离并启动游戏；
+- [x] Web、macOS、Windows 均由同一 Godot 工程导出；
 - [x] macOS 与 Windows 构建上传至私有 GitHub `v0.9.4` 预发布版本；
 
 ## 人工全流程

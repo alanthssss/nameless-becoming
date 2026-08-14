@@ -8,7 +8,9 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-## 当前版本：Godot 候选 MVP 0.9
+## 当前版本：Godot 候选 MVP 0.9.4
+
+当前维护三个发行端：Web、macOS universal、Windows x86_64。三端均由同一个 `godot/` 工程导出，不再分别维护网页玩法代码。
 
 正式单机方向已转入 Godot 4。玩家直接控制蜜蜂在花田中飞行：
 
@@ -52,7 +54,7 @@ godot --path godot --editor
 godot --path godot --headless --script res://tests/smoke_test.gd
 ```
 
-早期网页原型仍可使用 Node.js 22.13 或更高版本运行：
+Web 端由 Godot 导出后，通过 Node.js 站点外壳承载：
 
 ```bash
 npm install
@@ -65,8 +67,9 @@ npm run build
 - `godot/`：正式单机版工程；
 - `godot/scripts/main.gd`：Godot 核心游戏循环；
 - `godot/data/seasons.json`：节令数据；
-- `app/page.tsx`：游戏循环、操作、敌人与节令配置；
-- `app/globals.css`：界面、节气色彩和响应式布局；
+- `app/page.tsx`：Godot Web 版启动外壳；
+- `public/game/`：与桌面端同源的 Godot Web 导出；
+- `app/globals.css`：网页承载界面与响应式布局；
 - `docs/PROJECT_LOG.md`：策划与版本决策记录。
 - `docs/MVP_SPEC.md`：完整 MVP 范围、验收标准与里程碑。
 
