@@ -99,6 +99,9 @@ func _init() -> void:
 			failures.append("缺少玩家动作映射 %s" % action)
 	if InputMap.has_action("sting"):
 		failures.append("已移除的普通蜂针动作仍存在")
+	for clustered_action in ["harvest", "dash", "sense"]:
+		if InputMap.action_get_events(clustered_action).size() < 2:
+			failures.append("技能区按键没有为 %s 配置兼容映射" % clustered_action)
 
 	if failures.is_empty():
 		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")

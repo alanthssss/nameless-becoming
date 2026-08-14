@@ -17,6 +17,15 @@ func run_test() -> void:
 	game.persistence_enabled = false
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入春分")
+	for stage_index in 4:
+		game.spawn_stage(stage_index)
+		expect(game.total_recoverable_honey() >= int(game.stages[stage_index].goal), "节令 %d 初始总蜜量不足" % stage_index)
+	game.spawn_stage(0)
+	var conserved_before: int = game.total_recoverable_honey()
+	game.flowers[0].nectar = int(game.flowers[0].nectar) - 2
+	game.carried = 2
+	game.fail_expedition()
+	expect(game.total_recoverable_honey() == conserved_before, "体力耗尽后花蜜没有回到生态循环")
 	game.bee.position = Vector2(100, 410)
 	game.bee.energy = 50.0
 	game.carried = 0

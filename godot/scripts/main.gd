@@ -20,6 +20,7 @@ var ants: Array = []
 var tuning_blooms: Array[Vector2] = []
 var boss := {"position": Vector2.ZERO, "velocity": Vector2.ZERO, "hits": 0, "hit_cooldown": 0.0}
 var pollen: Array = []
+var recovery_flower_serial := 1000
 var carried := 0
 var delivered := 0
 var hive_lives := 3
@@ -171,6 +172,20 @@ func build_interface() -> void:
 	energy_bar.size = Vector2(166, 8)
 	energy_bar.max_value = 100.0
 	energy_bar.show_percentage = false
+	var energy_background := StyleBoxFlat.new()
+	energy_background.bg_color = Color("33483d")
+	energy_background.corner_radius_top_left = 4
+	energy_background.corner_radius_top_right = 4
+	energy_background.corner_radius_bottom_left = 4
+	energy_background.corner_radius_bottom_right = 4
+	var energy_fill := StyleBoxFlat.new()
+	energy_fill.bg_color = Color("ddb84c")
+	energy_fill.corner_radius_top_left = 4
+	energy_fill.corner_radius_top_right = 4
+	energy_fill.corner_radius_bottom_left = 4
+	energy_fill.corner_radius_bottom_right = 4
+	energy_bar.add_theme_stylebox_override("background", energy_background)
+	energy_bar.add_theme_stylebox_override("fill", energy_fill)
 	energy_label.get_parent().add_child(energy_bar)
 	energy_change_label = make_label(energy_label.get_parent(), "", Vector2(50, 4), Vector2(48, 24), 12, Color("b34b3f"))
 	energy_change_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -182,17 +197,22 @@ func build_interface() -> void:
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
 	make_label(side, "当前节令", Vector2(20, 20), Vector2(190, 20), 11, Color("68705d"))
-	detail_label = make_label(side, "春分", Vector2(20, 50), Vector2(190, 250), 25, Color("293c32"))
+	detail_label = make_label(side, "春分", Vector2(20, 50), Vector2(190, 220), 18, Color("293c32"))
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	message_label = make_label(side, message, Vector2(20, 300), Vector2(190, 135), 13, Color("4c5548"))
+	message_label = make_label(side, message, Vector2(20, 276), Vector2(190, 125), 13, Color("4c5548"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 412), Vector2(190, 38), 11, Color("556054"))
-	make_mouse_action(side, "按住采蜜", "harvest", Vector2(16, 450), true)
-	make_mouse_action(side, "按住振翅", "dash", Vector2(116, 450), true)
-	make_mouse_action(side, "震翼惊退 -8", "repel", Vector2(16, 492), false)
-	sense_button = make_mouse_action(side, "触角寻迹", "sense", Vector2(116, 492), false)
+	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 405), Vector2(190, 34), 11, Color("556054"))
+	make_mouse_action(side, "I  按住采蜜", "harvest", Vector2(16, 441), true)
+	make_mouse_action(side, "O  按住振翅", "dash", Vector2(116, 441), true)
+	make_mouse_action(side, "J  惊退 -8", "repel", Vector2(16, 486), false)
+	sense_button = make_mouse_action(side, "U  触角寻迹", "sense", Vector2(116, 486), false)
 
-	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  震翼惊退(-8)     E  触角寻迹", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
+	var tips_background := ColorRect.new()
+	tips_background.color = Color("26392f", 0.96)
+	tips_background.position = Vector2(34, 684)
+	tips_background.size = Vector2(970, 36)
+	ui.add_child(tips_background)
+	var tips := make_label(ui, "WASD 飞行   技能区：U 寻迹 · I 采蜜 · O 振翅 / J 惊退(-8)   兼容 E·空格·Shift", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	overlay = ColorRect.new()
@@ -280,6 +300,7 @@ func spawn_stage(index: int) -> void:
 	if stages.is_empty():
 		return
 	stage_index = index
+	sound.set_season(index)
 	phase = "playing"
 	overlay.visible = false
 	carried = 0
@@ -302,7 +323,8 @@ func spawn_stage(index: int) -> void:
 			"position": Vector2(rng.randf_range(300, 950), rng.randf_range(205, 620)),
 			"nectar": max(2, roundi(rng.randf_range(3, 6) * float(data.nectar_scale))) + extra_nectar,
 			"kind": i % 3,
-			"phase": rng.randf_range(0, TAU)
+			"phase": rng.randf_range(0, TAU),
+			"recovery": false
 		})
 	for i in int(data.enemies):
 		mosquitoes.append({
@@ -317,7 +339,8 @@ func spawn_stage(index: int) -> void:
 			"position": Vector2(rng.randf_range(600, 940), rng.randf_range(220, 630)),
 			"velocity": Vector2.ZERO,
 			"steal_cooldown": 0.0,
-			"flee_time": 0.0
+			"flee_time": 0.0,
+			"stolen_honey": 0
 		})
 	message = "%s：%s" % [data.name, data.line]
 	update_interface()
@@ -372,7 +395,7 @@ func update_game(delta: float) -> void:
 	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
 		show_energy_change(-sting_cost)
 		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
-		sound.play_cue("sting")
+		sound.play_cue("repel")
 		for i in mosquitoes.size():
 			var mosquito: Dictionary = mosquitoes[i]
 			if bee.position.distance_to(mosquito.position) < sting_range:
@@ -384,6 +407,10 @@ func update_game(delta: float) -> void:
 			if bee.position.distance_to(ant.position) < sting_range:
 				ant.flee_time = 1.8
 				ant.velocity = (ant.position - bee.position).normalized() * 3.2
+				if int(ant.stolen_honey) > 0:
+					return_honey_to_field(int(ant.stolen_honey), ant.position)
+					message = "掠蜜蚁受惊后丢下了 %d 滴蜜，花田会重新吸收它们。" % int(ant.stolen_honey)
+					ant.stolen_honey = 0
 				ants[i] = ant
 		message = "急促的震翼把附近敌虫推离了航线。"
 
@@ -418,7 +445,9 @@ func update_mosquitoes(delta: float) -> void:
 				hit_cooldown = 1.05
 				bee.energy = maxf(0.0, bee.energy - balance_value("mosquito", "energy_damage", 15.0))
 				show_energy_change(-balance_value("mosquito", "energy_damage", 15.0))
-				carried = maxi(0, carried - roundi(balance_value("mosquito", "honey_damage", 2.0)))
+				var lost_honey := mini(carried, roundi(balance_value("mosquito", "honey_damage", 2.0)))
+				carried -= lost_honey
+				return_honey_to_field(lost_honey, mosquito.position)
 				shake = 7.0
 				flash = 0.48
 				message = "蚊虫刺中了你：体力下降，花蜜洒落。"
@@ -446,6 +475,7 @@ func update_ants(delta: float) -> void:
 		ant.position.y = clampf(ant.position.y, WORLD.position.y + 14, WORLD.end.y - 14)
 		if ant.flee_time <= 0.0 and ant_position.distance_to(bee.position) < balance_value("ant", "steal_range", 29.0) and carried > 0 and ant.steal_cooldown <= 0.0:
 			carried -= 1
+			ant.stolen_honey = int(ant.stolen_honey) + 1
 			ant.steal_cooldown = 1.2
 			ant.flee_time = balance_value("ant", "flee_seconds", 1.4)
 			ant.velocity = (ant_position - bee.position).normalized() * 3.0
@@ -474,10 +504,12 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 
 func fail_expedition() -> void:
 	hive_lives -= 1
+	var lost_honey := carried
 	carried = 0
+	return_honey_to_field(lost_honey, bee.position)
 	bee.reset_for_expedition(Vector2(180, 410))
 	shake = 10.0
-	message = "你没能带回花蜜。蜂巢的呼吸弱了一分。"
+	message = "你没能带回花蜜，蜂巢的呼吸弱了一分。洒落的 %d 滴蜜将孕育返蜜花。" % lost_honey
 	if hive_lives <= 0:
 		show_loss()
 
@@ -528,6 +560,7 @@ func on_upgrade_selected(index: int) -> void:
 
 func start_boss() -> void:
 	phase = "boss"
+	sound.set_season(3)
 	overlay.visible = false
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
@@ -567,7 +600,7 @@ func update_boss(delta: float) -> void:
 	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
 		show_energy_change(-sting_cost)
 		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
-		sound.play_cue("sting")
+		sound.play_cue("repel")
 		var bloom_index := nearest_tuning_bloom(boss.position)
 		if bee.position.distance_to(boss.position) < sting_range + 7.0 and bloom_index >= 0:
 			var bloom_position := tuning_blooms[bloom_index]
@@ -649,6 +682,32 @@ func nearest_flower_to(origin: Vector2) -> int:
 func spawn_pollen(origin: Vector2) -> void:
 	for i in 6:
 		pollen.append({"position": origin, "velocity": Vector2.from_angle(rng.randf_range(0, TAU)) * rng.randf_range(20, 65), "life": rng.randf_range(0.35, 0.7)})
+
+func return_honey_to_field(amount: int, origin: Vector2) -> void:
+	if amount <= 0:
+		return
+	for i in flowers.size():
+		var flower: Dictionary = flowers[i]
+		if bool(flower.get("recovery", false)) and Vector2(flower.position).distance_to(origin) < 130.0:
+			flower.nectar = int(flower.nectar) + amount
+			flowers[i] = flower
+			spawn_pollen(flower.position)
+			return
+	var recovery_position := Vector2(
+		clampf(origin.x + rng.randf_range(-45.0, 45.0), HIVE_SAFE_X + 45.0, WORLD.end.x - 50.0),
+		clampf(origin.y + rng.randf_range(-45.0, 45.0), WORLD.position.y + 55.0, WORLD.end.y - 55.0)
+	)
+	flowers.append({"id": recovery_flower_serial, "position": recovery_position, "nectar": amount, "kind": 1, "phase": rng.randf_range(0, TAU), "recovery": true})
+	recovery_flower_serial += 1
+	spawn_pollen(recovery_position)
+
+func total_recoverable_honey() -> int:
+	var total := delivered + carried
+	for flower in flowers:
+		total += maxi(0, int(flower.nectar))
+	for ant in ants:
+		total += maxi(0, int(ant.get("stolen_honey", 0)))
+	return total
 
 func show_energy_change(amount: float) -> void:
 	energy_feedback_time = 1.0
@@ -830,7 +889,9 @@ func _draw() -> void:
 				continue
 			var is_best := i == recommended
 			draw_line(bee.position, flower.position, Color("fff0a0", 0.42 if is_best else 0.12), 3.0 if is_best else 1.0)
-			draw_string(ThemeDB.fallback_font, flower.position + Vector2(-9, -28), str(flower.nectar), HORIZONTAL_ALIGNMENT_CENTER, 18, 13, Color("fff4bf"))
+			var badge_position: Vector2 = flower.position + Vector2(0, -29)
+			draw_circle(badge_position, 10, Color("26392f", 0.88))
+			draw_string(ThemeDB.fallback_font, badge_position + Vector2(-8, 5), str(flower.nectar), HORIZONTAL_ALIGNMENT_CENTER, 16, 12, Color("fff4bf"))
 			if is_best:
 				draw_arc(flower.position, 38, 0, TAU, 32, Color("fff0a0", 0.9), 3)
 		for mosquito in mosquitoes:
@@ -850,12 +911,16 @@ func _draw() -> void:
 func draw_flower(flower: Dictionary) -> void:
 	var pos: Vector2 = flower.position
 	var alive := int(flower.nectar) > 0
+	var recovery := bool(flower.get("recovery", false))
 	var alpha := 1.0 if alive else 0.28
 	draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), alpha), 3)
 	for petal in 5:
 		var angle := float(petal) * TAU / 5.0 + float(flower.phase)
 		draw_circle(pos + Vector2.from_angle(angle) * 11, 7, Color(FLOWER_COLORS[int(flower.kind)], alpha))
 	draw_circle(pos, 6, Color(stage_color(3), alpha))
+	if recovery and alive:
+		draw_arc(pos, 24 + sin(elapsed * 4.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.9), 3)
+		draw_string(ThemeDB.fallback_font, pos + Vector2(-22, 66), "返蜜", HORIZONTAL_ALIGNMENT_CENTER, 44, 11, Color("fff1a8"))
 	if not alive:
 		draw_line(pos + Vector2(-14, 49), pos + Vector2(14, 49), Color(stage_color(2), 0.45), 2)
 
@@ -886,6 +951,8 @@ func draw_ant(ant: Dictionary) -> void:
 		var ratio := clampf(float(ant.flee_time) / 1.8, 0.0, 1.0)
 		draw_rect(Rect2(pos + Vector2(-18, -24), Vector2(36, 5)), Color("332b27", 0.75))
 		draw_rect(Rect2(pos + Vector2(-17, -23), Vector2(34 * ratio, 3)), Color("e9b84f"))
+	if int(ant.get("stolen_honey", 0)) > 0:
+		draw_string(ThemeDB.fallback_font, pos + Vector2(-18, -30), "蜜%d" % int(ant.stolen_honey), HORIZONTAL_ALIGNMENT_CENTER, 36, 11, Color("f4ce67"))
 
 func draw_tuning_bloom(pos: Vector2) -> void:
 	var pulse := 28.0 + sin(elapsed * 4.0) * 4.0
