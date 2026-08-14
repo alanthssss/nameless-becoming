@@ -30,7 +30,7 @@ func reset_upgrades() -> void:
 
 func apply_upgrade(upgrade_id: String) -> void:
 	if upgrade_id == "long_wing":
-		speed_multiplier *= 1.08
+		speed_multiplier *= 1.10
 		dash_cost_multiplier *= 0.85
 
 func reset_for_expedition(at: Vector2) -> void:

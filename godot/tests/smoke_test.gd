@@ -66,6 +66,14 @@ func _init() -> void:
 			failures.append("长翼蜂成长未改变飞行属性")
 		bee.free()
 
+	var save_script := load("res://scripts/save_manager.gd")
+	if save_script == null:
+		failures.append("存档脚本无法加载")
+	else:
+		var save_manager = save_script.new()
+		if save_manager.best_stage != 0 or save_manager.fullscreen:
+			failures.append("新存档默认值错误")
+
 	if failures.is_empty():
 		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")
 		quit(0)

@@ -8,6 +8,7 @@ const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立
 var stages: Array = []
 var upgrade_catalog: Array = []
 var chosen_upgrades: Array[String] = []
+var upgrade_counts := {"long_wing": 0, "forager": 0, "guard": 0}
 var stage_index := 0
 var phase := "intro"
 var bee: BeePlayer
@@ -26,12 +27,15 @@ var hit_cooldown := 0.0
 var harvest_multiplier := 1.0
 var sting_range := 88.0
 var sting_cost := 8.0
-var home_energy_bonus := 0.0
+var sting_cooldown_multiplier := 1.0
+var extra_nectar := 0
 var elapsed := 0.0
 var shake := 0.0
 var flash := 0.0
 var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
 var rng := RandomNumberGenerator.new()
+var save_manager := HiveSaveManager.new()
+var paused_from_phase := "playing"
 
 var title_label: Label
 var term_label: Label
@@ -46,9 +50,13 @@ var overlay_title: Label
 var overlay_body: Label
 var overlay_button: Button
 var upgrade_buttons: Array[Button] = []
+var pause_button: Button
+var fullscreen_button: Button
 
 func _ready() -> void:
 	rng.randomize()
+	save_manager.load_data()
+	apply_display_settings()
 	load_stage_data()
 	load_upgrade_data()
 	bee = BeePlayer.new()
@@ -101,12 +109,24 @@ func build_interface() -> void:
 	term_label = make_label(ui, "春 · 春分", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
 	term_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	var restart := Button.new()
-	restart.text = "重新开始"
-	restart.position = Vector2(1140, 22)
-	restart.size = Vector2(110, 36)
-	restart.pressed.connect(start_game)
-	ui.add_child(restart)
+	fullscreen_button = Button.new()
+	fullscreen_button.position = Vector2(920, 22)
+	fullscreen_button.size = Vector2(100, 36)
+	fullscreen_button.pressed.connect(toggle_fullscreen)
+	ui.add_child(fullscreen_button)
+	var quit_button := Button.new()
+	quit_button.text = "退出"
+	quit_button.position = Vector2(1030, 22)
+	quit_button.size = Vector2(100, 36)
+	quit_button.pressed.connect(func(): get_tree().quit())
+	ui.add_child(quit_button)
+	pause_button = Button.new()
+	pause_button.text = "暂停"
+	pause_button.position = Vector2(1140, 22)
+	pause_button.size = Vector2(110, 36)
+	pause_button.pressed.connect(toggle_pause)
+	ui.add_child(pause_button)
+	refresh_setting_labels()
 
 	carried_label = make_stat(ui, "携带", Vector2(34, 82))
 	delivered_label = make_stat(ui, "本节储蜜", Vector2(234, 82))
@@ -171,7 +191,7 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。"
+	overlay_body.text = "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。\n\n历史最远：%s  ·  完成轮回：%d" % [progress_name(), save_manager.runs_completed]
 	overlay_button.text = "飞入春分"
 	set_upgrade_buttons_visible(false)
 
@@ -179,11 +199,14 @@ func start_game() -> void:
 	hive_lives = 3
 	stage_index = 0
 	chosen_upgrades.clear()
+	upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
 	harvest_multiplier = 1.0
 	sting_range = 88.0
 	sting_cost = 8.0
-	home_energy_bonus = 0.0
+	sting_cooldown_multiplier = 1.0
+	extra_nectar = 0
 	bee.reset_upgrades()
+	save_manager.begin_run()
 	spawn_stage(0)
 
 func spawn_stage(index: int) -> void:
@@ -209,7 +232,7 @@ func spawn_stage(index: int) -> void:
 		flowers.append({
 			"id": i,
 			"position": Vector2(rng.randf_range(300, 950), rng.randf_range(205, 620)),
-			"nectar": max(2, roundi(rng.randf_range(3, 6) * float(data.nectar_scale))),
+			"nectar": max(2, roundi(rng.randf_range(3, 6) * float(data.nectar_scale))) + extra_nectar,
 			"kind": i % 3,
 			"phase": rng.randf_range(0, TAU)
 		})
@@ -235,6 +258,7 @@ func spawn_stage(index: int) -> void:
 func on_overlay_button() -> void:
 	match phase:
 		"intro", "won", "lost": start_game()
+		"paused": toggle_pause()
 		"between":
 			if stage_index >= stages.size() - 1:
 				start_boss()
@@ -274,7 +298,7 @@ func update_game(delta: float) -> void:
 		harvest_clock = 0.0
 
 	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		sting_cooldown = 1.15
+		sting_cooldown = 1.15 * sting_cooldown_multiplier
 		for i in mosquitoes.size():
 			var mosquito: Dictionary = mosquitoes[i]
 			if bee.position.distance_to(mosquito.position) < sting_range:
@@ -295,7 +319,7 @@ func update_game(delta: float) -> void:
 		var amount := carried
 		delivered += amount
 		carried = 0
-		bee.energy = minf(100.0, bee.energy + 70.0 + home_energy_bonus)
+		bee.energy = minf(100.0, bee.energy + 70.0)
 		message = "安全归巢，存入 %d 滴蜜。" % amount
 		flash = 0.32
 		if delivered >= int(data.goal):
@@ -367,6 +391,7 @@ func show_between() -> void:
 	bee.active = false
 	overlay.visible = true
 	var data: Dictionary = stages[stage_index]
+	save_manager.record_stage(stage_index + 1)
 	overlay_title.text = "%s完成 · 蜂巢成长" % data.name
 	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。"
 	overlay_button.visible = false
@@ -378,21 +403,25 @@ func set_upgrade_buttons_visible(value: bool) -> void:
 		if value and i < upgrade_catalog.size():
 			var data: Dictionary = upgrade_catalog[i]
 			upgrade_buttons[i].text = "%s  %s\n\n%s" % [data.symbol, data.name, data.description]
+			upgrade_buttons[i].disabled = int(upgrade_counts.get(String(data.id), 0)) >= 2
 
 func on_upgrade_selected(index: int) -> void:
 	if phase != "between" or index >= upgrade_catalog.size():
 		return
 	var data: Dictionary = upgrade_catalog[index]
 	var upgrade_id := String(data.id)
+	if int(upgrade_counts.get(upgrade_id, 0)) >= 2:
+		return
 	chosen_upgrades.append(upgrade_id)
+	upgrade_counts[upgrade_id] = int(upgrade_counts.get(upgrade_id, 0)) + 1
 	match upgrade_id:
 		"long_wing": bee.apply_upgrade(upgrade_id)
 		"forager":
 			harvest_multiplier *= 1.18
-			home_energy_bonus += 12.0
+			extra_nectar += 1
 		"guard":
-			sting_range *= 1.15
-			sting_cost *= 0.82
+			sting_range *= 1.18
+			sting_cooldown_multiplier *= 0.85
 	set_upgrade_buttons_visible(false)
 	overlay_button.visible = true
 	if stage_index >= stages.size() - 1:
@@ -437,7 +466,7 @@ func update_boss(delta: float) -> void:
 		message = "失律之蚊夺走一滴蜜。它只知道索取。"
 
 	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		sting_cooldown = 1.15
+		sting_cooldown = 1.15 * sting_cooldown_multiplier
 		var bloom_index := nearest_tuning_bloom(boss.position)
 		if bee.position.distance_to(boss.position) < sting_range + 7.0 and bloom_index >= 0:
 			var bloom_position := tuning_blooms[bloom_index]
@@ -467,6 +496,7 @@ func show_win() -> void:
 	overlay.visible = true
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
+	save_manager.record_completion()
 	overlay_title.text = "冬至一阳生"
 	overlay_body.text = "蜂群熬过了四个压缩节令。\n未来，它们之间将展开为完整的二十四个小关卡。"
 	overlay_button.text = "再走一次四季"
@@ -538,6 +568,10 @@ func update_interface() -> void:
 		detail_label.text = "%s\n\n%s\n\n阴 %d  ·  阳 %d\n目标  %d 滴\n蚊群  %s\n掠蜜蚁  %s" % [data.name, data.line, int(data.yin), int(data.yang), int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants))]
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		toggle_pause()
+		get_viewport().set_input_as_handled()
+		return
 	if phase != "playing" and phase != "boss":
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -546,6 +580,46 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func on_sense_started() -> void:
 	message = "花香、敌意与归巢方向在一瞬间变得清晰。"
+
+func toggle_pause() -> void:
+	if phase == "paused":
+		phase = paused_from_phase
+		bee.active = true
+		overlay.visible = false
+		pause_button.text = "暂停"
+		return
+	if phase != "playing" and phase != "boss":
+		return
+	paused_from_phase = phase
+	phase = "paused"
+	bee.active = false
+	overlay.visible = true
+	set_upgrade_buttons_visible(false)
+	overlay_title.text = "蜂翼暂歇"
+	overlay_body.text = "当前进度已自动保存。\n按 Esc 或下方按钮继续。"
+	overlay_button.visible = true
+	overlay_button.text = "继续出巢"
+	pause_button.text = "继续"
+
+func toggle_fullscreen() -> void:
+	save_manager.fullscreen = not save_manager.fullscreen
+	save_manager.save_data()
+	apply_display_settings()
+	refresh_setting_labels()
+
+func apply_display_settings() -> void:
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if save_manager.fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
+
+func refresh_setting_labels() -> void:
+	if fullscreen_button:
+		fullscreen_button.text = "窗口化" if save_manager.fullscreen else "全屏"
+
+func progress_name() -> String:
+	if save_manager.best_stage >= 5:
+		return "四季已归律"
+	if save_manager.best_stage <= 0 or stages.is_empty():
+		return "尚未出巢"
+	return String(stages[mini(save_manager.best_stage - 1, stages.size() - 1)].name)
 
 func stage_color(index: int) -> Color:
 	if stages.is_empty():
