@@ -8,6 +8,7 @@ var runs_started := 0
 var runs_completed := 0
 var fullscreen := false
 var sound_enabled := true
+var last_run_seconds := 0.0
 
 func load_data() -> void:
 	var config := ConfigFile.new()
@@ -18,6 +19,7 @@ func load_data() -> void:
 	runs_completed = int(config.get_value("progress", "runs_completed", 0))
 	fullscreen = bool(config.get_value("settings", "fullscreen", false))
 	sound_enabled = bool(config.get_value("settings", "sound_enabled", true))
+	last_run_seconds = float(config.get_value("progress", "last_run_seconds", 0.0))
 
 func save_data() -> Error:
 	var config := ConfigFile.new()
@@ -26,6 +28,7 @@ func save_data() -> Error:
 	config.set_value("progress", "runs_completed", runs_completed)
 	config.set_value("settings", "fullscreen", fullscreen)
 	config.set_value("settings", "sound_enabled", sound_enabled)
+	config.set_value("progress", "last_run_seconds", last_run_seconds)
 	return config.save(SAVE_PATH)
 
 func begin_run() -> void:
@@ -36,7 +39,12 @@ func record_stage(stage: int) -> void:
 	best_stage = maxi(best_stage, stage)
 	save_data()
 
-func record_completion() -> void:
+func record_completion(duration_seconds := 0.0) -> void:
 	runs_completed += 1
 	best_stage = maxi(best_stage, 5)
+	last_run_seconds = duration_seconds
+	save_data()
+
+func record_failure(duration_seconds: float) -> void:
+	last_run_seconds = duration_seconds
 	save_data()

@@ -31,6 +31,7 @@ var sting_cost := 8.0
 var sting_cooldown_multiplier := 1.0
 var extra_nectar := 0
 var elapsed := 0.0
+var run_elapsed := 0.0
 var shake := 0.0
 var flash := 0.0
 var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
@@ -38,6 +39,7 @@ var rng := RandomNumberGenerator.new()
 var save_manager := HiveSaveManager.new()
 var sound := SoundFeedback.new()
 var paused_from_phase := "playing"
+var persistence_enabled := true
 
 var title_label: Label
 var term_label: Label
@@ -218,13 +220,14 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。\n\n历史最远：%s  ·  完成轮回：%d" % [progress_name(), save_manager.runs_completed]
+	overlay_body.text = "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。\n\n历史最远：%s  ·  完成轮回：%d%s" % [progress_name(), save_manager.runs_completed, last_run_text()]
 	overlay_button.text = "飞入春分"
 	set_upgrade_buttons_visible(false)
 
 func start_game() -> void:
 	hive_lives = 3
 	stage_index = 0
+	run_elapsed = 0.0
 	chosen_upgrades.clear()
 	upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
 	harvest_multiplier = 1.0
@@ -233,7 +236,8 @@ func start_game() -> void:
 	sting_cooldown_multiplier = 1.0
 	extra_nectar = 0
 	bee.reset_upgrades()
-	save_manager.begin_run()
+	if persistence_enabled:
+		save_manager.begin_run()
 	spawn_stage(0)
 
 func spawn_stage(index: int) -> void:
@@ -297,8 +301,10 @@ func _process(delta: float) -> void:
 	shake = maxf(0.0, shake - delta * 18.0)
 	flash = maxf(0.0, flash - delta * 2.5)
 	if phase == "playing":
+		run_elapsed += delta
 		update_game(delta)
 	elif phase == "boss":
+		run_elapsed += delta
 		update_boss(delta)
 	update_pollen(delta)
 	update_interface()
@@ -423,7 +429,8 @@ func show_between() -> void:
 	bee.active = false
 	overlay.visible = true
 	var data: Dictionary = stages[stage_index]
-	save_manager.record_stage(stage_index + 1)
+	if persistence_enabled:
+		save_manager.record_stage(stage_index + 1)
 	overlay_title.text = "%s完成 · 蜂巢成长" % data.name
 	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。"
 	overlay_button.visible = false
@@ -532,10 +539,11 @@ func show_win() -> void:
 	overlay.visible = true
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
-	save_manager.record_completion()
+	if persistence_enabled:
+		save_manager.record_completion(run_elapsed)
 	sound.play_cue("win")
 	overlay_title.text = "冬至一阳生"
-	overlay_body.text = "蜂群熬过了四个压缩节令。\n未来，它们之间将展开为完整的二十四个小关卡。"
+	overlay_body.text = "蜂群熬过了四个压缩节令。\n本轮主动游玩时间：%s\n未来，它们之间将展开为完整的二十四个小关卡。" % format_duration(run_elapsed)
 	overlay_button.text = "再走一次四季"
 
 func show_loss() -> void:
@@ -545,8 +553,10 @@ func show_loss() -> void:
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
 	sound.play_cue("loss")
+	if persistence_enabled:
+		save_manager.record_failure(run_elapsed)
 	overlay_title.text = "这一次没能\n等到春天"
-	overlay_body.text = "远花仍在那里，但带回家的蜜才真正属于蜂群。"
+	overlay_body.text = "远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
 	overlay_button.text = "重新出巢"
 
 func nearest_flower(radius: float) -> int:
@@ -666,6 +676,16 @@ func progress_name() -> String:
 	if save_manager.best_stage <= 0 or stages.is_empty():
 		return "尚未出巢"
 	return String(stages[mini(save_manager.best_stage - 1, stages.size() - 1)].name)
+
+func last_run_text() -> String:
+	if save_manager.last_run_seconds <= 0.0:
+		return ""
+	return "  ·  上轮 %s" % format_duration(save_manager.last_run_seconds)
+
+func format_duration(duration_seconds: float) -> String:
+	var minutes := floori(duration_seconds / 60.0)
+	var seconds := floori(fmod(duration_seconds, 60.0))
+	return "%d:%02d" % [minutes, seconds]
 
 func stage_color(index: int) -> Color:
 	if stages.is_empty():

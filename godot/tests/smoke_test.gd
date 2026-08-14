@@ -26,6 +26,10 @@ func _init() -> void:
 					failures.append("节令 %d 阴阳总和不是 100" % index)
 				if stage.has("goal") and int(stage.goal) <= 0:
 					failures.append("节令 %d 目标必须为正数" % index)
+				if stage.has("flowers") and stage.has("nectar_scale") and stage.has("goal"):
+					var minimum_nectar := int(stage.flowers) * maxi(2, roundi(3.0 * float(stage.nectar_scale)))
+					if minimum_nectar < int(stage.goal):
+						failures.append("节令 %d 最差花量不足以完成目标" % index)
 				if stage.has("ants") and int(stage.ants) < 0:
 					failures.append("节令 %d 掠蜜蚁数量不能为负" % index)
 				if stage.has("colors") and (not stage.colors is Array or stage.colors.size() != 4):
@@ -84,6 +88,8 @@ func _init() -> void:
 		var save_manager = save_script.new()
 		if save_manager.best_stage != 0 or save_manager.fullscreen:
 			failures.append("新存档默认值错误")
+		if save_manager.last_run_seconds != 0.0:
+			failures.append("新存档不应含有上局时长")
 
 	if load("res://scripts/sound_feedback.gd") == null:
 		failures.append("程序化音效脚本无法加载")
