@@ -8,7 +8,7 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-## 当前版本：Godot 垂直切片 0.3
+## 当前版本：Godot 垂直切片 0.4
 
 正式单机方向已转入 Godot 4。玩家直接控制蜜蜂在花田中飞行：
 
@@ -25,6 +25,7 @@
 | 采蜜 | 按住空格 | — |
 | 冲刺 | Shift | — |
 | 蜂针 | J | — |
+| 感知 | E | — |
 
 ## 设计方向
 

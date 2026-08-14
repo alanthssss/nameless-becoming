@@ -33,6 +33,20 @@ func _init() -> void:
 	if scene == null:
 		failures.append("主场景无法加载")
 
+	var bee_script := load("res://scripts/player/bee_player.gd")
+	if bee_script == null:
+		failures.append("玩家控制脚本无法加载")
+	else:
+		var bee = bee_script.new()
+		bee.reset_for_expedition(Vector2(180, 410))
+		if bee.energy != 100.0:
+			failures.append("出巢时体力未正确重置")
+		if not bee.spend_energy(8.0) or bee.energy != 92.0:
+			failures.append("体力消耗公式错误")
+		if bee.spend_energy(100.0):
+			failures.append("体力不足时不应允许消费")
+		bee.free()
+
 	if failures.is_empty():
 		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")
 		quit(0)

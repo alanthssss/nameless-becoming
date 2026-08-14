@@ -8,15 +8,12 @@ const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立
 var stages: Array = []
 var stage_index := 0
 var phase := "intro"
-var player := Vector2(180, 410)
-var target := Vector2.ZERO
-var has_target := false
+var bee: BeePlayer
 var flowers: Array = []
 var mosquitoes: Array = []
 var pollen: Array = []
 var carried := 0
 var delivered := 0
-var energy := 100.0
 var hive_lives := 3
 var harvest_clock := 0.0
 var sting_cooldown := 0.0
@@ -43,6 +40,10 @@ var overlay_button: Button
 func _ready() -> void:
 	rng.randomize()
 	load_stage_data()
+	bee = BeePlayer.new()
+	bee.position = Vector2(180, 410)
+	bee.sense_started.connect(on_sense_started)
+	add_child(bee)
 	build_interface()
 	show_intro()
 	queue_redraw()
@@ -102,7 +103,7 @@ func build_interface() -> void:
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	make_label(side, "搜  寻找仍有蜜的花\n打  蜂针震开蚊虫\n撤  飞回左侧蜂巢", Vector2(20, 445), Vector2(190, 80), 12, Color("556054"))
 
-	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  蜂针", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
+	var tips := make_label(ui, "WASD / 方向键  飞行     空格  采蜜     Shift  振翅     J  蜂针     E  感知", Vector2(34, 690), Vector2(970, 24), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	overlay = ColorRect.new()
@@ -136,6 +137,7 @@ func make_stat(parent: Node, caption: String, position: Vector2) -> Label:
 
 func show_intro() -> void:
 	phase = "intro"
+	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
 	overlay_body.text = "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。"
@@ -152,11 +154,8 @@ func spawn_stage(index: int) -> void:
 	stage_index = index
 	phase = "playing"
 	overlay.visible = false
-	player = Vector2(180, 410)
-	has_target = false
 	carried = 0
 	delivered = 0
-	energy = 100.0
 	harvest_clock = 0.0
 	sting_cooldown = 0.0
 	hit_cooldown = 0.0
@@ -164,6 +163,8 @@ func spawn_stage(index: int) -> void:
 	mosquitoes.clear()
 	pollen.clear()
 	var data: Dictionary = stages[index]
+	bee.configure(float(data.energy_drain))
+	bee.reset_for_expedition(Vector2(180, 410))
 	for i in int(data.flowers):
 		flowers.append({
 			"id": i,
@@ -206,24 +207,11 @@ func update_game(delta: float) -> void:
 	var data: Dictionary = stages[stage_index]
 	sting_cooldown = maxf(0.0, sting_cooldown - delta)
 	hit_cooldown = maxf(0.0, hit_cooldown - delta)
-	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	if direction.length_squared() < 0.01 and has_target:
-		var to_target := target - player
-		if to_target.length() > 8:
-			direction = to_target.normalized()
-		else:
-			has_target = false
-	var dashing := Input.is_action_pressed("dash") and energy > 8.0
-	var speed := 360.0 if dashing else 215.0
-	player += direction * speed * delta
-	player.x = clampf(player.x, WORLD.position.x + 18, WORLD.end.x - 18)
-	player.y = clampf(player.y, WORLD.position.y + 18, WORLD.end.y - 18)
-	energy = maxf(0.0, energy - float(data.energy_drain) * delta - (9.5 * delta if dashing else 0.0))
 
 	var nearby := nearest_flower(46.0)
-	if Input.is_action_pressed("harvest") and nearby >= 0 and energy > 0:
+	if Input.is_action_pressed("harvest") and nearby >= 0 and bee.energy > 0:
 		harvest_clock += delta
-		energy = maxf(0.0, energy - 3.2 * delta)
+		bee.energy = maxf(0.0, bee.energy - 3.2 * delta)
 		if harvest_clock >= 0.42:
 			harvest_clock = 0.0
 			var flower: Dictionary = flowers[nearby]
@@ -235,28 +223,27 @@ func update_game(delta: float) -> void:
 	else:
 		harvest_clock = 0.0
 
-	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and energy >= 8.0:
+	if Input.is_action_just_pressed("sting") and sting_cooldown <= 0.0 and bee.spend_energy(8.0):
 		sting_cooldown = 1.15
-		energy -= 8.0
 		for i in mosquitoes.size():
 			var mosquito: Dictionary = mosquitoes[i]
-			if player.distance_to(mosquito.position) < 88:
+			if bee.position.distance_to(mosquito.position) < 88:
 				mosquito.stunned = 2.1
-				mosquito.velocity = (mosquito.position - player).normalized() * 8.0
+				mosquito.velocity = (mosquito.position - bee.position).normalized() * 8.0
 				mosquitoes[i] = mosquito
 		message = "蜂针震开了附近的蚊影。"
 
 	update_mosquitoes(delta)
-	if player.x < HIVE_X and carried > 0:
+	if bee.position.x < HIVE_X and carried > 0:
 		var amount := carried
 		delivered += amount
 		carried = 0
-		energy = 100.0
+		bee.energy = 100.0
 		message = "安全归巢，存入 %d 滴蜜。" % amount
 		flash = 0.32
 		if delivered >= int(data.goal):
 			show_between()
-	if energy <= 0.0:
+	if bee.energy <= 0.0:
 		fail_expedition()
 
 func update_mosquitoes(delta: float) -> void:
@@ -264,16 +251,16 @@ func update_mosquitoes(delta: float) -> void:
 		var mosquito: Dictionary = mosquitoes[i]
 		mosquito.stunned = maxf(0.0, float(mosquito.stunned) - delta)
 		if mosquito.stunned <= 0.0:
-			var distance_to_player := Vector2(mosquito.position).distance_to(player)
+			var distance_to_player := Vector2(mosquito.position).distance_to(bee.position)
 			if distance_to_player < 330:
-				var chase := (player - Vector2(mosquito.position)).normalized()
+				var chase := (bee.position - Vector2(mosquito.position)).normalized()
 				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
 			mosquito.position += Vector2(mosquito.velocity) * 82.0 * delta
 			mosquito.position.x = clampf(mosquito.position.x, WORLD.position.x + 12, WORLD.end.x - 12)
 			mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
 			if distance_to_player < 26 and hit_cooldown <= 0.0:
 				hit_cooldown = 1.05
-				energy = maxf(0.0, energy - 15.0)
+				bee.energy = maxf(0.0, bee.energy - 15.0)
 				carried = maxi(0, carried - 2)
 				shake = 7.0
 				flash = 0.48
@@ -283,9 +270,7 @@ func update_mosquitoes(delta: float) -> void:
 func fail_expedition() -> void:
 	hive_lives -= 1
 	carried = 0
-	energy = 100.0
-	player = Vector2(180, 410)
-	has_target = false
+	bee.reset_for_expedition(Vector2(180, 410))
 	shake = 10.0
 	message = "你没能带回花蜜。蜂巢的呼吸弱了一分。"
 	if hive_lives <= 0:
@@ -293,6 +278,7 @@ func fail_expedition() -> void:
 
 func show_between() -> void:
 	phase = "between"
+	bee.active = false
 	overlay.visible = true
 	var data: Dictionary = stages[stage_index]
 	overlay_title.text = "%s完成" % data.name
@@ -301,6 +287,7 @@ func show_between() -> void:
 
 func show_win() -> void:
 	phase = "won"
+	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "冬至一阳生"
 	overlay_body.text = "蜂群熬过了四个压缩节令。\n未来，它们之间将展开为完整的二十四个小关卡。"
@@ -308,6 +295,7 @@ func show_win() -> void:
 
 func show_loss() -> void:
 	phase = "lost"
+	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "这一次没能\n等到春天"
 	overlay_body.text = "远花仍在那里，但带回家的蜜才真正属于蜂群。"
@@ -320,7 +308,7 @@ func nearest_flower(radius: float) -> int:
 		var flower: Dictionary = flowers[i]
 		if int(flower.nectar) <= 0:
 			continue
-		var current := player.distance_to(flower.position)
+		var current := bee.position.distance_to(flower.position)
 		if current < best_distance:
 			best = i
 			best_distance = current
@@ -348,7 +336,7 @@ func update_interface() -> void:
 	term_label.text = "%s · %s" % [data.season, data.name]
 	carried_label.text = str(carried)
 	delivered_label.text = "%d / %d" % [delivered, int(data.goal)]
-	energy_label.text = str(roundi(energy))
+	energy_label.text = str(roundi(bee.energy))
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	message_label.text = message
 	detail_label.text = "%s\n\n%s\n\n阴 %d  ·  阳 %d\n目标  %d 滴\n蚊群  %s" % [data.name, data.line, int(data.yin), int(data.yang), int(data.goal), "◆".repeat(int(data.enemies))]
@@ -358,8 +346,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if WORLD.has_point(event.position):
-			target = event.position
-			has_target = true
+			bee.set_move_target(event.position)
+
+func on_sense_started() -> void:
+	message = "花香、敌意与归巢方向在一瞬间变得清晰。"
 
 func stage_color(index: int) -> Color:
 	if stages.is_empty():
@@ -398,7 +388,13 @@ func _draw() -> void:
 		draw_mosquito(mosquito)
 	for mote in pollen:
 		draw_circle(mote.position, 2.5, Color(stage_color(3), clampf(float(mote.life) * 2.0, 0, 1)))
-	draw_bee(player)
+	if bee.sense_time > 0.0 and phase == "playing":
+		for flower in flowers:
+			if int(flower.nectar) > 0:
+				draw_line(bee.position, flower.position, Color(stage_color(3), 0.12), 1)
+		for mosquito in mosquitoes:
+			draw_circle(mosquito.position, 20, Color("8d3d36", 0.12), false, 2)
+		draw_line(bee.position, Vector2(HIVE_X, bee.position.y), Color("fff0a0", 0.42), 2)
 
 	var nearby := nearest_flower(46.0)
 	if nearby >= 0 and phase == "playing":
@@ -429,13 +425,3 @@ func draw_mosquito(mosquito: Dictionary) -> void:
 	draw_line(pos + Vector2(5, 4), pos + Vector2(15, 12), Color("f5f2df", 0.7), 3)
 	if stunned:
 		draw_arc(pos, 17, 0, TAU * 0.75, 12, Color("fff0aa"), 2)
-
-func draw_bee(pos: Vector2) -> void:
-	draw_circle(pos + Vector2(-5, -10), 8, Color("f7f5dd", 0.65))
-	draw_circle(pos + Vector2(-5, 10), 8, Color("f7f5dd", 0.65))
-	draw_circle(pos, 13, Color("292921"))
-	draw_rect(Rect2(pos + Vector2(-7, -12), Vector2(5, 24)), Color("e1aa2c"))
-	draw_rect(Rect2(pos + Vector2(3, -11), Vector2(5, 22)), Color("e1aa2c"))
-	draw_circle(pos + Vector2(13, 0), 7, Color("efcf69"))
-	if sting_cooldown > 0:
-		draw_arc(pos, 27, -PI * 0.7, PI * 0.7, 18, Color("e8c452", 0.55), 2)
