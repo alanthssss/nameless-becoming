@@ -19,6 +19,7 @@
 - [x] 生成并启动 macOS 调试包；
 - [x] 生成 Windows x86_64 调试包；
 - [x] 在 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md) 记录包体积与 SHA-256。
+- [x] macOS 与 Windows 构建上传至私有 GitHub `v0.9.0` 预发布版本；
 
 ## 人工全流程
 

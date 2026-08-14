@@ -10,3 +10,5 @@
 | Windows x86_64 | `builds/HiveboundSeasons-Windows.exe` | 100,684,016 bytes | `61a121d169075887c093fc63b4e658a66cfcf5d7fe4b702cee28a4018b18a913` | Godot 导出成功；PE32+ 格式确认，PCK 已嵌入 |
 
 构建产物不提交 Git；它们保留在本机 `builds/`，可按 [`godot/README.md`](../godot/README.md) 中的命令重建。
+
+两个构建已上传至私有 GitHub 仓库的 [`v0.9.0` 预发布版本](https://github.com/alanthssss/hivebound-seasons/releases/tag/v0.9.0)，远端资产大小与本表一致。
