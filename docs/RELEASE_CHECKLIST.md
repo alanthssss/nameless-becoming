@@ -11,10 +11,10 @@
 
 ## 构建验证
 
-- [ ] 安装 Godot 4.6.2 官方导出模板；
-- [ ] 生成并启动 macOS 调试包；
-- [ ] 生成 Windows x86_64 调试包；
-- [ ] 记录包体积与 SHA-256。
+- [x] 安装 Godot 4.6.2 官方导出模板；
+- [x] 生成并启动 macOS 调试包；
+- [x] 生成 Windows x86_64 调试包；
+- [x] 在 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md) 记录包体积与 SHA-256。
 
 ## 人工全流程
 
