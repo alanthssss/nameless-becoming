@@ -65,6 +65,7 @@ npm run build
 - `app/page.tsx`：游戏循环、操作、敌人与节令配置；
 - `app/globals.css`：界面、节气色彩和响应式布局；
 - `docs/PROJECT_LOG.md`：策划与版本决策记录。
+- `docs/MVP_SPEC.md`：完整 MVP 范围、验收标准与里程碑。
 
 ## 当前验证问题
 
