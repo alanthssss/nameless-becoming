@@ -1,6 +1,6 @@
 extends SceneTree
 
-const REQUIRED_KEYS := ["name", "season", "yin", "yang", "goal", "flowers", "enemies", "energy_drain", "nectar_scale", "colors", "line"]
+const REQUIRED_KEYS := ["name", "season", "yin", "yang", "goal", "flowers", "enemies", "ants", "energy_drain", "nectar_scale", "colors", "line"]
 
 func _init() -> void:
 	var failures: Array[String] = []
@@ -26,8 +26,23 @@ func _init() -> void:
 					failures.append("节令 %d 阴阳总和不是 100" % index)
 				if stage.has("goal") and int(stage.goal) <= 0:
 					failures.append("节令 %d 目标必须为正数" % index)
+				if stage.has("ants") and int(stage.ants) < 0:
+					failures.append("节令 %d 掠蜜蚁数量不能为负" % index)
 				if stage.has("colors") and (not stage.colors is Array or stage.colors.size() != 4):
 					failures.append("节令 %d 必须配置 4 个颜色" % index)
+
+	var upgrade_file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
+	if upgrade_file == null:
+		failures.append("无法读取 upgrades.json")
+	else:
+		var upgrades = JSON.parse_string(upgrade_file.get_as_text())
+		if not upgrades is Array or upgrades.size() != 3:
+			failures.append("MVP 必须提供 3 种蜂巢分工")
+		else:
+			for upgrade in upgrades:
+				for key in ["id", "name", "description", "color"]:
+					if not upgrade.has(key):
+						failures.append("蜂巢成长缺少字段 %s" % key)
 
 	var scene := load("res://main.tscn")
 	if scene == null:
@@ -45,6 +60,10 @@ func _init() -> void:
 			failures.append("体力消耗公式错误")
 		if bee.spend_energy(100.0):
 			failures.append("体力不足时不应允许消费")
+		bee.reset_upgrades()
+		bee.apply_upgrade("long_wing")
+		if bee.speed_multiplier <= 1.0 or bee.dash_cost_multiplier >= 1.0:
+			failures.append("长翼蜂成长未改变飞行属性")
 		bee.free()
 
 	if failures.is_empty():

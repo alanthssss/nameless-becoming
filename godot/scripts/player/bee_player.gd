@@ -18,9 +18,20 @@ var active := false
 var sense_time := 0.0
 var sense_cooldown := 0.0
 var facing := 0.0
+var speed_multiplier := 1.0
+var dash_cost_multiplier := 1.0
 
 func configure(stage_drain: float) -> void:
 	drain_rate = stage_drain
+
+func reset_upgrades() -> void:
+	speed_multiplier = 1.0
+	dash_cost_multiplier = 1.0
+
+func apply_upgrade(upgrade_id: String) -> void:
+	if upgrade_id == "long_wing":
+		speed_multiplier *= 1.08
+		dash_cost_multiplier *= 0.85
 
 func reset_for_expedition(at: Vector2) -> void:
 	position = at
@@ -59,7 +70,7 @@ func _physics_process(delta: float) -> void:
 			has_target = false
 
 	var dashing := Input.is_action_pressed("dash") and energy > 8.0
-	var desired_speed := dash_speed if dashing else base_speed
+	var desired_speed := (dash_speed if dashing else base_speed) * speed_multiplier
 	if input_direction.length_squared() > 0.01:
 		velocity = velocity.move_toward(input_direction.normalized() * desired_speed, acceleration * delta)
 	else:
@@ -70,7 +81,7 @@ func _physics_process(delta: float) -> void:
 	position += velocity * delta
 	position.x = clampf(position.x, WORLD_BOUNDS.position.x + 18, WORLD_BOUNDS.end.x - 18)
 	position.y = clampf(position.y, WORLD_BOUNDS.position.y + 18, WORLD_BOUNDS.end.y - 18)
-	energy = maxf(0.0, energy - drain_rate * delta - (9.5 * delta if dashing else 0.0))
+	energy = maxf(0.0, energy - drain_rate * delta - (9.5 * dash_cost_multiplier * delta if dashing else 0.0))
 
 	if Input.is_action_just_pressed("sense") and sense_cooldown <= 0.0:
 		sense_time = 2.4
