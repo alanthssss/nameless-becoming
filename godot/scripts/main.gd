@@ -47,6 +47,12 @@ var run_elapsed := 0.0
 var shake := 0.0
 var flash := 0.0
 var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
+var action_hold_time := 0.0
+var action_decoy_fired := false
+var last_dir_tap := {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
+const DOUBLE_TAP_WINDOW := 0.25
+const DECOY_HOLD_THRESHOLD := 0.5
+const HIVE_RETURN_POS := Vector2(180, 410)
 var rng := RandomNumberGenerator.new()
 var save_manager := NamelessSaveManager.new()
 var sound := SoundFeedback.new()
@@ -129,12 +135,8 @@ func ensure_keyboard_controls() -> void:
 		"move_right": [KEY_D, KEY_RIGHT],
 		"move_up": [KEY_W, KEY_UP],
 		"move_down": [KEY_S, KEY_DOWN],
-		"harvest": [KEY_I, KEY_SPACE],
-		"dash": [KEY_O, KEY_SHIFT],
-		"repel": [KEY_J],
-		"sense": [KEY_U, KEY_E],
-		"evade": [KEY_K],
-		"decoy": [KEY_L]
+		"action": [KEY_SPACE, KEY_ENTER],
+		"return_hive": [KEY_Q]
 	}
 	for action in bindings:
 		if not InputMap.has_action(action):
@@ -304,19 +306,19 @@ func build_interface() -> void:
 	input_rule.size = Vector2(190, 1)
 	side.add_child(input_rule)
 	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 360), Vector2(190, 28), 11, Color("556054"))
-	sense_button = make_mouse_action(side, "U 寻迹", "sense", Vector2(14, 402), false, Vector2(62, 36))
-	make_mouse_action(side, "I 采蜜", "harvest", Vector2(84, 402), true, Vector2(62, 36))
-	make_mouse_action(side, "O 振翅", "dash", Vector2(154, 402), true, Vector2(62, 36))
-	make_mouse_action(side, "J 惊退", "repel", Vector2(14, 447), false, Vector2(62, 36))
-	make_mouse_action(side, "K 急转", "evade", Vector2(84, 447), false, Vector2(62, 36))
-	make_mouse_action(side, "L 诱饵", "decoy", Vector2(154, 447), false, Vector2(62, 36))
+	# 情境动作按钮：近花=采蜜 / 近敌=惊退 / 静止=寻迹 / 长按携蜜=诱饵
+	sense_button = make_mouse_action(side, "动作", "action", Vector2(14, 402), true, Vector2(135, 36))
+	make_mouse_action(side, "归巢", "return_hive", Vector2(155, 402), false, Vector2(62, 36))
+	make_label(side, "近花采蜜 · 近敌惊退 · 静止寻迹", Vector2(14, 447), Vector2(200, 18), 10, Color("68705d"))
+	make_label(side, "长按携蜜=投诱饵 · 双击方向=急转", Vector2(14, 465), Vector2(200, 18), 10, Color("68705d"))
+	make_label(side, "持续飞行=自动振翅加速", Vector2(14, 483), Vector2(200, 18), 10, Color("68705d"))
 
 	var tips_background := ColorRect.new()
 	tips_background.color = Color("26392f", 0.96)
 	tips_background.position = Vector2(34, 684)
 	tips_background.size = Vector2(970, 36)
 	ui.add_child(tips_background)
-	var tips := make_label(ui, "WASD 飞行  ｜ U 寻迹 · I 采蜜 · O 振翅 ｜ J 惊退 · K 急转(-12) · L 投蜜诱饵(-1蜜)", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
+	var tips := make_label(ui, "WASD 飞行（持续飞=振翅加速） ｜ 空格 动作（近花采/近敌退/静止寻/长按诱饵） ｜ Q 归巢 ｜ 双击方向 急转", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	overlay = ColorRect.new()
@@ -419,7 +421,7 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。\n\n历史最远：%s  ·  完成轮回：%d%s" % [progress_name(), save_manager.runs_completed, last_run_text()]
+	overlay_body.text = "WASD 飞向花朵，空格采蜜。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n长按携蜜=投诱饵 · 双击方向=急转 · Q=归巢\n\n历史最远：%s  ·  完成轮回：%d%s" % [progress_name(), save_manager.runs_completed, last_run_text()]
 	overlay_button.text = "飞入冬至"
 	set_upgrade_buttons_visible(false)
 
@@ -575,73 +577,56 @@ func update_game(delta: float) -> void:
 	sting_cooldown = maxf(0.0, sting_cooldown - delta)
 	hit_cooldown = maxf(0.0, hit_cooldown - delta)
 	update_decoys(delta)
-	if Input.is_action_just_pressed("evade") and bee.try_evade():
-		show_energy_change(-12.0)
-		sound.play_cue("evade")
-		message = "急转掠过攻击线：短暂避开碰撞。"
-	if Input.is_action_just_pressed("decoy"):
-		drop_honey_decoy()
-	# 冬季侦察：摇摆舞解锁后缩短寻迹冷却
-	if Input.is_action_just_pressed("sense"):
-		var huddle = season_mechanics.mechanic_by_id("huddle")
-		if huddle != null and huddle.is_scouting_ready():
-			bee.sense_cooldown = huddle.scout_cooldown_value()
-			message = "摇摆舞传来花源方位：蜜最丰的花田已标出。"
 
+	# 双击方向键 = 急转闪避
+	_check_double_tap_evade(delta)
+
+	# 归巢：Q 键自动飞回蜂巢
+	if Input.is_action_just_pressed("return_hive"):
+		bee.set_move_target(HIVE_RETURN_POS)
+		message = "归巢路线已锁定。"
+
+	# 情境动作：空格/回车根据上下文执行不同操作
 	var nearby := nearest_flower(46.0)
-	if Input.is_action_pressed("harvest") and nearby >= 0 and bee.energy > 0:
-		harvest_clock += delta
-		bee.energy = maxf(0.0, bee.energy - balance_value("player", "harvest_energy_per_second", 3.2) * delta)
-		if harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
-			harvest_clock = 0.0
-			var flower: Dictionary = flowers[nearby]
-			flower.nectar = int(flower.nectar) - 1
-			flowers[nearby] = flower
-			carried += 1
-			sound.play_cue("harvest")
-			spawn_pollen(flower.position)
-			season_mechanics.on_harvest(nearby)
-			message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
-	else:
-		harvest_clock = 0.0
+	var near_enemy := _nearest_enemy_distance() < sting_range
+	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
 
-	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		show_energy_change(-sting_cost)
-		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
-		sound.play_cue("repel")
-		for i in mosquitoes.size():
-			var mosquito: Dictionary = mosquitoes[i]
-			if bee.position.distance_to(mosquito.position) < sting_range:
-				mosquito.repel_time = balance_value("player", "repel_duration", 3.5)
-				mosquito.velocity = (mosquito.position - bee.position).normalized() * 8.0
-				mosquitoes[i] = mosquito
-		for i in ants.size():
-			var ant: Dictionary = ants[i]
-			if bee.position.distance_to(ant.position) < sting_range:
-				ant.flee_time = 1.8
-				ant.velocity = (ant.position - bee.position).normalized() * 3.2
-				if int(ant.stolen_honey) > 0:
-					return_honey_to_field(int(ant.stolen_honey), ant.position)
-					message = "掠蜜蚁受惊后丢下了 %d 滴蜜，花田会重新吸收它们。" % int(ant.stolen_honey)
-					ant.stolen_honey = 0
-				ants[i] = ant
-		for i in crickets.size():
-			var cricket: Dictionary = crickets[i]
-			if bee.position.distance_to(cricket.position) < sting_range:
-				cricket.repel_time = balance_value("player", "repel_duration", 3.5)
-				cricket.hopping = false
-				cricket.hop_clock = balance_value("cricket", "rest_seconds", 1.2)
-				crickets[i] = cricket
-		for i in thrushes.size():
-			var thrush: Dictionary = thrushes[i]
-			if bee.position.distance_to(thrush.position) < sting_range + 20.0:
-				thrush.silence_time = balance_value("player", "repel_duration", 3.5)
-				thrushes[i] = thrush
-		season_mechanics.on_repel_success()
-		message = "急促的震翼把附近敌虫推离了航线。"
-		for bear_unit in bears:
-			if bee.position.distance_to(bear_unit.position) < sting_range + 40.0:
-				message = "熊对震翼毫无反应。绕开它，抢在它之前收完这片花田。"
+	if Input.is_action_just_pressed("action"):
+		action_hold_time = 0.0
+		action_decoy_fired = false
+		# 优先级：近敌→惊退 > 静止→寻迹
+		if near_enemy and nearby < 0:
+			_do_repel()
+		elif is_still and nearby < 0 and not near_enemy:
+			_do_sense()
+		elif nearby >= 0:
+			# 近花时按下开始采蜜（持续按住逻辑在下面）
+			pass
+
+	if Input.is_action_pressed("action"):
+		action_hold_time += delta
+		if nearby >= 0 and bee.energy > 0:
+			# 采蜜（持续）
+			harvest_clock += delta
+			bee.energy = maxf(0.0, bee.energy - balance_value("player", "harvest_energy_per_second", 3.2) * delta)
+			if harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
+				harvest_clock = 0.0
+				var flower: Dictionary = flowers[nearby]
+				flower.nectar = int(flower.nectar) - 1
+				flowers[nearby] = flower
+				carried += 1
+				sound.play_cue("harvest")
+				spawn_pollen(flower.position)
+				season_mechanics.on_harvest(nearby)
+				message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
+		elif not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy:
+			# 长按空格 + 携蜜 + 无花无敌 = 投蜜诱饵
+			action_decoy_fired = true
+			drop_honey_decoy()
+	else:
+		action_hold_time = 0.0
+		action_decoy_fired = false
+		harvest_clock = 0.0
 
 	update_mosquitoes(delta)
 	update_ants(delta)
@@ -660,6 +645,87 @@ func update_game(delta: float) -> void:
 		show_between()
 	if bee.energy <= 0.0:
 		fail_expedition()
+
+func _nearest_enemy_distance() -> float:
+	var min_dist := INF
+	for mosquito in mosquitoes:
+		min_dist = minf(min_dist, bee.position.distance_to(mosquito.position))
+	for ant in ants:
+		min_dist = minf(min_dist, bee.position.distance_to(ant.position))
+	for cricket in crickets:
+		min_dist = minf(min_dist, bee.position.distance_to(cricket.position))
+	for thrush in thrushes:
+		min_dist = minf(min_dist, bee.position.distance_to(thrush.position))
+	for bear_unit in bears:
+		min_dist = minf(min_dist, bee.position.distance_to(bear_unit.position))
+	return min_dist
+
+func _do_repel() -> void:
+	if sting_cooldown > 0.0 or not bee.spend_energy(sting_cost):
+		return
+	show_energy_change(-sting_cost)
+	sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
+	sound.play_cue("repel")
+	for i in mosquitoes.size():
+		var mosquito: Dictionary = mosquitoes[i]
+		if bee.position.distance_to(mosquito.position) < sting_range:
+			mosquito.repel_time = balance_value("player", "repel_duration", 3.5)
+			mosquito.velocity = (mosquito.position - bee.position).normalized() * 8.0
+			mosquitoes[i] = mosquito
+	for i in ants.size():
+		var ant: Dictionary = ants[i]
+		if bee.position.distance_to(ant.position) < sting_range:
+			ant.flee_time = 1.8
+			ant.velocity = (ant.position - bee.position).normalized() * 3.2
+			if int(ant.stolen_honey) > 0:
+				return_honey_to_field(int(ant.stolen_honey), ant.position)
+				message = "掠蜜蚁受惊后丢下了 %d 滴蜜，花田会重新吸收它们。" % int(ant.stolen_honey)
+				ant.stolen_honey = 0
+			ants[i] = ant
+	for i in crickets.size():
+		var cricket: Dictionary = crickets[i]
+		if bee.position.distance_to(cricket.position) < sting_range:
+			cricket.repel_time = balance_value("player", "repel_duration", 3.5)
+			cricket.hopping = false
+			cricket.hop_clock = balance_value("cricket", "rest_seconds", 1.2)
+			crickets[i] = cricket
+	for i in thrushes.size():
+		var thrush: Dictionary = thrushes[i]
+		if bee.position.distance_to(thrush.position) < sting_range + 20.0:
+			thrush.silence_time = balance_value("player", "repel_duration", 3.5)
+			thrushes[i] = thrush
+	season_mechanics.on_repel_success()
+	message = "急促的震翼把附近敌虫推离了航线。"
+	for bear_unit in bears:
+		if bee.position.distance_to(bear_unit.position) < sting_range + 40.0:
+			message = "熊对震翼毫无反应。绕开它，抢在它之前收完这片花田。"
+
+func _do_sense() -> void:
+	if bee.sense_cooldown > 0.0:
+		return
+	var huddle = season_mechanics.mechanic_by_id("huddle")
+	if huddle != null and huddle.is_scouting_ready():
+		bee.sense_cooldown = huddle.scout_cooldown_value()
+		message = "摇摆舞传来花源方位：蜜最丰的花田已标出。"
+	else:
+		bee.trigger_sense()
+
+func _check_double_tap_evade(_delta: float) -> void:
+	var now := Time.get_ticks_msec() / 1000.0
+	var directions := {
+		"left": "move_left",
+		"right": "move_right",
+		"up": "move_up",
+		"down": "move_down"
+	}
+	for dir_key in directions:
+		if Input.is_action_just_pressed(directions[dir_key]):
+			if now - last_dir_tap[dir_key] < DOUBLE_TAP_WINDOW:
+				if bee.try_evade():
+					show_energy_change(-12.0)
+					sound.play_cue("evade")
+					message = "急转掠过攻击线：短暂避开碰撞。"
+			last_dir_tap[dir_key] = now
 
 func update_mosquitoes(delta: float) -> void:
 	for i in mosquitoes.size():
@@ -1178,7 +1244,7 @@ func update_boss(delta: float) -> void:
 		flash = 0.55
 		message = String(data.damage_message)
 
-	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
+	if Input.is_action_just_pressed("action") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
 		show_energy_change(-sting_cost)
 		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
 		sound.play_cue("repel")
@@ -1414,8 +1480,8 @@ func update_interface() -> void:
 	energy_bar_fill.size.x = 166.0 * clampf(bee.energy / 100.0, 0.0, 1.0)
 	energy_change_label.modulate.a = clampf(energy_feedback_time * 2.0, 0.0, 1.0)
 	if sense_button:
-		sense_button.disabled = bee.sense_cooldown > 0.0
-		sense_button.text = "U %.1f" % bee.sense_cooldown if bee.sense_cooldown > 0.0 else "U 寻迹"
+		sense_button.disabled = false
+		sense_button.text = "动作"
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	reserve_label.text = str(hive_reserve)
 	message_label.text = message

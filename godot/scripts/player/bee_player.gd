@@ -4,6 +4,7 @@ extends Node2D
 signal sense_started
 
 const WORLD_BOUNDS := Rect2(34, 146, 970, 538)
+const AUTO_DASH_THRESHOLD := 0.35
 
 var energy := 100.0
 var drain_rate := 1.45
@@ -23,6 +24,7 @@ var dash_cost_multiplier := 1.0
 var evade_time := 0.0
 var evade_cooldown := 0.0
 var invulnerable_time := 0.0
+var move_duration := 0.0
 
 func configure(stage_drain: float) -> void:
 	drain_rate = stage_drain
@@ -47,6 +49,7 @@ func reset_for_expedition(at: Vector2) -> void:
 	evade_time = 0.0
 	evade_cooldown = 0.0
 	invulnerable_time = 0.0
+	move_duration = 0.0
 	active = true
 	queue_redraw()
 
@@ -71,6 +74,12 @@ func try_evade() -> bool:
 	has_target = false
 	return true
 
+func trigger_sense() -> void:
+	if sense_cooldown <= 0.0:
+		sense_time = 3.0
+		sense_cooldown = 7.0
+		sense_started.emit()
+
 func _physics_process(delta: float) -> void:
 	sense_time = maxf(0.0, sense_time - delta)
 	sense_cooldown = maxf(0.0, sense_cooldown - delta)
@@ -89,11 +98,18 @@ func _physics_process(delta: float) -> void:
 		else:
 			has_target = false
 
-	var dashing := Input.is_action_pressed("dash") and energy > 8.0 and evade_time <= 0.0
-	var desired_speed := (dash_speed if dashing else base_speed) * speed_multiplier
+	# Auto-dash: sustained movement for >threshold automatically accelerates to dash speed
+	var is_moving := input_direction.length_squared() > 0.01
+	if is_moving:
+		move_duration += delta
+	else:
+		move_duration = 0.0
+
+	var auto_dashing := move_duration > AUTO_DASH_THRESHOLD and energy > 8.0 and evade_time <= 0.0
+	var desired_speed := (dash_speed if auto_dashing else base_speed) * speed_multiplier
 	if evade_time > 0.0:
 		velocity = velocity.move_toward(velocity.normalized() * 520.0, 180.0 * delta)
-	elif input_direction.length_squared() > 0.01:
+	elif is_moving:
 		velocity = velocity.move_toward(input_direction.normalized() * desired_speed, acceleration * delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, braking * delta)
@@ -103,11 +119,7 @@ func _physics_process(delta: float) -> void:
 	position += velocity * delta
 	position.x = clampf(position.x, WORLD_BOUNDS.position.x + 18, WORLD_BOUNDS.end.x - 18)
 	position.y = clampf(position.y, WORLD_BOUNDS.position.y + 18, WORLD_BOUNDS.end.y - 18)
-	energy = maxf(0.0, energy - drain_rate * delta - (9.5 * dash_cost_multiplier * delta if dashing else 0.0))
-	if Input.is_action_just_pressed("sense") and sense_cooldown <= 0.0:
-		sense_time = 3.0
-		sense_cooldown = 7.0
-		sense_started.emit()
+	energy = maxf(0.0, energy - drain_rate * delta - (9.5 * dash_cost_multiplier * delta if auto_dashing else 0.0))
 
 	queue_redraw()
 
