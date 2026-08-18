@@ -65,7 +65,12 @@
 
 **English / EN**: Current version is **Candidate MVP 0.9.4**, maintaining three distribution targets — Web, macOS universal, and Windows x86_64 — all exported from the same `godot/` project. The official single-player direction has moved to Godot 4; the older web prototype is kept as historical validation.
 
-**在线试玩 / Play Online**: https://hivebound-seasons-game.pages.dev
+**2026-08-18 最新进展 / Latest (2026-08-18)**：
+- **四季机制全量实现**：授粉/征召/储备/抱团四招牌机制 + `season_mechanics.gd` 调度层（`feat/season-mechanics` 分支，PR #2 待合并）；
+- **二十四节气色彩体系定稿**：`docs/COLOR_SYSTEM.md`，四正色（玄/青/朱/白）+ 四季大关 × 6 小关（24 节气节点）+ 四正色守关 Boss（春分/夏至/秋分/冬至）（`docs/color-system` 分支，PR #3 待合并）；
+- **身份徽章系统定案**：属性节点 × 成就徽章（PR #1 已合并，未实现）。
+
+**在线试玩 / Play Online**: https://hivebound-seasons-game.pages.dev（注：线上仍为 0.9.4，不含四季机制与色彩体系）
 
 ---
 

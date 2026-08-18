@@ -66,16 +66,44 @@
 
 ---
 
-## 4. 四季节令 / The Four Solar Terms
+## 4. 四季大关与色彩体系 / Season Stages & Color System
 
-| 节令 / Term | 阴阳 / Yin:Yang | 花量 / Flowers | 敌人 / Enemies | 目标蜜量 / Goal | 体力消耗 / Drain | 定位 / Role |
-|-------------|-----------------|----------------|----------------|-----------------|------------------|-------------|
-| 春分 Spring Equinox | 50:50 | 8 | 1 | 7 | 1.45 | 学习与建立信心 / Learn & build confidence |
-| 夏至 Summer Solstice | 15:85 | 8 | 4 | 11 | 1.80 | 高收益与高威胁 / High reward, high threat |
-| 秋分 Autumn Equinox | 50:50 | 7 | 7 | 14 | 2.00 | 匮乏与规划 / Scarcity & planning |
-| 冬至 Winter Solstice | 85:15 | 6 | 6 | 9 | 2.25 | 生存极限 / Survival limit |
+### 4.1 关卡结构 / Stage Structure
 
-**配色曲线 / Color Curve**：春季青绿米黄 → 夏季高明度金橙 → 秋季赭石 → 冬季蓝灰；蜂蜜金贯穿全年，阴影逐季加深，再从冬至孕育下一轮暖色。四季使用不同五声音阶和弦底色，保持低音量，不遮蔽提示音。
+**中文 / CN**：关卡结构为**四季大关 × 6 小关**（24 个节气节点），每大关内 6 个小关对应六个节气节点，色调沿该季阴阳方向逐阶渐变；**四正色（春分/夏至/秋分/冬至）为守关 Boss 节点**——正色即阴阳消长的关键转折，失律者盘踞之处。
+
+**English / EN**: The stage structure is **4 season stages × 6 sub-stages** (24 solar-term nodes). Each stage's 6 sub-stages follow six solar terms with gradual hue shifts along the season's yin-yang direction; the **four zhengse nodes (Spring Equinox / Summer Solstice / Autumn Equinox / Winter Solstice) host the gate bosses** — the key turning points of yin-yang flux, where the Unregulated dwell.
+
+| 大关 / Stage | 色系 / Palette | 6 小关 / 6 Sub-stages | 守关 Boss 节点 / Gate Boss |
+|-------------|----------------|----------------------|---------------------------|
+| 春 / Spring | 玄→青 | 冬至、小寒、大寒、立春、雨水、惊蛰 | 春分 · 正青 |
+| 夏 / Summer | 青→朱 | 清明、谷雨、立夏、小满、芒种 | 夏至 · 正朱 |
+| 秋 / Autumn | 朱→白 | 小暑、大暑、立秋、处暑、白露 | 秋分 · 正白 |
+| 冬 / Winter | 白→玄 | 寒露、霜降、立冬、小雪、大雪 | 冬至 · 正玄 |
+
+### 4.2 四正色 / The Four Zhengse
+
+| 正色 / Zhengse | HEX | 角色 / Role |
+|----------------|-----|-------------|
+| 玄 Xuan | `#101420` | 背景深渊、未探索区域、失败归宿 |
+| 青 Qing | `#008080` | 生机、蜂群、可采集花蜜提示 |
+| 朱 Zhu | `#DC3C3C` | 危险、失律者、Boss、受击 |
+| 白 Bai | `#F5F5F5` | 蜂巢、安全区、结算、澄澈的匮乏 |
+
+**材质原则 / Material Principles**：低饱和低对比，叠加宣纸/岩彩纹理，避免纯色塑料感。完整色谱见 `docs/COLOR_SYSTEM.md`。
+
+### 4.3 四季招牌机制 / Seasonal Signature Mechanics
+
+**中文 / CN**：2026-08-18 全量实现四季差异化玩法（数据驱动，`seasons.json` mechanics 槽位 + `season_mechanics.gd` 调度层）：
+
+**English / EN**: All four seasonal signature mechanics were fully implemented on 2026-08-18 (data-driven: `mechanics` slots in `seasons.json` + dispatcher `season_mechanics.gd`):
+
+| 季 / Season | 机制 / Mechanic | 玩法 / Gameplay | 生态依据 / Ecology |
+|------------|----------------|-----------------|-------------------|
+| 春 / Spring | 授粉 Pollination | 花田是活的：久不采则休眠（蜜保留）；低蜜量触发授粉长新花 | 授粉是生态的一部分 |
+| 夏 / Summer | 征召 Conscription | 巢口/花区告急交替，响应哪边都是贡献；不响应不惩罚 | 被需要的方式在变化 |
+| 秋 / Autumn | 储备 Reserve | 季末分配：储备冬蜜 vs 哺育幼虫（两种集体投资） | 无私有财产；为来年投资 |
+| 冬 / Winter | 抱团 Huddle | 体温系统、带蜜归巢耗储备恢复、储备≥5 解锁侦察+摇摆舞 | 共御严寒；风险留给老兵 |
 
 ---
 
@@ -86,15 +114,16 @@
 1. **蚊虫 / Mosquito**：在巢外警戒范围内追击，接触后损失体力和少量携蜜；无法越过蜂巢安全边界，震翼会令其实际向外惊退。
 2. **掠蜜蚁 / Honey-Thief Ant**：移动较慢，优先追逐掉落或携带的蜜；被击退后会绕路再次靠近。
 
-### 失律之蚊 / The Unregulated Mosquito (Boss)
+### 失律者 / The Unregulated (Boss)
 
 - **主题 / Theme**：只索取、不流转 / Takes without giving back
 - **玩法 / Gameplay**：玩家通过震翼打断吸取、引导其撞入花粉团并完成三次共振"调律"。胜利条件是调律或驱离，而非削空传统生命条。
+- **落位 / Placement**：四正色节点（春分/夏至/秋分/冬至）各设守关 Boss；原型对应分配（蚊/油葫芦/画眉/熊）待定。
 - **参数 / Parameters**：速度 78，碰撞范围 39，调律半径 82，需 3 次调律
 
 ---
 
-## 6. 蜂巢成长 / Hive Upgrades
+## 6. 蜂巢成长与身份 / Hive Upgrades & Identity
 
 每个节令结束后展示三选一，只在本局有效，同类可叠加两次：
 
@@ -103,6 +132,8 @@
 | 长翼蜂 Long-Winged | 疾 | 飞行速度 +10%，振翅耗能 -15% |
 | 采蜜蜂 Forager | 蜜 | 采蜜间隔 -15%，每朵花额外保留 1 滴 |
 | 守卫蜂 Guard | 守 | 惊退范围 +18%，震翼冷却 -15% |
+
+**身份系统方向 / Identity Direction**（设计已定案，未实现）：三选一升级将**去职业化**为纯属性节点（不承担身份语义）；明确身份 = **成就徽章系统**——基于实际行为 + 完成程度事后授予，徽章集合构成身份画像，结算时组合生成一句身份描述。侦察 = 采集徽章达阶解锁。详见 `docs/PROJECT_LOG.md` 十三节。
 
 ---
 

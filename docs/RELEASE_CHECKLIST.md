@@ -19,6 +19,7 @@
 - [x] 四季程序化 BGM 可随关卡切换，并受声音开关控制；
 - [x] `git diff --check` 无空白错误；
 - [x] `main` 已同步私有 GitHub 仓库。
+- [x] 四季机制（授粉/征召/储备/抱团）通过 smoke_test + flow_test（2026-08-18，feat/season-mechanics，待合并后并入 0.9.x 发布检查）；
 
 ## 构建验证
 

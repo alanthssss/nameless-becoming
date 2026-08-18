@@ -12,4 +12,6 @@
 
 构建产物不提交 Git；它们保留在本机 `builds/`，可按 [`godot/README.md`](../godot/README.md) 中的命令重建。
 
+> **已知状态（2026-08-18）**：本清单为 0.9.4（2026-08-15 构建），**不含**四季机制与色彩体系。含四季机制（授粉/征召/储备/抱团）的构建尚未导出；在线试玩地址 [hivebound-seasons-game.pages.dev](https://hivebound-seasons-game.pages.dev) 亦为旧 0.9.4。验证新机制需 Godot 编辑器 F5 或重新导出后更新本表。
+
 桌面构建发布于私有 GitHub [`v0.9.4`](https://github.com/alanthssss/nameless-becoming/releases/tag/v0.9.4)（仓库原名为 hivebound-seasons，2026-08-18 更名）；Web 构建部署至 [https://hivebound-seasons-game.pages.dev](https://hivebound-seasons-game.pages.dev)。
