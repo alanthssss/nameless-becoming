@@ -18,6 +18,7 @@
 | 0.8 | 单机产品外壳（第一轮） | 标题界面、暂停、窗口/全屏、本地存档（不存局中状态） | 产品化起步 |
 | 0.9 | 候选 MVP（进行中） | 程序化音效、外部 balance.json、发布清单、双平台构建、GitHub 预发布 | 迈向 1.0 MVP |
 | 0.9.x | 世界规则修订与打磨 | 移除感知→重做为触角寻迹；蜂针退出普通攻击→震翼惊退；资源守恒；六键区；四季 BGM | 每轮试玩反馈驱动 |
+| 0.9.x (2026-08-18) | 四季机制与色彩体系 | 四季招牌机制全量实现（授粉/征召/储备/抱团 + 调度层）；二十四节气色彩体系定稿（4 大关 × 6 小关 + 四正色 Boss） | 数据驱动全参数化；设计已定稿，代码未铺开 |
 
 ---
 
@@ -86,16 +87,16 @@
 
 ## 5. 下一阶段候选 / Next-Phase Candidates
 
-**中文 / CN**：只有 0.2 的核心互动通过试玩后，才进入下列工作（MVP 不扩展二十四关或四个完整 Boss）：
+**中文 / CN**：核心互动通过试玩后，进入下列工作（MVP 已定稿 4 大关 × 6 小关结构，但 24 节点与四正色 Boss 尚未在代码中铺开）：
 
-**English / EN**: Only after the core interaction passes playtesting will the following work begin (the MVP does not expand to 24 stages or four full bosses):
+**English / EN**: Once the core interaction passes playtesting, the following work begins (the MVP has finalized the 4×6 stage structure, but the 24 nodes and four zhengse bosses are not yet implemented in code):
 
 1. 调整飞行惯性、采蜜时间、敌人速度和撤离距离
 2. 增加一种与蚊虫行为明显不同的小怪
-3. 将一个节令扩展为包含路线选择的小地图
+3. 将一个节气大关扩展为包含路线选择的小地图
 4. 增加蜂巢中的一次资源分配决策
-5. 制作第一个失律者遭遇
-6. 再决定是否从四节令扩展到二十四关
+5. 定案四正色守关 Boss 原型分配并逐季实现
+6. 把 24 节点色谱接入场景（`CanvasModulate` + UI 调色板）
 
 ---
 
@@ -103,8 +104,8 @@
 
 | 中文 / CN | English / EN |
 |-----------|--------------|
-| 二十四个完整关卡 | 24 full stages |
-| 四个完整 Boss | 4 full bosses |
+| 二十四个彼此独立的完整大关卡（现有结构为 4 大关 × 6 小关的参数化递进） | 24 independent full stages (current structure is a 4×6 parameterized progression) |
+| 每个节气节点都做独立 Boss（只做四正色节点） | A unique boss per solar-term node (only the four zhengse nodes) |
 | 开放世界、地图传送与支线任务 | Open world, fast travel, side quests |
 | 装备、背包、品质、抽卡、商店和货币体系 | Gear, inventory, rarity, gacha, shops, currency |
 | 大量剧情对白与完整配音 | Extensive dialogue and full voice acting |

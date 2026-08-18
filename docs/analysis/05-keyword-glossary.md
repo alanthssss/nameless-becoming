@@ -47,26 +47,45 @@
 
 ---
 
-## 3. 节令与阴阳 / Solar Terms & Yin-Yang
+## 3. 节令、色彩与阴阳 / Solar Terms, Colors & Yin-Yang
 
-| 中文 / CN | English / EN | 阴阳 / Yin:Yang |
-|-----------|--------------|-----------------|
-| 二十四节气 | 24 Solar Terms | — |
-| 春分 | Spring Equinox | 50:50 |
-| 夏至 | Summer Solstice | 15:85（阳极阴生） |
-| 秋分 | Autumn Equinox | 50:50 |
-| 冬至 | Winter Solstice | 85:15（阴极阳生） |
-| 阴阳消长 | Yin-Yang Flux | 组织关卡节奏的核心概念 |
+| 中文 / CN | English / EN | 说明 / Note |
+|-----------|--------------|-------------|
+| 二十四节气 | 24 Solar Terms | 关卡骨架：4 大关 × 6 小关 = 24 节点 |
+| 四正色 | Four Zhengse | 玄/青/朱/白，阴阳消长的四个正色 |
+| 玄 | Xuan | 阴之极 `#101420`，冬之正色 |
+| 青 | Qing | 春分之正色 `#008080` |
+| 朱 | Zhu | 阳之极 `#DC3C3C`，夏之正色 |
+| 白 | Bai | 秋分之正色 `#F5F5F5` |
+| 两至两分 | The two solstices & two equinoxes | 春分/夏至/秋分/冬至 = 四正色 Boss 节点 |
+| 守关 Boss | Gate boss | 位于每季终点正色节点的失律者 |
+| 春分 | Spring Equinox | 春之终，正青，守关节点 |
+| 夏至 | Summer Solstice | 阳极阴生，正朱，守关节点 |
+| 秋分 | Autumn Equinox | 阴阳相半，正白，守关节点 |
+| 冬至 | Winter Solstice | 阴极阳生，正玄，守关节点 |
+| 阴阳消长 | Yin-Yang Flux | 组织关卡色调与节奏的核心概念 |
 
 ---
 
-## 4. 蜂巢成长 / Hive Upgrades
+## 4. 蜂巢成长与身份 / Hive Upgrades & Identity
 
 | 中文 / CN | English / EN | ID | 效果 / Effect |
 |-----------|--------------|----|---------------|
 | 长翼蜂 | Long-Winged Bee | `long_wing` | 速度 +10%，振翅耗能 -15% |
 | 采蜜蜂 | Forager Bee | `forager` | 采蜜间隔 -15%，额外保留 1 滴 |
 | 守卫蜂 | Guard Bee | `guard` | 惊退范围 +18%，冷却 -15% |
+| 属性节点 | Attribute node | — | 三选一升级去职业化后的纯能力构筑 |
+| 成就徽章 | Achievement badge | — | 事后授予的事迹（行为×完成程度），徽章集合=身份画像 |
+| 侦察 | Scouting | — | 采集徽章达阶解锁的资深进阶行为 |
+
+## 4.1 四季机制 / Seasonal Mechanics
+
+| 中文 / CN | English / EN | 归属 / Season | 玩法 / Gameplay |
+|-----------|--------------|---------------|-----------------|
+| 授粉 | Pollination | 春 | 花田休眠与新生（花田的馈赠） |
+| 征召 | Conscription | 夏 | 巢口/花区告急事件（被需要的方式） |
+| 储备 | Reserve | 秋 | 季末分配：储备冬蜜 vs 哺育幼虫（为来年投资） |
+| 抱团 | Huddle | 冬 | 体温系统 + 储备消耗 + 侦察解锁（共御严寒） |
 
 ---
 
