@@ -118,12 +118,17 @@ var season_label: Label
 var season_rule: ColorRect
 var energy_change_label: Label
 var energy_feedback_time := 0.0
+# 代价可见性演出：蜜囊续命时体力条短暂提亮，扣蜂巢命时圆点闪红
+var energy_bar_flash_time := 0.0
+var hive_flash_time := 0.0
 var reserve_label: Label
 var season_mechanics
 var hive_reserve := 0
 var larval_boost := 0
 var warmth := 100.0
 var energy_cap_override := 100.0
+# 力竭停顿拍：体力见底先静止展示 0 与损失清单，再回巢重置
+var exhaustion_timer := 0.0
 var cold_warmth_threshold := 15.0
 var allocation_panel: Control
 var allocation_body_label: Label
@@ -694,12 +699,19 @@ func _process(delta: float) -> void:
 	shake = maxf(0.0, shake - delta * 18.0)
 	flash = maxf(0.0, flash - delta * 2.5)
 	energy_feedback_time = maxf(0.0, energy_feedback_time - delta)
+	energy_bar_flash_time = maxf(0.0, energy_bar_flash_time - delta)
+	hive_flash_time = maxf(0.0, hive_flash_time - delta)
 	if phase == "playing":
 		run_elapsed += delta
 		update_game(delta)
 	elif phase == "boss":
 		run_elapsed += delta
 		update_boss(delta)
+	elif phase == "exhausted":
+		# 力竭停顿拍：世界静止，体力条停在 0，随后结算损失并回巢重置
+		exhaustion_timer -= delta
+		if exhaustion_timer <= 0.0:
+			resolve_exhaustion()
 	update_pollen(delta)
 	update_interface()
 	queue_redraw()
@@ -815,8 +827,10 @@ func update_game(delta: float) -> void:
 	update_hive_rest(delta, true)
 	if delivered >= int(data.goal) and phase == "playing":
 		show_between()
-	if bee.energy <= 0.0:
-		fail_expedition()
+	if bee.energy <= 0.0 and phase == "playing":
+		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
+		if not _try_crop_fuel():
+			begin_exhaustion()
 
 func _nearest_enemy_distance() -> float:
 	var min_dist := INF
@@ -1173,11 +1187,51 @@ func fail_expedition() -> void:
 	var lost_honey := carried
 	carried = 0
 	return_honey_to_field(lost_honey, bee.position)
+	# 扣命演出：蜂巢呼吸的圆点闪红——代价必须被看见，而不是右上角悄悄变一个符号
+	hive_flash_time = 1.0
+	if hive_lives <= 0:
+		# 终局失败页保留体力 0 与倒下的位置。此前先回巢重置再判负，
+		# 失败页体力条会显示满格 100，玩家以为体力没耗尽过。
+		bee.active = false
+		show_loss()
+		return
 	bee.reset_for_expedition(Vector2(180, 410))
+	# 力竭归巢不再满体力：蜂群的照料需要时间，回巢停留才靠 hive_rest_per_second 恢复
+	bee.energy = balance_value("player", "post_failure_energy", 45.0)
 	shake = 10.0
 	message = "你没能带回花蜜，蜂巢的呼吸弱了一分。洒落的 %d 滴蜜将孕育返蜜花。" % lost_honey
-	if hive_lives <= 0:
-		show_loss()
+
+# 蜜囊续命：体力见底时先吃掉一滴携带蜜续飞——蜜蜂飞行燃料本就来自蜜囊。
+# 被吃掉的蜜不生成返蜜花：它转化成了飞行本身，仍在能量意义上守恒。
+func _try_crop_fuel() -> bool:
+	if carried <= 0:
+		return false
+	carried -= 1
+	bee.energy = balance_value("player", "crop_fuel_refill", 30.0)
+	show_energy_change(bee.energy)
+	# 续命必须被看见：体力条短暂提亮，配合飘字说明这 30 点是吃出来的
+	energy_bar_flash_time = 0.8
+	flash = 0.28
+	sound.play_cue("harvest")
+	message = "翅膀几乎停摆——你吞下了蜜囊里的一滴蜜。它本是要带回蜂巢的。"
+	return true
+
+# 力竭停顿拍：蜜尽才真正倒下。短暂静止 + 画面转暗，让玩家看清
+# 体力条归零与损失清单（此前同帧重置导致体力条从未显示过 0）。
+func begin_exhaustion() -> void:
+	phase = "exhausted"
+	bee.active = false
+	bee.velocity = Vector2.ZERO
+	bee.has_target = false
+	exhaustion_timer = balance_value("player", "exhaustion_beat_seconds", 1.1)
+	shake = 10.0
+	sound.play_cue("loss")
+	message = "翅膀停在了半空。携带的 %d 滴蜜将洒落花田，蜂巢的呼吸弱了一分……" % carried
+
+func resolve_exhaustion() -> void:
+	fail_expedition()
+	if phase == "exhausted":
+		phase = "playing"
 
 func show_between() -> void:
 	phase = "between"
@@ -1467,8 +1521,11 @@ func update_boss(delta: float) -> void:
 	update_hive_rest(delta, false)
 
 	if bee.energy <= 0.0:
+		if _try_crop_fuel():
+			return
 		# 失律者战败扣 1 命；若归律前蜂巢已散，走全轮结算页
 		hive_lives -= 1
+		hive_flash_time = 1.0
 		message = "你没能完成调律，蜂群的节律又弱了一分。"
 		shake = 10.0
 		sound.play_cue("loss")
@@ -1715,12 +1772,24 @@ func update_interface() -> void:
 	else:
 		delivered_label.text = "%d / %d" % [delivered, int(data.goal)]
 	energy_label.text = str(roundi(bee.energy))
-	energy_bar_fill.size.x = 166.0 * clampf(bee.energy / 100.0, 0.0, 1.0)
+	# 分母跟随实际上限（越冬抱团可把上限提到 100 以上），避免条提前满格
+	var energy_cap := maxf(100.0, energy_cap_override)
+	energy_bar_fill.size.x = 166.0 * clampf(bee.energy / energy_cap, 0.0, 1.0)
+	# 蜜囊续命提亮：让「这 30 点体力是吃掉一滴蜜换来的」在体力条上可见
+	if energy_bar_flash_time > 0.0:
+		energy_bar_fill.color = Color("ddb84c").lerp(Color("fff6cf"), clampf(energy_bar_flash_time * 1.8, 0.0, 1.0))
+	else:
+		energy_bar_fill.color = Color("ddb84c")
 	energy_change_label.modulate.a = clampf(energy_feedback_time * 2.0, 0.0, 1.0)
 	if sense_button:
 		sense_button.disabled = false
 		sense_button.text = "动作"
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
+	# 扣命闪红：从红渐褪回白，与震动/音效一起把损失推到台前
+	if hive_flash_time > 0.0:
+		hive_label.modulate = Color("e5604f").lerp(Color.WHITE, 1.0 - clampf(hive_flash_time * 1.6, 0.0, 1.0))
+	else:
+		hive_label.modulate = Color.WHITE
 	reserve_label.text = str(hive_reserve)
 	message_label.text = message
 	if boss_context:
@@ -1991,6 +2060,9 @@ func _draw() -> void:
 		draw_string(zh_font, flower.position + Vector2(-30, -42), "按住空格采蜜", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, deep)
 	if flash > 0:
 		draw_rect(WORLD, Color("fff1b0", flash * 0.25))
+	if phase == "exhausted":
+		# 力竭停顿拍：世界转暗，唯一的光留给体力条上的 0
+		draw_rect(WORLD, Color("10160c", 0.5))
 	season_mechanics.draw()
 	draw_set_transform(Vector2.ZERO)
 
