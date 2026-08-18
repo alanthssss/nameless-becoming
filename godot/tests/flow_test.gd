@@ -55,6 +55,33 @@ func run_test() -> void:
 	game.carried = 2
 	game.fail_expedition()
 	expect(game.total_recoverable_honey() == conserved_before, "体力耗尽后花蜜没有回到生态循环")
+	# 蜜囊续命：体力见底先吃 1 滴携带蜜续飞，被吃掉的蜜不生成返蜜花
+	game.carried = 2
+	game.bee.energy = 0.0
+	var eaten_before: int = game.total_recoverable_honey()
+	expect(game._try_crop_fuel() and game.carried == 1 and game.bee.energy > 0.0, "体力见底未消耗携带蜜续飞")
+	expect(game.total_recoverable_honey() == eaten_before - 1, "吃蜜续飞应恰好消耗 1 滴可回收蜜（转化为飞行）")
+	game.carried = 0
+	game.bee.energy = 0.0
+	expect(not game._try_crop_fuel(), "蜜尽后不应再续命")
+	# 力竭停顿拍：蜜尽才真正倒下，世界静止、体力归零可见，随后回巢重置
+	game.begin_exhaustion()
+	expect(game.phase == "exhausted" and not game.bee.active and game.bee.energy == 0.0, "力竭未进入停顿拍（世界应静止且体力为 0）")
+	game.resolve_exhaustion()
+	expect(game.phase == "playing" and game.bee.active and game.bee.energy > 0.0, "力竭停顿后未回巢重置")
+	expect(game.bee.energy < 100.0, "力竭归巢不应满体力（蜂群照料需要时间）")
+	# 终局失败：最后一命力竭直接进失败页，体力条应停在 0 而不是先被重置为满
+	game.hive_lives = 1
+	game.carried = 0
+	game.bee.energy = 0.0
+	game.begin_exhaustion()
+	game.resolve_exhaustion()
+	expect(game.phase == "lost" and game.bee.energy == 0.0, "终局失败页体力条未停在 0（回巢重置先于判负）")
+	# 恢复现场，不干扰后续用例
+	game.phase = "playing"
+	game.bee.active = true
+	game.hive_lives = 3
+	game.bee.energy = 60.0
 	game.carried = 1
 	var before_decoy: int = game.total_recoverable_honey()
 	game.drop_honey_decoy()
