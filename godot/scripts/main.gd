@@ -180,6 +180,16 @@ func season_index_of(index: int) -> int:
 func is_boss_stage(index: int) -> bool:
 	return index >= 0 and index < stages.size() and stages[index].has("boss")
 
+# 按节点查失律者数据：boss 关用 stages[index].boss，循环终点默认回到失律之熊
+func boss_data_for_stage(index: int) -> Dictionary:
+	var boss_id := "bear"
+	if is_boss_stage(index):
+		boss_id = String(stages[index].boss)
+	for entry in boss_catalog:
+		if String(entry.get("id", "")) == boss_id:
+			return entry
+	return {}
+
 func load_upgrade_data() -> void:
 	var file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
 	if file == null:
@@ -523,6 +533,9 @@ func spawn_stage(index: int) -> void:
 	queue_redraw()
 
 func on_overlay_button() -> void:
+	# 相位护栏：异常状态下点穿弹窗不推进关卡
+	if not ["intro", "won", "lost", "paused", "boss_victory", "between"].has(phase):
+		return
 	match phase:
 		"intro", "won", "lost": start_game()
 		"paused": toggle_pause()
@@ -957,15 +970,27 @@ func show_upgrade_choices(data: Dictionary) -> void:
 			break
 	if not any_available:
 		overlay_title.text = "%s完成 · 蜂巢安定" % data.name
-		overlay_body.text = "三种分工都已成熟。蜂群按既定的节奏继续运转。"
+		overlay_body.text = "三种分工都已成熟。蜂群按既定的节奏继续运转。" + next_boss_hint()
 		overlay_button.text = "继续下一个节令"
 		overlay_button.visible = true
 		set_upgrade_buttons_visible(false)
 		return
 	overlay_title.text = "%s完成 · 蜂巢成长" % data.name
-	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。"
+	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。" + next_boss_hint()
 	overlay_button.visible = false
 	set_upgrade_buttons_visible(true)
+
+# 通关横幅只写「刚刚完成的节令」，玩家无从知道下一个节点是失律者关卡——
+# 在蜂巢成长界面直接预告，消除「惊蛰完成却撞上春分 Boss」的错位感
+func next_boss_hint() -> String:
+	if stage_index + 1 >= stages.size():
+		return ""
+	if not is_boss_stage(stage_index + 1):
+		return ""
+	var next: Dictionary = stages[stage_index + 1]
+	var next_boss := boss_data_for_stage(stage_index + 1)
+	var boss_name := String(next_boss.get("name", "失律者"))
+	return "\n\n下一个节令是正色节点：%s——%s盘踞其上，调律在等着你。" % [String(next.name), boss_name]
 
 func show_allocation_panel() -> void:
 	overlay_title.text = "白露 · 为来年投资"
@@ -1031,18 +1056,14 @@ func start_boss() -> void:
 		push_error("失律者数据缺失，无法开启调律遭遇")
 		return
 	# 失律者由所在节气节点决定；循环终点（大雪之后）默认回到失律之熊
-	var boss_id := "bear"
-	if is_boss_stage(stage_index):
-		boss_id = String(stages[stage_index].boss)
-	current_boss_data = {}
-	for i in boss_catalog.size():
-		if String(boss_catalog[i].get("id", "")) == boss_id:
-			current_boss_index = i
-			current_boss_data = boss_catalog[i]
-			break
+	current_boss_data = boss_data_for_stage(stage_index)
 	if current_boss_data.is_empty():
-		push_error("失律者数据中找不到 %s" % boss_id)
+		push_error("失律者数据中找不到本节点的失律者")
 		return
+	for i in boss_catalog.size():
+		if boss_catalog[i] == current_boss_data:
+			current_boss_index = i
+			break
 	var data: Dictionary = current_boss_data
 	phase = "boss"
 	sound.set_season(int(data.season_index))
@@ -1376,13 +1397,16 @@ func update_interface() -> void:
 	if stages.is_empty():
 		return
 	var data: Dictionary = stages[stage_index]
-	if phase == "boss" and not current_boss_data.is_empty():
+	# 失律者上下文从 boss 延续到 boss_victory：调律完成的瞬间，
+	# 顶栏与侧栏不应突然切回关卡数据（春分无 goal/flowers，会显示「目标 · 0 滴」的空状态）
+	var boss_context := (phase == "boss" or phase == "boss_victory") and not current_boss_data.is_empty()
+	if boss_context:
 		# 失律者关卡显示其盘踞的正色节点（熊的节点是循环终点：冬至）
 		term_label.text = "%s · %s" % [data.season, String(current_boss_data.get("term", data.name))]
 	else:
 		term_label.text = "%s · %s" % [data.season, data.name]
 	carried_label.text = str(carried)
-	if phase == "boss" and not current_boss_data.is_empty():
+	if boss_context:
 		delivered_label.text = "调律 %d / %d" % [int(boss.hits), int(current_boss_data.required_tunings)]
 	else:
 		delivered_label.text = "%d / %d" % [delivered, int(data.goal)]
@@ -1395,7 +1419,7 @@ func update_interface() -> void:
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	reserve_label.text = str(hive_reserve)
 	message_label.text = message
-	if phase == "boss" and not current_boss_data.is_empty():
+	if boss_context:
 		var boss_data: Dictionary = current_boss_data
 		season_label.text = String(boss_data.name)
 		detail_label.text = "%s\n\n▸ 调律  %d / %d\n\n引向共鸣点\n再以震翼调律" % [String(boss_data.line), int(boss.hits), int(boss_data.required_tunings)]
@@ -1420,11 +1444,27 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle_pause()
 		get_viewport().set_input_as_handled()
 		return
+	# 弹窗阶段允许键盘确认（Enter/空格）：切走程序回来后不依赖鼠标重按按钮
+	if event.is_action_pressed("ui_accept") and overlay.visible and overlay_button.visible:
+		if phase == "boss_victory" or phase == "won" or phase == "lost" or phase == "intro":
+			on_overlay_button()
+			get_viewport().set_input_as_handled()
+			return
 	if phase != "playing" and phase != "boss":
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if WORLD.has_point(event.position):
 			bee.set_move_target(event.position)
+
+# 切走程序时自动暂停（体力照扣、失律者照追是设计事故）；
+# 切回来时把焦点交还主按钮，键盘 Enter 可直接继续。
+# toggle_pause 内部有相位护栏，between/boss_victory 等静态界面不会被误暂停覆盖。
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		toggle_pause()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		if overlay_button != null and overlay.visible and overlay_button.visible:
+			overlay_button.grab_focus()
 
 func on_sense_started() -> void:
 	message = "触角捕捉到蜜量、敌虫警戒范围和一条相对安全的采集方向。"
@@ -1568,7 +1608,7 @@ func _draw() -> void:
 		draw_thrush(thrush)
 	for bear_unit in bears:
 		draw_bear_unit(bear_unit)
-	if phase == "boss":
+	if phase == "boss" or phase == "boss_victory":
 		for bloom in tuning_blooms:
 			draw_tuning_bloom(bloom)
 		draw_boss(boss)

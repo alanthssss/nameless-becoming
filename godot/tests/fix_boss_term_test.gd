@@ -1,0 +1,66 @@
+# 修复验证：boss 上下文延续到 boss_victory + 通关横幅预告失律者节点 + 相位护栏
+extends SceneTree
+
+var failures: Array[String] = []
+
+func _init() -> void:
+	call_deferred("run_test")
+
+func expect(condition: bool, message: String) -> void:
+	if not condition:
+		failures.append(message)
+
+func run_test() -> void:
+	var packed := load("res://main.tscn") as PackedScene
+	var game = packed.instantiate()
+	root.add_child(game)
+	await process_frame
+	game.persistence_enabled = false
+
+	# --- 场景 1：惊蛰(index 5)通关 → 蜂巢成长界面应预告春分失律之蚊 ---
+	game.spawn_stage(5)
+	await process_frame
+	game.show_between()
+	await process_frame
+	expect(game.phase == "between", "惊蛰通关后未进入 between")
+	expect("春分" in game.overlay_body.text and "失律之蚊" in game.overlay_body.text,
+		"通关横幅未预告下一个正色节点（春分 · 失律之蚊）：%s" % game.overlay_body.text)
+
+	# --- 场景 2：春分 boss 通关 → boss_victory 期间顶栏/侧栏保持失律者上下文 ---
+	game.spawn_stage(6)
+	await process_frame
+	expect(game.phase == "boss", "春分节点未进入 boss 相位")
+	game.boss.hits = 3
+	game.show_boss_victory()
+	await process_frame
+	expect(game.phase == "boss_victory", "调律完成后未进入 boss_victory")
+	expect(game.term_label.text == "春 · 春分", "boss_victory 顶栏节令错误：%s" % game.term_label.text)
+	expect(game.season_label.text == "失律之蚊", "boss_victory 侧栏未保持失律者名称：%s" % game.season_label.text)
+	expect(game.delivered_label.text == "调律 3 / 3", "boss_victory 调律计数错误：%s" % game.delivered_label.text)
+
+	# --- 场景 3：boss_victory 点继续 → 进入清明（普通关） ---
+	game.on_overlay_button()
+	await process_frame
+	expect(game.phase == "playing" and game.stage_index == 7, "boss_victory 后未进入清明")
+
+	# --- 场景 4：相位护栏：playing 状态下点穿 overlay_button 不重置游戏 ---
+	var stage_before: int = game.stage_index
+	game.on_overlay_button()
+	await process_frame
+	expect(game.phase == "playing" and game.stage_index == stage_before, "playing 相位点穿按钮错误推进关卡")
+
+	# --- 场景 5：focus out 自动暂停 / focus in 不误伤静态界面 ---
+	game.phase = "playing"
+	game._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.phase == "paused", "切走程序未自动暂停：%s" % game.phase)
+	game.phase = "boss_victory"
+	game._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.phase == "boss_victory", "boss_victory 下 focus out 被误暂停：%s" % game.phase)
+
+	if failures.is_empty():
+		print("FIX TEST PASSED: boss 上下文延续 / 失律者预告 / 相位护栏 / focus 自动暂停 全部通过")
+	else:
+		for failure in failures:
+			printerr("FAIL: " + failure)
+		print("FIX TEST FAILED: %d 项未通过" % failures.size())
+	quit(1 if not failures.is_empty() else 0)
