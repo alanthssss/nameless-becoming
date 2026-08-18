@@ -1,6 +1,7 @@
 extends SceneTree
 
-const REQUIRED_KEYS := ["name", "season", "yin", "yang", "goal", "flowers", "enemies", "ants", "energy_drain", "nectar_scale", "colors", "line"]
+const REQUIRED_KEYS := ["name", "season", "yin", "yang", "goal", "flowers", "enemies", "ants", "energy_drain", "nectar_scale", "colors", "line", "mechanics"]
+const EXPECTED_MECHANICS := ["pollination", "conscription", "reserve", "huddle"]
 
 func _init() -> void:
 	var failures: Array[String] = []
@@ -34,6 +35,8 @@ func _init() -> void:
 					failures.append("节令 %d 掠蜜蚁数量不能为负" % index)
 				if stage.has("colors") and (not stage.colors is Array or stage.colors.size() != 4):
 					failures.append("节令 %d 必须配置 4 个颜色" % index)
+				if not stage.has("mechanics") or not stage.mechanics is Array or stage.mechanics.size() != 1 or stage.mechanics[0] != EXPECTED_MECHANICS[index]:
+					failures.append("节令 %d 机制槽位错误（应为 %s）" % [index, EXPECTED_MECHANICS[index]])
 
 	var upgrade_file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
 	if upgrade_file == null:
@@ -53,11 +56,19 @@ func _init() -> void:
 		failures.append("无法读取 balance.json")
 	else:
 		var balance = JSON.parse_string(balance_file.get_as_text())
-		for section in ["player", "mosquito", "ant", "boss"]:
+		for section in ["player", "mosquito", "ant", "boss", "mechanics"]:
 			if not balance is Dictionary or not balance.has(section) or not balance[section] is Dictionary:
 				failures.append("平衡参数缺少分区 %s" % section)
 		if balance is Dictionary and balance.has("boss") and float(balance.boss.get("required_tunings", 0)) <= 0:
 			failures.append("Boss 调律次数必须为正数")
+		if balance is Dictionary and balance.has("mechanics"):
+			for mechanic_id in EXPECTED_MECHANICS:
+				if not balance.mechanics.has(mechanic_id) or not balance.mechanics[mechanic_id] is Dictionary:
+					failures.append("机制参数缺少 %s 分区" % mechanic_id)
+
+	for mechanic_path in ["res://scripts/mechanics/season_mechanics.gd", "res://scripts/mechanics/pollination_mechanic.gd", "res://scripts/mechanics/conscription_mechanic.gd", "res://scripts/mechanics/reserve_mechanic.gd", "res://scripts/mechanics/huddle_mechanic.gd"]:
+		if load(mechanic_path) == null:
+			failures.append("季节机制脚本无法加载：%s" % mechanic_path)
 
 	var scene := load("res://main.tscn")
 	if scene == null:

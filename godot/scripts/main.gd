@@ -5,6 +5,7 @@ const HIVE_X := 132.0
 const HIVE_SAFE_X := 225.0
 const FLOWER_COLORS := [Color("f2d66f"), Color("e9aab1"), Color("a995c9")]
 const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"]
+const SeasonMechanicsScript := preload("res://scripts/mechanics/season_mechanics.gd")
 
 var stages: Array = []
 var balance: Dictionary = {}
@@ -67,6 +68,21 @@ var energy_bar: ColorRect
 var energy_bar_fill: ColorRect
 var energy_change_label: Label
 var energy_feedback_time := 0.0
+var reserve_label: Label
+var season_mechanics
+var hive_reserve := 0
+var larval_boost := 0
+var warmth := 100.0
+var energy_cap_override := 100.0
+var cold_warmth_threshold := 15.0
+var allocation_panel: Control
+var allocation_body_label: Label
+var allocation_left_label: Label
+var allocation_right_label: Label
+var allocation_slider: HSlider
+var allocation_pending := false
+var allocation_harvest := 0
+var allocation_fraction := 0.5
 
 func _ready() -> void:
 	zh_font = load("res://fonts/hivebound_font.ttf")
@@ -86,6 +102,9 @@ func _ready() -> void:
 	add_child(sound)
 	sound.set_enabled(save_manager.sound_enabled)
 	build_interface()
+	season_mechanics = SeasonMechanicsScript.new()
+	season_mechanics.configure(self)
+	add_child(season_mechanics)
 	show_intro()
 	queue_redraw()
 
@@ -215,6 +234,7 @@ func build_interface() -> void:
 	energy_change_label = make_label(energy_label.get_parent(), "", Vector2(50, 4), Vector2(48, 24), 12, Color("b34b3f"))
 	energy_change_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hive_label = make_stat(ui, "蜂巢呼吸", Vector2(634, 82))
+	reserve_label = make_stat(ui, "公共储备", Vector2(824, 82))
 
 	var side := ColorRect.new()
 	side.color = Color("f3eedb", 0.94)
@@ -267,6 +287,40 @@ func build_interface() -> void:
 		choice.visible = false
 		overlay.add_child(choice)
 		upgrade_buttons.append(choice)
+
+	allocation_panel = Control.new()
+	allocation_panel.position = Vector2(150, 70)
+	allocation_panel.size = Vector2(670, 400)
+	allocation_panel.visible = false
+	overlay.add_child(allocation_panel)
+	var allocation_bg := ColorRect.new()
+	allocation_bg.color = Color("16281f", 0.97)
+	allocation_bg.size = allocation_panel.size
+	allocation_panel.add_child(allocation_bg)
+	var allocation_title := make_label(allocation_panel, "秋分 · 为来年投资", Vector2(0, 26), Vector2(670, 44), 28, Color("fff8d9"))
+	allocation_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	allocation_body_label = make_label(allocation_panel, "", Vector2(60, 96), Vector2(550, 66), 15, Color("d8ddc9"))
+	allocation_body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	allocation_left_label = make_label(allocation_panel, "", Vector2(60, 176), Vector2(190, 30), 17, Color("f4d893"))
+	allocation_right_label = make_label(allocation_panel, "", Vector2(420, 176), Vector2(190, 30), 17, Color("d8ddc9"))
+	allocation_right_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	allocation_slider = HSlider.new()
+	allocation_slider.position = Vector2(100, 224)
+	allocation_slider.size = Vector2(470, 28)
+	allocation_slider.min_value = 0.0
+	allocation_slider.max_value = 100.0
+	allocation_slider.step = 25.0
+	allocation_slider.value = 50.0
+	allocation_slider.value_changed.connect(func(v: float): allocation_fraction = v / 100.0; refresh_allocation_labels())
+	allocation_panel.add_child(allocation_slider)
+	var allocation_confirm := Button.new()
+	allocation_confirm.text = "确认分配"
+	allocation_confirm.position = Vector2(255, 296)
+	allocation_confirm.size = Vector2(160, 52)
+	allocation_confirm.add_theme_font_size_override("font_size", 17)
+	allocation_confirm.pressed.connect(confirm_allocation)
+	allocation_panel.add_child(allocation_confirm)
+	make_label(allocation_panel, "向左为越冬留足储备，向右为来年哺育更多幼虫。没有对错，只有不同的活法。", Vector2(90, 368), Vector2(490, 24), 11, Color("aab5a0")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	make_label(overlay, "四季搜打撤 · 核心交互测试", Vector2(300, 38), Vector2(370, 25), 12, Color("dfbd54")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	if zh_font != null:
@@ -376,6 +430,9 @@ func spawn_stage(index: int) -> void:
 			"flee_time": 0.0,
 			"stolen_honey": 0
 		})
+	if index != 3:
+		energy_cap_override = 100.0
+	season_mechanics.start_stage(index)
 	message = "%s：%s" % [data.name, data.line]
 	update_interface()
 	queue_redraw()
@@ -416,6 +473,12 @@ func update_game(delta: float) -> void:
 		message = "急转掠过攻击线：短暂避开碰撞。"
 	if Input.is_action_just_pressed("decoy"):
 		drop_honey_decoy()
+	# 冬季侦察：摇摆舞解锁后缩短寻迹冷却
+	if Input.is_action_just_pressed("sense"):
+		var huddle = season_mechanics.mechanic_by_id("huddle")
+		if huddle != null and huddle.is_scouting_ready():
+			bee.sense_cooldown = huddle.scout_cooldown_value()
+			message = "摇摆舞传来花源方位：蜜最丰的花田已标出。"
 
 	var nearby := nearest_flower(46.0)
 	if Input.is_action_pressed("harvest") and nearby >= 0 and bee.energy > 0:
@@ -429,6 +492,7 @@ func update_game(delta: float) -> void:
 			carried += 1
 			sound.play_cue("harvest")
 			spawn_pollen(flower.position)
+			season_mechanics.on_harvest(nearby)
 			message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
 	else:
 		harvest_clock = 0.0
@@ -453,10 +517,12 @@ func update_game(delta: float) -> void:
 					message = "掠蜜蚁受惊后丢下了 %d 滴蜜，花田会重新吸收它们。" % int(ant.stolen_honey)
 					ant.stolen_honey = 0
 				ants[i] = ant
+		season_mechanics.on_repel_success()
 		message = "急促的震翼把附近敌虫推离了航线。"
 
 	update_mosquitoes(delta)
 	update_ants(delta)
+	season_mechanics.process(delta)
 	update_hive_rest(delta, true)
 	if delivered >= int(data.goal) and phase == "playing":
 		show_between()
@@ -535,7 +601,11 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 	if not inside:
 		was_in_hive = false
 		return
-	bee.energy = minf(100.0, bee.energy + balance_value("player", "hive_rest_per_second", 36.0) * delta)
+	season_mechanics.on_home(carried if deposit_honey else 0, delta)
+	var rest_rate := balance_value("player", "hive_rest_per_second", 36.0)
+	if stage_index == 3 and warmth <= cold_warmth_threshold:
+		rest_rate *= 0.5
+	bee.energy = minf(energy_cap_override, bee.energy + rest_rate * delta)
 	if deposit_honey and carried > 0:
 		var amount := carried
 		delivered += amount
@@ -565,10 +635,51 @@ func show_between() -> void:
 	var data: Dictionary = stages[stage_index]
 	if persistence_enabled:
 		save_manager.record_stage(stage_index + 1)
+	season_mechanics.on_stage_complete()
+	# 秋分储备机制：本季的蜜需要分配（储冬蜜 / 哺育幼虫）
+	var reserve_m = season_mechanics.mechanic_by_id("reserve")
+	if reserve_m != null and reserve_m.pending_allocation:
+		allocation_pending = true
+		allocation_harvest = int(reserve_m.pending_harvest)
+		show_allocation_panel()
+	else:
+		hive_reserve += delivered
+		show_upgrade_choices(data)
+
+func show_upgrade_choices(data: Dictionary) -> void:
 	overlay_title.text = "%s完成 · 蜂巢成长" % data.name
 	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。"
 	overlay_button.visible = false
 	set_upgrade_buttons_visible(true)
+
+func show_allocation_panel() -> void:
+	overlay_title.text = "秋分 · 为来年投资"
+	overlay_body.text = ""
+	set_upgrade_buttons_visible(false)
+	overlay_button.visible = false
+	allocation_body_label.text = "本季带回 %d 滴蜜。储冬蜜撑起越冬；哺育的幼虫将成为来年劳动力。" % allocation_harvest
+	allocation_panel.visible = true
+	allocation_slider.value = 50.0
+	refresh_allocation_labels()
+
+func refresh_allocation_labels() -> void:
+	if allocation_panel == null or not allocation_panel.visible:
+		return
+	var fed := roundi(allocation_harvest * allocation_fraction)
+	var stored := allocation_harvest - fed
+	allocation_left_label.text = "储冬蜜　%02d 滴" % stored
+	allocation_right_label.text = "哺育幼虫　%02d 滴" % fed
+
+func confirm_allocation() -> void:
+	if phase != "between" or not allocation_pending:
+		return
+	var reserve_m = season_mechanics.mechanic_by_id("reserve")
+	if reserve_m == null:
+		return
+	reserve_m.apply_split(allocation_fraction)
+	allocation_pending = false
+	allocation_panel.visible = false
+	show_upgrade_choices(stages[stage_index])
 
 func set_upgrade_buttons_visible(value: bool) -> void:
 	for i in upgrade_buttons.size():
@@ -703,7 +814,7 @@ func nearest_flower(radius: float) -> int:
 	var best_distance := radius
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
-		if int(flower.nectar) <= 0:
+		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
 			continue
 		var current := bee.position.distance_to(flower.position)
 		if current < best_distance:
@@ -716,7 +827,7 @@ func nearest_flower_to(origin: Vector2) -> int:
 	var best_distance := INF
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
-		if int(flower.nectar) <= 0:
+		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
 			continue
 		var current := origin.distance_to(flower.position)
 		if current < best_distance:
@@ -825,11 +936,15 @@ func update_interface() -> void:
 		sense_button.disabled = bee.sense_cooldown > 0.0
 		sense_button.text = "U %.1f" % bee.sense_cooldown if bee.sense_cooldown > 0.0 else "U 寻迹"
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
+	reserve_label.text = str(hive_reserve)
 	message_label.text = message
 	if phase == "boss":
 		detail_label.text = "失律之蚊\n\n只索取，\n不流转。\n\n调律  %d / 3\n\n引向花粉团\n再以震翼共鸣" % int(boss.hits)
 	else:
-		detail_label.text = "%s\n\n%s\n\n阴 %d  ·  阳 %d\n目标  %d 滴\n蚊群  %s\n掠蜜蚁  %s" % [data.name, data.line, int(data.yin), int(data.yang), int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants))]
+		var winter_note := ""
+		if stage_index == 3:
+			winter_note = "\n\n温暖  %d%%\n储备  %d 滴" % [roundi(warmth), hive_reserve]
+		detail_label.text = "%s\n\n%s\n\n阴 %d  ·  阳 %d\n目标  %d 滴\n蚊群  %s\n掠蜜蚁  %s%s" % [data.name, data.line, int(data.yin), int(data.yang), int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants)), winter_note]
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -850,7 +965,7 @@ func best_foraging_target() -> int:
 	var best_score := -INF
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
-		if int(flower.nectar) <= 0:
+		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
 			continue
 		var score := float(flower.nectar) * 42.0 - bee.position.distance_to(flower.position) * 0.12
 		for mosquito in mosquitoes:
@@ -975,7 +1090,7 @@ func _draw() -> void:
 		var recommended := best_foraging_target()
 		for i in flowers.size():
 			var flower: Dictionary = flowers[i]
-			if int(flower.nectar) <= 0:
+			if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
 				continue
 			var is_best := i == recommended
 			draw_line(bee.position, flower.position, Color("fff0a0", 0.42 if is_best else 0.12), 3.0 if is_best else 1.0)
@@ -996,13 +1111,22 @@ func _draw() -> void:
 		draw_string(zh_font, flower.position + Vector2(-30, -42), "按住空格采蜜", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, deep)
 	if flash > 0:
 		draw_rect(WORLD, Color("fff1b0", flash * 0.25))
+	season_mechanics.draw()
 	draw_set_transform(Vector2.ZERO)
 
 func draw_flower(flower: Dictionary) -> void:
 	var pos: Vector2 = flower.position
-	var alive := int(flower.nectar) > 0
+	var sleeping := bool(flower.get("sleeping", false))
+	var newly_open := bool(flower.get("newly_open", false))
+	var alive := int(flower.nectar) > 0 and not sleeping
 	var recovery := bool(flower.get("recovery", false))
 	var alpha := 1.0 if alive else 0.28
+	if sleeping:
+		draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), 0.35), 3)
+		draw_circle(pos + Vector2(0, 14), 5, Color("3d4a3a", 0.55))
+		draw_arc(pos, 13, 0, TAU, 16, Color(stage_color(2), 0.4), 2)
+		draw_string(zh_font, pos + Vector2(-15, 66), "休眠", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color(stage_color(2), 0.8))
+		return
 	draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), alpha), 3)
 	for petal in 5:
 		var angle := float(petal) * TAU / 5.0 + float(flower.phase)
@@ -1011,6 +1135,9 @@ func draw_flower(flower: Dictionary) -> void:
 	if recovery and alive:
 		draw_arc(pos, 24 + sin(elapsed * 4.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.9), 3)
 		draw_string(zh_font, pos + Vector2(-22, 66), "返蜜", HORIZONTAL_ALIGNMENT_CENTER, 44, 11, Color("fff1a8"))
+	if newly_open and alive:
+		draw_arc(pos, 26 + sin(elapsed * 5.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.8), 2)
+		draw_string(zh_font, pos + Vector2(-15, 66), "新开", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color("fff1a8"))
 	if not alive:
 		draw_line(pos + Vector2(-14, 49), pos + Vector2(14, 49), Color(stage_color(2), 0.45), 2)
 
