@@ -62,6 +62,7 @@ var flash := 0.0
 var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
 var action_hold_time := 0.0
 var action_decoy_fired := false
+var action_was_harvesting := false
 var last_dir_tap := {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
 const DOUBLE_TAP_WINDOW := 0.25
 const DECOY_HOLD_THRESHOLD := 0.5
@@ -373,7 +374,7 @@ func build_interface() -> void:
 	sense_button = make_mouse_action(side, "动作", "action", Vector2(14, 402), true, Vector2(135, 36))
 	make_mouse_action(side, "归巢", "return_hive", Vector2(155, 402), false, Vector2(62, 36))
 	make_label(side, "近花采蜜 · 近敌惊退 · 静止寻迹", Vector2(14, 447), Vector2(200, 18), 10, Color("68705d"))
-	make_label(side, "长按携蜜=投诱饵 · 双击方向=急转", Vector2(14, 465), Vector2(200, 18), 10, Color("68705d"))
+	make_label(side, "松开后长按=投诱饵 · 双击方向=急转", Vector2(14, 465), Vector2(200, 18), 10, Color("68705d"))
 	make_label(side, "持续飞行=自动振翅加速", Vector2(14, 483), Vector2(200, 18), 10, Color("68705d"))
 	# 历史信息是跨 run 的持久状态，留给 HUD 侧栏底部常驻显示——属于状态不属于弹窗
 	var meter_rule := ColorRect.new()
@@ -392,7 +393,7 @@ func build_interface() -> void:
 	tips_background.position = Vector2(34, 684)
 	tips_background.size = Vector2(970, 36)
 	ui.add_child(tips_background)
-	var tips := make_label(ui, "WASD 飞行（持续飞=振翅加速） ｜ 空格 动作（近花采/近敌退/静止寻/长按诱饵） ｜ Q 归巢 ｜ 双击方向 急转", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
+	var tips := make_label(ui, "WASD 飞行（持续飞=振翅加速） ｜ 空格 动作（近花采/近敌退/静止寻/松开后长按诱饵） ｜ Q 归巢 ｜ 双击方向 急转", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
 	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	overlay = ColorRect.new()
@@ -508,7 +509,7 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "WASD 飞向花朵，空格动作。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n长按携蜜=投诱饵 · 双击方向=急转 · Q=归巢"
+	overlay_body.text = "WASD 飞向花朵，空格动作。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n松开后长按=投诱饵 · 双击方向=急转 · Q=归巢"
 	overlay_button.text = "飞入冬至"
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
@@ -728,6 +729,7 @@ func update_game(delta: float) -> void:
 	if Input.is_action_just_pressed("action"):
 		action_hold_time = 0.0
 		action_decoy_fired = false
+		action_was_harvesting = false
 		# 优先级：近敌→惊退 > 静止→寻迹
 		if near_enemy and nearby < 0:
 			_do_repel()
@@ -774,8 +776,9 @@ func update_game(delta: float) -> void:
 				# 应用加成（花蜜不减反增）
 				flower.nectar = int(flower.nectar) + bonus_nectar
 				flowers[nearby] = flower
-				carried += 1
-				sound.play_cue("harvest")
+			carried += 1
+			action_was_harvesting = true
+			sound.play_cue("harvest")
 				spawn_pollen(flower.position)
 				var msg_before := message
 				season_mechanics.on_harvest(nearby)
@@ -787,13 +790,14 @@ func update_game(delta: float) -> void:
 					message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
 				last_harvest_index = nearby
 				last_harvest_time = elapsed
-		elif not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy:
-			# 长按空格 + 携蜜 + 无花无敌 = 投蜜诱饵
+		elif not action_was_harvesting and not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy:
+			# 长按空格 + 携蜜 + 无花无敌 = 投蜜诱饵（采过蜜的同一按键不会触发，需松开重按）
 			action_decoy_fired = true
 			drop_honey_decoy()
 	else:
 		action_hold_time = 0.0
 		action_decoy_fired = false
+		action_was_harvesting = false
 		harvest_clock = 0.0
 
 	update_mosquitoes(delta)
@@ -1824,7 +1828,7 @@ func toggle_pause() -> void:
 	overlay.visible = true
 	set_upgrade_buttons_visible(false)
 	overlay_title.text = "蜂翼暂歇"
-	overlay_body.text = "当前进度已自动保存。\n按 Esc 或下方按钮继续。"
+	overlay_body.text = "当前进度已自动保存。\n点击下方按钮继续，按 Esc 退出。"
 	overlay_button.visible = true
 	overlay_button.text = "继续出巢"
 	set_secondary_link("或者退出游戏", true)
