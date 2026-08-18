@@ -80,11 +80,12 @@ func spawn_new_flower() -> void:
 		"id": 2000 + extra_count,
 		"position": position,
 		"nectar": new_flower_nectar,
+		"max_nectar": new_flower_nectar,
 		"kind": extra_count % 3,
 		"phase": 0.0,
 		"recovery": false,
+		"type": "nectar_bloom",
 		"sleep_timer": sleep_seconds,
-		"max_nectar": new_flower_nectar,
 		"newly_open": true,
 		"pollinated": false,
 		"sleeping": false
