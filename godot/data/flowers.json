@@ -1,0 +1,34 @@
+{
+  "spring": {
+    "types": [
+      {"id": "nectar_bloom", "nectar_base": 3, "weight": 0.40},
+      {"id": "first_bloom", "nectar_base": 2, "triggers_growth": true, "weight": 0.30},
+      {"id": "chain_bloom", "nectar_base": 2, "weight": 0.30}
+    ],
+    "pollen_transfer": {"bonus": 1, "window_s": 2.0},
+    "chain_bloom": {"bonus": 1, "window_s": 2.0, "cap": 3, "range_px": 120}
+  },
+  "summer": {
+    "types": [
+      {"id": "nectar_bloom", "nectar_base": 3, "weight": 0.30},
+      {"id": "peak_bloom", "nectar_base": 5, "weight": 0.50},
+      {"id": "cascade_bloom", "nectar_base": 7, "weight": 0.20}
+    ]
+  },
+  "autumn": {
+    "types": [
+      {"id": "nectar_bloom", "nectar_base": 3, "weight": 0.25},
+      {"id": "fading_bloom", "nectar_base": 2, "weight": 0.35},
+      {"id": "late_bloom", "nectar_base": 4, "weight": 0.25},
+      {"id": "seed_bloom", "nectar_base": 1, "weight": 0.15}
+    ]
+  },
+  "winter": {
+    "types": [
+      {"id": "nectar_bloom", "nectar_base": 2, "weight": 0.15},
+      {"id": "hidden_bloom", "nectar_base": 2, "weight": 0.40},
+      {"id": "warmth_bloom", "nectar_base": 3, "weight": 0.25},
+      {"id": "frozen_bloom", "nectar_base": 3, "weight": 0.20}
+    ]
+  }
+}

@@ -4,6 +4,19 @@ const WORLD := Rect2(34, 146, 970, 538)
 const HIVE_X := 132.0
 const HIVE_SAFE_X := 225.0
 const FLOWER_COLORS := [Color("f2d66f"), Color("e9aab1"), Color("a995c9")]
+const FLOWER_TYPE_COLORS := {
+	"nectar_bloom": Color("f2d66f"),
+	"first_bloom": Color("c8e89a"),
+	"chain_bloom": Color("e8a0d4"),
+	"peak_bloom": Color("e07845"),
+	"fading_bloom": Color("b89070"),
+	"late_bloom": Color("d4b060"),
+	"seed_bloom": Color("a8c878"),
+	"hidden_bloom": Color("8899bb"),
+	"warmth_bloom": Color("e8a06a"),
+	"frozen_bloom": Color("a0c4d4"),
+	"cascade_bloom": Color("cc66aa")
+}
 const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"]
 const SEASON_LENGTH := 6
 const UPGRADE_CAP := 6
@@ -58,6 +71,19 @@ var save_manager := NamelessSaveManager.new()
 var sound := SoundFeedback.new()
 var paused_from_phase := "playing"
 var persistence_enabled := true
+
+# 花物候学：花型配置与春季行为状态
+var flower_configs: Dictionary = {}
+var last_harvest_index := -1
+var last_harvest_time := 0.0
+var pollen_transfer_window := 2.0
+var pollen_transfer_bonus := 1
+var chain_timer := 0.0
+var chain_last_index := -1
+var chain_bonus_count := 0
+var chain_window_s := 2.0
+var chain_cap := 3
+var chain_range_px := 120.0
 
 var title_label: Label
 var term_label: Label
@@ -115,6 +141,7 @@ func _ready() -> void:
 	apply_display_settings()
 	load_stage_data()
 	load_balance_data()
+	load_flower_data()
 	load_upgrade_data()
 	load_boss_data()
 	bee = BeePlayer.new()
@@ -215,10 +242,38 @@ func load_balance_data() -> void:
 	else:
 		push_error("平衡参数格式错误")
 
+func load_flower_data() -> void:
+	var file := FileAccess.open("res://data/flowers.json", FileAccess.READ)
+	if file == null:
+		push_warning("无法读取花型数据，将使用基线蜜花")
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if parsed is Dictionary:
+		flower_configs = parsed
+	else:
+		push_warning("花型数据格式错误，将使用基线蜜花")
+
 func balance_value(section: String, key: String, fallback: float) -> float:
 	if balance.has(section) and balance[section] is Dictionary:
 		return float(balance[section].get(key, fallback))
 	return fallback
+
+## 花物候学：按权重随机选取花型
+func _pick_flower_type(types: Array) -> Dictionary:
+	if types.is_empty():
+		return {"id": "nectar_bloom", "nectar_base": 3}
+	var total_weight := 0.0
+	for t in types:
+		total_weight += float(t.get("weight", 1.0))
+	if total_weight <= 0.0:
+		return types[0]
+	var roll := rng.randf() * total_weight
+	var cumulative := 0.0
+	for t in types:
+		cumulative += float(t.get("weight", 1.0))
+		if roll <= cumulative:
+			return t
+	return types[-1]
 
 func make_label(parent: Node, text: String, position: Vector2, size: Vector2, font_size: int, color := Color("252a22")) -> Label:
 	var label := Label.new()
@@ -481,18 +536,47 @@ func spawn_stage(index: int) -> void:
 	decoys.clear()
 	tuning_blooms.clear()
 	pollen.clear()
+	# 花物候学：重置花粉传递与连环花状态
+	last_harvest_index = -1
+	last_harvest_time = 0.0
+	chain_timer = 0.0
+	chain_last_index = -1
+	chain_bonus_count = 0
 	var data: Dictionary = stages[index]
 	bee.configure(float(data.energy_drain))
 	bee.reset_for_expedition(Vector2(180, 410))
+	# 花物候学：按 flower_set 读取花型权重生成
+	var flower_set_id := str(data.get("flower_set", ""))
+	var ftypes: Array = []
+	pollen_transfer_window = 0.0
+	chain_window_s = 0.0
+	if flower_set_id != "" and flower_configs.has(flower_set_id):
+		var fset: Dictionary = flower_configs[flower_set_id]
+		ftypes = fset.get("types", [])
+		if fset.has("pollen_transfer"):
+			var pt: Dictionary = fset["pollen_transfer"]
+			pollen_transfer_window = float(pt.get("window_s", 2.0))
+			pollen_transfer_bonus = int(pt.get("bonus", 1))
+		if fset.has("chain_bloom"):
+			var cb: Dictionary = fset["chain_bloom"]
+			chain_window_s = float(cb.get("window_s", 2.0))
+			chain_cap = int(cb.get("cap", 3))
+			chain_range_px = float(cb.get("range_px", 120.0))
 	for i in int(data.flowers):
 		var flower_position := find_spaced_flower_position(82.0)
+		var ftype := _pick_flower_type(ftypes)
+		var base_nectar := int(ftype.get("nectar_base", 3))
+		var nectar_val: int = max(2, roundi(base_nectar * float(data.nectar_scale))) + extra_nectar
 		flowers.append({
 			"id": i,
 			"position": flower_position,
-			"nectar": max(2, roundi(rng.randf_range(3, 6) * float(data.nectar_scale))) + extra_nectar,
+			"nectar": nectar_val,
+			"max_nectar": nectar_val,
 			"kind": i % 3,
 			"phase": rng.randf_range(0, TAU),
-			"recovery": false
+			"recovery": false,
+			"type": ftype.get("id", "nectar_bloom"),
+			"triggers_growth": bool(ftype.get("triggers_growth", false))
 		})
 	# 敌物候学：五类小怪按节令物候生成（见 docs/design/enemy-phenology.md）
 	for i in int(data.get("mosquitoes", 0)):
@@ -588,6 +672,9 @@ func update_game(delta: float) -> void:
 	# 双击方向键 = 急转闪避
 	_check_double_tap_evade(delta)
 
+	# 花物候学：连环花窗口倒计时
+	chain_timer = maxf(0.0, chain_timer - delta)
+
 	# 归巢：Q 键自动飞回蜂巢
 	if Input.is_action_just_pressed("return_hive"):
 		bee.set_move_target(HIVE_RETURN_POS)
@@ -619,13 +706,47 @@ func update_game(delta: float) -> void:
 			if harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
 				harvest_clock = 0.0
 				var flower: Dictionary = flowers[nearby]
+				var ftype := str(flower.get("type", "nectar_bloom"))
 				flower.nectar = int(flower.nectar) - 1
+				var harvest_msg := ""
+				var bonus_nectar := 0
+				# 花物候学：花粉传递——连续采两朵不同花，第二朵蜜量+1
+				if pollen_transfer_window > 0.0 and last_harvest_index >= 0 and last_harvest_index != nearby:
+					var time_since := elapsed - last_harvest_time
+					if time_since <= pollen_transfer_window:
+						bonus_nectar += pollen_transfer_bonus
+						harvest_msg = "花粉传递：携带的花粉让这朵花蜜量更丰。"
+				# 花物候学：连环花——采完一朵后2秒内采相邻同型花，蜜量+1
+				if ftype == "chain_bloom" and chain_window_s > 0.0:
+					if chain_timer > 0.0 and chain_last_index >= 0 and chain_bonus_count < chain_cap:
+						var prev_pos: Vector2 = flowers[chain_last_index].position
+						if flower.position.distance_to(prev_pos) <= chain_range_px:
+							bonus_nectar += 1
+							chain_bonus_count += 1
+							harvest_msg = "连环花路线：连续采蜜让花田更慷慨。（%d/%d）" % [chain_bonus_count, chain_cap]
+					chain_last_index = nearby
+					chain_timer = chain_window_s
+				else:
+					if chain_window_s > 0.0:
+						chain_timer = 0.0
+						chain_last_index = -1
+						chain_bonus_count = 0
+				# 应用加成（花蜜不减反增）
+				flower.nectar = int(flower.nectar) + bonus_nectar
 				flowers[nearby] = flower
 				carried += 1
 				sound.play_cue("harvest")
 				spawn_pollen(flower.position)
+				var msg_before := message
 				season_mechanics.on_harvest(nearby)
-				message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
+				if harvest_msg != "":
+					message = harvest_msg
+				elif message != msg_before:
+					pass
+				else:
+					message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
+				last_harvest_index = nearby
+				last_harvest_time = elapsed
 		elif not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy:
 			# 长按空格 + 携蜜 + 无花无敌 = 投蜜诱饵
 			action_decoy_fired = true
@@ -1437,7 +1558,7 @@ func return_honey_to_field(amount: int, origin: Vector2) -> void:
 		clampf(origin.x + rng.randf_range(-45.0, 45.0), HIVE_SAFE_X + 45.0, WORLD.end.x - 50.0),
 		clampf(origin.y + rng.randf_range(-45.0, 45.0), WORLD.position.y + 55.0, WORLD.end.y - 55.0)
 	)
-	flowers.append({"id": recovery_flower_serial, "position": recovery_position, "nectar": amount, "kind": 1, "phase": rng.randf_range(0, TAU), "recovery": true})
+	flowers.append({"id": recovery_flower_serial, "position": recovery_position, "nectar": amount, "max_nectar": amount, "kind": 1, "phase": rng.randf_range(0, TAU), "recovery": true, "type": "nectar_bloom"})
 	recovery_flower_serial += 1
 	spawn_pollen(recovery_position)
 
@@ -1662,6 +1783,18 @@ func _draw() -> void:
 		var y := 570.0 + sin(float(i) * 2.1) * 60.0
 		draw_line(Vector2(x, WORLD.end.y), Vector2(x + 10, y), Color(deep, 0.2), 3)
 
+	# 花物候学：连环花连接线（窗口内时，从上一朵连环花画指引线到附近同型花）
+	if chain_timer > 0.0 and chain_last_index >= 0 and chain_last_index < flowers.size():
+		var chain_pos: Vector2 = flowers[chain_last_index].position
+		for i in flowers.size():
+			var fl: Dictionary = flowers[i]
+			if i == chain_last_index or int(fl.nectar) <= 0:
+				continue
+			if str(fl.get("type", "")) != "chain_bloom":
+				continue
+			if chain_pos.distance_to(fl.position) <= chain_range_px:
+				var pulse := 0.3 + 0.2 * sin(elapsed * 5.0)
+				draw_line(chain_pos, fl.position, Color("e8a0d4", pulse), 2.0)
 	for flower in flowers:
 		draw_flower(flower)
 	for phantom in phantom_flowers:
@@ -1730,6 +1863,8 @@ func draw_flower(flower: Dictionary) -> void:
 	var alive := int(flower.nectar) > 0 and not sleeping
 	var recovery := bool(flower.get("recovery", false))
 	var alpha := 1.0 if alive else 0.28
+	var ftype := str(flower.get("type", "nectar_bloom"))
+	var petal_base: Color = FLOWER_TYPE_COLORS.get(ftype, FLOWER_COLORS[int(flower.kind)])
 	if sleeping:
 		draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), 0.35), 3)
 		draw_circle(pos + Vector2(0, 14), 5, Color("3d4a3a", 0.55))
@@ -1738,7 +1873,7 @@ func draw_flower(flower: Dictionary) -> void:
 		return
 	if float(flower.get("flatten_time", 0.0)) > 0.0:
 		# 被熊压平：花没有死，flatten_time 走完后会重新立起
-		var petal_color := Color(FLOWER_COLORS[int(flower.kind)], 0.38)
+		var petal_color := Color(petal_base, 0.38)
 		draw_line(pos + Vector2(0, 16), pos + Vector2(0, 38), Color(stage_color(2), 0.28), 2)
 		draw_circle(pos + Vector2(-7, 3), 6, petal_color)
 		draw_circle(pos + Vector2(6, 6), 5, petal_color)
@@ -1749,8 +1884,14 @@ func draw_flower(flower: Dictionary) -> void:
 	draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), alpha), 3)
 	for petal in 5:
 		var angle := float(petal) * TAU / 5.0 + float(flower.phase)
-		draw_circle(pos + Vector2.from_angle(angle) * 11, 7, Color(FLOWER_COLORS[int(flower.kind)], alpha))
+		draw_circle(pos + Vector2.from_angle(angle) * 11, 7, Color(petal_base, alpha))
 	draw_circle(pos, 6, Color(stage_color(3), alpha))
+	# 花物候学：非基线花型标注名称
+	if alive and ftype != "nectar_bloom":
+		var type_labels := {"first_bloom": "初花", "chain_bloom": "连", "peak_bloom": "盛", "fading_bloom": "残", "late_bloom": "晚蜜", "seed_bloom": "籽", "hidden_bloom": "藏", "warmth_bloom": "暖", "frozen_bloom": "冰封", "cascade_bloom": "瀑"}
+		var label := str(type_labels.get(ftype, ""))
+		if label != "":
+			draw_string(zh_font, pos + Vector2(-12, 66), label, HORIZONTAL_ALIGNMENT_CENTER, 24, 10, Color(petal_base, 0.9))
 	if recovery and alive:
 		draw_arc(pos, 24 + sin(elapsed * 4.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.9), 3)
 		draw_string(zh_font, pos + Vector2(-22, 66), "返蜜", HORIZONTAL_ALIGNMENT_CENTER, 44, 11, Color("fff1a8"))

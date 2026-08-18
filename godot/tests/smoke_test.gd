@@ -77,6 +77,12 @@ func _init() -> void:
 				for stage in parsed:
 					if stage.get("mechanics", []).size() == 1 and stage.mechanics[0] == "huddle" and String(stage.name) != "寒露" and not bool(stage.get("warmth_carry", false)):
 						failures.append("越冬关 %s 缺少 warmth_carry 标记" % String(stage.name))
+				# 花物候学：春季节令必须携带 flower_set=spring
+				var spring_terms := ["立春", "雨水", "惊蛰", "清明", "谷雨"]
+				for stage in parsed:
+					if String(stage.name) in spring_terms:
+						if not stage.has("flower_set") or String(stage.flower_set) != "spring":
+							failures.append("春季节令 %s 缺少 flower_set=spring" % String(stage.name))
 
 	var upgrade_file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
 	if upgrade_file == null:
@@ -135,6 +141,35 @@ func _init() -> void:
 			for mechanic_id in EXPECTED_MECHANICS:
 				if not balance.mechanics.has(mechanic_id) or not balance.mechanics[mechanic_id] is Dictionary:
 					failures.append("机制参数缺少 %s 分区" % mechanic_id)
+
+	var flower_file := FileAccess.open("res://data/flowers.json", FileAccess.READ)
+	if flower_file == null:
+		failures.append("无法读取 flowers.json")
+	else:
+		var flower_data = JSON.parse_string(flower_file.get_as_text())
+		if not flower_data is Dictionary:
+			failures.append("flowers.json 顶层必须是对象")
+		else:
+			for season_id in ["spring", "summer", "autumn", "winter"]:
+				if not flower_data.has(season_id):
+					failures.append("flowers.json 缺少季节分组 %s" % season_id)
+				else:
+					var fset = flower_data[season_id]
+					if not fset is Dictionary or not fset.has("types") or not fset.types is Array:
+						failures.append("flowers.json %s 缺少 types 数组" % season_id)
+					else:
+						for ftype in fset.types:
+							for key in ["id", "nectar_base", "weight"]:
+								if not ftype.has(key):
+									failures.append("flowers.json %s 花型缺少字段 %s" % [season_id, key])
+			if flower_data.has("spring") and flower_data.spring is Dictionary:
+				if not flower_data.spring.has("pollen_transfer"):
+					failures.append("flowers.json spring 缺少 pollen_transfer 配置")
+				if not flower_data.spring.has("chain_bloom"):
+					failures.append("flowers.json spring 缺少 chain_bloom 配置")
+
+	# 花物候学：春季节令必须携带 flower_set
+	# (checked inside seasons.json validation block above)
 
 	for mechanic_path in ["res://scripts/mechanics/season_mechanics.gd", "res://scripts/mechanics/pollination_mechanic.gd", "res://scripts/mechanics/conscription_mechanic.gd", "res://scripts/mechanics/reserve_mechanic.gd", "res://scripts/mechanics/huddle_mechanic.gd"]:
 		if load(mechanic_path) == null:
