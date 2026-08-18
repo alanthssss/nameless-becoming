@@ -34,6 +34,11 @@
 |-------------|----------------------|--------------|
 | `godot/scripts/main.gd` | 游戏主循环：关卡、敌人、Boss、UI、结算 | ~41 KB |
 | `godot/scripts/player/bee_player.gd` | 玩家飞行控制（加速/惯性/制动模型） | ~4 KB |
+| `godot/scripts/mechanics/season_mechanics.gd` | 季节机制调度层（按 stage 启停，四节点钩子） | 新增（0.9.x） |
+| `godot/scripts/mechanics/pollination_mechanic.gd` | 春·授粉：花田休眠与新生 | 新增（0.9.x） |
+| `godot/scripts/mechanics/conscription_mechanic.gd` | 夏·征召：巢口/花区告急事件 | 新增（0.9.x） |
+| `godot/scripts/mechanics/reserve_mechanic.gd` | 秋·储备：季末分配面板 | 新增（0.9.x） |
+| `godot/scripts/mechanics/huddle_mechanic.gd` | 冬·抱团：体温、储备消耗、侦察解锁 | 新增（0.9.x） |
 | `godot/scripts/sound_feedback.gd` | 程序化音效反馈（采蜜/受击/归巢/四季 BGM） | ~4.6 KB |
 | `godot/scripts/save_manager.gd` | 本地 ConfigFile 存档 | ~1.6 KB |
 | `app/page.tsx` | Godot Web 版启动外壳（iframe 承载） | 1 组件 |
@@ -49,8 +54,8 @@
 
 | 文件 / File | 内容 / Contents | 示例字段 / Example Fields |
 |-------------|-----------------|---------------------------|
-| `seasons.json` | 四季节令参数 | 阴阳比例 yin/yang、目标蜜量 goal、花量 flowers、敌人 enemies、体力消耗 energy_drain、配色 colors |
-| `balance.json` | 数值平衡 | 玩家采蜜/惊退成本、蚊虫感知/速度、掠蜜蚁偷蜜、Boss 调律半径 |
+| `seasons.json` | 四季节令参数 + 机制槽位 | 阴阳比例 yin/yang、目标蜜量 goal、花量 flowers、敌人 enemies、体力消耗 energy_drain、配色 colors、`mechanics`（授粉/征召/储备/抱团） |
+| `balance.json` | 数值平衡（含 mechanics 分区） | 玩家采蜜/惊退成本、蚊虫感知/速度、掠蜜蚁偷蜜、Boss 调律半径、四机制参数 |
 | `upgrades.json` | 蜂巢成长选项 | 长翼蜂 long_wing、采蜜蜂 forager、守卫蜂 guard |
 
 ---
