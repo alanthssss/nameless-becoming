@@ -32,7 +32,9 @@ func start(game, data: Dictionary, balance: Dictionary) -> void:
 	cold_warmth_threshold = float(params.get("cold_warmth_threshold", 15.0))
 	cold_recovery_factor = float(params.get("cold_recovery_factor", 0.5))
 	main.cold_warmth_threshold = cold_warmth_threshold
-	main.warmth = 100.0
+	# 整季越冬期间体温延续：仅入冬第一个节令（index % 6 == 0）重置
+	if not main.preserve_warmth:
+		main.warmth = 100.0
 	_low_warned = false
 	scouting_unlocked = main.hive_reserve >= scout_reserve_threshold
 	# 幼虫加成：来年劳动力 → 更耐寒的体格（出巢能量上限）

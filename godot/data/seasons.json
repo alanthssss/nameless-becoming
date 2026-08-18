@@ -1,62 +1,510 @@
 [
   {
-    "name": "春分",
+    "name": "冬至",
+    "season": "冬",
+    "yin": 85,
+    "yang": 15,
+    "goal": 5,
+    "flowers": 9,
+    "enemies": 0,
+    "ants": 0,
+    "energy_drain": 1.25,
+    "nectar_scale": 1.1,
+    "colors": [
+      "b4beda",
+      "4e629c",
+      "222a44",
+      "f4d994"
+    ],
+    "line": "阴极而阳生。蜂群在至暗中苏醒，一阳初动。",
+    "mechanics": [
+      "pollination"
+    ]
+  },
+  {
+    "name": "小寒",
+    "season": "冬",
+    "yin": 82,
+    "yang": 18,
+    "goal": 5,
+    "flowers": 9,
+    "enemies": 1,
+    "ants": 0,
+    "energy_drain": 1.3,
+    "nectar_scale": 1.08,
+    "colors": [
+      "b6c6d8",
+      "527498",
+      "243242",
+      "f4d994"
+    ],
+    "line": "寒气积久，花田沉默。但蜂巢里，呼吸正在变暖。",
+    "mechanics": [
+      "pollination"
+    ]
+  },
+  {
+    "name": "大寒",
+    "season": "冬",
+    "yin": 78,
+    "yang": 22,
+    "goal": 6,
+    "flowers": 9,
+    "enemies": 1,
+    "ants": 0,
+    "energy_drain": 1.35,
+    "nectar_scale": 1.06,
+    "colors": [
+      "b8cad6",
+      "567b94",
+      "293c49",
+      "f4d994"
+    ],
+    "line": "大寒至极。冻土之下，根须记得春天的方向。",
+    "mechanics": [
+      "pollination"
+    ]
+  },
+  {
+    "name": "立春",
     "season": "春",
-    "yin": 50,
-    "yang": 50,
-    "goal": 7,
+    "yin": 68,
+    "yang": 32,
+    "goal": 6,
     "flowers": 8,
     "enemies": 1,
     "ants": 0,
     "energy_drain": 1.45,
-    "nectar_scale": 1.0,
-    "colors": ["d9e8c2", "f3d59b", "58784f", "ffe8a3"],
-    "line": "昼夜均分，花潮初醒。",
-    "mechanics": ["pollination"]
+    "nectar_scale": 1.04,
+    "colors": [
+      "baccd3",
+      "5b7f8f",
+      "395764",
+      "f4d994"
+    ],
+    "line": "东风解冻，蛰虫始振。翅膀第一次感受到风的温度。",
+    "mechanics": [
+      "pollination"
+    ]
+  },
+  {
+    "name": "雨水",
+    "season": "春",
+    "yin": 62,
+    "yang": 38,
+    "goal": 7,
+    "flowers": 8,
+    "enemies": 1,
+    "ants": 0,
+    "energy_drain": 1.5,
+    "nectar_scale": 1.03,
+    "colors": [
+      "bccdd1",
+      "5b858f",
+      "3e666f",
+      "f4d994"
+    ],
+    "line": "草木萌动，第一滴蜜在等待被找到。",
+    "mechanics": [
+      "pollination"
+    ]
+  },
+  {
+    "name": "惊蛰",
+    "season": "春",
+    "yin": 56,
+    "yang": 44,
+    "goal": 7,
+    "flowers": 8,
+    "enemies": 2,
+    "ants": 1,
+    "energy_drain": 1.55,
+    "nectar_scale": 1.05,
+    "colors": [
+      "bccfd2",
+      "709ea3",
+      "3e6a6f",
+      "f4d994"
+    ],
+    "line": "春雷乍响，万物初醒。花潮在雷声后涌来。",
+    "mechanics": [
+      "pollination"
+    ]
+  },
+  {
+    "name": "春分",
+    "season": "春",
+    "yin": 50,
+    "yang": 50,
+    "boss": "mosquito",
+    "colors": [
+      "abe3e3",
+      "35b6b6",
+      "166a6a",
+      "f4d994"
+    ],
+    "line": "昼夜均分，正青之节点。失律之蚊在花潮上空盘旋，只知索取。"
+  },
+  {
+    "name": "清明",
+    "season": "春",
+    "yin": 44,
+    "yang": 56,
+    "goal": 8,
+    "flowers": 8,
+    "enemies": 3,
+    "ants": 1,
+    "energy_drain": 1.65,
+    "nectar_scale": 1.16,
+    "colors": [
+      "abe3d8",
+      "35b69d",
+      "1f8e79",
+      "f4d994"
+    ],
+    "line": "气清景明，花田渐密。蜜光在每一条航线上流转。",
+    "mechanics": [
+      "conscription"
+    ]
+  },
+  {
+    "name": "谷雨",
+    "season": "春",
+    "yin": 38,
+    "yang": 62,
+    "goal": 9,
+    "flowers": 8,
+    "enemies": 3,
+    "ants": 1,
+    "energy_drain": 1.7,
+    "nectar_scale": 1.2,
+    "colors": [
+      "b2dcc2",
+      "4aa56e",
+      "367850",
+      "f4d994"
+    ],
+    "line": "雨生百谷，花潮将盛。蚊影也开始在雨后聚集。",
+    "mechanics": [
+      "conscription"
+    ]
+  },
+  {
+    "name": "立夏",
+    "season": "夏",
+    "yin": 32,
+    "yang": 68,
+    "goal": 10,
+    "flowers": 8,
+    "enemies": 3,
+    "ants": 1,
+    "energy_drain": 1.75,
+    "nectar_scale": 1.24,
+    "colors": [
+      "c9d5b9",
+      "80995c",
+      "5b6f3e",
+      "f4d994"
+    ],
+    "line": "夏始风暖。蜂群的需要正在变化——巢口与花区同时呼唤。",
+    "mechanics": [
+      "conscription"
+    ]
+  },
+  {
+    "name": "小满",
+    "season": "夏",
+    "yin": 26,
+    "yang": 74,
+    "goal": 10,
+    "flowers": 7,
+    "enemies": 4,
+    "ants": 2,
+    "energy_drain": 1.8,
+    "nectar_scale": 1.22,
+    "colors": [
+      "e1c6ad",
+      "bb7f48",
+      "7e552f",
+      "f4d994"
+    ],
+    "line": "籽粒未满，蜂翼已勤。盛夏的压力正在逼近。",
+    "mechanics": [
+      "conscription"
+    ]
+  },
+  {
+    "name": "芒种",
+    "season": "夏",
+    "yin": 20,
+    "yang": 80,
+    "goal": 11,
+    "flowers": 7,
+    "enemies": 4,
+    "ants": 2,
+    "energy_drain": 1.85,
+    "nectar_scale": 1.18,
+    "colors": [
+      "e3b5ab",
+      "ca624a",
+      "8f331e",
+      "f4d994"
+    ],
+    "line": "有芒之谷可种，花蜜正丰。这是被需要最深的时刻。",
+    "mechanics": [
+      "conscription"
+    ]
   },
   {
     "name": "夏至",
     "season": "夏",
     "yin": 15,
     "yang": 85,
+    "boss": "cricket",
+    "colors": [
+      "e3abab",
+      "cb4d4d",
+      "8f1e1e",
+      "f4d994"
+    ],
+    "line": "阳极而阴生，正朱之节点。失律的油葫芦在盛夏的顶点四处乱窜，不肯归位。"
+  },
+  {
+    "name": "小暑",
+    "season": "夏",
+    "yin": 18,
+    "yang": 82,
     "goal": 11,
-    "flowers": 8,
+    "flowers": 7,
     "enemies": 3,
-    "ants": 1,
-    "energy_drain": 1.8,
-    "nectar_scale": 1.25,
-    "colors": ["d8cf76", "e89643", "52663d", "fff0a3"],
-    "line": "阳极而阴生，蚊影藏在盛光之后。",
-    "mechanics": ["conscription"]
+    "ants": 2,
+    "energy_drain": 1.9,
+    "nectar_scale": 1.0,
+    "colors": [
+      "e3abab",
+      "d26665",
+      "8f1f1e",
+      "f4d994"
+    ],
+    "line": "暑气初盛，掠蜜者出。花期在热浪中开始退让。",
+    "mechanics": [
+      "reserve"
+    ]
+  },
+  {
+    "name": "大暑",
+    "season": "夏",
+    "yin": 22,
+    "yang": 78,
+    "goal": 12,
+    "flowers": 7,
+    "enemies": 4,
+    "ants": 2,
+    "energy_drain": 1.92,
+    "nectar_scale": 0.95,
+    "colors": [
+      "e3afab",
+      "d37169",
+      "8f271e",
+      "f4d994"
+    ],
+    "line": "酷热至极，万物焦灼。蜜的颜色在变深。",
+    "mechanics": [
+      "reserve"
+    ]
+  },
+  {
+    "name": "立秋",
+    "season": "秋",
+    "yin": 28,
+    "yang": 72,
+    "goal": 12,
+    "flowers": 7,
+    "enemies": 4,
+    "ants": 2,
+    "energy_drain": 1.95,
+    "nectar_scale": 0.92,
+    "colors": [
+      "e3bbab",
+      "d38769",
+      "8a4124",
+      "f4d994"
+    ],
+    "line": "凉风至，白露生。收获的季节也是告别的季节。",
+    "mechanics": [
+      "reserve"
+    ]
+  },
+  {
+    "name": "处暑",
+    "season": "秋",
+    "yin": 35,
+    "yang": 65,
+    "goal": 12,
+    "flowers": 6,
+    "enemies": 4,
+    "ants": 3,
+    "energy_drain": 2.0,
+    "nectar_scale": 0.88,
+    "colors": [
+      "e0c7ae",
+      "c99f73",
+      "7d5730",
+      "f4d994"
+    ],
+    "line": "暑气止，花期渐退。归途比收获更长。",
+    "mechanics": [
+      "reserve"
+    ]
+  },
+  {
+    "name": "白露",
+    "season": "秋",
+    "yin": 42,
+    "yang": 58,
+    "goal": 12,
+    "flowers": 6,
+    "enemies": 3,
+    "ants": 3,
+    "energy_drain": 2.05,
+    "nectar_scale": 0.85,
+    "colors": [
+      "e5dfce",
+      "bcac80",
+      "71633c",
+      "f4d994"
+    ],
+    "line": "露凝而白，花蜜渐稀。来年的重量压在每一次选择上。",
+    "mechanics": [
+      "reserve"
+    ]
   },
   {
     "name": "秋分",
     "season": "秋",
     "yin": 50,
     "yang": 50,
-    "goal": 14,
-    "flowers": 7,
-    "enemies": 4,
-    "ants": 3,
-    "energy_drain": 2.0,
-    "nectar_scale": 0.85,
-    "colors": ["d7a768", "8f5b43", "4d5435", "f4c879"],
-    "line": "花期将尽，归途比收获更长。",
-    "mechanics": ["reserve"]
+    "boss": "thrush",
+    "colors": [
+      "f7f3f3",
+      "b38989",
+      "6f3e3e",
+      "f4d994"
+    ],
+    "line": "昼夜再次均分，正白之节点。失律的画眉以歌声诱离每一只归途上的蜂。"
   },
   {
-    "name": "冬至",
-    "season": "冬",
-    "yin": 85,
-    "yang": 15,
+    "name": "寒露",
+    "season": "秋",
+    "yin": 58,
+    "yang": 42,
+    "goal": 10,
+    "flowers": 6,
+    "enemies": 3,
+    "ants": 2,
+    "energy_drain": 2.12,
+    "nectar_scale": 0.78,
+    "colors": [
+      "e2ddd5",
+      "b3a289",
+      "6f5c3e",
+      "f4d994"
+    ],
+    "line": "露寒花凋，蜜光将熄。坚守最后的花。",
+    "mechanics": [
+      "huddle"
+    ]
+  },
+  {
+    "name": "霜降",
+    "season": "秋",
+    "yin": 65,
+    "yang": 35,
     "goal": 9,
     "flowers": 6,
     "enemies": 4,
     "ants": 2,
+    "energy_drain": 2.15,
+    "nectar_scale": 0.76,
+    "warmth_carry": true,
+    "colors": [
+      "bdbdd1",
+      "8989b3",
+      "3e3e6f",
+      "f4d994"
+    ],
+    "line": "霜降水涸。花田最后的光在褪去，冬天在路上。",
+    "mechanics": [
+      "huddle"
+    ]
+  },
+  {
+    "name": "立冬",
+    "season": "冬",
+    "yin": 70,
+    "yang": 30,
+    "goal": 9,
+    "flowers": 6,
+    "enemies": 4,
+    "ants": 2,
+    "energy_drain": 2.2,
+    "nectar_scale": 0.74,
+    "warmth_carry": true,
+    "colors": [
+      "bdc2d1",
+      "7884a8",
+      "3e4b6f",
+      "f4d994"
+    ],
+    "line": "水始冰，地始冻。花藏于根，蜜藏于巢。",
+    "mechanics": [
+      "huddle"
+    ]
+  },
+  {
+    "name": "小雪",
+    "season": "冬",
+    "yin": 75,
+    "yang": 25,
+    "goal": 8,
+    "flowers": 5,
+    "enemies": 3,
+    "ants": 1,
     "energy_drain": 2.25,
+    "nectar_scale": 0.72,
+    "warmth_carry": true,
+    "colors": [
+      "bdc3d1",
+      "5b6b8f",
+      "3e4d6f",
+      "f4d994"
+    ],
+    "line": "雪未盛而寒已深。蜂翼沉重，归途漫长。",
+    "mechanics": [
+      "huddle"
+    ]
+  },
+  {
+    "name": "大雪",
+    "season": "冬",
+    "yin": 80,
+    "yang": 20,
+    "goal": 8,
+    "flowers": 5,
+    "enemies": 3,
+    "ants": 1,
+    "energy_drain": 2.3,
     "nectar_scale": 0.7,
-    "colors": ["b8ced0", "586c78", "33494b", "f4d893"],
-    "line": "阴极而阳生，最后一点蜜守着来年的春。",
-    "mechanics": ["huddle"]
+    "warmth_carry": true,
+    "colors": [
+      "bdc0d1",
+      "5b658f",
+      "2e3451",
+      "f4d994"
+    ],
+    "line": "雪盛花藏，万物寂默。抱团是唯一的暖。",
+    "mechanics": [
+      "huddle"
+    ]
   }
 ]

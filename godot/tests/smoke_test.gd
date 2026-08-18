@@ -1,7 +1,7 @@
 extends SceneTree
 
-const REQUIRED_KEYS := ["name", "season", "yin", "yang", "goal", "flowers", "enemies", "ants", "energy_drain", "nectar_scale", "colors", "line", "mechanics"]
 const EXPECTED_MECHANICS := ["pollination", "conscription", "reserve", "huddle"]
+const GATHERING_KEYS := ["goal", "flowers", "enemies", "ants", "energy_drain", "nectar_scale", "mechanics"]
 
 func _init() -> void:
 	var failures: Array[String] = []
@@ -13,18 +13,31 @@ func _init() -> void:
 		if not parsed is Array:
 			failures.append("seasons.json 顶层必须是数组")
 		else:
-			if parsed.size() != 4:
-				failures.append("MVP 应包含 4 个压缩节令")
+			if parsed.size() != 24:
+				failures.append("完整轮回应包含 24 个节令")
+			var boss_stage_count := 0
 			for index in parsed.size():
 				var stage = parsed[index]
 				if not stage is Dictionary:
 					failures.append("节令 %d 不是对象" % index)
 					continue
-				for key in REQUIRED_KEYS:
+				for key in ["name", "season", "yin", "yang", "colors", "line"]:
 					if not stage.has(key):
 						failures.append("节令 %d 缺少字段 %s" % [index, key])
 				if stage.has("yin") and stage.has("yang") and int(stage.yin) + int(stage.yang) != 100:
 					failures.append("节令 %d 阴阳总和不是 100" % index)
+				if stage.has("colors") and (not stage.colors is Array or stage.colors.size() != 4):
+					failures.append("节令 %d 必须配置 4 个颜色" % index)
+				# 正色节点本身是失律者关卡，不携带采蜜字段
+				if stage.has("boss"):
+					boss_stage_count += 1
+					for key in GATHERING_KEYS:
+						if stage.has(key):
+							failures.append("失律者关卡 %d 不应携带采蜜字段 %s" % [index, key])
+					continue
+				for key in GATHERING_KEYS:
+					if not stage.has(key):
+						failures.append("采蜜关 %d 缺少字段 %s" % [index, key])
 				if stage.has("goal") and int(stage.goal) <= 0:
 					failures.append("节令 %d 目标必须为正数" % index)
 				if stage.has("flowers") and stage.has("nectar_scale") and stage.has("goal"):
@@ -33,10 +46,32 @@ func _init() -> void:
 						failures.append("节令 %d 最差花量不足以完成目标" % index)
 				if stage.has("ants") and int(stage.ants) < 0:
 					failures.append("节令 %d 掠蜜蚁数量不能为负" % index)
-				if stage.has("colors") and (not stage.colors is Array or stage.colors.size() != 4):
-					failures.append("节令 %d 必须配置 4 个颜色" % index)
-				if not stage.has("mechanics") or not stage.mechanics is Array or stage.mechanics.size() != 1 or stage.mechanics[0] != EXPECTED_MECHANICS[index]:
-					failures.append("节令 %d 机制槽位错误（应为 %s）" % [index, EXPECTED_MECHANICS[index]])
+				var expected_mechanic: String = EXPECTED_MECHANICS[clampi(index / 6, 0, 3)]
+				if not stage.has("mechanics") or not stage.mechanics is Array or stage.mechanics.size() != 1 or stage.mechanics[0] != expected_mechanic:
+					failures.append("节令 %d 机制槽位错误（应为 %s）" % [index, expected_mechanic])
+			# 轮回从冬至开始；正色节点为失律者关卡，熊守着循环终点（大雪之后）
+			if parsed.size() == 24:
+				if String(parsed[0].name) != "冬至":
+					failures.append("完整轮回的第一个节令必须是冬至")
+				if boss_stage_count != 3:
+					failures.append("正色失律者关卡应恰好 3 个（春分/夏至/秋分），实为 %d" % boss_stage_count)
+				var cardinal_bosses := {6: ["春分", "mosquito"], 12: ["夏至", "cricket"], 18: ["秋分", "thrush"]}
+				for position in cardinal_bosses:
+					var expected: Array = cardinal_bosses[position]
+					if String(parsed[position].name) != expected[0] or String(parsed[position].get("boss", "")) != expected[1]:
+						failures.append("节令 %d 应为正色失律者关卡 %s（%s）" % [position, expected[0], expected[1]])
+				if String(parsed[23].name) != "大雪":
+					failures.append("最后一个采蜜关应为大雪，此后回到冬至的熊")
+				# 越冬段体温延续标记：寒露重置，其余越冬关延续
+				var huddle_stages: Array[String] = []
+				for index in parsed.size():
+					if parsed[index].get("mechanics", []).size() == 1 and parsed[index].mechanics[0] == "huddle":
+						huddle_stages.append(String(parsed[index].name))
+				if huddle_stages.size() == 5 and huddle_stages[0] != "寒露":
+					failures.append("越冬段应从寒露开始（体温在此重置）")
+				for stage in parsed:
+					if stage.get("mechanics", []).size() == 1 and stage.mechanics[0] == "huddle" and String(stage.name) != "寒露" and not bool(stage.get("warmth_carry", false)):
+						failures.append("越冬关 %s 缺少 warmth_carry 标记" % String(stage.name))
 
 	var upgrade_file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
 	if upgrade_file == null:
@@ -50,6 +85,36 @@ func _init() -> void:
 				for key in ["id", "name", "description", "color"]:
 					if not upgrade.has(key):
 						failures.append("蜂巢成长缺少字段 %s" % key)
+
+	var boss_file := FileAccess.open("res://data/bosses.json", FileAccess.READ)
+	if boss_file == null:
+		failures.append("无法读取 bosses.json")
+	else:
+		var bosses = JSON.parse_string(boss_file.get_as_text())
+		if not bosses is Array or bosses.size() != 4:
+			failures.append("四位失律者原型必须齐全（蚊/油葫芦/画眉/熊）")
+		else:
+			var expected_patterns := ["orbital", "erratic", "lure", "charge"]
+			var expected_terms := ["春分", "夏至", "秋分", "冬至"]
+			var boss_keys := ["id", "name", "season_index", "term", "line", "move_pattern", "move_speed", "impact_range", "energy_damage", "tuning_radius", "required_tunings", "bloom_count", "bloom_color", "body_color", "accent_color", "size", "encounter_message", "tuning_message", "miss_message", "damage_message"]
+			for index in bosses.size():
+				var boss = bosses[index]
+				if not boss is Dictionary:
+					failures.append("失律者 %d 不是对象" % index)
+					continue
+				for key in boss_keys:
+					if not boss.has(key):
+						failures.append("失律者 %d 缺少字段 %s" % [index, key])
+				if String(boss.get("move_pattern", "")) != expected_patterns[index]:
+					failures.append("失律者 %d 移动模式错误（应为 %s）" % [index, expected_patterns[index]])
+				if String(boss.get("term", "")) != expected_terms[index]:
+					failures.append("失律者 %d 应位于四正点 %s" % [index, expected_terms[index]])
+				# season_index 对应新游戏季分段：春分=1、夏至=2、秋分=3、冬至终点=3
+				var expected_season_indices := [1, 2, 3, 3]
+				if int(boss.get("season_index", -1)) != expected_season_indices[index]:
+					failures.append("失律者 %d season_index 错误" % index)
+				if int(boss.get("required_tunings", 0)) <= 0:
+					failures.append("失律者 %d 调律次数必须为正数" % index)
 
 	var balance_file := FileAccess.open("res://data/balance.json", FileAccess.READ)
 	if balance_file == null:
@@ -118,7 +183,7 @@ func _init() -> void:
 			failures.append("WASD/方向键双映射缺失：%s" % movement_action)
 
 	if failures.is_empty():
-		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")
+		print("SMOKE TEST PASSED: Godot project, 24 solar terms and 4 boss prototypes are valid")
 		quit(0)
 	else:
 		for failure in failures:

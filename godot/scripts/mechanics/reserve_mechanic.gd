@@ -24,7 +24,9 @@ func start(game, data: Dictionary, balance: Dictionary) -> void:
 
 
 func on_stage_complete() -> void:
-	# 秋分节令完成：本季带回的蜜进入分配池，等待玩家定夺
+	# 储备段完成：只在白露（储备段最后的采蜜关）触发分配池，等待玩家定夺
+	if main.stage_index % 6 != 5:
+		return
 	pending_harvest = main.delivered
 	pending_allocation = true
 
