@@ -236,6 +236,14 @@ func _init() -> void:
 			failures.append("缺失 show_boss_loss：失律者战败需要专属结算页，不能复用 show_loss")
 		if not main_node.has_method("refresh_runs_meter"):
 			failures.append("缺失 refresh_runs_meter：历史信息应从 overlay 弹窗搬到 HUD 侧栏底部")
+		# 失败 overlay「主操作 + 二级链接」双交互：
+		# overlay 上的"重新走四季"按钮历史只有一处极小的 button，玩家会以为失败页面
+		# 只能依赖顶部 HUD 按钮。需要 on_secondary_link / set_secondary_link 等辅助函数
+		# 给出次要出口（退出游戏）。
+		if not main_node.has_method("on_secondary_link"):
+			failures.append("缺失 on_secondary_link：失败页面需要二级链接，给玩家退出选项")
+		if not main_node.has_method("set_secondary_link"):
+			failures.append("缺失 set_secondary_link：次要链接的显示/隐藏应该集中管理")
 		main_node.free()
 
 	if failures.is_empty():
