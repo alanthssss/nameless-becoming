@@ -1,7 +1,8 @@
 extends SceneTree
 
 const EXPECTED_MECHANICS := ["pollination", "conscription", "reserve", "huddle"]
-const GATHERING_KEYS := ["goal", "flowers", "enemies", "ants", "energy_drain", "nectar_scale", "mechanics"]
+const GATHERING_KEYS := ["goal", "flowers", "mosquitoes", "ants", "crickets", "thrushes", "bears", "energy_drain", "nectar_scale", "mechanics"]
+const SPECIES_KEYS := ["mosquitoes", "ants", "crickets", "thrushes", "bears"]
 
 func _init() -> void:
 	var failures: Array[String] = []
@@ -38,14 +39,18 @@ func _init() -> void:
 				for key in GATHERING_KEYS:
 					if not stage.has(key):
 						failures.append("采蜜关 %d 缺少字段 %s" % [index, key])
+				# 五物候种数量都不能为负；熊作为碾压型敌害每关至多 1 只
+				for species in SPECIES_KEYS:
+					if stage.has(species) and int(stage[species]) < 0:
+						failures.append("节令 %d 的 %s 数量不能为负" % [index, species])
+				if stage.has("bears") and int(stage.bears) > 1:
+					failures.append("节令 %d 的熊至多 1 只（碾压型敌害不宜成群）" % index)
 				if stage.has("goal") and int(stage.goal) <= 0:
 					failures.append("节令 %d 目标必须为正数" % index)
 				if stage.has("flowers") and stage.has("nectar_scale") and stage.has("goal"):
 					var minimum_nectar := int(stage.flowers) * maxi(2, roundi(3.0 * float(stage.nectar_scale)))
 					if minimum_nectar < int(stage.goal):
 						failures.append("节令 %d 最差花量不足以完成目标" % index)
-				if stage.has("ants") and int(stage.ants) < 0:
-					failures.append("节令 %d 掠蜜蚁数量不能为负" % index)
 				var expected_mechanic: String = EXPECTED_MECHANICS[clampi(index / 6, 0, 3)]
 				if not stage.has("mechanics") or not stage.mechanics is Array or stage.mechanics.size() != 1 or stage.mechanics[0] != expected_mechanic:
 					failures.append("节令 %d 机制槽位错误（应为 %s）" % [index, expected_mechanic])
@@ -121,7 +126,7 @@ func _init() -> void:
 		failures.append("无法读取 balance.json")
 	else:
 		var balance = JSON.parse_string(balance_file.get_as_text())
-		for section in ["player", "mosquito", "ant", "boss", "mechanics"]:
+		for section in ["player", "mosquito", "ant", "cricket", "thrush", "bear", "boss", "mechanics"]:
 			if not balance is Dictionary or not balance.has(section) or not balance[section] is Dictionary:
 				failures.append("平衡参数缺少分区 %s" % section)
 		if balance is Dictionary and balance.has("boss") and float(balance.boss.get("required_tunings", 0)) <= 0:

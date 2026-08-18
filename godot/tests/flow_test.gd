@@ -184,6 +184,69 @@ func run_test() -> void:
 			expect(conscription.state == "idle", "征召：花区响应未完成")
 			expect(int(game.flowers[0].nectar) > nectar_before_response, "征召：花区响应后花田未恢复")
 
+	# 敌物候学单元探针
+	# 惊蛰·掠蜜蚁：沿信息素轨迹（巢口→花田）往返巡逻
+	game.spawn_stage(5)
+	expect(game.ants.size() == int(game.stages[5].ants), "惊蛰蚁数量与配置不符")
+	if not game.ants.is_empty():
+		var scout: Dictionary = game.ants[0]
+		var scout_trail: Array = scout.get("trail", [])
+		expect(scout_trail.size() >= 2, "掠蜜蚁缺少信息素轨迹")
+		if scout_trail.size() >= 2:
+			expect(Vector2(scout_trail[0]).x > Vector2(scout_trail[scout_trail.size() - 1]).x, "蚁迹应从巢口（右缘）出发")
+			game.bee.position = Vector2(150, 300)
+			scout["trail_index"] = 1
+			scout["position"] = Vector2(scout_trail[1]) + Vector2(60, 0)
+			game.ants[0] = scout
+			game.update_ants(0.5)
+			expect(Vector2(game.ants[0].position).distance_to(Vector2(scout_trail[1])) < 60.0, "蚁没有沿轨迹向路点移动")
+	# 小雪·深冬：花田无虫，寒冷与匮乏本身即敌人
+	game.spawn_stage(22)
+	expect(game.mosquitoes.is_empty() and game.ants.is_empty() and game.crickets.is_empty() and game.thrushes.is_empty() and game.bears.is_empty(), "深冬关不应生成任何敌害")
+	# 小满·油葫芦：蓄力结束起跳并留下残影
+	game.spawn_stage(10)
+	expect(game.crickets.size() == int(game.stages[10].crickets), "小满油葫芦数量与配置不符")
+	if not game.crickets.is_empty():
+		var hopper: Dictionary = game.crickets[0]
+		hopper["hop_clock"] = 0.01
+		game.crickets[0] = hopper
+		game.update_crickets(0.05)
+		expect(bool(game.crickets[0].hopping), "油葫芦蓄力结束后未起跳")
+		expect(game.field_afterimages.size() >= 1, "油葫芦起跳没有留下残影")
+	# 清明·画眉：鸣唱催生幻花，近身识破
+	game.spawn_stage(7)
+	expect(game.thrushes.size() == int(game.stages[7].thrushes), "清明画眉数量与配置不符")
+	if not game.thrushes.is_empty():
+		var songbird: Dictionary = game.thrushes[0]
+		songbird["song_clock"] = 0.01
+		game.thrushes[0] = songbird
+		game.bee.position = Vector2(200, 200)
+		game.update_thrushes(0.05)
+		expect(game.phantom_flowers.size() == 1, "画眉鸣唱未催生幻花")
+		if not game.phantom_flowers.is_empty():
+			var pollen_before_reveal: int = game.pollen.size()
+			game.bee.position = Vector2(game.phantom_flowers[0].position)
+			game.update_thrushes(0.05)
+			expect(game.phantom_flowers.is_empty(), "靠近幻花没有被识破")
+			expect(game.pollen.size() > pollen_before_reveal, "识破幻花没有散落标记")
+	# 立秋·熊：碾压花田，抵达巢区直食储备
+	game.spawn_stage(15)
+	expect(game.bears.size() == int(game.stages[15].bears), "立秋熊数量与配置不符")
+	if not game.bears.is_empty():
+		game.bee.position = Vector2(150, 300)
+		var bruin: Dictionary = game.bears[0]
+		bruin["position"] = Vector2(game.flowers[0].position)
+		game.bears[0] = bruin
+		game.update_bears(0.05)
+		expect(float(game.flowers[0].get("flatten_time", 0.0)) > 0.0, "熊没有压平沿途花朵")
+		bruin = game.bears[0]
+		bruin["position"] = Vector2(game.HIVE_SAFE_X, 410.0)
+		bruin["eat_clock"] = 0.01
+		game.bears[0] = bruin
+		var reserve_before_bear: int = game.hive_reserve
+		game.update_bears(0.05)
+		expect(game.hive_reserve == reserve_before_bear - 1 and int(game.bears[0].eaten) == 1, "熊抵巢后没有吃掉储备蜜")
+
 	game.queue_free()
 	await process_frame
 	if failures.is_empty():

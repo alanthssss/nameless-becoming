@@ -20,6 +20,11 @@ var bee: BeePlayer
 var flowers: Array = []
 var mosquitoes: Array = []
 var ants: Array = []
+var crickets: Array = []
+var thrushes: Array = []
+var bears: Array = []
+var phantom_flowers: Array = []
+var field_afterimages: Array = []
 var tuning_blooms: Array[Vector2] = []
 var boss := {"position": Vector2.ZERO, "velocity": Vector2.ZERO, "hits": 0, "hit_cooldown": 0.0}
 var pollen: Array = []
@@ -449,6 +454,11 @@ func spawn_stage(index: int) -> void:
 	flowers.clear()
 	mosquitoes.clear()
 	ants.clear()
+	crickets.clear()
+	thrushes.clear()
+	bears.clear()
+	phantom_flowers.clear()
+	field_afterimages.clear()
 	decoys.clear()
 	tuning_blooms.clear()
 	pollen.clear()
@@ -465,21 +475,42 @@ func spawn_stage(index: int) -> void:
 			"phase": rng.randf_range(0, TAU),
 			"recovery": false
 		})
-	for i in int(data.enemies):
+	# 敌物候学：五类小怪按节令物候生成（见 docs/design/enemy-phenology.md）
+	for i in int(data.get("mosquitoes", 0)):
 		mosquitoes.append({
 			"id": i,
 			"position": Vector2(rng.randf_range(540, 940), rng.randf_range(210, 610)),
 			"velocity": Vector2.ZERO,
 			"repel_time": 0.0
 		})
-	for i in int(data.ants):
-		ants.append({
+	for i in int(data.get("ants", 0)):
+		ants.append(build_ant_with_trail(i))
+	for i in int(data.get("crickets", 0)):
+		crickets.append({
 			"id": i,
-			"position": Vector2(rng.randf_range(600, 940), rng.randf_range(220, 630)),
+			"position": Vector2(rng.randf_range(420, 920), rng.randf_range(240, 600)),
 			"velocity": Vector2.ZERO,
-			"steal_cooldown": 0.0,
-			"flee_time": 0.0,
-			"stolen_honey": 0
+			"repel_time": 0.0,
+			"hopping": false,
+			"hop_clock": rng.randf_range(0.3, 1.2),
+			"hop_time": 0.0,
+			"hop_direction": Vector2.RIGHT
+		})
+	for i in int(data.get("thrushes", 0)):
+		thrushes.append({
+			"id": i,
+			"position": Vector2(rng.randf_range(480, 900), rng.randf_range(240, 580)),
+			"song_clock": rng.randf_range(2.0, 5.0),
+			"silence_time": 0.0
+		})
+	for i in int(data.get("bears", 0)):
+		bears.append({
+			"id": i,
+			"position": Vector2(WORLD.end.x - 26.0, rng.randf_range(300.0, 560.0)),
+			"state": "forage",
+			"eat_clock": balance_value("bear", "eat_interval", 4.0),
+			"eaten": 0,
+			"bored": 0
 		})
 	# 体温在越冬段（寒露→大雪）内延续：由数据字段 warmth_carry 标记，
 	# 只有入冬第一个节令（寒露）重置体温
@@ -581,11 +612,35 @@ func update_game(delta: float) -> void:
 					message = "掠蜜蚁受惊后丢下了 %d 滴蜜，花田会重新吸收它们。" % int(ant.stolen_honey)
 					ant.stolen_honey = 0
 				ants[i] = ant
+		for i in crickets.size():
+			var cricket: Dictionary = crickets[i]
+			if bee.position.distance_to(cricket.position) < sting_range:
+				cricket.repel_time = balance_value("player", "repel_duration", 3.5)
+				cricket.hopping = false
+				cricket.hop_clock = balance_value("cricket", "rest_seconds", 1.2)
+				crickets[i] = cricket
+		for i in thrushes.size():
+			var thrush: Dictionary = thrushes[i]
+			if bee.position.distance_to(thrush.position) < sting_range + 20.0:
+				thrush.silence_time = balance_value("player", "repel_duration", 3.5)
+				thrushes[i] = thrush
 		season_mechanics.on_repel_success()
 		message = "急促的震翼把附近敌虫推离了航线。"
+		for bear_unit in bears:
+			if bee.position.distance_to(bear_unit.position) < sting_range + 40.0:
+				message = "熊对震翼毫无反应。绕开它，抢在它之前收完这片花田。"
 
 	update_mosquitoes(delta)
 	update_ants(delta)
+	update_crickets(delta)
+	update_thrushes(delta)
+	update_bears(delta)
+	# 花被熊压平后的恢复倒计时
+	for i in flowers.size():
+		var flower_timer: Dictionary = flowers[i]
+		if float(flower_timer.get("flatten_time", 0.0)) > 0.0:
+			flower_timer.flatten_time = maxf(0.0, float(flower_timer.flatten_time) - delta)
+			flowers[i] = flower_timer
 	season_mechanics.process(delta)
 	update_hive_rest(delta, true)
 	if delivered >= int(data.goal) and phase == "playing":
@@ -638,6 +693,35 @@ func update_mosquitoes(delta: float) -> void:
 		)
 		mosquitoes[i] = mosquito_clamp
 
+# 掠蜜蚁沿信息素轨迹在巢口与富花之间巡逻：轨迹可读、可预判（生态化重设计）
+func build_ant_with_trail(id: int) -> Dictionary:
+	var nest := Vector2(WORLD.end.x - 18.0, rng.randf_range(220.0, 620.0))
+	var richest := -1
+	var richest_nectar := -1
+	for i in flowers.size():
+		var flower: Dictionary = flowers[i]
+		if int(flower.nectar) > richest_nectar and not bool(flower.get("recovery", false)):
+			richest_nectar = int(flower.nectar)
+			richest = i
+	var target := Vector2(WORLD.end.x - 120.0, 410.0)
+	if richest >= 0:
+		target = Vector2(flowers[richest].position)
+	var waypoint := Vector2(
+		(nest.x + target.x) * 0.5 + rng.randf_range(-60.0, 60.0),
+		clampf((nest.y + target.y) * 0.5 + rng.randf_range(-80.0, 80.0), WORLD.position.y + 60.0, WORLD.end.y - 60.0)
+	)
+	return {
+		"id": id,
+		"position": nest,
+		"velocity": Vector2.ZERO,
+		"steal_cooldown": 0.0,
+		"flee_time": 0.0,
+		"stolen_honey": 0,
+		"trail": [nest, waypoint, target],
+		"trail_index": 0,
+		"trail_forward": true
+	}
+
 func update_ants(delta: float) -> void:
 	for i in ants.size():
 		var ant: Dictionary = ants[i]
@@ -647,12 +731,23 @@ func update_ants(delta: float) -> void:
 		var desired := Vector2.ZERO
 		if ant.flee_time > 0.0:
 			desired = Vector2(ant.velocity).normalized()
-		elif carried > 0 and bee.position.x > HIVE_SAFE_X:
-			desired = (bee.position - ant_position).normalized()
 		else:
-			var flower_index := nearest_flower_to(ant_position)
-			if flower_index >= 0:
-				desired = (Vector2(flowers[flower_index].position) - ant_position).normalized()
+			var trail: Array = ant.get("trail", [])
+			if trail.is_empty():
+				var flower_index := nearest_flower_to(ant_position)
+				if flower_index >= 0:
+					desired = (Vector2(flowers[flower_index].position) - ant_position).normalized()
+			else:
+				var arrive := balance_value("ant", "trail_arrive_range", 14.0)
+				var target_position: Vector2 = trail[int(ant.trail_index)]
+				if ant_position.distance_to(target_position) < arrive:
+					if int(ant.trail_index) >= trail.size() - 1:
+						ant.trail_forward = false
+					elif int(ant.trail_index) <= 0:
+						ant.trail_forward = true
+					ant.trail_index = clampi(int(ant.trail_index) + (1 if bool(ant.trail_forward) else -1), 0, trail.size() - 1)
+					target_position = trail[int(ant.trail_index)]
+				desired = (target_position - ant_position).normalized()
 		ant.velocity = Vector2(ant.velocity).lerp(desired * 1.35, delta * 2.2)
 		ant.position += Vector2(ant.velocity) * balance_value("ant", "move_speed", 58.0) * delta
 		ant.position.x = clampf(ant.position.x, HIVE_SAFE_X, WORLD.end.x - 14)
@@ -677,6 +772,129 @@ func update_ants(delta: float) -> void:
 			clampf(clamp_position.y, WORLD.position.y + 14, WORLD.end.y - 14)
 		)
 		ants[i] = ant_clamp
+
+# 油葫芦：间歇跳跃（0.4s 爆发 + 一个虚影 → 1.2s 停顿），威胁在落点预判
+func update_crickets(delta: float) -> void:
+	for i in crickets.size():
+		var cricket: Dictionary = crickets[i]
+		cricket.repel_time = maxf(0.0, float(cricket.repel_time) - delta)
+		if bool(cricket.hopping):
+			cricket.hop_time = float(cricket.hop_time) - delta
+			cricket.position = Vector2(cricket.position) + Vector2(cricket.hop_direction) * balance_value("cricket", "burst_speed", 110.0) * delta
+			if float(cricket.hop_time) <= 0.0:
+				cricket.hopping = false
+				cricket.hop_clock = balance_value("cricket", "rest_seconds", 1.2)
+		else:
+			cricket.hop_clock = float(cricket.hop_clock) - delta
+			if float(cricket.repel_time) > 0.0:
+				var away := (Vector2(cricket.position) - bee.position).normalized()
+				cricket.position = Vector2(cricket.position) + away * 60.0 * delta
+			elif float(cricket.hop_clock) <= 0.0:
+				cricket.hopping = true
+				cricket.hop_time = balance_value("cricket", "burst_seconds", 0.4)
+				var to_player: Vector2 = bee.position - Vector2(cricket.position)
+				if to_player.length() < balance_value("cricket", "sense_range", 220.0):
+					cricket.hop_direction = to_player.normalized().rotated(rng.randf_range(-0.5, 0.5))
+				else:
+					cricket.hop_direction = Vector2.from_angle(rng.randf() * TAU)
+				field_afterimages.append({"position": Vector2(cricket.position), "life": balance_value("cricket", "afterimage_life", 0.5)})
+		var cricket_position: Vector2 = cricket.position
+		cricket_position.x = clampf(cricket_position.x, HIVE_SAFE_X, WORLD.end.x - 14)
+		cricket_position.y = clampf(cricket_position.y, WORLD.position.y + 14, WORLD.end.y - 14)
+		cricket.position = cricket_position
+		if float(cricket.repel_time) <= 0.0 and cricket_position.distance_to(bee.position) < balance_value("cricket", "impact_range", 28.0) and hit_cooldown <= 0.0 and bee.invulnerable_time <= 0.0:
+			hit_cooldown = 1.05
+			bee.energy = maxf(0.0, bee.energy - balance_value("cricket", "energy_damage", 10.0))
+			show_energy_change(-balance_value("cricket", "energy_damage", 10.0))
+			shake = 6.0
+			flash = 0.4
+			message = "油葫芦擦身跃过，气流扫得你失去平衡。"
+			sound.play_cue("hurt")
+		crickets[i] = cricket
+	separate_units(crickets, 24.0)
+	for i in range(field_afterimages.size() - 1, -1, -1):
+		field_afterimages[i].life = float(field_afterimages[i].life) - delta
+		if float(field_afterimages[i].life) <= 0.0:
+			field_afterimages.remove_at(i)
+
+# 画眉：栖息鸣唱催生幻花（无蜜的骗局），靠近才识破；惊退可打断歌声
+func update_thrushes(delta: float) -> void:
+	for i in thrushes.size():
+		var thrush: Dictionary = thrushes[i]
+		thrush.silence_time = maxf(0.0, float(thrush.silence_time) - delta)
+		thrush.song_clock = float(thrush.song_clock) - delta
+		if float(thrush.silence_time) <= 0.0 and float(thrush.song_clock) <= 0.0:
+			thrush.song_clock = balance_value("thrush", "song_interval", 8.0)
+			if phantom_flowers.size() < int(balance_value("thrush", "max_phantoms", 3.0)):
+				var angle := rng.randf() * TAU
+				var distance := rng.randf_range(46.0, balance_value("thrush", "phantom_radius", 120.0))
+				var thrush_position: Vector2 = thrush.position
+				var phantom_position := Vector2(
+					clampf(thrush_position.x + cos(angle) * distance, HIVE_SAFE_X + 30.0, WORLD.end.x - 40.0),
+					clampf(thrush_position.y + sin(angle) * distance, WORLD.position.y + 50.0, WORLD.end.y - 50.0)
+				)
+				phantom_flowers.append({"position": phantom_position, "life": balance_value("thrush", "phantom_life", 20.0), "kind": rng.randi() % 3, "phase": rng.randf_range(0, TAU)})
+				message = "画眉的歌声在花田里催出一朵幻花。"
+		thrushes[i] = thrush
+	for i in range(phantom_flowers.size() - 1, -1, -1):
+		var phantom: Dictionary = phantom_flowers[i]
+		phantom.life = float(phantom.life) - delta
+		var revealed := Vector2(phantom.position).distance_to(bee.position) < balance_value("thrush", "phantom_reveal_range", 34.0)
+		if revealed or float(phantom.life) <= 0.0:
+			if revealed:
+				spawn_pollen(phantom.position)
+				message = "这朵花没有蜜——歌声的骗局消散了。"
+			phantom_flowers.remove_at(i)
+		else:
+			phantom_flowers[i] = phantom
+
+# 熊：不可对抗的碾压型威胁——压平沿途花朵，抵达巢区吃储备，吃饱自行离开
+func update_bears(delta: float) -> void:
+	var anchor_x := HIVE_SAFE_X + balance_value("bear", "hive_anchor_offset", 70.0)
+	var flatten_radius := balance_value("bear", "flatten_radius", 30.0)
+	for i in range(bears.size() - 1, -1, -1):
+		var bear: Dictionary = bears[i]
+		var bear_position: Vector2 = bear.position
+		if String(bear.state) == "leaving":
+			bear_position.x += balance_value("bear", "move_speed", 30.0) * 1.6 * delta
+			bear.position = bear_position
+			if bear_position.x > WORLD.end.x + 60.0:
+				bears.remove_at(i)
+			continue
+		if bear_position.x > anchor_x:
+			var target := Vector2(anchor_x, bear_position.y)
+			bear_position += (target - bear_position).normalized() * balance_value("bear", "move_speed", 30.0) * delta
+			bear.position = bear_position
+		else:
+			bear.state = "feeding"
+			bear.eat_clock = float(bear.eat_clock) - delta
+			if float(bear.eat_clock) <= 0.0:
+				bear.eat_clock = balance_value("bear", "eat_interval", 4.0)
+				if hive_reserve > 0:
+					hive_reserve -= 1
+					bear.eaten = int(bear.eaten) + 1
+					shake = 6.0
+					sound.play_cue("hurt")
+					message = "熊在巢口吃掉一滴储备蜜。绕不开它，就抢在它前面收蜜。"
+				else:
+					bear.bored = int(bear.bored) + 1
+				if int(bear.eaten) >= int(balance_value("bear", "appetite", 3.0)) or int(bear.bored) >= 2:
+					bear.state = "leaving"
+					message = "熊吃饱了，摇摇摆摆地离开花田。"
+		for flower_index in flowers.size():
+			var flower: Dictionary = flowers[flower_index]
+			if Vector2(flower.position).distance_to(bear_position) < flatten_radius:
+				flower.flatten_time = balance_value("bear", "flatten_seconds", 9.0)
+				flowers[flower_index] = flower
+		if bear_position.distance_to(bee.position) < balance_value("bear", "contact_range", 30.0) and hit_cooldown <= 0.0 and bee.invulnerable_time <= 0.0:
+			hit_cooldown = 1.05
+			bee.energy = maxf(0.0, bee.energy - balance_value("bear", "contact_damage", 16.0))
+			show_energy_change(-balance_value("bear", "contact_damage", 16.0))
+			shake = 8.0
+			flash = 0.5
+			message = "你撞上了熊的肩膀。别和它较劲——绕开。"
+			sound.play_cue("hurt")
+		bears[i] = bear
 
 func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 	var inside := bee.position.x < HIVE_X
@@ -834,6 +1052,11 @@ func start_boss() -> void:
 	flowers.clear()
 	mosquitoes.clear()
 	ants.clear()
+	crickets.clear()
+	thrushes.clear()
+	bears.clear()
+	phantom_flowers.clear()
+	field_afterimages.clear()
 	pollen.clear()
 	decoys.clear()
 	boss_afterimages.clear()
@@ -1017,7 +1240,7 @@ func nearest_flower(radius: float) -> int:
 	var best_distance := radius
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
-		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
+		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
 			continue
 		var current := bee.position.distance_to(flower.position)
 		if current < best_distance:
@@ -1030,7 +1253,7 @@ func nearest_flower_to(origin: Vector2) -> int:
 	var best_distance := INF
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
-		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
+		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
 			continue
 		var current := origin.distance_to(flower.position)
 		if current < best_distance:
@@ -1180,7 +1403,14 @@ func update_interface() -> void:
 		# 阴阳数值是内部设计依据（驱动节令难度），不向玩家暴露；
 		# 用「▸」做状态行节奏符，把敌害收进同一行避免被误读为玩家可选角色。
 		season_label.text = data.name
-		var status_rows := "▸ 目标 · %d 滴\n▸ 敌害 · 蚊 %s   蚁 %s" % [int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants))]
+		var threat_parts := []
+		var species := [["蚊", "mosquitoes"], ["蚁", "ants"], ["蛐", "crickets"], ["眉", "thrushes"], ["熊", "bears"]]
+		for entry in species:
+			var count := int(data.get(entry[1], 0))
+			if count > 0:
+				threat_parts.append("%s %s" % [entry[0], "◆".repeat(mini(count, 4))])
+		var threat_row := "▸ 敌害 · " + ("  ".join(threat_parts) if not threat_parts.is_empty() else "无（寒冷与匮乏本身）")
+		var status_rows := "▸ 目标 · %d 滴\n%s" % [int(data.goal), threat_row]
 		if season_index_of(stage_index) == 3:
 			status_rows += "\n▸ 体温 · %d%%  储蜜 · %d 滴" % [roundi(warmth), hive_reserve]
 		detail_label.text = "%s\n\n%s" % [data.line, status_rows]
@@ -1204,7 +1434,7 @@ func best_foraging_target() -> int:
 	var best_score := -INF
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
-		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
+		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
 			continue
 		var score := float(flower.nectar) * 42.0 - bee.position.distance_to(flower.position) * 0.12
 		for mosquito in mosquitoes:
@@ -1215,6 +1445,16 @@ func best_foraging_target() -> int:
 			var ant_distance := Vector2(flower.position).distance_to(ant.position)
 			if ant_distance < 180.0:
 				score -= (180.0 - ant_distance) * 0.18
+		# 油葫芦的突进警戒圈：静止时也随时可能弹跳过来
+		for cricket in crickets:
+			var cricket_distance := Vector2(flower.position).distance_to(cricket.position)
+			if cricket_distance < balance_value("cricket", "sense_range", 220.0):
+				score -= (220.0 - cricket_distance) * 0.2
+		# 熊的碾压半径：花随时会被压平，风险远高于虫害
+		for bear_unit in bears:
+			var bear_distance := Vector2(flower.position).distance_to(bear_unit.position)
+			if bear_distance < balance_value("bear", "flatten_radius", 30.0) + 90.0:
+				score -= (balance_value("bear", "flatten_radius", 30.0) + 90.0 - bear_distance) * 0.5
 		if score > best_score:
 			best_score = score
 			best = i
@@ -1311,10 +1551,23 @@ func _draw() -> void:
 
 	for flower in flowers:
 		draw_flower(flower)
+	for phantom in phantom_flowers:
+		draw_phantom_flower(phantom)
+	for ant in ants:
+		draw_ant_trail(ant)
 	for mosquito in mosquitoes:
 		draw_mosquito(mosquito)
 	for ant in ants:
 		draw_ant(ant)
+	for afterimage in field_afterimages:
+		var a_pos: Vector2 = afterimage.position
+		draw_circle(a_pos, 8, Color("6d5a35", clampf(float(afterimage.life) / balance_value("cricket", "afterimage_life", 0.5), 0.0, 0.4)))
+	for cricket in crickets:
+		draw_cricket(cricket)
+	for thrush in thrushes:
+		draw_thrush(thrush)
+	for bear_unit in bears:
+		draw_bear_unit(bear_unit)
 	if phase == "boss":
 		for bloom in tuning_blooms:
 			draw_tuning_bloom(bloom)
@@ -1329,7 +1582,7 @@ func _draw() -> void:
 		var recommended := best_foraging_target()
 		for i in flowers.size():
 			var flower: Dictionary = flowers[i]
-			if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)):
+			if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
 				continue
 			var is_best := i == recommended
 			draw_line(bee.position, flower.position, Color("fff0a0", 0.42 if is_best else 0.12), 3.0 if is_best else 1.0)
@@ -1342,6 +1595,10 @@ func _draw() -> void:
 			draw_arc(mosquito.position, balance_value("mosquito", "sense_range", 330.0), 0, TAU, 64, Color("9d4238", 0.15), 2)
 		for ant in ants:
 			draw_circle(ant.position, 26, Color("74452d", 0.15), false, 2)
+		for cricket in crickets:
+			draw_arc(cricket.position, balance_value("cricket", "sense_range", 220.0), 0, TAU, 48, Color("9d4238", 0.13), 2)
+		for bear_unit in bears:
+			draw_circle(bear_unit.position, balance_value("bear", "flatten_radius", 30.0) + 6.0, Color("5c4433", 0.16), false, 3)
 		draw_line(bee.position, Vector2(HIVE_X, bee.position.y), Color("fff0a0", 0.55), 3)
 	var nearby := nearest_flower(46.0)
 	if nearby >= 0 and phase == "playing":
@@ -1365,6 +1622,16 @@ func draw_flower(flower: Dictionary) -> void:
 		draw_circle(pos + Vector2(0, 14), 5, Color("3d4a3a", 0.55))
 		draw_arc(pos, 13, 0, TAU, 16, Color(stage_color(2), 0.4), 2)
 		draw_string(zh_font, pos + Vector2(-15, 66), "休眠", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color(stage_color(2), 0.8))
+		return
+	if float(flower.get("flatten_time", 0.0)) > 0.0:
+		# 被熊压平：花没有死，flatten_time 走完后会重新立起
+		var petal_color := Color(FLOWER_COLORS[int(flower.kind)], 0.38)
+		draw_line(pos + Vector2(0, 16), pos + Vector2(0, 38), Color(stage_color(2), 0.28), 2)
+		draw_circle(pos + Vector2(-7, 3), 6, petal_color)
+		draw_circle(pos + Vector2(6, 6), 5, petal_color)
+		draw_circle(pos + Vector2(0, 9), 4, Color(stage_color(3), 0.35))
+		draw_line(pos + Vector2(-18, 13), pos + Vector2(20, 13), Color("5c4433", 0.5), 3)
+		draw_string(zh_font, pos + Vector2(-15, 66), "压平", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color("8a6a4d", 0.9))
 		return
 	draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), alpha), 3)
 	for petal in 5:
@@ -1409,6 +1676,103 @@ func draw_ant(ant: Dictionary) -> void:
 		draw_rect(Rect2(pos + Vector2(-17, -23), Vector2(34 * ratio, 3)), Color("e9b84f"))
 	if int(ant.get("stolen_honey", 0)) > 0:
 		draw_string(zh_font, pos + Vector2(-18, -30), "蜜%d" % int(ant.stolen_honey), HORIZONTAL_ALIGNMENT_CENTER, 36, 11, Color("f4ce67"))
+
+func draw_ant_trail(ant: Dictionary) -> void:
+	# 信息素迹：蚁沿固定的巢—花往返线巡逻，虚线点提示玩家可预判
+	var points: Array = ant.get("trail", [])
+	if points.size() < 2:
+		return
+	for i in points.size() - 1:
+		var a: Vector2 = points[i]
+		var b: Vector2 = points[i + 1]
+		var length := a.distance_to(b)
+		var steps := maxi(2, int(length / 34.0))
+		for step_i in steps:
+			var ratio := (float(step_i) + 0.5) / float(steps)
+			var dot_position := a.lerp(b, ratio)
+			var pulse := 0.14 + 0.08 * sin(elapsed * 3.0 + float(i) + float(step_i) * 0.8)
+			draw_circle(dot_position, 2.0, Color("74452d", pulse))
+
+func draw_phantom_flower(phantom: Dictionary) -> void:
+	# 画眉的幻花：外形与真花一致，唯有花心颜色偏灰绿是唯一破绽
+	var pos: Vector2 = phantom.position
+	draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), 0.85), 3)
+	for petal in 5:
+		var angle := float(petal) * TAU / 5.0 + float(phantom.phase)
+		draw_circle(pos + Vector2.from_angle(angle) * 11, 7, Color(FLOWER_COLORS[int(phantom.kind)]))
+	draw_circle(pos, 6, Color("cfe0b4"))
+
+func draw_cricket(cricket: Dictionary) -> void:
+	# 油葫芦：三节躯体 + 后腿；静止蓄力、突进时留残影
+	var pos: Vector2 = cricket.position
+	var hopping := bool(cricket.hopping)
+	var repelled := float(cricket.repel_time) > 0.0
+	var body := Color("8d7f4a") if repelled else Color("4f4a2c")
+	if hopping:
+		body = Color("6d6438")
+	draw_circle(pos + Vector2(-8, 0), 5, body)
+	draw_circle(pos + Vector2(0, 0), 6, body)
+	draw_circle(pos + Vector2(8, -1), 4, body)
+	draw_line(pos + Vector2(-8, -3), pos + Vector2(-17, -11), body, 2)
+	draw_line(pos + Vector2(8, -3), pos + Vector2(17, -11), body, 2)
+	# 粗壮后腿（跳跃足）
+	for side in [-1, 1]:
+		draw_line(pos + Vector2(-4, 3 * side), pos + Vector2(-10, 12 * side), body, 3)
+		draw_line(pos + Vector2(-10, 12 * side), pos + Vector2(1, 8 * side), body, 3)
+	if not hopping:
+		var charge_ratio := 1.0 - clampf(float(cricket.hop_clock) / balance_value("cricket", "rest_seconds", 1.2), 0.0, 1.0)
+		draw_rect(Rect2(pos + Vector2(-16, -25), Vector2(32, 4)), Color("332b27", 0.7))
+		draw_rect(Rect2(pos + Vector2(-15, -24), Vector2(30 * charge_ratio, 2)), Color("d9c26a"))
+	if repelled:
+		draw_line(pos + Vector2(12, -4), pos + Vector2(26, -4), Color("fff0aa", 0.7), 2)
+		draw_line(pos + Vector2(12, 4), pos + Vector2(26, 4), Color("fff0aa", 0.7), 2)
+
+func draw_thrush(thrush: Dictionary) -> void:
+	# 画眉：地栖鸟，栖在花田中低处，鸣唱间隔催生幻花
+	var pos: Vector2 = thrush.position
+	var silenced := float(thrush.silence_time) > 0.0
+	var body := Color("8a6f52") if silenced else Color("6b543d")
+	draw_circle(pos, 10, body)
+	draw_circle(pos + Vector2(9, -5), 6, body)
+	draw_circle(pos + Vector2(11.5, -5.5), 1.6, Color("2c231b"))
+	draw_line(pos + Vector2(14, -4), pos + Vector2(22, -2), Color("4a3a29"), 3)
+	# 眉线（名字来源）
+	draw_line(pos + Vector2(6, -8), pos + Vector2(14, -7), Color("e8dcc2"), 2)
+	# 尾羽
+	draw_line(pos + Vector2(-9, 0), pos + Vector2(-19, 4), body, 4)
+	for side in [-1, 1]:
+		draw_line(pos + Vector2(-2, 6 * side), pos + Vector2(-8, 13 * side), Color("4a3a29"), 2)
+	if not silenced:
+		var note_phase := elapsed * 2.5
+		for i in 2:
+			var note_pos := pos + Vector2(-14.0 - i * 10.0, -14.0 - sin(note_phase + i * 1.7) * 4.0)
+			draw_circle(note_pos, 2.4, Color("e8dcc2", 0.75))
+			draw_line(note_pos + Vector2(2, -1), note_pos + Vector2(2, -7), Color("e8dcc2", 0.75), 1.5)
+	else:
+		draw_string(zh_font, pos + Vector2(-15, -22), "噤声", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("e8dcc2", 0.85))
+
+func draw_bear_unit(bear_unit: Dictionary) -> void:
+	# 熊：不可对抗的移动地形，压平花、直取储蜜
+	var pos: Vector2 = bear_unit.position
+	var state := String(bear_unit.state)
+	var body := Color("4a3a30")
+	var gait := sin(elapsed * 4.0) * 2.0 if state != "feeding" else 0.0
+	draw_circle(pos + Vector2(0, 0), 20, body)
+	draw_circle(pos + Vector2(-16, -6 + gait * 0.3), 12, body)
+	draw_circle(pos + Vector2(-13, -14), 4, Color("2e231c"))
+	draw_circle(pos + Vector2(-19, -13), 4, Color("2e231c"))
+	draw_circle(pos + Vector2(-18, -6), 5, Color("8a6f52"))
+	for side in [-1, 1]:
+		draw_circle(pos + Vector2(8, 14 * side), 8, body)
+		draw_circle(pos + Vector2(-8, 14 * side), 8, body)
+	if state == "feeding":
+		var eat_pulse := 0.5 + 0.5 * sin(elapsed * 6.0)
+		draw_arc(pos + Vector2(-16, -6), 24 + eat_pulse * 4.0, PI * 0.75, PI * 1.6, 16, Color("e9b84f", 0.6 * eat_pulse + 0.2), 2)
+		draw_string(zh_font, pos + Vector2(-24, -34), "吞蜜 %d/%d" % [int(bear_unit.eaten), int(balance_value("bear", "appetite", 3))], HORIZONTAL_ALIGNMENT_CENTER, 48, 11, Color("e9b84f"))
+	elif state == "leaving":
+		draw_string(zh_font, pos + Vector2(-12, -34), "饱足", HORIZONTAL_ALIGNMENT_CENTER, 24, 11, Color("b7a98c"))
+	else:
+		draw_string(zh_font, pos + Vector2(-12, -34), "压平花田", HORIZONTAL_ALIGNMENT_CENTER, 48, 11, Color("c9a06a", 0.9))
 
 func draw_tuning_bloom(pos: Vector2) -> void:
 	var bloom_color := Color(String(current_boss_data.get("bloom_color", "fff0a0"))) if not current_boss_data.is_empty() else Color("fff0a0")
