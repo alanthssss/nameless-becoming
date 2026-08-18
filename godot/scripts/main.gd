@@ -71,6 +71,7 @@ var overlay: ColorRect
 var overlay_title: Label
 var overlay_body: Label
 var overlay_button: Button
+var overlay_history: Label
 var upgrade_buttons: Array[Button] = []
 var zh_font: Font
 var pause_button: Button
@@ -337,6 +338,9 @@ func build_interface() -> void:
 	overlay_button.add_theme_font_size_override("font_size", 18)
 	overlay_button.pressed.connect(on_overlay_button)
 	overlay.add_child(overlay_button)
+	overlay_history = make_label(overlay, "", Vector2(190, 415), Vector2(590, 28), 14, Color("9fb1a3"))
+	overlay_history.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	overlay_history.visible = false
 	for i in 3:
 		var choice := Button.new()
 		choice.position = Vector2(105 + i * 255, 330)
@@ -421,9 +425,12 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "WASD 飞向花朵，空格采蜜。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n长按携蜜=投诱饵 · 双击方向=急转 · Q=归巢\n\n历史最远：%s  ·  完成轮回：%d%s" % [progress_name(), save_manager.runs_completed, last_run_text()]
+	overlay_body.text = "WASD 飞向花朵，空格采蜜。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n长按携蜜=投诱饵 · 双击方向=急转 · Q=归巢"
+	overlay_history.text = "历史最远：%s  ·  完成轮回：%d%s" % [progress_name(), save_manager.runs_completed, last_run_text()]
 	overlay_button.text = "飞入冬至"
 	set_upgrade_buttons_visible(false)
+	overlay_button.visible = true
+	overlay_history.visible = true
 
 func start_game() -> void:
 	hive_lives = 3
