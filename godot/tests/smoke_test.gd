@@ -224,6 +224,9 @@ func _init() -> void:
 
 	# 失律者战败必须可见、可重入：避免「XX完成 · 蜂巢成长」stale 文案重新浮上来。
 	# 范围检查：主脚本必须暴露 show_boss_loss，且 on_overlay_button 接受 boss_loss 相位。
+	# 历史信息（轮回计数 + 前路最远）应寄生在 HUD 侧栏持久位，而不是 overlay 弹窗里的临时 Label：
+	# 旧 overlay_history Label 只在 show_intro 写了 visible=true，从未关闭，会跟着 overlay 一起浮到
+	# 升级选择界面盖在三张升级卡片上，导致卡片读不清、按钮区域视觉碎片化。
 	var main_script := load("res://scripts/main.gd")
 	if main_script == null:
 		failures.append("主脚本无法加载")
@@ -231,6 +234,8 @@ func _init() -> void:
 		var main_node = main_script.new()
 		if not main_node.has_method("show_boss_loss"):
 			failures.append("缺失 show_boss_loss：失律者战败需要专属结算页，不能复用 show_loss")
+		if not main_node.has_method("refresh_runs_meter"):
+			failures.append("缺失 refresh_runs_meter：历史信息应从 overlay 弹窗搬到 HUD 侧栏底部")
 		main_node.free()
 
 	if failures.is_empty():
