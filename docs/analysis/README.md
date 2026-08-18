@@ -37,3 +37,4 @@
 |-----------------|-------------|-------------|
 | 项目策划记录 / Project Log | `docs/PROJECT_LOG.md` | 版本决策与设计共识（中文） |
 | MVP 规格 / MVP Spec | `docs/MVP_SPEC.md` | 完整 MVP 范围与验收标准（中文） |
+| 设计共识与实现差距 / Design Consensus & Gaps | `docs/DESIGN_CONSENSUS.md` | 十五项共识逐项对照实现状态 + 后续优先级（中文） |
