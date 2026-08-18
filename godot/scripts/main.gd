@@ -5,6 +5,8 @@ const HIVE_X := 132.0
 const HIVE_SAFE_X := 225.0
 const FLOWER_COLORS := [Color("f2d66f"), Color("e9aab1"), Color("a995c9")]
 const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"]
+const SEASON_LENGTH := 6
+const UPGRADE_CAP := 6
 const SeasonMechanicsScript := preload("res://scripts/mechanics/season_mechanics.gd")
 
 var stages: Array = []
@@ -85,6 +87,11 @@ var allocation_slider: HSlider
 var allocation_pending := false
 var allocation_harvest := 0
 var allocation_fraction := 0.5
+var boss_catalog: Array = []
+var current_boss_data: Dictionary = {}
+var current_boss_index := 0
+var boss_afterimages: Array = []
+var preserve_warmth := false
 
 func _ready() -> void:
 	zh_font = load("res://fonts/hivebound_font.ttf")
@@ -97,6 +104,7 @@ func _ready() -> void:
 	load_stage_data()
 	load_balance_data()
 	load_upgrade_data()
+	load_boss_data()
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
 	bee.sense_started.connect(on_sense_started)
@@ -148,6 +156,25 @@ func load_stage_data() -> void:
 	else:
 		push_error("节令数据格式错误")
 
+func load_boss_data() -> void:
+	var file := FileAccess.open("res://data/bosses.json", FileAccess.READ)
+	if file == null:
+		push_error("无法读取失律者数据")
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if parsed is Array:
+		boss_catalog = parsed
+	else:
+		push_error("失律者数据格式错误")
+
+# 游戏季（0-3）：每 6 个节令为一季，难度与机制按此分派
+func season_index_of(index: int) -> int:
+	return clampi(index / SEASON_LENGTH, 0, 3)
+
+# 季末节令（惊蛰/芒种/白露/大雪）：完成后在四正点遭遇失律者
+func is_season_end(index: int) -> bool:
+	return index % SEASON_LENGTH == SEASON_LENGTH - 1
+
 func load_upgrade_data() -> void:
 	var file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
 	if file == null:
@@ -194,7 +221,7 @@ func build_interface() -> void:
 
 	title_label = make_label(ui, "◆  无名：成蜂", Vector2(34, 17), Vector2(350, 42), 24, Color("26342b"))
 	make_label(ui, "NAMELESS: BECOMING · GODOT VERTICAL SLICE", Vector2(67, 48), Vector2(370, 20), 10, Color("566257"))
-	term_label = make_label(ui, "春 · 春分", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
+	term_label = make_label(ui, "冬 · 冬至", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
 	term_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	fullscreen_button = Button.new()
@@ -244,7 +271,7 @@ func build_interface() -> void:
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
 	make_label(side, "当前节令", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
-	season_label = make_label(side, "春分", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
+	season_label = make_label(side, "冬至", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
 	# 节令名下的细分隔条：用 4px 高的色块代替“空行造成的虚假分隔”，视觉上更稳重
 	season_rule = ColorRect.new()
 	season_rule.color = Color("c8a86b", 0.7)
@@ -287,7 +314,7 @@ func build_interface() -> void:
 	overlay_body = make_label(overlay, "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。", Vector2(190, 245), Vector2(590, 78), 17, Color("d8ddc9"))
 	overlay_body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	overlay_button = Button.new()
-	overlay_button.text = "飞入春分"
+	overlay_button.text = "飞入冬至"
 	overlay_button.position = Vector2(374, 345)
 	overlay_button.size = Vector2(220, 54)
 	overlay_button.add_theme_font_size_override("font_size", 18)
@@ -378,7 +405,7 @@ func show_intro() -> void:
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
 	overlay_body.text = "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。\n\n历史最远：%s  ·  完成轮回：%d%s" % [progress_name(), save_manager.runs_completed, last_run_text()]
-	overlay_button.text = "飞入春分"
+	overlay_button.text = "飞入冬至"
 	set_upgrade_buttons_visible(false)
 
 func start_game() -> void:
@@ -387,6 +414,10 @@ func start_game() -> void:
 	run_elapsed = 0.0
 	chosen_upgrades.clear()
 	upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
+	current_boss_index = 0
+	current_boss_data = {}
+	boss_afterimages.clear()
+	preserve_warmth = false
 	harvest_multiplier = 1.0
 	sting_range = balance_value("player", "repel_range", 88.0)
 	sting_cost = balance_value("player", "repel_cost", 8.0)
@@ -401,7 +432,7 @@ func spawn_stage(index: int) -> void:
 	if stages.is_empty():
 		return
 	stage_index = index
-	sound.set_season(index)
+	sound.set_season(season_index_of(index))
 	phase = "playing"
 	overlay.visible = false
 	carried = 0
@@ -445,7 +476,9 @@ func spawn_stage(index: int) -> void:
 			"flee_time": 0.0,
 			"stolen_honey": 0
 		})
-	if index != 3:
+	# 体温在整季越冬（18-23）内延续：只在入冬第一个节令重置
+	preserve_warmth = index % SEASON_LENGTH != 0
+	if season_index_of(index) != 3:
 		energy_cap_override = 100.0
 	season_mechanics.start_stage(index)
 	message = "%s：%s" % [data.name, data.line]
@@ -456,8 +489,13 @@ func on_overlay_button() -> void:
 	match phase:
 		"intro", "won", "lost": start_game()
 		"paused": toggle_pause()
+		"boss_victory":
+			if stage_index + 1 < stages.size():
+				spawn_stage(stage_index + 1)
+			else:
+				start_game()
 		"between":
-			if stage_index >= stages.size() - 1:
+			if is_season_end(stage_index):
 				start_boss()
 			else:
 				spawn_stage(stage_index + 1)
@@ -636,7 +674,7 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 		return
 	season_mechanics.on_home(carried if deposit_honey else 0, delta)
 	var rest_rate := balance_value("player", "hive_rest_per_second", 36.0)
-	if stage_index == 3 and warmth <= cold_warmth_threshold:
+	if season_index_of(stage_index) == 3 and warmth <= cold_warmth_threshold:
 		rest_rate *= 0.5
 	bee.energy = minf(energy_cap_override, bee.energy + rest_rate * delta)
 	if deposit_honey and carried > 0:
@@ -680,6 +718,21 @@ func show_between() -> void:
 		show_upgrade_choices(data)
 
 func show_upgrade_choices(data: Dictionary) -> void:
+	# 二十四个节令会让成长点远多于旧 MVP：三种倾向全部满级后，
+	# 不再强制选择，直接给出「继续」按钮，避免成长界面死锁。
+	var any_available := false
+	for i in upgrade_catalog.size():
+		var entry: Dictionary = upgrade_catalog[i]
+		if int(upgrade_counts.get(String(entry.id), 0)) < UPGRADE_CAP:
+			any_available = true
+			break
+	if not any_available:
+		overlay_title.text = "%s完成 · 蜂巢安定" % data.name
+		overlay_body.text = "三种分工都已成熟。蜂群按既定的节奏继续运转。"
+		overlay_button.text = "继续下一个节令"
+		overlay_button.visible = true
+		set_upgrade_buttons_visible(false)
+		return
 	overlay_title.text = "%s完成 · 蜂巢成长" % data.name
 	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。"
 	overlay_button.visible = false
@@ -720,14 +773,14 @@ func set_upgrade_buttons_visible(value: bool) -> void:
 		if value and i < upgrade_catalog.size():
 			var data: Dictionary = upgrade_catalog[i]
 			upgrade_buttons[i].text = "%s  %s\n\n%s" % [data.symbol, data.name, data.description]
-			upgrade_buttons[i].disabled = int(upgrade_counts.get(String(data.id), 0)) >= 2
+			upgrade_buttons[i].disabled = int(upgrade_counts.get(String(data.id), 0)) >= UPGRADE_CAP
 
 func on_upgrade_selected(index: int) -> void:
 	if phase != "between" or index >= upgrade_catalog.size():
 		return
 	var data: Dictionary = upgrade_catalog[index]
 	var upgrade_id := String(data.id)
-	if int(upgrade_counts.get(upgrade_id, 0)) >= 2:
+	if int(upgrade_counts.get(upgrade_id, 0)) >= UPGRADE_CAP:
 		return
 	chosen_upgrades.append(upgrade_id)
 	sound.play_cue("upgrade")
@@ -742,14 +795,21 @@ func on_upgrade_selected(index: int) -> void:
 			sting_cooldown_multiplier *= 0.85
 	set_upgrade_buttons_visible(false)
 	overlay_button.visible = true
-	if stage_index >= stages.size() - 1:
+	if is_season_end(stage_index):
 		start_boss()
 	else:
 		spawn_stage(stage_index + 1)
 
 func start_boss() -> void:
+	if boss_catalog.is_empty():
+		push_error("失律者数据缺失，无法开启调律遭遇")
+		return
+	current_boss_index = clampi(current_boss_index, 0, boss_catalog.size() - 1)
+	if current_boss_data.is_empty():
+		current_boss_data = boss_catalog[current_boss_index]
+	var data: Dictionary = current_boss_data
 	phase = "boss"
-	sound.set_season(3)
+	sound.set_season(int(data.season_index))
 	overlay.visible = false
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
@@ -757,34 +817,104 @@ func start_boss() -> void:
 	mosquitoes.clear()
 	ants.clear()
 	pollen.clear()
-	tuning_blooms = [Vector2(400, 285), Vector2(720, 250), Vector2(650, 550)]
-	boss = {"position": Vector2(840, 410), "velocity": Vector2.ZERO, "hits": 0, "hit_cooldown": 0.0}
-	bee.configure(1.7)
+	decoys.clear()
+	boss_afterimages.clear()
+	tuning_blooms.clear()
+	for i in int(data.bloom_count):
+		tuning_blooms.append(Vector2(360.0 + i * 180.0, clampf(285.0 + sin(float(i) * 2.4) * 150.0, 200.0, 600.0)))
+	boss = {
+		"position": Vector2(840, 410),
+		"velocity": Vector2.ZERO,
+		"hits": 0,
+		"hit_cooldown": 0.0,
+		"pattern_time": 0.0,
+		"next_shift": 0.0,
+		"charge_state": "wander",
+		"state_time": 0.0,
+		"aim_direction": Vector2.RIGHT
+	}
+	bee.configure(1.45 + float(data.season_index) * 0.2)
 	bee.reset_for_expedition(Vector2(180, 410))
 	carried = 6
 	delivered = 0
-	message = "失律之蚊在吸取花潮。把它引到三处共鸣花粉，再以震翼完成调律。"
+	message = String(data.encounter_message)
 
 func update_boss(delta: float) -> void:
+	if current_boss_data.is_empty():
+		return
+	var data: Dictionary = current_boss_data
 	sting_cooldown = maxf(0.0, sting_cooldown - delta)
 	boss.hit_cooldown = maxf(0.0, float(boss.hit_cooldown) - delta)
+	boss.pattern_time = float(boss.pattern_time) + delta
 	var boss_position: Vector2 = boss.position
 	var to_bee := bee.position - boss_position
-	var orbit := to_bee.normalized().rotated(sin(elapsed * 1.7) * 0.45)
-	boss.velocity = Vector2(boss.velocity).lerp(orbit * 2.2, delta * 1.7)
-	boss.position += Vector2(boss.velocity) * balance_value("boss", "move_speed", 78.0) * delta
+	var pattern := String(data.move_pattern)
+	var move_speed := float(data.move_speed)
+
+	match pattern:
+		"orbital":
+			# 蚊：绕着玩家盘旋吸取，航线随时间摆动
+			var orbit := to_bee.normalized().rotated(sin(elapsed * 1.7) * 0.45)
+			boss.velocity = Vector2(boss.velocity).lerp(orbit * 2.2, delta * 1.7)
+		"erratic":
+			# 油葫芦：随机变向乱窜，离开虚影；远离玩家时靠回来
+			if float(boss.pattern_time) >= float(boss.next_shift):
+				boss.next_shift = float(boss.pattern_time) + rng.randf_range(0.35, 0.8)
+				var heading := to_bee.normalized() if to_bee.length() > 380.0 else Vector2.from_angle(rng.randf() * TAU)
+				boss.velocity = heading * 2.6
+				boss_afterimages.append({"position": boss_position, "life": 0.5})
+		"lure":
+			# 画眉：与玩家保持中距离徘徊打转，把战线缓缓拖离蜂巢
+			var tangent_sign := 1.0 if int(data.season_index) % 2 == 0 else -1.0
+			var tangent := to_bee.normalized().rotated(PI * 0.5 * tangent_sign)
+			var radial := clampf((to_bee.length() - 240.0) / 240.0, -1.0, 1.0)
+			boss.velocity = Vector2(boss.velocity).lerp((to_bee.normalized() * radial + tangent * 0.85) * 1.5, delta * 2.2)
+		"charge":
+			# 熊：游走 → 蓄势（直线预告）→ 冲撞 → 晕眩（调律窗口）
+			match String(boss.charge_state):
+				"wander":
+					boss.velocity = Vector2(boss.velocity).lerp(to_bee.normalized() * 0.7, delta * 1.2)
+					if to_bee.length() < 320.0:
+						boss.charge_state = "aim"
+						boss.state_time = 0.8
+						boss.aim_direction = to_bee.normalized()
+				"aim":
+					boss.state_time = float(boss.state_time) - delta
+					boss.velocity = Vector2(boss.velocity).lerp(Vector2.ZERO, delta * 6.0)
+					if float(boss.state_time) <= 0.0:
+						boss.charge_state = "dash"
+						boss.state_time = 1.0
+						boss.velocity = Vector2(boss.aim_direction) * 4.2
+				"dash":
+					boss.state_time = float(boss.state_time) - delta
+					boss.velocity = Vector2(boss.velocity).lerp(Vector2(boss.aim_direction) * 4.2, delta * 2.0)
+					if float(boss.state_time) <= 0.0:
+						boss.charge_state = "rest"
+						boss.state_time = 1.3
+				"rest":
+					boss.state_time = float(boss.state_time) - delta
+					boss.velocity = Vector2(boss.velocity).lerp(Vector2.ZERO, delta * 5.0)
+					if float(boss.state_time) <= 0.0:
+						boss.charge_state = "wander"
+
+	boss.position += Vector2(boss.velocity) * move_speed * delta
 	boss.position.x = clampf(boss.position.x, HIVE_SAFE_X + 18.0, WORLD.end.x - 28)
 	boss.position.y = clampf(boss.position.y, WORLD.position.y + 28, WORLD.end.y - 28)
 
-	if boss_position.distance_to(bee.position) < balance_value("boss", "impact_range", 39.0) and boss.hit_cooldown <= 0.0:
+	for i in range(boss_afterimages.size() - 1, -1, -1):
+		boss_afterimages[i].life = float(boss_afterimages[i].life) - delta
+		if float(boss_afterimages[i].life) <= 0.0:
+			boss_afterimages.remove_at(i)
+
+	if boss_position.distance_to(bee.position) < float(data.impact_range) and boss.hit_cooldown <= 0.0:
 		boss.hit_cooldown = 1.0
-		bee.energy = maxf(0.0, bee.energy - balance_value("boss", "energy_damage", 18.0))
-		show_energy_change(-balance_value("boss", "energy_damage", 18.0))
-		carried = maxi(0, carried - 1)
+		bee.energy = maxf(0.0, bee.energy - float(data.energy_damage))
+		show_energy_change(-float(data.energy_damage))
+		carried = maxi(0, carried - int(data.honey_damage))
 		shake = 9.0
 		sound.play_cue("hurt")
 		flash = 0.55
-		message = "失律之蚊夺走一滴蜜。它只知道索取。"
+		message = String(data.damage_message)
 
 	if Input.is_action_just_pressed("repel") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
 		show_energy_change(-sting_cost)
@@ -798,12 +928,15 @@ func update_boss(delta: float) -> void:
 			boss.velocity = (boss.position - bee.position).normalized() * 8.0
 			spawn_pollen(bloom_position)
 			shake = 7.0
-			message = "共鸣完成：%d / 3。被夺走的蜜重新开始流动。" % int(boss.hits)
+			message = String(data.tuning_message).replace("{n}", str(int(boss.hits)))
 			sound.play_cue("tune")
-			if int(boss.hits) >= roundi(balance_value("boss", "required_tunings", 3.0)):
-				show_win()
+			if int(boss.hits) >= int(data.required_tunings):
+				if current_boss_index >= boss_catalog.size() - 1:
+					show_win()
+				else:
+					show_boss_victory()
 		else:
-			message = "震翼没有引发花粉共鸣。先把它引向发光花团。"
+			message = String(data.miss_message)
 
 	update_hive_rest(delta, false)
 
@@ -811,10 +944,31 @@ func update_boss(delta: float) -> void:
 		show_loss()
 
 func nearest_tuning_bloom(origin: Vector2) -> int:
+	var radius := float(current_boss_data.get("tuning_radius", balance_value("boss", "tuning_radius", 82.0)))
 	for i in tuning_blooms.size():
-		if origin.distance_to(tuning_blooms[i]) < balance_value("boss", "tuning_radius", 82.0):
+		if origin.distance_to(tuning_blooms[i]) < radius:
 			return i
 	return -1
+
+func show_boss_victory() -> void:
+	phase = "boss_victory"
+	bee.active = false
+	overlay.visible = true
+	overlay_button.visible = true
+	set_upgrade_buttons_visible(false)
+	sound.play_cue("win")
+	var data: Dictionary = current_boss_data
+	overlay_title.text = "%s · 归律" % String(data.name)
+	overlay_body.text = "%s\n\n%s" % [String(data.line), next_term_hint()]
+	overlay_button.text = "继续前行"
+	current_boss_index = mini(current_boss_index + 1, boss_catalog.size() - 1)
+	current_boss_data = {}
+
+func next_term_hint() -> String:
+	if stage_index + 1 >= stages.size():
+		return ""
+	var data: Dictionary = stages[stage_index + 1]
+	return "下一个节令：%s。%s" % [String(data.name), String(data.line)]
 
 func show_win() -> void:
 	phase = "won"
@@ -826,7 +980,7 @@ func show_win() -> void:
 		save_manager.record_completion(run_elapsed)
 	sound.play_cue("win")
 	overlay_title.text = "冬至一阳生"
-	overlay_body.text = "蜂群熬过了四个压缩节令。\n本轮主动游玩时间：%s\n未来，它们之间将展开为完整的二十四个小关卡。" % format_duration(run_elapsed)
+	overlay_body.text = "蜂群走完了完整的二十四个节令，四位失律者重归循环。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
 	overlay_button.text = "再走一次四季"
 
 func show_loss() -> void:
@@ -985,7 +1139,10 @@ func update_interface() -> void:
 	var data: Dictionary = stages[stage_index]
 	term_label.text = "%s · %s" % [data.season, data.name]
 	carried_label.text = str(carried)
-	delivered_label.text = "调律 %d / 3" % int(boss.hits) if phase == "boss" else "%d / %d" % [delivered, int(data.goal)]
+	if phase == "boss" and not current_boss_data.is_empty():
+		delivered_label.text = "调律 %d / %d" % [int(boss.hits), int(current_boss_data.required_tunings)]
+	else:
+		delivered_label.text = "%d / %d" % [delivered, int(data.goal)]
 	energy_label.text = str(roundi(bee.energy))
 	energy_bar_fill.size.x = 166.0 * clampf(bee.energy / 100.0, 0.0, 1.0)
 	energy_change_label.modulate.a = clampf(energy_feedback_time * 2.0, 0.0, 1.0)
@@ -995,15 +1152,16 @@ func update_interface() -> void:
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	reserve_label.text = str(hive_reserve)
 	message_label.text = message
-	if phase == "boss":
-		season_label.text = "失律之蚊"
-		detail_label.text = "只索取，不流转。\n\n▸ 调律  %d / 3\n\n引向花粉团\n再以震翼共鸣" % int(boss.hits)
+	if phase == "boss" and not current_boss_data.is_empty():
+		var boss_data: Dictionary = current_boss_data
+		season_label.text = String(boss_data.name)
+		detail_label.text = "%s\n\n▸ 调律  %d / %d\n\n引向共鸣点\n再以震翼调律" % [String(boss_data.line), int(boss.hits), int(boss_data.required_tunings)]
 	else:
 		# 阴阳数值是内部设计依据（驱动节令难度），不向玩家暴露；
 		# 用「▸」做状态行节奏符，把敌害收进同一行避免被误读为玩家可选角色。
 		season_label.text = data.name
 		var status_rows := "▸ 目标 · %d 滴\n▸ 敌害 · 蚊 %s   蚁 %s" % [int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants))]
-		if stage_index == 3:
+		if season_index_of(stage_index) == 3:
 			status_rows += "\n▸ 体温 · %d%%  储蜜 · %d 滴" % [roundi(warmth), hive_reserve]
 		detail_label.text = "%s\n\n%s" % [data.line, status_rows]
 
@@ -1084,8 +1242,8 @@ func refresh_setting_labels() -> void:
 		sound_button.text = "声音：开" if save_manager.sound_enabled else "声音：关"
 
 func progress_name() -> String:
-	if save_manager.best_stage >= 5:
-		return "四季已归律"
+	if not stages.is_empty() and save_manager.best_stage >= stages.size():
+		return "二十四节令已归律"
 	if save_manager.best_stage <= 0 or stages.is_empty():
 		return "尚未出巢"
 	return String(stages[mini(save_manager.best_stage - 1, stages.size() - 1)].name)
@@ -1233,19 +1391,67 @@ func draw_ant(ant: Dictionary) -> void:
 		draw_string(zh_font, pos + Vector2(-18, -30), "蜜%d" % int(ant.stolen_honey), HORIZONTAL_ALIGNMENT_CENTER, 36, 11, Color("f4ce67"))
 
 func draw_tuning_bloom(pos: Vector2) -> void:
+	var bloom_color := Color(String(current_boss_data.get("bloom_color", "fff0a0"))) if not current_boss_data.is_empty() else Color("fff0a0")
 	var pulse := 28.0 + sin(elapsed * 4.0) * 4.0
-	draw_circle(pos, 18, Color(stage_color(3), 0.24))
-	draw_arc(pos, pulse, 0, TAU, 32, Color("fff0a0", 0.75), 3)
+	draw_circle(pos, 18, Color(bloom_color, 0.24))
+	draw_arc(pos, pulse, 0, TAU, 32, Color(bloom_color, 0.75), 3)
 	for i in 8:
 		var angle := float(i) * TAU / 8.0 + elapsed * 0.25
-		draw_circle(pos + Vector2.from_angle(angle) * pulse, 3, Color("fff4bd", 0.85))
+		draw_circle(pos + Vector2.from_angle(angle) * pulse, 3, Color(bloom_color, 0.85))
 
-func draw_boss(data: Dictionary) -> void:
-	var pos: Vector2 = data.position
-	var radius := 24.0 + sin(elapsed * 5.0) * 2.0
-	draw_circle(pos, radius, Color("35242d"))
-	draw_circle(pos + Vector2(20, 0), 11, Color("704044"))
-	draw_line(pos + Vector2(28, 0), pos + Vector2(47, -2), Color("2e2327"), 4)
-	draw_arc(pos, radius + 9, -2.4, 2.4, 22, Color("d7b56a", 0.55), 3)
-	for i in int(data.hits):
-		draw_circle(pos + Vector2(-12 + i * 12, -34), 4, Color("f5d975"))
+func draw_boss(state: Dictionary) -> void:
+	if current_boss_data.is_empty():
+		return
+	var data: Dictionary = current_boss_data
+	var pos: Vector2 = state.position
+	var radius := float(data.size) + sin(elapsed * 5.0) * 2.0
+	var body := Color(String(data.body_color))
+	var accent := Color(String(data.accent_color))
+	for afterimage in boss_afterimages:
+		var a_pos: Vector2 = afterimage.position
+		draw_circle(a_pos, radius * 0.8, Color(body, clampf(float(afterimage.life) * 1.6, 0.0, 0.4)))
+	match String(data.move_pattern):
+		"orbital":
+			# 蚊：圆躯 + 长口器
+			draw_circle(pos, radius, body)
+			draw_circle(pos + Vector2(radius * 0.8, 0), radius * 0.45, accent)
+			draw_line(pos + Vector2(radius * 1.1, 0), pos + Vector2(radius * 1.9, -2), Color("2e2327"), 4)
+			draw_arc(pos, radius + 9, -2.4, 2.4, 22, Color("d7b56a", 0.55), 3)
+		"erratic":
+			# 油葫芦：三节躯体 + 长触角
+			draw_circle(pos + Vector2(-radius * 0.55, 2), radius * 0.42, body)
+			draw_circle(pos + Vector2(radius * 0.2, 0), radius * 0.6, body)
+			draw_circle(pos + Vector2(radius * 0.8, -1), radius * 0.3, accent)
+			for side in [-1, 1]:
+				draw_line(pos + Vector2(-radius * 0.3, 2.0 * side), pos + Vector2(-radius * 1.2, radius * 0.8 * side), accent, 3)
+				draw_line(pos + Vector2(radius * 0.4, 2.0 * side), pos + Vector2(radius * 1.3, radius * 0.9 * side), accent, 3)
+			draw_line(pos + Vector2(radius * 0.9, -4), pos + Vector2(radius * 1.7, -14), body, 2)
+			draw_line(pos + Vector2(radius * 0.9, 2), pos + Vector2(radius * 1.8, -4), body, 2)
+		"lure":
+			# 画眉：鸟身 + 喙 + 振翅弧线 + 漂浮音符
+			draw_circle(pos, radius, body)
+			draw_circle(pos + Vector2(radius * 0.55, -radius * 0.3), radius * 0.16, Color("fff4bd"))
+			draw_line(pos + Vector2(radius, 0), pos + Vector2(radius * 1.7, radius * 0.15), Color("e8c47a"), 4)
+			var flap := sin(elapsed * 9.0) * 0.25
+			draw_arc(pos + Vector2(-radius * 0.2, -radius * 0.4), radius * 0.85, PI * (1.05 + flap), PI * (1.95 - flap), 12, accent, 3)
+			draw_arc(pos + Vector2(-radius * 0.2, radius * 0.4), radius * 0.85, PI * (0.05 - flap), PI * (0.95 + flap), 12, accent, 3)
+			for i in 3:
+				var note_pos := pos + Vector2(-radius * 1.5 - i * 14.0, -radius * 0.9 - sin(elapsed * 3.0 + i) * 6.0)
+				draw_circle(note_pos, 3, Color(accent, 0.8))
+				draw_line(note_pos + Vector2(3, -1), note_pos + Vector2(3, -9), Color(accent, 0.8), 2)
+		"charge":
+			# 熊：大圆身 + 双耳 + 口鼻；蓄势时画出冲撞预告线，晕眩时头顶提示
+			var charge_state := String(state.get("charge_state", "wander"))
+			if charge_state == "aim":
+				var aim: Vector2 = state.get("aim_direction", Vector2.RIGHT)
+				draw_line(pos, pos + aim * 340.0, Color("e05a4a", 0.55), 4)
+			draw_circle(pos + Vector2(-radius * 0.55, -radius * 0.6), radius * 0.32, body)
+			draw_circle(pos + Vector2(radius * 0.55, -radius * 0.6), radius * 0.32, body)
+			draw_circle(pos, radius, body)
+			draw_circle(pos + Vector2(0, radius * 0.25), radius * 0.34, accent)
+			draw_circle(pos + Vector2(-radius * 0.28, radius * 0.18), radius * 0.07, Color("1c222b"))
+			draw_circle(pos + Vector2(radius * 0.28, radius * 0.18), radius * 0.07, Color("1c222b"))
+			if charge_state == "rest":
+				draw_string(zh_font, pos + Vector2(-22, -radius - 12), "晕眩", HORIZONTAL_ALIGNMENT_CENTER, 44, 12, Color("f5d975"))
+	for i in int(state.hits):
+		draw_circle(pos + Vector2(-12 + i * 12, -radius - 30), 4, Color("f5d975"))

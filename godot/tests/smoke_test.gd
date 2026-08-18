@@ -13,8 +13,8 @@ func _init() -> void:
 		if not parsed is Array:
 			failures.append("seasons.json 顶层必须是数组")
 		else:
-			if parsed.size() != 4:
-				failures.append("MVP 应包含 4 个压缩节令")
+			if parsed.size() != 24:
+				failures.append("完整轮回应包含 24 个节令")
 			for index in parsed.size():
 				var stage = parsed[index]
 				if not stage is Dictionary:
@@ -35,8 +35,12 @@ func _init() -> void:
 					failures.append("节令 %d 掠蜜蚁数量不能为负" % index)
 				if stage.has("colors") and (not stage.colors is Array or stage.colors.size() != 4):
 					failures.append("节令 %d 必须配置 4 个颜色" % index)
-				if not stage.has("mechanics") or not stage.mechanics is Array or stage.mechanics.size() != 1 or stage.mechanics[0] != EXPECTED_MECHANICS[index]:
-					failures.append("节令 %d 机制槽位错误（应为 %s）" % [index, EXPECTED_MECHANICS[index]])
+				var expected_mechanic: String = EXPECTED_MECHANICS[clampi(index / 6, 0, 3)]
+				if not stage.has("mechanics") or not stage.mechanics is Array or stage.mechanics.size() != 1 or stage.mechanics[0] != expected_mechanic:
+					failures.append("节令 %d 机制槽位错误（应为 %s）" % [index, expected_mechanic])
+			# 轮回必须从冬至开始，按四正点结构推进
+			if parsed.size() == 24 and String(parsed[0].name) != "冬至":
+				failures.append("完整轮回的第一个节令必须是冬至")
 
 	var upgrade_file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
 	if upgrade_file == null:
@@ -50,6 +54,34 @@ func _init() -> void:
 				for key in ["id", "name", "description", "color"]:
 					if not upgrade.has(key):
 						failures.append("蜂巢成长缺少字段 %s" % key)
+
+	var boss_file := FileAccess.open("res://data/bosses.json", FileAccess.READ)
+	if boss_file == null:
+		failures.append("无法读取 bosses.json")
+	else:
+		var bosses = JSON.parse_string(boss_file.get_as_text())
+		if not bosses is Array or bosses.size() != 4:
+			failures.append("四位失律者原型必须齐全（蚊/油葫芦/画眉/熊）")
+		else:
+			var expected_patterns := ["orbital", "erratic", "lure", "charge"]
+			var expected_terms := ["春分", "夏至", "秋分", "冬至"]
+			var boss_keys := ["id", "name", "season_index", "term", "line", "move_pattern", "move_speed", "impact_range", "energy_damage", "tuning_radius", "required_tunings", "bloom_count", "bloom_color", "body_color", "accent_color", "size", "encounter_message", "tuning_message", "miss_message", "damage_message"]
+			for index in bosses.size():
+				var boss = bosses[index]
+				if not boss is Dictionary:
+					failures.append("失律者 %d 不是对象" % index)
+					continue
+				for key in boss_keys:
+					if not boss.has(key):
+						failures.append("失律者 %d 缺少字段 %s" % [index, key])
+				if String(boss.get("move_pattern", "")) != expected_patterns[index]:
+					failures.append("失律者 %d 移动模式错误（应为 %s）" % [index, expected_patterns[index]])
+				if String(boss.get("term", "")) != expected_terms[index]:
+					failures.append("失律者 %d 应位于四正点 %s" % [index, expected_terms[index]])
+				if int(boss.get("season_index", -1)) != index:
+					failures.append("失律者 %d season_index 错误" % index)
+				if int(boss.get("required_tunings", 0)) <= 0:
+					failures.append("失律者 %d 调律次数必须为正数" % index)
 
 	var balance_file := FileAccess.open("res://data/balance.json", FileAccess.READ)
 	if balance_file == null:
@@ -118,7 +150,7 @@ func _init() -> void:
 			failures.append("WASD/方向键双映射缺失：%s" % movement_action)
 
 	if failures.is_empty():
-		print("SMOKE TEST PASSED: Godot project and 4 seasonal stages are valid")
+		print("SMOKE TEST PASSED: Godot project, 24 solar terms and 4 boss prototypes are valid")
 		quit(0)
 	else:
 		for failure in failures:

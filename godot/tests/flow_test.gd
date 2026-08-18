@@ -16,14 +16,14 @@ func run_test() -> void:
 	await process_frame
 	game.persistence_enabled = false
 	game.start_game()
-	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入春分")
-	for stage_index in 4:
+	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
+	for stage_index in 24:
 		game.spawn_stage(stage_index)
 		expect(game.total_recoverable_honey() >= int(game.stages[stage_index].goal), "节令 %d 初始总蜜量不足" % stage_index)
 		for flower_index in game.flowers.size():
 			for other_index in range(flower_index + 1, game.flowers.size()):
 				expect(Vector2(game.flowers[flower_index].position).distance_to(Vector2(game.flowers[other_index].position)) >= 81.9, "节令 %d 花朵生成间距不足" % stage_index)
-		var expected_id: String = ["pollination", "conscription", "reserve", "huddle"][stage_index]
+		var expected_id: String = ["pollination", "conscription", "reserve", "huddle"][clampi(stage_index / 6, 0, 3)]
 		expect(game.season_mechanics.mechanic_by_id(expected_id) != null, "节令 %d 未激活 %s 机制" % [stage_index, expected_id])
 	game.spawn_stage(0)
 	var movement_start: Vector2 = game.bee.position
@@ -62,37 +62,58 @@ func run_test() -> void:
 	game.bee.sense_time = 3.0
 	expect(game.best_foraging_target() >= 0, "触角寻迹没有给出采集建议")
 
-	for index in 4:
+	var boss_patterns := ["orbital", "erratic", "lure", "charge"]
+	var boss_terms := ["惊蛰", "芒种", "白露", "大雪"]
+	for index in 24:
 		game.delivered = int(game.stages[index].goal)
 		game.show_between()
 		expect(game.phase == "between", "节令 %d 未进入蜂巢成长" % index)
 		var reserve_m = game.season_mechanics.mechanic_by_id("reserve")
 		if reserve_m != null and reserve_m.pending_allocation:
-			expect(game.allocation_pending, "秋分未进入分配界面")
+			expect(game.allocation_pending, "秋末未进入分配界面")
+			game.allocation_fraction = 0.5
 			game.confirm_allocation()
-			expect(not game.allocation_pending, "秋分分配后界面未关闭")
+			expect(not game.allocation_pending, "秋末分配后界面未关闭")
+		# 测试直接推进：重置成长计数，保证 24 次选择都有效
+		game.upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
 		game.on_upgrade_selected(index % 3)
-		if index < 3:
+		if index % 6 != 5:
 			expect(game.phase == "playing" and game.stage_index == index + 1, "节令 %d 无法推进" % index)
 		else:
-			expect(game.phase == "boss", "冬至后未进入失律者遭遇")
+			var season := index / 6
+			expect(game.phase == "boss", "季末（%s）未进入失律者遭遇" % boss_terms[season])
+			expect(String(game.current_boss_data.move_pattern) == boss_patterns[season], "第 %d 位失律者移动模式错误" % season)
+			expect(game.tuning_blooms.size() == int(game.current_boss_data.bloom_count), "失律者调律共鸣点数量错误")
+			if index < 23:
+				game.show_boss_victory()
+				expect(game.phase == "boss_victory", "失律者归律后未进入休整界面")
+				game.on_overlay_button()
+				expect(game.phase == "playing" and game.stage_index == index + 1, "失律者归律后无法进入下一季")
+			else:
+				game.show_win()
+				expect(game.phase == "won", "最终失律者结算未进入胜利状态")
 
-	expect(game.chosen_upgrades.size() == 4, "四次蜂巢成长没有全部生效")
-	expect(game.tuning_blooms.size() == 3, "失律者调律花粉数量错误")
+	expect(game.chosen_upgrades.size() == 24, "二十四次蜂巢成长没有全部生效")
 	expect(game.hive_reserve > 0, "公共储备没有在四季间积累")
-	# 冬至抱团机制
-	game.spawn_stage(3)
-	expect(game.warmth == 100.0, "冬至出巢温暖未初始化")
+	# 成长满级后的防死锁回退：全部分工达上限时直接给出继续按钮
+	game.spawn_stage(5)
+	game.delivered = int(game.stages[5].goal)
+	game.upgrade_counts = {"long_wing": 99, "forager": 99, "guard": 99}
+	game.show_between()
+	expect(game.phase == "between" and game.overlay_button.visible, "成长满级后没有回退到继续按钮")
+	game.on_overlay_button()
+	expect(game.phase == "boss", "满级回退后季末未进入失律者遭遇")
+	# 冬季抱团机制（第 18 关秋分入冬，体温在整季延续）
+	game.spawn_stage(18)
+	expect(game.warmth == 100.0, "入冬出巢温暖未初始化")
 	var reserve_before: int = game.hive_reserve
 	game.bee.position = Vector2(500, 410)
 	game.season_mechanics.process(1.0)
-	expect(game.warmth < 100.0, "冬至野外温暖没有下降")
+	expect(game.warmth < 100.0, "冬季野外温暖没有下降")
 	game.bee.position = Vector2(100, 410)
 	game.carried = 3
 	game.update_hive_rest(1.0, true)
-	expect(game.warmth >= 99.0 and game.hive_reserve == reserve_before - 1, "冬至归巢抱团未按预期回暖或消耗储备")
-	game.show_win()
-	expect(game.phase == "won", "失律者结算未进入胜利状态")
+	expect(game.warmth >= 99.0 and game.hive_reserve == reserve_before - 1, "冬季归巢抱团未按预期回暖或消耗储备")
 
 	game.spawn_stage(0)
 	game.toggle_pause()
@@ -101,10 +122,10 @@ func run_test() -> void:
 	expect(game.phase == "playing" and game.bee.active, "继续未恢复玩家")
 
 	# 四季机制单元探针
-	# 春分·授粉：休眠与新花开放
+	# 冬至·授粉：休眠与新花开放
 	game.spawn_stage(0)
 	var pollinator = game.season_mechanics.mechanic_by_id("pollination")
-	expect(pollinator != null, "春分授粉机制缺失")
+	expect(pollinator != null, "冬季授粉机制缺失")
 	if pollinator != null:
 		var dozing: Dictionary = game.flowers[0]
 		dozing["sleep_timer"] = 0.1
@@ -118,10 +139,10 @@ func run_test() -> void:
 		game.flowers[1] = pollinated
 		game.season_mechanics.on_harvest(1)
 		expect(game.flowers.size() == flower_count_before + 1, "授粉：采蜜未使新花开放")
-	# 夏至·征召：事件触发与响应
-	game.spawn_stage(1)
+	# 春分·征召：事件触发与响应
+	game.spawn_stage(6)
 	var conscription = game.season_mechanics.mechanic_by_id("conscription")
-	expect(conscription != null, "夏至征召机制缺失")
+	expect(conscription != null, "春分征召机制缺失")
 	if conscription != null:
 		conscription.state = "idle"
 		conscription.timer = 0.1
