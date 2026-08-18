@@ -6,7 +6,7 @@
 
 ## 在线试玩
 
-[https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
+[https://hivebound-seasons-game.pages.dev](https://hivebound-seasons-game.pages.dev)
 
 ## 当前版本：Godot 候选 MVP 0.9.4
 

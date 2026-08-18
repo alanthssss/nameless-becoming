@@ -65,7 +65,7 @@
 
 **English / EN**: Current version is **Candidate MVP 0.9.4**, maintaining three distribution targets — Web, macOS universal, and Windows x86_64 — all exported from the same `godot/` project. The official single-player direction has moved to Godot 4; the older web prototype is kept as historical validation.
 
-**在线试玩 / Play Online**: https://hivebound-seasons.alanthssss.chatgpt.site
+**在线试玩 / Play Online**: https://hivebound-seasons-game.pages.dev
 
 ---
 
