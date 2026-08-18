@@ -776,9 +776,9 @@ func update_game(delta: float) -> void:
 				# 应用加成（花蜜不减反增）
 				flower.nectar = int(flower.nectar) + bonus_nectar
 				flowers[nearby] = flower
-			carried += 1
-			action_was_harvesting = true
-			sound.play_cue("harvest")
+				carried += 1
+				action_was_harvesting = true
+				sound.play_cue("harvest")
 				spawn_pollen(flower.position)
 				var msg_before := message
 				season_mechanics.on_harvest(nearby)
