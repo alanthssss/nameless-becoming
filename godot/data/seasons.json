@@ -136,22 +136,14 @@
     "season": "春",
     "yin": 50,
     "yang": 50,
-    "goal": 8,
-    "flowers": 8,
-    "enemies": 2,
-    "ants": 1,
-    "energy_drain": 1.6,
-    "nectar_scale": 1.12,
+    "boss": "mosquito",
     "colors": [
       "abe3e3",
       "35b6b6",
       "166a6a",
       "f4d994"
     ],
-    "line": "昼夜均分。被夺走的蜜重新流动，花潮全面苏醒。",
-    "mechanics": [
-      "conscription"
-    ]
+    "line": "昼夜均分，正青之节点。失律之蚊在花潮上空盘旋，只知索取。"
   },
   {
     "name": "清明",
@@ -268,22 +260,14 @@
     "season": "夏",
     "yin": 15,
     "yang": 85,
-    "goal": 11,
-    "flowers": 7,
-    "enemies": 3,
-    "ants": 2,
-    "energy_drain": 1.88,
-    "nectar_scale": 1.05,
+    "boss": "cricket",
     "colors": [
       "e3abab",
       "cb4d4d",
       "8f1e1e",
       "f4d994"
     ],
-    "line": "阳极而阴生。漂泊者归位了，盛夏真正开始。",
-    "mechanics": [
-      "reserve"
-    ]
+    "line": "阳极而阴生，正朱之节点。失律的油葫芦在盛夏的顶点四处乱窜，不肯归位。"
   },
   {
     "name": "小暑",
@@ -400,22 +384,14 @@
     "season": "秋",
     "yin": 50,
     "yang": 50,
-    "goal": 10,
-    "flowers": 6,
-    "enemies": 3,
-    "ants": 2,
-    "energy_drain": 2.08,
-    "nectar_scale": 0.8,
+    "boss": "thrush",
     "colors": [
       "f7f3f3",
       "b38989",
       "6f3e3e",
       "f4d994"
     ],
-    "line": "昼夜再次均分。歌声停了，是时候为来年打算。",
-    "mechanics": [
-      "huddle"
-    ]
+    "line": "昼夜再次均分，正白之节点。失律的画眉以歌声诱离每一只归途上的蜂。"
   },
   {
     "name": "寒露",
@@ -450,6 +426,7 @@
     "ants": 2,
     "energy_drain": 2.15,
     "nectar_scale": 0.76,
+    "warmth_carry": true,
     "colors": [
       "bdbdd1",
       "8989b3",
@@ -472,6 +449,7 @@
     "ants": 2,
     "energy_drain": 2.2,
     "nectar_scale": 0.74,
+    "warmth_carry": true,
     "colors": [
       "bdc2d1",
       "7884a8",
@@ -494,6 +472,7 @@
     "ants": 1,
     "energy_drain": 2.25,
     "nectar_scale": 0.72,
+    "warmth_carry": true,
     "colors": [
       "bdc3d1",
       "5b6b8f",
@@ -516,6 +495,7 @@
     "ants": 1,
     "energy_drain": 2.3,
     "nectar_scale": 0.7,
+    "warmth_carry": true,
     "colors": [
       "bdc0d1",
       "5b658f",

@@ -17,7 +17,12 @@ func run_test() -> void:
 	game.persistence_enabled = false
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
+	var gathering_total := 0
 	for stage_index in 24:
+		# 正色节点（春分/夏至/秋分）是失律者关卡，没有采蜜数据
+		if game.stages[stage_index].has("boss"):
+			continue
+		gathering_total += 1
 		game.spawn_stage(stage_index)
 		expect(game.total_recoverable_honey() >= int(game.stages[stage_index].goal), "节令 %d 初始总蜜量不足" % stage_index)
 		for flower_index in game.flowers.size():
@@ -25,6 +30,13 @@ func run_test() -> void:
 				expect(Vector2(game.flowers[flower_index].position).distance_to(Vector2(game.flowers[other_index].position)) >= 81.9, "节令 %d 花朵生成间距不足" % stage_index)
 		var expected_id: String = ["pollination", "conscription", "reserve", "huddle"][clampi(stage_index / 6, 0, 3)]
 		expect(game.season_mechanics.mechanic_by_id(expected_id) != null, "节令 %d 未激活 %s 机制" % [stage_index, expected_id])
+	# 正色节点直接进入失律者遭遇
+	var pattern_by_boss := {"mosquito": "orbital", "cricket": "erratic", "thrush": "lure", "bear": "charge"}
+	for boss_stage in [6, 12, 18]:
+		game.spawn_stage(boss_stage)
+		expect(game.phase == "boss" and game.stage_index == boss_stage, "正色节点 %d 未进入失律者关卡" % boss_stage)
+		expect(String(game.current_boss_data.move_pattern) == pattern_by_boss[String(game.stages[boss_stage].boss)], "正色节点 %d 失律者移动模式错误" % boss_stage)
+		expect(game.tuning_blooms.size() == int(game.current_boss_data.bloom_count), "正色节点 %d 调律共鸣点数量错误" % boss_stage)
 	game.spawn_stage(0)
 	var movement_start: Vector2 = game.bee.position
 	var d_key := InputEventKey.new()
@@ -62,38 +74,47 @@ func run_test() -> void:
 	game.bee.sense_time = 3.0
 	expect(game.best_foraging_target() >= 0, "触角寻迹没有给出采集建议")
 
-	var boss_patterns := ["orbital", "erratic", "lure", "charge"]
-	var boss_terms := ["惊蛰", "芒种", "白露", "大雪"]
+	# 全流程推进：21 个采蜜关穿插 3 个正色失律者关卡，终点回到冬至的熊
+	var boss_terms := ["春分", "夏至", "秋分", "冬至"]
+	var boss_encounters := 0
 	for index in 24:
+		if game.stages[index].has("boss"):
+			continue
+		game.spawn_stage(index)
 		game.delivered = int(game.stages[index].goal)
 		game.show_between()
 		expect(game.phase == "between", "节令 %d 未进入蜂巢成长" % index)
 		var reserve_m = game.season_mechanics.mechanic_by_id("reserve")
 		if reserve_m != null and reserve_m.pending_allocation:
-			expect(game.allocation_pending, "秋末未进入分配界面")
+			expect(game.allocation_pending, "白露未进入分配界面")
 			game.allocation_fraction = 0.5
 			game.confirm_allocation()
-			expect(not game.allocation_pending, "秋末分配后界面未关闭")
-		# 测试直接推进：重置成长计数，保证 24 次选择都有效
+			expect(not game.allocation_pending, "白露分配后界面未关闭")
+		# 测试直接推进：重置成长计数，保证所有选择都有效
 		game.upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
-		game.on_upgrade_selected(index % 3)
-		if index % 6 != 5:
-			expect(game.phase == "playing" and game.stage_index == index + 1, "节令 %d 无法推进" % index)
+		game.on_upgrade_selected(0)
+		var next_index := index + 1
+		if next_index < game.stages.size() and game.stages[next_index].has("boss"):
+			expect(game.phase == "boss" and game.stage_index == next_index, "节令 %d 后未进入正色失律者关卡" % index)
+			expect(String(game.current_boss_data.term) == boss_terms[boss_encounters], "第 %d 位失律者节点错误" % boss_encounters)
+			boss_encounters += 1
+			game.show_boss_victory()
+			expect(game.phase == "boss_victory", "失律者归律后未进入休整界面")
+			game.on_overlay_button()
+			expect(game.phase == "playing" and game.stage_index == next_index + 1, "失律者归律后无法进入下一季")
+		elif next_index < game.stages.size():
+			expect(game.phase == "playing" and game.stage_index == next_index, "节令 %d 无法推进" % index)
 		else:
-			var season := index / 6
-			expect(game.phase == "boss", "季末（%s）未进入失律者遭遇" % boss_terms[season])
-			expect(String(game.current_boss_data.move_pattern) == boss_patterns[season], "第 %d 位失律者移动模式错误" % season)
-			expect(game.tuning_blooms.size() == int(game.current_boss_data.bloom_count), "失律者调律共鸣点数量错误")
-			if index < 23:
-				game.show_boss_victory()
-				expect(game.phase == "boss_victory", "失律者归律后未进入休整界面")
-				game.on_overlay_button()
-				expect(game.phase == "playing" and game.stage_index == index + 1, "失律者归律后无法进入下一季")
-			else:
-				game.show_win()
-				expect(game.phase == "won", "最终失律者结算未进入胜利状态")
+			expect(game.phase == "boss", "大雪后未回到冬至遭遇失律之熊")
+			expect(String(game.current_boss_data.term) == "冬至" and String(game.current_boss_data.move_pattern) == "charge", "循环终点的失律者应为熊（冬至）")
+			boss_encounters += 1
+			game.show_boss_victory()
+			expect(game.phase == "boss_victory", "熊归律后未进入休整界面")
+			game.on_overlay_button()
+			expect(game.phase == "won", "熊归律后未通关")
 
-	expect(game.chosen_upgrades.size() == 24, "二十四次蜂巢成长没有全部生效")
+	expect(boss_encounters == 4, "四位失律者遭遇没有全部发生")
+	expect(game.chosen_upgrades.size() == gathering_total, "蜂巢成长次数与采蜜关数量不一致")
 	expect(game.hive_reserve > 0, "公共储备没有在四季间积累")
 	# 成长满级后的防死锁回退：全部分工达上限时直接给出继续按钮
 	game.spawn_stage(5)
@@ -103,8 +124,8 @@ func run_test() -> void:
 	expect(game.phase == "between" and game.overlay_button.visible, "成长满级后没有回退到继续按钮")
 	game.on_overlay_button()
 	expect(game.phase == "boss", "满级回退后季末未进入失律者遭遇")
-	# 冬季抱团机制（第 18 关秋分入冬，体温在整季延续）
-	game.spawn_stage(18)
+	# 冬季抱团机制（寒露入冬，体温在越冬段延续）
+	game.spawn_stage(19)
 	expect(game.warmth == 100.0, "入冬出巢温暖未初始化")
 	var reserve_before: int = game.hive_reserve
 	game.bee.position = Vector2(500, 410)
@@ -139,8 +160,8 @@ func run_test() -> void:
 		game.flowers[1] = pollinated
 		game.season_mechanics.on_harvest(1)
 		expect(game.flowers.size() == flower_count_before + 1, "授粉：采蜜未使新花开放")
-	# 春分·征召：事件触发与响应
-	game.spawn_stage(6)
+	# 清明·征召：事件触发与响应
+	game.spawn_stage(7)
 	var conscription = game.season_mechanics.mechanic_by_id("conscription")
 	expect(conscription != null, "春分征召机制缺失")
 	if conscription != null:

@@ -171,9 +171,9 @@ func load_boss_data() -> void:
 func season_index_of(index: int) -> int:
 	return clampi(index / SEASON_LENGTH, 0, 3)
 
-# 季末节令（惊蛰/芒种/白露/大雪）：完成后在四正点遭遇失律者
-func is_season_end(index: int) -> bool:
-	return index % SEASON_LENGTH == SEASON_LENGTH - 1
+# 正色节点（春分/夏至/秋分）本身是失律者关卡；冬至由循环终点（大雪之后）的熊守卫
+func is_boss_stage(index: int) -> bool:
+	return index >= 0 and index < stages.size() and stages[index].has("boss")
 
 func load_upgrade_data() -> void:
 	var file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
@@ -431,6 +431,11 @@ func start_game() -> void:
 func spawn_stage(index: int) -> void:
 	if stages.is_empty():
 		return
+	# 正色节点即失律者关卡：春分/夏至/秋分直接进入调律遭遇
+	if is_boss_stage(index):
+		stage_index = index
+		start_boss()
+		return
 	stage_index = index
 	sound.set_season(season_index_of(index))
 	phase = "playing"
@@ -476,8 +481,9 @@ func spawn_stage(index: int) -> void:
 			"flee_time": 0.0,
 			"stolen_honey": 0
 		})
-	# 体温在整季越冬（18-23）内延续：只在入冬第一个节令重置
-	preserve_warmth = index % SEASON_LENGTH != 0
+	# 体温在越冬段（寒露→大雪）内延续：由数据字段 warmth_carry 标记，
+	# 只有入冬第一个节令（寒露）重置体温
+	preserve_warmth = bool(data.get("warmth_carry", false))
 	if season_index_of(index) != 3:
 		energy_cap_override = 100.0
 	season_mechanics.start_stage(index)
@@ -493,12 +499,17 @@ func on_overlay_button() -> void:
 			if stage_index + 1 < stages.size():
 				spawn_stage(stage_index + 1)
 			else:
-				start_game()
+				show_win()
 		"between":
-			if is_season_end(stage_index):
-				start_boss()
-			else:
-				spawn_stage(stage_index + 1)
+			advance_stage()
+
+# 从蜂巢成长界面推进：下一个节令若是正色节点则直接进入失律者关卡；
+# 大雪是最后的采蜜关，此后回到冬至——失律之熊守着循环的终点。
+func advance_stage() -> void:
+	if stage_index + 1 < stages.size():
+		spawn_stage(stage_index + 1)
+	else:
+		start_boss()
 
 func _process(delta: float) -> void:
 	elapsed += delta
@@ -707,7 +718,7 @@ func show_between() -> void:
 	if persistence_enabled:
 		save_manager.record_stage(stage_index + 1)
 	season_mechanics.on_stage_complete()
-	# 秋分储备机制：本季的蜜需要分配（储冬蜜 / 哺育幼虫）
+	# 储备机制：白露是储备段最后的采蜜关，本季的蜜需要分配（储冬蜜 / 哺育幼虫）
 	var reserve_m = season_mechanics.mechanic_by_id("reserve")
 	if reserve_m != null and reserve_m.pending_allocation:
 		allocation_pending = true
@@ -739,7 +750,7 @@ func show_upgrade_choices(data: Dictionary) -> void:
 	set_upgrade_buttons_visible(true)
 
 func show_allocation_panel() -> void:
-	overlay_title.text = "秋分 · 为来年投资"
+	overlay_title.text = "白露 · 为来年投资"
 	overlay_body.text = ""
 	set_upgrade_buttons_visible(false)
 	overlay_button.visible = false
@@ -795,18 +806,25 @@ func on_upgrade_selected(index: int) -> void:
 			sting_cooldown_multiplier *= 0.85
 	set_upgrade_buttons_visible(false)
 	overlay_button.visible = true
-	if is_season_end(stage_index):
-		start_boss()
-	else:
-		spawn_stage(stage_index + 1)
+	advance_stage()
 
 func start_boss() -> void:
 	if boss_catalog.is_empty():
 		push_error("失律者数据缺失，无法开启调律遭遇")
 		return
-	current_boss_index = clampi(current_boss_index, 0, boss_catalog.size() - 1)
+	# 失律者由所在节气节点决定；循环终点（大雪之后）默认回到失律之熊
+	var boss_id := "bear"
+	if is_boss_stage(stage_index):
+		boss_id = String(stages[stage_index].boss)
+	current_boss_data = {}
+	for i in boss_catalog.size():
+		if String(boss_catalog[i].get("id", "")) == boss_id:
+			current_boss_index = i
+			current_boss_data = boss_catalog[i]
+			break
 	if current_boss_data.is_empty():
-		current_boss_data = boss_catalog[current_boss_index]
+		push_error("失律者数据中找不到 %s" % boss_id)
+		return
 	var data: Dictionary = current_boss_data
 	phase = "boss"
 	sound.set_season(int(data.season_index))
@@ -961,8 +979,6 @@ func show_boss_victory() -> void:
 	overlay_title.text = "%s · 归律" % String(data.name)
 	overlay_body.text = "%s\n\n%s" % [String(data.line), next_term_hint()]
 	overlay_button.text = "继续前行"
-	current_boss_index = mini(current_boss_index + 1, boss_catalog.size() - 1)
-	current_boss_data = {}
 
 func next_term_hint() -> String:
 	if stage_index + 1 >= stages.size():
@@ -1137,7 +1153,11 @@ func update_interface() -> void:
 	if stages.is_empty():
 		return
 	var data: Dictionary = stages[stage_index]
-	term_label.text = "%s · %s" % [data.season, data.name]
+	if phase == "boss" and not current_boss_data.is_empty():
+		# 失律者关卡显示其盘踞的正色节点（熊的节点是循环终点：冬至）
+		term_label.text = "%s · %s" % [data.season, String(current_boss_data.get("term", data.name))]
+	else:
+		term_label.text = "%s · %s" % [data.season, data.name]
 	carried_label.text = str(carried)
 	if phase == "boss" and not current_boss_data.is_empty():
 		delivered_label.text = "调律 %d / %d" % [int(boss.hits), int(current_boss_data.required_tunings)]
