@@ -97,6 +97,7 @@ var overlay: ColorRect
 var overlay_title: Label
 var overlay_body: Label
 var overlay_button: Button
+var secondary_link: Button
 var upgrade_buttons: Array[Button] = []
 # 历史信息是「持久状态」（跨 run 的轮回计数 + 最远记录），
 # 属于 HUD 侧栏常驻元素 runs_meter，不寄生在 overlay 弹窗里——
@@ -405,11 +406,23 @@ func build_interface() -> void:
 	overlay_body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	overlay_button = Button.new()
 	overlay_button.text = "飞入冬至"
-	overlay_button.position = Vector2(374, 345)
-	overlay_button.size = Vector2(220, 54)
-	overlay_button.add_theme_font_size_override("font_size", 18)
+	overlay_button.position = Vector2(334, 340)
+	overlay_button.size = Vector2(300, 60)
+	overlay_button.add_theme_font_size_override("font_size", 21)
 	overlay_button.pressed.connect(on_overlay_button)
 	overlay.add_child(overlay_button)
+	secondary_link = Button.new()
+	secondary_link.flat = true
+	secondary_link.text = ""
+	secondary_link.position = Vector2(334, 412)
+	secondary_link.size = Vector2(300, 28)
+	secondary_link.add_theme_font_size_override("font_size", 13)
+	secondary_link.add_theme_color_override("font_color", Color("a8aa90"))
+	secondary_link.add_theme_color_override("font_hover_color", Color("fff8d9"))
+	secondary_link.add_theme_color_override("font_pressed_color", Color("d8ddc9"))
+	secondary_link.pressed.connect(on_secondary_link)
+	secondary_link.visible = false
+	overlay.add_child(secondary_link)
 	# —— overlay 区以内的元素到此为止 ——升级卡片直接挂在 overlay 上
 	for i in 3:
 		var choice := Button.new()
@@ -497,8 +510,10 @@ func show_intro() -> void:
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
 	overlay_body.text = "WASD 飞向花朵，空格动作。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n长按携蜜=投诱饵 · 双击方向=急转 · Q=归巢"
 	overlay_button.text = "飞入冬至"
-	set_upgrade_buttons_visible(false)
 	overlay_button.visible = true
+	set_upgrade_buttons_visible(false)
+	set_secondary_link("或者退出游戏", true)
+	overlay_button.grab_focus()
 	refresh_runs_meter()
 
 func start_game() -> void:
@@ -1194,11 +1209,14 @@ func show_upgrade_choices(data: Dictionary) -> void:
 		overlay_button.text = "继续下一个节令"
 		overlay_button.visible = true
 		set_upgrade_buttons_visible(false)
+		set_secondary_link("或者退出游戏", true)
+		overlay_button.grab_focus()
 		return
 	overlay_title.text = "%s完成 · 蜂巢成长" % data.name
 	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。" + next_boss_hint()
 	overlay_button.visible = false
 	set_upgrade_buttons_visible(true)
+	set_secondary_link("", false)
 
 # 通关横幅只写「刚刚完成的节令」，玩家无从知道下一个节点是失律者关卡——
 # 在蜂巢成长界面直接预告，消除「惊蛰完成却撞上春分 Boss」的错位感
@@ -1216,6 +1234,7 @@ func show_allocation_panel() -> void:
 	overlay_title.text = "白露 · 为来年投资"
 	overlay_body.text = ""
 	set_upgrade_buttons_visible(false)
+	set_secondary_link("", false)
 	overlay_button.visible = false
 	allocation_body_label.text = "本季带回 %d 滴蜜。储冬蜜撑起越冬；哺育的幼虫将成为来年劳动力。" % allocation_harvest
 	allocation_panel.visible = true
@@ -1248,6 +1267,21 @@ func set_upgrade_buttons_visible(value: bool) -> void:
 			var data: Dictionary = upgrade_catalog[i]
 			upgrade_buttons[i].text = "%s  %s\n\n%s" % [data.symbol, data.name, data.description]
 			upgrade_buttons[i].disabled = int(upgrade_counts.get(String(data.id), 0)) >= UPGRADE_CAP
+
+func set_secondary_link(text_: String, value: bool) -> void:
+	if secondary_link == null:
+		return
+	secondary_link.text = text_
+	secondary_link.visible = value and text_ != ""
+
+func on_secondary_link() -> void:
+	# overlay 阶段次要操作：退出游戏（让玩家不必回到 HUD 顶部点「退出」）
+	# boss_loss 已被 on_overlay_button 路由，不允许用此函数逃避重玩。
+	if phase not in ["intro", "won", "lost", "paused"]:
+		return
+	# Web 平台浏览器拦截主动关闭窗口：玩家已主动点「或者退出游戏」时，
+	# 直接调 quit() 让浏览器兜底拦截（关 tab 即可离开），避免重复弹窗干扰。
+	get_tree().quit()
 
 func on_upgrade_selected(index: int) -> void:
 	if phase != "between" or index >= upgrade_catalog.size():
@@ -1477,6 +1511,8 @@ func show_win() -> void:
 	overlay_title.text = "冬至一阳生"
 	overlay_body.text = "蜂群走完了完整的二十四个节令，四位失律者重归循环。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
 	overlay_button.text = "再走一次四季"
+	set_secondary_link("或者退出游戏", true)
+	overlay_button.grab_focus()
 
 func show_loss() -> void:
 	phase = "lost"
@@ -1493,6 +1529,8 @@ func show_loss() -> void:
 	overlay_title.text = "这一次没能\n等到春天"
 	overlay_body.text = "蜂巢已经散落，节令的循环不等人——\n远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
 	overlay_button.text = "重新走四季"
+	set_secondary_link("或者退出游戏", true)
+	overlay_button.grab_focus()
 
 # 失律者战败但蜂巢还有余力：不要把玩家推回立春，用上一节令的成长心得也能再试一次。
 # 同时把上一节令「蜂巢成长」面板的 stale 文案显式覆盖掉，避免红点/回放
@@ -1515,6 +1553,8 @@ func show_boss_loss() -> void:
 		+ "\n本节令已落蜜 %d 滴。" % delivered
 	)
 	overlay_button.text = "再入节令"
+	set_secondary_link("", false)
+	overlay_button.grab_focus()
 
 func nearest_flower(radius: float) -> int:
 	var best := -1
@@ -1701,7 +1741,16 @@ func update_interface() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		toggle_pause()
+		# overlay 阶段 Esc 路由：
+		# boss_loss = 鼓励再试（等同 Enter，触发再入节令）
+		# intro/won/lost/paused = 退出游戏（次要链接）
+		# playing/boss = 暂停
+		if phase == "boss_loss":
+			on_overlay_button()
+		elif phase in ["intro", "won", "lost", "paused"]:
+			on_secondary_link()
+		else:
+			toggle_pause()
 		get_viewport().set_input_as_handled()
 		return
 	# 弹窗阶段允许键盘确认（Enter/空格）：切走程序回来后不依赖鼠标重按按钮
@@ -1778,6 +1827,8 @@ func toggle_pause() -> void:
 	overlay_body.text = "当前进度已自动保存。\n按 Esc 或下方按钮继续。"
 	overlay_button.visible = true
 	overlay_button.text = "继续出巢"
+	set_secondary_link("或者退出游戏", true)
+	overlay_button.grab_focus()
 	pause_button.text = "继续"
 
 func toggle_fullscreen() -> void:
