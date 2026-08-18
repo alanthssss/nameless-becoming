@@ -222,6 +222,17 @@ func _init() -> void:
 	if InputMap.action_get_events("action").size() < 2:
 		failures.append("动作键缺少 Space/Enter 双映射")
 
+	# 失律者战败必须可见、可重入：避免「XX完成 · 蜂巢成长」stale 文案重新浮上来。
+	# 范围检查：主脚本必须暴露 show_boss_loss，且 on_overlay_button 接受 boss_loss 相位。
+	var main_script := load("res://scripts/main.gd")
+	if main_script == null:
+		failures.append("主脚本无法加载")
+	else:
+		var main_node = main_script.new()
+		if not main_node.has_method("show_boss_loss"):
+			failures.append("缺失 show_boss_loss：失律者战败需要专属结算页，不能复用 show_loss")
+		main_node.free()
+
 	if failures.is_empty():
 		print("SMOKE TEST PASSED: Godot project, 24 solar terms and 4 boss prototypes are valid")
 		quit(0)

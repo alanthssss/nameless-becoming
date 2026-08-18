@@ -519,6 +519,11 @@ func spawn_stage(index: int) -> void:
 	sound.set_season(season_index_of(index))
 	phase = "playing"
 	overlay.visible = false
+	# 蜂巢成长面板的 title/body 必须跟随 overlay 一起清空，
+	# 否则下一节令若再次让 overlay 可见（例如失律者战败），玩家会读到上一关
+	# 「XX 完成 · 蜂巢成长」的 stale 文案，把败北误判成「我在哪个选择升级」。
+	overlay_title.text = ""
+	overlay_body.text = ""
 	carried = 0
 	delivered = 0
 	harvest_clock = 0.0
@@ -627,7 +632,7 @@ func spawn_stage(index: int) -> void:
 
 func on_overlay_button() -> void:
 	# 相位护栏：异常状态下点穿弹窗不推进关卡
-	if not ["intro", "won", "lost", "paused", "boss_victory", "between"].has(phase):
+	if not ["intro", "won", "lost", "paused", "boss_victory", "between", "boss_loss"].has(phase):
 		return
 	match phase:
 		"intro", "won", "lost": start_game()
@@ -637,6 +642,12 @@ func on_overlay_button() -> void:
 				spawn_stage(stage_index + 1)
 			else:
 				show_win()
+		# 失律者战败但还有命：从当前节令重开，不把玩家发配回立春
+		"boss_loss":
+			if is_boss_stage(stage_index):
+				start_boss()
+			else:
+				spawn_stage(stage_index)
 		"between":
 			advance_stage()
 
@@ -1294,6 +1305,12 @@ func start_boss() -> void:
 	carried = 6
 	delivered = 0
 	message = String(data.encounter_message)
+	# 关卡间唯一需要清理的 overlay 状态：上一节令蜂巢成长面板的 title/body
+	# 还会保留在内存里——一旦 overlay 因为任何理由再变可见（例如调试、热键、
+	# 红点回放），stale 的「春分完成 · 蜂巢成长」会让玩家误判当前还在选蜂倾向，
+	# 进而怀疑失律者战败提示是不是错位。这里显式清空，避免幽灵文本。
+	overlay_title.text = ""
+	overlay_body.text = ""
 
 func update_boss(delta: float) -> void:
 	if current_boss_data.is_empty():
@@ -1397,7 +1414,15 @@ func update_boss(delta: float) -> void:
 	update_hive_rest(delta, false)
 
 	if bee.energy <= 0.0:
-		show_loss()
+		# 失律者战败扣 1 命；若归律前蜂巢已散，走全轮结算页
+		hive_lives -= 1
+		message = "你没能完成调律，蜂群的节律又弱了一分。"
+		shake = 10.0
+		sound.play_cue("loss")
+		if hive_lives <= 0:
+			show_loss()
+		else:
+			show_boss_loss()
 
 func nearest_tuning_bloom(origin: Vector2) -> int:
 	var radius := float(current_boss_data.get("tuning_radius", balance_value("boss", "tuning_radius", 82.0)))
@@ -1446,9 +1471,33 @@ func show_loss() -> void:
 	sound.play_cue("loss")
 	if persistence_enabled:
 		save_manager.record_failure(run_elapsed)
+	# hive_lives 已经在 fail_expedition / boss_loss 里清零：
+	# 整轮散了，不再以「再战一节」收尾，强制回起点重走四季。
 	overlay_title.text = "这一次没能\n等到春天"
-	overlay_body.text = "远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
-	overlay_button.text = "重新出巢"
+	overlay_body.text = "蜂巢已经散落，节令的循环不等人——\n远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
+	overlay_button.text = "重新走四季"
+
+# 失律者战败但蜂巢还有余力：不要把玩家推回立春，用上一节令的成长心得也能再试一次。
+# 同时把上一节令「蜂巢成长」面板的 stale 文案显式覆盖掉，避免红点/回放
+# 让玩家误以为「我还在蜂巢成长界面」。
+func show_boss_loss() -> void:
+	phase = "boss_loss"
+	bee.active = false
+	overlay.visible = true
+	overlay_button.visible = true
+	set_upgrade_buttons_visible(false)
+	sound.play_cue("loss")
+	var stage_data: Dictionary = stages[stage_index]
+	var boss_name := "失律者"
+	if not current_boss_data.is_empty():
+		boss_name = String(current_boss_data.get("name", "失律者"))
+	overlay_title.text = "%s · 调律未竟" % String(stage_data.name)
+	overlay_body.text = (
+		"%s还在花田上游荡。\n回到蜂巢歇一歇，本节令还会再来；剩余机会：" % boss_name
+		+ "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
+		+ "\n本节令已落蜜 %d 滴。" % delivered
+	)
+	overlay_button.text = "再入节令"
 
 func nearest_flower(radius: float) -> int:
 	var best := -1
@@ -1640,7 +1689,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	# 弹窗阶段允许键盘确认（Enter/空格）：切走程序回来后不依赖鼠标重按按钮
 	if event.is_action_pressed("ui_accept") and overlay.visible and overlay_button.visible:
-		if phase == "boss_victory" or phase == "won" or phase == "lost" or phase == "intro":
+		if phase == "boss_victory" or phase == "won" or phase == "lost" or phase == "intro" or phase == "boss_loss":
 			on_overlay_button()
 			get_viewport().set_input_as_handled()
 			return
