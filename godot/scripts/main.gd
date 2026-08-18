@@ -97,8 +97,14 @@ var overlay: ColorRect
 var overlay_title: Label
 var overlay_body: Label
 var overlay_button: Button
-var overlay_history: Label
 var upgrade_buttons: Array[Button] = []
+# 历史信息是「持久状态」（跨 run 的轮回计数 + 最远记录），
+# 属于 HUD 侧栏常驻元素 runs_meter，不寄生在 overlay 弹窗里——
+# overlay_history 这个独立 Label 在 PR #12 临时补救时被引进来，
+# 生命周期写在 show_intro 但从未关闭，会跟着 overlay 浮到 upgrade 界面
+# 直接压在升级卡片上造成视觉错位（背景碎片化、读不清）。
+var runs_meter: Label
+var runs_meter_farthest: Label
 var zh_font: Font
 var pause_button: Button
 var fullscreen_button: Button
@@ -368,6 +374,17 @@ func build_interface() -> void:
 	make_label(side, "近花采蜜 · 近敌惊退 · 静止寻迹", Vector2(14, 447), Vector2(200, 18), 10, Color("68705d"))
 	make_label(side, "长按携蜜=投诱饵 · 双击方向=急转", Vector2(14, 465), Vector2(200, 18), 10, Color("68705d"))
 	make_label(side, "持续飞行=自动振翅加速", Vector2(14, 483), Vector2(200, 18), 10, Color("68705d"))
+	# 历史信息是跨 run 的持久状态，留给 HUD 侧栏底部常驻显示——属于状态不属于弹窗
+	var meter_rule := ColorRect.new()
+	meter_rule.color = Color("c7c0a4", 0.6)
+	meter_rule.position = Vector2(20, 520)
+	meter_rule.size = Vector2(190, 1)
+	side.add_child(meter_rule)
+	runs_meter = make_label(side, "", Vector2(20, 528), Vector2(190, 18), 11, Color("3a4a3e"))
+	runs_meter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	runs_meter_farthest = make_label(side, "", Vector2(20, 548), Vector2(190, 18), 11, Color("68705d"))
+	runs_meter_farthest.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	refresh_runs_meter()
 
 	var tips_background := ColorRect.new()
 	tips_background.color = Color("26392f", 0.96)
@@ -393,9 +410,7 @@ func build_interface() -> void:
 	overlay_button.add_theme_font_size_override("font_size", 18)
 	overlay_button.pressed.connect(on_overlay_button)
 	overlay.add_child(overlay_button)
-	overlay_history = make_label(overlay, "", Vector2(190, 415), Vector2(590, 28), 14, Color("9fb1a3"))
-	overlay_history.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	overlay_history.visible = false
+	# —— overlay 区以内的元素到此为止 ——升级卡片直接挂在 overlay 上
 	for i in 3:
 		var choice := Button.new()
 		choice.position = Vector2(105 + i * 255, 330)
@@ -480,12 +495,11 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "WASD 飞向花朵，空格采蜜。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n长按携蜜=投诱饵 · 双击方向=急转 · Q=归巢"
-	overlay_history.text = "历史最远：%s  ·  完成轮回：%d%s" % [progress_name(), save_manager.runs_completed, last_run_text()]
+	overlay_body.text = "WASD 飞向花朵，空格动作。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n长按携蜜=投诱饵 · 双击方向=急转 · Q=归巢"
 	overlay_button.text = "飞入冬至"
 	set_upgrade_buttons_visible(false)
 	overlay_button.visible = true
-	overlay_history.visible = true
+	refresh_runs_meter()
 
 func start_game() -> void:
 	hive_lives = 3
@@ -519,6 +533,11 @@ func spawn_stage(index: int) -> void:
 	sound.set_season(season_index_of(index))
 	phase = "playing"
 	overlay.visible = false
+	# 蜂巢成长面板的 title/body 必须跟随 overlay 一起清空，
+	# 否则下一节令若再次让 overlay 可见（例如失律者战败），玩家会读到上一关
+	# 「XX 完成 · 蜂巢成长」的 stale 文案，把败北误判成「我在哪个选择升级」。
+	overlay_title.text = ""
+	overlay_body.text = ""
 	carried = 0
 	delivered = 0
 	harvest_clock = 0.0
@@ -627,7 +646,7 @@ func spawn_stage(index: int) -> void:
 
 func on_overlay_button() -> void:
 	# 相位护栏：异常状态下点穿弹窗不推进关卡
-	if not ["intro", "won", "lost", "paused", "boss_victory", "between"].has(phase):
+	if not ["intro", "won", "lost", "paused", "boss_victory", "between", "boss_loss"].has(phase):
 		return
 	match phase:
 		"intro", "won", "lost": start_game()
@@ -637,6 +656,12 @@ func on_overlay_button() -> void:
 				spawn_stage(stage_index + 1)
 			else:
 				show_win()
+		# 失律者战败但还有命：从当前节令重开，不把玩家发配回立春
+		"boss_loss":
+			if is_boss_stage(stage_index):
+				start_boss()
+			else:
+				spawn_stage(stage_index)
 		"between":
 			advance_stage()
 
@@ -1142,6 +1167,7 @@ func show_between() -> void:
 	var data: Dictionary = stages[stage_index]
 	if persistence_enabled:
 		save_manager.record_stage(stage_index + 1)
+	refresh_runs_meter()
 	season_mechanics.on_stage_complete()
 	# 储备机制：白露是储备段最后的采蜜关，本季的蜜需要分配（储冬蜜 / 哺育幼虫）
 	var reserve_m = season_mechanics.mechanic_by_id("reserve")
@@ -1294,6 +1320,12 @@ func start_boss() -> void:
 	carried = 6
 	delivered = 0
 	message = String(data.encounter_message)
+	# 关卡间唯一需要清理的 overlay 状态：上一节令蜂巢成长面板的 title/body
+	# 还会保留在内存里——一旦 overlay 因为任何理由再变可见（例如调试、热键、
+	# 红点回放），stale 的「春分完成 · 蜂巢成长」会让玩家误判当前还在选蜂倾向，
+	# 进而怀疑失律者战败提示是不是错位。这里显式清空，避免幽灵文本。
+	overlay_title.text = ""
+	overlay_body.text = ""
 
 func update_boss(delta: float) -> void:
 	if current_boss_data.is_empty():
@@ -1397,7 +1429,15 @@ func update_boss(delta: float) -> void:
 	update_hive_rest(delta, false)
 
 	if bee.energy <= 0.0:
-		show_loss()
+		# 失律者战败扣 1 命；若归律前蜂巢已散，走全轮结算页
+		hive_lives -= 1
+		message = "你没能完成调律，蜂群的节律又弱了一分。"
+		shake = 10.0
+		sound.play_cue("loss")
+		if hive_lives <= 0:
+			show_loss()
+		else:
+			show_boss_loss()
 
 func nearest_tuning_bloom(origin: Vector2) -> int:
 	var radius := float(current_boss_data.get("tuning_radius", balance_value("boss", "tuning_radius", 82.0)))
@@ -1432,6 +1472,7 @@ func show_win() -> void:
 	set_upgrade_buttons_visible(false)
 	if persistence_enabled:
 		save_manager.record_completion(run_elapsed)
+	refresh_runs_meter()
 	sound.play_cue("win")
 	overlay_title.text = "冬至一阳生"
 	overlay_body.text = "蜂群走完了完整的二十四个节令，四位失律者重归循环。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
@@ -1446,9 +1487,34 @@ func show_loss() -> void:
 	sound.play_cue("loss")
 	if persistence_enabled:
 		save_manager.record_failure(run_elapsed)
+	refresh_runs_meter()
+	# hive_lives 已经在 fail_expedition / boss_loss 里清零：
+	# 整轮散了，不再以「再战一节」收尾，强制回起点重走四季。
 	overlay_title.text = "这一次没能\n等到春天"
-	overlay_body.text = "远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
-	overlay_button.text = "重新出巢"
+	overlay_body.text = "蜂巢已经散落，节令的循环不等人——\n远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
+	overlay_button.text = "重新走四季"
+
+# 失律者战败但蜂巢还有余力：不要把玩家推回立春，用上一节令的成长心得也能再试一次。
+# 同时把上一节令「蜂巢成长」面板的 stale 文案显式覆盖掉，避免红点/回放
+# 让玩家误以为「我还在蜂巢成长界面」。
+func show_boss_loss() -> void:
+	phase = "boss_loss"
+	bee.active = false
+	overlay.visible = true
+	overlay_button.visible = true
+	set_upgrade_buttons_visible(false)
+	sound.play_cue("loss")
+	var stage_data: Dictionary = stages[stage_index]
+	var boss_name := "失律者"
+	if not current_boss_data.is_empty():
+		boss_name = String(current_boss_data.get("name", "失律者"))
+	overlay_title.text = "%s · 调律未竟" % String(stage_data.name)
+	overlay_body.text = (
+		"%s还在花田上游荡。\n回到蜂巢歇一歇，本节令还会再来；剩余机会：" % boss_name
+		+ "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
+		+ "\n本节令已落蜜 %d 滴。" % delivered
+	)
+	overlay_button.text = "再入节令"
 
 func nearest_flower(radius: float) -> int:
 	var best := -1
@@ -1640,7 +1706,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	# 弹窗阶段允许键盘确认（Enter/空格）：切走程序回来后不依赖鼠标重按按钮
 	if event.is_action_pressed("ui_accept") and overlay.visible and overlay_button.visible:
-		if phase == "boss_victory" or phase == "won" or phase == "lost" or phase == "intro":
+		if phase == "boss_victory" or phase == "won" or phase == "lost" or phase == "intro" or phase == "boss_loss":
 			on_overlay_button()
 			get_viewport().set_input_as_handled()
 			return
@@ -1742,10 +1808,27 @@ func progress_name() -> String:
 		return "尚未出巢"
 	return String(stages[mini(save_manager.best_stage - 1, stages.size() - 1)].name)
 
-func last_run_text() -> String:
-	if save_manager.last_run_seconds <= 0.0:
-		return ""
-	return "  ·  上轮 %s" % format_duration(save_manager.last_run_seconds)
+# 把跨 run 的历史信息从 overlay 弹窗里搬出来，放进 HUD 侧栏底部永久位：
+# 三行小字——轮回次数 / 前路最远 / 上轮时长。
+# 跨 run 但属于「持久状态」，不属于任何弹窗。
+func refresh_runs_meter() -> void:
+	if runs_meter == null or runs_meter_farthest == null:
+		return
+	var runs := int(save_manager.runs_completed)
+	if runs <= 0:
+		runs_meter.text = "尚未启程"
+	else:
+		runs_meter.text = "已走过 %d 轮四季" % runs
+	var farthest := progress_name()
+	if farthest == "尚未出巢":
+		runs_meter_farthest.text = "前路：远方还是远方"
+	elif farthest == "二十四节令已归律":
+		runs_meter_farthest.text = "前路：二十四节令归律"
+	else:
+		runs_meter_farthest.text = "前路：%s" % farthest
+	var last_seconds := save_manager.last_run_seconds
+	if last_seconds > 0.0:
+		runs_meter.text += "  ·  上轮 %s" % format_duration(last_seconds)
 
 func format_duration(duration_seconds: float) -> String:
 	var minutes := floori(duration_seconds / 60.0)
