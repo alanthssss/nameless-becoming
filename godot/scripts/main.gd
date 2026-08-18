@@ -242,17 +242,17 @@ func build_interface() -> void:
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
 	make_label(side, "当前节令", Vector2(20, 20), Vector2(190, 20), 11, Color("68705d"))
-	detail_label = make_label(side, "春分", Vector2(20, 50), Vector2(190, 220), 18, Color("293c32"))
+	detail_label = make_label(side, "春分", Vector2(20, 50), Vector2(190, 260), 18, Color("293c32"))
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	message_label = make_label(side, message, Vector2(20, 276), Vector2(190, 125), 13, Color("4c5548"))
+	message_label = make_label(side, message, Vector2(20, 316), Vector2(190, 80), 13, Color("4c5548"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 405), Vector2(190, 34), 11, Color("556054"))
-	sense_button = make_mouse_action(side, "U 寻迹", "sense", Vector2(14, 441), false, Vector2(62, 36))
-	make_mouse_action(side, "I 采蜜", "harvest", Vector2(84, 441), true, Vector2(62, 36))
-	make_mouse_action(side, "O 振翅", "dash", Vector2(154, 441), true, Vector2(62, 36))
-	make_mouse_action(side, "J 惊退", "repel", Vector2(14, 486), false, Vector2(62, 36))
-	make_mouse_action(side, "K 急转", "evade", Vector2(84, 486), false, Vector2(62, 36))
-	make_mouse_action(side, "L 诱饵", "decoy", Vector2(154, 486), false, Vector2(62, 36))
+	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 400), Vector2(190, 34), 11, Color("556054"))
+	sense_button = make_mouse_action(side, "U 寻迹", "sense", Vector2(14, 436), false, Vector2(62, 36))
+	make_mouse_action(side, "I 采蜜", "harvest", Vector2(84, 436), true, Vector2(62, 36))
+	make_mouse_action(side, "O 振翅", "dash", Vector2(154, 436), true, Vector2(62, 36))
+	make_mouse_action(side, "J 惊退", "repel", Vector2(14, 481), false, Vector2(62, 36))
+	make_mouse_action(side, "K 急转", "evade", Vector2(84, 481), false, Vector2(62, 36))
+	make_mouse_action(side, "L 诱饵", "decoy", Vector2(154, 481), false, Vector2(62, 36))
 
 	var tips_background := ColorRect.new()
 	tips_background.color = Color("26392f", 0.96)
@@ -564,6 +564,15 @@ func update_mosquitoes(delta: float) -> void:
 				message = "蚊虫刺中了你：体力下降，花蜜洒落。"
 				sound.play_cue("hurt")
 		mosquitoes[i] = mosquito
+	separate_units(mosquitoes, 28.0)
+	for i in mosquitoes.size():
+		var mosquito_clamp: Dictionary = mosquitoes[i]
+		var clamp_position: Vector2 = mosquito_clamp.position
+		mosquito_clamp.position = Vector2(
+			clampf(clamp_position.x, HIVE_SAFE_X, WORLD.end.x - 12),
+			clampf(clamp_position.y, WORLD.position.y + 12, WORLD.end.y - 12)
+		)
+		mosquitoes[i] = mosquito_clamp
 
 func update_ants(delta: float) -> void:
 	for i in ants.size():
@@ -595,6 +604,15 @@ func update_ants(delta: float) -> void:
 			sound.play_cue("hurt")
 			shake = 4.0
 		ants[i] = ant
+	separate_units(ants, 26.0)
+	for i in ants.size():
+		var ant_clamp: Dictionary = ants[i]
+		var clamp_position: Vector2 = ant_clamp.position
+		ant_clamp.position = Vector2(
+			clampf(clamp_position.x, HIVE_SAFE_X, WORLD.end.x - 14),
+			clampf(clamp_position.y, WORLD.position.y + 14, WORLD.end.y - 14)
+		)
+		ants[i] = ant_clamp
 
 func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 	var inside := bee.position.x < HIVE_X
@@ -852,6 +870,30 @@ func find_spaced_flower_position(minimum_distance: float) -> Vector2:
 			return candidate
 	return candidate
 
+func separate_units(units: Array, minimum_distance: float) -> void:
+	# 防止同种敌人完全重叠：每帧成对推开一半的缺口。
+	# 强度取 0.5 让推力是渐进的，视觉上仍然自然、不会瞬移。
+	for i in units.size():
+		for j in range(i + 1, units.size()):
+			var a: Dictionary = units[i]
+			var b: Dictionary = units[j]
+			var diff: Vector2 = Vector2(a.position) - Vector2(b.position)
+			var dist := diff.length()
+			if dist < minimum_distance and dist > 0.001:
+				var push: Vector2 = diff / dist * (minimum_distance - dist) * 0.5
+				a.position = Vector2(a.position) + push
+				b.position = Vector2(b.position) - push
+				units[i] = a
+				units[j] = b
+			elif dist <= 0.001:
+				# 完全重合：沿随机方向各推开半个最小距离。
+				var angle := rng.randf() * TAU
+				var offset := Vector2.from_angle(angle) * minimum_distance * 0.5
+				a.position = Vector2(a.position) + offset
+				b.position = Vector2(b.position) - offset
+				units[i] = a
+				units[j] = b
+
 func drop_honey_decoy() -> void:
 	if carried <= 0:
 		message = "投蜜诱饵需要至少携带 1 滴蜜。"
@@ -943,8 +985,10 @@ func update_interface() -> void:
 	else:
 		var winter_note := ""
 		if stage_index == 3:
-			winter_note = "\n\n温暖  %d%%\n储备  %d 滴" % [roundi(warmth), hive_reserve]
-		detail_label.text = "%s\n\n%s\n\n阴 %d  ·  阳 %d\n目标  %d 滴\n蚊群  %s\n掠蜜蚁  %s%s" % [data.name, data.line, int(data.yin), int(data.yang), int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants)), winter_note]
+			winter_note = "\n温暖  %d%%\n储备  %d 滴" % [roundi(warmth), hive_reserve]
+		# 阴阳数值是内部设计依据（驱动节令难度），不向玩家暴露；
+		# 用「敌害」收拢蚊/蚁两行，避免被误读为可选角色。
+		detail_label.text = "%s\n\n%s\n\n目标  %d 滴\n敌害\n蚊  %s\n蚁  %s%s" % [data.name, data.line, int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants)), winter_note]
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
