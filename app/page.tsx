@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="game-shell">
       <header>
-        <div><strong>归巢之前</strong><span>Godot 同源 Web 版 · v0.9.4</span></div>
+        <div><strong>无名：成蜂</strong><span>Godot 同源 Web 版 · v0.9.4</span></div>
         <p>Web · macOS · Windows 使用同一份关卡与玩法代码</p>
       </header>
       <section className="game-stage">
@@ -19,7 +19,7 @@ export default function Home() {
             <small>首次点击同时允许浏览器播放游戏音乐。推荐使用键盘与横屏。</small>
           </div>
         ) : (
-          <iframe src="/game/index.html" title="归巢之前 Godot Web 游戏" allow="autoplay; fullscreen" />
+          <iframe src="/game/index.html" title="无名：成蜂 Godot Web 游戏" allow="autoplay; fullscreen" />
         )}
       </section>
     </main>

@@ -1,7 +1,7 @@
 # 01 · 项目总览 / Project Overview
 
-> 归巢之前 · Hivebound Seasons — 一款以蜜蜂生态、四季循环与东方节气为核心的轻量"搜、打、撤"肉鸽游戏原型。
-> Hivebound Seasons — a lightweight "search, fight, extract" roguelike prototype centered on bee ecology, seasonal cycles, and Eastern solar terms.
+> 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、四季循环与东方节气为核心的轻量"搜、打、撤"肉鸽游戏原型。
+> Nameless: Becoming — a lightweight "search, fight, extract" roguelike prototype centered on bee ecology, seasonal cycles, and Eastern solar terms.
 
 ---
 

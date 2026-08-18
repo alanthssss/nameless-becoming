@@ -40,7 +40,7 @@ var shake := 0.0
 var flash := 0.0
 var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
 var rng := RandomNumberGenerator.new()
-var save_manager := HiveSaveManager.new()
+var save_manager := NamelessSaveManager.new()
 var sound := SoundFeedback.new()
 var paused_from_phase := "playing"
 var persistence_enabled := true
@@ -58,6 +58,7 @@ var overlay_title: Label
 var overlay_body: Label
 var overlay_button: Button
 var upgrade_buttons: Array[Button] = []
+var zh_font: Font
 var pause_button: Button
 var fullscreen_button: Button
 var sound_button: Button
@@ -68,6 +69,9 @@ var energy_change_label: Label
 var energy_feedback_time := 0.0
 
 func _ready() -> void:
+	zh_font = load("res://fonts/hivebound_font.ttf")
+	if zh_font == null:
+		push_warning("无法加载中文字体，将使用回退字体")
 	rng.randomize()
 	ensure_keyboard_controls()
 	save_manager.load_data()
@@ -155,6 +159,8 @@ func make_label(parent: Node, text: String, position: Vector2, size: Vector2, fo
 	label.text = text
 	label.position = position
 	label.size = size
+	if zh_font != null:
+		label.add_theme_font_override("font", zh_font)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
 	parent.add_child(label)
@@ -165,8 +171,8 @@ func build_interface() -> void:
 	ui.name = "Interface"
 	add_child(ui)
 
-	title_label = make_label(ui, "◆  归巢之前", Vector2(34, 17), Vector2(350, 42), 24, Color("26342b"))
-	make_label(ui, "HIVEBOUND · GODOT VERTICAL SLICE", Vector2(67, 48), Vector2(370, 20), 10, Color("566257"))
+	title_label = make_label(ui, "◆  无名：成蜂", Vector2(34, 17), Vector2(350, 42), 24, Color("26342b"))
+	make_label(ui, "NAMELESS: BECOMING · GODOT VERTICAL SLICE", Vector2(67, 48), Vector2(370, 20), 10, Color("566257"))
 	term_label = make_label(ui, "春 · 春分", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
 	term_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -262,6 +268,11 @@ func build_interface() -> void:
 		overlay.add_child(choice)
 		upgrade_buttons.append(choice)
 	make_label(overlay, "四季搜打撤 · 核心交互测试", Vector2(300, 38), Vector2(370, 25), 12, Color("dfbd54")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	if zh_font != null:
+		for node in ui.find_children("*", "Button", true):
+			if node is Button:
+				node.add_theme_font_override("font", zh_font)
 
 func make_stat(parent: Node, caption: String, position: Vector2) -> Label:
 	var panel := ColorRect.new()
@@ -935,8 +946,8 @@ func _draw() -> void:
 	draw_rect(Rect2(WORLD.position.x, WORLD.position.y, 108, WORLD.size.y), Color("26392f", 0.88))
 	for y in range(178, 664, 42):
 		draw_circle(Vector2(86, y), 17, Color("e5bd4a", 0.08), false, 2)
-	draw_string(ThemeDB.fallback_font, Vector2(58, 176), "蜂 巢", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("fff1bd"))
-	draw_string(ThemeDB.fallback_font, Vector2(57, 661), "撤 离 区", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d8d4b8"))
+	draw_string(zh_font, Vector2(58, 176), "蜂 巢", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("fff1bd"))
+	draw_string(zh_font, Vector2(57, 661), "撤 离 区", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d8d4b8"))
 
 	var deep := stage_color(2)
 	for i in 34:
@@ -970,7 +981,7 @@ func _draw() -> void:
 			draw_line(bee.position, flower.position, Color("fff0a0", 0.42 if is_best else 0.12), 3.0 if is_best else 1.0)
 			var badge_position: Vector2 = flower.position + Vector2(0, -29)
 			draw_circle(badge_position, 10, Color("26392f", 0.88))
-			draw_string(ThemeDB.fallback_font, badge_position + Vector2(-8, 5), str(flower.nectar), HORIZONTAL_ALIGNMENT_CENTER, 16, 12, Color("fff4bf"))
+			draw_string(zh_font, badge_position + Vector2(-8, 5), str(flower.nectar), HORIZONTAL_ALIGNMENT_CENTER, 16, 12, Color("fff4bf"))
 			if is_best:
 				draw_arc(flower.position, 38, 0, TAU, 32, Color("fff0a0", 0.9), 3)
 		for mosquito in mosquitoes:
@@ -982,7 +993,7 @@ func _draw() -> void:
 	if nearby >= 0 and phase == "playing":
 		var flower: Dictionary = flowers[nearby]
 		draw_arc(flower.position, 32 + sin(elapsed * 6.0) * 3, 0, TAU, 28, stage_color(3), 2)
-		draw_string(ThemeDB.fallback_font, flower.position + Vector2(-30, -42), "按住空格采蜜", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, deep)
+		draw_string(zh_font, flower.position + Vector2(-30, -42), "按住空格采蜜", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, deep)
 	if flash > 0:
 		draw_rect(WORLD, Color("fff1b0", flash * 0.25))
 	draw_set_transform(Vector2.ZERO)
@@ -999,7 +1010,7 @@ func draw_flower(flower: Dictionary) -> void:
 	draw_circle(pos, 6, Color(stage_color(3), alpha))
 	if recovery and alive:
 		draw_arc(pos, 24 + sin(elapsed * 4.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.9), 3)
-		draw_string(ThemeDB.fallback_font, pos + Vector2(-22, 66), "返蜜", HORIZONTAL_ALIGNMENT_CENTER, 44, 11, Color("fff1a8"))
+		draw_string(zh_font, pos + Vector2(-22, 66), "返蜜", HORIZONTAL_ALIGNMENT_CENTER, 44, 11, Color("fff1a8"))
 	if not alive:
 		draw_line(pos + Vector2(-14, 49), pos + Vector2(14, 49), Color(stage_color(2), 0.45), 2)
 
@@ -1031,7 +1042,7 @@ func draw_ant(ant: Dictionary) -> void:
 		draw_rect(Rect2(pos + Vector2(-18, -24), Vector2(36, 5)), Color("332b27", 0.75))
 		draw_rect(Rect2(pos + Vector2(-17, -23), Vector2(34 * ratio, 3)), Color("e9b84f"))
 	if int(ant.get("stolen_honey", 0)) > 0:
-		draw_string(ThemeDB.fallback_font, pos + Vector2(-18, -30), "蜜%d" % int(ant.stolen_honey), HORIZONTAL_ALIGNMENT_CENTER, 36, 11, Color("f4ce67"))
+		draw_string(zh_font, pos + Vector2(-18, -30), "蜜%d" % int(ant.stolen_honey), HORIZONTAL_ALIGNMENT_CENTER, 36, 11, Color("f4ce67"))
 
 func draw_tuning_bloom(pos: Vector2) -> void:
 	var pulse := 28.0 + sin(elapsed * 4.0) * 4.0

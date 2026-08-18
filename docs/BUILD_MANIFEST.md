@@ -12,4 +12,4 @@
 
 构建产物不提交 Git；它们保留在本机 `builds/`，可按 [`godot/README.md`](../godot/README.md) 中的命令重建。
 
-桌面构建发布于私有 GitHub [`v0.9.4`](https://github.com/alanthssss/hivebound-seasons/releases/tag/v0.9.4)；Web 构建部署至 [https://hivebound-seasons-game.pages.dev](https://hivebound-seasons-game.pages.dev)。
+桌面构建发布于私有 GitHub [`v0.9.4`](https://github.com/alanthssss/nameless-becoming/releases/tag/v0.9.4)（仓库原名为 hivebound-seasons，2026-08-18 更名）；Web 构建部署至 [https://hivebound-seasons-game.pages.dev](https://hivebound-seasons-game.pages.dev)。

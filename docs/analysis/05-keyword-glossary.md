@@ -9,7 +9,7 @@
 
 | 中文 / CN | English / EN | 说明 / Note |
 |-----------|--------------|-------------|
-| 归巢之前 | Hivebound Seasons | 项目名 / Project name |
+| 无名：成蜂 | Nameless: Becoming | 项目名 / Project name（旧名：归巢之前 Hivebound Seasons） |
 | 搜、打、撤 | Search, Fight, Extract | 核心循环类型 / Core loop genre |
 | 肉鸽 | Roguelike | 品类标签 / Genre tag |
 | 搜 | Search | 寻找花蜜 / Finding nectar |

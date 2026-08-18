@@ -1,7 +1,7 @@
-class_name HiveSaveManager
+class_name NamelessSaveManager
 extends RefCounted
 
-const SAVE_PATH := "user://hivebound.cfg"
+const SAVE_PATH := "user://nameless.cfg"
 
 var best_stage := 0
 var runs_started := 0

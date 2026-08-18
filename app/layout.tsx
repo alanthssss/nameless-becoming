@@ -6,17 +6,17 @@ const serif = Noto_Serif_SC({ variable: "--font-serif", subsets: ["latin"], weig
 const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "归巢之前｜Godot 四季搜打撤",
+  title: "无名：成蜂｜Godot 四季搜打撤",
   description: "与 macOS、Windows 同源的 Godot Web 版：穿越四季，在体力耗尽前采蜜归巢。",
   metadataBase: new URL("https://hivebound-seasons-game.pages.dev"),
   openGraph: {
-    title: "归巢之前｜四季搜打撤",
+    title: "无名：成蜂｜四季搜打撤",
     description: "再采一朵，还是现在归巢？",
     images: ["/og.jpg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "归巢之前｜四季搜打撤",
+    title: "无名：成蜂｜四季搜打撤",
     description: "再采一朵，还是现在归巢？",
     images: ["/og.jpg"],
   },
