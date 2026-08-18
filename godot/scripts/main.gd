@@ -66,6 +66,8 @@ var sound_button: Button
 var sense_button: Button
 var energy_bar: ColorRect
 var energy_bar_fill: ColorRect
+var season_label: Label
+var season_rule: ColorRect
 var energy_change_label: Label
 var energy_feedback_time := 0.0
 var reserve_label: Label
@@ -241,18 +243,31 @@ func build_interface() -> void:
 	side.position = Vector2(1020, 146)
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
-	make_label(side, "当前节令", Vector2(20, 20), Vector2(190, 20), 11, Color("68705d"))
-	detail_label = make_label(side, "春分", Vector2(20, 50), Vector2(190, 260), 18, Color("293c32"))
+	make_label(side, "当前节令", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
+	season_label = make_label(side, "春分", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
+	# 节令名下的细分隔条：用 4px 高的色块代替“空行造成的虚假分隔”，视觉上更稳重
+	season_rule = ColorRect.new()
+	season_rule.color = Color("c8a86b", 0.7)
+	season_rule.position = Vector2(20, 84)
+	season_rule.size = Vector2(36, 2)
+	side.add_child(season_rule)
+	detail_label = make_label(side, "·", Vector2(20, 96), Vector2(190, 84), 13, Color("3a4a3e"))
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	message_label = make_label(side, message, Vector2(20, 316), Vector2(190, 80), 13, Color("4c5548"))
+	message_label = make_label(side, message, Vector2(20, 250), Vector2(190, 88), 13, Color("4c5548"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 400), Vector2(190, 34), 11, Color("556054"))
-	sense_button = make_mouse_action(side, "U 寻迹", "sense", Vector2(14, 436), false, Vector2(62, 36))
-	make_mouse_action(side, "I 采蜜", "harvest", Vector2(84, 436), true, Vector2(62, 36))
-	make_mouse_action(side, "O 振翅", "dash", Vector2(154, 436), true, Vector2(62, 36))
-	make_mouse_action(side, "J 惊退", "repel", Vector2(14, 481), false, Vector2(62, 36))
-	make_mouse_action(side, "K 急转", "evade", Vector2(84, 481), false, Vector2(62, 36))
-	make_mouse_action(side, "L 诱饵", "decoy", Vector2(154, 481), false, Vector2(62, 36))
+	# 提示消息下方用一根更细的线把「输入层」和「行动层」分开
+	var input_rule := ColorRect.new()
+	input_rule.color = Color("c7c0a4", 0.6)
+	input_rule.position = Vector2(20, 348)
+	input_rule.size = Vector2(190, 1)
+	side.add_child(input_rule)
+	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 360), Vector2(190, 28), 11, Color("556054"))
+	sense_button = make_mouse_action(side, "U 寻迹", "sense", Vector2(14, 402), false, Vector2(62, 36))
+	make_mouse_action(side, "I 采蜜", "harvest", Vector2(84, 402), true, Vector2(62, 36))
+	make_mouse_action(side, "O 振翅", "dash", Vector2(154, 402), true, Vector2(62, 36))
+	make_mouse_action(side, "J 惊退", "repel", Vector2(14, 447), false, Vector2(62, 36))
+	make_mouse_action(side, "K 急转", "evade", Vector2(84, 447), false, Vector2(62, 36))
+	make_mouse_action(side, "L 诱饵", "decoy", Vector2(154, 447), false, Vector2(62, 36))
 
 	var tips_background := ColorRect.new()
 	tips_background.color = Color("26392f", 0.96)
@@ -981,14 +996,16 @@ func update_interface() -> void:
 	reserve_label.text = str(hive_reserve)
 	message_label.text = message
 	if phase == "boss":
-		detail_label.text = "失律之蚊\n\n只索取，\n不流转。\n\n调律  %d / 3\n\n引向花粉团\n再以震翼共鸣" % int(boss.hits)
+		season_label.text = "失律之蚊"
+		detail_label.text = "只索取，不流转。\n\n▸ 调律  %d / 3\n\n引向花粉团\n再以震翼共鸣" % int(boss.hits)
 	else:
-		var winter_note := ""
-		if stage_index == 3:
-			winter_note = "\n温暖  %d%%\n储备  %d 滴" % [roundi(warmth), hive_reserve]
 		# 阴阳数值是内部设计依据（驱动节令难度），不向玩家暴露；
-		# 用「敌害」收拢蚊/蚁两行，避免被误读为可选角色。
-		detail_label.text = "%s\n\n%s\n\n目标  %d 滴\n敌害\n蚊  %s\n蚁  %s%s" % [data.name, data.line, int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants)), winter_note]
+		# 用「▸」做状态行节奏符，把敌害收进同一行避免被误读为玩家可选角色。
+		season_label.text = data.name
+		var status_rows := "▸ 目标 · %d 滴\n▸ 敌害 · 蚊 %s   蚁 %s" % [int(data.goal), "◆".repeat(int(data.enemies)), "◆".repeat(int(data.ants))]
+		if stage_index == 3:
+			status_rows += "\n▸ 体温 · %d%%  储蜜 · %d 滴" % [roundi(warmth), hive_reserve]
+		detail_label.text = "%s\n\n%s" % [data.line, status_rows]
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
