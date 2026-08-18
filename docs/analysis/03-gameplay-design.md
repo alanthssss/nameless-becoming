@@ -53,13 +53,13 @@
 
 | 动作 / Action | 输入 / Input | 作用 / Effect | 成本与限制 / Cost & Limits |
 |---------------|--------------|---------------|----------------------------|
-| 飞行 / Fly | WASD / 方向键 / 鼠标目标 | 在花田移动 / Move across the field | 持续缓慢消耗体力 / Slow stamina drain |
-| 采蜜 / Harvest | I / 按住空格 | 从附近花朵逐滴采集 / Collect drop by drop | 停留、额外消耗体力 / Must linger |
-| 振翅 / Dash | O / Shift | 快速位移、脱离包围 / Rapid reposition | 高体力消耗 / High stamina cost |
-| 震翼惊退 / Repel | J | 推开敌人并使其持续远离 | 8 点体力 + 冷却；非麻痹非蜂针 |
-| 触角寻迹 / Sense | U / E | 显示蜜量、警戒区、归巢方向、推荐花 | 3 秒持续，7 秒冷却 |
-| 急转闪避 / Evade | K | 快速侧掠并短暂无伤 | 12 点体力，1.6 秒冷却 |
-| 投蜜诱饵 / Decoy | L | 投 1 滴蜜吸引蚊虫 5 秒 | 诱饵结束后蜜回归花田 |
+| 飞行 / Fly | WASD / 方向键 | 移动；持续飞自动振翅加速 / Move; sustained flight auto-dashes | 持续缓慢消耗体力 / Slow stamina drain |
+| 采蜜 / Harvest | 空格（近花）/ Space near flower | 从附近花朵逐滴采集 / Collect drop by drop | 停留、额外消耗体力 / Must linger |
+| 震翼惊退 / Repel | 空格（近敌）/ Space near enemy | 推开敌人并使其持续远离 | 8 点体力 + 冷却；非麻痹非蜂针 |
+| 触角寻迹 / Sense | 空格（静止）/ Space while still | 显示蜜量、警戒区、归巢方向、推荐花 | 3 秒持续，7 秒冷却 |
+| 投蜜诱饵 / Decoy | 松开后长按空格 / Long-press after release | 投 1 滴蜜吸引蚊虫 5 秒 | 诱饵结束后蜜回归花田 |
+| 急转闪避 / Evade | 双击方向 / Double-tap direction | 快速侧掠并短暂无伤 | 12 点体力，1.6 秒冷却 |
+| 归巢 / Return | Q | 自动飞回蜂巢 / Auto-return to hive | 需亲自回巢蜜才入储备 |
 | 暂停 / Pause | Esc | 暂停并显示操作 | — |
 
 > 注：蜂针不是普通攻击。工蜂刺器是巢群防御器官并带不可逆的生命意味；若未来加入蜂针，只能用于明确、稀少且改变角色命运的抉择。
