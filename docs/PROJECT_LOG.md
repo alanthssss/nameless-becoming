@@ -373,3 +373,11 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 5. flow_test 新增断言：力竭归巢体力 < 100、终局失败页体力 == 0。
 
 **分支基线说明**：本分支基于 #16 合并前的 main 创建，rebase 后已包含 #16 的缩进回归修复（此前会话曾误报"#16 未合并"，实为本地 main 未 pull——已更正，详见工作日志）。
+
+## 十七、仓库收口与 Web 门禁校准（2026-08-20）
+
+- 从最新 `origin/main` 新建 `chore/repository-hygiene`，不再沿用已合并并从远端删除的文档分支；
+- 清除三份 Finder 重名产生的 Sites 启动模板副本与过期截图脚本；`.workbuddy/` 作为本地工具工作资料加入忽略，不进入发行仓库；
+- 将 `rendered-html.test.mjs` 从“验证启动模板骨架”改为验证真实《无名：成蜂》Web 外壳：中文标题、核心文案、启动入口、版本标识及模板残留隔离；
+- ESLint 明确忽略 `public/game/` 下的 Godot 自动导出代码，只检查项目维护的源码；同时整理 WebAssembly 分片准备脚本格式并消除 lint 错误；
+- 验证结果：`npm test`（含生产构建）2/2 通过，`npm run lint` 通过，`git diff --check` 通过；本轮未改动 Godot 玩法代码，因此不替代下一次发布前的 Godot smoke/flow 复验。

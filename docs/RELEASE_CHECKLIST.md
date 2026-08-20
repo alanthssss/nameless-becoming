@@ -20,6 +20,8 @@
 - [x] `git diff --check` 无空白错误；
 - [x] `main` 已同步私有 GitHub 仓库。
 - [x] 四季机制（授粉/征召/储备/抱团）通过 smoke_test + flow_test（2026-08-18，feat/season-mechanics，待合并后并入 0.9.x 发布检查）；
+- [x] Web 外壳生产内容、中文元数据与启动入口通过服务端渲染测试，Sites 启动模板残留已移除（2026-08-20）；
+- [x] ESLint 排除 Godot Web 导出产物后，项目自有 JavaScript/TypeScript 代码检查通过（2026-08-20）；
 
 ## 构建验证
 
