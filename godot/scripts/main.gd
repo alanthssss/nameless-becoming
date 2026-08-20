@@ -476,7 +476,8 @@ func build_interface() -> void:
 	make_label(overlay, "四季搜打撤 · 核心交互测试", Vector2(300, 38), Vector2(370, 25), 12, Color("dfbd54")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	if zh_font != null:
-		for node in ui.find_children("*", "Button", true):
+		# 运行时创建的控件没有 scene owner；owned=true 会漏掉全部按钮。
+		for node in ui.find_children("*", "Button", true, false):
 			if node is Button:
 				node.add_theme_font_override("font", zh_font)
 
