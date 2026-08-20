@@ -395,3 +395,13 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - verbose 退出日志将唯一资源存活警告定位到 `SoundFeedback`：smoke 只实例化主节点做接口探针但不加入场景树，导致 `_ready()` 未执行，预创建的声音节点没有成为可随父节点释放的子节点；
 - 测试夹具现先显式释放 `main_node.sound`，再释放 `main_node`；生产场景中的正常生命周期不变，本轮不修改玩法代码；
 - 验收要求：smoke 仍通过，标准输出中不再出现 `instances leaked` 或 `resources still in use`，随后完整 Godot 三测试门禁继续通过。
+
+## 二十、0.9.5-rc.1 三端候选构建（2026-08-20）
+
+- 版本显示统一为 `0.9.5-rc.1`；macOS 短版本使用系统兼容的 `0.9.5`，Windows 文件版本使用纯数字 `0.9.5.0`；网页、包元数据、README 与渲染测试同步更新；
+- 下载官方 Godot 4.6.2 export templates 并按发行页 SHA-512 校验后安装；三端均由同一 `godot/` 工程以 Debug candidate 导出；
+- Web 导出前发现生成目录残留旧 `index-v5/v6/v7.pck`，已改为空目录重导出；WASM 分片重组 SHA-256 与原始文件一致，避免历史产物混入部署包；
+- 修复 `package_macos.sh` 的 Perl 分隔符冲突：原替换式以 `|` 分隔，却在注入内容中包含 `|| true`，导致签名后打包中断；改用无冲突分隔符后打包成功；
+- macOS 验证：universal arm64+x86_64、版本元数据正确、临时签名严格校验通过、无界面启动成功；Windows 验证：PE32+ GUI x86-64、嵌入 PCK，仍需真实 Windows 设备启动；
+- npm 锁文件审计报告 20 个既有依赖漏洞（1 low / 4 moderate / 15 high）；本轮不执行可能引入破坏性升级的 `npm audit fix --force`，作为独立依赖治理任务处理；
+- 精确产物大小与 SHA-256 见 `docs/BUILD_MANIFEST.md`。候选尚未上传或部署，不冒充正式发布。

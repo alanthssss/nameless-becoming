@@ -1,6 +1,6 @@
 {
-  "name": "site-creator-vinext-starter",
-  "version": "0.1.0",
+  "name": "nameless-becoming",
+  "version": "0.9.5-rc.1",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
