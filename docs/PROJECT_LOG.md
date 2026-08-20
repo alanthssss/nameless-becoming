@@ -421,3 +421,4 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - 从 Noto 官方仓库完整 Noto Sans CJK SC Regular 生成覆盖当前项目文案的子集，上游文件以 Git blob SHA `dc15562470b4f842321894787a0d066879ccff8b` 核验，并随子集保留 SIL Open Font License 1.1；完整字体直接提交会让 Web PCK 增加约 14 MB 且触发 Sites 源仓库单 blob 上传失败，因此改用受测试门禁约束的 418 KB 子集；
 - smoke 测试新增 CJK 字形覆盖门禁：扫描游戏数据、项目设置与实际界面脚本中的中日韩统一表意文字及全角标点，任何项目字符缺字都会使测试失败；
 - 修复后需重新导出 Web、验证 PCK/字体大小与页面显示，再发布新的 Sites version；桌面候选二进制不因本轮 Web 字体修复自动替换，后续 RC 重建时一并吸收。
+- 修复经 PR #25 与体积收敛 PR #26 的 GitHub Actions 双门禁通过后合入；最终空导出 PCK 为 514,320 bytes，Sites version 6 已成功私有发布。受当前会话浏览器接口限制，生产页面目视确认保留为明确待办。
