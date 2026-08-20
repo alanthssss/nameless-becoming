@@ -14,7 +14,7 @@ codesign --force --deep --sign - "$app"
 codesign --verify --deep --strict --verbose=2 "$app"
 
 if ! grep -q 'com.apple.quarantine' "$launcher"; then
-  perl -0pi -e 's|(BASE_PATH=.*?\n)|$1xattr -dr com.apple.quarantine "\$BASE_PATH/无名：成蜂.app" 2>/dev/null || true\n|' "$launcher"
+  perl -0pi -e 's~(BASE_PATH=.*?\n)~$1xattr -dr com.apple.quarantine "\$BASE_PATH/无名：成蜂.app" 2>/dev/null || true\n~' "$launcher"
 fi
 chmod +x "$launcher"
 

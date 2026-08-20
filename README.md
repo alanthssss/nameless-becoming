@@ -8,7 +8,7 @@
 
 [https://hivebound-seasons-game.pages.dev](https://hivebound-seasons-game.pages.dev)
 
-## 当前版本：Godot 候选 MVP 0.9.4
+## 当前版本：Godot 候选 MVP 0.9.5-rc.1
 
 当前维护三个发行端：Web、macOS universal、Windows x86_64。三端均由同一个 `godot/` 工程导出，不再分别维护网页玩法代码。
 

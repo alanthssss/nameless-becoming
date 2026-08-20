@@ -35,7 +35,7 @@ test("server-renders the Nameless: Becoming launch shell", async () => {
   assert.match(html, /<title>无名：成蜂｜Godot 四季搜打撤<\/title>/i);
   assert.match(html, /再采一朵，还是现在归巢？/);
   assert.match(html, /启动 Web 版/);
-  assert.match(html, /v0\.9\.4/);
+  assert.match(html, /v0\.9\.5-rc\.1/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Building your site/i);
 });
 

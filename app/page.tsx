@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="game-shell">
       <header>
-        <div><strong>无名：成蜂</strong><span>Godot 同源 Web 版 · v0.9.4</span></div>
+        <div><strong>无名：成蜂</strong><span>Godot 同源 Web 版 · v0.9.5-rc.1</span></div>
         <p>Web · macOS · Windows 使用同一份关卡与玩法代码</p>
       </header>
       <section className="game-stage">
