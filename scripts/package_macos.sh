@@ -10,6 +10,10 @@ ditto -x -k "$archive" "$staging"
 app="$staging/无名：成蜂.app"
 launcher="$staging/无名：成蜂.command"
 
+if [ ! -f "$launcher" ]; then
+  printf '%s\n' '#!/bin/sh' 'BASE_PATH=$(CDPATH= cd -- "$(dirname "$0")" && pwd)' 'open "$BASE_PATH/无名：成蜂.app"' > "$launcher"
+fi
+
 codesign --force --deep --sign - "$app"
 codesign --verify --deep --strict --verbose=2 "$app"
 

@@ -1,0 +1,156 @@
+name: Desktop client builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Version tag recorded in artifact names and an optional prerelease
+        required: true
+        default: v0.9.5-rc.2
+        type: string
+      publish_prerelease:
+        description: Create a GitHub prerelease after both packages pass
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-build-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GODOT_VERSION: 4.6.2
+  GODOT_RELEASE: 4.6.2-stable
+  TEMPLATE_ARCHIVE: Godot_v4.6.2-stable_export_templates.tpz
+
+jobs:
+  validate:
+    name: Validate requested version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Match workflow tag to project version
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          project_version=$(node -p "require('./package.json').version")
+          test "$RELEASE_TAG" = "v$project_version"
+
+  macos:
+    name: macOS universal client
+    needs: validate
+    runs-on: macos-14
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify Godot and export templates
+        working-directory: ${{ runner.temp }}
+        run: |
+          editor_archive=Godot_v${GODOT_RELEASE}_macos.universal.zip
+          sums_url=https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}/SHA512-SUMS.txt
+          release_url=https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}
+          curl --fail --silent --show-error --location --output SHA512-SUMS.txt "$sums_url"
+          for archive in "$editor_archive" "$TEMPLATE_ARCHIVE"; do
+            curl --fail --silent --show-error --location --output "$archive" "$release_url/$archive"
+            grep " $archive$" SHA512-SUMS.txt | shasum -a 512 --check
+          done
+          unzip -q "$editor_archive" -d godot-bin
+          unzip -q "$TEMPLATE_ARCHIVE" -d template-archive
+          template_dir="$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$template_dir"
+          cp -R template-archive/templates/. "$template_dir/"
+      - name: Run Godot tests
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot.app/Contents/MacOS/Godot
+        run: npm run test:godot
+      - name: Export, sign and verify macOS package
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot.app/Contents/MacOS/Godot
+        run: |
+          mkdir -p builds
+          "$GODOT_BIN" --path godot --headless --export-release macOS
+          ./scripts/package_macos.sh
+          unzip -q builds/NamelessBecoming-macOS.zip -d "$RUNNER_TEMP/macos-verify"
+          codesign --verify --deep --strict --verbose=2 "$RUNNER_TEMP/macos-verify/无名：成蜂.app"
+          shasum -a 256 builds/NamelessBecoming-macOS.zip > builds/NamelessBecoming-macOS.zip.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NamelessBecoming-macOS-${{ inputs.release_tag }}
+          path: |
+            builds/NamelessBecoming-macOS.zip
+            builds/NamelessBecoming-macOS.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+  windows:
+    name: Windows x86_64 client
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify Godot and export templates
+        working-directory: ${{ runner.temp }}
+        run: |
+          editor_archive=Godot_v${GODOT_RELEASE}_linux.x86_64.zip
+          sums_url=https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}/SHA512-SUMS.txt
+          release_url=https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}
+          curl --fail --silent --show-error --location --output SHA512-SUMS.txt "$sums_url"
+          for archive in "$editor_archive" "$TEMPLATE_ARCHIVE"; do
+            curl --fail --silent --show-error --location --output "$archive" "$release_url/$archive"
+            grep " $archive$" SHA512-SUMS.txt | sha512sum --check --strict
+          done
+          unzip -q "$editor_archive" -d godot-bin
+          unzip -q "$TEMPLATE_ARCHIVE" -d template-archive
+          template_dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$template_dir"
+          cp -R template-archive/templates/. "$template_dir/"
+      - name: Run Godot tests
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        run: npm run test:godot
+      - name: Export and verify Windows package
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        run: |
+          mkdir -p builds
+          "$GODOT_BIN" --path godot --headless --export-release "Windows Desktop"
+          test -s builds/NamelessBecoming-Windows.exe
+          file builds/NamelessBecoming-Windows.exe | grep 'PE32+ executable.*x86-64'
+          sha256sum builds/NamelessBecoming-Windows.exe > builds/NamelessBecoming-Windows.exe.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NamelessBecoming-Windows-${{ inputs.release_tag }}
+          path: |
+            builds/NamelessBecoming-Windows.exe
+            builds/NamelessBecoming-Windows.exe.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+  prerelease:
+    name: Publish GitHub prerelease
+    if: inputs.publish_prerelease && github.ref == 'refs/heads/main'
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: NamelessBecoming-*-${{ inputs.release_tag }}
+          merge-multiple: true
+          path: release-assets
+      - name: Create prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --generate-notes \
+            --title "无名：成蜂 $RELEASE_TAG"

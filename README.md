@@ -8,9 +8,9 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-当前 0.9.5-rc.1 为所有者私有验证部署，需使用获授权的 ChatGPT 账号访问；旧 Cloudflare Pages 地址不再作为当前候选基线。
+当前 0.9.5-rc.2 为所有者私有验证候选，需使用获授权的 ChatGPT 账号访问 Web；旧 Cloudflare Pages 地址不再作为当前候选基线。
 
-## 当前版本：Godot 候选 MVP 0.9.5-rc.1
+## 当前版本：Godot 候选 MVP 0.9.5-rc.2
 
 当前维护三个发行端：Web、macOS universal、Windows x86_64。三端均由同一个 `godot/` 工程导出，不再分别维护网页玩法代码。
 
@@ -63,6 +63,8 @@ npm install
 npm run dev
 npm run build
 ```
+
+桌面候选包可在 GitHub 的 **Actions → Desktop client builds → Run workflow** 手动生成。`release_tag` 必须与 `package.json` 版本一致；默认只生成保留 30 天的 macOS/Windows artifacts，确认后可勾选 `publish_prerelease` 创建 GitHub 预发布版本。流水线会校验 Godot 编辑器与导出模板、运行 Godot 测试、导出双端客户端并附带 SHA-256 文件。
 
 主要实现位于：
 

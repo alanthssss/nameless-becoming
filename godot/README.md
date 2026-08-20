@@ -43,3 +43,5 @@ npm run test:godot
 godot --path godot --headless --export-debug "macOS"
 godot --path godot --headless --export-debug "Windows Desktop"
 ```
+
+仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出，生成包与 SHA-256 artifact；默认不创建 Release，只有主分支运行且明确选择 `publish_prerelease` 才会发布预发布版本。

@@ -65,3 +65,14 @@ Web 外壳增加启动、加载、20 秒超时和重试状态，并明确标记�
 2026-08-20 增加寻迹、敌害与低体力三类首次情境教学，并将 Web 核心载荷由 37,695,054 bytes 的原始 WASM 优先切换为 9,469,248 bytes 的 gzip 流式解压载荷；20,971,520 与 16,723,534 bytes 的原始分片仅作不支持 `DecompressionStream` 浏览器的兼容回退。gzip 解压结果与双分片重组结果 SHA-256 均为 `cca8bc7c462d348aaa3f318aecf3281d99bf219e182256412711b24f0d086d80`。
 
 字体子集为 428,260 bytes，SHA-256 `c4099e124cbd1666d67b080cc3ed4ff4c0da152e0b82f93880dad3df1383e5e8`；空目录重导出的 `public/game/index.pck` 为 524,480 bytes，SHA-256 `204fb3aef4fb892b64f799d9101417fc48f94368be134ede00246806cc2c95d2`；gzip 载荷 SHA-256 为 `28105b24784987bf32eed7bb2d3388ad6c57e14fb603bdebc268c1e559403b87`。外层页面等待 Godot 真实 ready/error 消息而非 iframe onLoad；Godot 三组测试、Web 构建、渲染测试、ESLint、压缩包解压与分片重组一致性均已通过。
+
+## 0.9.5-rc.2 桌面候选
+
+2026-08-20 从包含渐进 UX、三类首次情境教学与字体补全的同一 Godot 工程重新导出桌面候选；本地构建用于先验证导出与打包逻辑，合入后由 GitHub `Desktop client builds` 使用官方 SHA-512 校验过的编辑器和模板独立重建。
+
+| 平台 | 文件 | 大小 | SHA-256 | 本地验证 |
+| --- | --- | ---: | --- | --- |
+| macOS universal | `builds/NamelessBecoming-macOS.zip` | 61,590,267 bytes | `568d3a6567b75a6e26132dbd34700cbf979f85b9828ef0f3e37023e582ccf064` | arm64 + x86_64；0.9.5 / 0.9.5-rc.2；ad-hoc 签名严格校验通过；无界面启动退出码 0 |
+| Windows x86_64 | `builds/NamelessBecoming-Windows.exe` | 105,037,008 bytes | `57353aa7638e127ed5e9d8c58b8649802a673a39652e7704aa8a8105140736d0` | PE32+ GUI x86-64；PCK 内嵌；仍需 Windows 真机试玩 |
+
+GitHub runner 重建值可能因官方 runner 的 ZIP 元数据不同而与本机 macOS ZIP 哈希不同；流水线产出的 `.sha256` 才是对应下载 artifact 的权威校验值。候选尚未创建 GitHub prerelease。
