@@ -51,3 +51,5 @@ smoke 门禁同步增加当前可见 Label/Button 文本的逐字符 `has_char` 
 Web 外壳增加启动、加载、20 秒超时和重试状态，并明确标记为“可玩垂直切片 · 私人试玩构建”；Godot 首次说明收敛为移动、采蜜、归巢三步。新增文案触发字形门禁后，使用可复现生成器重建字体。
 
 重建字体为 431,976 bytes，SHA-256 `63c5925cbea147322c754abcbb650b23f79ceabd7641eaf032697fb57ed09108`；空目录重导出的 `public/game/index.pck` 为 519,888 bytes，SHA-256 `ab0dbc36a20ee7e0e09b851e66037922a03a532a1ce81cef78bf5b8c729ac349`。Godot 三组测试、Web 构建、渲染测试、ESLint 与 WASM 分片准备均通过。
+
+正式试玩版 P0 基础以 Sites 源提交 `1fd3ba9cbc9962c449cce1ffa613d237dceffefa` 保存为 version 9，并成功私有发布到原生产 URL；访问策略仍为所有者单人可见。
