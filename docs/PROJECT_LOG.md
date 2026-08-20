@@ -429,3 +429,4 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - 定位到运行时按钮没有 scene owner，而字体覆盖循环使用 `find_children` 的默认 `owned=true`，因此匹配 0 个 Button；改为显式 `owned=false` 后覆盖全部运行时按钮；
 - smoke 门禁不再维护手工文件清单，改为递归扫描全部运行时 `.gd/.godot/.json/.tres/.tscn`；同时实例化主场景并逐个验证 Label/Button 的最终主题字体，既防缺字也防字体未应用；
 - 新增 `scripts/build_cjk_font_subset.py`，让子集生成与运行时资源范围可复现；本轮门禁在旧子集中实际抓到 4 个漏字，重生成后 16 个来源、958 个字符全部通过。
+- PR #28 经 Godot 与 Web 双门禁通过后合入，精确合并文件树保存为 Sites version 7 并成功私有发布；生产页最终目视确认按顶部、侧栏、弹窗、成长与分配五类按钮逐项执行。
