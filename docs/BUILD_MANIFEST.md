@@ -35,3 +35,5 @@ version 6 人工截图确认 Label 中文已恢复，但 Button 中文仍显示�
 修复将搜索改为 `owned=false`，并把 smoke 门禁提升为两层：递归扫描全部运行时 `.gd/.godot/.json/.tres/.tscn` 的 CJK 字形；实例化真实主场景，验证每个 Label/Button 实际解析到项目字体。字体子集生成器也已纳入仓库，按同一运行时资源范围重建 16 个来源、958 个字符的子集。
 
 重建字体为 429,356 bytes，SHA-256 `08e8d9469aca3f65a518ebd494898b1b43dbc23cd1aec8a75c93ffeebf94c576`；空目录重导出的 `public/game/index.pck` 为 516,544 bytes，SHA-256 `a79e98342db0ba69df0ed92f15b2f8a654d97227a60590cb73e278d1c823e613`。
+
+完整文本控件修复以 Sites 源提交 `398644a874402850ee1cea56cba99c510a494d24` 保存为 version 7，并成功私有发布到原生产 URL；访问策略仍为所有者单人可见。
