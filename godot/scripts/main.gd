@@ -515,7 +515,7 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "WASD 飞向花朵，空格动作。\n近花=采蜜 · 近敌=惊退 · 静止=寻迹\n松开后长按=投诱饵 · 双击方向=急转 · Q=归巢"
+	overlay_body.text = "先飞近一朵花：WASD 移动。\n靠近后按住空格采蜜；带蜜按 Q 自动归巢。\n其他动作会在需要时出现在右侧。"
 	overlay_button.text = "飞入冬至"
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
