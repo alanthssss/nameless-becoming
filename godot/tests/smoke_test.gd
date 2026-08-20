@@ -244,6 +244,9 @@ func _init() -> void:
 			failures.append("缺失 on_secondary_link：失败页面需要二级链接，给玩家退出选项")
 		if not main_node.has_method("set_secondary_link"):
 			failures.append("缺失 set_secondary_link：次要链接的显示/隐藏应该集中管理")
+		# main_node 未进入场景树，_ready() 不会把预创建的 sound 注册为子节点；
+		# 测试夹具需显式释放它，避免退出时产生 Node/GDScript 资源泄漏警告。
+		main_node.sound.free()
 		main_node.free()
 
 	if failures.is_empty():
