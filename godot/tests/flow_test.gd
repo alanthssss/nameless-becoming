@@ -17,6 +17,20 @@ func run_test() -> void:
 	game.persistence_enabled = false
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
+	expect(game.tutorial_step == 0 and game.tutorial_panel.visible, "首局没有从单一步骤的移动教学开始")
+	expect(not game.fullscreen_button.visible and not game.sound_button.visible and not game.quit_button.visible, "系统级操作仍常驻在游戏过程界面")
+	expect(not game.sense_button.visible and not game.return_button.visible, "尚未行动时提前展示了采蜜或归巢")
+	game.bee.position = game.tutorial_origin + Vector2(70, 0)
+	game.update_progressive_guidance()
+	expect(game.tutorial_step == 1, "移动完成后没有进入采蜜教学")
+	game.carried = 1
+	game.update_progressive_guidance()
+	expect(game.tutorial_step == 2 and game.return_button.visible, "采到第一滴后没有出现归巢教学")
+	game.delivered = 1
+	game.carried = 0
+	game.update_progressive_guidance()
+	expect(game.tutorial_step == 3 and game.tutorial_complete and not game.tutorial_panel.visible, "第一次存蜜后教学没有结束")
+	game.delivered = 0
 	var gathering_total := 0
 	for stage_index in 24:
 		# 正色节点（春分/夏至/秋分）是失律者关卡，没有采蜜数据
@@ -35,6 +49,8 @@ func run_test() -> void:
 	for boss_stage in [6, 12, 18]:
 		game.spawn_stage(boss_stage)
 		expect(game.phase == "boss" and game.stage_index == boss_stage, "正色节点 %d 未进入失律者关卡" % boss_stage)
+		game.update_progressive_guidance()
+		expect(game.sense_button.visible and game.sense_button.text == "调律" and not game.return_button.visible, "失律者关卡没有保留情境调律操作")
 		expect(String(game.current_boss_data.move_pattern) == pattern_by_boss[String(game.stages[boss_stage].boss)], "正色节点 %d 失律者移动模式错误" % boss_stage)
 		expect(game.tuning_blooms.size() == int(game.current_boss_data.bloom_count), "正色节点 %d 调律共鸣点数量错误" % boss_stage)
 	game.spawn_stage(0)

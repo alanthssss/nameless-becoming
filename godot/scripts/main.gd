@@ -111,7 +111,14 @@ var zh_font: Font
 var pause_button: Button
 var fullscreen_button: Button
 var sound_button: Button
+var quit_button: Button
 var sense_button: Button
+var return_button: Button
+var context_hint_label: Label
+var tutorial_panel: ColorRect
+var tutorial_title: Label
+var tutorial_body: Label
+var pause_system_buttons: Array[Button] = []
 var energy_bar: ColorRect
 var energy_bar_fill: ColorRect
 var season_label: Label
@@ -143,6 +150,9 @@ var current_boss_data: Dictionary = {}
 var current_boss_index := 0
 var boss_afterimages: Array = []
 var preserve_warmth := false
+var tutorial_step := 0
+var tutorial_origin := Vector2.ZERO
+var tutorial_complete := false
 
 func _ready() -> void:
 	zh_font = load("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
@@ -320,7 +330,7 @@ func build_interface() -> void:
 	sound_button.size = Vector2(100, 36)
 	sound_button.pressed.connect(toggle_sound)
 	ui.add_child(sound_button)
-	var quit_button := Button.new()
+	quit_button = Button.new()
 	quit_button.text = "退出"
 	quit_button.position = Vector2(1030, 22)
 	quit_button.size = Vector2(100, 36)
@@ -332,24 +342,55 @@ func build_interface() -> void:
 	pause_button.size = Vector2(110, 36)
 	pause_button.pressed.connect(toggle_pause)
 	ui.add_child(pause_button)
+	# System controls live behind pause; play keeps one pause entry.
+	fullscreen_button.visible = false
+	sound_button.visible = false
+	quit_button.visible = false
 	refresh_setting_labels()
 
-	carried_label = make_stat(ui, "携带", Vector2(34, 82))
-	delivered_label = make_stat(ui, "本节储蜜", Vector2(234, 82))
-	energy_label = make_stat(ui, "飞行体力", Vector2(434, 82))
+	# Three HUD groups: forage, flight, and hive.
+	var forage_panel := ColorRect.new()
+	forage_panel.color = Color("f3eedb", 0.88)
+	forage_panel.position = Vector2(34, 82)
+	forage_panel.size = Vector2(300, 50)
+	ui.add_child(forage_panel)
+	make_label(forage_panel, "本次采集", Vector2(12, 5), Vector2(90, 18), 10, Color("6d715f"))
+	carried_label = make_label(forage_panel, "0", Vector2(94, 8), Vector2(54, 30), 17, Color("26342b"))
+	carried_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	make_label(forage_panel, "携带", Vector2(158, 5), Vector2(52, 18), 10, Color("6d715f"))
+	delivered_label = make_label(forage_panel, "0 / 5", Vector2(205, 8), Vector2(80, 30), 17, Color("26342b"))
+	delivered_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+
+	var flight_panel := ColorRect.new()
+	flight_panel.color = Color("f3eedb", 0.88)
+	flight_panel.position = Vector2(348, 82)
+	flight_panel.size = Vector2(310, 50)
+	ui.add_child(flight_panel)
+	make_label(flight_panel, "飞行体力", Vector2(12, 5), Vector2(90, 18), 10, Color("6d715f"))
+	energy_label = make_label(flight_panel, "100", Vector2(242, 7), Vector2(54, 25), 17, Color("26342b"))
+	energy_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	energy_bar = ColorRect.new()
 	energy_bar.position = Vector2(12, 35)
-	energy_bar.size = Vector2(166, 6)
+	energy_bar.size = Vector2(284, 6)
 	energy_bar.color = Color("33483d")
-	energy_label.get_parent().add_child(energy_bar)
+	flight_panel.add_child(energy_bar)
 	energy_bar_fill = ColorRect.new()
-	energy_bar_fill.size = Vector2(166, 6)
+	energy_bar_fill.size = Vector2(284, 6)
 	energy_bar_fill.color = Color("ddb84c")
 	energy_bar.add_child(energy_bar_fill)
-	energy_change_label = make_label(energy_label.get_parent(), "", Vector2(50, 4), Vector2(48, 24), 12, Color("b34b3f"))
+	energy_change_label = make_label(flight_panel, "", Vector2(188, 4), Vector2(48, 24), 12, Color("b34b3f"))
 	energy_change_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hive_label = make_stat(ui, "蜂巢呼吸", Vector2(634, 82))
-	reserve_label = make_stat(ui, "公共储备", Vector2(824, 82))
+
+	var hive_panel := ColorRect.new()
+	hive_panel.color = Color("f3eedb", 0.88)
+	hive_panel.position = Vector2(672, 82)
+	hive_panel.size = Vector2(332, 50)
+	ui.add_child(hive_panel)
+	make_label(hive_panel, "蜂巢", Vector2(12, 5), Vector2(52, 18), 10, Color("6d715f"))
+	hive_label = make_label(hive_panel, "●●●", Vector2(66, 8), Vector2(92, 30), 17, Color("26342b"))
+	make_label(hive_panel, "公共储备", Vector2(174, 5), Vector2(72, 18), 10, Color("6d715f"))
+	reserve_label = make_label(hive_panel, "0", Vector2(260, 8), Vector2(58, 30), 17, Color("26342b"))
+	reserve_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	var side := ColorRect.new()
 	side.color = Color("f3eedb", 0.94)
@@ -368,19 +409,17 @@ func build_interface() -> void:
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label = make_label(side, message, Vector2(20, 250), Vector2(190, 88), 13, Color("4c5548"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	# 提示消息下方用一根更细的线把「输入层」和「行动层」分开
+	# The side rail exposes only the action valid in the current context.
 	var input_rule := ColorRect.new()
 	input_rule.color = Color("c7c0a4", 0.6)
 	input_rule.position = Vector2(20, 348)
 	input_rule.size = Vector2(190, 1)
 	side.add_child(input_rule)
-	make_label(side, "左键点地移动 · 左侧是安全蜂巢", Vector2(20, 360), Vector2(190, 28), 11, Color("556054"))
+	context_hint_label = make_label(side, "", Vector2(20, 360), Vector2(190, 32), 11, Color("556054"))
+	context_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	# 情境动作按钮：近花=采蜜 / 近敌=惊退 / 静止=寻迹 / 长按携蜜=诱饵
 	sense_button = make_mouse_action(side, "动作", "action", Vector2(14, 402), true, Vector2(135, 36))
-	make_mouse_action(side, "归巢", "return_hive", Vector2(155, 402), false, Vector2(62, 36))
-	make_label(side, "近花采蜜 · 近敌惊退 · 静止寻迹", Vector2(14, 447), Vector2(200, 18), 10, Color("68705d"))
-	make_label(side, "松开后长按=投诱饵 · 双击方向=急转", Vector2(14, 465), Vector2(200, 18), 10, Color("68705d"))
-	make_label(side, "持续飞行=自动振翅加速", Vector2(14, 483), Vector2(200, 18), 10, Color("68705d"))
+	return_button = make_mouse_action(side, "归巢", "return_hive", Vector2(155, 402), false, Vector2(62, 36))
 	# 历史信息是跨 run 的持久状态，留给 HUD 侧栏底部常驻显示——属于状态不属于弹窗
 	var meter_rule := ColorRect.new()
 	meter_rule.color = Color("c7c0a4", 0.6)
@@ -391,15 +430,19 @@ func build_interface() -> void:
 	runs_meter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	runs_meter_farthest = make_label(side, "", Vector2(20, 548), Vector2(190, 18), 11, Color("68705d"))
 	runs_meter_farthest.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	runs_meter.visible = false
+	runs_meter_farthest.visible = false
 	refresh_runs_meter()
 
-	var tips_background := ColorRect.new()
-	tips_background.color = Color("26392f", 0.96)
-	tips_background.position = Vector2(34, 684)
-	tips_background.size = Vector2(970, 36)
-	ui.add_child(tips_background)
-	var tips := make_label(ui, "WASD 飞行（持续飞=振翅加速） ｜ 空格 动作（近花采/近敌退/静止寻/松开后长按诱饵） ｜ Q 归巢 ｜ 双击方向 急转", Vector2(34, 691), Vector2(970, 22), 12, Color("f7f0d5"))
-	tips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Tutorial prompts are temporary and contextual, never a permanent key list.
+	tutorial_panel = ColorRect.new()
+	tutorial_panel.color = Color("26392f", 0.94)
+	tutorial_panel.position = Vector2(292, 616)
+	tutorial_panel.size = Vector2(454, 54)
+	ui.add_child(tutorial_panel)
+	tutorial_title = make_label(tutorial_panel, "", Vector2(16, 7), Vector2(120, 20), 12, Color("dfbd54"))
+	tutorial_body = make_label(tutorial_panel, "", Vector2(118, 7), Vector2(320, 38), 12, Color("f7f0d5"))
+	tutorial_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	overlay = ColorRect.new()
 	overlay.color = Color("21352c", 0.93)
@@ -429,6 +472,15 @@ func build_interface() -> void:
 	secondary_link.pressed.connect(on_secondary_link)
 	secondary_link.visible = false
 	overlay.add_child(secondary_link)
+	for spec in [["全屏", toggle_fullscreen], ["声音", toggle_sound], ["退出", func(): get_tree().quit()]]:
+		var system_button := Button.new()
+		system_button.text = String(spec[0])
+		system_button.position = Vector2(262 + pause_system_buttons.size() * 150, 412)
+		system_button.size = Vector2(140, 38)
+		system_button.pressed.connect(spec[1])
+		system_button.visible = false
+		overlay.add_child(system_button)
+		pause_system_buttons.append(system_button)
 	# —— overlay 区以内的元素到此为止 ——升级卡片直接挂在 overlay 上
 	for i in 3:
 		var choice := Button.new()
@@ -515,10 +567,11 @@ func show_intro() -> void:
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "再采一朵，\n还是现在归巢？"
-	overlay_body.text = "先飞近一朵花：WASD 移动。\n靠近后按住空格采蜜；带蜜按 Q 自动归巢。\n其他动作会在需要时出现在右侧。"
+	overlay_body.text = "冬至花少，蜂巢仍在呼吸。\n飞出去看看；行动时，世界会给出提示。"
 	overlay_button.text = "飞入冬至"
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
+	set_pause_system_controls_visible(false)
 	set_secondary_link("或者退出游戏", true)
 	overlay_button.grab_focus()
 	refresh_runs_meter()
@@ -539,6 +592,8 @@ func start_game() -> void:
 	sting_cooldown_multiplier = 1.0
 	extra_nectar = 0
 	bee.reset_upgrades()
+	tutorial_step = 3 if tutorial_complete else 0
+	tutorial_origin = HIVE_RETURN_POS
 	if persistence_enabled:
 		save_manager.begin_run()
 	spawn_stage(0)
@@ -555,6 +610,7 @@ func spawn_stage(index: int) -> void:
 	sound.set_season(season_index_of(index))
 	phase = "playing"
 	overlay.visible = false
+	set_pause_system_controls_visible(false)
 	# 蜂巢成长面板的 title/body 必须跟随 overlay 一起清空，
 	# 否则下一节令若再次让 overlay 可见（例如失律者战败），玩家会读到上一关
 	# 「XX 完成 · 蜂巢成长」的 stale 文案，把败北误判成「我在哪个选择升级」。
@@ -1775,16 +1831,14 @@ func update_interface() -> void:
 	energy_label.text = str(roundi(bee.energy))
 	# 分母跟随实际上限（越冬抱团可把上限提到 100 以上），避免条提前满格
 	var energy_cap := maxf(100.0, energy_cap_override)
-	energy_bar_fill.size.x = 166.0 * clampf(bee.energy / energy_cap, 0.0, 1.0)
+	energy_bar_fill.size.x = 284.0 * clampf(bee.energy / energy_cap, 0.0, 1.0)
 	# 蜜囊续命提亮：让「这 30 点体力是吃掉一滴蜜换来的」在体力条上可见
 	if energy_bar_flash_time > 0.0:
 		energy_bar_fill.color = Color("ddb84c").lerp(Color("fff6cf"), clampf(energy_bar_flash_time * 1.8, 0.0, 1.0))
 	else:
 		energy_bar_fill.color = Color("ddb84c")
 	energy_change_label.modulate.a = clampf(energy_feedback_time * 2.0, 0.0, 1.0)
-	if sense_button:
-		sense_button.disabled = false
-		sense_button.text = "动作"
+	update_progressive_guidance()
 	hive_label.text = "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
 	# 扣命闪红：从红渐褪回白，与震动/音效一起把损失推到台前
 	if hive_flash_time > 0.0:
@@ -1888,6 +1942,7 @@ func toggle_pause() -> void:
 		phase = paused_from_phase
 		bee.active = true
 		overlay.visible = false
+		set_pause_system_controls_visible(false)
 		pause_button.text = "暂停"
 		return
 	if phase != "playing" and phase != "boss":
@@ -1898,12 +1953,87 @@ func toggle_pause() -> void:
 	overlay.visible = true
 	set_upgrade_buttons_visible(false)
 	overlay_title.text = "蜂翼暂歇"
-	overlay_body.text = "当前进度已自动保存。\n点击下方按钮继续，按 Esc 退出。"
+	overlay_body.text = "游戏过程已经停下。\n可在这里调整显示和声音，或退出游戏。"
 	overlay_button.visible = true
 	overlay_button.text = "继续出巢"
-	set_secondary_link("或者退出游戏", true)
+	set_secondary_link("", false)
+	set_pause_system_controls_visible(true)
 	overlay_button.grab_focus()
 	pause_button.text = "继续"
+
+func set_pause_system_controls_visible(visible: bool) -> void:
+	for button in pause_system_buttons:
+		button.visible = visible
+	if visible and pause_system_buttons.size() >= 2:
+		pause_system_buttons[0].text = "窗口化" if save_manager.fullscreen else "全屏"
+		pause_system_buttons[1].text = "声音：开" if save_manager.sound_enabled else "声音：关"
+
+# First-run state machine: move -> harvest -> return -> free play.
+func update_progressive_guidance() -> void:
+	if tutorial_panel == null or sense_button == null or return_button == null:
+		return
+	if phase == "boss":
+		tutorial_panel.visible = false
+		sense_button.visible = true
+		sense_button.text = "调律"
+		return_button.visible = false
+		context_hint_label.text = "引向共鸣点，靠近后震翼调律。"
+		return
+	if phase != "playing":
+		tutorial_panel.visible = false
+		sense_button.visible = false
+		return_button.visible = false
+		return
+	if stage_index == 0 and not tutorial_complete:
+		if tutorial_step == 0 and bee.position.distance_to(tutorial_origin) >= 64.0:
+			tutorial_step = 1
+		elif tutorial_step == 1 and carried > 0:
+			tutorial_step = 2
+		elif tutorial_step == 2 and delivered > 0:
+			tutorial_step = 3
+			tutorial_complete = true
+			message = "第一次采集完成。接下来由花香、敌害和体力引导你的判断。"
+		tutorial_panel.visible = tutorial_step < 3
+		return_button.visible = tutorial_step == 2
+		match tutorial_step:
+			0:
+				tutorial_title.text = "先试着飞"
+				tutorial_body.text = "用 WASD、方向键或点击花田移动。"
+				context_hint_label.text = "移动会消耗体力；左侧蜂巢安全。"
+				sense_button.visible = false
+			1:
+				var near_flower := nearest_flower(46.0) >= 0
+				tutorial_title.text = "靠近花朵"
+				tutorial_body.text = "花心亮起时，按住空格或下方按钮采蜜。"
+				context_hint_label.text = "已经靠近：按住采蜜。" if near_flower else "飞近一朵仍有花蜜的花。"
+				sense_button.visible = near_flower
+				sense_button.text = "按住采蜜"
+			2:
+				tutorial_title.text = "把蜜带回去"
+				tutorial_body.text = "按 Q 或右侧“归巢”；蜜存入蜂巢才算收获。"
+				context_hint_label.text = "归巢路线会自动锁定左侧蜂巢。"
+				sense_button.visible = false
+		return
+
+	tutorial_panel.visible = false
+	var nearby := nearest_flower(46.0)
+	var near_enemy := _nearest_enemy_distance() < sting_range
+	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
+	return_button.visible = carried > 0
+	sense_button.visible = nearby >= 0 or near_enemy or is_still
+	if near_enemy and nearby < 0:
+		sense_button.text = "惊退"
+		context_hint_label.text = "敌害逼近：及时惊退或绕开。"
+	elif nearby >= 0:
+		sense_button.text = "按住采蜜"
+		context_hint_label.text = "花心亮起：可以采蜜。"
+	elif is_still:
+		sense_button.text = "寻迹"
+		context_hint_label.text = "停稳后可感知花源与敌害。"
+	elif carried > 0:
+		context_hint_label.text = "继续寻找，或带着收获归巢。"
+	else:
+		context_hint_label.text = "飞近环境目标后，动作才会出现。"
 
 func toggle_fullscreen() -> void:
 	save_manager.fullscreen = not save_manager.fullscreen
@@ -1925,6 +2055,8 @@ func refresh_setting_labels() -> void:
 		fullscreen_button.text = "窗口化" if save_manager.fullscreen else "全屏"
 	if sound_button:
 		sound_button.text = "声音：开" if save_manager.sound_enabled else "声音：关"
+	if phase == "paused":
+		set_pause_system_controls_visible(true)
 
 func progress_name() -> String:
 	if not stages.is_empty() and save_manager.best_stage >= stages.size():
