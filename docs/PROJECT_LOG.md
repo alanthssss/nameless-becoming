@@ -389,3 +389,9 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - 新增 GitHub Actions 双门禁：Web job 执行依赖锁定安装、lint、生产构建和服务端渲染测试；Godot job 下载官方 4.6.2 Linux 包、核对官方 SHA-512 后运行相同测试脚本；每项 Godot 测试限时 90 秒，job 总限时 5 分钟，避免 runner 异常形成永久 pending；
 - 工作流只在 PR 和 `main` 推送触发，权限收敛为只读仓库内容；本轮不改玩法与平衡参数。
 - 首轮干净 Linux runner 暴露冷启动差异：仓库忽略 `.godot/` 后，全局 `class_name` 缓存不存在，直接跑测试无法解析 `BeePlayer` 等类型；统一入口现先执行 `--headless --import` 生成资源与类缓存，再进入测试，避免本机热缓存掩盖 CI 问题。
+
+## 十九、smoke 测试资源清理（2026-08-20）
+
+- verbose 退出日志将唯一资源存活警告定位到 `SoundFeedback`：smoke 只实例化主节点做接口探针但不加入场景树，导致 `_ready()` 未执行，预创建的声音节点没有成为可随父节点释放的子节点；
+- 测试夹具现先显式释放 `main_node.sound`，再释放 `main_node`；生产场景中的正常生命周期不变，本轮不修改玩法代码；
+- 验收要求：smoke 仍通过，标准输出中不再出现 `instances leaked` 或 `resources still in use`，随后完整 Godot 三测试门禁继续通过。

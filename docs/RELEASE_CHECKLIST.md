@@ -24,6 +24,7 @@
 - [x] ESLint 排除 Godot Web 导出产物后，项目自有 JavaScript/TypeScript 代码检查通过（2026-08-20）；
 - [x] 统一 `npm run test:godot` 门禁覆盖 smoke、完整状态流与 Boss 上下文回归；本机使用官方 Godot 4.6.2 三组通过（2026-08-20）；
 - [x] GitHub Actions 在 PR 与 `main` 推送时并行执行 Web 构建/测试/lint 和经 SHA-512 校验的 Godot 4.6.2 测试（2026-08-20）；
+- [x] smoke 测试显式释放未入树的声音测试夹具，Godot 退出不再报告 Node/GDScript 资源存活警告（2026-08-20）；
 
 ## 构建验证
 
