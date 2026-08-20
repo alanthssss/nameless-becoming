@@ -34,8 +34,8 @@ test("server-renders the Nameless: Becoming launch shell", async () => {
   assert.match(html, /<html lang="zh-CN">/i);
   assert.match(html, /<title>无名：成蜂｜Godot 四季搜打撤<\/title>/i);
   assert.match(html, /再采一朵，还是现在归巢？/);
-  assert.match(html, /启动 Web 版/);
-  assert.match(html, /v0\.9\.5-rc\.1/);
+  assert.match(html, /进入试玩/);
+  assert.match(html, /可玩垂直切片/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Building your site/i);
 });
 
@@ -46,8 +46,12 @@ test("keeps starter artifacts out of the production shell", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /iframe src="\/game\/index\.html"/);
+  assert.match(page, /src="\/game\/index\.html"/);
   assert.match(page, /title="无名：成蜂 Godot Web 游戏"/);
+  assert.match(page, /正在唤醒蜂群/);
+  assert.match(page, /重新载入/);
+  assert.match(page, /role="status"/);
+  assert.match(page, /role="alert"/);
   assert.match(layout, /title:\s*"无名：成蜂｜Godot 四季搜打撤"/);
   assert.match(layout, /<html lang="zh-CN">/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
