@@ -3,20 +3,25 @@ extends SceneTree
 const EXPECTED_MECHANICS := ["pollination", "conscription", "reserve", "huddle"]
 const GATHERING_KEYS := ["goal", "flowers", "mosquitoes", "ants", "crickets", "thrushes", "bears", "energy_drain", "nectar_scale", "mechanics"]
 const SPECIES_KEYS := ["mosquitoes", "ants", "crickets", "thrushes", "bears"]
-const GLYPH_SOURCE_FILES := [
-	"res://data/balance.json",
-	"res://data/bosses.json",
-	"res://data/flowers.json",
-	"res://data/seasons.json",
-	"res://data/upgrades.json",
-	"res://project.godot",
-	"res://scripts/main.gd",
-	"res://scripts/mechanics/conscription_mechanic.gd",
-	"res://scripts/mechanics/huddle_mechanic.gd",
-	"res://scripts/mechanics/pollination_mechanic.gd",
-	"res://scripts/mechanics/reserve_mechanic.gd",
-	"res://scripts/mechanics/season_mechanics.gd",
-]
+const GLYPH_SOURCE_EXTENSIONS := ["gd", "godot", "json", "tres", "tscn"]
+const GLYPH_IGNORED_DIRECTORIES := [".godot", "fonts", "tests"]
+
+func collect_glyph_source_files(directory_path: String, output: Array[String]) -> void:
+	var directory := DirAccess.open(directory_path)
+	if directory == null:
+		return
+	directory.list_dir_begin()
+	var entry := directory.get_next()
+	while not entry.is_empty():
+		var entry_path := directory_path.path_join(entry)
+		if directory.current_is_dir():
+			if entry not in GLYPH_IGNORED_DIRECTORIES:
+				collect_glyph_source_files(entry_path, output)
+		elif entry.get_extension().to_lower() in GLYPH_SOURCE_EXTENSIONS:
+			output.append(entry_path)
+		entry = directory.get_next()
+	directory.list_dir_end()
+	output.sort()
 
 func is_cjk_codepoint(codepoint: int) -> bool:
 	return (
@@ -29,10 +34,14 @@ func is_cjk_codepoint(codepoint: int) -> bool:
 func check_cjk_glyph_coverage(failures: Array[String]) -> void:
 	var font := load("res://fonts/NotoSansCJKsc-ProjectSubset.otf") as Font
 	if font == null:
-		failures.append("无法加载完整中文字体")
+		failures.append("无法加载项目中文字体")
 		return
 	var missing: Dictionary = {}
-	for source_path in GLYPH_SOURCE_FILES:
+	var source_files: Array[String] = []
+	collect_glyph_source_files("res://", source_files)
+	if source_files.is_empty():
+		failures.append("未找到任何运行时字形来源")
+	for source_path in source_files:
 		var source := FileAccess.open(source_path, FileAccess.READ)
 		if source == null:
 			failures.append("无法读取字形检查源：%s" % source_path)
@@ -47,9 +56,25 @@ func check_cjk_glyph_coverage(failures: Array[String]) -> void:
 			missing_characters += String.chr(int(codepoint))
 		failures.append("中文字体缺少项目字形：%s" % missing_characters)
 
+func check_runtime_control_fonts(failures: Array[String]) -> void:
+	var main_scene := load("res://main.tscn") as PackedScene
+	if main_scene == null:
+		failures.append("无法加载主场景进行控件字体检查")
+		return
+	var game := main_scene.instantiate()
+	root.add_child(game)
+	var expected_font := load("res://fonts/NotoSansCJKsc-ProjectSubset.otf") as Font
+	for node in game.find_children("*", "Control", true, false):
+		if node is Label or node is Button:
+			var control := node as Control
+			if control.get_theme_font("font") != expected_font:
+				failures.append("文本控件未使用项目字体：%s (%s)" % [control.get_path(), control.get_class()])
+	game.queue_free()
+
 func _init() -> void:
 	var failures: Array[String] = []
 	check_cjk_glyph_coverage(failures)
+	check_runtime_control_fonts(failures)
 	var file := FileAccess.open("res://data/seasons.json", FileAccess.READ)
 	if file == null:
 		failures.append("无法读取 seasons.json")

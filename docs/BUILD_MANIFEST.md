@@ -27,3 +27,11 @@ Web 候选已作为 Sites version 5 私有部署至 [hivebound-seasons.alanthsss
 字形门禁会扫描实际游戏数据和界面源码，确保子集覆盖当前全部 CJK 文案；新增文案缺字时 CI 会失败并要求重生成子集。空目录重导出的 `public/game/index.pck` 为 514,320 bytes，SHA-256 `37f2a7e9e76f8ad2e750bd6bb182ecb61122a4f4275c68fa4567552d49145fde`；WASM 分片重组、Web 构建、渲染测试与 Godot 中文字形覆盖测试均通过。该记录只更新 Web 候选；0.9.5-rc.1 桌面发布资产及其校验值不变。
 
 修复树以 Sites 源提交 `f3d4cd59fb015fb1a80eb128dd202e629c2bd2ff` 保存为 version 6，并成功私有发布到原生产 URL；访问策略仍为所有者单人可见。当前自动化会话未提供受支持的浏览器交互接口，且部署未生成截图资产，因此生产页中文字形目视确认仍需人工完成。
+
+## Web 文本控件完整覆盖修复
+
+version 6 人工截图确认 Label 中文已恢复，但 Button 中文仍显示方框。根因不是继续缺字，而是运行时创建的控件没有 scene owner，`find_children("*", "Button", true)` 默认只返回有 owner 的节点，导致按钮字体覆盖循环实际匹配 0 个按钮。
+
+修复将搜索改为 `owned=false`，并把 smoke 门禁提升为两层：递归扫描全部运行时 `.gd/.godot/.json/.tres/.tscn` 的 CJK 字形；实例化真实主场景，验证每个 Label/Button 实际解析到项目字体。字体子集生成器也已纳入仓库，按同一运行时资源范围重建 16 个来源、958 个字符的子集。
+
+重建字体为 429,356 bytes，SHA-256 `08e8d9469aca3f65a518ebd494898b1b43dbc23cd1aec8a75c93ffeebf94c576`；空目录重导出的 `public/game/index.pck` 为 516,544 bytes，SHA-256 `a79e98342db0ba69df0ed92f15b2f8a654d97227a60590cb73e278d1c823e613`。
