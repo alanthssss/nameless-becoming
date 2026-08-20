@@ -52,4 +52,10 @@ Web 外壳增加启动、加载、20 秒超时和重试状态，并明确标记�
 
 重建字体为 431,976 bytes，SHA-256 `63c5925cbea147322c754abcbb650b23f79ceabd7641eaf032697fb57ed09108`；空目录重导出的 `public/game/index.pck` 为 519,888 bytes，SHA-256 `ab0dbc36a20ee7e0e09b851e66037922a03a532a1ce81cef78bf5b8c729ac349`。Godot 三组测试、Web 构建、渲染测试、ESLint 与 WASM 分片准备均通过。
 
+## 渐进教学与 HUD 收束候选
+
+2026-08-20 将系统级操作收进暂停层、把五张同权状态卡合并为采集/飞行/蜂巢三组，并删除永久快捷键长条。首局教学改为由实际行为推进的移动→采蜜→归巢三步，情境动作只在成立时出现；失律者关保留独立“调律”动作。对应 UX 规则、材质语法和六边形约束已同步进入设计文档。
+
+字体子集为 428,008 bytes，SHA-256 `4247285bb7ff4deb42c7707714c0ff746b00e515a8b3b4fbbc9b2464cd278bbc`；空目录重导出的 `public/game/index.pck` 为 522,720 bytes，SHA-256 `c1d0100aafc35f0fc8fb347dc5de42cfb193a007770696726b9d023765441b29`。WASM 分片为 20,971,520 与 16,723,534 bytes；Godot 三组测试、Web 构建、渲染测试与 ESLint 全部通过。
+
 正式试玩版 P0 基础以 Sites 源提交 `1fd3ba9cbc9962c449cce1ffa613d237dceffefa` 保存为 version 9，并成功私有发布到原生产 URL；访问策略仍为所有者单人可见。
