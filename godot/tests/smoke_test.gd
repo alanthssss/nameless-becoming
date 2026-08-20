@@ -4,7 +4,9 @@ const EXPECTED_MECHANICS := ["pollination", "conscription", "reserve", "huddle"]
 const GATHERING_KEYS := ["goal", "flowers", "mosquitoes", "ants", "crickets", "thrushes", "bears", "energy_drain", "nectar_scale", "mechanics"]
 const SPECIES_KEYS := ["mosquitoes", "ants", "crickets", "thrushes", "bears"]
 const GLYPH_SOURCE_FILES := [
+	"res://data/balance.json",
 	"res://data/bosses.json",
+	"res://data/flowers.json",
 	"res://data/seasons.json",
 	"res://data/upgrades.json",
 	"res://project.godot",
@@ -25,7 +27,7 @@ func is_cjk_codepoint(codepoint: int) -> bool:
 	)
 
 func check_cjk_glyph_coverage(failures: Array[String]) -> void:
-	var font := load("res://fonts/NotoSansCJKsc-Regular.otf") as Font
+	var font := load("res://fonts/NotoSansCJKsc-ProjectSubset.otf") as Font
 	if font == null:
 		failures.append("无法加载完整中文字体")
 		return

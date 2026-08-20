@@ -145,7 +145,7 @@ var boss_afterimages: Array = []
 var preserve_warmth := false
 
 func _ready() -> void:
-	zh_font = load("res://fonts/NotoSansCJKsc-Regular.otf")
+	zh_font = load("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
 	if zh_font == null:
 		push_warning("无法加载中文字体，将使用回退字体")
 	rng.randomize()
