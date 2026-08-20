@@ -19,3 +19,9 @@
 桌面候选已发布至 GitHub [`v0.9.5-rc.1`](https://github.com/alanthssss/nameless-becoming/releases/tag/v0.9.5-rc.1) 预发布版本，远端资产大小与 SHA-256 均和本表一致。
 
 Web 候选已作为 Sites version 5 私有部署至 [hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)，站点访问策略保持所有者单人可见；这不是公开试玩发布。
+
+## Web 中文字形修复候选
+
+2026-08-20 针对 Sites 版本中部分新增中文显示为方框的问题，从空目录重新导出 Web 包。工程字体改为完整的 Noto Sans CJK SC Regular（16,437,364 bytes，SHA-256 `2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b`），并随仓库保留 OFL 许可文本。
+
+修复后的 `public/game/index.pck` 为 14,588,836 bytes，SHA-256 `b1c8d7e63bde7d8a31aa045c333f28183c459eeffe36417fce37a76aba1353f2`。WASM 分片未变化，分片重组、Web 构建、渲染测试与 Godot 中文字形覆盖测试均通过。该记录只更新 Web 候选；0.9.5-rc.1 桌面发布资产及其校验值不变。

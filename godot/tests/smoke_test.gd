@@ -3,9 +3,51 @@ extends SceneTree
 const EXPECTED_MECHANICS := ["pollination", "conscription", "reserve", "huddle"]
 const GATHERING_KEYS := ["goal", "flowers", "mosquitoes", "ants", "crickets", "thrushes", "bears", "energy_drain", "nectar_scale", "mechanics"]
 const SPECIES_KEYS := ["mosquitoes", "ants", "crickets", "thrushes", "bears"]
+const GLYPH_SOURCE_FILES := [
+	"res://data/bosses.json",
+	"res://data/seasons.json",
+	"res://data/upgrades.json",
+	"res://project.godot",
+	"res://scripts/main.gd",
+	"res://scripts/mechanics/conscription_mechanic.gd",
+	"res://scripts/mechanics/huddle_mechanic.gd",
+	"res://scripts/mechanics/pollination_mechanic.gd",
+	"res://scripts/mechanics/reserve_mechanic.gd",
+	"res://scripts/mechanics/season_mechanics.gd",
+]
+
+func is_cjk_codepoint(codepoint: int) -> bool:
+	return (
+		(codepoint >= 0x3000 and codepoint <= 0x303F)
+		or (codepoint >= 0x3400 and codepoint <= 0x4DBF)
+		or (codepoint >= 0x4E00 and codepoint <= 0x9FFF)
+		or (codepoint >= 0xFF00 and codepoint <= 0xFFEF)
+	)
+
+func check_cjk_glyph_coverage(failures: Array[String]) -> void:
+	var font := load("res://fonts/NotoSansCJKsc-Regular.otf") as Font
+	if font == null:
+		failures.append("无法加载完整中文字体")
+		return
+	var missing: Dictionary = {}
+	for source_path in GLYPH_SOURCE_FILES:
+		var source := FileAccess.open(source_path, FileAccess.READ)
+		if source == null:
+			failures.append("无法读取字形检查源：%s" % source_path)
+			continue
+		for character in source.get_as_text():
+			var codepoint := character.unicode_at(0)
+			if is_cjk_codepoint(codepoint) and not font.has_char(codepoint):
+				missing[codepoint] = character
+	if not missing.is_empty():
+		var missing_characters := ""
+		for codepoint in missing:
+			missing_characters += String.chr(int(codepoint))
+		failures.append("中文字体缺少项目字形：%s" % missing_characters)
 
 func _init() -> void:
 	var failures: Array[String] = []
+	check_cjk_glyph_coverage(failures)
 	var file := FileAccess.open("res://data/seasons.json", FileAccess.READ)
 	if file == null:
 		failures.append("无法读取 seasons.json")

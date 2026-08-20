@@ -413,3 +413,11 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - Sites 源仓库与 GitHub 历史分叉，且服务器禁止强推；为避免携带 GitHub 历史中的旧 35 MB 未分片 WASM，使用“旧 Sites 头为唯一父节点 + 当前 main 精确文件树”的最小发布提交快进，文件树与 `f6dedb8` 完全一致；
 - Web 保存为 Sites version 5 并以所有者单人访问策略私有部署成功；站点展示标题由旧《归巢之前》更新为《无名：成蜂》，URL 保持 `hivebound-seasons.alanthssss.chatgpt.site`；
 - 当前仍是候选验证版：Windows 真机启动、完整人工流程与五名外部试玩尚未完成，因此不提升为稳定版本或 1.0。
+
+## 二十二、Web 中文字形覆盖修复（2026-08-20）
+
+- 0.9.5-rc.1 私有 Web 实测出现大量方框字；确认不是 UTF-8 编码错误，而是仓库内 106 KB 的 Noto Sans SC 早期裁剪子集只覆盖旧文案，新四季、Boss 与情境动作文本超出字形集合；
+- 桌面系统可用系统 fallback 掩盖缺字，WebAssembly 环境没有可依赖的系统中文字体，因此问题集中暴露在 Web；
+- 用 Noto 官方仓库的完整 Noto Sans CJK SC Regular 替换裁剪字体，下载文件以 Git blob SHA `dc15562470b4f842321894787a0d066879ccff8b` 核验，并随字体保留 SIL Open Font License 1.1；
+- smoke 测试新增 CJK 字形覆盖门禁：扫描游戏数据、项目设置与实际界面脚本中的中日韩统一表意文字及全角标点，任何项目字符缺字都会使测试失败；
+- 修复后需重新导出 Web、验证 PCK/字体大小与页面显示，再发布新的 Sites version；桌面候选二进制不因本轮 Web 字体修复自动替换，后续 RC 重建时一并吸收。
