@@ -16,6 +16,21 @@ fi
 
 echo "Using $($godot_bin --version)"
 
+run_with_timeout() {
+  if command -v timeout >/dev/null 2>&1; then
+    timeout --foreground 90s "$@"
+  else
+    "$@"
+  fi
+}
+
+echo "Preparing Godot imports and global class cache"
+run_with_timeout \
+  "$godot_bin" \
+  --path "$project_root/godot" \
+  --headless \
+  --import
+
 for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd; do
   echo "Running $test_file"
   test_command=(
@@ -24,9 +39,5 @@ for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd; do
     --headless
     --script "res://tests/$test_file"
   )
-  if command -v timeout >/dev/null 2>&1; then
-    timeout --foreground 90s "${test_command[@]}"
-  else
-    "${test_command[@]}"
-  fi
+  run_with_timeout "${test_command[@]}"
 done
