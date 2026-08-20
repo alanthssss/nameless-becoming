@@ -37,3 +37,9 @@ version 6 人工截图确认 Label 中文已恢复，但 Button 中文仍显示�
 重建字体为 429,356 bytes，SHA-256 `08e8d9469aca3f65a518ebd494898b1b43dbc23cd1aec8a75c93ffeebf94c576`；空目录重导出的 `public/game/index.pck` 为 516,544 bytes，SHA-256 `a79e98342db0ba69df0ed92f15b2f8a654d97227a60590cb73e278d1c823e613`。
 
 完整文本控件修复以 Sites 源提交 `398644a874402850ee1cea56cba99c510a494d24` 保存为 version 7，并成功私有发布到原生产 URL；访问策略仍为所有者单人可见。
+
+## Web 装饰符号兼容修复
+
+version 7 人工截图发现侧栏“目标 / 敌害”前的 `▸` 显示为方框。对 16 个运行时文本来源的全部非 ASCII 字符与上游完整 Noto Sans CJK SC cmap 做差集，确认唯一不受支持的字符就是 U+25B8 `▸`；普通关、Boss 与越冬状态行已统一改用文字标签，不再依赖该装饰符。
+
+smoke 门禁同步增加当前可见 Label/Button 文本的逐字符 `has_char` 检查。重建字体为 431,556 bytes，SHA-256 `13839d372ea7f8f4208547cceb7d207c9def67a4eee0159ee1dd2db92b9502d0`；空目录重导出的 `public/game/index.pck` 为 519,472 bytes，SHA-256 `e86cb257d16dad7bc1d695f18c5d43838332d46b47a44a3a9d0ec3a7bc384bad`。
