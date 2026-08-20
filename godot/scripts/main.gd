@@ -153,6 +153,9 @@ var preserve_warmth := false
 var tutorial_step := 0
 var tutorial_origin := Vector2.ZERO
 var tutorial_complete := false
+var context_lesson_id := ""
+var context_lesson_time := 0.0
+var context_lessons_seen := {"sense": false, "danger": false, "low_energy": false}
 
 func _ready() -> void:
 	zh_font = load("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
@@ -757,6 +760,7 @@ func _process(delta: float) -> void:
 	flash = maxf(0.0, flash - delta * 2.5)
 	energy_feedback_time = maxf(0.0, energy_feedback_time - delta)
 	energy_bar_flash_time = maxf(0.0, energy_bar_flash_time - delta)
+	context_lesson_time = maxf(0.0, context_lesson_time - delta)
 	hive_flash_time = maxf(0.0, hive_flash_time - delta)
 	if phase == "playing":
 		run_elapsed += delta
@@ -1968,7 +1972,8 @@ func set_pause_system_controls_visible(visible: bool) -> void:
 		pause_system_buttons[0].text = "窗口化" if save_manager.fullscreen else "全屏"
 		pause_system_buttons[1].text = "声音：开" if save_manager.sound_enabled else "声音：关"
 
-# First-run state machine: move -> harvest -> return -> free play.
+# First-run state machine: move -> harvest -> return, followed by brief lessons
+# triggered only when their mechanic first becomes relevant.
 func update_progressive_guidance() -> void:
 	if tutorial_panel == null or sense_button == null or return_button == null:
 		return
@@ -2015,10 +2020,29 @@ func update_progressive_guidance() -> void:
 				sense_button.visible = false
 		return
 
-	tutorial_panel.visible = false
 	var nearby := nearest_flower(46.0)
 	var near_enemy := _nearest_enemy_distance() < sting_range
 	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
+	if bee.energy <= 35.0:
+		trigger_context_lesson("low_energy", "体力将尽", "继续飞会消耗携带蜜；左侧蜂巢可恢复体力。")
+	elif near_enemy:
+		trigger_context_lesson("danger", "敌害逼近", "动作会变为惊退；也可以改变方向绕开。")
+	elif is_still and nearby < 0:
+		trigger_context_lesson("sense", "停稳寻迹", "停下后按空格或寻迹，可看见花源、危险和归巢线。")
+	if context_lesson_time > 0.0:
+		tutorial_panel.visible = true
+		match context_lesson_id:
+			"low_energy":
+				tutorial_title.text = "体力将尽"
+				tutorial_body.text = "继续飞会消耗携带蜜；左侧蜂巢可恢复体力。"
+			"danger":
+				tutorial_title.text = "敌害逼近"
+				tutorial_body.text = "动作会变为惊退；也可以改变方向绕开。"
+			"sense":
+				tutorial_title.text = "停稳寻迹"
+				tutorial_body.text = "按空格或寻迹，看见花源、危险和归巢线。"
+	else:
+		tutorial_panel.visible = false
 	return_button.visible = carried > 0
 	sense_button.visible = nearby >= 0 or near_enemy or is_still
 	if near_enemy and nearby < 0:
@@ -2034,6 +2058,15 @@ func update_progressive_guidance() -> void:
 		context_hint_label.text = "继续寻找，或带着收获归巢。"
 	else:
 		context_hint_label.text = "飞近环境目标后，动作才会出现。"
+
+func trigger_context_lesson(id: String, title: String, body: String) -> void:
+	if bool(context_lessons_seen.get(id, false)) or context_lesson_time > 0.0:
+		return
+	context_lessons_seen[id] = true
+	context_lesson_id = id
+	context_lesson_time = 5.0
+	tutorial_title.text = title
+	tutorial_body.text = body
 
 func toggle_fullscreen() -> void:
 	save_manager.fullscreen = not save_manager.fullscreen

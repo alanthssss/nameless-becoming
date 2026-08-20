@@ -10,8 +10,17 @@ export default function Home() {
 
   useEffect(() => {
     if (phase !== "loading") return;
-    const timeout = window.setTimeout(() => setPhase("error"), 20000);
-    return () => window.clearTimeout(timeout);
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === "nameless-game-ready") setPhase("ready");
+      if (event.data?.type === "nameless-game-error") setPhase("error");
+    };
+    window.addEventListener("message", onMessage);
+    const timeout = window.setTimeout(() => setPhase("error"), 60000);
+    return () => {
+      window.removeEventListener("message", onMessage);
+      window.clearTimeout(timeout);
+    };
   }, [phase, attempt]);
 
   function launch() {
@@ -40,13 +49,12 @@ export default function Home() {
               src="/game/index.html"
               title="无名：成蜂 Godot Web 游戏"
               allow="autoplay; fullscreen"
-              onLoad={() => setPhase("ready")}
             />
             {phase === "loading" && (
               <div className="load-state" role="status" aria-live="polite">
                 <span className="season-loader" aria-hidden="true" />
                 <strong>正在唤醒蜂群</strong>
-                <small>首次载入需要准备游戏资源，请稍候。</small>
+                <small>首次需要下载约 10 MB 游戏核心；启动成功后会自动进入。</small>
               </div>
             )}
             {phase === "error" && (

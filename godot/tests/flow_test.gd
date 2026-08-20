@@ -30,6 +30,21 @@ func run_test() -> void:
 	game.carried = 0
 	game.update_progressive_guidance()
 	expect(game.tutorial_step == 3 and game.tutorial_complete and not game.tutorial_panel.visible, "第一次存蜜后教学没有结束")
+	game.update_progressive_guidance()
+	expect(game.context_lesson_id == "sense" and game.tutorial_panel.visible, "基础教学后没有在停稳时出现寻迹教学")
+	game.context_lesson_time = 0.0
+	game.bee.energy = 30.0
+	game.update_progressive_guidance()
+	expect(game.context_lesson_id == "low_energy" and game.tutorial_panel.visible, "低体力首次出现时没有情境教学")
+	game.context_lesson_time = 0.0
+	game.bee.energy = 100.0
+	game.mosquitoes = [{"id": 0, "position": game.bee.position + Vector2(20, 0), "velocity": Vector2.ZERO, "repel_time": 0.0}]
+	game.update_progressive_guidance()
+	expect(game.context_lesson_id == "danger" and game.tutorial_panel.visible and game.sense_button.text == "惊退", "敌害首次逼近时没有惊退教学")
+	game.mosquitoes.clear()
+	game.context_lesson_time = 0.0
+	game.update_progressive_guidance()
+	expect(not game.tutorial_panel.visible, "一次性情境教学结束后仍常驻界面")
 	game.delivered = 0
 	var gathering_total := 0
 	for stage_index in 24:
