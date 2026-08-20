@@ -75,7 +75,7 @@ jobs:
           ./scripts/package_macos.sh
           unzip -q builds/NamelessBecoming-macOS.zip -d "$RUNNER_TEMP/macos-verify"
           codesign --verify --deep --strict --verbose=2 "$RUNNER_TEMP/macos-verify/无名：成蜂.app"
-          shasum -a 256 builds/NamelessBecoming-macOS.zip > builds/NamelessBecoming-macOS.zip.sha256
+          (cd builds && shasum -a 256 NamelessBecoming-macOS.zip > NamelessBecoming-macOS.zip.sha256)
       - uses: actions/upload-artifact@v4
         with:
           name: NamelessBecoming-macOS-${{ inputs.release_tag }}
@@ -120,7 +120,7 @@ jobs:
           "$GODOT_BIN" --path godot --headless --export-release "Windows Desktop"
           test -s builds/NamelessBecoming-Windows.exe
           file builds/NamelessBecoming-Windows.exe | grep 'PE32+ executable.*x86-64'
-          sha256sum builds/NamelessBecoming-Windows.exe > builds/NamelessBecoming-Windows.exe.sha256
+          (cd builds && sha256sum NamelessBecoming-Windows.exe > NamelessBecoming-Windows.exe.sha256)
       - uses: actions/upload-artifact@v4
         with:
           name: NamelessBecoming-Windows-${{ inputs.release_tag }}

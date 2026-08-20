@@ -75,4 +75,4 @@ Web 外壳增加启动、加载、20 秒超时和重试状态，并明确标记�
 | macOS universal | `builds/NamelessBecoming-macOS.zip` | 61,590,267 bytes | `568d3a6567b75a6e26132dbd34700cbf979f85b9828ef0f3e37023e582ccf064` | arm64 + x86_64；0.9.5 / 0.9.5-rc.2；ad-hoc 签名严格校验通过；无界面启动退出码 0 |
 | Windows x86_64 | `builds/NamelessBecoming-Windows.exe` | 105,037,008 bytes | `57353aa7638e127ed5e9d8c58b8649802a673a39652e7704aa8a8105140736d0` | PE32+ GUI x86-64；PCK 内嵌；仍需 Windows 真机试玩 |
 
-GitHub runner 重建值可能因官方 runner 的 ZIP 元数据不同而与本机 macOS ZIP 哈希不同；流水线产出的 `.sha256` 才是对应下载 artifact 的权威校验值。候选尚未创建 GitHub prerelease。
+GitHub runner 重建值可能因官方 runner 的 ZIP 元数据不同而与本机 macOS ZIP 哈希不同；流水线产出的 `.sha256` 才是对应下载 artifact 的权威校验值。首次 run `32383642710` 已成功生成 macOS（62,093,142 bytes，SHA-256 `47bb9f3892fbc2b793ddda185524f9b459aa788e2d70fe62a5e64cb9cc198738`）与 Windows（105,037,008 bytes，SHA-256 `e609fa1bc694002a043d161da5a7129bb26045cfbce1bfdd7c52a30b42ff53a8`）；二次下载发现 sidecar 内含 `builds/` 前缀，二进制校验值正确但解包后不能直接运行校验，因此在正式验收前修正为可移植文件名并重跑。候选尚未创建 GitHub prerelease。
