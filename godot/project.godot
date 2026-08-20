@@ -24,8 +24,8 @@ window/stretch/mode="canvas_items"
 
 [gui]
 
-theme/default_font="res://fonts/NotoSansCJKsc-Regular.otf"
-theme/fallback_font="res://fonts/NotoSansCJKsc-Regular.otf"
+theme/default_font="res://fonts/NotoSansCJKsc-ProjectSubset.otf"
+theme/fallback_font="res://fonts/NotoSansCJKsc-ProjectSubset.otf"
 
 [input]
 

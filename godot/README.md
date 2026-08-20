@@ -33,7 +33,7 @@ npm run test:godot
 
 全部图形暂时由 Godot 原生绘制，避免在核心手感确定前制造大量不可复用美术。
 
-界面中文使用完整的 Noto Sans CJK SC Regular，字体文件位于 `fonts/NotoSansCJKsc-Regular.otf`，按同目录 `OFL-NotoSansCJK.txt` 中的 SIL Open Font License 1.1 分发。smoke 测试会扫描游戏数据与界面源码中的 CJK 字符，阻止缺字字体进入 Web 构建。
+界面中文使用 Noto Sans CJK SC Regular 的项目文案子集，字体文件位于 `fonts/NotoSansCJKsc-ProjectSubset.otf`，按同目录 `OFL-NotoSansCJK.txt` 中的 SIL Open Font License 1.1 分发。子集由官方完整字体和当前游戏数据、项目设置及界面源码生成；smoke 测试会扫描同一批来源中的 CJK 字符，阻止缺字字体进入 Web 构建。新增中文导致测试失败时，必须重新生成子集后再导出。
 
 ## 桌面导出
 
