@@ -405,3 +405,11 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - macOS 验证：universal arm64+x86_64、版本元数据正确、临时签名严格校验通过、无界面启动成功；Windows 验证：PE32+ GUI x86-64、嵌入 PCK，仍需真实 Windows 设备启动；
 - npm 锁文件审计报告 20 个既有依赖漏洞（1 low / 4 moderate / 15 high）；本轮不执行可能引入破坏性升级的 `npm audit fix --force`，作为独立依赖治理任务处理；
 - 精确产物大小与 SHA-256 见 `docs/BUILD_MANIFEST.md`。候选尚未上传或部署，不冒充正式发布。
+
+## 二十一、0.9.5-rc.1 候选发布（2026-08-20）
+
+- 源码候选经 PR #23 的 Web/Godot 双门禁通过后 squash 合入 `main`，发布基线为合并提交 `f6dedb8`；
+- GitHub `v0.9.5-rc.1` 以 prerelease 发布 macOS 与 Windows 两份资产；GitHub 返回的远端大小及 SHA-256 digest 与本地构建清单完全一致；
+- Sites 源仓库与 GitHub 历史分叉，且服务器禁止强推；为避免携带 GitHub 历史中的旧 35 MB 未分片 WASM，使用“旧 Sites 头为唯一父节点 + 当前 main 精确文件树”的最小发布提交快进，文件树与 `f6dedb8` 完全一致；
+- Web 保存为 Sites version 5 并以所有者单人访问策略私有部署成功；站点展示标题由旧《归巢之前》更新为《无名：成蜂》，URL 保持 `hivebound-seasons.alanthssss.chatgpt.site`；
+- 当前仍是候选验证版：Windows 真机启动、完整人工流程与五名外部试玩尚未完成，因此不提升为稳定版本或 1.0。
