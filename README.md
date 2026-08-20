@@ -6,7 +6,9 @@
 
 ## 在线试玩
 
-[https://hivebound-seasons-game.pages.dev](https://hivebound-seasons-game.pages.dev)
+[https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
+
+当前 0.9.5-rc.1 为所有者私有验证部署，需使用获授权的 ChatGPT 账号访问；旧 Cloudflare Pages 地址不再作为当前候选基线。
 
 ## 当前版本：Godot 候选 MVP 0.9.5-rc.1
 
