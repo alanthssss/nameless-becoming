@@ -1,0 +1,47 @@
+name: Quality gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: Web build, tests and lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  godot:
+    name: Godot 4.6.2 tests
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: 4.6.2
+      GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify Godot
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --silent --show-error --location \
+            --output "$GODOT_ARCHIVE" \
+            "https://github.com/godotengine/godot/releases/download/$GODOT_VERSION-stable/$GODOT_ARCHIVE"
+          curl --fail --silent --show-error --location \
+            --output SHA512-SUMS.txt \
+            "https://github.com/godotengine/godot/releases/download/$GODOT_VERSION-stable/SHA512-SUMS.txt"
+          grep " $GODOT_ARCHIVE$" SHA512-SUMS.txt | sha512sum --check --strict
+          unzip -q "$GODOT_ARCHIVE" -d godot-bin
+      - name: Run Godot tests
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        run: npm run test:godot

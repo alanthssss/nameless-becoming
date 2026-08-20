@@ -381,3 +381,10 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - 将 `rendered-html.test.mjs` 从“验证启动模板骨架”改为验证真实《无名：成蜂》Web 外壳：中文标题、核心文案、启动入口、版本标识及模板残留隔离；
 - ESLint 明确忽略 `public/game/` 下的 Godot 自动导出代码，只检查项目维护的源码；同时整理 WebAssembly 分片准备脚本格式并消除 lint 错误；
 - 验证结果：`npm test`（含生产构建）2/2 通过，`npm run lint` 通过，`git diff --check` 通过；本轮未改动 Godot 玩法代码，因此不替代下一次发布前的 Godot smoke/flow 复验。
+
+## 十八、Godot 自动化质量门禁（2026-08-20）
+
+- 新增统一入口 `npm run test:godot`，固定依次执行 smoke、完整状态流和 Boss 上下文三组测试；支持 PATH 自动发现，也支持用 `GODOT_BIN` 指定编辑器路径；
+- 使用官方 Godot 4.6.2 macOS universal 包在本机临时目录复验，三组测试均以退出码 0 通过；smoke 测试退出时仍报告资源存活警告，当前不影响结果，后续作为测试清洁度问题单独处理；
+- 新增 GitHub Actions 双门禁：Web job 执行依赖锁定安装、lint、生产构建和服务端渲染测试；Godot job 下载官方 4.6.2 Linux 包、核对官方 SHA-512 后运行相同测试脚本；
+- 工作流只在 PR 和 `main` 推送触发，权限收敛为只读仓库内容；本轮不改玩法与平衡参数。
