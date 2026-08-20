@@ -476,3 +476,4 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - 编辑器与导出模板均从 Godot 官方 Release 下载并以官方 SHA-512 清单验证；两个平台导出前运行相同 Godot 测试，产物连同 SHA-256 作为 30 天 GitHub Actions artifact；
 - 默认只打包不发布；从主分支明确勾选 `publish_prerelease` 后，只有双端成功才创建 GitHub prerelease，避免失败或未经确认的包进入发布页；
 - 当前候选版本推进到 `0.9.5-rc.2`，用于收纳渐进 UX、情境教学与 Web 首载改进。
+- 首次 GitHub 双端 run `32383642710` 的编辑器/模板验证、测试、导出、格式检查、macOS 签名和 artifact 上传均通过；下载后二进制重新计算哈希与 sidecar 数值一致，但 sidecar 记录 `builds/文件名`，解包后无法直接 `-c` 校验，随即修正为只记录文件名并要求重跑闭环。
