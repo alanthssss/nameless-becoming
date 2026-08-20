@@ -18,8 +18,15 @@ echo "Using $($godot_bin --version)"
 
 for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd; do
   echo "Running $test_file"
-  "$godot_bin" \
-    --path "$project_root/godot" \
-    --headless \
+  test_command=(
+    "$godot_bin"
+    --path "$project_root/godot"
+    --headless
     --script "res://tests/$test_file"
+  )
+  if command -v timeout >/dev/null 2>&1; then
+    timeout --foreground 90s "${test_command[@]}"
+  else
+    "${test_command[@]}"
+  fi
 done
