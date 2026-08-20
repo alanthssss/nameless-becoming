@@ -59,3 +59,9 @@ Web 外壳增加启动、加载、20 秒超时和重试状态，并明确标记�
 字体子集为 428,008 bytes，SHA-256 `4247285bb7ff4deb42c7707714c0ff746b00e515a8b3b4fbbc9b2464cd278bbc`；空目录重导出的 `public/game/index.pck` 为 522,720 bytes，SHA-256 `c1d0100aafc35f0fc8fb347dc5de42cfb193a007770696726b9d023765441b29`。WASM 分片为 20,971,520 与 16,723,534 bytes；Godot 三组测试、Web 构建、渲染测试与 ESLint 全部通过。
 
 正式试玩版 P0 基础以 Sites 源提交 `1fd3ba9cbc9962c449cce1ffa613d237dceffefa` 保存为 version 9，并成功私有发布到原生产 URL；访问策略仍为所有者单人可见。
+
+## Web 首载与情境教学候选
+
+2026-08-20 增加寻迹、敌害与低体力三类首次情境教学，并将 Web 核心载荷由 37,695,054 bytes 的原始 WASM 优先切换为 9,469,248 bytes 的 gzip 流式解压载荷；20,971,520 与 16,723,534 bytes 的原始分片仅作不支持 `DecompressionStream` 浏览器的兼容回退。gzip 解压结果与双分片重组结果 SHA-256 均为 `cca8bc7c462d348aaa3f318aecf3281d99bf219e182256412711b24f0d086d80`。
+
+字体子集为 428,260 bytes，SHA-256 `c4099e124cbd1666d67b080cc3ed4ff4c0da152e0b82f93880dad3df1383e5e8`；空目录重导出的 `public/game/index.pck` 为 524,480 bytes，SHA-256 `204fb3aef4fb892b64f799d9101417fc48f94368be134ede00246806cc2c95d2`；gzip 载荷 SHA-256 为 `28105b24784987bf32eed7bb2d3388ad6c57e14fb603bdebc268c1e559403b87`。外层页面等待 Godot 真实 ready/error 消息而非 iframe onLoad；Godot 三组测试、Web 构建、渲染测试、ESLint、压缩包解压与分片重组一致性均已通过。

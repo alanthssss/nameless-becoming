@@ -52,14 +52,30 @@ test("keeps starter artifacts out of the production shell", async () => {
   assert.match(page, /重新载入/);
   assert.match(page, /role="status"/);
   assert.match(page, /role="alert"/);
+  assert.match(page, /nameless-game-ready/);
+  assert.match(page, /nameless-game-error/);
+  assert.match(page, /60000/);
+  assert.doesNotMatch(page, /onLoad=\{\(\) => setPhase\("ready"\)\}/);
   assert.match(layout, /title:\s*"无名：成蜂｜Godot 四季搜打撤"/);
   assert.match(layout, /<html lang="zh-CN">/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
   assert.doesNotMatch(layout, /Starter Project|codex-preview|_sites-preview/);
+  assert.doesNotMatch(layout, /next\/font/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 
   await Promise.all([
     assert.rejects(access(new URL("app/_sites-preview", projectRoot))),
     assert.rejects(access(new URL("public/_sites-preview", projectRoot))),
   ]);
+});
+
+test("prepares a compressed Godot payload and signals real engine readiness", async () => {
+  const script = await readFile(new URL("../scripts/prepare_web_export.mjs", import.meta.url), "utf8");
+  assert.match(script, /gzipSync/);
+  assert.match(script, /index\.wasm\.gz/);
+  assert.match(script, /DecompressionStream/);
+  assert.match(script, /credentials: "same-origin"/);
+  assert.match(script, /nameless-game-ready/);
+  assert.match(script, /nameless-game-error/);
+  assert.match(script, /index\.wasm\.part/);
 });

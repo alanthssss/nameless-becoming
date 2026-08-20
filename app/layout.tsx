@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Serif_SC, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const serif = Noto_Serif_SC({ variable: "--font-serif", subsets: ["latin"], weight: ["400", "600", "700"] });
-const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "无名：成蜂｜Godot 四季搜打撤",
@@ -23,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="zh-CN"><body className={`${serif.variable} ${mono.variable}`}>{children}</body></html>;
+  return <html lang="zh-CN"><body>{children}</body></html>;
 }
