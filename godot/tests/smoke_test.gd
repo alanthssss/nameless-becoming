@@ -69,6 +69,11 @@ func check_runtime_control_fonts(failures: Array[String]) -> void:
 			var control := node as Control
 			if control.get_theme_font("font") != expected_font:
 				failures.append("文本控件未使用项目字体：%s (%s)" % [control.get_path(), control.get_class()])
+			var visible_text := String(control.get("text"))
+			for character in visible_text:
+				var codepoint := character.unicode_at(0)
+				if codepoint > 0x20 and not expected_font.has_char(codepoint):
+					failures.append("文本控件包含无法渲染的字符：%s (%s, U+%04X)" % [control.get_path(), character, codepoint])
 	game.queue_free()
 
 func _init() -> void:

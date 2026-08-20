@@ -1796,10 +1796,10 @@ func update_interface() -> void:
 	if boss_context:
 		var boss_data: Dictionary = current_boss_data
 		season_label.text = String(boss_data.name)
-		detail_label.text = "%s\n\n▸ 调律  %d / %d\n\n引向共鸣点\n再以震翼调律" % [String(boss_data.line), int(boss.hits), int(boss_data.required_tunings)]
+		detail_label.text = "%s\n\n调律 · %d / %d\n\n引向共鸣点\n再以震翼调律" % [String(boss_data.line), int(boss.hits), int(boss_data.required_tunings)]
 	else:
 		# 阴阳数值是内部设计依据（驱动节令难度），不向玩家暴露；
-		# 用「▸」做状态行节奏符，把敌害收进同一行避免被误读为玩家可选角色。
+		# 用文字标签组织状态行，避免依赖 CJK 字体不包含的装饰符号。
 		season_label.text = data.name
 		var threat_parts := []
 		var species := [["蚊", "mosquitoes"], ["蚁", "ants"], ["蛐", "crickets"], ["眉", "thrushes"], ["熊", "bears"]]
@@ -1807,10 +1807,10 @@ func update_interface() -> void:
 			var count := int(data.get(entry[1], 0))
 			if count > 0:
 				threat_parts.append("%s %s" % [entry[0], "◆".repeat(mini(count, 4))])
-		var threat_row := "▸ 敌害 · " + ("  ".join(threat_parts) if not threat_parts.is_empty() else "无（寒冷与匮乏本身）")
-		var status_rows := "▸ 目标 · %d 滴\n%s" % [int(data.goal), threat_row]
+		var threat_row := "敌害 · " + ("  ".join(threat_parts) if not threat_parts.is_empty() else "无（寒冷与匮乏本身）")
+		var status_rows := "目标 · %d 滴\n%s" % [int(data.goal), threat_row]
 		if season_index_of(stage_index) == 3:
-			status_rows += "\n▸ 体温 · %d%%  储蜜 · %d 滴" % [roundi(warmth), hive_reserve]
+			status_rows += "\n体温 · %d%%  储蜜 · %d 滴" % [roundi(warmth), hive_reserve]
 		detail_label.text = "%s\n\n%s" % [data.line, status_rows]
 
 func _unhandled_input(event: InputEvent) -> void:
