@@ -468,3 +468,11 @@ alan 试玩后提出两问：①小关卡体力耗尽"没有任何消耗直接�
 - Web 长时间加载定位为约 36 MB 原始 WASM 首包与错误的就绪判断叠加：iframe HTML 加载被误认为 Godot 已启动，外层超时因此提前取消；
 - Web 导出改为现代浏览器优先下载约 10 MB gzip WASM 并流式解压，保留分片原始包兼容回退；Godot 外壳向父页面发送真实启动/失败事件，外层只在收到真实事件后切换状态；
 - 移除 Web 外壳的远程字体构建依赖，消除生产日志中的本地绝对字体 URL 404。
+
+## 二十九、桌面客户端 GitHub 打包流水线（2026-08-20）
+
+- 既有 `quality.yml` 只做 Web 与 Godot 测试，macOS/Windows 客户端仍需本机手工导出、签名、计算校验值并上传；因此此前并非每次版本都有客户端包；
+- 新增手动触发的 `Desktop client builds`：输入 tag 必须与工程版本一致，macOS 14 runner 生成 universal 包并做 ad-hoc 签名/严格校验，Ubuntu runner 生成 Windows x86_64 PE；
+- 编辑器与导出模板均从 Godot 官方 Release 下载并以官方 SHA-512 清单验证；两个平台导出前运行相同 Godot 测试，产物连同 SHA-256 作为 30 天 GitHub Actions artifact；
+- 默认只打包不发布；从主分支明确勾选 `publish_prerelease` 后，只有双端成功才创建 GitHub prerelease，避免失败或未经确认的包进入发布页；
+- 当前候选版本推进到 `0.9.5-rc.2`，用于收纳渐进 UX、情境教学与 Web 首载改进。

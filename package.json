@@ -1,6 +1,6 @@
 {
   "name": "nameless-becoming",
-  "version": "0.9.5-rc.1",
+  "version": "0.9.5-rc.2",
   "private": true,
   "engines": {
     "node": ">=22.13.0"

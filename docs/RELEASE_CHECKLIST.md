@@ -24,6 +24,7 @@
 - [x] ESLint 排除 Godot Web 导出产物后，项目自有 JavaScript/TypeScript 代码检查通过（2026-08-20）；
 - [x] 统一 `npm run test:godot` 门禁覆盖 smoke、完整状态流与 Boss 上下文回归；本机使用官方 Godot 4.6.2 三组通过（2026-08-20）；
 - [x] GitHub Actions 在 PR 与 `main` 推送时并行执行 Web 构建/测试/lint 和经 SHA-512 校验的 Godot 4.6.2 测试（2026-08-20）；
+- [x] 新增手动桌面打包流水线：macOS runner 导出、临时签名并严格校验 universal 包，Ubuntu runner 导出并检查 Windows x86_64 PE；双端均校验官方 Godot/模板并上传 SHA-256（2026-08-20）；
 - [x] smoke 测试显式释放未入树的声音测试夹具，Godot 退出不再报告 Node/GDScript 资源存活警告（2026-08-20）；
 - [x] 0.9.5-rc.1 使用官方 Godot 4.6.2 模板从空 Web 目录重新导出三端候选，模板 SHA-512 已核验（2026-08-20）；
 - [x] Web WASM 两分片重组 SHA-256 与原始文件一致，生产构建和渲染测试通过（2026-08-20）；
@@ -40,6 +41,7 @@
 - [x] 审计全部运行时非 ASCII 字符与上游字体 cmap，确认并移除唯一不受支持的 `▸`；当前可见文本逐字渲染检查进入 smoke 门禁（2026-08-20）；
 - [x] 装饰符号兼容修复保存为 Sites version 8 并完成所有者私有发布（2026-08-20）；
 - [ ] 发布装饰符号兼容修复后，确认侧栏目标、敌害、调律与体温状态行不再出现方框；
+- [ ] GitHub 首次完成 0.9.5-rc.2 双端流水线打包，并核对下载 artifact 的 SHA-256；
 
 ## 构建验证
 
