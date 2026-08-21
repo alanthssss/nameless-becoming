@@ -74,6 +74,7 @@ func play_cue(cue: String) -> void:
 		"tune": start_tone(760.0, 0.32, 0.15)
 		"win": start_tone(880.0, 0.55, 0.13)
 		"loss": start_tone(145.0, 0.48, 0.12)
+		"drink": start_tone(440.0, 0.15, 0.12)
 
 func start_tone(next_frequency: float, duration: float, next_amplitude: float) -> void:
 	frequency = next_frequency
