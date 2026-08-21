@@ -14,7 +14,7 @@ else
   exit 127
 fi
 
-echo "Using $($godot_bin --version)"
+echo "Using $("$godot_bin" --version)"
 
 run_with_timeout() {
   if command -v timeout >/dev/null 2>&1; then

@@ -86,15 +86,22 @@ func run_test() -> void:
 	game.carried = 2
 	game.fail_expedition()
 	expect(game.total_recoverable_honey() == conserved_before, "体力耗尽后花蜜没有回到生态循环")
-	# 蜜囊续命：体力见底先吃 1 滴携带蜜续飞，被吃掉的蜜不生成返蜜花
+	# 显式饮蜜：E 键主动饮下蜜囊里的一滴蜜续力，每节气受 crop_fuel_limit 限制；
+	# 被饮下的蜜不生成返蜜花，它转化成了飞行本身
 	game.carried = 2
 	game.bee.energy = 0.0
-	var eaten_before: int = game.total_recoverable_honey()
-	expect(game._try_crop_fuel() and game.carried == 1 and game.bee.energy > 0.0, "体力见底未消耗携带蜜续飞")
-	expect(game.total_recoverable_honey() == eaten_before - 1, "吃蜜续飞应恰好消耗 1 滴可回收蜜（转化为飞行）")
+	var drunk_before: int = game.total_recoverable_honey()
+	expect(game._drink_honey() and game.carried == 1 and game.bee.energy > 0.0, "饮蜜未消耗携带蜜或未恢复体力")
+	expect(game.total_recoverable_honey() == drunk_before - 1, "饮蜜应恰好消耗 1 滴可回收蜜（转化为飞行）")
+	expect(game.crop_fuel_used == 1, "续力计数未随饮蜜递增")
+	# 续力次数封顶：同一节气内限饮 2 口，用尽后即使有蜜也不再续力
+	game.carried = 3
+	game.bee.energy = 0.0
+	expect(game._drink_honey() and game.carried == 2 and game.crop_fuel_used == 2, "上限内第二口续力应正常")
+	expect(not game._drink_honey() and game.carried == 2, "续力次数用尽后不应再消耗携带蜜")
 	game.carried = 0
 	game.bee.energy = 0.0
-	expect(not game._try_crop_fuel(), "蜜尽后不应再续命")
+	expect(not game._drink_honey(), "蜜尽后不应再续力")
 	# 力竭停顿拍：蜜尽才真正倒下，世界静止、体力归零可见，随后回巢重置
 	game.begin_exhaustion()
 	expect(game.phase == "exhausted" and not game.bee.active and game.bee.energy == 0.0, "力竭未进入停顿拍（世界应静止且体力为 0）")

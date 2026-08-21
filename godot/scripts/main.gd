@@ -44,6 +44,8 @@ var pollen: Array = []
 var decoys: Array = []
 var recovery_flower_serial := 1000
 var carried := 0
+# 显式饮蜜：本节气已饮下的续力次数，每节气出勤开始时重置（上限 crop_fuel_limit）
+var crop_fuel_used := 0
 var delivered := 0
 var hive_lives := 3
 var harvest_clock := 0.0
@@ -625,6 +627,8 @@ func spawn_stage(index: int) -> void:
 	overlay_title.text = ""
 	overlay_body.text = ""
 	carried = 0
+	# 蜜囊续力按节气计数：出勤开始时重置；失败重试不重置，饮蜜是每节气的有限资源
+	crop_fuel_used = 0
 	delivered = 0
 	harvest_clock = 0.0
 	sting_cooldown = 0.0
@@ -800,6 +804,10 @@ func update_game(delta: float) -> void:
 		bee.set_move_target(HIVE_RETURN_POS)
 		message = "归巢路线已锁定。"
 
+	# 显式饮蜜：E 键主动饮下蜜囊里的一滴蜜续力（每节气受 crop_fuel_limit 限制）
+	if Input.is_action_just_pressed("drink_honey"):
+		_drink_honey()
+
 	# 情境动作：空格/回车根据上下文执行不同操作
 	var nearby := nearest_flower(46.0)
 	var near_enemy := _nearest_enemy_distance() < sting_range
@@ -905,8 +913,7 @@ func update_game(delta: float) -> void:
 		show_between()
 	if bee.energy <= 0.0 and phase == "playing":
 		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
-		if not _try_crop_fuel():
-			begin_exhaustion()
+		begin_exhaustion()
 
 func _nearest_enemy_distance() -> float:
 	var min_dist := INF
@@ -1277,19 +1284,25 @@ func fail_expedition() -> void:
 	shake = 10.0
 	message = "你没能带回花蜜，蜂巢的呼吸弱了一分。洒落的 %d 滴蜜将孕育返蜜花。" % lost_honey
 
-# 蜜囊续命：体力见底时先吃掉一滴携带蜜续飞——蜜蜂飞行燃料本就来自蜜囊。
-# 被吃掉的蜜不生成返蜜花：它转化成了飞行本身，仍在能量意义上守恒。
-func _try_crop_fuel() -> bool:
+# 显式饮蜜：E 键主动饮下蜜囊里的一滴蜜续力。蜜蜂飞行燃料本就来自蜜囊，
+# 被饮下的蜜不生成返蜜花：它转化成了飞行本身，仍在能量意义上守恒。
+# 每节气受 crop_fuel_limit 限制：用尽后即使仍有蜜也不再续力。
+func _drink_honey() -> bool:
 	if carried <= 0:
+		message = "蜜囊已经空了。"
+		return false
+	if crop_fuel_used >= int(balance_value("player", "crop_fuel_limit", 2)):
+		message = "这趟出勤，蜜囊续力已到尽头。"
 		return false
 	carried -= 1
+	crop_fuel_used += 1
 	bee.energy = balance_value("player", "crop_fuel_refill", 30.0)
 	show_energy_change(bee.energy)
-	# 续命必须被看见：体力条短暂提亮，配合飘字说明这 30 点是吃出来的
+	# 续力必须被看见：体力条短暂提亮，配合飘字说明这 30 点是喝出来的
 	energy_bar_flash_time = 0.8
 	flash = 0.28
-	sound.play_cue("harvest")
-	message = "翅膀几乎停摆——你吞下了蜜囊里的一滴蜜。它本是要带回蜂巢的。"
+	sound.play_cue("drink")
+	message = "你饮下蜜囊里的一滴蜜，翅膀重新有了力气。"
 	return true
 
 # 力竭停顿拍：蜜尽才真正倒下。短暂静止 + 画面转暗，让玩家看清
@@ -1598,8 +1611,6 @@ func update_boss(delta: float) -> void:
 	update_hive_rest(delta, false)
 
 	if bee.energy <= 0.0:
-		if _try_crop_fuel():
-			return
 		# 失律者战败扣 1 命；若归律前蜂巢已散，走全轮结算页
 		hive_lives -= 1
 		hive_flash_time = 1.0
@@ -2046,7 +2057,7 @@ func update_progressive_guidance() -> void:
 	var near_enemy := _nearest_enemy_distance() < sting_range
 	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
 	if bee.energy <= 35.0:
-		trigger_context_lesson("low_energy", "体力将尽", "继续飞会消耗携带蜜；左侧蜂巢可恢复体力。")
+		trigger_context_lesson("low_energy", "体力将尽", "可按 E 饮下蜜囊里的一滴蜜续力（每节气限次）；左侧蜂巢也能恢复体力。")
 	elif near_enemy:
 		trigger_context_lesson("danger", "敌害逼近", "动作会变为惊退；也可以改变方向绕开。")
 	elif is_still and nearby < 0:
@@ -2056,7 +2067,7 @@ func update_progressive_guidance() -> void:
 		match context_lesson_id:
 			"low_energy":
 				tutorial_title.text = "体力将尽"
-				tutorial_body.text = "继续飞会消耗携带蜜；左侧蜂巢可恢复体力。"
+				tutorial_body.text = "可按 E 饮下蜜囊里的一滴蜜续力（每节气限次）；左侧蜂巢也能恢复体力。"
 			"danger":
 				tutorial_title.text = "敌害逼近"
 				tutorial_body.text = "动作会变为惊退；也可以改变方向绕开。"
@@ -2076,6 +2087,8 @@ func update_progressive_guidance() -> void:
 	elif is_still:
 		sense_button.text = "寻迹"
 		context_hint_label.text = "停稳后可感知花源与敌害。"
+	elif bee.energy <= 35.0 and carried > 0 and crop_fuel_used < int(balance_value("player", "crop_fuel_limit", 2)):
+		context_hint_label.text = "体力将尽：按 E 饮蜜续力，或带蜜归巢。"
 	elif carried > 0:
 		context_hint_label.text = "继续寻找，或带着收获归巢。"
 	else:
