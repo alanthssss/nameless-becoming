@@ -42,7 +42,7 @@ func start(game, data: Dictionary, balance: Dictionary) -> void:
 	var larvae_per_boost := int(reserve_params.get("larvae_per_boost", 10))
 	var boost_per_round := int(reserve_params.get("boost_energy_cap", 5))
 	var bonus := int(main.larval_boost / maxi(larvae_per_boost, 1)) * boost_per_round
-	main.energy_cap_override = 100.0 + float(bonus)
+	main.energy_cap_override = main.bee.max_energy + float(bonus)
 	if bonus > 0:
 		main.bee.energy = main.energy_cap_override
 		main.message = "幼虫已长成来年劳动力：出巢能量上限 +%d。" % bonus

@@ -102,6 +102,26 @@ func run_test() -> void:
 	game.carried = 0
 	game.bee.energy = 0.0
 	expect(not game._drink_honey(), "蜜尽后不应再续力")
+	# 饮蜜回力是加法并钳到体力上限：旧实现「设为 refill」只在体力见底时碰巧等价，
+	# 但显式饮蜜可在任意体力值触发——高体力时只回零头甚至倒扣
+	var refill_amount: float = game.balance_value("player", "crop_fuel_refill", 22.0)
+	game.crop_fuel_used = 0
+	game.carried = 2
+	game.bee.energy = 10.0
+	expect(game._drink_honey() and is_equal_approx(game.bee.energy, 10.0 + refill_amount), "饮蜜应按增量恢复体力而非设为定值")
+	game.bee.energy = 95.0
+	expect(game._drink_honey() and game.bee.energy == 100.0 and game.carried == 0, "高体力饮蜜应钳到体力上限而非倒扣")
+	# 体力上限数据驱动：基准来自 balance.json player.max_energy（_ready 注入），
+	# 越冬幼虫加成通过 energy_cap_override 抬高实际上限，饮蜜钳制跟随两者较大值
+	expect(game.bee.max_energy == game.balance_value("player", "max_energy", 100.0), "体力上限未从 balance.json 注入")
+	game.crop_fuel_used = 0
+	game.carried = 1
+	game.energy_cap_override = 130.0
+	game.bee.energy = 125.0
+	expect(game._drink_honey() and game.bee.energy == 130.0, "饮蜜应钳到实际体力上限（含冬季加成）")
+	# 还原力竭用例的前置条件：蜜尽 + 体力归零
+	game.energy_cap_override = 100.0
+	game.bee.energy = 0.0
 	# 力竭停顿拍：蜜尽才真正倒下，世界静止、体力归零可见，随后回巢重置
 	game.begin_exhaustion()
 	expect(game.phase == "exhausted" and not game.bee.active and game.bee.energy == 0.0, "力竭未进入停顿拍（世界应静止且体力为 0）")
