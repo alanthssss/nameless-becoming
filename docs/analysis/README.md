@@ -17,6 +17,7 @@
 | 03 | [玩法与设计](03-gameplay-design.md) | 核心循环、操作、四季、敌人、Boss、成长 | 设计者 / Designers |
 | 04 | [阶段目标](04-stage-goals.md) | 版本历程、当前目标、MVP 验收、里程碑 | 项目管理者 / PMs |
 | 05 | [关键词表](05-keyword-glossary.md) | 中英术语对照表 | 所有人 / Everyone |
+| 06 | [数值设计总览](06-numeric-design.md) | 关键数值、设置依据、交互与反馈清单、调参工作流 | 设计者 / Designers |
 
 ---
 
