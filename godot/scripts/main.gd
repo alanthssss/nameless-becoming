@@ -1296,9 +1296,13 @@ func _drink_honey() -> bool:
 		return false
 	carried -= 1
 	crop_fuel_used += 1
-	bee.energy = balance_value("player", "crop_fuel_refill", 30.0)
-	show_energy_change(bee.energy)
-	# 续力必须被看见：体力条短暂提亮，配合飘字说明这 30 点是喝出来的
+	# 续力是加法而非设定：旧自动续命只在体力见底时触发，「设为 refill」碰巧等价于
+	# 「+refill」；显式饮蜜可在任意体力值触发，必须改成增量并钳到体力上限，
+	# 否则高体力时饮蜜只回零头、甚至被倒扣。飘字显示真实增量而非绝对值。
+	var before_energy := bee.energy
+	bee.energy = clampf(bee.energy + balance_value("player", "crop_fuel_refill", 22.0), 0.0, 100.0)
+	show_energy_change(bee.energy - before_energy)
+	# 续力必须被看见：体力条短暂提亮，配合飘字说明这份力气是喝出来的
 	energy_bar_flash_time = 0.8
 	flash = 0.28
 	sound.play_cue("drink")
