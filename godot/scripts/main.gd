@@ -129,6 +129,8 @@ var energy_change_label: Label
 var energy_feedback_time := 0.0
 # 代价可见性演出：蜜囊续命时体力条短暂提亮，扣蜂巢命时圆点闪红
 var energy_bar_flash_time := 0.0
+# 蜜囊满额：携带条闪红，替代每帧飘字
+var carry_full_flash_time := 0.0
 var hive_flash_time := 0.0
 var reserve_label: Label
 var season_mechanics
@@ -454,7 +456,7 @@ func build_interface() -> void:
 	overlay.position = Vector2(34, 146)
 	overlay.size = Vector2(970, 538)
 	ui.add_child(overlay)
-	overlay_title = make_label(overlay, "再采一朵，\n还是现在归巢？", Vector2(150, 82), Vector2(670, 150), 54, Color("fff8d9"))
+	overlay_title = make_label(overlay, "冬至 · 蜂巢", Vector2(150, 82), Vector2(670, 150), 54, Color("fff8d9"))
 	overlay_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	overlay_body = make_label(overlay, "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。", Vector2(190, 245), Vector2(590, 78), 17, Color("d8ddc9"))
 	overlay_body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -571,7 +573,7 @@ func show_intro() -> void:
 	phase = "intro"
 	bee.active = false
 	overlay.visible = true
-	overlay_title.text = "再采一朵，\n还是现在归巢？"
+	overlay_title.text = "冬至 · 蜂巢"
 	overlay_body.text = "冬至花少，蜂巢仍在呼吸。\n飞出去看看；行动时，世界会给出提示。"
 	overlay_button.text = "飞入冬至"
 	overlay_button.visible = true
@@ -763,6 +765,7 @@ func _process(delta: float) -> void:
 	flash = maxf(0.0, flash - delta * 2.5)
 	energy_feedback_time = maxf(0.0, energy_feedback_time - delta)
 	energy_bar_flash_time = maxf(0.0, energy_bar_flash_time - delta)
+	carry_full_flash_time = maxf(0.0, carry_full_flash_time - delta)
 	context_lesson_time = maxf(0.0, context_lesson_time - delta)
 	hive_flash_time = maxf(0.0, hive_flash_time - delta)
 	if phase == "playing":
@@ -824,8 +827,12 @@ func update_game(delta: float) -> void:
 			if harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
 				harvest_clock = 0.0
 				if carried >= int(carry_capacity):
-					# 蜜囊已满：花蜜不扣、花粉不落，避免白白耗掉一朵花
-					message = "蜜囊已满，先归巢。"
+					# 蜜囊已满：花蜜不扣、花粉不落，避免白白耗掉一朵花。
+					# 反馈身体化：条闪红与提示音，飘字只在初次出现（按住不再提示）
+					if carry_full_flash_time <= 0.0:
+						message = "蜜囊已满，先归巢。"
+						sound.play_cue("full")
+					carry_full_flash_time = 0.6
 				else:
 					var flower: Dictionary = flowers[nearby]
 					var ftype := str(flower.get("type", "nectar_bloom"))
@@ -866,8 +873,9 @@ func update_game(delta: float) -> void:
 						message = harvest_msg
 					elif message != msg_before:
 						pass
-					else:
-						message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
+					elif flower.nectar <= 0:
+						# 采尽只提示一次；采蜜中的常态反馈交给音效与花粉，不再每滴飘字
+						message = "这朵花已经采尽。"
 					last_harvest_index = nearby
 					last_harvest_time = elapsed
 		elif not action_was_harvesting and not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy:
@@ -1836,6 +1844,12 @@ func update_interface() -> void:
 	else:
 		term_label.text = "%s · %s" % [data.season, data.name]
 	carried_label.text = "%d / %d" % [carried, int(carry_capacity)]
+	# 蜜囊满额：携带条闪红，飘字只在初次
+	if carry_full_flash_time > 0.0:
+		var carry_pulse := 0.5 + 0.5 * sin(carry_full_flash_time * 24.0)
+		carried_label.modulate = Color("e5604f").lerp(Color.WHITE, carry_pulse)
+	else:
+		carried_label.modulate = Color.WHITE
 	if boss_context:
 		delivered_label.text = "调律 %d / %d" % [int(boss.hits), int(current_boss_data.required_tunings)]
 	else:
