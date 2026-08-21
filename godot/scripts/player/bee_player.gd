@@ -6,7 +6,9 @@ signal sense_started
 const WORLD_BOUNDS := Rect2(34, 146, 970, 538)
 const AUTO_DASH_THRESHOLD := 0.35
 
-var energy := 100.0
+# 出巢体力上限：由 main 从 balance.json player.max_energy 注入，避免调参时改代码
+var max_energy := 100.0
+var energy := max_energy
 var drain_rate := 1.45
 var base_speed := 215.0
 var dash_speed := 360.0
@@ -43,7 +45,7 @@ func reset_for_expedition(at: Vector2) -> void:
 	velocity = Vector2.ZERO
 	target = Vector2.ZERO
 	has_target = false
-	energy = 100.0
+	energy = max_energy
 	sense_time = 0.0
 	sense_cooldown = 0.0
 	evade_time = 0.0

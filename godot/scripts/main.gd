@@ -178,6 +178,7 @@ func _ready() -> void:
 	load_boss_data()
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
+	bee.max_energy = balance_value("player", "max_energy", 100.0)
 	bee.sense_started.connect(on_sense_started)
 	add_child(bee)
 	add_child(sound)
@@ -289,6 +290,11 @@ func balance_value(section: String, key: String, fallback: float) -> float:
 	if balance.has(section) and balance[section] is Dictionary:
 		return float(balance[section].get(key, fallback))
 	return fallback
+
+## 实际体力上限：基准（balance.json player.max_energy）与季节性覆盖
+## （越冬抱团的幼虫加成可把上限提到基准之上）取较大者，恢复/饮蜜/体力条共用
+func effective_energy_cap() -> float:
+	return maxf(bee.max_energy, energy_cap_override)
 
 ## 花物候学：按权重随机选取花型
 func _pick_flower_type(types: Array) -> Dictionary:
@@ -728,7 +734,7 @@ func spawn_stage(index: int) -> void:
 	# 只有入冬第一个节令（寒露）重置体温
 	preserve_warmth = bool(data.get("warmth_carry", false))
 	if season_index_of(index) != 3:
-		energy_cap_override = 100.0
+		energy_cap_override = bee.max_energy
 	season_mechanics.start_stage(index)
 	message = "%s：%s" % [data.name, data.line]
 	update_interface()
@@ -1253,7 +1259,7 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 	var rest_rate := balance_value("player", "hive_rest_per_second", 36.0)
 	if season_index_of(stage_index) == 3 and warmth <= cold_warmth_threshold:
 		rest_rate *= 0.5
-	bee.energy = minf(energy_cap_override, bee.energy + rest_rate * delta)
+	bee.energy = minf(effective_energy_cap(), bee.energy + rest_rate * delta)
 	if deposit_honey and carried > 0:
 		var amount := carried
 		delivered += amount
@@ -1300,7 +1306,7 @@ func _drink_honey() -> bool:
 	# 「+refill」；显式饮蜜可在任意体力值触发，必须改成增量并钳到体力上限，
 	# 否则高体力时饮蜜只回零头、甚至被倒扣。飘字显示真实增量而非绝对值。
 	var before_energy := bee.energy
-	bee.energy = clampf(bee.energy + balance_value("player", "crop_fuel_refill", 22.0), 0.0, 100.0)
+	bee.energy = clampf(bee.energy + balance_value("player", "crop_fuel_refill", 22.0), 0.0, effective_energy_cap())
 	show_energy_change(bee.energy - before_energy)
 	# 续力必须被看见：体力条短暂提亮，配合飘字说明这份力气是喝出来的
 	energy_bar_flash_time = 0.8
@@ -1870,8 +1876,8 @@ func update_interface() -> void:
 	else:
 		delivered_label.text = "%d / %d" % [mini(delivered, int(data.goal)), int(data.goal)]
 	energy_label.text = str(roundi(bee.energy))
-	# 分母跟随实际上限（越冬抱团可把上限提到 100 以上），避免条提前满格
-	var energy_cap := maxf(100.0, energy_cap_override)
+	# 分母跟随实际上限（越冬抱团可把上限提到基准之上），避免条提前满格
+	var energy_cap := effective_energy_cap()
 	energy_bar_fill.size.x = 284.0 * clampf(bee.energy / energy_cap, 0.0, 1.0)
 	# 蜜囊续命提亮：让「这 30 点体力是吃掉一滴蜜换来的」在体力条上可见
 	if energy_bar_flash_time > 0.0:
