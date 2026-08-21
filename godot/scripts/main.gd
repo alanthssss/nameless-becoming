@@ -51,6 +51,8 @@ var sting_cooldown := 0.0
 var hit_cooldown := 0.0
 var was_in_hive := false
 var harvest_multiplier := 1.0
+# 蜜囊携带上限：满额时停下采蜜。采蜜蜂成长每级 +3。
+var carry_capacity := 8.0
 var sting_range := 88.0
 var sting_cost := 8.0
 var sting_cooldown_multiplier := 1.0
@@ -357,11 +359,11 @@ func build_interface() -> void:
 	forage_panel.position = Vector2(34, 82)
 	forage_panel.size = Vector2(300, 50)
 	ui.add_child(forage_panel)
-	make_label(forage_panel, "本次采集", Vector2(12, 5), Vector2(90, 18), 10, Color("6d715f"))
-	carried_label = make_label(forage_panel, "0", Vector2(94, 8), Vector2(54, 30), 17, Color("26342b"))
+	make_label(forage_panel, "携带", Vector2(12, 5), Vector2(40, 18), 10, Color("6d715f"))
+	carried_label = make_label(forage_panel, "0 / 8", Vector2(50, 8), Vector2(64, 30), 17, Color("26342b"))
 	carried_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	make_label(forage_panel, "携带", Vector2(158, 5), Vector2(52, 18), 10, Color("6d715f"))
-	delivered_label = make_label(forage_panel, "0 / 5", Vector2(205, 8), Vector2(80, 30), 17, Color("26342b"))
+	make_label(forage_panel, "本关进度", Vector2(126, 5), Vector2(72, 18), 10, Color("6d715f"))
+	delivered_label = make_label(forage_panel, "0 / 5", Vector2(198, 8), Vector2(88, 30), 17, Color("26342b"))
 	delivered_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	var flight_panel := ColorRect.new()
@@ -594,6 +596,7 @@ func start_game() -> void:
 	sting_cost = balance_value("player", "repel_cost", 8.0)
 	sting_cooldown_multiplier = 1.0
 	extra_nectar = 0
+	carry_capacity = balance_value("player", "carry_capacity", 8.0)
 	bee.reset_upgrades()
 	tutorial_step = 3 if tutorial_complete else 0
 	tutorial_origin = HIVE_RETURN_POS
@@ -820,49 +823,53 @@ func update_game(delta: float) -> void:
 			bee.energy = maxf(0.0, bee.energy - balance_value("player", "harvest_energy_per_second", 3.2) * delta)
 			if harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
 				harvest_clock = 0.0
-				var flower: Dictionary = flowers[nearby]
-				var ftype := str(flower.get("type", "nectar_bloom"))
-				flower.nectar = int(flower.nectar) - 1
-				var harvest_msg := ""
-				var bonus_nectar := 0
-				# 花物候学：花粉传递——连续采两朵不同花，第二朵蜜量+1
-				if pollen_transfer_window > 0.0 and last_harvest_index >= 0 and last_harvest_index != nearby:
-					var time_since := elapsed - last_harvest_time
-					if time_since <= pollen_transfer_window:
-						bonus_nectar += pollen_transfer_bonus
-						harvest_msg = "花粉传递：携带的花粉让这朵花蜜量更丰。"
-				# 花物候学：连环花——采完一朵后2秒内采相邻同型花，蜜量+1
-				if ftype == "chain_bloom" and chain_window_s > 0.0:
-					if chain_timer > 0.0 and chain_last_index >= 0 and chain_bonus_count < chain_cap:
-						var prev_pos: Vector2 = flowers[chain_last_index].position
-						if flower.position.distance_to(prev_pos) <= chain_range_px:
-							bonus_nectar += 1
-							chain_bonus_count += 1
-							harvest_msg = "连环花路线：连续采蜜让花田更慷慨。（%d/%d）" % [chain_bonus_count, chain_cap]
-					chain_last_index = nearby
-					chain_timer = chain_window_s
+				if carried >= int(carry_capacity):
+					# 蜜囊已满：花蜜不扣、花粉不落，避免白白耗掉一朵花
+					message = "蜜囊已满，先归巢。"
 				else:
-					if chain_window_s > 0.0:
-						chain_timer = 0.0
-						chain_last_index = -1
-						chain_bonus_count = 0
-				# 应用加成（花蜜不减反增）
-				flower.nectar = int(flower.nectar) + bonus_nectar
-				flowers[nearby] = flower
-				carried += 1
-				action_was_harvesting = true
-				sound.play_cue("harvest")
-				spawn_pollen(flower.position)
-				var msg_before := message
-				season_mechanics.on_harvest(nearby)
-				if harvest_msg != "":
-					message = harvest_msg
-				elif message != msg_before:
-					pass
-				else:
-					message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
-				last_harvest_index = nearby
-				last_harvest_time = elapsed
+					var flower: Dictionary = flowers[nearby]
+					var ftype := str(flower.get("type", "nectar_bloom"))
+					flower.nectar = int(flower.nectar) - 1
+					var harvest_msg := ""
+					var bonus_nectar := 0
+					# 花物候学：花粉传递——连续采两朵不同花，第二朵蜜量+1
+					if pollen_transfer_window > 0.0 and last_harvest_index >= 0 and last_harvest_index != nearby:
+						var time_since := elapsed - last_harvest_time
+						if time_since <= pollen_transfer_window:
+							bonus_nectar += pollen_transfer_bonus
+							harvest_msg = "花粉传递：携带的花粉让这朵花蜜量更丰。"
+					# 花物候学：连环花——采完一朵后2秒内采相邻同型花，蜜量+1
+					if ftype == "chain_bloom" and chain_window_s > 0.0:
+						if chain_timer > 0.0 and chain_last_index >= 0 and chain_bonus_count < chain_cap:
+							var prev_pos: Vector2 = flowers[chain_last_index].position
+							if flower.position.distance_to(prev_pos) <= chain_range_px:
+								bonus_nectar += 1
+								chain_bonus_count += 1
+								harvest_msg = "连环花路线：连续采蜜让花田更慷慨。（%d/%d）" % [chain_bonus_count, chain_cap]
+						chain_last_index = nearby
+						chain_timer = chain_window_s
+					else:
+						if chain_window_s > 0.0:
+							chain_timer = 0.0
+							chain_last_index = -1
+							chain_bonus_count = 0
+					# 应用加成（花蜜不减反增）
+					flower.nectar = int(flower.nectar) + bonus_nectar
+					flowers[nearby] = flower
+					carried += 1
+					action_was_harvesting = true
+					sound.play_cue("harvest")
+					spawn_pollen(flower.position)
+					var msg_before := message
+					season_mechanics.on_harvest(nearby)
+					if harvest_msg != "":
+						message = harvest_msg
+					elif message != msg_before:
+						pass
+					else:
+						message = "花香正在变淡。还要继续停留吗？" if flower.nectar > 0 else "这朵花已经采尽。"
+					last_harvest_index = nearby
+					last_harvest_time = elapsed
 		elif not action_was_harvesting and not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy:
 			# 长按空格 + 携蜜 + 无花无敌 = 投蜜诱饵（采过蜜的同一按键不会触发，需松开重按）
 			action_decoy_fired = true
@@ -1417,6 +1424,7 @@ func on_upgrade_selected(index: int) -> void:
 		"forager":
 			harvest_multiplier *= 1.18
 			extra_nectar += 1
+			carry_capacity += 3.0
 		"guard":
 			sting_range *= 1.18
 			sting_cooldown_multiplier *= 0.85
@@ -1827,11 +1835,11 @@ func update_interface() -> void:
 		term_label.text = "%s · %s" % [data.season, String(current_boss_data.get("term", data.name))]
 	else:
 		term_label.text = "%s · %s" % [data.season, data.name]
-	carried_label.text = str(carried)
+	carried_label.text = "%d / %d" % [carried, int(carry_capacity)]
 	if boss_context:
 		delivered_label.text = "调律 %d / %d" % [int(boss.hits), int(current_boss_data.required_tunings)]
 	else:
-		delivered_label.text = "%d / %d" % [delivered, int(data.goal)]
+		delivered_label.text = "%d / %d" % [mini(delivered, int(data.goal)), int(data.goal)]
 	energy_label.text = str(roundi(bee.energy))
 	# 分母跟随实际上限（越冬抱团可把上限提到 100 以上），避免条提前满格
 	var energy_cap := maxf(100.0, energy_cap_override)

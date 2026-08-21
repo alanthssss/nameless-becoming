@@ -1,5 +1,5 @@
 {
-  "player": {"harvest_interval":0.42,"harvest_energy_per_second":3.2,"repel_cost":8.0,"repel_range":88.0,"repel_cooldown":1.15,"repel_duration":3.5,"hive_rest_per_second":36.0,"crop_fuel_refill":30.0,"exhaustion_beat_seconds":1.1,"post_failure_energy":45.0},
+  "player": {"harvest_interval":0.42,"harvest_energy_per_second":3.2,"repel_cost":8.0,"repel_range":88.0,"repel_cooldown":1.15,"repel_duration":3.5,"hive_rest_per_second":36.0,"crop_fuel_refill":30.0,"exhaustion_beat_seconds":1.1,"post_failure_energy":45.0,"carry_capacity":8.0},
   "mosquito": {"sense_range":330.0,"move_speed":58.0,"impact_range":26.0,"energy_damage":8.0,"honey_damage":1},
   "ant": {"move_speed":58.0,"steal_range":29.0,"flee_seconds":1.4,"trail_arrive_range":14.0},
   "cricket": {"burst_speed":110.0,"burst_seconds":0.4,"rest_seconds":1.2,"impact_range":28.0,"energy_damage":10.0,"sense_range":220.0,"afterimage_life":0.5},
