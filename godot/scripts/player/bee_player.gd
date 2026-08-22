@@ -25,6 +25,8 @@ var speed_multiplier := 1.0
 var dash_cost_multiplier := 1.0
 var evade_time := 0.0
 var evade_cooldown := 0.0
+# 闪避无敌时长：由 main 从 balance.json player.evade_invuln_seconds 注入
+var evade_invuln := 0.18
 var invulnerable_time := 0.0
 var move_duration := 0.0
 
@@ -72,7 +74,7 @@ func try_evade() -> bool:
 	velocity = direction * 520.0
 	evade_time = 0.18
 	evade_cooldown = 1.6
-	invulnerable_time = 0.34
+	invulnerable_time = evade_invuln
 	has_target = false
 	return true
 
