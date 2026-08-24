@@ -79,6 +79,14 @@ func capture() -> void:
 			game.mentor_tutorial._start_lesson("defense")
 			game.mentor_tutorial.demo_time = game.mentor_tutorial.demo_duration * 0.42
 			game.mentor_tutorial._update_demo_position()
+		"mentor_evade":
+			game.tutorial_step = 5
+			game.tutorial_scent_revealed = true
+			game.bee.position = Vector2(500, 430)
+			game.spawn_tutorial_mosquito()
+			game.mentor_tutorial._start_lesson("evade")
+			game.mentor_tutorial.demo_time = game.mentor_tutorial.demo_duration * 0.28
+			game.mentor_tutorial._update_demo_position()
 		"relay_hive":
 			game.tutorial_complete = true
 			game.context_lessons_seen["sense"] = true
@@ -93,14 +101,45 @@ func capture() -> void:
 		"tutorial_attack":
 			game.tutorial_step = 5
 			game.tutorial_scent_revealed = true
+			game.mentor_tutorial.profile_id = "first_trip_pollination"
+			game.mentor_tutorial.lesson_id = "evade"
+			game.mentor_tutorial.phase = "imitate"
+			game.bee.active = true
 			game.spawn_tutorial_mosquito()
 			game.bee.position = Vector2(520, 410)
 			var attacker: Dictionary = game.mosquitoes[-1]
 			attacker.position = Vector2(760, 365)
-			attacker.attack_state = "aim"
-			attacker.attack_time = 0.9
+			attacker.attack_state = "locked"
+			attacker.attack_time = 0.48
 			attacker.aim_direction = (game.bee.position - Vector2(attacker.position)).normalized()
+			attacker.locked_origin = attacker.position
+			attacker.locked_target = game.bee.position
+			attacker.evade_sequence_at_lock = game.bee.evade_sequence
 			game.mosquitoes[-1] = attacker
+		"tutorial_evade_success":
+			game.tutorial_step = 5
+			game.tutorial_scent_revealed = true
+			game.mentor_tutorial.profile_id = "first_trip_pollination"
+			game.mentor_tutorial.lesson_id = "evade"
+			game.mentor_tutorial.phase = "practice"
+			game.bee.active = true
+			game.spawn_tutorial_mosquito()
+			var locked_target := Vector2(520, 410)
+			game.bee.position = locked_target + Vector2.UP * 60.0
+			var attacker: Dictionary = game.mosquitoes[-1]
+			attacker.position = locked_target - Vector2(90, 0)
+			attacker.velocity = Vector2.LEFT * 520.0
+			attacker.attack_state = "dash"
+			attacker.attack_time = 0.45
+			attacker.aim_direction = Vector2.LEFT
+			attacker.locked_origin = locked_target + Vector2.RIGHT * 240.0
+			attacker.locked_target = locked_target
+			attacker.evade_sequence_at_lock = game.bee.evade_sequence - 1
+			game.mosquitoes[-1] = attacker
+			game.evade_confirmation_time = 0.8
+			game.evade_confirmation_position = locked_target
+			game.evade_confirmation_direction = Vector2.LEFT
+			game.message = "急转 1 / 2：冲刺穿过残影；提示收起，再独立完成一次。"
 		"summer_raid":
 			game.tutorial_complete = true
 			game.context_lessons_seen["sense"] = true

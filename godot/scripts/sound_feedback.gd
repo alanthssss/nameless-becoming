@@ -42,6 +42,8 @@ func play_cue(cue: String) -> void:
 		"home": start_tone(330.0, 0.22, 0.14)
 		"repel": start_tone(190.0, 0.09, 0.13)
 		"evade": start_tone(410.0, 0.08, 0.10)
+		"attack_lock": start_tone(265.0, 0.06, 0.11)
+		"evade_clear": start_tone(760.0, 0.16, 0.13)
 		"sense": start_tone(470.0, 0.18, 0.08)
 		"decoy": start_tone(540.0, 0.16, 0.09)
 		"full": start_tone(175.0, 0.12, 0.13)

@@ -292,7 +292,7 @@ func _init() -> void:
 	if load("res://scripts/sound_feedback.gd") == null:
 		failures.append("程序化音效脚本无法加载")
 
-	for action in ["move_left", "move_right", "move_up", "move_down", "action", "return_hive"]:
+	for action in ["move_left", "move_right", "move_up", "move_down", "action", "return_hive", "drink_honey"]:
 		if not InputMap.has_action(action):
 			failures.append("缺少玩家动作映射 %s" % action)
 	for removed_action in ["harvest", "dash", "repel", "sense", "evade", "decoy", "sting"]:
@@ -303,6 +303,8 @@ func _init() -> void:
 			failures.append("WASD/方向键双映射缺失：%s" % movement_action)
 	if InputMap.action_get_events("action").size() < 2:
 		failures.append("动作键缺少 Space/Enter 双映射")
+	if bool(ProjectSettings.get_setting("input_devices/pointing/emulate_mouse_from_touch", true)):
+		failures.append("触摸已由主循环显式处理，不应再模拟鼠标把一次触摸误算成双击")
 
 	# 失律者战败必须可见、可重入：避免「XX完成 · 蜂巢成长」stale 文案重新浮上来。
 	# 范围检查：主脚本必须暴露 show_boss_loss，且 on_overlay_button 接受 boss_loss 相位。

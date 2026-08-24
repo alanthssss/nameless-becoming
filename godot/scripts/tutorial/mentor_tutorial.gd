@@ -93,11 +93,11 @@ func allows_action(action_id: String) -> bool:
 		"sortie":
 			return action_id in ["move", "harvest", "return"]
 		"sense":
-			return action_id in (["sense"] if phase == "imitate" else ["harvest", "return"])
+			return action_id in (["move", "sense"] if phase == "imitate" else ["move", "harvest", "return"])
 		"defense":
-			return action_id == "repel"
+			return action_id in ["move", "repel", "return", "drink"]
 		"evade":
-			return action_id in ["move", "evade"]
+			return action_id in ["move", "evade", "return", "drink"]
 		"pollination":
 			return action_id in ["move", "harvest", "seasonal", "return"]
 	return true
@@ -130,6 +130,8 @@ func prompt() -> Dictionary:
 	if phase == "practice":
 		return {"visible": false, "title": "", "body": ""}
 	var title := "先看老师傅" if phase == "demo" else "轮到你"
+	if lesson_id == "evade":
+		title = "先看急转" if phase == "demo" else "轮到你 · 同向 × 2"
 	var body := ""
 	match lesson_id:
 		"sortie":
@@ -139,7 +141,7 @@ func prompt() -> Dictionary:
 		"defense":
 			body = "它靠近占花者振翅，直到花与敌之间重新拉开距离。" if phase == "demo" else "把占花者真正推出资源区。"
 		"evade":
-			body = "等攻击线压近，再沿侧面急转；抢跑不会穿过攻击。" if phase == "demo" else "让冲刺线真正穿过急转留下的空隙。"
+			body = "虚线会跟随，亮起的实线才是锁定路线；老师傅向可行的一侧连飞两次。" if phase == "demo" else "实线停住后，沿一个亮色侧标同向连按两次（鼠标点同侧两次）；冲刺穿过旧位置才算成功。"
 		"pollination":
 			body = "先从花心带走散粉，再到同花型花心传粉。" if phase == "demo" else "让第一朵同花型花心开始结籽。"
 		"raid":
@@ -153,11 +155,19 @@ func prompt() -> Dictionary:
 func draw() -> void:
 	if phase != "demo" or main == null:
 		return
-	main.draw_dashed_line(demo_start, demo_target, Color(HONEY, 0.30), 2.0, 8.0)
+	if lesson_id != "evade":
+		main.draw_dashed_line(demo_start, demo_target, Color(HONEY, 0.30), 2.0, 8.0)
 	_draw_lesson_ghosts()
 	if main.colony_bee_texture == null:
 		return
-	var facing := (demo_target - mentor_position).angle()
+	var facing_vector := demo_target - mentor_position
+	if lesson_id == "evade":
+		var progress := 1.0 - clampf(demo_time / maxf(0.01, demo_duration), 0.0, 1.0)
+		var lock_target := demo_start.lerp(demo_target, 0.55)
+		facing_vector = Vector2.UP if progress >= 0.58 else lock_target - mentor_position
+		if facing_vector.length_squared() < 0.01:
+			facing_vector = Vector2.RIGHT
+	var facing := facing_vector.angle()
 	main.draw_set_transform(main.field_draw_offset + mentor_position, facing, Vector2(0.82, 0.82))
 	main.draw_texture_rect(main.colony_bee_texture, Rect2(-34, -24, 68, 48), false, Color("d6ddd7"))
 	# One indigo wing binding distinguishes the elder without introducing a hat,
@@ -294,9 +304,15 @@ func _update_demo_position() -> void:
 			mentor_position = demo_target + Vector2(0, sin(progress * 32.0) * 3.0)
 		else:
 			mentor_position = demo_target.lerp(demo_start, (progress - 0.68) / 0.32)
-	elif lesson_id == "evade" and progress > 0.58:
-		var approach := demo_start.lerp(demo_target, 0.55)
-		mentor_position = approach + Vector2(0, -95.0 * sin((progress - 0.58) / 0.42 * PI))
+	elif lesson_id == "evade":
+		var lock_target := demo_start.lerp(demo_target, 0.55)
+		if progress < 0.45:
+			mentor_position = demo_start.lerp(lock_target, progress / 0.45)
+		elif progress < 0.58:
+			mentor_position = lock_target
+		else:
+			var sidestep := clampf((progress - 0.58) / 0.20, 0.0, 1.0)
+			mentor_position = lock_target + Vector2(0, -95.0 * sidestep)
 	else:
 		var travel := clampf(progress / 0.70, 0.0, 1.0)
 		mentor_position = demo_start.lerp(demo_target, travel)
@@ -421,8 +437,26 @@ func _draw_lesson_ghosts() -> void:
 				var angle := float(ray) * TAU / 4.0
 				main.draw_line(ghost + Vector2.from_angle(angle) * 17.0, ghost + Vector2.from_angle(angle) * 30.0, Color(HONEY, 0.62), 3.0)
 		"evade":
-			main.draw_line(demo_target + Vector2(70, 0), demo_start - Vector2(25, 0), Color("d95d54", 0.58), 4.0)
-			main.draw_circle(mentor_position - Vector2(18, 0), 9.0, Color(INDIGO, 0.18))
+			var lock_target := demo_start.lerp(demo_target, 0.55)
+			var attack_origin := lock_target + Vector2(190, 0)
+			var attack_direction := Vector2.LEFT
+			if progress < 0.45:
+				var tracking_direction := (mentor_position - attack_origin).normalized()
+				main.draw_dashed_line(attack_origin, attack_origin + tracking_direction * 430.0, Color("d95d54", 0.42), 3.0, 12.0)
+			else:
+				main.draw_committed_attack_corridor(attack_origin, attack_direction, lock_target, 36.0, 0.72, progress < 0.76)
+			var attacker := attack_origin
+			if progress > 0.58:
+				var dash_progress := clampf((progress - 0.58) / 0.34, 0.0, 1.0)
+				attacker = attack_origin.lerp(lock_target - Vector2(110, 0), dash_progress)
+				main.draw_line(attacker + Vector2(65, 0), attacker, Color(HONEY, 0.78), 6.0)
+			if main.spring_mosquito_texture != null:
+				main.draw_set_transform(main.field_draw_offset + attacker, attack_direction.angle())
+				main.draw_texture_rect(main.spring_mosquito_texture, Rect2(-34, -24, 68, 48), false, Color.WHITE)
+				main.draw_set_transform(main.field_draw_offset)
+			else:
+				main.draw_circle(attacker, 12.0, Color("d95d54", 0.90))
+			main.draw_circle(lock_target, 11.0, Color(INDIGO, 0.18))
 		"seed":
 			var pod := demo_target + Vector2(0, -24)
 			main.draw_colored_polygon(PackedVector2Array([

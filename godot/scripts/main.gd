@@ -108,7 +108,15 @@ var action_hold_time := 0.0
 var action_decoy_fired := false
 var action_was_harvesting := false
 var last_dir_tap := {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
-const DOUBLE_TAP_WINDOW := 0.25
+var last_dir_tap_origin := {"left": Vector2.ZERO, "right": Vector2.ZERO, "up": Vector2.ZERO, "down": Vector2.ZERO}
+var last_world_tap_time := 0.0
+var last_world_tap_direction := Vector2.ZERO
+var last_world_tap_position := Vector2.ZERO
+var last_world_tap_origin := Vector2.ZERO
+const DOUBLE_TAP_WINDOW := 0.34
+const EVADE_PATH_CLEARANCE := 36.0
+const EVADE_LOCK_ORIGIN_TOLERANCE := 52.0
+const WORLD_TAP_REPEAT_RADIUS := 56.0
 const DECOY_HOLD_THRESHOLD := 0.5
 const HIVE_RETURN_POS := Vector2(150, 410)
 var rng := RandomNumberGenerator.new()
@@ -210,6 +218,9 @@ var tutorial_charge_state := "idle"
 var tutorial_charge_time := 0.0
 var tutorial_charge_direction := Vector2.LEFT
 var tutorial_failed_crossings := 0
+var evade_confirmation_time := 0.0
+var evade_confirmation_position := Vector2.ZERO
+var evade_confirmation_direction := Vector2.LEFT
 var context_lesson_id := ""
 var context_lesson_time := 0.0
 var context_lessons_seen := {"sense": false, "danger": false, "low_energy": false}
@@ -767,6 +778,8 @@ func spawn_stage(index: int) -> void:
 	bears.clear()
 	phantom_flowers.clear()
 	field_afterimages.clear()
+	evade_confirmation_time = 0.0
+	_clear_evade_tap_buffers()
 	decoys.clear()
 	tuning_blooms.clear()
 	pollen.clear()
@@ -992,6 +1005,7 @@ func _process(delta: float) -> void:
 	context_lesson_time = maxf(0.0, context_lesson_time - delta)
 	hive_flash_time = maxf(0.0, hive_flash_time - delta)
 	hive_activity_time = maxf(0.0, hive_activity_time - delta)
+	evade_confirmation_time = maxf(0.0, evade_confirmation_time - delta)
 	if phase == "playing":
 		run_elapsed += delta
 		update_game(delta)
@@ -1333,17 +1347,129 @@ func _check_double_tap_evade(_delta: float) -> void:
 		"up": "move_up",
 		"down": "move_down"
 	}
+	var pressed_directions: Array[String] = []
 	for dir_key in directions:
-		if Input.is_action_just_pressed(directions[dir_key]):
-			if now - last_dir_tap[dir_key] < DOUBLE_TAP_WINDOW:
-				if bee.try_evade():
-					on_evade_succeeded()
-			last_dir_tap[dir_key] = now
+		if Input.is_action_just_pressed(String(directions[dir_key])):
+			pressed_directions.append(String(dir_key))
+	_process_evade_pressed_directions(pressed_directions, now)
 
-func on_evade_succeeded() -> void:
+func _active_evade_attack_direction() -> Vector2:
+	if tutorial_step == 5:
+		for mosquito in mosquitoes:
+			if bool(mosquito.get("tutorial", false)) and String(mosquito.get("attack_state", "")) in ["locked", "dash"]:
+				return Vector2(mosquito.get("aim_direction", Vector2.ZERO)).normalized()
+	if phase == "boss" and String(current_boss_data.get("move_pattern", "")) == "charge" and String(boss.get("charge_state", "")) in ["aim", "dash"]:
+		return Vector2(boss.get("aim_direction", Vector2.ZERO)).normalized()
+	return Vector2.ZERO
+
+func _process_evade_pressed_directions(pressed_directions: Array[String], now: float, attack_direction_override := Vector2.ZERO) -> bool:
+	var vectors := {
+		"left": Vector2.LEFT,
+		"right": Vector2.RIGHT,
+		"up": Vector2.UP,
+		"down": Vector2.DOWN
+	}
+	var directions_to_process: Array[String] = pressed_directions.duplicate()
+	var attack_direction: Vector2 = attack_direction_override.normalized() if attack_direction_override.length_squared() > 0.01 else _active_evade_attack_direction()
+	if directions_to_process.size() > 1 and attack_direction.length_squared() > 0.01:
+		var best_key := ""
+		var best_score := INF
+		for candidate_key in directions_to_process:
+			if not vectors.has(candidate_key):
+				continue
+			var candidate := Vector2(vectors[candidate_key])
+			var score := absf(candidate.dot(attack_direction))
+			if score < best_score:
+				best_score = score
+				best_key = candidate_key
+		if not best_key.is_empty():
+			directions_to_process.clear()
+			directions_to_process.append(best_key)
+	for direction_key in directions_to_process:
+		if not vectors.has(direction_key):
+			continue
+		if _register_direction_tap(direction_key, Vector2(vectors[direction_key]), now):
+			# A diagonal key chord can report two just-pressed directions in the
+			# same frame. Once one evade starts, do not let the second direction
+			# overwrite success with a cooldown error or become a stale first tap.
+			_clear_evade_tap_buffers()
+			return true
+	return false
+
+func _register_direction_tap(direction_key: String, direction: Vector2, now: float) -> bool:
+	var previous_tap := float(last_dir_tap.get(direction_key, 0.0))
+	if previous_tap > 0.0 and now - previous_tap <= DOUBLE_TAP_WINDOW:
+		last_dir_tap[direction_key] = 0.0
+		var attempt_origin := Vector2(last_dir_tap_origin.get(direction_key, bee.position))
+		if _try_start_evade(direction, attempt_origin):
+			return true
+		# A failed second tap is a complete attempt, not the first half of a
+		# hidden third-tap shortcut after cooldown or recovery.
+		bee.clear_evade_first_tap()
+		return false
+	last_dir_tap[direction_key] = now
+	last_dir_tap_origin[direction_key] = bee.position
+	bee.show_evade_first_tap(direction, DOUBLE_TAP_WINDOW)
+	return false
+
+func _clear_evade_tap_buffers() -> void:
+	last_dir_tap = {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
+	last_dir_tap_origin = {"left": Vector2.ZERO, "right": Vector2.ZERO, "up": Vector2.ZERO, "down": Vector2.ZERO}
+	last_world_tap_time = 0.0
+	last_world_tap_direction = Vector2.ZERO
+	last_world_tap_position = Vector2.ZERO
+	last_world_tap_origin = Vector2.ZERO
+	bee.clear_evade_first_tap()
+
+func _try_start_evade(direction: Vector2, attempt_origin = null) -> bool:
+	if not mentor_tutorial.allows_action("evade"):
+		return false
+	if bee.try_evade(direction, attempt_origin):
+		on_evade_started()
+		return true
+	if bee.evade_cooldown > 0.0:
+		message = "翅膀还没收稳；急转尚未恢复。"
+	elif bee.energy < 12.0:
+		message = "体力不足；急转需要 12 点体力。"
+	return false
+
+# This callback confirms the movement input only. A real dodge is confirmed
+# separately when a committed attack crosses the position it had locked.
+func on_evade_started() -> void:
 	show_energy_change(-12.0)
 	sound.play_cue("evade")
-	message = "急转掠过攻击线。"
+	message = "急转已发动；是否躲开，要看冲刺有没有穿过旧位置。" if tutorial_step == 5 else "急转。"
+
+func _attack_crossed_locked_target(previous: Vector2, current: Vector2, locked_target: Vector2, radius: float) -> bool:
+	var closest := Geometry2D.get_closest_point_to_segment(locked_target, previous, current)
+	return closest.distance_to(locked_target) <= radius
+
+func _evade_cleared_locked_path(attack_direction: Vector2, locked_target: Vector2, sequence_at_lock: int, clearance := EVADE_PATH_CLEARANCE) -> bool:
+	if bee.evade_sequence <= sequence_at_lock:
+		return false
+	var normalized_attack := attack_direction.normalized()
+	if normalized_attack.length_squared() < 0.01:
+		return false
+	# Cardinal input must be substantially sideways to the committed route. The
+	# 0.76 threshold still accepts the best cardinal choice against a diagonal.
+	if absf(bee.last_evade_direction.normalized().dot(normalized_attack)) > 0.76:
+		return false
+	var evade_origin_offset := bee.last_evade_origin - locked_target
+	# The evade must begin at the position/corridor that was actually locked.
+	# Otherwise flying away normally and performing an unrelated evade elsewhere
+	# could be credited when the enemy later crosses the old target.
+	if evade_origin_offset.length() > maxf(EVADE_LOCK_ORIGIN_TOLERANCE, clearance + 16.0):
+		return false
+	if absf(evade_origin_offset.cross(normalized_attack)) >= clearance:
+		return false
+	var sideways_distance := absf((bee.position - locked_target).cross(normalized_attack))
+	return sideways_distance >= clearance
+
+func _show_evade_confirmation(locked_target: Vector2, attack_direction: Vector2) -> void:
+	evade_confirmation_time = 0.8
+	evade_confirmation_position = locked_target
+	evade_confirmation_direction = attack_direction.normalized()
+	sound.play_cue("evade_clear")
 
 func update_mosquitoes(delta: float) -> void:
 	# 蜜香招敌：携带的蜜越多，蚊虫嗅觉半径越大——满载在蚁蚊眼里是显眼的
@@ -1424,7 +1550,7 @@ func _update_tutorial_mosquito(mosquito: Dictionary, delta: float) -> Dictionary
 			tutorial_step = 5
 			context_lessons_seen["danger"] = true
 			tutorial_charge_state = "aim"
-			tutorial_charge_time = 1.0
+			tutorial_charge_time = 0.72
 			position = Vector2(
 				clampf(bee.position.x + 190.0, HIVE_SAFE_X + 80.0, WORLD.end.x - 35.0),
 				clampf(bee.position.y - 36.0, WORLD.position.y + 40.0, WORLD.end.y - 40.0)
@@ -1432,7 +1558,7 @@ func _update_tutorial_mosquito(mosquito: Dictionary, delta: float) -> Dictionary
 			tutorial_charge_direction = (bee.position - position).normalized()
 			mosquito.attack_state = "aim"
 			mosquito.attack_time = tutorial_charge_time
-			message = "它折返了；等攻击线压来时急转。"
+			message = "红色虚线正在跟随；等它变亮、停住，再向线外急转。"
 	elif tutorial_step == 5:
 		var attack_state := String(mosquito.get("attack_state", "aim"))
 		var attack_time := float(mosquito.get("attack_time", 0.0)) - delta
@@ -1442,37 +1568,57 @@ func _update_tutorial_mosquito(mosquito: Dictionary, delta: float) -> Dictionary
 				tutorial_charge_direction = (bee.position - position).normalized()
 				mosquito.aim_direction = tutorial_charge_direction
 				if attack_time <= 0.0:
+					mosquito.attack_state = "locked"
+					mosquito.attack_time = 0.48
+					_clear_evade_tap_buffers()
+					mosquito.locked_origin = position
+					mosquito.locked_target = bee.position
+					mosquito.evade_sequence_at_lock = bee.evade_sequence
+					tutorial_charge_state = "locked"
+					sound.play_cue("attack_lock")
+					message = "路线锁定：沿亮色侧标，同一方向连按两次。"
+			"locked":
+				mosquito.velocity = Vector2.ZERO
+				if attack_time <= 0.0:
 					mosquito.attack_state = "dash"
 					mosquito.attack_time = 0.85
-					mosquito.velocity = tutorial_charge_direction * 520.0
+					mosquito.velocity = Vector2(mosquito.get("aim_direction", tutorial_charge_direction)).normalized() * 520.0
+					tutorial_charge_state = "dash"
 			"dash":
 				var previous := position
 				position += Vector2(mosquito.velocity) * delta
-				var closest := Geometry2D.get_closest_point_to_segment(bee.position, previous, position)
-				if closest.distance_to(bee.position) < 29.0:
-					if bee.invulnerable_time > 0.0:
+				var locked_target := Vector2(mosquito.get("locked_target", bee.position))
+				var attack_direction := Vector2(mosquito.get("aim_direction", tutorial_charge_direction)).normalized()
+				var sequence_at_lock := int(mosquito.get("evade_sequence_at_lock", bee.evade_sequence))
+				if _attack_crossed_locked_target(previous, position, locked_target, 29.0):
+					if _evade_cleared_locked_path(attack_direction, locked_target, sequence_at_lock):
+						_show_evade_confirmation(locked_target, attack_direction)
 						var mentor_result := mentor_tutorial.notify_event("attack_evaded")
 						if mentor_result == "repeat_without_prompt":
 							mosquito.attack_state = "recover"
-							mosquito.attack_time = 0.65
+							mosquito.attack_time = 0.72
 							mosquito.velocity = Vector2.ZERO
-							message = "这次躲开了。提示收起；再独立穿过一次。"
+							message = "急转 1 / 2：冲刺穿过残影；提示收起，再独立完成一次。"
 						else:
 							if mentor_result == "ignored":
 								_complete_contextual_tutorial()
 							mosquito.attack_state = "flee"
 							mosquito.attack_time = 2.0
 							mosquito.velocity = Vector2.RIGHT * 280.0
+							message = "急转 2 / 2：冲刺穿过旧位置；已经学会。"
 					else:
 						tutorial_failed_crossings += 1
 						mosquito.attack_state = "recover"
-						mosquito.attack_time = 0.55
+						mosquito.attack_time = 0.72
 						shake = 4.0
 						flash = 0.22
-						message = "攻击线擦过了翅尖；它会再来一次。"
+						if bee.evade_sequence <= sequence_at_lock:
+							message = "冲刺穿过旧位置；要在实线锁定后再连按两次。"
+						else:
+							message = "急转没有离开红色通道；下一次沿亮色侧标连按。"
 				elif attack_time <= 0.0 or not WORLD.grow(70.0).has_point(position):
 					mosquito.attack_state = "recover"
-					mosquito.attack_time = 0.45
+					mosquito.attack_time = 0.72
 			"recover":
 				mosquito.velocity = Vector2.ZERO
 				if attack_time <= 0.0:
@@ -1481,8 +1627,10 @@ func _update_tutorial_mosquito(mosquito: Dictionary, delta: float) -> Dictionary
 						clampf(bee.position.y - 36.0, WORLD.position.y + 40.0, WORLD.end.y - 40.0)
 					)
 					mosquito.attack_state = "aim"
-					mosquito.attack_time = 0.9
+					mosquito.attack_time = 0.72
 					mosquito.aim_direction = (bee.position - position).normalized()
+					tutorial_charge_state = "aim"
+					message = "虚线重新跟随；等它变成实线。"
 			"flee":
 				position += Vector2(mosquito.velocity) * delta
 		if String(mosquito.get("attack_state", "")) == attack_state:
@@ -1984,6 +2132,8 @@ func start_boss() -> void:
 	bears.clear()
 	phantom_flowers.clear()
 	field_afterimages.clear()
+	evade_confirmation_time = 0.0
+	_clear_evade_tap_buffers()
 	pollen.clear()
 	decoys.clear()
 	boss_afterimages.clear()
@@ -2001,6 +2151,9 @@ func start_boss() -> void:
 		"charge_state": "wander",
 		"state_time": 0.0,
 		"aim_direction": Vector2.RIGHT,
+		"locked_origin": Vector2.ZERO,
+		"locked_target": Vector2.ZERO,
+		"evade_sequence_at_lock": 0,
 		"feed_clock": 1.4,
 		"landing_clock": 1.2,
 		"illusion_clock": 1.0,
@@ -2115,7 +2268,11 @@ func update_boss(delta: float) -> void:
 						if to_bee.length() < 320.0:
 							boss.charge_state = "aim"
 							boss.state_time = 0.9 / speed_multiplier
+							_clear_evade_tap_buffers()
 							boss.aim_direction = to_bee.normalized()
+							boss.locked_origin = previous_position
+							boss.locked_target = bee.position
+							boss.evade_sequence_at_lock = bee.evade_sequence
 							boss.evade_armed = false
 					"aim":
 						boss.state_time = float(boss.state_time) - delta
@@ -2141,6 +2298,17 @@ func update_boss(delta: float) -> void:
 	boss.position.y = clampf(boss.position.y, WORLD.position.y + 28, WORLD.end.y - 28)
 	var boss_position := Vector2(boss.position)
 
+	if pattern == "charge" and String(boss.charge_state) == "dash" and not bool(boss.evade_armed):
+		if _evade_cleared_locked_path(
+			Vector2(boss.get("aim_direction", Vector2.RIGHT)),
+			Vector2(boss.get("locked_target", bee.position)),
+			int(boss.get("evade_sequence_at_lock", bee.evade_sequence)),
+			float(data.impact_range)
+		):
+			boss.evade_armed = true
+			_show_evade_confirmation(Vector2(boss.locked_target), Vector2(boss.aim_direction))
+			message = "急转离开了锁定路线；现在让冲锋撞向暖花。"
+
 	if pattern == "charge" and String(boss.charge_state) == "dash" and bool(boss.evade_armed):
 		for bloom_position in tuning_blooms:
 			if boss_position.distance_to(bloom_position) < 52.0:
@@ -2158,12 +2326,7 @@ func update_boss(delta: float) -> void:
 			boss_afterimages.remove_at(i)
 
 	var closest_on_attack := Geometry2D.get_closest_point_to_segment(bee.position, previous_position, boss_position)
-	if closest_on_attack.distance_to(bee.position) < float(data.impact_range) and bee.invulnerable_time > 0.0:
-		if pattern == "charge" and String(boss.charge_state) == "dash":
-			# The dodge only counts when the moving charge segment actually crosses
-			# the bee during invulnerability; pressing evade elsewhere is not evidence.
-			boss.evade_armed = true
-	elif closest_on_attack.distance_to(bee.position) < float(data.impact_range) and boss.hit_cooldown <= 0.0:
+	if closest_on_attack.distance_to(bee.position) < float(data.impact_range) and bee.invulnerable_time <= 0.0 and boss.hit_cooldown <= 0.0:
 		boss.hit_cooldown = 1.0
 		bee.energy = maxf(0.0, bee.energy - float(data.energy_damage))
 		show_energy_change(-float(data.energy_damage))
@@ -2247,7 +2410,7 @@ func _boss_exposure_hint(pattern: String) -> String:
 		"lure":
 			return "先停稳寻迹，真声只会露出片刻。"
 		"charge":
-			return "站到暖花后方；冲锋压来时急转。"
+			return "把暖花留在冲锋路上；红线锁定后向线外连按两次。"
 	return "观察动作，等破绽出现。"
 
 func _update_boss_hive_rest() -> void:
@@ -2650,6 +2813,39 @@ func update_interface() -> void:
 	if production_hud != null:
 		production_hud.update_state(self)
 
+func _handle_world_tap(world_position: Vector2) -> bool:
+	if not WORLD.has_point(world_position):
+		return false
+	if not mentor_tutorial.allows_action("move"):
+		return true
+	if not mentor_tutorial.allows_action("evade"):
+		bee.set_move_target(world_position)
+		return true
+	var now := Time.get_ticks_msec() / 1000.0
+	if last_world_tap_time > 0.0 and now - last_world_tap_time > DOUBLE_TAP_WINDOW:
+		_clear_evade_tap_buffers()
+	var direction := (world_position - bee.position).normalized()
+	var repeats_position := last_world_tap_position.distance_to(world_position) <= WORLD_TAP_REPEAT_RADIUS
+	var repeats_direction := direction.length_squared() > 0.01 and last_world_tap_direction.length_squared() > 0.01 and last_world_tap_direction.dot(direction) >= 0.86
+	if last_world_tap_time > 0.0 and (repeats_position or repeats_direction):
+		# Use the first click's direction. The first click starts ordinary movement,
+		# so recomputing from the moved bee can turn an identical second click into
+		# a zero or reversed vector just when the player follows the visible marker.
+		var committed_direction := last_world_tap_direction
+		if committed_direction.length_squared() > 0.01:
+			_try_start_evade(committed_direction, last_world_tap_origin)
+		_clear_evade_tap_buffers()
+		return true
+	if direction.length_squared() < 0.01:
+		return false
+	last_world_tap_time = now
+	last_world_tap_direction = direction
+	last_world_tap_position = world_position
+	last_world_tap_origin = bee.position
+	bee.show_evade_first_tap(direction, DOUBLE_TAP_WINDOW)
+	bee.set_move_target(world_position)
+	return true
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		# overlay 阶段 Esc 路由：
@@ -2673,8 +2869,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if phase != "playing" and phase != "boss":
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		if WORLD.has_point(event.position):
-			bee.set_move_target(event.position)
+		if _handle_world_tap(event.position):
+			get_viewport().set_input_as_handled()
+	elif event is InputEventScreenTouch and event.pressed:
+		if _handle_world_tap(event.position):
+			get_viewport().set_input_as_handled()
 
 # 切走程序时自动暂停（体力照扣、失律者照追是设计事故）；
 # 切回来时把焦点交还主按钮，键盘 Enter 可直接继续。
@@ -2916,7 +3115,8 @@ func _update_mentor_guidance() -> void:
 	var contextual_action := relay_hive.context_action_id(bee.position, carried)
 	if contextual_action.is_empty() and season_mechanics.has_method("context_action_id"):
 		contextual_action = String(season_mechanics.context_action_id(bee.position))
-	return_button.visible = carried > 0 and mentor_tutorial.allows_action("return")
+	var recovery_return_needed: bool = mentor_tutorial.lesson_id in ["defense", "evade"] and bee.energy < 24.0
+	return_button.visible = mentor_tutorial.allows_action("return") and (carried > 0 or recovery_return_needed)
 	sense_button.visible = false
 	context_hint_label.text = ""
 	if mentor_tutorial.lesson_id == "sense" and mentor_tutorial.phase == "imitate":
@@ -3198,6 +3398,7 @@ func _draw() -> void:
 		draw_ant_trail(ant)
 	for mosquito in mosquitoes:
 		draw_mosquito(mosquito)
+	draw_evade_confirmation()
 	for ant in ants:
 		draw_ant(ant)
 	for afterimage in field_afterimages:
@@ -3334,17 +3535,98 @@ func seasonal_flower_texture(set_id: String, second_variant: bool) -> Texture2D:
 		return pair[1 if second_variant else 0] as Texture2D
 	return FLOWER_HIGH_VALUE_TEXTURE if second_variant else FLOWER_COMMON_TEXTURE
 
+func draw_evade_side_arrows(target: Vector2, attack_direction: Vector2, alpha := 1.0) -> void:
+	var normalized_attack := attack_direction.normalized()
+	var side := normalized_attack.orthogonal()
+	if side.length_squared() < 0.01:
+		return
+	var bee_center_bounds := WORLD.grow(-18.0)
+	var cardinal_directions := [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
+	for side_sign in [-1.0, 1.0]:
+		var outward: Vector2 = side * float(side_sign)
+		var shown_direction := Vector2.ZERO
+		var best_alignment := -INF
+		for candidate in cardinal_directions:
+			var cardinal := Vector2(candidate)
+			var alignment := cardinal.dot(outward)
+			if alignment <= best_alignment or absf(cardinal.dot(normalized_attack)) > 0.76:
+				continue
+			if not bee_center_bounds.has_point(target + cardinal * (EVADE_PATH_CLEARANCE + 1.0)):
+				continue
+			shown_direction = cardinal
+			best_alignment = alignment
+		# Side markers snap to a valid single WASD axis. A slightly diagonal line
+		# should never visually invite a chord that the evade detector cannot repeat.
+		if shown_direction.length_squared() < 0.01:
+			continue
+		for tap_index in 2:
+			var tip: Vector2 = target + shown_direction * (42.0 + float(tap_index) * 15.0)
+			var wing: Vector2 = shown_direction.orthogonal() * 6.0
+			draw_line(tip - shown_direction * 11.0 + wing, tip, Color("f4d36f", alpha), 3.0)
+			draw_line(tip - shown_direction * 11.0 - wing, tip, Color("f4d36f", alpha), 3.0)
+
+func draw_committed_attack_corridor(origin: Vector2, attack_direction: Vector2, target: Vector2, half_width: float, alpha := 1.0, show_arrows := true) -> void:
+	var aim := attack_direction.normalized()
+	if aim.length_squared() < 0.01:
+		return
+	var side := aim.orthogonal()
+	var reach := 1100.0
+	if absf(aim.x) > 0.001:
+		var x_edge := WORLD.end.x if aim.x > 0.0 else WORLD.position.x
+		reach = minf(reach, (x_edge - origin.x) / aim.x)
+	if absf(aim.y) > 0.001:
+		var y_edge := WORLD.end.y if aim.y > 0.0 else WORLD.position.y
+		reach = minf(reach, (y_edge - origin.y) / aim.y)
+	reach = maxf(0.0, reach)
+	var start := origin - aim * 24.0
+	start = Vector2(clampf(start.x, WORLD.position.x, WORLD.end.x), clampf(start.y, WORLD.position.y, WORLD.end.y))
+	var finish := origin + aim * reach
+	draw_colored_polygon(PackedVector2Array([
+		start + side * half_width,
+		finish + side * half_width,
+		finish - side * half_width,
+		start - side * half_width
+	]), Color("d95d54", 0.11 * alpha))
+	draw_line(start + side * half_width, finish + side * half_width, Color("d95d54", 0.44 * alpha), 2.0)
+	draw_line(start - side * half_width, finish - side * half_width, Color("d95d54", 0.44 * alpha), 2.0)
+	draw_line(start, finish, Color("f06b60", 0.70 * alpha), 3.0)
+	if show_arrows:
+		draw_evade_side_arrows(target, aim, alpha)
+
+func draw_evade_confirmation() -> void:
+	if evade_confirmation_time <= 0.0:
+		return
+	var ratio := clampf(evade_confirmation_time / 0.8, 0.0, 1.0)
+	var radius := 20.0 + (1.0 - ratio) * 34.0
+	draw_arc(evade_confirmation_position, radius, 0.0, TAU, 32, Color("f4d36f", ratio * 0.85), 4.0)
+	if colony_bee_texture != null:
+		draw_set_transform(field_draw_offset + evade_confirmation_position, evade_confirmation_direction.angle(), Vector2(0.72, 0.72))
+		draw_texture_rect(colony_bee_texture, Rect2(-34, -24, 68, 48), false, Color(0.88, 0.92, 1.0, ratio * 0.30))
+		draw_set_transform(field_draw_offset)
+
 func draw_mosquito(mosquito: Dictionary) -> void:
 	var pos: Vector2 = mosquito.position
 	var repelled := float(mosquito.repel_time) > 0.0
+	var mentor_demonstrating_evade: bool = mentor_tutorial.lesson_id == "evade" and mentor_tutorial.phase == "demo"
+	if bool(mosquito.get("tutorial", false)) and mentor_demonstrating_evade:
+		# The mentor demo draws one authored attacker on the demonstration route.
+		# Hiding the live tutorial mosquito avoids showing two conflicting threats.
+		return
 	if bool(mosquito.get("tutorial", false)):
 		var attack_state := String(mosquito.get("attack_state", ""))
+		var aim := Vector2(mosquito.get("aim_direction", Vector2.LEFT)).normalized()
 		if attack_state == "aim":
-			var aim := Vector2(mosquito.get("aim_direction", Vector2.LEFT)).normalized()
-			draw_line(pos - aim * 28.0, pos + aim * 820.0, Color("d95d54", 0.42 + sin(elapsed * 14.0) * 0.12), 4.0)
+			draw_dashed_line(pos - aim * 28.0, pos + aim * 820.0, Color("d95d54", 0.34 + sin(elapsed * 10.0) * 0.08), 3.0, 12.0)
 			draw_circle(pos, 18.0 + sin(elapsed * 14.0) * 3.0, Color("d95d54", 0.16))
+		elif attack_state == "locked":
+			var locked_origin := Vector2(mosquito.get("locked_origin", pos))
+			var locked_target := Vector2(mosquito.get("locked_target", bee.position))
+			draw_committed_attack_corridor(locked_origin, aim, locked_target, EVADE_PATH_CLEARANCE, 0.88 + sin(elapsed * 18.0) * 0.12)
 		elif attack_state == "dash":
-			draw_line(pos - Vector2(mosquito.velocity).normalized() * 90.0, pos, Color("f4d994", 0.65), 5.0)
+			var locked_origin := Vector2(mosquito.get("locked_origin", pos))
+			var locked_target := Vector2(mosquito.get("locked_target", bee.position))
+			draw_committed_attack_corridor(locked_origin, aim, locked_target, EVADE_PATH_CLEARANCE, 0.55, false)
+			draw_line(pos - aim * 90.0, pos, Color("f4d994", 0.88), 7.0)
 	if world_art_ready():
 		var velocity := Vector2(mosquito.get("velocity", Vector2.ZERO))
 		var angle := velocity.angle() if velocity.length_squared() > 0.01 else 0.0
@@ -3554,9 +3836,13 @@ func draw_boss(state: Dictionary) -> void:
 		"charge":
 			# 熊：大圆身 + 双耳 + 口鼻；蓄势时画出冲撞预告线，晕眩时头顶提示
 			var charge_state := String(state.get("charge_state", "wander"))
-			if charge_state == "aim":
+			if charge_state in ["aim", "dash"]:
 				var aim: Vector2 = state.get("aim_direction", Vector2.RIGHT)
-				draw_line(pos, pos + aim * 340.0, Color("e05a4a", 0.55), 4)
+				var locked_origin := Vector2(state.get("locked_origin", pos))
+				var locked_target := Vector2(state.get("locked_target", bee.position))
+				draw_committed_attack_corridor(locked_origin, aim, locked_target, float(data.impact_range), 0.72 if charge_state == "aim" else 0.42, charge_state == "aim")
+				if charge_state == "dash":
+					draw_line(pos - aim.normalized() * 110.0, pos, Color("f4d994", 0.75), 8.0)
 			draw_circle(pos + Vector2(-radius * 0.55, -radius * 0.6), radius * 0.32, body)
 			draw_circle(pos + Vector2(radius * 0.55, -radius * 0.6), radius * 0.32, body)
 			draw_circle(pos, radius, body)

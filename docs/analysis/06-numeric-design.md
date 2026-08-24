@@ -27,7 +27,7 @@
 | 采蜜间隔 harvest_interval | 0.42 s/滴 | balance.json | 一滴蜜约 0.4s 站桩，配合敌袭构成"采蜜被打断"的风险窗口 |
 | 采蜜耗能 harvest_energy_per_second | 3.2 /s | balance.json | 采蜜比飞行贵（基础 drain 1.25~2.3），悬停采蜜是最危险的状态 |
 | 惊退 repel | 耗 8 体力，范围 88px，冷却 1.15s，持续 1.8s | balance.json | 防身技但有代价；冷却防止无脑清场（批次2 落地：持续 3.5→1.8s，威胁回归更快） |
-| 闪避 evade | 双击方向触发，耗 12 体力，冲刺 520px/s，无敌 0.18s（`player.evade_invuln_seconds`），冷却 1.6s | bee_player.gd + balance.json | 高级防御：操作换生存（批次2 落地：无敌 0.34→0.18s，闪避时机要求更准） |
+| 急转 evade | 锁线后同方向 0.34s 内连按两次，记录第一次输入位置并沿该方向以 520px/s 侧掠 0.18s；耗 12 体力，无伤 0.18s（`player.evade_invuln_seconds`），冷却 1.6s | main.gd + bee_player.gd + balance.json | 锁线攻击的空间解法：从锁定位置附近开始、离开危险通道；无伤时间仅保护动作过渡，不再充当教学成功证据 |
 | 受击无敌间隔 hit_cooldown | 0.9s（被击中后的短无敌窗） | balance.json | 批次2 落地：1.05→0.9s + 移出硬编码，连击威胁更高 |
 | 蚊虫嗅觉 sense_range + sense_per_carry | 330px + 每滴携带蜜 +12px（满载 8 滴 = 426px） | balance.json | 蜜香招敌（批次2 落地）：满载显眼，"再采一朵"的代价从体力扩展到暴露 |
 | 力竭进度惩罚 exhaustion_delivered_penalty | 已入库进度回退 2 滴（以返蜜花回到花田，守恒不破） | balance.json | 批次2 落地：力竭不只扣命，本关进度也受损——归巢止损更有分量 |
@@ -139,7 +139,7 @@ nectar_val = max(2, roundi(base_nectar * nectar_scale)) + extra_nectar
 |---|---|---|
 | WASD/方向 | 飞行（加速/惯性/制动模型） | 215 / 冲刺 360 / 闪避 520 |
 | 持续移动 >0.35s | 自动冲刺（多耗能） | 额外 9.5/s |
-| 双击方向 | 闪避（无敌帧） | 耗 12、无敌 0.34s、冷却 1.6s |
+| 同方向 0.34s 内连按两次 | 急转（沿输入方向侧掠） | 耗 12、无伤 0.18s、冷却 1.6s |
 | 空格/回车（情境） | 近敌→惊退；静止→摇摆舞寻迹；近花→按住采蜜 | 优先级：惊退 > 寻迹 |
 | 按住不放（近敌） | 投蜜诱饵（decoy） | 耗 1 滴蜜，蚊改追诱饵 |
 | Q | 归巢路线锁定（自动飞回） | 归巢是显式决策 |
@@ -173,7 +173,7 @@ nectar_val = max(2, roundi(base_nectar * nectar_scale)) + extra_nectar
 
 **通道 3 · 音效（程序化生成，sound_feedback.gd，ADR-002）**
 
-cue 清单：harvest / full / repel / evade / hurt / home / drink / loss / upgrade / tune / win / decoy。
+cue 清单：harvest / full / repel / evade / attack_lock / evade_clear / hurt / home / drink / loss / upgrade / tune / win / decoy。`evade` 只确认动作发动，`attack_lock` 确认路线提交，`evade_clear` 才确认敌害穿过旧位置且蜜蜂离线。
 背景音乐按四季换根音（A/B/G/E）、五声音阶（PENTATONIC）、五段式结构——**音乐是季节状态的 ambient 反馈**，不是装饰。
 
 **通道 4 · 状态常显（HUD）**

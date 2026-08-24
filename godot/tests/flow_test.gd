@@ -113,21 +113,59 @@ func run_test() -> void:
 		if game.tutorial_step == 5:
 			break
 	expect(game.tutorial_step == 5, "敌虫实际离开资源圈后没有发动可见攻击线")
+	game.last_dir_tap["up"] = 10.0
+	game.last_world_tap_time = 10.0
+	game.last_world_tap_direction = Vector2.UP
+	var locking_enemy: Dictionary = game.mosquitoes[-1]
+	locking_enemy.attack_state = "aim"
+	locking_enemy.attack_time = 0.01
+	game.mosquitoes[-1] = locking_enemy
+	game.update_mosquitoes(0.02)
+	expect(String(game.mosquitoes[-1].attack_state) == "locked", "跟随虚线结束后没有进入独立锁定阶段")
+	expect(float(game.last_dir_tap.up) == 0.0 and game.last_world_tap_time == 0.0, "锁定前的第一次输入没有清除，仍可与锁定后的第二次输入拼成抢跑急转")
 	game.bee.energy = 100.0
 	game.bee.velocity = Vector2.RIGHT
-	expect(game.bee.try_evade(), "教学急转动作未能触发")
-	game.on_evade_succeeded()
+	expect(game.bee.try_evade(Vector2.UP), "教学急转动作未能触发")
+	expect(game.bee.velocity.normalized().dot(Vector2.UP) > 0.99, "双击方向没有决定急转方向，仍沿旧速度飞行")
+	game.on_evade_started()
 	expect(game.tutorial_step == 5 and not game.tutorial_complete, "空放一次急转就错误完成了闪避教学")
+	expect(not game.message.contains("掠过攻击线"), "空放急转仍被文案误报成已经躲开攻击")
 	var tutorial_enemy: Dictionary = game.mosquitoes[-1]
-	tutorial_enemy.position = game.bee.position - Vector2(45, 0)
+	var locked_target: Vector2 = game.bee.position
+	tutorial_enemy.position = locked_target - Vector2(45, 0)
 	tutorial_enemy.velocity = Vector2(520, 0)
 	tutorial_enemy.attack_state = "dash"
 	tutorial_enemy.attack_time = 0.3
+	tutorial_enemy.aim_direction = Vector2.RIGHT
+	tutorial_enemy.locked_origin = tutorial_enemy.position
+	tutorial_enemy.locked_target = locked_target
+	tutorial_enemy.evade_sequence_at_lock = game.bee.evade_sequence
 	game.mosquitoes[-1] = tutorial_enemy
-	game.bee.invulnerable_time = 0.2
+	expect(not game._evade_cleared_locked_path(Vector2.RIGHT, locked_target, game.bee.evade_sequence), "锁定前已经发动的急转被错误沿用为本次闪避证据")
+	game.bee.evade_cooldown = 0.0
+	game.bee.energy = 100.0
+	expect(game.bee.try_evade(Vector2.RIGHT), "沿攻击路线的错误急转没有触发动作")
+	game.bee.position = locked_target + Vector2.RIGHT * 60.0
+	expect(not game._evade_cleared_locked_path(Vector2.RIGHT, locked_target, int(tutorial_enemy.evade_sequence_at_lock)), "沿红色通道急转被错误算成侧向离线")
+	game.bee.position = locked_target + Vector2.RIGHT * 80.0
+	game.bee.evade_cooldown = 0.0
+	game.bee.energy = 100.0
+	expect(game.bee.try_evade(Vector2.UP), "远离锁点后的对照急转没有触发动作")
+	game.bee.position += Vector2.UP * 60.0
+	expect(not game._evade_cleared_locked_path(Vector2.RIGHT, locked_target, int(tutorial_enemy.evade_sequence_at_lock)), "先普通飞离锁点、再在远处空放急转被错误算成因果闪避")
+	game.bee.position = locked_target
+	game.bee.evade_cooldown = 0.0
+	game.bee.energy = 100.0
+	expect(game.bee.try_evade(Vector2.UP), "锁定后侧向急转没有触发")
+	game.on_evade_started()
+	game.bee.position = locked_target + Vector2.UP * 35.0
+	expect(not game._evade_cleared_locked_path(Vector2.RIGHT, locked_target, int(tutorial_enemy.evade_sequence_at_lock)), "蜂心尚在 36px 危险通道内却被算成成功")
+	game.bee.position = locked_target + Vector2.UP * 36.0
+	expect(game._evade_cleared_locked_path(Vector2.RIGHT, locked_target, int(tutorial_enemy.evade_sequence_at_lock)), "蜂心到达可见危险通道边界后仍不算离线")
+	game.bee.position = locked_target + Vector2.UP * 60.0
 	game.update_mosquitoes(0.1)
 	game.update_progressive_guidance()
-	expect(game.tutorial_step == 6 and game.tutorial_complete and not game.tutorial_panel.visible, "攻击真正穿过急转无敌帧后教学仍未完成")
+	expect(game.tutorial_step == 6 and game.tutorial_complete and not game.tutorial_panel.visible, "攻击穿过旧位置且蜜蜂离开危险通道后教学仍未完成")
 	game.context_lesson_time = 0.0
 	game.bee.energy = 30.0
 	game.update_progressive_guidance()
@@ -225,16 +263,22 @@ func run_test() -> void:
 	game.stage_index = 23
 	game.start_boss()
 	var warm_bloom: Vector2 = game.tuning_blooms[0]
-	game.boss.position = warm_bloom + Vector2(40, 0)
-	game.bee.position = warm_bloom + Vector2(120, 0)
+	game.boss.position = warm_bloom + Vector2(100, 0)
+	game.bee.position = warm_bloom + Vector2(220, 0)
 	game.boss.charge_state = "dash"
 	game.boss.state_time = 1.0
 	game.boss.aim_direction = Vector2.RIGHT
 	game.boss.velocity = Vector2.RIGHT * 4.2
 	game.boss.evade_armed = false
-	game.bee.invulnerable_time = 0.2
-	game.update_boss(0.6)
-	expect(bool(game.boss.evade_armed) and not game.boss_director.can_tune(), "熊的真实冲锋穿过急转无敌帧后没有记录闪避，或未撞暖花就提前暴露")
+	game.boss.locked_origin = game.boss.position
+	game.boss.locked_target = game.bee.position
+	game.boss.evade_sequence_at_lock = game.bee.evade_sequence
+	game.bee.evade_cooldown = 0.0
+	game.bee.energy = 100.0
+	expect(game.bee.try_evade(Vector2.UP), "熊冲锋锁定后侧向急转没有触发")
+	game.bee.position = Vector2(game.boss.locked_target) + Vector2.UP * 60.0
+	game.update_boss(0.1)
+	expect(bool(game.boss.evade_armed) and not game.boss_director.can_tune(), "熊锁定后侧向急转没有记录闪避，或未撞暖花就提前暴露")
 	game.boss.position = warm_bloom + Vector2(30, 0)
 	game.boss.velocity = Vector2.ZERO
 	game.update_boss(0.0)
@@ -249,9 +293,73 @@ func run_test() -> void:
 	game.bee._physics_process(0.1)
 	Input.action_release("move_right")
 	expect(game.bee.position.x > movement_start.x, "WASD 的 D 键动作没有驱动玩家")
+	game.last_dir_tap = {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
 	game.bee.energy = 100.0
+	game.bee.evade_cooldown = 0.0
+	var evade_sequence_before: int = game.bee.evade_sequence
+	var actual_evade_origin: Vector2 = game.bee.position
+	expect(not game._register_direction_tap("up", Vector2.UP, 10.0), "第一次方向输入就错误触发了急转")
+	expect(game.bee.evade_tap_time > 0.0, "第一次方向输入没有给出已记录反馈")
+	expect(game._register_direction_tap("up", Vector2.UP, 10.2), "0.34 秒窗口内的同方向第二次输入没有触发急转")
+	expect(game.bee.evade_sequence == evade_sequence_before + 1 and game.bee.velocity.normalized().dot(Vector2.UP) > 0.99, "方向登记窗口没有沿所按方向触发一次急转")
+	game.bee._physics_process(0.1)
+	expect(actual_evade_origin.y - game.bee.position.y >= 36.0, "急转位移没有稳定离开 36px 教学危险带")
+	game.bee.evade_cooldown = 0.0
+	game.bee.evade_time = 0.0
+	game.bee.energy = 100.0
+	game._clear_evade_tap_buffers()
+	game.last_dir_tap.right = 30.0
+	game.last_dir_tap.up = 30.0
+	game.last_dir_tap_origin.right = game.bee.position
+	game.last_dir_tap_origin.up = game.bee.position
+	var chord_sequence_before: int = game.bee.evade_sequence
+	var chord_directions: Array[String] = ["right", "up"]
+	expect(game._process_evade_pressed_directions(chord_directions, 30.2, Vector2.RIGHT), "同一帧的斜向第二击没有发动急转")
+	expect(game.bee.evade_sequence == chord_sequence_before + 1 and game.bee.last_evade_direction.dot(Vector2.UP) > 0.99 and not game.message.contains("尚未恢复"), "斜向同帧输入没有选择远离攻击线的有效轴，或用冷却失败覆盖了成功反馈")
+	expect(game.last_dir_tap.values().all(func(value): return float(value) == 0.0), "斜向急转成功后仍遗留另一方向的首击缓存")
+	game.bee.evade_cooldown = 0.0
+	game.bee.energy = 100.0
+	game.bee.evade_time = 0.0
+	game.bee.velocity = Vector2.ZERO
+	game._clear_evade_tap_buffers()
+	var world_tap_sequence_before: int = game.bee.evade_sequence
+	var repeated_world_point: Vector2 = game.bee.position + Vector2.UP * 42.0
+	var first_click := InputEventMouseButton.new()
+	first_click.button_index = MOUSE_BUTTON_LEFT
+	first_click.pressed = true
+	first_click.position = repeated_world_point
+	game._unhandled_input(first_click)
+	expect(game.bee.has_target and game.last_world_tap_time > 0.0, "真实鼠标第一次点击没有登记移动与急转首击")
+	game.bee._physics_process(0.2)
+	expect(game.bee.position.distance_to(repeated_world_point) < 2.0, "鼠标稳定性对照没有让第一次点击真实移动到侧标")
+	var second_click := InputEventMouseButton.new()
+	second_click.button_index = MOUSE_BUTTON_LEFT
+	second_click.pressed = true
+	second_click.position = repeated_world_point
+	game._unhandled_input(second_click)
+	expect(game.bee.evade_sequence == world_tap_sequence_before + 1 and game.bee.velocity.normalized().dot(Vector2.UP) > 0.99, "蜂已移动到侧标后，第二次真实鼠标点击没有沿第一次点击方向触发急转")
+	game.bee.evade_cooldown = 0.0
+	game.bee.evade_time = 0.0
+	game.bee.energy = 100.0
+	game.bee.velocity = Vector2.ZERO
+	game._clear_evade_tap_buffers()
+	var touch_sequence_before: int = game.bee.evade_sequence
+	var repeated_touch_point: Vector2 = game.bee.position + Vector2.LEFT * 42.0
+	var first_touch := InputEventScreenTouch.new()
+	first_touch.pressed = true
+	first_touch.position = repeated_touch_point
+	game._unhandled_input(first_touch)
+	expect(game.bee.evade_sequence == touch_sequence_before and game.last_world_tap_time > 0.0, "一次真实触摸被误算成完整双击急转")
+	game.bee._physics_process(0.2)
+	var second_touch := InputEventScreenTouch.new()
+	second_touch.pressed = true
+	second_touch.position = repeated_touch_point
+	game._unhandled_input(second_touch)
+	expect(game.bee.evade_sequence == touch_sequence_before + 1 and game.bee.velocity.normalized().dot(Vector2.LEFT) > 0.99, "第二次真实触摸没有沿首触方向发动急转")
+	game.bee.energy = 100.0
+	game.bee.evade_cooldown = 0.0
 	game.bee.velocity = Vector2.RIGHT
-	expect(game.bee.try_evade() and game.bee.invulnerable_time > 0.0 and game.bee.energy == 88.0, "K 急转没有产生位移防护与体力消耗")
+	expect(game.bee.try_evade(Vector2.UP) and game.bee.velocity.normalized().dot(Vector2.UP) > 0.99 and game.bee.invulnerable_time > 0.0 and game.bee.energy == 88.0, "急转没有沿输入方向产生位移防护与体力消耗")
 	game.delivered = 3
 	var conserved_before: int = game.total_recoverable_honey()
 	game.flowers[0].nectar = int(game.flowers[0].nectar) - 2

@@ -27,6 +27,12 @@ window/stretch/mode="canvas_items"
 theme/default_font="res://fonts/NotoSansCJKsc-ProjectSubset.otf"
 theme/fallback_font="res://fonts/NotoSansCJKsc-ProjectSubset.otf"
 
+[input_devices]
+
+; Touch is handled explicitly in main.gd. Disabling mouse emulation prevents one
+; physical touch from being counted as both halves of a double-tap evade.
+pointing/emulate_mouse_from_touch=false
+
 [input]
 
 move_left={
