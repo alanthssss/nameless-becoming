@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="104" viewBox="0 0 144 104">
+  <defs>
+    <linearGradient id="wax" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd96a"/><stop offset="1" stop-color="#dfa52c"/></linearGradient>
+    <linearGradient id="felt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4b3b2d"/><stop offset="1" stop-color="#261f1a"/></linearGradient>
+    <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff8d9" stop-opacity=".92"/><stop offset="1" stop-color="#d9e9dd" stop-opacity=".66"/></linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.4"/></filter>
+  </defs>
+  <ellipse cx="68" cy="58" rx="39" ry="20" fill="#18221c" opacity=".18" filter="url(#softShadow)"/>
+  <path d="M63 48C43 45 20 31 22 18c2-9 17-8 29 1 10 8 17 18 20 27Z" fill="url(#wing)" stroke="#e6d8ae" stroke-width="2.4"/>
+  <path d="M63 57C43 60 22 74 25 87c2 9 17 7 28-2 10-8 16-18 19-27Z" fill="url(#wing)" stroke="#e6d8ae" stroke-width="2.4"/>
+  <path d="M31 23c12 4 23 13 31 23M33 82c12-4 22-13 30-23" fill="none" stroke="#bfae83" stroke-width="1.5" stroke-linecap="round" opacity=".65"/>
+  <path d="M26 52c0-19 13-31 35-31h18v62H61C39 83 26 71 26 52Z" fill="url(#wax)" stroke="#4a3928" stroke-width="3"/>
+  <path d="M39 25c-6 5-10 13-11 22h13c1-9 4-17 9-24ZM54 21h13v62H54c4-18 4-43 0-62ZM78 21h9c13 0 23 12 23 31S100 83 87 83h-9Z" fill="url(#felt)"/>
+  <path d="M28 52c0-17 12-28 33-28h25" fill="none" stroke="#ffe8a0" stroke-width="1.5" stroke-dasharray="4 4" opacity=".8"/>
+  <ellipse cx="106" cy="52" rx="22" ry="23" fill="url(#wax)" stroke="#4a3928" stroke-width="3"/>
+  <ellipse cx="111" cy="42" rx="5" ry="6" fill="#30271f"/><circle cx="112.5" cy="40.5" r="1.5" fill="#fff4c7"/>
+  <path d="M124 46c9-9 13-11 17-12M124 58c9 9 13 11 17 12" fill="none" stroke="#3d3026" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="141" cy="34" r="2.5" fill="#3d3026"/><circle cx="141" cy="70" r="2.5" fill="#3d3026"/>
+  <path d="M77 31 70 18M77 73 70 86M94 31l2-14M94 73l2 14" fill="none" stroke="#3d3026" stroke-width="3" stroke-linecap="round"/>
+</svg>
