@@ -78,6 +78,8 @@ npm run build
 - `docs/COLOR_SYSTEM.md`：二十四节气色彩体系（四正色 + 四季六阶色谱）；
 - `docs/PROJECT_LOG.md`：策划与版本决策记录。
 - `docs/MVP_SPEC.md`：完整 MVP 范围、验收标准与里程碑。
+- `docs/DEMO_TO_PLAYTEST_PLAN.md`：从当前原型收敛为 Steam 公开 Demo 的产品化计划。
+- `docs/STEAM_NEXT_FEST_2026_PLAN.md`：2026 年 10 月新品节报名、提审、素材与运营待办。
 
 ## 当前验证问题
 
