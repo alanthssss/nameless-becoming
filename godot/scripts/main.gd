@@ -25,9 +25,20 @@ const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.s
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
 const FIELD_TEXTILE_OVERLAY := preload("res://assets/art/field_textile_overlay.svg")
+const SPRING_FIELD_PATH := "res://assets/art/launch/spring_field_v1.png"
+const SPRING_FLOWER_COMMON_PATH := "res://assets/art/launch/flower_common_v1.png"
+const SPRING_FLOWER_HIGH_VALUE_PATH := "res://assets/art/launch/flower_high_value_v1.png"
+const SPRING_HIVE_ENTRANCE_PATH := "res://assets/art/launch/hive_city_entrance_v1.png"
+const SPRING_MOSQUITO_PATH := "res://assets/art/launch/mosquito_v1.png"
 
 var stages: Array = []
 var balance: Dictionary = {}
+var spring_field_texture: Texture2D
+var spring_flower_common_texture: Texture2D
+var spring_flower_high_value_texture: Texture2D
+var spring_hive_entrance_texture: Texture2D
+var spring_mosquito_texture: Texture2D
+var field_draw_offset := Vector2.ZERO
 var upgrade_catalog: Array = []
 var chosen_upgrades: Array[String] = []
 var upgrade_counts := {"long_wing": 0, "forager": 0, "guard": 0}
@@ -182,6 +193,7 @@ func _ready() -> void:
 	load_flower_data()
 	load_upgrade_data()
 	load_boss_data()
+	load_spring_launch_art()
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
 	bee.max_energy = balance_value("player", "max_energy", 100.0)
@@ -196,6 +208,38 @@ func _ready() -> void:
 	add_child(season_mechanics)
 	show_intro()
 	queue_redraw()
+
+func load_optional_texture(path: String) -> Texture2D:
+	if not ResourceLoader.exists(path):
+		return null
+	return ResourceLoader.load(path, "Texture2D") as Texture2D
+
+func load_spring_launch_art() -> void:
+	spring_field_texture = load_optional_texture(SPRING_FIELD_PATH)
+	spring_flower_common_texture = load_optional_texture(SPRING_FLOWER_COMMON_PATH)
+	spring_flower_high_value_texture = load_optional_texture(SPRING_FLOWER_HIGH_VALUE_PATH)
+	spring_hive_entrance_texture = load_optional_texture(SPRING_HIVE_ENTRANCE_PATH)
+	spring_mosquito_texture = load_optional_texture(SPRING_MOSQUITO_PATH)
+
+func spring_launch_art_ready() -> bool:
+	return (
+		spring_field_texture != null
+		and spring_flower_common_texture != null
+		and spring_flower_high_value_texture != null
+		and spring_hive_entrance_texture != null
+		and spring_mosquito_texture != null
+		and bee != null
+		and bee.has_spring_launch_art()
+	)
+
+func is_spring_gathering_stage(index: int) -> bool:
+	if index < 0 or index >= stages.size():
+		return false
+	var data: Dictionary = stages[index]
+	return String(data.get("season", "")) == "春" and not data.has("boss")
+
+func uses_spring_launch_art() -> bool:
+	return is_spring_gathering_stage(stage_index) and spring_launch_art_ready()
 
 func ensure_keyboard_controls() -> void:
 	var bindings := {
@@ -744,6 +788,7 @@ func spawn_stage(index: int) -> void:
 	if season_index_of(index) != 3:
 		energy_cap_override = bee.max_energy
 	season_mechanics.start_stage(index)
+	bee.set_spring_launch_art(uses_spring_launch_art())
 	message = "%s：%s" % [data.name, data.line]
 	update_interface()
 	queue_redraw()
@@ -1565,6 +1610,7 @@ func start_boss() -> void:
 		"aim_direction": Vector2.RIGHT
 	}
 	bee.configure(1.45 + float(data.season_index) * 0.2)
+	bee.set_spring_launch_art(false)
 	bee.reset_for_expedition(Vector2(180, 410))
 	carried = 6
 	delivered = 0
@@ -2254,32 +2300,34 @@ func _draw() -> void:
 	if stages.is_empty():
 		return
 	var offset := Vector2(rng.randf_range(-shake, shake), rng.randf_range(-shake, shake)) if shake > 0 else Vector2.ZERO
+	field_draw_offset = offset
 	draw_set_transform(offset)
-	var top := stage_color(0)
-	var bottom := stage_color(1)
-	draw_rect(WORLD, top)
-	for band in 18:
-		var ratio := float(band) / 17.0
-		var band_rect := Rect2(WORLD.position.x, WORLD.position.y + WORLD.size.y * ratio, WORLD.size.x, WORLD.size.y / 17.0 + 1)
-		draw_rect(band_rect, top.lerp(bottom, ratio * 0.68))
-	# A transparent, season-agnostic weave layer turns the gradient into fabric
-	# without painting over the interaction colors beneath it.
-	draw_texture_rect(FIELD_TEXTILE_OVERLAY, WORLD, false)
-
-	draw_rect(Rect2(WORLD.position.x, WORLD.position.y, 108, WORLD.size.y), Color("26392f", 0.88))
-	for y in range(178, 664, 42):
-		draw_circle(Vector2(86, y), 17, Color("e5bd4a", 0.08), false, 2)
-	draw_string(zh_font, Vector2(58, 176), "蜂 巢", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("fff1bd"))
-	draw_string(zh_font, Vector2(57, 661), "撤 离 区", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d8d4b8"))
-	# The hive is the first environmental art anchor. Its doorway aligns with the
-	# safe-zone edge so the visual entrance and the actual deposit rule agree.
-	draw_texture_rect(HIVE_ENTRANCE_TEXTURE, Rect2(47, 325, 118, 150), false)
+	var spring_launch := uses_spring_launch_art()
+	if spring_launch:
+		draw_texture_rect(spring_field_texture, WORLD, false)
+	else:
+		var top := stage_color(0)
+		var bottom := stage_color(1)
+		draw_rect(WORLD, top)
+		for band in 18:
+			var ratio := float(band) / 17.0
+			var band_rect := Rect2(WORLD.position.x, WORLD.position.y + WORLD.size.y * ratio, WORLD.size.x, WORLD.size.y / 17.0 + 1)
+			draw_rect(band_rect, top.lerp(bottom, ratio * 0.68))
+		# Existing prototype rendering remains available outside the spring launch slice.
+		draw_texture_rect(FIELD_TEXTILE_OVERLAY, WORLD, false)
+		draw_rect(Rect2(WORLD.position.x, WORLD.position.y, 108, WORLD.size.y), Color("26392f", 0.88))
+		for y in range(178, 664, 42):
+			draw_circle(Vector2(86, y), 17, Color("e5bd4a", 0.08), false, 2)
+		draw_string(zh_font, Vector2(58, 176), "蜂 巢", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("fff1bd"))
+		draw_string(zh_font, Vector2(57, 661), "撤 离 区", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d8d4b8"))
+		draw_texture_rect(HIVE_ENTRANCE_TEXTURE, Rect2(47, 325, 118, 150), false)
 
 	var deep := stage_color(2)
-	for i in 34:
-		var x := WORLD.position.x + fmod(float(i * 97 + stage_index * 31), WORLD.size.x)
-		var y := 570.0 + sin(float(i) * 2.1) * 60.0
-		draw_line(Vector2(x, WORLD.end.y), Vector2(x + 10, y), Color(deep, 0.2), 3)
+	if not spring_launch:
+		for i in 34:
+			var x := WORLD.position.x + fmod(float(i * 97 + stage_index * 31), WORLD.size.x)
+			var y := 570.0 + sin(float(i) * 2.1) * 60.0
+			draw_line(Vector2(x, WORLD.end.y), Vector2(x + 10, y), Color(deep, 0.2), 3)
 
 	# 花物候学：连环花连接线（窗口内时，从上一朵连环花画指引线到附近同型花）
 	if chain_timer > 0.0 and chain_last_index >= 0 and chain_last_index < flowers.size():
@@ -2384,12 +2432,21 @@ func draw_flower(flower: Dictionary) -> void:
 		return
 	var high_value_types := ["peak_bloom", "cascade_bloom", "late_bloom", "warmth_bloom"]
 	var high_value := ftype in high_value_types or int(flower.nectar) >= 5
-	var flower_texture: Texture2D = FLOWER_HIGH_VALUE_TEXTURE if high_value else FLOWER_COMMON_TEXTURE
-	var flower_size := Vector2(58, 68) if high_value else Vector2(50, 65)
+	var launch_flower := uses_spring_launch_art()
+	var spring_pollination_flower := launch_flower and ftype in ["first_bloom", "chain_bloom"]
+	var flower_texture: Texture2D
+	var flower_size: Vector2
+	if launch_flower:
+		flower_texture = spring_flower_high_value_texture if high_value or spring_pollination_flower else spring_flower_common_texture
+		flower_size = Vector2(70, 80) if high_value or spring_pollination_flower else Vector2(54, 64)
+	else:
+		flower_texture = FLOWER_HIGH_VALUE_TEXTURE if high_value else FLOWER_COMMON_TEXTURE
+		flower_size = Vector2(58, 68) if high_value else Vector2(50, 65)
 	# Type color remains as a low-noise halo; value is communicated by silhouette,
 	# scale and the wax center rather than a label or color swap alone.
 	draw_circle(pos, 23.0 if high_value else 18.0, Color(petal_base, 0.12))
-	draw_texture_rect(flower_texture, Rect2(pos - Vector2(flower_size.x * 0.5, 28), flower_size), false, Color(1, 1, 1, alpha))
+	var flower_anchor_y := flower_size.y * 0.42 if launch_flower else 28.0
+	draw_texture_rect(flower_texture, Rect2(pos - Vector2(flower_size.x * 0.5, flower_anchor_y), flower_size), false, Color(1, 1, 1, alpha))
 	# 花物候学：非基线花型标注名称
 	if alive and ftype != "nectar_bloom":
 		var type_labels := {"first_bloom": "初花", "chain_bloom": "连", "peak_bloom": "盛", "fading_bloom": "残", "late_bloom": "晚蜜", "seed_bloom": "籽", "hidden_bloom": "藏", "warmth_bloom": "暖", "frozen_bloom": "冰封", "cascade_bloom": "瀑"}
@@ -2408,9 +2465,16 @@ func draw_flower(flower: Dictionary) -> void:
 func draw_mosquito(mosquito: Dictionary) -> void:
 	var pos: Vector2 = mosquito.position
 	var repelled := float(mosquito.repel_time) > 0.0
-	draw_circle(pos, 9, Color("b77b3e") if repelled else Color("402e34"))
-	draw_line(pos + Vector2(-5, -4), pos + Vector2(-15, -12), Color("f5f2df", 0.7), 3)
-	draw_line(pos + Vector2(5, 4), pos + Vector2(15, 12), Color("f5f2df", 0.7), 3)
+	if uses_spring_launch_art():
+		var velocity := Vector2(mosquito.get("velocity", Vector2.ZERO))
+		var angle := velocity.angle() if velocity.length_squared() > 0.01 else 0.0
+		draw_set_transform(pos, angle)
+		draw_texture_rect(spring_mosquito_texture, Rect2(-34, -24, 68, 48), false, Color("c9855f") if repelled else Color.WHITE)
+		draw_set_transform(field_draw_offset)
+	else:
+		draw_circle(pos, 9, Color("b77b3e") if repelled else Color("402e34"))
+		draw_line(pos + Vector2(-5, -4), pos + Vector2(-15, -12), Color("f5f2df", 0.7), 3)
+		draw_line(pos + Vector2(5, 4), pos + Vector2(15, 12), Color("f5f2df", 0.7), 3)
 	if repelled:
 		var ratio := clampf(float(mosquito.repel_time) / balance_value("player", "repel_duration", 3.5), 0.0, 1.0)
 		draw_line(pos + Vector2(10, -4), pos + Vector2(25, -4), Color("fff0aa", 0.7), 2)

@@ -6,6 +6,7 @@ signal sense_started
 const WORLD_BOUNDS := Rect2(34, 146, 970, 538)
 const AUTO_DASH_THRESHOLD := 0.35
 const PLAYER_BEE_TEXTURE := preload("res://assets/art/player_bee_textile.svg")
+const SPRING_PLAYER_BEE_PATH := "res://assets/art/launch/player_bee_v1.png"
 
 # 出巢体力上限：由 main 从 balance.json player.max_energy 注入，避免调参时改代码
 var max_energy := 100.0
@@ -30,6 +31,19 @@ var evade_cooldown := 0.0
 var evade_invuln := 0.18
 var invulnerable_time := 0.0
 var move_duration := 0.0
+var spring_player_bee_texture: Texture2D
+var use_spring_launch_art := false
+
+func _ready() -> void:
+	if ResourceLoader.exists(SPRING_PLAYER_BEE_PATH):
+		spring_player_bee_texture = ResourceLoader.load(SPRING_PLAYER_BEE_PATH, "Texture2D") as Texture2D
+
+func has_spring_launch_art() -> bool:
+	return spring_player_bee_texture != null
+
+func set_spring_launch_art(enabled: bool) -> void:
+	use_spring_launch_art = enabled and has_spring_launch_art()
+	queue_redraw()
 
 func configure(stage_drain: float) -> void:
 	drain_rate = stage_drain
@@ -130,11 +144,12 @@ func _physics_process(delta: float) -> void:
 
 func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, facing)
-	# First production art anchor: editable textile appliqué SVG imported by Godot.
 	# A slight vertical pulse keeps the wings alive before a full frame sheet exists.
 	var wing_pulse := 0.96 + sin(Time.get_ticks_msec() * 0.03) * 0.04
 	draw_set_transform(Vector2.ZERO, facing, Vector2(1.0, wing_pulse))
-	draw_texture_rect(PLAYER_BEE_TEXTURE, Rect2(-29, -21, 58, 42), false)
+	var player_texture: Texture2D = spring_player_bee_texture if use_spring_launch_art else PLAYER_BEE_TEXTURE
+	var player_size := Vector2(82, 60) if use_spring_launch_art else Vector2(58, 42)
+	draw_texture_rect(player_texture, Rect2(player_size * -0.5, player_size), false)
 	if sense_time > 0.0:
 		draw_arc(Vector2.ZERO, 27 + sin(Time.get_ticks_msec() * 0.012) * 4, 0, TAU, 28, Color("f1d46d", 0.72), 2)
 	draw_set_transform(Vector2.ZERO)
