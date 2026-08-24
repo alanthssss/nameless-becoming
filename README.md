@@ -80,6 +80,7 @@ npm run build
 - `docs/MVP_SPEC.md`：完整 MVP 范围、验收标准与里程碑。
 - `docs/DEMO_TO_PLAYTEST_PLAN.md`：从当前原型收敛为 Steam 公开 Demo 的产品化计划。
 - `docs/STEAM_NEXT_FEST_2026_PLAN.md`：2026 年 10 月新品节报名、提审、素材与运营待办。
+- `docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`：游戏成熟度、核心循环、市场、美术音乐、试玩边界与生产排期评估。
 
 ## 当前验证问题
 
