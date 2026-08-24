@@ -611,7 +611,7 @@ func start_game() -> void:
 	extra_nectar = 0
 	carry_capacity = balance_value("player", "carry_capacity", 8.0)
 	bee.reset_upgrades()
-	tutorial_step = 3 if tutorial_complete else 0
+	tutorial_step = 6 if tutorial_complete else 0
 	tutorial_origin = HIVE_RETURN_POS
 	if persistence_enabled:
 		save_manager.begin_run()
@@ -919,7 +919,8 @@ func update_game(delta: float) -> void:
 			flowers[i] = flower_timer
 	season_mechanics.process(delta)
 	update_hive_rest(delta, true)
-	if delivered >= int(data.goal) and phase == "playing":
+	# 首局先完成寻迹、惊退与闪避的行动式教学，避免一次交蜜就跳过核心工具。
+	if delivered >= int(data.goal) and phase == "playing" and (stage_index != 0 or tutorial_complete):
 		show_between()
 	if bee.energy <= 0.0 and phase == "playing":
 		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
@@ -945,15 +946,18 @@ func _do_repel() -> void:
 	show_energy_change(-sting_cost)
 	sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
 	sound.play_cue("repel")
+	var repelled_any := false
 	for i in mosquitoes.size():
 		var mosquito: Dictionary = mosquitoes[i]
 		if bee.position.distance_to(mosquito.position) < sting_range:
+			repelled_any = true
 			mosquito.repel_time = balance_value("player", "repel_duration", 3.5)
 			mosquito.velocity = (mosquito.position - bee.position).normalized() * 8.0
 			mosquitoes[i] = mosquito
 	for i in ants.size():
 		var ant: Dictionary = ants[i]
 		if bee.position.distance_to(ant.position) < sting_range:
+			repelled_any = true
 			ant.flee_time = 1.8
 			ant.velocity = (ant.position - bee.position).normalized() * 3.2
 			if int(ant.stolen_honey) > 0:
@@ -964,6 +968,7 @@ func _do_repel() -> void:
 	for i in crickets.size():
 		var cricket: Dictionary = crickets[i]
 		if bee.position.distance_to(cricket.position) < sting_range:
+			repelled_any = true
 			cricket.repel_time = balance_value("player", "repel_duration", 3.5)
 			cricket.hopping = false
 			cricket.hop_clock = balance_value("cricket", "rest_seconds", 1.2)
@@ -971,10 +976,14 @@ func _do_repel() -> void:
 	for i in thrushes.size():
 		var thrush: Dictionary = thrushes[i]
 		if bee.position.distance_to(thrush.position) < sting_range + 20.0:
+			repelled_any = true
 			thrush.silence_time = balance_value("player", "repel_duration", 3.5)
 			thrushes[i] = thrush
 	season_mechanics.on_repel_success()
 	message = "急促的震翼把附近敌虫推离了航线。"
+	if stage_index == 0 and not tutorial_complete and tutorial_step == 4 and repelled_any:
+		tutorial_step = 5
+		context_lessons_seen["danger"] = true
 	for bear_unit in bears:
 		if bee.position.distance_to(bear_unit.position) < sting_range + 40.0:
 			message = "熊对震翼毫无反应。绕开它，抢在它之前收完这片花田。"
@@ -988,6 +997,22 @@ func _do_sense() -> void:
 		message = "摇摆舞传来花源方位：蜜最丰的花田已标出。"
 	else:
 		bee.trigger_sense()
+	if stage_index == 0 and not tutorial_complete and tutorial_step == 3 and bee.sense_time > 0.0:
+		tutorial_step = 4
+		context_lessons_seen["sense"] = true
+		spawn_tutorial_mosquito()
+
+func spawn_tutorial_mosquito() -> void:
+	for mosquito in mosquitoes:
+		if bool(mosquito.get("tutorial", false)):
+			return
+	mosquitoes.append({
+		"id": 9000,
+		"position": Vector2(390, 410),
+		"velocity": Vector2.ZERO,
+		"repel_time": 0.0,
+		"tutorial": true
+	})
 
 func _check_double_tap_evade(_delta: float) -> void:
 	var now := Time.get_ticks_msec() / 1000.0
@@ -1001,10 +1026,17 @@ func _check_double_tap_evade(_delta: float) -> void:
 		if Input.is_action_just_pressed(directions[dir_key]):
 			if now - last_dir_tap[dir_key] < DOUBLE_TAP_WINDOW:
 				if bee.try_evade():
-					show_energy_change(-12.0)
-					sound.play_cue("evade")
-					message = "急转掠过攻击线：短暂避开碰撞。"
+					on_evade_succeeded()
 			last_dir_tap[dir_key] = now
+
+func on_evade_succeeded() -> void:
+	show_energy_change(-12.0)
+	sound.play_cue("evade")
+	message = "急转掠过攻击线：短暂避开碰撞。"
+	if stage_index == 0 and not tutorial_complete and tutorial_step == 5:
+		tutorial_step = 6
+		tutorial_complete = true
+		message = "翅膀已经记住了花香、危险与归途。"
 
 func update_mosquitoes(delta: float) -> void:
 	# 蜜香招敌：携带的蜜越多，蚊虫嗅觉半径越大——满载在蚁蚊眼里是显眼的
@@ -1030,7 +1062,9 @@ func update_mosquitoes(delta: float) -> void:
 			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * delta
 		mosquito.position.x = clampf(mosquito.position.x, HIVE_SAFE_X, WORLD.end.x - 12)
 		mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
-		if mosquito.repel_time <= 0.0:
+		# 教学蚊虫只负责制造可读的练习情境；完成急转前不造成惩罚。
+		var tutorial_guard := bool(mosquito.get("tutorial", false)) and not tutorial_complete
+		if mosquito.repel_time <= 0.0 and not tutorial_guard:
 			if distance_to_player < balance_value("mosquito", "impact_range", 26.0) and hit_cooldown <= 0.0 and bee.invulnerable_time <= 0.0:
 				hit_cooldown = balance_value("player", "hit_cooldown", 0.9)
 				bee.energy = maxf(0.0, bee.energy - balance_value("mosquito", "energy_damage", 15.0))
@@ -2034,8 +2068,8 @@ func set_pause_system_controls_visible(visible: bool) -> void:
 		pause_system_buttons[0].text = "窗口化" if save_manager.fullscreen else "全屏"
 		pause_system_buttons[1].text = "声音：开" if save_manager.sound_enabled else "声音：关"
 
-# First-run state machine: move -> harvest -> return, followed by brief lessons
-# triggered only when their mechanic first becomes relevant.
+# First-run state machine: move -> harvest -> return -> sense -> repel -> evade.
+# Each tool must be performed once before the first stage can end.
 func update_progressive_guidance() -> void:
 	if tutorial_panel == null or sense_button == null or return_button == null:
 		return
@@ -2058,9 +2092,8 @@ func update_progressive_guidance() -> void:
 			tutorial_step = 2
 		elif tutorial_step == 2 and delivered > 0:
 			tutorial_step = 3
-			tutorial_complete = true
-			message = "第一次采集完成。接下来由花香、敌害和体力引导你的判断。"
-		tutorial_panel.visible = tutorial_step < 3
+			message = "蜜已经归巢。现在学会辨认花香与危险。"
+		tutorial_panel.visible = tutorial_step < 6
 		return_button.visible = tutorial_step == 2
 		match tutorial_step:
 			0:
@@ -2079,6 +2112,23 @@ func update_progressive_guidance() -> void:
 				tutorial_title.text = "把蜜带回去"
 				tutorial_body.text = "按 Q 或右侧“归巢”；蜜存入蜂巢才算收获。"
 				context_hint_label.text = "归巢路线会自动锁定左侧蜂巢。"
+				sense_button.visible = false
+			3:
+				tutorial_title.text = "停稳，循着花香"
+				tutorial_body.text = "离开花朵后停稳，按空格或下方按钮寻迹。"
+				context_hint_label.text = "花香、危险和归巢方向会在环境中显现。"
+				sense_button.visible = true
+				sense_button.text = "寻迹"
+			4:
+				tutorial_title.text = "让它退开"
+				tutorial_body.text = "靠近出现的蚊虫，再按空格或下方按钮震翼。"
+				context_hint_label.text = "进入震翼范围后，动作会自然变成惊退。"
+				sense_button.visible = true
+				sense_button.text = "惊退"
+			5:
+				tutorial_title.text = "掠过攻击线"
+				tutorial_body.text = "快速连按两次同一方向，做一次急转闪避。"
+				context_hint_label.text = "急转消耗体力，但会短暂避开碰撞。"
 				sense_button.visible = false
 		return
 
