@@ -280,11 +280,11 @@ Alan 在正确分支实机截图中指出，第三行老师傅要求越过原有
 | 子任务 | 建议 branch / worktree | 依赖与验收 |
 | --- | --- | --- |
 | 文档事实源一致性 | `codex/feedback-ledger-sync` / `/private/tmp/nameless-feedback-ledger` | #63 合并后执行；清理 `DESIGN_CONSENSUS.md`、`MVP_SPEC.md`、`docs/analysis/`、README 与发布清单中的旧关卡、Boss、音乐、授粉和固定时长说法；`git diff --check` |
-| 构建来源可见化 | `codex/build-provenance` / `/private/tmp/nameless-build-provenance` | 第一项串行工程任务；在暂停/版本界面和构建清单显示版本与短提交号；截图、运行构建与提交一致，防止再次打开错版 |
+| 构建来源可见化 | 已在 `codex/player-feedback-v2` 完成 | `dd4d4f08` 已在标题/暂停层显示版本与 8 位提交号，dirty 工作区有明确后缀；本地与远端 Quality gates 通过 |
 | Alan 固定构建验收 | 不改代码，记录进本文件与 `PLAYTEST.md` | 首关无口头帮助；急转两次与 3 分钟迁移；授粉器官、四季路线、关卡节奏和 Boss 规则原话 |
 | 音乐盲听与 A/B | `codex/audio-listening-pass` / `/private/tmp/nameless-audio-listening` | 先记录同季配对、四季气质、不舒服音色与三轮耐听度，不先重编 |
-| Windows / 发布前人工流程 | `codex/release-manual-pass` / `/private/tmp/nameless-release-manual` | 固定同一候选构建，记录设备、完整流程、设置持久化与失败点；不改核心玩法 |
-| HUD 响应式与指针输入 | `codex/hud-responsive` / `/private/tmp/nameless-hud-responsive` | 构建来源任务合入后再创建/变基，不能与其并行编辑暂停 UI；方向验收后再合并；1280×720 不回退，覆盖 1920×1080、1440×900 和窄屏安全区；饮蜜补鼠标/触摸入口 |
+| Windows / 发布前人工流程 | `codex/release-manual-pass` / `/private/tmp/nameless-release-manual` | `dd4d4f08` 的 macOS/Windows artifact 已由 run `32769425753` 生成并复验哈希；仍需真实设备、完整流程、设置持久化与失败点，不改核心玩法 |
+| HUD 响应式与指针输入 | `codex/hud-responsive` / `/private/tmp/nameless-hud-responsive` | 从 `dd4d4f08` 之后的已接受基线创建，不能回写覆盖构建来源 UI；方向验收后再合并；1280×720 不回退，覆盖 1920×1080、1440×900 和窄屏安全区；饮蜜补鼠标/触摸入口 |
 
 第二波由证据触发，不能预先宣布已经排产：
 
