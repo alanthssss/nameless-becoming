@@ -919,8 +919,8 @@ func update_game(delta: float) -> void:
 			flowers[i] = flower_timer
 	season_mechanics.process(delta)
 	update_hive_rest(delta, true)
-	# 首局先完成寻迹、惊退与闪避的行动式教学，避免一次交蜜就跳过核心工具。
-	if delivered >= int(data.goal) and phase == "playing" and (stage_index != 0 or tutorial_complete):
+	# 进度目标必须可信：教学可以跨关继续，但不能把已达成的目标变成软锁。
+	if delivered >= int(data.goal) and phase == "playing":
 		show_between()
 	if bee.energy <= 0.0 and phase == "playing":
 		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
@@ -981,7 +981,7 @@ func _do_repel() -> void:
 			thrushes[i] = thrush
 	season_mechanics.on_repel_success()
 	message = "急促的震翼把附近敌虫推离了航线。"
-	if stage_index == 0 and not tutorial_complete and tutorial_step == 4 and repelled_any:
+	if not tutorial_complete and tutorial_step == 4 and repelled_any:
 		tutorial_step = 5
 		context_lessons_seen["danger"] = true
 	for bear_unit in bears:
@@ -997,7 +997,7 @@ func _do_sense() -> void:
 		message = "摇摆舞传来花源方位：蜜最丰的花田已标出。"
 	else:
 		bee.trigger_sense()
-	if stage_index == 0 and not tutorial_complete and tutorial_step == 3 and bee.sense_time > 0.0:
+	if not tutorial_complete and tutorial_step == 3 and bee.sense_time > 0.0:
 		tutorial_step = 4
 		context_lessons_seen["sense"] = true
 		spawn_tutorial_mosquito()
@@ -1033,7 +1033,7 @@ func on_evade_succeeded() -> void:
 	show_energy_change(-12.0)
 	sound.play_cue("evade")
 	message = "急转掠过攻击线：短暂避开碰撞。"
-	if stage_index == 0 and not tutorial_complete and tutorial_step == 5:
+	if not tutorial_complete and tutorial_step == 5:
 		tutorial_step = 6
 		tutorial_complete = true
 		message = "翅膀已经记住了花香、危险与归途。"
@@ -2069,7 +2069,8 @@ func set_pause_system_controls_visible(visible: bool) -> void:
 		pause_system_buttons[1].text = "声音：开" if save_manager.sound_enabled else "声音：关"
 
 # First-run state machine: move -> harvest -> return -> sense -> repel -> evade.
-# Each tool must be performed once before the first stage can end.
+# Each tool should be performed once; unfinished steps may continue across stages
+# and never override a completed stage objective.
 func update_progressive_guidance() -> void:
 	if tutorial_panel == null or sense_button == null or return_button == null:
 		return
@@ -2085,7 +2086,7 @@ func update_progressive_guidance() -> void:
 		sense_button.visible = false
 		return_button.visible = false
 		return
-	if stage_index == 0 and not tutorial_complete:
+	if not tutorial_complete:
 		if tutorial_step == 0 and bee.position.distance_to(tutorial_origin) >= 64.0:
 			tutorial_step = 1
 		elif tutorial_step == 1 and carried > 0:
