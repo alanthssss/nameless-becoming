@@ -81,6 +81,7 @@ npm run build
 - `docs/DEMO_TO_PLAYTEST_PLAN.md`：从当前原型收敛为 Steam 公开 Demo 的产品化计划。
 - `docs/STEAM_NEXT_FEST_2026_PLAN.md`：2026 年 10 月新品节报名、提审、素材与运营待办。
 - `docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`：游戏成熟度、核心循环、市场、美术音乐、试玩边界与生产排期评估。
+- `docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`：玩家反馈后的关卡、教学、四季机制、文字、美术音乐与排期整改方案。
 
 ## 当前验证问题
 
