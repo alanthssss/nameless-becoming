@@ -45,7 +45,7 @@
 → 带着资源亲自飞回蜂巢
 ```
 
-视觉以二十四节气阴阳消长色系组织（四正色：玄/青/朱/白），四季大关 × 6 小关逐阶渐变色调，两至两分（春分/夏至/秋分/冬至）为守关 Boss 节点。完整色谱见 [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)。
+视觉以布艺贴花作为清楚、可动画的主体表现，以毛毡微缩控制温暖体积，以蜂蜡、浅色植鞣革和刺绣分别表达生命能量、蜂群设施与信息轨迹；不转为像素风，剪纸仅为已停用的历史候选。色彩继续以二十四节气阴阳消长色系组织（四正色：玄/青/朱/白）。完整色谱见 [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)，生产规则见 [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)。
 
 ## 开发
 
@@ -82,6 +82,7 @@ npm run build
 - `docs/STEAM_NEXT_FEST_2026_PLAN.md`：2026 年 10 月新品节报名、提审、素材与运营待办。
 - `docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`：游戏成熟度、核心循环、市场、美术音乐、试玩边界与生产排期评估。
 - `docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`：玩家反馈后的关卡、教学、四季机制、文字、美术音乐与排期整改方案。
+- `docs/design/ART_IMPLEMENTATION_STANDARD.md`：正式美术媒介、资产尺寸、制作管线和首个引擎切片验收标准。
 
 ## 当前验证问题
 

@@ -5,6 +5,7 @@ signal sense_started
 
 const WORLD_BOUNDS := Rect2(34, 146, 970, 538)
 const AUTO_DASH_THRESHOLD := 0.35
+const PLAYER_BEE_TEXTURE := preload("res://assets/art/player_bee_textile.svg")
 
 # 出巢体力上限：由 main 从 balance.json player.max_energy 注入，避免调参时改代码
 var max_energy := 100.0
@@ -129,14 +130,11 @@ func _physics_process(delta: float) -> void:
 
 func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, facing)
-	var wing_alpha := 0.5 + sin(Time.get_ticks_msec() * 0.03) * 0.12
-	draw_circle(Vector2(-5, -10), 8, Color(0.97, 0.98, 0.9, wing_alpha))
-	draw_circle(Vector2(-5, 10), 8, Color(0.97, 0.98, 0.9, wing_alpha))
-	draw_circle(Vector2.ZERO, 13, Color("292921"))
-	draw_rect(Rect2(Vector2(-7, -12), Vector2(5, 24)), Color("e1aa2c"))
-	draw_rect(Rect2(Vector2(3, -11), Vector2(5, 22)), Color("e1aa2c"))
-	draw_circle(Vector2(13, 0), 7, Color("efcf69"))
-	draw_line(Vector2(18, 0), Vector2(24, 0), Color("2b2921"), 2)
+	# First production art anchor: editable textile appliqué SVG imported by Godot.
+	# A slight vertical pulse keeps the wings alive before a full frame sheet exists.
+	var wing_pulse := 0.96 + sin(Time.get_ticks_msec() * 0.03) * 0.04
+	draw_set_transform(Vector2.ZERO, facing, Vector2(1.0, wing_pulse))
+	draw_texture_rect(PLAYER_BEE_TEXTURE, Rect2(-29, -21, 58, 42), false)
 	if sense_time > 0.0:
 		draw_arc(Vector2.ZERO, 27 + sin(Time.get_ticks_msec() * 0.012) * 4, 0, TAU, 28, Color("f1d46d", 0.72), 2)
 	draw_set_transform(Vector2.ZERO)
