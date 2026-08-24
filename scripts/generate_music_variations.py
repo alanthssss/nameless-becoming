@@ -59,7 +59,7 @@ class TrackSpec:
 TRACKS = {
     "spring_explore": TrackSpec(
         "spring_explore", 104.0, 4, 4, 12, 2,
-        "wood chamber folk, 3+3+2 branching pulse",
+        "wood-electronic chamber folk, 3+3+2 pulse and sparse synthesized dizi turns",
     ),
     "spring_boss": TrackSpec(
         "spring_boss", 148.0, 4, 4, 16, 2,
@@ -71,11 +71,11 @@ TRACKS = {
     ),
     "summer_boss": TrackSpec(
         "summer_boss", 172.0, 4, 4, 16, 3,
-        "stop-time punk for the cricket's jump and landing", True,
+        "stop-time punk with clipped synthesized dizi punctuation", True,
     ),
     "autumn_explore": TrackSpec(
         "autumn_explore", 84.0, 5, 4, 8, 1,
-        "dry chamber five-four whose fifth beat is left empty",
+        "dry chamber five-four with sparse synthesized erhu-like replies and an empty fifth beat",
     ),
     "autumn_boss": TrackSpec(
         "autumn_boss", 126.0, 6, 8, 16, 1,
@@ -83,7 +83,7 @@ TRACKS = {
     ),
     "winter_explore": TrackSpec(
         "winter_explore", 108.0, 6, 8, 16, 4,
-        "warm sparse six-eight pulse (dotted-quarter = 72)",
+        "warm sparse six-eight pulse with two synthesized xiao-like breaths (dotted-quarter = 72)",
     ),
     "winter_boss": TrackSpec(
         "winter_boss", 96.0, 4, 4, 12, 4,
@@ -129,6 +129,7 @@ INSTRUMENTS = {
     "ice": ((1.0, 0.42), (2.65, 0.28), (4.05, 0.20), (6.20, 0.10), 0.002, 0.090, 0.18, 0.00),
     "warm": ((1.0, 0.74), (2.0, 0.17), (3.0, 0.09), 0.012, 0.100, 0.34, 0.06),
     "bass": ((1.0, 0.78), (2.0, 0.16), (3.0, 0.06), 0.004, 0.060, 0.17, 0.10),
+    "bass_pick": ((1.0, 0.56), (2.0, 0.23), (3.0, 0.13), (4.0, 0.08), 0.002, 0.035, 0.10, 0.01),
     "rock": ((1.0, 0.34), (2.0, 0.23), (3.0, 0.16), (4.0, 0.11), (5.0, 0.09), (7.0, 0.07), 0.003, 0.045, 0.22, 0.22),
 }
 
@@ -221,6 +222,18 @@ def add_dyad(buffer: StereoBuffer, spec: TrackSpec, start_q: float, length_q: fl
     add_note(buffer, spec, start_q, length_q, penta_midi(degrees[1] + octave * 5), gain * 0.86, instrument, pan + 0.12)
 
 
+def add_bass_hit(buffer: StereoBuffer, spec: TrackSpec, start_q: float, midi_note: float,
+                 gain: float, length_q: float = 0.30, pan: float = 0.0) -> None:
+    """Layer a written bass note with a brief upper-octave pick transient.
+
+    The upper layer makes the rhythm readable on small speakers without turning
+    the entire arrangement into a louder low-frequency carpet.
+    """
+    add_note(buffer, spec, start_q, length_q, midi_note, gain, "bass", pan)
+    add_note(buffer, spec, start_q, min(length_q * 0.52, 0.16), midi_note + 12.0,
+             gain * 0.24, "bass_pick", pan + 0.05)
+
+
 def add_noise_hit(buffer: StereoBuffer, spec: TrackSpec, start_q: float, length: float,
                   gain: float, seed: int, pan: float = 0.0, colour: str = "bright") -> None:
     start = round(start_q * 60.0 / spec.bpm * RATE)
@@ -245,6 +258,77 @@ def add_noise_hit(buffer: StereoBuffer, spec: TrackSpec, start_q: float, length:
         buffer.right[target] += value * right_gain
 
 
+def add_hat(buffer: StereoBuffer, spec: TrackSpec, start_q: float, gain: float,
+            seed: int, pan: float = 0.0, is_open: bool = False) -> None:
+    """Add a deliberately synthetic open/closed hat articulation."""
+    length = 0.115 if is_open else 0.032
+    add_noise_hit(buffer, spec, start_q, length, gain, seed, pan, "bright")
+    if is_open:
+        add_note(buffer, spec, start_q, 0.15, 102.0, gain * 0.13, "metal", pan * 0.65)
+
+
+def add_rim(buffer: StereoBuffer, spec: TrackSpec, start_q: float, gain: float,
+            seed: int, pan: float = 0.0) -> None:
+    """Add a short rim/woodblock accent, useful for ghost-note hierarchy."""
+    add_noise_hit(buffer, spec, start_q, 0.024, gain * 0.62, seed, pan, "bright")
+    add_note(buffer, spec, start_q, 0.075, 86.0, gain, "wood", pan)
+
+
+GESTURE_VOICES = {
+    # These are sound-design gestures, not sampled instruments.  The names
+    # describe articulation and register: breathy attack for dizi/xiao, bowed
+    # portamento and delayed vibrato for erhu.
+    "dizi": (((1.0, 0.68), (2.0, 0.09), (3.0, 0.15), (5.0, 0.08)), 0.018, 0.075, 0.105, 5.7, 0.10),
+    "xiao": (((1.0, 0.82), (2.0, 0.05), (3.0, 0.09), (5.0, 0.04)), 0.060, 0.135, 0.125, 4.8, 0.08),
+    "erhu": (((1.0, 0.52), (2.0, 0.24), (3.0, 0.13), (4.0, 0.07), (5.0, 0.04)), 0.035, 0.110, 0.055, 5.4, 0.21),
+}
+
+
+def add_gesture_lead(buffer: StereoBuffer, spec: TrackSpec, start_q: float, length_q: float,
+                     midi_start: float, midi_end: float, gain: float, voice: str,
+                     seed: int, pan: float = 0.0) -> None:
+    """Synthesize one sparse breath/bow gesture with portamento and vibrato.
+
+    It intentionally avoids a General MIDI imitation.  Only the timing,
+    register and motion allude to a dizi, xiao or erhu articulation.
+    """
+    start = round(start_q * 60.0 / spec.bpm * RATE)
+    frames = max(2, round(length_q * 60.0 / spec.bpm * RATE))
+    partials, attack_seconds, release_seconds, noise_gain, vibrato_rate, vibrato_depth = GESTURE_VOICES[voice]
+    attack_frames = max(1, round(attack_seconds * RATE))
+    release_frames = max(1, round(release_seconds * RATE))
+    rng = random.Random(seed)
+    left_gain, right_gain = _pan_gains(pan)
+    phase = 0.0
+    previous_noise = 0.0
+    for local in range(frames):
+        target = start + local
+        if target < 0 or target >= buffer.frames:
+            continue
+        progress = local / max(1, frames - 1)
+        glide = progress * progress * (3.0 - 2.0 * progress)
+        vibrato_ramp = max(0.0, min(1.0, (progress - 0.22) / 0.22))
+        vibrato = math.sin(TAU * vibrato_rate * local / RATE) * vibrato_depth * vibrato_ramp
+        note = midi_start + (midi_end - midi_start) * glide + vibrato
+        phase += midi_hz(note) * TABLE_SIZE / RATE
+        tonal = 0.0
+        for ratio, partial_gain in partials:
+            if midi_hz(note) * ratio < RATE * 0.49:
+                tonal += SINE_TABLE[int(phase * ratio) % TABLE_SIZE] * partial_gain
+        raw_noise = rng.uniform(-1.0, 1.0)
+        if voice == "dizi":
+            breath = raw_noise - previous_noise * 0.90
+        else:
+            breath = raw_noise * 0.28 + previous_noise * 0.72
+        previous_noise = raw_noise
+        attack = min(1.0, local / attack_frames)
+        release = min(1.0, (frames - 1 - local) / release_frames)
+        envelope = attack * release
+        value = (tonal + breath * noise_gain) * envelope * gain
+        buffer.left[target] += value * left_gain
+        buffer.right[target] += value * right_gain
+
+
 def add_kick(buffer: StereoBuffer, spec: TrackSpec, start_q: float, gain: float = 0.18) -> None:
     start = round(start_q * 60.0 / spec.bpm * RATE)
     frames = round(0.145 * RATE)
@@ -257,13 +341,16 @@ def add_kick(buffer: StereoBuffer, spec: TrackSpec, start_q: float, gain: float 
         frequency = 112.0 * ((54.0 / 112.0) ** progress)
         phase += TAU * frequency / RATE
         attack = min(1.0, local / max(1, round(0.0015 * RATE)))
-        value = math.sin(phase) * attack * math.exp(-6.0 * progress) * gain
+        body = math.sin(phase) + math.sin(phase * 2.0) * 0.14
+        click = math.sin(TAU * 1650.0 * local / RATE) * math.exp(-58.0 * progress) * 0.13
+        value = (body * math.exp(-6.0 * progress) + click) * attack * gain
         buffer.left[target] += value * 0.707
         buffer.right[target] += value * 0.707
 
 
 def add_snare(buffer: StereoBuffer, spec: TrackSpec, start_q: float, gain: float, seed: int) -> None:
     add_noise_hit(buffer, spec, start_q, 0.105, gain, seed, 0.08, "bright")
+    add_noise_hit(buffer, spec, start_q + 0.035, 0.055, gain * 0.24, seed + 1, -0.16, "bright")
     add_note(buffer, spec, start_q, 0.18, 50.0, gain * 0.42, "muted", -0.06)
 
 
@@ -282,6 +369,10 @@ def render_spring_explore(spec: TrackSpec) -> StereoBuffer:
     response = (4, 5, 6, 7, 6)
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
+        add_kick(buffer, spec, base, 0.065)
+        if bar % 2 == 0:
+            add_kick(buffer, spec, base + 2.5, 0.043)
+        add_rim(buffer, spec, base + 1.5, 0.024, 900 + bar, -0.22)
         for accent, position in enumerate((0.0, 1.5, 3.0)):
             add_note(buffer, spec, base + position, 0.22, penta_midi(7 + accent % 2), 0.075, "wood", -0.30 + accent * 0.30)
         for step in range(8):
@@ -289,10 +380,14 @@ def render_spring_explore(spec: TrackSpec) -> StereoBuffer:
                 continue
             add_noise_hit(buffer, spec, base + step * 0.5, 0.035, 0.020 if step else 0.032,
                           1000 + bar * 16 + step, 0.35, "bright")
-        add_note(buffer, spec, base, 0.52, penta_midi(2 - 5), 0.085, "bass", 0.0)
+        add_bass_hit(buffer, spec, base, penta_midi(2 - 5), 0.085, 0.52)
         if bar % 2 == 0:
-            add_note(buffer, spec, base + 2.5, 0.38, penta_midi(0 - 5), 0.065, "bass", 0.0)
-        add_dyad(buffer, spec, base + 3.0, 0.28, (2, 4), 0.046, "mallet", -0.08)
+            add_bass_hit(buffer, spec, base + 2.5, penta_midi(0 - 5), 0.065, 0.38)
+        if bar % 4 == 3:
+            add_gesture_lead(buffer, spec, base + 2.92, 0.70, penta_midi(7), penta_midi(8),
+                             0.052, "dizi", 1200 + bar, 0.34)
+        else:
+            add_dyad(buffer, spec, base + 3.0, 0.28, (2, 4), 0.046, "mallet", -0.08)
         degrees = motif if bar % 2 == 0 else response
         positions = (0.25, 0.75, 1.25, 2.0, 2.75)
         instrument = "wood" if bar % 2 == 0 else "mallet"
@@ -319,12 +414,14 @@ def render_spring_boss(spec: TrackSpec) -> StereoBuffer:
             position = step * 0.5
             if final_stop and position >= 2.5:
                 continue
-            add_noise_hit(buffer, spec, base + position, 0.030, 0.042,
-                          2200 + bar * 16 + step, -0.35 if step % 2 else 0.35, "bright")
+            add_hat(buffer, spec, base + position, 0.042, 2200 + bar * 16 + step,
+                    -0.35 if step % 2 else 0.35, step == 7)
+        if not final_stop and bar % 2 == 1:
+            add_rim(buffer, spec, base + 2.5, 0.028, 2250 + bar, 0.30)
         for position, degree in ((0.0, 2 - 5), (0.75, 3 - 5), (1.5, 2 - 5), (2.5, 0 - 5)):
             if final_stop and position >= 2.5:
                 continue
-            add_note(buffer, spec, base + position, 0.30, penta_midi(degree), 0.055, "bass", 0.0)
+            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.055, 0.30)
         for index, degree in enumerate(clipped):
             position = (0.25, 0.75, 1.25)[index]
             add_note(buffer, spec, base + position, 0.23, penta_midi(degree + 5), 0.150, "buzz", -0.30)
@@ -342,14 +439,19 @@ def render_summer_explore(spec: TrackSpec) -> StereoBuffer:
         base = bar_start(spec, bar)
         for position in (0.0, 1.5, 2.75):
             add_kick(buffer, spec, base + position, 0.14)
+        if bar % 2 == 1:
+            add_kick(buffer, spec, base + 3.5, 0.058)
         for position in (1.0, 3.0):
             add_snare(buffer, spec, base + position, 0.090, 3000 + bar * 8 + int(position))
+        for ghost_index, position in enumerate((0.75, 2.75)):
+            add_rim(buffer, spec, base + position, 0.026, 3050 + bar * 4 + ghost_index,
+                    -0.28 if ghost_index == 0 else 0.28)
         for step in range(16):
             position = step * 0.25 + (0.055 if step % 2 else 0.0)
-            add_noise_hit(buffer, spec, base + position, 0.025, 0.018 if step % 4 else 0.030,
-                          3100 + bar * 32 + step, -0.26 if step % 2 else 0.26, "bright")
+            add_hat(buffer, spec, base + position, 0.018 if step % 4 else 0.030,
+                    3100 + bar * 32 + step, -0.26 if step % 2 else 0.26, step in (7, 15))
         for position, degree in ((0.0, 3 - 5), (0.75, 4 - 5), (1.5, 3 - 5), (2.25, 5 - 5), (3.5, 4 - 5)):
-            add_note(buffer, spec, base + position, 0.28, penta_midi(degree), 0.085, "bass", 0.0)
+            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.085, 0.28)
         for position in (0.5, 1.75, 2.5, 3.25):
             degree = 3 if int(position * 4) % 2 == 0 else 4
             add_dyad(buffer, spec, base + position, 0.17, (degree, degree + 2), 0.063,
@@ -379,18 +481,21 @@ def render_summer_boss(spec: TrackSpec) -> StereoBuffer:
             position = step * 0.5
             if stop_bar and position >= 2.5:
                 continue
-            add_noise_hit(buffer, spec, base + position, 0.030, 0.043,
-                          4100 + bar * 16 + step, 0.28 if step % 2 else -0.28, "bright")
+            add_hat(buffer, spec, base + position, 0.043, 4100 + bar * 16 + step,
+                    0.28 if step % 2 else -0.28, step in (3, 7))
+        if not stop_bar:
+            add_rim(buffer, spec, base + 2.5, 0.030, 4150 + bar, 0.34)
         for step in range(8):
             position = step * 0.5
             if stop_bar and position >= 2.5:
                 continue
             degree = (3, 3, 4, 3, 5, 4, 3, 2)[step] - 5
-            add_note(buffer, spec, base + position, 0.22, penta_midi(degree), 0.045, "bass", 0.0)
+            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.045, 0.22)
             add_dyad(buffer, spec, base + position, 0.16, (degree + 5, degree + 7), 0.120,
                      "rock", -0.22 if step % 2 == 0 else 0.22)
         if stop_bar:
-            add_note(buffer, spec, base + 3.35, 0.22, penta_midi(3 + 10), 0.125, "metal", 0.0)
+            add_gesture_lead(buffer, spec, base + 3.16, 0.42, penta_midi(13), penta_midi(14),
+                             0.060, "dizi", 4300 + bar, 0.18)
         else:
             for index, degree in enumerate(jump_motif):
                 add_note(buffer, spec, base + 0.25 + index * 0.625, 0.20,
@@ -403,16 +508,24 @@ def render_autumn_explore(spec: TrackSpec) -> StereoBuffer:
     falling = (1, 0, -1, -2, -1)
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
+        add_tom(buffer, spec, base, 47.0, 0.038, -0.16)
+        add_tom(buffer, spec, base + 2.5, 52.0, 0.028, 0.18)
         for position in (0.0, 2.5):
             add_noise_hit(buffer, spec, base + position, 0.050, 0.032,
                           5000 + bar * 8 + int(position * 2), -0.28 if position else 0.28, "bright")
         add_noise_hit(buffer, spec, base + 1.5, 0.16, 0.026, 5100 + bar, 0.10, "dark")
         for position, degree in ((0.0, 1 - 5), (2.0, -1 - 5), (3.25, 0 - 5)):
-            add_note(buffer, spec, base + position, 0.46, penta_midi(degree), 0.080, "pizz", 0.0)
+            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.080, 0.46)
         for index, (position, degree) in enumerate(zip((0.25, 1.0, 1.75, 2.5, 3.25), falling)):
             add_note(buffer, spec, base + position, 0.34 if index < 4 else 0.48,
                      penta_midi(degree + 5), 0.095, "pizz", -0.32 if bar % 2 == 0 else 0.32)
         add_dyad(buffer, spec, base + 2.75, 0.26, (1, 3), 0.043, "metal", 0.35)
+        if bar in (2, 6):
+            gesture_pan = -0.26 if bar == 2 else 0.26
+            add_gesture_lead(buffer, spec, base + 0.48, 0.96, penta_midi(6), penta_midi(5),
+                             0.044, "erhu", 5300 + bar, gesture_pan)
+            add_gesture_lead(buffer, spec, base + 2.42, 0.76, penta_midi(4), penta_midi(3),
+                             0.037, "erhu", 5350 + bar, -gesture_pan)
     return buffer
 
 
@@ -425,10 +538,12 @@ def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
             add_kick(buffer, spec, base + position, 0.135)
         add_snare(buffer, spec, base + 1.0, 0.100, 6000 + bar)
         for step in range(6):
-            add_noise_hit(buffer, spec, base + step * 0.5, 0.040, 0.030 if step % 3 else 0.043,
-                          6100 + bar * 12 + step, -0.42 if step % 2 else 0.42, "bright")
+            add_hat(buffer, spec, base + step * 0.5, 0.030 if step % 3 else 0.043,
+                    6100 + bar * 12 + step, -0.42 if step % 2 else 0.42, step == 5)
+        if bar % 2 == 0:
+            add_rim(buffer, spec, base + 0.5, 0.026, 6180 + bar, -0.28)
         for position, degree in ((0.0, 1 - 5), (1.0, 0 - 5), (1.5, -1 - 5), (2.5, 0 - 5)):
-            add_note(buffer, spec, base + position, 0.30, penta_midi(degree), 0.065, "bass", 0.0)
+            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.065, 0.30)
         degree = truth[bar % len(truth)]
         add_note(buffer, spec, base + 0.25, 0.45, penta_midi(degree + 10), 0.105, "echo", 0.0)
         add_note(buffer, spec, base + 0.75, 0.34, penta_midi(degree + 11), 0.070, "buzz", -0.78)
@@ -446,9 +561,11 @@ def render_winter_explore(spec: TrackSpec) -> StereoBuffer:
     circle = (4, 5, 6, 7, 6)
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
-        add_note(buffer, spec, base, 0.38, penta_midi(4 - 5), 0.082, "warm", 0.0)
+        add_kick(buffer, spec, base, 0.050)
+        add_noise_hit(buffer, spec, base + 1.5, 0.085, 0.014, 6800 + bar, 0.16, "dark")
+        add_bass_hit(buffer, spec, base, penta_midi(4 - 5), 0.072, 0.38)
         if bar % 2 == 1:
-            add_note(buffer, spec, base + 1.5, 0.32, penta_midi(0 - 5), 0.060, "warm", 0.0)
+            add_bass_hit(buffer, spec, base + 1.5, penta_midi(0 - 5), 0.054, 0.32)
         for position, pan in ((0.75, -0.52), (2.25, 0.52)):
             if (bar + int(position * 2)) % 3 != 0:
                 add_note(buffer, spec, base + position, 0.24, penta_midi(9 + bar % 3), 0.066, "ice", pan)
@@ -461,6 +578,12 @@ def render_winter_explore(spec: TrackSpec) -> StereoBuffer:
             add_note(buffer, spec, base + 2.0, 0.38, penta_midi(circle[4] + 5), 0.068, "warm", 0.0)
         if bar % 4 == 3:
             add_dyad(buffer, spec, base + 2.4, 0.34, (5, 7), 0.048, "warm", 0.0)
+        if bar in (3, 11):
+            gesture_pan = -0.30 if bar == 3 else 0.30
+            add_gesture_lead(buffer, spec, base + 0.42, 1.08, penta_midi(7), penta_midi(6),
+                             0.043, "xiao", 6900 + bar, gesture_pan)
+            add_gesture_lead(buffer, spec, base + 1.88, 0.58, penta_midi(5), penta_midi(6),
+                             0.033, "xiao", 6950 + bar, -gesture_pan)
     return buffer
 
 
@@ -478,12 +601,12 @@ def render_winter_boss(spec: TrackSpec) -> StereoBuffer:
             position = step * 0.5
             if stop_bar and position >= 1.5:
                 continue
-            add_noise_hit(buffer, spec, base + position, 0.034, 0.020 if step % 4 else 0.034,
-                          7100 + bar * 16 + step, 0.22 if step % 2 else -0.22, "bright")
+            add_hat(buffer, spec, base + position, 0.020 if step % 4 else 0.034,
+                    7100 + bar * 16 + step, 0.22 if step % 2 else -0.22, step == 7)
         hit_positions = (0.0, 0.75, 1.5, 2.75) if not stop_bar else (0.0, 0.75)
         for index, position in enumerate(hit_positions):
             degree = (4, 4, 5, 3)[index] - 5
-            add_note(buffer, spec, base + position, 0.34, penta_midi(degree), 0.105, "bass", 0.0)
+            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.105, 0.34)
             add_dyad(buffer, spec, base + position, 0.28, (degree + 5, degree + 8), 0.074,
                      "rock", -0.18 if index % 2 else 0.18)
         if phase == 2:

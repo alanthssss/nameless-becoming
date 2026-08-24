@@ -22,6 +22,9 @@ const SEASON_LENGTH := 6
 const UPGRADE_CAP := 6
 const SeasonMechanicsScript := preload("res://scripts/mechanics/season_mechanics.gd")
 const BossEncounterDirectorScript := preload("res://scripts/boss_encounter_director.gd")
+const ProductionHUDScript := preload("res://scripts/ui/production_hud.gd")
+const RelayHiveMechanicScript := preload("res://scripts/mechanics/relay_hive_mechanic.gd")
+const MentorTutorialScript := preload("res://scripts/tutorial/mentor_tutorial.gd")
 const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.svg")
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
@@ -151,6 +154,7 @@ var runs_meter: Label
 var runs_meter_farthest: Label
 var zh_font: Font
 var pause_button: Button
+var production_hud: ProductionHUD
 var fullscreen_button: Button
 var sound_button: Button
 var quit_button: Button
@@ -174,6 +178,9 @@ var carry_full_flash_time := 0.0
 var hive_flash_time := 0.0
 var reserve_label: Label
 var season_mechanics
+var relay_hive = RelayHiveMechanicScript.new()
+var relay_was_resting := false
+var mentor_tutorial = MentorTutorialScript.new()
 var hive_reserve := 0
 var larval_boost := 0
 var warmth := 100.0
@@ -236,6 +243,7 @@ func _ready() -> void:
 	music.set_enabled(save_manager.sound_enabled)
 	build_interface()
 	season_mechanics = SeasonMechanicsScript.new()
+	mentor_tutorial.configure(self)
 	season_mechanics.configure(self)
 	add_child(season_mechanics)
 	show_intro()
@@ -435,6 +443,8 @@ func build_interface() -> void:
 	var ui := CanvasLayer.new()
 	ui.name = "Interface"
 	add_child(ui)
+	production_hud = ProductionHUDScript.new()
+	ui.add_child(production_hud)
 
 	title_label = make_label(ui, "◆  无名：成蜂", Vector2(34, 17), Vector2(350, 42), 24, Color("26342b"))
 	term_label = make_label(ui, "", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
@@ -470,6 +480,7 @@ func build_interface() -> void:
 
 	# Three HUD groups: forage, flight, and hive.
 	var forage_panel := ColorRect.new()
+	forage_panel.name = "ForagePanel"
 	forage_panel.color = Color("f3eedb", 0.88)
 	forage_panel.position = Vector2(34, 82)
 	forage_panel.size = Vector2(300, 50)
@@ -482,6 +493,7 @@ func build_interface() -> void:
 	delivered_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	var flight_panel := ColorRect.new()
+	flight_panel.name = "FlightPanel"
 	flight_panel.color = Color("f3eedb", 0.88)
 	flight_panel.position = Vector2(348, 82)
 	flight_panel.size = Vector2(310, 50)
@@ -502,6 +514,7 @@ func build_interface() -> void:
 	energy_change_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	var hive_panel := ColorRect.new()
+	hive_panel.name = "HivePanel"
 	hive_panel.color = Color("f3eedb", 0.88)
 	hive_panel.position = Vector2(672, 82)
 	hive_panel.size = Vector2(332, 50)
@@ -513,6 +526,7 @@ func build_interface() -> void:
 	reserve_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	var side := ColorRect.new()
+	side.name = "ContextRail"
 	side.color = Color("f3eedb", 0.94)
 	side.position = Vector2(1020, 146)
 	side.size = Vector2(230, 538)
@@ -651,6 +665,7 @@ func build_interface() -> void:
 		for node in ui.find_children("*", "Button", true, false):
 			if node is Button:
 				node.add_theme_font_override("font", zh_font)
+	production_hud.apply_to(self, ui)
 
 func make_stat(parent: Node, caption: String, position: Vector2) -> Label:
 	var panel := ColorRect.new()
@@ -764,6 +779,8 @@ func spawn_stage(index: int) -> void:
 	chain_last_index = -1
 	chain_bonus_count = 0
 	var data: Dictionary = stages[index]
+	relay_hive.configure(data.get("relay_hive", {}))
+	relay_was_resting = false
 	bee.configure(float(data.energy_drain))
 	bee.reset_for_expedition(Vector2(180, 410))
 	# 花物候学：按 flower_set 读取花型权重生成
@@ -805,6 +822,8 @@ func spawn_stage(index: int) -> void:
 		_configure_authored_first_trip()
 	elif index in [7, 13, 19]:
 		_configure_season_showcase(index)
+	elif index == 9:
+		_configure_relay_showcase()
 	# 敌物候学：五类小怪按节令物候生成（见 docs/design/enemy-phenology.md）
 	for i in int(data.get("mosquitoes", 0)):
 		mosquitoes.append({
@@ -850,7 +869,8 @@ func spawn_stage(index: int) -> void:
 	season_mechanics.start_stage(index)
 	bee.set_spring_launch_art(world_art_ready())
 	_ensure_stage_resource_budget()
-	message = ""
+	mentor_tutorial.start_stage(index, data)
+	message = "远路旁的中继巢还暗着。" if relay_hive.enabled else ""
 	update_interface()
 	queue_redraw()
 
@@ -919,13 +939,28 @@ func _configure_season_showcase(index: int) -> void:
 		flower.kind = i % 2
 		flower.visual_variant = i % 2
 		flower.large_bloom = i % 2 == 1
-		if index == 13 and i == 0:
-			# The first autumn flower reaches its seed pod after one harvest tick,
-			# making the new stop/continue decision unavoidable and immediately visible.
+		if index == 13 and i < 2:
+			# Two authored seed flowers support one prompted decision followed by one
+			# unprompted practice decision; each reaches its pod after one harvest tick.
 			flower.nectar = 2
 			flower.max_nectar = 2
 			flower.type = "seed_bloom"
 			flower.showcase_seed = true
+		flowers[i] = flower
+
+## The first relay-hive field is a fixed long route. The post sits between the
+## near and far flower clusters, so activating it changes traversal instead of
+## behaving like another HUD upgrade.
+func _configure_relay_showcase() -> void:
+	var route := [
+		Vector2(310, 350), Vector2(395, 245), Vector2(445, 510),
+		Vector2(575, 285), Vector2(750, 245), Vector2(825, 410), Vector2(895, 570)
+	]
+	for i in mini(flowers.size(), route.size()):
+		var flower: Dictionary = flowers[i]
+		flower.position = route[i]
+		flower.visual_variant = i % 2
+		flower.large_bloom = i % 2 == 1
 		flowers[i] = flower
 
 func on_overlay_button() -> void:
@@ -984,6 +1019,10 @@ func _process(delta: float) -> void:
 
 func update_game(delta: float) -> void:
 	var data: Dictionary = stages[stage_index]
+	mentor_tutorial.process(delta)
+	if mentor_tutorial.blocks_simulation():
+		return
+	bee.active = true
 	sting_cooldown = maxf(0.0, sting_cooldown - delta)
 	hit_cooldown = maxf(0.0, hit_cooldown - delta)
 	update_decoys(delta)
@@ -995,12 +1034,12 @@ func update_game(delta: float) -> void:
 	chain_timer = maxf(0.0, chain_timer - delta)
 
 	# 归巢：Q 键自动飞回蜂巢
-	if Input.is_action_just_pressed("return_hive"):
+	if Input.is_action_just_pressed("return_hive") and mentor_tutorial.allows_action("return"):
 		bee.set_move_target(HIVE_RETURN_POS)
 		message = "归巢路线已锁定。"
 
 	# 显式饮蜜：E 键主动饮下蜜囊里的一滴蜜续力（每节气受 crop_fuel_limit 限制）
-	if Input.is_action_just_pressed("drink_honey"):
+	if Input.is_action_just_pressed("drink_honey") and mentor_tutorial.allows_action("drink"):
 		_drink_honey()
 
 	# 情境动作：空格/回车根据上下文执行不同操作
@@ -1013,14 +1052,17 @@ func update_game(delta: float) -> void:
 		action_decoy_fired = false
 		action_was_harvesting = false
 		var seasonal_action_used := false
-		if season_mechanics.has_method("try_context_action"):
+		var relay_action_used := false
+		if not near_enemy:
+			relay_action_used = _try_activate_relay_hive()
+		if not relay_action_used and mentor_tutorial.allows_action("seasonal") and season_mechanics.has_method("try_context_action"):
 			seasonal_action_used = bool(season_mechanics.try_context_action(bee.position))
 		# 优先级：近敌→惊退 > 静止→寻迹
-		if seasonal_action_used:
+		if relay_action_used or seasonal_action_used:
 			action_decoy_fired = true
-		elif near_enemy:
+		elif near_enemy and mentor_tutorial.allows_action("repel"):
 			_do_repel()
-		elif is_still and nearby < 0:
+		elif is_still and nearby < 0 and mentor_tutorial.allows_action("sense"):
 			_do_sense()
 		elif nearby >= 0:
 			# 近花时按下开始采蜜（持续按住逻辑在下面）
@@ -1028,7 +1070,7 @@ func update_game(delta: float) -> void:
 
 	if Input.is_action_pressed("action"):
 		action_hold_time += delta
-		if nearby >= 0 and bee.energy > 0 and not near_enemy:
+		if nearby >= 0 and bee.energy > 0 and not near_enemy and mentor_tutorial.allows_action("harvest"):
 			# 采蜜（持续）
 			var release_required := false
 			if season_mechanics.has_method("harvest_requires_release"):
@@ -1096,7 +1138,7 @@ func update_game(delta: float) -> void:
 						message = "这朵花已经采尽。"
 					last_harvest_index = nearby
 					last_harvest_time = elapsed
-		elif not action_was_harvesting and not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy:
+		elif not action_was_harvesting and not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy and mentor_tutorial.allows_action("decoy"):
 			# 长按空格 + 携蜜 + 无花无敌 = 投蜜诱饵（采过蜜的同一按键不会触发，需松开重按）
 			action_decoy_fired = true
 			drop_honey_decoy()
@@ -1120,6 +1162,7 @@ func update_game(delta: float) -> void:
 			flower_timer.flatten_time = maxf(0.0, float(flower_timer.flatten_time) - delta)
 			flowers[i] = flower_timer
 	season_mechanics.process(delta)
+	_update_relay_hive(delta)
 	update_hive_rest(delta, true)
 	# 目标与能力演示共同组成首趟路线；后续季节机制也可声明自己的
 	# 因果目标尚未完成（例如尚未开芽/点暖），但没有计时门。
@@ -1127,7 +1170,8 @@ func update_game(delta: float) -> void:
 	if season_mechanics.has_method("can_complete"):
 		mechanics_ready = bool(season_mechanics.can_complete())
 	var tutorial_ready := tutorial_complete or stage_index != 0
-	if delivered >= int(data.goal) and tutorial_ready and mechanics_ready and phase == "playing":
+	var mentor_ready := mentor_tutorial.can_complete_stage()
+	if delivered >= int(data.goal) and tutorial_ready and mechanics_ready and mentor_ready and phase == "playing":
 		show_between()
 	if bee.energy <= 0.0 and phase == "playing":
 		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
@@ -1148,6 +1192,8 @@ func _nearest_enemy_distance() -> float:
 	return min_dist
 
 func _do_repel() -> void:
+	if not mentor_tutorial.allows_action("repel"):
+		return
 	if sting_cooldown > 0.0 or not bee.spend_energy(sting_cost):
 		return
 	show_energy_change(-sting_cost)
@@ -1194,6 +1240,8 @@ func _do_repel() -> void:
 			message = "熊对震翼毫无反应。绕开它，抢在它之前收完这片花田。"
 
 func _do_sense() -> void:
+	if not mentor_tutorial.allows_action("sense"):
+		return
 	if bee.sense_cooldown > 0.0:
 		return
 	var huddle = season_mechanics.mechanic_by_id("huddle")
@@ -1212,6 +1260,40 @@ func _do_sense() -> void:
 			hidden.tutorial_locked = false
 			flowers[tutorial_hidden_index] = hidden
 		message = "一缕花香越过了安静的空地。"
+
+func _try_activate_relay_hive() -> bool:
+	var action_id := relay_hive.context_action_id(bee.position, carried)
+	if action_id.is_empty():
+		return false
+	var result: Dictionary = relay_hive.try_activate(bee.position, carried)
+	match String(result.get("event", "")):
+		"needs_honey":
+			message = "中继巢需要一滴蜜才能醒来。"
+		"activated":
+			var consumed := int(result.get("consumed", 0))
+			carried = maxi(0, carried - consumed)
+			flash = maxf(flash, 0.28)
+			sound.play_cue("relay")
+			message = "中继巢亮了。它只能让翅膀歇一歇，蜜仍要带回主巢。"
+	return true
+
+func _update_relay_hive(delta: float) -> void:
+	var resting := bee.velocity.length_squared() < 4.0 and not bee.has_target
+	var result: Dictionary = relay_hive.process(
+		delta,
+		bee.position,
+		resting,
+		bee.energy,
+		effective_energy_cap(),
+		warmth,
+		season_index_of(stage_index) == 3
+	)
+	bee.energy = float(result.get("energy", bee.energy))
+	warmth = float(result.get("warmth", warmth))
+	var is_resting := bool(result.get("resting", false))
+	if is_resting and not relay_was_resting:
+		message = "中继巢的工蜂托住了翅膀；这里只能恢复一部分。"
+	relay_was_resting = is_resting
 
 func spawn_tutorial_mosquito() -> void:
 	for mosquito in mosquitoes:
@@ -1244,6 +1326,8 @@ func _on_tutorial_home(_amount: int) -> void:
 		message = "远处有花香，但花还藏在风里。"
 
 func _check_double_tap_evade(_delta: float) -> void:
+	if not mentor_tutorial.allows_action("evade"):
+		return
 	var now := Time.get_ticks_msec() / 1000.0
 	var directions := {
 		"left": "move_left",
@@ -1329,6 +1413,16 @@ func _update_tutorial_mosquito(mosquito: Dictionary, delta: float) -> Dictionary
 			position = position.lerp(tutorial_resource_position + Vector2(8, -8), delta * 4.0)
 			mosquito.velocity = Vector2.ZERO
 		if position.distance_to(tutorial_resource_position) > 105.0:
+			var mentor_result := mentor_tutorial.notify_event("resource_cleared")
+			if mentor_result == "repeat_without_prompt":
+				# Put the same harmless guard back on the flower. The first clear was
+				# prompted imitation; the second must be reproduced without the ribbon.
+				position = tutorial_resource_position + Vector2(8, -8)
+				mosquito.velocity = Vector2.ZERO
+				mosquito.repel_time = 0.0
+				message = "花又被占住了。提示收起；再独立清出一次。"
+				mosquito.position = position
+				return mosquito
 			tutorial_step = 5
 			context_lessons_seen["danger"] = true
 			tutorial_charge_state = "aim"
@@ -1359,10 +1453,18 @@ func _update_tutorial_mosquito(mosquito: Dictionary, delta: float) -> Dictionary
 				var closest := Geometry2D.get_closest_point_to_segment(bee.position, previous, position)
 				if closest.distance_to(bee.position) < 29.0:
 					if bee.invulnerable_time > 0.0:
-						_complete_contextual_tutorial()
-						mosquito.attack_state = "flee"
-						mosquito.attack_time = 2.0
-						mosquito.velocity = Vector2.RIGHT * 280.0
+						var mentor_result := mentor_tutorial.notify_event("attack_evaded")
+						if mentor_result == "repeat_without_prompt":
+							mosquito.attack_state = "recover"
+							mosquito.attack_time = 0.65
+							mosquito.velocity = Vector2.ZERO
+							message = "这次躲开了。提示收起；再独立穿过一次。"
+						else:
+							if mentor_result == "ignored":
+								_complete_contextual_tutorial()
+							mosquito.attack_state = "flee"
+							mosquito.attack_time = 2.0
+							mosquito.velocity = Vector2.RIGHT * 280.0
 					else:
 						tutorial_failed_crossings += 1
 						mosquito.attack_state = "recover"
@@ -1403,7 +1505,10 @@ func _complete_contextual_tutorial() -> void:
 		var flower: Dictionary = flowers[i]
 		flower.tutorial_locked = false
 		flowers[i] = flower
-	message = "攻击穿过了急转留下的空隙；前路开了。"
+	if mentor_tutorial.profile_id == "first_trip_pollination" and mentor_tutorial.lesson_id == "pollination":
+		message = "第二朵花苞也打开了。老师傅退回巢口；接下来由你判断。"
+	else:
+		message = "攻击穿过了急转留下的空隙；前路开了。"
 	sound.play_cue("tune")
 
 # 掠蜜蚁沿信息素轨迹在巢口与富花之间巡逻：轨迹可读、可预判（生态化重设计）
@@ -2293,6 +2398,8 @@ func find_spaced_flower_position(minimum_distance: float) -> Vector2:
 			if candidate.distance_to(Vector2(flower.position)) < minimum_distance:
 				valid = false
 				break
+		if valid and relay_hive.enabled and candidate.distance_to(relay_hive.position) < 92.0:
+			valid = false
 		if valid:
 			return candidate
 	return candidate
@@ -2403,6 +2510,8 @@ func stage_permanent_honey_budget(index: int) -> int:
 		var huddle = season_mechanics.mechanic_by_id("huddle")
 		if huddle != null:
 			budget += huddle.warm_points.size() * int(huddle.activation_honey_cost)
+	if relay_hive.enabled:
+		budget += int(relay_hive.activation_cost)
 	return budget
 
 func _ensure_stage_resource_budget() -> void:
@@ -2495,6 +2604,8 @@ func update_interface() -> void:
 		if tutorial_complete and season_mechanics != null and season_mechanics.has_method("hud_status"):
 			mechanics_status = String(season_mechanics.hud_status())
 		detail_label.text = mechanics_status
+	if production_hud != null:
+		production_hud.update_state(self)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -2628,11 +2739,19 @@ func update_progressive_guidance() -> void:
 		sense_button.visible = false
 		return_button.visible = false
 		return
+	# The elder owns presentation and action ordering, but the first real sortie
+	# still advances from movement -> carried honey -> deposited honey. Keeping
+	# this evidence update before the mentor branch prevents the ribbon from
+	# accidentally freezing the underlying causal state machine.
 	if not tutorial_complete:
 		if tutorial_step == 0 and bee.position.distance_to(tutorial_origin) >= 64.0:
 			tutorial_step = 1
 		elif tutorial_step == 1 and carried > 0:
 			tutorial_step = 2
+	if mentor_tutorial.owns_guidance():
+		_update_mentor_guidance()
+		return
+	if not tutorial_complete:
 		tutorial_panel.visible = tutorial_step < 6
 		return_button.visible = tutorial_step == 2
 		match tutorial_step:
@@ -2676,7 +2795,10 @@ func update_progressive_guidance() -> void:
 	var near_enemy := _nearest_enemy_distance() < sting_range
 	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
 	var seasonal_action_id := ""
-	if season_mechanics.has_method("context_action_id"):
+	var relay_action_id := relay_hive.context_action_id(bee.position, carried)
+	if not relay_action_id.is_empty():
+		seasonal_action_id = relay_action_id
+	elif season_mechanics.has_method("context_action_id"):
 		seasonal_action_id = String(season_mechanics.context_action_id(bee.position))
 	if bee.energy <= 35.0:
 		trigger_context_lesson("low_energy", "翅膀变沉", "E 饮蜜 / 回巢")
@@ -2712,6 +2834,12 @@ func update_progressive_guidance() -> void:
 	elif seasonal_action_id == "warm_relay_needs_honey":
 		sense_button.text = "需一滴蜜"
 		context_hint_label.text = ""
+	elif seasonal_action_id == "activate_relay_hive":
+		sense_button.text = "点亮中继巢"
+		context_hint_label.text = "远路中继"
+	elif seasonal_action_id == "relay_hive_needs_honey":
+		sense_button.text = "需一滴蜜"
+		context_hint_label.text = "中继巢未亮"
 	elif near_enemy:
 		sense_button.text = "惊退"
 		context_hint_label.text = ""
@@ -2727,6 +2855,50 @@ func update_progressive_guidance() -> void:
 		context_hint_label.text = ""
 	else:
 		context_hint_label.text = ""
+
+func _update_mentor_guidance() -> void:
+	var guidance: Dictionary = mentor_tutorial.prompt()
+	tutorial_panel.visible = bool(guidance.get("visible", false))
+	if tutorial_panel.visible:
+		tutorial_title.text = String(guidance.get("title", ""))
+		tutorial_body.text = String(guidance.get("body", ""))
+	if mentor_tutorial.blocks_simulation():
+		sense_button.visible = false
+		return_button.visible = false
+		context_hint_label.text = "演示中"
+		return
+	var nearby := nearest_flower(46.0)
+	var near_enemy := _nearest_enemy_distance() < sting_range
+	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
+	var contextual_action := relay_hive.context_action_id(bee.position, carried)
+	if contextual_action.is_empty() and season_mechanics.has_method("context_action_id"):
+		contextual_action = String(season_mechanics.context_action_id(bee.position))
+	return_button.visible = carried > 0 and mentor_tutorial.allows_action("return")
+	sense_button.visible = false
+	context_hint_label.text = ""
+	if mentor_tutorial.lesson_id == "sense" and mentor_tutorial.phase == "imitate":
+		sense_button.visible = true
+		sense_button.text = "寻迹"
+		context_hint_label.text = "先停稳"
+	elif not contextual_action.is_empty() and mentor_tutorial.allows_action("seasonal"):
+		sense_button.visible = true
+		match contextual_action:
+			"open_pollination_bud": sense_button.text = "传粉"
+			"repel_raider": sense_button.text = "惊退"
+			"light_warm_relay": sense_button.text = "点亮"
+			"warm_relay_needs_honey": sense_button.text = "需一滴蜜"
+			"activate_relay_hive": sense_button.text = "点亮中继巢"
+			"relay_hive_needs_honey": sense_button.text = "需一滴蜜"
+			_: sense_button.text = "行动"
+	elif near_enemy and mentor_tutorial.allows_action("repel"):
+		sense_button.visible = true
+		sense_button.text = "惊退"
+	elif nearby >= 0 and mentor_tutorial.allows_action("harvest"):
+		sense_button.visible = true
+		sense_button.text = "采蜜"
+	elif is_still and mentor_tutorial.allows_action("sense"):
+		sense_button.visible = true
+		sense_button.text = "寻迹"
 
 func trigger_context_lesson(id: String, title: String, body: String) -> void:
 	if bool(context_lessons_seen.get(id, false)) or context_lesson_time > 0.0:
@@ -2859,6 +3031,37 @@ func draw_hive_world() -> void:
 		draw_circle(cell_pos, 4.0 + activity * 1.5, Color("ffd968", 0.58 + reserve_glow * 0.32))
 	draw_hive_workers()
 
+func draw_relay_hive_world() -> void:
+	if not relay_hive.enabled:
+		return
+	var pos: Vector2 = relay_hive.position
+	var active := bool(relay_hive.active)
+	var glow := clampf(float(relay_hive.activity_time), 0.0, 1.0)
+	# A small, grounded landing patch makes this a place in the field rather than
+	# another abstract interaction radius. Reusing the primary hive material and
+	# silhouette keeps the two structures in one visual family.
+	draw_colored_polygon(PackedVector2Array([
+		pos + Vector2(-46, 14), pos + Vector2(40, 14),
+		pos + Vector2(54, 48), pos + Vector2(-55, 48)
+	]), Color("efd37b", 0.06 + (0.16 if active else 0.02) + glow * 0.12))
+	var texture: Texture2D = spring_hive_entrance_texture if spring_hive_entrance_texture != null else HIVE_ENTRANCE_TEXTURE
+	var tint := Color.WHITE if active else Color("b6ab88")
+	draw_texture_rect(texture, Rect2(pos + Vector2(-51, -75), Vector2(102, 128)), false, tint)
+	# The post never pretends to be a second scoring hive: one wax lamp communicates
+	# rest, while the main hive alone displays stored-honey chambers.
+	draw_line(pos + Vector2(0, 7), pos + Vector2(0, -8), Color("4b3a2d"), 3.0)
+	if active:
+		draw_colored_polygon(PackedVector2Array([
+			pos + Vector2(0, -23), pos + Vector2(-6, -9),
+			pos + Vector2(0, -4), pos + Vector2(6, -9)
+		]), Color("f6aa3f", 0.92))
+		draw_circle(pos + Vector2(0, -10), 3.0 + glow, Color("fff0a0"))
+	else:
+		draw_colored_polygon(PackedVector2Array([
+			pos + Vector2(0, -22), pos + Vector2(-5, -12),
+			pos + Vector2(0, -6), pos + Vector2(5, -12)
+		]), Color("766b57", 0.72))
+
 func draw_hive_workers() -> void:
 	if colony_bee_texture == null:
 		return
@@ -2915,6 +3118,7 @@ func _draw() -> void:
 		draw_texture_rect(FIELD_TEXTILE_OVERLAY, WORLD, false, Color(1, 1, 1, 0.34))
 	draw_season_ambience(field_theme)
 	draw_hive_world()
+	draw_relay_hive_world()
 
 	var deep := stage_color(2)
 	if not coherent_world:
@@ -3005,6 +3209,7 @@ func _draw() -> void:
 		# 力竭停顿拍：世界转暗，唯一的光留给体力条上的 0
 		draw_rect(WORLD, Color("10160c", 0.5))
 	season_mechanics.draw()
+	mentor_tutorial.draw()
 	draw_set_transform(Vector2.ZERO)
 
 func draw_flower(flower: Dictionary) -> void:

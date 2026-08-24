@@ -293,7 +293,9 @@ func repel_raider_at(position: Vector2) -> bool:
 	raid_ants[nearest] = raider
 	main.flash = maxf(float(main.flash), 0.22)
 	main.message = "被夺的蜜落回花田。" if stolen > 0 else "袭扰者退出航线。"
-	_latch_event("honey_return")
+	# Teaching and world feedback must distinguish a real recovered drop from an
+	# early scare-off. Otherwise "repel immediately" would falsely teach return.
+	_latch_event("honey_return" if stolen > 0 else "raider_repelled")
 	return true
 
 

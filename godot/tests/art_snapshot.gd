@@ -25,6 +25,28 @@ func capture() -> void:
 		game.stage_index = mini(stage_index, game.stages.size() - 1)
 		game.spawn_stage(game.stage_index)
 	match snapshot_state:
+		"mentor_sortie":
+			game.mentor_tutorial.demo_time = game.mentor_tutorial.demo_duration * 0.58
+			game.mentor_tutorial._update_demo_position()
+		"mentor_defense":
+			game.tutorial_step = 4
+			game.tutorial_scent_revealed = true
+			game.spawn_tutorial_mosquito()
+			game.bee.position = Vector2(505, 445)
+			game.mentor_tutorial._start_lesson("defense")
+			game.mentor_tutorial.demo_time = game.mentor_tutorial.demo_duration * 0.42
+			game.mentor_tutorial._update_demo_position()
+		"relay_hive":
+			game.tutorial_complete = true
+			game.context_lessons_seen["sense"] = true
+			game.context_lessons_seen["danger"] = true
+			game.spawn_stage(9)
+			game.mosquitoes.clear()
+			game.ants.clear()
+			game.crickets.clear()
+			game.thrushes.clear()
+			game.carried = 1
+			game.bee.position = game.relay_hive.position
 		"tutorial_attack":
 			game.tutorial_step = 5
 			game.tutorial_scent_revealed = true

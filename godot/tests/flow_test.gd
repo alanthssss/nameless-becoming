@@ -17,6 +17,11 @@ func run_test() -> void:
 	game.persistence_enabled = false
 	expect(game.term_label.text.is_empty() and game.season_label.text == "花田", "首次进入仍直接显示季节或节气名称")
 	game.start_game()
+	# The legacy causal route remains independently tested here; the dedicated
+	# mentor test owns demonstrate -> imitate -> practice sequencing.
+	game.mentor_tutorial.profile_id = ""
+	game.mentor_tutorial.phase = "inactive"
+	game.bee.active = true
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
 	expect(game.is_in_hive_entry(game.HIVE_RETURN_POS), "归巢目标没有落在可见巢门内")
 	expect(not game.is_in_hive_entry(Vector2(game.HIVE_RETURN_POS.x, 220.0)), "左侧任意高度仍被误判为蜂巢")
@@ -129,7 +134,28 @@ func run_test() -> void:
 				visual_variants[int(flower.get("visual_variant", -1))] = true
 			expect(visual_variants.has(0) and visual_variants.has(1), "机制首关 %d 没有稳定展示两种花" % stage_index)
 		if stage_index == 13:
-			expect(int(game.flowers[0].nectar) == 2 and bool(game.flowers[0].get("showcase_seed", false)), "秋季首花被资源补偿改坏，无法一次采蜜见种核")
+			expect(int(game.flowers[0].nectar) == 2 and int(game.flowers[1].nectar) == 2, "秋季两朵教学花被资源补偿改坏，无法先模仿再独立取舍")
+			expect(bool(game.flowers[0].get("showcase_seed", false)) and bool(game.flowers[1].get("showcase_seed", false)), "秋季两次留种练习没有固定真实种花身份")
+	# 中继巢只改变远路休息点，不改变归巢结算语义。
+	game.spawn_stage(9)
+	expect(game.relay_hive.enabled and not game.relay_hive.active, "立夏远路没有出现未点亮的中继巢")
+	var relay_delivered_before: int = int(game.delivered)
+	var main_hive_activity_before: float = float(game.hive_activity_time)
+	game.carried = 1
+	game.bee.position = game.relay_hive.position
+	expect(game._try_activate_relay_hive() and game.relay_hive.active and game.carried == 0, "靠近后使用一滴蜜没有点亮中继巢")
+	expect(game.delivered == relay_delivered_before, "中继巢错误把燃料算作主巢交付")
+	expect(game.hive_activity_time == main_hive_activity_before, "中继巢点亮错误触发主巢活动反馈")
+	game.bee.energy = 20.0
+	game.bee.velocity = Vector2.ZERO
+	game.bee.has_target = false
+	game._update_relay_hive(1.0)
+	expect(game.bee.energy == 32.0, "中继巢没有按固定位置慢速恢复体力")
+	game.bee.position = Vector2(800, 540)
+	Input.action_press("return_hive")
+	game.update_game(0.0)
+	Input.action_release("return_hive")
+	expect(game.bee.target == game.HIVE_RETURN_POS, "Q 被中继巢劫持，不再指向唯一主巢")
 	# 正色节点直接进入失律者遭遇
 	var pattern_by_boss := {"mosquito": "orbital", "cricket": "erratic", "thrush": "lure", "bear": "charge"}
 	for boss_stage in [6, 12, 18]:

@@ -16,6 +16,7 @@
     "nectar_scale": 1.1,
     "colors": ["b4beda", "4e629c", "222a44", "f4d994"],
     "line": "阴极而阳生。蜂群在至暗中苏醒，一阳初动。",
+    "tutorial_profile": "first_trip_pollination",
     "mechanics": ["pollination"]
   },
   {
@@ -139,6 +140,7 @@
     "nectar_scale": 1.16,
     "colors": ["abe3d8", "35b69d", "1f8e79", "f4d994"],
     "line": "气清景明，花田渐密。蜜光在每一条航线上流转。",
+    "tutorial_profile": "raid_intro",
     "mechanics": ["conscription"]
   },
   {
@@ -175,6 +177,12 @@
     "bears": 0,
     "energy_drain": 1.75,
     "nectar_scale": 1.24,
+    "relay_hive": {
+      "position": [640, 548],
+      "activation_cost": 1,
+      "energy_restore_per_second": 12,
+      "energy_cap_ratio": 0.65
+    },
     "colors": ["c9d5b9", "80995c", "5b6f3e", "f4d994"],
     "line": "夏始风暖。蜂群的需要正在变化——巢口与花区同时呼唤。",
     "mechanics": ["conscription"]
@@ -243,6 +251,7 @@
     "nectar_scale": 1.0,
     "colors": ["e3abab", "d26665", "8f1f1e", "f4d994"],
     "line": "暑气初盛，掠蜜者出。花期在热浪中开始退让。",
+    "tutorial_profile": "seed_intro",
     "mechanics": ["reserve"]
   },
   {
@@ -347,6 +356,7 @@
     "nectar_scale": 0.78,
     "colors": ["e2ddd5", "b3a289", "6f5c3e", "f4d994"],
     "line": "露寒花凋，蜜光将熄。坚守最后的花。",
+    "tutorial_profile": "warmth_intro",
     "mechanics": ["huddle"]
   },
   {

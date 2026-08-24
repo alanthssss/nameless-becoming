@@ -48,6 +48,7 @@ func play_cue(cue: String) -> void:
 		"hurt": start_tone(105.0, 0.18, 0.16)
 		"upgrade": start_tone(520.0, 0.28, 0.12)
 		"tune": start_tone(760.0, 0.32, 0.15)
+		"relay": start_tone(590.0, 0.18, 0.10)
 		"win": start_tone(880.0, 0.55, 0.13)
 		"loss": start_tone(145.0, 0.48, 0.12)
 		"drink": start_tone(440.0, 0.15, 0.12)
