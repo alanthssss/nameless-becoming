@@ -1,11 +1,14 @@
 extends SceneTree
 
 var output_path := "/tmp/nameless-art-snapshot.png"
+var snapshot_stage := 0
 
 func _init() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--output="):
 			output_path = argument.trim_prefix("--output=")
+		elif argument.begins_with("--stage="):
+			snapshot_stage = int(argument.trim_prefix("--stage="))
 	call_deferred("capture")
 
 func capture() -> void:
@@ -15,6 +18,11 @@ func capture() -> void:
 	await process_frame
 	game.persistence_enabled = false
 	game.start_game()
+	if snapshot_stage >= game.stages.size():
+		game.stage_index = game.stages.size() - 1
+		game.start_boss()
+	elif snapshot_stage > 0:
+		game.spawn_stage(clampi(snapshot_stage, 0, game.stages.size() - 1))
 	# Move away from the doorway so the player and hive silhouettes do not overlap.
 	game.bee.position = Vector2(300, 390)
 	game.bee.facing = 0.0

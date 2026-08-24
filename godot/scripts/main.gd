@@ -25,6 +25,12 @@ const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.s
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
 const FIELD_TEXTILE_OVERLAY := preload("res://assets/art/field_textile_overlay.svg")
+const MOSQUITO_TEXTURE := preload("res://assets/art/enemy_mosquito_textile.svg")
+const ANT_TEXTURE := preload("res://assets/art/enemy_ant_textile.svg")
+const CRICKET_TEXTURE := preload("res://assets/art/enemy_cricket_textile.svg")
+const THRUSH_TEXTURE := preload("res://assets/art/enemy_thrush_textile.svg")
+const BEAR_TEXTURE := preload("res://assets/art/enemy_bear_textile.svg")
+const ENVIRONMENT_LEAF_TEXTURE := preload("res://assets/art/environment_leaf_textile.svg")
 
 var stages: Array = []
 var balance: Dictionary = {}
@@ -140,6 +146,7 @@ var energy_bar_flash_time := 0.0
 # 蜜囊满额：携带条闪红，替代每帧飘字
 var carry_full_flash_time := 0.0
 var hive_flash_time := 0.0
+var hive_home_flash_time := 0.0
 var reserve_label: Label
 var season_mechanics
 var hive_reserve := 0
@@ -332,6 +339,21 @@ func make_label(parent: Node, text: String, position: Vector2, size: Vector2, fo
 	parent.add_child(label)
 	return label
 
+func add_textile_seam(panel: ColorRect, color := Color("9b8a69", 0.5)) -> void:
+	var seam_specs := [
+		[Vector2(4, 3), Vector2(panel.size.x - 8, 1)],
+		[Vector2(4, panel.size.y - 4), Vector2(panel.size.x - 8, 1)],
+		[Vector2(3, 4), Vector2(1, panel.size.y - 8)],
+		[Vector2(panel.size.x - 4, 4), Vector2(1, panel.size.y - 8)]
+	]
+	for spec in seam_specs:
+		var seam := ColorRect.new()
+		seam.position = spec[0]
+		seam.size = spec[1]
+		seam.color = color
+		seam.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		panel.add_child(seam)
+
 func build_interface() -> void:
 	var ui := CanvasLayer.new()
 	ui.name = "Interface"
@@ -376,6 +398,7 @@ func build_interface() -> void:
 	forage_panel.position = Vector2(34, 82)
 	forage_panel.size = Vector2(300, 50)
 	ui.add_child(forage_panel)
+	add_textile_seam(forage_panel)
 	make_label(forage_panel, "携带", Vector2(12, 5), Vector2(40, 18), 10, Color("6d715f"))
 	carried_label = make_label(forage_panel, "0 / 8", Vector2(50, 8), Vector2(64, 30), 17, Color("26342b"))
 	carried_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -388,6 +411,7 @@ func build_interface() -> void:
 	flight_panel.position = Vector2(348, 82)
 	flight_panel.size = Vector2(310, 50)
 	ui.add_child(flight_panel)
+	add_textile_seam(flight_panel)
 	make_label(flight_panel, "飞行体力", Vector2(12, 5), Vector2(90, 18), 10, Color("6d715f"))
 	energy_label = make_label(flight_panel, "100", Vector2(242, 7), Vector2(54, 25), 17, Color("26342b"))
 	energy_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -408,6 +432,7 @@ func build_interface() -> void:
 	hive_panel.position = Vector2(672, 82)
 	hive_panel.size = Vector2(332, 50)
 	ui.add_child(hive_panel)
+	add_textile_seam(hive_panel)
 	make_label(hive_panel, "蜂巢", Vector2(12, 5), Vector2(52, 18), 10, Color("6d715f"))
 	hive_label = make_label(hive_panel, "●●●", Vector2(66, 8), Vector2(92, 30), 17, Color("26342b"))
 	make_label(hive_panel, "公共储备", Vector2(174, 5), Vector2(72, 18), 10, Color("6d715f"))
@@ -419,6 +444,7 @@ func build_interface() -> void:
 	side.position = Vector2(1020, 146)
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
+	add_textile_seam(side)
 	make_label(side, "当前节令", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
 	season_label = make_label(side, "冬至", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
 	# 节令名下的细分隔条：用 4px 高的色块代替“空行造成的虚假分隔”，视觉上更稳重
@@ -462,6 +488,7 @@ func build_interface() -> void:
 	tutorial_panel.position = Vector2(292, 616)
 	tutorial_panel.size = Vector2(454, 54)
 	ui.add_child(tutorial_panel)
+	add_textile_seam(tutorial_panel, Color("d2b85e", 0.38))
 	tutorial_title = make_label(tutorial_panel, "", Vector2(16, 7), Vector2(120, 20), 12, Color("dfbd54"))
 	tutorial_body = make_label(tutorial_panel, "", Vector2(118, 7), Vector2(320, 38), 12, Color("f7f0d5"))
 	tutorial_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -471,6 +498,7 @@ func build_interface() -> void:
 	overlay.position = Vector2(34, 146)
 	overlay.size = Vector2(970, 538)
 	ui.add_child(overlay)
+	add_textile_seam(overlay, Color("d2b85e", 0.32))
 	overlay_title = make_label(overlay, "冬至 · 蜂巢", Vector2(150, 82), Vector2(670, 150), 54, Color("fff8d9"))
 	overlay_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	overlay_body = make_label(overlay, "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。", Vector2(190, 245), Vector2(590, 78), 17, Color("d8ddc9"))
@@ -786,6 +814,7 @@ func _process(delta: float) -> void:
 	carry_full_flash_time = maxf(0.0, carry_full_flash_time - delta)
 	context_lesson_time = maxf(0.0, context_lesson_time - delta)
 	hive_flash_time = maxf(0.0, hive_flash_time - delta)
+	hive_home_flash_time = maxf(0.0, hive_home_flash_time - delta)
 	if phase == "playing":
 		run_elapsed += delta
 		update_game(delta)
@@ -1315,6 +1344,7 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 		message = "安全归巢，存入 %d 滴蜜。蜂群的照料正在恢复体力。" % amount
 		sound.play_cue("home")
 		flash = 0.32
+		hive_home_flash_time = 0.9
 	elif not was_in_hive:
 		if deposit_honey and carried > 0:
 			message = "落巢了。卸蜜需要站稳片刻——别急着再飞。"
@@ -2265,6 +2295,7 @@ func _draw() -> void:
 	# A transparent, season-agnostic weave layer turns the gradient into fabric
 	# without painting over the interaction colors beneath it.
 	draw_texture_rect(FIELD_TEXTILE_OVERLAY, WORLD, false)
+	draw_seasonal_ground_details()
 
 	draw_rect(Rect2(WORLD.position.x, WORLD.position.y, 108, WORLD.size.y), Color("26392f", 0.88))
 	for y in range(178, 664, 42):
@@ -2273,7 +2304,25 @@ func _draw() -> void:
 	draw_string(zh_font, Vector2(57, 661), "撤 离 区", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d8d4b8"))
 	# The hive is the first environmental art anchor. Its doorway aligns with the
 	# safe-zone edge so the visual entrance and the actual deposit rule agree.
-	draw_texture_rect(HIVE_ENTRANCE_TEXTURE, Rect2(47, 325, 118, 150), false)
+	var hive_near := bee != null and bee.position.x < HIVE_SAFE_X
+	var hive_pulse := 1.0 + (sin(elapsed * 3.0) * 0.025 if hive_near else sin(elapsed * 1.4) * 0.01)
+	draw_set_transform(Vector2(106, 400), 0.0, Vector2(hive_pulse, hive_pulse))
+	draw_texture_rect(HIVE_ENTRANCE_TEXTURE, Rect2(-59, -75, 118, 150), false)
+	draw_set_transform(Vector2.ZERO)
+
+	if hive_near:
+		draw_arc(Vector2(106, 400), 68 + sin(elapsed * 4.0) * 3.0, -1.1, 1.1, 20, Color("f6d66d", 0.38), 3)
+	if hive_home_flash_time > 0.0:
+		var home_ratio := hive_home_flash_time / 0.9
+		draw_arc(Vector2(106, 400), 72 + (1.0 - home_ratio) * 28.0, 0, TAU, 32, Color("ffe580", home_ratio * 0.8), 4)
+		for home_mote in 8:
+			var home_angle := float(home_mote) * TAU / 8.0 + elapsed
+			var home_pos := Vector2(106, 400) + Vector2.from_angle(home_angle) * (45.0 + (1.0 - home_ratio) * 22.0)
+			draw_circle(home_pos, 3.0, Color("efb83f", home_ratio))
+	for reserve_dot in mini(hive_reserve, 6):
+		var dot_pos := Vector2(76 + reserve_dot * 12, 476)
+		draw_circle(dot_pos, 4.5, Color("efb83f"))
+		draw_circle(dot_pos + Vector2(-1.5, -1.5), 1.4, Color("fff1a8"))
 
 	var deep := stage_color(2)
 	for i in 34:
@@ -2318,6 +2367,13 @@ func _draw() -> void:
 		draw_boss(boss)
 	for mote in pollen:
 		draw_circle(mote.position, 2.5, Color(stage_color(3), clampf(float(mote.life) * 2.0, 0, 1)))
+	# Carried honey is shown in-world around the bee, so greed/risk remains visible
+	# even when the player is not reading the top HUD.
+	for honey_index in mini(carried, 5):
+		var honey_angle := elapsed * 1.8 + float(honey_index) * TAU / float(maxi(1, mini(carried, 5)))
+		var honey_pos := bee.position + Vector2.from_angle(honey_angle) * (23.0 + float(honey_index % 2) * 4.0)
+		draw_circle(honey_pos, 4.0, Color("e9b83f", 0.92))
+		draw_circle(honey_pos + Vector2(-1.2, -1.3), 1.2, Color("fff3b0"))
 	for decoy in decoys:
 		var decoy_position: Vector2 = decoy.position
 		draw_circle(decoy_position, 8.0, Color("e8b83f", 0.9))
@@ -2356,6 +2412,21 @@ func _draw() -> void:
 		draw_rect(WORLD, Color("10160c", 0.5))
 	season_mechanics.draw()
 	draw_set_transform(Vector2.ZERO)
+
+func draw_seasonal_ground_details() -> void:
+	var season_name := String(stages[stage_index].get("season", "冬"))
+	var detail_color: Color = {
+		"春": Color("8fb96f", 0.42),
+		"夏": Color("4f8359", 0.38),
+		"秋": Color("c08a49", 0.42),
+		"冬": Color("dbe8ec", 0.32)
+	}.get(season_name, Color("a9bf87", 0.35))
+	for detail_index in 18:
+		var x := HIVE_SAFE_X + 35.0 + fmod(float(detail_index * 149 + stage_index * 37), WORLD.size.x - 250.0)
+		var y := WORLD.position.y + 38.0 + fmod(float(detail_index * 83 + stage_index * 29), WORLD.size.y - 85.0)
+		var angle := sin(float(detail_index) * 1.9 + float(stage_index)) * 0.65
+		var size := Vector2(21, 14) * (0.8 + float(detail_index % 3) * 0.13)
+		draw_entity_texture(ENVIRONMENT_LEAF_TEXTURE, Vector2(x, y), size, angle, detail_color)
 
 func draw_flower(flower: Dictionary) -> void:
 	var pos: Vector2 = flower.position
@@ -2405,12 +2476,17 @@ func draw_flower(flower: Dictionary) -> void:
 	if not alive:
 		draw_line(pos + Vector2(-14, 49), pos + Vector2(14, 49), Color(stage_color(2), 0.45), 2)
 
+func draw_entity_texture(texture: Texture2D, pos: Vector2, size: Vector2, angle: float, modulate := Color.WHITE) -> void:
+	draw_set_transform(pos, angle)
+	draw_texture_rect(texture, Rect2(-size * 0.5, size), false, modulate)
+	draw_set_transform(Vector2.ZERO)
+
 func draw_mosquito(mosquito: Dictionary) -> void:
 	var pos: Vector2 = mosquito.position
 	var repelled := float(mosquito.repel_time) > 0.0
-	draw_circle(pos, 9, Color("b77b3e") if repelled else Color("402e34"))
-	draw_line(pos + Vector2(-5, -4), pos + Vector2(-15, -12), Color("f5f2df", 0.7), 3)
-	draw_line(pos + Vector2(5, 4), pos + Vector2(15, 12), Color("f5f2df", 0.7), 3)
+	var velocity: Vector2 = mosquito.velocity
+	var angle := velocity.angle() if velocity.length_squared() > 0.1 else 0.0
+	draw_entity_texture(MOSQUITO_TEXTURE, pos, Vector2(48, 31), angle, Color("f2c58a") if repelled else Color.WHITE)
 	if repelled:
 		var ratio := clampf(float(mosquito.repel_time) / balance_value("player", "repel_duration", 3.5), 0.0, 1.0)
 		draw_line(pos + Vector2(10, -4), pos + Vector2(25, -4), Color("fff0aa", 0.7), 2)
@@ -2421,13 +2497,9 @@ func draw_mosquito(mosquito: Dictionary) -> void:
 func draw_ant(ant: Dictionary) -> void:
 	var pos: Vector2 = ant.position
 	var fleeing := float(ant.flee_time) > 0.0
-	var color := Color("a66d38") if fleeing else Color("5a382a")
-	draw_circle(pos + Vector2(-7, 0), 6, color)
-	draw_circle(pos + Vector2(2, 0), 7, color)
-	draw_circle(pos + Vector2(11, 0), 5, color)
-	for side in [-1, 1]:
-		draw_line(pos + Vector2(-2, 2 * side), pos + Vector2(-11, 10 * side), color, 2)
-		draw_line(pos + Vector2(5, 2 * side), pos + Vector2(13, 10 * side), color, 2)
+	var velocity: Vector2 = ant.velocity
+	var angle := velocity.angle() if velocity.length_squared() > 0.1 else 0.0
+	draw_entity_texture(ANT_TEXTURE, pos, Vector2(46, 30), angle, Color("f2c58a") if fleeing else Color.WHITE)
 	if fleeing:
 		var ratio := clampf(float(ant.flee_time) / 1.8, 0.0, 1.0)
 		draw_rect(Rect2(pos + Vector2(-18, -24), Vector2(36, 5)), Color("332b27", 0.75))
@@ -2454,29 +2526,19 @@ func draw_ant_trail(ant: Dictionary) -> void:
 func draw_phantom_flower(phantom: Dictionary) -> void:
 	# 画眉的幻花：外形与真花一致，唯有花心颜色偏灰绿是唯一破绽
 	var pos: Vector2 = phantom.position
-	draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), 0.85), 3)
-	for petal in 5:
-		var angle := float(petal) * TAU / 5.0 + float(phantom.phase)
-		draw_circle(pos + Vector2.from_angle(angle) * 11, 7, Color(FLOWER_COLORS[int(phantom.kind)]))
-	draw_circle(pos, 6, Color("cfe0b4"))
+	draw_texture_rect(FLOWER_COMMON_TEXTURE, Rect2(pos - Vector2(25, 28), Vector2(50, 65)), false, Color("9eb5a8", 0.82))
+	draw_circle(pos, 5, Color("9ab7a4"))
 
 func draw_cricket(cricket: Dictionary) -> void:
-	# 油葫芦：三节躯体 + 后腿；静止蓄力、突进时留残影
 	var pos: Vector2 = cricket.position
 	var hopping := bool(cricket.hopping)
 	var repelled := float(cricket.repel_time) > 0.0
-	var body := Color("8d7f4a") if repelled else Color("4f4a2c")
-	if hopping:
-		body = Color("6d6438")
-	draw_circle(pos + Vector2(-8, 0), 5, body)
-	draw_circle(pos + Vector2(0, 0), 6, body)
-	draw_circle(pos + Vector2(8, -1), 4, body)
-	draw_line(pos + Vector2(-8, -3), pos + Vector2(-17, -11), body, 2)
-	draw_line(pos + Vector2(8, -3), pos + Vector2(17, -11), body, 2)
-	# 粗壮后腿（跳跃足）
-	for side in [-1, 1]:
-		draw_line(pos + Vector2(-4, 3 * side), pos + Vector2(-10, 12 * side), body, 3)
-		draw_line(pos + Vector2(-10, 12 * side), pos + Vector2(1, 8 * side), body, 3)
+	var velocity: Vector2 = cricket.velocity
+	var angle := velocity.angle() if velocity.length_squared() > 0.1 else 0.0
+	var scale_y := 0.82 if not hopping else 1.12
+	draw_set_transform(pos, angle, Vector2(1.0, scale_y))
+	draw_texture_rect(CRICKET_TEXTURE, Rect2(-27, -18, 54, 36), false, Color("f2c58a") if repelled else Color.WHITE)
+	draw_set_transform(Vector2.ZERO)
 	if not hopping:
 		var charge_ratio := 1.0 - clampf(float(cricket.hop_clock) / balance_value("cricket", "rest_seconds", 1.2), 0.0, 1.0)
 		draw_rect(Rect2(pos + Vector2(-16, -25), Vector2(32, 4)), Color("332b27", 0.7))
@@ -2486,20 +2548,9 @@ func draw_cricket(cricket: Dictionary) -> void:
 		draw_line(pos + Vector2(12, 4), pos + Vector2(26, 4), Color("fff0aa", 0.7), 2)
 
 func draw_thrush(thrush: Dictionary) -> void:
-	# 画眉：地栖鸟，栖在花田中低处，鸣唱间隔催生幻花
 	var pos: Vector2 = thrush.position
 	var silenced := float(thrush.silence_time) > 0.0
-	var body := Color("8a6f52") if silenced else Color("6b543d")
-	draw_circle(pos, 10, body)
-	draw_circle(pos + Vector2(9, -5), 6, body)
-	draw_circle(pos + Vector2(11.5, -5.5), 1.6, Color("2c231b"))
-	draw_line(pos + Vector2(14, -4), pos + Vector2(22, -2), Color("4a3a29"), 3)
-	# 眉线（名字来源）
-	draw_line(pos + Vector2(6, -8), pos + Vector2(14, -7), Color("e8dcc2"), 2)
-	# 尾羽
-	draw_line(pos + Vector2(-9, 0), pos + Vector2(-19, 4), body, 4)
-	for side in [-1, 1]:
-		draw_line(pos + Vector2(-2, 6 * side), pos + Vector2(-8, 13 * side), Color("4a3a29"), 2)
+	draw_entity_texture(THRUSH_TEXTURE, pos, Vector2(58, 43), 0.0, Color("c7b79f") if silenced else Color.WHITE)
 	if not silenced:
 		var note_phase := elapsed * 2.5
 		for i in 2:
@@ -2510,19 +2561,13 @@ func draw_thrush(thrush: Dictionary) -> void:
 		draw_string(zh_font, pos + Vector2(-15, -22), "噤声", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("e8dcc2", 0.85))
 
 func draw_bear_unit(bear_unit: Dictionary) -> void:
-	# 熊：不可对抗的移动地形，压平花、直取储蜜
 	var pos: Vector2 = bear_unit.position
 	var state := String(bear_unit.state)
-	var body := Color("4a3a30")
 	var gait := sin(elapsed * 4.0) * 2.0 if state != "feeding" else 0.0
-	draw_circle(pos + Vector2(0, 0), 20, body)
-	draw_circle(pos + Vector2(-16, -6 + gait * 0.3), 12, body)
-	draw_circle(pos + Vector2(-13, -14), 4, Color("2e231c"))
-	draw_circle(pos + Vector2(-19, -13), 4, Color("2e231c"))
-	draw_circle(pos + Vector2(-18, -6), 5, Color("8a6f52"))
-	for side in [-1, 1]:
-		draw_circle(pos + Vector2(8, 14 * side), 8, body)
-		draw_circle(pos + Vector2(-8, 14 * side), 8, body)
+	var angle := 0.0 if state == "leaving" else PI
+	draw_set_transform(pos, angle, Vector2(1.0, 1.0 + gait * 0.008))
+	draw_texture_rect(BEAR_TEXTURE, Rect2(-48, -38, 96, 76), false)
+	draw_set_transform(Vector2.ZERO)
 	if state == "feeding":
 		var eat_pulse := 0.5 + 0.5 * sin(elapsed * 6.0)
 		draw_arc(pos + Vector2(-16, -6), 24 + eat_pulse * 4.0, PI * 0.75, PI * 1.6, 16, Color("e9b84f", 0.6 * eat_pulse + 0.2), 2)
@@ -2554,26 +2599,13 @@ func draw_boss(state: Dictionary) -> void:
 		draw_circle(a_pos, radius * 0.8, Color(body, clampf(float(afterimage.life) * 1.6, 0.0, 0.4)))
 	match String(data.move_pattern):
 		"orbital":
-			# 蚊：圆躯 + 长口器
-			draw_circle(pos, radius, body)
-			draw_circle(pos + Vector2(radius * 0.8, 0), radius * 0.45, accent)
-			draw_line(pos + Vector2(radius * 1.1, 0), pos + Vector2(radius * 1.9, -2), Color("2e2327"), 4)
+			draw_entity_texture(MOSQUITO_TEXTURE, pos, Vector2(radius * 2.9, radius * 1.85), float(state.velocity.angle()))
 			draw_arc(pos, radius + 9, -2.4, 2.4, 22, Color("d7b56a", 0.55), 3)
 		"erratic":
-			# 油葫芦：三节躯体 + 长触角
-			draw_circle(pos + Vector2(-radius * 0.55, 2), radius * 0.42, body)
-			draw_circle(pos + Vector2(radius * 0.2, 0), radius * 0.6, body)
-			draw_circle(pos + Vector2(radius * 0.8, -1), radius * 0.3, accent)
-			for side in [-1, 1]:
-				draw_line(pos + Vector2(-radius * 0.3, 2.0 * side), pos + Vector2(-radius * 1.2, radius * 0.8 * side), accent, 3)
-				draw_line(pos + Vector2(radius * 0.4, 2.0 * side), pos + Vector2(radius * 1.3, radius * 0.9 * side), accent, 3)
-			draw_line(pos + Vector2(radius * 0.9, -4), pos + Vector2(radius * 1.7, -14), body, 2)
-			draw_line(pos + Vector2(radius * 0.9, 2), pos + Vector2(radius * 1.8, -4), body, 2)
+			draw_entity_texture(CRICKET_TEXTURE, pos, Vector2(radius * 3.0, radius * 2.05), float(state.velocity.angle()))
+			draw_arc(pos, radius + 8, 0, TAU, 24, Color(accent, 0.45), 2)
 		"lure":
-			# 画眉：鸟身 + 喙 + 振翅弧线 + 漂浮音符
-			draw_circle(pos, radius, body)
-			draw_circle(pos + Vector2(radius * 0.55, -radius * 0.3), radius * 0.16, Color("fff4bd"))
-			draw_line(pos + Vector2(radius, 0), pos + Vector2(radius * 1.7, radius * 0.15), Color("e8c47a"), 4)
+			draw_entity_texture(THRUSH_TEXTURE, pos, Vector2(radius * 3.0, radius * 2.2), float(state.velocity.angle()))
 			var flap := sin(elapsed * 9.0) * 0.25
 			draw_arc(pos + Vector2(-radius * 0.2, -radius * 0.4), radius * 0.85, PI * (1.05 + flap), PI * (1.95 - flap), 12, accent, 3)
 			draw_arc(pos + Vector2(-radius * 0.2, radius * 0.4), radius * 0.85, PI * (0.05 - flap), PI * (0.95 + flap), 12, accent, 3)
@@ -2582,17 +2614,12 @@ func draw_boss(state: Dictionary) -> void:
 				draw_circle(note_pos, 3, Color(accent, 0.8))
 				draw_line(note_pos + Vector2(3, -1), note_pos + Vector2(3, -9), Color(accent, 0.8), 2)
 		"charge":
-			# 熊：大圆身 + 双耳 + 口鼻；蓄势时画出冲撞预告线，晕眩时头顶提示
 			var charge_state := String(state.get("charge_state", "wander"))
 			if charge_state == "aim":
 				var aim: Vector2 = state.get("aim_direction", Vector2.RIGHT)
 				draw_line(pos, pos + aim * 340.0, Color("e05a4a", 0.55), 4)
-			draw_circle(pos + Vector2(-radius * 0.55, -radius * 0.6), radius * 0.32, body)
-			draw_circle(pos + Vector2(radius * 0.55, -radius * 0.6), radius * 0.32, body)
-			draw_circle(pos, radius, body)
-			draw_circle(pos + Vector2(0, radius * 0.25), radius * 0.34, accent)
-			draw_circle(pos + Vector2(-radius * 0.28, radius * 0.18), radius * 0.07, Color("1c222b"))
-			draw_circle(pos + Vector2(radius * 0.28, radius * 0.18), radius * 0.07, Color("1c222b"))
+			var bear_angle := float(state.velocity.angle()) if Vector2(state.velocity).length_squared() > 0.1 else PI
+			draw_entity_texture(BEAR_TEXTURE, pos, Vector2(radius * 2.75, radius * 2.2), bear_angle)
 			if charge_state == "rest":
 				draw_string(zh_font, pos + Vector2(-22, -radius - 12), "晕眩", HORIZONTAL_ALIGNMENT_CENTER, 44, 12, Color("f5d975"))
 	for i in int(state.hits):

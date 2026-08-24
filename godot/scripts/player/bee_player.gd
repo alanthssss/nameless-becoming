@@ -132,9 +132,14 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, facing)
 	# First production art anchor: editable textile appliqué SVG imported by Godot.
 	# A slight vertical pulse keeps the wings alive before a full frame sheet exists.
-	var wing_pulse := 0.96 + sin(Time.get_ticks_msec() * 0.03) * 0.04
-	draw_set_transform(Vector2.ZERO, facing, Vector2(1.0, wing_pulse))
-	draw_texture_rect(PLAYER_BEE_TEXTURE, Rect2(-29, -21, 58, 42), false)
+	var motion_rate := 0.05 if velocity.length_squared() > 100.0 else 0.03
+	var wing_pulse := 0.96 + sin(Time.get_ticks_msec() * motion_rate) * 0.06
+	var action_scale := Vector2(1.0, wing_pulse)
+	if evade_time > 0.0:
+		action_scale = Vector2(1.18, 0.78)
+	var action_tint := Color("fff3b0") if invulnerable_time > 0.0 else Color.WHITE
+	draw_set_transform(Vector2.ZERO, facing, action_scale)
+	draw_texture_rect(PLAYER_BEE_TEXTURE, Rect2(-29, -21, 58, 42), false, action_tint)
 	if sense_time > 0.0:
 		draw_arc(Vector2.ZERO, 27 + sin(Time.get_ticks_msec() * 0.012) * 4, 0, TAU, 28, Color("f1d46d", 0.72), 2)
 	draw_set_transform(Vector2.ZERO)
