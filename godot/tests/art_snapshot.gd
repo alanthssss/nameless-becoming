@@ -43,6 +43,17 @@ func capture() -> void:
 			game.spawn_stage(7)
 			game.season_mechanics.on_home(3, 0.1)
 			game.bee.position = Vector2(560, 410)
+		"autumn_seed":
+			game.tutorial_complete = true
+			game.context_lessons_seen["sense"] = true
+			game.context_lessons_seen["danger"] = true
+			game.spawn_stage(13)
+			var reserve = game.season_mechanics.mechanic_by_id("reserve")
+			var seed_flower: Dictionary = game.flowers[0]
+			seed_flower.nectar = 1
+			game.flowers[0] = seed_flower
+			reserve.on_harvest(0)
+			game.bee.position = Vector2(seed_flower.position) + Vector2(46, 0)
 		"winter_route":
 			game.tutorial_complete = true
 			game.context_lessons_seen["sense"] = true

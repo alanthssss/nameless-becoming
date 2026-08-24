@@ -56,6 +56,39 @@ func try_context_action(position: Vector2) -> bool:
 	return false
 
 
+func context_action_id(position: Vector2) -> String:
+	for mechanic in active:
+		if mechanic.has_method("context_action_id"):
+			var action_id := String(mechanic.context_action_id(position))
+			if not action_id.is_empty():
+				return action_id
+	return ""
+
+
+func latched_event() -> Dictionary:
+	var best := {"id": "", "remaining": 0.0}
+	for mechanic in active:
+		if not mechanic.has_method("latched_event"):
+			continue
+		var candidate: Dictionary = mechanic.latched_event()
+		if float(candidate.get("remaining", 0.0)) > float(best.remaining):
+			best = candidate
+	return best
+
+
+func harvest_requires_release(flower_index: int) -> bool:
+	for mechanic in active:
+		if mechanic.has_method("harvest_requires_release") and bool(mechanic.harvest_requires_release(flower_index)):
+			return true
+	return false
+
+
+func notify_harvest_released(flower_index: int = -1) -> void:
+	for mechanic in active:
+		if mechanic.has_method("notify_harvest_released"):
+			mechanic.notify_harvest_released(flower_index)
+
+
 # 测试与旧调用的兼容入口；运行时 main 使用 try_context_action，避免同一帧双触发。
 func on_context_action() -> bool:
 	if main == null or main.bee == null:

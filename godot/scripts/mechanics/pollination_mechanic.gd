@@ -15,6 +15,7 @@ var pollen_time := 0.0
 var opened_buds := 0
 var source_indices: Array[int] = []
 var bud_indices: Array[int] = []
+var pollen_charges: Array[int] = [0, 0]
 
 
 func start(game, _data: Dictionary, balance: Dictionary) -> void:
@@ -25,6 +26,7 @@ func start(game, _data: Dictionary, balance: Dictionary) -> void:
 	carried_pollen = -1
 	pollen_time = 0.0
 	opened_buds = 0
+	pollen_charges = [0, 0]
 	source_indices.clear()
 	bud_indices.clear()
 	if main.flowers.size() < 2:
@@ -69,6 +71,7 @@ func on_harvest(flower_index: int) -> void:
 	if pollen_kind < 0:
 		return
 	carried_pollen = pollen_kind
+	pollen_charges[pollen_kind % POLLEN_COLORS.size()] += 1
 	pollen_time = 1.0
 	main.spawn_pollen(Vector2(flower.position))
 	main.message = "花粉落在翅上。"
@@ -79,11 +82,9 @@ func on_context_action() -> bool:
 	if bud_index < 0:
 		return false
 	var flower: Dictionary = main.flowers[bud_index]
-	if carried_pollen < 0 or pollen_time <= 0.0:
+	var required_kind := int(flower.get("required_pollen", -1))
+	if required_kind < 0 or pollen_charges[required_kind % POLLEN_COLORS.size()] <= 0:
 		main.message = "锁芽在等花粉。"
-		return true
-	if int(flower.get("required_pollen", -1)) != carried_pollen:
-		main.message = "颜色没有相合。"
 		return true
 
 	flower["locked_bud"] = false
@@ -93,8 +94,8 @@ func on_context_action() -> bool:
 	flower["stored_nectar"] = 0
 	main.flowers[bud_index] = flower
 	opened_buds += 1
-	carried_pollen = -1
-	pollen_time = 0.0
+	pollen_charges[required_kind % POLLEN_COLORS.size()] -= 1
+	_refresh_visible_pollen()
 	main.spawn_pollen(Vector2(flower.position))
 	main.flash = maxf(float(main.flash), 0.28)
 	main.message = "锁芽打开。"
@@ -105,8 +106,18 @@ func try_context_action(_position: Vector2) -> bool:
 	return on_context_action()
 
 
+func context_action_id(position: Vector2) -> String:
+	if nearest_locked_bud_at(position) >= 0:
+		return "open_pollination_bud"
+	return ""
+
+
+func required_open_count() -> int:
+	return mini(2, bud_indices.size())
+
+
 func can_complete() -> bool:
-	return opened_buds > 0 or bud_indices.is_empty()
+	return opened_buds >= required_open_count()
 
 
 func hud_status() -> String:
@@ -124,6 +135,10 @@ func is_flower_available(index: int) -> bool:
 
 
 func nearest_locked_bud() -> int:
+	return nearest_locked_bud_at(main.bee.position)
+
+
+func nearest_locked_bud_at(position: Vector2) -> int:
 	var nearest := -1
 	var nearest_distance := bud_open_range
 	for index in bud_indices:
@@ -132,11 +147,73 @@ func nearest_locked_bud() -> int:
 		var flower: Dictionary = main.flowers[index]
 		if not bool(flower.get("locked_bud", false)):
 			continue
-		var distance: float = main.bee.position.distance_to(Vector2(flower.position))
+		var distance: float = position.distance_to(Vector2(flower.position))
 		if distance < nearest_distance:
 			nearest_distance = distance
 			nearest = index
 	return nearest
+
+
+func nearest_matching_bud(kind: int, origin: Vector2) -> int:
+	var nearest := -1
+	var nearest_distance := INF
+	for index in bud_indices:
+		if index < 0 or index >= main.flowers.size():
+			continue
+		var flower: Dictionary = main.flowers[index]
+		if not bool(flower.get("locked_bud", false)) or int(flower.get("required_pollen", -1)) != kind:
+			continue
+		var distance := origin.distance_to(Vector2(flower.position))
+		if distance < nearest_distance:
+			nearest_distance = distance
+			nearest = index
+	return nearest
+
+
+func visual_state_for_flower(index: int) -> String:
+	if source_indices.has(index):
+		return "pollen_stamens"
+	if bud_indices.has(index) and index >= 0 and index < main.flowers.size():
+		return "closed_bud" if bool(main.flowers[index].get("locked_bud", false)) else "opened_bloom"
+	return "ordinary"
+
+
+func _refresh_visible_pollen() -> void:
+	carried_pollen = -1
+	for kind in pollen_charges.size():
+		if pollen_charges[kind] > 0:
+			carried_pollen = kind
+			break
+	pollen_time = 1.0 if carried_pollen >= 0 else 0.0
+
+
+func _draw_closed_bud(pos: Vector2, color: Color) -> void:
+	# A stem, two sepals and folded petals read as a physical bud rather than
+	# the abstract empty target rings used by the first implementation.
+	main.draw_line(pos + Vector2(0, 12), pos + Vector2(0, 38), Color("49634d"), 4.0)
+	main.draw_colored_polygon(PackedVector2Array([
+		pos + Vector2(0, -19), pos + Vector2(-8, -17),
+		pos + Vector2(-14, -8), pos + Vector2(-13, 4),
+		pos + Vector2(-6, 12), pos + Vector2(0, 15),
+		pos + Vector2(6, 12), pos + Vector2(13, 4),
+		pos + Vector2(14, -8), pos + Vector2(8, -17)
+	]), Color(color, 0.92))
+	main.draw_colored_polygon(PackedVector2Array([
+		pos + Vector2(0, -17), pos + Vector2(-7, -5),
+		pos + Vector2(-4, 10), pos + Vector2(0, 14),
+		pos + Vector2(4, 10), pos + Vector2(7, -5)
+	]), Color(color.darkened(0.18), 0.82))
+	main.draw_colored_polygon(PackedVector2Array([
+		pos + Vector2(0, 15),
+		pos + Vector2(-13, 4),
+		pos + Vector2(-5, 0)
+	]), Color("66825c"))
+	main.draw_colored_polygon(PackedVector2Array([
+		pos + Vector2(0, 15),
+		pos + Vector2(13, 4),
+		pos + Vector2(5, 0)
+	]), Color("66825c"))
+	main.draw_line(pos + Vector2(0, 10), pos + Vector2(0, -15), Color("fff2b3", 0.52), 1.5)
 
 
 func draw() -> void:
@@ -146,9 +223,19 @@ func draw() -> void:
 		var source: Dictionary = main.flowers[index]
 		if int(source.get("nectar", 0)) <= 0:
 			continue
+		if bool(source.get("tutorial_hidden", false)) and not bool(source.get("discovered", false)):
+			continue
+		if bool(source.get("tutorial_locked", false)):
+			continue
 		var kind := int(source.get("pollen_kind", 0)) % POLLEN_COLORS.size()
-		var pulse := 15.0 + sin(main.elapsed * 4.0 + float(index)) * 2.0
-		main.draw_arc(Vector2(source.position), pulse, 0, TAU, 20, POLLEN_COLORS[kind], 2.0)
+		var pos := Vector2(source.position)
+		# Five bright stamens sit inside the existing flower silhouette. Their
+		# arrangement and color are repeated on the matching closed bud.
+		for stamen in 5:
+			var angle: float = TAU * float(stamen) / 5.0 + float(main.elapsed) * 0.22
+			var head: Vector2 = pos + Vector2.from_angle(angle) * (8.0 + sin(float(main.elapsed) * 4.0 + stamen) * 1.2)
+			main.draw_line(pos, head, Color(POLLEN_COLORS[kind], 0.58), 1.5)
+			main.draw_circle(head, 3.2, POLLEN_COLORS[kind])
 	for index in bud_indices:
 		if index >= main.flowers.size():
 			continue
@@ -157,13 +244,28 @@ func draw() -> void:
 			continue
 		var kind := int(bud.get("required_pollen", 0)) % POLLEN_COLORS.size()
 		var pos := Vector2(bud.position)
-		main.draw_circle(pos, 9.0, Color("40534f"))
-		main.draw_arc(pos, 13.0, -PI * 0.8, PI * 0.8, 18, POLLEN_COLORS[kind], 3.0)
-	if carried_pollen >= 0 and pollen_time > 0.0:
-		var color: Color = POLLEN_COLORS[carried_pollen % POLLEN_COLORS.size()]
-		main.draw_arc(main.bee.position, 25.0, 0, TAU, 24, Color(color, 0.85), 3.0)
+		_draw_closed_bud(pos, POLLEN_COLORS[kind])
+	if pollen_time > 0.0:
+		for kind in pollen_charges.size():
+			if pollen_charges[kind] <= 0:
+				continue
+			var color: Color = POLLEN_COLORS[kind]
+			var leg_side := -1.0 if kind == 0 else 1.0
+			# Pollen is carried as two small clumps on the bee's hind legs.
+			main.draw_circle(main.bee.position + Vector2(-8, 12.0 * leg_side), 4.5, color)
+			main.draw_circle(main.bee.position + Vector2(-14, 9.0 * leg_side), 3.2, Color(color, 0.86))
+			var match_index := nearest_matching_bud(kind, main.bee.position)
+			if match_index < 0:
+				continue
+			var target := Vector2(main.flowers[match_index].position)
+			for mote in 5:
+				var ratio := fmod(main.elapsed * 0.22 + float(mote) / 5.0, 1.0)
+				var guide_pos: Vector2 = Vector2(main.bee.position).lerp(target, ratio)
+				guide_pos.y += sin(ratio * PI) * -18.0
+				main.draw_circle(guide_pos, 2.0 + ratio, Color(color, 0.28 + ratio * 0.34))
 
 
 func end() -> void:
 	carried_pollen = -1
 	pollen_time = 0.0
+	pollen_charges = [0, 0]

@@ -18,6 +18,8 @@ func run_test() -> void:
 	expect(game.term_label.text.is_empty() and game.season_label.text == "花田", "首次进入仍直接显示季节或节气名称")
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
+	expect(game.is_in_hive_entry(game.HIVE_RETURN_POS), "归巢目标没有落在可见巢门内")
+	expect(not game.is_in_hive_entry(Vector2(game.HIVE_RETURN_POS.x, 220.0)), "左侧任意高度仍被误判为蜂巢")
 	expect(game.is_spring_gathering_stage(0) and game.is_spring_gathering_stage(3), "授粉玩法组未被春季正式美术路由识别")
 	expect(not game.is_spring_gathering_stage(6), "春分失律者关不应启用春季普通关美术")
 	expect(not game.is_spring_gathering_stage(7) and not game.is_spring_gathering_stage(9), "袭扰玩法组错误沿用春季正式美术")
@@ -121,6 +123,13 @@ func run_test() -> void:
 				expect(Vector2(game.flowers[flower_index].position).distance_to(Vector2(game.flowers[other_index].position)) >= 81.9, "节令 %d 花朵生成间距不足" % stage_index)
 		var expected_id: String = ["pollination", "conscription", "reserve", "huddle"][clampi(stage_index / 6, 0, 3)]
 		expect(game.season_mechanics.mechanic_by_id(expected_id) != null, "节令 %d 未激活 %s 机制" % [stage_index, expected_id])
+		if stage_index in [7, 13, 19]:
+			var visual_variants := {}
+			for flower in game.flowers:
+				visual_variants[int(flower.get("visual_variant", -1))] = true
+			expect(visual_variants.has(0) and visual_variants.has(1), "机制首关 %d 没有稳定展示两种花" % stage_index)
+		if stage_index == 13:
+			expect(int(game.flowers[0].nectar) == 2 and bool(game.flowers[0].get("showcase_seed", false)), "秋季首花被资源补偿改坏，无法一次采蜜见种核")
 	# 正色节点直接进入失律者遭遇
 	var pattern_by_boss := {"mosquito": "orbital", "cricket": "erratic", "thrush": "lure", "bear": "charge"}
 	for boss_stage in [6, 12, 18]:

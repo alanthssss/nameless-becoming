@@ -50,8 +50,10 @@ func set_boss_tuning_progress(value: int) -> void:
 	tuning_progress = clampi(value, 0, 3)
 	if mode != &"boss":
 		return
-	# Each successful tuning brings the distorted version closer to its home pulse.
-	player.pitch_scale = lerpf(0.94, 1.0, float(tuning_progress) / 3.0)
+	# The eight masters already contain their intended key and tempo.  Global
+	# pitch-shifting made the slower bosses sound like the same low drone, so
+	# tuning now changes presence without detuning the written arrangement.
+	player.pitch_scale = 1.0
 	player.volume_db = lerpf(-11.0, -14.0, float(tuning_progress) / 3.0)
 
 
@@ -72,7 +74,7 @@ func _play_current() -> void:
 	stream.loop_begin = 0
 	stream.loop_end = maxi(1, roundi(stream.get_length() * float(stream.mix_rate)))
 	player.stream = stream
-	player.pitch_scale = 0.94 if mode == &"boss" else 1.0
+	player.pitch_scale = 1.0
 	player.volume_db = -11.0 if mode == &"boss" else -13.0
 	if enabled:
 		player.play()

@@ -21,6 +21,7 @@ var warm_points: Array = []
 var activated_points := 0
 var flower_route: Array[int] = []
 var _low_warned := false
+var frost_level := 0.0
 
 
 func start(game, _data: Dictionary, balance: Dictionary) -> void:
@@ -42,6 +43,7 @@ func start(game, _data: Dictionary, balance: Dictionary) -> void:
 		main.warmth = 100.0
 	main.bee.environment_speed_multiplier = 1.0
 	_low_warned = false
+	frost_level = 0.0
 	activated_points = 0
 	flower_route.clear()
 	scouting_unlocked = main.hive_reserve >= scout_reserve_threshold
@@ -76,7 +78,7 @@ func build_warm_points() -> void:
 
 
 func process(delta: float) -> void:
-	var in_hive: bool = main.bee.position.x < main.HIVE_SAFE_X
+	var in_hive: bool = main.is_in_hive_entry(main.bee.position)
 	var point_index := active_warm_point_at(main.bee.position)
 	if in_hive:
 		main.warmth = minf(100.0, main.warmth + hive_restore * delta)
@@ -86,7 +88,8 @@ func process(delta: float) -> void:
 		main.bee.environment_speed_multiplier = 1.0
 	else:
 		main.warmth = maxf(0.0, main.warmth - warmth_drain * delta)
-		main.bee.environment_speed_multiplier = cold_speed_multiplier
+		main.bee.environment_speed_multiplier = speed_for_warmth(main.warmth)
+	frost_level = clampf((100.0 - main.warmth) / 100.0, 0.0, 1.0)
 
 	if main.warmth <= cold_warmth_threshold and not _low_warned:
 		_low_warned = true
@@ -96,13 +99,14 @@ func process(delta: float) -> void:
 
 
 func on_context_action() -> bool:
-	var point_index := nearest_inactive_point()
+	var point_index := nearest_inactive_point_at(main.bee.position)
 	if point_index < 0:
 		return false
 	if int(main.carried) < activation_honey_cost:
 		main.message = "暖点需要一滴蜜。"
-		# 不占用附近花朵的采集动作；有蜜时才由暖点取得情境动作优先级。
-		return false
+		# The relay owns this press so the generic router cannot reinterpret it as
+		# sense. Held harvesting still runs independently when a real flower overlaps.
+		return true
 	main.carried -= activation_honey_cost
 	var point: Dictionary = warm_points[point_index]
 	point["active"] = true
@@ -118,6 +122,14 @@ func on_context_action() -> bool:
 
 func try_context_action(_position: Vector2) -> bool:
 	return on_context_action()
+
+
+func context_action_id(position: Vector2) -> String:
+	if nearest_inactive_point_at(position) < 0:
+		return ""
+	if int(main.carried) < activation_honey_cost:
+		return "warm_relay_needs_honey"
+	return "light_warm_relay"
 
 
 func can_complete() -> bool:
@@ -145,6 +157,10 @@ func is_flower_available(index: int) -> bool:
 
 
 func nearest_inactive_point() -> int:
+	return nearest_inactive_point_at(main.bee.position)
+
+
+func nearest_inactive_point_at(position: Vector2) -> int:
 	var nearest := -1
 	var nearest_distance := activation_range
 	for i in warm_points.size():
@@ -153,7 +169,7 @@ func nearest_inactive_point() -> int:
 			continue
 		if i > 0 and not bool(warm_points[i - 1].get("active", false)):
 			continue
-		var distance: float = main.bee.position.distance_to(Vector2(point.position))
+		var distance: float = position.distance_to(Vector2(point.position))
 		if distance < nearest_distance:
 			nearest_distance = distance
 			nearest = i
@@ -180,27 +196,81 @@ func current_speed_factor() -> float:
 	return float(main.bee.environment_speed_multiplier)
 
 
+func speed_for_warmth(value: float) -> float:
+	# A full bee leaves the hive at normal speed. Cold becomes legible as a
+	# gradual bodily change instead of an unexplained 28% movement penalty on the
+	# very first frame outside the safe zone.
+	var full_speed_warmth := maxf(cold_warmth_threshold + 35.0, 70.0)
+	var ratio := inverse_lerp(cold_warmth_threshold, full_speed_warmth, clampf(value, cold_warmth_threshold, full_speed_warmth))
+	# The exposed field retains a barely perceptible 2% headwind even while warm,
+	# keeping the existing cold-zone contract without the old immediate 28% drag.
+	return lerpf(cold_speed_multiplier, 0.98, ratio)
+
+
+func visual_profile() -> String:
+	return "wax_lamp_huddle"
+
+
 func draw() -> void:
-	var hive_position := Vector2(86, 410)
-	var glow := 27.0 + sin(main.elapsed * 3.0) * 3.0
-	main.draw_arc(hive_position, glow, 0, TAU, 28, Color("f4d893", 0.6), 3.0)
 	for i in warm_points.size():
 		var point: Dictionary = warm_points[i]
 		var pos := Vector2(point.position)
 		if bool(point.get("active", false)):
 			var pulse := warm_radius + sin(main.elapsed * 2.6 + float(i)) * 5.0
-			main.draw_circle(pos, 10.0, Color("f4d893"))
-			main.draw_arc(pos, pulse, 0, TAU, 40, Color("f4d893", 0.34), 3.0)
+			# A low, filled pool of amber is environmental warmth, not another
+			# interactable ring. The wax lamp remains the readable object at its core.
+			main.draw_circle(pos + Vector2(0, 10), pulse, Color("f4d893", 0.055))
+			_draw_wax_lamp(pos, true)
 		else:
-			main.draw_circle(pos, 9.0, Color("53636b"))
-			main.draw_arc(pos, 17.0, -PI * 0.8, PI * 0.8, 20, Color("9eb5bf", 0.72), 2.0)
+			_draw_wax_lamp(pos, false)
 	for flower_index in flower_route:
 		if is_flower_available(flower_index):
 			continue
 		var frozen_position := Vector2(main.flowers[flower_index].position)
-		main.draw_arc(frozen_position, 29.0, -PI * 0.9, PI * 0.15, 20, Color("b8d8e8", 0.62), 3.0)
-	if main.bee.environment_speed_multiplier < 1.0:
-		main.draw_arc(main.bee.position, 27.0, -PI * 0.8, PI * 0.8, 22, Color("b8d8e8", 0.75), 3.0)
+		# Frost clings to petals as shards; it no longer reads as a generic target arc.
+		for shard_index in 5:
+			var shard_angle := -PI * 0.88 + float(shard_index) * PI * 0.38
+			var shard_root := frozen_position + Vector2.from_angle(shard_angle) * 22.0
+			var shard_tip := frozen_position + Vector2.from_angle(shard_angle) * (28.0 + float(shard_index % 2) * 5.0)
+			main.draw_line(shard_root, shard_tip, Color("b8d8e8", 0.72), 3.0)
+			main.draw_line(shard_tip, shard_tip + Vector2.from_angle(shard_angle + 0.65) * 5.0, Color("d9eef7", 0.62), 1.5)
+	if frost_level > 0.04:
+		var bee_pos: Vector2 = Vector2(main.bee.position)
+		var frost_color := Color("b8d8e8", 0.2 + frost_level * 0.65)
+		for shard in 6:
+			var angle: float = float(shard) * TAU / 6.0 + float(main.elapsed) * 0.08
+			var inner: Vector2 = bee_pos + Vector2.from_angle(angle) * (20.0 + frost_level * 5.0)
+			var outer: Vector2 = bee_pos + Vector2.from_angle(angle) * (25.0 + frost_level * 10.0)
+			main.draw_line(inner, outer, frost_color, 2.0 + frost_level)
+
+
+func _draw_wax_lamp(pos: Vector2, active: bool) -> void:
+	var wax := Color("f0d889") if active else Color("d3c39a")
+	var wax_shadow := Color("be9c52") if active else Color("927d5c")
+	# Chunky wax body and wick replace the previous abstract empty circle.
+	main.draw_colored_polygon(PackedVector2Array([
+		pos + Vector2(-11, 14), pos + Vector2(-13, -8),
+		pos + Vector2(-6, -13), pos + Vector2(0, -9),
+		pos + Vector2(7, -14), pos + Vector2(12, -8),
+		pos + Vector2(10, 14)
+	]), wax)
+	main.draw_line(pos + Vector2(-9, 12), pos + Vector2(9, 12), wax_shadow, 3.0)
+	main.draw_line(pos + Vector2(0, -10), pos + Vector2(0, -19), Color("4b3a2d"), 3.0)
+	if active:
+		var flame_height: float = 11.0 + sin(float(main.elapsed) * 7.0 + pos.x) * 2.0
+		main.draw_colored_polygon(PackedVector2Array([
+			pos + Vector2(0, -31 - flame_height * 0.25),
+			pos + Vector2(-7, -20), pos + Vector2(0, -15),
+			pos + Vector2(7, -20)
+		]), Color("f6a43d"))
+		main.draw_circle(pos + Vector2(0, -21), 3.5, Color("fff0a0"))
+	# Three tiny bees physically huddle around the lamp base. When cold they face
+	# inward; after ignition their gold stripes become visible.
+	for bee_index in 3:
+		var angle: float = PI * 0.15 + float(bee_index) * PI * 0.35
+		var bee_pos: Vector2 = pos + Vector2.from_angle(angle) * 23.0 + Vector2(0, 11)
+		main.draw_circle(bee_pos, 5.5, Color("4a4036"))
+		main.draw_line(bee_pos + Vector2(-3, 0), bee_pos + Vector2(3, 0), Color("e1b94f") if active else Color("aa8742"), 2.5)
 
 
 func end() -> void:

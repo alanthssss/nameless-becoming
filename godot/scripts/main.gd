@@ -1,8 +1,8 @@
 extends Node2D
 
 const WORLD := Rect2(34, 146, 970, 538)
-const HIVE_X := 132.0
 const HIVE_SAFE_X := 225.0
+const HIVE_ENTRY_AREA := Rect2(34, 350, 176, 120)
 const FLOWER_COLORS := [Color("f2d66f"), Color("e9aab1"), Color("a995c9")]
 const FLOWER_TYPE_COLORS := {
 	"nectar_bloom": Color("f2d66f"),
@@ -26,11 +26,26 @@ const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.s
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
 const FIELD_TEXTILE_OVERLAY := preload("res://assets/art/field_textile_overlay.svg")
-const SPRING_FIELD_PATH := "res://assets/art/launch/spring_field_v1.png"
+const SPRING_FIELD_PATH := "res://assets/art/launch/spring_field_v2.png"
 const SPRING_FLOWER_COMMON_PATH := "res://assets/art/launch/flower_common_v1.png"
 const SPRING_FLOWER_HIGH_VALUE_PATH := "res://assets/art/launch/flower_high_value_v1.png"
 const SPRING_HIVE_ENTRANCE_PATH := "res://assets/art/launch/hive_city_entrance_v1.png"
 const SPRING_MOSQUITO_PATH := "res://assets/art/launch/mosquito_v1.png"
+const COLONY_BEE_PATH := "res://assets/art/launch/player_bee_v1.png"
+const SEASON_FLOWER_TEXTURES := {
+	"summer": [
+		preload("res://assets/art/seasonal/summer_hibiscus_v1.png"),
+		preload("res://assets/art/seasonal/summer_sunflower_v1.png")
+	],
+	"autumn": [
+		preload("res://assets/art/seasonal/autumn_aster_v1.png"),
+		preload("res://assets/art/seasonal/autumn_chrysanthemum_v1.png")
+	],
+	"winter": [
+		preload("res://assets/art/seasonal/winter_camellia_v1.png"),
+		preload("res://assets/art/seasonal/winter_wintersweet_v1.png")
+	]
+}
 
 var stages: Array = []
 var balance: Dictionary = {}
@@ -39,6 +54,7 @@ var spring_flower_common_texture: Texture2D
 var spring_flower_high_value_texture: Texture2D
 var spring_hive_entrance_texture: Texture2D
 var spring_mosquito_texture: Texture2D
+var colony_bee_texture: Texture2D
 var field_draw_offset := Vector2.ZERO
 var upgrade_catalog: Array = []
 var chosen_upgrades: Array[String] = []
@@ -91,7 +107,7 @@ var action_was_harvesting := false
 var last_dir_tap := {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
 const DOUBLE_TAP_WINDOW := 0.25
 const DECOY_HOLD_THRESHOLD := 0.5
-const HIVE_RETURN_POS := Vector2(180, 410)
+const HIVE_RETURN_POS := Vector2(150, 410)
 var rng := RandomNumberGenerator.new()
 var save_manager := NamelessSaveManager.new()
 var sound := SoundFeedback.new()
@@ -192,6 +208,7 @@ var tutorial_failed_crossings := 0
 var context_lesson_id := ""
 var context_lesson_time := 0.0
 var context_lessons_seen := {"sense": false, "danger": false, "low_energy": false}
+var hive_activity_time := 0.0
 
 func _ready() -> void:
 	zh_font = load("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
@@ -235,6 +252,7 @@ func load_spring_launch_art() -> void:
 	spring_flower_high_value_texture = load_optional_texture(SPRING_FLOWER_HIGH_VALUE_PATH)
 	spring_hive_entrance_texture = load_optional_texture(SPRING_HIVE_ENTRANCE_PATH)
 	spring_mosquito_texture = load_optional_texture(SPRING_MOSQUITO_PATH)
+	colony_bee_texture = load_optional_texture(COLONY_BEE_PATH)
 
 func spring_launch_art_ready() -> bool:
 	return (
@@ -243,9 +261,28 @@ func spring_launch_art_ready() -> bool:
 		and spring_flower_high_value_texture != null
 		and spring_hive_entrance_texture != null
 		and spring_mosquito_texture != null
+		and colony_bee_texture != null
 		and bee != null
 		and bee.has_spring_launch_art()
 	)
+
+func world_art_ready() -> bool:
+	return spring_launch_art_ready()
+
+func is_in_hive_entry(world_position: Vector2) -> bool:
+	# Deposit, healing and winter warmth all use the doorway-shaped landing area.
+	# Merely touching the left edge above or below the visible hive is not home.
+	return HIVE_ENTRY_AREA.has_point(world_position)
+
+func current_flower_set() -> String:
+	if phase == "boss" or phase == "boss_victory" or phase == "boss_loss":
+		return ["spring", "summer", "autumn", "winter"][clampi(current_boss_index, 0, 3)]
+	if stage_index < 0 or stage_index >= stages.size():
+		return "spring"
+	var configured := String(stages[stage_index].get("flower_set", ""))
+	if not configured.is_empty():
+		return configured
+	return ["spring", "summer", "autumn", "winter"][season_index_of(stage_index)]
 
 func is_spring_gathering_stage(index: int) -> bool:
 	if index < 0 or index >= stages.size():
@@ -757,6 +794,8 @@ func spawn_stage(index: int) -> void:
 			"nectar": nectar_val,
 			"max_nectar": nectar_val,
 			"kind": i % 3,
+			"visual_variant": i % 2,
+			"large_bloom": i % 2 == 1,
 			"phase": rng.randf_range(0, TAU),
 			"recovery": false,
 			"type": ftype.get("id", "nectar_bloom"),
@@ -764,6 +803,8 @@ func spawn_stage(index: int) -> void:
 		})
 	if index == 0 and not tutorial_complete:
 		_configure_authored_first_trip()
+	elif index in [7, 13, 19]:
+		_configure_season_showcase(index)
 	# 敌物候学：五类小怪按节令物候生成（见 docs/design/enemy-phenology.md）
 	for i in int(data.get("mosquitoes", 0)):
 		mosquitoes.append({
@@ -807,7 +848,7 @@ func spawn_stage(index: int) -> void:
 	if season_index_of(index) != 3:
 		energy_cap_override = bee.max_energy
 	season_mechanics.start_stage(index)
-	bee.set_spring_launch_art(uses_spring_launch_art())
+	bee.set_spring_launch_art(world_art_ready())
 	_ensure_stage_resource_budget()
 	message = ""
 	update_interface()
@@ -838,6 +879,8 @@ func _configure_authored_first_trip() -> void:
 		flower.nectar = design.nectar
 		flower.max_nectar = design.nectar
 		flower.type = design.type
+		flower.visual_variant = [1, 0, 1, 0, 1, 0][i]
+		flower.large_bloom = bool(flower.visual_variant == 1)
 		flower.tutorial_locked = bool(design.locked)
 		flower.tutorial_hidden = bool(design.hidden)
 		flower.discovered = not bool(design.hidden)
@@ -850,6 +893,40 @@ func _configure_authored_first_trip() -> void:
 	tutorial_charge_time = 0.0
 	tutorial_failed_crossings = 0
 	tutorial_origin = HIVE_RETURN_POS
+
+## The first trip in each new mechanic family is composed as a readable exhibit:
+## one dominant route, one new physical rule, and no dependence on random spawn
+## luck. Later trips keep the systemic layouts and combine the rule with hazards.
+func _configure_season_showcase(index: int) -> void:
+	var routes := {
+		7: [
+			Vector2(305, 410), Vector2(430, 292), Vector2(445, 525),
+			Vector2(610, 255), Vector2(625, 445), Vector2(790, 318), Vector2(855, 525)
+		],
+		13: [
+			Vector2(315, 410), Vector2(445, 305), Vector2(455, 520),
+			Vector2(620, 260), Vector2(630, 455), Vector2(800, 325), Vector2(850, 535)
+		],
+		19: [
+			Vector2(285, 405), Vector2(335, 515), Vector2(455, 290), Vector2(515, 450),
+			Vector2(620, 545), Vector2(690, 330), Vector2(790, 270), Vector2(865, 505)
+		]
+	}
+	var route: Array = routes.get(index, [])
+	for i in mini(flowers.size(), route.size()):
+		var flower: Dictionary = flowers[i]
+		flower.position = route[i]
+		flower.kind = i % 2
+		flower.visual_variant = i % 2
+		flower.large_bloom = i % 2 == 1
+		if index == 13 and i == 0:
+			# The first autumn flower reaches its seed pod after one harvest tick,
+			# making the new stop/continue decision unavoidable and immediately visible.
+			flower.nectar = 2
+			flower.max_nectar = 2
+			flower.type = "seed_bloom"
+			flower.showcase_seed = true
+		flowers[i] = flower
 
 func on_overlay_button() -> void:
 	# 相位护栏：异常状态下点穿弹窗不推进关卡
@@ -889,6 +966,7 @@ func _process(delta: float) -> void:
 	carry_full_flash_time = maxf(0.0, carry_full_flash_time - delta)
 	context_lesson_time = maxf(0.0, context_lesson_time - delta)
 	hive_flash_time = maxf(0.0, hive_flash_time - delta)
+	hive_activity_time = maxf(0.0, hive_activity_time - delta)
 	if phase == "playing":
 		run_elapsed += delta
 		update_game(delta)
@@ -952,9 +1030,18 @@ func update_game(delta: float) -> void:
 		action_hold_time += delta
 		if nearby >= 0 and bee.energy > 0 and not near_enemy:
 			# 采蜜（持续）
-			harvest_clock += delta
-			bee.energy = maxf(0.0, bee.energy - balance_value("player", "harvest_energy_per_second", 3.2) * delta)
-			if harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
+			var release_required := false
+			if season_mechanics.has_method("harvest_requires_release"):
+				release_required = bool(season_mechanics.harvest_requires_release(nearby))
+			if release_required:
+				# 秋季种核必须真的松手一次。停在最后一滴时不再持续耗体力，
+				# 也不会因为玩家持续按键而越过这个可见取舍。
+				action_was_harvesting = true
+				harvest_clock = 0.0
+			else:
+				harvest_clock += delta
+				bee.energy = maxf(0.0, bee.energy - balance_value("player", "harvest_energy_per_second", 3.2) * delta)
+			if not release_required and harvest_clock >= balance_value("player", "harvest_interval", 0.42) / harvest_multiplier:
 				harvest_clock = 0.0
 				if carried >= int(carry_capacity):
 					# 蜜囊已满：花蜜不扣、花粉不落，避免白白耗掉一朵花。
@@ -1014,6 +1101,8 @@ func update_game(delta: float) -> void:
 			action_decoy_fired = true
 			drop_honey_decoy()
 	else:
+		if season_mechanics.has_method("notify_harvest_released"):
+			season_mechanics.notify_harvest_released()
 		action_hold_time = 0.0
 		action_decoy_fired = false
 		action_was_harvesting = false
@@ -1109,6 +1198,7 @@ func _do_sense() -> void:
 		return
 	var huddle = season_mechanics.mechanic_by_id("huddle")
 	if huddle != null and huddle.is_scouting_ready():
+		bee.trigger_sense()
 		bee.sense_cooldown = huddle.scout_cooldown_value()
 		message = "摇摆舞传来花源方位：蜜最丰的花田已标出。"
 	else:
@@ -1520,7 +1610,7 @@ func update_bears(delta: float) -> void:
 		bears[i] = bear
 
 func update_hive_rest(delta: float, deposit_honey: bool) -> void:
-	var inside := bee.position.x < HIVE_X
+	var inside := is_in_hive_entry(bee.position)
 	if not inside:
 		was_in_hive = false
 		hive_dwell_time = 0.0
@@ -1528,7 +1618,14 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 	hive_dwell_time += delta
 	# 入巢延迟：站稳 hive_deposit_delay 秒才卸蜜——归巢是停靠决策，不是贴边擦存
 	var deposit_ready := deposit_honey and carried > 0 and hive_dwell_time >= balance_value("player", "hive_deposit_delay", 0.4)
+	var message_before_home := message
 	season_mechanics.on_home(carried if deposit_ready else 0, delta)
+	var mechanics_home_message := message if message != message_before_home else ""
+	var home_event: Dictionary = {}
+	if season_mechanics.has_method("latched_event"):
+		home_event = season_mechanics.latched_event()
+	if not String(home_event.get("id", "")).is_empty():
+		hive_activity_time = maxf(hive_activity_time, 1.2)
 	var rest_rate := balance_value("player", "hive_rest_per_second", 36.0)
 	if season_index_of(stage_index) == 3 and warmth <= cold_warmth_threshold:
 		rest_rate *= 0.5
@@ -1537,10 +1634,19 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 		var amount := carried
 		delivered += amount
 		carried = 0
+		var message_before_tutorial := message
 		_on_tutorial_home(amount)
-		message = "安全归巢，存入 %d 滴蜜。蜂群的照料正在恢复体力。" % amount
+		var tutorial_home_message := message if message != message_before_tutorial else ""
+		if not tutorial_home_message.is_empty():
+			message = tutorial_home_message
+		elif not mechanics_home_message.is_empty():
+			# 袭扰出现、种核成熟等世界事件不能被同帧的通用卸蜜提示盖掉。
+			message = mechanics_home_message
+		else:
+			message = "安全归巢，存入 %d 滴蜜。蜂群的照料正在恢复体力。" % amount
 		sound.play_cue("home")
 		flash = 0.32
+		hive_activity_time = 1.2
 	elif not was_in_hive:
 		if deposit_honey and carried > 0:
 			message = "落巢了。卸蜜需要站稳片刻——别急着再飞。"
@@ -1801,7 +1907,7 @@ func start_boss() -> void:
 	boss_hive_heals_remaining = 2
 	boss_hive_was_inside = false
 	bee.configure(1.45 + float(data.season_index) * 0.2)
-	bee.set_spring_launch_art(false)
+	bee.set_spring_launch_art(world_art_ready())
 	bee.reset_for_expedition(Vector2(180, 410))
 	carried = 6
 	delivered = 0
@@ -2042,7 +2148,7 @@ func _boss_exposure_hint(pattern: String) -> String:
 	return "观察动作，等破绽出现。"
 
 func _update_boss_hive_rest() -> void:
-	var inside := bee.position.x < HIVE_X
+	var inside := is_in_hive_entry(bee.position)
 	if not inside:
 		boss_hive_was_inside = false
 		return
@@ -2256,7 +2362,18 @@ func return_honey_to_field(amount: int, origin: Vector2) -> void:
 		clampf(origin.x + rng.randf_range(-45.0, 45.0), HIVE_SAFE_X + 45.0, WORLD.end.x - 50.0),
 		clampf(origin.y + rng.randf_range(-45.0, 45.0), WORLD.position.y + 55.0, WORLD.end.y - 55.0)
 	)
-	flowers.append({"id": recovery_flower_serial, "position": recovery_position, "nectar": amount, "max_nectar": amount, "kind": 1, "phase": rng.randf_range(0, TAU), "recovery": true, "type": "nectar_bloom"})
+	flowers.append({
+		"id": recovery_flower_serial,
+		"position": recovery_position,
+		"nectar": amount,
+		"max_nectar": amount,
+		"kind": 1,
+		"visual_variant": 1,
+		"large_bloom": true,
+		"phase": rng.randf_range(0, TAU),
+		"recovery": true,
+		"type": "nectar_bloom"
+	})
 	recovery_flower_serial += 1
 	spawn_pollen(recovery_position)
 
@@ -2297,9 +2414,13 @@ func _ensure_stage_resource_budget() -> void:
 		return
 	# Add the safety margin to a real, already-open flower. Recovery flowers are
 	# inappropriate here because winter route locking is built before this audit.
-	for i in flowers.size():
+	for i in range(flowers.size() - 1, -1, -1):
 		var flower: Dictionary = flowers[i]
 		if bool(flower.get("locked_bud", false)):
+			continue
+		if bool(flower.get("showcase_seed", false)):
+			continue
+		if bool(flower.get("tutorial_locked", false)) or bool(flower.get("tutorial_hidden", false)):
 			continue
 		flower.nectar = int(flower.get("nectar", 0)) + deficit
 		flower.max_nectar = maxi(int(flower.get("max_nectar", 0)), int(flower.nectar))
@@ -2554,9 +2675,12 @@ func update_progressive_guidance() -> void:
 	var nearby := nearest_flower(46.0)
 	var near_enemy := _nearest_enemy_distance() < sting_range
 	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
+	var seasonal_action_id := ""
+	if season_mechanics.has_method("context_action_id"):
+		seasonal_action_id = String(season_mechanics.context_action_id(bee.position))
 	if bee.energy <= 35.0:
 		trigger_context_lesson("low_energy", "翅膀变沉", "E 饮蜜 / 回巢")
-	elif near_enemy:
+	elif seasonal_action_id == "repel_raider" or near_enemy:
 		trigger_context_lesson("danger", "航线被占", "靠近 · 空格")
 	elif is_still and nearby < 0:
 		trigger_context_lesson("sense", "风里有花香", "停稳 · 空格")
@@ -2575,8 +2699,20 @@ func update_progressive_guidance() -> void:
 	else:
 		tutorial_panel.visible = false
 	return_button.visible = carried > 0
-	sense_button.visible = nearby >= 0 or near_enemy or is_still
-	if near_enemy:
+	sense_button.visible = nearby >= 0 or near_enemy or is_still or not seasonal_action_id.is_empty()
+	if seasonal_action_id == "open_pollination_bud":
+		sense_button.text = "传粉"
+		context_hint_label.text = ""
+	elif seasonal_action_id == "repel_raider":
+		sense_button.text = "惊退"
+		context_hint_label.text = ""
+	elif seasonal_action_id == "light_warm_relay":
+		sense_button.text = "点亮"
+		context_hint_label.text = ""
+	elif seasonal_action_id == "warm_relay_needs_honey":
+		sense_button.text = "需一滴蜜"
+		context_hint_label.text = ""
+	elif near_enemy:
 		sense_button.text = "惊退"
 		context_hint_label.text = ""
 	elif nearby >= 0:
@@ -2665,15 +2801,109 @@ func stage_color(index: int) -> Color:
 	var colors: Array = stages[stage_index].colors
 	return Color(colors[index])
 
+func season_field_tint(id: String) -> Color:
+	match id:
+		"summer":
+			return Color("ffe3ad")
+		"autumn":
+			return Color("e6b77f")
+		"winter":
+			return Color("b9d2df")
+		_:
+			return Color.WHITE
+
+func draw_season_ambience(id: String) -> void:
+	match id:
+		"summer":
+			# Short moving highlights make the field feel hot and busy without
+			# placing another permanent UI symbol over the flowers.
+			for i in 10:
+				var x := WORLD.position.x + 180.0 + fmod(float(i * 113) + elapsed * 18.0, WORLD.size.x - 220.0)
+				var y := WORLD.position.y + 64.0 + fmod(float(i * 71), WORLD.size.y - 128.0)
+				draw_line(Vector2(x, y), Vector2(x + 22.0, y - 7.0), Color("fff1b8", 0.24), 3.0)
+		"autumn":
+			# Leaves, not labels, announce the field's turn toward seed and reserve.
+			for i in 16:
+				var x := WORLD.position.x + fmod(float(i * 83) + elapsed * (9.0 + float(i % 3) * 3.0), WORLD.size.x)
+				var y := WORLD.position.y + fmod(float(i * 117) + elapsed * 11.0, WORLD.size.y)
+				var leaf := PackedVector2Array([
+					Vector2(x - 5.0, y), Vector2(x, y - 3.0),
+					Vector2(x + 6.0, y), Vector2(x, y + 3.0)
+				])
+				draw_colored_polygon(leaf, Color("9e5d2f", 0.28))
+		"winter":
+			var frost := clampf((82.0 - warmth) / 82.0, 0.08, 1.0)
+			draw_rect(WORLD, Color("d9edf4", 0.08 + frost * 0.16))
+			for i in 14:
+				var fx := WORLD.position.x + float(i) * WORLD.size.x / 13.0
+				draw_line(Vector2(fx, WORLD.end.y), Vector2(fx + 17.0, WORLD.end.y - 42.0 - frost * 30.0), Color("f4fbff", 0.12 + frost * 0.22), 2.0)
+
+func draw_hive_world() -> void:
+	var hive_rect := Rect2(38, 254, 164, 198)
+	var activity := clampf(hive_activity_time * 1.5, 0.0, 1.0)
+	var reserve_glow := clampf(float(hive_reserve) / 24.0, 0.0, 1.0)
+	var damage := clampf(hive_flash_time * 1.5, 0.0, 1.0)
+	# The light is a doorway-shaped landing lane rather than another abstract ring.
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(104, 384), Vector2(178, 384), Vector2(205, 437), Vector2(92, 437)
+	]), Color("f8d66b", 0.10 + reserve_glow * 0.16 + activity * 0.22))
+	var hive_tint := Color.WHITE.lerp(Color("e96658"), damage * 0.7)
+	if spring_hive_entrance_texture != null:
+		draw_texture_rect(spring_hive_entrance_texture, hive_rect, false, hive_tint)
+	else:
+		draw_texture_rect(HIVE_ENTRANCE_TEXTURE, Rect2(47, 325, 118, 150), false, hive_tint)
+	# Stored honey visibly lights individual chambers; damage dims them.
+	var lit_cells := clampi(1 + int(hive_reserve / 4), 1, 6)
+	for i in lit_cells:
+		var cell_pos := Vector2(76.0 + float(i % 3) * 25.0, 318.0 + float(i / 3) * 27.0)
+		draw_circle(cell_pos, 4.0 + activity * 1.5, Color("ffd968", 0.58 + reserve_glow * 0.32))
+	draw_hive_workers()
+
+func draw_hive_workers() -> void:
+	if colony_bee_texture == null:
+		return
+	var worker_count := clampi(2 + int(hive_reserve / 6) + int(chosen_upgrades.size() / 2), 2, 6)
+	var role_tints := [Color("fff2bd"), Color("b8dcff"), Color("f0a36a")]
+	var raid_active := false
+	var raid = season_mechanics.mechanic_by_id("conscription") if season_mechanics != null else null
+	if raid != null:
+		raid_active = String(raid.state) == "active"
+	for i in worker_count:
+		var role := i % 3 # scout / forager / guard
+		var phase_offset := elapsed * (1.3 + float(i % 3) * 0.2) + float(i) * 1.7
+		var pos := Vector2(
+			132.0 + float(i % 3) * 24.0 + sin(phase_offset) * 9.0,
+			352.0 + float(i / 3) * 52.0 + cos(phase_offset * 1.2) * 8.0
+		)
+		if role == 0 and bee.sense_time > 0.0:
+			# Scout leaves the doorway toward the field while scent is being read.
+			pos += Vector2(62.0 + sin(phase_offset) * 12.0, -38.0)
+		elif role == 1 and hive_activity_time > 0.0:
+			# Forager shuttles through the landing lane during a real deposit.
+			pos += Vector2(32.0 * sin(phase_offset * 2.1), 34.0)
+		elif role == 2 and raid_active:
+			# Guard holds the outer lip of the door when the field is raided.
+			pos = Vector2(196.0 + sin(phase_offset) * 6.0, 398.0 + cos(phase_offset) * 12.0)
+		draw_set_transform(field_draw_offset + pos, sin(phase_offset) * 0.24)
+		draw_texture_rect(colony_bee_texture, Rect2(-13, -9, 26, 18), false, role_tints[role])
+		if role == 1 and hive_activity_time > 0.0:
+			draw_colored_polygon(PackedVector2Array([
+				Vector2(0, 9), Vector2(-3, 14), Vector2(0, 18), Vector2(3, 14)
+			]), Color("f2cf5b"))
+		elif role == 2 and raid_active:
+			draw_line(Vector2(8, -6), Vector2(19, -13), Color("9f4b35"), 3.0)
+		draw_set_transform(field_draw_offset)
+
 func _draw() -> void:
 	if stages.is_empty():
 		return
 	var offset := Vector2(rng.randf_range(-shake, shake), rng.randf_range(-shake, shake)) if shake > 0 else Vector2.ZERO
 	field_draw_offset = offset
 	draw_set_transform(offset)
-	var spring_launch := uses_spring_launch_art()
-	if spring_launch:
-		draw_texture_rect(spring_field_texture, WORLD, false)
+	var coherent_world := world_art_ready()
+	var field_theme := current_flower_set()
+	if coherent_world:
+		draw_texture_rect(spring_field_texture, WORLD, false, season_field_tint(field_theme))
 	else:
 		var top := stage_color(0)
 		var bottom := stage_color(1)
@@ -2682,17 +2912,12 @@ func _draw() -> void:
 			var ratio := float(band) / 17.0
 			var band_rect := Rect2(WORLD.position.x, WORLD.position.y + WORLD.size.y * ratio, WORLD.size.x, WORLD.size.y / 17.0 + 1)
 			draw_rect(band_rect, top.lerp(bottom, ratio * 0.68))
-		# Existing prototype rendering remains available outside the spring launch slice.
-		draw_texture_rect(FIELD_TEXTILE_OVERLAY, WORLD, false)
-		draw_rect(Rect2(WORLD.position.x, WORLD.position.y, 108, WORLD.size.y), Color("26392f", 0.88))
-		for y in range(178, 664, 42):
-			draw_circle(Vector2(86, y), 17, Color("e5bd4a", 0.08), false, 2)
-		draw_string(zh_font, Vector2(58, 176), "蜂 巢", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("fff1bd"))
-		draw_string(zh_font, Vector2(57, 661), "撤 离 区", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d8d4b8"))
-		draw_texture_rect(HIVE_ENTRANCE_TEXTURE, Rect2(47, 325, 118, 150), false)
+		draw_texture_rect(FIELD_TEXTILE_OVERLAY, WORLD, false, Color(1, 1, 1, 0.34))
+	draw_season_ambience(field_theme)
+	draw_hive_world()
 
 	var deep := stage_color(2)
-	if not spring_launch:
+	if not coherent_world:
 		for i in 34:
 			var x := WORLD.position.x + fmod(float(i * 97 + stage_index * 31), WORLD.size.x)
 			var y := 570.0 + sin(float(i) * 2.1) * 60.0
@@ -2745,8 +2970,13 @@ func _draw() -> void:
 		draw_circle(mote.position, 2.5, Color(stage_color(3), clampf(float(mote.life) * 2.0, 0, 1)))
 	for decoy in decoys:
 		var decoy_position: Vector2 = decoy.position
-		draw_circle(decoy_position, 8.0, Color("e8b83f", 0.9))
-		draw_arc(decoy_position, 18.0 + sin(elapsed * 7.0) * 3.0, 0, TAU, 24, Color("fff1a8", 0.75), 2)
+		var decoy_sway := sin(elapsed * 7.0) * 2.0
+		draw_colored_polygon(PackedVector2Array([
+			decoy_position + Vector2(0, -13 + decoy_sway),
+			decoy_position + Vector2(-9, 2), decoy_position + Vector2(0, 11),
+			decoy_position + Vector2(9, 2)
+		]), Color("e8b83f", 0.92))
+		draw_line(decoy_position + Vector2(-5, 10), decoy_position + Vector2(7, 10), Color("8b6231", 0.72), 3.0)
 	if bee.sense_time > 0.0 and (phase == "playing" or phase == "boss"):
 		var recommended := best_foraging_target()
 		for i in flowers.size():
@@ -2768,11 +2998,7 @@ func _draw() -> void:
 			draw_arc(cricket.position, balance_value("cricket", "sense_range", 220.0), 0, TAU, 48, Color("9d4238", 0.13), 2)
 		for bear_unit in bears:
 			draw_circle(bear_unit.position, balance_value("bear", "flatten_radius", 30.0) + 6.0, Color("5c4433", 0.16), false, 3)
-		draw_line(bee.position, Vector2(HIVE_X, bee.position.y), Color("fff0a0", 0.55), 3)
-	var nearby := nearest_flower(46.0)
-	if nearby >= 0 and phase == "playing":
-		var flower: Dictionary = flowers[nearby]
-		draw_arc(flower.position, 32 + sin(elapsed * 6.0) * 3, 0, TAU, 28, stage_color(3), 2)
+		draw_line(bee.position, HIVE_RETURN_POS, Color("fff0a0", 0.55), 3)
 	if flash > 0:
 		draw_rect(WORLD, Color("fff1b0", flash * 0.25))
 	if phase == "exhausted":
@@ -2785,11 +3011,26 @@ func draw_flower(flower: Dictionary) -> void:
 	var pos: Vector2 = flower.position
 	if bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false)):
 		return
+	# PollinationMechanic owns the physical closed-bud silhouette. Do not leave a
+	# faded open flower underneath it.
+	if bool(flower.get("locked_bud", false)):
+		return
 	if bool(flower.get("tutorial_locked", false)):
-		# Closed buds communicate unavailable routes without a label or modal gate.
-		draw_line(pos + Vector2(0, 10), pos + Vector2(0, 42), Color(stage_color(2), 0.45), 3)
-		draw_circle(pos + Vector2(0, 5), 9, Color(stage_color(2), 0.45))
-		draw_arc(pos + Vector2(0, 5), 13, -2.7, -0.45, 14, Color(stage_color(3), 0.5), 2)
+		# A folded bud is a world object; the former empty target ring looked like
+		# debug UI and gave no clue what would open.
+		draw_line(pos + Vector2(0, 8), pos + Vector2(0, 38), Color("587449", 0.8), 4)
+		draw_colored_polygon(PackedVector2Array([
+			pos + Vector2(-11, 8), pos + Vector2(0, -10), pos + Vector2(4, 9)
+		]), Color("d98caa", 0.82))
+		draw_colored_polygon(PackedVector2Array([
+			pos + Vector2(-4, 9), pos + Vector2(2, -12), pos + Vector2(12, 8)
+		]), Color("f0b8cb", 0.88))
+		draw_colored_polygon(PackedVector2Array([
+			pos + Vector2(-13, 10), pos + Vector2(-2, 4), pos + Vector2(-5, 17)
+		]), Color("6f9255", 0.9))
+		draw_colored_polygon(PackedVector2Array([
+			pos + Vector2(13, 10), pos + Vector2(2, 4), pos + Vector2(5, 17)
+		]), Color("6f9255", 0.9))
 		return
 	var sleeping := bool(flower.get("sleeping", false))
 	var newly_open := bool(flower.get("newly_open", false))
@@ -2812,29 +3053,42 @@ func draw_flower(flower: Dictionary) -> void:
 		draw_circle(pos + Vector2(0, 9), 4, Color(stage_color(3), 0.35))
 		draw_line(pos + Vector2(-18, 13), pos + Vector2(20, 13), Color("5c4433", 0.5), 3)
 		return
-	var high_value_types := ["peak_bloom", "cascade_bloom", "late_bloom", "warmth_bloom"]
-	var high_value := ftype in high_value_types or int(flower.nectar) >= 5
-	var launch_flower := uses_spring_launch_art()
-	var spring_pollination_flower := launch_flower and ftype in ["first_bloom", "chain_bloom"]
-	var flower_texture: Texture2D
-	var flower_size: Vector2
-	if launch_flower:
-		flower_texture = spring_flower_high_value_texture if high_value or spring_pollination_flower else spring_flower_common_texture
-		flower_size = Vector2(70, 80) if high_value or spring_pollination_flower else Vector2(54, 64)
-	else:
-		flower_texture = FLOWER_HIGH_VALUE_TEXTURE if high_value else FLOWER_COMMON_TEXTURE
-		flower_size = Vector2(58, 68) if high_value else Vector2(50, 65)
-	# Type color remains as a low-noise halo; value is communicated by silhouette,
-	# scale and the wax center rather than a label or color swap alone.
-	draw_circle(pos, 23.0 if high_value else 18.0, Color(petal_base, 0.12))
-	var flower_anchor_y := flower_size.y * 0.42 if launch_flower else 28.0
+	var high_value_types := ["peak_bloom", "cascade_bloom", "late_bloom", "warmth_bloom", "first_bloom", "chain_bloom"]
+	var visual_variant := clampi(int(flower.get("visual_variant", 1 if ftype in high_value_types else int(flower.kind) % 2)), 0, 1)
+	var large_bloom := bool(flower.get("large_bloom", ftype in high_value_types))
+	var flower_texture := seasonal_flower_texture(current_flower_set(), visual_variant == 1)
+	var flower_height := 82.0 if large_bloom else 66.0
+	var flower_ratio := float(flower_texture.get_width()) / maxf(1.0, float(flower_texture.get_height()))
+	var flower_size := Vector2(flower_height * flower_ratio, flower_height)
+	# Every independent sprite shares a grounded contact shadow. The old colored
+	# halo was too faint to explain type and read as yet another empty ring.
+	draw_set_transform(field_draw_offset + pos, 0.0, Vector2(1.0, 0.34))
+	draw_circle(Vector2.ZERO, 20.0 if large_bloom else 16.0, Color("26352a", 0.22 * alpha))
+	draw_set_transform(field_draw_offset)
+	var flower_anchor_y := flower_size.y * 0.42
 	draw_texture_rect(flower_texture, Rect2(pos - Vector2(flower_size.x * 0.5, flower_anchor_y), flower_size), false, Color(1, 1, 1, alpha))
 	if recovery and alive:
-		draw_arc(pos, 24 + sin(elapsed * 4.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.9), 3)
+		for drop_index in 3:
+			var drop_pos := pos + Vector2(float(drop_index - 1) * 10.0, -42.0 - abs(drop_index - 1) * 4.0)
+			draw_colored_polygon(PackedVector2Array([
+				drop_pos + Vector2(0, -6), drop_pos + Vector2(-4, 1),
+				drop_pos + Vector2(0, 6), drop_pos + Vector2(4, 1)
+			]), Color("fff1a8", 0.88))
 	if newly_open and alive:
-		draw_arc(pos, 26 + sin(elapsed * 5.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.8), 2)
+		for spark_index in 4:
+			var spark_angle := float(spark_index) * TAU / 4.0 + elapsed * 0.3
+			var spark_pos := pos + Vector2.from_angle(spark_angle) * 28.0
+			draw_line(spark_pos, spark_pos + Vector2.from_angle(spark_angle) * 5.0, Color("fff1a8", 0.72), 2.0)
 	if not alive:
 		draw_line(pos + Vector2(-14, 49), pos + Vector2(14, 49), Color(stage_color(2), 0.45), 2)
+
+func seasonal_flower_texture(set_id: String, second_variant: bool) -> Texture2D:
+	if set_id == "spring" and spring_flower_common_texture != null and spring_flower_high_value_texture != null:
+		return spring_flower_high_value_texture if second_variant else spring_flower_common_texture
+	if SEASON_FLOWER_TEXTURES.has(set_id):
+		var pair: Array = SEASON_FLOWER_TEXTURES[set_id]
+		return pair[1 if second_variant else 0] as Texture2D
+	return FLOWER_HIGH_VALUE_TEXTURE if second_variant else FLOWER_COMMON_TEXTURE
 
 func draw_mosquito(mosquito: Dictionary) -> void:
 	var pos: Vector2 = mosquito.position
@@ -2847,10 +3101,10 @@ func draw_mosquito(mosquito: Dictionary) -> void:
 			draw_circle(pos, 18.0 + sin(elapsed * 14.0) * 3.0, Color("d95d54", 0.16))
 		elif attack_state == "dash":
 			draw_line(pos - Vector2(mosquito.velocity).normalized() * 90.0, pos, Color("f4d994", 0.65), 5.0)
-	if uses_spring_launch_art():
+	if world_art_ready():
 		var velocity := Vector2(mosquito.get("velocity", Vector2.ZERO))
 		var angle := velocity.angle() if velocity.length_squared() > 0.01 else 0.0
-		draw_set_transform(pos, angle)
+		draw_set_transform(field_draw_offset + pos, angle)
 		draw_texture_rect(spring_mosquito_texture, Rect2(-34, -24, 68, 48), false, Color("c9855f") if repelled else Color.WHITE)
 		draw_set_transform(field_draw_offset)
 	else:
@@ -2980,12 +3234,23 @@ func draw_bear_unit(bear_unit: Dictionary) -> void:
 
 func draw_tuning_bloom(pos: Vector2) -> void:
 	var bloom_color := Color(String(current_boss_data.get("bloom_color", "fff0a0"))) if not current_boss_data.is_empty() else Color("fff0a0")
-	var pulse := 28.0 + sin(elapsed * 4.0) * 4.0
-	draw_circle(pos, 18, Color(bloom_color, 0.24))
-	draw_arc(pos, pulse, 0, TAU, 32, Color(bloom_color, 0.75), 3)
+	var breathe := 1.0 + sin(elapsed * 4.0) * 0.08
+	# Boss 调律目标现在是一朵有花心、有花片的实体，不再是空圈。
 	for i in 8:
-		var angle := float(i) * TAU / 8.0 + elapsed * 0.25
-		draw_circle(pos + Vector2.from_angle(angle) * pulse, 3, Color(bloom_color, 0.85))
+		var angle := float(i) * TAU / 8.0 + sin(elapsed * 0.9) * 0.08
+		var petal_center := pos + Vector2.from_angle(angle) * 18.0 * breathe
+		var tangent := Vector2.from_angle(angle + PI * 0.5)
+		var radial := Vector2.from_angle(angle)
+		draw_colored_polygon(PackedVector2Array([
+			petal_center + radial * 13.0,
+			petal_center + tangent * 8.0,
+			petal_center - radial * 7.0,
+			petal_center - tangent * 8.0
+		]), Color(bloom_color, 0.78))
+	draw_circle(pos, 12.0, Color("5c3f27"))
+	for stamen_index in 6:
+		var stamen_angle := float(stamen_index) * TAU / 6.0 + elapsed * 0.15
+		draw_circle(pos + Vector2.from_angle(stamen_angle) * 6.0, 2.2, Color("fff0a0"))
 
 func draw_ellipse_shadow(center: Vector2, radii: Vector2, color: Color) -> void:
 	var points := PackedVector2Array()
