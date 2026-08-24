@@ -21,6 +21,10 @@ const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立
 const SEASON_LENGTH := 6
 const UPGRADE_CAP := 6
 const SeasonMechanicsScript := preload("res://scripts/mechanics/season_mechanics.gd")
+const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.svg")
+const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
+const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
+const FIELD_TEXTILE_OVERLAY := preload("res://assets/art/field_textile_overlay.svg")
 
 var stages: Array = []
 var balance: Dictionary = {}
@@ -2258,12 +2262,18 @@ func _draw() -> void:
 		var ratio := float(band) / 17.0
 		var band_rect := Rect2(WORLD.position.x, WORLD.position.y + WORLD.size.y * ratio, WORLD.size.x, WORLD.size.y / 17.0 + 1)
 		draw_rect(band_rect, top.lerp(bottom, ratio * 0.68))
+	# A transparent, season-agnostic weave layer turns the gradient into fabric
+	# without painting over the interaction colors beneath it.
+	draw_texture_rect(FIELD_TEXTILE_OVERLAY, WORLD, false)
 
 	draw_rect(Rect2(WORLD.position.x, WORLD.position.y, 108, WORLD.size.y), Color("26392f", 0.88))
 	for y in range(178, 664, 42):
 		draw_circle(Vector2(86, y), 17, Color("e5bd4a", 0.08), false, 2)
 	draw_string(zh_font, Vector2(58, 176), "蜂 巢", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("fff1bd"))
 	draw_string(zh_font, Vector2(57, 661), "撤 离 区", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("d8d4b8"))
+	# The hive is the first environmental art anchor. Its doorway aligns with the
+	# safe-zone edge so the visual entrance and the actual deposit rule agree.
+	draw_texture_rect(HIVE_ENTRANCE_TEXTURE, Rect2(47, 325, 118, 150), false)
 
 	var deep := stage_color(2)
 	for i in 34:
@@ -2372,11 +2382,14 @@ func draw_flower(flower: Dictionary) -> void:
 		draw_line(pos + Vector2(-18, 13), pos + Vector2(20, 13), Color("5c4433", 0.5), 3)
 		draw_string(zh_font, pos + Vector2(-15, 66), "压平", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color("8a6a4d", 0.9))
 		return
-	draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), alpha), 3)
-	for petal in 5:
-		var angle := float(petal) * TAU / 5.0 + float(flower.phase)
-		draw_circle(pos + Vector2.from_angle(angle) * 11, 7, Color(petal_base, alpha))
-	draw_circle(pos, 6, Color(stage_color(3), alpha))
+	var high_value_types := ["peak_bloom", "cascade_bloom", "late_bloom", "warmth_bloom"]
+	var high_value := ftype in high_value_types or int(flower.nectar) >= 5
+	var flower_texture: Texture2D = FLOWER_HIGH_VALUE_TEXTURE if high_value else FLOWER_COMMON_TEXTURE
+	var flower_size := Vector2(58, 68) if high_value else Vector2(50, 65)
+	# Type color remains as a low-noise halo; value is communicated by silhouette,
+	# scale and the wax center rather than a label or color swap alone.
+	draw_circle(pos, 23.0 if high_value else 18.0, Color(petal_base, 0.12))
+	draw_texture_rect(flower_texture, Rect2(pos - Vector2(flower_size.x * 0.5, 28), flower_size), false, Color(1, 1, 1, alpha))
 	# 花物候学：非基线花型标注名称
 	if alive and ftype != "nectar_bloom":
 		var type_labels := {"first_bloom": "初花", "chain_bloom": "连", "peak_bloom": "盛", "fading_bloom": "残", "late_bloom": "晚蜜", "seed_bloom": "籽", "hidden_bloom": "藏", "warmth_bloom": "暖", "frozen_bloom": "冰封", "cascade_bloom": "瀑"}

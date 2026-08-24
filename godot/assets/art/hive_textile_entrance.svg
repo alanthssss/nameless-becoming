@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="190" viewBox="0 0 150 190">
+  <defs>
+    <linearGradient id="leather" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d7a763"/><stop offset="1" stop-color="#8a5b34"/></linearGradient>
+    <linearGradient id="wax" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffe58a"/><stop offset="1" stop-color="#d69b2e"/></linearGradient>
+    <linearGradient id="felt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#627b59"/><stop offset="1" stop-color="#314c3d"/></linearGradient>
+  </defs>
+  <ellipse cx="76" cy="174" rx="57" ry="12" fill="#1c2c24" opacity=".2"/>
+  <path d="M24 167V73C24 35 45 12 75 12s51 23 51 61v94Z" fill="url(#felt)" stroke="#263e32" stroke-width="6"/>
+  <path d="M34 160V77c0-31 16-52 41-52s41 21 41 52v83Z" fill="url(#leather)" stroke="#6f472c" stroke-width="5"/>
+  <path d="M44 154V82c0-25 12-42 31-42s31 17 31 42v72Z" fill="url(#wax)" stroke="#795423" stroke-width="4"/>
+  <g fill="none" stroke="#a56d2d" stroke-width="2" opacity=".8">
+    <path d="m61 62 14-8 14 8v16l-14 8-14-8Zm-14 25 14-8 14 8v16l-14 8-14-8Zm28 0 14-8 14 8v16l-14 8-14-8Z"/>
+  </g>
+  <path d="M54 154v-22c0-17 9-28 21-28s21 11 21 28v22Z" fill="#25362d" stroke="#5e4128" stroke-width="5"/>
+  <path d="M47 25c15-10 42-10 57 1" fill="none" stroke="#efd094" stroke-width="2.5" stroke-dasharray="5 5"/>
+  <circle cx="75" cy="13" r="7" fill="#f6cc57" stroke="#704820" stroke-width="2"/>
+  <path d="M18 166h114" stroke="#705136" stroke-width="8" stroke-linecap="round"/>
+</svg>
