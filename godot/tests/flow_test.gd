@@ -81,11 +81,14 @@ func run_test() -> void:
 	game.bee.energy = 100.0
 	game.bee.velocity = Vector2.RIGHT
 	expect(game.bee.try_evade() and game.bee.invulnerable_time > 0.0 and game.bee.energy == 88.0, "K 急转没有产生位移防护与体力消耗")
+	game.delivered = 3
 	var conserved_before: int = game.total_recoverable_honey()
 	game.flowers[0].nectar = int(game.flowers[0].nectar) - 2
 	game.carried = 2
 	game.fail_expedition()
 	expect(game.total_recoverable_honey() == conserved_before, "体力耗尽后花蜜没有回到生态循环")
+	expect(game.delivered == 1, "力竭应按 exhaustion_delivered_penalty 回退已入库进度（3-2=1），且守恒不破")
+	game.delivered = 0
 	# 显式饮蜜：E 键主动饮下蜜囊里的一滴蜜续力，每节气受 crop_fuel_limit 限制；
 	# 被饮下的蜜不生成返蜜花，它转化成了飞行本身
 	game.carried = 2
@@ -149,6 +152,36 @@ func run_test() -> void:
 	game.carried = 0
 	game.update_hive_rest(1.0, true)
 	expect(game.bee.energy > 50.0 and game.delivered == 0, "空手归巢没有恢复体力")
+	# 入巢卸蜜延迟：落巢后需站稳 hive_deposit_delay 才入库，期间离开则计时清零
+	game.carried = 2
+	game.bee.position = Vector2(300, 410)
+	game.update_hive_rest(0.05, true)
+	game.bee.position = Vector2(100, 410)
+	game.update_hive_rest(0.2, true)
+	expect(game.delivered == 0 and game.carried == 2, "入巢未满延迟不应提前卸蜜")
+	game.update_hive_rest(0.3, true)
+	expect(game.delivered == 2 and game.carried == 0, "站稳 hive_deposit_delay 后应完成卸蜜")
+	# 离巢再回：计时清零，需重新站稳
+	game.carried = 1
+	game.bee.position = Vector2(300, 410)
+	game.update_hive_rest(0.3, true)
+	game.bee.position = Vector2(100, 410)
+	game.update_hive_rest(0.3, true)
+	expect(game.delivered == 2 and game.carried == 1, "离开蜂巢应清零卸蜜计时，回来未满延迟不应卸蜜")
+	game.update_hive_rest(0.2, true)
+	expect(game.delivered == 3 and game.carried == 0, "回巢重新站稳后应完成卸蜜")
+	# 蜜香招敌：携带蜜扩大蚊虫嗅觉半径——330px 外、感官加成内的蚊应转向追击
+	game.decoys.clear()
+	game.carried = 8
+	game.bee.position = Vector2(280, 410)
+	game.mosquitoes = [{"id": 0, "position": Vector2(620, 410), "velocity": Vector2.ZERO, "repel_time": 0.0}]
+	game.update_mosquitoes(0.1)
+	expect(Vector2(game.mosquitoes[0].velocity).length() > 0.5, "满载蜜香未把嗅觉外的蚊虫引来")
+	game.carried = 0
+	game.mosquitoes = [{"id": 0, "position": Vector2(620, 410), "velocity": Vector2.ZERO, "repel_time": 0.0}]
+	game.update_mosquitoes(0.1)
+	expect(Vector2(game.mosquitoes[0].velocity).length() < 0.5, "空载时 330px 外的蚊虫不应被吸引")
+	game.carried = 0
 	game.mosquitoes = [{"id": 0, "position": Vector2(210, 410), "velocity": Vector2(-2, 0), "repel_time": 0.0}]
 	game.update_mosquitoes(0.2)
 	expect(float(game.mosquitoes[0].position.x) >= game.HIVE_SAFE_X, "蚊虫越过蜂巢安全边界")

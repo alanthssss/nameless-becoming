@@ -18,6 +18,7 @@
 | 04 | [阶段目标](04-stage-goals.md) | 版本历程、当前目标、MVP 验收、里程碑 | 项目管理者 / PMs |
 | 05 | [关键词表](05-keyword-glossary.md) | 中英术语对照表 | 所有人 / Everyone |
 | 06 | [数值设计总览](06-numeric-design.md) | 关键数值、设置依据、交互与反馈清单、调参工作流 | 设计者 / Designers |
+| 07 | [竞品对比分析](07-competitive-analysis.md) | 品类坐标、8 款竞品详析、六维矩阵、优劣与机会威胁 | 设计者/发行 / Designers & Publishing |
 
 ---
 

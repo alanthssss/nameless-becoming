@@ -52,6 +52,8 @@ var harvest_clock := 0.0
 var sting_cooldown := 0.0
 var hit_cooldown := 0.0
 var was_in_hive := false
+# 入巢卸蜜延迟：落巢后需站稳 hive_deposit_delay 秒才开始卸蜜（防蹭巢速存速撤）
+var hive_dwell_time := 0.0
 var harvest_multiplier := 1.0
 # 蜜囊携带上限：满额时停下采蜜。采蜜蜂成长每级 +3。
 var carry_capacity := 8.0
@@ -179,6 +181,7 @@ func _ready() -> void:
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
 	bee.max_energy = balance_value("player", "max_energy", 100.0)
+	bee.evade_invuln = balance_value("player", "evade_invuln_seconds", 0.18)
 	bee.sense_started.connect(on_sense_started)
 	add_child(bee)
 	add_child(sound)
@@ -640,6 +643,7 @@ func spawn_stage(index: int) -> void:
 	sting_cooldown = 0.0
 	hit_cooldown = 0.0
 	was_in_hive = false
+	hive_dwell_time = 0.0
 	flowers.clear()
 	mosquitoes.clear()
 	ants.clear()
@@ -1003,6 +1007,8 @@ func _check_double_tap_evade(_delta: float) -> void:
 			last_dir_tap[dir_key] = now
 
 func update_mosquitoes(delta: float) -> void:
+	# 蜜香招敌：携带的蜜越多，蚊虫嗅觉半径越大——满载在蚁蚊眼里是显眼的
+	var scent_range := balance_value("mosquito", "sense_range", 330.0) + balance_value("mosquito", "sense_per_carry", 0.0) * carried
 	for i in mosquitoes.size():
 		var mosquito: Dictionary = mosquitoes[i]
 		mosquito.repel_time = maxf(0.0, float(mosquito.repel_time) - delta)
@@ -1018,7 +1024,7 @@ func update_mosquitoes(delta: float) -> void:
 			if lure_position != Vector2.INF:
 				var chase := (lure_position - Vector2(mosquito.position)).normalized()
 				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
-			elif distance_to_player < balance_value("mosquito", "sense_range", 330.0) and bee.position.x > HIVE_SAFE_X:
+			elif distance_to_player < scent_range and bee.position.x > HIVE_SAFE_X:
 				var chase := (bee.position - Vector2(mosquito.position)).normalized()
 				mosquito.velocity = Vector2(mosquito.velocity).lerp(chase * 2.1, delta * 2.8)
 			mosquito.position += Vector2(mosquito.velocity) * balance_value("mosquito", "move_speed", 82.0) * delta
@@ -1026,7 +1032,7 @@ func update_mosquitoes(delta: float) -> void:
 		mosquito.position.y = clampf(mosquito.position.y, WORLD.position.y + 12, WORLD.end.y - 12)
 		if mosquito.repel_time <= 0.0:
 			if distance_to_player < balance_value("mosquito", "impact_range", 26.0) and hit_cooldown <= 0.0 and bee.invulnerable_time <= 0.0:
-				hit_cooldown = 1.05
+				hit_cooldown = balance_value("player", "hit_cooldown", 0.9)
 				bee.energy = maxf(0.0, bee.energy - balance_value("mosquito", "energy_damage", 15.0))
 				show_energy_change(-balance_value("mosquito", "energy_damage", 15.0))
 				var lost_honey := mini(carried, roundi(balance_value("mosquito", "honey_damage", 2.0)))
@@ -1157,7 +1163,7 @@ func update_crickets(delta: float) -> void:
 		cricket_position.y = clampf(cricket_position.y, WORLD.position.y + 14, WORLD.end.y - 14)
 		cricket.position = cricket_position
 		if float(cricket.repel_time) <= 0.0 and cricket_position.distance_to(bee.position) < balance_value("cricket", "impact_range", 28.0) and hit_cooldown <= 0.0 and bee.invulnerable_time <= 0.0:
-			hit_cooldown = 1.05
+			hit_cooldown = balance_value("player", "hit_cooldown", 0.9)
 			bee.energy = maxf(0.0, bee.energy - balance_value("cricket", "energy_damage", 10.0))
 			show_energy_change(-balance_value("cricket", "energy_damage", 10.0))
 			shake = 6.0
@@ -1241,7 +1247,7 @@ func update_bears(delta: float) -> void:
 				flower.flatten_time = balance_value("bear", "flatten_seconds", 9.0)
 				flowers[flower_index] = flower
 		if bear_position.distance_to(bee.position) < balance_value("bear", "contact_range", 30.0) and hit_cooldown <= 0.0 and bee.invulnerable_time <= 0.0:
-			hit_cooldown = 1.05
+			hit_cooldown = balance_value("player", "hit_cooldown", 0.9)
 			bee.energy = maxf(0.0, bee.energy - balance_value("bear", "contact_damage", 16.0))
 			show_energy_change(-balance_value("bear", "contact_damage", 16.0))
 			shake = 8.0
@@ -1254,13 +1260,17 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 	var inside := bee.position.x < HIVE_X
 	if not inside:
 		was_in_hive = false
+		hive_dwell_time = 0.0
 		return
-	season_mechanics.on_home(carried if deposit_honey else 0, delta)
+	hive_dwell_time += delta
+	# 入巢延迟：站稳 hive_deposit_delay 秒才卸蜜——归巢是停靠决策，不是贴边擦存
+	var deposit_ready := deposit_honey and carried > 0 and hive_dwell_time >= balance_value("player", "hive_deposit_delay", 0.4)
+	season_mechanics.on_home(carried if deposit_ready else 0, delta)
 	var rest_rate := balance_value("player", "hive_rest_per_second", 36.0)
 	if season_index_of(stage_index) == 3 and warmth <= cold_warmth_threshold:
 		rest_rate *= 0.5
 	bee.energy = minf(effective_energy_cap(), bee.energy + rest_rate * delta)
-	if deposit_honey and carried > 0:
+	if deposit_ready:
 		var amount := carried
 		delivered += amount
 		carried = 0
@@ -1268,14 +1278,21 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 		sound.play_cue("home")
 		flash = 0.32
 	elif not was_in_hive:
-		message = "即使空手归来，蜂巢也会接纳你。停留片刻恢复体力。"
+		if deposit_honey and carried > 0:
+			message = "落巢了。卸蜜需要站稳片刻——别急着再飞。"
+		else:
+			message = "即使空手归来，蜂巢也会接纳你。停留片刻恢复体力。"
 	was_in_hive = true
 
 func fail_expedition() -> void:
 	hive_lives -= 1
 	var lost_honey := carried
 	carried = 0
-	return_honey_to_field(lost_honey, bee.position)
+	# 力竭代价加重：已入库的进度也按 exhaustion_delivered_penalty 回退——
+	# 回退的蜜以返蜜花回到花田，花蜜守恒不破
+	var lost_delivered := mini(int(balance_value("player", "exhaustion_delivered_penalty", 2)), delivered)
+	delivered -= lost_delivered
+	return_honey_to_field(lost_honey + lost_delivered, bee.position)
 	# 扣命演出：蜂巢呼吸的圆点闪红——代价必须被看见，而不是右上角悄悄变一个符号
 	hive_flash_time = 1.0
 	if hive_lives <= 0:
@@ -1289,6 +1306,8 @@ func fail_expedition() -> void:
 	bee.energy = balance_value("player", "post_failure_energy", 45.0)
 	shake = 10.0
 	message = "你没能带回花蜜，蜂巢的呼吸弱了一分。洒落的 %d 滴蜜将孕育返蜜花。" % lost_honey
+	if lost_delivered > 0:
+		message += "已入库的 %d 滴也被搬回了花田。" % lost_delivered
 
 # 显式饮蜜：E 键主动饮下蜜囊里的一滴蜜续力。蜜蜂飞行燃料本就来自蜜囊，
 # 被饮下的蜜不生成返蜜花：它转化成了飞行本身，仍在能量意义上守恒。
