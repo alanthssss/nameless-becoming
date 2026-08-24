@@ -25,6 +25,13 @@ func capture() -> void:
 		game.stage_index = mini(stage_index, game.stages.size() - 1)
 		game.spawn_stage(game.stage_index)
 	match snapshot_state:
+		"completion_card":
+			game.delivered = 4
+			game.message = "敌虫空手嗅探，蜂翼也会受伤。停留片刻恢复体力。"
+			game.mentor_tutorial.profile_id = "first_trip_pollination"
+			game.mentor_tutorial.phase = "imitate"
+			game.mentor_tutorial.lesson_id = "evade"
+			game.update_interface()
 		"pollination_ecology":
 			game.tutorial_complete = true
 			game.tutorial_step = 6

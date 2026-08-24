@@ -115,8 +115,9 @@ func _reflow_context(main) -> void:
 		if child is Label:
 			child.add_theme_color_override("font_color", CREAM_TEXT)
 
-	# Card 1: what is happening now. One title, one mechanic state, one short
-	# consequence. It replaces the long empty report-like sidebar.
+	# Card 1: every completion blocker remains readable above the transient world
+	# message. Mentor requirements can wrap to a fourth visual line, so the two
+	# labels must never share the old 42px slot.
 	var heading := side.get_child(0) as Label
 	heading.text = "当前"
 	heading.position = Vector2(20, 13)
@@ -131,23 +132,26 @@ func _reflow_context(main) -> void:
 	main.season_rule.size = Vector2(44, 2)
 	main.season_rule.color = HONEY
 	main.detail_label.position = Vector2(20, 82)
-	main.detail_label.size = Vector2(192, 42)
+	main.detail_label.size = Vector2(192, 74)
 	main.detail_label.add_theme_font_size_override("font_size", 12)
 	main.detail_label.add_theme_color_override("font_color", Color("d7dfc7"))
-	main.message_label.position = Vector2(20, 128)
-	main.message_label.size = Vector2(192, 45)
+	main.message_label.position = Vector2(20, 162)
+	main.message_label.size = Vector2(192, 46)
+	main.message_label.clip_text = true
+	main.message_label.max_lines_visible = 2
+	main.message_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	main.message_label.add_theme_font_size_override("font_size", 11)
 	main.message_label.add_theme_color_override("font_color", Color("bfcbb8"))
 
 	# Card 2: only the action that can be taken here and now.
-	main.context_hint_label.position = Vector2(20, 222)
+	main.context_hint_label.position = Vector2(20, 286)
 	main.context_hint_label.size = Vector2(192, 24)
 	main.context_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	main.context_hint_label.add_theme_font_size_override("font_size", 11)
 	main.context_hint_label.add_theme_color_override("font_color", Color("c8d5bf"))
-	main.sense_button.position = Vector2(16, 258)
+	main.sense_button.position = Vector2(16, 312)
 	main.sense_button.size = Vector2(136, 42)
-	main.return_button.position = Vector2(158, 258)
+	main.return_button.position = Vector2(158, 312)
 	main.return_button.size = Vector2(58, 42)
 
 	# Old separator ColorRects remain as lightweight ornaments instead of office
@@ -197,18 +201,18 @@ func _draw() -> void:
 
 	# Context is split into compact cards; the gaps deliberately reveal the page
 	# background so this no longer reads as a permanent office sidebar.
-	_draw_panel(Rect2(1018, 146, 232, 184), Color("20372e", 0.97), Color("6e825f"), 12, 1, Color(0, 0, 0, 0.20), 4)
-	_draw_panel(Rect2(1018, 350, 232, 120), Color("294438", 0.96), Color("8a7848"), 12, 1, Color(0, 0, 0, 0.17), 4)
-	draw_string(host.zh_font, Vector2(1038, 379), "当下动作", HORIZONTAL_ALIGNMENT_LEFT, 120, 10, HONEY_LIGHT)
-	draw_line(Vector2(1038, 389), Vector2(1229, 389), Color("8fa17d", 0.34), 1.0)
+	_draw_panel(Rect2(1018, 146, 232, 220), Color("20372e", 0.97), Color("6e825f"), 12, 1, Color(0, 0, 0, 0.20), 4)
+	_draw_panel(Rect2(1018, 386, 232, 120), Color("294438", 0.96), Color("8a7848"), 12, 1, Color(0, 0, 0, 0.17), 4)
+	draw_string(host.zh_font, Vector2(1038, 415), "当下动作", HORIZONTAL_ALIGNMENT_LEFT, 120, 10, HONEY_LIGHT)
+	draw_line(Vector2(1038, 425), Vector2(1229, 425), Color("8fa17d", 0.34), 1.0)
 	if host.runs_meter.visible or host.runs_meter_farthest.visible:
 		_draw_panel(Rect2(1018, 618, 232, 66), Color("1d3028", 0.90), Color("5d735f"), 11, 1)
 
 	# A restrained comb spine makes the negative space intentional and visually
 	# connects the contextual controls to colony history.
-	draw_line(Vector2(1233, 488), Vector2(1233, 602), Color(HONEY, 0.22), 1.0)
+	draw_line(Vector2(1233, 524), Vector2(1233, 608), Color(HONEY, 0.22), 1.0)
 	for i in 3:
-		_draw_hex(Vector2(1233, 506 + i * 32), 7, Color(HONEY, 0.25 - i * 0.04), 1.0)
+		_draw_hex(Vector2(1233, 542 + i * 30), 7, Color(HONEY, 0.25 - i * 0.04), 1.0)
 
 	if tutorial_visible:
 		_draw_panel(Rect2(276, 612, 486, 58), Color("1d3028", 0.96), Color("d0a94b"), 14, 1, Color(0, 0, 0, 0.25), 4)

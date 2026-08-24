@@ -23,6 +23,32 @@ func run_test() -> void:
 	expect(game.season_label.text == "过关条件" and game.detail_label.text.contains("归巢蜜 0 / %d" % first_goal), "首关没有常驻显示归巢蜜过关条件")
 	expect(not first_mechanics_status.is_empty() and game.detail_label.text.contains(first_mechanics_status), "首关教学期间隐藏了季节机制过关条件")
 	expect(game.detail_label.text.contains("教学 · 观看采蜜归巢示范"), "首关老师傅演示没有在过关条件卡显示当前教学要求")
+	# Every mentor blocker must fit above the transient world message. The delivery
+	# HUD previously left only 42px here, so the fourth wrapped line painted over it.
+	var original_profile: String = game.mentor_tutorial.profile_id
+	var original_phase: String = game.mentor_tutorial.phase
+	var original_lesson: String = game.mentor_tutorial.lesson_id
+	var condition_font: Font = game.detail_label.get_theme_font("font")
+	var condition_font_size: int = game.detail_label.get_theme_font_size("font_size")
+	var condition_line_height: float = condition_font.get_height(condition_font_size)
+	var condition_line_spacing: int = game.detail_label.get_theme_constant("line_spacing")
+	for lesson in ["sortie", "sense", "defense", "evade", "pollination", "raid", "seed", "warmth"]:
+		for mentor_phase in ["demo", "imitate", "practice"]:
+			game.mentor_tutorial.profile_id = "layout_regression"
+			game.mentor_tutorial.phase = mentor_phase
+			game.mentor_tutorial.lesson_id = lesson
+			game.update_interface()
+			await process_frame
+			var rendered_lines: int = game.detail_label.get_line_count()
+			var required_height := rendered_lines * condition_line_height + maxi(0, rendered_lines - 1) * condition_line_spacing
+			expect(required_height <= game.detail_label.size.y + 0.5, "过关条件溢出卡片：%s/%s 需要 %.1fpx，只有 %.1fpx" % [lesson, mentor_phase, required_height, game.detail_label.size.y])
+	expect(game.detail_label.position.y + game.detail_label.size.y + 5.0 <= game.message_label.position.y, "过关条件与情境消息没有保留安全间距")
+	expect(game.message_label.position.y + game.message_label.size.y <= 212.0, "情境消息溢出第一张状态卡")
+	expect(game.message_label.clip_text and game.message_label.max_lines_visible == 2, "情境消息没有限制为卡片内两行，长文案仍可能覆盖下一张卡")
+	game.mentor_tutorial.profile_id = original_profile
+	game.mentor_tutorial.phase = original_phase
+	game.mentor_tutorial.lesson_id = original_lesson
+	game.update_interface()
 	# The legacy causal route remains independently tested here; the dedicated
 	# mentor test owns demonstrate -> imitate -> practice sequencing.
 	game.mentor_tutorial.profile_id = ""
