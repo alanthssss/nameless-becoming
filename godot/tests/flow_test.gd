@@ -542,6 +542,18 @@ func run_test() -> void:
 	game.spawn_stage(0)
 	game.toggle_pause()
 	expect(game.phase == "paused" and not game.bee.active, "暂停未冻结玩家")
+	var provenance_file := FileAccess.open("res://data/build_provenance.json", FileAccess.READ)
+	expect(provenance_file != null, "测试/构建链路未注入构建来源")
+	if provenance_file != null:
+		var provenance = JSON.parse_string(provenance_file.get_as_text())
+		expect(provenance is Dictionary, "构建来源不是有效 JSON 对象")
+		if provenance is Dictionary:
+			var dirty_suffix := "+dirty" if bool(provenance.get("dirty", false)) else ""
+			var expected_provenance := "v%s · %s%s" % [String(provenance.get("product_version", "")), String(provenance.get("commit", "")).left(8), dirty_suffix]
+			expect(game.build_provenance_label.text == expected_provenance, "暂停层构建来源错误：%s" % game.build_provenance_label.text)
+			expect(typeof(provenance.get("dirty", null)) == TYPE_BOOL, "构建来源缺少 dirty worktree 状态")
+			expect(not provenance.has("branch"), "构建来源不应注入可能误导的分支名")
+	expect(game.build_provenance_label.is_visible_in_tree(), "暂停层没有显示构建来源")
 	game.toggle_pause()
 	expect(game.phase == "playing" and game.bee.active, "继续未恢复玩家")
 

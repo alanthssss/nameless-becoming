@@ -16,6 +16,8 @@ fi
 
 echo "Using $("$godot_bin" --version)"
 
+node "$project_root/scripts/generate_build_provenance.mjs"
+
 run_with_timeout() {
   if command -v timeout >/dev/null 2>&1; then
     timeout --foreground 90s "$@"

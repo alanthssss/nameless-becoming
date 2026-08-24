@@ -35,6 +35,7 @@ const SPRING_FLOWER_HIGH_VALUE_PATH := "res://assets/art/launch/flower_high_valu
 const SPRING_HIVE_ENTRANCE_PATH := "res://assets/art/launch/hive_city_entrance_v1.png"
 const SPRING_MOSQUITO_PATH := "res://assets/art/launch/mosquito_v1.png"
 const COLONY_BEE_PATH := "res://assets/art/launch/player_bee_v1.png"
+const BUILD_PROVENANCE_PATH := "res://data/build_provenance.json"
 const SEASON_FLOWER_TEXTURES := {
 	"summer": [
 		preload("res://assets/art/seasonal/summer_hibiscus_v1.png"),
@@ -150,6 +151,7 @@ var overlay_title: Label
 var overlay_body: Label
 var overlay_button: Button
 var secondary_link: Button
+var build_provenance_label: Label
 var upgrade_buttons: Array[Button] = []
 # 历史信息是「持久状态」（跨 run 的轮回计数 + 最远记录），
 # 属于 HUD 侧栏常驻元素 runs_meter，不寄生在 overlay 弹窗里——
@@ -225,6 +227,8 @@ var context_lesson_id := ""
 var context_lesson_time := 0.0
 var context_lessons_seen := {"sense": false, "danger": false, "low_energy": false}
 var hive_activity_time := 0.0
+var build_product_version := ""
+var build_commit := ""
 
 func _ready() -> void:
 	zh_font = load("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
@@ -240,6 +244,7 @@ func _ready() -> void:
 	load_upgrade_data()
 	load_boss_data()
 	load_spring_launch_art()
+	load_build_provenance()
 	bee = BeePlayer.new()
 	bee.position = Vector2(180, 410)
 	bee.max_energy = balance_value("player", "max_energy", 100.0)
@@ -257,6 +262,29 @@ func _ready() -> void:
 	add_child(season_mechanics)
 	show_intro()
 	queue_redraw()
+
+func load_build_provenance() -> void:
+	build_product_version = String(ProjectSettings.get_setting("application/config/version", "unknown"))
+	build_commit = "unavailable"
+	var file := FileAccess.open(BUILD_PROVENANCE_PATH, FileAccess.READ)
+	if file == null:
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not parsed is Dictionary:
+		push_warning("Ignoring malformed build provenance")
+		return
+	var injected_version := String(parsed.get("product_version", ""))
+	var injected_commit := String(parsed.get("commit", "")).to_lower()
+	var injected_dirty = parsed.get("dirty", null)
+	var commit_pattern := RegEx.new()
+	commit_pattern.compile("^[0-9a-f]{7,40}$")
+	if injected_version != build_product_version or commit_pattern.search(injected_commit) == null or typeof(injected_dirty) != TYPE_BOOL:
+		push_warning("Ignoring inconsistent build provenance")
+		return
+	build_commit = injected_commit.left(8) + ("+dirty" if bool(injected_dirty) else "")
+
+func build_provenance_text() -> String:
+	return "v%s · %s" % [build_product_version, build_commit]
 
 func load_optional_texture(path: String) -> Texture2D:
 	if not ResourceLoader.exists(path):
@@ -615,6 +643,9 @@ func build_interface() -> void:
 	secondary_link.pressed.connect(on_secondary_link)
 	secondary_link.visible = false
 	overlay.add_child(secondary_link)
+	build_provenance_label = make_label(overlay, build_provenance_text(), Vector2(190, 492), Vector2(590, 20), 11, Color("89978b"))
+	build_provenance_label.name = "BuildProvenanceLabel"
+	build_provenance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	for spec in [["全屏", toggle_fullscreen], ["声音", toggle_sound], ["退出", func(): get_tree().quit()]]:
 		var system_button := Button.new()
 		system_button.text = String(spec[0])

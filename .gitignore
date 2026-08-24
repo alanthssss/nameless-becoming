@@ -42,5 +42,7 @@ yarn-error.log*
 
 # Godot generated cache
 /godot/.godot/
+/godot/data/build_provenance.json
+/scripts/__pycache__/
 /builds/
 /public/game/

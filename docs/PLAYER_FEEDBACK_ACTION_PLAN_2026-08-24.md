@@ -254,7 +254,7 @@ Alan 在正确分支实机截图中指出，第三行老师傅要求越过原有
 
 | 用途 | worktree / 分支 | 状态 | 结论 |
 | --- | --- | --- | --- |
-| 本轮玩家反馈整改 | `/private/tmp/nameless-player-feedback-v2` / `codex/player-feedback-v2` / `23a72c7` | PR #63 开放，Godot 与 Web CI 通过，尚未合并 | 当前应试玩的实现；属于“已实现事实 + 开发者自测” |
+| 本轮玩家反馈整改 | `/private/tmp/nameless-player-feedback-v2` / `codex/player-feedback-v2`（游戏实现基线 `23a72c7`，候选提交以游戏内构建来源为准） | PR #63 开放，Godot 与 Web CI 通过，尚未合并 | 当前应试玩的实现；属于“已实现事实 + 开发者自测” |
 | 日常仓库目录 | `/Users/alanthssss/Documents/ChatGPT/nameless-becoming` / `feat/demo-art-completion` | 对应草稿 PR #60，不含 PR #63 的六轮整改 | 不得用来判断本轮反馈是否生效，也不得作为新任务基线 |
 
 静态快照会过期。每次打开 Godot 或交付构建前，仍须重新核对绝对路径、分支、短提交号和 PR 状态。
@@ -275,16 +275,16 @@ Alan 在正确分支实机截图中指出，第三行老师傅要求越过原有
 
 先完成一个串行前置门禁：Alan 必须从上表的 PR #63 worktree / 构建复核本轮关键链；确认方向后才合并 #63，并从更新后的 `origin/main` 创建后续 worktree。若方向仍不成立，就在 #63 内修正，不让未接受的基线扩散到多个分支。
 
-第一波可并行：
+第一波以互不修改同一核心文件为前提并行。构建来源可见化必须先于 HUD 响应式完成并合入验收基线；两者不得同时编辑暂停界面或 `main.gd`。
 
 | 子任务 | 建议 branch / worktree | 依赖与验收 |
 | --- | --- | --- |
 | 文档事实源一致性 | `codex/feedback-ledger-sync` / `/private/tmp/nameless-feedback-ledger` | #63 合并后执行；清理 `DESIGN_CONSENSUS.md`、`MVP_SPEC.md`、`docs/analysis/`、README 与发布清单中的旧关卡、Boss、音乐、授粉和固定时长说法；`git diff --check` |
-| 构建来源可见化 | `codex/build-provenance` / `/private/tmp/nameless-build-provenance` | 在暂停/版本界面和构建清单显示版本与短提交号；截图、运行构建与提交一致，防止再次打开错版 |
+| 构建来源可见化 | `codex/build-provenance` / `/private/tmp/nameless-build-provenance` | 第一项串行工程任务；在暂停/版本界面和构建清单显示版本与短提交号；截图、运行构建与提交一致，防止再次打开错版 |
 | Alan 固定构建验收 | 不改代码，记录进本文件与 `PLAYTEST.md` | 首关无口头帮助；急转两次与 3 分钟迁移；授粉器官、四季路线、关卡节奏和 Boss 规则原话 |
 | 音乐盲听与 A/B | `codex/audio-listening-pass` / `/private/tmp/nameless-audio-listening` | 先记录同季配对、四季气质、不舒服音色与三轮耐听度，不先重编 |
 | Windows / 发布前人工流程 | `codex/release-manual-pass` / `/private/tmp/nameless-release-manual` | 固定同一候选构建，记录设备、完整流程、设置持久化与失败点；不改核心玩法 |
-| HUD 响应式与指针输入 | `codex/hud-responsive` / `/private/tmp/nameless-hud-responsive` | 方向验收后再合并；1280×720 不回退，覆盖 1920×1080、1440×900 和窄屏安全区；饮蜜补鼠标/触摸入口 |
+| HUD 响应式与指针输入 | `codex/hud-responsive` / `/private/tmp/nameless-hud-responsive` | 构建来源任务合入后再创建/变基，不能与其并行编辑暂停 UI；方向验收后再合并；1280×720 不回退，覆盖 1920×1080、1440×900 和窄屏安全区；饮蜜补鼠标/触摸入口 |
 
 第二波由证据触发，不能预先宣布已经排产：
 
