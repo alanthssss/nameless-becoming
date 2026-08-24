@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="104" viewBox="0 0 80 104">
+  <defs>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#789769"/><stop offset="1" stop-color="#405f48"/></linearGradient>
+    <radialGradient id="petal"><stop stop-color="#fffdf0"/><stop offset=".72" stop-color="#eee7cf"/><stop offset="1" stop-color="#cfc4a6"/></radialGradient>
+    <radialGradient id="wax"><stop stop-color="#fff09b"/><stop offset="1" stop-color="#daa530"/></radialGradient>
+  </defs>
+  <path d="M40 45v47" stroke="#405f48" stroke-width="6" stroke-linecap="round"/>
+  <path d="M40 72C27 62 18 66 18 75c7 7 15 8 22 2M40 80c12-10 21-7 22 1-7 7-15 8-22 3" fill="url(#leaf)" stroke="#314c3a" stroke-width="2"/>
+  <g stroke="#b7aa8c" stroke-width="2">
+    <ellipse cx="40" cy="19" rx="12" ry="18" fill="url(#petal)"/>
+    <ellipse cx="59" cy="33" rx="12" ry="18" transform="rotate(72 59 33)" fill="url(#petal)"/>
+    <ellipse cx="52" cy="56" rx="12" ry="18" transform="rotate(144 52 56)" fill="url(#petal)"/>
+    <ellipse cx="28" cy="56" rx="12" ry="18" transform="rotate(216 28 56)" fill="url(#petal)"/>
+    <ellipse cx="21" cy="33" rx="12" ry="18" transform="rotate(288 21 33)" fill="url(#petal)"/>
+  </g>
+  <circle cx="40" cy="40" r="12" fill="url(#wax)" stroke="#75592b" stroke-width="2.5"/>
+  <circle cx="36" cy="36" r="3" fill="#fff4b4" opacity=".9"/>
+  <path d="M34 39c4 3 8 3 12 0" fill="none" stroke="#a77a22" stroke-width="1.4" stroke-dasharray="2 2"/>
+</svg>
