@@ -1,7 +1,7 @@
 # 花物候学与蜜蜂季行：花田与活动生态化重设计 / Flower Phenology & Seasonal Bee Activities
 
-> 版本 / Version: 草案 v0.1（2026-08-18）  
-> 状态 / Status: 待审阅 / Pending review  
+> 版本 / Version: 草案 v0.2（2026-08-25 授粉生态纠偏）
+> 状态 / Status: 授粉纠偏已实现并通过开发者回归；待 Alan／独立玩家复核 / Implemented and regression-tested; awaiting Alan and independent-player review
 > 关联 / Related: `docs/design/enemy-phenology.md`、`docs/DESIGN_CONSENSUS.md`、`godot/data/seasons.json`、`godot/data/balance.json`  
 > 基线 / Baseline: 候选 MVP 0.9.4 + 四季机制全量实现
 
@@ -18,18 +18,33 @@
 ## 1. 设计原则 / Design Principles
 
 1. **花有物候，不是蜜量容器 / Flowers have phenology, not just nectar.**  
-   每种花型对应真实植物类群的物候行为：早春花量少但授粉后繁殖（投资性），盛夏花蜜丰但引来竞争（暴露性），秋末花凋不重生（有限性），冬花罕见且隐蔽（藏匿性）。花型差异改变的是**采集决策**，不是数值大小。
+   每种花型对应真实植物类群的物候行为：早春花量少但授粉后进入结籽（投资性），盛夏花蜜丰但引来竞争（暴露性），秋末花凋不重生（有限性），冬花罕见且隐蔽（藏匿性）。花型差异改变的是**采集决策**，不是数值大小。
 
 2. **蜜蜂活动的差异 = 被需要方式的差异 / Bee behavior shifts = how it's needed shifts.**  
    春：蜜蜂是花与花之间的桥梁（花粉传递）→ 被花需要。夏：蜜蜂在采蜜和守门间切换（巢口轮值）→ 被巢需要。秋：蜜蜂在采蜜和留种间取舍（选择采收）→ 被来年需要。冬：蜜蜂在觅食和保温间冒险（侦察寻花）→ 被彼此需要。不增加新操作键，而是改变现有操作的季节语义。
 
 3. **跨季因果链 / Cross-season causal chain.**  
-   春季授粉质量 → 夏季花田密度 → 秋季可采花量 → 秋季种子投入 → 来年春季花田基础 → 冬季储备余量。一季的采集方式影响下一季的花田状态，让"为来年投资"成为可感知的前置→后果链，而非文案比喻。
+   春季授粉形成结籽成果 → 后续花田密度 → 秋季可采花量 → 秋季种子投入 → 来年春季花田基础 → 冬季储备余量。授粉的后续影响不得在当前关抽象成“立即开花或生蜜”。一季的采集方式影响后续花田状态，让"为来年投资"成为可感知的前置→后果链，而非文案比喻。
 
 4. **花蜜守恒不破 / Nectar conservation intact.**  
-   所有新花型遵守花蜜总量守恒：连环花的额外蜜来自新花生长（授粉机制产出）；残花不重生但蜜量本就低；冰封花的体温代价不是蜜量损失。返蜜花机制不受影响。
+   所有新花型遵守花蜜总量守恒：授粉的直接结果是柱头受粉后进入结籽，不是花立即开放、新生或恢复花蜜；连环花若保留采集加成，必须定义为路线熟练带来的采收效率，不得冒充授粉产蜜；残花不重生但蜜量本就低；冰封花的体温代价不是蜜量损失。返蜜花机制不受影响。
 
-5. **未经 playtest 的数值标 [PLACEHOLDER] / Unplaytested values are [PLACEHOLDER].**
+5. **授粉因果必须可见 / Pollination causality must be visible.**
+   唯一已批准链路是：**已开放的花药 → 蜜蜂身上松散可见的花粉 → 同一可见花型的可接受柱头 → 结籽**。给粉花和受粉花都必须预先可见；兼容的花瓣／花型保持同一身份，而开放花药与可接受柱头必须有不同的器官轮廓、姿态与状态反馈。
+
+6. **完成条件不得隐藏 / Completion conditions must not be hidden.**
+   所有会阻止关卡结算的条件都要从关卡开始起展示各自进度。若结籽是必做项，显示“结籽 `x/y`”；若不是必做项，则不得暗中拦截结算。
+
+7. **未经 playtest 的数值标 [PLACEHOLDER] / Unplaytested values are [PLACEHOLDER].**
+
+> **证据边界（2026-08-25）**：上述纠偏来自 Alan 对旧构建的直接反馈，不是独立外部玩家证据。新模型已进入代码并通过开发者回归；是否在真实运动中无需解释即可读懂，仍待 Alan 与独立玩家复核。
+
+### 1.1 授粉生态依据与游戏化边界
+
+- 授粉者的有效工作可操作化为从花药移走花粉，并把花粉沉积到可接受柱头；这支持“花药 → 蜂体 → 柱头”的核心链，而不支持“花粉打开花苞”：[pollinator effectiveness field study](https://pmc.ncbi.nlm.nih.gov/articles/PMC11940143/)。
+- 蜜蜂胸腹等体表的松散花粉会参与柱头接触；后足花粉筐内压实、湿润的花粉主要用于运回巢内，不能把它简单等同于最有效的授粉表面：[honey-bee body and corbicular pollen study](https://pmc.ncbi.nlm.nih.gov/articles/PMC12942308/)。
+- 授粉常会触发花朵衰老或关闭相关过程，而不是让未开放花苞立即盛开；种子／果实形成也发生在后续时间尺度：[pollination-induced flower senescence](https://pmc.ncbi.nlm.nih.gov/articles/PMC2826652/)、[orchid post-pollination development](https://pmc.ncbi.nlm.nih.gov/articles/PMC4243647/)。
+- 游戏中的“同一可见花型”是对同种／相容花粉的可读性近似，并不声称所有同种个体必然相容；真实植物还可能存在自交不亲和、雌雄阶段和品种差异。若未来引入这些限制，必须同步给出可见形态，不得退回隐藏编号。
 
 ---
 
@@ -43,7 +58,7 @@
 |------|---------|---------|---------|
 | **蜜花 Nectar Bloom** | 采就走（基线） | 稳定给蜜，无特殊行为 | 盛花期标准花 |
 | **初花 First Bloom** | 投资 | 蜜少但触发花田生长 | 早春先花（梅/桃/油菜） |
-| **连环花 Chain Bloom** | 路线规划 | 连采同型花，蜜量递增 | 花序植物（紫藤/油菜花序） |
+| **连环花 Chain Bloom** | 路线规划 | 连采同型花，同次动作多取现有花蜜 | 花序植物（紫藤/油菜花序） |
 | **盛花 Peak Bloom** | 贪与避 | 蜜多但引来蚊虫 | 盛夏大花 |
 | **残花 Fading Bloom** | 取舍 | 采了不重生，每朵是最后一次 | 秋末凋花 |
 | **藏花 Hidden Bloom** | 搜索 | 不可见，需侦察发现 | 冬花（蜡梅/山茶） |
@@ -61,15 +76,15 @@
 
 ### 2.2 初花 · First Bloom —— 投资型 / Investment
 
-- **现实生态 / Real ecology**：早春先花植物（梅花、桃花、油菜花）花量少、单花蜜量低，但花期早且授粉后迅速繁殖——是蜜蜂出冬后的第一批食物，也是花田扩张的起点。
-- **机制 / Mechanic**：蜜量低（`1–2 滴`），但采蜜触发授粉机制的新花生长（已由 `pollination_mechanic.gd` 覆盖）。在现有授粉机制中，初花 = 授粉阈值以下的"低蜜但触发生长"的花朵。
-- **决策 / Decision**：采低蜜的初花 = 投资花田未来（更多新花）；还是跳过它直接找蜜多的蜜花？春季核心张力。
+- **现实生态 / Real ecology**：早春先花植物（梅花、桃花、油菜花）花量少、单花蜜量低且花期早，是蜜蜂出冬后的第一批食物。花粉从开放花药转移到兼容柱头后，植物进入受精与结籽过程，不会当场开出一朵新花或新增花蜜。
+- **机制 / Mechanic**：蜜量低（`1–2 滴`）；同一可见初花变体中同时配置预先可见的给粉花和受粉花。给粉花以已开放花药掉落散粉；蜜蜂身上带散粉接触同型花的可接受柱头后，受粉花进入可见结籽状态。该状态不增加当前花蜜。
+- **决策 / Decision**：是否为同型花完成“取粉 → 传粉 → 结籽”的可见路线，用当前采集时间换后续繁殖成果；还是直接找蜜多的蜜花？春季核心张力。
 - **窗口 / Window**：冬至 → 惊蛰（春季前半段，花田建立期）。
 
 ### 2.3 连环花 · Chain Bloom —— 路线规划型 / Route Planning
 
 - **现实生态 / Real ecology**：花序植物（紫藤、油菜、紫云英）同株多花顺序开放，蜜蜂沿花序顺序访问效率最高——这是蜜蜂"花序学习"行为的真实基础。
-- **机制 / Mechanic**：采完一朵连环花后，`2 秒`内采相邻（≤120px）同型花，蜜量 `+1`（叠加上限 `+3`）[PLACEHOLDER]。超出窗口或采异型花则重置。
+- **机制 / Mechanic**：采完一朵连环花后，`2 秒`内采相邻（≤120px）同型花，同一次采集可从目标花的**现有库存**多取 `1 滴`，每条路线最多触发 `3 次` [PLACEHOLDER]。目标花只剩一滴或蜜囊只剩一格时不触发；超出窗口或采异型花则重置。该奖励缩短采收时间，但不会补回或创造花蜜。
 - **决策 / Decision**：花时间规划连环花路线（高效率但固定路线=可预测=敌人可伏击），还是就近散采（灵活但效率低）？
 - **窗口 / Window**：立春 → 谷雨（春季中后段，花田成熟期）。
 
@@ -83,7 +98,7 @@
 ### 2.5 残花 · Fading Bloom —— 取舍型 / Finite
 
 - **现实生态 / Real ecology**：秋末花凋，花蜜分泌渐止且不再新生。秋季植物转向结籽，花朵本身进入不可逆的衰退期。
-- **机制 / Mechanic**：蜜量低（`1–2 滴`），采完不重生——关闭该花的授粉新花生长。秋季整体关闭 pollination 新花机制，花田只减不增。
+- **机制 / Mechanic**：蜜量低（`1–2 滴`），采完不重生。秋季当前关不生成新开花朵，花田只减不增；这是秋季物候规则，不再与授粉的结籽结果混为同一个即时重生开关。
 - **决策 / Decision**：每一朵花都是不可再生的稀缺资源。采还是留给"模拟蜂群"（不存在的其他工蜂）？走远路采晚蜜花还是就近采残花？
 - **窗口 / Window**：小暑 → 寒露（秋季全程）。
 
@@ -168,11 +183,12 @@
 
 | 项目 | 内容 |
 |------|------|
-| **触发** | 春季节令内，连续采两朵不同花（任意花型），间隔 ≤ `2 秒` |
-| **效果** | 第二朵花蜜量 `+1` [PLACEHOLDER]；若第二朵是初花，额外触发一次授粉新花生长 |
-| **生态依据** | 授粉是互惠关系——蜜蜂是花与花之间的桥梁，携带花粉的访问提高目标花的蜜量分泌 |
-| **决策** | 规划路线触发花粉传递（高效但固定路线），还是就近散采（灵活但无加成）？ |
-| **实现** | 采蜜钩子：记录上一朵花位置和时间戳，2 秒内采另一朵 → 目标花 nectar +1 |
+| **给粉前件** | 花已开放，花药展开且花粉可见；蜜蜂接触后，花粉以松散颗粒附在身体上 |
+| **受粉前件** | 目标花与给粉花属于同一可见花型，已开放且具有可接受柱头；目标不隐藏，柱头与花药不同形 |
+| **效果** | 花粉转移到兼容柱头，目标花显示已受粉并进入结籽状态；不打开花苞，不新增或恢复花蜜 |
+| **生态依据** | 蜜蜂把花粉从花药转移到兼容柱头，为后续受精和种子发育建立条件；花蜜分泌是独立的植物过程 |
+| **决策** | 识别同型花中可见的花药／柱头差异，规划取粉与传粉路线，用当前时间换结籽进度 |
+| **实现要求** | 花实例以 `visual_variant` 表达可见花型，以 `has_anthers` / `receptive_stigma` 表达器官角色，并以 `pollen_variant` / `stigma_variant` 校验兼容；蜜蜂记录并绘制身上散粉；兼容柱头命中后写入 `pollinated` / `seed_setting`，不写花蜜数值 |
 
 ### 5.2 夏季 · 巢口轮值 & 快速抢采 / Hive Guard & Sprint Harvest（与征召机制联动）
 
@@ -200,8 +216,8 @@
 ## 6. 跨季因果链 / Cross-Season Causal Chain
 
 ```
-春·授粉让花田生长（初花投资 + 连环花路线 + 花粉传递）
-    ↓ 花田基础花量 + 连环花出现率 进入夏季
+春·授粉完成同型花的结籽（开放花药 + 身上散粉 + 可接受柱头）
+    ↓ 结籽成果可进入后续花田基础（不在当前关开花或产蜜）
 夏·盛花暴露采集者（盛花引蚊 + 巢口轮值 + 快速抢采）
     ↓ 采集效率影响秋季可采花量
 秋·残花有限 + 种子可投资（选择采收 + 种子归巢）
@@ -222,9 +238,9 @@
 
 | 花型/活动 → | 授粉（春） | 征召（夏） | 储备（秋） | 抱团（冬） | 花蜜守恒 | 敌人系统 |
 |------------|-----------|-----------|-----------|-----------|---------|---------|
-| **初花** | intended：初花=授粉触发源 | — | — | — | acceptable：低蜜但触发新花=守恒 | — |
-| **连环花** | intended：连环路线=高效授粉 | — | — | — | acceptable：额外蜜来自新花生长 | acceptable：固定路线=蚁伏击点 |
-| **花粉传递** | intended：传递=授粉的个体表达 | — | — | — | acceptable：加成蜜来自花自身分泌 | — |
+| **初花** | intended：同一可见花型同时承载给粉／受粉实例 | — | — | — | required：结籽不改变当前花蜜 | — |
+| **连环花** | optional：连环路线可与同型授粉路线重合 | — | — | — | required：若保留采集加成，只能解释为采收效率 | acceptable：固定路线=蚁伏击点 |
+| **花粉传递** | required：花药取粉 → 身上散粉 → 同型柱头 → 结籽 | — | — | — | required：不加蜜、不开花 | — |
 | **盛花** | — | intended：盛花引蚊=巢口告急的自然源 | — | — | acceptable：蜜多但消耗快 | intended：盛花=蚊虫吸引源 |
 | **巢口轮值** | — | intended：轮值=征召的行为表达 | — | — | — | intended：轮值加速蚊群驱散 |
 | **快速抢采** | — | intended：抢采=花区告急的应激 | — | — | — | acceptable：抢采时蚁威胁仍在 |
@@ -240,7 +256,7 @@
 
 ## 8. 数据结构设计 / Data Schema
 
-### `godot/data/flowers.json`（新增）
+### `godot/data/flowers.json`（当前实现）
 
 ```jsonc
 {
@@ -248,37 +264,32 @@
     "types": [
       {"id": "nectar_bloom", "nectar_base": 3, "weight": 0.40},
       {"id": "first_bloom", "nectar_base": 2, "triggers_growth": true, "weight": 0.30},
-      {"id": "chain_bloom", "nectar_base": 2, "chain_bonus": 1, "chain_window_s": 2.0, "chain_cap": 3, "chain_range_px": 120, "weight": 0.30}
+      {"id": "chain_bloom", "nectar_base": 2, "weight": 0.30}
     ],
-    "pollen_transfer": {"bonus": 1, "window_s": 2.0}
+    "chain_bloom": {"bonus": 1, "window_s": 2.0, "cap": 3, "range_px": 120}
   },
   "summer": {
     "types": [
       {"id": "nectar_bloom", "nectar_base": 3, "weight": 0.30},
-      {"id": "peak_bloom", "nectar_base": 5, "attracts_mosquito": true, "attract_radius_px": 200, "spawn_chance": 0.3, "weight": 0.50},
-      {"id": "cascade_bloom", "nectar_base": 7, "harvest_time_mult": 2.0, "weight": 0.20}
-    ],
-    "hive_guard": {"drain_speed_mult": 1.5, "area_x": 225},
-    "sprint_harvest": {"interval_mult": 0.8}
+      {"id": "peak_bloom", "nectar_base": 5, "weight": 0.50},
+      {"id": "cascade_bloom", "nectar_base": 7, "weight": 0.20}
+    ]
   },
   "autumn": {
     "types": [
       {"id": "nectar_bloom", "nectar_base": 3, "weight": 0.25},
-      {"id": "fading_bloom", "nectar_base": 2, "no_regen": true, "weight": 0.35},
-      {"id": "late_bloom", "nectar_base": 4, "edge_only": true, "weight": 0.25},
-      {"id": "seed_bloom", "nectar_base": 1, "gives_seed": true, "weight": 0.15}
-    ],
-    "seed_return": {"field_bonus_flowers": 1, "reserve_bonus_honey": 2}
+      {"id": "fading_bloom", "nectar_base": 2, "weight": 0.35},
+      {"id": "late_bloom", "nectar_base": 4, "weight": 0.25},
+      {"id": "seed_bloom", "nectar_base": 1, "weight": 0.15}
+    ]
   },
   "winter": {
     "types": [
       {"id": "nectar_bloom", "nectar_base": 2, "weight": 0.15},
-      {"id": "hidden_bloom", "nectar_base": 2, "invisible": true, "reveal_by": "sense", "weight": 0.40},
-      {"id": "warmth_bloom", "nectar_base": 3, "warmth_pause": true, "warmth_radius_px": 45, "weight": 0.25},
-      {"id": "frozen_bloom", "nectar_base": 3, "thaw_cost_warmth": 20, "weight": 0.20}
-    ],
-    "scout_reveals": "hidden_flowers",
-    "warmth_share": {"npc_bee_range_px": 40, "drain_mult": 0.3, "npc_bee_count": 3}
+      {"id": "hidden_bloom", "nectar_base": 2, "weight": 0.40},
+      {"id": "warmth_bloom", "nectar_base": 3, "weight": 0.25},
+      {"id": "frozen_bloom", "nectar_base": 3, "weight": 0.20}
+    ]
   }
 }
 ```
@@ -287,9 +298,7 @@
 
 每个节气节点增加 `flower_set` 字段（值为 `spring` / `summer` / `autumn` / `winter`），指向 flowers.json 对应分组。Boss 节令无 `flower_set`。
 
-### `balance.json` 扩展
-
-新增 `flowers` 分区（花型参数的运行时常量），与现有 `mechanics` 分区并列。
+授粉器官角色不是静态花型开关，而由 `pollination_mechanic.gd` 按当前开放花实例分配；相容性直接使用每朵花已有的 `visual_variant`。传粉接触距离位于 `balance.json` 的 `mechanics.pollination.deposit_range`。
 
 ---
 
@@ -298,10 +307,11 @@
 | 现有系统 | 对接方式 | 改动量 |
 |---------|---------|--------|
 | `seasons.json` | 每季增加 `flower_set` 字段 | 小 |
-| `balance.json` | 新增 `flowers` 分区 | 中 |
+| `balance.json` | `mechanics.pollination.deposit_range` 配置传粉接触距离 | 小 |
 | `main.gd` 花朵生成 | 改为按 `flower_set` 读取花型权重生成 | 中 |
-| `main.gd` 花朵对象 | 增加 `type` 字段，采蜜/绘制/交互按 type 分支 | 中 |
-| `pollination_mechanic.gd` | 连环花和花粉传递接入采蜜钩子（春季） | 小 |
+| `main.gd` 花朵对象 | 使用 `type`、`visual_variant`；授粉机制补充 `has_anthers`、`receptive_stigma`、`pollen_variant`、`stigma_variant`、`pollinated` 与 `seed_setting`，采蜜/绘制/交互按实例分支 | 中 |
+| `pollination_mechanic.gd` | 替换旧“隐藏花苞开花／回蜜”链：花药取粉、身上散粉、同型柱头受粉与结籽（春季） | 中 |
+| 关卡目标／HUD | 显示每个结算条件的独立进度；结籽若必做则显示 `x/y`，否则不能阻塞结算 | 中 |
 | `conscription_mechanic.gd` | 巢口轮值和快速抢采接入征召钩子（夏季） | 小 |
 | `reserve_mechanic.gd` | 种子作为第三选项接入分配面板（秋季） | 中 |
 | `huddle_mechanic.gd` | 暖花和冰封花接入体温逻辑；NPC 蜂渲染（冬季） | 中 |
@@ -315,14 +325,15 @@
 
 | 候选 | 理由 | 风险 |
 |------|------|------|
-| **春季先行（推荐）** | 授粉机制已实现；连环花和花粉传递是自然延伸，实现成本最低；敌人压力最低，适合隔离测试新花型手感 | 春季敌人少，可能测不出"花型选择在压力下的决策" |
+| **春季先行（推荐）** | 旧授粉机制已被 Alan 否决，必须先以一季切片替换为“花药 → 散粉 → 同型柱头 → 结籽”；敌人压力最低，适合隔离验证器官辨识、路线和完成条件 | 不同器官若缩小后仍同形，或结籽进度仍隐藏，则不得进入其他季节 |
 | **冬季先行** | 抱团机制已实现；藏花和冰封花的体温代价是最强决策点；冬季"找花"体验差异最明显 | 冬季系统最复杂（体温+侦察+NPC蜂），调试成本高 |
 
 ### 阶段 2：数据驱动铺底
 
 1. 新增 `godot/data/flowers.json`；
 2. `main.gd` 花朵生成改为按 `flower_set` 读取花型权重；
-3. 花朵对象增加 `type` 字段，采蜜/绘制/交互按 type 分支。
+3. 花朵对象使用 `type`、`visual_variant`，授粉机制按实例补充花药／柱头、相容变体与 `pollinated` / `seed_setting` 状态；
+4. 为蜜蜂增加可见散粉状态，为关卡目标增加独立结籽进度（仅在结籽是必做项时）。
 
 ### 阶段 3：逐季铺开 + 跨季因果链
 
@@ -341,15 +352,20 @@
 | 4 | 冬季冰封花体温代价（-20）与抱团体温消耗叠加后是否过于严苛？ | 数值模拟 + playtest |
 | 5 | 籽花→来年花田回馈的因果链是否太长，玩家感知不到？ | playtest：玩家是否理解"种子=来年花" |
 | 6 | NPC 蜂（暖流共享）需要实际渲染还是纯数值效果？ | 视觉可行性 + 性能 |
-| 7 | 花型视觉区分：颜色+形状 vs 独立美术？ | 美术成本 vs 可读性 |
+| 7 | 同一可见花型内，开放花药与可接受柱头用哪些器官形状、姿态和运动差异区分？ | 100% 缩放与真实运动中，不靠文字或寻迹也能分辨给粉／受粉器官 |
 | 8 | 蜜蜂活动差异沿用现有按键的季节语义切换，是否足够直觉？ | 操作复杂度 vs 表达力 |
 | 9 | 晚蜜花"只在地图边缘出现"是否需要地图分区逻辑？ | 当前单屏地图的可行性 |
+| 10 | 玩家能否在关卡开始时说出所有会阻止结算的条件？ | 开局后不操作，请玩家复述目标；达成最后一项后观察是否立即收到结算反馈 |
+| 11 | 蜜蜂身上的松散花粉和柱头结籽反馈是否足以说明两段因果？ | 隐去教学文字，观察玩家能否说出“已取粉”和“已结籽” |
 
 ---
 
 ## 12. 设计纪律备注 / Design Discipline Notes
 
 - 所有数值标注 [PLACEHOLDER]，未经 playtest 不定稿；
+- 授粉固定为“已开放花药 → 身上松散花粉 → 同一可见花型的可接受柱头 → 结籽”；给粉／受粉器官可见且不同形，不得回退到隐藏同形目标；
+- 授粉不即时开花、不创造或恢复花蜜；任何结籽后续收益都必须经过明确时间层级，不得偷换成当前关奖励；
+- 任何阻止结算的条件必须从关卡开始起可见并显示进度；
 - 每种花型必须回答："如果删掉这种花，玩家的体验损失是什么？"——如果答案是"没有损失"，删掉它；
 - 蜜蜂活动的季节差异不增加新操作键（沿用 U/I/O/J/K/L），而是改变现有操作的季节语义；
 - 跨季因果链（种子→花田）是"锦上添花"而非"必须闭环"——可简化为文案层表达；

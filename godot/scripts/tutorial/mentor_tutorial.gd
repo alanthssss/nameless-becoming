@@ -141,7 +141,7 @@ func prompt() -> Dictionary:
 		"evade":
 			body = "等攻击线压近，再沿侧面急转；抢跑不会穿过攻击。" if phase == "demo" else "让冲刺线真正穿过急转留下的空隙。"
 		"pollination":
-			body = "先从亮花带走花粉，再到同色花苞旁传粉。" if phase == "demo" else "亲手打开第一朵同色花苞。"
+			body = "先从花心带走散粉，再到同花型花心传粉。" if phase == "demo" else "让第一朵同花型花心开始结籽。"
 		"raid":
 			body = "蜜被抢走后再惊退，蜜滴才会落回原来的花。" if phase == "demo" else "先归巢引出袭扰；等它偷蜜后再惊退。"
 		"seed":
@@ -184,9 +184,9 @@ func _process_first_trip() -> void:
 			var pollination = main.season_mechanics.mechanic_by_id("pollination")
 			if pollination == null:
 				return
-			if phase == "imitate" and int(pollination.opened_buds) >= 1:
+			if phase == "imitate" and int(pollination.pollinated_flowers) >= 1:
 				phase = "practice"
-			elif phase == "practice" and int(pollination.opened_buds) >= 2:
+			elif phase == "practice" and int(pollination.pollinated_flowers) >= 2:
 				phase = "complete"
 				main._complete_contextual_tutorial()
 
@@ -253,20 +253,20 @@ func _start_lesson(id: String) -> void:
 				var unlocked_flower: Dictionary = main.flowers[flower_index]
 				unlocked_flower["tutorial_locked"] = false
 				main.flowers[flower_index] = unlocked_flower
-			if pollination != null and not pollination.source_indices.is_empty() and not pollination.bud_indices.is_empty():
-				var source_index := int(pollination.source_indices[0])
-				for candidate in pollination.source_indices:
+			if pollination != null and not pollination.donor_indices.is_empty() and not pollination.receptive_indices.is_empty():
+				var source_index := int(pollination.donor_indices[0])
+				for candidate in pollination.donor_indices:
 					if int(main.flowers[candidate].get("nectar", 0)) > 0:
 						source_index = int(candidate)
 						break
-				var source_kind := int(main.flowers[source_index].get("pollen_kind", 0))
-				var bud_index := int(pollination.bud_indices[0])
-				for candidate in pollination.bud_indices:
-					if int(main.flowers[candidate].get("required_pollen", -1)) == source_kind:
-						bud_index = int(candidate)
+				var source_variant := int(main.flowers[source_index].get("pollen_variant", -1))
+				var receptive_index := int(pollination.receptive_indices[0])
+				for candidate in pollination.receptive_indices:
+					if int(main.flowers[candidate].get("stigma_variant", -1)) == source_variant:
+						receptive_index = int(candidate)
 						break
 				demo_start = Vector2(main.flowers[source_index].position)
-				demo_target = Vector2(main.flowers[bud_index].position)
+				demo_target = Vector2(main.flowers[receptive_index].position)
 			else:
 				demo_start = Vector2(315, 410)
 				demo_target = Vector2(430, 565)

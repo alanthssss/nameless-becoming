@@ -25,6 +25,42 @@ func capture() -> void:
 		game.stage_index = mini(stage_index, game.stages.size() - 1)
 		game.spawn_stage(game.stage_index)
 	match snapshot_state:
+		"pollination_ecology":
+			game.tutorial_complete = true
+			game.tutorial_step = 6
+			game.context_lessons_seen["sense"] = true
+			game.context_lessons_seen["danger"] = true
+			game.mentor_tutorial.profile_id = ""
+			game.mentor_tutorial.phase = "inactive"
+			for flower_index in game.flowers.size():
+				var visible_flower: Dictionary = game.flowers[flower_index]
+				visible_flower["tutorial_locked"] = false
+				visible_flower["tutorial_hidden"] = false
+				visible_flower["discovered"] = true
+				game.flowers[flower_index] = visible_flower
+			var pollination = game.season_mechanics.mechanic_by_id("pollination")
+			if pollination != null:
+				var donor_index := -1
+				var first_target := -1
+				var second_target := -1
+				for candidate_donor in pollination.donor_indices:
+					var variant := int(game.flowers[candidate_donor].get("pollen_variant", -1))
+					var matching_targets: Array[int] = []
+					for candidate_target in pollination.receptive_indices:
+						if int(game.flowers[candidate_target].get("stigma_variant", -2)) == variant:
+							matching_targets.append(candidate_target)
+					if matching_targets.size() >= 2:
+						donor_index = candidate_donor
+						first_target = matching_targets[0]
+						second_target = matching_targets[1]
+						break
+				if donor_index >= 0:
+					game.season_mechanics.on_harvest(donor_index)
+					game.season_mechanics.on_harvest(donor_index)
+					game.bee.position = Vector2(game.flowers[first_target].position)
+					game.season_mechanics.try_context_action(game.bee.position)
+					game.bee.position = Vector2(game.flowers[second_target].position) + Vector2(-44, 20)
+			game.update_interface()
 		"mentor_sortie":
 			game.mentor_tutorial.demo_time = game.mentor_tutorial.demo_duration * 0.58
 			game.mentor_tutorial._update_demo_position()

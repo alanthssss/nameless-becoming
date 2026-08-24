@@ -220,11 +220,11 @@ func can_complete() -> bool:
 func hud_status() -> String:
 	match state:
 		"waiting_for_deposit":
-			return "首批归巢将惊动花田"
+			return "袭扰 · 待首批归巢"
 		"active":
-			return "袭扰航线 %d" % raid_ants.size()
+			return "惊退袭扰者 %d" % raid_ants.size()
 		_:
-			return "袭扰已退"
+			return "袭扰已清"
 
 
 func is_flower_available(_index: int) -> bool:

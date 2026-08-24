@@ -7,7 +7,7 @@
   "bear": {"move_speed":30.0,"flatten_radius":30.0,"flatten_seconds":9.0,"contact_range":30.0,"contact_damage":16.0,"eat_interval":4.0,"appetite":3,"hive_anchor_offset":70.0},
   "boss": {"move_speed":78.0,"impact_range":39.0,"energy_damage":18.0,"tuning_radius":82.0,"required_tunings":3},
   "mechanics": {
-    "pollination": {"bud_open_range":58.0},
+    "pollination": {"deposit_range":58.0},
     "conscription": {"raider_count":3,"raider_speed":92.0,"steal_interval":0.75,"steal_range":23.0,"raid_capacity":2,"goal_margin":3,"repel_range_bonus":18.0},
     "reserve": {"slider_steps":5,"larvae_per_boost":10,"boost_energy_cap":5,"seed_reward_reserve":2},
     "huddle": {"warmth_drain":5.0,"warm_zone_restore":14.0,"hive_restore":20.0,"warm_radius":92.0,"activation_range":54.0,"activation_honey_cost":1,"cold_speed_multiplier":0.72,"scout_reserve_threshold":5,"sense_cooldown_scout":4.0,"cold_warmth_threshold":35.0}

@@ -118,22 +118,20 @@ var music := MusicDirector.new()
 var paused_from_phase := "playing"
 var persistence_enabled := true
 
-# 花物候学：花型配置与春季行为状态
+# 花物候学：花型配置与连环花状态
 var flower_configs: Dictionary = {}
-var last_harvest_index := -1
-var last_harvest_time := 0.0
-var pollen_transfer_window := 2.0
-var pollen_transfer_bonus := 1
 var chain_timer := 0.0
 var chain_last_index := -1
 var chain_bonus_count := 0
 var chain_window_s := 2.0
 var chain_cap := 3
 var chain_range_px := 120.0
+var chain_harvest_bonus := 1
 
 var title_label: Label
 var term_label: Label
 var carried_label: Label
+var delivered_title_label: Label
 var delivered_label: Label
 var energy_label: Label
 var hive_label: Label
@@ -488,7 +486,7 @@ func build_interface() -> void:
 	make_label(forage_panel, "携带", Vector2(12, 5), Vector2(40, 18), 10, Color("6d715f"))
 	carried_label = make_label(forage_panel, "0 / 8", Vector2(50, 8), Vector2(64, 30), 17, Color("26342b"))
 	carried_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	make_label(forage_panel, "本关进度", Vector2(126, 5), Vector2(72, 18), 10, Color("6d715f"))
+	delivered_title_label = make_label(forage_panel, "归巢蜜", Vector2(126, 5), Vector2(72, 18), 10, Color("6d715f"))
 	delivered_label = make_label(forage_panel, "0 / 5", Vector2(198, 8), Vector2(88, 30), 17, Color("26342b"))
 	delivered_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
@@ -532,7 +530,7 @@ func build_interface() -> void:
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
 	make_label(side, "当前局面", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
-	season_label = make_label(side, "花田", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
+	season_label = make_label(side, "过关条件", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
 	# 节令名下的细分隔条：用 4px 高的色块代替“空行造成的虚假分隔”，视觉上更稳重
 	season_rule = ColorRect.new()
 	season_rule.color = Color("c8a86b", 0.7)
@@ -772,9 +770,7 @@ func spawn_stage(index: int) -> void:
 	decoys.clear()
 	tuning_blooms.clear()
 	pollen.clear()
-	# 花物候学：重置花粉传递与连环花状态
-	last_harvest_index = -1
-	last_harvest_time = 0.0
+	# 花物候学：重置连环花状态
 	chain_timer = 0.0
 	chain_last_index = -1
 	chain_bonus_count = 0
@@ -786,20 +782,17 @@ func spawn_stage(index: int) -> void:
 	# 花物候学：按 flower_set 读取花型权重生成
 	var flower_set_id := str(data.get("flower_set", ""))
 	var ftypes: Array = []
-	pollen_transfer_window = 0.0
 	chain_window_s = 0.0
+	chain_harvest_bonus = 0
 	if flower_set_id != "" and flower_configs.has(flower_set_id):
 		var fset: Dictionary = flower_configs[flower_set_id]
 		ftypes = fset.get("types", [])
-		if fset.has("pollen_transfer"):
-			var pt: Dictionary = fset["pollen_transfer"]
-			pollen_transfer_window = float(pt.get("window_s", 2.0))
-			pollen_transfer_bonus = int(pt.get("bonus", 1))
 		if fset.has("chain_bloom"):
 			var cb: Dictionary = fset["chain_bloom"]
 			chain_window_s = float(cb.get("window_s", 2.0))
 			chain_cap = int(cb.get("cap", 3))
 			chain_range_px = float(cb.get("range_px", 120.0))
+			chain_harvest_bonus = maxi(0, int(cb.get("bonus", 1)))
 	for i in int(data.flowers):
 		var flower_position := find_spaced_flower_position(82.0)
 		var ftype := _pick_flower_type(ftypes)
@@ -879,10 +872,7 @@ func spawn_stage(index: int) -> void:
 ## completion is evidence that the ability changed the world rather than that a
 ## key happened to be pressed.
 func _configure_authored_first_trip() -> void:
-	# Keep the lesson route finite. Generic consecutive-flower bonuses can replenish
-	# the two initially open flowers and recreate the old "goal full, lesson stuck"
-	# state before the occupied resource flower has actually been recovered.
-	pollen_transfer_window = 0.0
+	# Keep the authored lesson route finite and free of unrelated route bonuses.
 	chain_window_s = 0.0
 	var authored := [
 		{"position": Vector2(315, 410), "nectar": 2, "type": "first_bloom", "locked": false, "hidden": false},
@@ -1094,35 +1084,13 @@ func update_game(delta: float) -> void:
 					carry_full_flash_time = 0.6
 				else:
 					var flower: Dictionary = flowers[nearby]
-					var ftype := str(flower.get("type", "nectar_bloom"))
 					flower.nectar = int(flower.nectar) - 1
-					var harvest_msg := ""
-					var bonus_nectar := 0
-					# 花物候学：花粉传递——连续采两朵不同花，第二朵蜜量+1
-					if pollen_transfer_window > 0.0 and last_harvest_index >= 0 and last_harvest_index != nearby:
-						var time_since := elapsed - last_harvest_time
-						if time_since <= pollen_transfer_window:
-							bonus_nectar += pollen_transfer_bonus
-							harvest_msg = "花粉传递：携带的花粉让这朵花蜜量更丰。"
-					# 花物候学：连环花——采完一朵后2秒内采相邻同型花，蜜量+1
-					if ftype == "chain_bloom" and chain_window_s > 0.0:
-						if chain_timer > 0.0 and chain_last_index >= 0 and chain_bonus_count < chain_cap:
-							var prev_pos: Vector2 = flowers[chain_last_index].position
-							if flower.position.distance_to(prev_pos) <= chain_range_px:
-								bonus_nectar += 1
-								chain_bonus_count += 1
-								harvest_msg = "连环花路线：连续采蜜让花田更慷慨。（%d/%d）" % [chain_bonus_count, chain_cap]
-						chain_last_index = nearby
-						chain_timer = chain_window_s
-					else:
-						if chain_window_s > 0.0:
-							chain_timer = 0.0
-							chain_last_index = -1
-							chain_bonus_count = 0
-					# 应用加成（花蜜不减反增）
-					flower.nectar = int(flower.nectar) + bonus_nectar
+					var route_result := _apply_chain_route_harvest(flower, nearby)
+					flower = route_result.flower
+					var extra_harvest: int = int(route_result.extra_harvest)
+					var harvest_msg: String = str(route_result.message)
 					flowers[nearby] = flower
-					carried += 1
+					carried += 1 + extra_harvest
 					action_was_harvesting = true
 					sound.play_cue("harvest")
 					spawn_pollen(flower.position)
@@ -1136,8 +1104,7 @@ func update_game(delta: float) -> void:
 					elif flower.nectar <= 0:
 						# 采尽只提示一次；采蜜中的常态反馈交给音效与花粉，不再每滴飘字
 						message = "这朵花已经采尽。"
-					last_harvest_index = nearby
-					last_harvest_time = elapsed
+
 		elif not action_was_harvesting and not action_decoy_fired and action_hold_time >= DECOY_HOLD_THRESHOLD and carried > 0 and not near_enemy and mentor_tutorial.allows_action("decoy"):
 			# 长按空格 + 携蜜 + 无花无敌 = 投蜜诱饵（采过蜜的同一按键不会触发，需松开重按）
 			action_decoy_fired = true
@@ -1165,7 +1132,7 @@ func update_game(delta: float) -> void:
 	_update_relay_hive(delta)
 	update_hive_rest(delta, true)
 	# 目标与能力演示共同组成首趟路线；后续季节机制也可声明自己的
-	# 因果目标尚未完成（例如尚未开芽/点暖），但没有计时门。
+	# 因果目标尚未完成（例如尚未传粉/点暖），但没有计时门。
 	var mechanics_ready := true
 	if season_mechanics.has_method("can_complete"):
 		mechanics_ready = bool(season_mechanics.can_complete())
@@ -1176,6 +1143,37 @@ func update_game(delta: float) -> void:
 	if bee.energy <= 0.0 and phase == "playing":
 		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
 		begin_exhaustion()
+
+## A chain route rewards execution speed by taking another existing drop in the
+## same harvest tick. It never creates nectar, and it never overfills the crop.
+func _apply_chain_route_harvest(flower: Dictionary, flower_index: int) -> Dictionary:
+	var result := {"flower": flower, "extra_harvest": 0, "message": ""}
+	if str(flower.get("type", "")) == "chain_bloom" and chain_window_s > 0.0:
+		var previous_is_valid := chain_timer > 0.0 \
+			and chain_last_index >= 0 \
+			and chain_last_index < flowers.size() \
+			and chain_last_index != flower_index \
+			and chain_bonus_count < chain_cap
+		if previous_is_valid:
+			var prev_pos: Vector2 = flowers[chain_last_index].position
+			if Vector2(flower.position).distance_to(prev_pos) <= chain_range_px:
+				var remaining_nectar := maxi(0, int(flower.get("nectar", 0)))
+				var spare_capacity := maxi(0, int(carry_capacity) - carried - 1)
+				var extra_harvest := mini(chain_harvest_bonus, mini(remaining_nectar, spare_capacity))
+				if extra_harvest > 0:
+					flower["nectar"] = remaining_nectar - extra_harvest
+					chain_bonus_count += 1
+					result["extra_harvest"] = extra_harvest
+					result["message"] = "连环花路线：一次带走两滴。（%d/%d）" % [chain_bonus_count, chain_cap]
+		chain_last_index = flower_index
+		chain_timer = chain_window_s
+	else:
+		if chain_window_s > 0.0:
+			chain_timer = 0.0
+			chain_last_index = -1
+			chain_bonus_count = 0
+	result["flower"] = flower
+	return result
 
 func _nearest_enemy_distance() -> float:
 	var min_dist := INF
@@ -1506,7 +1504,7 @@ func _complete_contextual_tutorial() -> void:
 		flower.tutorial_locked = false
 		flowers[i] = flower
 	if mentor_tutorial.profile_id == "first_trip_pollination" and mentor_tutorial.lesson_id == "pollination":
-		message = "第二朵花苞也打开了。老师傅退回巢口；接下来由你判断。"
+		message = "第二朵花也开始结籽。老师傅退回巢口；接下来由你判断。"
 	else:
 		message = "攻击穿过了急转留下的空隙；前路开了。"
 	sound.play_cue("tune")
@@ -2488,8 +2486,6 @@ func total_recoverable_honey() -> int:
 	var total := delivered + carried
 	for flower in flowers:
 		total += maxi(0, int(flower.nectar))
-		if int(flower.get("nectar", 0)) <= 0:
-			total += maxi(0, int(flower.get("stored_nectar", 0)))
 	for ant in ants:
 		total += maxi(0, int(ant.get("stolen_honey", 0)))
 	total += decoys.size()
@@ -2525,8 +2521,6 @@ func _ensure_stage_resource_budget() -> void:
 	# inappropriate here because winter route locking is built before this audit.
 	for i in range(flowers.size() - 1, -1, -1):
 		var flower: Dictionary = flowers[i]
-		if bool(flower.get("locked_bud", false)):
-			continue
 		if bool(flower.get("showcase_seed", false)):
 			continue
 		if bool(flower.get("tutorial_locked", false)) or bool(flower.get("tutorial_hidden", false)):
@@ -2552,6 +2546,48 @@ func update_pollen(delta: float) -> void:
 		else:
 			pollen[i] = mote
 
+func mentor_completion_requirement() -> String:
+	if mentor_tutorial.profile_id.is_empty() or mentor_tutorial.phase in ["inactive", "complete"]:
+		return ""
+	var lesson := String(mentor_tutorial.lesson_id)
+	match String(mentor_tutorial.phase):
+		"demo":
+			var demonstrations := {
+				"sortie": "采蜜归巢",
+				"sense": "停稳寻迹",
+				"defense": "惊退占花者",
+				"evade": "急转闪避",
+				"pollination": "同型花传粉",
+				"raid": "花田袭扰",
+				"seed": "留种取舍",
+				"warmth": "点亮暖点"
+			}
+			var demonstration := String(demonstrations.get(lesson, ""))
+			return "教学 · 观看%s示范" % demonstration if not demonstration.is_empty() else ""
+		"imitate":
+			return String({
+				"sortie": "教学 · 完成一次采蜜归巢",
+				"sense": "教学 · 停稳寻迹，找出藏花",
+				"defense": "教学 · 把占花者推出资源区",
+				"evade": "教学 · 用急转避开一次冲刺",
+				"pollination": "教学 · 让第一朵同花型花结籽",
+				"raid": "教学 · 等它偷蜜后再惊退",
+				"seed": "教学 · 留种并归巢一次",
+				"warmth": "教学 · 点亮第一处暖点"
+			}.get(lesson, ""))
+		"practice":
+			return String({
+				"sortie": "教学 · 再独立采蜜归巢一次",
+				"sense": "教学 · 采到寻迹找出的藏花",
+				"defense": "教学 · 再把占花者推出资源区",
+				"evade": "教学 · 再用急转避开一次冲刺",
+				"pollination": "教学 · 再让一朵同花型花结籽",
+				"raid": "教学 · 惊退剩余袭扰者",
+				"seed": "教学 · 再独立完成一次留种取舍",
+				"warmth": "教学 · 点亮剩余暖点"
+			}.get(lesson, ""))
+	return ""
+
 func update_interface() -> void:
 	if stages.is_empty():
 		return
@@ -2572,8 +2608,10 @@ func update_interface() -> void:
 	else:
 		carried_label.modulate = Color.WHITE
 	if boss_context:
-		delivered_label.text = "调律 %d / %d" % [int(boss.hits), int(current_boss_data.required_tunings)]
+		delivered_title_label.text = "调律"
+		delivered_label.text = "%d / %d" % [int(boss.hits), int(current_boss_data.required_tunings)]
 	else:
+		delivered_title_label.text = "归巢蜜"
 		delivered_label.text = "%d / %d" % [mini(delivered, int(data.goal)), int(data.goal)]
 	energy_label.text = str(roundi(bee.energy))
 	# 分母跟随实际上限（越冬抱团可把上限提到基准之上），避免条提前满格
@@ -2599,11 +2637,16 @@ func update_interface() -> void:
 		season_label.text = String(boss_data.name)
 		detail_label.text = "调律 · %d / %d" % [int(boss.hits), int(boss_data.required_tunings)]
 	else:
-		season_label.text = "花田"
-		var mechanics_status := ""
-		if tutorial_complete and season_mechanics != null and season_mechanics.has_method("hud_status"):
-			mechanics_status = String(season_mechanics.hud_status())
-		detail_label.text = mechanics_status
+		season_label.text = "过关条件"
+		var condition_parts: Array[String] = ["归巢蜜 %d / %d" % [mini(delivered, int(data.goal)), int(data.goal)]]
+		if season_mechanics != null and season_mechanics.has_method("hud_status"):
+			var mechanics_status := String(season_mechanics.hud_status())
+			if not mechanics_status.is_empty():
+				condition_parts.append(mechanics_status)
+		var mentor_requirement := mentor_completion_requirement()
+		if not mentor_requirement.is_empty():
+			condition_parts.append(mentor_requirement)
+		detail_label.text = "\n".join(condition_parts)
 	if production_hud != null:
 		production_hud.update_state(self)
 
@@ -2822,7 +2865,7 @@ func update_progressive_guidance() -> void:
 		tutorial_panel.visible = false
 	return_button.visible = carried > 0
 	sense_button.visible = nearby >= 0 or near_enemy or is_still or not seasonal_action_id.is_empty()
-	if seasonal_action_id == "open_pollination_bud":
+	if seasonal_action_id == "deposit_pollen":
 		sense_button.text = "传粉"
 		context_hint_label.text = ""
 	elif seasonal_action_id == "repel_raider":
@@ -2883,7 +2926,7 @@ func _update_mentor_guidance() -> void:
 	elif not contextual_action.is_empty() and mentor_tutorial.allows_action("seasonal"):
 		sense_button.visible = true
 		match contextual_action:
-			"open_pollination_bud": sense_button.text = "传粉"
+			"deposit_pollen": sense_button.text = "传粉"
 			"repel_raider": sense_button.text = "惊退"
 			"light_warm_relay": sense_button.text = "点亮"
 			"warm_relay_needs_honey": sense_button.text = "需一滴蜜"
@@ -3215,10 +3258,6 @@ func _draw() -> void:
 func draw_flower(flower: Dictionary) -> void:
 	var pos: Vector2 = flower.position
 	if bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false)):
-		return
-	# PollinationMechanic owns the physical closed-bud silhouette. Do not leave a
-	# faded open flower underneath it.
-	if bool(flower.get("locked_bud", false)):
 		return
 	if bool(flower.get("tutorial_locked", false)):
 		# A folded bud is a world object; the former empty target ring looked like

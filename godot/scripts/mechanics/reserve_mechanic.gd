@@ -156,8 +156,11 @@ func visual_state_for_flower(flower_index: int) -> String:
 
 func hud_status() -> String:
 	if seeds_matured > 0:
-		return "留种 %d" % seeds_matured
-	return "最后一滴可留种"
+		return "留种 1 / 1"
+	for flower in main.flowers:
+		if int(flower.get("nectar", 0)) > 0:
+			return "留种 0 / 1 · 或采尽"
+	return "花田已采尽"
 
 
 func is_flower_available(_index: int) -> bool:

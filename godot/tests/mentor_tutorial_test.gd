@@ -65,12 +65,12 @@ func run_test() -> void:
 	expect(mentor.notify_event("attack_evaded") == "advance" and mentor.lesson_id == "pollination" and mentor.phase == "demo", "第二次真实闪避没有进入授粉演示")
 	finish_demo(mentor)
 	var pollination = game.season_mechanics.mechanic_by_id("pollination")
-	pollination.opened_buds = 1
+	pollination.pollinated_flowers = 1
 	mentor.process(0.0)
-	expect(mentor.phase == "practice" and not bool(mentor.prompt().visible), "第一朵芽打开后没有进入无提示授粉练习")
-	pollination.opened_buds = 2
+	expect(mentor.phase == "practice" and not bool(mentor.prompt().visible), "第一朵花结籽后没有进入无提示授粉练习")
+	pollination.pollinated_flowers = 2
 	mentor.process(0.0)
-	expect(mentor.phase == "complete" and game.tutorial_complete and mentor.can_complete_stage(), "第二朵芽打开后首关教学仍未完成")
+	expect(mentor.phase == "complete" and game.tutorial_complete and mentor.can_complete_stage(), "第二朵花结籽后首关教学仍未完成")
 
 	game.spawn_stage(7)
 	mentor = game.mentor_tutorial

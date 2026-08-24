@@ -36,7 +36,7 @@ func run_test() -> void:
 	expect(game.phase == "boss_victory", "调律完成后未进入 boss_victory")
 	expect(game.term_label.text.is_empty(), "行动 HUD 不应重复显示节令名：%s" % game.term_label.text)
 	expect(game.season_label.text == "失律之蚊", "boss_victory 侧栏未保持失律者名称：%s" % game.season_label.text)
-	expect(game.delivered_label.text == "调律 3 / 3", "boss_victory 调律计数错误：%s" % game.delivered_label.text)
+	expect(game.delivered_title_label.text == "调律" and game.delivered_label.text == "3 / 3", "boss_victory 调律计数错误：%s %s" % [game.delivered_title_label.text, game.delivered_label.text])
 
 	# --- 场景 3：boss_victory 点继续 → 进入清明（普通关） ---
 	game.on_overlay_button()

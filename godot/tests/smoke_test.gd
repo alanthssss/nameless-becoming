@@ -245,8 +245,8 @@ func _init() -> void:
 								if not ftype.has(key):
 									failures.append("flowers.json %s 花型缺少字段 %s" % [season_id, key])
 			if flower_data.has("spring") and flower_data.spring is Dictionary:
-				if not flower_data.spring.has("pollen_transfer"):
-					failures.append("flowers.json spring 缺少 pollen_transfer 配置")
+				if flower_data.spring.has("pollen_transfer"):
+					failures.append("flowers.json spring 仍保留快速访花加蜜的 pollen_transfer 规则")
 				if not flower_data.spring.has("chain_bloom"):
 					failures.append("flowers.json spring 缺少 chain_bloom 配置")
 

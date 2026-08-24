@@ -29,51 +29,143 @@ func run_test() -> void:
 		var mechanic_id := String(stage.mechanics[0])
 		expect(String(stage.get("flower_set", "")) == String(flower_set_by_mechanic[mechanic_id]), "花型未连接机制：%s" % String(stage.name))
 
-	# 春：采花形成携粉状态；匹配花粉把不可采的锁芽变成真花。
+	# 连环花：路线奖励只能多取该花已有的一滴，不能补回或创造花蜜。
+	game.flowers = [
+		{"position": Vector2(100, 100), "nectar": 2, "type": "chain_bloom"},
+		{"position": Vector2(150, 100), "nectar": 1, "type": "chain_bloom"}
+	]
+	game.carried = 1
+	game.chain_window_s = 2.0
+	game.chain_timer = 1.0
+	game.chain_last_index = 0
+	game.chain_bonus_count = 0
+	game.chain_harvest_bonus = 1
+	var chain_result: Dictionary = game._apply_chain_route_harvest(game.flowers[1].duplicate(), 1)
+	expect(int(chain_result.extra_harvest) == 1 and int(chain_result.flower.nectar) == 0, "连环路线没有从目标花现有库存多采一滴")
+	expect(int(chain_result.flower.nectar) + 1 + int(chain_result.extra_harvest) == 2, "连环路线凭空生成或吞掉了花蜜")
+	game.carried = 1
+	game.chain_timer = 1.0
+	game.chain_last_index = 1
+	game.chain_bonus_count = 0
+	var same_flower_result: Dictionary = game._apply_chain_route_harvest({"position": Vector2(150, 100), "nectar": 1, "type": "chain_bloom"}, 1)
+	expect(int(same_flower_result.extra_harvest) == 0 and int(same_flower_result.flower.nectar) == 1, "持续采同一朵花错误触发连环路线奖励")
+	game.carried = int(game.carry_capacity) - 1
+	game.chain_timer = 1.0
+	game.chain_last_index = 0
+	game.chain_bonus_count = 0
+	var full_crop_result: Dictionary = game._apply_chain_route_harvest({"position": Vector2(150, 100), "nectar": 1, "type": "chain_bloom"}, 1)
+	expect(int(full_crop_result.extra_harvest) == 0 and int(full_crop_result.flower.nectar) == 1, "连环路线在蜜囊只剩一格时溢出或吞蜜")
+
+	# 春：开放花的可见变体同时决定花粉兼容；授粉只进入结籽，不回填花蜜。
 	game.spawn_stage(0)
 	var spring = game.season_mechanics.mechanic_by_id("pollination")
 	expect(spring != null, "春季机制未启动")
 	if spring != null:
-		expect(not spring.source_indices.is_empty() and not spring.bud_indices.is_empty(), "春季没有花粉源或锁芽")
-		expect(spring.required_open_count() == mini(2, spring.bud_indices.size()), "春季开芽目标没有要求至少两次真实连接")
-		var bud_index: int = spring.bud_indices[0]
-		expect(spring.visual_state_for_flower(bud_index) == "closed_bud", "锁芽仍没有真实闭芽视觉状态")
-		var required: int = int(game.flowers[bud_index].required_pollen)
-		var source_index := -1
-		for candidate in spring.source_indices:
-			if int(game.flowers[candidate].pollen_kind) == required:
-				source_index = candidate
-				break
-		expect(source_index >= 0, "锁芽找不到匹配花粉")
-		if source_index >= 0:
-			game.season_mechanics.on_harvest(source_index)
-			expect(spring.carried_pollen == required, "采花没有形成携粉状态")
-			expect(int(spring.pollen_charges[required]) > 0, "采花没有在蜂腿留下可用粉团")
-			expect(spring.nearest_matching_bud(required, game.bee.position) >= 0, "携粉后没有导向匹配闭芽")
-			expect(not game.season_mechanics.is_flower_available(bud_index), "锁芽开放前仍可被普通采集")
-			game.bee.position = Vector2(game.flowers[bud_index].position)
-			expect(game.season_mechanics.context_action_id(game.bee.position) == "open_pollination_bud", "闭芽附近没有暴露开芽情境动作")
-			expect(game.season_mechanics.try_context_action(game.bee.position), "锁芽旁情境动作未消费")
-			expect(bool(game.flowers[bud_index].opened_by_pollination) and int(game.flowers[bud_index].nectar) > 0, "匹配花粉没有打开锁芽")
-			expect(int(game.flowers[bud_index].get("stored_nectar", 0)) == 0, "锁芽打开后仍重复计入暂存花蜜")
-			expect(spring.visual_state_for_flower(bud_index) == "opened_bloom", "开芽后视觉状态没有变成开放花")
-			expect(game.season_mechanics.can_complete() == (spring.required_open_count() <= 1), "春季只开一芽就错误完成")
-			if spring.required_open_count() > 1:
-				var second_bud := -1
-				for candidate in spring.bud_indices:
-					if bool(game.flowers[candidate].get("locked_bud", false)):
-						second_bud = candidate
+		expect(not spring.donor_indices.is_empty() and not spring.receptive_indices.is_empty(), "春季没有开放花药或可接受柱头")
+		expect(spring.required_pollination_count() == mini(2, spring.receptive_indices.size()), "春季结籽目标没有要求两次真实授粉")
+		expect(spring.hud_status() == "传粉 0 / 2", "春季状态栏没有常驻显示明确传粉进度")
+		expect(game.flowers.all(func(flower): return not flower.has("locked_bud") and not flower.has("stored_nectar") and not flower.has("required_pollen") and not flower.has("pollen_kind")), "春季仍保留锁芽或隐藏索引兼容字段")
+		var donor_index: int = spring.donor_indices[0]
+		var receptive_index: int = spring.receptive_indices[0]
+		var donor: Dictionary = game.flowers[donor_index]
+		var receptive: Dictionary = game.flowers[receptive_index]
+		expect(bool(donor.has_anthers) and int(donor.pollen_variant) == int(donor.visual_variant), "花药没有由可见花变体决定花粉")
+		expect(bool(receptive.receptive_stigma) and int(receptive.stigma_variant) == int(receptive.visual_variant), "柱头没有由可见花变体决定兼容")
+		expect(spring.visual_state_for_flower(donor_index) == "donor_anthers" and spring.visual_state_for_flower(receptive_index) == "receptive_stigma", "花药与柱头没有暴露不同视觉状态")
+		expect(game.season_mechanics.is_flower_available(donor_index) and game.season_mechanics.is_flower_available(receptive_index), "授粉花没有保持开放可采")
+		var required_variant := int(receptive.stigma_variant)
+		var filtered: Dictionary = game.flowers[receptive_index]
+		filtered["tutorial_locked"] = true
+		game.flowers[receptive_index] = filtered
+		expect(spring.nearest_matching_receptive(required_variant, Vector2(filtered.position)) != receptive_index, "匹配查询仍指向教学锁定花")
+		filtered["tutorial_locked"] = false
+		filtered["tutorial_hidden"] = true
+		filtered["discovered"] = false
+		game.flowers[receptive_index] = filtered
+		expect(spring.nearest_matching_receptive(required_variant, Vector2(filtered.position)) != receptive_index, "匹配查询仍指向未发现藏花")
+		filtered["tutorial_hidden"] = false
+		filtered["discovered"] = true
+		game.flowers[receptive_index] = filtered
+		var matching_donor := -1
+		var mismatching_donor := -1
+		for candidate in spring.donor_indices:
+			var candidate_variant := int(game.flowers[candidate].pollen_variant)
+			if candidate_variant == required_variant:
+				matching_donor = candidate
+			elif mismatching_donor < 0:
+				mismatching_donor = candidate
+		expect(matching_donor >= 0, "柱头找不到同可见花型的花粉")
+		var nectar_before: int = int(game.flowers[receptive_index].nectar)
+		game.bee.position = Vector2(game.flowers[receptive_index].position)
+		if mismatching_donor >= 0:
+			game.season_mechanics.on_harvest(mismatching_donor)
+			expect(game.season_mechanics.try_context_action(game.bee.position), "异花型柱头附近没有消费传粉动作")
+			expect(not bool(game.flowers[receptive_index].pollinated) and int(game.flowers[receptive_index].nectar) == nectar_before, "异花型散粉错误授粉或改变花蜜")
+		if matching_donor >= 0:
+			game.season_mechanics.on_harvest(matching_donor)
+			expect(spring.carried_pollen_variant == required_variant and int(spring.pollen_charges[required_variant]) > 0, "采花药没有在蜂身留下可用散粉")
+			expect(spring.nearest_matching_receptive(required_variant, game.bee.position) >= 0, "携粉后找不到同花型柱头")
+			expect(game.season_mechanics.context_action_id(game.bee.position) == "deposit_pollen", "柱头附近没有暴露传粉情境动作")
+			expect(game.season_mechanics.try_context_action(game.bee.position), "同花型传粉动作未消费")
+			expect(bool(game.flowers[receptive_index].pollinated) and bool(game.flowers[receptive_index].seed_setting), "同花型散粉没有标记授粉与结籽")
+			expect(int(game.flowers[receptive_index].nectar) == nectar_before, "成功授粉改变了柱头花的花蜜")
+			expect(spring.visual_state_for_flower(receptive_index) == "seed_setting", "授粉后没有切换到可见结籽状态")
+			expect(spring.hud_status() == "传粉 1 / 2", "第一次传粉后状态栏没有更新数字进度")
+			expect(game.season_mechanics.can_complete() == (spring.required_pollination_count() <= 1), "春季只授粉一朵就错误完成")
+			if spring.required_pollination_count() > 1:
+				var second_receptive := -1
+				for candidate in spring.receptive_indices:
+					if not bool(game.flowers[candidate].pollinated):
+						second_receptive = candidate
 						break
-				expect(second_bud >= 0, "春季找不到第二个闭芽")
-				if second_bud >= 0:
-					var second_required := int(game.flowers[second_bud].required_pollen)
-					for candidate in spring.source_indices:
-						if int(game.flowers[candidate].pollen_kind) == second_required:
+				expect(second_receptive >= 0, "春季找不到第二个柱头")
+				if second_receptive >= 0:
+					var second_variant := int(game.flowers[second_receptive].stigma_variant)
+					for candidate in spring.donor_indices:
+						if int(game.flowers[candidate].pollen_variant) == second_variant:
 							game.season_mechanics.on_harvest(candidate)
 							break
-					game.bee.position = Vector2(game.flowers[second_bud].position)
-					expect(game.season_mechanics.try_context_action(game.bee.position), "第二次花粉连接未消费")
-					expect(game.season_mechanics.can_complete(), "完成两次花粉连接后仍阻止结算")
+					var second_nectar_before := int(game.flowers[second_receptive].nectar)
+					game.bee.position = Vector2(game.flowers[second_receptive].position)
+					expect(game.season_mechanics.try_context_action(game.bee.position), "第二次开花传粉未消费")
+					expect(int(game.flowers[second_receptive].nectar) == second_nectar_before, "第二次授粉产生了花蜜")
+					expect(game.season_mechanics.can_complete(), "两朵花进入结籽后仍阻止结算")
+		var completed_pollinations := int(spring.pollinated_flowers)
+		spring.pollinated_flowers = spring.required_pollination_count() + 1
+		expect(spring.hud_status() == "传粉 2 / 2", "额外传粉让状态栏显示超过目标的 3 / 2")
+		spring.pollinated_flowers = completed_pollinations
+		var spent_donor: Dictionary = game.flowers[donor_index]
+		var donor_nectar_before := int(spent_donor.nectar)
+		spent_donor["nectar"] = 0
+		game.flowers[donor_index] = spent_donor
+		expect(spring.visual_state_for_flower(donor_index) == "spent_donor", "采空花仍显示可供粉花药")
+		spent_donor["nectar"] = donor_nectar_before
+		game.flowers[donor_index] = spent_donor
+		for dynamic_spec in [
+			{"visual_variant": 0, "mentor_practice": true, "recovery": false},
+			{"visual_variant": 1, "mentor_practice": false, "recovery": true}
+		]:
+			var dynamic_index: int = int(game.flowers.size())
+			game.flowers.append({
+				"id": 9900 + dynamic_index,
+				"position": Vector2(700 + dynamic_index * 3, 600),
+				"nectar": 1,
+				"max_nectar": 1,
+				"kind": 0,
+				"visual_variant": int(dynamic_spec.visual_variant),
+				"large_bloom": bool(dynamic_spec.visual_variant),
+				"phase": 0.0,
+				"recovery": bool(dynamic_spec.recovery),
+				"mentor_practice": bool(dynamic_spec.mentor_practice),
+				"type": "nectar_bloom"
+			})
+			spring.process(0.0)
+			var dynamic_flower: Dictionary = game.flowers[dynamic_index]
+			var has_role: bool = bool(dynamic_flower.has_anthers) != bool(dynamic_flower.receptive_stigma)
+			var role_variant: int = int(dynamic_flower.pollen_variant) if bool(dynamic_flower.has_anthers) else int(dynamic_flower.stigma_variant)
+			expect(has_role and role_variant == int(dynamic_flower.visual_variant), "后加教学/返蜜花没有按可见变体注册传粉角色")
+			expect(spring.donor_indices.has(dynamic_index) or spring.receptive_indices.has(dynamic_index), "后加花没有进入传粉查询")
+			expect(spring.visual_state_for_flower(dynamic_index) in ["donor_anthers", "receptive_stigma"], "后加花没有对应的可见花心")
 
 	# 夏：只有真实卸蜜才触发；实体逐滴偷取，惊退会归还赃蜜。
 	game.spawn_stage(7)

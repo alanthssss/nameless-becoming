@@ -5,7 +5,6 @@
       {"id": "first_bloom", "nectar_base": 2, "triggers_growth": true, "weight": 0.30},
       {"id": "chain_bloom", "nectar_base": 2, "weight": 0.30}
     ],
-    "pollen_transfer": {"bonus": 1, "window_s": 2.0},
     "chain_bloom": {"bonus": 1, "window_s": 2.0, "cap": 3, "range_px": 120}
   },
   "summer": {

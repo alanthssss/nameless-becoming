@@ -15,12 +15,19 @@ func run_test() -> void:
 	root.add_child(game)
 	await process_frame
 	game.persistence_enabled = false
-	expect(game.term_label.text.is_empty() and game.season_label.text == "花田", "首次进入仍直接显示季节或节气名称")
+	expect(game.term_label.text.is_empty() and game.season_label.text == "过关条件", "首次进入仍直接显示季节或节气名称，或没有预告固定过关条件卡")
+	expect(game.delivered_title_label.text == "归巢蜜", "顶部归巢进度仍使用模糊的本关进度标签")
 	game.start_game()
+	var first_goal := int(game.stages[0].goal)
+	var first_mechanics_status := String(game.season_mechanics.hud_status())
+	expect(game.season_label.text == "过关条件" and game.detail_label.text.contains("归巢蜜 0 / %d" % first_goal), "首关没有常驻显示归巢蜜过关条件")
+	expect(not first_mechanics_status.is_empty() and game.detail_label.text.contains(first_mechanics_status), "首关教学期间隐藏了季节机制过关条件")
+	expect(game.detail_label.text.contains("教学 · 观看采蜜归巢示范"), "首关老师傅演示没有在过关条件卡显示当前教学要求")
 	# The legacy causal route remains independently tested here; the dedicated
 	# mentor test owns demonstrate -> imitate -> practice sequencing.
 	game.mentor_tutorial.profile_id = ""
 	game.mentor_tutorial.phase = "inactive"
+	game.update_interface()
 	game.bee.active = true
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
 	expect(game.is_in_hive_entry(game.HIVE_RETURN_POS), "归巢目标没有落在可见巢门内")
@@ -29,12 +36,9 @@ func run_test() -> void:
 	expect(not game.is_spring_gathering_stage(6), "春分失律者关不应启用春季普通关美术")
 	expect(not game.is_spring_gathering_stage(7) and not game.is_spring_gathering_stage(9), "袭扰玩法组错误沿用春季正式美术")
 	expect(game.tutorial_step == 0 and game.tutorial_panel.visible, "首局没有从单一步骤的移动教学开始")
-	var first_trip_source_nectar := 0
-	for flower in game.flowers:
-		if not bool(flower.get("locked_bud", false)):
-			first_trip_source_nectar += int(flower.nectar)
-	expect(first_trip_source_nectar < int(game.stages[0].goal), "首局无需打开授粉花苞就能填满目标，仍会出现进度已满却不结算")
-	expect(game.pollen_transfer_window == 0.0 and game.chain_window_s == 0.0, "首局通用连采增殖可能绕过教学资源路线")
+	var first_pollination = game.season_mechanics.mechanic_by_id("pollination")
+	expect(first_pollination != null and first_pollination.receptive_indices.all(func(index): return not bool(game.flowers[index].get("tutorial_locked", false))), "HUD 已显示传粉条件，但首局受粉花仍被教学锁藏成闭合花苞")
+	expect(not game.flower_configs.spring.has("pollen_transfer") and game.chain_window_s == 0.0, "首局仍有快速访花加蜜或连环增殖绕过教学路线")
 	var goal_regression_game = packed.instantiate()
 	root.add_child(goal_regression_game)
 	goal_regression_game.persistence_enabled = false
@@ -128,7 +132,12 @@ func run_test() -> void:
 				expect(Vector2(game.flowers[flower_index].position).distance_to(Vector2(game.flowers[other_index].position)) >= 81.9, "节令 %d 花朵生成间距不足" % stage_index)
 		var expected_id: String = ["pollination", "conscription", "reserve", "huddle"][clampi(stage_index / 6, 0, 3)]
 		expect(game.season_mechanics.mechanic_by_id(expected_id) != null, "节令 %d 未激活 %s 机制" % [stage_index, expected_id])
+		var stage_mechanics_status := String(game.season_mechanics.hud_status())
+		expect(game.delivered_title_label.text == "归巢蜜" and game.season_label.text == "过关条件", "节令 %d 没有保持归巢蜜顶部标签和过关条件侧栏" % stage_index)
+		expect(game.detail_label.text.contains("归巢蜜 0 / %d" % int(game.stages[stage_index].goal)), "节令 %d 没有常驻显示归巢蜜目标" % stage_index)
+		expect(not stage_mechanics_status.is_empty() and game.detail_label.text.contains(stage_mechanics_status), "节令 %d 没有常驻显示季节机制条件" % stage_index)
 		if stage_index in [7, 13, 19]:
+			expect(game.detail_label.text.contains("教学 · 观看"), "机制首关 %d 的老师傅门禁没有常驻显示" % stage_index)
 			var visual_variants := {}
 			for flower in game.flowers:
 				visual_variants[int(flower.get("visual_variant", -1))] = true
@@ -160,7 +169,9 @@ func run_test() -> void:
 	var pattern_by_boss := {"mosquito": "orbital", "cricket": "erratic", "thrush": "lure", "bear": "charge"}
 	for boss_stage in [6, 12, 18]:
 		game.spawn_stage(boss_stage)
+		game.update_interface()
 		expect(game.phase == "boss" and game.stage_index == boss_stage, "正色节点 %d 未进入失律者关卡" % boss_stage)
+		expect(game.delivered_title_label.text == "调律" and not game.delivered_label.text.begins_with("调律") and game.detail_label.text.begins_with("调律 · "), "正色节点 %d 错误沿用归巢蜜过关条件或重复调律标签" % boss_stage)
 		game.update_progressive_guidance()
 		expect(not game.return_button.visible and not game.boss_director.can_tune(), "失律者开场不应直接暴露调律窗口")
 		expect(String(game.current_boss_data.move_pattern) == pattern_by_boss[String(game.stages[boss_stage].boss)], "正色节点 %d 失律者移动模式错误" % boss_stage)
@@ -401,27 +412,29 @@ func run_test() -> void:
 	expect(game.phase == "playing" and game.bee.active, "继续未恢复玩家")
 
 	# 四季机制因果探针
-	# 春·花粉连接：采花携粉，匹配花粉才能打开锁芽
+	# 春·开放花授粉：采花药携散粉，同可见花型柱头才会结籽
 	game.spawn_stage(0)
 	var pollinator = game.season_mechanics.mechanic_by_id("pollination")
 	expect(pollinator != null, "春季花粉连接机制缺失")
 	if pollinator != null:
-		expect(not pollinator.source_indices.is_empty() and not pollinator.bud_indices.is_empty(), "春季没有同时生成花粉源与锁芽")
-		if not pollinator.source_indices.is_empty() and not pollinator.bud_indices.is_empty():
-			var bud_index: int = pollinator.bud_indices[0]
-			var required: int = int(game.flowers[bud_index].required_pollen)
-			var source_index := -1
-			for candidate in pollinator.source_indices:
-				if int(game.flowers[candidate].pollen_kind) == required:
-					source_index = candidate
+		expect(not pollinator.donor_indices.is_empty() and not pollinator.receptive_indices.is_empty(), "春季没有同时生成开放花药与柱头")
+		if not pollinator.donor_indices.is_empty() and not pollinator.receptive_indices.is_empty():
+			var receptive_index: int = pollinator.receptive_indices[0]
+			var required: int = int(game.flowers[receptive_index].stigma_variant)
+			var donor_index := -1
+			for candidate in pollinator.donor_indices:
+				if int(game.flowers[candidate].pollen_variant) == required:
+					donor_index = candidate
 					break
-			expect(source_index >= 0, "锁芽没有匹配的花粉源")
-			if source_index >= 0:
-				game.season_mechanics.on_harvest(source_index)
-				expect(pollinator.carried_pollen == required, "采花后没有携带可见花粉")
-				game.bee.position = Vector2(game.flowers[bud_index].position)
+			expect(donor_index >= 0, "柱头没有同可见花型的花粉源")
+			if donor_index >= 0:
+				game.season_mechanics.on_harvest(donor_index)
+				expect(pollinator.carried_pollen_variant == required, "采花药后没有携带散粉")
+				var nectar_before_pollination := int(game.flowers[receptive_index].nectar)
+				game.bee.position = Vector2(game.flowers[receptive_index].position)
 				game.season_mechanics.on_context_action()
-				expect(not bool(game.flowers[bud_index].locked_bud) and int(game.flowers[bud_index].nectar) > 0, "匹配花粉没有打开锁芽")
+				expect(bool(game.flowers[receptive_index].pollinated) and bool(game.flowers[receptive_index].seed_setting), "同花型散粉没有使柱头花结籽")
+				expect(int(game.flowers[receptive_index].nectar) == nectar_before_pollination, "授粉不应产生或回填花蜜")
 
 	# 夏·实体袭扰：首次卸蜜触发，袭扰者移动并取走真实花蜜，惊退后归还
 	game.spawn_stage(7)

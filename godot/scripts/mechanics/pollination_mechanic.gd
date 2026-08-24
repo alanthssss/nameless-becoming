@@ -1,151 +1,165 @@
 class_name PollinationMechanic
 extends RefCounted
-## 春 · 花粉连接。
-## 开放花提供两类可见花粉；玩家采到花粉后，需要把它带到颜色匹配的锁芽旁，
-## 再使用同一个情境动作打开花芽。锁芽的蜜在打开前为 0，因此春季不能靠
-## 守着一朵高蜜花完成，必须在花与花之间规划路线。
+## 春 · 开放花传粉。
+## 散粉花心与受粉花心是开放花上两种不同的可见部分；它们的变体直接来自
+## 花本身的 visual_variant。蜂身上同变体的散粉落到受粉花心后，这朵花进入
+## 结籽状态；传粉不创造、储存或增加花蜜。
 
-const POLLEN_COLORS := [Color("f2cf5b"), Color("8fc9ee")]
+const POLLEN_COLORS := [Color("f2cf5b"), Color("e99aba")]
+const DUST_OFFSETS := [
+	Vector2(-19, -9), Vector2(-12, 8), Vector2(-5, -13), Vector2(1, 10),
+	Vector2(8, -8), Vector2(14, 5), Vector2(20, -2), Vector2(-2, 1)
+]
 
 var mechanic_id := "pollination"
 var main
-var bud_open_range := 58.0
-var carried_pollen := -1
-var pollen_time := 0.0
-var opened_buds := 0
-var source_indices: Array[int] = []
-var bud_indices: Array[int] = []
+var deposit_range := 58.0
+var carried_pollen_variant := -1
+var pollinated_flowers := 0
+var donor_indices: Array[int] = []
+var receptive_indices: Array[int] = []
 var pollen_charges: Array[int] = [0, 0]
+var registered_flower_count := 0
 
 
 func start(game, _data: Dictionary, balance: Dictionary) -> void:
 	main = game
 	var mechanics: Dictionary = balance.get("mechanics", {})
 	var params: Dictionary = mechanics.get("pollination", {})
-	bud_open_range = float(params.get("bud_open_range", 58.0))
-	carried_pollen = -1
-	pollen_time = 0.0
-	opened_buds = 0
+	deposit_range = float(params.get("deposit_range", 58.0))
+	carried_pollen_variant = -1
+	pollinated_flowers = 0
 	pollen_charges = [0, 0]
-	source_indices.clear()
-	bud_indices.clear()
+	donor_indices.clear()
+	receptive_indices.clear()
+	registered_flower_count = 0
 	if main.flowers.size() < 2:
 		return
 
-	# 一半是花粉源，一半是锁芽。花粉类型交错，任何锁芽都至少有一个匹配源。
-	var source_count := maxi(1, int(ceil(float(main.flowers.size()) * 0.5)))
+	# Give every visible variant a donor before filling the rest of the donor half.
+	# The arrays are traversal caches only: flower fields drive both drawing and play.
+	var donor_flags := {}
+	for variant in POLLEN_COLORS.size():
+		for i in main.flowers.size():
+			if _visible_variant(main.flowers[i]) == variant:
+				donor_flags[i] = true
+				break
+	var donor_count := maxi(donor_flags.size(), int(ceil(float(main.flowers.size()) * 0.5)))
 	for i in main.flowers.size():
-		var flower: Dictionary = main.flowers[i]
-		flower["sleeping"] = false
-		flower["pollinated"] = false
-		flower["locked_bud"] = false
-		flower["pollen_source"] = false
-		flower["pollen_kind"] = -1
-		flower["required_pollen"] = -1
-		flower["opened_by_pollination"] = false
-		if i < source_count:
-			flower["pollen_source"] = true
-			flower["pollen_kind"] = i % POLLEN_COLORS.size()
-			source_indices.append(i)
-		else:
-			flower["locked_bud"] = true
-			flower["required_pollen"] = (i - source_count) % POLLEN_COLORS.size()
-			flower["stored_nectar"] = maxi(2, int(flower.get("nectar", 2)))
-			flower["nectar"] = 0
-			bud_indices.append(i)
-		main.flowers[i] = flower
+		if donor_flags.size() >= donor_count:
+			break
+		if not donor_flags.has(i):
+			donor_flags[i] = true
+
+	for i in main.flowers.size():
+		_register_flower(i, donor_flags.has(i))
+	# The first lesson may sequence harvest and danger, but a completion target
+	# must not remain a generic closed bud while the HUD already requires it.
+	# Receptive flowers are open and visibly marked from the start; mentor action
+	# permissions still control when deposition itself can be attempted.
+	if String(_data.get("tutorial_profile", "")) == "first_trip_pollination" and not bool(main.tutorial_complete):
+		for index in receptive_indices:
+			var receptive: Dictionary = main.flowers[index]
+			receptive["tutorial_locked"] = false
+			main.flowers[index] = receptive
+	registered_flower_count = main.flowers.size()
 
 
 func process(_delta: float) -> void:
-	# 花粉保持到匹配锁芽被打开；不设置隐形倒计时，避免花粉源采尽后的软锁。
-	pass
+	# Loose pollen remains until it reaches a compatible stigma. There is no hidden
+	# timer that could exhaust all donors and soft-lock reproduction.
+	_register_new_flowers()
 
 
 func on_harvest(flower_index: int) -> void:
+	_register_new_flowers()
 	if flower_index < 0 or flower_index >= main.flowers.size():
 		return
 	var flower: Dictionary = main.flowers[flower_index]
-	if bool(flower.get("locked_bud", false)):
+	if not bool(flower.get("has_anthers", false)):
 		return
-	var pollen_kind := int(flower.get("pollen_kind", -1))
-	if pollen_kind < 0:
+	var variant := int(flower.get("pollen_variant", -1))
+	if variant < 0 or variant >= pollen_charges.size():
 		return
-	carried_pollen = pollen_kind
-	pollen_charges[pollen_kind % POLLEN_COLORS.size()] += 1
-	pollen_time = 1.0
-	main.spawn_pollen(Vector2(flower.position))
-	main.message = "花粉落在翅上。"
+	carried_pollen_variant = variant
+	pollen_charges[variant] += 1
+	main.message = "散粉留在蜂身上。"
 
 
 func on_context_action() -> bool:
-	var bud_index := nearest_locked_bud()
-	if bud_index < 0:
+	if main == null or main.bee == null:
 		return false
-	var flower: Dictionary = main.flowers[bud_index]
-	var required_kind := int(flower.get("required_pollen", -1))
-	if required_kind < 0 or pollen_charges[required_kind % POLLEN_COLORS.size()] <= 0:
-		main.message = "锁芽在等花粉。"
+	return _deposit_at(main.bee.position)
+
+
+func try_context_action(position: Vector2) -> bool:
+	return _deposit_at(position)
+
+
+func _deposit_at(position: Vector2) -> bool:
+	var flower_index := nearest_receptive_flower_at(position)
+	if flower_index < 0:
+		return false
+	var flower: Dictionary = main.flowers[flower_index]
+	var required_variant := int(flower.get("stigma_variant", -1))
+	if required_variant < 0 or required_variant >= pollen_charges.size():
+		return false
+	if pollen_charges[required_variant] <= 0:
+		main.message = "这个花心需要同花型的散粉。"
 		return true
 
-	flower["locked_bud"] = false
-	flower["opened_by_pollination"] = true
+	# Reproduction changes reproductive state only. Nectar is deliberately neither
+	# read nor written here, so deposition cannot become a disguised refill rule.
 	flower["pollinated"] = true
-	flower["nectar"] = int(flower.get("stored_nectar", 2))
-	flower["stored_nectar"] = 0
-	main.flowers[bud_index] = flower
-	opened_buds += 1
-	pollen_charges[required_kind % POLLEN_COLORS.size()] -= 1
-	_refresh_visible_pollen()
+	flower["seed_setting"] = true
+	main.flowers[flower_index] = flower
+	pollinated_flowers += 1
+	pollen_charges[required_variant] -= 1
+	_refresh_carried_pollen_variant()
 	main.spawn_pollen(Vector2(flower.position))
 	main.flash = maxf(float(main.flash), 0.28)
-	main.message = "锁芽打开。"
+	main.message = "同花型散粉落下，花心开始结籽。"
 	return true
 
 
-func try_context_action(_position: Vector2) -> bool:
-	return on_context_action()
-
-
 func context_action_id(position: Vector2) -> String:
-	if nearest_locked_bud_at(position) >= 0:
-		return "open_pollination_bud"
+	if nearest_receptive_flower_at(position) >= 0:
+		return "deposit_pollen"
 	return ""
 
 
-func required_open_count() -> int:
-	return mini(2, bud_indices.size())
+func required_pollination_count() -> int:
+	return mini(2, receptive_indices.size())
 
 
 func can_complete() -> bool:
-	return opened_buds >= required_open_count()
+	return pollinated_flowers >= required_pollination_count()
 
 
 func hud_status() -> String:
-	if can_complete():
-		return "花粉连接 %d" % opened_buds
-	if carried_pollen >= 0:
-		return "携粉 · 寻同色锁芽"
-	return "锁芽未开"
+	var required := required_pollination_count()
+	return "传粉 %d / %d" % [mini(pollinated_flowers, required), required]
 
 
 func is_flower_available(index: int) -> bool:
-	if index < 0 or index >= main.flowers.size():
-		return false
-	return not bool(main.flowers[index].get("locked_bud", false))
+	# Donors and receptive flowers are already open and remain ordinary nectar
+	# sources before and after reproduction.
+	return index >= 0 and index < main.flowers.size()
 
 
-func nearest_locked_bud() -> int:
-	return nearest_locked_bud_at(main.bee.position)
-
-
-func nearest_locked_bud_at(position: Vector2) -> int:
+func nearest_receptive_flower_at(position: Vector2) -> int:
+	_register_new_flowers()
 	var nearest := -1
-	var nearest_distance := bud_open_range
-	for index in bud_indices:
+	var nearest_distance := deposit_range
+	for index in receptive_indices:
 		if index < 0 or index >= main.flowers.size():
 			continue
 		var flower: Dictionary = main.flowers[index]
-		if not bool(flower.get("locked_bud", false)):
+		if not bool(flower.get("receptive_stigma", false)) or bool(flower.get("pollinated", false)):
+			continue
+		if bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false)):
+			continue
+		if bool(flower.get("tutorial_locked", false)):
 			continue
 		var distance: float = position.distance_to(Vector2(flower.position))
 		if distance < nearest_distance:
@@ -154,14 +168,21 @@ func nearest_locked_bud_at(position: Vector2) -> int:
 	return nearest
 
 
-func nearest_matching_bud(kind: int, origin: Vector2) -> int:
+func nearest_matching_receptive(variant: int, origin: Vector2) -> int:
+	_register_new_flowers()
 	var nearest := -1
 	var nearest_distance := INF
-	for index in bud_indices:
+	for index in receptive_indices:
 		if index < 0 or index >= main.flowers.size():
 			continue
 		var flower: Dictionary = main.flowers[index]
-		if not bool(flower.get("locked_bud", false)) or int(flower.get("required_pollen", -1)) != kind:
+		if (
+			not bool(flower.get("receptive_stigma", false))
+			or bool(flower.get("pollinated", false))
+			or int(flower.get("stigma_variant", -1)) != variant
+		):
+			continue
+		if not _flower_is_visible(flower):
 			continue
 		var distance := origin.distance_to(Vector2(flower.position))
 		if distance < nearest_distance:
@@ -171,101 +192,149 @@ func nearest_matching_bud(kind: int, origin: Vector2) -> int:
 
 
 func visual_state_for_flower(index: int) -> String:
-	if source_indices.has(index):
-		return "pollen_stamens"
-	if bud_indices.has(index) and index >= 0 and index < main.flowers.size():
-		return "closed_bud" if bool(main.flowers[index].get("locked_bud", false)) else "opened_bloom"
+	if index < 0 or index >= main.flowers.size():
+		return "ordinary"
+	var flower: Dictionary = main.flowers[index]
+	if bool(flower.get("seed_setting", false)):
+		return "seed_setting"
+	if bool(flower.get("has_anthers", false)):
+		return "donor_anthers" if int(flower.get("nectar", 0)) > 0 else "spent_donor"
+	if bool(flower.get("receptive_stigma", false)):
+		return "receptive_stigma"
 	return "ordinary"
 
 
-func _refresh_visible_pollen() -> void:
-	carried_pollen = -1
-	for kind in pollen_charges.size():
-		if pollen_charges[kind] > 0:
-			carried_pollen = kind
+func _visible_variant(flower: Dictionary) -> int:
+	return clampi(int(flower.get("visual_variant", 0)), 0, POLLEN_COLORS.size() - 1)
+
+
+func _register_flower(index: int, is_donor: bool) -> void:
+	if index < 0 or index >= main.flowers.size():
+		return
+	var flower: Dictionary = main.flowers[index]
+	var variant := _visible_variant(flower)
+	flower["sleeping"] = false
+	flower["has_anthers"] = is_donor
+	flower["receptive_stigma"] = not is_donor
+	flower["pollen_variant"] = variant if is_donor else -1
+	flower["stigma_variant"] = variant if not is_donor else -1
+	flower["pollinated"] = false
+	flower["seed_setting"] = false
+	if is_donor:
+		donor_indices.append(index)
+	else:
+		receptive_indices.append(index)
+	main.flowers[index] = flower
+
+
+func _register_new_flowers() -> void:
+	if main == null:
+		return
+	while registered_flower_count < main.flowers.size():
+		var index := registered_flower_count
+		var variant := _visible_variant(main.flowers[index])
+		var donors_of_variant := 0
+		var receptive_of_variant := 0
+		for donor_index in donor_indices:
+			if donor_index < main.flowers.size() and int(main.flowers[donor_index].get("pollen_variant", -1)) == variant:
+				donors_of_variant += 1
+		for receptive_index in receptive_indices:
+			if receptive_index < main.flowers.size() and int(main.flowers[receptive_index].get("stigma_variant", -1)) == variant:
+				receptive_of_variant += 1
+		# Alternate each visible variant between donor and receptive roles. A mentor
+		# practice bloom or recovery bloom therefore joins the same visible rule as
+		# authored flowers instead of becoming an unmarked exception.
+		_register_flower(index, donors_of_variant <= receptive_of_variant)
+		registered_flower_count += 1
+
+
+func _refresh_carried_pollen_variant() -> void:
+	carried_pollen_variant = -1
+	for variant in pollen_charges.size():
+		if pollen_charges[variant] > 0:
+			carried_pollen_variant = variant
 			break
-	pollen_time = 1.0 if carried_pollen >= 0 else 0.0
 
 
-func _draw_closed_bud(pos: Vector2, color: Color) -> void:
-	# A stem, two sepals and folded petals read as a physical bud rather than
-	# the abstract empty target rings used by the first implementation.
-	main.draw_line(pos + Vector2(0, 12), pos + Vector2(0, 38), Color("49634d"), 4.0)
+func _flower_is_visible(flower: Dictionary) -> bool:
+	if bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false)):
+		return false
+	return not bool(flower.get("tutorial_locked", false))
+
+
+func _draw_anthers(flower: Dictionary) -> void:
+	var variant := int(flower.get("pollen_variant", 0))
+	if variant < 0 or variant >= POLLEN_COLORS.size():
+		return
+	var pos := Vector2(flower.position)
+	var color: Color = POLLEN_COLORS[variant]
+	for stamen in 5:
+		var angle: float = TAU * float(stamen) / 5.0 + float(main.elapsed) * 0.12
+		var head := pos + Vector2.from_angle(angle) * 11.0
+		main.draw_line(pos, head, Color("66512f", 0.82), 2.2)
+		main.draw_circle(head, 4.2, Color("66512f", 0.88))
+		main.draw_circle(head, 3.0, color)
+	main.draw_circle(pos, 3.8, Color("66512f", 0.92))
+
+
+func _draw_receptive_stigma(flower: Dictionary) -> void:
+	var variant := int(flower.get("stigma_variant", 0))
+	if variant < 0 or variant >= POLLEN_COLORS.size():
+		return
+	var pos := Vector2(flower.position)
+	var color: Color = POLLEN_COLORS[variant].lightened(0.12)
+	# One raised, three-lobed stigma is deliberately unlike the donor's five anthers.
+	main.draw_line(pos + Vector2(0, 9), pos + Vector2(0, -7), Color("f6eed2", 0.95), 4.0)
+	for lobe_position in [Vector2(0, -10), Vector2(-5, -7), Vector2(5, -7)]:
+		main.draw_circle(pos + lobe_position, 5.0, Color("405840", 0.90))
+		main.draw_circle(pos + lobe_position, 3.6, Color(color, 0.96))
+
+
+func _draw_seed_setting(flower: Dictionary) -> void:
+	var pos := Vector2(flower.position)
 	main.draw_colored_polygon(PackedVector2Array([
-		pos + Vector2(0, -19), pos + Vector2(-8, -17),
-		pos + Vector2(-14, -8), pos + Vector2(-13, 4),
-		pos + Vector2(-6, 12), pos + Vector2(0, 15),
-		pos + Vector2(6, 12), pos + Vector2(13, 4),
-		pos + Vector2(14, -8), pos + Vector2(8, -17)
-	]), Color(color, 0.92))
-	main.draw_colored_polygon(PackedVector2Array([
-		pos + Vector2(0, -17), pos + Vector2(-7, -5),
-		pos + Vector2(-4, 10), pos + Vector2(0, 14),
-		pos + Vector2(4, 10), pos + Vector2(7, -5)
-	]), Color(color.darkened(0.18), 0.82))
-	main.draw_colored_polygon(PackedVector2Array([
-		pos + Vector2(0, 15),
-		pos + Vector2(-13, 4),
-		pos + Vector2(-5, 0)
-	]), Color("66825c"))
-	main.draw_colored_polygon(PackedVector2Array([
-		pos + Vector2(0, 15),
-		pos + Vector2(13, 4),
-		pos + Vector2(5, 0)
-	]), Color("66825c"))
-	main.draw_line(pos + Vector2(0, 10), pos + Vector2(0, -15), Color("fff2b3", 0.52), 1.5)
+		pos + Vector2(0, -11), pos + Vector2(-8, -3),
+		pos + Vector2(-6, 9), pos + Vector2(0, 14),
+		pos + Vector2(6, 9), pos + Vector2(8, -3)
+	]), Color("86a85f", 0.94))
+	for seed in 3:
+		main.draw_circle(pos + Vector2(0, -3 + seed * 5), 2.2, Color("f3d474"))
+
+
+func _draw_loose_body_dust() -> void:
+	for variant in pollen_charges.size():
+		if pollen_charges[variant] <= 0:
+			continue
+		var color: Color = POLLEN_COLORS[variant]
+		for mote in DUST_OFFSETS.size():
+			if mote % pollen_charges.size() != variant:
+				continue
+			var base: Vector2 = DUST_OFFSETS[mote]
+			var drift := Vector2(0, sin(float(main.elapsed) * 4.0 + float(mote)) * 1.8)
+			main.draw_circle(Vector2(main.bee.position) + base + drift, 2.2 + float(mote % 3) * 0.30, Color(color, 0.88))
 
 
 func draw() -> void:
-	for index in source_indices:
-		if index >= main.flowers.size():
+	_register_new_flowers()
+	for index in donor_indices:
+		if index < 0 or index >= main.flowers.size():
 			continue
-		var source: Dictionary = main.flowers[index]
-		if int(source.get("nectar", 0)) <= 0:
+		var flower: Dictionary = main.flowers[index]
+		if _flower_is_visible(flower) and bool(flower.get("has_anthers", false)) and int(flower.get("nectar", 0)) > 0:
+			_draw_anthers(flower)
+	for index in receptive_indices:
+		if index < 0 or index >= main.flowers.size():
 			continue
-		if bool(source.get("tutorial_hidden", false)) and not bool(source.get("discovered", false)):
+		var flower: Dictionary = main.flowers[index]
+		if not _flower_is_visible(flower):
 			continue
-		if bool(source.get("tutorial_locked", false)):
-			continue
-		var kind := int(source.get("pollen_kind", 0)) % POLLEN_COLORS.size()
-		var pos := Vector2(source.position)
-		# Five bright stamens sit inside the existing flower silhouette. Their
-		# arrangement and color are repeated on the matching closed bud.
-		for stamen in 5:
-			var angle: float = TAU * float(stamen) / 5.0 + float(main.elapsed) * 0.22
-			var head: Vector2 = pos + Vector2.from_angle(angle) * (8.0 + sin(float(main.elapsed) * 4.0 + stamen) * 1.2)
-			main.draw_line(pos, head, Color(POLLEN_COLORS[kind], 0.58), 1.5)
-			main.draw_circle(head, 3.2, POLLEN_COLORS[kind])
-	for index in bud_indices:
-		if index >= main.flowers.size():
-			continue
-		var bud: Dictionary = main.flowers[index]
-		if not bool(bud.get("locked_bud", false)):
-			continue
-		var kind := int(bud.get("required_pollen", 0)) % POLLEN_COLORS.size()
-		var pos := Vector2(bud.position)
-		_draw_closed_bud(pos, POLLEN_COLORS[kind])
-	if pollen_time > 0.0:
-		for kind in pollen_charges.size():
-			if pollen_charges[kind] <= 0:
-				continue
-			var color: Color = POLLEN_COLORS[kind]
-			var leg_side := -1.0 if kind == 0 else 1.0
-			# Pollen is carried as two small clumps on the bee's hind legs.
-			main.draw_circle(main.bee.position + Vector2(-8, 12.0 * leg_side), 4.5, color)
-			main.draw_circle(main.bee.position + Vector2(-14, 9.0 * leg_side), 3.2, Color(color, 0.86))
-			var match_index := nearest_matching_bud(kind, main.bee.position)
-			if match_index < 0:
-				continue
-			var target := Vector2(main.flowers[match_index].position)
-			for mote in 5:
-				var ratio := fmod(main.elapsed * 0.22 + float(mote) / 5.0, 1.0)
-				var guide_pos: Vector2 = Vector2(main.bee.position).lerp(target, ratio)
-				guide_pos.y += sin(ratio * PI) * -18.0
-				main.draw_circle(guide_pos, 2.0 + ratio, Color(color, 0.28 + ratio * 0.34))
+		if bool(flower.get("seed_setting", false)):
+			_draw_seed_setting(flower)
+		elif bool(flower.get("receptive_stigma", false)):
+			_draw_receptive_stigma(flower)
+	_draw_loose_body_dust()
 
 
 func end() -> void:
-	carried_pollen = -1
-	pollen_time = 0.0
+	carried_pollen_variant = -1
 	pollen_charges = [0, 0]
