@@ -18,6 +18,14 @@ func run_test() -> void:
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
 	expect(game.tutorial_step == 0 and game.tutorial_panel.visible, "首局没有从单一步骤的移动教学开始")
+	var goal_regression_game = packed.instantiate()
+	root.add_child(goal_regression_game)
+	goal_regression_game.persistence_enabled = false
+	goal_regression_game.start_game()
+	goal_regression_game.delivered = int(goal_regression_game.stages[0].goal)
+	goal_regression_game.update_game(0.0)
+	expect(goal_regression_game.phase == "between", "首局达到 5/5 后被未完成教学阻止结算")
+	goal_regression_game.queue_free()
 	expect(not game.fullscreen_button.visible and not game.sound_button.visible and not game.quit_button.visible, "系统级操作仍常驻在游戏过程界面")
 	expect(not game.sense_button.visible and not game.return_button.visible, "尚未行动时提前展示了采蜜或归巢")
 	game.bee.position = game.tutorial_origin + Vector2(70, 0)
@@ -29,15 +37,28 @@ func run_test() -> void:
 	game.delivered = 1
 	game.carried = 0
 	game.update_progressive_guidance()
-	expect(game.tutorial_step == 3 and game.tutorial_complete and not game.tutorial_panel.visible, "第一次存蜜后教学没有结束")
+	expect(game.tutorial_step == 3 and not game.tutorial_complete and game.tutorial_panel.visible, "第一次存蜜后没有进入寻迹练习")
+	game.bee.sense_cooldown = 0.0
+	game._do_sense()
+	expect(game.tutorial_step == 4 and game.mosquitoes.any(func(unit): return bool(unit.get("tutorial", false))), "寻迹后没有生成安全的惊退练习")
+	game.bee.position = Vector2(game.mosquitoes[-1].position) + Vector2(10, 0)
+	game.sting_cooldown = 0.0
+	game.bee.energy = 100.0
+	game._do_repel()
+	expect(game.tutorial_step == 5, "实际惊退敌虫后没有进入急转练习")
+	game.bee.energy = 100.0
+	game.bee.velocity = Vector2.RIGHT
+	expect(game.bee.try_evade(), "教学急转动作未能触发")
+	game.on_evade_succeeded()
 	game.update_progressive_guidance()
-	expect(game.context_lesson_id == "sense" and game.tutorial_panel.visible, "基础教学后没有在停稳时出现寻迹教学")
+	expect(game.tutorial_step == 6 and game.tutorial_complete and not game.tutorial_panel.visible, "完成急转后首局行动教学没有结束")
 	game.context_lesson_time = 0.0
 	game.bee.energy = 30.0
 	game.update_progressive_guidance()
 	expect(game.context_lesson_id == "low_energy" and game.tutorial_panel.visible, "低体力首次出现时没有情境教学")
 	game.context_lesson_time = 0.0
 	game.bee.energy = 100.0
+	game.context_lessons_seen.erase("danger")
 	game.mosquitoes = [{"id": 0, "position": game.bee.position + Vector2(20, 0), "velocity": Vector2.ZERO, "repel_time": 0.0}]
 	game.update_progressive_guidance()
 	expect(game.context_lesson_id == "danger" and game.tutorial_panel.visible and game.sense_button.text == "惊退", "敌害首次逼近时没有惊退教学")
