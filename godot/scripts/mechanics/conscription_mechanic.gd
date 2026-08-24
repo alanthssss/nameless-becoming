@@ -1,189 +1,242 @@
 class_name ConscriptionMechanic
 extends RefCounted
-## 夏至 · 征召：被需要的方式在变化。
-## 巢口告急（蚊群冲巢 → 回巢稳住阵脚）/ 花区告急（掠蜜蚁扑田 → 惊退驱赶）
-## 交替出现；响应哪边都是贡献，不响应也有代价，但不会致死——
-## 被需要的方式在变化，而不是「个体 vs 集体」的对立。
+## 夏 · 实体袭扰。
+## 第一批花蜜真正卸入蜂巢后，袭扰者从花田外缘进入并扑向仍有蜜的花。
+## 它们逐滴取走真实花蜜；玩家必须中断下一条采集路线，飞去惊退它们。
 
 var mechanic_id := "conscription"
 var main
-var state := "idle"  # idle / active
-var kind := ""  # hive / field
-var timer := 0.0
-var remaining := 0.0
-var response_progress := 0.0
-var field_repels_needed := 2
-var field_repels_done := 0
-var interval_min := 14.0
-var interval_max := 20.0
-var duration := 12.0
-var hive_response_seconds := 1.0
-var horde_count := 2
-var reward_reserve := 2
-var horde: Array = []
+var state := "waiting_for_deposit" # waiting_for_deposit / active / cleared
+var kind := "field"
+var first_deposit_seen := false
 var raid_ants: Array = []
-var rng := RandomNumberGenerator.new()
+var raider_count := 3
+var raider_speed := 92.0
+var steal_interval := 0.75
+var steal_range := 23.0
+var raid_capacity := 2
+var goal_margin := 3
+var repel_range_bonus := 18.0
+var original_goal := -1
+var goal_extended := false
+var configured_stage_index := -1
 
 
 func start(game, data: Dictionary, balance: Dictionary) -> void:
 	main = game
-	rng.randomize()
 	var mechanics: Dictionary = balance.get("mechanics", {})
 	var params: Dictionary = mechanics.get("conscription", {})
-	interval_min = float(params.get("interval_min", 14.0))
-	interval_max = float(params.get("interval_max", 20.0))
-	duration = float(params.get("duration", 12.0))
-	hive_response_seconds = float(params.get("hive_response_seconds", 1.0))
-	field_repels_needed = int(params.get("field_repels", 2))
-	horde_count = int(params.get("horde_count", 2))
-	reward_reserve = int(params.get("reward_reserve", 2))
-	state = "idle"
-	kind = ""
-	response_progress = 0.0
-	field_repels_done = 0
-	horde.clear()
+	raider_count = int(params.get("raider_count", 3))
+	raider_speed = float(params.get("raider_speed", 92.0))
+	steal_interval = float(params.get("steal_interval", 0.75))
+	steal_range = float(params.get("steal_range", 23.0))
+	raid_capacity = int(params.get("raid_capacity", 2))
+	goal_margin = int(params.get("goal_margin", 3))
+	repel_range_bonus = float(params.get("repel_range_bonus", 18.0))
+	state = "waiting_for_deposit"
+	kind = "field"
+	first_deposit_seen = false
 	raid_ants.clear()
-	timer = rng.randf_range(interval_min, interval_max)
+	original_goal = int(data.get("goal", -1))
+	goal_extended = false
+	configured_stage_index = int(main.stage_index)
 
 
 func process(delta: float) -> void:
-	if state == "idle":
-		timer -= delta
-		if timer <= 0.0:
-			trigger_event()
-	elif state == "active":
-		remaining -= delta
-		if kind == "hive":
-			update_horde(delta)
-		if response_complete():
-			resolve(true)
-		elif remaining <= 0.0:
-			resolve(false)
+	if state != "active":
+		return
+	for i in range(raid_ants.size() - 1, -1, -1):
+		var raider: Dictionary = raid_ants[i]
+		var raider_state := String(raider.get("state", "approach"))
+		if raider_state == "escape":
+			var escape_direction: Vector2 = Vector2(raider.get("escape_direction", Vector2.RIGHT))
+			raider["position"] = Vector2(raider.position) + escape_direction * raider_speed * 1.35 * delta
+			raid_ants[i] = raider
+			var escape_position := Vector2(raider.position)
+			if (
+				escape_position.x >= main.WORLD.end.x - 8.0
+				or escape_position.x <= main.WORLD.position.x + 8.0
+				or escape_position.y <= main.WORLD.position.y + 8.0
+				or escape_position.y >= main.WORLD.end.y - 8.0
+			):
+				raid_ants.remove_at(i)
+			continue
+		if raider_state == "holding":
+			# A full raider keeps the stolen nectar visible until the player
+			# intervenes. Waiting is no longer an automatic solution.
+			raid_ants[i] = raider
+			continue
+
+		var target_index := int(raider.get("target", -1))
+		if not is_viable_target(target_index):
+			target_index = richest_target()
+			raider["target"] = target_index
+		if target_index < 0:
+			raider["state"] = "holding"
+			raid_ants[i] = raider
+			continue
+
+		var target: Dictionary = main.flowers[target_index]
+		var to_target := Vector2(target.position) - Vector2(raider.position)
+		if to_target.length() > steal_range:
+			raider["position"] = Vector2(raider.position) + to_target.normalized() * raider_speed * delta
+		else:
+			raider["steal_clock"] = float(raider.get("steal_clock", steal_interval)) - delta
+			if float(raider.steal_clock) <= 0.0 and int(target.get("nectar", 0)) > 0:
+				target["nectar"] = int(target.nectar) - 1
+				main.flowers[target_index] = target
+				raider["stolen"] = int(raider.get("stolen", 0)) + 1
+				raider["steal_clock"] = steal_interval
+				main.spawn_pollen(Vector2(target.position))
+				main.message = "花蜜正在被带走。"
+				if int(raider.stolen) >= raid_capacity:
+					raider["state"] = "holding"
+		raid_ants[i] = raider
+
+	if raid_ants.is_empty():
+		state = "cleared"
+		main.message = "袭扰退去。"
 
 
-func trigger_event() -> void:
+func on_home(amount: int, _delta: float) -> void:
+	# amount 只有在 main 判定“站稳并实际卸蜜”的那一帧大于 0；擦过巢口不触发。
+	if amount <= 0 or first_deposit_seen:
+		return
+	first_deposit_seen = true
+	trigger_raid(amount)
+
+
+func trigger_raid(deposit_amount: int = 0) -> void:
+	if state == "active":
+		return
 	state = "active"
-	kind = "hive" if rng.randf() < 0.5 else "field"
-	remaining = duration
-	response_progress = 0.0
-	field_repels_done = 0
-	if kind == "hive":
-		main.message = "巢口告急！蚊群正向蜂巢扑来——回到巢口稳住阵脚。"
-		horde.clear()
-		for i in horde_count:
-			horde.append({
-				"position": Vector2(rng.randf_range(560, 900), rng.randf_range(220, 600)),
-				"velocity": Vector2(-1, 0),
-				"repel_time": 0.0
-			})
-	else:
-		main.message = "花区告急！掠蜜蚁正扑向花田——用惊退（J）把它们赶走。"
-		raid_ants.clear()
-		for i in 2:
-			raid_ants.append({
-				"position": Vector2(rng.randf_range(500, 800), rng.randf_range(240, 580)),
-				"velocity": Vector2.ZERO,
-				"flee_time": 0.0
-			})
+	kind = "field"
+	raid_ants.clear()
+	# 第一趟若足以碰到旧目标，当前关会在同一帧结算，玩家永远看不到袭扰。
+	# 只为本关临时延长一个小回合，进入下一关前由 end() 恢复原数据。
+	if original_goal > 0 and configured_stage_index >= 0 and configured_stage_index < main.stages.size():
+		var stage: Dictionary = main.stages[configured_stage_index]
+		stage["goal"] = maxi(original_goal, int(main.delivered) + deposit_amount + goal_margin)
+		main.stages[configured_stage_index] = stage
+		goal_extended = int(stage.goal) != original_goal
+	var right_edge: float = main.WORLD.end.x - 18.0
+	for i in raider_count:
+		raid_ants.append({
+			"position": Vector2(right_edge, 220.0 + float(i % 4) * 105.0),
+			"target": richest_target(i),
+			"state": "approach",
+			"stolen": 0,
+			"steal_clock": steal_interval,
+			"escape_direction": Vector2.RIGHT
+		})
+	main.message = "袭扰从花田边缘出现。"
 
 
-func update_horde(delta: float) -> void:
-	for i in horde.size():
-		var mosquito: Dictionary = horde[i]
-		mosquito["repel_time"] = maxf(0.0, float(mosquito.get("repel_time", 0.0)) - delta)
-		var direction := Vector2.LEFT if Vector2(mosquito.position).x > main.HIVE_SAFE_X + 12.0 else Vector2.RIGHT
-		mosquito["position"] = Vector2(mosquito.position) + direction * 130.0 * delta
-		horde[i] = mosquito
-		# 蚊群冲过巢口 = 巢口失守
-		if Vector2(mosquito.position).x <= main.HIVE_SAFE_X + 10.0 and state == "active" and not response_complete():
-			resolve(false)
-			return
+func richest_target(offset: int = 0) -> int:
+	var candidates: Array[int] = []
+	for i in main.flowers.size():
+		if is_viable_target(i):
+			candidates.append(i)
+	if candidates.is_empty():
+		return -1
+	candidates.sort_custom(func(a: int, b: int) -> bool:
+		return int(main.flowers[a].nectar) > int(main.flowers[b].nectar)
+	)
+	return candidates[offset % candidates.size()]
 
 
-func on_home(amount: int, delta: float) -> void:
-	if state == "active" and kind == "hive":
-		response_progress += delta
-		if response_progress >= hive_response_seconds:
-			resolve(true)
+func is_viable_target(index: int) -> bool:
+	if index < 0 or index >= main.flowers.size():
+		return false
+	var flower: Dictionary = main.flowers[index]
+	return (
+		int(flower.get("nectar", 0)) > 0
+		and not bool(flower.get("sleeping", false))
+		and float(flower.get("flatten_time", 0.0)) <= 0.0
+	)
+
+
+func on_context_action() -> bool:
+	return repel_nearest_raider()
+
+
+func try_context_action(_position: Vector2) -> bool:
+	return on_context_action()
+
+
+func can_complete() -> bool:
+	return first_deposit_seen and state != "active"
+
+
+func hud_status() -> String:
+	match state:
+		"waiting_for_deposit":
+			return "首批归巢将惊动花田"
+		"active":
+			return "袭扰航线 %d" % raid_ants.size()
+		_:
+			return "袭扰已退"
+
+
+func is_flower_available(_index: int) -> bool:
+	return true
 
 
 func on_repel_success() -> void:
-	if state != "active" or kind != "field":
-		return
-	for i in raid_ants.size():
-		var ant: Dictionary = raid_ants[i]
-		if main.bee.position.distance_to(Vector2(ant.position)) < main.sting_range + 10.0:
-			ant["flee_time"] = 1.5
-			ant["velocity"] = (Vector2(ant.position) - main.bee.position).normalized() * 3.0
-			raid_ants[i] = ant
-			field_repels_done += 1
-			if field_repels_done >= field_repels_needed:
-				resolve(true)
-			return
+	repel_nearest_raider()
 
 
-func response_complete() -> bool:
-	if kind == "hive":
-		return response_progress >= hive_response_seconds
-	return field_repels_done >= field_repels_needed
-
-
-func resolve(success: bool) -> void:
+func repel_nearest_raider() -> bool:
 	if state != "active":
-		return
-	var resolved_kind := kind
-	state = "idle"
-	kind = ""
-	response_progress = 0.0
-	field_repels_done = 0
-	horde.clear()
-	raid_ants.clear()
-	timer = rng.randf_range(interval_min, interval_max)
-	if success:
-		main.flash = 0.32
-		if resolved_kind == "hive":
-			main.hive_reserve += reward_reserve
-			main.message = "你及时回防，蜂群安然无恙。公共储备 +%d。" % reward_reserve
-		else:
-			for i in main.flowers.size():
-				var flower: Dictionary = main.flowers[i]
-				if int(flower.nectar) > 0:
-					flower["nectar"] = int(flower.nectar) + 1
-					main.flowers[i] = flower
-			main.message = "掠蜜蚁被赶退，花田恢复了活力。"
-	else:
-		if resolved_kind == "hive":
-			main.message = "蜂群等了一场空——蚊群扰过巢口，本轮蜂群呼吸弱了一分。"
-		else:
-			main.message = "花区被掠走一滴蜜。蜂群需要你时，你在远方。"
-			for i in main.flowers.size():
-				var flower: Dictionary = main.flowers[i]
-				if int(flower.nectar) > 1:
-					flower["nectar"] = int(flower.nectar) - 1
-					main.flowers[i] = flower
-					break
+		return false
+	var nearest := -1
+	var nearest_distance := float(main.sting_range) + repel_range_bonus
+	for i in raid_ants.size():
+		var raider: Dictionary = raid_ants[i]
+		if String(raider.get("state", "approach")) == "escape":
+			continue
+		var distance: float = main.bee.position.distance_to(Vector2(raider.position))
+		if distance < nearest_distance:
+			nearest_distance = distance
+			nearest = i
+	if nearest < 0:
+		return false
+
+	var raider: Dictionary = raid_ants[nearest]
+	var stolen := int(raider.get("stolen", 0))
+	var target_index := int(raider.get("target", -1))
+	if stolen > 0 and target_index >= 0 and target_index < main.flowers.size():
+		var flower: Dictionary = main.flowers[target_index]
+		flower["nectar"] = int(flower.get("nectar", 0)) + stolen
+		main.flowers[target_index] = flower
+	raider["stolen"] = 0
+	raider["state"] = "escape"
+	var away: Vector2 = Vector2(raider.position) - main.bee.position
+	raider["escape_direction"] = Vector2.RIGHT if away.length_squared() < 0.01 else away.normalized()
+	raid_ants[nearest] = raider
+	main.flash = maxf(float(main.flash), 0.22)
+	main.message = "被夺的蜜落回花田。"
+	return true
 
 
 func draw() -> void:
 	if state != "active":
 		return
-	if kind == "hive":
-		var hive_position := Vector2(86, 410)
-		var pulse := 30.0 + sin(main.elapsed * 4.0) * 4.0
-		main.draw_arc(hive_position, pulse, 0, TAU, 32, Color("b84a3f", 0.7), 3)
-		main.draw_arc(hive_position, pulse + 14, 0, TAU, 32, Color("b84a3f", 0.35), 2)
-		for mosquito in horde:
-			var pos: Vector2 = mosquito.position
-			main.draw_circle(pos, 8, Color("8e3740"))
-			main.draw_line(pos, pos + Vector2(-22, 0), Color("c96a5a", 0.8), 2)
-		var progress := clampf(response_progress / maxf(hive_response_seconds, 0.01), 0.0, 1.0)
-		main.draw_arc(hive_position, 48, -PI / 2.0, -PI / 2.0 + TAU * progress, 40, Color("fff1a8", 0.9), 4)
-	else:
-		var field_center := Vector2(620, 410)
-		var pulse := 60.0 + sin(main.elapsed * 3.0) * 6.0
-		main.draw_arc(field_center, pulse, 0, TAU, 48, Color("d9a93f", 0.5), 3)
-		main.draw_arc(field_center, pulse + 16, 0, TAU, 48, Color("d9a93f", 0.22), 2)
-		for ant in raid_ants:
-			var pos: Vector2 = ant.position
-			main.draw_circle(pos + Vector2(-5, 0), 6, Color("a66d38"))
-			main.draw_circle(pos + Vector2(6, 0), 6, Color("a66d38"))
+	for raider in raid_ants:
+		var pos := Vector2(raider.position)
+		var escaping := String(raider.get("state", "approach")) == "escape"
+		main.draw_circle(pos + Vector2(-6, 0), 7.0, Color("a66d38", 0.55 if escaping else 1.0))
+		main.draw_circle(pos + Vector2(7, 0), 6.0, Color("c48645", 0.55 if escaping else 1.0))
+		var target_index := int(raider.get("target", -1))
+		if not escaping and target_index >= 0 and target_index < main.flowers.size():
+			main.draw_dashed_line(pos, Vector2(main.flowers[target_index].position), Color("c96a5a", 0.7), 2.0, 8.0)
+		for drop in int(raider.get("stolen", 0)):
+			main.draw_circle(pos + Vector2(-5.0 + float(drop) * 8.0, -14.0), 3.5, Color("f2cf5b"))
+
+
+func end() -> void:
+	if goal_extended and original_goal > 0 and configured_stage_index >= 0 and configured_stage_index < main.stages.size():
+		var stage: Dictionary = main.stages[configured_stage_index]
+		stage["goal"] = original_goal
+		main.stages[configured_stage_index] = stage
+	raid_ants.clear()

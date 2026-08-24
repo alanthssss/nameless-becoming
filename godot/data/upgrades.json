@@ -1,5 +1,5 @@
 [
   {"id":"long_wing","name":"长翼蜂","symbol":"疾","description":"飞行速度 +10%\n振翅耗能 -15%","color":"8fb7a2"},
-  {"id":"forager","name":"采蜜蜂","symbol":"蜜","description":"采蜜间隔 -15%\n每朵花额外保留 1 滴\n携带上限 +3","color":"d8ad43"},
+  {"id":"forager","name":"采蜜蜂","symbol":"蜜","description":"采蜜间隔 -15%\n每朵花额外保留 1 滴","color":"d8ad43"},
   {"id":"guard","name":"守卫蜂","symbol":"守","description":"惊退范围 +18%\n震翼冷却 -15%","color":"9d725d"}
 ]

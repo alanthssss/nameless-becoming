@@ -24,6 +24,9 @@ var sense_time := 0.0
 var sense_cooldown := 0.0
 var facing := 0.0
 var speed_multiplier := 1.0
+## Environment-owned movement modifier. Seasonal mechanics may slow or restore the
+## bee without overwriting permanent Long Wing upgrades.
+var environment_speed_multiplier := 1.0
 var dash_cost_multiplier := 1.0
 var evade_time := 0.0
 var evade_cooldown := 0.0
@@ -50,6 +53,7 @@ func configure(stage_drain: float) -> void:
 
 func reset_upgrades() -> void:
 	speed_multiplier = 1.0
+	environment_speed_multiplier = 1.0
 	dash_cost_multiplier = 1.0
 
 func apply_upgrade(upgrade_id: String) -> void:
@@ -69,6 +73,7 @@ func reset_for_expedition(at: Vector2) -> void:
 	evade_cooldown = 0.0
 	invulnerable_time = 0.0
 	move_duration = 0.0
+	environment_speed_multiplier = 1.0
 	active = true
 	queue_redraw()
 
@@ -125,7 +130,7 @@ func _physics_process(delta: float) -> void:
 		move_duration = 0.0
 
 	var auto_dashing := move_duration > AUTO_DASH_THRESHOLD and energy > 8.0 and evade_time <= 0.0
-	var desired_speed := (dash_speed if auto_dashing else base_speed) * speed_multiplier
+	var desired_speed := (dash_speed if auto_dashing else base_speed) * speed_multiplier * environment_speed_multiplier
 	if evade_time > 0.0:
 		velocity = velocity.move_toward(velocity.normalized() * 520.0, 180.0 * delta)
 	elif is_moving:

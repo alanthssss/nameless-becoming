@@ -151,12 +151,20 @@ func _init() -> void:
 				for stage in parsed:
 					if stage.get("mechanics", []).size() == 1 and stage.mechanics[0] == "huddle" and String(stage.name) != "寒露" and not bool(stage.get("warmth_carry", false)):
 						failures.append("越冬关 %s 缺少 warmth_carry 标记" % String(stage.name))
-				# 花物候学：春季节令必须携带 flower_set=spring
-				var spring_terms := ["立春", "雨水", "惊蛰", "清明", "谷雨"]
+				# 每个大关的花型必须与实际机制相连；数据里只有名字但没有 stage 接线不算实现。
+				var flower_set_by_mechanic := {
+					"pollination": "spring",
+					"conscription": "summer",
+					"reserve": "autumn",
+					"huddle": "winter"
+				}
 				for stage in parsed:
-					if String(stage.name) in spring_terms:
-						if not stage.has("flower_set") or String(stage.flower_set) != "spring":
-							failures.append("春季节令 %s 缺少 flower_set=spring" % String(stage.name))
+					if stage.has("boss"):
+						continue
+					var mechanic_id := String(stage.mechanics[0])
+					var expected_flower_set := String(flower_set_by_mechanic.get(mechanic_id, ""))
+					if String(stage.get("flower_set", "")) != expected_flower_set:
+						failures.append("节令 %s 的 %s 机制应连接 flower_set=%s" % [String(stage.name), mechanic_id, expected_flower_set])
 
 	var upgrade_file := FileAccess.open("res://data/upgrades.json", FileAccess.READ)
 	if upgrade_file == null:

@@ -2,7 +2,8 @@ class_name SeasonMechanics
 extends Node
 ## 季节机制调度层。
 ## 按当前节令的 mechanics 槽位启停对应子系统；所有机制独立实现
-## （start / process / on_harvest / on_home / on_stage_complete / on_repel_success / draw），
+## （start / process / on_context_action / on_harvest / on_home /
+## on_stage_complete / on_repel_success / draw），
 ## 不侵入 main.gd 主循环，只通过钩子被调用。
 
 const MECHANIC_SCRIPTS := {
@@ -42,6 +43,48 @@ func process(delta: float) -> void:
 	for mechanic in active:
 		if mechanic.has_method("process"):
 			mechanic.process(delta)
+
+
+func try_context_action(position: Vector2) -> bool:
+	for mechanic in active:
+		if mechanic.has_method("try_context_action"):
+			if bool(mechanic.try_context_action(position)):
+				return true
+			continue
+		if mechanic.has_method("on_context_action") and bool(mechanic.on_context_action()):
+			return true
+	return false
+
+
+# 测试与旧调用的兼容入口；运行时 main 使用 try_context_action，避免同一帧双触发。
+func on_context_action() -> bool:
+	if main == null or main.bee == null:
+		return false
+	return try_context_action(main.bee.position)
+
+
+func can_complete() -> bool:
+	for mechanic in active:
+		if mechanic.has_method("can_complete") and not bool(mechanic.can_complete()):
+			return false
+	return true
+
+
+func hud_status() -> String:
+	var parts: Array[String] = []
+	for mechanic in active:
+		if mechanic.has_method("hud_status"):
+			var status := String(mechanic.hud_status())
+			if not status.is_empty():
+				parts.append(status)
+	return "　".join(parts)
+
+
+func is_flower_available(index: int) -> bool:
+	for mechanic in active:
+		if mechanic.has_method("is_flower_available") and not bool(mechanic.is_flower_available(index)):
+			return false
+	return true
 
 
 func on_harvest(flower_index: int) -> void:

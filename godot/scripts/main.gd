@@ -21,6 +21,7 @@ const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立
 const SEASON_LENGTH := 6
 const UPGRADE_CAP := 6
 const SeasonMechanicsScript := preload("res://scripts/mechanics/season_mechanics.gd")
+const BossEncounterDirectorScript := preload("res://scripts/boss_encounter_director.gd")
 const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.svg")
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
@@ -55,6 +56,9 @@ var phantom_flowers: Array = []
 var field_afterimages: Array = []
 var tuning_blooms: Array[Vector2] = []
 var boss := {"position": Vector2.ZERO, "velocity": Vector2.ZERO, "hits": 0, "hit_cooldown": 0.0}
+var boss_director = BossEncounterDirectorScript.new()
+var boss_hive_heals_remaining := 2
+var boss_hive_was_inside := false
 var pollen: Array = []
 var decoys: Array = []
 var recovery_flower_serial := 1000
@@ -91,6 +95,7 @@ const HIVE_RETURN_POS := Vector2(180, 410)
 var rng := RandomNumberGenerator.new()
 var save_manager := NamelessSaveManager.new()
 var sound := SoundFeedback.new()
+var music := MusicDirector.new()
 var paused_from_phase := "playing"
 var persistence_enabled := true
 
@@ -176,6 +181,14 @@ var preserve_warmth := false
 var tutorial_step := 0
 var tutorial_origin := Vector2.ZERO
 var tutorial_complete := false
+var tutorial_hidden_index := -1
+var tutorial_resource_index := -1
+var tutorial_resource_position := Vector2.ZERO
+var tutorial_scent_revealed := false
+var tutorial_charge_state := "idle"
+var tutorial_charge_time := 0.0
+var tutorial_charge_direction := Vector2.LEFT
+var tutorial_failed_crossings := 0
 var context_lesson_id := ""
 var context_lesson_time := 0.0
 var context_lessons_seen := {"sense": false, "danger": false, "low_energy": false}
@@ -202,6 +215,8 @@ func _ready() -> void:
 	add_child(bee)
 	add_child(sound)
 	sound.set_enabled(save_manager.sound_enabled)
+	add_child(music)
+	music.set_enabled(save_manager.sound_enabled)
 	build_interface()
 	season_mechanics = SeasonMechanicsScript.new()
 	season_mechanics.configure(self)
@@ -236,7 +251,10 @@ func is_spring_gathering_stage(index: int) -> bool:
 	if index < 0 or index >= stages.size():
 		return false
 	var data: Dictionary = stages[index]
-	return String(data.get("season", "")) == "春" and not data.has("boss")
+	# Art follows the mechanic family the player can perceive, not the legacy
+	# calendar label. Otherwise the first pollination trip gets fallback art while
+	# the first raider trip is incorrectly dressed as spring.
+	return String(data.get("flower_set", "")) == "spring" and not data.has("boss")
 
 func uses_spring_launch_art() -> bool:
 	return is_spring_gathering_stage(stage_index) and spring_launch_art_ready()
@@ -382,8 +400,7 @@ func build_interface() -> void:
 	add_child(ui)
 
 	title_label = make_label(ui, "◆  无名：成蜂", Vector2(34, 17), Vector2(350, 42), 24, Color("26342b"))
-	make_label(ui, "NAMELESS: BECOMING · GODOT VERTICAL SLICE", Vector2(67, 48), Vector2(370, 20), 10, Color("566257"))
-	term_label = make_label(ui, "冬 · 冬至", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
+	term_label = make_label(ui, "", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
 	term_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	fullscreen_button = Button.new()
@@ -463,8 +480,8 @@ func build_interface() -> void:
 	side.position = Vector2(1020, 146)
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
-	make_label(side, "当前节令", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
-	season_label = make_label(side, "冬至", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
+	make_label(side, "当前局面", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
+	season_label = make_label(side, "花田", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
 	# 节令名下的细分隔条：用 4px 高的色块代替“空行造成的虚假分隔”，视觉上更稳重
 	season_rule = ColorRect.new()
 	season_rule.color = Color("c8a86b", 0.7)
@@ -515,12 +532,12 @@ func build_interface() -> void:
 	overlay.position = Vector2(34, 146)
 	overlay.size = Vector2(970, 538)
 	ui.add_child(overlay)
-	overlay_title = make_label(overlay, "冬至 · 蜂巢", Vector2(150, 82), Vector2(670, 150), 54, Color("fff8d9"))
+	overlay_title = make_label(overlay, "蜂巢仍在呼吸", Vector2(150, 82), Vector2(670, 150), 54, Color("fff8d9"))
 	overlay_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	overlay_body = make_label(overlay, "控制蜜蜂飞向花朵，按住空格采蜜。\n体力耗尽前，带着花蜜返回左侧蜂巢。", Vector2(190, 245), Vector2(590, 78), 17, Color("d8ddc9"))
 	overlay_body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	overlay_button = Button.new()
-	overlay_button.text = "飞入冬至"
+	overlay_button.text = "出巢"
 	overlay_button.position = Vector2(334, 340)
 	overlay_button.size = Vector2(300, 60)
 	overlay_button.add_theme_font_size_override("font_size", 21)
@@ -567,7 +584,7 @@ func build_interface() -> void:
 	allocation_bg.color = Color("16281f", 0.97)
 	allocation_bg.size = allocation_panel.size
 	allocation_panel.add_child(allocation_bg)
-	var allocation_title := make_label(allocation_panel, "秋分 · 为来年投资", Vector2(0, 26), Vector2(670, 44), 28, Color("fff8d9"))
+	var allocation_title := make_label(allocation_panel, "分配收成", Vector2(0, 26), Vector2(670, 44), 28, Color("fff8d9"))
 	allocation_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	allocation_body_label = make_label(allocation_panel, "", Vector2(60, 96), Vector2(550, 66), 15, Color("d8ddc9"))
 	allocation_body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -590,8 +607,7 @@ func build_interface() -> void:
 	allocation_confirm.add_theme_font_size_override("font_size", 17)
 	allocation_confirm.pressed.connect(confirm_allocation)
 	allocation_panel.add_child(allocation_confirm)
-	make_label(allocation_panel, "向左为越冬留足储备，向右为来年哺育更多幼虫。没有对错，只有不同的活法。", Vector2(90, 368), Vector2(490, 24), 11, Color("aab5a0")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	make_label(overlay, "四季搜打撤 · 核心交互测试", Vector2(300, 38), Vector2(370, 25), 12, Color("dfbd54")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	make_label(allocation_panel, "一边维持蜂巢，一边哺育幼虫。没有对错，只有不同的活法。", Vector2(90, 368), Vector2(490, 24), 11, Color("aab5a0")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	if zh_font != null:
 		# 运行时创建的控件没有 scene owner；owned=true 会漏掉全部按钮。
@@ -632,9 +648,9 @@ func show_intro() -> void:
 	phase = "intro"
 	bee.active = false
 	overlay.visible = true
-	overlay_title.text = "冬至 · 蜂巢"
-	overlay_body.text = "冬至花少，蜂巢仍在呼吸。\n飞出去看看；行动时，世界会给出提示。"
-	overlay_button.text = "飞入冬至"
+	overlay_title.text = "蜂巢仍在呼吸"
+	overlay_body.text = "远处还有花香。\n飞出去；行动时，世界会回应你。"
+	overlay_button.text = "出巢"
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
 	set_pause_system_controls_visible(false)
@@ -675,6 +691,7 @@ func spawn_stage(index: int) -> void:
 		return
 	stage_index = index
 	sound.set_season(season_index_of(index))
+	music.enter_explore(season_index_of(index))
 	phase = "playing"
 	overlay.visible = false
 	set_pause_system_controls_visible(false)
@@ -745,6 +762,8 @@ func spawn_stage(index: int) -> void:
 			"type": ftype.get("id", "nectar_bloom"),
 			"triggers_growth": bool(ftype.get("triggers_growth", false))
 		})
+	if index == 0 and not tutorial_complete:
+		_configure_authored_first_trip()
 	# 敌物候学：五类小怪按节令物候生成（见 docs/design/enemy-phenology.md）
 	for i in int(data.get("mosquitoes", 0)):
 		mosquitoes.append({
@@ -789,9 +808,48 @@ func spawn_stage(index: int) -> void:
 		energy_cap_override = bee.max_energy
 	season_mechanics.start_stage(index)
 	bee.set_spring_launch_art(uses_spring_launch_art())
-	message = "%s：%s" % [data.name, data.line]
+	_ensure_stage_resource_budget()
+	message = ""
 	update_interface()
 	queue_redraw()
+
+## First-session level authored as a small journey instead of a random sandbox.
+## Only the resource required by the current lesson is open, so every tutorial
+## completion is evidence that the ability changed the world rather than that a
+## key happened to be pressed.
+func _configure_authored_first_trip() -> void:
+	# Keep the lesson route finite. Generic consecutive-flower bonuses can replenish
+	# the two initially open flowers and recreate the old "goal full, lesson stuck"
+	# state before the occupied resource flower has actually been recovered.
+	pollen_transfer_window = 0.0
+	chain_window_s = 0.0
+	var authored := [
+		{"position": Vector2(315, 410), "nectar": 2, "type": "first_bloom", "locked": false, "hidden": false},
+		{"position": Vector2(500, 292), "nectar": 3, "type": "hidden_bloom", "locked": true, "hidden": true},
+		{"position": Vector2(650, 410), "nectar": 5, "type": "peak_bloom", "locked": true, "hidden": false},
+		{"position": Vector2(815, 255), "nectar": 4, "type": "nectar_bloom", "locked": true, "hidden": false},
+		{"position": Vector2(850, 515), "nectar": 4, "type": "nectar_bloom", "locked": true, "hidden": false},
+		{"position": Vector2(430, 565), "nectar": 3, "type": "nectar_bloom", "locked": true, "hidden": false}
+	]
+	for i in mini(flowers.size(), authored.size()):
+		var flower: Dictionary = flowers[i]
+		var design: Dictionary = authored[i]
+		flower.position = design.position
+		flower.nectar = design.nectar
+		flower.max_nectar = design.nectar
+		flower.type = design.type
+		flower.tutorial_locked = bool(design.locked)
+		flower.tutorial_hidden = bool(design.hidden)
+		flower.discovered = not bool(design.hidden)
+		flowers[i] = flower
+	tutorial_hidden_index = 1
+	tutorial_resource_index = 2
+	tutorial_resource_position = Vector2(authored[tutorial_resource_index].position)
+	tutorial_scent_revealed = false
+	tutorial_charge_state = "idle"
+	tutorial_charge_time = 0.0
+	tutorial_failed_crossings = 0
+	tutorial_origin = HIVE_RETURN_POS
 
 func on_overlay_button() -> void:
 	# 相位护栏：异常状态下点穿弹窗不推进关卡
@@ -876,10 +934,15 @@ func update_game(delta: float) -> void:
 		action_hold_time = 0.0
 		action_decoy_fired = false
 		action_was_harvesting = false
+		var seasonal_action_used := false
+		if season_mechanics.has_method("try_context_action"):
+			seasonal_action_used = bool(season_mechanics.try_context_action(bee.position))
 		# 优先级：近敌→惊退 > 静止→寻迹
-		if near_enemy and nearby < 0:
+		if seasonal_action_used:
+			action_decoy_fired = true
+		elif near_enemy:
 			_do_repel()
-		elif is_still and nearby < 0 and not near_enemy:
+		elif is_still and nearby < 0:
 			_do_sense()
 		elif nearby >= 0:
 			# 近花时按下开始采蜜（持续按住逻辑在下面）
@@ -887,7 +950,7 @@ func update_game(delta: float) -> void:
 
 	if Input.is_action_pressed("action"):
 		action_hold_time += delta
-		if nearby >= 0 and bee.energy > 0:
+		if nearby >= 0 and bee.energy > 0 and not near_enemy:
 			# 采蜜（持续）
 			harvest_clock += delta
 			bee.energy = maxf(0.0, bee.energy - balance_value("player", "harvest_energy_per_second", 3.2) * delta)
@@ -936,6 +999,7 @@ func update_game(delta: float) -> void:
 					spawn_pollen(flower.position)
 					var msg_before := message
 					season_mechanics.on_harvest(nearby)
+					_on_tutorial_harvest(nearby)
 					if harvest_msg != "":
 						message = harvest_msg
 					elif message != msg_before:
@@ -968,8 +1032,13 @@ func update_game(delta: float) -> void:
 			flowers[i] = flower_timer
 	season_mechanics.process(delta)
 	update_hive_rest(delta, true)
-	# 进度目标必须可信：教学可以跨关继续，但不能把已达成的目标变成软锁。
-	if delivered >= int(data.goal) and phase == "playing":
+	# 目标与能力演示共同组成首趟路线；后续季节机制也可声明自己的
+	# 因果目标尚未完成（例如尚未开芽/点暖），但没有计时门。
+	var mechanics_ready := true
+	if season_mechanics.has_method("can_complete"):
+		mechanics_ready = bool(season_mechanics.can_complete())
+	var tutorial_ready := tutorial_complete or stage_index != 0
+	if delivered >= int(data.goal) and tutorial_ready and mechanics_ready and phase == "playing":
 		show_between()
 	if bee.energy <= 0.0 and phase == "playing":
 		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
@@ -1028,11 +1097,9 @@ func _do_repel() -> void:
 			repelled_any = true
 			thrush.silence_time = balance_value("player", "repel_duration", 3.5)
 			thrushes[i] = thrush
-	season_mechanics.on_repel_success()
-	message = "急促的震翼把附近敌虫推离了航线。"
-	if not tutorial_complete and tutorial_step == 4 and repelled_any:
-		tutorial_step = 5
-		context_lessons_seen["danger"] = true
+	if repelled_any:
+		season_mechanics.on_repel_success()
+		message = "航线重新露了出来。"
 	for bear_unit in bears:
 		if bee.position.distance_to(bear_unit.position) < sting_range + 40.0:
 			message = "熊对震翼毫无反应。绕开它，抢在它之前收完这片花田。"
@@ -1047,9 +1114,14 @@ func _do_sense() -> void:
 	else:
 		bee.trigger_sense()
 	if not tutorial_complete and tutorial_step == 3 and bee.sense_time > 0.0:
-		tutorial_step = 4
+		tutorial_scent_revealed = true
 		context_lessons_seen["sense"] = true
-		spawn_tutorial_mosquito()
+		if tutorial_hidden_index >= 0 and tutorial_hidden_index < flowers.size():
+			var hidden: Dictionary = flowers[tutorial_hidden_index]
+			hidden.discovered = true
+			hidden.tutorial_locked = false
+			flowers[tutorial_hidden_index] = hidden
+		message = "一缕花香越过了安静的空地。"
 
 func spawn_tutorial_mosquito() -> void:
 	for mosquito in mosquitoes:
@@ -1057,11 +1129,29 @@ func spawn_tutorial_mosquito() -> void:
 			return
 	mosquitoes.append({
 		"id": 9000,
-		"position": Vector2(390, 410),
+		"position": tutorial_resource_position + Vector2(8, -8),
 		"velocity": Vector2.ZERO,
 		"repel_time": 0.0,
-		"tutorial": true
+		"tutorial": true,
+		"attack_state": "guard",
+		"attack_time": 0.0,
+		"aim_direction": Vector2.LEFT
 	})
+
+func _on_tutorial_harvest(flower_index: int) -> void:
+	if tutorial_complete or stage_index != 0:
+		return
+	if tutorial_step == 3 and tutorial_scent_revealed and flower_index == tutorial_hidden_index:
+		tutorial_step = 4
+		spawn_tutorial_mosquito()
+		message = "蜜源被占住了；把来客推出花圈。"
+
+func _on_tutorial_home(_amount: int) -> void:
+	if tutorial_complete or stage_index != 0:
+		return
+	if tutorial_step == 2 and delivered > 0:
+		tutorial_step = 3
+		message = "远处有花香，但花还藏在风里。"
 
 func _check_double_tap_evade(_delta: float) -> void:
 	var now := Time.get_ticks_msec() / 1000.0
@@ -1081,17 +1171,16 @@ func _check_double_tap_evade(_delta: float) -> void:
 func on_evade_succeeded() -> void:
 	show_energy_change(-12.0)
 	sound.play_cue("evade")
-	message = "急转掠过攻击线：短暂避开碰撞。"
-	if not tutorial_complete and tutorial_step == 5:
-		tutorial_step = 6
-		tutorial_complete = true
-		message = "翅膀已经记住了花香、危险与归途。"
+	message = "急转掠过攻击线。"
 
 func update_mosquitoes(delta: float) -> void:
 	# 蜜香招敌：携带的蜜越多，蚊虫嗅觉半径越大——满载在蚁蚊眼里是显眼的
 	var scent_range := balance_value("mosquito", "sense_range", 330.0) + balance_value("mosquito", "sense_per_carry", 0.0) * carried
 	for i in mosquitoes.size():
 		var mosquito: Dictionary = mosquitoes[i]
+		if bool(mosquito.get("tutorial", false)) and not tutorial_complete:
+			mosquitoes[i] = _update_tutorial_mosquito(mosquito, delta)
+			continue
 		mosquito.repel_time = maxf(0.0, float(mosquito.repel_time) - delta)
 		var distance_to_player := Vector2(mosquito.position).distance_to(bee.position)
 		if mosquito.repel_time > 0.0:
@@ -1135,6 +1224,97 @@ func update_mosquitoes(delta: float) -> void:
 			clampf(clamp_position.y, WORLD.position.y + 12, WORLD.end.y - 12)
 		)
 		mosquitoes[i] = mosquito_clamp
+
+func _update_tutorial_mosquito(mosquito: Dictionary, delta: float) -> Dictionary:
+	mosquito.repel_time = maxf(0.0, float(mosquito.get("repel_time", 0.0)) - delta)
+	var position := Vector2(mosquito.position)
+	if tutorial_step == 4:
+		if float(mosquito.repel_time) > 0.0:
+			var away := (position - bee.position).normalized()
+			if away.length_squared() < 0.01:
+				away = Vector2.RIGHT
+			mosquito.velocity = Vector2(mosquito.velocity).lerp(away * 4.2, delta * 9.0)
+			position += Vector2(mosquito.velocity) * 96.0 * delta
+		else:
+			position = position.lerp(tutorial_resource_position + Vector2(8, -8), delta * 4.0)
+			mosquito.velocity = Vector2.ZERO
+		if position.distance_to(tutorial_resource_position) > 105.0:
+			tutorial_step = 5
+			context_lessons_seen["danger"] = true
+			tutorial_charge_state = "aim"
+			tutorial_charge_time = 1.0
+			position = Vector2(
+				clampf(bee.position.x + 190.0, HIVE_SAFE_X + 80.0, WORLD.end.x - 35.0),
+				clampf(bee.position.y - 36.0, WORLD.position.y + 40.0, WORLD.end.y - 40.0)
+			)
+			tutorial_charge_direction = (bee.position - position).normalized()
+			mosquito.attack_state = "aim"
+			mosquito.attack_time = tutorial_charge_time
+			message = "它折返了；等攻击线压来时急转。"
+	elif tutorial_step == 5:
+		var attack_state := String(mosquito.get("attack_state", "aim"))
+		var attack_time := float(mosquito.get("attack_time", 0.0)) - delta
+		match attack_state:
+			"aim":
+				mosquito.velocity = Vector2.ZERO
+				tutorial_charge_direction = (bee.position - position).normalized()
+				mosquito.aim_direction = tutorial_charge_direction
+				if attack_time <= 0.0:
+					mosquito.attack_state = "dash"
+					mosquito.attack_time = 0.85
+					mosquito.velocity = tutorial_charge_direction * 520.0
+			"dash":
+				var previous := position
+				position += Vector2(mosquito.velocity) * delta
+				var closest := Geometry2D.get_closest_point_to_segment(bee.position, previous, position)
+				if closest.distance_to(bee.position) < 29.0:
+					if bee.invulnerable_time > 0.0:
+						_complete_contextual_tutorial()
+						mosquito.attack_state = "flee"
+						mosquito.attack_time = 2.0
+						mosquito.velocity = Vector2.RIGHT * 280.0
+					else:
+						tutorial_failed_crossings += 1
+						mosquito.attack_state = "recover"
+						mosquito.attack_time = 0.55
+						shake = 4.0
+						flash = 0.22
+						message = "攻击线擦过了翅尖；它会再来一次。"
+				elif attack_time <= 0.0 or not WORLD.grow(70.0).has_point(position):
+					mosquito.attack_state = "recover"
+					mosquito.attack_time = 0.45
+			"recover":
+				mosquito.velocity = Vector2.ZERO
+				if attack_time <= 0.0:
+					position = Vector2(
+						clampf(bee.position.x + 190.0, HIVE_SAFE_X + 80.0, WORLD.end.x - 35.0),
+						clampf(bee.position.y - 36.0, WORLD.position.y + 40.0, WORLD.end.y - 40.0)
+					)
+					mosquito.attack_state = "aim"
+					mosquito.attack_time = 0.9
+					mosquito.aim_direction = (bee.position - position).normalized()
+			"flee":
+				position += Vector2(mosquito.velocity) * delta
+		if String(mosquito.get("attack_state", "")) == attack_state:
+			mosquito.attack_time = attack_time
+	mosquito.position = Vector2(
+		clampf(position.x, HIVE_SAFE_X, WORLD.end.x - 12.0),
+		clampf(position.y, WORLD.position.y + 12.0, WORLD.end.y - 12.0)
+	)
+	return mosquito
+
+func _complete_contextual_tutorial() -> void:
+	if tutorial_complete:
+		return
+	tutorial_step = 6
+	tutorial_complete = true
+	tutorial_charge_state = "complete"
+	for i in flowers.size():
+		var flower: Dictionary = flowers[i]
+		flower.tutorial_locked = false
+		flowers[i] = flower
+	message = "攻击穿过了急转留下的空隙；前路开了。"
+	sound.play_cue("tune")
 
 # 掠蜜蚁沿信息素轨迹在巢口与富花之间巡逻：轨迹可读、可预判（生态化重设计）
 func build_ant_with_trail(id: int) -> Dictionary:
@@ -1357,6 +1537,7 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 		var amount := carried
 		delivered += amount
 		carried = 0
+		_on_tutorial_home(amount)
 		message = "安全归巢，存入 %d 滴蜜。蜂群的照料正在恢复体力。" % amount
 		sound.play_cue("home")
 		flash = 0.32
@@ -1437,6 +1618,7 @@ func resolve_exhaustion() -> void:
 func show_between() -> void:
 	phase = "between"
 	bee.active = false
+	music.enter_hive()
 	overlay.visible = true
 	var data: Dictionary = stages[stage_index]
 	if persistence_enabled:
@@ -1463,15 +1645,15 @@ func show_upgrade_choices(data: Dictionary) -> void:
 			any_available = true
 			break
 	if not any_available:
-		overlay_title.text = "%s完成 · 蜂巢安定" % data.name
+		overlay_title.text = "归巢 · 蜂群安定"
 		overlay_body.text = "三种分工都已成熟。蜂群按既定的节奏继续运转。" + next_boss_hint()
-		overlay_button.text = "继续下一个节令"
+		overlay_button.text = "再次出巢"
 		overlay_button.visible = true
 		set_upgrade_buttons_visible(false)
 		set_secondary_link("或者退出游戏", true)
 		overlay_button.grab_focus()
 		return
-	overlay_title.text = "%s完成 · 蜂巢成长" % data.name
+	overlay_title.text = "归巢 · 蜂群成长"
 	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。" + next_boss_hint()
 	overlay_button.visible = false
 	set_upgrade_buttons_visible(true)
@@ -1484,18 +1666,17 @@ func next_boss_hint() -> String:
 		return ""
 	if not is_boss_stage(stage_index + 1):
 		return ""
-	var next: Dictionary = stages[stage_index + 1]
 	var next_boss := boss_data_for_stage(stage_index + 1)
 	var boss_name := String(next_boss.get("name", "失律者"))
-	return "\n\n下一个节令是正色节点：%s——%s盘踞其上，调律在等着你。" % [String(next.name), boss_name]
+	return "\n\n前方的节律忽然断了——%s在等着你。" % boss_name
 
 func show_allocation_panel() -> void:
-	overlay_title.text = "白露 · 为来年投资"
+	overlay_title.text = "分配收成"
 	overlay_body.text = ""
 	set_upgrade_buttons_visible(false)
 	set_secondary_link("", false)
 	overlay_button.visible = false
-	allocation_body_label.text = "本季带回 %d 滴蜜。储冬蜜撑起越冬；哺育的幼虫将成为来年劳动力。" % allocation_harvest
+	allocation_body_label.text = "带回 %d 滴蜜。公共储备维持蜂巢；幼虫会提高之后的飞行上限。" % allocation_harvest
 	allocation_panel.visible = true
 	allocation_slider.value = 50.0
 	refresh_allocation_labels()
@@ -1505,7 +1686,7 @@ func refresh_allocation_labels() -> void:
 		return
 	var fed := roundi(allocation_harvest * allocation_fraction)
 	var stored := allocation_harvest - fed
-	allocation_left_label.text = "储冬蜜　%02d 滴" % stored
+	allocation_left_label.text = "公共储备　%02d 滴" % stored
 	allocation_right_label.text = "哺育幼虫　%02d 滴" % fed
 
 func confirm_allocation() -> void:
@@ -1557,7 +1738,6 @@ func on_upgrade_selected(index: int) -> void:
 		"forager":
 			harvest_multiplier *= 1.18
 			extra_nectar += 1
-			carry_capacity += 3.0
 		"guard":
 			sting_range *= 1.18
 			sting_cooldown_multiplier *= 0.85
@@ -1580,7 +1760,10 @@ func start_boss() -> void:
 			break
 	var data: Dictionary = current_boss_data
 	phase = "boss"
+	sting_cooldown = 0.0
+	hit_cooldown = 0.0
 	sound.set_season(int(data.season_index))
+	music.enter_boss(current_boss_index)
 	overlay.visible = false
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
@@ -1598,6 +1781,7 @@ func start_boss() -> void:
 	tuning_blooms.clear()
 	for i in int(data.bloom_count):
 		tuning_blooms.append(Vector2(360.0 + i * 180.0, clampf(285.0 + sin(float(i) * 2.4) * 150.0, 200.0, 600.0)))
+	boss_director.reset(String(data.move_pattern), int(data.required_tunings))
 	boss = {
 		"position": Vector2(840, 410),
 		"velocity": Vector2.ZERO,
@@ -1607,14 +1791,21 @@ func start_boss() -> void:
 		"next_shift": 0.0,
 		"charge_state": "wander",
 		"state_time": 0.0,
-		"aim_direction": Vector2.RIGHT
+		"aim_direction": Vector2.RIGHT,
+		"feed_clock": 1.4,
+		"landing_clock": 1.2,
+		"illusion_clock": 1.0,
+		"evade_armed": false,
+		"telegraph": ""
 	}
+	boss_hive_heals_remaining = 2
+	boss_hive_was_inside = false
 	bee.configure(1.45 + float(data.season_index) * 0.2)
 	bee.set_spring_launch_art(false)
 	bee.reset_for_expedition(Vector2(180, 410))
 	carried = 6
 	delivered = 0
-	message = String(data.encounter_message)
+	message = ""
 	# 关卡间唯一需要清理的 overlay 状态：上一节令蜂巢成长面板的 title/body
 	# 还会保留在内存里——一旦 overlay 因为任何理由再变可见（例如调试、热键、
 	# 红点回放），stale 的「春分完成 · 蜂巢成长」会让玩家误判当前还在选蜂倾向，
@@ -1626,70 +1817,144 @@ func update_boss(delta: float) -> void:
 	if current_boss_data.is_empty():
 		return
 	var data: Dictionary = current_boss_data
+	_check_double_tap_evade(delta)
 	sting_cooldown = maxf(0.0, sting_cooldown - delta)
 	boss.hit_cooldown = maxf(0.0, float(boss.hit_cooldown) - delta)
 	boss.pattern_time = float(boss.pattern_time) + delta
-	var boss_position: Vector2 = boss.position
-	var to_bee := bee.position - boss_position
 	var pattern := String(data.move_pattern)
-	var move_speed := float(data.move_speed)
+	boss_director.update(delta)
+	var director_state: Dictionary = boss_director.draw_state()
+	var parameters: Dictionary = director_state.get("parameters", {})
+	var speed_multiplier := float(parameters.get("speed_multiplier", 1.0))
+	var attack_interval := float(parameters.get("attack_interval", 2.4))
+	var previous_position := Vector2(boss.position)
+	var to_bee := bee.position - previous_position
+	var move_speed := float(data.move_speed) * speed_multiplier
+	var action_pressed := Input.is_action_just_pressed("action")
+	var action_became_sense := false
+
+	# The thrush cannot be solved by blind vibration. The first action while its
+	# true voice is hidden is a real sense pulse; the next, during the reveal
+	# window and at close range, is the tuning attempt.
+	if action_pressed and pattern == "lure" and not boss_director.can_tune() and bee.sense_cooldown <= 0.0:
+		_reveal_boss_truth()
+		action_became_sense = true
 
 	match pattern:
 		"orbital":
-			# 蚊：绕着玩家盘旋吸取，航线随时间摆动
-			var orbit := to_bee.normalized().rotated(sin(elapsed * 1.7) * 0.45)
-			boss.velocity = Vector2(boss.velocity).lerp(orbit * 2.2, delta * 1.7)
+			# 蚊先以一条逐渐收紧的吸食线索取花蜜；腹部饱胀后的短暂停顿才是破绽。
+			boss.feed_clock = float(boss.feed_clock) - delta
+			boss.telegraph = ""
+			if boss_director.can_tune():
+				boss.velocity = Vector2(boss.velocity).lerp(Vector2.ZERO, delta * 7.0)
+				boss.telegraph = "sated"
+			else:
+				if float(boss.feed_clock) <= 0.0:
+					if to_bee.length() <= 175.0:
+						carried = maxi(0, carried - 1)
+						boss_director.notify_feed_completed()
+						boss.feed_clock = attack_interval
+						boss.telegraph = "sated"
+						message = "它吸得太满，飞行忽然失了拍。"
+					else:
+						boss.feed_clock = 0.35
+				elif float(boss.feed_clock) < 0.65 and to_bee.length() <= 220.0:
+					boss.telegraph = "siphon"
+				var orbit := to_bee.normalized().rotated(sin(elapsed * 1.7) * 0.45)
+				boss.velocity = Vector2(boss.velocity).lerp(orbit * 2.2, delta * 1.7)
 		"erratic":
-			# 油葫芦：随机变向乱窜，离开虚影；远离玩家时靠回来
-			if float(boss.pattern_time) >= float(boss.next_shift):
-				boss.next_shift = float(boss.pattern_time) + rng.randf_range(0.35, 0.8)
-				var heading := to_bee.normalized() if to_bee.length() > 380.0 else Vector2.from_angle(rng.randf() * TAU)
-				boss.velocity = heading * 2.6
-				boss_afterimages.append({"position": boss_position, "life": 0.5})
+			# 油葫芦的虚影仍在飞，只有实体落地留下的压低影子可调律。
+			boss.landing_clock = float(boss.landing_clock) - delta
+			boss.telegraph = ""
+			if boss_director.can_tune():
+				boss.velocity = Vector2.ZERO
+				boss.telegraph = "landing"
+			elif float(boss.landing_clock) <= 0.0:
+				boss_director.notify_landed()
+				boss.landing_clock = attack_interval
+				boss.velocity = Vector2.ZERO
+				boss.telegraph = "landing"
+			else:
+				if float(boss.pattern_time) >= float(boss.next_shift):
+					boss.next_shift = float(boss.pattern_time) + rng.randf_range(0.28, 0.65)
+					var heading := to_bee.normalized() if to_bee.length() > 380.0 else Vector2.from_angle(rng.randf() * TAU)
+					boss.velocity = heading * 2.6
+					boss_afterimages.append({"position": previous_position, "life": 0.7, "false_echo": true})
 		"lure":
-			# 画眉：与玩家保持中距离徘徊打转，把战线缓缓拖离蜂巢
+			# 画眉用多个假回声拉开路线；寻迹会一次清空假声并照亮真身。
 			var tangent_sign := 1.0 if int(data.season_index) % 2 == 0 else -1.0
 			var tangent := to_bee.normalized().rotated(PI * 0.5 * tangent_sign)
 			var radial := clampf((to_bee.length() - 240.0) / 240.0, -1.0, 1.0)
 			boss.velocity = Vector2(boss.velocity).lerp((to_bee.normalized() * radial + tangent * 0.85) * 1.5, delta * 2.2)
+			boss.illusion_clock = float(boss.illusion_clock) - delta
+			if float(boss.illusion_clock) <= 0.0 and not boss_director.can_tune():
+				boss.illusion_clock = attack_interval
+				var feints := int(parameters.get("feint_count", 2))
+				for feint_index in feints:
+					var angle := TAU * float(feint_index) / maxf(1.0, float(feints)) + elapsed
+					boss_afterimages.append({"position": previous_position + Vector2.from_angle(angle) * (58.0 + feint_index * 16.0), "life": attack_interval, "false_echo": true})
+			boss.telegraph = "truth" if boss_director.can_tune() else "song"
 		"charge":
-			# 熊：游走 → 蓄势（直线预告）→ 冲撞 → 晕眩（调律窗口）
-			match String(boss.charge_state):
-				"wander":
-					boss.velocity = Vector2(boss.velocity).lerp(to_bee.normalized() * 0.7, delta * 1.2)
-					if to_bee.length() < 320.0:
-						boss.charge_state = "aim"
-						boss.state_time = 0.8
-						boss.aim_direction = to_bee.normalized()
-				"aim":
-					boss.state_time = float(boss.state_time) - delta
-					boss.velocity = Vector2(boss.velocity).lerp(Vector2.ZERO, delta * 6.0)
-					if float(boss.state_time) <= 0.0:
-						boss.charge_state = "dash"
-						boss.state_time = 1.0
-						boss.velocity = Vector2(boss.aim_direction) * 4.2
-				"dash":
-					boss.state_time = float(boss.state_time) - delta
-					boss.velocity = Vector2(boss.velocity).lerp(Vector2(boss.aim_direction) * 4.2, delta * 2.0)
-					if float(boss.state_time) <= 0.0:
-						boss.charge_state = "rest"
-						boss.state_time = 1.3
-				"rest":
-					boss.state_time = float(boss.state_time) - delta
-					boss.velocity = Vector2(boss.velocity).lerp(Vector2.ZERO, delta * 5.0)
-					if float(boss.state_time) <= 0.0:
-						boss.charge_state = "wander"
+			# 熊必须在冲锋中逼出一次急转，再撞进暖花；普通停顿不是调律窗口。
+			boss.telegraph = "warm_stun" if boss_director.can_tune() else String(boss.charge_state)
+			if boss_director.can_tune():
+				boss.velocity = Vector2.ZERO
+			else:
+				match String(boss.charge_state):
+					"wander":
+						boss.velocity = Vector2(boss.velocity).lerp(to_bee.normalized() * 0.7, delta * 1.2)
+						if to_bee.length() < 320.0:
+							boss.charge_state = "aim"
+							boss.state_time = 0.9 / speed_multiplier
+							boss.aim_direction = to_bee.normalized()
+							boss.evade_armed = false
+					"aim":
+						boss.state_time = float(boss.state_time) - delta
+						boss.velocity = Vector2(boss.velocity).lerp(Vector2.ZERO, delta * 6.0)
+						if float(boss.state_time) <= 0.0:
+							boss.charge_state = "dash"
+							boss.state_time = 1.0 / speed_multiplier
+							boss.velocity = Vector2(boss.aim_direction) * 4.2
+					"dash":
+						boss.state_time = float(boss.state_time) - delta
+						boss.velocity = Vector2(boss.velocity).lerp(Vector2(boss.aim_direction) * 4.2, delta * 2.0)
+						if float(boss.state_time) <= 0.0:
+							boss.charge_state = "wander"
+							boss.state_time = 0.0
+					"rest":
+						boss.state_time = float(boss.state_time) - delta
+						boss.velocity = Vector2(boss.velocity).lerp(Vector2.ZERO, delta * 5.0)
+						if float(boss.state_time) <= 0.0:
+							boss.charge_state = "wander"
 
 	boss.position += Vector2(boss.velocity) * move_speed * delta
 	boss.position.x = clampf(boss.position.x, HIVE_SAFE_X + 18.0, WORLD.end.x - 28)
 	boss.position.y = clampf(boss.position.y, WORLD.position.y + 28, WORLD.end.y - 28)
+	var boss_position := Vector2(boss.position)
+
+	if pattern == "charge" and String(boss.charge_state) == "dash" and bool(boss.evade_armed):
+		for bloom_position in tuning_blooms:
+			if boss_position.distance_to(bloom_position) < 52.0:
+				if boss_director.notify_evade_collision(true):
+					boss.charge_state = "rest"
+					boss.state_time = float(parameters.get("window_seconds", 1.2))
+					boss.velocity = Vector2.ZERO
+					boss.telegraph = "warm_stun"
+					message = "暖花接住了冲锋，冰壳裂开了。"
+				break
 
 	for i in range(boss_afterimages.size() - 1, -1, -1):
 		boss_afterimages[i].life = float(boss_afterimages[i].life) - delta
 		if float(boss_afterimages[i].life) <= 0.0:
 			boss_afterimages.remove_at(i)
 
-	if boss_position.distance_to(bee.position) < float(data.impact_range) and boss.hit_cooldown <= 0.0:
+	var closest_on_attack := Geometry2D.get_closest_point_to_segment(bee.position, previous_position, boss_position)
+	if closest_on_attack.distance_to(bee.position) < float(data.impact_range) and bee.invulnerable_time > 0.0:
+		if pattern == "charge" and String(boss.charge_state) == "dash":
+			# The dodge only counts when the moving charge segment actually crosses
+			# the bee during invulnerability; pressing evade elsewhere is not evidence.
+			boss.evade_armed = true
+	elif closest_on_attack.distance_to(bee.position) < float(data.impact_range) and boss.hit_cooldown <= 0.0:
 		boss.hit_cooldown = 1.0
 		bee.energy = maxf(0.0, bee.energy - float(data.energy_damage))
 		show_energy_change(-float(data.energy_damage))
@@ -1699,29 +1964,10 @@ func update_boss(delta: float) -> void:
 		flash = 0.55
 		message = String(data.damage_message)
 
-	if Input.is_action_just_pressed("action") and sting_cooldown <= 0.0 and bee.spend_energy(sting_cost):
-		show_energy_change(-sting_cost)
-		sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
-		sound.play_cue("repel")
-		var bloom_index := nearest_tuning_bloom(boss.position)
-		if bee.position.distance_to(boss.position) < sting_range + 7.0 and bloom_index >= 0:
-			var bloom_position := tuning_blooms[bloom_index]
-			tuning_blooms.remove_at(bloom_index)
-			boss.hits = int(boss.hits) + 1
-			boss.velocity = (boss.position - bee.position).normalized() * 8.0
-			spawn_pollen(bloom_position)
-			shake = 7.0
-			message = String(data.tuning_message).replace("{n}", str(int(boss.hits)))
-			sound.play_cue("tune")
-			if int(boss.hits) >= int(data.required_tunings):
-				if current_boss_index >= boss_catalog.size() - 1:
-					show_win()
-				else:
-					show_boss_victory()
-		else:
-			message = String(data.miss_message)
+	if action_pressed and not action_became_sense:
+		_attempt_boss_tune()
 
-	update_hive_rest(delta, false)
+	_update_boss_hive_rest()
 
 	if bee.energy <= 0.0:
 		# 失律者战败扣 1 命；若归律前蜂巢已散，走全轮结算页
@@ -1734,6 +1980,84 @@ func update_boss(delta: float) -> void:
 			show_loss()
 		else:
 			show_boss_loss()
+
+func _reveal_boss_truth() -> bool:
+	if phase != "boss" or current_boss_data.is_empty() or String(current_boss_data.move_pattern) != "lure":
+		return false
+	if bee.sense_cooldown > 0.0 or not boss_director.notify_sense():
+		return false
+	bee.trigger_sense()
+	boss_afterimages.clear()
+	message = "回声散开，真声短暂露了出来。"
+	sound.play_cue("sense")
+	return true
+
+func _attempt_boss_tune() -> bool:
+	if phase != "boss" or current_boss_data.is_empty() or sting_cooldown > 0.0:
+		return false
+	var pattern := String(current_boss_data.move_pattern)
+	var bloom_index := nearest_tuning_bloom(boss.position)
+	if bee.position.distance_to(boss.position) >= sting_range + 7.0 or bloom_index < 0 or not boss_director.can_tune():
+		message = _boss_exposure_hint(pattern)
+		return false
+	if not bee.spend_energy(sting_cost):
+		message = "翅膀太沉，先撤回蜂巢。"
+		return false
+	show_energy_change(-sting_cost)
+	sting_cooldown = balance_value("player", "repel_cooldown", 1.15) * sting_cooldown_multiplier
+	var bloom_position := tuning_blooms[bloom_index]
+	if not boss_director.register_tune():
+		return false
+	tuning_blooms.remove_at(bloom_index)
+	boss.hits = boss_director.tunings
+	music.set_boss_tuning_progress(int(boss.hits))
+	boss.velocity = (boss.position - bee.position).normalized() * 8.0
+	spawn_pollen(bloom_position)
+	shake = 7.0
+	message = String(current_boss_data.tuning_message).replace("{n}", str(int(boss.hits)))
+	sound.play_cue("tune")
+	var next_parameters: Dictionary = boss_director.parameters
+	var next_interval := float(next_parameters.get("attack_interval", 2.4))
+	boss.feed_clock = next_interval
+	boss.landing_clock = next_interval
+	boss.illusion_clock = next_interval
+	boss.charge_state = "wander"
+	if int(boss.hits) >= int(current_boss_data.required_tunings):
+		if current_boss_index >= boss_catalog.size() - 1:
+			show_win()
+		else:
+			show_boss_victory()
+	return true
+
+func _boss_exposure_hint(pattern: String) -> String:
+	match pattern:
+		"orbital":
+			return "吸食线收紧后，它会因饱胀停拍。"
+		"erratic":
+			return "虚影还在飞；等实体真正落地。"
+		"lure":
+			return "先停稳寻迹，真声只会露出片刻。"
+		"charge":
+			return "站到暖花后方；冲锋压来时急转。"
+	return "观察动作，等破绽出现。"
+
+func _update_boss_hive_rest() -> void:
+	var inside := bee.position.x < HIVE_X
+	if not inside:
+		boss_hive_was_inside = false
+		return
+	if boss_hive_was_inside:
+		return
+	boss_hive_was_inside = true
+	if boss_hive_heals_remaining <= 0:
+		message = "蜂巢已把这一战能给的力气都给了。"
+		return
+	boss_hive_heals_remaining -= 1
+	var before := bee.energy
+	bee.energy = minf(effective_energy_cap(), bee.energy + 28.0)
+	show_energy_change(bee.energy - before)
+	sound.play_cue("home")
+	message = "蜂巢托住你一次；还剩 %d 次照料。" % boss_hive_heals_remaining
 
 func nearest_tuning_bloom(origin: Vector2) -> int:
 	var radius := float(current_boss_data.get("tuning_radius", balance_value("boss", "tuning_radius", 82.0)))
@@ -1751,14 +2075,13 @@ func show_boss_victory() -> void:
 	sound.play_cue("win")
 	var data: Dictionary = current_boss_data
 	overlay_title.text = "%s · 归律" % String(data.name)
-	overlay_body.text = "%s\n\n%s" % [String(data.line), next_term_hint()]
+	overlay_body.text = "花田重新流动。\n\n%s" % next_term_hint()
 	overlay_button.text = "继续前行"
 
 func next_term_hint() -> String:
 	if stage_index + 1 >= stages.size():
 		return ""
-	var data: Dictionary = stages[stage_index + 1]
-	return "下一个节令：%s。%s" % [String(data.name), String(data.line)]
+	return "前路重新打开。"
 
 func show_win() -> void:
 	phase = "won"
@@ -1770,9 +2093,9 @@ func show_win() -> void:
 		save_manager.record_completion(run_elapsed)
 	refresh_runs_meter()
 	sound.play_cue("win")
-	overlay_title.text = "冬至一阳生"
-	overlay_body.text = "蜂群走完了完整的二十四个节令，四位失律者重归循环。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
-	overlay_button.text = "再走一次四季"
+	overlay_title.text = "蜂巢重新发亮"
+	overlay_body.text = "蜂群走完了完整循环，四位失律者重归节拍。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
+	overlay_button.text = "再走一次"
 	set_secondary_link("或者退出游戏", true)
 	overlay_button.grab_focus()
 
@@ -1787,10 +2110,10 @@ func show_loss() -> void:
 		save_manager.record_failure(run_elapsed)
 	refresh_runs_meter()
 	# hive_lives 已经在 fail_expedition / boss_loss 里清零：
-	# 整轮散了，不再以「再战一节」收尾，强制回起点重走四季。
-	overlay_title.text = "这一次没能\n等到春天"
-	overlay_body.text = "蜂巢已经散落，节令的循环不等人——\n远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
-	overlay_button.text = "重新走四季"
+	# 整轮散了，强制回到起点；不再重复讲解内部章节结构。
+	overlay_title.text = "这一次，\n蜂巢没有撑住"
+	overlay_body.text = "蜂巢已经散落。\n远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
+	overlay_button.text = "重新出巢"
 	set_secondary_link("或者退出游戏", true)
 	overlay_button.grab_focus()
 
@@ -1804,17 +2127,16 @@ func show_boss_loss() -> void:
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
 	sound.play_cue("loss")
-	var stage_data: Dictionary = stages[stage_index]
 	var boss_name := "失律者"
 	if not current_boss_data.is_empty():
 		boss_name = String(current_boss_data.get("name", "失律者"))
-	overlay_title.text = "%s · 调律未竟" % String(stage_data.name)
+	overlay_title.text = "%s · 调律未竟" % boss_name
 	overlay_body.text = (
-		"%s还在花田上游荡。\n回到蜂巢歇一歇，本节令还会再来；剩余机会：" % boss_name
+		"它还在花田上游荡。\n回到蜂巢歇一歇，这场交锋还会再来；剩余机会："
 		+ "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
-		+ "\n本节令已落蜜 %d 滴。" % delivered
+		+ "\n本次已落蜜 %d 滴。" % delivered
 	)
-	overlay_button.text = "再入节令"
+	overlay_button.text = "再试一次"
 	set_secondary_link("", false)
 	overlay_button.grab_focus()
 
@@ -1824,6 +2146,10 @@ func nearest_flower(radius: float) -> int:
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
 		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
+			continue
+		if bool(flower.get("tutorial_locked", false)) or (bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false))):
+			continue
+		if season_mechanics != null and season_mechanics.has_method("is_flower_available") and not bool(season_mechanics.is_flower_available(i)):
 			continue
 		var current := bee.position.distance_to(flower.position)
 		if current < best_distance:
@@ -1837,6 +2163,10 @@ func nearest_flower_to(origin: Vector2) -> int:
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
 		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
+			continue
+		if bool(flower.get("tutorial_locked", false)) or (bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false))):
+			continue
+		if season_mechanics != null and season_mechanics.has_method("is_flower_available") and not bool(season_mechanics.is_flower_available(i)):
 			continue
 		var current := origin.distance_to(flower.position)
 		if current < best_distance:
@@ -1934,10 +2264,47 @@ func total_recoverable_honey() -> int:
 	var total := delivered + carried
 	for flower in flowers:
 		total += maxi(0, int(flower.nectar))
+		if int(flower.get("nectar", 0)) <= 0:
+			total += maxi(0, int(flower.get("stored_nectar", 0)))
 	for ant in ants:
 		total += maxi(0, int(ant.get("stolen_honey", 0)))
 	total += decoys.size()
 	return total
+
+# Legal player choices consume honey permanently: up to two drinks in every
+# field, every autumn flower may become a seed, and all winter relays require
+# fuel. Reserve that budget when the stage is authored so choosing a mechanic
+# can never make the remaining goal mathematically impossible.
+func stage_permanent_honey_budget(index: int) -> int:
+	if index < 0 or index >= stages.size() or stages[index].has("boss"):
+		return 0
+	var budget := int(balance_value("player", "crop_fuel_limit", 2))
+	var mechanic_ids: Array = stages[index].get("mechanics", [])
+	if mechanic_ids.has("reserve"):
+		budget += flowers.size()
+	if mechanic_ids.has("huddle"):
+		var huddle = season_mechanics.mechanic_by_id("huddle")
+		if huddle != null:
+			budget += huddle.warm_points.size() * int(huddle.activation_honey_cost)
+	return budget
+
+func _ensure_stage_resource_budget() -> void:
+	if stage_index < 0 or stage_index >= stages.size() or stages[stage_index].has("boss"):
+		return
+	var required_total := int(stages[stage_index].goal) + stage_permanent_honey_budget(stage_index)
+	var deficit := required_total - total_recoverable_honey()
+	if deficit <= 0:
+		return
+	# Add the safety margin to a real, already-open flower. Recovery flowers are
+	# inappropriate here because winter route locking is built before this audit.
+	for i in flowers.size():
+		var flower: Dictionary = flowers[i]
+		if bool(flower.get("locked_bud", false)):
+			continue
+		flower.nectar = int(flower.get("nectar", 0)) + deficit
+		flower.max_nectar = maxi(int(flower.get("max_nectar", 0)), int(flower.nectar))
+		flowers[i] = flower
+		return
 
 func show_energy_change(amount: float) -> void:
 	energy_feedback_time = 1.0
@@ -1963,10 +2330,10 @@ func update_interface() -> void:
 	# 顶栏与侧栏不应突然切回关卡数据（春分无 goal/flowers，会显示「目标 · 0 滴」的空状态）
 	var boss_context := (phase == "boss" or phase == "boss_victory") and not current_boss_data.is_empty()
 	if boss_context:
-		# 失律者关卡显示其盘踞的正色节点（熊的节点是循环终点：冬至）
-		term_label.text = "%s · %s" % [data.season, String(current_boss_data.get("term", data.name))]
+		term_label.text = ""
 	else:
-		term_label.text = "%s · %s" % [data.season, data.name]
+		# 节令只在章节转场出现；行动中让色彩、花型、敌害与音乐承担季候表达。
+		term_label.text = ""
 	carried_label.text = "%d / %d" % [carried, int(carry_capacity)]
 	# 蜜囊满额：携带条闪红，飘字只在初次
 	if carry_full_flash_time > 0.0:
@@ -2000,22 +2367,13 @@ func update_interface() -> void:
 	if boss_context:
 		var boss_data: Dictionary = current_boss_data
 		season_label.text = String(boss_data.name)
-		detail_label.text = "%s\n\n调律 · %d / %d\n\n引向共鸣点\n再以震翼调律" % [String(boss_data.line), int(boss.hits), int(boss_data.required_tunings)]
+		detail_label.text = "调律 · %d / %d" % [int(boss.hits), int(boss_data.required_tunings)]
 	else:
-		# 阴阳数值是内部设计依据（驱动节令难度），不向玩家暴露；
-		# 用文字标签组织状态行，避免依赖 CJK 字体不包含的装饰符号。
-		season_label.text = data.name
-		var threat_parts := []
-		var species := [["蚊", "mosquitoes"], ["蚁", "ants"], ["蛐", "crickets"], ["眉", "thrushes"], ["熊", "bears"]]
-		for entry in species:
-			var count := int(data.get(entry[1], 0))
-			if count > 0:
-				threat_parts.append("%s %s" % [entry[0], "◆".repeat(mini(count, 4))])
-		var threat_row := "敌害 · " + ("  ".join(threat_parts) if not threat_parts.is_empty() else "无（寒冷与匮乏本身）")
-		var status_rows := "目标 · %d 滴\n%s" % [int(data.goal), threat_row]
-		if season_index_of(stage_index) == 3:
-			status_rows += "\n体温 · %d%%  储蜜 · %d 滴" % [roundi(warmth), hive_reserve]
-		detail_label.text = "%s\n\n%s" % [data.line, status_rows]
+		season_label.text = "花田"
+		var mechanics_status := ""
+		if tutorial_complete and season_mechanics != null and season_mechanics.has_method("hud_status"):
+			mechanics_status = String(season_mechanics.hud_status())
+		detail_label.text = mechanics_status
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -2062,6 +2420,10 @@ func best_foraging_target() -> int:
 	for i in flowers.size():
 		var flower: Dictionary = flowers[i]
 		if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
+			continue
+		if bool(flower.get("tutorial_locked", false)) or (bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false))):
+			continue
+		if season_mechanics != null and season_mechanics.has_method("is_flower_available") and not bool(season_mechanics.is_flower_available(i)):
 			continue
 		var score := float(flower.nectar) * 42.0 - bee.position.distance_to(flower.position) * 0.12
 		for mosquito in mosquitoes:
@@ -2126,10 +2488,19 @@ func update_progressive_guidance() -> void:
 		return
 	if phase == "boss":
 		tutorial_panel.visible = false
-		sense_button.visible = true
-		sense_button.text = "调律"
 		return_button.visible = false
-		context_hint_label.text = "引向共鸣点，靠近后震翼调律。"
+		var boss_pattern := String(current_boss_data.get("move_pattern", ""))
+		if boss_director.can_tune():
+			sense_button.visible = true
+			sense_button.text = "调律"
+			context_hint_label.text = "破绽亮起"
+		elif boss_pattern == "lure":
+			sense_button.visible = true
+			sense_button.text = "寻迹"
+			context_hint_label.text = "停稳 · 寻迹"
+		else:
+			sense_button.visible = false
+			context_hint_label.text = _boss_exposure_hint(boss_pattern)
 		return
 	if phase != "playing":
 		tutorial_panel.visible = false
@@ -2141,45 +2512,42 @@ func update_progressive_guidance() -> void:
 			tutorial_step = 1
 		elif tutorial_step == 1 and carried > 0:
 			tutorial_step = 2
-		elif tutorial_step == 2 and delivered > 0:
-			tutorial_step = 3
-			message = "蜜已经归巢。现在学会辨认花香与危险。"
 		tutorial_panel.visible = tutorial_step < 6
 		return_button.visible = tutorial_step == 2
 		match tutorial_step:
 			0:
-				tutorial_title.text = "先试着飞"
-				tutorial_body.text = "用 WASD、方向键或点击花田移动。"
-				context_hint_label.text = "移动会消耗体力；左侧蜂巢安全。"
+				tutorial_title.text = "飞出去"
+				tutorial_body.text = "WASD / 方向键 / 点击"
+				context_hint_label.text = ""
 				sense_button.visible = false
 			1:
 				var near_flower := nearest_flower(46.0) >= 0
-				tutorial_title.text = "靠近花朵"
-				tutorial_body.text = "花心亮起时，按住空格或下方按钮采蜜。"
-				context_hint_label.text = "已经靠近：按住采蜜。" if near_flower else "飞近一朵仍有花蜜的花。"
+				tutorial_title.text = "花心亮了"
+				tutorial_body.text = "按住 空格"
+				context_hint_label.text = "" if near_flower else ""
 				sense_button.visible = near_flower
-				sense_button.text = "按住采蜜"
+				sense_button.text = "采蜜"
 			2:
-				tutorial_title.text = "把蜜带回去"
-				tutorial_body.text = "按 Q 或右侧“归巢”；蜜存入蜂巢才算收获。"
-				context_hint_label.text = "归巢路线会自动锁定左侧蜂巢。"
+				tutorial_title.text = "带它回家"
+				tutorial_body.text = "Q / 归巢"
+				context_hint_label.text = ""
 				sense_button.visible = false
 			3:
-				tutorial_title.text = "停稳，循着花香"
-				tutorial_body.text = "离开花朵后停稳，按空格或下方按钮寻迹。"
-				context_hint_label.text = "花香、危险和归巢方向会在环境中显现。"
+				tutorial_title.text = "风里有花香"
+				tutorial_body.text = "停稳 · 空格；循香找到它"
+				context_hint_label.text = ""
 				sense_button.visible = true
 				sense_button.text = "寻迹"
 			4:
-				tutorial_title.text = "让它退开"
-				tutorial_body.text = "靠近出现的蚊虫，再按空格或下方按钮震翼。"
-				context_hint_label.text = "进入震翼范围后，动作会自然变成惊退。"
+				tutorial_title.text = "花被占住了"
+				tutorial_body.text = "靠近 · 空格"
+				context_hint_label.text = ""
 				sense_button.visible = true
 				sense_button.text = "惊退"
 			5:
-				tutorial_title.text = "掠过攻击线"
-				tutorial_body.text = "快速连按两次同一方向，做一次急转闪避。"
-				context_hint_label.text = "急转消耗体力，但会短暂避开碰撞。"
+				tutorial_title.text = "等攻击线压来"
+				tutorial_body.text = "同一方向连按两次"
+				context_hint_label.text = ""
 				sense_button.visible = false
 		return
 
@@ -2187,42 +2555,42 @@ func update_progressive_guidance() -> void:
 	var near_enemy := _nearest_enemy_distance() < sting_range
 	var is_still := bee.velocity.length_squared() < 4.0 and not bee.has_target
 	if bee.energy <= 35.0:
-		trigger_context_lesson("low_energy", "体力将尽", "可按 E 饮下蜜囊里的一滴蜜续力（每节气限次）；左侧蜂巢也能恢复体力。")
+		trigger_context_lesson("low_energy", "翅膀变沉", "E 饮蜜 / 回巢")
 	elif near_enemy:
-		trigger_context_lesson("danger", "敌害逼近", "动作会变为惊退；也可以改变方向绕开。")
+		trigger_context_lesson("danger", "航线被占", "靠近 · 空格")
 	elif is_still and nearby < 0:
-		trigger_context_lesson("sense", "停稳寻迹", "停下后按空格或寻迹，可看见花源、危险和归巢线。")
+		trigger_context_lesson("sense", "风里有花香", "停稳 · 空格")
 	if context_lesson_time > 0.0:
 		tutorial_panel.visible = true
 		match context_lesson_id:
 			"low_energy":
-				tutorial_title.text = "体力将尽"
-				tutorial_body.text = "可按 E 饮下蜜囊里的一滴蜜续力（每节气限次）；左侧蜂巢也能恢复体力。"
+				tutorial_title.text = "翅膀变沉"
+				tutorial_body.text = "E 饮蜜 / 回巢"
 			"danger":
-				tutorial_title.text = "敌害逼近"
-				tutorial_body.text = "动作会变为惊退；也可以改变方向绕开。"
+				tutorial_title.text = "航线被占"
+				tutorial_body.text = "靠近 · 空格"
 			"sense":
-				tutorial_title.text = "停稳寻迹"
-				tutorial_body.text = "按空格或寻迹，看见花源、危险和归巢线。"
+				tutorial_title.text = "风里有花香"
+				tutorial_body.text = "停稳 · 空格"
 	else:
 		tutorial_panel.visible = false
 	return_button.visible = carried > 0
 	sense_button.visible = nearby >= 0 or near_enemy or is_still
-	if near_enemy and nearby < 0:
+	if near_enemy:
 		sense_button.text = "惊退"
-		context_hint_label.text = "敌害逼近：及时惊退或绕开。"
+		context_hint_label.text = ""
 	elif nearby >= 0:
-		sense_button.text = "按住采蜜"
-		context_hint_label.text = "花心亮起：可以采蜜。"
+		sense_button.text = "采蜜"
+		context_hint_label.text = ""
 	elif is_still:
 		sense_button.text = "寻迹"
-		context_hint_label.text = "停稳后可感知花源与敌害。"
+		context_hint_label.text = ""
 	elif bee.energy <= 35.0 and carried > 0 and crop_fuel_used < int(balance_value("player", "crop_fuel_limit", 2)):
-		context_hint_label.text = "体力将尽：按 E 饮蜜续力，或带蜜归巢。"
+		context_hint_label.text = "E / Q"
 	elif carried > 0:
-		context_hint_label.text = "继续寻找，或带着收获归巢。"
+		context_hint_label.text = ""
 	else:
-		context_hint_label.text = "飞近环境目标后，动作才会出现。"
+		context_hint_label.text = ""
 
 func trigger_context_lesson(id: String, title: String, body: String) -> void:
 	if bool(context_lessons_seen.get(id, false)) or context_lesson_time > 0.0:
@@ -2243,6 +2611,7 @@ func toggle_sound() -> void:
 	save_manager.sound_enabled = not save_manager.sound_enabled
 	save_manager.save_data()
 	sound.set_enabled(save_manager.sound_enabled)
+	music.set_enabled(save_manager.sound_enabled)
 	refresh_setting_labels()
 
 func apply_display_settings() -> void:
@@ -2258,10 +2627,10 @@ func refresh_setting_labels() -> void:
 
 func progress_name() -> String:
 	if not stages.is_empty() and save_manager.best_stage >= stages.size():
-		return "二十四节令已归律"
+		return "完整循环已归律"
 	if save_manager.best_stage <= 0 or stages.is_empty():
 		return "尚未出巢"
-	return String(stages[mini(save_manager.best_stage - 1, stages.size() - 1)].name)
+	return "第 %d 段花田" % mini(save_manager.best_stage, stages.size())
 
 # 把跨 run 的历史信息从 overlay 弹窗里搬出来，放进 HUD 侧栏底部永久位：
 # 三行小字——轮回次数 / 前路最远 / 上轮时长。
@@ -2273,12 +2642,12 @@ func refresh_runs_meter() -> void:
 	if runs <= 0:
 		runs_meter.text = "尚未启程"
 	else:
-		runs_meter.text = "已走过 %d 轮四季" % runs
+		runs_meter.text = "已走过 %d 轮" % runs
 	var farthest := progress_name()
 	if farthest == "尚未出巢":
 		runs_meter_farthest.text = "前路：远方还是远方"
-	elif farthest == "二十四节令已归律":
-		runs_meter_farthest.text = "前路：二十四节令归律"
+	elif farthest == "完整循环已归律":
+		runs_meter_farthest.text = "前路：完整循环归律"
 	else:
 		runs_meter_farthest.text = "前路：%s" % farthest
 	var last_seconds := save_manager.last_run_seconds
@@ -2341,6 +2710,14 @@ func _draw() -> void:
 			if chain_pos.distance_to(fl.position) <= chain_range_px:
 				var pulse := 0.3 + 0.2 * sin(elapsed * 5.0)
 				draw_line(chain_pos, fl.position, Color("e8a0d4", pulse), 2.0)
+	# The first scent is environmental: a few barely visible motes collect in the
+	# quiet gap. Sensing turns the hidden bloom into a real harvest target.
+	if stage_index == 0 and not tutorial_complete and tutorial_step == 3 and not tutorial_scent_revealed:
+		for mote_index in 5:
+			var ratio := float(mote_index + 1) / 6.0
+			var scent_pos := Vector2(390, 410).lerp(Vector2(500, 292), ratio)
+			scent_pos.y += sin(elapsed * 2.4 + mote_index) * 7.0
+			draw_circle(scent_pos, 2.5 + ratio * 1.5, Color("f4d994", 0.16 + ratio * 0.08))
 	for flower in flowers:
 		draw_flower(flower)
 	for phantom in phantom_flowers:
@@ -2396,7 +2773,6 @@ func _draw() -> void:
 	if nearby >= 0 and phase == "playing":
 		var flower: Dictionary = flowers[nearby]
 		draw_arc(flower.position, 32 + sin(elapsed * 6.0) * 3, 0, TAU, 28, stage_color(3), 2)
-		draw_string(zh_font, flower.position + Vector2(-30, -42), "按住空格采蜜", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, deep)
 	if flash > 0:
 		draw_rect(WORLD, Color("fff1b0", flash * 0.25))
 	if phase == "exhausted":
@@ -2407,6 +2783,14 @@ func _draw() -> void:
 
 func draw_flower(flower: Dictionary) -> void:
 	var pos: Vector2 = flower.position
+	if bool(flower.get("tutorial_hidden", false)) and not bool(flower.get("discovered", false)):
+		return
+	if bool(flower.get("tutorial_locked", false)):
+		# Closed buds communicate unavailable routes without a label or modal gate.
+		draw_line(pos + Vector2(0, 10), pos + Vector2(0, 42), Color(stage_color(2), 0.45), 3)
+		draw_circle(pos + Vector2(0, 5), 9, Color(stage_color(2), 0.45))
+		draw_arc(pos + Vector2(0, 5), 13, -2.7, -0.45, 14, Color(stage_color(3), 0.5), 2)
+		return
 	var sleeping := bool(flower.get("sleeping", false))
 	var newly_open := bool(flower.get("newly_open", false))
 	var alive := int(flower.nectar) > 0 and not sleeping
@@ -2418,7 +2802,6 @@ func draw_flower(flower: Dictionary) -> void:
 		draw_line(pos + Vector2(0, 16), pos + Vector2(0, 45), Color(stage_color(2), 0.35), 3)
 		draw_circle(pos + Vector2(0, 14), 5, Color("3d4a3a", 0.55))
 		draw_arc(pos, 13, 0, TAU, 16, Color(stage_color(2), 0.4), 2)
-		draw_string(zh_font, pos + Vector2(-15, 66), "休眠", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color(stage_color(2), 0.8))
 		return
 	if float(flower.get("flatten_time", 0.0)) > 0.0:
 		# 被熊压平：花没有死，flatten_time 走完后会重新立起
@@ -2428,7 +2811,6 @@ func draw_flower(flower: Dictionary) -> void:
 		draw_circle(pos + Vector2(6, 6), 5, petal_color)
 		draw_circle(pos + Vector2(0, 9), 4, Color(stage_color(3), 0.35))
 		draw_line(pos + Vector2(-18, 13), pos + Vector2(20, 13), Color("5c4433", 0.5), 3)
-		draw_string(zh_font, pos + Vector2(-15, 66), "压平", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color("8a6a4d", 0.9))
 		return
 	var high_value_types := ["peak_bloom", "cascade_bloom", "late_bloom", "warmth_bloom"]
 	var high_value := ftype in high_value_types or int(flower.nectar) >= 5
@@ -2447,24 +2829,24 @@ func draw_flower(flower: Dictionary) -> void:
 	draw_circle(pos, 23.0 if high_value else 18.0, Color(petal_base, 0.12))
 	var flower_anchor_y := flower_size.y * 0.42 if launch_flower else 28.0
 	draw_texture_rect(flower_texture, Rect2(pos - Vector2(flower_size.x * 0.5, flower_anchor_y), flower_size), false, Color(1, 1, 1, alpha))
-	# 花物候学：非基线花型标注名称
-	if alive and ftype != "nectar_bloom":
-		var type_labels := {"first_bloom": "初花", "chain_bloom": "连", "peak_bloom": "盛", "fading_bloom": "残", "late_bloom": "晚蜜", "seed_bloom": "籽", "hidden_bloom": "藏", "warmth_bloom": "暖", "frozen_bloom": "冰封", "cascade_bloom": "瀑"}
-		var label := str(type_labels.get(ftype, ""))
-		if label != "":
-			draw_string(zh_font, pos + Vector2(-12, 66), label, HORIZONTAL_ALIGNMENT_CENTER, 24, 10, Color(petal_base, 0.9))
 	if recovery and alive:
 		draw_arc(pos, 24 + sin(elapsed * 4.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.9), 3)
-		draw_string(zh_font, pos + Vector2(-22, 66), "返蜜", HORIZONTAL_ALIGNMENT_CENTER, 44, 11, Color("fff1a8"))
 	if newly_open and alive:
 		draw_arc(pos, 26 + sin(elapsed * 5.0) * 2.0, 0, TAU, 24, Color("fff1a8", 0.8), 2)
-		draw_string(zh_font, pos + Vector2(-15, 66), "新开", HORIZONTAL_ALIGNMENT_CENTER, 30, 11, Color("fff1a8"))
 	if not alive:
 		draw_line(pos + Vector2(-14, 49), pos + Vector2(14, 49), Color(stage_color(2), 0.45), 2)
 
 func draw_mosquito(mosquito: Dictionary) -> void:
 	var pos: Vector2 = mosquito.position
 	var repelled := float(mosquito.repel_time) > 0.0
+	if bool(mosquito.get("tutorial", false)):
+		var attack_state := String(mosquito.get("attack_state", ""))
+		if attack_state == "aim":
+			var aim := Vector2(mosquito.get("aim_direction", Vector2.LEFT)).normalized()
+			draw_line(pos - aim * 28.0, pos + aim * 820.0, Color("d95d54", 0.42 + sin(elapsed * 14.0) * 0.12), 4.0)
+			draw_circle(pos, 18.0 + sin(elapsed * 14.0) * 3.0, Color("d95d54", 0.16))
+		elif attack_state == "dash":
+			draw_line(pos - Vector2(mosquito.velocity).normalized() * 90.0, pos, Color("f4d994", 0.65), 5.0)
 	if uses_spring_launch_art():
 		var velocity := Vector2(mosquito.get("velocity", Vector2.ZERO))
 		var angle := velocity.angle() if velocity.length_squared() > 0.01 else 0.0
@@ -2497,7 +2879,8 @@ func draw_ant(ant: Dictionary) -> void:
 		draw_rect(Rect2(pos + Vector2(-18, -24), Vector2(36, 5)), Color("332b27", 0.75))
 		draw_rect(Rect2(pos + Vector2(-17, -23), Vector2(34 * ratio, 3)), Color("e9b84f"))
 	if int(ant.get("stolen_honey", 0)) > 0:
-		draw_string(zh_font, pos + Vector2(-18, -30), "蜜%d" % int(ant.stolen_honey), HORIZONTAL_ALIGNMENT_CENTER, 36, 11, Color("f4ce67"))
+		for drop_index in int(ant.stolen_honey):
+			draw_circle(pos + Vector2(-6 + drop_index * 8, -22), 3.5, Color("f4ce67"))
 
 func draw_ant_trail(ant: Dictionary) -> void:
 	# 信息素迹：蚁沿固定的巢—花往返线巡逻，虚线点提示玩家可预判
@@ -2571,7 +2954,7 @@ func draw_thrush(thrush: Dictionary) -> void:
 			draw_circle(note_pos, 2.4, Color("e8dcc2", 0.75))
 			draw_line(note_pos + Vector2(2, -1), note_pos + Vector2(2, -7), Color("e8dcc2", 0.75), 1.5)
 	else:
-		draw_string(zh_font, pos + Vector2(-15, -22), "噤声", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("e8dcc2", 0.85))
+		draw_line(pos + Vector2(-13, -20), pos + Vector2(13, -20), Color("e8dcc2", 0.75), 3)
 
 func draw_bear_unit(bear_unit: Dictionary) -> void:
 	# 熊：不可对抗的移动地形，压平花、直取储蜜
@@ -2590,11 +2973,10 @@ func draw_bear_unit(bear_unit: Dictionary) -> void:
 	if state == "feeding":
 		var eat_pulse := 0.5 + 0.5 * sin(elapsed * 6.0)
 		draw_arc(pos + Vector2(-16, -6), 24 + eat_pulse * 4.0, PI * 0.75, PI * 1.6, 16, Color("e9b84f", 0.6 * eat_pulse + 0.2), 2)
-		draw_string(zh_font, pos + Vector2(-24, -34), "吞蜜 %d/%d" % [int(bear_unit.eaten), int(balance_value("bear", "appetite", 3))], HORIZONTAL_ALIGNMENT_CENTER, 48, 11, Color("e9b84f"))
 	elif state == "leaving":
-		draw_string(zh_font, pos + Vector2(-12, -34), "饱足", HORIZONTAL_ALIGNMENT_CENTER, 24, 11, Color("b7a98c"))
+		draw_arc(pos, 29.0, -PI * 0.8, -PI * 0.2, 12, Color("b7a98c", 0.7), 3)
 	else:
-		draw_string(zh_font, pos + Vector2(-12, -34), "压平花田", HORIZONTAL_ALIGNMENT_CENTER, 48, 11, Color("c9a06a", 0.9))
+		draw_circle(pos + Vector2(0, 24), 26.0, Color("5c4433", 0.08))
 
 func draw_tuning_bloom(pos: Vector2) -> void:
 	var bloom_color := Color(String(current_boss_data.get("bloom_color", "fff0a0"))) if not current_boss_data.is_empty() else Color("fff0a0")
@@ -2605,6 +2987,13 @@ func draw_tuning_bloom(pos: Vector2) -> void:
 		var angle := float(i) * TAU / 8.0 + elapsed * 0.25
 		draw_circle(pos + Vector2.from_angle(angle) * pulse, 3, Color(bloom_color, 0.85))
 
+func draw_ellipse_shadow(center: Vector2, radii: Vector2, color: Color) -> void:
+	var points := PackedVector2Array()
+	for point_index in 24:
+		var angle := TAU * float(point_index) / 24.0
+		points.append(center + Vector2(cos(angle) * radii.x, sin(angle) * radii.y))
+	draw_colored_polygon(points, color)
+
 func draw_boss(state: Dictionary) -> void:
 	if current_boss_data.is_empty():
 		return
@@ -2613,9 +3002,13 @@ func draw_boss(state: Dictionary) -> void:
 	var radius := float(data.size) + sin(elapsed * 5.0) * 2.0
 	var body := Color(String(data.body_color))
 	var accent := Color(String(data.accent_color))
+	var vulnerable := boss_director.can_tune()
 	for afterimage in boss_afterimages:
 		var a_pos: Vector2 = afterimage.position
 		draw_circle(a_pos, radius * 0.8, Color(body, clampf(float(afterimage.life) * 1.6, 0.0, 0.4)))
+	if vulnerable:
+		draw_circle(pos, radius + 14.0, Color("f5d975", 0.14))
+		draw_arc(pos, radius + 20.0 + sin(elapsed * 9.0) * 3.0, 0, TAU, 36, Color("f5d975", 0.88), 4.0)
 	match String(data.move_pattern):
 		"orbital":
 			# 蚊：圆躯 + 长口器
@@ -2623,6 +3016,8 @@ func draw_boss(state: Dictionary) -> void:
 			draw_circle(pos + Vector2(radius * 0.8, 0), radius * 0.45, accent)
 			draw_line(pos + Vector2(radius * 1.1, 0), pos + Vector2(radius * 1.9, -2), Color("2e2327"), 4)
 			draw_arc(pos, radius + 9, -2.4, 2.4, 22, Color("d7b56a", 0.55), 3)
+			if String(state.get("telegraph", "")) == "siphon":
+				draw_line(pos, bee.position, Color("d95d54", 0.5 + sin(elapsed * 12.0) * 0.15), 3.0)
 		"erratic":
 			# 油葫芦：三节躯体 + 长触角
 			draw_circle(pos + Vector2(-radius * 0.55, 2), radius * 0.42, body)
@@ -2631,8 +3026,10 @@ func draw_boss(state: Dictionary) -> void:
 			for side in [-1, 1]:
 				draw_line(pos + Vector2(-radius * 0.3, 2.0 * side), pos + Vector2(-radius * 1.2, radius * 0.8 * side), accent, 3)
 				draw_line(pos + Vector2(radius * 0.4, 2.0 * side), pos + Vector2(radius * 1.3, radius * 0.9 * side), accent, 3)
-			draw_line(pos + Vector2(radius * 0.9, -4), pos + Vector2(radius * 1.7, -14), body, 2)
-			draw_line(pos + Vector2(radius * 0.9, 2), pos + Vector2(radius * 1.8, -4), body, 2)
+				draw_line(pos + Vector2(radius * 0.9, -4), pos + Vector2(radius * 1.7, -14), body, 2)
+				draw_line(pos + Vector2(radius * 0.9, 2), pos + Vector2(radius * 1.8, -4), body, 2)
+			if String(state.get("telegraph", "")) == "landing":
+				draw_ellipse_shadow(pos + Vector2(0, radius + 15.0), Vector2(radius * 1.35, 9.0), Color("2a3028", 0.55))
 		"lure":
 			# 画眉：鸟身 + 喙 + 振翅弧线 + 漂浮音符
 			draw_circle(pos, radius, body)
@@ -2657,7 +3054,9 @@ func draw_boss(state: Dictionary) -> void:
 			draw_circle(pos + Vector2(0, radius * 0.25), radius * 0.34, accent)
 			draw_circle(pos + Vector2(-radius * 0.28, radius * 0.18), radius * 0.07, Color("1c222b"))
 			draw_circle(pos + Vector2(radius * 0.28, radius * 0.18), radius * 0.07, Color("1c222b"))
-			if charge_state == "rest":
-				draw_string(zh_font, pos + Vector2(-22, -radius - 12), "晕眩", HORIZONTAL_ALIGNMENT_CENTER, 44, 12, Color("f5d975"))
+			if String(state.get("telegraph", "")) == "warm_stun":
+				for shard in 5:
+					var shard_angle := float(shard) * TAU / 5.0 + elapsed
+					draw_line(pos + Vector2.from_angle(shard_angle) * (radius + 5.0), pos + Vector2.from_angle(shard_angle) * (radius + 18.0), Color("f5d975", 0.8), 3.0)
 	for i in int(state.hits):
 		draw_circle(pos + Vector2(-12 + i * 12, -radius - 30), 4, Color("f5d975"))

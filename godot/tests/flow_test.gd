@@ -15,21 +15,38 @@ func run_test() -> void:
 	root.add_child(game)
 	await process_frame
 	game.persistence_enabled = false
+	expect(game.term_label.text.is_empty() and game.season_label.text == "花田", "首次进入仍直接显示季节或节气名称")
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
-	expect(not game.is_spring_gathering_stage(0), "冬至不应启用春季正式美术")
-	expect(game.is_spring_gathering_stage(3) and game.is_spring_gathering_stage(7), "春季普通关未被正式美术路由识别")
+	expect(game.is_spring_gathering_stage(0) and game.is_spring_gathering_stage(3), "授粉玩法组未被春季正式美术路由识别")
 	expect(not game.is_spring_gathering_stage(6), "春分失律者关不应启用春季普通关美术")
-	expect(not game.is_spring_gathering_stage(9), "夏季普通关不应启用春季正式美术")
+	expect(not game.is_spring_gathering_stage(7) and not game.is_spring_gathering_stage(9), "袭扰玩法组错误沿用春季正式美术")
 	expect(game.tutorial_step == 0 and game.tutorial_panel.visible, "首局没有从单一步骤的移动教学开始")
+	var first_trip_source_nectar := 0
+	for flower in game.flowers:
+		if not bool(flower.get("locked_bud", false)):
+			first_trip_source_nectar += int(flower.nectar)
+	expect(first_trip_source_nectar < int(game.stages[0].goal), "首局无需打开授粉花苞就能填满目标，仍会出现进度已满却不结算")
+	expect(game.pollen_transfer_window == 0.0 and game.chain_window_s == 0.0, "首局通用连采增殖可能绕过教学资源路线")
 	var goal_regression_game = packed.instantiate()
 	root.add_child(goal_regression_game)
 	goal_regression_game.persistence_enabled = false
 	goal_regression_game.start_game()
 	goal_regression_game.delivered = int(goal_regression_game.stages[0].goal)
 	goal_regression_game.update_game(0.0)
-	expect(goal_regression_game.phase == "between", "首局达到 5/5 后被未完成教学阻止结算")
+	expect(goal_regression_game.phase == "playing", "首局不应以伪造进度绕过尚未发生的能力教学")
 	goal_regression_game.queue_free()
+	var pacing_game = packed.instantiate()
+	root.add_child(pacing_game)
+	pacing_game.persistence_enabled = false
+	pacing_game.tutorial_complete = true
+	pacing_game.start_game()
+	var base_capacity: int = int(pacing_game.carry_capacity)
+	for upgrade_round in 6:
+		pacing_game.phase = "between"
+		pacing_game.on_upgrade_selected(1)
+	expect(int(pacing_game.carry_capacity) == base_capacity, "采蜜蜂成长重新扩大蜜囊，后期关卡会退化为一次归巢")
+	pacing_game.queue_free()
 	expect(not game.fullscreen_button.visible and not game.sound_button.visible and not game.quit_button.visible, "系统级操作仍常驻在游戏过程界面")
 	expect(not game.sense_button.visible and not game.return_button.visible, "尚未行动时提前展示了采蜜或归巢")
 	game.bee.position = game.tutorial_origin + Vector2(70, 0)
@@ -40,22 +57,40 @@ func run_test() -> void:
 	expect(game.tutorial_step == 2 and game.return_button.visible, "采到第一滴后没有出现归巢教学")
 	game.delivered = 1
 	game.carried = 0
+	game._on_tutorial_home(1)
 	game.update_progressive_guidance()
 	expect(game.tutorial_step == 3 and not game.tutorial_complete and game.tutorial_panel.visible, "第一次存蜜后没有进入寻迹练习")
 	game.bee.sense_cooldown = 0.0
 	game._do_sense()
-	expect(game.tutorial_step == 4 and game.mosquitoes.any(func(unit): return bool(unit.get("tutorial", false))), "寻迹后没有生成安全的惊退练习")
+	expect(game.tutorial_step == 3 and game.tutorial_scent_revealed and bool(game.flowers[game.tutorial_hidden_index].discovered), "只按寻迹键没有揭出隐藏蜜源")
+	expect(game.mosquitoes.is_empty(), "寻迹键本身不应被误算成找到隐藏花")
+	game._on_tutorial_harvest(game.tutorial_hidden_index)
+	expect(game.tutorial_step == 4 and game.mosquitoes.any(func(unit): return bool(unit.get("tutorial", false))), "实际采到隐藏花后没有形成资源争夺情境")
 	game.bee.position = Vector2(game.mosquitoes[-1].position) + Vector2(10, 0)
 	game.sting_cooldown = 0.0
 	game.bee.energy = 100.0
 	game._do_repel()
-	expect(game.tutorial_step == 5, "实际惊退敌虫后没有进入急转练习")
+	expect(game.tutorial_step == 4, "仅按下惊退键、不确认敌虫离开资源圈就提前完成了教学")
+	for frame in 20:
+		game.update_mosquitoes(0.1)
+		if game.tutorial_step == 5:
+			break
+	expect(game.tutorial_step == 5, "敌虫实际离开资源圈后没有发动可见攻击线")
 	game.bee.energy = 100.0
 	game.bee.velocity = Vector2.RIGHT
 	expect(game.bee.try_evade(), "教学急转动作未能触发")
 	game.on_evade_succeeded()
+	expect(game.tutorial_step == 5 and not game.tutorial_complete, "空放一次急转就错误完成了闪避教学")
+	var tutorial_enemy: Dictionary = game.mosquitoes[-1]
+	tutorial_enemy.position = game.bee.position - Vector2(45, 0)
+	tutorial_enemy.velocity = Vector2(520, 0)
+	tutorial_enemy.attack_state = "dash"
+	tutorial_enemy.attack_time = 0.3
+	game.mosquitoes[-1] = tutorial_enemy
+	game.bee.invulnerable_time = 0.2
+	game.update_mosquitoes(0.1)
 	game.update_progressive_guidance()
-	expect(game.tutorial_step == 6 and game.tutorial_complete and not game.tutorial_panel.visible, "完成急转后首局行动教学没有结束")
+	expect(game.tutorial_step == 6 and game.tutorial_complete and not game.tutorial_panel.visible, "攻击真正穿过急转无敌帧后教学仍未完成")
 	game.context_lesson_time = 0.0
 	game.bee.energy = 30.0
 	game.update_progressive_guidance()
@@ -65,7 +100,7 @@ func run_test() -> void:
 	game.context_lessons_seen.erase("danger")
 	game.mosquitoes = [{"id": 0, "position": game.bee.position + Vector2(20, 0), "velocity": Vector2.ZERO, "repel_time": 0.0}]
 	game.update_progressive_guidance()
-	expect(game.context_lesson_id == "danger" and game.tutorial_panel.visible and game.sense_button.text == "惊退", "敌害首次逼近时没有惊退教学")
+	expect(game.sense_button.text == "惊退", "敌害逼近时情境动作没有变为惊退")
 	game.mosquitoes.clear()
 	game.context_lesson_time = 0.0
 	game.update_progressive_guidance()
@@ -78,7 +113,9 @@ func run_test() -> void:
 			continue
 		gathering_total += 1
 		game.spawn_stage(stage_index)
-		expect(game.total_recoverable_honey() >= int(game.stages[stage_index].goal), "节令 %d 初始总蜜量不足" % stage_index)
+		var permanent_budget: int = int(game.stage_permanent_honey_budget(stage_index))
+		expect(game.total_recoverable_honey() >= int(game.stages[stage_index].goal) + permanent_budget, "节令 %d 未给合法饮蜜或机制消耗保留资源预算" % stage_index)
+		expect(int(game.stages[stage_index].goal) > int(game.carry_capacity), "节令 %d 仍可在一只基础蜜囊内完成" % stage_index)
 		for flower_index in game.flowers.size():
 			for other_index in range(flower_index + 1, game.flowers.size()):
 				expect(Vector2(game.flowers[flower_index].position).distance_to(Vector2(game.flowers[other_index].position)) >= 81.9, "节令 %d 花朵生成间距不足" % stage_index)
@@ -90,9 +127,46 @@ func run_test() -> void:
 		game.spawn_stage(boss_stage)
 		expect(game.phase == "boss" and game.stage_index == boss_stage, "正色节点 %d 未进入失律者关卡" % boss_stage)
 		game.update_progressive_guidance()
-		expect(game.sense_button.visible and game.sense_button.text == "调律" and not game.return_button.visible, "失律者关卡没有保留情境调律操作")
+		expect(not game.return_button.visible and not game.boss_director.can_tune(), "失律者开场不应直接暴露调律窗口")
 		expect(String(game.current_boss_data.move_pattern) == pattern_by_boss[String(game.stages[boss_stage].boss)], "正色节点 %d 失律者移动模式错误" % boss_stage)
 		expect(game.tuning_blooms.size() == int(game.current_boss_data.bloom_count), "正色节点 %d 调律共鸣点数量错误" % boss_stage)
+		var pattern := String(game.current_boss_data.move_pattern)
+		game.boss.position = game.tuning_blooms[0]
+		game.bee.position = Vector2(game.boss.position) + Vector2(10, 0)
+		match pattern:
+			"orbital":
+				game.boss.feed_clock = 0.0
+				game.update_boss(0.01)
+			"erratic":
+				game.boss.landing_clock = 0.0
+				game.update_boss(0.01)
+			"lure":
+				game.bee.velocity = Vector2.ZERO
+				game.bee.sense_cooldown = 0.0
+				game._reveal_boss_truth()
+		expect(game.boss_director.can_tune(), "Boss %s 的真实行为没有打开专属破绽窗口" % pattern)
+		var speed_before := float(game.boss_director.parameters.speed_multiplier)
+		game._attempt_boss_tune()
+		expect(int(game.boss.hits) == 1 and game.tuning_blooms.size() == int(game.current_boss_data.bloom_count) - 1, "Boss %s 的破绽窗口没有接入真实调律" % pattern)
+		expect(float(game.boss_director.parameters.speed_multiplier) > speed_before, "Boss %s 第一次调律后没有升级参数" % pattern)
+	# 熊：只有冲锋期间急转、再撞入暖花，才会暴露。
+	game.stage_index = 23
+	game.start_boss()
+	var warm_bloom: Vector2 = game.tuning_blooms[0]
+	game.boss.position = warm_bloom + Vector2(40, 0)
+	game.bee.position = warm_bloom + Vector2(120, 0)
+	game.boss.charge_state = "dash"
+	game.boss.state_time = 1.0
+	game.boss.aim_direction = Vector2.RIGHT
+	game.boss.velocity = Vector2.RIGHT * 4.2
+	game.boss.evade_armed = false
+	game.bee.invulnerable_time = 0.2
+	game.update_boss(0.6)
+	expect(bool(game.boss.evade_armed) and not game.boss_director.can_tune(), "熊的真实冲锋穿过急转无敌帧后没有记录闪避，或未撞暖花就提前暴露")
+	game.boss.position = warm_bloom + Vector2(30, 0)
+	game.boss.velocity = Vector2.ZERO
+	game.update_boss(0.0)
+	expect(game.boss_director.can_tune() and String(game.boss_director.state) == "warm_stun", "熊没有把急转与暖花碰撞组合成眩晕窗口")
 	game.spawn_stage(0)
 	var movement_start: Vector2 = game.bee.position
 	var d_key := InputEventKey.new()
@@ -267,17 +341,23 @@ func run_test() -> void:
 	expect(game.phase == "between" and game.overlay_button.visible, "成长满级后没有回退到继续按钮")
 	game.on_overlay_button()
 	expect(game.phase == "boss", "满级回退后季末未进入失律者遭遇")
-	# 冬季抱团机制（寒露入冬，体温在越冬段延续）
+	# 冬季热源接力（寒露入冬，冷区减速；携蜜可点亮沿路暖点）
 	game.spawn_stage(19)
 	expect(game.warmth == 100.0, "入冬出巢温暖未初始化")
-	var reserve_before: int = game.hive_reserve
 	game.bee.position = Vector2(500, 410)
 	game.season_mechanics.process(1.0)
-	expect(game.warmth < 100.0, "冬季野外温暖没有下降")
-	game.bee.position = Vector2(100, 410)
-	game.carried = 3
-	game.update_hive_rest(1.0, true)
-	expect(game.warmth >= 99.0 and game.hive_reserve == reserve_before - 1, "冬季归巢抱团未按预期回暖或消耗储备")
+	expect(game.warmth < 100.0 and game.bee.environment_speed_multiplier < 1.0, "冬季冷区没有同时消耗温暖并降低速度")
+	var huddle = game.season_mechanics.mechanic_by_id("huddle")
+	expect(huddle != null and not huddle.warm_points.is_empty(), "冬季缺少沿路暖点")
+	if huddle != null and not huddle.warm_points.is_empty():
+		game.carried = 2
+		game.bee.position = Vector2(huddle.warm_points[0].position)
+		game.season_mechanics.on_context_action()
+		expect(bool(huddle.warm_points[0].active) and game.carried == 1, "携蜜没有点亮冬季暖点")
+		game.warmth = 50.0
+		var cold_warmth: float = game.warmth
+		game.season_mechanics.process(1.0)
+		expect(game.warmth > cold_warmth and game.bee.environment_speed_multiplier == 1.0, "点亮的暖区没有恢复温暖和正常速度")
 
 	game.spawn_stage(0)
 	game.toggle_pause()
@@ -285,47 +365,73 @@ func run_test() -> void:
 	game.toggle_pause()
 	expect(game.phase == "playing" and game.bee.active, "继续未恢复玩家")
 
-	# 四季机制单元探针
-	# 冬至·授粉：休眠与新花开放
+	# 四季机制因果探针
+	# 春·花粉连接：采花携粉，匹配花粉才能打开锁芽
 	game.spawn_stage(0)
 	var pollinator = game.season_mechanics.mechanic_by_id("pollination")
-	expect(pollinator != null, "冬季授粉机制缺失")
+	expect(pollinator != null, "春季花粉连接机制缺失")
 	if pollinator != null:
-		var dozing: Dictionary = game.flowers[0]
-		dozing["sleep_timer"] = 0.1
-		game.flowers[0] = dozing
-		game.season_mechanics.process(0.3)
-		expect(bool(game.flowers[0].get("sleeping", false)), "授粉：久不采的花未休眠")
-		var flower_count_before: int = game.flowers.size()
-		var pollinated: Dictionary = game.flowers[1]
-		pollinated["nectar"] = 1
-		pollinated["max_nectar"] = 6
-		game.flowers[1] = pollinated
-		game.season_mechanics.on_harvest(1)
-		expect(game.flowers.size() == flower_count_before + 1, "授粉：采蜜未使新花开放")
-	# 清明·征召：事件触发与响应
+		expect(not pollinator.source_indices.is_empty() and not pollinator.bud_indices.is_empty(), "春季没有同时生成花粉源与锁芽")
+		if not pollinator.source_indices.is_empty() and not pollinator.bud_indices.is_empty():
+			var bud_index: int = pollinator.bud_indices[0]
+			var required: int = int(game.flowers[bud_index].required_pollen)
+			var source_index := -1
+			for candidate in pollinator.source_indices:
+				if int(game.flowers[candidate].pollen_kind) == required:
+					source_index = candidate
+					break
+			expect(source_index >= 0, "锁芽没有匹配的花粉源")
+			if source_index >= 0:
+				game.season_mechanics.on_harvest(source_index)
+				expect(pollinator.carried_pollen == required, "采花后没有携带可见花粉")
+				game.bee.position = Vector2(game.flowers[bud_index].position)
+				game.season_mechanics.on_context_action()
+				expect(not bool(game.flowers[bud_index].locked_bud) and int(game.flowers[bud_index].nectar) > 0, "匹配花粉没有打开锁芽")
+
+	# 夏·实体袭扰：首次卸蜜触发，袭扰者移动并取走真实花蜜，惊退后归还
 	game.spawn_stage(7)
 	var conscription = game.season_mechanics.mechanic_by_id("conscription")
-	expect(conscription != null, "春分征召机制缺失")
+	expect(conscription != null, "夏季实体袭扰机制缺失")
 	if conscription != null:
-		conscription.state = "idle"
-		conscription.timer = 0.1
-		game.season_mechanics.process(0.2)
-		expect(conscription.state == "active", "征召：事件未触发")
-		if conscription.kind == "hive":
-			game.bee.position = Vector2(100, 410)
-			var reserve_before_reward: int = game.hive_reserve
-			conscription.response_progress = 0.9
-			game.season_mechanics.on_home(0, 0.2)
-			expect(conscription.state == "idle" and game.hive_reserve > reserve_before_reward, "征召：巢口响应未获奖励")
-		else:
-			conscription.raid_ants = [{"position": Vector2(320, 300), "velocity": Vector2.ZERO, "flee_time": 0.0}]
-			game.bee.position = Vector2(300, 300)
-			var nectar_before_response: int = int(game.flowers[0].nectar)
-			conscription.field_repels_done = 1
-			game.season_mechanics.on_repel_success()
-			expect(conscription.state == "idle", "征召：花区响应未完成")
-			expect(int(game.flowers[0].nectar) > nectar_before_response, "征召：花区响应后花田未恢复")
+		game.season_mechanics.on_home(3, 0.2)
+		expect(conscription.state == "active" and not conscription.raid_ants.is_empty(), "首次真实卸蜜没有触发袭扰者")
+		if not conscription.raid_ants.is_empty():
+			var target_index: int = int(conscription.raid_ants[0].target)
+			var raider: Dictionary = conscription.raid_ants[0]
+			raider["position"] = Vector2(game.flowers[target_index].position)
+			raider["steal_clock"] = 0.0
+			conscription.raid_ants[0] = raider
+			var nectar_before_raid: int = int(game.flowers[target_index].nectar)
+			game.season_mechanics.process(0.1)
+			expect(int(game.flowers[target_index].nectar) == nectar_before_raid - 1, "袭扰者没有取走真实花蜜")
+			game.bee.position = Vector2(conscription.raid_ants[0].position)
+			game.season_mechanics.on_context_action()
+			expect(String(conscription.raid_ants[0].state) == "escape" and int(game.flowers[target_index].nectar) == nectar_before_raid, "惊退没有截断袭扰并归还被夺花蜜")
+
+	# 秋·留种：停在最后一滴并归巢产生储备；继续采尽则失去收益
+	game.spawn_stage(13)
+	var reserve_mechanic = game.season_mechanics.mechanic_by_id("reserve")
+	expect(reserve_mechanic != null, "秋季留种机制缺失")
+	if reserve_mechanic != null:
+		var seed_flower: Dictionary = game.flowers[0]
+		seed_flower["nectar"] = 1
+		game.flowers[0] = seed_flower
+		game.season_mechanics.on_harvest(0)
+		expect(bool(game.flowers[0].seed_ready), "花剩最后一滴时没有形成可留种状态")
+		var seed_reserve_before: int = game.hive_reserve
+		game.season_mechanics.on_home(2, 0.1)
+		expect(bool(game.flowers[0].seeded) and game.hive_reserve > seed_reserve_before, "停手归巢没有让种核成熟")
+		var stripped: Dictionary = game.flowers[1]
+		stripped["nectar"] = 1
+		game.flowers[1] = stripped
+		game.season_mechanics.on_harvest(1)
+		stripped = game.flowers[1]
+		stripped["nectar"] = 0
+		game.flowers[1] = stripped
+		game.season_mechanics.on_harvest(1)
+		var reserve_after_stripping: int = game.hive_reserve
+		game.season_mechanics.on_home(2, 0.1)
+		expect(bool(game.flowers[1].seed_lost) and game.hive_reserve == reserve_after_stripping, "采尽最后一滴后仍错误获得留种收益")
 
 	# 敌物候学单元探针
 	# 惊蛰·掠蜜蚁：沿信息素轨迹（巢口→花田）往返巡逻

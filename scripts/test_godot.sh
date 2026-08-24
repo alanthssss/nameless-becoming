@@ -29,15 +29,24 @@ run_with_timeout \
   "$godot_bin" \
   --path "$project_root/godot" \
   --headless \
+  --log-file "$project_root/godot/.godot/import-test.log" \
   --import
 
-for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd; do
+for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd boss_encounter_director_test.gd season_mechanics_test.gd; do
   echo "Running $test_file"
+  test_log="$project_root/godot/.godot/${test_file%.gd}.log"
   test_command=(
     "$godot_bin"
     --path "$project_root/godot"
     --headless
+    --log-file "$test_log"
     --script "res://tests/$test_file"
   )
   run_with_timeout "${test_command[@]}"
+  # Godot may exit 0 when a --script fails to parse, so the process status alone
+  # is not a sufficient test result. Every test owns an explicit success marker.
+  if ! grep -q "TEST PASSED" "$test_log"; then
+    echo "$test_file did not report TEST PASSED; inspect $test_log" >&2
+    exit 1
+  fi
 done
