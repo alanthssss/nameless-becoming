@@ -16,16 +16,22 @@ func run_test() -> void:
 	await process_frame
 	game.persistence_enabled = false
 	game.start_game()
-	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
+	expect(game.phase == "playing" and game.stage_index == 3, "新循环未进入春季代表航程")
 	expect(game.tutorial_step == 0 and game.tutorial_panel.visible, "首局没有从单一步骤的移动教学开始")
 	var goal_regression_game = packed.instantiate()
 	root.add_child(goal_regression_game)
 	goal_regression_game.persistence_enabled = false
 	goal_regression_game.start_game()
-	goal_regression_game.delivered = int(goal_regression_game.stages[0].goal)
+	goal_regression_game.delivered = int(goal_regression_game.stages[goal_regression_game.stage_index].goal)
+	goal_regression_game.stage_returns = 2
 	goal_regression_game.update_game(0.0)
-	expect(goal_regression_game.phase == "between", "首局达到 5/5 后被未完成教学阻止结算")
+	expect(goal_regression_game.phase == "playing", "首局只采够蜜就跳过了行动教学")
+	goal_regression_game.tutorial_complete = true
+	goal_regression_game.season_mechanics.mechanic_by_id("pollination").pollination_count = 1
+	goal_regression_game.update_game(0.0)
+	expect(goal_regression_game.phase == "playing" and goal_regression_game.stage_index == 4, "完成教学、两次归巢和授粉后未进入同季下一航程")
 	goal_regression_game.queue_free()
+	expect(game.sound.music_context == "field", "采集段没有使用探索音乐状态")
 	expect(not game.fullscreen_button.visible and not game.sound_button.visible and not game.quit_button.visible, "系统级操作仍常驻在游戏过程界面")
 	expect(not game.sense_button.visible and not game.return_button.visible, "尚未行动时提前展示了采蜜或归巢")
 	game.bee.position = game.tutorial_origin + Vector2(70, 0)
@@ -59,6 +65,7 @@ func run_test() -> void:
 	game.context_lesson_time = 0.0
 	game.bee.energy = 100.0
 	game.context_lessons_seen.erase("danger")
+	game.flowers.clear()
 	game.mosquitoes = [{"id": 0, "position": game.bee.position + Vector2(20, 0), "velocity": Vector2.ZERO, "repel_time": 0.0}]
 	game.update_progressive_guidance()
 	expect(game.context_lesson_id == "danger" and game.tutorial_panel.visible and game.sense_button.text == "惊退", "敌害首次逼近时没有惊退教学")
@@ -85,6 +92,7 @@ func run_test() -> void:
 	for boss_stage in [6, 12, 18]:
 		game.spawn_stage(boss_stage)
 		expect(game.phase == "boss" and game.stage_index == boss_stage, "正色节点 %d 未进入失律者关卡" % boss_stage)
+		expect(game.sound.music_context == "boss", "失律者关卡没有切换 Boss 音乐状态")
 		game.update_progressive_guidance()
 		expect(game.sense_button.visible and game.sense_button.text == "调律" and not game.return_button.visible, "失律者关卡没有保留情境调律操作")
 		expect(String(game.current_boss_data.move_pattern) == pattern_by_boss[String(game.stages[boss_stage].boss)], "正色节点 %d 失律者移动模式错误" % boss_stage)
@@ -213,47 +221,51 @@ func run_test() -> void:
 	game.bee.sense_time = 3.0
 	expect(game.best_foraging_target() >= 0, "触角寻迹没有给出采集建议")
 
-	# 全流程推进：21 个采蜜关穿插 3 个正色失律者关卡，终点回到冬至的熊
+	# Demo 全流程：每季 3 个连续航程 + 1 位失律者；24 节气只保留为内部数据。
 	var boss_terms := ["春分", "夏至", "秋分", "冬至"]
 	var boss_encounters := 0
-	for index in 24:
-		if game.stages[index].has("boss"):
-			continue
-		game.spawn_stage(index)
-		game.delivered = int(game.stages[index].goal)
-		game.show_between()
-		expect(game.phase == "between", "节令 %d 未进入蜂巢成长" % index)
-		var reserve_m = game.season_mechanics.mechanic_by_id("reserve")
-		if reserve_m != null and reserve_m.pending_allocation:
-			expect(game.allocation_pending, "白露未进入分配界面")
+	var season_groups := [[3, 4, 5, 6], [9, 10, 11, 12], [15, 16, 17, 18], [21, 22, 23, -1]]
+	game.tutorial_complete = true
+	for season_group in season_groups:
+		for phase_index in 3:
+			var index: int = season_group[phase_index]
+			game.spawn_stage(index)
+			game.tutorial_complete = true
+			game.delivered = int(game.stages[index].goal)
+			game.stage_returns = 2
+			var mechanic = game.season_mechanics.active[0]
+			match String(mechanic.mechanic_id):
+				"pollination": mechanic.pollination_count = 1
+				"conscription": mechanic.successful_events = 1
+				"reserve":
+					mechanic.stored_found = true
+					mechanic.larvae_found = true
+				"huddle": mechanic.cold_return_completed = true
+			game.update_game(0.0)
+			if phase_index < 2:
+				expect(game.phase == "playing" and game.stage_index == int(season_group[phase_index + 1]), "同季航程 %d 发生硬切或无法推进" % index)
+			else:
+				expect(game.phase == "between", "季末航程 %d 未进入蜂巢成长" % index)
+		if game.allocation_pending:
 			game.allocation_fraction = 0.5
 			game.confirm_allocation()
-			expect(not game.allocation_pending, "白露分配后界面未关闭")
-		# 测试直接推进：重置成长计数，保证所有选择都有效
+			expect(not game.allocation_pending, "秋季分配后界面未关闭")
+		# 测试直接推进：重置成长计数，保证选择有效。
 		game.upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
 		game.on_upgrade_selected(0)
-		var next_index := index + 1
-		if next_index < game.stages.size() and game.stages[next_index].has("boss"):
-			expect(game.phase == "boss" and game.stage_index == next_index, "节令 %d 后未进入正色失律者关卡" % index)
-			expect(String(game.current_boss_data.term) == boss_terms[boss_encounters], "第 %d 位失律者节点错误" % boss_encounters)
-			boss_encounters += 1
-			game.show_boss_victory()
-			expect(game.phase == "boss_victory", "失律者归律后未进入休整界面")
-			game.on_overlay_button()
-			expect(game.phase == "playing" and game.stage_index == next_index + 1, "失律者归律后无法进入下一季")
-		elif next_index < game.stages.size():
-			expect(game.phase == "playing" and game.stage_index == next_index, "节令 %d 无法推进" % index)
+		expect(game.phase == "boss", "季末成长后未进入失律者关卡")
+		expect(String(game.current_boss_data.term) == boss_terms[boss_encounters], "第 %d 位失律者节点错误" % boss_encounters)
+		boss_encounters += 1
+		game.show_boss_victory()
+		expect(game.phase == "boss_victory", "失律者归律后未进入休整界面")
+		game.on_overlay_button()
+		if boss_encounters < 4:
+			expect(game.phase == "playing" and game.stage_index == int(season_groups[boss_encounters][0]), "失律者归律后无法进入下一季")
 		else:
-			expect(game.phase == "boss", "大雪后未回到冬至遭遇失律之熊")
-			expect(String(game.current_boss_data.term) == "冬至" and String(game.current_boss_data.move_pattern) == "charge", "循环终点的失律者应为熊（冬至）")
-			boss_encounters += 1
-			game.show_boss_victory()
-			expect(game.phase == "boss_victory", "熊归律后未进入休整界面")
-			game.on_overlay_button()
 			expect(game.phase == "won", "熊归律后未通关")
 
 	expect(boss_encounters == 4, "四位失律者遭遇没有全部发生")
-	expect(game.chosen_upgrades.size() == gathering_total, "蜂巢成长次数与采蜜关数量不一致")
+	expect(game.chosen_upgrades.size() == 4, "四个大关结束后应各有一次蜂巢成长")
 	expect(game.hive_reserve > 0, "公共储备没有在四季间积累")
 	# 成长满级后的防死锁回退：全部分工达上限时直接给出继续按钮
 	game.spawn_stage(5)

@@ -11,10 +11,12 @@ var sleep_seconds := 26.0
 var new_flower_nectar := 3
 var max_extra_flowers := 4
 var pollinate_after_ratio := 0.55
+var pollination_count := 0
 
 
 func start(game, data: Dictionary, balance: Dictionary) -> void:
 	main = game
+	pollination_count = 0
 	var mechanics: Dictionary = balance.get("mechanics", {})
 	var params: Dictionary = mechanics.get("pollination", {})
 	sleep_seconds = float(params.get("sleep_seconds", 26.0))
@@ -65,7 +67,11 @@ func on_harvest(flower_index: int) -> void:
 	if int(flower.nectar) <= maxi(1, roundi(max_nectar * pollinate_after_ratio)):
 		flower["pollinated"] = true
 		main.flowers[flower_index] = flower
+		pollination_count += 1
 		spawn_new_flower()
+
+func completion_ready() -> bool:
+	return pollination_count >= 1
 
 
 func spawn_new_flower() -> void:

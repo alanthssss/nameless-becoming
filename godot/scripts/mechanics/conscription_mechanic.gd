@@ -22,6 +22,7 @@ var horde_count := 2
 var reward_reserve := 2
 var horde: Array = []
 var raid_ants: Array = []
+var successful_events := 0
 var rng := RandomNumberGenerator.new()
 
 
@@ -43,6 +44,7 @@ func start(game, data: Dictionary, balance: Dictionary) -> void:
 	field_repels_done = 0
 	horde.clear()
 	raid_ants.clear()
+	successful_events = 0
 	timer = rng.randf_range(interval_min, interval_max)
 
 
@@ -132,6 +134,8 @@ func resolve(success: bool) -> void:
 	if state != "active":
 		return
 	var resolved_kind := kind
+	if success:
+		successful_events += 1
 	state = "idle"
 	kind = ""
 	response_progress = 0.0
@@ -162,6 +166,9 @@ func resolve(success: bool) -> void:
 					flower["nectar"] = int(flower.nectar) - 1
 					main.flowers[i] = flower
 					break
+
+func completion_ready() -> bool:
+	return successful_events >= 1
 
 
 func draw() -> void:

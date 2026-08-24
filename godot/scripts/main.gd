@@ -19,6 +19,9 @@ const FLOWER_TYPE_COLORS := {
 }
 const TERMS := ["立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"]
 const SEASON_LENGTH := 6
+# Demo 只把每季三个代表阶段做成可玩航程；其余节气继续作为内部色彩、
+# 物候和数值资料，不再拆成 24 个短促且同质的关卡。
+const PLAYABLE_STAGE_ORDER := [3, 4, 5, 6, 9, 10, 11, 12, 15, 16, 17, 18, 21, 22, 23]
 const UPGRADE_CAP := 6
 const SeasonMechanicsScript := preload("res://scripts/mechanics/season_mechanics.gd")
 const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.svg")
@@ -168,6 +171,7 @@ var tutorial_complete := false
 var context_lesson_id := ""
 var context_lesson_time := 0.0
 var context_lessons_seen := {"sense": false, "danger": false, "low_energy": false}
+var stage_returns := 0
 
 func _ready() -> void:
 	zh_font = load("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
@@ -249,6 +253,12 @@ func season_index_of(index: int) -> int:
 # 正色节点（春分/夏至/秋分）本身是失律者关卡；冬至由循环终点（大雪之后）的熊守卫
 func is_boss_stage(index: int) -> bool:
 	return index >= 0 and index < stages.size() and stages[index].has("boss")
+
+func next_playable_stage(index: int) -> int:
+	var order_index := PLAYABLE_STAGE_ORDER.find(index)
+	if order_index < 0 or order_index + 1 >= PLAYABLE_STAGE_ORDER.size():
+		return -1
+	return int(PLAYABLE_STAGE_ORDER[order_index + 1])
 
 # 按节点查失律者数据：boss 关用 stages[index].boss，循环终点默认回到失律之熊
 func boss_data_for_stage(index: int) -> Dictionary:
@@ -419,7 +429,7 @@ func build_interface() -> void:
 	side.position = Vector2(1020, 146)
 	side.size = Vector2(230, 538)
 	ui.add_child(side)
-	make_label(side, "当前节令", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
+	make_label(side, "当前环境", Vector2(20, 18), Vector2(190, 18), 10, Color("68705d"))
 	season_label = make_label(side, "冬至", Vector2(20, 38), Vector2(190, 38), 24, Color("1f2c24"))
 	# 节令名下的细分隔条：用 4px 高的色块代替“空行造成的虚假分隔”，视觉上更稳重
 	season_rule = ColorRect.new()
@@ -619,7 +629,7 @@ func start_game() -> void:
 	tutorial_origin = HIVE_RETURN_POS
 	if persistence_enabled:
 		save_manager.begin_run()
-	spawn_stage(0)
+	spawn_stage(int(PLAYABLE_STAGE_ORDER[0]))
 
 func spawn_stage(index: int) -> void:
 	if stages.is_empty():
@@ -640,6 +650,7 @@ func spawn_stage(index: int) -> void:
 	overlay_title.text = ""
 	overlay_body.text = ""
 	carried = 0
+	stage_returns = 0
 	# 蜜囊续力按节气计数：出勤开始时重置；失败重试不重置，饮蜜是每节气的有限资源
 	crop_fuel_used = 0
 	delivered = 0
@@ -744,7 +755,8 @@ func spawn_stage(index: int) -> void:
 	if season_index_of(index) != 3:
 		energy_cap_override = bee.max_energy
 	season_mechanics.start_stage(index)
-	message = "%s：%s" % [data.name, data.line]
+	# 节气仍驱动世界，但不再用开场说明句抢在体验之前解释。
+	message = ""
 	update_interface()
 	queue_redraw()
 
@@ -756,8 +768,9 @@ func on_overlay_button() -> void:
 		"intro", "won", "lost": start_game()
 		"paused": toggle_pause()
 		"boss_victory":
-			if stage_index + 1 < stages.size():
-				spawn_stage(stage_index + 1)
+			var next_stage := next_playable_stage(stage_index)
+			if next_stage >= 0:
+				spawn_stage(next_stage)
 			else:
 				show_win()
 		# 失律者战败但还有命：从当前节令重开，不把玩家发配回立春
@@ -772,8 +785,9 @@ func on_overlay_button() -> void:
 # 从蜂巢成长界面推进：下一个节令若是正色节点则直接进入失律者关卡；
 # 大雪是最后的采蜜关，此后回到冬至——失律之熊守着循环的终点。
 func advance_stage() -> void:
-	if stage_index + 1 < stages.size():
-		spawn_stage(stage_index + 1)
+	var next_stage := next_playable_stage(stage_index)
+	if next_stage >= 0:
+		spawn_stage(next_stage)
 	else:
 		start_boss()
 
@@ -923,12 +937,26 @@ func update_game(delta: float) -> void:
 			flowers[i] = flower_timer
 	season_mechanics.process(delta)
 	update_hive_rest(delta, true)
-	# 进度目标必须可信：教学可以跨关继续，但不能把已达成的目标变成软锁。
-	if delivered >= int(data.goal) and phase == "playing":
-		show_between()
+	# 首次教学和季节规则必须实际发生，不能只靠侧栏文字就跳关。
+	if delivered >= int(data.goal) and stage_experience_complete() and phase == "playing":
+		var next_stage := next_playable_stage(stage_index)
+		# 同一大关的三个阶段连续展开，只在进入失律者前回到蜂巢成长。
+		if next_stage >= 0 and not is_boss_stage(next_stage) and season_index_of(next_stage) == season_index_of(stage_index):
+			spawn_stage(next_stage)
+		else:
+			show_between()
 	if bee.energy <= 0.0 and phase == "playing":
 		# 相位护栏：同一帧已达标进入蜂巢成长时不再误触力竭
 		begin_exhaustion()
+
+func stage_experience_complete() -> bool:
+	# 每个采集段至少包含两次真实出巢/归巢，避免一囊蜜直接跳关。
+	if stage_returns < 2:
+		return false
+	# 第一段必须让玩家亲手完成寻迹、惊退和闪避，不把文字看完当学会。
+	if stage_index == int(PLAYABLE_STAGE_ORDER[0]) and not tutorial_complete:
+		return false
+	return season_mechanics.completion_ready()
 
 func _nearest_enemy_distance() -> float:
 	var min_dist := INF
@@ -1311,6 +1339,7 @@ func update_hive_rest(delta: float, deposit_honey: bool) -> void:
 	if deposit_ready:
 		var amount := carried
 		delivered += amount
+		stage_returns += 1
 		carried = 0
 		message = "安全归巢，存入 %d 滴蜜。蜂群的照料正在恢复体力。" % amount
 		sound.play_cue("home")
@@ -1391,6 +1420,7 @@ func resolve_exhaustion() -> void:
 
 func show_between() -> void:
 	phase = "between"
+	sound.set_hive(season_index_of(stage_index))
 	bee.active = false
 	overlay.visible = true
 	var data: Dictionary = stages[stage_index]
@@ -1420,7 +1450,7 @@ func show_upgrade_choices(data: Dictionary) -> void:
 	if not any_available:
 		overlay_title.text = "%s完成 · 蜂巢安定" % data.name
 		overlay_body.text = "三种分工都已成熟。蜂群按既定的节奏继续运转。" + next_boss_hint()
-		overlay_button.text = "继续下一个节令"
+		overlay_button.text = "继续前行"
 		overlay_button.visible = true
 		set_upgrade_buttons_visible(false)
 		set_secondary_link("或者退出游戏", true)
@@ -1435,14 +1465,15 @@ func show_upgrade_choices(data: Dictionary) -> void:
 # 通关横幅只写「刚刚完成的节令」，玩家无从知道下一个节点是失律者关卡——
 # 在蜂巢成长界面直接预告，消除「惊蛰完成却撞上春分 Boss」的错位感
 func next_boss_hint() -> String:
-	if stage_index + 1 >= stages.size():
+	var next_stage := next_playable_stage(stage_index)
+	if next_stage < 0:
 		return ""
-	if not is_boss_stage(stage_index + 1):
+	if not is_boss_stage(next_stage):
 		return ""
-	var next: Dictionary = stages[stage_index + 1]
-	var next_boss := boss_data_for_stage(stage_index + 1)
+	var next: Dictionary = stages[next_stage]
+	var next_boss := boss_data_for_stage(next_stage)
 	var boss_name := String(next_boss.get("name", "失律者"))
-	return "\n\n下一个节令是正色节点：%s——%s盘踞其上，调律在等着你。" % [String(next.name), boss_name]
+	return "\n\n前方的花田失去节奏：%s正在靠近。" % boss_name
 
 func show_allocation_panel() -> void:
 	overlay_title.text = "白露 · 为来年投资"
@@ -1535,7 +1566,7 @@ func start_boss() -> void:
 			break
 	var data: Dictionary = current_boss_data
 	phase = "boss"
-	sound.set_season(int(data.season_index))
+	sound.set_boss(int(data.season_index))
 	overlay.visible = false
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
@@ -1709,10 +1740,10 @@ func show_boss_victory() -> void:
 	overlay_button.text = "继续前行"
 
 func next_term_hint() -> String:
-	if stage_index + 1 >= stages.size():
+	var next_stage := next_playable_stage(stage_index)
+	if next_stage < 0:
 		return ""
-	var data: Dictionary = stages[stage_index + 1]
-	return "下一个节令：%s。%s" % [String(data.name), String(data.line)]
+	return "花田正在改变。"
 
 func show_win() -> void:
 	phase = "won"
@@ -1764,11 +1795,11 @@ func show_boss_loss() -> void:
 		boss_name = String(current_boss_data.get("name", "失律者"))
 	overlay_title.text = "%s · 调律未竟" % String(stage_data.name)
 	overlay_body.text = (
-		"%s还在花田上游荡。\n回到蜂巢歇一歇，本节令还会再来；剩余机会：" % boss_name
+		"%s还在花田上游荡。\n回到蜂巢歇一歇，再试一次；剩余机会：" % boss_name
 		+ "●".repeat(maxi(0, hive_lives)) + "○".repeat(maxi(0, 3 - hive_lives))
-		+ "\n本节令已落蜜 %d 滴。" % delivered
+		+ "\n已经存下 %d 滴蜜。" % delivered
 	)
-	overlay_button.text = "再入节令"
+	overlay_button.text = "再次出巢"
 	set_secondary_link("", false)
 	overlay_button.grab_focus()
 
@@ -1917,10 +1948,12 @@ func update_interface() -> void:
 	# 顶栏与侧栏不应突然切回关卡数据（春分无 goal/flowers，会显示「目标 · 0 滴」的空状态）
 	var boss_context := (phase == "boss" or phase == "boss_victory") and not current_boss_data.is_empty()
 	if boss_context:
-		# 失律者关卡显示其盘踞的正色节点（熊的节点是循环终点：冬至）
-		term_label.text = "%s · %s" % [data.season, String(current_boss_data.get("term", data.name))]
+		term_label.text = "失律者"
 	else:
-		term_label.text = "%s · %s" % [data.season, data.name]
+		var chapter_names := ["萌发", "奔流", "积藏", "守暖"]
+		var playable_position := PLAYABLE_STAGE_ORDER.find(stage_index)
+		var phase_number := playable_position % 4 + 1 if playable_position >= 0 else 1
+		term_label.text = "%s · 航程 %d / 3" % [chapter_names[season_index_of(stage_index)], phase_number]
 	carried_label.text = "%d / %d" % [carried, int(carry_capacity)]
 	# 蜜囊满额：携带条闪红，飘字只在初次
 	if carry_full_flash_time > 0.0:
@@ -1954,11 +1987,12 @@ func update_interface() -> void:
 	if boss_context:
 		var boss_data: Dictionary = current_boss_data
 		season_label.text = String(boss_data.name)
-		detail_label.text = "%s\n\n调律 · %d / %d\n\n引向共鸣点\n再以震翼调律" % [String(boss_data.line), int(boss.hits), int(boss_data.required_tunings)]
+		detail_label.text = "调律 · %d / %d\n\n引向共鸣点\n再以震翼调律" % [int(boss.hits), int(boss_data.required_tunings)]
 	else:
 		# 阴阳数值是内部设计依据（驱动节令难度），不向玩家暴露；
 		# 用文字标签组织状态行，避免依赖 CJK 字体不包含的装饰符号。
-		season_label.text = data.name
+		var chapter_names := ["萌发", "奔流", "积藏", "守暖"]
+		season_label.text = chapter_names[season_index_of(stage_index)]
 		var threat_parts := []
 		var species := [["蚊", "mosquitoes"], ["蚁", "ants"], ["蛐", "crickets"], ["眉", "thrushes"], ["熊", "bears"]]
 		for entry in species:
@@ -1966,10 +2000,10 @@ func update_interface() -> void:
 			if count > 0:
 				threat_parts.append("%s %s" % [entry[0], "◆".repeat(mini(count, 4))])
 		var threat_row := "敌害 · " + ("  ".join(threat_parts) if not threat_parts.is_empty() else "无（寒冷与匮乏本身）")
-		var status_rows := "目标 · %d 滴\n%s" % [int(data.goal), threat_row]
+		var status_rows := "目标 · %d 滴\n归巢 · %d / 2\n%s" % [int(data.goal), mini(stage_returns, 2), threat_row]
 		if season_index_of(stage_index) == 3:
 			status_rows += "\n体温 · %d%%  储蜜 · %d 滴" % [roundi(warmth), hive_reserve]
-		detail_label.text = "%s\n\n%s" % [data.line, status_rows]
+		detail_label.text = status_rows
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):

@@ -11,6 +11,8 @@ var pending_allocation := false
 var pending_harvest := 0
 var larvae_per_boost := 10
 var boost_energy_cap := 5
+var stored_found := false
+var larvae_found := false
 
 
 func start(game, data: Dictionary, balance: Dictionary) -> void:
@@ -21,6 +23,42 @@ func start(game, data: Dictionary, balance: Dictionary) -> void:
 	boost_energy_cap = int(params.get("boost_energy_cap", 5))
 	pending_allocation = false
 	pending_harvest = 0
+	stored_found = false
+	larvae_found = false
+	# 秋季花田直接出现两种未来：蜡环花补储备，籽心花哺育幼虫。
+	# 玩家必须改变采集路线并至少带回两类，而不是关末才读一个滑块。
+	for i in main.flowers.size():
+		var flower: Dictionary = main.flowers[i]
+		flower["reserve_kind"] = "store" if i % 2 == 0 else "larvae"
+		flower["reserve_claimed"] = false
+		main.flowers[i] = flower
+
+func on_harvest(flower_index: int) -> void:
+	var flower: Dictionary = main.flowers[flower_index]
+	if bool(flower.get("reserve_claimed", false)):
+		return
+	var max_nectar := maxi(1, int(flower.get("max_nectar", flower.nectar)))
+	if int(flower.nectar) > max_nectar / 2:
+		return
+	flower["reserve_claimed"] = true
+	main.flowers[flower_index] = flower
+	if String(flower.get("reserve_kind", "store")) == "store":
+		stored_found = true
+		main.hive_reserve += 1
+	else:
+		larvae_found = true
+		main.larval_boost += 1
+	main.spawn_pollen(Vector2(flower.position))
+
+func completion_ready() -> bool:
+	return stored_found and larvae_found
+
+func draw() -> void:
+	for flower in main.flowers:
+		if bool(flower.get("reserve_claimed", false)) or int(flower.nectar) <= 0:
+			continue
+		var color := Color("d8ad43", 0.75) if String(flower.get("reserve_kind", "store")) == "store" else Color("8fbd77", 0.75)
+		main.draw_arc(Vector2(flower.position), 26.0, 0, TAU, 24, color, 3)
 
 
 func on_stage_complete() -> void:

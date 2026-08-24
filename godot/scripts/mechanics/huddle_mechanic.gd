@@ -17,6 +17,7 @@ var cold_warmth_threshold := 15.0
 var cold_recovery_factor := 0.5
 var scouting_unlocked := false
 var _low_warned := false
+var cold_return_completed := false
 
 
 func start(game, data: Dictionary, balance: Dictionary) -> void:
@@ -36,6 +37,7 @@ func start(game, data: Dictionary, balance: Dictionary) -> void:
 	if not main.preserve_warmth:
 		main.warmth = 100.0
 	_low_warned = false
+	cold_return_completed = false
 	scouting_unlocked = main.hive_reserve >= scout_reserve_threshold
 	# 幼虫加成：来年劳动力 → 更耐寒的体格（出巢能量上限）
 	var reserve_params: Dictionary = mechanics.get("reserve", {})
@@ -61,6 +63,9 @@ func process(delta: float) -> void:
 
 
 func on_home(amount: int, delta: float) -> void:
+	# 让一次明显变冷后的主动撤离即可完成体验门槛；真正的低温阈值仍控制惩罚。
+	if main.warmth <= 70.0:
+		cold_return_completed = true
 	if amount > 0:
 		# 抱团回暖：消耗一份储备燃料
 		if main.hive_reserve >= reserve_per_rest:
@@ -72,6 +77,9 @@ func on_home(amount: int, delta: float) -> void:
 	else:
 		# 空手回巢也能短暂挤进蜂团
 		main.warmth = minf(100.0, main.warmth + 12.0)
+
+func completion_ready() -> bool:
+	return cold_return_completed
 
 
 func is_scouting_ready() -> bool:

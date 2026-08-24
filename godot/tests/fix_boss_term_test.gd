@@ -23,8 +23,8 @@ func run_test() -> void:
 	game.show_between()
 	await process_frame
 	expect(game.phase == "between", "惊蛰通关后未进入 between")
-	expect("春分" in game.overlay_body.text and "失律之蚊" in game.overlay_body.text,
-		"通关横幅未预告下一个正色节点（春分 · 失律之蚊）：%s" % game.overlay_body.text)
+	expect("失律之蚊" in game.overlay_body.text and not "春分" in game.overlay_body.text,
+		"通关横幅没有用世界事件预告失律者，或仍直接解释节气：%s" % game.overlay_body.text)
 
 	# --- 场景 2：春分 boss 通关 → boss_victory 期间顶栏/侧栏保持失律者上下文 ---
 	game.spawn_stage(6)
@@ -34,14 +34,14 @@ func run_test() -> void:
 	game.show_boss_victory()
 	await process_frame
 	expect(game.phase == "boss_victory", "调律完成后未进入 boss_victory")
-	expect(game.term_label.text == "春 · 春分", "boss_victory 顶栏节令错误：%s" % game.term_label.text)
+	expect(game.term_label.text == "失律者", "boss_victory 顶栏没有保持去节气化的失律者上下文：%s" % game.term_label.text)
 	expect(game.season_label.text == "失律之蚊", "boss_victory 侧栏未保持失律者名称：%s" % game.season_label.text)
 	expect(game.delivered_label.text == "调律 3 / 3", "boss_victory 调律计数错误：%s" % game.delivered_label.text)
 
-	# --- 场景 3：boss_victory 点继续 → 进入清明（普通关） ---
+	# --- 场景 3：boss_victory 点继续 → 进入下一季代表航程 ---
 	game.on_overlay_button()
 	await process_frame
-	expect(game.phase == "playing" and game.stage_index == 7, "boss_victory 后未进入清明")
+	expect(game.phase == "playing" and game.stage_index == 9, "boss_victory 后未进入下一季代表航程")
 
 	# --- 场景 4：相位护栏：playing 状态下点穿 overlay_button 不重置游戏 ---
 	var stage_before: int = game.stage_index

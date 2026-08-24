@@ -67,6 +67,12 @@ func on_repel_success() -> void:
 		if mechanic.has_method("on_repel_success"):
 			mechanic.on_repel_success()
 
+func completion_ready() -> bool:
+	for mechanic in active:
+		if mechanic.has_method("completion_ready") and not mechanic.completion_ready():
+			return false
+	return true
+
 
 func draw() -> void:
 	for mechanic in active:

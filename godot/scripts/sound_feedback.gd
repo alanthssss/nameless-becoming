@@ -2,7 +2,6 @@ class_name SoundFeedback
 extends Node
 
 const MIX_RATE := 22050.0
-const STEP_SECONDS := 0.42
 const ROOTS := [220.0, 246.94, 196.0, 164.81]
 const MELODIES := [
 	[0, 2, 4, 7, 4, 2, 1, -1, 0, 2, 5, 4, 2, 1, 0, -1],
@@ -22,6 +21,7 @@ var frequency := 440.0
 var amplitude := 0.12
 var enabled := true
 var season_index := 0
+var music_context := "field" # field / boss / hive
 var music_frame := 0
 var melody_phase := 0.0
 var bass_phase := 0.0
@@ -51,6 +51,17 @@ func _ready() -> void:
 
 func set_season(index: int) -> void:
 	season_index = clampi(index, 0, 3)
+	music_context = "field"
+	music_frame = 0
+
+func set_boss(index: int) -> void:
+	season_index = clampi(index, 0, 3)
+	music_context = "boss"
+	music_frame = 0
+
+func set_hive(index: int) -> void:
+	season_index = clampi(index, 0, 3)
+	music_context = "hive"
 	music_frame = 0
 
 func set_enabled(value: bool) -> void:
@@ -99,7 +110,14 @@ func _process(_delta: float) -> void:
 func fill_music_buffer() -> void:
 	if music_playback == null:
 		return
-	var frames_per_step := roundi(MIX_RATE * STEP_SECONDS)
+	# 四季不再只是同一首曲子的移调。速度、发音、节奏密度和空间层都不同；
+	# Boss 使用更快、更密的变奏，蜂巢则退回稳定的宫音呼吸。
+	var step_seconds: Array[float] = [0.48, 0.28, 0.58, 0.76]
+	if music_context == "boss":
+		step_seconds[season_index] *= 0.62
+	elif music_context == "hive":
+		step_seconds[season_index] = 0.82
+	var frames_per_step := roundi(MIX_RATE * step_seconds[season_index])
 	var melody: Array = MELODIES[season_index]
 	for frame in music_playback.get_frames_available():
 		var step := (music_frame / frames_per_step) % melody.size()
@@ -108,12 +126,25 @@ func fill_music_buffer() -> void:
 		var melody_frequency: float = float(ROOTS[season_index]) * pow(2.0, float(semitone) / 12.0)
 		var bass_degree: int = int(PENTATONIC[(step / 4) % PENTATONIC.size()])
 		var bass_frequency: float = float(ROOTS[season_index]) * 0.5 * pow(2.0, float(bass_degree) / 12.0)
-		var melody_envelope := pow(maxf(0.0, 1.0 - position_in_step), 1.7) * minf(1.0, position_in_step * 24.0)
+		var envelope_power: Array[float] = [2.6, 0.9, 1.8, 0.45]
+		var melody_envelope := pow(maxf(0.0, 1.0 - position_in_step), envelope_power[season_index]) * minf(1.0, position_in_step * 24.0)
 		var bass_envelope := 0.35 + 0.25 * pow(maxf(0.0, 1.0 - fmod(position_in_step * 2.0, 1.0)), 2.0)
-		var pulse := 0.035 if music_frame % (frames_per_step * 2) < 240 else 0.0
+		var pulse_density: Array[int] = [4, 1, 6, 8]
+		var pulse := 0.028 if music_frame % (frames_per_step * pulse_density[season_index]) < 240 else 0.0
+		if music_context == "boss":
+			pulse *= 2.4
+		elif music_context == "hive":
+			pulse = 0.0
 		var noise_like := sin(breeze_phase) * sin(breeze_phase * 0.731)
-		var sample := sin(melody_phase) * 0.075 * melody_envelope
-		sample += sin(bass_phase) * 0.045 * bass_envelope
+		var melody_wave := sin(melody_phase)
+		match season_index:
+			0: melody_wave = sin(melody_phase) * 0.75 + sin(melody_phase * 2.0) * 0.18 # 木与空气
+			1: melody_wave = signf(sin(melody_phase)) * 0.55 + sin(melody_phase * 2.0) * 0.2 # 夏季脉冲
+			2: melody_wave = sin(melody_phase) * 0.65 + sin(melody_phase * 0.5) * 0.22 # 秋季留白
+			3: melody_wave = sin(melody_phase) * 0.58 + sin(melody_phase * 0.25) * 0.28 # 冬季长音
+		var melody_gain := 0.04 if music_context == "hive" else (0.09 if music_context == "boss" else 0.072)
+		var sample := melody_wave * melody_gain * melody_envelope
+		sample += sin(bass_phase) * (0.06 if season_index == 3 else 0.042) * bass_envelope
 		sample += noise_like * pulse
 		music_playback.push_frame(Vector2(sample * 0.96, sample))
 		melody_phase = fmod(melody_phase + TAU * melody_frequency / MIX_RATE, TAU)
