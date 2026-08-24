@@ -17,6 +17,10 @@ func run_test() -> void:
 	game.persistence_enabled = false
 	game.start_game()
 	expect(game.phase == "playing" and game.stage_index == 0, "新循环未进入冬至")
+	expect(not game.is_spring_gathering_stage(0), "冬至不应启用春季正式美术")
+	expect(game.is_spring_gathering_stage(3) and game.is_spring_gathering_stage(7), "春季普通关未被正式美术路由识别")
+	expect(not game.is_spring_gathering_stage(6), "春分失律者关不应启用春季普通关美术")
+	expect(not game.is_spring_gathering_stage(9), "夏季普通关不应启用春季正式美术")
 	expect(game.tutorial_step == 0 and game.tutorial_panel.visible, "首局没有从单一步骤的移动教学开始")
 	var goal_regression_game = packed.instantiate()
 	root.add_child(goal_regression_game)
