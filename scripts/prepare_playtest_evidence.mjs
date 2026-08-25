@@ -112,6 +112,7 @@ export function buildObserverPayload({ product, task, sessionId, participant, an
       platform: String(answers.platform || ""),
       windows_environment: String(answers.windows_environment || ""),
       input_methods: arrayValue(answers.input_methods).map(String),
+      prior_external_explanation: String(answers.prior_external_explanation || ""),
     },
     timeline: {
       origin: "T0 = 首次取得控制权",
@@ -120,9 +121,24 @@ export function buildObserverPayload({ product, task, sessionId, participant, an
     },
     contacts: Object.fromEntries(observedMoments.map(({ id }) => [id, String(answers[`contact_${id}`] || "")])),
     objective_observations: Object.fromEntries(observedMoments.map(({ id }) => [id, String(answers[`observation_${id}`] || "")])),
+    learning_transfer: {
+      evade_delayed_retest: {
+        opportunity: String(answers.evade_retest_opportunity || ""),
+        result: String(answers.evade_retest_result || ""),
+        objective_observation: String(answers.evade_retest_observation || ""),
+      },
+    },
     help_request_quote: String(answers.help_request_quote || ""),
     exported_at: exportedAt,
   };
+}
+
+export function validateEvadeRetestAnswers(answers = {}) {
+  const opportunity = String(answers.evade_retest_opportunity || "");
+  const result = String(answers.evade_retest_result || "");
+  if (opportunity === "provided_stable" && result === "not_evaluable") return "已有稳定复测机会，请记录实际结果";
+  if (opportunity && opportunity !== "provided_stable" && result && result !== "not_evaluable") return "没有稳定复测机会时，结果必须选不可判定";
+  return "";
 }
 
 export async function readProductIdentity(root = repositoryRoot) {
@@ -199,9 +215,14 @@ function observerHtml(context) {
 <label class="field">记录来源<select name="evidence_channel" required><option value="">请选择</option><option value="onsite_observation">现场观察</option><option value="remote_self_report">远程自报，无观察</option><option value="consented_screen_recording">自愿匿名屏幕记录</option></select></label>
 <label class="field">运行平台<select name="platform" id="platform" required><option value="">请选择</option><option value="macos">macOS</option><option value="windows">Windows</option><option value="web">Web</option></select></label>
 <label class="field" id="windows-environment-field" hidden>Windows 运行环境<select name="windows_environment" disabled><option value="">请选择</option><option value="native_physical_hardware">真实 Windows 设备</option><option value="virtual_machine">虚拟机</option><option value="compatibility_layer">兼容层</option><option value="unknown">不确定</option></select></label>
+<label class="field">游戏外是否在试玩前解释过操作、目标或正确做法？<select name="prior_external_explanation" required><option value="">请选择</option><option value="none">没有</option><option value="after_explicit_request">只在玩家主动求助后解释</option><option value="before_play">开始前就解释过</option><option value="unknown">不确定</option></select></label>
 <fieldset class="field full"><legend>实际输入方式（可多选）</legend><div class="choices"><label><input type="checkbox" name="input_methods" value="keyboard_mouse"> 键盘＋鼠标</label><label><input type="checkbox" name="input_methods" value="trackpad"> 触控板</label><label><input type="checkbox" name="input_methods" value="touchscreen"> 真实触屏</label><label><input type="checkbox" name="input_methods" value="other"> 其他</label><label><input type="checkbox" name="input_methods" value="unknown"> 不确定</label></div></fieldset></div></section>
 <section class="panel"><div class="section-heading"><h2>观察时间线</h2><p>T0 = 首次取得控制权。无观察时标记“未观察”，不得补造秒数。</p></div><div class="timer-row"><strong id="timer-display">尚未开始</strong><button type="button" id="start-timer" class="primary">开始计时</button><button type="button" id="finish-timer">结束计时</button><button type="button" id="unavailable-timer">总时长不可得</button></div><div class="event-grid">${timelineEvents.map(timelineCard).join("")}</div></section>
-<section class="panel"><div class="section-heading"><h2>机制接触判定</h2><p>这是观察者分类，不要求参与者逐项回答。没有观察时统一选“没有可用观察”。</p></div><div class="detail-grid">${momentFields}</div><label class="field full">玩家第一次求助的原话（可空）<textarea name="help_request_quote" maxlength="1200" placeholder="只抄原话；没有或不可得就留空。"></textarea></label></section></form></main>
+<section class="panel"><div class="section-heading"><h2>机制接触判定</h2><p>这是观察者分类，不要求参与者逐项回答。没有观察时统一选“没有可用观察”。</p></div><div class="detail-grid">${momentFields}</div><label class="field full">玩家第一次求助的原话（可空）<textarea name="help_request_quote" maxlength="1200" placeholder="只抄原话；没有或不可得就留空。"></textarea></label></section>
+<section class="panel" id="evade-retest-panel"><div class="section-heading"><h2>急转延迟复测</h2><p>机会与结果必须分开。只有首次急转之后、间隔约 3 分钟、同一危险语法且没有再次教学，才算稳定复测机会；没有机会不能判成迁移失败。</p></div><div class="form-grid">
+<label class="field">是否提供稳定延迟复测机会？<select name="evade_retest_opportunity" required><option value="">请选择</option><option value="not_observed">没有可用观察，不能判定</option><option value="first_evade_not_completed">首次急转未完成，不能进入迁移判断</option><option value="not_provided">没有提供稳定延迟复测机会</option><option value="provided_with_reteaching">再次遇到，但有重新教学，不算稳定复测</option><option value="provided_stable">提供了稳定、无重新教学的复测机会</option></select></label>
+<label class="field">该次稳定复测的结果<select name="evade_retest_result" required><option value="">请选择</option><option value="not_evaluable">不可判定／没有稳定机会</option><option value="not_attempted">有稳定机会，但玩家没有尝试</option><option value="attempted_incomplete">尝试了，但没有完成</option><option value="completed_external_help">经游戏外帮助完成</option><option value="completed_independent">无额外提示或帮助，独立完成</option></select></label>
+<label class="field full">延迟复测客观观察（可空）<textarea name="evade_retest_observation" maxlength="1200" placeholder="例如首次急转后的间隔、是否出现同语法危险、是否重新弹出教学、玩家实际动作。"></textarea></label></div></section></form></main>
 <div class="sticky-actions"><button id="save-button" type="button">保存到本机</button><button id="export-button" class="primary" type="button">导出观察 JSON</button><button id="reset-button" class="danger" type="button">清空</button><span id="save-status">尚未保存</span></div><script src="observer.js"></script></body></html>`;
 }
 
@@ -224,12 +245,12 @@ form.addEventListener("input",()=>{setStatus("有未导出的修改");window.cle
 }
 
 function observerJavaScript() {
-  return `${browserContextJavaScript()}\n${arrayValue.toString()}\n${productPayload.toString()}\n${taskPayload.toString()}\n${normalizeTimelineEvent.toString()}\n${buildObserverPayload.toString()}
+  return `${browserContextJavaScript()}\n${arrayValue.toString()}\n${productPayload.toString()}\n${taskPayload.toString()}\n${normalizeTimelineEvent.toString()}\n${buildObserverPayload.toString()}\n${validateEvadeRetestAnswers.toString()}
 const timelineEvents=${JSON.stringify(timelineEvents)},observedMoments=${JSON.stringify(observedMoments)},form=document.querySelector("#observer-form"),saveStatus=document.querySelector("#save-status"),timerDisplay=document.querySelector("#timer-display"),storageKey="nameless-playtest-observer-v2-"+body.dataset.sessionId;let events=Object.fromEntries(timelineEvents.map(({id})=>[id,{status:"not_recorded",elapsed_seconds:null}])),timer={started_at_epoch_ms:null,ended_elapsed_seconds:null,status:"not_recorded"},timerInterval=null;
 function setStatus(message){saveStatus.textContent=message}function elapsedSeconds(){if(timer.status==="unavailable"||timer.status==="not_recorded")return null;if(timer.ended_elapsed_seconds!==null)return timer.ended_elapsed_seconds;if(timer.started_at_epoch_ms===null)return null;return Math.max(0,Math.round((Date.now()-timer.started_at_epoch_ms)/1000))}function formatElapsed(seconds){if(seconds===null||!Number.isFinite(seconds))return"时间不可得";return"T+"+String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(Math.floor(seconds%60)).padStart(2,"0")}function refreshTimer(){if(timer.status==="unavailable"){timerDisplay.textContent="总时长不可得";return}const elapsed=elapsedSeconds();timerDisplay.textContent=elapsed===null?"尚未开始":formatElapsed(elapsed)+(timer.ended_elapsed_seconds!==null?" · 已结束":"")}
-function refreshEvents(){for(const{id}of timelineEvents){const value=events[id],label=value.status==="occurred_timed"?"已记录 "+formatElapsed(value.elapsed_seconds):value.status==="occurred_time_unavailable"?"已发生 · 时间不可得":value.status==="did_not_occur"?"确认未发生":value.status==="not_observed"?"未观察 · 不能判断":"尚未记录";document.querySelector('[data-event-value="'+id+'"]').textContent=label}}function refreshWindowsField(){const field=document.querySelector("#windows-environment-field"),select=field.querySelector("select"),show=document.querySelector("#platform").value==="windows";field.hidden=!show;select.disabled=!show;select.required=show;if(!show)select.value=""}function localState(){return{schema_version:schemaVersion,answers:formAnswers(form),events,timer}}function save(){try{localStorage.setItem(storageKey,JSON.stringify(localState()));setStatus("已保存在本机")}catch{setStatus("请直接导出 JSON")}}
+function refreshEvents(){for(const{id}of timelineEvents){const value=events[id],label=value.status==="occurred_timed"?"已记录 "+formatElapsed(value.elapsed_seconds):value.status==="occurred_time_unavailable"?"已发生 · 时间不可得":value.status==="did_not_occur"?"确认未发生":value.status==="not_observed"?"未观察 · 不能判断":"尚未记录";document.querySelector('[data-event-value="'+id+'"]').textContent=label}}function refreshWindowsField(){const field=document.querySelector("#windows-environment-field"),select=field.querySelector("select"),show=document.querySelector("#platform").value==="windows";field.hidden=!show;select.disabled=!show;select.required=show;if(!show)select.value=""}function validateEvadeRetest(){const message=validateEvadeRetestAnswers(formAnswers(form));if(!message)return true;setStatus(message);document.querySelector("#evade-retest-panel").scrollIntoView({behavior:"smooth",block:"center"});return false}function localState(){return{schema_version:schemaVersion,answers:formAnswers(form),events,timer}}function save(){try{localStorage.setItem(storageKey,JSON.stringify(localState()));setStatus("已保存在本机")}catch{setStatus("请直接导出 JSON")}}
 function restore(){let saved;try{saved=JSON.parse(localStorage.getItem(storageKey)||"null")}catch{return}if(!saved||saved.schema_version!==schemaVersion)return;for(const control of form.elements){if(!control.name)continue;const value=saved.answers?.[control.name];if(control.type==="checkbox")control.checked=arrayValue(value).includes(control.value);else if(typeof value==="string")control.value=value}events=Object.fromEntries(timelineEvents.map(({id})=>[id,normalizeTimelineEvent(saved.events?.[id])]));if(saved.timer&&["not_recorded","running","recorded","unavailable"].includes(saved.timer.status))timer=saved.timer;setStatus("已恢复本机记录")}
-function exportResults(){refreshWindowsField();if(!form.reportValidity()){setStatus("请先补全必填观察项");return}if(![...form.querySelectorAll('[name="input_methods"]')].some(control=>control.checked)){setStatus("请至少选择一种输入方式");return}const missing=timelineEvents.find(({id})=>events[id].status==="not_recorded");if(missing){setStatus("请明确记录四个事件，或标记未观察");document.querySelector('[data-event-card="'+missing.id+'"]').scrollIntoView({behavior:"smooth",block:"center"});return}if(timer.status==="not_recorded"){setStatus("请记录总时长或标记不可得");return}if(timer.status==="running"){timer.ended_elapsed_seconds=elapsedSeconds();timer.status="recorded";window.clearInterval(timerInterval);refreshTimer()}save();const payload=buildObserverPayload({product,task,sessionId:body.dataset.sessionId,participant,answers:formAnswers(form),events,sessionDurationSeconds:elapsedSeconds(),sessionDurationStatus:timer.status==="unavailable"?"unavailable":"recorded",exportedAt:new Date().toISOString()});downloadJson(payload,"playtest-observer-"+body.dataset.sessionId+".json");setStatus("观察结果已导出")}
+function exportResults(){refreshWindowsField();if(!form.reportValidity()){setStatus("请先补全必填观察项");return}if(![...form.querySelectorAll('[name="input_methods"]')].some(control=>control.checked)){setStatus("请至少选择一种输入方式");return}if(!validateEvadeRetest())return;const missing=timelineEvents.find(({id})=>events[id].status==="not_recorded");if(missing){setStatus("请明确记录四个事件，或标记未观察");document.querySelector('[data-event-card="'+missing.id+'"]').scrollIntoView({behavior:"smooth",block:"center"});return}if(timer.status==="not_recorded"){setStatus("请记录总时长或标记不可得");return}if(timer.status==="running"){timer.ended_elapsed_seconds=elapsedSeconds();timer.status="recorded";window.clearInterval(timerInterval);refreshTimer()}save();const payload=buildObserverPayload({product,task,sessionId:body.dataset.sessionId,participant,answers:formAnswers(form),events,sessionDurationSeconds:elapsedSeconds(),sessionDurationStatus:timer.status==="unavailable"?"unavailable":"recorded",exportedAt:new Date().toISOString()});downloadJson(payload,"playtest-observer-"+body.dataset.sessionId+".json");setStatus("观察结果已导出")}
 document.querySelector("#start-timer").addEventListener("click",()=>{if(timer.started_at_epoch_ms===null)timer.started_at_epoch_ms=Date.now();timer.ended_elapsed_seconds=null;timer.status="running";window.clearInterval(timerInterval);timerInterval=window.setInterval(refreshTimer,1000);refreshTimer();save()});document.querySelector("#finish-timer").addEventListener("click",()=>{if(timer.started_at_epoch_ms!==null&&timer.ended_elapsed_seconds===null){timer.ended_elapsed_seconds=elapsedSeconds();timer.status="recorded"}window.clearInterval(timerInterval);refreshTimer();save()});document.querySelector("#unavailable-timer").addEventListener("click",()=>{timer={started_at_epoch_ms:null,ended_elapsed_seconds:null,status:"unavailable"};window.clearInterval(timerInterval);refreshTimer();save()});
 for(const button of document.querySelectorAll("[data-event-action]"))button.addEventListener("click",()=>{const id=button.dataset.eventId;if(button.dataset.eventAction==="timed"){const elapsed=elapsedSeconds();if(elapsed===null){setStatus("先在取得控制权时开始计时");return}events[id]={status:"occurred_timed",elapsed_seconds:elapsed}}else if(button.dataset.eventAction==="unavailable")events[id]={status:"occurred_time_unavailable",elapsed_seconds:null};else if(button.dataset.eventAction==="absent")events[id]={status:"did_not_occur",elapsed_seconds:null};else if(button.dataset.eventAction==="not-observed")events[id]={status:"not_observed",elapsed_seconds:null};else events[id]={status:"not_recorded",elapsed_seconds:null};refreshEvents();save()});
 form.addEventListener("input",()=>{refreshWindowsField();setStatus("有未导出的修改");window.clearTimeout(form.saveTimer);form.saveTimer=window.setTimeout(save,350)});form.addEventListener("submit",event=>event.preventDefault());document.querySelector("#save-button").addEventListener("click",save);document.querySelector("#export-button").addEventListener("click",exportResults);document.querySelector("#reset-button").addEventListener("click",()=>{if(!window.confirm("清空观察记录？已导出的 JSON 不受影响。"))return;form.reset();events=Object.fromEntries(timelineEvents.map(({id})=>[id,{status:"not_recorded",elapsed_seconds:null}]));timer={started_at_epoch_ms:null,ended_elapsed_seconds:null,status:"not_recorded"};window.clearInterval(timerInterval);try{localStorage.removeItem(storageKey)}catch{}refreshWindowsField();refreshEvents();refreshTimer();setStatus("已清空")});restore();refreshWindowsField();refreshEvents();refreshTimer();if(timer.status==="running")timerInterval=window.setInterval(refreshTimer,1000);`;
@@ -246,7 +267,7 @@ function coordinatorReadme({ product, sourceIdentity, sessionId, participant }) 
 ## 两个入口
 
 - 只把同级的 \`participant/\` 文件夹交给参与者。A 表只有 4 个原话题和 2 个结束选择。
-- 协调者自己打开 \`observer.html\`，记录环境、时间线和机制接触状态。它含内部机制名，绝不能交给参与者。
+- 协调者自己打开 \`observer.html\`，记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果。它含内部机制名，绝不能交给参与者。
 
 参与者不再选择自己是不是外部玩家，也不再逐项判定是否掌握机制。分析时仍需核对 \`external_player\` 确实未参与策划／开发。
 
@@ -256,6 +277,8 @@ function coordinatorReadme({ product, sourceIdentity, sessionId, participant }) 
 4. 玩家结束后才打开 participant 表；两份 JSON 分别引用到 \`analysis-template.json\`。
 
 participant JSON 只保存短回忆与结束选择，不能单独证明机制掌握。observer JSON 保存观察事实和分类；无观察就保持不可判定。
+
+**急转复测警告**：只有 observer 同时记录 \`opportunity = provided_stable\`（首次急转后约 3 分钟、同一危险语法、没有重新教学）和对应结果，才能评价延迟迁移。\`not_observed\`、\`first_evade_not_completed\`、\`not_provided\` 或 \`provided_with_reteaching\` 一律记为不可判定，不能改写成玩家失败。
 
 不收姓名、联系方式、账号、IP、年龄、性别、精确位置、健康／残障信息、脸或声音。匿名录屏须先说明用途并允许关麦、裁通知。
 
@@ -274,10 +297,18 @@ function analysisTemplate({ product, task, sessionId, participant }) {
     observer_export_file: "",
     relation_asserted_at_generation: true,
     relation_verified_by_coordinator: null,
+    protocol_verification: { prior_external_explanation: null },
     objective_observations: [],
     verbatim_player_quotes: [],
     developer_interpretations: [],
     follow_up_actions: [],
+    evade_delayed_retest_assessment: {
+      opportunity: null,
+      result: null,
+      evaluable: null,
+      evidence_refs: [],
+      analyst_note: "只有 provided_stable 加观察到的结果可以评价；其他机会状态一律不可判定，不能记为迁移失败。",
+    },
     analyst_confidence: "",
     evidence_classification: { counts_as_external_player: null, counts_as_windows_native_hardware: null, mechanism_mastery_evaluable: null },
   };

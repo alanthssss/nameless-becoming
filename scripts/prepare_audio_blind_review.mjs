@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
-import { copyFile, lstat, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
-import { dirname, isAbsolute, parse, relative, resolve } from "node:path";
+import { copyFile, lstat, mkdir, readFile, realpath, rename, rm, writeFile } from "node:fs/promises";
+import { basename, dirname, isAbsolute, parse, relative, resolve } from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
@@ -147,7 +147,6 @@ audio { width: 100%; margin-bottom: 1rem; accent-color: #e5b94e; }
 
 const listenerJs = `
 const trackIds = ["A", "B", "C", "D", "E", "F", "G", "H"];
-const storageKey = "nameless-music-blind-review-v1";
 const form = document.querySelector("#review-form");
 const saveStatus = document.querySelector("#save-status");
 const listening = Object.fromEntries(trackIds.map((id) => [id, { plays: 0, seconds: 0 }]));
@@ -158,7 +157,22 @@ const packageIdentity = {
   generator_dirty: document.body.dataset.generatorDirty === "true",
   track_manifest_sha256: document.body.dataset.trackManifestSha256,
 };
+const storageKey = "nameless-music-blind-review-v1-" + [
+  packageIdentity.product_version,
+  packageIdentity.generator_full_commit,
+  packageIdentity.generator_dirty ? "dirty" : "clean",
+  packageIdentity.track_manifest_sha256,
+].map(encodeURIComponent).join("-");
 ${validateAudioExportAnswers.toString()}
+
+function samePackageIdentity(left, right) {
+  if (!left || !right) return false;
+  return left.product_version === right.product_version
+    && left.generator_commit === right.generator_commit
+    && left.generator_full_commit === right.generator_full_commit
+    && Boolean(left.generator_dirty) === Boolean(right.generator_dirty)
+    && left.track_manifest_sha256 === right.track_manifest_sha256;
+}
 
 function formAnswers() {
   const answers = {};
@@ -199,7 +213,7 @@ function restore() {
   } catch {
     return;
   }
-  if (!saved || ![1, 2].includes(saved.schema_version)) return;
+  if (!saved || ![1, 2].includes(saved.schema_version) || !samePackageIdentity(saved.package_identity, packageIdentity)) return;
   for (const control of form.elements) {
     if (!control.name) continue;
     const value = saved.answers?.[control.name];
@@ -492,19 +506,37 @@ ${rows}
 `;
 }
 
-function validateOutputTarget(outputDirectory) {
-  const output = resolve(outputDirectory);
+function isWithin(parent, candidate) {
+  const path = relative(parent, candidate);
+  return path === "" || (!path.startsWith("..") && !isAbsolute(path));
+}
+
+function validateResolvedOutput(output) {
   if (output === parse(output).root) throw new Error("Refusing to replace a filesystem root.");
-  for (const protectedPath of [repositoryRoot, musicRoot]) {
-    const pathToProtected = relative(output, protectedPath);
-    if (pathToProtected === "" || (!pathToProtected.startsWith("..") && !isAbsolute(pathToProtected))) {
-      throw new Error(`Refusing protected output path ${output}; it is ${protectedPath === repositoryRoot ? "the repository or its ancestor" : "the music source directory or its ancestor"}.`);
+  if (isWithin(output, repositoryRoot)) throw new Error(`Refusing protected output path ${output}; it is the repository or one of its ancestors.`);
+  if (isWithin(repositoryRoot, output) && !isWithin(resolve(repositoryRoot, "outputs"), output)) {
+    throw new Error("Output inside the repository must stay under outputs/.");
+  }
+}
+
+async function validateOutputTarget(outputDirectory) {
+  const output = resolve(outputDirectory);
+  validateResolvedOutput(output);
+  let existingAncestor = output;
+  const missingSegments = [];
+  while (true) {
+    try {
+      await lstat(existingAncestor);
+      break;
+    } catch (error) {
+      if (error?.code !== "ENOENT") throw error;
+      const parent = dirname(existingAncestor);
+      if (parent === existingAncestor) throw new Error(`Unable to resolve output target: ${output}.`);
+      missingSegments.unshift(basename(existingAncestor));
+      existingAncestor = parent;
     }
   }
-  const pathFromMusic = relative(musicRoot, output);
-  if (pathFromMusic === "" || (!pathFromMusic.startsWith("..") && !isAbsolute(pathFromMusic))) {
-    throw new Error(`Refusing output inside the music source directory: ${output}.`);
-  }
+  validateResolvedOutput(resolve(await realpath(existingAncestor), ...missingSegments));
   return output;
 }
 
@@ -535,7 +567,7 @@ async function assertReplaceableOutput(output) {
 }
 
 export async function generateAudioBlindReview(outputDirectory = defaultOutput) {
-  const output = validateOutputTarget(outputDirectory);
+  const output = await validateOutputTarget(outputDirectory);
   const packageJson = JSON.parse(await readFile(resolve(repositoryRoot, "package.json"), "utf8"));
   const [{ stdout: commitOutput }, { stdout: statusOutput }] = await Promise.all([
     execFileAsync("git", ["rev-parse", "HEAD"], { cwd: repositoryRoot }),
