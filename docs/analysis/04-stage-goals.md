@@ -24,6 +24,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 | PR #64 | 8 轨 A–H 匿名盲听包、独立答案和自动校验 | 解除主观盲听的工具依赖，不代表 Alan 已完成听感验收 |
 | PR #65 | 1280×720 参考画布的等比安全框、按条件显示的饮蜜指针／触摸入口与第九组 Godot 回归 | 当前 HUD 与输入实现基线；不代表真实原生触屏或任意宽高比重排已验收 |
 | PR #69 | 首次采蜜距离、持续按住、`蜜囊 +1` 成功证据与老师傅演示 | 当前固定候选 `4b57d856`；自动回归通过，但旧 A 包不能替代新候选复测 |
+| PR #70（不合并） | D 秋 Boss 与 G 秋探索的定向减层／缩滑音 A/B 候选 | Alan 两组均选 `tie`、“都不好”和 `neither`；创作者门禁失败，秋季双轨转入结构性新方向 |
 
 ## 2. 当前阶段结论 / Current Stage Conclusion
 
@@ -32,7 +33,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 | 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具、PR #65 的 HUD／输入和 PR #69 的首次采蜜修复形成固定可玩实现 `4b57d856`；PR #67、#68 不改游戏二进制 |
 | 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
 | Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
-| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`4b57d856` 尚待重新采证。八轨逐轨评论已完成，D/G 触发 A/B，但总体配对与实机混音缺失；四季、Boss、节奏仍需记录 |
+| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`4b57d856` 尚待重新采证。八轨逐轨评论已完成；D/G A/B 两版均未获认可，PR #70 不合并。总体配对与实机混音缺失；四季、Boss、节奏仍需记录 |
 | Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
 | 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
@@ -56,7 +57,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 5. 体验夏季袭扰、秋季留种、冬季暖点并描述实际改过的路线或选择；
 6. 分别复述四位 Boss 的暴露规则；
 7. 记录各节点／Boss 用时、失败点和无决策重复时长；
-8. 对 D 秋 Boss 与 G 秋探索完成修改前后 A/B，再补同季配对、总体区分度和实机混音；其余六轨不因本次证据重写。
+8. D 秋 Boss 与 G 秋探索修改前后 A/B 已完成但两版均未获认可；另做结构性新方向，并在下轮对比前匹配到 `±0.3 LU`。再补同季配对、总体区分度和实机混音；其余六轨不因本次证据重写。
 
 ### 3.3 发布人工流程 / Release Manual Pass
 
@@ -108,7 +109,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 | 四组仍被概括为“都是采蜜” | 四季路线深化 | 每组至少观察到一次不同路线、顺序、撤离或资源选择 |
 | 节点仍短或只是机械重复 | 节奏与 Boss 调律 | 依据用时、失败原因和重复劳动改内容，不只抬目标 |
 | 视觉仍不协调 | 单代表场景画风切片 | 先通过一张实机场景，再批量生产 |
-| 某轨／民乐标点不舒服 | 定向音乐修订 | 只修被盲听指出的轨并提交 A/B |
+| PR #70 与主线基线均被评价“都不好”／`neither` | 秋季两轨结构性新方向 | 不续接被否决候选；响度先匹配 `±0.3 LU`，再取得明确可接受选择 |
 | 中继巢确实带来主动改线 | 第二据点实验 | 不破坏主巢、Q 归巢与交付语义唯一性 |
 
 未出现触发证据时，这些不是已排产功能。
