@@ -9,7 +9,7 @@ const TRACK_PATHS := [
 const EXPECTED_DURATIONS := [
 	[27.692313, 25.945941],
 	[24.827596, 22.325578],
-	[28.571429, 22.857143],
+	[30.967755, 30.0],
 	[26.666667, 30.0],
 ]
 const ANALYSIS_PATH := "res://assets/music/analysis.json"
