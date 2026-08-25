@@ -573,9 +573,27 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
     assert.match(participantText, /10 分钟/u);
     assert.match(participantText, /"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket\.json 的绝对路径>"/u);
     assert.doesNotMatch(participantText, /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜/iu);
-    assert.doesNotMatch(participantText, /\b(?:pollination|evade|nectar|deposit|handler|profile|observer)\b/iu);
+    assert.doesNotMatch(participantText, /(?<![\p{L}\p{N}])(?:pollination|evade|nectar|deposit|handler|profile|observer)(?![\p{L}\p{N}])/iu);
     assert.doesNotMatch(participantText, /contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment/iu);
     assert.doesNotMatch(participantText, /answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria|正确答案|答案说明/iu);
+
+    const leakingFixture = await writeArtifactFixture(join(temporaryRoot, "leaking-distribution"), {
+      commit: fixture.commit,
+      version: "0.9.5-rc.2",
+      sourceMetadata: true,
+      manifestOverrides: { source_ref: "refs/heads/handler_registry" },
+    });
+    const leakingOutput = join(temporaryRoot, "must-not-leak");
+    await assert.rejects(generatePlaytestEvidence(leakingOutput, {
+      repositoryRoot: fixture.root,
+      artifactPath: leakingFixture.artifactPath,
+      artifactManifestPath: leakingFixture.artifactManifestPath,
+      taskCode: "B",
+      sliceCode: "B01",
+      testerRelation: "external_player",
+      sessionId: "NB-20260825-LEAK0001",
+    }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+    assert.equal(await pathDoesNotExist(leakingOutput), true);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }

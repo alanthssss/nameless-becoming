@@ -599,9 +599,9 @@ function participantRuntimeReadme({ task }) {
 
 const participantForbiddenPatterns = Object.freeze([
   /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜/iu,
-  /\b(?:pollination|evade|nectar|deposit|handler|profile|observer)\b/iu,
-  /\b(?:contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment)/iu,
-  /\b(?:answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria)\b|正确答案|答案说明/iu,
+  /(?<![\p{L}\p{N}])(?:pollination|evade|nectar|deposit|handler|profile|observer)(?![\p{L}\p{N}])/iu,
+  /(?<![\p{L}\p{N}])(?:contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment)/iu,
+  /(?<![\p{L}\p{N}])(?:answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria)(?![\p{L}\p{N}])|正确答案|答案说明/iu,
 ]);
 
 async function assertParticipantPackageBlind(participantDirectory) {
