@@ -238,11 +238,24 @@ func test_shared_rule_runtime_wiring() -> void:
 	slice.free()
 
 func test_no_save_or_private_runtime() -> void:
+	var source_paths := [
+		"res://playtest/b01_evade_slice.tscn",
+		"res://scripts/playtest/b01_evade_encounter.gd",
+		"res://scripts/playtest/b01_evade_slice.gd",
+	]
+	var combined := ""
+	for source_path in source_paths:
+		combined += "\n" + FileAccess.get_file_as_string(source_path)
+	var lowered := combined.to_lower()
+	for forbidden in [
+		"res://main.tscn", "res://scripts/main.gd",
+		"mentor_tutorial", "mentortutorial", "save_manager", "namelesssavemanager",
+		"configfile", "user://", "stage_index", "spawn_stage", "tutorial_step",
+		"tutorial_complete", "record_stage", "save_data", "load_data",
+	]:
+		expect(not lowered.contains(forbidden), "B01 私有 runtime 泄露或存档依赖：%s" % forbidden)
 	var source := FileAccess.get_file_as_string("res://scripts/playtest/b01_evade_slice.gd")
 	var encounter_source := FileAccess.get_file_as_string("res://scripts/playtest/b01_evade_encounter.gd")
-	var combined := source + "\n" + encounter_source
-	for forbidden in ["main.tscn", "mentor_tutorial.gd", "save_manager.gd", "user://", "ConfigFile.new", "stage_index", "tutorial_step"]:
-		expect(not combined.contains(forbidden), "B01 私有 runtime 泄露或存档依赖：%s" % forbidden)
 	expect(source.contains("evade_input_controller.gd") and encounter_source.contains("evade_rules.gd"), "B01 未接入共享输入／因果规则")
 	expect(source.contains("player_bee_v1.png") and source.contains("mosquito_v1.png") and source.contains("_draw_demo_double_tap_cues"), "B01 示范仍用抽象圆点或没有可见双击节奏")
 	expect(not ordinary_save_sha.is_empty() and FileAccess.get_sha256(ordinary_save_path) == ordinary_save_sha, "B01 session 改写了普通存档 sentinel")

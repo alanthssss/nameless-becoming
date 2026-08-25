@@ -59,6 +59,7 @@ func _init() -> void:
 		"res://project.binary",
 		"res://bootstrap.tscn.remap",
 		"res://main.tscn.remap",
+		"res://playtest/b01_evade_slice.tscn.remap",
 		"res://data/playtest_slices.json",
 	]
 	var missing_runtime_files: Array[String] = []

@@ -576,6 +576,7 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
     assert.doesNotMatch(participantText, /(?<![\p{L}\p{N}])(?:pollination|evade|nectar|deposit|handler|profile|observer)(?![\p{L}\p{N}])/iu);
     assert.doesNotMatch(participantText, /contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment/iu);
     assert.doesNotMatch(participantText, /answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria|正确答案|答案说明/iu);
+    assert.doesNotMatch(participantText, /main\.tscn|scripts\/main\.gd|mentor_tutorial|save_manager|stage_index|spawn_stage|tutorial_step|tutorial_complete/iu);
 
     const leakingFixture = await writeArtifactFixture(join(temporaryRoot, "leaking-distribution"), {
       commit: fixture.commit,
@@ -594,6 +595,24 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
       sessionId: "NB-20260825-LEAK0001",
     }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
     assert.equal(await pathDoesNotExist(leakingOutput), true);
+
+    const privateRouteFixture = await writeArtifactFixture(join(temporaryRoot, "private-route-distribution"), {
+      commit: fixture.commit,
+      version: "0.9.5-rc.2",
+      sourceMetadata: true,
+      manifestOverrides: { source_ref: "refs/heads/save_manager" },
+    });
+    const privateRouteOutput = join(temporaryRoot, "must-not-leak-private-route");
+    await assert.rejects(generatePlaytestEvidence(privateRouteOutput, {
+      repositoryRoot: fixture.root,
+      artifactPath: privateRouteFixture.artifactPath,
+      artifactManifestPath: privateRouteFixture.artifactManifestPath,
+      taskCode: "B",
+      sliceCode: "B01",
+      testerRelation: "external_player",
+      sessionId: "NB-20260825-LEAK0002",
+    }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+    assert.equal(await pathDoesNotExist(privateRouteOutput), true);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }

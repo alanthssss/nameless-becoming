@@ -35,10 +35,13 @@ func run_test() -> void:
 		expect(production_catalog.slices.size() == 1, "生产 catalog 必须只有中性 B01")
 		if production_catalog.slices.size() == 1:
 			var production_slice: Dictionary = production_catalog.slices[0]
-			expect(production_slice.keys().size() == 4 and production_slice.code == "B01" and production_slice.assignment == "固定切片 B01" and int(production_slice.maximum_minutes) == 10 and production_slice.status == "blocked", "生产 B01 必须保持 exact blocked/10min 公共模型")
+			expect(production_slice.keys().size() == 4 and production_slice.code == "B01" and production_slice.assignment == "固定切片 B01" and int(production_slice.maximum_minutes) == 10 and production_slice.status == "ready", "生产 B01 必须保持 exact ready/10min 公共模型")
 	expect(not production_catalog_text.contains("handler") and not production_catalog_text.contains("stage") and not production_catalog_text.contains("seed") and not production_catalog_text.contains("path") and not production_catalog_text.contains("override") and not production_catalog_text.contains("patch"), "生产 catalog 泄露执行路径或 override 字段")
 	var production_registry := PlaytestSliceRegistry.new()
-	expect(production_registry.has_code("B01") and production_registry.scene_for_code("B01") == null, "生产 registry 必须保留 B01 编号但不得伪装 typed scene 已实现")
+	var production_b01_scene := production_registry.scene_for_code("B01")
+	expect(production_registry.has_code("B01") and production_b01_scene != null, "生产 registry 没有编译 B01 typed scene")
+	if production_b01_scene != null:
+		expect(production_b01_scene.resource_path == "res://playtest/b01_evade_slice.tscn", "生产 B01 registry 指向了 Main 或其他场景")
 
 	var relative_result := PlaytestTicketValidator.new().validate_ticket("relative/playtest-ticket.json")
 	expect_code(relative_result, "PT-TICKET-PATH", "相对 ticket")
@@ -167,6 +170,7 @@ func run_test() -> void:
 	var valid_result := validate(valid)
 	expect(bool(valid_result.get("ok", false)), "受控 fixture 应通过：%s" % JSON.stringify(valid_result))
 	if valid_result.get("ok", false):
+		expect(valid_result.scene is PackedScene and valid_result.scene.resource_path == "res://playtest/b01_evade_slice.tscn", "ready B01 validator 没有返回编译期 typed scene")
 		expect(valid_result.context.ticket_sha256 == fixture_helper.sha256(fixture_helper.json_bytes(valid.ticket)), "成功 context 未绑定 ticket 原始字节 SHA")
 		expect(valid_result.context.slice.code == "B01" and int(valid_result.context.slice.maximum_minutes) == 10 and valid_result.context.slice.status == "ready", "成功 context 未携带 catalog 公共 slice")
 
