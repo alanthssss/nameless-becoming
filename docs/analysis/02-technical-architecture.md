@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前可玩实现基线 / Current playable baseline：`f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
+当前可玩实现基线 / Current playable baseline：`4b57d856`（PR #69）；玩法与资产来自 PR #63，盲听工具来自 PR #64，HUD 与输入来自 PR #65；PR #67、#68 只增加证据工具与文档。
 
 ---
 
@@ -107,7 +107,7 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 - Web WASM 通过传输分片部署，浏览器加载时重组；
 - macOS universal 与 Windows x86_64 由手动桌面流水线在独立 runner 构建；
 - 流水线校验 Godot 4.6.2 编辑器／模板，运行 9 组回归，导出后附带 SHA-256；
-- 固定候选 `f57ea02c` 的 artifact 与哈希见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
+- 固定候选 `4b57d856` 的 artifact 与哈希见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
 - macOS 使用 ad-hoc 签名只适合内部候选，公开发行仍需 Developer ID 签名和公证；
 - Windows artifact 的格式与哈希已验证，但真实 Windows 设备流程尚未完成。
 
@@ -119,7 +119,7 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 v0.9.5-rc.2 · <8 位提交号>[+dirty]
 ```
 
-固定验收候选应显示 `v0.9.5-rc.2 · f57ea02c`，不带 `+dirty`。此前 `dd4d4f08` 候选及 PR #63 合并提交 `4537151` 是构建历史，不再表示当前固定候选。
+固定验收候选应显示 `v0.9.5-rc.2 · 4b57d856`，不带 `+dirty`。此前 `f57ea02c`、`dd4d4f08` 候选及 PR #63 合并提交 `4537151` 都是构建历史，不再表示当前固定候选；旧候选的人工证据也不能迁移为当前候选通过。
 
 ## 8. 当前技术边界 / Current Technical Boundaries
 
