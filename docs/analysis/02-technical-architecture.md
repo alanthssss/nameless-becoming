@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前仓库基线 / Current repository baseline：`origin/main` `b03811c4`（PR #64）；玩法与资产基线为 `4537151`（PR #63）。
+当前可玩实现基线 / Current playable baseline：`f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
 
 ---
 
@@ -21,7 +21,7 @@ Godot 4.6.2 游戏核心
 ├─ boss_encounter_director.gd：四位 Boss 独立暴露状态机
 ├─ music_director.gd：4 探索 + 4 Boss 音乐路由
 ├─ relay_hive_mechanic.gd：立夏中继巢切片
-└─ production_hud.gd：当前状态、完成条件与动作卡
+└─ production_hud.gd：当前状态、完成条件、动作卡、等比安全框与饮蜜指针入口
         │
         ├─ godot/data/*.json：节气、Boss、花、成长与平衡数据
         └─ godot/assets/：8 轨音乐、季节花、背景与 UI 资源
@@ -49,7 +49,7 @@ Web · macOS universal · Windows x86_64
 | `godot/scripts/boss_encounter_director.gd` | 蚊／油葫芦／画眉／熊的暴露条件、3 阶段参数与窗口收束 |
 | `godot/scripts/music_director.gd` | 探索、归巢柔化、Boss 变奏与调律进度映射 |
 | `godot/scripts/sound_feedback.gd` | 高频动作提示音；旧单一程序化背景循环已移除 |
-| `godot/scripts/ui/production_hud.gd` | 1280×720 产品壳、常驻完成条件、情境动作与教学文案布局 |
+| `godot/scripts/ui/production_hud.gd` | 1280×720 参考画布、等比安全框、常驻完成条件、情境动作、教学文案与按条件显示的饮蜜指针入口 |
 | `godot/scripts/save_manager.gd` | 本地 `ConfigFile` 保存声音开关、全屏状态、最远节点、开始／完成次数和上次运行秒数；不保存教程或局中状态，也没有连续音量值 |
 | `app/page.tsx` | Godot Web 导出的 React 承载入口 |
 | `scripts/prepare_audio_blind_review.mjs` | 从 8 个固定 WAV 生成 A–H 匿名听众包和隔离的开发者答案 |
@@ -83,7 +83,7 @@ intro
 
 ## 5. 自动测试 / Automated Tests
 
-`npm run test:godot` 生成构建来源、准备导入缓存，然后顺序执行 8 组测试；每组除了进程退出码，还必须在独立日志中输出 `TEST PASSED`。
+`npm run test:godot` 生成构建来源、准备导入缓存，然后顺序执行 9 组测试；每组除了进程退出码，还必须在独立日志中输出 `TEST PASSED`。
 
 | 测试 / Test | 当前覆盖 / Current coverage |
 | --- | --- |
@@ -95,18 +95,19 @@ intro
 | `season_mechanics_test.gd` | 授粉、实体袭扰、留种和暖点的成功／失败／资源分支 |
 | `relay_hive_test.gd` | 中继巢激活、65% 恢复上限与非交付边界 |
 | `mentor_tutorial_test.gd` | 示范／模仿／实践，真实急转 `1/2 → 2/2` 与恢复重演 |
+| `hud_responsive_test.gd` | 1920×1080、1440×900、1024×768 等比安全框，以及饮蜜按钮的鼠标／显式触摸路由、条件可见性和取消边界 |
 
-`art_snapshot.gd` 用于生成开发者视觉快照，不属于上述 8 组发布回归，也不能替代真人动态复核。
+`art_snapshot.gd` 用于生成开发者视觉快照，不属于上述 9 组发布回归，也不能替代真人动态复核。
 
-PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈希、固定匿名映射、答案隔离、单轨播放和安全输出。它进入 `npm test`，但不计入上述 8 组 Godot 回归，也不能代替 Alan 的主观盲听。
+PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈希、固定匿名映射、答案隔离、单轨播放和安全输出。它进入 `npm test`，但不计入上述 9 组 Godot 回归，也不能代替 Alan 的主观盲听。
 
 ## 6. Web 与三端构建 / Web and Three-Target Builds
 
 - Web 不是第二套玩法代码，而是同一 Godot Web 导出的承载外壳；
 - Web WASM 通过传输分片部署，浏览器加载时重组；
 - macOS universal 与 Windows x86_64 由手动桌面流水线在独立 runner 构建；
-- 流水线校验 Godot 4.6.2 编辑器／模板，运行 8 组回归，导出后附带 SHA-256；
-- 固定候选 `dd4d4f08` 的 artifact 与哈希见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
+- 流水线校验 Godot 4.6.2 编辑器／模板，运行 9 组回归，导出后附带 SHA-256；
+- 固定候选 `f57ea02c` 的 artifact 与哈希见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
 - macOS 使用 ad-hoc 签名只适合内部候选，公开发行仍需 Developer ID 签名和公证；
 - Windows artifact 的格式与哈希已验证，但真实 Windows 设备流程尚未完成。
 
@@ -118,12 +119,12 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 v0.9.5-rc.2 · <8 位提交号>[+dirty]
 ```
 
-固定验收候选应显示 `v0.9.5-rc.2 · dd4d4f08`，不带 `+dirty`。PR #63 的合并提交为 `4537151`；两者分别表示固定可玩候选和合并后的仓库事实，不应混为同一个哈希。
+固定验收候选应显示 `v0.9.5-rc.2 · f57ea02c`，不带 `+dirty`。此前 `dd4d4f08` 候选及 PR #63 合并提交 `4537151` 是构建历史，不再表示当前固定候选。
 
 ## 8. 当前技术边界 / Current Technical Boundaries
 
 - `main.gd` 仍承担大量集成，多个核心分支不得并行覆盖同一区域；
-- HUD 当前以 1280×720 为交付基线，响应式分辨率仍在后续任务；
-- 饮蜜只有 E 键，缺少指针／触摸等价入口；
+- HUD 以 1280×720 为参考画布，已对 1920×1080、1440×900 与 1024×768 使用等比安全框；这不是任意宽高比的世界重排或手机正式适配；
+- 饮蜜已有按条件显示的鼠标／显式触摸入口；自动输入事件通过不等于真实原生触屏设备已经验收；
 - 自动化和 artifact 验证不能证明 Windows 真机、教学理解、节奏、审美或音乐品质；
 - Alan 已批准方向门禁，不是完整人工验收；外部玩家证据仍为 0。

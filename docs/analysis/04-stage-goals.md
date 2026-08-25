@@ -3,8 +3,8 @@
 > 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
 > The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
 
-当前仓库基线 / Current repository baseline：`origin/main` `b03811c4`（PR #64）；玩法与资产基线为 PR #63 合并提交 `4537151`。
-固定验收候选 / Fixed acceptance candidate：`dd4d4f08`。
+当前可玩实现基线 / Current playable baseline：`f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
+固定验收候选 / Fixed acceptance candidate：`f57ea02c`。
 
 ---
 
@@ -22,15 +22,16 @@ This section records history only; the old four stages, first-boss prototype, ol
 | 0.9.4–rc.1 | 数据、CI、三端导出、字体与桌面候选 | 当前构建链基础 |
 | 0.9.5-rc.2 / PR #63 | 24 节点可感知整改、老师傅教学、四组季节行为、四位 Boss、8 轨音乐、产品 HUD、构建来源 | 当前候选实现基线 |
 | PR #64 | 8 轨 A–H 匿名盲听包、独立答案和自动校验 | 解除主观盲听的工具依赖，不代表 Alan 已完成听感验收 |
+| PR #65 | 1280×720 参考画布的等比安全框、按条件显示的饮蜜指针／触摸入口与第九组 Godot 回归 | 当前 HUD 与输入实现基线；不代表真实原生触屏或任意宽高比重排已验收 |
 
 ## 2. 当前阶段结论 / Current Stage Conclusion
 
 | 证据层 / Evidence layer | 状态 / Status | 结论 / Conclusion |
 | --- | --- | --- |
-| 实现 / Implementation | 已完成当前批次 | PR #63 已以 `4537151` 进入主线；PR #64 盲听工具已以 `b03811c4` 进入主线 |
-| 开发者自测 / Developer verification | 通过 | 8 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
-| Alan 方向门禁 / Direction gate | 通过 | 允许合并并创建后续独立工作线，不代表逐项体验或发行通过 |
-| Alan 完整人工流程 / Full manual pass | 未完成 | 首节点、3 分钟迁移、四季、Boss、音乐与节奏仍需记录 |
+| 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成固定可玩实现 `f57ea02c`；PR #67 不改游戏二进制 |
+| 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
+| Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
+| Alan 完整人工流程 / Full manual pass | 未完成 | 首节点、四季、Boss、音乐与节奏仍需记录；当前路线没有固定的延迟急转复测机会 |
 | Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
 | 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
@@ -49,7 +50,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 1. 不经口头提示完成首节点；
 2. 急转真实完成 `1/2 → 2/2`；
-3. 约 3 分钟后再次完成寻迹、惊退和急转；
+3. 用自己的话说明寻迹、惊退与急转的事实、操作和成功证据；如需验证约 3 分钟后的保持，先提供固定复测切片；
 4. 不看说明分辨花药、柱头、蜂身散粉和结籽，并复述授粉因果；
 5. 体验夏季袭扰、秋季留种、冬季暖点并描述实际改过的路线或选择；
 6. 分别复述四位 Boss 的暴露规则；
@@ -60,16 +61,16 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 - Windows x86_64 真机完成启动、DPI／全屏、中文字体、声音、设置持久化与退出；
 - macOS 固定候选完成一整轮和设置重启；
-- 验证标题／暂停层来源为 `v0.9.5-rc.2 · dd4d4f08`，不含 `+dirty`；
-- 当前 HUD 只承诺 1280×720；1920×1080、1440×900 和窄屏安全区由响应式任务验证；
-- 补齐饮蜜的鼠标／触摸入口前，不宣称键盘操作全部有指针等价路径。
+- 验证标题／暂停层来源为 `v0.9.5-rc.2 · f57ea02c`，不含 `+dirty`；
+- 1280×720 是 HUD 参考画布；1920×1080、1440×900 与 1024×768 的等比安全框已自动验证，但任意宽高比世界重排和手机正式适配未承诺；
+- 饮蜜已有按条件显示的鼠标／显式触摸入口；仍须在真实原生触屏设备上验证手感、取消和系统缩放。
 
 ### 3.4 外部玩家 / Independent Playtests
 
 当前样本为 0。首轮记录：
 
 - 首次移动、采蜜、交蜜时间与所有口头求助；
-- 急转两次和约 3 分钟迁移；
+- 急转两次及玩家对因果的自由复述；当前路线未提供固定延迟复测机会，缺失记录不得算迁移失败；
 - 授粉因果与四组季节行为的玩家原话；
 - 各节点／Boss 用时、失败原因、退出点、主动撤离和重开；
 - 8 轨配对、情绪、不舒服音色与循环疲劳；
@@ -79,7 +80,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 ### 自动与构建 / Automated and Build
 
-- Godot 4.6.2 的 8 组测试均显式报告 `TEST PASSED`；
+- Godot 4.6.2 的 9 组测试均显式报告 `TEST PASSED`；
 - Web build/test/lint 通过；
 - 24 节点数据、资源预算、完成条件、四组机制、四位 Boss、8 轨路由和构建来源受门禁覆盖；
 - macOS universal／Windows x86_64 artifact 的 sidecar SHA-256 复验通过。
@@ -102,7 +103,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 | 触发证据 / Trigger | 才允许开始的任务 / Conditional task | 成功判据 / Success criterion |
 | --- | --- | --- |
-| 约 3 分钟后不能再次急转 | 普通敌害复用锁线语法 | 无文字再次闪过 |
+| 需要验证约 3 分钟后的急转保持 | 先提供固定同语法复测切片；再由结果决定是否让普通敌害复用锁线语法 | 未遇到机会不判失败；复测时无文字再次闪过 |
 | 四组仍被概括为“都是采蜜” | 四季路线深化 | 每组至少观察到一次不同路线、顺序、撤离或资源选择 |
 | 节点仍短或只是机械重复 | 节奏与 Boss 调律 | 依据用时、失败原因和重复劳动改内容，不只抬目标 |
 | 视觉仍不协调 | 单代表场景画风切片 | 先通过一张实机场景，再批量生产 |

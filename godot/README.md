@@ -12,7 +12,7 @@ macOS 命令行验证：
 npm run test:godot
 ```
 
-脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢和老师傅教学共 8 组回归。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。
+脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢、老师傅教学和 HUD 响应式／饮蜜指针输入共 9 组回归。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。
 
 ## 当前内容
 

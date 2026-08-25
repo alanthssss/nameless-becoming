@@ -190,7 +190,7 @@ cue 清单：harvest / full / repel / evade / attack_lock / evade_clear / hurt /
 
 1. 先定位参数所有者：可配节点／玩家／Boss／花／成长数值改 `godot/data/*.json`；状态机、移动手感、时间窗和表现常量改对应 `.gd`，并同步测试。禁止改 fallback 值绕过正式数据源。
 2. 节点资源参数改动前跑 `python3 scripts/difficulty_table.py table`，改后跑 `validate <seasons.json>`；脚本常量改动则补充或更新直接覆盖该行为的测试。
-3. 跑 `npm run test:godot` 执行 8 组 Godot 回归；不再只抽跑 smoke / flow 就声明整体通过。
+3. 跑 `npm run test:godot` 执行 9 组 Godot 回归；不再只抽跑 smoke / flow 就声明整体通过。
 4. 新增中文文案时跑字体子集覆盖门禁；不使用一份可过期的手工“缺字列表”代替实际扫描。
 5. 重启游戏生效（无热重载），记录改动前后的节点／Boss 用时、失败原因与无决策重复时长。
 

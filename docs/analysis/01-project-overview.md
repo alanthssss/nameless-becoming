@@ -3,8 +3,8 @@
 > 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
 > A lightweight action-extraction prototype centered on bee ecology, the 24-solar-term cycle, and the risk of making it home.
 
-当前仓库基线 / Current repository baseline：`0.9.5-rc.2`；`origin/main` `b03811c4`（PR #64），玩法与资产基线为 `4537151`（PR #63）。
-固定候选 / Fixed candidate：`dd4d4f08`。
+当前可玩实现基线 / Current playable baseline：`0.9.5-rc.2` / `f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
+固定候选 / Fixed candidate：`f57ea02c`。
 
 ---
 
@@ -63,17 +63,17 @@ Each requires three tunings, with faster phases and shorter windows; they no lon
 
 | 领域 / Area | 当前事实 / Current fact | 尚未证明 / Not yet proven |
 | --- | --- | --- |
-| 工程 / Engineering | Web、macOS universal、Windows x86_64 同源导出；8 组 Godot 回归和 Web 门禁通过 | Windows 真机完整流程、所有设备表现 |
-| 教学 / Tutorial | 老师傅“示范 → 模仿 → 无提示实践”已接入，关键动作由真实结果推进 | 陌生玩家无口头帮助和 3 分钟迁移 |
+| 工程 / Engineering | Web、macOS universal、Windows x86_64 同源导出；9 组 Godot 回归和 Web 门禁通过；标准输出尺寸的等比 HUD 安全框与饮蜜指针入口已接入 | Windows 真机完整流程、真实原生触屏与未覆盖设备表现 |
+| 教学 / Tutorial | 老师傅“示范 → 模仿 → 无提示实践”已接入，关键动作由真实结果推进 | 陌生玩家无口头帮助；当前正常路线没有固定的延迟急转复测机会 |
 | 音乐 / Music | 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；A–H 匿名盲听工具已合并并自动校验 | Alan 尚未完成主观盲听；配对、情绪、耐循环和实机混音待验证 |
 | 视觉 / Visuals | 低噪地表、独立蜂巢、8 种季节花与机制实体已接入 | 运动中的画风统一和目标可读性 |
-| 发行 / Release | 固定候选 artifact 已构建并复验 SHA-256 | Windows 真机、完整人工流程和外部试玩 |
+| 发行 / Release | `f57ea02c` 固定候选 artifact 已构建并复验 SHA-256 | Windows 真机、完整人工流程和外部试玩 |
 
 ## 5. 证据边界 / Evidence Boundary
 
-- **实现事实 / Implemented facts**：PR #63 已以 `4537151` 进入主线；PR #64 盲听工具已以 `b03811c4` 进入主线。
+- **实现事实 / Implemented facts**：PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成固定可玩实现 `f57ea02c`；PR #67 只增加试玩证据工具与文档。
 - **开发者自测 / Developer verification**：自动流程、构建、哈希、静态快照。
-- **Alan 方向门禁 / Alan direction gate**：允许合并并展开后续任务，不等于逐项验收。
+- **Alan 方向门禁 / Alan direction gate**：PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均允许合并并继续，不等于逐项、原生触屏或发行验收。
 - **外部玩家 / Independent players**：当前证据数为 **0**。
 
 详细状态以 [`../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md) 为准。
@@ -81,8 +81,8 @@ For detailed status, use [`PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](../PLAYER
 
 ## 6. 当前验证问题 / Current Validation Questions
 
-1. 陌生玩家能否不经口头提示完成第一趟，并在约 3 分钟后再次正确寻迹、惊退与急转？
-   Can a new player complete the first trip unaided and repeat sense, repel, and evade roughly three minutes later?
+1. 陌生玩家能否不经口头提示完成第一趟，并用自己的话说明寻迹、惊退与急转的事实、操作和成功证据？当前正常路线没有固定的延迟急转复测机会；如需验证约 3 分钟后的保持，应先提供固定复测切片。
+   Can a new player complete the first trip unaided and explain the facts, operation, and success evidence for sense, repel, and evade? The normal route has no fixed delayed evade retest; a dedicated slice is required before measuring retention after roughly three minutes.
 2. 玩家能否不看文字分辨开放花药、同型柱头、蜂身散粉与结籽？
    Can players distinguish open anthers, compatible stigmas, pollen on the bee, and seed setting without text?
 3. 四组机制是否真实改变路线、顺序、撤离或资源选择，而不是仍被概括为“都是采蜜”？
