@@ -572,11 +572,17 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
     assert.match(participantText, /固定切片 B01/u);
     assert.match(participantText, /10 分钟/u);
     assert.match(participantText, /"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket\.json 的绝对路径>"/u);
-    assert.doesNotMatch(participantText, /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜/iu);
-    assert.doesNotMatch(participantText, /pollination|evade|nectar|deposit|handler|profile|observer/iu);
-    assert.doesNotMatch(participantText, /contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment/iu);
-    assert.doesNotMatch(participantText, /answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria|正确答案|答案说明/iu);
-    assert.doesNotMatch(participantText, /main[._/-]*tscn|scripts[._/-]*main[._/-]*gd|mentor[._/-]*tutorial|save[._/-]*manager|stage[._/-]*index|spawn[._/-]*stage|tutorial[._/-]*(?:step|complete)/iu);
+    assert.doesNotMatch(participantText, /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜|正确答案|答案说明/iu);
+    const compactParticipantText = participantText.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+    for (const forbiddenTerm of [
+      "pollination", "evade", "nectar", "deposit", "handler", "profile", "observer",
+      "contact", "event1", "event2", "event3", "event4", "observation", "evidencechannel",
+      "windowsenvironment", "inputmethods", "priorexternalexplanation", "timeline", "contacts",
+      "objectiveobservations", "learningtransfer", "helprequestquote", "internalassignment",
+      "answerkey", "answerexplanation", "expectedanswer", "expectedresult", "successcondition",
+      "successcriteria", "maintscn", "scriptsmaingd", "mentortutorial", "savemanager",
+      "stageindex", "spawnstage", "tutorialstep", "tutorialcomplete",
+    ]) assert.equal(compactParticipantText.includes(forbiddenTerm), false, forbiddenTerm);
 
     const leakingFixture = await writeArtifactFixture(join(temporaryRoot, "leaking-distribution"), {
       commit: fixture.commit,
@@ -674,6 +680,18 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
       ["refs/heads/pollinationV2", "NB-20260825-LEAKC003"],
       ["refs/heads/handlerRegistry", "NB-20260825-LEAKC004"],
       ["refs/heads/ObserverProfile", "NB-20260825-LEAKC005"],
+      ["refs/heads/AnswerKey", "NB-20260825-LEAKC006"],
+      ["refs/heads/SuccessCriteria2", "NB-20260825-LEAKC007"],
+      ["refs/heads/ExpectedResultV2", "NB-20260825-LEAKC008"],
+      ["refs/heads/InternalAssignment", "NB-20260825-LEAKC009"],
+      ["refs/heads/LearningTransfer", "NB-20260825-LEAKC010"],
+      ["refs/heads/EvidenceChannel", "NB-20260825-LEAKC011"],
+      ["refs/heads/ObjectiveObservations", "NB-20260825-LEAKC012"],
+      ["refs/heads/HelpRequestQuote", "NB-20260825-LEAKC013"],
+      ["refs/heads/contactMoment", "NB-20260825-LEAKC014"],
+      ["refs/heads/event1", "NB-20260825-LEAKC015"],
+      ["refs/heads/observationDetail", "NB-20260825-LEAKC016"],
+      ["refs/heads/priorExternalExplanation", "NB-20260825-LEAKC017"],
     ];
     for (const [index, [sourceRef, sessionId]] of embeddedSensitiveRoutes.entries()) {
       const embeddedSensitiveFixture = await writeArtifactFixture(join(temporaryRoot, `embedded-sensitive-${index}`), {
