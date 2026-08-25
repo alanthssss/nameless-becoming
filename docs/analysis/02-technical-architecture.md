@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`29e719f`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停与 PR #82 导出门禁。
+当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停、PR #82 导出门禁与 PR #87 B01 固定急转切片／共享急转运行时／证据门禁。
 
 ---
 
@@ -11,8 +11,11 @@
 
 ```text
 Godot 4.6.2 游戏核心
+├─ bootstrap.gd：普通启动进 Main；固定 session 先过 strict ticket／artifact identity gate
 ├─ main.gd：24 节点推进、输入、敌害、UI 与系统集成
+├─ evade_rules.gd + evade_input_controller.gd：主流程与 B01 共享急转因果／键鼠触输入规则
 ├─ mentor_tutorial.gd：示范 → 模仿 → 无提示实践
+├─ playtest/：B01 typed scene、encounter、编译期 registry 与 ticket validator
 ├─ season_mechanics.gd
 │  ├─ pollination_mechanic.gd：开放花器官与结籽
 │  ├─ conscription_mechanic.gd：实体袭扰与花蜜追回
@@ -37,9 +40,13 @@ Web · macOS universal · Windows x86_64
 
 | 文件 / File | 当前职责 / Current responsibility |
 | --- | --- |
+| `godot/scripts/bootstrap.gd` | 普通启动不带 ticket 时进入原 `main.tscn`；固定 session 只在产品、平台、clean commit、artifact／manifest／catalog 哈希与 registry 全部一致时实例化 typed scene |
 | `godot/scripts/main.gd` | 24 节点状态流、归巢结算、普通敌害、四位 Boss 的场景集成、输入与主 UI |
 | `godot/scripts/player/bee_player.gd` | 飞行、自动振翅、体力、急转位移与环境速度倍率 |
+| `godot/scripts/mechanics/evade_rules.gd` / `godot/scripts/player/evade_input_controller.gd` | 集中定义锁线、侧移、通道判定以及键盘／鼠标／触摸急转输入；主流程与 B01 不再维护两套规则 |
 | `godot/scripts/tutorial/mentor_tutorial.gd` | 首节点及季节首次机制的示范／模仿／实践状态机 |
+| `godot/scripts/playtest/b01_evade_slice.gd` / `b01_evade_encounter.gd` | 独立 B01 固定切片：2.8 秒示范、有界引导／实践、条件性 180 秒 active 花间路线、一次无字复测与三个互斥结果；不读写存档 |
+| `godot/scripts/playtest/playtest_ticket_validator.gd` / `playtest_slice_registry.gd` | 校验 strict ticket／schema v1 artifact manifest／包内 provenance／精确 commit／catalog，并只从编译注册表解析 `ready` typed scene |
 | `godot/scripts/mechanics/season_mechanics.gd` | 按节点 `mechanics` 列表启停子系统并转发采蜜、归巢、动作与完成钩子 |
 | `godot/scripts/mechanics/pollination_mechanic.gd` | 开放花药取粉、同可见花型兼容、蜂身散粉、柱头结籽；不修改花蜜 |
 | `godot/scripts/mechanics/conscription_mechanic.gd` | 首次真实卸蜜后生成实体袭扰者；移动、偷蜜、持赃、惊退与返蜜 |
@@ -63,6 +70,7 @@ Web · macOS universal · Windows x86_64
 | `godot/data/balance.json` | 玩家、普通敌害、Boss 公共参数和四组机制参数 |
 | `godot/data/flowers.json` | 花蜜基础量、权重与花型行为数据 |
 | `godot/data/upgrades.json` | 长翼、采蜜、守卫三类成长 |
+| `godot/data/playtest_slices.json` | schema v1 固定切片 catalog；当前只有 `B01 / 10 / ready`，scene 与 handler 仍只由编译期 registry 绑定 |
 
 数据优先支持可调参数；部分状态机与表现常量仍位于脚本中，因此不能再写成“所有数值零硬编码”。代码与文档冲突时，以当前代码／数据为实现事实，并在同一任务修正文档。
 
@@ -83,11 +91,16 @@ intro
 
 ## 5. 自动测试 / Automated Tests
 
-`npm run test:godot` 生成构建来源、准备导入缓存，然后顺序执行 9 组测试；每组除了进程退出码，还必须在独立日志中输出 `TEST PASSED`。
+`npm run test:godot` 生成构建来源、准备导入缓存，然后顺序执行 14 组测试；每组除了进程退出码，还必须在独立日志中输出 `TEST PASSED`。
 
 | 测试 / Test | 当前覆盖 / Current coverage |
 | --- | --- |
 | `smoke_test.gd` | 数据结构、场景、字体、输入、核心公式与资源引用 |
+| `playtest_ticket_validator_test.gd` | ticket／artifact manifest／provenance／catalog 的精确身份交叉核对与 fail-closed 边界 |
+| `playtest_bootstrap_test.gd` | 无 ticket 保持原 Main，有效 B01 才实例化 typed scene，无效身份不进游戏 |
+| `playtest_save_isolation_test.gd` | 通用固定 session 命名空间与普通存档隔离；B01 本身不走存档 |
+| `evade_runtime_test.gd` | 主流程／B01 共享锁线、侧移、通道和键鼠触输入规则 |
+| `b01_evade_slice_test.gd` | 2.8 秒示范、有界阶段、恰好 180 秒 active 边界、单次复测、反馈和三个互斥结果 |
 | `flow_test.gd` | 24 节点状态流、完成条件、资源预算、急转因果、构建来源与产品壳 |
 | `fix_boss_term_test.gd` | 正色节点与循环终点 Boss 上下文 |
 | `music_test.gd` | 8 轨资源格式、确定性、循环与探索／Boss／归巢路由 |
@@ -97,17 +110,18 @@ intro
 | `mentor_tutorial_test.gd` | 示范／模仿／实践，真实急转 `1/2 → 2/2` 与恢复重演 |
 | `hud_responsive_test.gd` | 等比安全框、饮蜜按钮指针路由，以及标题、成长、全满继续和分配弹层的真实键盘焦点／单次确认边界 |
 
-`art_snapshot.gd` 用于生成开发者视觉快照，不属于上述 9 组发布回归，也不能替代真人动态复核。
+`art_snapshot.gd` 用于生成开发者视觉快照，不属于上述 14 组发布回归，也不能替代真人动态复核。
 
-PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈希、固定匿名映射、答案隔离、单轨播放和安全输出。它进入 `npm test`，但不计入上述 9 组 Godot 回归，也不能代替 Alan 的主观盲听。
+PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈希、固定匿名映射、答案隔离、单轨播放和安全输出。PR #87 又增加 B 包 actual artifact／manifest／catalog 推导、strict CLI 和 participant 递归泄漏扫描。它们进入 `npm test`，但不计入上述 14 组 Godot 回归，也不能代替 Alan 的主观盲听或 B01 人工结果。
 
 ## 6. Web 与三端构建 / Web and Three-Target Builds
 
 - Web 不是第二套玩法代码，而是同一 Godot Web 导出的承载外壳；
 - Web WASM 通过传输分片部署，浏览器加载时重组；
 - macOS universal 与 Windows x86_64 由手动桌面流水线在独立 runner 构建；
-- 流水线校验 Godot 4.6.2 编辑器／模板，运行 9 组回归，导出后附带 SHA-256；
-- 固定候选 `29e719f` 的 artifact、哈希与最终包内部资源检查见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
+- 流水线校验 Godot 4.6.2 编辑器／模板，运行 14 组回归，导出后附带 SHA-256；
+- 固定候选 `57aefc4` 的 macOS／Windows artifact 由 [run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 构建，两端 sidecar 与最终 pack verifier 通过；完整记录见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
+- B01 self-test 包已从该精确 artifact／manifest／catalog 生成并按精确 ticket 启动，但尚无 Alan result JSON；
 - macOS 使用 ad-hoc 签名只适合内部候选，公开发行仍需 Developer ID 签名和公证；
 - Windows artifact 的格式与哈希已验证，但真实 Windows 设备流程尚未完成。
 
@@ -119,7 +133,7 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 v0.9.5-rc.2 · <8 位提交号>[+dirty]
 ```
 
-固定验收候选应显示 `v0.9.5-rc.2 · 29e719ff`，不带 `+dirty`。此前 `21a44bd`、`de78f2c`、`4b57d856`、`f57ea02c`、`dd4d4f08` 候选及 PR #63 合并提交 `4537151` 都是构建历史，不再表示当前固定候选；旧候选的人工证据也不能迁移为当前候选通过。
+固定验收候选应显示 `v0.9.5-rc.2 · 57aefc49`，不带 `+dirty`。此前 `29e719f`、`21a44bd`、`de78f2c`、`4b57d856`、`f57ea02c`、`dd4d4f08` 候选及 PR #63 合并提交 `4537151` 都是构建历史，不再表示当前固定候选；旧候选的人工证据也不能迁移为当前候选通过。
 
 ## 8. 当前技术边界 / Current Technical Boundaries
 

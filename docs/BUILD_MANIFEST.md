@@ -1,10 +1,10 @@
 # 0.9.5 候选构建历史与校验清单
 
-本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选为 `0.9.5-rc.2` / `29e719fff1621df35f88972f3bdeed98e37d8af9`，见“2026-08-25 内部资源导出门禁替代候选”。此前的 `21a44bd64e100231548fa2663a7b4d6f472a88dd` 因误带 Godot 测试资源已降为历史可追溯构建，不得继续作为交付或人工验收入口；`de78f2c` 及更早表格同样只作历史记录。
+本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选为 `0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，见“2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包”。此前的 `29e719fff1621df35f88972f3bdeed98e37d8af9` 早于 B01 运行时，已降为历史可追溯构建，不得继续作为当前交付或人工验收入口；`21a44bd`、`de78f2c` 及更早表格同样只作历史记录。
 
-PR #85 已实现固定切片身份基础；本次 B01 源码任务又将独立 typed scene、共享急转运行时、编译期 registry 与生产 catalog `ready` 接齐。但尚未从包含该运行时的最终 clean commit 重建桌面 artifact，因此不会替换上述 `29e719f` 候选，也没有可登记的新 payload 大小或 SHA-256。自动测试通过只是开发者自测，不构成 B01 人工验收、玩家已学会或外部玩家证据。
+PR #85 实现固定切片身份基础；PR #87 将 B01 独立 typed scene、共享急转运行时、编译期 registry 与生产 catalog `ready` 合入完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a`。当前双端 artifact 和 Alan B01 自测包已生成；自动测试、包检查和进程启动事实仍不构成 Alan 完成 B01、玩家已学会或外部玩家证据。
 
-## 2026-08-25 · 固定 B 切片身份与 B01 运行时（尚无新 artifact）
+## 2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包
 
 实现事实：Godot 导出入口改为 `bootstrap.tscn`，无 ticket 时直接进入既有 `main.tscn`；固定 session 只接受一个绝对路径 ticket，并严格交叉核对 schema v1 ticket、同目录 `artifact-manifest.json`、包内 `build_provenance.json`、产品／平台／完整 clean commit、artifact 文件名／大小／SHA-256、manifest 原始字节 SHA-256、`playtest_slices.json` 原始字节 SHA-256、catalog 状态和编译期 registry。ticket 或 catalog 不能提供 scene、handler、stage、seed、save 或 patch 路径。任一失败只显示中性错误码，不实例化 Main，也不触碰存档。
 
@@ -12,9 +12,18 @@ PR #85 已实现固定切片身份基础；本次 B01 源码任务又将独立 t
 
 Godot 共 14 组回归：其中 validator、bootstrap 和 namespace 隔离覆盖身份基础，共享急转运行时与 B01 两组覆盖主流程／切片规则一致、有界阶段、180 秒 active 边界、单次复测和互斥结果；Node 测试覆盖 B 的实际 artifact／manifest／catalog 身份推导、严格 CLI 和 participant 递归泄漏扫描。这些都属于开发者自动验证，不是最终分发包或真人学习证据。
 
-构建门禁同步要求三个 preset 的导出包包含 `bootstrap.tscn`、原 `main.tscn`、生产 `ready` 的 `data/playtest_slices.json` 与编译注册的 B01 typed scene，并继续排除 `res://tests/` 和 `res://tools/`。仍必须从包含该运行时的最终 clean commit 重新生成 provenance、macOS／Windows artifact、sidecar 和 schema v1 artifact manifest，再运行最终包检查；旧 `29e719f` artifact 早于固定切片基础与 B01 运行时，不含此 scene，不能配新 ticket。
+构建门禁要求三个 preset 的导出包包含 `bootstrap.tscn`、原 `main.tscn`、生产 `ready` 的 `data/playtest_slices.json` 与编译注册的 B01 typed scene，并继续排除 `res://tests/` 和 `res://tools/`。GitHub [`Desktop client builds` run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 已从上述精确 clean commit 生成 provenance、macOS／Windows artifact、sidecar 和 schema v1 artifact manifest。两份 manifest 均绑定完整提交 `57aefc4933db88968777b11ea1d1679c6374842a`、`source_ref: refs/heads/main`、run `32867365895` 和 `dirty: false`：
 
-当前没有包含 B01 运行时的新 clean artifact／B 包、Alan B01 完整人工流程、Windows B01 真机或外部玩家 B01 证据。因此本节没有新的文件大小、SHA-256 或可发放会话号；等新 clean artifact 实际生成并复验后才能追加。
+| 平台 | GitHub artifact | 本机持久副本 | 到期时间 | payload 文件大小 | payload SHA-256 | 已完成验证 |
+| --- | --- | --- | --- | ---: | --- | --- |
+| macOS universal | `9570704713` / `NamelessBecoming-macOS-v0.9.5-rc.2` | `nameless-becoming-candidates/57aefc4-run-32867365895/NamelessBecoming-macOS-v0.9.5-rc.2/NamelessBecoming-macOS.zip` | `2026-09-24T15:43:34Z` | 70,368,894 bytes | `625a8cb9b379fccf92156f4a1573b062c7bb94a301a2cbe7fc54de669486395e` | universal 架构检查通过；严格签名校验通过；最终包检查通过；内嵌 PCK SHA-256 为 `20f580894489ce078fdae9acb892f19b9825ff7bd3f09ea7befcec5cb952aa57`；标准无 ticket 无界面 smoke 退出码 0 |
+| Windows x86_64 | `9570695538` / `NamelessBecoming-Windows-v0.9.5-rc.2` | `nameless-becoming-candidates/57aefc4-run-32867365895/NamelessBecoming-Windows-v0.9.5-rc.2/NamelessBecoming-Windows.exe` | `2026-09-24T15:43:19Z` | 116,888,848 bytes | `ccf7101a1c7d254ab8af12908ddcdeddec794ca59dc9de28c7e37c795e70eead` | PE32+ GUI x86-64 格式检查通过；最终包检查通过；Windows 真机尚未验证 |
+
+仓库外当前候选根目录为 `nameless-becoming-candidates/57aefc4-run-32867365895/`；该目录不是 Git 资产或公开发行渠道。上述验证证明实际 payload、来源、签名／格式和导出资源闭包符合构建门禁，不是真人玩法结论。
+
+在干净临时目录解包后，当前 macOS 包还以标准无 ticket 入口完成无界面 smoke。启动前后真实 `nameless.cfg` 的 SHA-256 均为 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime 均为 `1787640643`、大小均为 143 bytes，本次标准入口检查没有改写既有存档。
+
+已从该 macOS artifact 和 manifest 生成 Alan B01 包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。使用该精确 ticket 启动的 macOS 进程曾运行，随后已退出；尚未导入 Alan 的 participant／observer 表单或结果 JSON，因此不得记为“完成切片”“理解急转”或任何复测结果。Windows B01 真机与独立外部玩家证据仍待采集。
 
 ## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 
@@ -172,11 +181,11 @@ macOS PCK 与 Windows EXE 均内嵌产品版本 `0.9.5-rc.2`、完整提交 `21a
 
 该发现证明的是导出范围与包体卫生缺陷。仅凭测试字节码被打包，不能得出存在可利用安全漏洞或已造成安全事件的结论；安全定性需要独立威胁分析。但 `21a44bd` 双端 artifact 已不满足预期交付边界，必须停止继续验收，并由修复后的新完整提交重建替代。旧文件和哈希继续保留为历史证据，不得改写为已通过过滤的候选。
 
-修复把 macOS、Windows Desktop、Web 三个 Godot 4.6.2 preset 的排除 glob 统一为 `tests/**,tools/**`。自动门禁不是 grep 配置：质量流水线会对三个 preset 逐一执行真实 `--export-pack` 并由 Godot 挂载检查；桌面构建流水线还会在 `package_macos.sh` 完成签名与重新打包后，从最终 macOS ZIP 解包并直接挂载其中的 PCK，同时检查最终 Windows EXE 的内嵌 PCK。任一包出现 `res://tests/` 或 `res://tools/`、缺少主场景 remap，或检查脚本没有显式成功标记都会失败。下述 `29e719f` 双端 artifact 已在修复合入后的完整提交上重建，并由该新检查器直接确认最终交付包边界。
+修复把 macOS、Windows Desktop、Web 三个 Godot 4.6.2 preset 的排除 glob 统一为 `tests/**,tools/**`。自动门禁不是 grep 配置：质量流水线会对三个 preset 逐一执行真实 `--export-pack` 并由 Godot 挂载检查；桌面构建流水线还会在 `package_macos.sh` 完成签名与重新打包后，从最终 macOS ZIP 解包并直接挂载其中的 PCK，同时检查最终 Windows EXE 的内嵌 PCK。任一包出现 `res://tests/` 或 `res://tools/`、缺少主场景 remap，或检查脚本没有显式成功标记都会失败。下述 `29e719f` 双端 artifact 曾在修复合入后的完整提交上重建，并由该新检查器直接确认最终交付包边界；它现已被包含 B01 运行时的 `57aefc4` 候选替代。
 
-## 2026-08-25 内部资源导出门禁替代候选
+## 2026-08-25 历史内部资源导出门禁候选 `29e719f`
 
-当前固定人工验收 artifact 来自完整 `main` 提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。该提交是 PR #82 的合并提交：在 `21a44bd` 已有玩法、首次采蜜、秋季双轨和 Boss 失败／暂停修复之上，包含 PR #81 的外围弹层键盘焦点／切出暂停修复，以及 PR #82 的三 preset 内部资源排除与最终包检查门禁。`21a44bd` 继续作为包含历史缺陷的可追溯记录，不是当前验收入口。
+该历史固定 artifact 来自完整 `main` 提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。该提交是 PR #82 的合并提交：在 `21a44bd` 已有玩法、首次采蜜、秋季双轨和 Boss 失败／暂停修复之上，包含 PR #81 的外围弹层键盘焦点／切出暂停修复，以及 PR #82 的三 preset 内部资源排除与最终包检查门禁。它早于 PR #85／#87 的固定切片身份与 B01 运行时，已被 `57aefc4` 替代，不再是当前验收入口。`21a44bd` 继续作为包含更早历史缺陷的可追溯记录。
 
 GitHub [`Desktop client builds` run 32851917691](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从上述精确提交生成双端 artifact。两个下载文件均已用随包 sidecar 在本机复验 SHA-256；下表大小与哈希指 artifact 解包后的 macOS ZIP／Windows EXE payload，不是 GitHub Actions 外层下载归档：
 
