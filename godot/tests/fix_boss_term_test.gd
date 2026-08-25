@@ -50,13 +50,34 @@ func run_test() -> void:
 	await process_frame
 	expect(game.phase == "playing" and game.stage_index == stage_before, "playing 相位点穿按钮错误推进关卡")
 
-	# --- 场景 5：focus out 自动暂停 / focus in 不误伤静态界面 ---
-	game.phase = "playing"
-	game._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
-	expect(game.phase == "paused", "切走程序未自动暂停：%s" % game.phase)
-	game.phase = "boss_victory"
-	game._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
-	expect(game.phase == "boss_victory", "boss_victory 下 focus out 被误暂停：%s" % game.phase)
+	# --- 场景 5：真实通知路由只会进入暂停，绝不能在后台反向解暂停 ---
+	game.toggle_pause()
+	expect(game.phase == "paused" and game.paused_from_phase == "playing", "手动暂停没有记录 playing 来源")
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.phase == "paused" and not game.bee.active, "手动 paused 状态切出后被反向解暂停")
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_IN)
+	expect(game.phase == "paused" and root.gui_get_focus_owner() == game.overlay_button, "切回应用后没有保持暂停或恢复暂停页焦点")
+	game.toggle_pause()
+	expect(game.phase == "playing" and game.bee.active, "手动暂停后无法正常恢复 playing")
+
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.phase == "paused" and game.paused_from_phase == "playing" and not game.bee.active, "playing 切出后没有记录来源并进入暂停")
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_IN)
+	expect(game.phase == "paused", "playing 自动暂停后切回应用时错误恢复了运行")
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.phase == "paused" and game.paused_from_phase == "playing", "自动 paused 状态再次切出后被反向解暂停")
+	game.toggle_pause()
+
+	game.spawn_stage(6)
+	await process_frame
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.phase == "paused" and game.paused_from_phase == "boss" and not game.bee.active, "boss 切出后没有记录来源并进入暂停")
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_IN)
+	expect(game.phase == "paused", "boss 自动暂停后切回应用时错误恢复了战斗")
+	game.toggle_pause()
+	game.show_boss_victory()
+	game.notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.phase == "boss_victory", "boss_victory 下 focus out 被误暂停")
 
 	# --- 场景 6：Boss 可重试失败页仍使用调律 HUD，不能读取无 goal 的节点 ---
 	game.spawn_stage(6)

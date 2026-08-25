@@ -205,9 +205,12 @@ var allocation_body_label: Label
 var allocation_left_label: Label
 var allocation_right_label: Label
 var allocation_slider: HSlider
+var allocation_confirm: Button
 var allocation_pending := false
 var allocation_harvest := 0
 var allocation_fraction := 0.5
+var last_overlay_focus: Control
+var overlay_focus_restore_queued := false
 var boss_catalog: Array = []
 var current_boss_data: Dictionary = {}
 var current_boss_index := 0
@@ -260,6 +263,8 @@ func _ready() -> void:
 	add_child(music)
 	music.set_enabled(save_manager.sound_enabled)
 	build_interface()
+	get_viewport().gui_focus_changed.connect(_on_gui_focus_changed)
+	connect_overlay_focus_recovery()
 	season_mechanics = SeasonMechanicsScript.new()
 	mentor_tutorial.configure(self)
 	season_mechanics.configure(self)
@@ -709,13 +714,18 @@ func build_interface() -> void:
 	allocation_slider.value = 50.0
 	allocation_slider.value_changed.connect(func(v: float): allocation_fraction = v / 100.0; refresh_allocation_labels())
 	allocation_panel.add_child(allocation_slider)
-	var allocation_confirm := Button.new()
+	allocation_confirm = Button.new()
+	allocation_confirm.name = "AllocationConfirm"
 	allocation_confirm.text = "确认分配"
 	allocation_confirm.position = Vector2(255, 296)
 	allocation_confirm.size = Vector2(160, 52)
 	allocation_confirm.add_theme_font_size_override("font_size", 17)
 	allocation_confirm.pressed.connect(confirm_allocation)
 	allocation_panel.add_child(allocation_confirm)
+	allocation_slider.focus_next = allocation_slider.get_path_to(allocation_confirm)
+	allocation_slider.focus_previous = allocation_slider.get_path_to(allocation_confirm)
+	allocation_confirm.focus_next = allocation_confirm.get_path_to(allocation_slider)
+	allocation_confirm.focus_previous = allocation_confirm.get_path_to(allocation_slider)
 	make_label(allocation_panel, "一边维持蜂巢，一边哺育幼虫。没有对错，只有不同的活法。", Vector2(90, 368), Vector2(490, 24), 11, Color("aab5a0")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	if zh_font != null:
@@ -765,8 +775,88 @@ func show_intro() -> void:
 	set_upgrade_buttons_visible(false)
 	set_pause_system_controls_visible(false)
 	set_secondary_link("或者退出游戏", true)
-	overlay_button.grab_focus()
+	focus_overlay_primary()
 	refresh_runs_meter()
+
+# Overlay keyboard focus has one source of truth. Each newly shown state chooses
+# a deterministic primary control; transient focus loss restores the most recent
+# valid control inside that same state instead of falling back to a hidden main
+# button or letting Enter leak into a second transition.
+func is_valid_overlay_focus(control: Control) -> bool:
+	if control == null or overlay == null or not overlay.visible:
+		return false
+	if control != overlay and not overlay.is_ancestor_of(control):
+		return false
+	if not control.is_visible_in_tree() or control.focus_mode == Control.FOCUS_NONE:
+		return false
+	if control is BaseButton and (control as BaseButton).disabled:
+		return false
+	return true
+
+func overlay_primary_focus() -> Control:
+	if overlay == null or not overlay.visible:
+		return null
+	if allocation_panel != null and allocation_panel.visible:
+		if is_valid_overlay_focus(allocation_slider):
+			return allocation_slider
+		if is_valid_overlay_focus(allocation_confirm):
+			return allocation_confirm
+	for button in upgrade_buttons:
+		if is_valid_overlay_focus(button):
+			return button
+	if is_valid_overlay_focus(overlay_button):
+		return overlay_button
+	if is_valid_overlay_focus(secondary_link):
+		return secondary_link
+	for button in pause_system_buttons:
+		if is_valid_overlay_focus(button):
+			return button
+	return null
+
+func focus_overlay_primary() -> void:
+	var target := overlay_primary_focus()
+	if target == null:
+		return
+	last_overlay_focus = target
+	target.grab_focus()
+
+func queue_overlay_focus_restore() -> void:
+	if overlay_focus_restore_queued:
+		return
+	overlay_focus_restore_queued = true
+	call_deferred("restore_overlay_focus")
+
+func connect_overlay_focus_recovery() -> void:
+	for node in overlay.find_children("*", "Control", true, false):
+		var control := node as Control
+		if control != null and control.focus_mode != Control.FOCUS_NONE:
+			control.focus_exited.connect(queue_overlay_focus_restore)
+
+func restore_overlay_focus() -> void:
+	overlay_focus_restore_queued = false
+	if overlay == null or not overlay.visible:
+		return
+	var current := get_viewport().gui_get_focus_owner()
+	if is_valid_overlay_focus(current):
+		return
+	var target: Control = null
+	if is_instance_valid(last_overlay_focus) and is_valid_overlay_focus(last_overlay_focus):
+		target = last_overlay_focus
+	else:
+		target = overlay_primary_focus()
+	if target != null:
+		last_overlay_focus = target
+		target.grab_focus()
+
+func _on_gui_focus_changed(control: Control) -> void:
+	if overlay == null or not overlay.visible:
+		return
+	if is_valid_overlay_focus(control):
+		last_overlay_focus = control
+		return
+	# Focus changes may briefly report null while Tab moves between two controls.
+	# Deferring lets that normal transition settle before repairing a true loss.
+	queue_overlay_focus_restore()
 
 func start_game() -> void:
 	hive_lives = 3
@@ -2121,6 +2211,7 @@ func show_between() -> void:
 func show_upgrade_choices(data: Dictionary) -> void:
 	# 二十四个节令会让成长点远多于旧 MVP：三种倾向全部满级后，
 	# 不再强制选择，直接给出「继续」按钮，避免成长界面死锁。
+	allocation_panel.visible = false
 	var any_available := false
 	for i in upgrade_catalog.size():
 		var entry: Dictionary = upgrade_catalog[i]
@@ -2134,13 +2225,14 @@ func show_upgrade_choices(data: Dictionary) -> void:
 		overlay_button.visible = true
 		set_upgrade_buttons_visible(false)
 		set_secondary_link("或者退出游戏", true)
-		overlay_button.grab_focus()
+		focus_overlay_primary()
 		return
 	overlay_title.text = "归巢 · 蜂群成长"
 	overlay_body.text = "带回的蜜哺育了新的分工。选择一种蜂群倾向；本轮效果可以叠加。" + next_boss_hint()
 	overlay_button.visible = false
 	set_upgrade_buttons_visible(true)
 	set_secondary_link("", false)
+	focus_overlay_primary()
 
 # 通关横幅只写「刚刚完成的节令」，玩家无从知道下一个节点是失律者关卡——
 # 在蜂巢成长界面直接预告，消除「惊蛰完成却撞上春分 Boss」的错位感
@@ -2163,6 +2255,7 @@ func show_allocation_panel() -> void:
 	allocation_panel.visible = true
 	allocation_slider.value = 50.0
 	refresh_allocation_labels()
+	focus_overlay_primary()
 
 func refresh_allocation_labels() -> void:
 	if allocation_panel == null or not allocation_panel.visible:
@@ -2190,6 +2283,26 @@ func set_upgrade_buttons_visible(value: bool) -> void:
 			var data: Dictionary = upgrade_catalog[i]
 			upgrade_buttons[i].text = "%s  %s\n\n%s" % [data.symbol, data.name, data.description]
 			upgrade_buttons[i].disabled = int(upgrade_counts.get(String(data.id), 0)) >= UPGRADE_CAP
+	configure_upgrade_focus_navigation()
+
+func configure_upgrade_focus_navigation() -> void:
+	var available: Array[Button] = []
+	for button in upgrade_buttons:
+		button.focus_neighbor_left = NodePath("")
+		button.focus_neighbor_right = NodePath("")
+		button.focus_previous = NodePath("")
+		button.focus_next = NodePath("")
+		if button.visible and not button.disabled:
+			available.append(button)
+	if available.size() < 2:
+		return
+	for i in available.size():
+		var previous := available[(i - 1 + available.size()) % available.size()]
+		var next := available[(i + 1) % available.size()]
+		available[i].focus_neighbor_left = available[i].get_path_to(previous)
+		available[i].focus_neighbor_right = available[i].get_path_to(next)
+		available[i].focus_previous = available[i].get_path_to(previous)
+		available[i].focus_next = available[i].get_path_to(next)
 
 func set_secondary_link(text_: String, value: bool) -> void:
 	if secondary_link == null:
@@ -2578,6 +2691,8 @@ func show_boss_victory() -> void:
 	overlay_title.text = "%s · 归律" % String(data.name)
 	overlay_body.text = "花田重新流动。\n\n%s" % next_term_hint()
 	overlay_button.text = "继续前行"
+	set_secondary_link("", false)
+	focus_overlay_primary()
 
 func next_term_hint() -> String:
 	if stage_index + 1 >= stages.size():
@@ -2598,7 +2713,7 @@ func show_win() -> void:
 	overlay_body.text = "蜂群走完了完整循环，四位失律者重归节拍。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
 	overlay_button.text = "再走一次"
 	set_secondary_link("或者退出游戏", true)
-	overlay_button.grab_focus()
+	focus_overlay_primary()
 
 func show_loss() -> void:
 	# `lost` is shared by ordinary gathering and the last life of a Boss fight.
@@ -2620,7 +2735,7 @@ func show_loss() -> void:
 	overlay_body.text = "蜂巢已经散落。\n远花仍在那里，但带回家的蜜才真正属于蜂群。\n本轮主动游玩时间：%s" % format_duration(run_elapsed)
 	overlay_button.text = "重新出巢"
 	set_secondary_link("或者退出游戏", true)
-	overlay_button.grab_focus()
+	focus_overlay_primary()
 
 # 失律者战败但蜂巢还有余力：不要把玩家推回立春，用上一节令的成长心得也能再试一次。
 # 同时把上一节令「蜂巢成长」面板的 stale 文案显式覆盖掉，避免红点/回放
@@ -2643,7 +2758,7 @@ func show_boss_loss() -> void:
 	)
 	overlay_button.text = "再试一次"
 	set_secondary_link("", false)
-	overlay_button.grab_focus()
+	focus_overlay_primary()
 
 func nearest_flower(radius: float) -> int:
 	var best := -1
@@ -3010,12 +3125,16 @@ func _unhandled_input(event: InputEvent) -> void:
 			toggle_pause()
 		get_viewport().set_input_as_handled()
 		return
-	# 弹窗阶段允许键盘确认（Enter/空格）：切走程序回来后不依赖鼠标重按按钮
-	if event.is_action_pressed("ui_accept") and overlay.visible and overlay_button.visible:
-		if phase == "boss_victory" or phase == "won" or phase == "lost" or phase == "intro" or phase == "boss_loss":
-			on_overlay_button()
+	# Focused Controls own ui_accept. Keeping phase transitions out of this
+	# fallback prevents the same Enter release from activating a newly revealed
+	# control (allocation confirm -> upgrade/all-mature continue) a second time.
+	# If focus vanished between OS/window events, consume this press after repair;
+	# the next deliberate press then activates exactly one focused control.
+	if event.is_action_pressed("ui_accept") and overlay.visible:
+		if not is_valid_overlay_focus(get_viewport().gui_get_focus_owner()):
+			restore_overlay_focus()
 			get_viewport().set_input_as_handled()
-			return
+		return
 	if phase != "playing" and phase != "boss":
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -3026,15 +3145,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 # 切走程序时自动暂停（体力照扣、失律者照追是设计事故）；
-# 切回来时把焦点交还主按钮，键盘 Enter 可直接继续。
+# 切回来时把焦点交还当前弹层最近的有效控件，键盘可直接继续。
 # toggle_pause 内部有相位护栏，between/boss_victory 等静态界面不会被误暂停覆盖。
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		_cancel_drink_touch()
-		toggle_pause()
+		if phase in ["playing", "boss"]:
+			toggle_pause()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
-		if overlay_button != null and overlay.visible and overlay_button.visible:
-			overlay_button.grab_focus()
+		restore_overlay_focus()
 
 func on_sense_started() -> void:
 	message = "触角捕捉到蜜量、敌虫警戒范围和一条相对安全的采集方向。"
@@ -3095,7 +3214,7 @@ func toggle_pause() -> void:
 	overlay_button.text = "继续出巢"
 	set_secondary_link("", false)
 	set_pause_system_controls_visible(true)
-	overlay_button.grab_focus()
+	focus_overlay_primary()
 	pause_button.text = "继续"
 
 func set_pause_system_controls_visible(visible: bool) -> void:
