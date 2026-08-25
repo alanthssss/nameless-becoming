@@ -135,7 +135,7 @@ func prompt() -> Dictionary:
 	var body := ""
 	match lesson_id:
 		"sortie":
-			body = "看它飞到花边、停稳采蜜，再落回亮着的巢门。" if phase == "demo" else "亲自完成一次出巢、采蜜、归巢。"
+			body = "看它贴近花心，停在那里直到蜜囊 +1，再落回亮着的巢门。" if phase == "demo" else "贴近花心，等右侧“按住采蜜”亮起；按住空格 / 回车，蜜囊 +1 后松开，再按 Q 归巢。"
 		"sense":
 			body = "它先停稳，再让花粉沿着气味找到藏花。" if phase == "demo" else "停稳寻迹，让藏花真正出现。"
 		"defense":
@@ -419,6 +419,23 @@ func _nearest_raider_has_stolen_honey() -> bool:
 func _draw_lesson_ghosts() -> void:
 	var progress := 1.0 - clampf(demo_time / maxf(0.01, demo_duration), 0.0, 1.0)
 	match lesson_id:
+		"sortie":
+			# The first harvest has a real dwell time. Show nectar converging while
+			# the elder waits, then carry one embodied honey drop home; neither cue
+			# changes resources or leaves another target ring in the field.
+			if progress >= 0.42 and progress < 0.68:
+				var gather_progress := clampf((progress - 0.42) / 0.26, 0.0, 1.0)
+				for mote in 6:
+					var angle := float(mote) * TAU / 6.0 + _demo_rotation()
+					var radius := lerpf(28.0, 5.0, gather_progress)
+					var pos := demo_target + Vector2.from_angle(angle) * radius
+					main.draw_circle(pos, 2.2 + gather_progress, Color(HONEY, 0.48 + gather_progress * 0.40))
+			elif progress >= 0.68:
+				var drop := mentor_position + Vector2(0, 19)
+				main.draw_colored_polygon(PackedVector2Array([
+					drop + Vector2(0, -6), drop + Vector2(-4, 1),
+					drop + Vector2(0, 6), drop + Vector2(4, 1)
+				]), Color(HONEY, 0.90))
 		"sense", "pollination":
 			for mote in 6:
 				var ratio := fmod(progress * 0.65 + float(mote) / 6.0, 1.0)
@@ -472,3 +489,6 @@ func _draw_lesson_ghosts() -> void:
 				lamp + Vector2(0, -29), lamp + Vector2(-7, -14),
 				lamp + Vector2(0, -8), lamp + Vector2(7, -14)
 			]), Color("f6a43d", 0.84))
+
+func _demo_rotation() -> float:
+	return (1.0 - clampf(demo_time / maxf(0.01, demo_duration), 0.0, 1.0)) * TAU * 1.5

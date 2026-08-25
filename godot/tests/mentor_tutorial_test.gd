@@ -36,6 +36,41 @@ func run_test() -> void:
 	finish_demo(mentor)
 	expect(mentor.phase == "imitate" and game.bee.active, "演示结束后没有把控制权交给玩家")
 	expect(bool(mentor.prompt().visible) and mentor.allows_action("harvest") and not mentor.allows_action("sense") and not mentor.allows_action("drink") and not mentor.allows_action("decoy"), "模仿阶段没有保持单一动作顺序")
+	var sortie_prompt: Dictionary = mentor.prompt()
+	expect(String(sortie_prompt.body).contains("“按住采蜜”亮起") and String(sortie_prompt.body).contains("按住空格 / 回车") and String(sortie_prompt.body).contains("蜜囊 +1") and String(sortie_prompt.body).contains("Q 归巢"), "首次采蜜提示没有同时说明有效距离事实、持续操作、成功证据与归巢操作")
+	game._update_mentor_guidance()
+	await process_frame
+	expect(game.tutorial_body.get_line_count() <= 2, "首次采蜜操作说明超出老师傅临时教学条的两行安全区")
+	game.bee.position = Vector2(game.flowers[0].position)
+	game.bee.velocity = Vector2.ZERO
+	game.bee.has_target = false
+	game.harvest_clock = 0.0
+	game._update_mentor_guidance()
+	expect(game.sense_button.visible and game.sense_button.text == "按住采蜜" and game.context_hint_label.text == "花心已对准", "进入真实采蜜距离后没有出现按住操作与位置事实")
+	game.harvest_clock = 0.2
+	game._update_mentor_guidance()
+	expect(game.sense_button.text == "继续按住" and game.context_hint_label.text.contains("蜜囊 +1"), "第一滴形成前没有给出持续按住与成功证据")
+	await process_frame
+	expect(game.context_hint_label.get_line_count() == 1, "采蜜中的成功证据超出情境动作卡单行安全区")
+	# Exercise the real input/harvest path in an isolated game so this regression
+	# does not fabricate the progression evidence used by the sequencing checks.
+	var harvest_game = packed.instantiate()
+	root.add_child(harvest_game)
+	await process_frame
+	harvest_game.persistence_enabled = false
+	harvest_game.tutorial_complete = false
+	harvest_game.start_game()
+	finish_demo(harvest_game.mentor_tutorial)
+	harvest_game.bee.position = Vector2(harvest_game.flowers[0].position)
+	harvest_game.bee.velocity = Vector2.ZERO
+	harvest_game.bee.has_target = false
+	var carried_before_hold: int = int(harvest_game.carried)
+	Input.action_press("action")
+	harvest_game.update_game(float(harvest_game.balance_value("player", "harvest_interval", 0.42)) + 0.01)
+	Input.action_release("action")
+	harvest_game.update_game(0.0)
+	expect(int(harvest_game.carried) == carried_before_hold + 1, "贴近花心并持续按住真实动作后仍未采到第一滴蜜")
+	harvest_game.queue_free()
 	game.bee.has_target = false
 	game._handle_world_tap(game.bee.position + Vector2.RIGHT * 100.0)
 	expect(game.bee.has_target and game.last_world_tap_time == 0.0, "只允许移动的教学阶段错误缓存了急转首击，或鼠标移动被禁止")

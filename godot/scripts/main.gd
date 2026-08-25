@@ -3142,10 +3142,10 @@ func update_progressive_guidance() -> void:
 			1:
 				var near_flower := nearest_flower(46.0) >= 0
 				tutorial_title.text = "花心亮了"
-				tutorial_body.text = "按住 空格"
+				tutorial_body.text = "按住空格，蜜囊 +1 再松开"
 				context_hint_label.text = "" if near_flower else ""
 				sense_button.visible = near_flower
-				sense_button.text = "采蜜"
+				sense_button.text = "继续按住" if harvest_clock > 0.0 else "按住采蜜"
 			2:
 				tutorial_title.text = "带它回家"
 				tutorial_body.text = "Q / 归巢"
@@ -3223,8 +3223,8 @@ func update_progressive_guidance() -> void:
 		sense_button.text = "惊退"
 		context_hint_label.text = ""
 	elif nearby >= 0:
-		sense_button.text = "采蜜"
-		context_hint_label.text = ""
+		sense_button.text = "继续按住" if harvest_clock > 0.0 else "按住采蜜"
+		context_hint_label.text = "蜜囊 +1 再松开" if harvest_clock > 0.0 else ""
 	elif is_still:
 		sense_button.text = "寻迹"
 		context_hint_label.text = ""
@@ -3275,7 +3275,8 @@ func _update_mentor_guidance() -> void:
 		sense_button.text = "惊退"
 	elif nearby >= 0 and mentor_tutorial.allows_action("harvest"):
 		sense_button.visible = true
-		sense_button.text = "采蜜"
+		sense_button.text = "继续按住" if harvest_clock > 0.0 else "按住采蜜"
+		context_hint_label.text = "采蜜中 · 蜜囊 +1 后松开" if harvest_clock > 0.0 else "花心已对准"
 	elif is_still and mentor_tutorial.allows_action("sense"):
 		sense_button.visible = true
 		sense_button.text = "寻迹"
