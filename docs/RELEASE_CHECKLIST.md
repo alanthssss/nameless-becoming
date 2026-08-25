@@ -46,6 +46,7 @@
 - [x] macOS、Windows Desktop、Web 三个 preset 使用 Godot 4.6.2 实测可用的 `tests/**,tools/**` 排除 glob；
 - [x] `npm run verify:godot-export` 对三个 preset 执行真实 `--export-pack`，再由 Godot 挂载 PCK 检查内部路径与主场景，不以 grep 配置代替导出；
 - [x] 桌面构建流水线直接检查解包后的 macOS PCK 和 Windows 最终 EXE 内嵌 PCK，出现 `res://tests/`、`res://tools/` 或缺失明确成功标记即失败；
+- [x] 桌面流水线在 macOS 最终包严格验签、Windows 最终 EXE 内容检查及 sidecar 生成后，读取包的实际 bytes 生成 schema v1 JSON manifest；manifest 会交叉核对 `package.json` 与 `project.godot` 产品版本、完整 40 位 `HEAD`、`dirty: false` provenance、干净工作区、固定平台文件名、大小及 sidecar／实际 SHA-256，任一不一致即停止上传；
 - [x] 开发者本机使用官方 Godot 4.6.2 完成三 preset resource pack 门禁、三端 release 导出、实际 macOS PCK／Windows EXE／Web PCK 内容检查及 macOS 无界面启动；这些 `+dirty` 输出只算开发者自测；
 - [x] GitHub `Desktop client builds` run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从新完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9` 运行，双端最终包检查器均显式通过；
 
@@ -84,6 +85,8 @@
 - [x] GitHub run [`32844593593`](https://github.com/alanthssss/nameless-becoming/actions/runs/32844593593) 从精确 `21a44bd` 生成 macOS artifact `9561860219` 与 Windows artifact `9561841115`，分别于 `2026-09-24T11:54:52Z` 与 `2026-09-24T11:54:16Z` 到期；`publish_prerelease=false`；这两份 artifact 现只作历史溯源；
 - [x] 当前 run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从精确 `29e719f` 生成 macOS artifact `9564658342` 与 Windows artifact `9564653395`，分别于 `2026-09-24T13:13:49Z` 与 `2026-09-24T13:13:40Z` 到期；
 - [x] 当前两个 artifact 下载后均以随包 sidecar 复验 SHA-256；macOS ZIP 为 70,315,673 bytes / `be1e269c529e651de71c9658f9d16bad3822b27eba4b6841df2d080208114e4e`，Windows EXE 为 116,831,112 bytes / `48195830e70ca78f68316dc9c6a8a9193ed85c894ca2601f33f951f0252ff074`；
+- [x] 新桌面构建会把包、sidecar 与同名 `.manifest.json` 一起上传；manifest 记录产品版本、完整提交、`dirty: false`、平台、文件名、byte 大小、SHA-256 及显式 GitHub run/ref，不记录或猜测尚未由 `upload-artifact` 分配的 artifact ID；
+- [ ] schema v1 manifest 只证明该流水线包的机器可读身份与完整性，不等于 Alan 完整流程、Windows 真机、外部玩家或公开发行验收；功能合入后的下一候选仍须实际运行新流水线并按本清单完成人工证据，当前 `29e719f` 已归档构建事实不因其早于 manifest 功能而回退；
 - [x] macOS 包为 universal，ad-hoc 签名通过 `codesign --verify --deep --strict`；
 - [x] macOS 干净解包后为 x86_64 + arm64 universal，bundle id 为 `com.alanthssss.namelessbecoming`，0.9.5 / 0.9.5-rc.2，严格验签和无界面 smoke 通过；PCK SHA-256 为 `8af383ff36607d3a6200c6d789f6ecc0cc39603684ac43c20550cef51598b1f7`，provenance 为完整 `29e719f`、`dirty: false`；
 - [x] macOS 无界面 smoke 前后真实存档 SHA-256 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime `1787640643`、大小 143 bytes 均不变；
