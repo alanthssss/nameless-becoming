@@ -71,7 +71,7 @@ PR #64（`b03811c4`）已实现固定 A–H 匿名顺序、本地填写／JSON �
 npm run audio:review
 ```
 
-默认输出位于 `outputs/music-blind-review/`。给听者的唯一入口是 `listener/index.html`；`reviewer/` 含季节、探索／Boss 角色和正确配对，必须在听者导出结果前与其隔离。工具、WAV 哈希与匿名映射已自动校验；Alan 尚未完成主观盲听，因此配对辨识度、情绪、耐循环和民乐点缀都不得标记为通过。
+默认输出位于 `outputs/music-blind-review/`。给听者的唯一入口是 `listener/index.html`；`reviewer/` 含季节、探索／Boss 角色和正确配对，必须在听者导出结果前与其隔离。工具、WAV 哈希与匿名映射已自动校验。Alan 已完成固定八轨的逐轨评论：六轨总体正向，D 秋 Boss 的过满／突兀和 G 秋探索的“猫叫”式滑音触发修改前后 A/B；总体偏好、四组配对、长期耐循环和实机混音仍未完成，因此整套音乐不得标记为通过。
 
 ## 首轮试玩证据包
 
@@ -85,7 +85,7 @@ npm run playtest:prepare -- \
   --artifact-sha256 <安装包 SHA-256>
 ```
 
-默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；`coordinator/` 留给测试协调者。参与者页面完全离线、不收个人信息，只导出匿名 JSON。A 包最多 15 分钟；B 单切片包因游戏尚无固定切片入口而明确阻塞，不能用跑前置节点替代。音乐继续独立使用 `npm run audio:review`。生成器会记录传入的 SHA-256，但不会读取安装包，交付者仍须用 sidecar 或哈希工具核对实际文件。完整边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
+默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；`coordinator/` 留给测试协调者。参与者页面完全离线、不收个人信息，只导出匿名 JSON。A 包最多 15 分钟；B 单切片包因游戏尚无固定切片入口而明确阻塞，不能用跑前置节点替代。音乐继续独立使用 `npm run audio:review`。生成器会记录传入的 SHA-256，但不会读取安装包，交付者仍须用 sidecar 或哈希工具核对实际文件。首份 A 包已验证候选来源，并暴露首分钟采蜜反馈和问卷过长两个 P0；其填写者身份尚未由协调者确认，所以外部玩家样本仍为 0。完整记录与边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
 
 ## 视觉方向
 
