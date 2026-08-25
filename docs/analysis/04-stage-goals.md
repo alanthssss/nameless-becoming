@@ -3,7 +3,7 @@
 > 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
 > The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
 
-当前源码候选与固定验收 artifact / Current source candidate and fixed acceptance artifact：`29e719f`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停与 PR #82 导出门禁。
+当前源码候选与固定验收 artifact / Current source candidate and fixed acceptance artifact：`57aefc4933db88968777b11ea1d1679c6374842a`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停、PR #82 导出门禁与 PR #87 B01 固定急转切片／共享急转运行时／证据门禁。
 
 ---
 
@@ -28,16 +28,18 @@ This section records history only; the old four stages, first-boss prototype, ol
 | PR #76 | 16 小节秋季探索／Boss 正式候选、确定性生成与最终等响度 A/B | Alan 在探索、Boss 两组均盲选正式候选；合并提交 `de78f2c` 的双端 artifact 现为历史包，实机混音仍待后续 |
 | PR #79 | Boss 失败／暂停 HUD 上下文、循环终点机制清理与脚本错误门禁 | 合并提交 `21a44bd` 曾重建双端 artifact，后因误带测试资源降为历史包；修复事实仍成立，不是玩家通过 |
 | PR #81 | 成长／分配弹层键盘焦点、单次确认和切出／恢复暂停语义 | 自动 GUI 与通知回归通过，真实窗口和玩家操作仍待人工验证 |
-| PR #82 | 三 preset 排除内部测试／工具资源，并检查最终 macOS ZIP 与 Windows EXE | 合并提交 `29e719f` 已重建并复验当前固定双端 artifact |
+| PR #82 | 三 preset 排除内部测试／工具资源，并检查最终 macOS ZIP 与 Windows EXE | 合并提交 `29e719f` 曾重建并复验双端 artifact；PR #87 合并后已降为历史候选 |
+| PR #85 | 固定切片 strict ticket／bootstrap、artifact manifest／catalog 身份链与存档 namespace 隔离基础 | 解除 B 包身份依赖；未单独宣布玩法切片已就绪 |
+| PR #87 | B01 独立 typed scene、主流程／切片共享急转运行时、编译期 registry、产品 `ready` catalog 与证据门禁 | 合并提交 `57aefc4` 为当前固定 artifact；run `32867365895` 双端构建／sidecar／pack verifier 通过，B01 exact-ticket self-test 已启动，但仍无 Alan result JSON |
 
 ## 2. 当前阶段结论 / Current Stage Conclusion
 
 | 证据层 / Evidence layer | 状态 / Status | 结论 / Conclusion |
 | --- | --- | --- |
-| 实现 / Implementation | 已完成当前批次 | PR #63／#64／#65／#69 的玩法与工具、PR #76／#79／#81／#82 的音频、Boss、焦点和导出修复形成当前固定 artifact `29e719f` |
-| 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、正式秋季双轨回归，以及 `29e719f` 双端 artifact SHA-256 和最终包 tests/tools 边界复验通过 |
+| 实现 / Implementation | 已完成当前批次 | PR #63／#64／#65／#69 的玩法与工具、PR #76／#79／#81／#82 的音频、Boss、焦点和导出修复，以及 PR #87 的 B01／共享急转／证据门禁形成当前固定 artifact `57aefc4` |
+| 开发者自测 / Developer verification | 通过 | 14 组 Godot 回归、Web 门禁、正式秋季双轨回归，以及 run `32867365895` 对 `57aefc4` 的 macOS／Windows artifact、sidecar SHA-256 和最终 pack verifier 复验通过；B01 self-test 包已按精确 ticket 启动 |
 | Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
-| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`29e719f` 尚待重新采证。秋季双轨全长最终 A/B 已在两组均选择正式候选；总体配对、长期耐循环、实机混音与完整玩法流程仍缺失 |
+| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`57aefc4` 尚待重新采证。B01 self-test 包已按 exact ticket 启动，但没有 Alan result JSON，不得宣称人工完成或已学会。秋季双轨全长最终 A/B 已在两组均选择正式候选；总体配对、长期耐循环、实机混音与完整玩法流程仍缺失 |
 | Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
 | 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
@@ -54,9 +56,9 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 ### 3.2 Alan 固定候选人工流程 / Alan Fixed-Build Pass
 
-1. 先在新候选复测“贴近花心并持续按住”的首分钟采蜜反馈，再不经口头提示完成首节点；
+1. 从 `57aefc4` 复测“贴近花心并持续按住”的首分钟采蜜反馈，再不经口头提示完成首节点；
 2. 急转真实完成 `1/2 → 2/2`；
-3. 用自己的话说明寻迹、惊退与急转的事实、操作和成功证据；如需验证约 3 分钟后的保持，先提供固定复测切片；
+3. 用自己的话说明寻迹、惊退与急转的事实、操作和成功证据；再完整运行 B01 的无提示实践、恰好 180 秒 active 路线和单次无字复测，并保存 Alan result JSON；
 4. 不看说明分辨花药、柱头、蜂身散粉和结籽，并复述授粉因果；
 5. 体验夏季袭扰、秋季留种、冬季暖点并描述实际改过的路线或选择；
 6. 分别复述四位 Boss 的暴露规则；
@@ -67,7 +69,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 - Windows x86_64 真机完成启动、DPI／全屏、中文字体、声音、设置持久化与退出；
 - macOS 固定候选完成一整轮和设置重启；
-- 验证标题／暂停层来源为 `v0.9.5-rc.2 · 29e719ff`，不含 `+dirty`；
+- 验证标题／暂停层来源为 `v0.9.5-rc.2 · 57aefc49`，不含 `+dirty`；
 - 1280×720 是 HUD 参考画布；1920×1080、1440×900 与 1024×768 的等比安全框已自动验证，但任意宽高比世界重排和手机正式适配未承诺；
 - 饮蜜已有按条件显示的鼠标／显式触摸入口；仍须在真实原生触屏设备上验证手感、取消和系统缩放。
 
@@ -76,7 +78,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 当前样本为 0。会话 `NB-20260825-D9EFAA79` 虽自报外部玩家，但填写者与开发关系尚未由协调者确认，确认前不计样本。首轮记录：
 
 - 首次移动、采蜜、交蜜时间与所有口头求助；
-- 急转两次及玩家对因果的自由复述；当前路线未提供固定延迟复测机会，缺失记录不得算迁移失败；
+- 急转两次及玩家对因果的自由复述；再用 B01 记录无提示实践和延迟复测结果；self-test 启动不能代替 Alan 或外部玩家结果；
 - 授粉因果与四组季节行为的玩家原话；
 - 各节点／Boss 用时、失败原因、退出点、主动撤离和重开；
 - 8 轨配对、情绪、不舒服音色与循环疲劳；
@@ -86,10 +88,10 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 ### 自动与构建 / Automated and Build
 
-- Godot 4.6.2 的 9 组测试均显式报告 `TEST PASSED`；
+- Godot 4.6.2 的 14 组测试均显式报告 `TEST PASSED`；
 - Web build/test/lint 通过；
 - 24 节点数据、资源预算、完成条件、四组机制、四位 Boss、8 轨路由和构建来源受门禁覆盖；
-- macOS universal／Windows x86_64 artifact 的 sidecar SHA-256 复验通过，最终包不含 `res://tests/` 或 `res://tools/`。
+- run `32867365895` 的 macOS universal／Windows x86_64 artifact 已对 sidecar SHA-256 与最终 pack verifier 复验通过，包内同时存在 bootstrap、Main、精确 `ready` B01 catalog 和编译注册 scene，且不含 `res://tests/` 或 `res://tools/`。
 
 ### 可玩性 / Playability
 
@@ -109,7 +111,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 | 触发证据 / Trigger | 才允许开始的任务 / Conditional task | 成功判据 / Success criterion |
 | --- | --- | --- |
-| 需要验证约 3 分钟后的急转保持 | 先提供固定同语法复测切片；再由结果决定是否让普通敌害复用锁线语法 | 未遇到机会不判失败；复测时无文字再次闪过 |
+| 需要验证约 3 分钟后的急转保持（切片已实现） | 先用 B01 采集 Alan 和外部玩家结果；再由结果决定是否让普通敌害复用锁线语法 | 无提示实践首次成功后，恰好 180 秒 active 路线再进行一次无字同配置复测；保存 result JSON |
 | 四组仍被概括为“都是采蜜” | 四季路线深化 | 每组至少观察到一次不同路线、顺序、撤离或资源选择 |
 | 节点仍短或只是机械重复 | 节奏与 Boss 调律 | 依据用时、失败原因和重复劳动改内容，不只抬目标 |
 | 视觉仍不协调 | 单代表场景画风切片 | 先通过一张实机场景，再批量生产 |

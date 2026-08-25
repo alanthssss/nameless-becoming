@@ -46,9 +46,9 @@ npm run playtest:prepare -- \
 - “哪里最卡、最意外，或者最想让我们知道？”
 - “用一句自己的话描述这次游戏。”
 
-### B：单个高级切片（B01 源码 ready，尚无新 artifact）
+### B：单个高级切片（B01 固定 artifact 与 Alan 包已就绪，尚无导入结果）
 
-生产源码已完成 B01 的独立 typed scene 和固定身份链；这是**实现事实**，不等于已有可发放的 B 包：
+生产源码已完成 B01 的独立 typed scene 和固定身份链，当前双端 artifact 与 Alan 自测 B 包也已按精确身份流程生成；这些是**实现、构建与包生成事实**，不等于已取得玩家结果：
 
 - `godot/data/playtest_slices.json` 的公开 schema v1 只含中性编号、公开任务文案、时限和状态；生产 catalog 唯一条目是 `B01 / 固定切片 B01 / 10 分钟 / ready`，不含机制名、scene、handler、stage、seed、存档路径或 patch／override；编译期 registry 直接 preload B01 scene，不从 ticket 或 catalog 接受路径；
 - 导出主入口是 bootstrap。没有 user argument 时仍实例化原 `main.tscn`；试玩的完整启动命令必须是 `"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket.json 的绝对路径>"`，其中 `--` 把唯一一个 user argument 与引擎参数分开。ticket、同目录固定名 `artifact-manifest.json`、包内 build provenance、运行平台、产品版本、完整 clean commit、artifact 字段、catalog 原始字节 SHA-256 和编译期 registry 任一不一致都会 fail closed；
@@ -67,9 +67,9 @@ npm run playtest:prepare -- \
   --artifact-manifest /absolute/path/NamelessBecoming-macOS.zip.manifest.json
 ```
 
-现在还必须从包含 B01 运行时的最终 clean commit **重建 artifact、sidecar 与 manifest**，再运行最终包检查和生成器。旧 `29e719f` artifact 早于固定切片基础与 B01 运行时，不含此 scene，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
+当前固定 artifact 来自 PR #87 的完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)；双端 manifest 均绑定 `source_ref: refs/heads/main`、该 run 和 `dirty: false`。仓库外持久副本根目录为 `nameless-becoming-candidates/57aefc4-run-32867365895/`。旧 `29e719f` artifact 早于固定切片基础与 B01 运行时，已降为历史，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
 
-当前证据等级必须分开：上述 scene、共享运行时、catalog `ready` 与时序是**实现事实**；Godot／Node 自动测试是**开发者自测**，只能证明机会和判定被构造；当前没有包含该运行时的新 clean artifact／B 包、Alan B01 完整人工流程、Windows B01 真机或独立外部玩家 B01 证据，不能把自动回归写成玩家已学会、教学迁移或发行通过。
+已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。macOS 进程曾用该精确 ticket 启动，随后已退出；尚未导入 Alan 的 participant／observer 表单或结果 JSON。因此当前证据等级必须分开：上述 scene、共享运行时、catalog `ready` 与时序是**实现事实**；Godot／Node 自动测试是**开发者自测**；artifact／manifest／ticket 和进程启动是**构建与包执行事实**。它们只能证明机会和判定被构造，且 artifact／manifest／ticket 相互绑定，不能写成 Alan 已完成、已理解急转、教学迁移或发行通过。Windows B01 真机和独立外部玩家 B01 证据仍缺失。
 
 ### C：独立音乐盲听
 
@@ -87,7 +87,7 @@ npm run playtest:prepare -- \
 
 当前外部玩家样本仍为 **0**。生成器、JSON、CI 或 Alan 的方向批准都不增加样本数。
 
-首轮先收集 3–5 名陌生玩家的 A 包；B01 专用 typed scene 已由“正常路线没有稳定延迟复测”这一证据缺口触发实现，但必须先重建并校验新 artifact 才能开放 B。人数不是 1.0 的唯一门槛；至少还要分别关闭 Alan 完整人工流程、Windows 真机、音乐盲听、构建和发行链路。只有在同一固定构建上取得足够可比较记录后，才能讨论教学理解率、节奏、重开意愿或版本通过。
+首轮先收集 3–5 名陌生玩家的 A 包；B01 专用 typed scene 已由“正常路线没有稳定延迟复测”这一证据缺口触发实现，固定 artifact 和 Alan 自测包也已生成，下一门禁是完成并导入 Alan 的两份表单，而不是重复构建。人数不是 1.0 的唯一门槛；至少还要分别关闭 Alan 完整人工流程、Windows 真机、音乐盲听、构建和发行链路。只有在同一固定构建上取得足够可比较记录后，才能讨论教学理解率、节奏、重开意愿或版本通过。
 
 ## 开发者自测反馈（alan）
 
@@ -212,11 +212,11 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 
 该结论仍不是外部玩家证据，也不证明游戏内混音、四组同季配对、整套八轨总体区分度或长时间耐循环。播放秒数是累计值且不记录 seek／实际覆盖区间；尤其 Y 的累计 25 秒短于其 30.968 秒完整循环，所以不能把本次选择改写成“完整听完多轮后无疲劳”。
 
-### 当前固定人工验收 artifact `29e719f`：等待完整流程与实机混音
+### 当前固定人工验收 artifact `57aefc4`：B01 待导入 Alan 结果
 
-`21a44bd` 曾在 PR #79 合入后取代带 Boss P1 的 `de78f2c`，但随后因实包误带测试资源降为历史 artifact。PR #81 闭合弹层键盘焦点／切出暂停，PR #82 建立导出资源门禁并合并为完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。GitHub [`Desktop client builds` run 32851917691](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从该精确提交生成 macOS universal 与 Windows x86_64 artifact。两个下载文件均以随包 sidecar 复验 SHA-256，新检查器确认不含 `res://tests/` 或 `res://tools/`，PCK／EXE provenance 绑定 `0.9.5-rc.2`、完整 `29e719fff1621df35f88972f3bdeed98e37d8af9` 和 `dirty: false`；详细构建证据见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
+`29e719f` 曾在 PR #82 闭合导出资源门禁，但它早于固定切片身份基础与 B01 运行时，现已降为历史 artifact。PR #87 合并后的完整 `main` 提交为 `57aefc4933db88968777b11ea1d1679c6374842a`；GitHub [`Desktop client builds` run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 从该精确 clean 提交生成当前 macOS universal 与 Windows x86_64 artifact。两份 schema v1 manifest 均绑定 `source_ref: refs/heads/main`、该 run 和 `dirty: false`；macOS payload 为 70,368,894 bytes，SHA-256 为 `625a8cb9b379fccf92156f4a1573b062c7bb94a301a2cbe7fc54de669486395e`，Windows payload 为 116,888,848 bytes，SHA-256 为 `ccf7101a1c7d254ab8af12908ddcdeddec794ca59dc9de28c7e37c795e70eead`。双端最终包检查通过；macOS universal 架构、严格签名校验通过，Windows 为 PE32+ GUI x86-64。详细 artifact ID、到期时间、PCK 哈希和本机路径见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
-该构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨和 Boss P1 修复，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机证据仍为缺失。
+当前构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨、Boss P1 修复和 B01 固定急转切片，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。Alan B01 包会话 `NB-20260825-6412D7BA` 已生成，精确 ticket 进程在 macOS 上曾启动后退出，但没有导入任何表单或结果 JSON；不得由此声称 Alan 完成或理解了急转。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机与独立外部玩家证据仍为缺失。
 
 ### Draft PR #78 秋野探索源码内混音复核：Alan 制作人听感门禁通过（秋 Boss 待测）
 

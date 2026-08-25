@@ -3,8 +3,10 @@
 > 本文档集将上一轮的项目分析整理为分层的中英双语文档，避免单一长文档造成阅读负担。
 > This document set restructures the project analysis into layered bilingual (中文/EN) documents, avoiding the burden of a single lengthy file.
 
-**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2（当前源码与固定 artifact 为 `29e719f`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停与 PR #82 导出门禁）
-**同步日期 / Sync Date**: 2026-08-25
+**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2（当前源码与固定 artifact 为 `57aefc4933db88968777b11ea1d1679c6374842a`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停、PR #82 导出门禁与 PR #87 B01 固定急转切片／共享急转运行时／证据门禁）
+**同步日期 / Sync Date**: 2026-08-26
+
+> Desktop build run `32867365895` 的 macOS／Windows artifact、sidecar 和 pack verifier 已通过。B01 self-test 包已按精确 ticket 启动，但尚无 Alan result JSON；Windows 真机和外部玩家仍待验证。
 
 > 01–04 描述当前产品与执行边界；05–07 是专项参考，若与当前实现冲突，应回到 `godot/`、`MVP_SPEC.md` 和 `PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` 核对。`PROJECT_LOG.md` 是历史记录，不是现行规格。
 > Documents 01–04 describe the current product and execution boundary. Documents 05–07 are specialist references; when they conflict with implementation, check `godot/`, `MVP_SPEC.md`, and `PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`. `PROJECT_LOG.md` is historical, not a current spec.

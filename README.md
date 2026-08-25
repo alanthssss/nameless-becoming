@@ -8,14 +8,14 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。下文 `29e719f` 固定人工验收候选只指已校验的 macOS／Windows 桌面 artifact；现有 Web 部署尚未证明来自该精确提交，在重新部署并核对来源前不得用它采集 `29e719f` 候选证据。
+当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。下文 `57aefc4` 固定人工验收候选只指已校验的 macOS／Windows 桌面 artifact；现有 Web 部署尚未证明来自该精确提交，在重新部署并核对来源前不得用它采集 `57aefc4` 候选证据。
 
 ## 当前版本：Godot 候选 MVP 0.9.5-rc.2
 
-当前已校验的固定人工验收桌面 artifact 来自完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。它包含 `4b57d856` 的玩法／HUD／首次采蜜修复、PR #76 已通过 Alan 最终盲听的秋季探索／Boss 替换、PR #79 的 Boss 失败／暂停 HUD 与终点机制修复、PR #81 的弹层键盘焦点／切出暂停修复，以及 PR #82 的内部资源导出门禁。macOS／Windows 包由 GitHub run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 构建并完成 sidecar SHA-256 复验；新检查器确认最终包不含 `res://tests/` 或 `res://tools/`。固定包的标题／暂停层应显示：
+当前已校验的固定人工验收桌面 artifact 来自 PR #87 的完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a`。它在已有玩法、HUD、秋季双轨、Boss 修复和导出资源门禁上，加入固定 B01 急转切片的独立 typed scene、共享因果规则、strict ticket/bootstrap 和精确 artifact 身份校验。macOS／Windows 包由 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 构建；两份 manifest 均绑定 `source_ref: refs/heads/main`、该完整提交、该 run 且 `dirty: false`，最终包检查通过。旧 `29e719f` 桌面包早于 B01 运行时，已降为历史追溯 artifact，不再是当前验收入口。固定包的标题／暂停层应显示：
 
 ```text
-v0.9.5-rc.2 · 29e719ff
+v0.9.5-rc.2 · 57aefc49
 ```
 
 不应出现 `+dirty`。标准包没有秋季直达入口，秋季双轨仍须在完整流程中验证音效遮蔽、循环疲劳和实机混音；Windows 真机也尚未完成。Alan 已分别允许 PR #63 的玩法整改方向、PR #65 的 HUD／饮蜜按钮方向和 PR #76 的秋季双轨替换进入主线，但这些都不是完整玩法、原生触摸、整套音乐、设备或发行验收。未参与开发的外部玩家证据仍为 **0**。
@@ -92,7 +92,7 @@ npm run playtest:prepare -- \
   --artifact-sha256 <安装包 SHA-256>
 ```
 
-默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；新版 A 表由 29 个控件降为 6 个，只收 4 个短原话和 2 个结束选择。`coordinator/observer.html` 留给测试协调者，隔离记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果；关系类型由生成命令固定，参与者不能自报。两页均完全离线、不收个人信息。A 包最多 15 分钟，继续兼容声明式 artifact SHA 流程。B 已具备 strict ticket/bootstrap、actual artifact／schema v1 manifest／精确提交 catalog 校验；生产 catalog 的中性 `B01 / 10 分钟` 已为 `ready`，并编译绑定独立 typed scene。切片先执行“2.8 秒老师傅因果示范 → 有界引导模仿 → 无提示实践”；只有无提示实践首次成功，才进入“恰好 180 秒 active 花间路线 → 一次无字、同配置复测 → 中性结束”，否则在有界实践后直接中性结束。内部结果互斥为 `completed_independent`、`attempted_incomplete` 或 `not_attempted`。B01 不实例化 Main、MentorTutorial 或 SaveManager，也不读写任何存档；这与基础设施为其他未来切片保留的 ticket-derived namespace 能力不同。但尚未从包含该运行时的最终 clean commit 重建 artifact、sidecar 与 manifest，因此当前仍没有可发放的 B 包；旧 `29e719f` artifact 不含此运行时，不能配新 ticket。音乐继续独立使用 `npm run audio:review`。旧 schema v1 记录不自动升级为新版机制证据。首份 A 包属于旧候选 `f57ea02c`：它暴露首分钟采蜜反馈和问卷过长两个 P0，但不能迁移为当前 `29e719f` 的通过证据；填写者身份仍待协调者确认，外部玩家样本仍为 0。当前候选必须重新采集首分钟和完整流程证据。完整记录与边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
+默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；新版 A 表由 29 个控件降为 6 个，只收 4 个短原话和 2 个结束选择。`coordinator/observer.html` 留给测试协调者，隔离记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果；关系类型由生成命令固定，参与者不能自报。两页均完全离线、不收个人信息。A 包最多 15 分钟，继续兼容声明式 artifact SHA 流程。B 已具备 strict ticket/bootstrap、actual artifact／schema v1 manifest／精确提交 catalog 校验；生产 catalog 的中性 `B01 / 10 分钟` 已为 `ready`，并编译绑定独立 typed scene。切片先执行“2.8 秒老师傅因果示范 → 有界引导模仿 → 无提示实践”；只有无提示实践首次成功，才进入“恰好 180 秒 active 花间路线 → 一次无字、同配置复测 → 中性结束”，否则在有界实践后直接中性结束。内部结果互斥为 `completed_independent`、`attempted_incomplete` 或 `not_attempted`。B01 不实例化 Main、MentorTutorial 或 SaveManager，也不读写任何存档；这与基础设施为其他未来切片保留的 ticket-derived namespace 能力不同。当前 `57aefc4` 桌面 artifact、sidecar 与 manifest 已重建并校验，且已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`。macOS 精确 ticket 进程曾启动后退出，但尚未导入 Alan 的 participant／observer 表单或结果 JSON；这只是包和启动事实，不是“已完成”“已理解”或复测结果。音乐继续独立使用 `npm run audio:review`。旧 schema v1 记录不自动升级为新版机制证据。首份 A 包属于旧候选 `f57ea02c`：它暴露首分钟采蜜反馈和问卷过长两个 P0，但不能迁移为当前 `57aefc4` 的通过证据；填写者身份仍待协调者确认，外部玩家样本仍为 0。当前候选必须重新采集首分钟和完整流程证据。完整记录与边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
 
 ## 视觉方向
 
@@ -133,7 +133,7 @@ npm run test
 - `godot/scripts/music_director.gd`：8 轨音乐路由；
 - `godot/bootstrap.tscn`、`godot/scripts/playtest/` 与 `godot/data/playtest_slices.json`：普通启动兼容的导出入口、固定切片 strict identity gate、编译期 registry、生产 `ready` catalog 与 B01 独立 typed scene；
 - `scripts/prepare_audio_blind_review.mjs`：生成 A–H 匿名盲听包和独立答案；
-- `scripts/prepare_playtest_evidence.mjs`：生成首节点匿名试玩证据包和隔离分析模板；B 流程只能从 actual artifact、manifest 和精确提交 catalog 推导 ticket，因此必须等包含 B01 的新 clean artifact 重建后才能生成可发放包；
+- `scripts/prepare_playtest_evidence.mjs`：生成首节点匿名试玩证据包和隔离分析模板；B 流程只能从 actual artifact、manifest 和精确提交 catalog 推导 ticket，当前 `57aefc4` 的 Alan B01 包已按该流程生成；
 - `godot/scripts/ui/production_hud.gd`：当前状态、完成条件和动作卡；
 - `app/page.tsx`：Godot Web 版启动外壳。
 
@@ -157,7 +157,7 @@ npm run test
 
 ## 当前验证问题
 
-1. 陌生玩家能否不经口头提示完成首趟，并分别独立完成寻迹、惊退和急转？正常路线仍没有稳定延迟复测；B01 源码已构造恰好 180 秒 active 花间路线后的一次同配置、无字机会，但尚无新 artifact 或人工证据；未遇到不能记成失败，自动测试也不能记成学会。
+1. 陌生玩家能否不经口头提示完成首趟，并分别独立完成寻迹、惊退和急转？正常路线仍没有稳定延迟复测；当前 B01 固定 artifact 已构造恰好 180 秒 active 花间路线后的一次同配置、无字机会，但尚无导入的 Alan 或外部玩家结果；未遇到不能记成失败，自动测试也不能记成学会。
 2. 玩家能否从开放花器官和蜂身散粉读懂授粉，而不是理解为“碰花开花／产蜜”？
 3. 四组行为是否真实改变路线、顺序、撤离或资源选择？
 4. 四位 Boss 的失败原因能否分别复述？

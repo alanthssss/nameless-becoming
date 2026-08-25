@@ -3,7 +3,7 @@
 > 核心张力：发现花源 → 停留采集 → 危险与体力改变局面 → 决定继续、处理威胁或撤离 → 把资源带回蜂巢。
 > Core tension: find nectar → linger to harvest → danger and stamina reshape the situation → continue, respond, or retreat → bring resources home.
 
-当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`0.9.5-rc.2` / `29e719f`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停与 PR #82 导出门禁。
+当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停、PR #82 导出门禁与 PR #87 B01 固定急转切片／共享急转运行时／证据门禁。
 
 ---
 
@@ -71,7 +71,14 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
 - 惊退必须让敌害离开资源区；
 - 急转不能用锁线前抢跑、空地双击或无敌帧硬穿代替；
 - 首次失败安全重演，急转必须真实完成 `1/2 → 2/2`；
-- 当前正常路线在老师傅连续两次急转练习后，没有固定的延迟同语法复测机会；未遇到机会不能记为迁移失败。若要验证约 3 分钟后的保持，先提供固定复测切片。
+- 正常路线在老师傅连续两次急转练习后，仍没有固定的延迟同语法复测机会；PR #87 因此将验证隔离到 B01 固定切片。
+
+### B01 急转延迟复测 / B01 Delayed Evade Retest
+
+- 主流程和 B01 共享锁线、侧移、真实通道与键盘／鼠标／触摸输入规则；
+- 固定流程为 `2.8 秒示范 → 有界引导 → 无提示实践`；只有无提示实践首次成功才进入恰好 180 秒 active 花间路线和一次无字同配置复测，否则在有界实践后中性结束；
+- 切片不实例化 Main、MentorTutorial 或 SaveManager，不读写存档；结果只能是 `completed_independent`、`attempted_incomplete` 或 `not_attempted`；
+- `57aefc4` 的 B01 self-test 包已按精确 ticket 启动，但尚无 Alan result JSON 或外部玩家结果；自动时序与启动成功不能写成玩家已学会。
 
 ## 4. 24 节点推进 / 24-Node Progression
 
@@ -152,8 +159,8 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
 
 ## 10. 当前验证边界 / Current Validation Boundary
 
-- PR #63 的玩法／资产、PR #64 的匿名盲听工具和 PR #65 的 HUD／输入形成 `f57ea02c`，PR #69 形成历史 artifact `4b57d856`，PR #76 形成历史 artifact `de78f2c`，PR #79 形成历史 artifact `21a44bd`，PR #81／#82 合并后形成当前固定 artifact `29e719f`；PR #67、#68、#75 只增加证据工具／文档；
+- PR #63 的玩法／资产、PR #64 的匿名盲听工具和 PR #65 的 HUD／输入形成 `f57ea02c`，PR #69 形成历史 artifact `4b57d856`，PR #76 形成历史 artifact `de78f2c`，PR #79 形成历史 artifact `21a44bd`，PR #81／#82 形成历史 artifact `29e719f`，PR #87 合并后形成当前固定 artifact `57aefc4`，包含 B01、共享急转运行时和证据门禁；PR #67、#68、#75 只增加证据工具／文档；
 - Alan 的“可以”是方向门禁，不是逐项可用性通过；
-- 9 组 Godot 回归、视觉快照和构建哈希属于开发者证据；
+- 14 组 Godot 回归、run `32867365895` 双端 artifact／sidecar／pack verifier、B01 精确 ticket 启动和视觉快照属于开发者证据；
 - 外部玩家证据为 0；
 - 时长、难度、四季辨识、Boss 规则复述、音乐品质和重玩意愿都仍需真实记录。
