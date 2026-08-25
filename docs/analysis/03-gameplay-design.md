@@ -3,7 +3,7 @@
 > 核心张力：发现花源 → 停留采集 → 危险与体力改变局面 → 决定继续、处理威胁或撤离 → 把资源带回蜂巢。
 > Core tension: find nectar → linger to harvest → danger and stamina reshape the situation → continue, respond, or retreat → bring resources home.
 
-当前源码候选 / Current source candidate：`0.9.5-rc.2`；`4b57d856` 玩法基线＋PR #76 秋季双轨。固定桌面 artifact 仍为不含新音乐的 `4b57d856`。
+当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`0.9.5-rc.2` / `de78f2c`，包含 PR #76 秋季双轨。
 
 ---
 
@@ -152,7 +152,7 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
 
 ## 10. 当前验证边界 / Current Validation Boundary
 
-- PR #63 的玩法／资产、PR #64 的匿名盲听工具和 PR #65 的 HUD／输入形成 `f57ea02c`，PR #69 的首次采蜜修复形成固定 artifact `4b57d856`；当前源码另含 PR #76 秋季双轨，PR #67、#68、#75 只增加证据工具／文档；
+- PR #63 的玩法／资产、PR #64 的匿名盲听工具和 PR #65 的 HUD／输入形成 `f57ea02c`，PR #69 形成历史 artifact `4b57d856`，PR #76 合并后形成当前固定 artifact `de78f2c`；PR #67、#68、#75 只增加证据工具／文档；
 - Alan 的“可以”是方向门禁，不是逐项可用性通过；
 - 9 组 Godot 回归、视觉快照和构建哈希属于开发者证据；
 - 外部玩家证据为 0；
