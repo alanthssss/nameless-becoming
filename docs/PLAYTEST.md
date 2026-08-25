@@ -48,9 +48,9 @@ npm run playtest:prepare -- \
 
 这里把口语里的“卡”拆成“不知道下一步”“操作没有成功”“停下来想”“难懂／难操作”，避免参与者把理解、执行和停顿混为一个模糊结论；字段名、六项结构和 JSON schema 不变。A／B 使用同一份参与者短表，问题仍只收自由回忆，不提示具体机制、正确操作或成功条件。
 
-### B：单个高级切片（B01 固定 artifact 与 Alan 包已就绪，尚无导入结果）
+### B：单个高级切片（源码防护已就绪；新 artifact／新会话与有效运行结果待补）
 
-生产源码已完成 B01 的独立 typed scene 和固定身份链，当前双端 artifact 与 Alan 自测 B 包也已按精确身份流程生成；这些是**实现、构建与包生成事实**，不等于已取得玩家结果：
+生产源码已完成 B01 的独立 typed scene、固定身份链、启动 fail-closed 与精确 ready receipt。最近双端 artifact／Alan 包来自早于 PR #90／#91 的 `57aefc4`，只作下文历史错配记录；下一次有效 B01 的 artifact、session／ticket 与运行结果尚未生成：
 
 - `godot/data/playtest_slices.json` 的公开 schema v1 只含中性编号、公开任务文案、时限和状态；生产 catalog 唯一条目是 `B01 / 固定切片 B01 / 10 分钟 / ready`，不含机制名、scene、handler、stage、seed、存档路径或 patch／override；编译期 registry 直接 preload B01 scene，不从 ticket 或 catalog 接受路径；
 - 导出主入口是 bootstrap。没有 user argument 且 raw engine arguments 也没有 ticket 时仍实例化原 `main.tscn`；试玩的完整启动命令必须是 `"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket.json 的绝对路径>"`，其中 `--` 把唯一一个 user argument 与引擎参数分开。若 ticket 被错误放在分隔符前，bootstrap 必须显示稳定错误码 `PT-ARG-SEPARATOR`，不得静默进入 Main。ticket、同目录固定名 `artifact-manifest.json`、包内 build provenance、运行平台、产品版本、完整 clean commit、artifact 字段、catalog 原始字节 SHA-256 和编译期 registry 任一不一致都会 fail closed；
@@ -82,9 +82,13 @@ npm run playtest:launch -- \
 
 命令未打印 `Playtest ready receipt verified` 时不得开始记录 B01；看到 `PT-ARG-SEPARATOR` 时只修正启动链，不得继续普通 Main，也不得把这次尝试计入玩法结果。
 
-当前固定 artifact 来自 PR #87 的完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)；双端 manifest 均绑定 `source_ref: refs/heads/main`、该 run 和 `dirty: false`。仓库外持久副本根目录为 `nameless-becoming-candidates/57aefc4-run-32867365895/`。旧 `29e719f` artifact 早于固定切片基础与 B01 运行时，已降为历史，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
+当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`，已含 PR #90／#91。最近固定 artifact 来自 PR #87 的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)，仓库外副本位于 `nameless-becoming-candidates/57aefc4-run-32867365895/`；它不含新的启动防护，只作历史证据，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
 
-已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。第一次 macOS exact-ticket 启动前，协调者没有明确说明“现在要实际试玩”；Alan 看到“可以关闭”后合理关闭，并明确反馈自己不知道需要试玩。因此第一次退出定级为**试玩交接流程失败**，不得归入 B01 内部 `not_attempted`、不得判为 Alan 未学会，也不产生玩法结果。随后已用同一 exact ticket 重开，并只提供中性流程说明“直接玩到结束再填短表”；该次必须标为**程序性重试**，不能冒充完全盲测。当前仍未导入 Alan 的 participant／observer 表单或结果 JSON，也不得声称第二次已经完成。上述 scene、共享运行时、catalog `ready` 与时序是**实现事实**；Godot／Node 自动测试是**开发者自测**；artifact／manifest／ticket、两次进程启动和首次误关原因是**构建／流程执行事实与 Alan 原话证据**。它们仍不能写成 Alan 已完成、已理解急转、教学迁移或发行通过。Windows B01 真机和独立外部玩家 B01 证据仍缺失。
+已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。第一次 macOS exact-ticket 启动确实带有 Godot user-argument 分隔符并进入 B01；但协调者没有先说明“现在要实际试玩”，Alan 看到“可以关闭”后合理关闭，并明确反馈自己不知道需要试玩。因此第一次退出定级为**试玩交接流程失败**，不得归入 B01 内部 `not_attempted`、不得判为 Alan 未学会，也不产生玩法结果。
+
+第二次原计划用同一 ticket 做程序性重试，但实际进程命令是 `"<exe>" --playtest-ticket=<ticket>`，缺少引擎参数与 user arguments 之间的 `--`。在 `57aefc4` 旧构建中，`OS.get_cmdline_user_args()` 因此为空，旧 bootstrap 进入标准 `Main`；玩家又描述“过了几关、未到 Boss”，而 B01 不含这些结构。进程命令、旧构建行为与玩家原话共同支持该轮进入 `Main` 的判定。该次属于**协调者启动执行失败**，不是 B01 procedural replay。当前主线已由 PR #90 改为从 raw args 识别错放 ticket 并报 `PT-ARG-SEPARATOR`，不得把旧行为描述成现行实现。
+
+已收到 participant 导出 `playtest-NB-20260825-6412D7BA.json`，SHA-256 为 `d7ac2c4b7f754bc910a2e86c2d9feb2230a392d565c926b3305dd31ed32046f8`；机器身份为 `schema_version: 2`、`export_kind: participant_short_form`、`exported_at: 2026-08-25T17:18:13.688Z`、`tester_relation: alan_self_test`。其中产品版本、完整提交 `57aefc4933db88968777b11ea1d1679c6374842a`、`dirty:false` 和 macOS artifact SHA-256 均与固定包匹配；但静态 B01 task/product 字段不是 scene 运行回执，并与上述 Main 证据链不匹配。因此该 JSON **不可算 B01 结果，也不可算 B01 程序性重试结果**；只能作为 Alan 对历史 `Main` 的局部自测反馈归档。旧会话已关闭且不得重开。下一次必须从包含 PR #90／#91 与届时已合并修复的最新 clean `main` 重建 artifact、创建全新 session／ticket，并通过 `npm run playtest:launch` 取得精确 ready receipt 后再采集。手写 `"<exe>" -- "--playtest-ticket=<ticket>"` 只说明底层协议，不作为执行入口。上述 scene 与时序是**实现事实**；自动测试是**开发者自测**；旧 artifact／命令是**历史构建／流程事实**；Alan 原话只属于本次历史 Main 自测。Windows B01 真机和独立外部玩家 B01 证据仍缺失。
 
 ### C：独立音乐盲听
 
@@ -102,7 +106,7 @@ npm run playtest:launch -- \
 
 当前外部玩家样本仍为 **0**。生成器、JSON、CI 或 Alan 的方向批准都不增加样本数。
 
-首轮先收集 3–5 名陌生玩家的 A 包；B01 专用 typed scene 已由“正常路线没有稳定延迟复测”这一证据缺口触发实现，固定 artifact 和 Alan 自测包也已生成，下一门禁是完成并导入 Alan 的两份表单，而不是重复构建。人数不是 1.0 的唯一门槛；至少还要分别关闭 Alan 完整人工流程、Windows 真机、音乐盲听、构建和发行链路。只有在同一固定构建上取得足够可比较记录后，才能讨论教学理解率、节奏、重开意愿或版本通过。
+首轮先收集 3–5 名陌生玩家的 A 包。B01 typed scene 与启动防护已实现；下一门禁是从最新 clean main 重建 artifact、创建全新 session／ticket、通过 `npm run playtest:launch` 核对 ready receipt，再完成 Alan participant／observer。旧错配 JSON 不能填补该门禁。人数也不是 1.0 的唯一门槛；至少还要分别关闭 Alan 完整人工流程、Windows 真机、音乐盲听、构建和发行链路。
 
 ## 开发者自测反馈（alan）
 
@@ -151,7 +155,19 @@ npm run playtest:launch -- \
 
 ### 2026-08-26
 
-- **B01 首次启动被误当成可直接关闭**：Alan 原话语义为“误关的；看到显示可以关闭就关了，并不知道要试玩”。→ 根因是协调者在启动前没有明确交接“现在是一段实际试玩”，不是 Alan 没有尝试或没有学会。该次退出定级为 playtest protocol / instruction failure，不进入 `not_attempted` 或学习成败统计。同一 exact ticket 随后只以“直接玩到结束再填短表”的中性程序说明重开；这次属于 procedural replay，不能冒充完全盲测，且在表单／结果 JSON 导入前仍不得记为已完成。
+- **B01 首次启动被误当成可直接关闭**：Alan 原话语义为“误关的；看到显示可以关闭就关了，并不知道要试玩”。→ 根因是协调者在启动前没有明确交接“现在是一段实际试玩”，不是 Alan 没有尝试或没有学会。该次退出定级为 playtest protocol / instruction failure，不进入 `not_attempted` 或学习成败统计。
+- **第二次启动误入标准 Main**：原计划的 B01 程序性重试命令遗漏 Godot user-argument 分隔符 `--`；在 `57aefc4` 旧构建中，`OS.get_cmdline_user_args()` 为空后旧 bootstrap 进入 `Main`。→ 定级为协调者 launch execution failure，不得把随后填写的 B01 短表当成 B01 或 procedural replay 结果。旧会话永久关闭；下一次使用新 artifact、全新 session 与启动器精确回执。
+- **固定 Main 局部自测**：同会话 participant JSON 的构建与 artifact 身份匹配 `57aefc4`，结束字段为 `end_reason: time_limit`、`replay_intent: after_changes`；前者是参与者选择，不是实际时长遥测。首分钟字段的原始 JSON 字符串是 `没有卡顿 \n`；最远到达原话是“还没到第一个boss, 过了几关”；问题／建议原话如下：
+
+  ```text
+  1、闪避敌人成功后是不是可以考虑设计给自己buff 或者考虑给闪掉的敌人debuff
+  2、提示什么的放在最右侧、上侧是不是不是一个很好的设计,是否可以简约设计到画面中
+  3、整体美术设计还没有达到一个待宣传、待发售的水准
+  ```
+
+  一句话总结原话是“整体感觉比之前好多了,但是还是有很多具体的方面需要改善的”。→ 这些原话可作为 Alan 对固定 `Main` 的局部体验反馈：自报到达时间上限时过了几关但未到第一个 Boss；`没有卡顿` 来自含歧义的问题，既不能证明没有流程困惑，也不能证明没有性能问题。闪避成功后的 buff／debuff 仍只是设计建议，不能改写成已批准机制；右／上提示的画面内化和整体美术的宣传／发售品质继续作为未关闭项。它们不能证明 B01 急转教学或完整流程通过。
+- **首分钟旧问题存在语义歧义**：历史问法“开始后一分钟，你记得自己先做了什么、卡在哪里？”中的“卡”可能被理解为性能卡顿；本次“没有卡顿”没有回答先做了什么，也不能证明流程没有受阻。→ PR #91 已改为询问先做什么、操作未成功或停下来想的地方，并保持六字段／schema；不得回写或润色本次原始答案。
+- **当前实机美术方向未通过**：Alan 随后直接指出三点：目前像“写实元素转手绘”，缺少艺术加工和游戏化；场景／地图结构尚可，但过度精细；应回查怪物与 Boss 设定，为主角、蜂巢和场景加入人情味。→ 该反馈覆盖此前“整体方向可继续”的历史门禁，只针对当前美术方向，不否定已合并玩法代码。任务升级为 P0 角色化美术语言样板：保留空间结构、主动减细节，从敌害行为提炼轮廓／姿态／运动；角色性来自习惯、动作和生活痕迹，不靠给动植物加帽子、人脸或人类身体。春季代表场景获 Alan 明确确认前不得批量生产。
 
 ## 2026-08-25 候选证据接收
 
@@ -231,11 +247,11 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 
 该结论仍不是外部玩家证据，也不证明游戏内混音、四组同季配对、整套八轨总体区分度或长时间耐循环。播放秒数是累计值且不记录 seek／实际覆盖区间；尤其 Y 的累计 25 秒短于其 30.968 秒完整循环，所以不能把本次选择改写成“完整听完多轮后无疲劳”。
 
-### 当前固定人工验收 artifact `57aefc4`：B01 程序性重试待导入 Alan 结果
+### 历史固定 artifact `57aefc4`：Main 局部自测已归档，B01 无有效结果
 
-`29e719f` 曾在 PR #82 闭合导出资源门禁，但它早于固定切片身份基础与 B01 运行时，现已降为历史 artifact。PR #87 合并后的完整 `main` 提交为 `57aefc4933db88968777b11ea1d1679c6374842a`；GitHub [`Desktop client builds` run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 从该精确 clean 提交生成当前 macOS universal 与 Windows x86_64 artifact。两份 schema v1 manifest 均绑定 `source_ref: refs/heads/main`、该 run 和 `dirty: false`；macOS payload 为 70,368,894 bytes，SHA-256 为 `625a8cb9b379fccf92156f4a1573b062c7bb94a301a2cbe7fc54de669486395e`，Windows payload 为 116,888,848 bytes，SHA-256 为 `ccf7101a1c7d254ab8af12908ddcdeddec794ca59dc9de28c7e37c795e70eead`。双端最终包检查通过；macOS universal 架构、严格签名校验通过，Windows 为 PE32+ GUI x86-64。详细 artifact ID、到期时间、PCK 哈希和本机路径见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
+`29e719f` 曾在 PR #82 闭合导出资源门禁，但它早于固定切片身份基础与 B01 运行时，现已降为历史 artifact。PR #87 合并后的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 由 GitHub [`Desktop client builds` run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 生成 macOS universal 与 Windows x86_64 artifact；双端最终包检查通过。它现在同样是历史 artifact，因为当前源码 `a58358c3ac90d6edac8a654777beb378d978b688` 已含 PR #90／#91。详细旧 artifact 身份见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
-当前构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨、Boss P1 修复和 B01 固定急转切片，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。Alan B01 包会话 `NB-20260825-6412D7BA` 已生成；第一次 exact-ticket 进程因启动前缺少“现在要实际试玩”的流程交接而被合理关闭，该轮不属于 `not_attempted` 或学习失败。随后同一 ticket 已在中性流程说明下重开，记录身份为程序性重试，不是完全盲测；目前仍没有导入任何表单或结果 JSON，不得由此声称 Alan 完成或理解了急转。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机与独立外部玩家证据仍为缺失。
+该历史构建包含首次采蜜修复、秋季探索／Boss 双轨、Boss P1 修复和 B01 切片，但这些只是实现与旧构建事实。会话 `NB-20260825-6412D7BA` 第一次为交接失败；第二次在旧 bootstrap 中因缺少分隔符进入 `Main`。同会话 JSON 只归档为 Alan 历史 Main 局部自测：参与者自报 `time_limit`，实际时长不可得，最远“还没到第一个boss, 过了几关”。旧会话与旧包不得再用于采集；下一次 B01 和完整 Main/A 都须绑定新 artifact 与各自全新 session。Windows 真机与独立外部玩家证据仍缺失。
 
 ### Draft PR #78 秋野探索源码内混音复核：Alan 制作人听感门禁通过（秋 Boss 待测）
 

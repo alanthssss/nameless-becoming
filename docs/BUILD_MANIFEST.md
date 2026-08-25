@@ -1,8 +1,8 @@
 # 0.9.5 候选构建历史与校验清单
 
-本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选为 `0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，见“2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包”。此前的 `29e719fff1621df35f88972f3bdeed98e37d8af9` 早于 B01 运行时，已降为历史可追溯构建，不得继续作为当前交付或人工验收入口；`21a44bd`、`de78f2c` 及更早表格同样只作历史记录。
+本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`，已含 PR #90／#91；最近固定桌面 artifact 为 `0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，见“2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包”。该旧包及更早构建均只作历史记录，不得继续作为下一轮 B01 或当前交付入口。
 
-PR #85 实现固定切片身份基础；PR #87 将 B01 独立 typed scene、共享急转运行时、编译期 registry 与生产 catalog `ready` 合入完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a`。当前双端 artifact 和 Alan B01 自测包已生成；自动测试、包检查和进程启动事实仍不构成 Alan 完成 B01、玩家已学会或外部玩家证据。
+PR #85 实现固定切片身份基础；PR #87 将 B01 独立 typed scene、共享急转运行时、编译期 registry 与生产 catalog `ready` 合入完整提交 `57aefc4933db88968777b11ea1d1679c6374842a`。该历史双端 artifact 和 Alan B01 包曾生成；PR #90／#91 后的新 artifact 尚未构建。自动测试、包检查和进程启动事实仍不构成 Alan 完成 B01、玩家已学会或外部玩家证据。
 
 ## 2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包
 
@@ -19,11 +19,11 @@ Godot 共 14 组回归：其中 validator、bootstrap 和 namespace 隔离覆盖
 | macOS universal | `9570704713` / `NamelessBecoming-macOS-v0.9.5-rc.2` | `nameless-becoming-candidates/57aefc4-run-32867365895/NamelessBecoming-macOS-v0.9.5-rc.2/NamelessBecoming-macOS.zip` | `2026-09-24T15:43:34Z` | 70,368,894 bytes | `625a8cb9b379fccf92156f4a1573b062c7bb94a301a2cbe7fc54de669486395e` | universal 架构检查通过；严格签名校验通过；最终包检查通过；内嵌 PCK SHA-256 为 `20f580894489ce078fdae9acb892f19b9825ff7bd3f09ea7befcec5cb952aa57`；标准无 ticket 无界面 smoke 退出码 0 |
 | Windows x86_64 | `9570695538` / `NamelessBecoming-Windows-v0.9.5-rc.2` | `nameless-becoming-candidates/57aefc4-run-32867365895/NamelessBecoming-Windows-v0.9.5-rc.2/NamelessBecoming-Windows.exe` | `2026-09-24T15:43:19Z` | 116,888,848 bytes | `ccf7101a1c7d254ab8af12908ddcdeddec794ca59dc9de28c7e37c795e70eead` | PE32+ GUI x86-64 格式检查通过；最终包检查通过；Windows 真机尚未验证 |
 
-仓库外当前候选根目录为 `nameless-becoming-candidates/57aefc4-run-32867365895/`；该目录不是 Git 资产或公开发行渠道。上述验证证明实际 payload、来源、签名／格式和导出资源闭包符合构建门禁，不是真人玩法结论。
+仓库外历史候选副本位于 `nameless-becoming-candidates/57aefc4-run-32867365895/`；该目录不是 Git 资产或公开发行渠道，也不是下一轮验收入口。上述验证只证明该历史 payload 的来源、签名／格式和资源闭包。
 
-在干净临时目录解包后，当前 macOS 包还以标准无 ticket 入口完成无界面 smoke。启动前后真实 `nameless.cfg` 的 SHA-256 均为 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime 均为 `1787640643`、大小均为 143 bytes，本次标准入口检查没有改写既有存档。
+在干净临时目录解包后，该历史 macOS 包还以标准无 ticket 入口完成无界面 smoke。启动前后真实 `nameless.cfg` 的 SHA-256 均为 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime 均为 `1787640643`、大小均为 143 bytes，本次标准入口检查没有改写既有存档。
 
-已从该 macOS artifact 和 manifest 生成 Alan B01 包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。使用该精确 ticket 启动的 macOS 进程曾运行，随后已退出；尚未导入 Alan 的 participant／observer 表单或结果 JSON，因此不得记为“完成切片”“理解急转”或任何复测结果。Windows B01 真机与独立外部玩家证据仍待采集。
+已从该 macOS artifact 和 manifest 生成历史 Alan B01 包会话 `NB-20260825-6412D7BA`；第一次进入 B01 后因交接失败退出，第二次命令遗漏 Godot user-argument 分隔符。在 `57aefc4` 旧构建中，空 user arguments 会进入 `Main`；该进程命令、旧构建代码和玩家“过了几关、未到 Boss”的原话共同支持 Main 判定。随后 participant JSON SHA-256 为 `d7ac2c4b7f754bc910a2e86c2d9feb2230a392d565c926b3305dd31ed32046f8`，只归档为 Alan 历史 Main 局部自测。PR #90 后当前主线已对 raw args 中错放 ticket 以 `PT-ARG-SEPARATOR` fail closed，并要求精确 ready receipt；旧会话已关闭且不得复用。有效 B01 必须从最新 clean main 重建 artifact、创建全新 session／ticket，再通过 `npm run playtest:launch` 启动。Windows B01 真机与独立外部玩家证据仍待采集。
 
 ## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 

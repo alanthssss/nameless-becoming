@@ -3,7 +3,7 @@
 > 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
 > The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
 
-当前源码候选与固定验收 artifact / Current source candidate and fixed acceptance artifact：`57aefc4933db88968777b11ea1d1679c6374842a`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停、PR #82 导出门禁与 PR #87 B01 固定急转切片／共享急转运行时／证据门禁。
+当前源码基线 / Current source baseline：`a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不可用于下一轮 B01）。
 
 ---
 
@@ -30,16 +30,17 @@ This section records history only; the old four stages, first-boss prototype, ol
 | PR #81 | 成长／分配弹层键盘焦点、单次确认和切出／恢复暂停语义 | 自动 GUI 与通知回归通过，真实窗口和玩家操作仍待人工验证 |
 | PR #82 | 三 preset 排除内部测试／工具资源，并检查最终 macOS ZIP 与 Windows EXE | 合并提交 `29e719f` 曾重建并复验双端 artifact；PR #87 合并后已降为历史候选 |
 | PR #85 | 固定切片 strict ticket／bootstrap、artifact manifest／catalog 身份链与存档 namespace 隔离基础 | 解除 B 包身份依赖；未单独宣布玩法切片已就绪 |
-| PR #87 | B01 独立 typed scene、主流程／切片共享急转运行时、编译期 registry、产品 `ready` catalog 与证据门禁 | 合并提交 `57aefc4` 为当前固定 artifact；run `32867365895` 双端构建／sidecar／pack verifier 通过，B01 exact-ticket self-test 已启动，但仍无 Alan result JSON |
+| PR #87 | B01 独立 typed scene、主流程／切片共享急转运行时、编译期 registry、产品 `ready` catalog 与证据门禁 | 合并提交 `57aefc4` 形成历史固定 artifact；旧会话无有效 B01 结果 |
+| PR #90／#91 | 错放 ticket fail-closed、启动器自动分隔、精确 ready receipt；修订六字段短表 | 已进入当前源码 `a58358c` 并通过自动验证；待新 artifact、全新 session 与真人结果 |
 
 ## 2. 当前阶段结论 / Current Stage Conclusion
 
 | 证据层 / Evidence layer | 状态 / Status | 结论 / Conclusion |
 | --- | --- | --- |
-| 实现 / Implementation | 已完成当前批次 | PR #63／#64／#65／#69 的玩法与工具、PR #76／#79／#81／#82 的音频、Boss、焦点和导出修复，以及 PR #87 的 B01／共享急转／证据门禁形成当前固定 artifact `57aefc4` |
-| 开发者自测 / Developer verification | 通过 | 14 组 Godot 回归、Web 门禁、正式秋季双轨回归，以及 run `32867365895` 对 `57aefc4` 的 macOS／Windows artifact、sidecar SHA-256 和最终 pack verifier 复验通过；B01 self-test 包已按精确 ticket 启动 |
-| Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
-| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`57aefc4` 尚待重新采证。B01 self-test 包已按 exact ticket 启动，但没有 Alan result JSON，不得宣称人工完成或已学会。秋季双轨全长最终 A/B 已在两组均选择正式候选；总体配对、长期耐循环、实机混音与完整玩法流程仍缺失 |
+| 实现 / Implementation | 已完成当前批次 | PR #87 形成历史 B01 artifact；PR #90／#91 已把启动防护、ready receipt 与短表修订加入当前源码 |
+| 开发者自测 / Developer verification | 自动验证通过；新构建与 B01 人工执行未完成 | 旧 `57aefc4` 双端 artifact 曾复验；PR #90／#91 的 Godot／Node 回归通过。下一步仍需最新 main 新 artifact、全新 session 与真实 ready receipt |
+| Alan 方向门禁 / Direction gate | 玩法整改与旧 HUD 方向曾通过；当前美术重开 | 2026-08-26 直接反馈否决当前实机美术达到宣传／发售水准，并要求从写实转手绘改为角色化、游戏化的统一造型语言 |
+| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`57aefc4` 经证据链判定进入 Main 的局部自测已归档，参与者自报 `time_limit`、实际时长不可得，且未到首个 Boss。B01 第一次交接失败、第二次进入 Main，尚无有效 B01 运行结果，不得宣称人工完成或已学会。秋季双轨全长最终 A/B 已在两组均选择正式候选；总体配对、长期耐循环、实机混音与完整玩法流程仍缺失 |
 | Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
 | 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
@@ -56,9 +57,9 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 ### 3.2 Alan 固定候选人工流程 / Alan Fixed-Build Pass
 
-1. 从 `57aefc4` 复测“贴近花心并持续按住”的首分钟采蜜反馈，再不经口头提示完成首节点；
+1. 从最新 clean main 重建新 artifact，创建独立 Main/A 与 B01 全新会话后，复测首分钟采蜜并不经口头提示完成首节点；
 2. 急转真实完成 `1/2 → 2/2`；
-3. 用自己的话说明寻迹、惊退与急转的事实、操作和成功证据；再完整运行 B01 的无提示实践、恰好 180 秒 active 路线和单次无字复测，并保存 Alan result JSON；
+3. 用自己的话说明寻迹、惊退与急转的事实、操作和成功证据；B01 通过精确 ready receipt 后再完整运行无提示实践、180 秒 active 路线和单次无字复测，并保存 participant／observer；
 4. 不看说明分辨花药、柱头、蜂身散粉和结籽，并复述授粉因果；
 5. 体验夏季袭扰、秋季留种、冬季暖点并描述实际改过的路线或选择；
 6. 分别复述四位 Boss 的暴露规则；
@@ -69,7 +70,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 - Windows x86_64 真机完成启动、DPI／全屏、中文字体、声音、设置持久化与退出；
 - macOS 固定候选完成一整轮和设置重启；
-- 验证标题／暂停层来源为 `v0.9.5-rc.2 · 57aefc49`，不含 `+dirty`；
+- 验证标题／暂停层显示新 artifact manifest 对应的实际提交短号，版本一致且不含 `+dirty`；
 - 1280×720 是 HUD 参考画布；1920×1080、1440×900 与 1024×768 的等比安全框已自动验证，但任意宽高比世界重排和手机正式适配未承诺；
 - 饮蜜已有按条件显示的鼠标／显式触摸入口；仍须在真实原生触屏设备上验证手感、取消和系统缩放。
 

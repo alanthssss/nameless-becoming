@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停、PR #82 导出门禁与 PR #87 B01 固定急转切片／共享急转运行时／证据门禁。
+当前源码基线 / Current source baseline：`a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不含新的启动回执门禁）。
 
 ---
 
@@ -120,8 +120,8 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 - Web WASM 通过传输分片部署，浏览器加载时重组；
 - macOS universal 与 Windows x86_64 由手动桌面流水线在独立 runner 构建；
 - 流水线校验 Godot 4.6.2 编辑器／模板，运行 14 组回归，导出后附带 SHA-256；
-- 固定候选 `57aefc4` 的 macOS／Windows artifact 由 [run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 构建，两端 sidecar 与最终 pack verifier 通过；完整记录见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
-- B01 self-test 包已从该精确 artifact／manifest／catalog 生成并按精确 ticket 启动，但尚无 Alan result JSON；
+- 历史 `57aefc4` 双端 artifact 由 [run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 构建并复验；完整记录见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
+- 旧 B01 会话第一次交接失败，第二次在 `57aefc4` 旧 bootstrap 中误入 `Main`，现已关闭；PR #90 后的有效运行必须使用新 artifact、全新 session／ticket 与精确 ready receipt；
 - macOS 使用 ad-hoc 签名只适合内部候选，公开发行仍需 Developer ID 签名和公证；
 - Windows artifact 的格式与哈希已验证，但真实 Windows 设备流程尚未完成。
 
@@ -133,7 +133,7 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 v0.9.5-rc.2 · <8 位提交号>[+dirty]
 ```
 
-固定验收候选应显示 `v0.9.5-rc.2 · 57aefc49`，不带 `+dirty`。此前 `29e719f`、`21a44bd`、`de78f2c`、`4b57d856`、`f57ea02c`、`dd4d4f08` 候选及 PR #63 合并提交 `4537151` 都是构建历史，不再表示当前固定候选；旧候选的人工证据也不能迁移为当前候选通过。
+历史 `57aefc4` 包显示 `v0.9.5-rc.2 · 57aefc49`，不带 `+dirty`；它与更早候选都不再表示当前源码。下一固定候选必须从最新 clean main 生成并显示其实际提交号；旧候选人工证据不能迁移为新候选通过。
 
 ## 8. 当前技术边界 / Current Technical Boundaries
 

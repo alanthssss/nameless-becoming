@@ -1,7 +1,7 @@
 # 《无名：成蜂》成熟度、市场定位与新品节生产评估
 
 评估日期：2026-08-24；事实源同步：2026-08-26
-当前固定可玩 artifact：`57aefc4933db88968777b11ea1d1679c6374842a`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停、PR #82 导出门禁和 PR #87 B01 固定急转切片／共享急转运行时／证据门禁；标准包无秋季直达，尚无 Alan B01 result JSON，Windows 真机与实机混音仍待验证
+当前源码基线：`a58358c3ac90d6edac8a654777beb378d978b688`（已含 PR #90／#91）；最近固定桌面 artifact：`57aefc4933db88968777b11ea1d1679c6374842a`，其错配短表只归档为历史 Main 局部自测。该旧包不含启动 fail-closed／ready receipt，不可用于下一轮 B01；新 artifact、全新 session、Windows 真机与实机混音仍待验证
 目标窗口：Steam 2026 年 10 月新品节
 
 ## 执行摘要
@@ -47,7 +47,7 @@
 - PR #65 的 squash merge 提交为 `f57ea02c`，新增第九组 Godot 回归、标准输出尺寸的等比 HUD 安全框与按条件显示的饮蜜指针／触摸入口；自动事件测试不能替代真实原生触屏设备验收。
 - PR #67 建立首轮 A 包试玩证据工具并同步当前事实，不增加外部玩家样本，也不改变固定候选二进制。
 - PR #68 归档旧 `f57ea02c` A 包与八轨逐轨结果；PR #69 再以 `4b57d856` 修复首次采蜜距离、持续操作与成功反馈。新桌面 artifact 已构建并复验哈希，但旧 A 包不能迁移为新候选通过证据。
-- PR #87 将 B01 独立 typed scene、主流程／切片共享急转规则、strict ticket／bootstrap、编译期 registry 和证据包泄漏门禁合入主线。[run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 已从精确 `57aefc4` 构建 macOS／Windows artifact，两端 sidecar 与 pack verifier 通过；B01 self-test 包已按精确 ticket 启动。这些都是实现与开发者自测，不是 Alan 或外部玩家已学会的证据。
+- PR #87 将 B01 独立 typed scene、主流程／切片共享急转规则、strict ticket／bootstrap、编译期 registry 和证据包泄漏门禁合入主线。[run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 已从精确 `57aefc4` 构建 macOS／Windows artifact，两端 sidecar 与 pack verifier 通过；第一次 B01 self-test 进程已按精确 ticket 启动，但交接失败没有形成结果，第二次又因命令分隔符缺失进入标准 `Main`。这些都是实现、开发者自测与流程执行事实，不是 Alan 或外部玩家已学会的证据。
 
 ### 尚未成熟的条件
 
@@ -200,7 +200,7 @@ Boss：保留季节调式、叠加 Boss 动机
 - AI 不产生真实购买冲动、疲劳、挫败和审美偏好；
 - 单个 AI 样本不代表不同经验、语言和设备玩家；
 - 专家可发现可用性问题，但不能证明游戏好玩；
-- 本轮已有本机应用控制、真实窗口输入回归、候选窗口检查和 B01 精确 ticket 启动，但尚未形成 Alan B01 result JSON、完整人工一局或任何陌生玩家记录；这些开发者证据仍不能伪装成真人试玩结果。
+- 本轮已有本机应用控制、真实窗口输入回归、候选窗口检查和 B01 精确 ticket 启动；另有一次经证据链判定进入标准 `Main` 的 Alan 局部自测，参与者自报 `time_limit`，但没有客观实际时长。当前仍没有有效 B01 运行结果、完整人工一局或任何陌生玩家记录；这些证据不能伪装成教学通过或外部玩家结果。
 
 最低现实方案为 3–5 名异步真人：发送安装包或私有链接、不解释操作、要求录屏或启用匿名事件遥测，最后填写两分钟问卷。三个陌生真人仍然远胜于大量开发者自测和一个 AI 样本。
 
@@ -211,7 +211,7 @@ Boss：保留季节调式、叠加 Boss 动机
 ### 新品节前必须完成
 
 1. Steamworks、本体 AppID、商店页与新品节报名；
-2. 从 `57aefc4` 重新完成开发者人工完整一局，并采集 Alan B01 result JSON 和真实时长；
+2. 从最新 clean main 重建新 artifact，分别以全新 Main/A 与 B01 会话完成开发者人工流程；B01 只在精确 ready receipt 后采集 participant／observer；
 3. 3–5 名首轮真人测试，最终累计 10 名；
 4. 首分钟教学、主动撤离和卸蜜反馈；
 5. Windows 真机与 Steam Demo 配置；
