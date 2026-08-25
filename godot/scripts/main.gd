@@ -25,6 +25,8 @@ const BossEncounterDirectorScript := preload("res://scripts/boss_encounter_direc
 const ProductionHUDScript := preload("res://scripts/ui/production_hud.gd")
 const RelayHiveMechanicScript := preload("res://scripts/mechanics/relay_hive_mechanic.gd")
 const MentorTutorialScript := preload("res://scripts/tutorial/mentor_tutorial.gd")
+const EvadeRulesScript := preload("res://scripts/mechanics/evade_rules.gd")
+const EvadeInputControllerScript := preload("res://scripts/player/evade_input_controller.gd")
 const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.svg")
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
@@ -108,16 +110,43 @@ var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
 var action_hold_time := 0.0
 var action_decoy_fired := false
 var action_was_harvesting := false
-var last_dir_tap := {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
-var last_dir_tap_origin := {"left": Vector2.ZERO, "right": Vector2.ZERO, "up": Vector2.ZERO, "down": Vector2.ZERO}
-var last_world_tap_time := 0.0
-var last_world_tap_direction := Vector2.ZERO
-var last_world_tap_position := Vector2.ZERO
-var last_world_tap_origin := Vector2.ZERO
-const DOUBLE_TAP_WINDOW := 0.34
-const EVADE_PATH_CLEARANCE := 36.0
-const EVADE_LOCK_ORIGIN_TOLERANCE := 52.0
-const WORLD_TAP_REPEAT_RADIUS := 56.0
+var evade_input_controller = EvadeInputControllerScript.new()
+# Compatibility accessors keep tests and snapshot tooling on the old Main API
+# while the authoritative caches now live in the reusable input controller.
+var last_dir_tap: Dictionary:
+	get:
+		return evade_input_controller.direction_tap_times
+	set(value):
+		evade_input_controller.direction_tap_times = value
+var last_dir_tap_origin: Dictionary:
+	get:
+		return evade_input_controller.direction_tap_origins
+	set(value):
+		evade_input_controller.direction_tap_origins = value
+var last_world_tap_time: float:
+	get:
+		return evade_input_controller.world_tap_time
+	set(value):
+		evade_input_controller.world_tap_time = value
+var last_world_tap_direction: Vector2:
+	get:
+		return evade_input_controller.world_tap_direction
+	set(value):
+		evade_input_controller.world_tap_direction = value
+var last_world_tap_position: Vector2:
+	get:
+		return evade_input_controller.world_tap_position
+	set(value):
+		evade_input_controller.world_tap_position = value
+var last_world_tap_origin: Vector2:
+	get:
+		return evade_input_controller.world_tap_origin
+	set(value):
+		evade_input_controller.world_tap_origin = value
+const DOUBLE_TAP_WINDOW := EvadeRulesScript.DOUBLE_TAP_WINDOW
+const EVADE_PATH_CLEARANCE := EvadeRulesScript.PATH_CLEARANCE
+const EVADE_LOCK_ORIGIN_TOLERANCE := EvadeRulesScript.LOCK_ORIGIN_TOLERANCE
+const WORLD_TAP_REPEAT_RADIUS := EvadeRulesScript.WORLD_TAP_REPEAT_RADIUS
 const DECOY_HOLD_THRESHOLD := 0.5
 const HIVE_RETURN_POS := Vector2(150, 410)
 var rng := RandomNumberGenerator.new()
@@ -1542,63 +1571,30 @@ func _active_evade_attack_direction() -> Vector2:
 	return Vector2.ZERO
 
 func _process_evade_pressed_directions(pressed_directions: Array[String], now: float, attack_direction_override := Vector2.ZERO) -> bool:
-	var vectors := {
-		"left": Vector2.LEFT,
-		"right": Vector2.RIGHT,
-		"up": Vector2.UP,
-		"down": Vector2.DOWN
-	}
-	var directions_to_process: Array[String] = pressed_directions.duplicate()
 	var attack_direction: Vector2 = attack_direction_override.normalized() if attack_direction_override.length_squared() > 0.01 else _active_evade_attack_direction()
-	if directions_to_process.size() > 1 and attack_direction.length_squared() > 0.01:
-		var best_key := ""
-		var best_score := INF
-		for candidate_key in directions_to_process:
-			if not vectors.has(candidate_key):
-				continue
-			var candidate := Vector2(vectors[candidate_key])
-			var score := absf(candidate.dot(attack_direction))
-			if score < best_score:
-				best_score = score
-				best_key = candidate_key
-		if not best_key.is_empty():
-			directions_to_process.clear()
-			directions_to_process.append(best_key)
-	for direction_key in directions_to_process:
-		if not vectors.has(direction_key):
-			continue
-		if _register_direction_tap(direction_key, Vector2(vectors[direction_key]), now):
-			# A diagonal key chord can report two just-pressed directions in the
-			# same frame. Once one evade starts, do not let the second direction
-			# overwrite success with a cooldown error or become a stale first tap.
-			_clear_evade_tap_buffers()
-			return true
-	return false
+	var result: Dictionary = evade_input_controller.process_pressed_directions(pressed_directions, now, bee, attack_direction)
+	return _apply_evade_input_result(result)
 
 func _register_direction_tap(direction_key: String, direction: Vector2, now: float) -> bool:
-	var previous_tap := float(last_dir_tap.get(direction_key, 0.0))
-	if previous_tap > 0.0 and now - previous_tap <= DOUBLE_TAP_WINDOW:
-		last_dir_tap[direction_key] = 0.0
-		var attempt_origin := Vector2(last_dir_tap_origin.get(direction_key, bee.position))
-		if _try_start_evade(direction, attempt_origin):
-			return true
-		# A failed second tap is a complete attempt, not the first half of a
-		# hidden third-tap shortcut after cooldown or recovery.
-		bee.clear_evade_first_tap()
-		return false
-	last_dir_tap[direction_key] = now
-	last_dir_tap_origin[direction_key] = bee.position
-	bee.show_evade_first_tap(direction, DOUBLE_TAP_WINDOW)
-	return false
+	var result: Dictionary = evade_input_controller.register_direction_tap(direction_key, direction, now, bee)
+	return _apply_evade_input_result(result)
 
 func _clear_evade_tap_buffers() -> void:
-	last_dir_tap = {"left": 0.0, "right": 0.0, "up": 0.0, "down": 0.0}
-	last_dir_tap_origin = {"left": Vector2.ZERO, "right": Vector2.ZERO, "up": Vector2.ZERO, "down": Vector2.ZERO}
-	last_world_tap_time = 0.0
-	last_world_tap_direction = Vector2.ZERO
-	last_world_tap_position = Vector2.ZERO
-	last_world_tap_origin = Vector2.ZERO
-	bee.clear_evade_first_tap()
+	evade_input_controller.clear(bee)
+
+func _apply_evade_input_result(result: Dictionary) -> bool:
+	if bool(result.get("evade_started", false)):
+		on_evade_started()
+		return true
+	if bool(result.get("evade_attempted", false)):
+		_show_evade_unavailable_feedback()
+	return false
+
+func _show_evade_unavailable_feedback() -> void:
+	if bee.evade_cooldown > 0.0:
+		message = "翅膀还没收稳；急转尚未恢复。"
+	elif bee.energy < 12.0:
+		message = "体力不足；急转需要 12 点体力。"
 
 func _try_start_evade(direction: Vector2, attempt_origin = null) -> bool:
 	if not mentor_tutorial.allows_action("evade"):
@@ -1606,10 +1602,7 @@ func _try_start_evade(direction: Vector2, attempt_origin = null) -> bool:
 	if bee.try_evade(direction, attempt_origin):
 		on_evade_started()
 		return true
-	if bee.evade_cooldown > 0.0:
-		message = "翅膀还没收稳；急转尚未恢复。"
-	elif bee.energy < 12.0:
-		message = "体力不足；急转需要 12 点体力。"
+	_show_evade_unavailable_feedback()
 	return false
 
 # This callback confirms the movement input only. A real dodge is confirmed
@@ -1620,29 +1613,10 @@ func on_evade_started() -> void:
 	message = "急转已发动；是否躲开，要看冲刺有没有穿过旧位置。" if tutorial_step == 5 else "急转。"
 
 func _attack_crossed_locked_target(previous: Vector2, current: Vector2, locked_target: Vector2, radius: float) -> bool:
-	var closest := Geometry2D.get_closest_point_to_segment(locked_target, previous, current)
-	return closest.distance_to(locked_target) <= radius
+	return EvadeRulesScript.attack_crossed_locked_target(previous, current, locked_target, radius)
 
 func _evade_cleared_locked_path(attack_direction: Vector2, locked_target: Vector2, sequence_at_lock: int, clearance := EVADE_PATH_CLEARANCE) -> bool:
-	if bee.evade_sequence <= sequence_at_lock:
-		return false
-	var normalized_attack := attack_direction.normalized()
-	if normalized_attack.length_squared() < 0.01:
-		return false
-	# Cardinal input must be substantially sideways to the committed route. The
-	# 0.76 threshold still accepts the best cardinal choice against a diagonal.
-	if absf(bee.last_evade_direction.normalized().dot(normalized_attack)) > 0.76:
-		return false
-	var evade_origin_offset := bee.last_evade_origin - locked_target
-	# The evade must begin at the position/corridor that was actually locked.
-	# Otherwise flying away normally and performing an unrelated evade elsewhere
-	# could be credited when the enemy later crosses the old target.
-	if evade_origin_offset.length() > maxf(EVADE_LOCK_ORIGIN_TOLERANCE, clearance + 16.0):
-		return false
-	if absf(evade_origin_offset.cross(normalized_attack)) >= clearance:
-		return false
-	var sideways_distance := absf((bee.position - locked_target).cross(normalized_attack))
-	return sideways_distance >= clearance
+	return EvadeRulesScript.cleared_locked_path(bee, attack_direction, locked_target, sequence_at_lock, clearance)
 
 func _show_evade_confirmation(locked_target: Vector2, attack_direction: Vector2) -> void:
 	evade_confirmation_time = 0.8
@@ -3118,33 +3092,16 @@ func _handle_world_tap(world_position: Vector2) -> bool:
 		return false
 	if not mentor_tutorial.allows_action("move"):
 		return true
-	if not mentor_tutorial.allows_action("evade"):
-		bee.set_move_target(world_position)
-		return true
 	var now := Time.get_ticks_msec() / 1000.0
-	if last_world_tap_time > 0.0 and now - last_world_tap_time > DOUBLE_TAP_WINDOW:
-		_clear_evade_tap_buffers()
-	var direction := (world_position - bee.position).normalized()
-	var repeats_position := last_world_tap_position.distance_to(world_position) <= WORLD_TAP_REPEAT_RADIUS
-	var repeats_direction := direction.length_squared() > 0.01 and last_world_tap_direction.length_squared() > 0.01 and last_world_tap_direction.dot(direction) >= 0.86
-	if last_world_tap_time > 0.0 and (repeats_position or repeats_direction):
-		# Use the first click's direction. The first click starts ordinary movement,
-		# so recomputing from the moved bee can turn an identical second click into
-		# a zero or reversed vector just when the player follows the visible marker.
-		var committed_direction := last_world_tap_direction
-		if committed_direction.length_squared() > 0.01:
-			_try_start_evade(committed_direction, last_world_tap_origin)
-		_clear_evade_tap_buffers()
-		return true
-	if direction.length_squared() < 0.01:
-		return false
-	last_world_tap_time = now
-	last_world_tap_direction = direction
-	last_world_tap_position = world_position
-	last_world_tap_origin = bee.position
-	bee.show_evade_first_tap(direction, DOUBLE_TAP_WINDOW)
-	bee.set_move_target(world_position)
-	return true
+	var result: Dictionary = evade_input_controller.handle_world_tap(
+		world_position,
+		now,
+		bee,
+		WORLD,
+		mentor_tutorial.allows_action("evade")
+	)
+	_apply_evade_input_result(result)
+	return bool(result.get("consumed", false))
 
 func _input(event: InputEvent) -> void:
 	if _handle_drink_touch_input(event):
@@ -3855,29 +3812,16 @@ func seasonal_flower_texture(set_id: String, second_variant: bool) -> Texture2D:
 	return FLOWER_HIGH_VALUE_TEXTURE if second_variant else FLOWER_COMMON_TEXTURE
 
 func draw_evade_side_arrows(target: Vector2, attack_direction: Vector2, alpha := 1.0) -> void:
-	var normalized_attack := attack_direction.normalized()
-	var side := normalized_attack.orthogonal()
-	if side.length_squared() < 0.01:
-		return
 	var bee_center_bounds := WORLD.grow(-18.0)
-	var cardinal_directions := [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
-	for side_sign in [-1.0, 1.0]:
-		var outward: Vector2 = side * float(side_sign)
-		var shown_direction := Vector2.ZERO
-		var best_alignment := -INF
-		for candidate in cardinal_directions:
-			var cardinal := Vector2(candidate)
-			var alignment := cardinal.dot(outward)
-			if alignment <= best_alignment or absf(cardinal.dot(normalized_attack)) > 0.76:
-				continue
-			if not bee_center_bounds.has_point(target + cardinal * (EVADE_PATH_CLEARANCE + 1.0)):
-				continue
-			shown_direction = cardinal
-			best_alignment = alignment
-		# Side markers snap to a valid single WASD axis. A slightly diagonal line
-		# should never visually invite a chord that the evade detector cannot repeat.
-		if shown_direction.length_squared() < 0.01:
-			continue
+	var shown_directions: Array[Vector2] = EvadeRulesScript.cardinal_escape_directions(
+		target,
+		attack_direction,
+		bee_center_bounds,
+		EVADE_PATH_CLEARANCE
+	)
+	# Side markers snap to valid single WASD axes. A slightly diagonal line must
+	# never invite a chord that the shared detector cannot repeat.
+	for shown_direction in shown_directions:
 		for tap_index in 2:
 			var tip: Vector2 = target + shown_direction * (42.0 + float(tap_index) * 15.0)
 			var wing: Vector2 = shown_direction.orthogonal() * 6.0
@@ -3885,27 +3829,15 @@ func draw_evade_side_arrows(target: Vector2, attack_direction: Vector2, alpha :=
 			draw_line(tip - shown_direction * 11.0 - wing, tip, Color("f4d36f", alpha), 3.0)
 
 func draw_committed_attack_corridor(origin: Vector2, attack_direction: Vector2, target: Vector2, half_width: float, alpha := 1.0, show_arrows := true) -> void:
-	var aim := attack_direction.normalized()
-	if aim.length_squared() < 0.01:
+	var geometry: Dictionary = EvadeRulesScript.committed_corridor_geometry(origin, attack_direction, WORLD, half_width)
+	if not bool(geometry.get("valid", false)):
 		return
-	var side := aim.orthogonal()
-	var reach := 1100.0
-	if absf(aim.x) > 0.001:
-		var x_edge := WORLD.end.x if aim.x > 0.0 else WORLD.position.x
-		reach = minf(reach, (x_edge - origin.x) / aim.x)
-	if absf(aim.y) > 0.001:
-		var y_edge := WORLD.end.y if aim.y > 0.0 else WORLD.position.y
-		reach = minf(reach, (y_edge - origin.y) / aim.y)
-	reach = maxf(0.0, reach)
-	var start := origin - aim * 24.0
-	start = Vector2(clampf(start.x, WORLD.position.x, WORLD.end.x), clampf(start.y, WORLD.position.y, WORLD.end.y))
-	var finish := origin + aim * reach
-	draw_colored_polygon(PackedVector2Array([
-		start + side * half_width,
-		finish + side * half_width,
-		finish - side * half_width,
-		start - side * half_width
-	]), Color("d95d54", 0.11 * alpha))
+	var aim: Vector2 = geometry.aim
+	var side: Vector2 = geometry.side
+	var start: Vector2 = geometry.start
+	var finish: Vector2 = geometry.finish
+	var polygon: PackedVector2Array = geometry.polygon
+	draw_colored_polygon(polygon, Color("d95d54", 0.11 * alpha))
 	draw_line(start + side * half_width, finish + side * half_width, Color("d95d54", 0.44 * alpha), 2.0)
 	draw_line(start - side * half_width, finish - side * half_width, Color("d95d54", 0.44 * alpha), 2.0)
 	draw_line(start, finish, Color("f06b60", 0.70 * alpha), 3.0)
