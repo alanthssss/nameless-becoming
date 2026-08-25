@@ -3,8 +3,8 @@
 > 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
 > A lightweight action-extraction prototype centered on bee ecology, the 24-solar-term cycle, and the risk of making it home.
 
-当前可玩实现基线 / Current playable baseline：`0.9.5-rc.2` / `4b57d856`（PR #69）；玩法与资产来自 PR #63，盲听工具来自 PR #64，HUD 与输入来自 PR #65；PR #67、#68 只增加证据工具与文档。
-固定候选 / Fixed candidate：`4b57d856`。
+当前源码候选 / Current source candidate：`0.9.5-rc.2`；在 `4b57d856` 玩法基线上另含 PR #76 秋季双轨。
+固定 artifact / Fixed artifact：`4b57d856`，不含 PR #76 新音乐。
 
 ---
 
@@ -65,15 +65,15 @@ Each requires three tunings, with faster phases and shorter windows; they no lon
 | --- | --- | --- |
 | 工程 / Engineering | Web、macOS universal、Windows x86_64 同源导出；9 组 Godot 回归和 Web 门禁通过；标准输出尺寸的等比 HUD 安全框与饮蜜指针入口已接入 | Windows 真机完整流程、真实原生触屏与未覆盖设备表现 |
 | 教学 / Tutorial | 老师傅“示范 → 模仿 → 无提示实践”已接入，关键动作由真实结果推进 | 陌生玩家无口头帮助；当前正常路线没有固定的延迟急转复测机会 |
-| 音乐 / Music | 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；Alan 已完成 A–H 逐轨评论，D/G 触发定向 A/B | 总体偏好、四组配对、长期循环疲劳、D/G 复听和实机混音仍缺，不能判定整套音乐通过 |
+| 音乐 / Music | 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；Alan 已完成 A–H 评论，PR #70 否决后经方向草图与 PR #76 全长最终 A/B，两组均选择新版秋季候选 | 秋季双轨创作者替换门禁已通过；总体偏好、四组配对、长期循环疲劳、外部听者和实机混音仍缺，不能判定整套音乐通过 |
 | 视觉 / Visuals | 低噪地表、独立蜂巢、8 种季节花与机制实体已接入 | 运动中的画风统一和目标可读性 |
 | 发行 / Release | `4b57d856` 固定候选 artifact 已构建并复验 SHA-256 | 新候选首分钟重测、Windows 真机、完整人工流程和外部试玩 |
 
 ## 5. 证据边界 / Evidence Boundary
 
-- **实现事实 / Implemented facts**：PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成 `f57ea02c`，PR #69 的首次采蜜修复再形成固定可玩实现 `4b57d856`；PR #67、#68 只增加证据工具与文档。旧 `f57ea02c` A 包不能迁移为新候选通过证据。
+- **实现事实 / Implemented facts**：PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD／输入形成 `f57ea02c`，PR #69 的首次采蜜修复形成固定 artifact `4b57d856`；当前源码另含 PR #76 秋季双轨。PR #67、#68、#75 只增加证据工具／文档。旧 A 包不能迁移为新候选通过证据。
 - **开发者自测 / Developer verification**：自动流程、构建、哈希、静态快照。
-- **Alan 方向门禁 / Alan direction gate**：PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均允许合并并继续，不等于逐项、原生触屏或发行验收。
+- **Alan 方向门禁 / Alan direction gate**：PR #63 整体方向与 PR #65 HUD 视觉／按钮方向允许合并；PR #76 最终 A/B 两组均选择正式秋季候选。后者只通过秋季双轨替换，不等于完整八轨、长期耐循环、实机混音、原生触屏或发行验收。
 - **外部玩家 / Independent players**：当前证据数为 **0**。
 
 详细状态以 [`../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md) 为准。

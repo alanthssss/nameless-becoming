@@ -176,7 +176,7 @@ nectar_val = max(2, roundi(base_nectar * nectar_scale)) + extra_nectar
 **通道 3 · 音效（程序化生成，sound_feedback.gd，ADR-002）**
 
 cue 清单：harvest / full / repel / evade / attack_lock / evade_clear / hurt / home / drink / loss / upgrade / tune / win / decoy。`evade` 只确认动作发动，`attack_lock` 确认路线提交，`evade_clear` 才确认敌害穿过旧位置且蜜蜂离线。
-背景音乐为 8 个独立 WAV：春、夏、秋、冬各 1 首探索主题和 1 首 Boss 变奏。旧单一程序化背景循环、常驻低频 pad 与 Boss 全局降调已移除；当前路由由 `music_director.gd` 管理。资源差异与循环已通过开发者自测，听感仍待真人盲听和实机 A/B。
+背景音乐为 8 个独立 WAV：春、夏、秋、冬各 1 首探索主题和 1 首 Boss 变奏。旧单一程序化背景循环、常驻低频 pad 与 Boss 全局降调已移除；当前路由由 `music_director.gd` 管理。资源差异与循环已通过开发者自测；PR #76 秋季探索／Boss 又在最终等响度 A/B 中均获 Alan 选择。四组配对、长期耐循环、外部听者和实机混音仍待验证。
 
 **通道 4 · 状态常显（HUD）**
 
