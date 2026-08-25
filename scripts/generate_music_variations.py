@@ -75,11 +75,11 @@ TRACKS = {
     ),
     "autumn_explore": TrackSpec(
         "autumn_explore", 84.0, 5, 4, 8, 1,
-        "dry chamber five-four with sparse synthesized erhu-like replies and an empty fifth beat",
+        "dry chamber five-four with short bowed replies, a clear three-plus-two pulse and an empty fifth beat",
     ),
     "autumn_boss": TrackSpec(
         "autumn_boss", 126.0, 6, 8, 16, 1,
-        "psychedelic six-eight with false stereo thrush echoes", True,
+        "psychedelic art-rock six-eight with staggered false-stereo echoes and four-bar dropouts", True,
     ),
     "winter_explore": TrackSpec(
         "winter_explore", 108.0, 6, 8, 16, 4,
@@ -97,7 +97,7 @@ MACRO_GAINS = {
     "summer_explore": (0.76, 1.00, 0.86),
     "summer_boss": (0.84, 1.00, 0.76, 0.94),
     "autumn_explore": (0.70, 1.00),
-    "autumn_boss": (0.72, 0.94, 1.00, 0.80),
+    "autumn_boss": (0.64, 0.84, 1.00, 0.70),
     "winter_explore": (0.66, 0.82, 1.00, 0.74),
     "winter_boss": (0.74, 1.00, 0.84),
 }
@@ -109,7 +109,7 @@ PEAK_TARGETS = {
     "winter_explore": 0.62,
     "spring_boss": 0.86,
     "summer_boss": 0.86,
-    "autumn_boss": 0.86,
+    "autumn_boss": 0.80,
     "winter_boss": 0.86,
 }
 
@@ -280,7 +280,11 @@ GESTURE_VOICES = {
     # portamento and delayed vibrato for erhu.
     "dizi": (((1.0, 0.68), (2.0, 0.09), (3.0, 0.15), (5.0, 0.08)), 0.018, 0.075, 0.105, 5.7, 0.10),
     "xiao": (((1.0, 0.82), (2.0, 0.05), (3.0, 0.09), (5.0, 0.04)), 0.060, 0.135, 0.125, 4.8, 0.08),
-    "erhu": (((1.0, 0.52), (2.0, 0.24), (3.0, 0.13), (4.0, 0.07), (5.0, 0.04)), 0.035, 0.110, 0.055, 5.4, 0.21),
+    # Keep the autumn colour as a restrained bowed articulation.  The earlier
+    # strong upper partials, long portamento and wide vibrato read as a cat-like
+    # yowl in blind listening, so this voice now favours the fundamental and a
+    # much narrower vibrato.
+    "erhu": (((1.0, 0.68), (2.0, 0.16), (3.0, 0.09), (4.0, 0.05), (5.0, 0.02)), 0.045, 0.130, 0.035, 5.0, 0.08),
 }
 
 
@@ -509,23 +513,28 @@ def render_autumn_explore(spec: TrackSpec) -> StereoBuffer:
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
         add_tom(buffer, spec, base, 47.0, 0.038, -0.16)
-        add_tom(buffer, spec, base + 2.5, 52.0, 0.028, 0.18)
-        for position in (0.0, 2.5):
+        # The same two existing accents now state a legible 3+2 grouping.  No
+        # layer is added: the second accent simply moves off the ambiguous
+        # halfway point and onto the second group.
+        add_tom(buffer, spec, base + 3.0, 52.0, 0.028, 0.18)
+        for position in (0.0, 3.0):
             add_noise_hit(buffer, spec, base + position, 0.050, 0.032,
                           5000 + bar * 8 + int(position * 2), -0.28 if position else 0.28, "bright")
         add_noise_hit(buffer, spec, base + 1.5, 0.16, 0.026, 5100 + bar, 0.10, "dark")
-        for position, degree in ((0.0, 1 - 5), (2.0, -1 - 5), (3.25, 0 - 5)):
+        for position, degree in ((0.0, 1 - 5), (2.0, -1 - 5), (3.0, 0 - 5)):
             add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.080, 0.46)
-        for index, (position, degree) in enumerate(zip((0.25, 1.0, 1.75, 2.5, 3.25), falling)):
+        for index, (position, degree) in enumerate(zip((0.25, 1.0, 1.75, 3.0, 3.75), falling)):
             add_note(buffer, spec, base + position, 0.34 if index < 4 else 0.48,
                      penta_midi(degree + 5), 0.095, "pizz", -0.32 if bar % 2 == 0 else 0.32)
         add_dyad(buffer, spec, base + 2.75, 0.26, (1, 3), 0.043, "metal", 0.35)
         if bar in (2, 6):
             gesture_pan = -0.26 if bar == 2 else 0.26
-            add_gesture_lead(buffer, spec, base + 0.48, 0.96, penta_midi(6), penta_midi(5),
-                             0.044, "erhu", 5300 + bar, gesture_pan)
-            add_gesture_lead(buffer, spec, base + 2.42, 0.76, penta_midi(4), penta_midi(3),
-                             0.037, "erhu", 5350 + bar, -gesture_pan)
+            # Two short, almost stable bowed replies retain the folk colour
+            # without the long two-semitone slides that sounded cat-like.
+            add_gesture_lead(buffer, spec, base + 0.48, 0.56, penta_midi(6), penta_midi(6) - 0.30,
+                             0.030, "erhu", 5300 + bar, gesture_pan)
+            add_gesture_lead(buffer, spec, base + 3.18, 0.44, penta_midi(4), penta_midi(4) - 0.22,
+                             0.026, "erhu", 5350 + bar, -gesture_pan)
     return buffer
 
 
@@ -534,25 +543,50 @@ def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
     truth = (1, 0, -1, -2, -1)
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
-        for position in (0.0, 1.5):
-            add_kick(buffer, spec, base + position, 0.135)
-        add_snare(buffer, spec, base + 1.0, 0.100, 6000 + bar)
-        for step in range(6):
-            add_hat(buffer, spec, base + step * 0.5, 0.030 if step % 3 else 0.043,
-                    6100 + bar * 12 + step, -0.42 if step % 2 else 0.42, step == 5)
-        if bar % 2 == 0:
-            add_rim(buffer, spec, base + 0.5, 0.026, 6180 + bar, -0.28)
-        for position, degree in ((0.0, 1 - 5), (1.0, 0 - 5), (1.5, -1 - 5), (2.5, 0 - 5)):
-            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.065, 0.30)
+        phase = bar % 4
+        # A four-bar density arc makes the 6/8 breathe: statement, response,
+        # one driven bar, then a genuine dropout.  The old version ran every
+        # drum and tonal layer through almost every eighth note.
+        kick_positions = (0.0, 1.5) if phase in (0, 2) else (0.0,)
+        for position in kick_positions:
+            add_kick(buffer, spec, base + position, 0.105)
+        if phase in (0, 2):
+            add_snare(buffer, spec, base + 1.0, 0.074, 6000 + bar)
+        elif phase == 1:
+            add_snare(buffer, spec, base + 1.5, 0.060, 6000 + bar)
+
+        hat_steps = {
+            0: (0, 1, 3, 4, 5),
+            1: (0, 2, 3, 5),
+            2: (0, 1, 2, 3, 4, 5),
+            3: (0, 3),
+        }[phase]
+        for step in hat_steps:
+            add_hat(buffer, spec, base + step * 0.5, 0.018 if step % 3 else 0.028,
+                    6100 + bar * 12 + step, -0.34 if step % 2 else 0.34,
+                    phase == 2 and step == 5)
+        if phase == 2:
+            add_rim(buffer, spec, base + 0.5, 0.018, 6180 + bar, -0.24)
+
+        bass_pattern = {
+            0: ((0.0, 1 - 5), (1.5, -1 - 5), (2.5, 0 - 5)),
+            1: ((0.0, 1 - 5), (1.5, 0 - 5)),
+            2: ((0.0, 1 - 5), (1.0, 0 - 5), (1.5, -1 - 5), (2.5, 0 - 5)),
+            3: ((0.0, 1 - 5), (1.5, -1 - 5)),
+        }[phase]
+        for position, bass_degree in bass_pattern:
+            add_bass_hit(buffer, spec, base + position, penta_midi(bass_degree), 0.052, 0.28)
+
         degree = truth[bar % len(truth)]
-        add_note(buffer, spec, base + 0.25, 0.45, penta_midi(degree + 10), 0.105, "echo", 0.0)
-        add_note(buffer, spec, base + 0.75, 0.34, penta_midi(degree + 11), 0.070, "buzz", -0.78)
-        add_note(buffer, spec, base + 1.25, 0.30, penta_midi(degree + 9), 0.065, "echo", 0.78)
-        if bar % 4 != 3:
-            add_dyad(buffer, spec, base + 2.0, 0.30, (degree + 10, degree + 12), 0.065,
-                     "rock", -0.12 if bar % 2 else 0.12)
-        else:
-            add_note(buffer, spec, base + 2.15, 0.28, penta_midi(1 + 10), 0.095, "metal", 0.0)
+        lead_pan = -0.24 if bar % 2 == 0 else 0.24
+        add_note(buffer, spec, base + 0.25, 0.38, penta_midi(degree + 10), 0.085, "echo", lead_pan)
+        if phase in (0, 2):
+            add_note(buffer, spec, base + 0.82, 0.26, penta_midi(degree + 11), 0.045, "buzz", -0.62)
+        if phase != 3:
+            add_note(buffer, spec, base + 1.72, 0.32, penta_midi(degree + 9), 0.052, "echo", 0.62)
+        if phase == 2:
+            add_dyad(buffer, spec, base + 2.22, 0.24, (degree + 10, degree + 12), 0.045,
+                     "rock", 0.10)
     return buffer
 
 
