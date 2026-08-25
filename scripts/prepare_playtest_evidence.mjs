@@ -277,6 +277,9 @@ function coordinatorReadme({ product, sourceIdentity, task, sessionId, participa
   const protocolStart = task.code === "B"
     ? `B01 必须使用 participant 同目录的 \`playtest-ticket.json\` 启动，T0 为首次取得控制权，最多 ${task.maximum_minutes} 分钟；开始前不解释操作、目标或设计意图。`
     : "A 包从标题开始，T0 为首次取得控制权，最多 15 分钟；开始前不解释操作、目标或设计意图。";
+  const verifiedLaunch = task.code === "B"
+    ? `\n## 可靠启动\n\n从仓库根目录运行，不要手写 Godot 参数分隔符：\n\n\`npm run playtest:launch -- --executable "/游戏绝对路径/无名：成蜂.app" --ticket "/本会话绝对路径/participant/playtest-ticket.json"\`\n\n只有命令打印 \`Playtest ready receipt verified\` 才能记录为 B01 typed scene 已启动；它会在 participant 目录生成与本 session、slice、commit 和 ticket SHA-256 绑定的 \`playtest-ready-receipt.json\`。缺少 receipt、身份不符或游戏显示 \`PT-ARG-SEPARATOR\` 时均停止，不得把普通 Main 误记为 B01。\n`
+    : "";
   return `# 试玩协调说明（不要发给参与者）
 
 本次会话：\`${sessionId}\`  
@@ -288,6 +291,7 @@ function coordinatorReadme({ product, sourceIdentity, task, sessionId, participa
 
 - ${participantSummary}
 - 协调者自己打开 \`observer.html\`，记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果。它含内部机制名，绝不能交给参与者。
+${verifiedLaunch}
 
 参与者不再选择自己是不是外部玩家，也不再逐项判定是否掌握机制。分析时仍需核对 \`external_player\` 确实未参与策划／开发。
 
@@ -592,6 +596,8 @@ function participantRuntimeReadme({ task }) {
 用游戏可执行文件的绝对路径启动，并保留参数前的 \`--\` 分隔符：
 
 \`"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket.json 的绝对路径>"\`
+
+如果游戏显示错误码 \`PT-ARG-SEPARATOR\`，说明启动命令漏掉了分隔符；请停止并让协调者重新启动，不能继续玩随后出现的普通游戏。
 
 结束后回到 \`index.html\`，按自己的记忆填写六项短表。
 `;
