@@ -66,6 +66,7 @@ var encounter := EncounterScript.new()
 var input_controller := InputControllerScript.new()
 var _configured := false
 var _settled := false
+var _terminal_confirmation_pending := false
 var _focus_active := true
 var _any_player_attempt := false
 var _encounter_recovery_seconds := 0.0
@@ -249,7 +250,10 @@ func _label(text: String, size: int) -> Label:
 	return label
 
 func _physics_process(delta: float) -> void:
-	if not _configured or _settled:
+	if not _configured:
+		return
+	if _settled:
+		_advance_terminal_confirmation(delta)
 		return
 	var gameplay_active := _gameplay_is_active()
 	_set_bee_gameplay_enabled(gameplay_active and input_enabled)
@@ -443,6 +447,8 @@ func _finish(outcome: String) -> void:
 	phase = PHASE_COMPLETE
 	input_enabled = false
 	input_controller.clear(bee)
+	encounter.state = B01EvadeEncounter.STATE_RESOLVED
+	_encounter_recovery_seconds = 0.0
 	if bee != null:
 		_set_bee_gameplay_enabled(false)
 	set_process_unhandled_input(false)
@@ -451,7 +457,20 @@ func _finish(outcome: String) -> void:
 	_hide_instruction()
 	_status_label.text = ""
 	_pause_panel.visible = false
-	_end_panel.visible = true
+	_terminal_confirmation_pending = outcome == RESULT_COMPLETED and evade_confirmation_time > 0.0
+	_end_panel.visible = not _terminal_confirmation_pending
+	queue_redraw()
+
+func _advance_terminal_confirmation(delta: float) -> void:
+	if not _terminal_confirmation_pending or delta <= 0.0:
+		return
+	if not _focus_active or get_tree().paused:
+		return
+	evade_confirmation_time = maxf(0.0, evade_confirmation_time - delta)
+	if evade_confirmation_time <= 0.0:
+		_terminal_confirmation_pending = false
+		_end_panel.visible = true
+	queue_redraw()
 
 func _incomplete_result() -> String:
 	return RESULT_INCOMPLETE if _any_player_attempt else RESULT_NOT_ATTEMPTED
@@ -631,11 +650,14 @@ func _draw_encounter() -> void:
 		var geometry := Rules.committed_corridor_geometry(encounter.locked_origin, encounter.aim_direction, WORLD, Rules.PATH_CLEARANCE)
 		var corridor_alpha := 0.88 + sin(Time.get_ticks_msec() * 0.018) * 0.12 if encounter.state == B01EvadeEncounter.STATE_LOCKED else 0.55
 		_draw_corridor(geometry, corridor_alpha)
-	if phase == PHASE_GUIDED and encounter.state == B01EvadeEncounter.STATE_LOCKED:
+	if _shows_locked_chevrons():
 		for direction in escape_directions_for(encounter.locked_target, encounter.aim_direction):
 			_draw_escape_arrow(encounter.locked_target, direction)
 	_draw_mosquito(encounter.attacker_position, encounter.aim_direction, encounter.state == B01EvadeEncounter.STATE_DASH)
 	draw_circle(encounter.attacker_position, 34.0, Color("d95d5448"), false, 3.0)
+
+func _shows_locked_chevrons() -> bool:
+	return phase in [PHASE_GUIDED, PHASE_PRACTICE, PHASE_RETEST] and encounter.state == B01EvadeEncounter.STATE_LOCKED
 
 func _draw_corridor(geometry: Dictionary, alpha: float) -> void:
 	if not bool(geometry.get("valid", false)):

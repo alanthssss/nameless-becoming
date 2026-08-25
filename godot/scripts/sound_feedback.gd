@@ -36,10 +36,7 @@ func _ready() -> void:
 	if DisplayServer.get_name() == "headless":
 		return
 	player = AudioStreamPlayer.new()
-	var stream := AudioStreamGenerator.new()
-	stream.mix_rate = MIX_RATE
-	stream.buffer_length = 0.25
-	player.stream = stream
+	player.stream = _new_generator_stream()
 	player.volume_db = -8.0
 	add_child(player)
 	player.play()
@@ -52,8 +49,28 @@ func set_season(_index: int) -> void:
 
 func set_enabled(value: bool) -> void:
 	enabled = value
-	if player != null and player.is_inside_tree():
-		player.stream_paused = not enabled
+	if not enabled:
+		# Focus loss is a hard feedback boundary. Discard both ungenerated frames and
+		# samples already queued on the audio device so an old cue cannot resume later.
+		remaining_frames = 0
+		phase = 0.0
+		if player != null and player.is_inside_tree():
+			player.stop()
+			# Godot rejects clear_buffer() while the generator playback is active,
+			# including the same frame as stop(). Replacing the generator after stop
+			# discards that inaccessible device queue synchronously and safely.
+			playback = null
+			player.stream = _new_generator_stream()
+		return
+	if player != null and player.is_inside_tree() and not player.playing:
+		player.play()
+		playback = player.get_stream_playback()
+
+func _new_generator_stream() -> AudioStreamGenerator:
+	var stream := AudioStreamGenerator.new()
+	stream.mix_rate = MIX_RATE
+	stream.buffer_length = 0.25
+	return stream
 
 func play_cue(cue: String) -> void:
 	if not enabled or not CUE_TONES.has(cue):

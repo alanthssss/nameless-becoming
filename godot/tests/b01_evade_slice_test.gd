@@ -362,6 +362,17 @@ func exercise_feedback_success(slice: B01EvadeSlice, retest: bool) -> Array[Stri
 	return cues
 
 func test_production_nonverbal_feedback() -> void:
+	var marker_states := runtime_slice()
+	if marker_states == null:
+		return
+	for measured_phase in [B01EvadeSlice.PHASE_GUIDED, B01EvadeSlice.PHASE_PRACTICE, B01EvadeSlice.PHASE_RETEST]:
+		marker_states.phase = measured_phase
+		marker_states.encounter.state = B01EvadeEncounter.STATE_LOCKED
+		expect(marker_states._shows_locked_chevrons(), "%s locked 没有显示生产双 chevron" % measured_phase)
+		marker_states.encounter.state = B01EvadeEncounter.STATE_DASH
+		expect(not marker_states._shows_locked_chevrons(), "%s dash 仍显示答案 chevron" % measured_phase)
+	marker_states.free()
+
 	var practice := runtime_slice()
 	if practice == null:
 		return
@@ -373,7 +384,33 @@ func test_production_nonverbal_feedback() -> void:
 	var retest := runtime_slice()
 	var retest_cues := exercise_feedback_success(retest, true)
 	expect(retest_cues == practice_cues and retest_cues == ["attack_lock", "evade", "evade_clear"], "实践与复测没有复用完全相同的非文字反馈语法")
-	expect(retest.phase == B01EvadeSlice.PHASE_COMPLETE and retest._sound.enabled and retest._sound.can_process(), "复测成功结算截断了 SoundFeedback 短尾音")
+	expect(retest.phase == B01EvadeSlice.PHASE_COMPLETE and retest.result_code == B01EvadeSlice.RESULT_COMPLETED, "复测成功没有立即锁定 measured outcome")
+	expect(retest._settled and not retest.input_enabled and not retest.bee.active and retest.encounter.state == B01EvadeEncounter.STATE_RESOLVED, "成功确认窗仍允许输入、角色或 encounter 推进")
+	expect(retest.retest_opportunities == 1 and retest._terminal_confirmation_pending and not retest._end_panel.visible, "唯一复测成功被终屏立即遮住或生成额外机会")
+	expect(retest._sound.enabled and retest._sound.can_process(), "复测成功结算截断了 SoundFeedback 短尾音")
+	var settled_result := retest.result_code
+	var settled_opportunities := retest.retest_opportunities
+	var hard_at_settlement := retest.hard_elapsed_seconds
+	var confirmation_remaining := retest.evade_confirmation_time
+	retest._resolve_current_encounter(false, true)
+	expect(retest.result_code == settled_result and retest.retest_opportunities == settled_opportunities, "确认窗允许二次结算或第二次复测")
+
+	retest._sound.remaining_frames = 128
+	retest._set_focus_active(false)
+	expect(retest._sound.remaining_frames == 0 and not retest._sound.enabled, "失焦没有丢弃旧 SoundFeedback 尾音")
+	retest._physics_process(0.4)
+	expect(is_equal_approx(retest.evade_confirmation_time, confirmation_remaining) and not retest._end_panel.visible, "失焦期间成功确认窗仍推进")
+	retest._set_focus_active(true)
+	expect(retest._sound.enabled and retest._sound.remaining_frames == 0, "回焦恢复了已丢弃的旧短尾")
+	root.get_tree().paused = true
+	retest._physics_process(0.4)
+	expect(is_equal_approx(retest.evade_confirmation_time, confirmation_remaining) and not retest._end_panel.visible, "暂停期间成功确认窗仍推进")
+	root.get_tree().paused = false
+	retest._physics_process(B01EvadeSlice.EVADE_CONFIRMATION_SECONDS - 0.001)
+	expect(retest._terminal_confirmation_pending and not retest._end_panel.visible and retest.evade_confirmation_time > 0.0, "0.8s 确认环未完成就显示终屏")
+	retest._physics_process(0.002)
+	expect(not retest._terminal_confirmation_pending and retest._end_panel.visible and retest.evade_confirmation_time == 0.0, "0.8s active 确认完成后未显示中性终屏")
+	expect(retest.result_code == settled_result and retest.retest_opportunities == settled_opportunities and retest.hard_elapsed_seconds == hard_at_settlement, "确认窗改变 measured outcome、机会数或结算时点")
 	retest.free()
 
 	var failure := runtime_slice()
@@ -387,11 +424,12 @@ func test_production_nonverbal_feedback() -> void:
 
 	var focus := runtime_slice()
 	focus._sound.last_cue = ""
+	focus._sound.remaining_frames = 256
 	focus._set_focus_active(false)
 	focus._sound.play_cue("evade")
-	expect(not focus._sound.enabled and focus._sound.last_cue.is_empty(), "失焦后 SoundFeedback 仍接受 cue")
+	expect(not focus._sound.enabled and focus._sound.last_cue.is_empty() and focus._sound.remaining_frames == 0, "失焦后 SoundFeedback 仍接受 cue 或保留旧帧")
 	focus._set_focus_active(true)
-	expect(focus._sound.enabled, "回焦没有恢复非文字反馈")
+	expect(focus._sound.enabled and focus._sound.remaining_frames == 0, "回焦没有恢复非文字反馈，或续播旧尾音")
 	focus.free()
 
 func test_shared_rule_runtime_wiring() -> void:
@@ -446,7 +484,7 @@ func test_no_save_or_private_runtime() -> void:
 	expect(source.contains("evade_input_controller.gd") and encounter_source.contains("evade_rules.gd"), "B01 未接入共享输入／因果规则")
 	expect(source.contains("player_bee_v1.png") and source.contains("mosquito_v1.png") and source.contains("_draw_demo_double_tap_cues"), "B01 示范仍用抽象圆点或没有可见双击节奏")
 	expect(source.contains("sound_feedback.gd") and source.contains("attack_lock") and source.contains("evade_clear"), "B01 未复用生产 SoundFeedback 急转 cue")
-	expect(source.contains("start + side * Rules.PATH_CLEARANCE") and source.contains("geometry.chevrons") and source.contains("_draw_evade_confirmation"), "B01 通道边界、双 chevron 或成功残影未与 Main 声画语法对齐")
+	expect(source.contains("start + side * Rules.PATH_CLEARANCE") and source.contains("geometry.chevrons") and source.contains("_shows_locked_chevrons") and source.contains("_draw_evade_confirmation"), "B01 通道边界、三阶段双 chevron 或成功残影未与 Main 声画语法对齐")
 	expect(not ordinary_save_sha.is_empty() and FileAccess.get_sha256(ordinary_save_path) == ordinary_save_sha, "B01 session 改写了普通存档 sentinel")
 
 func run_test() -> void:
