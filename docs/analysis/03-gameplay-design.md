@@ -3,7 +3,7 @@
 > 核心张力：发现花源 → 停留采集 → 危险与体力改变局面 → 决定继续、处理威胁或撤离 → 把资源带回蜂巢。
 > Core tension: find nectar → linger to harvest → danger and stamina reshape the situation → continue, respond, or retreat → bring resources home.
 
-当前仓库基线 / Current repository baseline：`0.9.5-rc.2`，`origin/main` `b03811c4`；玩法与资产基线为 `4537151`。
+当前仓库基线 / Current repository baseline：`0.9.5-rc.2`，`origin/main` `f57ea02c`（PR #65）；玩法与资产基线来自 PR #63，盲听工具来自 PR #64。
 
 ---
 
@@ -61,7 +61,7 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
 | 情境动作 / Context action | 空格 / 回车 | 近花采蜜、近敌惊退、静止寻迹或机制交互 |
 | 诱饵 / Decoy | 松开后长按情境键 | 消耗 1 滴携蜜，结束后回到花田 |
 | 急转 / Evade | 锁线后同方向 0.34 秒内连按两次 | 从锁定位置附近离开真实危险通道；敌害穿过旧位置且蜂在线外才成功 |
-| 饮蜜 / Drink | E | 每节点最多 2 次；当前没有指针／触摸等价入口 |
+| 饮蜜 / Drink | E | 每节点最多 2 次；规则允许时 HUD 显示饮蜜按钮，鼠标／触摸松手确认；Boss 阶段不提供 |
 | 归巢 / Return | Q | 自动飞回唯一主巢，站稳后卸蜜 |
 
 老师傅统一采用“示范 → 模仿 → 无提示实践”：
@@ -71,7 +71,7 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
 - 惊退必须让敌害离开资源区；
 - 急转不能用锁线前抢跑、空地双击或无敌帧硬穿代替；
 - 首次失败安全重演，急转必须真实完成 `1/2 → 2/2`；
-- 首节点之外的迁移学习仍待真人约 3 分钟复测。
+- 当前正常路线在老师傅连续两次急转练习后，没有固定的延迟同语法复测机会；未遇到机会不能记为迁移失败。若要验证约 3 分钟后的保持，先提供固定复测切片。
 
 ## 4. 24 节点推进 / 24-Node Progression
 
@@ -152,8 +152,8 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
 
 ## 10. 当前验证边界 / Current Validation Boundary
 
-- PR #63 已以 `4537151` 进入主线；PR #64 的匿名盲听工具已以 `b03811c4` 进入主线，不改变可玩内容基线；
+- PR #63 的玩法／资产、PR #64 的匿名盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入均已进入 `origin/main` `f57ea02c`；
 - Alan 的“可以”是方向门禁，不是逐项可用性通过；
-- 8 组 Godot 回归、视觉快照和构建哈希属于开发者证据；
+- 9 组 Godot 回归、视觉快照和构建哈希属于开发者证据；
 - 外部玩家证据为 0；
 - 时长、难度、四季辨识、Boss 规则复述、音乐品质和重玩意愿都仍需真实记录。

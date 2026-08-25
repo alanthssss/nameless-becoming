@@ -1,6 +1,6 @@
 # 0.9.5 候选构建历史与校验清单
 
-本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选是 `0.9.5-rc.2` / `dd4d4f08`，其 artifact 与 SHA-256 见“2026-08-25 玩家反馈验收候选”；开头表格只是 2026-08-20 的 rc.1 历史记录，不是当前候选。
+本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选是 `0.9.5-rc.2` / `f57ea02c`，其 artifact 与 SHA-256 见“2026-08-25 HUD 与指针输入主线候选”；`dd4d4f08` 及更早表格均为历史记录，不是当前候选。
 
 ## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 
@@ -93,3 +93,16 @@ GitHub [`Desktop client builds` run 32769425753](https://github.com/alanthssss/n
 | Windows x86_64 | `NamelessBecoming-Windows-v0.9.5-rc.2/NamelessBecoming-Windows.exe` | 116,575,264 bytes | `f6e0d8019525d480af404424a854a9b2ede944bfd612dde16903e0d268431b26` | PE32+ GUI x86-64 格式检查、artifact 上传；下载后 sidecar 再校验通过 |
 
 两个 artifact 保留 30 天，本轮没有创建 prerelease。上述证明产物与提交一致且可被工具解析；Windows 真机启动、macOS 实际手感、声音、全屏/DPI、完整流程和玩家理解仍是人工门禁。
+
+## 2026-08-25 HUD 与指针输入主线候选
+
+当前固定候选来自 `origin/main` 完整提交 `f57ea02c8defea82bcc7f1b8849146350e76d578`。该提交包含已合并的 PR #63（玩法与资产）、PR #64（音乐盲听工具）、PR #66（当前事实源同步）和 PR #65（HUD 等比安全框、饮蜜指针／单指触摸入口与第 9 组 HUD 自动化）。PR #65 在合并前取得 Alan 对视觉与饮蜜按钮方向的明确允许；这不等于真实触摸屏、完整流程或外部玩家验收已经通过。
+
+GitHub [`Desktop client builds` run 32809311832](https://github.com/alanthssss/nameless-becoming/actions/runs/32809311832) 从上述精确 `main` 提交构建，使用官方 SHA-512 清单校验 Godot 4.6.2 编辑器与导出模板，并在 macOS／Ubuntu runner 重跑 9 组 Godot 测试。`release_tag` 为 `v0.9.5-rc.2`，`publish_prerelease=false`，因此没有创建或覆盖 GitHub prerelease。
+
+| 平台 | Artifact | 大小 | SHA-256 | 已完成验证 |
+| --- | --- | ---: | --- | --- |
+| macOS universal | `NamelessBecoming-macOS-v0.9.5-rc.2/NamelessBecoming-macOS.zip` | 70,598,030 bytes | `d2b94648e5637c1e62ec9db38dc950caf1bf9756c8fba14381d3c48e52dcbaf3` | sidecar 复验通过；arm64 + x86_64；0.9.5 / 0.9.5-rc.2；ad-hoc 签名通过严格校验；内嵌完整提交号且 `dirty: false`；本机无界面启动退出码 0 |
+| Windows x86_64 | `NamelessBecoming-Windows-v0.9.5-rc.2/NamelessBecoming-Windows.exe` | 116,589,584 bytes | `8a45db5f23fca1d4d1de11b5ce9622d4fee530a5a4223e1bd109a872e772b34c` | sidecar 复验通过；PE32+ GUI x86-64；内嵌完整提交号且 `dirty: false`；仍需 Windows 真机启动与输入／显示／声音验证 |
+
+本机持久副本位于仓库外的 `nameless-becoming-candidates/f57ea02/`，macOS 与 Windows 子目录各保留 artifact 和 sidecar。该目录便于固定人工证据来源，但不是 Git 资产或公开发行渠道。macOS 当前只是 ad-hoc 签名且未公证，Windows 当前未做 Authenticode 签名；两者均不得表述为公开发行签名通过。
