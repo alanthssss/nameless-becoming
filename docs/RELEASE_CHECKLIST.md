@@ -117,7 +117,9 @@
 - [ ] 不经口头提示完成首节点；
 - [ ] 急转真实完成 `1/2 → 2/2`，并能用自己的话说明躲什么、怎么按、什么画面才算成功；
 - [x] 急转迁移已提供固定无额外提示复测切片；B01 从 clean `57aefc4` artifact 生成会话 `NB-20260825-6412D7BA`，开发者已以 participant exact ticket 启动成功；
-- [ ] Alan 仍须完整游玩 B01 并导出 form/result JSON；目前没有该 JSON，不得记为已完成、已学会或已通过；
+- [x] B01 第一次启动前缺少“现在要实际试玩”的协调者交接；Alan 因看到“可以关闭”而合理关闭。该轮已定级为 protocol / instruction failure，不记 `not_attempted`、未学会或玩法失败；
+- [x] 同一 exact ticket 已只用“直接玩到结束再填短表”的中性程序说明重开；该轮标记为 procedural replay，不冒充完全盲测；
+- [ ] Alan 仍须在本次程序性重试中玩到结束并导出 form/result JSON；目前没有该 JSON，不得记为已完成、已学会或已通过；
 - [ ] 不看教学文字指出同型给粉花／受粉花，并复述“花药取粉 → 蜂身散粉 → 柱头授粉 → 结籽”；
 - [ ] 实际完成夏季袭扰、秋季留种与冬季暖点，并记录是否改变路线、顺序、撤离或资源选择；
 - [ ] 分别复述四位 Boss 的暴露规则和失败原因；
@@ -172,7 +174,7 @@
 - [x] Boss 失败／暂停 P1 已由 PR #79 合入，并从精确 `21a44bd` 重新生成、复验固定双端 artifact；旧 `de78f2c` 包停止继续验收；
 - [x] `21a44bd` 双端 artifact 误带测试资源的构建阻断已由 `29e719f` 替代包关闭；新 artifact、sidecar 与实包门禁结果已记录；
 - [x] B01 从最终 clean commit 重建 artifact／manifest／B 包的构建阻断已由 PR #87、`57aefc4` 与 run `32867365895` 关闭；
-- [ ] B01 会话 `NB-20260825-6412D7BA` 尚无 Alan form/result JSON，人工完成与学习结论仍待验证；
+- [ ] B01 会话 `NB-20260825-6412D7BA` 的首次误关属于交接流程失败；同一 ticket 的程序性重试尚无 Alan form/result JSON，人工完成与学习结论仍待验证；
 - [ ] Windows 真机尚未完成；
 - [ ] Alan 完整人工流程尚未完成；
 - [ ] 外部玩家证据为 0；

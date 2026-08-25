@@ -56,6 +56,8 @@ npm run playtest:prepare -- \
 - B01 的时序固定为：2.8 秒老师傅因果示范 → 有界引导模仿（最多 90 秒或 4 次有效机会）→ 无提示实践（最多 90 秒或 3 次机会）→ 实践首次成功后恰好 180 秒 active 花间路线 → 恰好一次无字、同配置复测 → 中性结束。暂停或失去焦点不计入 180 秒 active 时钟；内部结果互斥为 `completed_independent`、`attempted_incomplete` 或 `not_attempted`，玩家端不显示通过／失败评价或重试引导；
 - B 生成器读取实际 distribution bytes，严格复核 manifest 的文件名、平台、大小、SHA-256、版本、完整提交和 `dirty:false`，计算 manifest 自身 SHA-256，再以 `git show <manifest commit>:godot/data/playtest_slices.json` 读取精确 catalog bytes。只有 artifact 与该精确 clean commit 中的 `ready` catalog 一致时才会生成输出。
 
+所有 B 包在启动前必须由协调者只说一句流程说明：“这是一段约10分钟的实际试玩；按画面行动，结束后再填表”。这句话只确认当前任务、预计占用和填表顺序，不得解释机制、操作答案、成功条件或画面含义。若协调者没有先说明“现在要实际试玩”，参与者据界面或交接信息合理关闭程序，应记为 **playtest protocol / instruction failure**；不得据此填 `not_attempted`、判定未学会或形成任何机制结论。重新启动后的记录必须注明是否为程序性重试，不能冒充完全盲测。
+
 下列命令格式只能用于**从最终 clean commit 新建并已校验的 artifact**：
 
 ```bash
@@ -69,7 +71,7 @@ npm run playtest:prepare -- \
 
 当前固定 artifact 来自 PR #87 的完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)；双端 manifest 均绑定 `source_ref: refs/heads/main`、该 run 和 `dirty: false`。仓库外持久副本根目录为 `nameless-becoming-candidates/57aefc4-run-32867365895/`。旧 `29e719f` artifact 早于固定切片基础与 B01 运行时，已降为历史，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
 
-已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。macOS 进程曾用该精确 ticket 启动，随后已退出；尚未导入 Alan 的 participant／observer 表单或结果 JSON。因此当前证据等级必须分开：上述 scene、共享运行时、catalog `ready` 与时序是**实现事实**；Godot／Node 自动测试是**开发者自测**；artifact／manifest／ticket 和进程启动是**构建与包执行事实**。它们只能证明机会和判定被构造，且 artifact／manifest／ticket 相互绑定，不能写成 Alan 已完成、已理解急转、教学迁移或发行通过。Windows B01 真机和独立外部玩家 B01 证据仍缺失。
+已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。第一次 macOS exact-ticket 启动前，协调者没有明确说明“现在要实际试玩”；Alan 看到“可以关闭”后合理关闭，并明确反馈自己不知道需要试玩。因此第一次退出定级为**试玩交接流程失败**，不得归入 B01 内部 `not_attempted`、不得判为 Alan 未学会，也不产生玩法结果。随后已用同一 exact ticket 重开，并只提供中性流程说明“直接玩到结束再填短表”；该次必须标为**程序性重试**，不能冒充完全盲测。当前仍未导入 Alan 的 participant／observer 表单或结果 JSON，也不得声称第二次已经完成。上述 scene、共享运行时、catalog `ready` 与时序是**实现事实**；Godot／Node 自动测试是**开发者自测**；artifact／manifest／ticket、两次进程启动和首次误关原因是**构建／流程执行事实与 Alan 原话证据**。它们仍不能写成 Alan 已完成、已理解急转、教学迁移或发行通过。Windows B01 真机和独立外部玩家 B01 证据仍缺失。
 
 ### C：独立音乐盲听
 
@@ -133,6 +135,10 @@ npm run playtest:prepare -- \
 - **过关条件卡文字重叠**：老师傅要求与情境消息叠在一起，条件虽存在但不可读。→ PR #63 扩大独立条件区、下移消息区，并用 24 种教学文案的字体行高回归防重叠；视觉快照通过，密度舒适度仍待 Alan 判断。
 - **“急转”没有对应清楚的事实、操作与稳定方法**：原实现同时混用双击当前方向、锁定路线、无敌帧与敌害穿越，玩家无法形成可复现模型。→ PR #63 统一为“敌害先跟随 → 锁定蜜蜂旧位置并显示直线通道 → 同方向快速双击一个可达侧向 → 离开通道 → 敌害穿过旧位置”；补老师傅两轮真实示范/练习、键盘/鼠标/触摸/边界/低体力回归和成功证据。仍需 Alan 无口头指导完成 `1/2 → 2/2`，并在约 3 分钟后验证迁移。
 - **固定候选方向门禁通过**：构建 `dd4d4f08` 已以独立 macOS 候选和只读 Godot worktree 交付，游戏内显示相同版本/提交来源；Alan 回复“可以，做吧，这一步可以了”。→ 该回复批准 #63 进入主线并展开下一波任务，属于 Alan 的产品方向决定；没有附带逐步操作记录，因此不改写成“急转三分钟迁移、授粉辨认、四季路线或音乐耐听均已验证”，也不计入外部玩家样本。
+
+### 2026-08-26
+
+- **B01 首次启动被误当成可直接关闭**：Alan 原话语义为“误关的；看到显示可以关闭就关了，并不知道要试玩”。→ 根因是协调者在启动前没有明确交接“现在是一段实际试玩”，不是 Alan 没有尝试或没有学会。该次退出定级为 playtest protocol / instruction failure，不进入 `not_attempted` 或学习成败统计。同一 exact ticket 随后只以“直接玩到结束再填短表”的中性程序说明重开；这次属于 procedural replay，不能冒充完全盲测，且在表单／结果 JSON 导入前仍不得记为已完成。
 
 ## 2026-08-25 候选证据接收
 
@@ -212,11 +218,11 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 
 该结论仍不是外部玩家证据，也不证明游戏内混音、四组同季配对、整套八轨总体区分度或长时间耐循环。播放秒数是累计值且不记录 seek／实际覆盖区间；尤其 Y 的累计 25 秒短于其 30.968 秒完整循环，所以不能把本次选择改写成“完整听完多轮后无疲劳”。
 
-### 当前固定人工验收 artifact `57aefc4`：B01 待导入 Alan 结果
+### 当前固定人工验收 artifact `57aefc4`：B01 程序性重试待导入 Alan 结果
 
 `29e719f` 曾在 PR #82 闭合导出资源门禁，但它早于固定切片身份基础与 B01 运行时，现已降为历史 artifact。PR #87 合并后的完整 `main` 提交为 `57aefc4933db88968777b11ea1d1679c6374842a`；GitHub [`Desktop client builds` run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 从该精确 clean 提交生成当前 macOS universal 与 Windows x86_64 artifact。两份 schema v1 manifest 均绑定 `source_ref: refs/heads/main`、该 run 和 `dirty: false`；macOS payload 为 70,368,894 bytes，SHA-256 为 `625a8cb9b379fccf92156f4a1573b062c7bb94a301a2cbe7fc54de669486395e`，Windows payload 为 116,888,848 bytes，SHA-256 为 `ccf7101a1c7d254ab8af12908ddcdeddec794ca59dc9de28c7e37c795e70eead`。双端最终包检查通过；macOS universal 架构、严格签名校验通过，Windows 为 PE32+ GUI x86-64。详细 artifact ID、到期时间、PCK 哈希和本机路径见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
-当前构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨、Boss P1 修复和 B01 固定急转切片，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。Alan B01 包会话 `NB-20260825-6412D7BA` 已生成，精确 ticket 进程在 macOS 上曾启动后退出，但没有导入任何表单或结果 JSON；不得由此声称 Alan 完成或理解了急转。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机与独立外部玩家证据仍为缺失。
+当前构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨、Boss P1 修复和 B01 固定急转切片，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。Alan B01 包会话 `NB-20260825-6412D7BA` 已生成；第一次 exact-ticket 进程因启动前缺少“现在要实际试玩”的流程交接而被合理关闭，该轮不属于 `not_attempted` 或学习失败。随后同一 ticket 已在中性流程说明下重开，记录身份为程序性重试，不是完全盲测；目前仍没有导入任何表单或结果 JSON，不得由此声称 Alan 完成或理解了急转。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机与独立外部玩家证据仍为缺失。
 
 ### Draft PR #78 秋野探索源码内混音复核：Alan 制作人听感门禁通过（秋 Boss 待测）
 
