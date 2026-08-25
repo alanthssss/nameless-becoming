@@ -98,6 +98,32 @@ func route_touch_drag_out(control: Control, touch_index := 0) -> Dictionary:
 	await process_frame
 	return {"press_handled": press_handled, "drag_handled": drag_handled, "release_handled": release_handled}
 
+func route_ui_action(action: String) -> void:
+	var press := InputEventAction.new()
+	press.action = action
+	press.pressed = true
+	root.push_input(press, true)
+	await process_frame
+	var release := InputEventAction.new()
+	release.action = action
+	release.pressed = false
+	root.push_input(release, true)
+	await process_frame
+
+func route_key(keycode: int) -> void:
+	var press := InputEventKey.new()
+	press.keycode = keycode
+	press.physical_keycode = keycode
+	press.pressed = true
+	root.push_input(press, true)
+	await process_frame
+	var release := InputEventKey.new()
+	release.keycode = keycode
+	release.physical_keycode = keycode
+	release.pressed = false
+	root.push_input(release, true)
+	await process_frame
+
 func check_output_layout(label: String, output_size: Vector2) -> void:
 	var layout: Dictionary = ProductionHUDScript.layout_for_output(output_size)
 	expect(not layout.is_empty(), "%s 没有生成 HUD 安全布局" % label)
@@ -244,6 +270,75 @@ func run_test() -> void:
 	expect(not game.drink_button.visible and game.carried == 2, "Boss 阶段意外新增了指针饮蜜，和现有键盘路径不一致")
 
 	game.queue_free()
+	await process_frame
+
+	# Overlay keyboard regression uses GUI-routed ui actions and a physical Tab
+	# event. Directly invoking callbacks would miss focus gaps and Enter events
+	# that accidentally activate both the old and newly revealed controls.
+	var focus_game = packed.instantiate()
+	root.add_child(focus_game)
+	await process_frame
+	focus_game.persistence_enabled = false
+	focus_game.set_process(false)
+	expect(root.gui_get_focus_owner() == focus_game.overlay_button, "标题弹层没有把焦点交给出巢按钮")
+	await route_ui_action("ui_accept")
+	expect(focus_game.phase == "playing" and focus_game.stage_index == 0, "标题页一次 ui_accept 没有恰好进入第一节点")
+
+	# The first visible enabled growth card owns initial focus. Disabled cards are
+	# skipped, and a real right action moves through the authored card row.
+	focus_game.upgrade_counts = {"long_wing": focus_game.UPGRADE_CAP, "forager": 0, "guard": 0}
+	focus_game.delivered = int(focus_game.stages[0].goal)
+	focus_game.show_between()
+	await process_frame
+	expect(root.gui_get_focus_owner() == focus_game.upgrade_buttons[1], "成长弹层没有聚焦第一个可用项，或聚焦了已满成长")
+	focus_game.upgrade_buttons[1].release_focus()
+	await process_frame
+	await process_frame
+	expect(root.gui_get_focus_owner() == focus_game.upgrade_buttons[1], "成长弹层失焦后没有恢复原来的有效成长项")
+	await route_ui_action("ui_right")
+	expect(root.gui_get_focus_owner() == focus_game.upgrade_buttons[2], "成长卡向右没有跳到下一个可用项")
+	await route_ui_action("ui_accept")
+	expect(focus_game.phase == "playing" and focus_game.stage_index == 1, "一次成长确认没有恰好推进一个节点")
+	expect(focus_game.chosen_upgrades.size() == 1 and focus_game.chosen_upgrades[0] == "guard", "方向选择后的成长确认没有应用当前焦点项，或一次输入应用了多次")
+
+	# Once every growth is full, the explicit continue button becomes the primary
+	# target. Application focus restoration must resolve the current overlay state
+	# instead of assuming the hidden growth cards or allocation controls.
+	focus_game.upgrade_counts = {"long_wing": focus_game.UPGRADE_CAP, "forager": focus_game.UPGRADE_CAP, "guard": focus_game.UPGRADE_CAP}
+	focus_game.delivered = int(focus_game.stages[1].goal)
+	focus_game.show_between()
+	await process_frame
+	expect(root.gui_get_focus_owner() == focus_game.overlay_button and focus_game.overlay_button.text == "再次出巢", "成长全满时没有聚焦“再次出巢”")
+	focus_game.overlay_button.release_focus()
+	focus_game._notification(NOTIFICATION_APPLICATION_FOCUS_IN)
+	expect(root.gui_get_focus_owner() == focus_game.overlay_button, "应用恢复时没有恢复成长全满弹层的主焦点")
+	await route_ui_action("ui_accept")
+	expect(focus_game.phase == "playing" and focus_game.stage_index == 2, "成长全满页一次 ui_accept 没有恰好推进一个节点")
+
+	# White Dew ends the reserve segment. The slider starts focused, arrows adjust
+	# its step, physical Tab reaches confirmation, and that confirmation must stop
+	# on the newly revealed all-mature continue button until a second Enter.
+	focus_game.spawn_stage(17)
+	focus_game.upgrade_counts = {"long_wing": focus_game.UPGRADE_CAP, "forager": focus_game.UPGRADE_CAP, "guard": focus_game.UPGRADE_CAP}
+	focus_game.delivered = int(focus_game.stages[17].goal)
+	focus_game.show_between()
+	await process_frame
+	expect(focus_game.allocation_pending and root.gui_get_focus_owner() == focus_game.allocation_slider, "收成分配没有以滑杆作为初始焦点")
+	var allocation_before: float = focus_game.allocation_slider.value
+	await route_ui_action("ui_right")
+	expect(is_equal_approx(focus_game.allocation_slider.value, allocation_before + focus_game.allocation_slider.step), "收成滑杆方向键没有按一个步长调整")
+	await route_key(KEY_TAB)
+	expect(root.gui_get_focus_owner() == focus_game.allocation_confirm, "收成分配 Tab 没有到达确认按钮")
+	focus_game.allocation_confirm.release_focus()
+	focus_game._notification(NOTIFICATION_APPLICATION_FOCUS_IN)
+	expect(root.gui_get_focus_owner() == focus_game.allocation_confirm, "应用恢复时没有保留分配页当前的有效焦点")
+	await route_ui_action("ui_accept")
+	expect(not focus_game.allocation_pending and focus_game.phase == "between" and focus_game.stage_index == 17, "一次分配确认穿透到新按钮并推进了第二次")
+	expect(focus_game.overlay_button.visible and root.gui_get_focus_owner() == focus_game.overlay_button, "分配确认后没有把焦点交给成长全满继续按钮")
+	await route_ui_action("ui_accept")
+	expect(focus_game.phase == "boss" and focus_game.stage_index == 18, "分配后的第二次独立 ui_accept 没有恰好进入秋分失律者")
+
+	focus_game.queue_free()
 	await process_frame
 	finish_test()
 
