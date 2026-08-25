@@ -45,7 +45,7 @@ func configure_test_fixture(overrides: Dictionary) -> Error:
 
 func validate_ticket(ticket_path: String) -> Dictionary:
 	_validation_started = true
-	if ticket_path.is_empty() or not ticket_path.is_absolute_path():
+	if not _is_external_filesystem_path(ticket_path):
 		return _failure("PT-TICKET-PATH", "Ticket path must be an absolute filesystem path.")
 
 	var ticket_read := _read_file_bytes(ticket_path, "ticket")
@@ -117,6 +117,11 @@ func validate_ticket(ticket_path: String) -> Dictionary:
 		"ticket_sha256": _sha256(ticket_bytes),
 	}
 	return {"ok": true, "context": context, "scene": scene}
+
+func _is_external_filesystem_path(path: String) -> bool:
+	# String.is_absolute_path() also accepts res:// and user://. Identity files
+	# are deliberately external OS files, never bundled resources or app data.
+	return not path.is_empty() and path.is_absolute_path() and not path.contains("://")
 
 func _validate_ticket_shape(ticket: Dictionary) -> String:
 	if not _has_exact_keys(ticket, ["artifact", "catalog_sha256", "product", "schema_version", "session_id", "task"]):

@@ -31,7 +31,7 @@ func _ready() -> void:
 		_show_failure("PT-ARG-FORMAT", "Unsupported bootstrap user argument: %s" % argument)
 		return
 	var ticket_path := argument.trim_prefix(TICKET_ARGUMENT_PREFIX)
-	if ticket_path.is_empty() or not ticket_path.is_absolute_path():
+	if not _is_external_filesystem_path(ticket_path):
 		_show_failure("PT-ARG-PATH", "Playtest ticket argument must contain an absolute filesystem path.")
 		return
 	var validator: Variant = _test_validator if _test_validator != null else TicketValidatorScript.new()
@@ -54,6 +54,12 @@ func _ready() -> void:
 		_show_failure("PT-SCENE-CONFIG", "Compiled playtest scene rejected validated context with error %d." % configure_error)
 		return
 	_activate_scene(instance)
+
+func _is_external_filesystem_path(path: String) -> bool:
+	# Godot considers res:// and user:// absolute, but a playtest ticket must be
+	# an external OS path distributed beside its artifact manifest. Reject every
+	# URI/resource scheme while preserving POSIX, drive-letter and UNC paths.
+	return not path.is_empty() and path.is_absolute_path() and not path.contains("://")
 
 func _activate_scene(instance: Node) -> void:
 	launched_scene = instance
