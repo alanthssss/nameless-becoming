@@ -4,7 +4,7 @@
 
 ## 运行
 
-使用 Godot 4.6.2 或更高版本打开 `project.godot`，运行主场景即可。
+使用 Godot 4.6.2 或更高版本打开 `project.godot`，运行主场景即可。工程入口是 `bootstrap.tscn`；普通运行没有 playtest ticket 时，它会保持原行为进入 `main.tscn`。
 
 macOS 命令行验证：
 
@@ -12,7 +12,7 @@ macOS 命令行验证：
 npm run test:godot
 ```
 
-脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢、老师傅教学和 HUD 响应式／饮蜜指针输入共 9 组回归。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。
+脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、strict playtest ticket、bootstrap、save namespace 隔离、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢、老师傅教学和 HUD 响应式／饮蜜指针输入共 12 组回归。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。
 
 ## 当前内容
 
@@ -56,7 +56,7 @@ godot --path godot --headless --export-debug "Windows Desktop"
 npm run verify:godot-export
 ```
 
-该门禁使用 Godot 4.6.2 对 macOS、Windows Desktop、Web 各执行一次真实资源包导出，再由隔离的 Godot 检查进程挂载 PCK 并遍历内容；它不会只读取或 grep `export_presets.cfg`。也可用 `./scripts/verify_godot_export_contents.sh --pack <路径>` 直接检查已有 PCK、ZIP resource pack 或内嵌 PCK 的可执行文件。桌面 CI 会用后一种方式检查实际 macOS PCK 和最终 Windows EXE。
+该门禁使用 Godot 4.6.2 对 macOS、Windows Desktop、Web 各执行一次真实资源包导出，再由隔离的 Godot 检查进程挂载 PCK 并遍历内容；它不会只读取或 grep `export_presets.cfg`。包内必须同时存在 bootstrap、原 Main 和中性 `data/playtest_slices.json`，并且不能出现 tests／tools。也可用 `./scripts/verify_godot_export_contents.sh --pack <路径>` 直接检查已有 PCK、ZIP resource pack 或内嵌 PCK 的可执行文件。桌面 CI 会用后一种方式检查实际 macOS PCK 和最终 Windows EXE。
 
 仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出；最终包完成内容检查（macOS 另含严格验签）后，流水线为包生成 SHA-256 sidecar 和同名 `.manifest.json`，再把三者作为一个 artifact 上传。manifest schema v1 直接读取最终 ZIP／EXE bytes；generator 会从 macOS ZIP 中唯一的 app PCK 或 Windows EXE 内嵌 PCK 重新读取 `res://data/build_provenance.json`，拒绝把旧包与当前工作区 provenance 拼接成错误身份。包内与工作区 provenance 必须逐字段一致，并同时匹配当前 `package.json` 与 `project.godot` 产品版本、完整 40 位 `HEAD`、`dirty: false`、干净工作区、平台固定文件名、byte 大小及 sidecar 哈希。GitHub run/ref 只从显式流水线输入写入，manifest 不猜测稍后才由上传步骤分配的 artifact ID。
 

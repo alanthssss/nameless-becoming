@@ -301,7 +301,7 @@ Alan 在正确分支实机截图中指出，第三行老师傅要求越过原有
 | 已合并源码事实 | PR #63／#64／#65／#69／#76／#79／#81／#82 | 玩法、资产、HUD、首次采蜜修复、正式秋季双轨、Boss 失败／暂停、弹层焦点与导出门禁进入当前源码；PR #67、#68 与 #75 只增加证据工具／文档 | 秋季双轨通过 Alan 创作者替换门禁；Boss P1 与导出边界由开发者回归关闭；其余真人验收和发行状态不因此改变 |
 | 固定人工验收 artifact | `nameless-becoming-candidates/29e719f-run-32851917691/`（仓库外本机副本） | macOS／Windows artifact 已由 run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从完整 `29e719f` 构建并复验 SHA-256；最终包不含 `res://tests/` 或 `res://tools/` | 标题／暂停层应显示 `v0.9.5-rc.2 · 29e719ff`，不含 `+dirty`；玩法与实机混音待测，标准包无秋季直达 |
 | HUD 响应式与饮蜜入口 | PR #65，历史实现提交 `f57ea02c`，已包含于 `29e719f` | 9 组 Godot、10 个 Node 测试、lint、CI 与独立 P0/P1 复核通过；Alan 已允许合并视觉与按钮方向 | 代码已合并；真实系统缩放、极端宽高比、原生触摸与完整流程仍需设备证据 |
-| 首轮试玩证据工具 | PR #67 / `codex/playtest-evidence-kit` | A 包已分离参与者无答案问卷与内部观察／解释，并绑定候选提交与哈希；B 因无固定入口阻塞 | 工具与自动验证完成只代表可以规范采证，不代表已经取得玩家样本 |
+| 首轮试玩证据工具与固定切片基础 | PR #67 的 A 包；PR #85 的固定切片身份基础 | A 包继续兼容；B 已有 strict ticket/bootstrap、artifact manifest／catalog 身份链和隔离 save，但生产 B01 仍为 `blocked`，没有 typed scene／handler 或新 artifact | 工具与自动验证完成只代表可以规范采证；B01 仍不可发放，也没有新增玩家样本 |
 | 首轮结果 | 旧 `f57ea02c` 会话 `NB-20260825-D9EFAA79`；Alan 八轨导出；PR #70 A/B；Draft PR #74 方向选择；PR #76 全长最终 A/B | A 包来源匹配但身份待确认，外部样本仍为 0；首分钟采蜜卡住且问卷过长。PR #70 两组均否决；随后方向草图获准继续，最终全长 A/B 的探索 Y 与 Boss M 均选中正式候选 | 采蜜修复仍须重测；PR #70 与 Draft #74 不合并；PR #76 已合并进入主线；当前固定双端 artifact 为 `29e719f` |
 
 静态快照会过期。每次打开 Godot 或交付构建前，仍须重新核对绝对路径、分支、短提交号和 PR 状态。
@@ -337,13 +337,13 @@ Alan 在收到并打开固定候选 `dd4d4f08` 后明确回复“可以，做吧
 | A 包表单缩短 | 首份结果直接触发；独立证据工具分支 | 参与者只回答少量关键原话／结束问题；观察者记录时间线与机制接触；身份由协调者核验；回归确保未到达项不强迫填写 |
 | Windows / 发布前人工流程 | 固定 `29e719f` 候选 | macOS／Windows artifact 已由 run `32851917691` 生成并复验哈希与内部资源边界；仍需 Windows 真实设备、完整流程、设置持久化与失败点，不改核心玩法 |
 | HUD 响应式与指针输入 | PR #65 / `f57ea02c`（包含于 `29e719f`） | 已合并；自动回归、CI、独立 P0/P1 复核及 Alan 视觉／按钮方向门禁完成；窄屏采用等比留边而非世界重排，原生触摸仍待真机 |
-| 首轮试玩证据包 | PR #67 / `codex/playtest-evidence-kit` | A 包分离参与者问卷与内部观察，绑定精确 build／commit／artifact 哈希；B 包因游戏没有固定切片入口而阻塞，不能让玩家跑前置节点冒充；音乐盲听继续独立执行 |
+| 首轮试玩证据包 | PR #67 的 A 包；PR #85 的固定切片身份基础 | A 包保持兼容；B bootstrap、strict ticket、actual artifact／manifest／catalog 校验与 save 隔离已实现，但生产 B01 仍 blocked。不得让玩家跑前置节点冒充，也不得把基础设施自测当 B 玩法证据；音乐盲听继续独立执行 |
 
 第二波由证据触发，不能预先宣布已经排产：
 
 | 触发证据 | 条件任务 | 建议 branch / worktree | 玩家验收 |
 | --- | --- | --- | --- |
-| 需要判断急转能否延迟迁移，但当前路线没有稳定复测机会 | 固定急转迁移测试切片 | `codex/evade-transfer-slice` / `/private/tmp/nameless-evade-transfer` | 在无额外文字提示的固定延迟遭遇中记录是否独立成功；再依据结果决定是否让普通敌害复用锁线语法 |
+| 需要判断急转能否延迟迁移，但当前路线没有稳定复测机会 | B01 专用 typed scene／handler；使用既有固定切片身份基础，不修改主流程私有进度 | 独立后续任务（待 PR 编号） | 必须形成首次教学 → 实践 → 约 3 分钟无重新教学的同语法复测 → 结束；实现后改 catalog 为 ready 并重建 artifact／manifest，才可记录是否独立成功 |
 | 四季仍被概括为“都是采蜜” | 四季路线深化 | `codex/season-depth-integration` / `/private/tmp/nameless-season-depth` | 每季至少观察到一次不同路线、顺序、撤离或资源选择 |
 | 关卡仍短或只是机械重复 | 节奏与 Boss 调律 | `codex/pacing-boss-tuning` / `/private/tmp/nameless-pacing-boss` | 用完成时间、失败原因、无决策重复时长和规则复述判断，不只调高目标数 |
 | 视觉仍不协调 | 单场景画风切片 | `codex/art-cohesion-slice` / `/private/tmp/nameless-art-cohesion` | 先通过一张代表场景的方向评审，再决定是否批量生产 |

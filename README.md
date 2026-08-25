@@ -92,7 +92,7 @@ npm run playtest:prepare -- \
   --artifact-sha256 <安装包 SHA-256>
 ```
 
-默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；新版 A 表由 29 个控件降为 6 个，只收 4 个短原话和 2 个结束选择。`coordinator/observer.html` 留给测试协调者，隔离记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果；关系类型由生成命令固定，参与者不能自报。两页均完全离线、不收个人信息。A 包最多 15 分钟；B 单切片包因游戏尚无固定切片入口而明确阻塞，不能用跑前置节点替代；音乐继续独立使用 `npm run audio:review`。生成器会记录传入的 SHA-256，但不会读取安装包，交付者仍须用 sidecar 或哈希工具复验。旧 schema v1 记录不自动升级为新版机制证据。首份 A 包属于旧候选 `f57ea02c`：它暴露首分钟采蜜反馈和问卷过长两个 P0，但不能迁移为当前 `29e719f` 的通过证据；填写者身份仍待协调者确认，外部玩家样本仍为 0。当前候选必须重新采集首分钟和完整流程证据。完整记录与边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
+默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；新版 A 表由 29 个控件降为 6 个，只收 4 个短原话和 2 个结束选择。`coordinator/observer.html` 留给测试协调者，隔离记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果；关系类型由生成命令固定，参与者不能自报。两页均完全离线、不收个人信息。A 包最多 15 分钟，继续兼容声明式 artifact SHA 流程。B 已具备 strict ticket/bootstrap、actual artifact／schema v1 manifest／精确提交 catalog 校验和独立 save namespace，但生产 catalog 的中性 `B01` 仍为 `blocked / 10 分钟`；生成命令必须非零且不写 output，不能用跑前置节点替代。后续须另做 typed scene／handler（首次教学 → 实践 → 约 3 分钟延迟复测 → 结束）并重建 artifact 后才可开放。音乐继续独立使用 `npm run audio:review`。旧 schema v1 记录不自动升级为新版机制证据。首份 A 包属于旧候选 `f57ea02c`：它暴露首分钟采蜜反馈和问卷过长两个 P0，但不能迁移为当前 `29e719f` 的通过证据；填写者身份仍待协调者确认，外部玩家样本仍为 0。当前候选必须重新采集首分钟和完整流程证据。完整记录与边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
 
 ## 视觉方向
 
@@ -109,7 +109,7 @@ godot --path godot --editor
 npm run test:godot
 ```
 
-`npm run test:godot` 会生成构建来源、准备导入缓存并执行 9 组 Godot 回归；第 9 组覆盖 HUD 等比安全框、饮蜜按钮状态与指针／触摸触发边界，每组都必须在独立日志中报告 `TEST PASSED`。
+`npm run test:godot` 会生成构建来源、准备导入缓存并执行 12 组 Godot 回归；新增三组覆盖 strict ticket validator、bootstrap 与 ticket-derived save namespace，HUD 组继续覆盖等比安全框、饮蜜按钮状态与指针／触摸触发边界。每组都必须在独立日志中报告 `TEST PASSED`。
 
 Web 端由 Godot 导出后，通过 Node.js 站点外壳承载：
 
@@ -131,8 +131,9 @@ npm run test
 - `godot/scripts/tutorial/mentor_tutorial.gd`：老师傅因果教学；
 - `godot/scripts/boss_encounter_director.gd`：四位 Boss 独立暴露状态机；
 - `godot/scripts/music_director.gd`：8 轨音乐路由；
+- `godot/bootstrap.tscn`、`godot/scripts/playtest/` 与 `godot/data/playtest_slices.json`：普通启动兼容的导出入口、固定切片 strict identity gate、编译期 registry 和中性 catalog；生产 B01 仍 blocked；
 - `scripts/prepare_audio_blind_review.mjs`：生成 A–H 匿名盲听包和独立答案；
-- `scripts/prepare_playtest_evidence.mjs`：生成首节点匿名试玩证据包和隔离分析模板；单切片入口未实现时会主动拒绝 B 包；
+- `scripts/prepare_playtest_evidence.mjs`：生成首节点匿名试玩证据包和隔离分析模板；B 流程从 actual artifact、manifest 和精确提交 catalog 推导 ticket，但生产 B01 blocked 时不会写包；
 - `godot/scripts/ui/production_hud.gd`：当前状态、完成条件和动作卡；
 - `app/page.tsx`：Godot Web 版启动外壳。
 

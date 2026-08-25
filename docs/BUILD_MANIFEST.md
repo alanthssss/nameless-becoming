@@ -2,6 +2,18 @@
 
 本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选为 `0.9.5-rc.2` / `29e719fff1621df35f88972f3bdeed98e37d8af9`，见“2026-08-25 内部资源导出门禁替代候选”。此前的 `21a44bd64e100231548fa2663a7b4d6f472a88dd` 因误带 Godot 测试资源已降为历史可追溯构建，不得继续作为交付或人工验收入口；`de78f2c` 及更早表格同样只作历史记录。
 
+PR #85 已实现固定切片身份基础，但尚未从合并后的 clean commit 重建桌面 artifact，因此不会替换上述 `29e719f` 候选，也没有可登记的新 payload 大小或 SHA-256。生产 catalog 中 `B01` 仍是 `blocked`；基础设施测试通过不构成 B01 可玩、人工验收或外部玩家证据。
+
+## 2026-08-25 · 固定 B 切片身份基础（尚无 B01 artifact）
+
+实现事实：Godot 导出入口改为 `bootstrap.tscn`，无 ticket 时直接进入既有 `main.tscn`；固定 session 只接受一个绝对路径 ticket，并严格交叉核对 schema v1 ticket、同目录 `artifact-manifest.json`、包内 `build_provenance.json`、产品／平台／完整 clean commit、artifact 文件名／大小／SHA-256、manifest 原始字节 SHA-256、`playtest_slices.json` 原始字节 SHA-256、catalog 状态和编译期 registry。ticket 或 catalog 不能提供 scene、handler、stage、seed、save 或 patch 路径。任一失败只显示中性错误码，不实例化 Main，也不触碰存档。
+
+固定 session 的存档名只由 ticket 原始字节 SHA-256 派生；普通启动继续使用 `user://nameless.cfg`。三个新增 Godot 组覆盖 validator、bootstrap 和 namespace 隔离；Node 测试覆盖 B 的实际 artifact／manifest／catalog 身份推导、严格 CLI 和 participant 递归泄漏扫描。这些都属于开发者自动验证，不是最终分发包证据。
+
+构建门禁同步要求三个 preset 的导出包包含 `bootstrap.tscn`、原 `main.tscn` 与 `data/playtest_slices.json`，并继续排除 `res://tests/` 和 `res://tools/`。PR #85 合并后，仍必须从最终 clean commit 重新生成 provenance、macOS／Windows artifact、sidecar 和 schema v1 artifact manifest，再运行最终包检查；旧 `29e719f` artifact 不含本基础设施，不能配发新 ticket。
+
+开放 B01 还需另一个产品实现任务：提供独立 typed scene／handler，按“首次教学 → 实践 → 约 3 分钟延迟复测 → 结束”形成完整可玩时序；禁止改 `stage_index`、tutorial 私有字段或伪造 save 来跳转。该实现、catalog `ready` 变更与随后重建的 artifact 必须一起接受评审。当前没有 B01 包、Alan B01 人工流程、Windows B01 真机或外部玩家 B01 证据。
+
 ## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 
 构建日期：2026-08-20（Asia/Shanghai）
