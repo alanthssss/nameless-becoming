@@ -3,8 +3,8 @@
 > 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
 > The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
 
-当前可玩实现基线 / Current playable baseline：`f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
-固定验收候选 / Fixed acceptance candidate：`f57ea02c`。
+当前可玩实现基线 / Current playable baseline：`4b57d856`（PR #69）；玩法与资产来自 PR #63，盲听工具来自 PR #64，HUD 与输入来自 PR #65；PR #67、#68 只增加证据工具与文档。
+固定验收候选 / Fixed acceptance candidate：`4b57d856`。
 
 ---
 
@@ -23,15 +23,16 @@ This section records history only; the old four stages, first-boss prototype, ol
 | 0.9.5-rc.2 / PR #63 | 24 节点可感知整改、老师傅教学、四组季节行为、四位 Boss、8 轨音乐、产品 HUD、构建来源 | 当前候选实现基线 |
 | PR #64 | 8 轨 A–H 匿名盲听包、独立答案和自动校验 | 解除主观盲听的工具依赖，不代表 Alan 已完成听感验收 |
 | PR #65 | 1280×720 参考画布的等比安全框、按条件显示的饮蜜指针／触摸入口与第九组 Godot 回归 | 当前 HUD 与输入实现基线；不代表真实原生触屏或任意宽高比重排已验收 |
+| PR #69 | 首次采蜜距离、持续按住、`蜜囊 +1` 成功证据与老师傅演示 | 当前固定候选 `4b57d856`；自动回归通过，但旧 A 包不能替代新候选复测 |
 
 ## 2. 当前阶段结论 / Current Stage Conclusion
 
 | 证据层 / Evidence layer | 状态 / Status | 结论 / Conclusion |
 | --- | --- | --- |
-| 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成固定可玩实现 `f57ea02c`；PR #67 不改游戏二进制 |
+| 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具、PR #65 的 HUD／输入和 PR #69 的首次采蜜修复形成固定可玩实现 `4b57d856`；PR #67、#68 不改游戏二进制 |
 | 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
 | Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
-| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；八轨逐轨评论已完成，D/G 触发 A/B，但总体配对与实机混音缺失；四季、Boss、节奏仍需记录 |
+| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`4b57d856` 尚待重新采证。八轨逐轨评论已完成，D/G 触发 A/B，但总体配对与实机混音缺失；四季、Boss、节奏仍需记录 |
 | Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
 | 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
@@ -61,7 +62,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 - Windows x86_64 真机完成启动、DPI／全屏、中文字体、声音、设置持久化与退出；
 - macOS 固定候选完成一整轮和设置重启；
-- 验证标题／暂停层来源为 `v0.9.5-rc.2 · f57ea02c`，不含 `+dirty`；
+- 验证标题／暂停层来源为 `v0.9.5-rc.2 · 4b57d856`，不含 `+dirty`；
 - 1280×720 是 HUD 参考画布；1920×1080、1440×900 与 1024×768 的等比安全框已自动验证，但任意宽高比世界重排和手机正式适配未承诺；
 - 饮蜜已有按条件显示的鼠标／显式触摸入口；仍须在真实原生触屏设备上验证手感、取消和系统缩放。
 
