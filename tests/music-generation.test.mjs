@@ -26,7 +26,7 @@ const PRIOR_AUTUMN_HASHES = Object.freeze({
 });
 
 const FINAL_AUTUMN_HASHES = Object.freeze({
-  "autumn_boss.wav": "505a11c3ed2a9c8ef56a0ee91f82403e5653f343781a535975ed2681d09eaa99",
+  "autumn_boss.wav": "b571d75a05be755422214ddf7fd851fa31148c3a7feae7fa896d558340d95701",
   "autumn_explore.wav": "de25c797c9dcb49eabee9adc61630dba21493a985ec2dc79ddb115f2d8f4b23a",
 });
 
@@ -55,6 +55,23 @@ test("formal autumn candidate leaves all six out-of-scope arrangements byte-iden
   for (const [name, priorHash] of Object.entries(PRIOR_AUTUMN_HASHES)) {
     assert.notEqual(await sha256(join(musicPath, name)), priorHash, `${name} still contains the rejected baseline`);
   }
+});
+
+test("autumn Boss keeps Z as the full-loop majority spine and T as a bounded counterphrase", () => {
+  const result = spawnSync(process.env.PYTHON || "python3", [
+    "-c",
+    "import json,runpy,sys; data=runpy.run_path(sys.argv[1]); print(json.dumps(data['AUTUMN_BOSS_STRUCTURE']))",
+    generatorPath,
+  ], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  const structure = JSON.parse(result.stdout);
+  assert.deepEqual(structure.z_backbone_bars, Array.from({ length: 16 }, (_, index) => index));
+  assert.ok(structure.z_full_bars.length > structure.t_counter_bars.length, "Z must own more full bars than T");
+  assert.deepEqual([...structure.z_full_bars, ...structure.t_counter_bars].sort((a, b) => a - b),
+    Array.from({ length: 16 }, (_, index) => index));
+  assert.equal(structure.t_counter_bars.at(-1), 15, "T may punctuate the final closure bar");
+  assert.ok(!structure.t_counter_bars.includes(14), "the Boss reprise must return to Z before the last stop");
+  assert.ok(structure.dub_send_bars.every((bar) => structure.z_full_bars.includes(bar)));
 });
 
 test("formal autumn generator reproduces both checked-in loops deterministically", async () => {

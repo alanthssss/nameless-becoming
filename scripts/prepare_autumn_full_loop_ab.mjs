@@ -31,7 +31,7 @@ export const SOURCE_HASHES = Object.freeze({
   }),
   candidate: Object.freeze({
     autumn_explore: "de25c797c9dcb49eabee9adc61630dba21493a985ec2dc79ddb115f2d8f4b23a",
-    autumn_boss: "505a11c3ed2a9c8ef56a0ee91f82403e5653f343781a535975ed2681d09eaa99",
+    autumn_boss: "b571d75a05be755422214ddf7fd851fa31148c3a7feae7fa896d558340d95701",
   }),
 });
 

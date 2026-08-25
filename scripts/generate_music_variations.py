@@ -121,6 +121,17 @@ AUTUMN_LOUDNESS_TARGETS = {
     "autumn_boss": -18.7,
 }
 
+# A machine-readable arrangement contract keeps the selected hierarchy honest:
+# Z's post-punk/dub backbone is present in all 16 bars and receives nine full
+# bars; T is a seven-bar upper counterphrase, including only the final bar of
+# the closure.  Tests import this contract instead of trusting prose comments.
+AUTUMN_BOSS_STRUCTURE = {
+    "z_backbone_bars": tuple(range(16)),
+    "z_full_bars": (0, 1, 2, 3, 8, 10, 12, 13, 14),
+    "t_counter_bars": (4, 5, 6, 7, 9, 11, 15),
+    "dub_send_bars": (0, 2, 8, 12),
+}
+
 
 # Every oscillator uses genuine upper partials.  In particular there is no
 # 0.5-frequency component: bass comes from a written bass note, not a permanent
@@ -699,11 +710,11 @@ def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
         base = bar_start(spec, bar)
         section = bar // 4
         stop_after = section_drop[section] if bar % 4 == 3 else 4.0
-        # Z is the lure/echo spine.  T owns bars 5-8 and the final two-bar
-        # closure; bars 9-12 alternate instead of stacking both arrangements.
-        postpunk = section == 0 or (section == 2 and bar % 2 == 0) or (section == 3 and bar < 14)
+        z_full = bar in AUTUMN_BOSS_STRUCTURE["z_full_bars"]
+        t_counter = bar in AUTUMN_BOSS_STRUCTURE["t_counter_bars"]
+        root = roots[bar]
 
-        if postpunk:
+        if z_full:
             for step in (0.0, 2.0):
                 if step < stop_after:
                     add_kick(drums, spec, base + step, 0.165)
@@ -717,7 +728,6 @@ def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
                             6100 + bar * 16 + eighth, -0.42 if eighth % 2 else 0.42,
                             eighth == 7)
 
-            root = roots[bar]
             for eighth in range(8):
                 step = eighth * 0.5
                 if step >= stop_after:
@@ -738,41 +748,54 @@ def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
                         add_autumn_voice(hook, spec, base + step, 0.20, note, 0.225,
                                          "wire_pick", 6300 + bar * 32 + round(step * 8),
                                          -0.04 if step < 1.5 else 0.04)
-            if bar in {0, 2, 8, 12}:
-                chord = (50, 57, 62) if bar in {0, 8, 12} else (53, 60, 65)
-                add_autumn_dub_reply(effects, spec, base + 0.25, chord, 0.255,
-                                     6400 + bar, base + stop_after)
         else:
+            # Even during T's counterphrase, Z keeps the downbeat, backbeat and
+            # low wire-pick answer.  T therefore interrupts a continuing lure
+            # instead of replacing it with a second unrelated song.
+            add_kick(drums, spec, base, 0.150)
+            if 2.0 < stop_after:
+                add_snare(drums, spec, base + 2.0, 0.076, 6050 + bar)
+            for step, pan in ((0.50, -0.34), (2.50, 0.34)):
+                if step < stop_after:
+                    add_hat(drums, spec, base + step, 0.037,
+                            6150 + bar * 8 + round(step * 2), pan)
+            for step, note, pan in ((0.0, root, 0.12), (2.0, root + 12, -0.12)):
+                if step < stop_after:
+                    add_autumn_voice(drive, spec, base + step, 0.30, note, 0.235,
+                                     "wire_pick", 6250 + bar * 8 + round(step * 2), pan)
+
+        if bar in AUTUMN_BOSS_STRUCTURE["dub_send_bars"]:
+            chord = (50, 57, 62) if bar in {0, 8, 12} else (53, 60, 65)
+            add_autumn_dub_reply(effects, spec, base + 0.25, chord, 0.255,
+                                 6400 + bar, base + stop_after)
+
+        if t_counter:
             transpose = 0 if section == 1 else (3 if bar == 9 else 5 if bar == 11 else 0)
             cell = industrial_cells[bar % 4]
             for step, note in cell:
                 if step >= stop_after:
                     continue
-                voiced_note = note + transpose
-                if step > 0.0:
-                    voiced_note += 12 if step < 2.0 else 24
+                voiced_note = note + transpose + 12
+                if step >= 2.0:
+                    voiced_note += 12
                 add_autumn_voice(drive, spec, base + step, 0.25 if step < 2.0 else 0.31,
-                                 voiced_note, 0.315, "iron_pulse",
+                                 voiced_note, 0.275, "iron_pulse",
                                  6500 + bar * 32 + round(step * 8),
                                  -0.16 if round(step * 4) % 2 else 0.16)
-                if step in {0.0, 2.5, 2.75}:
-                    add_kick(drums, spec, base + step, 0.178)
+                if step in {2.5, 2.75}:
+                    add_kick(drums, spec, base + step, 0.135)
             if bar % 4 != 3:
-                for step in (1.0, 3.0):
-                    if step < stop_after:
-                        add_snare(drums, spec, base + step, 0.090,
-                                  6600 + bar * 4 + round(step))
                 for step in (0.25, 1.75, 3.50):
                     if step < stop_after:
-                        add_hat(drums, spec, base + step, 0.045,
+                        add_hat(drums, spec, base + step, 0.038,
                                 6650 + bar * 16 + round(step * 4),
                                 -0.38 if step < 2.0 else 0.38)
-            if bar in {5, 6, 9, 11, 14}:
+            if bar in {5, 6, 9, 11, 15}:
                 for step, note, pan in ((1.50, 74, -0.20), (2.00, 69, 0.20)):
                     if step < stop_after:
                         add_autumn_voice(effects, spec, base + step, 0.24, note, 0.145,
                                          "rust_bell", 6700 + bar * 8 + round(step * 2), pan)
-            if bar in {5, 9, 14} and 2.75 < stop_after:
+            if bar in {5, 9} and 2.75 < stop_after:
                 add_noise_hit(effects, spec, base + 2.75, 0.16, 0.068,
                               6750 + bar, 0.16, "dark")
 
