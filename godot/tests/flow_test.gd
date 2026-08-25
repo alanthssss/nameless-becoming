@@ -575,11 +575,13 @@ func run_test() -> void:
 			expect(donor_index >= 0, "柱头没有同可见花型的花粉源")
 			if donor_index >= 0:
 				game.season_mechanics.on_harvest(donor_index)
-				expect(pollinator.carried_pollen_variant == required, "采花药后没有携带散粉")
+				expect(pollinator.has_pollen_variant(required) and game.bee.pollen_loads[required] == 1, "采花药后蜂身没有携带对应形色散粉")
 				var nectar_before_pollination := int(game.flowers[receptive_index].nectar)
 				game.bee.position = Vector2(game.flowers[receptive_index].position)
 				game.season_mechanics.on_context_action()
-				expect(bool(game.flowers[receptive_index].pollinated) and bool(game.flowers[receptive_index].seed_setting), "同花型散粉没有使柱头花结籽")
+				expect(bool(game.flowers[receptive_index].pollination_pending) and not bool(game.flowers[receptive_index].seed_setting), "同花型散粉没有先进入可见飞行/pending，或过早结籽")
+				pollinator.process(0.47)
+				expect(bool(game.flowers[receptive_index].pollinated) and bool(game.flowers[receptive_index].seed_setting), "同花型散粉落地后没有使柱头花结籽")
 				expect(int(game.flowers[receptive_index].nectar) == nectar_before_pollination, "授粉不应产生或回填花蜜")
 
 	# 夏·实体袭扰：首次卸蜜触发，袭扰者移动并取走真实花蜜，惊退后归还

@@ -1,7 +1,7 @@
 # 花物候学与蜜蜂季行：花田与活动生态化重设计 / Flower Phenology & Seasonal Bee Activities
 
 > 版本 / Version: 草案 v0.2（2026-08-25 授粉生态纠偏）
-> 状态 / Status: 授粉纠偏已实现并通过开发者回归；待 Alan／独立玩家复核 / Implemented and regression-tested; awaiting Alan and independent-player review
+> 状态 / Status: 主线授粉生态纠偏已实现；PR #94 可恢复载粉候选通过开发者回归，待合并及 Alan／独立玩家复核 / Mainline ecology correction implemented; PR #94 recoverable-load candidate regression-tested, awaiting merge and player review
 > 关联 / Related: `docs/design/enemy-phenology.md`、`docs/DESIGN_CONSENSUS.md`、`godot/data/seasons.json`、`godot/data/balance.json`  
 > 基线 / Baseline: 候选 MVP 0.9.4 + 四季机制全量实现
 
@@ -185,10 +185,13 @@
 |------|------|
 | **给粉前件** | 花已开放，花药展开且花粉可见；蜜蜂接触后，花粉以松散颗粒附在身体上 |
 | **受粉前件** | 目标花与给粉花属于同一可见花型，已开放且具有可接受柱头；目标不隐藏，柱头与花药不同形 |
-| **效果** | 花粉转移到兼容柱头，目标花显示已受粉并进入结籽状态；不打开花苞，不新增或恢复花蜜 |
+| **携带状态** | PR #94 候选以 `pollen_charges` 为唯一规则真相；A／B 两类可同时携带、各上限 2。胸腹体表的两个散粉锚区精确显示 `0/1/2`，A 为金黄圆粒簇、B 为玫红菱粒簇，不使用单一“当前花粉”图标。锚区只总结多个接触面上的松散花粉，不是后足花粉筐 |
+| **恢复读取** | 携粉时停稳触角寻迹，每个正在携带的类型分别以同形气味点指向最近可见、未锁定、未结籽的同型柱头；此时收起普通最佳蜜花线，保留危险区与归巢线。无粉时寻迹仍按原寻蜜规则工作 |
+| **成功效果** | 按键后体表显示先减一份，目标进入约 `0.46s` pending 防重复；同形颗粒从对应体表散粉锚区离身并落向柱头，落地后才标记已受粉并进入结籽。这是“胸腹等体表松散花粉接触柱头”的可读性抽象，不表示花粉筐直接授粉；不打开花苞，不新增或恢复花蜜 |
+| **不匹配效果** | 不扣任何花粉、不结籽、不改花蜜；实际携带形态在目标前弹回，目标所需形态脉冲，并播放与成功不同的短音 |
 | **生态依据** | 蜜蜂把花粉从花药转移到兼容柱头，为后续受精和种子发育建立条件；花蜜分泌是独立的植物过程 |
 | **决策** | 识别同型花中可见的花药／柱头差异，规划取粉与传粉路线，用当前时间换结籽进度 |
-| **实现要求** | 花实例以 `visual_variant` 表达可见花型，以 `has_anthers` / `receptive_stigma` 表达器官角色，并以 `pollen_variant` / `stigma_variant` 校验兼容；蜜蜂记录并绘制身上散粉；兼容柱头命中后写入 `pollinated` / `seed_setting`，不写花蜜数值 |
+| **实现要求** | 花实例以 `visual_variant` 表达可见花型，以 `has_anthers` / `receptive_stigma` 表达器官角色，并以 `pollen_variant` / `stigma_variant` 校验兼容；共享视觉字母表同时服务花、蜂、寻迹与反馈；只有颗粒落地才写入 `pollinated` / `seed_setting`，不写花蜜数值 |
 
 ### 5.2 夏季 · 巢口轮值 & 快速抢采 / Hive Guard & Sprint Harvest（与征召机制联动）
 
@@ -310,12 +313,13 @@
 | `balance.json` | `mechanics.pollination.deposit_range` 配置传粉接触距离 | 小 |
 | `main.gd` 花朵生成 | 改为按 `flower_set` 读取花型权重生成 | 中 |
 | `main.gd` 花朵对象 | 使用 `type`、`visual_variant`；授粉机制补充 `has_anthers`、`receptive_stigma`、`pollen_variant`、`stigma_variant`、`pollinated` 与 `seed_setting`，采蜜/绘制/交互按实例分支 | 中 |
-| `pollination_mechanic.gd` | 替换旧“隐藏花苞开花／回蜜”链：花药取粉、身上散粉、同型柱头受粉与结籽（春季） | 中 |
+| `pollen_visual_language.gd` | 统一 A 型金黄圆粒／B 型玫红菱粒在花药、柱头、蜂身、寻迹与传递反馈中的形色语法 | 小 |
+| `pollination_mechanic.gd` | 维护双类型各两份权威载粉；同型寻迹、pending 传递、落地结籽与不匹配弹回（春季） | 中 |
 | 关卡目标／HUD | 显示每个结算条件的独立进度；结籽若必做则显示 `x/y`，否则不能阻塞结算 | 中 |
 | `conscription_mechanic.gd` | 巢口轮值和快速抢采接入征召钩子（夏季） | 小 |
 | `reserve_mechanic.gd` | 种子作为第三选项接入分配面板（秋季） | 中 |
 | `huddle_mechanic.gd` | 暖花和冰封花接入体温逻辑；NPC 蜂渲染（冬季） | 中 |
-| `bee_player.gd` | 无改动（活动差异通过 main.gd 的季节钩子实现） | 无 |
+| `bee_player.gd` | 在角色贴图之后、随朝向绘制两个展示用体表散粉锚区；它们总结体表松散花粉而非模拟后足花粉筐，规则仍由授粉机制持有 | 小 |
 
 ---
 
@@ -333,7 +337,7 @@
 1. 新增 `godot/data/flowers.json`；
 2. `main.gd` 花朵生成改为按 `flower_set` 读取花型权重；
 3. 花朵对象使用 `type`、`visual_variant`，授粉机制按实例补充花药／柱头、相容变体与 `pollinated` / `seed_setting` 状态；
-4. 为蜜蜂增加可见散粉状态，为关卡目标增加独立结籽进度（仅在结籽是必做项时）。
+4. 为蜜蜂增加可同时读取的双类型散粉状态与走神后寻迹恢复，为关卡目标增加独立结籽进度（仅在结籽是必做项时）。
 
 ### 阶段 3：逐季铺开 + 跨季因果链
 

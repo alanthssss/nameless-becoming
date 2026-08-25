@@ -1,5 +1,7 @@
 extends SceneTree
 
+const PollenVisualLanguageScript := preload("res://scripts/mechanics/pollen_visual_language.gd")
+
 var failures: Array[String] = []
 
 func _init() -> void:
@@ -173,8 +175,27 @@ func run_test() -> void:
 	game.update_mosquitoes(0.1)
 	expect(mentor.lesson_id == "pollination" and mentor.phase == "demo", "第二次世界结果没有进入授粉演示")
 	expect(game.message.contains("2 / 2"), "第二次世界结果没有给出明确的 2 / 2 证据")
-	finish_demo(mentor)
 	var pollination = game.season_mechanics.mechanic_by_id("pollination")
+	var pollination_flowers_before: Array = game.flowers.duplicate(true)
+	var pollination_load_before: Array[int] = pollination.pollen_charges.duplicate()
+	expect(mentor.pollination_demo_variant >= 0 and mentor.pollination_demo_source_index >= 0 and mentor.pollination_demo_target_index >= 0, "授粉示范没有绑定同型花药与柱头")
+	expect(mentor.pollination_demo_visual_phase() == "pickup", "授粉示范没有从花药取粉拍开始")
+	mentor.demo_time = mentor.demo_duration * 0.70
+	mentor._update_demo_position()
+	expect(mentor.pollination_demo_visual_phase() == "carry", "授粉示范没有持续显示老师傅蜂身携粉")
+	mentor.demo_time = mentor.demo_duration * 0.25
+	mentor._update_demo_position()
+	expect(mentor.pollination_demo_visual_phase() == "transfer", "授粉示范没有显示蜂身散粉落向柱头")
+	var demo_slot: Vector2 = PollenVisualLanguageScript.load_slot(mentor.pollination_demo_variant)
+	var expected_transfer_source: Vector2 = mentor.mentor_position + (demo_slot * 0.82).rotated(mentor._mentor_facing_vector().angle())
+	var naive_untransformed_source: Vector2 = mentor.mentor_position + demo_slot
+	expect(mentor._mentor_load_world(mentor.pollination_demo_variant).is_equal_approx(expected_transfer_source), "授粉示范飞出点没有应用老师傅朝向与 0.82 缩放")
+	expect(expected_transfer_source.distance_to(naive_untransformed_source) > 1.0, "授粉示范坐标用例没有覆盖旧的未旋转/未缩放体表锚区")
+	mentor.demo_time = mentor.demo_duration * 0.06
+	mentor._update_demo_position()
+	expect(mentor.pollination_demo_visual_phase() == "seed", "授粉示范没有以结籽结果收束")
+	expect(game.flowers == pollination_flowers_before and pollination.pollen_charges == pollination_load_before, "老师傅四拍授粉示范改变了真实花田或玩家载粉")
+	finish_demo(mentor)
 	pollination.pollinated_flowers = 1
 	mentor.process(0.0)
 	expect(mentor.phase == "practice" and not bool(mentor.prompt().visible), "第一朵花结籽后没有进入无提示授粉练习")

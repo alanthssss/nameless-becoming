@@ -11,6 +11,7 @@ const EVADE_COST := 12.0
 const EVADE_COOLDOWN := 1.6
 const PLAYER_BEE_TEXTURE := preload("res://assets/art/player_bee_textile.svg")
 const SPRING_PLAYER_BEE_PATH := "res://assets/art/launch/player_bee_v1.png"
+const PollenVisualLanguage := preload("res://scripts/mechanics/pollen_visual_language.gd")
 
 # 出巢体力上限：由 main 从 balance.json player.max_energy 注入，避免调参时改代码
 var max_energy := 100.0
@@ -46,6 +47,10 @@ var move_duration := 0.0
 var spring_player_bee_texture: Texture2D
 var use_spring_launch_art := false
 var _movement_bounds := WORLD_BOUNDS
+## Presentation mirror only. PollinationMechanic owns the authoritative charges;
+## this copy exists so the load can be drawn after the bee texture instead of
+## disappearing underneath it in Main's parent canvas.
+var pollen_loads: Array[int] = [0, 0]
 
 func _ready() -> void:
 	if ResourceLoader.exists(SPRING_PLAYER_BEE_PATH):
@@ -56,6 +61,14 @@ func has_spring_launch_art() -> bool:
 
 func set_spring_launch_art(enabled: bool) -> void:
 	use_spring_launch_art = enabled and has_spring_launch_art()
+	queue_redraw()
+
+
+func set_pollen_loads(charges: Array[int]) -> void:
+	var next_loads: Array[int] = [0, 0]
+	for variant in mini(next_loads.size(), charges.size()):
+		next_loads[variant] = clampi(int(charges[variant]), 0, 2)
+	pollen_loads = next_loads
 	queue_redraw()
 
 func configure(stage_drain: float) -> void:
@@ -217,6 +230,18 @@ func _draw() -> void:
 			var trail_alpha := evade_ratio * (0.10 + float(2 - trail_index) * 0.08)
 			draw_texture_rect(player_texture, Rect2(player_size * -0.5 + trail_offset, player_size), false, Color(0.82, 0.90, 1.0, trail_alpha))
 	draw_texture_rect(player_texture, Rect2(player_size * -0.5, player_size), false)
+	# Two stable body-surface pollen anchors summarize loose grains distributed on
+	# contact hairs. They are not hind-leg pollen baskets. Shape and color match
+	# the corresponding anther, stigma and scent route; 0/1/2 charges are drawn
+	# exactly rather than collapsed into one icon.
+	for variant in pollen_loads.size():
+		PollenVisualLanguage.draw_cluster(
+			self,
+			PollenVisualLanguage.load_slot(variant),
+			variant,
+			pollen_loads[variant],
+			1.15
+		)
 	if sense_time > 0.0:
 		draw_arc(Vector2.ZERO, 27 + sin(Time.get_ticks_msec() * 0.012) * 4, 0, TAU, 28, Color("f1d46d", 0.72), 2)
 	draw_set_transform(Vector2.ZERO)

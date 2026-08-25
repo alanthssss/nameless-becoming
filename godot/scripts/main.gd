@@ -3161,7 +3161,10 @@ func _notification(what: int) -> void:
 		restore_overlay_focus()
 
 func on_sense_started() -> void:
-	message = "触角捕捉到蜜量、敌虫警戒范围和一条相对安全的采集方向。"
+	if season_mechanics != null and season_mechanics.has_method("sense_focus_active") and bool(season_mechanics.sense_focus_active()):
+		message = "身上的散粉回应同形花心；敌虫范围与归巢方向仍在风里。"
+	else:
+		message = "触角捕捉到蜜量、敌虫警戒范围和一条相对安全的采集方向。"
 
 func best_foraging_target() -> int:
 	var best := -1
@@ -3351,6 +3354,9 @@ func update_progressive_guidance() -> void:
 	if seasonal_action_id == "deposit_pollen":
 		sense_button.text = "传粉"
 		context_hint_label.text = ""
+	elif seasonal_action_id == "needs_pollen":
+		sense_button.text = "先取散粉"
+		context_hint_label.text = "蜂身没有散粉"
 	elif seasonal_action_id == "repel_raider":
 		sense_button.text = "惊退"
 		context_hint_label.text = ""
@@ -3411,6 +3417,9 @@ func _update_mentor_guidance() -> void:
 		sense_button.visible = true
 		match contextual_action:
 			"deposit_pollen": sense_button.text = "传粉"
+			"needs_pollen":
+				sense_button.text = "先取散粉"
+				context_hint_label.text = "蜂身没有散粉"
 			"repel_raider": sense_button.text = "惊退"
 			"light_warm_relay": sense_button.text = "点亮"
 			"warm_relay_needs_honey": sense_button.text = "需一滴蜜"
@@ -3711,18 +3720,26 @@ func _draw() -> void:
 		]), Color("e8b83f", 0.92))
 		draw_line(decoy_position + Vector2(-5, 10), decoy_position + Vector2(7, 10), Color("8b6231", 0.72), 3.0)
 	if bee.sense_time > 0.0 and (phase == "playing" or phase == "boss"):
-		var recommended := best_foraging_target()
-		for i in flowers.size():
-			var flower: Dictionary = flowers[i]
-			if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
-				continue
-			var is_best := i == recommended
-			draw_line(bee.position, flower.position, Color("fff0a0", 0.42 if is_best else 0.12), 3.0 if is_best else 1.0)
-			var badge_position: Vector2 = flower.position + Vector2(0, -29)
-			draw_circle(badge_position, 10, Color("26392f", 0.88))
-			draw_string(zh_font, badge_position + Vector2(-8, 5), str(flower.nectar), HORIZONTAL_ALIGNMENT_CENTER, 16, 12, Color("fff4bf"))
-			if is_best:
-				draw_arc(flower.position, 38, 0, TAU, 32, Color("fff0a0", 0.9), 3)
+		# A carried pollen load makes compatible stigmas the recoverable question.
+		# PollinationMechanic draws one motif route per carried variant later in this
+		# frame; suppressing the ordinary best-nectar line prevents two contradictory
+		# destinations. Danger zones and the hive line remain available below.
+		var seasonal_sense_focus: bool = season_mechanics != null \
+			and season_mechanics.has_method("sense_focus_active") \
+			and bool(season_mechanics.sense_focus_active())
+		if not seasonal_sense_focus:
+			var recommended := best_foraging_target()
+			for i in flowers.size():
+				var flower: Dictionary = flowers[i]
+				if int(flower.nectar) <= 0 or bool(flower.get("sleeping", false)) or float(flower.get("flatten_time", 0.0)) > 0.0:
+					continue
+				var is_best := i == recommended
+				draw_line(bee.position, flower.position, Color("fff0a0", 0.42 if is_best else 0.12), 3.0 if is_best else 1.0)
+				var badge_position: Vector2 = flower.position + Vector2(0, -29)
+				draw_circle(badge_position, 10, Color("26392f", 0.88))
+				draw_string(zh_font, badge_position + Vector2(-8, 5), str(flower.nectar), HORIZONTAL_ALIGNMENT_CENTER, 16, 12, Color("fff4bf"))
+				if is_best:
+					draw_arc(flower.position, 38, 0, TAU, 32, Color("fff0a0", 0.9), 3)
 		for mosquito in mosquitoes:
 			draw_arc(mosquito.position, balance_value("mosquito", "sense_range", 330.0), 0, TAU, 64, Color("9d4238", 0.15), 2)
 		for ant in ants:
