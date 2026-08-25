@@ -8,7 +8,7 @@ PR #85 已实现固定切片身份基础；本次 B01 源码任务又将独立 t
 
 实现事实：Godot 导出入口改为 `bootstrap.tscn`，无 ticket 时直接进入既有 `main.tscn`；固定 session 只接受一个绝对路径 ticket，并严格交叉核对 schema v1 ticket、同目录 `artifact-manifest.json`、包内 `build_provenance.json`、产品／平台／完整 clean commit、artifact 文件名／大小／SHA-256、manifest 原始字节 SHA-256、`playtest_slices.json` 原始字节 SHA-256、catalog 状态和编译期 registry。ticket 或 catalog 不能提供 scene、handler、stage、seed、save 或 patch 路径。任一失败只显示中性错误码，不实例化 Main，也不触碰存档。
 
-固定 session 的通用存档名只由 ticket 原始字节 SHA-256 派生；普通启动继续使用 `user://nameless.cfg`。B01 本身完全不走存档流程：它不实例化 Main、MentorTutorial 或 SaveManager，不读也不写任何存档。固定时序是 2.8 秒老师傅因果示范、有界引导模仿、无提示实践、恰好 180 秒 active 花间路线、一次无字同配置复测和中性结束；内部只保留 `completed_independent`、`attempted_incomplete`、`not_attempted` 三个互斥结果。
+固定 session 的通用存档名只由 ticket 原始字节 SHA-256 派生；普通启动继续使用 `user://nameless.cfg`。B01 本身完全不走存档流程：它不实例化 Main、MentorTutorial 或 SaveManager，不读也不写任何存档。固定前段是 2.8 秒老师傅因果示范、有界引导模仿和无提示实践；只有无提示实践首次成功，才进入恰好 180 秒 active 花间路线、一次无字同配置复测和中性结束，否则在有界实践后直接中性结束。内部只保留 `completed_independent`、`attempted_incomplete`、`not_attempted` 三个互斥结果。
 
 Godot 共 14 组回归：其中 validator、bootstrap 和 namespace 隔离覆盖身份基础，共享急转运行时与 B01 两组覆盖主流程／切片规则一致、有界阶段、180 秒 active 边界、单次复测和互斥结果；Node 测试覆盖 B 的实际 artifact／manifest／catalog 身份推导、严格 CLI 和 participant 递归泄漏扫描。这些都属于开发者自动验证，不是最终分发包或真人学习证据。
 

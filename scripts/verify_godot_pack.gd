@@ -26,6 +26,16 @@ func fail(message: String) -> void:
 	quit(1)
 
 
+func has_exact_keys(value: Dictionary, expected: Array[String]) -> bool:
+	var actual: Array[String] = []
+	for key in value.keys():
+		actual.append(String(key))
+	actual.sort()
+	var normalized := expected.duplicate()
+	normalized.sort()
+	return actual == normalized
+
+
 func _init() -> void:
 	var arguments := OS.get_cmdline_user_args()
 	if arguments.size() != 1 and arguments.size() != 3:
@@ -69,6 +79,44 @@ func _init() -> void:
 	if not missing_runtime_files.is_empty():
 		fail("Exported pack is missing required bootstrap/catalog resources: %s\n%s" % [pack_path, "\n".join(missing_runtime_files)])
 		return
+
+	var catalog_file := FileAccess.open("res://data/playtest_slices.json", FileAccess.READ)
+	if catalog_file == null:
+		fail("Exported pack playtest catalog cannot be read.")
+		return
+	var catalog_parser := JSON.new()
+	var catalog_parse_result := catalog_parser.parse(catalog_file.get_as_text())
+	catalog_file.close()
+	if catalog_parse_result != OK or not catalog_parser.data is Dictionary:
+		fail("Exported pack playtest catalog is not a JSON object using schema v1.")
+		return
+	var catalog: Dictionary = catalog_parser.data
+	if not has_exact_keys(catalog, ["schema_version", "slices"]) or catalog.get("schema_version") != 1 or not catalog.get("slices") is Array:
+		fail("Exported pack playtest catalog does not use the exact schema v1 shape.")
+		return
+	var slices: Array = catalog.slices
+	if slices.size() != 1 or not slices[0] is Dictionary:
+		fail("Exported pack playtest catalog must contain exactly one B01 row.")
+		return
+	var b01: Dictionary = slices[0]
+	if not has_exact_keys(b01, ["assignment", "code", "maximum_minutes", "status"]):
+		fail("Exported pack B01 row exposes an unexpected public field.")
+		return
+	if b01.get("code") != "B01" or b01.get("assignment") != "固定切片 B01" or b01.get("maximum_minutes") != 10 or b01.get("status") != "ready":
+		fail("Exported pack does not contain the exact ready B01 / 10-minute catalog row.")
+		return
+
+	var b01_scene := load("res://playtest/b01_evade_slice.tscn") as PackedScene
+	if b01_scene == null:
+		fail("Exported pack B01 scene or one of its compiled dependencies cannot be loaded.")
+		return
+	var b01_instance := b01_scene.instantiate()
+	if b01_instance == null or not b01_instance.has_method("configure_playtest_session"):
+		if b01_instance != null:
+			b01_instance.free()
+		fail("Exported pack B01 scene does not implement the typed session contract.")
+		return
+	b01_instance.free()
 
 	var internal_files: Array[String] = []
 	for file_path in files:
