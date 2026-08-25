@@ -260,6 +260,11 @@ func _init() -> void:
 	var scene := load("res://main.tscn")
 	if scene == null:
 		failures.append("主场景无法加载")
+	var bootstrap_scene := load("res://bootstrap.tscn")
+	if bootstrap_scene == null:
+		failures.append("bootstrap 场景无法加载")
+	if String(ProjectSettings.get_setting("application/run/main_scene", "")) != "res://bootstrap.tscn":
+		failures.append("导出主入口必须是 bootstrap.tscn")
 
 	var bee_script := load("res://scripts/player/bee_player.gd")
 	if bee_script == null:

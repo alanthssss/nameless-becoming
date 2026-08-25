@@ -1,8 +1,9 @@
 import { execFile } from "node:child_process";
-import { randomBytes } from "node:crypto";
-import { lstat, mkdir, readFile, realpath, rename, rm, writeFile } from "node:fs/promises";
+import { createHash, randomBytes } from "node:crypto";
+import { createReadStream } from "node:fs";
+import { lstat, mkdir, readFile, readdir, realpath, rename, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, isAbsolute, parse, relative, resolve } from "node:path";
-import { promisify } from "node:util";
+import { promisify, TextDecoder } from "node:util";
 import { fileURLToPath } from "node:url";
 
 const execFileAsync = promisify(execFile);
@@ -11,6 +12,15 @@ const defaultOutputRoot = resolve(repositoryRoot, "outputs/playtest-evidence");
 const outputSentinelName = ".nameless-playtest-evidence";
 const outputSentinel = "nameless-playtest-evidence:v2\n";
 const schemaVersion = 2;
+const artifactManifestSchemaVersion = 1;
+const playtestSliceSchemaVersion = 1;
+const playtestTicketSchemaVersion = 1;
+const playtestSliceCatalogPath = "godot/data/playtest_slices.json";
+const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
+const platformArtifacts = Object.freeze({
+  "macos-universal": "NamelessBecoming-macOS.zip",
+  "windows-x86_64": "NamelessBecoming-Windows.exe",
+});
 
 const contactStatuses = Object.freeze([
   ["not_observed", "没有可用观察，不能判定"],
@@ -173,14 +183,18 @@ function bodyData({ product, task, sessionId, participant }) {
 function participantHtml(context) {
   const { product, task, sessionId } = context;
   const versionLabel = `${product.version} · ${product.commit}${product.dirty ? " +dirty" : ""}`;
+  const introduction = task.code === "B"
+    ? "请先把本页放在一边自由玩，结束后再回来；不记得、失败或提前停下都可以照实写。"
+    : "请先把本页放在一边自由玩，结束后再回来。没有标准答案；不记得、失败或提前停下都可以照实写。";
+  const taskCard = task.code === "B" ? `<div><dt>任务</dt><dd>${escapeHtml(task.assignment)}</dd></div>` : "";
   return `<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; media-src 'none'">
 <title>《无名：成蜂》试玩回忆 ${escapeHtml(sessionId)}</title><link rel="stylesheet" href="styles.css"></head>
 <body ${bodyData(context)}><main class="shell compact-shell">
 <header class="hero"><p class="eyebrow">LOCAL PLAYTEST · ${escapeHtml(sessionId)}</p><h1>六项，写完就结束。</h1>
-<p class="lede">请先把本页放在一边自由玩，结束后再回来。没有标准答案；不记得、失败或提前停下都可以照实写。</p>
-<dl class="build-card"><div><dt>最长</dt><dd>${task.maximum_minutes} 分钟</dd></div><div><dt>版本</dt><dd>${escapeHtml(versionLabel)}</dd></div></dl>
+<p class="lede">${introduction}</p>
+<dl class="build-card">${taskCard}<div><dt>最长</dt><dd>${task.maximum_minutes} 分钟</dd></div><div><dt>版本</dt><dd>${escapeHtml(versionLabel)}</dd></div></dl>
 ${product.dirty ? '<p class="warning">这是 dirty 候选，只能用于排查，不能作为固定候选通过证据。</p>' : ""}</header>
 <form id="evidence-form"><section class="panel" aria-labelledby="recall-title"><div class="section-heading"><p class="eyebrow">结束后填写 · 约两分钟</p>
 <h2 id="recall-title">只写你自己的记忆</h2><p>不要填写姓名、联系方式、账号、精确位置、健康或残障信息。</p></div>
@@ -256,7 +270,13 @@ for(const button of document.querySelectorAll("[data-event-action]"))button.addE
 form.addEventListener("input",()=>{refreshWindowsField();setStatus("有未导出的修改");window.clearTimeout(form.saveTimer);form.saveTimer=window.setTimeout(save,350)});form.addEventListener("submit",event=>event.preventDefault());document.querySelector("#save-button").addEventListener("click",save);document.querySelector("#export-button").addEventListener("click",exportResults);document.querySelector("#reset-button").addEventListener("click",()=>{if(!window.confirm("清空观察记录？已导出的 JSON 不受影响。"))return;form.reset();events=Object.fromEntries(timelineEvents.map(({id})=>[id,{status:"not_recorded",elapsed_seconds:null}]));timer={started_at_epoch_ms:null,ended_elapsed_seconds:null,status:"not_recorded"};window.clearInterval(timerInterval);try{localStorage.removeItem(storageKey)}catch{}refreshWindowsField();refreshEvents();refreshTimer();setStatus("已清空")});restore();refreshWindowsField();refreshEvents();refreshTimer();if(timer.status==="running")timerInterval=window.setInterval(refreshTimer,1000);`;
 }
 
-function coordinatorReadme({ product, sourceIdentity, sessionId, participant }) {
+function coordinatorReadme({ product, sourceIdentity, task, sessionId, participant }) {
+  const participantSummary = task.code === "B"
+    ? `只把同级的 \`participant/\` 文件夹交给参与者。公开任务只写“${task.assignment}”和 ${task.maximum_minutes} 分钟时限。`
+    : "只把同级的 `participant/` 文件夹交给参与者。A 表只有 4 个原话题和 2 个结束选择。";
+  const protocolStart = task.code === "B"
+    ? `B01 必须使用 participant 同目录的 \`playtest-ticket.json\` 启动，T0 为首次取得控制权，最多 ${task.maximum_minutes} 分钟；开始前不解释操作、目标或设计意图。`
+    : "A 包从标题开始，T0 为首次取得控制权，最多 15 分钟；开始前不解释操作、目标或设计意图。";
   return `# 试玩协调说明（不要发给参与者）
 
 本次会话：\`${sessionId}\`  
@@ -266,13 +286,13 @@ function coordinatorReadme({ product, sourceIdentity, sessionId, participant }) 
 
 ## 两个入口
 
-- 只把同级的 \`participant/\` 文件夹交给参与者。A 表只有 4 个原话题和 2 个结束选择。
+- ${participantSummary}
 - 协调者自己打开 \`observer.html\`，记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果。它含内部机制名，绝不能交给参与者。
 
 参与者不再选择自己是不是外部玩家，也不再逐项判定是否掌握机制。分析时仍需核对 \`external_player\` 确实未参与策划／开发。
 
 1. 核对实际启动候选的版本、提交号和安装包哈希；不一致就停止。
-2. A 包从标题开始，T0 为首次取得控制权，最多 15 分钟；开始前不解释操作、目标或设计意图。
+2. ${protocolStart}
 3. 现场／录屏可用时填写 observer；远程无观察时把事件标成“未观察”，机制状态标成“没有可用观察”，不得让玩家补做长表。
 4. 玩家结束后才打开 participant 表；两份 JSON 分别引用到 \`analysis-template.json\`。
 
@@ -314,17 +334,193 @@ function analysisTemplate({ product, task, sessionId, participant }) {
   };
 }
 
+function requireExactKeys(value, expectedKeys, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be a JSON object.`);
+  const expected = [...expectedKeys].sort();
+  const actual = Object.keys(value).sort();
+  if (actual.length !== expected.length || actual.some((key, index) => key !== expected[index])) {
+    throw new Error(`${label} must contain exactly: ${expected.join(", ")}.`);
+  }
+}
+
+function parseJsonBytes(bytes, label) {
+  let text;
+  try { text = utf8Decoder.decode(bytes); } catch { throw new Error(`${label} must be valid UTF-8 JSON.`); }
+  try { return JSON.parse(text); } catch { throw new Error(`${label} must be valid JSON.`); }
+}
+
+async function readRegularFileBytes(path, label) {
+  let stats;
+  try { stats = await lstat(path); } catch (error) {
+    if (error?.code === "ENOENT") throw new Error(`${label} does not exist: ${path}.`);
+    throw error;
+  }
+  if (!stats.isFile() || stats.isSymbolicLink()) throw new Error(`${label} must be a regular file, not a directory or symbolic link: ${path}.`);
+  return { bytes: await readFile(path), stats };
+}
+
+async function hashRegularFile(path, label) {
+  let stats;
+  try { stats = await lstat(path); } catch (error) {
+    if (error?.code === "ENOENT") throw new Error(`${label} does not exist: ${path}.`);
+    throw error;
+  }
+  if (!stats.isFile() || stats.isSymbolicLink()) throw new Error(`${label} must be a regular file, not a directory or symbolic link: ${path}.`);
+  const hash = createHash("sha256");
+  let size = 0;
+  for await (const chunk of createReadStream(path)) { hash.update(chunk); size += chunk.byteLength; }
+  if (size !== stats.size) throw new Error(`${label} changed while it was being verified.`);
+  return { size, sha256: hash.digest("hex") };
+}
+
+async function gitShowBytes(commit, path, root, label) {
+  try {
+    const { stdout } = await execFileAsync("git", ["show", `${commit}:${path}`], { cwd: root, encoding: null, maxBuffer: 8 * 1024 * 1024 });
+    return Buffer.isBuffer(stdout) ? stdout : Buffer.from(stdout);
+  } catch {
+    throw new Error(`${label} is not available at exact artifact commit ${commit}: ${path}.`);
+  }
+}
+
+function validateArtifactManifest(manifest, artifactFilename) {
+  if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)) throw new Error("Artifact manifest must be a JSON object.");
+  const coreKeys = ["commit", "dirty", "filename", "platform", "product_version", "schema_version", "sha256", "size"];
+  const sourceKeys = [...coreKeys, "github_run_id", "source_ref"];
+  const actualKeys = Object.keys(manifest || {}).sort();
+  const hasCoreKeys = actualKeys.length === coreKeys.length && actualKeys.every((key, index) => key === [...coreKeys].sort()[index]);
+  const hasSourceKeys = actualKeys.length === sourceKeys.length && actualKeys.every((key, index) => key === [...sourceKeys].sort()[index]);
+  if (!hasCoreKeys && !hasSourceKeys) {
+    throw new Error(`Artifact manifest must contain exactly the schema v1 core keys, optionally plus source_ref and github_run_id together.`);
+  }
+  if (manifest.schema_version !== artifactManifestSchemaVersion) throw new Error("Artifact manifest schema_version must be 1.");
+  if (typeof manifest.product_version !== "string" || manifest.product_version.length === 0 || /[\r\n]/u.test(manifest.product_version)) {
+    throw new Error("Artifact manifest product_version must be a non-empty single-line string.");
+  }
+  if (typeof manifest.commit !== "string" || !/^[0-9a-f]{40}$/u.test(manifest.commit)) {
+    throw new Error("Artifact manifest commit must be exactly 40 lowercase hexadecimal characters.");
+  }
+  if (manifest.dirty !== false) throw new Error("Artifact manifest dirty must be false.");
+  const expectedFilename = platformArtifacts[manifest.platform];
+  if (!expectedFilename) throw new Error(`Artifact manifest platform must be one of: ${Object.keys(platformArtifacts).join(", ")}.`);
+  if (manifest.filename !== expectedFilename) throw new Error(`Artifact manifest filename ${String(manifest.filename)} does not match platform ${manifest.platform}.`);
+  if (artifactFilename !== manifest.filename) throw new Error(`Artifact filename ${artifactFilename} does not match manifest filename ${manifest.filename}.`);
+  if (!Number.isSafeInteger(manifest.size) || manifest.size <= 0) throw new Error("Artifact manifest size must be a positive safe integer.");
+  if (typeof manifest.sha256 !== "string" || !/^[0-9a-f]{64}$/u.test(manifest.sha256)) {
+    throw new Error("Artifact manifest sha256 must be 64 lowercase hexadecimal characters.");
+  }
+  if (hasSourceKeys) {
+    if (typeof manifest.source_ref !== "string" || !/^refs\/[A-Za-z0-9._/-]+$/u.test(manifest.source_ref)) {
+      throw new Error("Artifact manifest source_ref must be a non-empty full Git ref.");
+    }
+    if (typeof manifest.github_run_id !== "string" || !/^[1-9][0-9]*$/u.test(manifest.github_run_id)) {
+      throw new Error("Artifact manifest github_run_id must be a positive decimal string.");
+    }
+  }
+}
+
+async function verifyManifestCommitVersion(manifest, root) {
+  const packageBytes = await gitShowBytes(manifest.commit, "package.json", root, "package identity");
+  const packageJson = parseJsonBytes(packageBytes, "package.json at artifact commit");
+  if (packageJson?.version !== manifest.product_version) {
+    throw new Error(`Artifact manifest version ${manifest.product_version} does not match package.json version ${String(packageJson?.version)} at commit ${manifest.commit}.`);
+  }
+}
+
+export async function readArtifactIdentity({ artifactPath, artifactManifestPath, repositoryRoot: root = repositoryRoot } = {}) {
+  if (typeof artifactPath !== "string" || artifactPath.length === 0) throw new Error("--artifact is required.");
+  if (typeof artifactManifestPath !== "string" || artifactManifestPath.length === 0) throw new Error("--artifact-manifest is required.");
+  if (!isAbsolute(artifactPath)) throw new Error("--artifact must be an absolute path.");
+  if (!isAbsolute(artifactManifestPath)) throw new Error("--artifact-manifest must be an absolute path.");
+  const resolvedArtifact = resolve(artifactPath);
+  const resolvedManifest = resolve(artifactManifestPath);
+  const [{ bytes: manifestBytes }, artifactDigest] = await Promise.all([
+    readRegularFileBytes(resolvedManifest, "Artifact manifest"),
+    hashRegularFile(resolvedArtifact, "Artifact"),
+  ]);
+  const manifest = parseJsonBytes(manifestBytes, "Artifact manifest");
+  validateArtifactManifest(manifest, basename(resolvedArtifact));
+  if (artifactDigest.size !== manifest.size) {
+    throw new Error(`Artifact size ${artifactDigest.size} does not match manifest size ${manifest.size}.`);
+  }
+  if (artifactDigest.sha256 !== manifest.sha256) {
+    throw new Error(`Artifact SHA-256 ${artifactDigest.sha256} does not match manifest SHA-256 ${manifest.sha256}.`);
+  }
+  await verifyManifestCommitVersion(manifest, resolve(root));
+  const manifestSha256 = createHash("sha256").update(manifestBytes).digest("hex");
+  return {
+    product: {
+      name: "无名：成蜂",
+      version: manifest.product_version,
+      commit: manifest.commit.slice(0, 8),
+      full_commit: manifest.commit,
+      dirty: false,
+      artifact_sha256: manifest.sha256,
+    },
+    artifact: {
+      platform: manifest.platform,
+      filename: manifest.filename,
+      size: manifest.size,
+      sha256: manifest.sha256,
+      manifest_sha256: manifestSha256,
+    },
+    manifest,
+    manifestBytes,
+  };
+}
+
+export async function readPlaytestSliceCatalog(commit, root = repositoryRoot) {
+  if (typeof commit !== "string" || !/^[0-9a-f]{40}$/u.test(commit)) throw new Error("Slice catalog commit must be exactly 40 lowercase hexadecimal characters.");
+  const rawBytes = await gitShowBytes(commit, playtestSliceCatalogPath, resolve(root), "Playtest slice catalog");
+  const catalog = parseJsonBytes(rawBytes, "Playtest slice catalog");
+  requireExactKeys(catalog, ["schema_version", "slices"], "Playtest slice catalog");
+  if (catalog.schema_version !== playtestSliceSchemaVersion) throw new Error("Playtest slice catalog schema_version must be 1.");
+  if (!Array.isArray(catalog.slices) || catalog.slices.length === 0) throw new Error("Playtest slice catalog slices must be a non-empty array.");
+  const seen = new Set();
+  for (const [index, slice] of catalog.slices.entries()) {
+    const label = `Playtest slice catalog slices[${index}]`;
+    requireExactKeys(slice, ["assignment", "code", "maximum_minutes", "status"], label);
+    if (typeof slice.code !== "string" || !/^B[0-9]{2}$/u.test(slice.code)) throw new Error(`${label} code must match B followed by two digits.`);
+    if (seen.has(slice.code)) throw new Error(`Playtest slice catalog contains duplicate code ${slice.code}.`);
+    seen.add(slice.code);
+    if (slice.assignment !== `固定切片 ${slice.code}`) throw new Error(`${label} assignment must remain neutral and code-based.`);
+    if (!Number.isSafeInteger(slice.maximum_minutes) || slice.maximum_minutes <= 0 || slice.maximum_minutes > 60) throw new Error(`${label} maximum_minutes must be an integer from 1 to 60.`);
+    if (!["blocked", "ready"].includes(slice.status)) throw new Error(`${label} status must be blocked or ready.`);
+  }
+  return { catalog, rawBytes, sha256: createHash("sha256").update(rawBytes).digest("hex") };
+}
+
 function validateSha256(value) {
   const normalized = String(value || "").trim().toLowerCase();
   if (!/^[0-9a-f]{64}$/u.test(normalized)) throw new Error("A 64-character --artifact-sha256 is required before preparing a participant package.");
   return normalized;
 }
-function validateTask(taskCode) {
+
+function normalizeTaskCode(taskCode) {
   const code = String(taskCode || "A").trim().toUpperCase();
   if (code === "C") throw new Error("Task C is the separate music package. Run npm run audio:review instead.");
-  if (code === "B") throw new Error("Task B is blocked until the game has a fixed single-slice entry bound to the same artifact and hash. This generator currently prepares Task A only.");
-  if (code !== "A") throw new Error("--task must be A. Music task C uses npm run audio:review.");
-  return { code, assignment: "首次体验：首节点", internal_assignment: "", maximum_minutes: 15 };
+  if (!["A", "B"].includes(code)) throw new Error("--task must be A or B. Music task C uses npm run audio:review.");
+  return code;
+}
+
+async function validateTask(taskCode, sliceCode, artifactCommit, root) {
+  const code = normalizeTaskCode(taskCode);
+  if (code === "A") {
+    if (sliceCode !== undefined) throw new Error("--slice is only valid with --task B.");
+    return { task: { code, assignment: "首次体验：首节点", internal_assignment: "", maximum_minutes: 15 }, sliceCatalog: null };
+  }
+  const normalizedSlice = String(sliceCode || "").trim().toUpperCase();
+  if (!normalizedSlice) throw new Error("--slice is required with --task B.");
+  const sliceCatalog = await readPlaytestSliceCatalog(artifactCommit, root);
+  const slice = sliceCatalog.catalog.slices.find(({ code: candidate }) => candidate === normalizedSlice);
+  if (!slice) throw new Error(`Slice ${normalizedSlice} is not defined at artifact commit ${artifactCommit}.`);
+  if (slice.code !== "B01" || slice.assignment !== "固定切片 B01" || slice.maximum_minutes !== 10) {
+    throw new Error("Task B currently permits only the neutral fixed B01 assignment with a 10-minute limit.");
+  }
+  if (slice.status !== "ready") throw new Error(`Task B slice ${slice.code} is blocked at artifact commit ${artifactCommit}; no evidence package was written.`);
+  return {
+    task: { code, slice_code: slice.code, assignment: slice.assignment, internal_assignment: "", maximum_minutes: slice.maximum_minutes },
+    sliceCatalog,
+  };
 }
 function validateTesterRelation(value) {
   const relation = String(value || "").trim();
@@ -335,13 +531,13 @@ function isWithin(parent, candidate) {
   const path = relative(parent, candidate);
   return path === "" || (!path.startsWith("..") && !isAbsolute(path));
 }
-function validateResolvedOutput(output) {
+function validateResolvedOutput(output, root = repositoryRoot) {
   if (output === parse(output).root) throw new Error("Refusing to replace a filesystem root.");
-  if (isWithin(output, repositoryRoot)) throw new Error("Refusing the repository or one of its ancestors as output.");
-  if (isWithin(repositoryRoot, output) && !isWithin(resolve(repositoryRoot, "outputs"), output)) throw new Error("Output inside the repository must stay under outputs/.");
+  if (isWithin(output, root)) throw new Error("Refusing the repository or one of its ancestors as output.");
+  if (isWithin(root, output) && !isWithin(resolve(root, "outputs"), output)) throw new Error("Output inside the repository must stay under outputs/.");
 }
-async function validateOutputTarget(outputDirectory) {
-  const output = resolve(outputDirectory); validateResolvedOutput(output);
+async function validateOutputTarget(outputDirectory, root = repositoryRoot) {
+  const output = resolve(outputDirectory); validateResolvedOutput(output, root);
   let existingAncestor = output; const missingSegments = [];
   while (true) {
     try { await lstat(existingAncestor); break; } catch (error) {
@@ -351,7 +547,7 @@ async function validateOutputTarget(outputDirectory) {
       missingSegments.unshift(basename(existingAncestor)); existingAncestor = parent;
     }
   }
-  validateResolvedOutput(resolve(await realpath(existingAncestor), ...missingSegments)); return output;
+  validateResolvedOutput(resolve(await realpath(existingAncestor), ...missingSegments), root); return output;
 }
 async function assertReplaceableOutput(output) {
   let status;
@@ -365,47 +561,223 @@ async function assertReplaceableOutput(output) {
   return true;
 }
 
+function buildPlaytestTicket({ sessionId, product, artifact, task, catalogSha256 }) {
+  return {
+    schema_version: playtestTicketSchemaVersion,
+    session_id: sessionId,
+    task: { code: "B", slice_code: task.slice_code },
+    product: {
+      id: "nameless-becoming",
+      display_name: product.name,
+      version: product.version,
+      commit: product.full_commit,
+      dirty: false,
+    },
+    artifact: {
+      platform: artifact.platform,
+      filename: artifact.filename,
+      size: artifact.size,
+      sha256: artifact.sha256,
+      manifest_sha256: artifact.manifest_sha256,
+    },
+    catalog_sha256: catalogSha256,
+  };
+}
+
+function participantRuntimeReadme({ task }) {
+  return `# ${task.assignment}
+
+本次最长 ${task.maximum_minutes} 分钟。请不要打开同包之外的说明文件。
+
+用游戏可执行文件的绝对路径启动，并保留参数前的 \`--\` 分隔符：
+
+\`"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket.json 的绝对路径>"\`
+
+结束后回到 \`index.html\`，按自己的记忆填写六项短表。
+`;
+}
+
+const participantForbiddenPatterns = Object.freeze([
+  /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜/iu,
+  /\b(?:pollination|evade|nectar|deposit|handler|profile|observer)\b/iu,
+  /\b(?:contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment)/iu,
+  /\b(?:answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria)\b|正确答案|答案说明/iu,
+]);
+
+async function assertParticipantPackageBlind(participantDirectory) {
+  const pending = [participantDirectory];
+  while (pending.length > 0) {
+    const directory = pending.pop();
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+      const path = resolve(directory, entry.name);
+      if (entry.isDirectory()) { pending.push(path); continue; }
+      if (!entry.isFile() || entry.isSymbolicLink()) throw new Error(`Participant package contains an unsupported entry: ${path}.`);
+      const bytes = await readFile(path);
+      let text;
+      try { text = utf8Decoder.decode(bytes); } catch { throw new Error(`Participant package contains a non-text file: ${path}.`); }
+      const relativePath = relative(participantDirectory, path);
+      for (const pattern of participantForbiddenPatterns) {
+        if (pattern.test(`${relativePath}\n${text}`)) throw new Error(`Participant package leaks coordinator-only vocabulary in ${relativePath}.`);
+      }
+    }
+  }
+}
+
 export async function generatePlaytestEvidence(outputDirectory, options = {}) {
-  const sourceIdentity = await readProductIdentity();
-  const task = validateTask(options.taskCode);
-  const artifactSha256 = validateSha256(options.artifactSha256);
-  const testerRelation = validateTesterRelation(options.testerRelation);
-  if (options.candidateCommit && typeof options.candidateDirty !== "boolean") throw new Error("A fixed --candidate-commit also requires exactly one of --candidate-clean or --candidate-dirty.");
-  const candidateIdentity = options.candidateCommit ? await readCandidateIdentity(options.candidateCommit) : sourceIdentity;
-  const product = { name: candidateIdentity.name, version: candidateIdentity.version, commit: candidateIdentity.commit, full_commit: candidateIdentity.full_commit, dirty: options.candidateCommit ? options.candidateDirty : sourceIdentity.dirty, artifact_sha256: artifactSha256 };
+  const taskCode = normalizeTaskCode(options.taskCode);
+  const resolvedRepositoryRoot = resolve(options.repositoryRoot || repositoryRoot);
+  let artifactIdentity = null;
+  let sliceCatalog = null;
+  let sourceIdentity;
+  let product;
+  let task;
+  let testerRelation;
+
+  if (taskCode === "A") {
+    if ([options.sliceCode, options.artifactPath, options.artifactManifestPath].some((value) => value !== undefined)) {
+      throw new Error("--slice, --artifact, and --artifact-manifest are only valid with --task B.");
+    }
+    sourceIdentity = await readProductIdentity(resolvedRepositoryRoot);
+    ({ task } = await validateTask(taskCode, undefined, "", resolvedRepositoryRoot));
+    const artifactSha256 = validateSha256(options.artifactSha256);
+    testerRelation = validateTesterRelation(options.testerRelation);
+    if (options.candidateCommit && typeof options.candidateDirty !== "boolean") throw new Error("A fixed --candidate-commit also requires exactly one of --candidate-clean or --candidate-dirty.");
+    const candidateIdentity = options.candidateCommit ? await readCandidateIdentity(options.candidateCommit, resolvedRepositoryRoot) : sourceIdentity;
+    product = {
+      name: candidateIdentity.name,
+      version: candidateIdentity.version,
+      commit: candidateIdentity.commit,
+      full_commit: candidateIdentity.full_commit,
+      dirty: options.candidateCommit ? options.candidateDirty : sourceIdentity.dirty,
+      artifact_sha256: artifactSha256,
+    };
+  } else {
+    for (const legacyOption of ["artifactSha256", "candidateCommit", "candidateClean", "candidateDirty", "artifactSha256FromEnvironment"]) {
+      if (Object.hasOwn(options, legacyOption)) throw new Error(`Task B rejects legacy identity option ${legacyOption}; use --artifact and --artifact-manifest.`);
+    }
+    if (!String(options.sliceCode || "").trim()) throw new Error("--slice is required with --task B.");
+    artifactIdentity = await readArtifactIdentity({
+      artifactPath: options.artifactPath,
+      artifactManifestPath: options.artifactManifestPath,
+      repositoryRoot: resolvedRepositoryRoot,
+    });
+    ({ task, sliceCatalog } = await validateTask(taskCode, options.sliceCode, artifactIdentity.product.full_commit, resolvedRepositoryRoot));
+    product = artifactIdentity.product;
+    testerRelation = validateTesterRelation(options.testerRelation);
+    sourceIdentity = await readProductIdentity(resolvedRepositoryRoot);
+  }
   const sessionId = options.sessionId || `NB-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${randomBytes(4).toString("hex").toUpperCase()}`;
   if (!/^[A-Z0-9-]{8,40}$/u.test(sessionId)) throw new Error("Invalid session ID.");
   const participant = { participant_code: sessionId, tester_relation: testerRelation };
-  const output = await validateOutputTarget(outputDirectory || resolve(defaultOutputRoot, sessionId));
+  const output = await validateOutputTarget(outputDirectory || resolve(defaultOutputRoot, sessionId), resolvedRepositoryRoot);
   const stage = `${output}.stage-${process.pid}-${Date.now()}`, participantDirectory = resolve(stage, "participant"), coordinatorDirectory = resolve(stage, "coordinator");
   const replaceExisting = await assertReplaceableOutput(output);
-  await mkdir(dirname(output), { recursive: true }); await mkdir(participantDirectory, { recursive: true }); await mkdir(coordinatorDirectory, { recursive: true });
   const context = { product, task, sessionId, participant };
   try {
-    const manifest = { schema_version: schemaVersion, session_id: sessionId, candidate: product, task, participant_identity: participant, participant_entry: "../participant/index.html", observer_entry: "observer.html", generator_source: sourceIdentity, generated_at: new Date().toISOString() };
-    await Promise.all([
+    await mkdir(dirname(output), { recursive: true }); await mkdir(participantDirectory, { recursive: true }); await mkdir(coordinatorDirectory, { recursive: true });
+    const manifest = { schema_version: schemaVersion, session_id: sessionId, candidate: product, ...(artifactIdentity ? { artifact: artifactIdentity.artifact } : {}), task, participant_identity: participant, participant_entry: "../participant/index.html", observer_entry: "observer.html", generator_source: sourceIdentity, generated_at: new Date().toISOString() };
+    const writes = [
       writeFile(resolve(participantDirectory, "index.html"), participantHtml(context), "utf8"), writeFile(resolve(participantDirectory, "styles.css"), sharedCss, "utf8"), writeFile(resolve(participantDirectory, "review.js"), participantJavaScript(), "utf8"),
       writeFile(resolve(coordinatorDirectory, "observer.html"), observerHtml(context), "utf8"), writeFile(resolve(coordinatorDirectory, "styles.css"), sharedCss, "utf8"), writeFile(resolve(coordinatorDirectory, "observer.js"), observerJavaScript(), "utf8"),
       writeFile(resolve(coordinatorDirectory, "README.md"), coordinatorReadme({ product, sourceIdentity, task, sessionId, participant }), "utf8"), writeFile(resolve(coordinatorDirectory, "analysis-template.json"), `${JSON.stringify(analysisTemplate(context), null, 2)}\n`, "utf8"), writeFile(resolve(coordinatorDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8"), writeFile(resolve(stage, outputSentinelName), outputSentinel, "utf8"),
-    ]);
+    ];
+    if (task.code === "B") {
+      const ticket = buildPlaytestTicket({ sessionId, product, artifact: artifactIdentity.artifact, task, catalogSha256: sliceCatalog.sha256 });
+      writes.push(
+        writeFile(resolve(coordinatorDirectory, "artifact-manifest.json"), artifactIdentity.manifestBytes),
+        writeFile(resolve(participantDirectory, "artifact-manifest.json"), artifactIdentity.manifestBytes),
+        writeFile(resolve(participantDirectory, "playtest-ticket.json"), `${JSON.stringify(ticket, null, 2)}\n`, "utf8"),
+        writeFile(resolve(participantDirectory, "README.md"), participantRuntimeReadme({ task }), "utf8"),
+      );
+    }
+    await Promise.all(writes);
+    if (task.code === "B") await assertParticipantPackageBlind(participantDirectory);
     if (replaceExisting) { await assertReplaceableOutput(output); await rm(output, { recursive: true, force: true }); }
     await rename(stage, output);
   } catch (error) { await rm(stage, { recursive: true, force: true }); throw error; }
-  return { output, participant: resolve(output, "participant/index.html"), observer: resolve(output, "coordinator/observer.html"), coordinator: resolve(output, "coordinator/README.md"), sessionId, participantIdentity: participant, product, task };
+  return { output, participant: resolve(output, "participant/index.html"), observer: resolve(output, "coordinator/observer.html"), coordinator: resolve(output, "coordinator/README.md"), sessionId, participantIdentity: participant, product, ...(artifactIdentity ? { artifact: artifactIdentity.artifact } : {}), task };
 }
 
-function flagValue(name) {
-  const index = process.argv.indexOf(name); if (index < 0) return undefined;
-  const value = process.argv[index + 1]; if (!value || value.startsWith("--")) throw new Error(`${name} requires a value.`); return value;
+export function parseArguments(arguments_) {
+  const options = {};
+  const supported = new Map([
+    ["--output", "outputDirectory"],
+    ["--task", "taskCode"],
+    ["--slice", "sliceCode"],
+    ["--tester-relation", "testerRelation"],
+    ["--artifact", "artifactPath"],
+    ["--artifact-manifest", "artifactManifestPath"],
+    ["--artifact-sha256", "artifactSha256"],
+    ["--candidate-commit", "candidateCommit"],
+  ]);
+  const switches = new Map([
+    ["--candidate-clean", "candidateClean"],
+    ["--candidate-dirty", "candidateDirty"],
+  ]);
+  for (let index = 0; index < arguments_.length; index += 1) {
+    const flag = arguments_[index];
+    if (flag === "--help") {
+      if (options.help) throw new Error("Argument may only be provided once: --help.");
+      options.help = true;
+      continue;
+    }
+    const switchKey = switches.get(flag);
+    if (switchKey) {
+      if (Object.hasOwn(options, switchKey)) throw new Error(`Argument may only be provided once: ${flag}.`);
+      options[switchKey] = true;
+      continue;
+    }
+    const key = supported.get(flag);
+    if (!key) throw new Error(`Unknown argument: ${flag}.`);
+    if (Object.hasOwn(options, key)) throw new Error(`Argument may only be provided once: ${flag}.`);
+    const value = arguments_[index + 1];
+    if (value === undefined || value.startsWith("--")) throw new Error(`Argument requires a value: ${flag}.`);
+    options[key] = value;
+    index += 1;
+  }
+  if (String(options.taskCode || "A").trim().toUpperCase() === "B") {
+    for (const legacyKey of ["artifactSha256", "candidateCommit", "candidateClean", "candidateDirty"]) {
+      if (Object.hasOwn(options, legacyKey)) {
+        const flag = { artifactSha256: "--artifact-sha256", candidateCommit: "--candidate-commit", candidateClean: "--candidate-clean", candidateDirty: "--candidate-dirty" }[legacyKey];
+        throw new Error(`Task B rejects legacy argument ${flag}; use --artifact and --artifact-manifest.`);
+      }
+    }
+  }
+  return options;
 }
+
+function usage() {
+  return [
+    "Usage:",
+    "  node scripts/prepare_playtest_evidence.mjs --task A --tester-relation <relation>",
+    "    --artifact-sha256 <sha256> [--candidate-commit <commit> (--candidate-clean | --candidate-dirty)]",
+    "    [--output <directory>]",
+    "  node scripts/prepare_playtest_evidence.mjs --task B --slice B01 --tester-relation <relation>",
+    "    --artifact <distribution> --artifact-manifest <manifest> [--output <directory>]",
+  ].join("\n");
+}
+
 async function main() {
-  const requestedOutput = flagValue("--output") || process.env.NAMELESS_PLAYTEST_OUTPUT;
-  const artifactSha256 = flagValue("--artifact-sha256") || process.env.NAMELESS_PLAYTEST_ARTIFACT_SHA256;
-  const taskCode = flagValue("--task") || "A", testerRelation = flagValue("--tester-relation"), candidateCommit = flagValue("--candidate-commit");
-  const candidateClean = process.argv.includes("--candidate-clean"), candidateDirty = process.argv.includes("--candidate-dirty");
-  if (candidateClean && candidateDirty) throw new Error("Use only one of --candidate-clean or --candidate-dirty.");
-  if (!candidateCommit && (candidateClean || candidateDirty)) throw new Error("--candidate-clean/--candidate-dirty requires --candidate-commit.");
-  const result = await generatePlaytestEvidence(requestedOutput, { artifactSha256, taskCode, testerRelation, candidateCommit, candidateDirty: candidateClean ? false : candidateDirty ? true : undefined });
+  const options = parseArguments(process.argv.slice(2));
+  if (options.help) { console.log(usage()); return; }
+  const requestedOutput = options.outputDirectory || process.env.NAMELESS_PLAYTEST_OUTPUT;
+  const taskCode = normalizeTaskCode(options.taskCode);
+  let generationOptions;
+  if (taskCode === "A") {
+    if (options.candidateClean && options.candidateDirty) throw new Error("Use only one of --candidate-clean or --candidate-dirty.");
+    if (!options.candidateCommit && (options.candidateClean || options.candidateDirty)) throw new Error("--candidate-clean/--candidate-dirty requires --candidate-commit.");
+    generationOptions = {
+      ...options,
+      artifactSha256: options.artifactSha256 || process.env.NAMELESS_PLAYTEST_ARTIFACT_SHA256,
+      candidateDirty: options.candidateClean ? false : options.candidateDirty ? true : undefined,
+    };
+  } else {
+    generationOptions = { ...options };
+    if (Object.hasOwn(process.env, "NAMELESS_PLAYTEST_ARTIFACT_SHA256")) {
+      generationOptions.artifactSha256FromEnvironment = process.env.NAMELESS_PLAYTEST_ARTIFACT_SHA256;
+    }
+  }
+  const result = await generatePlaytestEvidence(requestedOutput, generationOptions);
   console.log(`Prepared playtest evidence package ${result.sessionId} at ${relative(repositoryRoot, result.output) || result.output}.`);
   console.log(`Give only this folder to the participant: ${dirname(result.participant)}`);
   console.log(`Coordinator observer (keep separate): ${result.observer}`);

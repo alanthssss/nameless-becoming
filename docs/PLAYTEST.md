@@ -19,6 +19,8 @@ npm run playtest:prepare -- \
 
 默认输出到 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包，不覆盖上一位。`--tester-relation` 必须由协调者在生成时声明为 `external_player` 或 `alan_self_test`，参与者页面不能自行选择或改写身份。生成器会从候选提交中的 `package.json` 读取版本，验证并保存完整提交号，同时记录当前工具提交和 dirty 状态。使用 `--candidate-commit` 时必须显式二选一：CI／固定 artifact 用 `--candidate-clean`；确实来自未提交工作区的候选才用 `--candidate-dirty`。若省略候选提交，则直接使用当前 `HEAD` 及其真实 dirty 状态。安装包 SHA-256 必填，但生成器只记录这项绑定声明，不读取或计算安装包；协调者必须先用 sidecar 或本机哈希工具确认它与玩家实际收到的文件一致。
 
+以上是保持兼容的 **A 包**身份流程。B 包不接受 `--artifact-sha256`、`--candidate-commit`、`--candidate-clean` 或 `--candidate-dirty`；它只接受 `--slice`、最终 distribution 的绝对 `--artifact` 路径和同一最终包的绝对 `--artifact-manifest` 路径，并从实际 artifact bytes、schema v1 manifest 与 manifest 精确提交中的 catalog bytes 重新推导身份。A 的声明式旧流程与 B 的固定 artifact 流程不能混用。
+
 输出严格分成两部分：
 
 - 只把 `participant/` 文件夹交给参与者，其 `index.html` 是 6 项短表（4 个原话题、2 个结束选择），无网络依赖，可在本机保存并导出匿名 JSON；
@@ -44,11 +46,29 @@ npm run playtest:prepare -- \
 - “哪里最卡、最意外，或者最想让我们知道？”
 - “用一句自己的话描述这次游戏。”
 
-### B：单个高级切片（当前阻塞）
+### B：单个高级切片（基础设施已实现，B01 仍阻塞）
 
-每人只测一个季节机制切片或一个 Boss 的原则保留，但当前正式游戏固定从首节点开始，没有可复现的单切片入口。`--task B` 因此会明确拒绝生成，不能让玩家先跑大量前置节点来冒充独立切片测试。
+源码现已具备固定切片的身份与隔离基础，但**没有可发放的 B 玩法**：
 
-只有在另一个任务提供并固定“单切片构建或存档入口”，且该入口与同一候选提交、artifact 和哈希绑定后，才能开放 B 包。参与者只应看到中性切片编号；真实季节／Boss 映射只留在协调者清单。
+- `godot/data/playtest_slices.json` 的公开 schema v1 只含中性编号、公开任务文案、时限和状态；生产 catalog 唯一条目是 `B01 / 固定切片 B01 / 10 分钟 / blocked`，不含机制名、scene、handler、stage、seed、存档路径或 patch／override；
+- 导出主入口是 bootstrap。没有 user argument 时仍实例化原 `main.tscn`；试玩的完整启动命令必须是 `"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket.json 的绝对路径>"`，其中 `--` 把唯一一个 user argument 与引擎参数分开。ticket、同目录固定名 `artifact-manifest.json`、包内 build provenance、运行平台、产品版本、完整 clean commit、artifact 字段、catalog 原始字节 SHA-256 和编译期 registry 任一不一致都会 fail closed；
+- 通过校验的 session 使用 ticket **原始 bytes** 的 SHA-256 派生 `user://nameless-playtest-<64hex>.cfg`。namespace 在 Main 进入场景树前注入并在首次 load 后锁死；失败不会读取或回退 `user://nameless.cfg`；
+- B 生成器读取实际 distribution bytes，严格复核 manifest 的文件名、平台、大小、SHA-256、版本、完整提交和 `dirty:false`，计算 manifest 自身 SHA-256，再以 `git show <manifest commit>:godot/data/playtest_slices.json` 读取精确 catalog bytes。生产 `B01` 的 `blocked` gate 在任何输出写入前返回非零。
+
+因此现在运行下列命令是**阻塞检查**，不是生成可玩包；它必须非零退出且不创建 output：
+
+```bash
+npm run playtest:prepare -- \
+  --task B \
+  --slice B01 \
+  --tester-relation external_player \
+  --artifact /absolute/path/NamelessBecoming-macOS.zip \
+  --artifact-manifest /absolute/path/NamelessBecoming-macOS.zip.manifest.json
+```
+
+后续必须在独立任务中实现 B01 专用 typed scene／handler，明确完成“首次教学 → 无额外教学的实践 → 约 3 分钟后的同语法延迟复测 → 结束”，不得改 `stage_index`、tutorial 私有字段或伪造存档来跳关。完成后还要把编译期 registry 接到该 typed scene、经评审把 catalog 状态改为 `ready`，并从该精确 clean commit **重建 artifact、sidecar 与 manifest**；只有新包通过完整校验后才能生成和发放 B。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
+
+当前证据等级必须分开：上述是**实现事实**；Godot／Node 自动测试是**开发者自测**；当前没有 B01 artifact、Alan B01 人工流程或独立外部玩家 B01 证据，不能把基础设施通过写成玩法、教学迁移或发行通过。
 
 ### C：独立音乐盲听
 
@@ -66,7 +86,7 @@ npm run playtest:prepare -- \
 
 当前外部玩家样本仍为 **0**。生成器、JSON、CI 或 Alan 的方向批准都不增加样本数。
 
-首轮先收集 3–5 名陌生玩家的 A 包，再按真实失败簇决定是否制作固定 B 切片入口。人数不是 1.0 的唯一门槛；至少还要分别关闭 Alan 完整人工流程、Windows 真机、音乐盲听、构建和发行链路。只有在同一固定构建上取得足够可比较记录后，才能讨论教学理解率、节奏、重开意愿或版本通过。
+首轮先收集 3–5 名陌生玩家的 A 包；固定 B 身份基础已经存在，但 B01 仍须由真实失败簇触发专用 typed scene 和新 artifact，不能提前开放。人数不是 1.0 的唯一门槛；至少还要分别关闭 Alan 完整人工流程、Windows 真机、音乐盲听、构建和发行链路。只有在同一固定构建上取得足够可比较记录后，才能讨论教学理解率、节奏、重开意愿或版本通过。
 
 ## 开发者自测反馈（alan）
 

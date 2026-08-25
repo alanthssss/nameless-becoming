@@ -55,8 +55,18 @@ func _init() -> void:
 	var files: Array[String] = []
 	collect_files("res://", files)
 	files.sort()
-	if "res://project.binary" not in files or "res://main.tscn.remap" not in files:
-		fail("Exported pack is missing the project settings or main scene remap: %s" % pack_path)
+	var required_runtime_files := [
+		"res://project.binary",
+		"res://bootstrap.tscn.remap",
+		"res://main.tscn.remap",
+		"res://data/playtest_slices.json",
+	]
+	var missing_runtime_files: Array[String] = []
+	for required_path in required_runtime_files:
+		if required_path not in files:
+			missing_runtime_files.append(required_path)
+	if not missing_runtime_files.is_empty():
+		fail("Exported pack is missing required bootstrap/catalog resources: %s\n%s" % [pack_path, "\n".join(missing_runtime_files)])
 		return
 
 	var internal_files: Array[String] = []

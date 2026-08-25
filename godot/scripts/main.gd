@@ -236,6 +236,45 @@ var context_lessons_seen := {"sense": false, "danger": false, "low_energy": fals
 var hive_activity_time := 0.0
 var build_product_version := ""
 var build_commit := ""
+var playtest_session_context: Dictionary = {}
+
+func configure_playtest_session(context: Dictionary) -> Error:
+	if is_inside_tree() or not playtest_session_context.is_empty():
+		return ERR_ALREADY_IN_USE
+	var expected_keys: Array[String] = ["artifact", "catalog_sha256", "product", "schema_version", "session_id", "slice", "task", "ticket_sha256"]
+	var actual_keys: Array[String] = []
+	for key in context.keys():
+		actual_keys.append(String(key))
+	actual_keys.sort()
+	expected_keys.sort()
+	if actual_keys != expected_keys:
+		return ERR_INVALID_DATA
+	if context.get("schema_version") != 1 or not context.get("task") is Dictionary:
+		return ERR_INVALID_DATA
+	var task: Dictionary = context.task
+	var task_keys: Array[String] = []
+	for key in task.keys():
+		task_keys.append(String(key))
+	task_keys.sort()
+	if task_keys != ["code", "slice_code"] or task.get("code") != "B" or not task.get("slice_code") is String:
+		return ERR_INVALID_DATA
+	if not context.get("slice") is Dictionary or not context.get("product") is Dictionary or not context.get("artifact") is Dictionary:
+		return ERR_INVALID_DATA
+	var slice: Dictionary = context.slice
+	var slice_keys: Array[String] = []
+	for key in slice.keys():
+		slice_keys.append(String(key))
+	slice_keys.sort()
+	if slice_keys != ["assignment", "code", "maximum_minutes", "status"] or slice.get("code") != task.slice_code or slice.get("status") != "ready":
+		return ERR_INVALID_DATA
+	var catalog_pattern := RegEx.new()
+	if catalog_pattern.compile("^[0-9a-f]{64}$") != OK or catalog_pattern.search(String(context.get("catalog_sha256", ""))) == null:
+		return ERR_INVALID_DATA
+	var namespace_error := save_manager.configure_playtest_namespace(String(context.get("ticket_sha256", "")))
+	if namespace_error != OK:
+		return namespace_error
+	playtest_session_context = context.duplicate(true)
+	return OK
 
 func _ready() -> void:
 	zh_font = load("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
