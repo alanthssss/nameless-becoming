@@ -345,6 +345,9 @@ test("keeps the A participant form, observer split, and overwrite protections", 
     assert.doesNotMatch(participantText, /\b(?:fetch|XMLHttpRequest|sendBeacon|WebSocket)\b/u);
     assert.match(participantHtml, /六项，写完就结束/);
     assert.match(participantHtml, /没有标准答案/);
+    assert.match(participantHtml, /开始后一分钟，你先做了什么？有没有不知道下一步做什么、操作没有成功或停下来想的地方？/u);
+    assert.match(participantHtml, /哪一处最难懂、最难操作、最意外，或者最想让我们知道？/u);
+    assert.doesNotMatch(participantHtml, /你记得自己先做了什么、卡在哪里|哪里最卡、最意外/u);
     assert.match(observerHtml, /机制接触判定/);
     assert.match(observerHtml, /完成条件|传粉|急转|饮蜜/u);
     assert.match(observerHtml, /name="prior_external_explanation"/u);
@@ -572,6 +575,9 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
     const coordinatorText = await readFile(join(output, "coordinator/README.md"), "utf8");
     assert.match(participantText, /固定切片 B01/u);
     assert.match(participantText, /10 分钟/u);
+    assert.match(participantText, /开始后一分钟，你先做了什么？有没有不知道下一步做什么、操作没有成功或停下来想的地方？/u);
+    assert.match(participantText, /哪一处最难懂、最难操作、最意外，或者最想让我们知道？/u);
+    assert.doesNotMatch(participantText, /你记得自己先做了什么、卡在哪里|哪里最卡、最意外/u);
     assert.match(participantText, /"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket\.json 的绝对路径>"/u);
     assert.match(participantText, /PT-ARG-SEPARATOR/u);
     assert.match(coordinatorText, /npm run playtest:launch/u);

@@ -199,9 +199,9 @@ ${product.dirty ? '<p class="warning">这是 dirty 候选，只能用于排查�
 <form id="evidence-form"><section class="panel" aria-labelledby="recall-title"><div class="section-heading"><p class="eyebrow">结束后填写 · 约两分钟</p>
 <h2 id="recall-title">只写你自己的记忆</h2><p>不要填写姓名、联系方式、账号、精确位置、健康或残障信息。</p></div>
 <div class="form-grid single-column">
-<label class="field">开始后一分钟，你记得自己先做了什么、卡在哪里？<textarea name="first_minute_quote" required maxlength="800" placeholder="不记得也可以直接写“不记得”。"></textarea></label>
+<label class="field">开始后一分钟，你先做了什么？有没有不知道下一步做什么、操作没有成功或停下来想的地方？<textarea name="first_minute_quote" required maxlength="800" placeholder="不记得也可以直接写“不记得”。"></textarea></label>
 <label class="field">你最远到达了什么画面？<textarea name="furthest_reached_quote" required maxlength="500" placeholder="按画面描述，不必知道关卡名。"></textarea></label>
-<label class="field">哪里最卡、最意外，或者最想让我们知道？<textarea name="stuck_or_surprised_quote" required maxlength="800" placeholder="没有也可以写“没有”。"></textarea></label>
+<label class="field">哪一处最难懂、最难操作、最意外，或者最想让我们知道？<textarea name="stuck_or_surprised_quote" required maxlength="800" placeholder="没有也可以写“没有”。"></textarea></label>
 <label class="field">用一句自己的话描述这次游戏<textarea name="player_summary_quote" required maxlength="500" placeholder="原话即可，不用替游戏宣传。"></textarea></label>
 <label class="field">为什么在这里结束？<select name="end_reason" required><option value="">请选择</option><option value="time_limit">到达时间上限</option><option value="felt_finished">觉得这一轮结束了</option><option value="stuck">卡住，不知道怎么继续</option><option value="lost_interest">不想继续</option><option value="technical_issue">技术问题</option><option value="other">其他</option></select></label>
 <label class="field">现在还想再来一次吗？<select name="replay_intent" required><option value="">请选择</option><option value="yes">想</option><option value="after_changes">改一些问题后想</option><option value="no">不想</option><option value="unsure">不确定</option></select></label>
