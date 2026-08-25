@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前仓库基线 / Current repository baseline：`origin/main` `f57ea02c`（PR #65）；玩法与资产基线来自 PR #63，盲听工具来自 PR #64。
+当前可玩实现基线 / Current playable baseline：`f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
 
 ---
 

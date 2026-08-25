@@ -3,7 +3,7 @@
 > 核心张力：发现花源 → 停留采集 → 危险与体力改变局面 → 决定继续、处理威胁或撤离 → 把资源带回蜂巢。
 > Core tension: find nectar → linger to harvest → danger and stamina reshape the situation → continue, respond, or retreat → bring resources home.
 
-当前仓库基线 / Current repository baseline：`0.9.5-rc.2`，`origin/main` `f57ea02c`（PR #65）；玩法与资产基线来自 PR #63，盲听工具来自 PR #64。
+当前可玩实现基线 / Current playable baseline：`0.9.5-rc.2` / `f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
 
 ---
 
@@ -152,7 +152,7 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
 
 ## 10. 当前验证边界 / Current Validation Boundary
 
-- PR #63 的玩法／资产、PR #64 的匿名盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入均已进入 `origin/main` `f57ea02c`；
+- PR #63 的玩法／资产、PR #64 的匿名盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成固定可玩实现 `f57ea02c`；PR #67 只增加试玩证据工具与文档；
 - Alan 的“可以”是方向门禁，不是逐项可用性通过；
 - 9 组 Godot 回归、视觉快照和构建哈希属于开发者证据；
 - 外部玩家证据为 0；

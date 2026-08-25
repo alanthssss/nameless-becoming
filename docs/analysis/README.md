@@ -3,7 +3,7 @@
 > 本文档集将上一轮的项目分析整理为分层的中英双语文档，避免单一长文档造成阅读负担。
 > This document set restructures the project analysis into layered bilingual (中文/EN) documents, avoiding the burden of a single lengthy file.
 
-**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2 (`origin/main` `f57ea02c`；固定候选 `f57ea02c`)
+**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2（可玩实现与固定候选 `f57ea02c`；PR #67 只增加试玩证据工具与文档）
 **同步日期 / Sync Date**: 2026-08-25
 
 > 01–04 描述当前产品与执行边界；05–07 是专项参考，若与当前实现冲突，应回到 `godot/`、`MVP_SPEC.md` 和 `PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` 核对。`PROJECT_LOG.md` 是历史记录，不是现行规格。

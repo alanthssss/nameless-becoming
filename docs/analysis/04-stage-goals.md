@@ -3,7 +3,7 @@
 > 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
 > The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
 
-当前仓库基线 / Current repository baseline：`origin/main` `f57ea02c`（PR #65）；玩法与资产基线来自 PR #63，盲听工具来自 PR #64。
+当前可玩实现基线 / Current playable baseline：`f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
 固定验收候选 / Fixed acceptance candidate：`f57ea02c`。
 
 ---
@@ -28,7 +28,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 | 证据层 / Evidence layer | 状态 / Status | 结论 / Conclusion |
 | --- | --- | --- |
-| 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入均已进入 `origin/main` `f57ea02c` |
+| 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成固定可玩实现 `f57ea02c`；PR #67 不改游戏二进制 |
 | 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
 | Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
 | Alan 完整人工流程 / Full manual pass | 未完成 | 首节点、四季、Boss、音乐与节奏仍需记录；当前路线没有固定的延迟急转复测机会 |

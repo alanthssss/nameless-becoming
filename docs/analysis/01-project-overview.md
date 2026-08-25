@@ -3,7 +3,7 @@
 > 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
 > A lightweight action-extraction prototype centered on bee ecology, the 24-solar-term cycle, and the risk of making it home.
 
-当前仓库基线 / Current repository baseline：`0.9.5-rc.2`；`origin/main` `f57ea02c`（PR #65），玩法与资产基线来自 PR #63，盲听工具来自 PR #64。
+当前可玩实现基线 / Current playable baseline：`0.9.5-rc.2` / `f57ea02c`（PR #65）；玩法与资产来自 PR #63，盲听工具来自 PR #64；PR #67 只增加试玩证据工具与文档。
 固定候选 / Fixed candidate：`f57ea02c`。
 
 ---
@@ -71,7 +71,7 @@ Each requires three tunings, with faster phases and shorter windows; they no lon
 
 ## 5. 证据边界 / Evidence Boundary
 
-- **实现事实 / Implemented facts**：PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入均已进入 `origin/main` `f57ea02c`。
+- **实现事实 / Implemented facts**：PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成固定可玩实现 `f57ea02c`；PR #67 只增加试玩证据工具与文档。
 - **开发者自测 / Developer verification**：自动流程、构建、哈希、静态快照。
 - **Alan 方向门禁 / Alan direction gate**：PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均允许合并并继续，不等于逐项、原生触屏或发行验收。
 - **外部玩家 / Independent players**：当前证据数为 **0**。

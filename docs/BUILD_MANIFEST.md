@@ -96,7 +96,7 @@ GitHub [`Desktop client builds` run 32769425753](https://github.com/alanthssss/n
 
 ## 2026-08-25 HUD 与指针输入主线候选
 
-当前固定候选来自 `origin/main` 完整提交 `f57ea02c8defea82bcc7f1b8849146350e76d578`。该提交包含已合并的 PR #63（玩法与资产）、PR #64（音乐盲听工具）、PR #66（当前事实源同步）和 PR #65（HUD 等比安全框、饮蜜指针／单指触摸入口与第 9 组 HUD 自动化）。PR #65 在合并前取得 Alan 对视觉与饮蜜按钮方向的明确允许；这不等于真实触摸屏、完整流程或外部玩家验收已经通过。
+该候选来自构建时的 `origin/main` 完整提交 `f57ea02c8defea82bcc7f1b8849146350e76d578`。该提交包含已合并的 PR #63（玩法与资产）、PR #64（音乐盲听工具）、PR #66（当前事实源同步）和 PR #65（HUD 等比安全框、饮蜜指针／单指触摸入口与第 9 组 HUD 自动化）。后续 PR #67 只增加试玩证据工具与文档，不改变这份已固定的游戏二进制。PR #65 在合并前取得 Alan 对视觉与饮蜜按钮方向的明确允许；这不等于真实触摸屏、完整流程或外部玩家验收已经通过。
 
 GitHub [`Desktop client builds` run 32809311832](https://github.com/alanthssss/nameless-becoming/actions/runs/32809311832) 从上述精确 `main` 提交构建，使用官方 SHA-512 清单校验 Godot 4.6.2 编辑器与导出模板，并在 macOS／Ubuntu runner 重跑 9 组 Godot 测试。`release_tag` 为 `v0.9.5-rc.2`，`publish_prerelease=false`，因此没有创建或覆盖 GitHub prerelease。
 
