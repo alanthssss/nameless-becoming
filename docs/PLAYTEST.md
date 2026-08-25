@@ -166,3 +166,14 @@ Alan 完成会话 `NB-MUSIC-AB-20260825-R1` 的定向 A/B，导出 schema 为 `n
 整体验收选择为 `replacement_readiness: neither`，`overall_notes` 为空。因此 PR #70 的产品门禁失败，处理决定是**关闭且不合并**；秋 Boss 与秋探索都需要结构性新方向，不能继续把这次减层／缩短滑音当作待微调候选。当前 `main` 仍使用表中的基线音频，但 `neither` 同样明确表示该基线**没有获得 Alan 认可**。
 
 本包存在响度混杂：按同一 EBU R128 测量，候选秋 Boss 比基线低约 `1.9 LU`，候选秋探索比基线低约 `1.4 LU`。这会干扰对“为什么两版都不好”的原因诊断，但不会推翻明确的 `neither` 门禁；下轮比较必须先匹配到 `±0.3 LU`，再判断结构、音色和节奏。该结果也不能推断候选必然比基线更差，不能外推到其余六轨、八轨整体、季节配对、长期耐循环或游戏内混音。
+
+### Draft PR #74 秋季结构方向草图：Alan 选择全长编曲方向
+
+PR #70 失败后，Draft PR #74 从最新主线另做四条 15–20 秒方向草图，没有修改正式八轨。Alan 在匿名页面导出 `nameless-autumn-direction-choice/v1`；结果 JSON SHA-256 为 `5e8c84596d7130ba034682fab6968b9067138c7792a6172723f0ec759077a34f`，隔离答案表 SHA-256 为 `94f6acec0ec1dda3e6e2eb36bf043de736253c1f0b6143be03a0313e0d3bfdd6`，`exported_at` 为 `2026-08-25T08:27:51.369Z`。导出绑定 package identity `fa10333b9e6465a05489b7114905c738d5c708e6f7fe40e88344dfd1fbc26960`、source manifest `d056ff447e421ae15704428aa95aa51395df9c00af7b4e3dac81252e70472d6a` 和 clean renderer／generator `97ad208f9a0537cc98a2802e81fef2bede3c0c12`；四个 listener WAV 与答案表逐项一致。
+
+| 角色 | 匿名映射与 SHA-256 | Alan 选择、原话与监听记录 | 进入全长候选的边界 |
+| --- | --- | --- | --- |
+| 秋探索 | K = amber circuit，`f27fc4c07d005ac461bcc37188709175ace8074cb1aeddbffceccda742fbdd14`；Q = seed funk，`edb3738affb11834bb1833245f834d72653e78dc6d03995b26af9194b9672c4c` | 选 K；“k整段都可以q开头挺好的 后面又乱七八糟的”。K 播放 2 次／15 秒，Q 3 次／35 秒 | 以 K 为唯一完整结构；Q 仅有开头可作稀疏点缀参考，不带回其后半密集结构 |
+| 秋 Boss | T = stop-time industrial，`6758fff770b2ea222f07ce0ea288ae54dd4bc1fcbf25ca46a932a23865d00721`；Z = post-punk dub，`8b2c1b1929afaa87d416eb5c7a686f63b15756de8c45e151bdbcdb4d04c3c150` | 选 `both`；“这两个都很好”。T 播放 1 次／16 秒，Z 1 次／15 秒 | 两条方向都可进入一个统一速度、调性和层数约束的全长候选；不得把“都好”改写成任意拼接必然通过 |
+
+这是 **Alan 创作者方向门禁**，不是外部玩家证据，也不是正式替换、长期循环或游戏内混音验收。它允许开始制作全长秋季双轨候选；正式 WAV 仍须与当前基线做匿名、响度匹配的最终 A/B，并由 Alan 明确选择 candidate 和 replacement readiness 后才能合并。Draft PR #74 保持未合并，只保存草图生成与证据工具，不是游戏音频变更。
