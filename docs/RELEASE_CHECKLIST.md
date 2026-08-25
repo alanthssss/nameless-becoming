@@ -46,7 +46,7 @@
 - [x] macOS、Windows Desktop、Web 三个 preset 使用 Godot 4.6.2 实测可用的 `tests/**,tools/**` 排除 glob；
 - [x] `npm run verify:godot-export` 对三个 preset 执行真实 `--export-pack`，再由 Godot 挂载 PCK 检查内部路径与主场景，不以 grep 配置代替导出；
 - [x] 桌面构建流水线直接检查解包后的 macOS PCK 和 Windows 最终 EXE 内嵌 PCK，出现 `res://tests/`、`res://tools/` 或缺失明确成功标记即失败；
-- [x] 桌面流水线在 macOS 最终包严格验签、Windows 最终 EXE 内容检查及 sidecar 生成后，读取包的实际 bytes 生成 schema v1 JSON manifest；manifest 会交叉核对 `package.json` 与 `project.godot` 产品版本、完整 40 位 `HEAD`、`dirty: false` provenance、干净工作区、固定平台文件名、大小及 sidecar／实际 SHA-256，任一不一致即停止上传；
+- [x] 桌面流水线在 macOS 最终包严格验签、Windows 最终 EXE 内容检查及 sidecar 生成后，读取包的实际 bytes 生成 schema v1 JSON manifest；generator 会从最终 macOS ZIP 唯一的 app PCK 或最终 Windows EXE 内嵌 PCK 重新读取 `res://data/build_provenance.json`，并交叉核对工作区 provenance、`package.json` 与 `project.godot` 产品版本、完整 40 位 `HEAD`、`dirty: false`、干净工作区、固定平台文件名、大小及 sidecar／实际 SHA-256，旧包、缺失／畸形／多字段 provenance 或任一不一致都会停止上传；
 - [x] 开发者本机使用官方 Godot 4.6.2 完成三 preset resource pack 门禁、三端 release 导出、实际 macOS PCK／Windows EXE／Web PCK 内容检查及 macOS 无界面启动；这些 `+dirty` 输出只算开发者自测；
 - [x] GitHub `Desktop client builds` run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从新完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9` 运行，双端最终包检查器均显式通过；
 

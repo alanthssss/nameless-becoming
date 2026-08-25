@@ -37,14 +37,19 @@ run_with_timeout() {
 verify_pack() {
   local pack_path=$1
   local label=$2
+  local report_path=${3:-}
   local log_path="$verification_root/${label//[^a-zA-Z0-9_-]/-}-inspect.log"
+  local inspector_arguments=("$pack_path")
+  if [[ -n $report_path ]]; then
+    inspector_arguments+=(--report "$report_path")
+  fi
   echo "Inspecting exported contents: $label"
   if ! run_with_timeout \
     "$godot_bin" \
     --path "$inspector_project" \
     --headless \
     --script "$project_root/scripts/verify_godot_pack.gd" \
-    -- "$pack_path" > "$log_path" 2>&1; then
+    -- "${inspector_arguments[@]}" > "$log_path" 2>&1; then
     cat "$log_path" >&2
     exit 1
   fi
@@ -58,7 +63,27 @@ verify_pack() {
     exit 1
   fi
   grep "EXPORT PACK CONTENTS VERIFIED" "$log_path"
+  if [[ -n $report_path && ! -s $report_path ]]; then
+    cat "$log_path" >&2
+    echo "Pack inspector did not create its machine-readable report for $label." >&2
+    exit 1
+  fi
 }
+
+if [[ ${1:-} == --pack-report ]]; then
+  if [[ $# -ne 3 ]]; then
+    echo "Usage: $0 --pack-report <PCK-or-embedded-executable> <absolute-report-path>" >&2
+    exit 2
+  fi
+  pack_path=$2
+  report_path=$3
+  if [[ $report_path != /* ]]; then
+    echo "Pack inspection report path must be absolute: $report_path" >&2
+    exit 2
+  fi
+  verify_pack "$(cd "$(dirname "$pack_path")" && pwd)/$(basename "$pack_path")" "reported-pack" "$report_path"
+  exit 0
+fi
 
 if [[ ${1:-} == --pack ]]; then
   shift

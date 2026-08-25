@@ -1,8 +1,10 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
-import { lstat, readFile, realpath, rename, rm, writeFile } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { lstat, mkdtemp, open, readFile, realpath, rename, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
-import { TextDecoder } from "node:util";
+import { isDeepStrictEqual, TextDecoder } from "node:util";
 import { fileURLToPath } from "node:url";
 
 export const ARTIFACT_MANIFEST_SCHEMA_VERSION = 1;
@@ -14,6 +16,7 @@ export const PLATFORM_ARTIFACTS = Object.freeze({
 
 const scriptPath = fileURLToPath(import.meta.url);
 const defaultRepositoryRoot = resolve(dirname(scriptPath), "..");
+const packInspectorPath = resolve(defaultRepositoryRoot, "scripts/verify_godot_export_contents.sh");
 const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
 
 function git(repositoryRoot, args) {
@@ -64,29 +67,135 @@ function requireProductVersion(packageJson, projectText) {
   return packageVersion;
 }
 
-function validateProvenance(provenance, packageVersion, headCommit) {
+function validateProvenance(provenance, packageVersion, headCommit, label = "Build provenance") {
   if (!provenance || typeof provenance !== "object" || Array.isArray(provenance)) {
-    throw new Error("Build provenance must be a JSON object.");
+    throw new Error(`${label} must be a JSON object.`);
   }
   const expectedKeys = ["commit", "dirty", "product_version", "schema_version"];
   const actualKeys = Object.keys(provenance).sort();
   if (actualKeys.length !== expectedKeys.length || actualKeys.some((key, index) => key !== expectedKeys[index])) {
-    throw new Error(`Build provenance must contain exactly: ${expectedKeys.join(", ")}.`);
+    throw new Error(`${label} must contain exactly: ${expectedKeys.join(", ")}.`);
   }
   if (provenance.schema_version !== 1) {
-    throw new Error("Build provenance schema_version must be 1.");
+    throw new Error(`${label} schema_version must be 1.`);
   }
   if (provenance.product_version !== packageVersion) {
-    throw new Error(`Build provenance version ${String(provenance.product_version)} does not match package version ${packageVersion}.`);
+    throw new Error(`${label} version ${String(provenance.product_version)} does not match package version ${packageVersion}.`);
   }
   if (typeof provenance.commit !== "string" || !/^[0-9a-f]{40}$/u.test(provenance.commit)) {
-    throw new Error("Build provenance commit must be exactly 40 lowercase hexadecimal characters.");
+    throw new Error(`${label} commit must be exactly 40 lowercase hexadecimal characters.`);
   }
   if (provenance.commit !== headCommit) {
-    throw new Error(`Build provenance commit ${provenance.commit} does not match current HEAD ${headCommit}.`);
+    throw new Error(`${label} commit ${provenance.commit} does not match current HEAD ${headCommit}.`);
   }
   if (provenance.dirty !== false) {
-    throw new Error("Build provenance dirty must be false for a fixed artifact manifest.");
+    throw new Error(`${label} dirty must be false for a fixed artifact manifest.`);
+  }
+}
+
+async function sha256File(path) {
+  const hash = createHash("sha256");
+  for await (const chunk of createReadStream(path)) hash.update(chunk);
+  return hash.digest("hex");
+}
+
+function commandFailure(error) {
+  const details = [error?.stdout, error?.stderr]
+    .map((value) => Buffer.isBuffer(value) ? value.toString("utf8") : String(value || ""))
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .join("\n");
+  return details ? `\n${details}` : "";
+}
+
+async function extractMacosPack(artifactPath, temporaryDirectory) {
+  const archiveCommand = process.platform === "darwin" ? "tar" : "unzip";
+  const listArguments = process.platform === "darwin" ? ["-tf", artifactPath] : ["-Z1", artifactPath];
+  let entries;
+  try {
+    entries = execFileSync(archiveCommand, listArguments, {
+      encoding: "utf8",
+      maxBuffer: 8 * 1024 * 1024,
+      stdio: ["ignore", "pipe", "pipe"],
+    }).split(/\r?\n/u).filter(Boolean);
+  } catch (error) {
+    throw new Error(`Could not list the final macOS ZIP contents.${commandFailure(error)}`);
+  }
+  const packEntries = entries.filter((entry) => /(?:^|\/)[^/]+\.pck$/u.test(entry));
+  const hasExpectedStructure = packEntries.length === 1
+    && /^[^/]+\.app\/Contents\/Resources\/[^/]+\.pck$/u.test(packEntries[0]);
+  if (!hasExpectedStructure) {
+    throw new Error(`Final macOS ZIP must contain exactly one PCK at app Contents/Resources; found ${packEntries.length}.`);
+  }
+
+  const packPath = join(temporaryDirectory, "macos-artifact.pck");
+  const packFile = await open(packPath, "wx", 0o600);
+  const extractArguments = process.platform === "darwin"
+    ? ["-xOf", artifactPath, packEntries[0]]
+    : ["-p", artifactPath, packEntries[0]];
+  let extraction;
+  try {
+    extraction = spawnSync(archiveCommand, extractArguments, {
+      maxBuffer: 1024 * 1024,
+      stdio: ["ignore", packFile.fd, "pipe"],
+    });
+  } finally {
+    await packFile.close();
+  }
+  if (extraction.error || extraction.status !== 0) {
+    throw new Error(`Could not extract the final macOS PCK.${commandFailure(extraction.error || extraction)}`);
+  }
+  const stats = await lstat(packPath);
+  if (!stats.isFile() || stats.isSymbolicLink() || stats.size === 0) {
+    throw new Error("Final macOS ZIP contains an empty or non-regular PCK entry.");
+  }
+  return packPath;
+}
+
+function validateInspectionReport(report, expectedPackSha256) {
+  if (!report || typeof report !== "object" || Array.isArray(report)) {
+    throw new Error("Pack inspection report must be a JSON object.");
+  }
+  const expectedKeys = ["build_provenance", "pack_sha256", "schema_version"];
+  const actualKeys = Object.keys(report).sort();
+  if (actualKeys.length !== expectedKeys.length || actualKeys.some((key, index) => key !== expectedKeys[index])) {
+    throw new Error(`Pack inspection report must contain exactly: ${expectedKeys.join(", ")}.`);
+  }
+  if (report.schema_version !== 1) throw new Error("Pack inspection report schema_version must be 1.");
+  if (typeof report.pack_sha256 !== "string" || !/^[0-9a-f]{64}$/u.test(report.pack_sha256)) {
+    throw new Error("Pack inspection report pack_sha256 must be 64 lowercase hexadecimal characters.");
+  }
+  if (report.pack_sha256 !== expectedPackSha256) {
+    throw new Error(`Pack inspection report SHA-256 ${report.pack_sha256} does not match inspected pack SHA-256 ${expectedPackSha256}.`);
+  }
+  return report.build_provenance;
+}
+
+async function inspectEmbeddedProvenance({ artifactPath, artifactSha256, platform, repositoryRoot, godotBin }) {
+  const temporaryDirectory = await mkdtemp(join(tmpdir(), "nameless-artifact-inspection-"));
+  try {
+    const packPath = platform === "macos-universal"
+      ? await extractMacosPack(artifactPath, temporaryDirectory)
+      : artifactPath;
+    const expectedPackSha256 = platform === "macos-universal" ? await sha256File(packPath) : artifactSha256;
+    const reportPath = join(temporaryDirectory, "pack-inspection.json");
+    const environment = { ...process.env };
+    if (godotBin !== undefined) environment.GODOT_BIN = godotBin;
+    try {
+      execFileSync(packInspectorPath, ["--pack-report", packPath, reportPath], {
+        cwd: repositoryRoot,
+        encoding: "utf8",
+        env: environment,
+        maxBuffer: 4 * 1024 * 1024,
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+    } catch (error) {
+      throw new Error(`Final artifact pack inspection failed.${commandFailure(error)}`);
+    }
+    const report = parseJson(await readRegularFile(reportPath, "Pack inspection report"), "Pack inspection report");
+    return validateInspectionReport(report, expectedPackSha256);
+  } finally {
+    await rm(temporaryDirectory, { recursive: true, force: true });
   }
 }
 
@@ -169,6 +278,7 @@ export async function generateArtifactManifest({
   platform,
   sourceRef,
   githubRunId,
+  godotBin,
   repositoryRoot = defaultRepositoryRoot,
 }) {
   if (typeof artifactPath !== "string" || artifactPath.length === 0) {
@@ -210,7 +320,7 @@ export async function generateArtifactManifest({
   if (!/^[0-9a-f]{40}$/u.test(headCommit)) {
     throw new Error(`Current HEAD is not a full 40-character commit: ${headCommit}`);
   }
-  validateProvenance(provenance, packageVersion, headCommit);
+  validateProvenance(provenance, packageVersion, headCommit, "Workspace build provenance");
 
   const dirtyPaths = git(resolvedRepositoryRoot, ["status", "--porcelain=v1", "--untracked-files=all"]);
   if (dirtyPaths.length > 0) {
@@ -224,6 +334,18 @@ export async function generateArtifactManifest({
   }
 
   const sourceMetadata = validateSourceMetadata(resolvedRepositoryRoot, headCommit, sourceRef, githubRunId);
+  const embeddedProvenance = await inspectEmbeddedProvenance({
+    artifactPath: resolvedArtifactPath,
+    artifactSha256: actualSha256,
+    platform,
+    repositoryRoot: resolvedRepositoryRoot,
+    godotBin,
+  });
+  validateProvenance(embeddedProvenance, packageVersion, headCommit, "Embedded build provenance");
+  if (!isDeepStrictEqual(embeddedProvenance, provenance)) {
+    throw new Error("Embedded build provenance does not exactly match the workspace build provenance.");
+  }
+
   const manifest = {
     schema_version: ARTIFACT_MANIFEST_SCHEMA_VERSION,
     product_version: packageVersion,
