@@ -1,6 +1,6 @@
 # 0.9.5 候选构建历史与校验清单
 
-本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选是 `0.9.5-rc.2` / `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`，其 artifact 与 SHA-256 见“2026-08-25 秋季双轨集成候选”；`4b57d856` 及更早表格均为历史记录，不是当前候选。
+本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选是 `0.9.5-rc.2` / `21a44bd64e100231548fa2663a7b4d6f472a88dd`，其 artifact 与 SHA-256 见“2026-08-25 Boss 失败／暂停修复候选”；`de78f2c` 及更早表格均为历史记录，不是当前候选。
 
 ## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 
@@ -120,9 +120,9 @@ GitHub [`Desktop client builds` run 32817220563](https://github.com/alanthssss/n
 
 旧 `f57ea02c` 的 A 包、人工操作记录与哈希核对继续作为旧候选证据保留，不能迁移成 `4b57d856` 的首关、教学或完整流程通过。该候选当时仍需重新完成首分钟采蜜、急转、授粉器官、四季路线、Boss 与设备流程；其缺失证据也不能迁移成后续候选的通过。
 
-## 2026-08-25 秋季双轨集成候选
+## 2026-08-25 秋季双轨集成历史候选
 
-当前固定人工验收 artifact 来自完整 `main` 提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`。该提交是 PR #76 的合并提交，在 `4b57d856` 玩法基线上包含已经通过 Alan 最终等响度 A/B 的秋季探索／Boss 双轨；它取代 `4b57d856` 作为当前固定桌面候选，但不会把旧候选的玩法证据迁移为新候选通过。
+该历史 artifact 来自完整 `main` 提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`。该提交是 PR #76 的合并提交，在 `4b57d856` 玩法基线上包含已经通过 Alan 最终等响度 A/B 的秋季探索／Boss 双轨；它当时取代 `4b57d856`，但不会把旧候选的玩法证据迁移为新候选通过。
 
 GitHub [`Desktop client builds` run 32840904829](https://github.com/alanthssss/nameless-becoming/actions/runs/32840904829) 以 `workflow_dispatch` 从上述精确 `main` 提交运行，版本校验、官方 Godot 4.6.2 编辑器／模板 SHA-512 校验、9 组 Godot 测试和双端导出均成功。`publish_prerelease=false`，所以 Publish GitHub prerelease job 按预期跳过，没有创建或覆盖 prerelease。两个远端 artifact 到期日均为 2026-09-24：
 
@@ -131,6 +131,23 @@ GitHub [`Desktop client builds` run 32840904829](https://github.com/alanthssss/n
 | macOS universal | `9560488439` / `NamelessBecoming-macOS-v0.9.5-rc.2` | `nameless-becoming-candidates/de78f2c-run-32840904829/macOS/NamelessBecoming-macOS.zip` | 70,413,511 bytes | `f7e82a1eb875495e27fea38784aa15c51e36b2dc26c26a15152a39f55e4ee776` | 随包 sidecar 本机复验通过；干净临时目录解包后严格验签通过，Mach-O 为 x86_64 + arm64，bundle id `com.alanthssss.namelessbecoming`，short version `0.9.5`，bundle version `0.9.5-rc.2`，无界面 smoke 退出码 0 |
 | Windows x86_64 | `9560473513` / `NamelessBecoming-Windows-v0.9.5-rc.2` | `nameless-becoming-candidates/de78f2c-run-32840904829/Windows/NamelessBecoming-Windows.exe` | 116,932,160 bytes | `d5d2155653dafe224846a10edc109702480525abd1f657d972ba2003ae2a5117` | 随包 sidecar 本机复验通过；本机确认为 PE32+ GUI x86-64；Windows 真机尚未验证 |
 
-PCK provenance 为产品版本 `0.9.5-rc.2`、完整提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`、`dirty: false`；标题／暂停层应显示 `v0.9.5-rc.2 · de78f2c`，不含 `+dirty`。Documents 中的解压副本曾被文件提供器附加 FinderInfo，导致该副本严格验签误报；同一 ZIP 在干净临时目录解包后显示 `valid on disk` 且 `satisfies its Designated Requirement`，因此这是本机文件元数据现象，不是 ZIP 内签名失败。
+PCK provenance 为产品版本 `0.9.5-rc.2`、完整提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`、`dirty: false`；标题／暂停层应显示 `v0.9.5-rc.2 · de78f2c8`，不含 `+dirty`。Documents 中的解压副本曾被文件提供器附加 FinderInfo，导致该副本严格验签误报；同一 ZIP 在干净临时目录解包后显示 `valid on disk` 且 `satisfies its Designated Requirement`，因此这是本机文件元数据现象，不是 ZIP 内签名失败。
 
 这是标准完整流程包，没有秋季直达入口或固定秋季存档；因此它证明新版秋季 WAV 已进入可追溯桌面构建，不证明听者能跳过前置节点直接复核秋季，也不关闭游戏内音效遮蔽、循环疲劳与混音门禁。Windows 真实设备启动、DPI／全屏、输入、声音、设置持久化和退出仍须人工验证；macOS 包仍只是 ad-hoc 签名且未公证，Windows 包仍未做 Authenticode 签名。
+
+该构建随后在开发者内部试听时暴露 Boss 失败／暂停 HUD 的逐帧 `SCRIPT ERROR`，以及终点熊战可能读取上一普通节点暖点状态的问题。其来源、文件哈希和签名复验仍是真实历史证据，但它已知包含该 P1，已由下述 `21a44bd` 候选替代，不得继续用于完整流程或 Boss 失败／暂停验收。
+
+## 2026-08-25 Boss 失败／暂停修复候选
+
+当前固定人工验收 artifact 来自完整 `main` 提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd`。该提交是 PR #79 的合并提交，在 `de78f2c` 的玩法、HUD、首次采蜜修复和正式秋季双轨基础上，修复 Boss 可重试失败、Boss 中暂停、最后一命失败与循环终点熊战的 HUD 上下文，并在进入 Boss 前结束上一普通节点的季节机制。它取代 `de78f2c` 作为当前固定桌面候选，但不会把旧候选的试玩或人工验收结论迁移为通过。
+
+GitHub [`Desktop client builds` run 32844593593](https://github.com/alanthssss/nameless-becoming/actions/runs/32844593593) 以 `workflow_dispatch` 从上述精确 `main` 提交运行，版本校验、官方 Godot 4.6.2 编辑器／模板 SHA-512 校验、9 组 Godot 测试和双端导出均成功。`publish_prerelease=false`，所以没有创建或覆盖 GitHub prerelease：
+
+| 平台 | GitHub artifact | 本机持久副本 | 到期时间 | 大小 | SHA-256 | 已完成验证 |
+| --- | --- | --- | --- | ---: | --- | --- |
+| macOS universal | `9561860219` / `NamelessBecoming-macOS-v0.9.5-rc.2` | `nameless-becoming-candidates/21a44bd-run-32844593593/macOS/NamelessBecoming-macOS.zip` | `2026-09-24T11:54:52Z` | 70,416,218 bytes | `430567fd9e2edfe1c8f83be2eea1b89f7dd37826c4f7bbd070ce65ead2a5cd4d` | 随包 sidecar 本机复验通过；干净临时目录解包后严格验签通过；Mach-O 为 x86_64 + arm64，bundle id `com.alanthssss.namelessbecoming`，short version `0.9.5`，bundle version `0.9.5-rc.2`；内嵌 PCK SHA-256 为 `d6537686e016473db6b67710a29189e8cf91be078478b9929436ebbc0f0a06de`；无界面 smoke 退出码 0 |
+| Windows x86_64 | `9561841115` / `NamelessBecoming-Windows-v0.9.5-rc.2` | `nameless-becoming-candidates/21a44bd-run-32844593593/Windows/NamelessBecoming-Windows.exe` | `2026-09-24T11:54:16Z` | 116,934,816 bytes | `65704d9d04430643c6c61678e922041bf45dacd48be7328aa9b070d8791cdcd7` | 随包 sidecar 本机复验通过；本机确认为 PE32+ GUI x86-64；Windows 真机尚未验证 |
+
+macOS PCK 与 Windows EXE 均内嵌产品版本 `0.9.5-rc.2`、完整提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd` 和 `dirty: false`；标题／暂停层应显示 `v0.9.5-rc.2 · 21a44bd6`，不含 `+dirty`。macOS 无界面 smoke 前后，真实存档 SHA-256 均为 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime 均为 `1787640643`、大小均为 143 bytes，证明本次启动检查未改写已有存档。
+
+以上是构建、来源、签名、格式和开发者 smoke 事实，不是 Alan 完整人工流程、秋季实机混音、Windows 真机或外部玩家验收。标准包仍没有秋季直达入口或固定秋季存档；macOS 包仍只是 ad-hoc 签名且未公证，Windows 包仍未做 Authenticode 签名。

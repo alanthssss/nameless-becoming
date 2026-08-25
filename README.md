@@ -8,14 +8,14 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。下文 `de78f2c` 固定人工验收候选只指已校验的 macOS／Windows 桌面 artifact；现有 Web 部署尚未证明来自该精确提交，在重新部署并核对来源前不得用它采集 `de78f2c` 候选证据。
+当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。下文 `21a44bd` 固定人工验收候选只指已校验的 macOS／Windows 桌面 artifact；现有 Web 部署尚未证明来自该精确提交，在重新部署并核对来源前不得用它采集 `21a44bd` 候选证据。
 
 ## 当前版本：Godot 候选 MVP 0.9.5-rc.2
 
-当前已校验的固定人工验收桌面 artifact 来自完整提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`。它包含 `4b57d856` 的玩法／HUD／首次采蜜修复，以及 PR #76 已通过 Alan 最终盲听的秋季探索／Boss 替换；macOS／Windows 包由 GitHub run [`32840904829`](https://github.com/alanthssss/nameless-becoming/actions/runs/32840904829) 构建并完成 sidecar SHA-256 复验。固定包的标题／暂停层应显示：
+当前已校验的固定人工验收桌面 artifact 来自完整提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd`。它包含 `4b57d856` 的玩法／HUD／首次采蜜修复、PR #76 已通过 Alan 最终盲听的秋季探索／Boss 替换，以及 PR #79 的 Boss 失败／暂停 HUD 与终点机制修复；macOS／Windows 包由 GitHub run [`32844593593`](https://github.com/alanthssss/nameless-becoming/actions/runs/32844593593) 构建并完成 sidecar SHA-256 复验。固定包的标题／暂停层应显示：
 
 ```text
-v0.9.5-rc.2 · de78f2c
+v0.9.5-rc.2 · 21a44bd6
 ```
 
 不应出现 `+dirty`。标准包没有秋季直达入口，秋季双轨仍须在完整流程中验证音效遮蔽、循环疲劳和实机混音；Windows 真机也尚未完成。Alan 已分别允许 PR #63 的玩法整改方向、PR #65 的 HUD／饮蜜按钮方向和 PR #76 的秋季双轨替换进入主线，但这些都不是完整玩法、原生触摸、整套音乐、设备或发行验收。未参与开发的外部玩家证据仍为 **0**。
@@ -92,7 +92,7 @@ npm run playtest:prepare -- \
   --artifact-sha256 <安装包 SHA-256>
 ```
 
-默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；新版 A 表由 29 个控件降为 6 个，只收 4 个短原话和 2 个结束选择。`coordinator/observer.html` 留给测试协调者，隔离记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果；关系类型由生成命令固定，参与者不能自报。两页均完全离线、不收个人信息。A 包最多 15 分钟；B 单切片包因游戏尚无固定切片入口而明确阻塞，不能用跑前置节点替代；音乐继续独立使用 `npm run audio:review`。生成器会记录传入的 SHA-256，但不会读取安装包，交付者仍须用 sidecar 或哈希工具复验。旧 schema v1 记录不自动升级为新版机制证据。首份 A 包属于旧候选 `f57ea02c`：它暴露首分钟采蜜反馈和问卷过长两个 P0，但不能迁移为当前 `de78f2c` 的通过证据；填写者身份仍待协调者确认，外部玩家样本仍为 0。当前候选必须重新采集首分钟和完整流程证据。完整记录与边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
+默认输出位于 `outputs/playtest-evidence/<随机会话号>/`，每位参与者单独生成一包。只把 `participant/` 文件夹交给玩家；新版 A 表由 29 个控件降为 6 个，只收 4 个短原话和 2 个结束选择。`coordinator/observer.html` 留给测试协调者，隔离记录环境、试玩前游戏外解释、时间线、机制接触，以及急转延迟复测的机会和结果；关系类型由生成命令固定，参与者不能自报。两页均完全离线、不收个人信息。A 包最多 15 分钟；B 单切片包因游戏尚无固定切片入口而明确阻塞，不能用跑前置节点替代；音乐继续独立使用 `npm run audio:review`。生成器会记录传入的 SHA-256，但不会读取安装包，交付者仍须用 sidecar 或哈希工具复验。旧 schema v1 记录不自动升级为新版机制证据。首份 A 包属于旧候选 `f57ea02c`：它暴露首分钟采蜜反馈和问卷过长两个 P0，但不能迁移为当前 `21a44bd` 的通过证据；填写者身份仍待协调者确认，外部玩家样本仍为 0。当前候选必须重新采集首分钟和完整流程证据。完整记录与边界见 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)。
 
 ## 视觉方向
 
