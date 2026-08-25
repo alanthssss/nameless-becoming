@@ -263,6 +263,15 @@ func _init() -> void:
 	var bootstrap_scene := load("res://bootstrap.tscn")
 	if bootstrap_scene == null:
 		failures.append("bootstrap 场景无法加载")
+	var b01_scene := load("res://playtest/b01_evade_slice.tscn") as PackedScene
+	if b01_scene == null:
+		failures.append("B01 typed scene 无法加载")
+	var b01_registry_scene := PlaytestSliceRegistry.new().scene_for_code("B01")
+	if b01_registry_scene == null or b01_registry_scene.resource_path != "res://playtest/b01_evade_slice.tscn":
+		failures.append("生产 registry 未编译真实 B01 typed scene")
+	for evade_runtime_path in ["res://scripts/mechanics/evade_rules.gd", "res://scripts/player/evade_input_controller.gd"]:
+		if load(evade_runtime_path) == null:
+			failures.append("共享急转运行时无法加载：%s" % evade_runtime_path)
 	if String(ProjectSettings.get_setting("application/run/main_scene", "")) != "res://bootstrap.tscn":
 		failures.append("导出主入口必须是 bootstrap.tscn")
 

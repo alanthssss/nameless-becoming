@@ -67,13 +67,21 @@ func run_test() -> void:
 
 	var fixture := fixture_helper.create(test_root.path_join("valid"))
 	var validator := fixture_helper.validator(fixture)
+	var ordinary_save_path := ProjectSettings.globalize_path(NamelessSaveManager.DEFAULT_SAVE_PATH)
+	DirAccess.make_dir_recursive_absolute(ordinary_save_path.get_base_dir())
+	var sentinel := FileAccess.open(ordinary_save_path, FileAccess.WRITE)
+	expect(sentinel != null, "无法建立普通存档不触碰 sentinel")
+	if sentinel != null:
+		sentinel.store_string("B01 bootstrap must not read or overwrite this malformed ordinary save.\n")
+		sentinel.close()
+	var ordinary_save_sha := FileAccess.get_sha256(ordinary_save_path)
 	var valid := launch(PackedStringArray(["--playtest-ticket=%s" % fixture.ticket_path]), validator)
-	expect(valid.scene != null and valid.scene.name == "NamelessBecoming", "有效受控 fixture 未实例化 Main")
+	expect(valid.scene is B01EvadeSlice and valid.scene.name == "B01EvadeSlice", "有效受控 fixture 未实例化 B01 typed scene")
 	if valid.scene != null:
 		var expected_ticket_sha := fixture_helper.sha256(fixture_helper.json_bytes(fixture.ticket))
-		expect(valid.scene.playtest_session_context.ticket_sha256 == expected_ticket_sha, "Main 未在 ready 前收到 ticket context")
-		expect(valid.scene.save_manager.namespace_is_locked(), "Main ready 的首次 load 后 namespace 未锁死")
-		expect(valid.scene.save_manager.save_path() == "user://nameless-playtest-%s.cfg" % expected_ticket_sha, "Main 未使用 ticket raw-byte 派生 namespace")
+		expect(valid.scene.playtest_session_context.ticket_sha256 == expected_ticket_sha, "B01 未收到 ticket context")
+		expect(valid.scene.find_child("NamelessBecoming", true, false) == null and valid.scene.find_child("*Save*", true, false) == null, "B01 启动仍实例化 Main 或存档管理器")
+	expect(not ordinary_save_sha.is_empty() and FileAccess.get_sha256(ordinary_save_path) == ordinary_save_sha, "B01 bootstrap 读写了普通存档")
 	valid.host.free()
 
 	var bootstrap_source := FileAccess.get_file_as_string("res://scripts/bootstrap.gd")

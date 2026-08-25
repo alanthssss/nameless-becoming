@@ -45,6 +45,7 @@ var evade_tap_direction := Vector2.RIGHT
 var move_duration := 0.0
 var spring_player_bee_texture: Texture2D
 var use_spring_launch_art := false
+var _movement_bounds := WORLD_BOUNDS
 
 func _ready() -> void:
 	if ResourceLoader.exists(SPRING_PLAYER_BEE_PATH):
@@ -59,6 +60,23 @@ func set_spring_launch_art(enabled: bool) -> void:
 
 func configure(stage_drain: float) -> void:
 	drain_rate = stage_drain
+
+func set_movement_bounds(bounds: Rect2) -> Error:
+	if (
+		not is_finite(bounds.position.x)
+		or not is_finite(bounds.position.y)
+		or not is_finite(bounds.size.x)
+		or not is_finite(bounds.size.y)
+		or bounds.size.x < 36.0
+		or bounds.size.y < 36.0
+	):
+		return ERR_INVALID_PARAMETER
+	_movement_bounds = bounds
+	_clamp_to_movement_bounds()
+	return OK
+
+func get_movement_bounds() -> Rect2:
+	return _movement_bounds
 
 func reset_upgrades() -> void:
 	speed_multiplier = 1.0
@@ -176,11 +194,14 @@ func _physics_process(delta: float) -> void:
 	if velocity.length_squared() > 1.0:
 		facing = velocity.angle()
 	position += velocity * delta
-	position.x = clampf(position.x, WORLD_BOUNDS.position.x + 18, WORLD_BOUNDS.end.x - 18)
-	position.y = clampf(position.y, WORLD_BOUNDS.position.y + 18, WORLD_BOUNDS.end.y - 18)
+	_clamp_to_movement_bounds()
 	energy = maxf(0.0, energy - drain_rate * delta - (9.5 * dash_cost_multiplier * delta if auto_dashing else 0.0))
 
 	queue_redraw()
+
+func _clamp_to_movement_bounds() -> void:
+	position.x = clampf(position.x, _movement_bounds.position.x + 18.0, _movement_bounds.end.x - 18.0)
+	position.y = clampf(position.y, _movement_bounds.position.y + 18.0, _movement_bounds.end.y - 18.0)
 
 func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, facing)

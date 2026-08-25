@@ -94,7 +94,7 @@ func create(directory: String, code := "B01", status := "ready") -> Dictionary:
 		"catalog_bytes": catalog_bytes,
 		"provenance_bytes": provenance_bytes,
 		"manifest_bytes": manifest_bytes,
-		"registry": {code: load("res://main.tscn") as PackedScene},
+		"registry": {code: load("res://playtest/b01_evade_slice.tscn") as PackedScene},
 	}
 	write_fixture(fixture)
 	return fixture

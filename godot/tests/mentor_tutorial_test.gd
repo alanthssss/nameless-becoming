@@ -23,6 +23,10 @@ func run_test() -> void:
 	var mentor = game.mentor_tutorial
 	expect(mentor.profile_id == "first_trip_pollination" and mentor.lesson_id == "sortie", "首关没有启动老师傅出巢演示")
 	expect(mentor.phase == "demo" and mentor.blocks_simulation() and not game.bee.active, "演示阶段没有冻结玩家与真实模拟")
+	var blocked_evade_sequence: int = game.bee.evade_sequence
+	expect(not game._register_direction_tap("up", Vector2.UP, 0.1), "禁止急转的演示阶段兼容入口登记了首击")
+	expect(not game._register_direction_tap("up", Vector2.UP, 0.2), "禁止急转的演示阶段兼容入口发动了急转")
+	expect(game.bee.evade_sequence == blocked_evade_sequence and float(game.last_dir_tap.up) == 0.0, "教学 action gate 被兼容急转入口绕过或遗留输入")
 	game.bee.has_target = false
 	expect(game._handle_world_tap(game.bee.position + Vector2.RIGHT * 100.0), "演示阶段的场内点击没有被消费")
 	expect(not game.bee.has_target and game.last_world_tap_time == 0.0, "老师傅演示期间缓存了移动或急转输入，交还控制后会突然飞走")

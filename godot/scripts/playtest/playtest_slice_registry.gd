@@ -1,12 +1,11 @@
 class_name PlaytestSliceRegistry
 extends RefCounted
 
-# A catalog row is not an implementation. B01 is reserved here so a future
-# typed scene can be compiled into the build without accepting a path from a
-# ticket or catalog. It deliberately remains null while the production row is
-# blocked.
+# A catalog row is not an implementation. Every runnable slice is compiled into
+# this registry so neither a ticket nor the public catalog can inject a scene or
+# handler path.
 const COMPILED_SLICE_SCENES := {
-	"B01": null,
+	"B01": preload("res://playtest/b01_evade_slice.tscn"),
 }
 
 func has_code(code: String) -> bool:

@@ -572,10 +572,17 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
     assert.match(participantText, /固定切片 B01/u);
     assert.match(participantText, /10 分钟/u);
     assert.match(participantText, /"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket\.json 的绝对路径>"/u);
-    assert.doesNotMatch(participantText, /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜/iu);
-    assert.doesNotMatch(participantText, /(?<![\p{L}\p{N}])(?:pollination|evade|nectar|deposit|handler|profile|observer)(?![\p{L}\p{N}])/iu);
-    assert.doesNotMatch(participantText, /contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment/iu);
-    assert.doesNotMatch(participantText, /answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria|正确答案|答案说明/iu);
+    assert.doesNotMatch(participantText, /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜|正确答案|答案说明/iu);
+    const compactParticipantText = participantText.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+    for (const forbiddenTerm of [
+      "pollination", "evade", "nectar", "deposit", "handler", "profile", "observer",
+      "contact", "event1", "event2", "event3", "event4", "observation", "evidencechannel",
+      "windowsenvironment", "inputmethods", "priorexternalexplanation", "timeline", "contacts",
+      "objectiveobservations", "learningtransfer", "helprequestquote", "internalassignment",
+      "answerkey", "answerexplanation", "expectedanswer", "expectedresult", "successcondition",
+      "successcriteria", "maintscn", "scriptsmaingd", "mentortutorial", "savemanager",
+      "stageindex", "spawnstage", "tutorialstep", "tutorialcomplete",
+    ]) assert.equal(compactParticipantText.includes(forbiddenTerm), false, forbiddenTerm);
 
     const leakingFixture = await writeArtifactFixture(join(temporaryRoot, "leaking-distribution"), {
       commit: fixture.commit,
@@ -594,6 +601,117 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
       sessionId: "NB-20260825-LEAK0001",
     }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
     assert.equal(await pathDoesNotExist(leakingOutput), true);
+
+    const privateRouteFixture = await writeArtifactFixture(join(temporaryRoot, "private-route-distribution"), {
+      commit: fixture.commit,
+      version: "0.9.5-rc.2",
+      sourceMetadata: true,
+      manifestOverrides: { source_ref: "refs/heads/save-manager" },
+    });
+    const privateRouteOutput = join(temporaryRoot, "must-not-leak-private-route");
+    await assert.rejects(generatePlaytestEvidence(privateRouteOutput, {
+      repositoryRoot: fixture.root,
+      artifactPath: privateRouteFixture.artifactPath,
+      artifactManifestPath: privateRouteFixture.artifactManifestPath,
+      taskCode: "B",
+      sliceCode: "B01",
+      testerRelation: "external_player",
+      sessionId: "NB-20260825-LEAK0002",
+    }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+    assert.equal(await pathDoesNotExist(privateRouteOutput), true);
+
+    const camelCaseRouteFixture = await writeArtifactFixture(join(temporaryRoot, "camel-case-route-distribution"), {
+      commit: fixture.commit,
+      version: "0.9.5-rc.2",
+      sourceMetadata: true,
+      manifestOverrides: { source_ref: "refs/heads/NamelessSaveManager" },
+    });
+    const camelCaseRouteOutput = join(temporaryRoot, "must-not-leak-camel-case-route");
+    await assert.rejects(generatePlaytestEvidence(camelCaseRouteOutput, {
+      repositoryRoot: fixture.root,
+      artifactPath: camelCaseRouteFixture.artifactPath,
+      artifactManifestPath: camelCaseRouteFixture.artifactManifestPath,
+      taskCode: "B",
+      sliceCode: "B01",
+      testerRelation: "external_player",
+      sessionId: "NB-20260825-LEAK0003",
+    }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+    assert.equal(await pathDoesNotExist(camelCaseRouteOutput), true);
+
+    const separatedRouteFixture = await writeArtifactFixture(join(temporaryRoot, "separated-route-distribution"), {
+      commit: fixture.commit,
+      version: "0.9.5-rc.2",
+      sourceMetadata: true,
+      manifestOverrides: { source_ref: "refs/heads/internal.save/manager" },
+    });
+    const separatedRouteOutput = join(temporaryRoot, "must-not-leak-separated-route");
+    await assert.rejects(generatePlaytestEvidence(separatedRouteOutput, {
+      repositoryRoot: fixture.root,
+      artifactPath: separatedRouteFixture.artifactPath,
+      artifactManifestPath: separatedRouteFixture.artifactManifestPath,
+      taskCode: "B",
+      sliceCode: "B01",
+      testerRelation: "external_player",
+      sessionId: "NB-20260825-LEAK0004",
+    }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+    assert.equal(await pathDoesNotExist(separatedRouteOutput), true);
+
+    const repeatedSeparatorFixture = await writeArtifactFixture(join(temporaryRoot, "repeated-separator-distribution"), {
+      commit: fixture.commit,
+      version: "0.9.5-rc.2",
+      sourceMetadata: true,
+      manifestOverrides: { source_ref: "refs/heads/save--._/manager" },
+    });
+    const repeatedSeparatorOutput = join(temporaryRoot, "must-not-leak-repeated-separator-route");
+    await assert.rejects(generatePlaytestEvidence(repeatedSeparatorOutput, {
+      repositoryRoot: fixture.root,
+      artifactPath: repeatedSeparatorFixture.artifactPath,
+      artifactManifestPath: repeatedSeparatorFixture.artifactManifestPath,
+      taskCode: "B",
+      sliceCode: "B01",
+      testerRelation: "external_player",
+      sessionId: "NB-20260825-LEAK0005",
+    }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+    assert.equal(await pathDoesNotExist(repeatedSeparatorOutput), true);
+
+    const embeddedSensitiveRoutes = [
+      ["refs/heads/EvadeRetest", "NB-20260825-LEAKC001"],
+      ["refs/heads/evade2", "NB-20260825-LEAKC002"],
+      ["refs/heads/pollinationV2", "NB-20260825-LEAKC003"],
+      ["refs/heads/handlerRegistry", "NB-20260825-LEAKC004"],
+      ["refs/heads/ObserverProfile", "NB-20260825-LEAKC005"],
+      ["refs/heads/AnswerKey", "NB-20260825-LEAKC006"],
+      ["refs/heads/SuccessCriteria2", "NB-20260825-LEAKC007"],
+      ["refs/heads/ExpectedResultV2", "NB-20260825-LEAKC008"],
+      ["refs/heads/InternalAssignment", "NB-20260825-LEAKC009"],
+      ["refs/heads/LearningTransfer", "NB-20260825-LEAKC010"],
+      ["refs/heads/EvidenceChannel", "NB-20260825-LEAKC011"],
+      ["refs/heads/ObjectiveObservations", "NB-20260825-LEAKC012"],
+      ["refs/heads/HelpRequestQuote", "NB-20260825-LEAKC013"],
+      ["refs/heads/contactMoment", "NB-20260825-LEAKC014"],
+      ["refs/heads/event1", "NB-20260825-LEAKC015"],
+      ["refs/heads/observationDetail", "NB-20260825-LEAKC016"],
+      ["refs/heads/priorExternalExplanation", "NB-20260825-LEAKC017"],
+    ];
+    for (const [index, [sourceRef, sessionId]] of embeddedSensitiveRoutes.entries()) {
+      const embeddedSensitiveFixture = await writeArtifactFixture(join(temporaryRoot, `embedded-sensitive-${index}`), {
+        commit: fixture.commit,
+        version: "0.9.5-rc.2",
+        sourceMetadata: true,
+        manifestOverrides: { source_ref: sourceRef },
+      });
+      const embeddedSensitiveOutput = join(temporaryRoot, `must-not-leak-embedded-sensitive-${index}`);
+      await assert.rejects(generatePlaytestEvidence(embeddedSensitiveOutput, {
+        repositoryRoot: fixture.root,
+        artifactPath: embeddedSensitiveFixture.artifactPath,
+        artifactManifestPath: embeddedSensitiveFixture.artifactManifestPath,
+        taskCode: "B",
+        sliceCode: "B01",
+        testerRelation: "external_player",
+        sessionId,
+      }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+      assert.equal(await pathDoesNotExist(embeddedSensitiveOutput), true);
+    }
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
