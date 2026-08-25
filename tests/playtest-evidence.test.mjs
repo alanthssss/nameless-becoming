@@ -9,9 +9,11 @@ import { fileURLToPath } from "node:url";
 
 import {
   buildEvidencePayload,
+  buildObserverPayload,
   generatePlaytestEvidence,
   readCandidateIdentity,
   readProductIdentity,
+  validateEvadeRetestAnswers,
 } from "../scripts/prepare_playtest_evidence.mjs";
 
 const execFileAsync = promisify(execFile);
@@ -20,223 +22,198 @@ const repositoryPath = fileURLToPath(repositoryRoot);
 const artifactSha256 = "a".repeat(64);
 const fixedSessionId = "NB-20260825-TEST0001";
 
-test("takes product version and source identity from package.json and the current git checkout", async () => {
+test("takes product version and source identity from the current checkout", async () => {
   const identity = await readProductIdentity();
   const packageJson = JSON.parse(await readFile(new URL("package.json", repositoryRoot), "utf8"));
-  const { stdout: commitOutput } = await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: repositoryPath });
-  const { stdout: statusOutput } = await execFileAsync(
-    "git",
-    ["status", "--porcelain=v1", "--untracked-files=normal"],
-    { cwd: repositoryPath },
-  );
-
+  const { stdout } = await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: repositoryPath });
+  const { stdout: statusOutput } = await execFileAsync("git", ["status", "--porcelain=v1", "--untracked-files=normal"], { cwd: repositoryPath });
   assert.equal(identity.name, "无名：成蜂");
   assert.equal(identity.version, packageJson.version);
-  assert.equal(identity.full_commit, commitOutput.trim());
-  assert.equal(identity.commit, commitOutput.trim().slice(0, 8));
+  assert.equal(identity.full_commit, stdout.trim());
+  assert.equal(identity.commit, stdout.trim().slice(0, 8));
   assert.equal(identity.dirty, statusOutput.trim().length > 0);
 });
 
-test("resolves a candidate commit and reads the version from that exact snapshot", async () => {
+test("resolves candidate identity from the exact commit", async () => {
   const temporaryRoot = await mkdtemp(join(tmpdir(), "nameless-candidate-identity-"));
   try {
     await execFileAsync("git", ["init", "--quiet"], { cwd: temporaryRoot });
-    await execFileAsync("git", ["config", "user.name", "Playtest Test"], { cwd: temporaryRoot });
-    await execFileAsync("git", ["config", "user.email", "playtest-test@example.invalid"], { cwd: temporaryRoot });
-    await writeFile(join(temporaryRoot, "package.json"), '{"version":"0.9.5-rc.1"}\n', "utf8");
+    await execFileAsync("git", ["config", "user.email", "test@example.invalid"], { cwd: temporaryRoot });
+    await execFileAsync("git", ["config", "user.name", "Test"], { cwd: temporaryRoot });
+    await writeFile(join(temporaryRoot, "package.json"), '{"version":"0.9.5-rc.1"}\n');
     await execFileAsync("git", ["add", "package.json"], { cwd: temporaryRoot });
-    await execFileAsync("git", ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "old candidate"], { cwd: temporaryRoot });
-    const { stdout: oldCommitOutput } = await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: temporaryRoot });
-    const oldCommit = oldCommitOutput.trim();
-
-    await writeFile(join(temporaryRoot, "package.json"), '{"version":"0.9.5-rc.2"}\n', "utf8");
+    await execFileAsync("git", ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "old"], { cwd: temporaryRoot });
+    const oldCommit = (await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: temporaryRoot })).stdout.trim();
+    await writeFile(join(temporaryRoot, "package.json"), '{"version":"0.9.5-rc.2"}\n');
     await execFileAsync("git", ["add", "package.json"], { cwd: temporaryRoot });
-    await execFileAsync("git", ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "new candidate"], { cwd: temporaryRoot });
-
+    await execFileAsync("git", ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "new"], { cwd: temporaryRoot });
     const identity = await readCandidateIdentity(oldCommit.slice(0, 8), temporaryRoot);
     assert.equal(identity.version, "0.9.5-rc.1");
     assert.equal(identity.full_commit, oldCommit);
-    assert.equal(identity.commit, oldCommit.slice(0, 8));
     await assert.rejects(readCandidateIdentity("deadbeef", temporaryRoot));
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
 });
 
-test("builds the documented anonymous export shape without mixing analysis into player evidence", () => {
-  const payload = buildEvidencePayload({
-    product: {
-      name: "无名：成蜂",
-      version: "0.9.5-rc.2",
-      commit: "11111111",
-      full_commit: "1".repeat(40),
-      dirty: false,
-      artifact_sha256: artifactSha256,
-    },
-    task: { code: "A", assignment: "首次体验：首节点", maximum_minutes: 15 },
-    sessionId: fixedSessionId,
+test("separates the six-item participant export from coordinator observation", () => {
+  const product = { name: "无名：成蜂", version: "0.9.5-rc.2", commit: "f57ea02c", full_commit: "f".repeat(40), dirty: false, artifact_sha256: artifactSha256 };
+  const task = { code: "A", assignment: "首次体验：首节点", maximum_minutes: 15 };
+  const participant = { participant_code: fixedSessionId, tester_relation: "external_player" };
+  const participantPayload = buildEvidencePayload({
+    product, task, sessionId: fixedSessionId, participant,
     answers: {
-      participant_code: "P01",
-      tester_relation: "external_player",
-      evidence_channel: "remote_self_report",
-      platform: "windows",
-      windows_environment: "native_physical_hardware",
-      input_methods: ["keyboard_mouse", "touchscreen"],
-      prior_external_explanation: "none",
-      end_reason: "time_limit",
-      replay_intent: "unsure",
-      contact_moment_3: "attempted_incomplete",
-      contact_moment_4: "not_reached",
       first_minute_quote: "我先飞向最近的花。",
-      moment_3_recall_quote: "花后来变了，但我没看懂。",
+      furthest_reached_quote: "到了一个大虫子前。",
+      stuck_or_surprised_quote: "不知道什么时候结束。",
+      player_summary_quote: "飞来飞去收集东西。",
+      end_reason: "stuck",
+      replay_intent: "after_changes",
+      contact_moment_3: "completed_game_prompt",
     },
-    events: {
-      event_1: { status: "occurred_timed", elapsed_seconds: 83.4 },
-      event_2: { status: "did_not_occur", elapsed_seconds: 12 },
-      event_3: { status: "occurred_time_unavailable" },
-    },
-    sessionDurationSeconds: 614.6,
-    sessionDurationStatus: "recorded",
     exportedAt: "2026-08-25T00:00:00.000Z",
   });
+  assert.equal(participantPayload.schema_version, 2);
+  assert.equal(participantPayload.export_kind, "participant_short_form");
+  assert.equal(participantPayload.evidence.tester_relation, "external_player");
+  assert.equal(participantPayload.evidence.relation_asserted_by, "coordinator_at_generation");
+  assert.deepEqual(Object.keys(participantPayload.verbatim_responses), ["first_minute_quote", "furthest_reached_quote", "stuck_or_surprised_quote", "player_summary_quote"]);
+  assert.equal(Object.hasOwn(participantPayload, "timeline"), false);
+  assert.equal(Object.hasOwn(participantPayload, "contacts"), false);
 
-  assert.equal(payload.schema_version, 1);
-  assert.equal(payload.session_id, fixedSessionId);
-  assert.equal(payload.evidence.participant_code, fixedSessionId);
-  assert.equal(payload.product.commit, "11111111");
-  assert.equal(payload.product.full_commit, "1".repeat(40));
-  assert.equal(payload.product.artifact_sha256, artifactSha256);
-  assert.deepEqual(payload.evidence.input_methods, ["keyboard_mouse", "touchscreen"]);
-  assert.equal(payload.contacts.moment_3, "attempted_incomplete");
-  assert.equal(payload.contacts.moment_4, "not_reached");
-  assert.equal(payload.timeline.origin, "T0 = 首次取得控制权");
-  assert.deepEqual(payload.timeline.session_duration, { status: "occurred_timed", elapsed_seconds: 615 });
-  assert.deepEqual(payload.timeline.events.event_1, { status: "occurred_timed", elapsed_seconds: 83 });
-  assert.deepEqual(payload.timeline.events.event_2, { status: "did_not_occur", elapsed_seconds: null });
-  assert.deepEqual(payload.timeline.events.event_4, { status: "not_recorded", elapsed_seconds: null });
-  assert.deepEqual(payload.categorical_responses, {
-    prior_external_explanation: "none",
-    end_reason: "time_limit",
-    replay_intent: "unsure",
+  const observerPayload = buildObserverPayload({
+    product, task, sessionId: fixedSessionId, participant,
+    answers: {
+      evidence_channel: "onsite_observation",
+      platform: "windows",
+      windows_environment: "native_physical_hardware",
+      input_methods: ["keyboard_mouse"],
+      prior_external_explanation: "none",
+      contact_moment_3: "attempted_incomplete",
+      observation_moment_3: "蜂身有变化，未碰到另一朵花。",
+      evade_retest_opportunity: "provided_stable",
+      evade_retest_result: "attempted_incomplete",
+      evade_retest_observation: "首次急转后三分钟出现同语法危险，玩家尝试一次但仍在线内。",
+    },
+    events: { event_1: { status: "occurred_timed", elapsed_seconds: 83.4 }, event_2: { status: "not_observed" } },
+    sessionDurationSeconds: 614.6, sessionDurationStatus: "recorded", exportedAt: "2026-08-25T00:00:00.000Z",
   });
-  assert.equal(payload.verbatim_responses.first_minute_quote, "我先飞向最近的花。");
-  assert.equal(payload.verbatim_responses.moment_3_recall_quote, "花后来变了，但我没看懂。");
-  assert.equal(Object.hasOwn(payload.verbatim_responses, "participant_code"), false);
-  assert.equal(Object.hasOwn(payload.verbatim_responses, "end_reason"), false);
-  assert.equal(Object.hasOwn(payload, "developer_interpretations"), false);
-  assert.equal(Object.hasOwn(payload, "follow_up_actions"), false);
+  assert.equal(observerPayload.export_kind, "coordinator_observation");
+  assert.equal(observerPayload.timeline.events.event_1.elapsed_seconds, 83);
+  assert.equal(observerPayload.timeline.events.event_2.status, "not_observed");
+  assert.equal(observerPayload.contacts.moment_3, "attempted_incomplete");
+  assert.equal(observerPayload.objective_observations.moment_3, "蜂身有变化，未碰到另一朵花。");
+  assert.equal(observerPayload.evidence.prior_external_explanation, "none");
+  assert.deepEqual(observerPayload.learning_transfer.evade_delayed_retest, {
+    opportunity: "provided_stable",
+    result: "attempted_incomplete",
+    objective_observation: "首次急转后三分钟出现同语法危险，玩家尝试一次但仍在线内。",
+  });
 });
 
-test("generates an offline participant folder and keeps coordinator material separate", async () => {
+test("only evaluates delayed evade transfer when a stable opportunity has a result", () => {
+  assert.equal(validateEvadeRetestAnswers({ evade_retest_opportunity: "provided_stable", evade_retest_result: "completed_independent" }), "");
+  assert.match(validateEvadeRetestAnswers({ evade_retest_opportunity: "provided_stable", evade_retest_result: "not_evaluable" }), /记录实际结果/);
+  assert.equal(validateEvadeRetestAnswers({ evade_retest_opportunity: "not_provided", evade_retest_result: "not_evaluable" }), "");
+  assert.match(validateEvadeRetestAnswers({ evade_retest_opportunity: "not_provided", evade_retest_result: "attempted_incomplete" }), /必须选不可判定/);
+});
+
+test("generates a short blind participant form and a separate observer workflow", async () => {
   const temporaryRoot = await mkdtemp(join(tmpdir(), "nameless-playtest-kit-"));
   const output = join(temporaryRoot, "package");
-  const currentIdentity = await readProductIdentity();
   try {
-    const result = await generatePlaytestEvidence(output, {
-      artifactSha256,
-      taskCode: "A",
-      candidateCommit: currentIdentity.full_commit,
-      candidateDirty: false,
-      sessionId: fixedSessionId,
-    });
-    assert.equal(result.sessionId, fixedSessionId);
-    assert.equal(await readFile(join(output, ".nameless-playtest-evidence"), "utf8"), "nameless-playtest-evidence:v1\n");
-
+    const identity = await readProductIdentity();
+    await generatePlaytestEvidence(output, { artifactSha256, taskCode: "A", testerRelation: "external_player", candidateCommit: identity.full_commit, candidateDirty: false, sessionId: fixedSessionId });
+    assert.equal(await readFile(join(output, ".nameless-playtest-evidence"), "utf8"), "nameless-playtest-evidence:v2\n");
     const participantAssets = await Promise.all([
       readFile(join(output, "participant", "index.html"), "utf8"),
       readFile(join(output, "participant", "styles.css"), "utf8"),
       readFile(join(output, "participant", "review.js"), "utf8"),
     ]);
     const participantText = participantAssets.join("\n");
+    const participantHtml = participantAssets[0];
+    const observerHtml = await readFile(join(output, "coordinator", "observer.html"), "utf8");
     const coordinatorText = await readFile(join(output, "coordinator", "README.md"), "utf8");
     const analysis = JSON.parse(await readFile(join(output, "coordinator", "analysis-template.json"), "utf8"));
     const manifest = JSON.parse(await readFile(join(output, "coordinator", "manifest.json"), "utf8"));
-
     await execFileAsync(process.execPath, ["--check", join(output, "participant", "review.js")]);
+    await execFileAsync(process.execPath, ["--check", join(output, "coordinator", "observer.js")]);
 
-    assert.match(participantAssets[0], /connect-src 'none'/);
+    assert.equal((participantHtml.match(/<(?:input|select|textarea)[^>]*\sname="/gu) || []).length, 6, "participant burden must stay at six controls");
+    assert.doesNotMatch(participantText, /contact_|event_[1-4]|observation_|完成条件|传粉|急转|饮蜜|第一次交蜜|游戏内提示/iu);
+    assert.doesNotMatch(participantHtml, /<select name="tester_relation"|evidence_channel|windows_environment|input_methods/u);
     assert.doesNotMatch(participantText, /https?:\/\//iu);
     assert.doesNotMatch(participantText, /\b(?:fetch|XMLHttpRequest|sendBeacon|WebSocket)\b/u);
-    assert.doesNotMatch(participantText, /开放花药|同型开放柱头|蜂身散粉|锁定旧位置|同方向快速双击|侧移出通道|第一次交蜜|完成条件|传粉|急转|饮蜜|honey_delivery|pollination|acute_turn|drink|E\s*键/iu);
-    assert.doesNotMatch(participantText, /coordinator|analysis-template|developer_interpretations|follow_up_actions/u);
-    assert.doesNotMatch(participantText, /name="(?:name|email|phone|age|gender|location)"/u);
-    assert.match(participantText, /本次未到达/);
-    assert.match(participantText, /data-contact-details="moment_3"/);
-    assert.match(participantText, /时间不可得/);
-    assert.match(participantText, /导出匿名 JSON/);
-    assert.match(coordinatorText, /只把同级的 `participant\/` 文件夹交给参与者/);
-    assert.match(coordinatorText, /没有稳定的“三分钟后再次急转”机会/);
-    assert.deepEqual(analysis.objective_observations, []);
-    assert.deepEqual(analysis.verbatim_player_quotes, []);
-    assert.deepEqual(analysis.developer_interpretations, []);
-    assert.deepEqual(analysis.follow_up_actions, []);
-    assert.deepEqual(
-      analysis.field_schema.objective_observations.required,
-      ["event_id", "source", "elapsed", "text"],
-    );
-    assert.match(analysis.field_schema.objective_observations.rule, /observable events/);
-    assert.equal(manifest.candidate.artifact_sha256, artifactSha256);
-    assert.equal(manifest.task.code, "A");
-
-    await generatePlaytestEvidence(output, {
-      artifactSha256,
-      taskCode: "A",
-      candidateCommit: currentIdentity.full_commit,
-      candidateDirty: false,
-      sessionId: fixedSessionId,
-    });
-    assert.equal(JSON.parse(await readFile(join(output, "coordinator", "manifest.json"), "utf8")).session_id, fixedSessionId);
+    assert.match(participantHtml, /六项，写完就结束/);
+    assert.match(observerHtml, /机制接触判定/);
+    assert.match(observerHtml, /完成条件|传粉|急转|饮蜜/u);
+    assert.match(observerHtml, /name="prior_external_explanation"/);
+    assert.match(observerHtml, /name="evade_retest_opportunity"/);
+    assert.match(observerHtml, /name="evade_retest_result"/);
+    assert.match(observerHtml, /机会与结果必须分开/);
+    assert.match(coordinatorText, /4 个原话题和 2 个结束选择/);
+    assert.match(coordinatorText, /provided_stable/);
+    assert.equal((coordinatorText.match(/不收姓名/gu) || []).length, 1, "coordinator privacy notice must not be duplicated");
+    assert.equal(analysis.participant_identity.tester_relation, "external_player");
+    assert.equal(analysis.relation_asserted_at_generation, true);
+    assert.equal(analysis.relation_verified_by_coordinator, null);
+    assert.equal(analysis.protocol_verification.prior_external_explanation, null);
+    assert.equal(analysis.evade_delayed_retest_assessment.opportunity, null);
+    assert.match(analysis.evade_delayed_retest_assessment.analyst_note, /不能记为迁移失败/);
+    assert.equal(manifest.observer_entry, "observer.html");
+    assert.equal(manifest.participant_identity.tester_relation, "external_player");
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
 });
 
-test("blocks unavailable task B, sends music to the separate tool, and protects output paths", async () => {
-  const temporaryRoot = await mkdtemp(join(tmpdir(), "nameless-playtest-kit-safety-"));
-  const currentIdentity = await readProductIdentity();
-  const unrelatedDirectory = join(temporaryRoot, "existing-project");
-  const guardFile = join(unrelatedDirectory, "keep.txt");
+test("requires complete provenance, routes tasks, preserves dirty status, and protects outputs", async () => {
+  const temporaryRoot = await mkdtemp(join(tmpdir(), "nameless-playtest-safety-"));
+  const unrelated = join(temporaryRoot, "existing-project");
   const repositoryLink = join(temporaryRoot, "repository-link");
-  await mkdir(unrelatedDirectory);
-  await writeFile(guardFile, "do not delete\n", "utf8");
+  const legacyOutput = join(temporaryRoot, "legacy-v1-package");
+  await mkdir(unrelated);
+  await writeFile(join(unrelated, "keep.txt"), "keep\n");
+  await mkdir(legacyOutput);
+  await writeFile(join(legacyOutput, ".nameless-playtest-evidence"), "nameless-playtest-evidence:v1\n");
+  await writeFile(join(legacyOutput, "keep.txt"), "legacy\n");
   await symlink(repositoryPath, repositoryLink);
   try {
-    await assert.rejects(
-      generatePlaytestEvidence(join(temporaryRoot, "missing-hash"), { taskCode: "A" }),
-      /64-character --artifact-sha256/,
-    );
-    await assert.rejects(
-      generatePlaytestEvidence(join(temporaryRoot, "blocked-slice"), { artifactSha256, taskCode: "B" }),
-      /blocked until the game has a fixed single-slice entry/,
-    );
-    await assert.rejects(
-      generatePlaytestEvidence(join(temporaryRoot, "music"), { artifactSha256, taskCode: "C" }),
-      /npm run audio:review/,
-    );
-    await assert.rejects(
-      generatePlaytestEvidence(join(temporaryRoot, "implicit-clean"), { artifactSha256, candidateCommit: currentIdentity.full_commit }),
-      /requires exactly one of --candidate-clean or --candidate-dirty/,
-    );
-    await assert.rejects(
-      generatePlaytestEvidence(join(temporaryRoot, "missing-commit"), { artifactSha256, candidateCommit: "deadbeef", candidateDirty: false }),
-    );
-    await assert.rejects(generatePlaytestEvidence(repositoryPath, { artifactSha256 }), /repository or one of its ancestors/);
-    await assert.rejects(generatePlaytestEvidence(dirname(repositoryPath), { artifactSha256 }), /repository or one of its ancestors/);
-    await assert.rejects(generatePlaytestEvidence(join(repositoryPath, "docs/generated"), { artifactSha256 }), /must stay under outputs/);
-    await assert.rejects(generatePlaytestEvidence(join(repositoryLink, "docs/generated"), { artifactSha256 }), /must stay under outputs/);
-    await assert.rejects(generatePlaytestEvidence(unrelatedDirectory, { artifactSha256 }), /without \.nameless-playtest-evidence/);
-    assert.equal(await readFile(guardFile, "utf8"), "do not delete\n");
-
-    const dirtyOutput = join(temporaryRoot, "dirty-candidate");
-    const dirtyResult = await generatePlaytestEvidence(dirtyOutput, {
+    const identity = await readProductIdentity();
+    const fixedOptions = {
       artifactSha256,
       taskCode: "A",
-      candidateCommit: currentIdentity.full_commit,
-      candidateDirty: true,
+      testerRelation: "external_player",
+      candidateCommit: identity.full_commit,
+      candidateDirty: false,
       sessionId: fixedSessionId,
-    });
+    };
+    await assert.rejects(generatePlaytestEvidence(join(temporaryRoot, "missing-hash"), { testerRelation: "external_player" }), /64-character --artifact-sha256/);
+    await assert.rejects(generatePlaytestEvidence(join(temporaryRoot, "missing-relation"), { artifactSha256 }), /--tester-relation/);
+    await assert.rejects(generatePlaytestEvidence(join(temporaryRoot, "bad-relation"), { artifactSha256, testerRelation: "external_player_self_selected" }), /--tester-relation/);
+    await assert.rejects(generatePlaytestEvidence(join(temporaryRoot, "task-b"), { artifactSha256, testerRelation: "external_player", taskCode: "B" }), /Task B is blocked/);
+    await assert.rejects(generatePlaytestEvidence(join(temporaryRoot, "task-c"), { artifactSha256, testerRelation: "external_player", taskCode: "C" }), /npm run audio:review/);
+    await assert.rejects(generatePlaytestEvidence(join(temporaryRoot, "implicit-clean"), { artifactSha256, testerRelation: "external_player", candidateCommit: identity.full_commit }), /requires exactly one of --candidate-clean or --candidate-dirty/);
+    await assert.rejects(generatePlaytestEvidence(join(temporaryRoot, "missing-commit"), { artifactSha256, testerRelation: "external_player", candidateCommit: "deadbeef", candidateDirty: false }));
+    await assert.rejects(generatePlaytestEvidence(repositoryPath, { artifactSha256, testerRelation: "external_player" }), /repository or one of its ancestors/);
+    await assert.rejects(generatePlaytestEvidence(dirname(repositoryPath), { artifactSha256, testerRelation: "external_player" }), /repository or one of its ancestors/);
+    await assert.rejects(generatePlaytestEvidence(join(repositoryPath, "docs/generated"), { artifactSha256, testerRelation: "external_player" }), /must stay under outputs/);
+    await assert.rejects(generatePlaytestEvidence(join(repositoryLink, "docs/generated"), { artifactSha256, testerRelation: "external_player" }), /must stay under outputs/);
+    await assert.rejects(generatePlaytestEvidence(unrelated, { artifactSha256, testerRelation: "external_player" }), /without \.nameless-playtest-evidence/);
+    await assert.rejects(generatePlaytestEvidence(legacyOutput, fixedOptions), /invalid \.nameless-playtest-evidence/);
+    assert.equal(await readFile(join(unrelated, "keep.txt"), "utf8"), "keep\n");
+    assert.equal(await readFile(join(legacyOutput, "keep.txt"), "utf8"), "legacy\n");
+
+    const repeatOutput = join(temporaryRoot, "repeat-v2-package");
+    await generatePlaytestEvidence(repeatOutput, fixedOptions);
+    await generatePlaytestEvidence(repeatOutput, fixedOptions);
+    assert.equal(await readFile(join(repeatOutput, ".nameless-playtest-evidence"), "utf8"), "nameless-playtest-evidence:v2\n");
+    assert.equal(JSON.parse(await readFile(join(repeatOutput, "coordinator", "manifest.json"), "utf8")).session_id, fixedSessionId);
+
+    const dirtyOutput = join(temporaryRoot, "dirty-candidate");
+    const dirtyResult = await generatePlaytestEvidence(dirtyOutput, { ...fixedOptions, candidateDirty: true });
     assert.equal(dirtyResult.product.dirty, true);
-    assert.match(await readFile(join(dirtyOutput, "participant", "index.html"), "utf8"), new RegExp(`${currentIdentity.commit} \\+dirty`));
+    assert.match(await readFile(join(dirtyOutput, "participant", "index.html"), "utf8"), new RegExp(`${identity.commit} \\+dirty`));
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }

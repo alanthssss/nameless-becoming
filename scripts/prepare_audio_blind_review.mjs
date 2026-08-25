@@ -1,8 +1,11 @@
+import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
-import { copyFile, lstat, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
-import { dirname, isAbsolute, parse, relative, resolve } from "node:path";
+import { copyFile, lstat, mkdir, readFile, realpath, rename, rm, writeFile } from "node:fs/promises";
+import { basename, dirname, isAbsolute, parse, relative, resolve } from "node:path";
+import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
+const execFileAsync = promisify(execFile);
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const musicRoot = resolve(repositoryRoot, "godot/assets/music");
 const defaultOutput = resolve(repositoryRoot, "outputs/music-blind-review");
@@ -26,6 +29,26 @@ export const CANONICAL_PAIRS = Object.freeze([
   Object.freeze(["C", "H"]),
   Object.freeze(["D", "G"]),
 ]);
+
+export function validateAudioExportAnswers(answers = {}) {
+  const overallFields = [
+    "overall_favorite",
+    "overall_replay_top3",
+    "pairing_confidence",
+    "overall_distinction",
+    "overall_drums_bass",
+    "overall_folk",
+    "overall_fatigue",
+  ];
+  const pairFields = ["pair_guess_1", "pair_guess_2", "pair_guess_3", "pair_guess_4"];
+  const hasValue = (value) => Array.isArray(value)
+    ? value.some((item) => String(item).trim().length > 0)
+    : String(value || "").trim().length > 0;
+  if (![...overallFields, ...pairFields].some((field) => hasValue(answers[field]))) {
+    return "请先填写至少一项整体感受或配对判断；整段空白无法区分‘没有意见’和‘漏填’。";
+  }
+  return "";
+}
 
 const listenerCss = `
 :root {
@@ -124,10 +147,32 @@ audio { width: 100%; margin-bottom: 1rem; accent-color: #e5b94e; }
 
 const listenerJs = `
 const trackIds = ["A", "B", "C", "D", "E", "F", "G", "H"];
-const storageKey = "nameless-music-blind-review-v1";
 const form = document.querySelector("#review-form");
 const saveStatus = document.querySelector("#save-status");
 const listening = Object.fromEntries(trackIds.map((id) => [id, { plays: 0, seconds: 0 }]));
+const packageIdentity = {
+  product_version: document.body.dataset.productVersion,
+  generator_commit: document.body.dataset.generatorCommit,
+  generator_full_commit: document.body.dataset.generatorFullCommit,
+  generator_dirty: document.body.dataset.generatorDirty === "true",
+  track_manifest_sha256: document.body.dataset.trackManifestSha256,
+};
+const storageKey = "nameless-music-blind-review-v1-" + [
+  packageIdentity.product_version,
+  packageIdentity.generator_full_commit,
+  packageIdentity.generator_dirty ? "dirty" : "clean",
+  packageIdentity.track_manifest_sha256,
+].map(encodeURIComponent).join("-");
+${validateAudioExportAnswers.toString()}
+
+function samePackageIdentity(left, right) {
+  if (!left || !right) return false;
+  return left.product_version === right.product_version
+    && left.generator_commit === right.generator_commit
+    && left.generator_full_commit === right.generator_full_commit
+    && Boolean(left.generator_dirty) === Boolean(right.generator_dirty)
+    && left.track_manifest_sha256 === right.track_manifest_sha256;
+}
 
 function formAnswers() {
   const answers = {};
@@ -145,7 +190,7 @@ function snapshot() {
   const roundedListening = Object.fromEntries(
     Object.entries(listening).map(([id, value]) => [id, { plays: value.plays, seconds: Math.round(value.seconds) }]),
   );
-  return { schema_version: 1, answers: formAnswers(), listening: roundedListening };
+  return { schema_version: 1, package_identity: packageIdentity, answers: formAnswers(), listening: roundedListening };
 }
 
 function setStatus(message) {
@@ -168,7 +213,7 @@ function restore() {
   } catch {
     return;
   }
-  if (!saved || saved.schema_version !== 1) return;
+  if (!saved || ![1, 2].includes(saved.schema_version) || !samePackageIdentity(saved.package_identity, packageIdentity)) return;
   for (const control of form.elements) {
     if (!control.name) continue;
     const value = saved.answers?.[control.name];
@@ -239,6 +284,13 @@ function enforceTopThree() {
 }
 
 function exportResults() {
+  const answers = formAnswers();
+  const validationMessage = validateAudioExportAnswers(answers);
+  if (validationMessage) {
+    setStatus(validationMessage);
+    document.querySelector("#overall-title").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
   save();
   const payload = { ...snapshot(), exported_at: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(payload, null, 2) + "\\n"], { type: "application/json" });
@@ -322,7 +374,7 @@ function trackCard(id) {
     </article>`;
 }
 
-function listenerHtml() {
+function listenerHtml(packageIdentity) {
   const options = BLIND_TRACKS.map(({ id }) => `<option>${id}</option>`).join("");
   const replayChoices = BLIND_TRACKS.map(({ id }) => `<label><input type="checkbox" name="overall_replay_top3" value="${id}"> ${id}</label>`).join("");
   return `<!doctype html>
@@ -334,7 +386,7 @@ function listenerHtml() {
   <title>八首音乐盲听记录</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-product-version="${packageIdentity.product_version}" data-generator-commit="${packageIdentity.generator_commit}" data-generator-full-commit="${packageIdentity.generator_full_commit}" data-generator-dirty="${packageIdentity.generator_dirty ? "true" : "false"}" data-track-manifest-sha256="${packageIdentity.track_manifest_sha256}">
   <main class="shell">
     <header class="hero">
       <p class="eyebrow">LOCAL BLIND LISTENING · A—H</p>
@@ -420,9 +472,10 @@ async function sha256(path) {
   return createHash("sha256").update(payload).digest("hex");
 }
 
-function answerKey() {
+function answerKey(packageIdentity) {
   return {
     schema_version: 1,
+    package_identity: packageIdentity,
     warning: "Developer-only answer key. Keep this directory separate from the listener UI until feedback is exported.",
     sequence: BLIND_TRACKS.map(({ id, source, sha256: sourceSha256 }) => ({
       blind_id: id,
@@ -434,12 +487,14 @@ function answerKey() {
   };
 }
 
-function reviewerReadme() {
+function reviewerReadme(packageIdentity) {
   const rows = BLIND_TRACKS.map(({ id, source, sha256: sourceSha256 }) => `| ${id} | \`${source}\` | \`${sourceSha256}\` |`).join("\n");
   const pairs = CANONICAL_PAIRS.map((pair) => pair.join("–")).join("、");
   return `# 开发者答案（勿在盲听前展示）
 
 听众入口只有 \`../listener/index.html\`。本目录不被听众页面链接或加载。
+
+证据包来源：\`${packageIdentity.product_version} · ${packageIdentity.generator_commit}${packageIdentity.generator_dirty ? " +dirty" : ""}\`；匿名音轨清单指纹：\`${packageIdentity.track_manifest_sha256}\`。
 
 | 盲听编号 | 原始文件 | SHA-256 |
 | --- | --- | --- |
@@ -451,19 +506,37 @@ ${rows}
 `;
 }
 
-function validateOutputTarget(outputDirectory) {
-  const output = resolve(outputDirectory);
+function isWithin(parent, candidate) {
+  const path = relative(parent, candidate);
+  return path === "" || (!path.startsWith("..") && !isAbsolute(path));
+}
+
+function validateResolvedOutput(output) {
   if (output === parse(output).root) throw new Error("Refusing to replace a filesystem root.");
-  for (const protectedPath of [repositoryRoot, musicRoot]) {
-    const pathToProtected = relative(output, protectedPath);
-    if (pathToProtected === "" || (!pathToProtected.startsWith("..") && !isAbsolute(pathToProtected))) {
-      throw new Error(`Refusing protected output path ${output}; it is ${protectedPath === repositoryRoot ? "the repository or its ancestor" : "the music source directory or its ancestor"}.`);
+  if (isWithin(output, repositoryRoot)) throw new Error(`Refusing protected output path ${output}; it is the repository or one of its ancestors.`);
+  if (isWithin(repositoryRoot, output) && !isWithin(resolve(repositoryRoot, "outputs"), output)) {
+    throw new Error("Output inside the repository must stay under outputs/.");
+  }
+}
+
+async function validateOutputTarget(outputDirectory) {
+  const output = resolve(outputDirectory);
+  validateResolvedOutput(output);
+  let existingAncestor = output;
+  const missingSegments = [];
+  while (true) {
+    try {
+      await lstat(existingAncestor);
+      break;
+    } catch (error) {
+      if (error?.code !== "ENOENT") throw error;
+      const parent = dirname(existingAncestor);
+      if (parent === existingAncestor) throw new Error(`Unable to resolve output target: ${output}.`);
+      missingSegments.unshift(basename(existingAncestor));
+      existingAncestor = parent;
     }
   }
-  const pathFromMusic = relative(musicRoot, output);
-  if (pathFromMusic === "" || (!pathFromMusic.startsWith("..") && !isAbsolute(pathFromMusic))) {
-    throw new Error(`Refusing output inside the music source directory: ${output}.`);
-  }
+  validateResolvedOutput(resolve(await realpath(existingAncestor), ...missingSegments));
   return output;
 }
 
@@ -494,7 +567,21 @@ async function assertReplaceableOutput(output) {
 }
 
 export async function generateAudioBlindReview(outputDirectory = defaultOutput) {
-  const output = validateOutputTarget(outputDirectory);
+  const output = await validateOutputTarget(outputDirectory);
+  const packageJson = JSON.parse(await readFile(resolve(repositoryRoot, "package.json"), "utf8"));
+  const [{ stdout: commitOutput }, { stdout: statusOutput }] = await Promise.all([
+    execFileAsync("git", ["rev-parse", "HEAD"], { cwd: repositoryRoot }),
+    execFileAsync("git", ["status", "--porcelain=v1", "--untracked-files=normal"], { cwd: repositoryRoot }),
+  ]);
+  const fullCommit = commitOutput.trim();
+  if (!/^[0-9a-f]{40}$/u.test(fullCommit)) throw new Error(`Unexpected git commit: ${fullCommit}`);
+  const packageIdentity = {
+    product_version: String(packageJson.version),
+    generator_commit: fullCommit.slice(0, 8),
+    generator_full_commit: fullCommit,
+    generator_dirty: statusOutput.trim().length > 0,
+    track_manifest_sha256: createHash("sha256").update(JSON.stringify(BLIND_TRACKS.map(({ id, sha256: trackSha256 }) => [id, trackSha256]))).digest("hex"),
+  };
   const stage = `${output}.stage-${process.pid}-${Date.now()}`;
   const listenerDirectory = resolve(stage, "listener");
   const trackDirectory = resolve(listenerDirectory, "tracks");
@@ -519,11 +606,11 @@ export async function generateAudioBlindReview(outputDirectory = defaultOutput) 
     }
 
     await Promise.all([
-      writeFile(resolve(listenerDirectory, "index.html"), listenerHtml(), "utf8"),
+      writeFile(resolve(listenerDirectory, "index.html"), listenerHtml(packageIdentity), "utf8"),
       writeFile(resolve(listenerDirectory, "styles.css"), listenerCss, "utf8"),
       writeFile(resolve(listenerDirectory, "review.js"), listenerJs, "utf8"),
-      writeFile(resolve(reviewerDirectory, "answer-key.json"), `${JSON.stringify(answerKey(), null, 2)}\n`, "utf8"),
-      writeFile(resolve(reviewerDirectory, "README.md"), reviewerReadme(), "utf8"),
+      writeFile(resolve(reviewerDirectory, "answer-key.json"), `${JSON.stringify(answerKey(packageIdentity), null, 2)}\n`, "utf8"),
+      writeFile(resolve(reviewerDirectory, "README.md"), reviewerReadme(packageIdentity), "utf8"),
       writeFile(resolve(stage, outputSentinelName), outputSentinel, "utf8"),
     ]);
 

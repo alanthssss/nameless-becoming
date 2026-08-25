@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -11,6 +11,7 @@ import {
   BLIND_TRACKS,
   CANONICAL_PAIRS,
   generateAudioBlindReview,
+  validateAudioExportAnswers,
 } from "../scripts/prepare_audio_blind_review.mjs";
 
 const repositoryRoot = new URL("../", import.meta.url);
@@ -67,6 +68,15 @@ function exerciseExclusivePlayback(listenerJavaScript) {
     "#reset-button": new FakeTarget(),
   };
   const document = {
+    body: {
+      dataset: {
+        productVersion: "0.9.5-rc.2",
+        generatorCommit: "f57ea02c",
+        generatorFullCommit: "f".repeat(40),
+        generatorDirty: "false",
+        trackManifestSha256: "a".repeat(64),
+      },
+    },
     querySelector(selector) {
       if (selector === "#review-form") return form;
       if (selector === "#save-status") return { textContent: "" };
@@ -114,6 +124,82 @@ function exerciseExclusivePlayback(listenerJavaScript) {
   assert.equal(Object.values(audios).filter((audio) => !audio.paused).length, 1);
 }
 
+function exercisePackageScopedRestore(listenerJavaScript, savedSnapshot) {
+  class FakeTarget {
+    constructor() {
+      this.listeners = new Map();
+    }
+
+    addEventListener(name, callback) {
+      const callbacks = this.listeners.get(name) || [];
+      callbacks.push(callback);
+      this.listeners.set(name, callbacks);
+    }
+  }
+
+  const currentIdentity = {
+    product_version: "0.9.5-rc.2",
+    generator_commit: "f57ea02c",
+    generator_full_commit: "f".repeat(40),
+    generator_dirty: false,
+    track_manifest_sha256: "a".repeat(64),
+  };
+  const control = { name: "overall_drums_bass", type: "textarea", value: "", checked: false };
+  const form = Object.assign(new FakeTarget(), { elements: [control], reset() {} });
+  const status = { textContent: "" };
+  const stats = Object.fromEntries(["A", "B", "C", "D", "E", "F", "G", "H"].map((id) => [id, { textContent: "" }]));
+  const audios = Object.fromEntries(Object.keys(stats).map((id) => [id, Object.assign(new FakeTarget(), { currentTime: 0, paused: true, pause() {} })]));
+  const buttons = Object.fromEntries(["#save-button", "#export-button", "#reset-button"].map((selector) => [selector, new FakeTarget()]));
+  let requestedStorageKey = "";
+  const document = {
+    body: {
+      dataset: {
+        productVersion: currentIdentity.product_version,
+        generatorCommit: currentIdentity.generator_commit,
+        generatorFullCommit: currentIdentity.generator_full_commit,
+        generatorDirty: "false",
+        trackManifestSha256: currentIdentity.track_manifest_sha256,
+      },
+    },
+    querySelector(selector) {
+      if (selector === "#review-form") return form;
+      if (selector === "#save-status") return status;
+      if (buttons[selector]) return buttons[selector];
+      const audioId = selector.match(/^\[data-audio="([A-H])"\]$/)?.[1];
+      if (audioId) return audios[audioId];
+      const statsId = selector.match(/^\[data-stats="([A-H])"\]$/)?.[1];
+      if (statsId) return stats[statsId];
+      throw new Error(`Unexpected querySelector call: ${selector}`);
+    },
+    querySelectorAll(selector) {
+      if (selector === "audio[data-audio]") return Object.values(audios);
+      if (selector === '[name="overall_replay_top3"]') return [];
+      throw new Error(`Unexpected querySelectorAll call: ${selector}`);
+    },
+  };
+  const localStorage = {
+    getItem(key) {
+      requestedStorageKey = key;
+      return JSON.stringify(savedSnapshot);
+    },
+    removeItem() {},
+    setItem() {},
+  };
+  class EmptyFormData {
+    entries() { return [][Symbol.iterator](); }
+  }
+
+  runInNewContext(listenerJavaScript, {
+    Blob,
+    document,
+    FormData: EmptyFormData,
+    localStorage,
+    URL,
+    window: { clearTimeout, confirm: () => true, setTimeout },
+  });
+  return { control, currentIdentity, requestedStorageKey, stats, status };
+}
+
 test("pins all eight reviewed WAV sources and the fixed blind mapping", async () => {
   assert.deepEqual(BLIND_TRACKS.map(({ id, source }) => [id, source]), [
     ["A", "summer_explore.wav"],
@@ -135,6 +221,13 @@ test("pins all eight reviewed WAV sources and the fixed blind mapping", async ()
   }
 });
 
+test("blocks an export whose overall section and all pair guesses are blank", () => {
+  assert.match(validateAudioExportAnswers({}), /整段空白/);
+  assert.match(validateAudioExportAnswers({ overall_drums_bass: "   ", pair_guess_1: "" }), /整段空白/);
+  assert.equal(validateAudioExportAnswers({ overall_distinction: "大多数能区分" }), "");
+  assert.equal(validateAudioExportAnswers({ pair_guess_1: "AF" }), "");
+});
+
 test("generates byte-identical anonymized audio and a separate developer answer key", async () => {
   const temporaryRoot = await mkdtemp(join(tmpdir(), "nameless-audio-review-"));
   const output = join(temporaryRoot, "package");
@@ -148,6 +241,9 @@ test("generates byte-identical anonymized audio and a separate developer answer 
     }
 
     const key = JSON.parse(await readFile(join(output, "reviewer", "answer-key.json"), "utf8"));
+    assert.equal(key.schema_version, 1, "package identity is an additive field for existing answer-key readers");
+    assert.match(key.package_identity.generator_full_commit, /^[0-9a-f]{40}$/u);
+    assert.match(key.package_identity.track_manifest_sha256, /^[0-9a-f]{64}$/u);
     assert.deepEqual(key.sequence.map(({ blind_id, source }) => [blind_id, source]),
       BLIND_TRACKS.map(({ id, source }) => [id, `godot/assets/music/${source}`]));
     assert.deepEqual(key.canonical_pairs, CANONICAL_PAIRS);
@@ -164,13 +260,17 @@ test("refuses protected paths and existing directories not owned by the generato
   const temporaryRoot = await mkdtemp(join(tmpdir(), "nameless-audio-review-safety-"));
   const unrelatedDirectory = join(temporaryRoot, "existing-project");
   const guardFile = join(unrelatedDirectory, "keep.txt");
+  const repositoryLink = join(temporaryRoot, "repository-link");
   await mkdir(unrelatedDirectory);
   await writeFile(guardFile, "do not delete\n", "utf8");
+  await symlink(repositoryPath, repositoryLink);
   try {
     await assert.rejects(generateAudioBlindReview(repositoryPath), /protected output path/);
     await assert.rejects(generateAudioBlindReview(dirname(repositoryPath)), /protected output path/);
-    await assert.rejects(generateAudioBlindReview(join(repositoryPath, "godot/assets/music")), /protected output path/);
-    await assert.rejects(generateAudioBlindReview(join(repositoryPath, "godot/assets/music/review")), /music source directory/);
+    await assert.rejects(generateAudioBlindReview(join(repositoryPath, "godot/assets/music")), /must stay under outputs/);
+    await assert.rejects(generateAudioBlindReview(join(repositoryPath, "godot/assets/music/review")), /must stay under outputs/);
+    await assert.rejects(generateAudioBlindReview(join(repositoryPath, "docs/audio-review")), /must stay under outputs/);
+    await assert.rejects(generateAudioBlindReview(join(repositoryLink, "docs/audio-review")), /must stay under outputs/);
     await assert.rejects(generateAudioBlindReview(unrelatedDirectory), /without \.nameless-audio-blind-review/);
     assert.equal(await readFile(guardFile, "utf8"), "do not delete\n");
   } finally {
@@ -205,11 +305,40 @@ test("keeps source names, roles, seasons, hashes, and canonical pairs out of lis
     assert.match(listenerText, /overall_drums_bass/);
     assert.match(listenerText, /overall_folk/);
     assert.match(listenerText, /pair_guess_4/);
+    assert.match(listenerText, /track_manifest_sha256/);
+    assert.match(listenerText, /整段空白无法区分/);
     assert.match(listenerText, /导出 JSON/);
     assert.match(listenerText, /localStorage/);
     assert.match(listenerJavaScript, /function pauseOtherTracks/);
     assert.match(listenerJavaScript, /candidate !== activeAudio && !candidate\.paused/);
+    assert.match(listenerJavaScript, /function samePackageIdentity/);
     exerciseExclusivePlayback(listenerJavaScript);
+
+    const matchingIdentity = {
+      product_version: "0.9.5-rc.2",
+      generator_commit: "f57ea02c",
+      generator_full_commit: "f".repeat(40),
+      generator_dirty: false,
+      track_manifest_sha256: "a".repeat(64),
+    };
+    const matching = exercisePackageScopedRestore(listenerJavaScript, {
+      schema_version: 1,
+      package_identity: matchingIdentity,
+      answers: { overall_drums_bass: "保留旧 schema 的同包草稿" },
+      listening: { A: { plays: 2, seconds: 12 } },
+    });
+    assert.equal(matching.control.value, "保留旧 schema 的同包草稿");
+    assert.match(matching.stats.A.textContent, /播放 2 次/);
+    assert.match(matching.requestedStorageKey, new RegExp(`nameless-music-blind-review-v1-.*${"a".repeat(64)}`));
+
+    const mismatched = exercisePackageScopedRestore(listenerJavaScript, {
+      schema_version: 2,
+      package_identity: { ...matchingIdentity, track_manifest_sha256: "b".repeat(64) },
+      answers: { overall_drums_bass: "不应污染新包" },
+      listening: { A: { plays: 99, seconds: 999 } },
+    });
+    assert.equal(mismatched.control.value, "");
+    assert.doesNotMatch(mismatched.stats.A.textContent, /播放 99 次/);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
