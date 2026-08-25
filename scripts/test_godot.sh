@@ -27,12 +27,17 @@ run_with_timeout() {
 }
 
 echo "Preparing Godot imports and global class cache"
+import_log="$project_root/godot/.godot/import-test.log"
 run_with_timeout \
   "$godot_bin" \
   --path "$project_root/godot" \
   --headless \
-  --log-file "$project_root/godot/.godot/import-test.log" \
+  --log-file "$import_log" \
   --import
+if grep -q "SCRIPT ERROR:" "$import_log"; then
+  echo "Godot import emitted SCRIPT ERROR; inspect $import_log" >&2
+  exit 1
+fi
 
 for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd boss_encounter_director_test.gd season_mechanics_test.gd relay_hive_test.gd mentor_tutorial_test.gd hud_responsive_test.gd; do
   echo "Running $test_file"
@@ -47,6 +52,10 @@ for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd 
   run_with_timeout "${test_command[@]}"
   # Godot may exit 0 when a --script fails to parse, so the process status alone
   # is not a sufficient test result. Every test owns an explicit success marker.
+  if grep -q "SCRIPT ERROR:" "$test_log"; then
+    echo "$test_file emitted SCRIPT ERROR; inspect $test_log" >&2
+    exit 1
+  fi
   if ! grep -q "TEST PASSED" "$test_log"; then
     echo "$test_file did not report TEST PASSED; inspect $test_log" >&2
     exit 1
