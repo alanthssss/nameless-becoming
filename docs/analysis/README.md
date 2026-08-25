@@ -3,8 +3,11 @@
 > 本文档集将上一轮的项目分析整理为分层的中英双语文档，避免单一长文档造成阅读负担。
 > This document set restructures the project analysis into layered bilingual (中文/EN) documents, avoiding the burden of a single lengthy file.
 
-**项目版本 / Project Version**: 候选 MVP 0.9.4 (Candidate MVP 0.9.4)
-**分析日期 / Analysis Date**: 2026-08-18
+**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2 (`origin/main` `b03811c4`；玩法基线 `4537151`)
+**同步日期 / Sync Date**: 2026-08-25
+
+> 01–04 描述当前产品与执行边界；05–07 是专项参考，若与当前实现冲突，应回到 `godot/`、`MVP_SPEC.md` 和 `PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` 核对。`PROJECT_LOG.md` 是历史记录，不是现行规格。
+> Documents 01–04 describe the current product and execution boundary. Documents 05–07 are specialist references; when they conflict with implementation, check `godot/`, `MVP_SPEC.md`, and `PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`. `PROJECT_LOG.md` is historical, not a current spec.
 
 ---
 
@@ -37,7 +40,8 @@
 
 | 文档 / Document | 路径 / Path | 说明 / Note |
 |-----------------|-------------|-------------|
-| 项目策划记录 / Project Log | `docs/PROJECT_LOG.md` | 版本决策与设计共识（中文） |
-| MVP 规格 / MVP Spec | `docs/MVP_SPEC.md` | 完整 MVP 范围与验收标准（中文） |
-| 设计共识与实现差距 / Design Consensus & Gaps | `docs/DESIGN_CONSENSUS.md` | 十五项共识逐项对照实现状态 + 后续优先级（中文） |
-| 色彩体系 / Color System | `docs/COLOR_SYSTEM.md` | 二十四节气阴阳消长色谱：四正色 + 四季六阶 + 四正色 Boss 落位（中文） |
+| 玩家反馈整改与验证 / Feedback Implementation & Validation | `docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` | 当前实现事实、证据等级、执行矩阵与外测标准（中文） |
+| MVP 规格 / MVP Spec | `docs/MVP_SPEC.md` | 当前候选范围与验收标准（中文） |
+| 设计共识与实现差距 / Design Consensus & Gaps | `docs/DESIGN_CONSENSUS.md` | 当前稳定共识、实现边界与证据触发任务（中文） |
+| 项目策划记录 / Project Log | `docs/PROJECT_LOG.md` | 历史版本决策；保留被后续推翻的旧方案（中文） |
+| 色彩体系 / Color System | `docs/COLOR_SYSTEM.md` | 二十四节气阴阳消长色谱：四正色与连续色彩区间；不定义现行关卡拓扑（中文） |

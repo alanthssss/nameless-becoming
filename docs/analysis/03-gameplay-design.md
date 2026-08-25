@@ -1,147 +1,159 @@
 # 03 · 玩法与设计 / Gameplay & Design
 
-> 核心张力：发现稀有花 → 停留采集 → 危险靠近、体力下降 → 决定继续贪、战斗或撤退 → 带着资源亲自飞回蜂巢
-> Core tension: discover rare flowers → linger and harvest → danger closes in, stamina drops → decide to keep going, fight, or retreat → fly back to the hive with your resources
+> 核心张力：发现花源 → 停留采集 → 危险与体力改变局面 → 决定继续、处理威胁或撤离 → 把资源带回蜂巢。
+> Core tension: find nectar → linger to harvest → danger and stamina reshape the situation → continue, respond, or retreat → bring resources home.
+
+当前仓库基线 / Current repository baseline：`0.9.5-rc.2`，`origin/main` `b03811c4`；玩法与资产基线为 `4537151`。
 
 ---
 
-## 1. 核心游戏循环 / Core Loop
+## 1. 核心循环 / Core Loop
 
+```text
+搜 Search → 采 Harvest → 险 Danger → 择 Decide → 撤 Extract
+     ↑                                           ↓
+下一节点 / 失律者 ← 蜂群成长 ← 归巢交付 ← 主巢站稳
 ```
-搜 Search ──► 采 Harvest ──► 险 Danger ──► 择 Decide ──► 撤 Extract
-  │                                                          │
-  └──────────── 蜂巢三选一成长 Hive upgrade ──► 下一节令 Next term ──┘
+
+关键情绪不是“击败所有敌人”，而是“已经带着收获，但远处还有一朵”。
+The key emotion is not “defeat every enemy,” but “I already carry a harvest, yet another flower remains farther away.”
+
+普通节点目标为 10～15，基础携带上限为 8，至少需要两次归巢。总时长只记录，不用固定 15～25 或 32～42 分钟判断通过。
+
+## 2. 三个设计支柱 / Three Design Pillars
+
+### 2.1 贪与撤 / Risk and Return
+
+- 采蜜需要持续停留；携蜜只有实际卸入主巢才安全。
+  Harvesting requires sustained presence; carried nectar becomes safe only after a real deposit at the main hive.
+- 体力、普通敌害、当组机制和路线共同制造撤离压力。
+  Stamina, field enemies, the active seasonal mechanic, and route shape extraction pressure.
+- 失败、盗蜜和诱饵遵守花蜜守恒，避免永久软锁。
+  Failure, theft, and decoys conserve nectar to prevent permanent soft locks.
+- 若延长节点只增加重复采集，就不算增加内容。
+  Extending a node through repetition alone does not count as more content.
+
+### 2.2 蜂群而非孤胆英雄 / Colony, Not Lone Hero
+
+- 归巢蜜进入公共储备；节点间成长改善飞行、采集或守卫倾向。
+  Deposited nectar enters a shared reserve; between-node upgrades improve flight, gathering, or guarding.
+- 蜂针不是普通攻击；震翼、诱饵、急转和调律承担对抗。
+  The sting is not a regular attack; repel, decoy, evade, and tuning handle threats.
+- 主蜂巢是唯一交付点；中继巢只能有限恢复。
+  The main hive is the only delivery point; the relay hive only offers capped recovery.
+
+### 2.3 可感知因果 / Perceptible Causality
+
+- 会阻止结算的条件必须从开局常驻显示；
+  Every blocking completion condition must remain visible from the start.
+- 按键本身不能证明学会，真实世界结果才推进教学；
+  A button press does not prove learning; only a real world result advances the tutorial.
+- 节气、季节和机制首先通过实体、运动、状态变化与声音表达；
+  Solar terms and mechanics are expressed first through entities, movement, state change, and sound.
+- 自动测试和截图只证明实现，不能证明玩家读懂。
+  Automation and screenshots prove implementation, not player comprehension.
+
+## 3. 操作与老师傅教学 / Controls and Mentor Teaching
+
+| 动作 / Action | 键盘 / Keyboard | 当前因果 / Current causal rule |
+| --- | --- | --- |
+| 飞行 / Fly | WASD / 方向键 | 持续移动自动振翅加速并额外耗体力 |
+| 情境动作 / Context action | 空格 / 回车 | 近花采蜜、近敌惊退、静止寻迹或机制交互 |
+| 诱饵 / Decoy | 松开后长按情境键 | 消耗 1 滴携蜜，结束后回到花田 |
+| 急转 / Evade | 锁线后同方向 0.34 秒内连按两次 | 从锁定位置附近离开真实危险通道；敌害穿过旧位置且蜂在线外才成功 |
+| 饮蜜 / Drink | E | 每节点最多 2 次；当前没有指针／触摸等价入口 |
+| 归巢 / Return | Q | 自动飞回唯一主巢，站稳后卸蜜 |
+
+老师傅统一采用“示范 → 模仿 → 无提示实践”：
+
+- 示范冻结真实模拟，不修改蜜、体力、敌害或储备；
+- 寻迹必须找到并采到被气味揭示的花；
+- 惊退必须让敌害离开资源区；
+- 急转不能用锁线前抢跑、空地双击或无敌帧硬穿代替；
+- 首次失败安全重演，急转必须真实完成 `1/2 → 2/2`；
+- 首节点之外的迁移学习仍待真人约 3 分钟复测。
+
+## 4. 24 节点推进 / 24-Node Progression
+
+`godot/data/seasons.json` 有 24 个节点。春分、夏至、秋分是显式 Boss 节点；大雪后的循环终点进入冬至失律之熊。当前结构不是早期“四个压缩节令”，也不是已废止的“每季 3 阶段”。
+
+普通节点按 `flower_set`／`mechanics` 分成四组，资产和行为不应只按 `season` 标题判断：
+
+| 组 / Group | 节点 / Nodes | 完成条件 / Completion condition |
+| --- | --- | --- |
+| 春／授粉 | 冬至～惊蛰 | 归巢蜜 + 传粉 `2/2`；首节点另需完成老师傅要求 |
+| 夏／袭扰 | 清明～芒种 | 归巢蜜 + 首次真实卸蜜已触发袭扰 + 全部袭扰者已被惊退 |
+| 秋／留种 | 小暑～白露 | 归巢蜜 + 至少一次成熟留种，或花田已经被明确采尽 |
+| 冬／暖点 | 寒露～大雪 | 归巢蜜 + 暖点 `3/3` |
+
+最后一项已列条件完成时立即结算；不得保留不显示却会阻止推进的门禁。
+
+## 5. 四组季节行为 / Seasonal Behavior Groups
+
+### 5.1 春：开放花授粉 / Spring: Open-Flower Pollination
+
+```text
+同一可见花型的开放花药
+→ 蜂身松散可见花粉
+→ 同型开放柱头
+→ 柱头受粉并进入结籽
 ```
 
-**中文 / CN**：关键情绪不是"击败所有敌人"，而是"已经收获很多，但远处还有一朵更好的花"。
+授粉不使闭合花苞瞬间开放，不生成、恢复或搬运花蜜。给粉花和受粉花从开局可见，兼容性由同一花型表达，角色由器官形状与状态区分。
 
-**English / EN**: The key emotion is not "defeat all enemies" but "I've gathered a lot, yet there is still a better flower farther away."
+### 5.2 夏：实体袭扰 / Summer: Physical Raid
 
----
+第一次真实卸蜜后，有翅劫掠者从边缘进入，移动到富蜜花，逐滴偷走真实花蜜；偷满后仍持赃停留，等待不会自动解决。玩家必须逐只惊退，被夺蜜才落回花田，航线清空后才能完成。
 
-## 2. 三大设计支柱 / Three Design Pillars
+### 5.3 秋：野外留种 / Autumn: Field Seed Choice
 
-### 2.1 贪与撤 / Greed vs. Retreat
+花剩最后一滴时自动暂停当前采集，玩家必须松手。再次按下可采尽并显示破裂种荚；若停手并带其他蜜真实归巢，种核成熟、该滴不再可采并增加公共储备。段末的“公共储备／哺育幼虫”分配仍存在，但它是跨季附加层，不是秋季主行为。
 
-| 中文 / CN | English / EN |
-|-----------|--------------|
-| 稀有花位于更远或更危险的位置 | Rare flowers sit farther away or in more dangerous positions |
-| 采蜜需要持续停留，不能碰触后瞬间获得 | Harvesting requires sustained presence; nectar is not instant |
-| 携带资源只有回到蜂巢才安全 | Carried resources are only safe back at the hive |
-| 体力、敌人和路线共同制造撤离压力 | Stamina, enemies, and routes together create extraction pressure |
-| 失败损失本次携带资源，但不立即清空整局进度 | Failure loses the current carry, not the whole run |
+### 5.4 冬：热源接力 / Winter: Warmth Relay
 
-**资源守恒 / Resource Conservation**：花蜜总量守恒——失败或蚊虫撞击把携蜜散回花田形成"返蜜花"；掠蜜蚁携带赃蜜，受惊后掉落。失败仍损失蜂巢呼吸与时间，但不能令关卡永久无解。
+野外寒冷持续降低体温并渐进减速。玩家用携蜜按顺序点亮 3 个蜂蜡暖点；每个暖点既提供恢复区，也开放下一段远花路线。完整暖链才允许结算。
 
-### 2.2 蜂群而非孤胆英雄 / The Colony, Not a Lone Hero
+## 6. 普通敌害 / Field Threats
 
-- 玩家带回的蜜进入蜂群公共储备 / Nectar enters the colony's public reserve
-- 节令间只能从三种蜂群成长中选择一种 / One of three colony upgrades per term
-- 成长体现分工：飞行、采集、守卫 / Upgrades embody division of labor: flight, gathering, guarding
-- 结局评价蜂群是否熬过循环，而不只计算击杀数 / Ending judges whether the colony survived, not kill count
+普通敌害包括追击蚊虫、偷蜜蚁、节奏冲刺的油葫芦、制造假花／歌声干扰的画眉和压平花区的熊。它们分别攻击体力、资源、节奏、信息和空间，不等同于四位 Boss。
 
-### 2.3 节气与阴阳消长 / Solar Terms & Yin-Yang Flux
+震翼只惊退可惊退目标；资源敌害的被夺花蜜必须以可见路径回到花田。普通蚊虫当前仍以持续跟随为主，没有普遍复用教学／熊的锁线急转语法。
 
-- 四个 MVP 关卡分别代表春分、夏至、秋分、冬至
-- 色彩、花量、敌人、能耗与音乐密度连续变化（非硬切主题皮肤）
-- 每关使用同一套操作，不制作互不相关的小游戏
-- 顶部保留二十四节气路线，为后续每季六关扩展
+## 7. 四位失律者 / Four Unregulated Bosses
 
----
+| Boss | 独立暴露条件 / Unique exposure | 成功读取 / Success read |
+| --- | --- | --- |
+| 蚊 / Mosquito | 完成真实吸取 / completes a real feed | 饱食短窗 |
+| 油葫芦 / Field cricket | 跳跃后真实落地 / actually lands | 落点停顿短窗 |
+| 画眉 / Thrush | 寻迹揭出真声 / sense reveals truth | 真身显露，假回声移除 |
+| 熊 / Bear | 玩家闪过冲锋且熊撞暖息花 / evade, then bear hits warm bloom | 暖花碰撞与眩晕短窗 |
 
-## 3. 操作与技能 / Controls & Skills
+暴露后仍需在共鸣实体附近用震翼登记一次调律。共 3 次，每阶段加快、缩短窗口；画眉假回声随阶段增加。Boss 巢口照料最多 2 次。
 
-| 动作 / Action | 输入 / Input | 作用 / Effect | 成本与限制 / Cost & Limits |
-|---------------|--------------|---------------|----------------------------|
-| 飞行 / Fly | WASD / 方向键 | 移动；持续飞自动振翅加速 / Move; sustained flight auto-dashes | 持续缓慢消耗体力 / Slow stamina drain |
-| 采蜜 / Harvest | 空格（近花）/ Space near flower | 从附近花朵逐滴采集 / Collect drop by drop | 停留、额外消耗体力 / Must linger |
-| 震翼惊退 / Repel | 空格（近敌）/ Space near enemy | 推开敌人并使其持续远离 | 8 点体力 + 冷却；非麻痹非蜂针 |
-| 触角寻迹 / Sense | 空格（静止）/ Space while still | 显示蜜量、警戒区、归巢方向、推荐花 | 3 秒持续，7 秒冷却 |
-| 投蜜诱饵 / Decoy | 松开后长按空格 / Long-press after release | 投 1 滴蜜吸引蚊虫 5 秒 | 诱饵结束后蜜回归花田 |
-| 急转闪避 / Evade | 同方向快速连按两次 / Double-tap one direction | 沿输入方向侧掠；避开已锁定的攻击通道 | 0.34 秒连按窗，12 点体力，1.6 秒冷却 |
-| 归巢 / Return | Q | 自动飞回蜂巢 / Auto-return to hive | 需亲自回巢蜜才入储备 |
-| 暂停 / Pause | Esc | 暂停并显示操作 | — |
+## 8. 音乐与反馈 / Music and Feedback
 
-> 注：蜂针不是普通攻击。工蜂刺器是巢群防御器官并带不可逆的生命意味；若未来加入蜂针，只能用于明确、稀少且改变角色命运的抉择。
+- 8 个独立 WAV：春／夏／秋／冬各 1 首探索和 1 首 Boss 变奏；
+- 普通节点按机制组路由探索曲，Boss 使用对应变奏，归巢柔化当前探索曲；
+- 旧单一程序背景循环、统一低频 pad 和 Boss 全局降调已移除；
+- 动作发动、攻击锁线和真正闪开使用不同 cue；
+- 文件差异、循环与路由已由开发者自测，听感仍待盲听和实机 A/B。
 
----
+## 9. 蜂巢成长与身份 / Hive Growth and Identity
 
-## 4. 四季大关与色彩体系 / Season Stages & Color System
+当前三选一成长只改变能力：
 
-### 4.1 关卡结构 / Stage Structure
+| 倾向 / Track | 当前效果 / Current effect |
+| --- | --- |
+| 长翼 / Long wing | 速度与振翅效率 |
+| 采蜜 / Forager | 采集间隔与单花产量；不增加携带上限 |
+| 守卫 / Guard | 惊退范围与冷却 |
 
-**中文 / CN**：关卡结构为**四季大关 × 6 小关**（24 个节气节点），每大关内 6 个小关对应六个节气节点，色调沿该季阴阳方向逐阶渐变；**四正色（春分/夏至/秋分/冬至）为守关 Boss 节点**——正色即阴阳消长的关键转折，失律者盘踞之处。
+身份徽章、侦察前置链、变态发育职业成长和蜂巢建设仍是候选方向，未进入当前规格。
 
-**English / EN**: The stage structure is **4 season stages × 6 sub-stages** (24 solar-term nodes). Each stage's 6 sub-stages follow six solar terms with gradual hue shifts along the season's yin-yang direction; the **four zhengse nodes (Spring Equinox / Summer Solstice / Autumn Equinox / Winter Solstice) host the gate bosses** — the key turning points of yin-yang flux, where the Unregulated dwell.
+## 10. 当前验证边界 / Current Validation Boundary
 
-| 大关 / Stage | 色系 / Palette | 6 小关 / 6 Sub-stages | 守关 Boss 节点 / Gate Boss |
-|-------------|----------------|----------------------|---------------------------|
-| 春 / Spring | 玄→青 | 冬至、小寒、大寒、立春、雨水、惊蛰 | 春分 · 正青 |
-| 夏 / Summer | 青→朱 | 清明、谷雨、立夏、小满、芒种 | 夏至 · 正朱 |
-| 秋 / Autumn | 朱→白 | 小暑、大暑、立秋、处暑、白露 | 秋分 · 正白 |
-| 冬 / Winter | 白→玄 | 寒露、霜降、立冬、小雪、大雪 | 冬至 · 正玄 |
-
-### 4.2 四正色 / The Four Zhengse
-
-| 正色 / Zhengse | HEX | 角色 / Role |
-|----------------|-----|-------------|
-| 玄 Xuan | `#101420` | 背景深渊、未探索区域、失败归宿 |
-| 青 Qing | `#008080` | 生机、蜂群、可采集花蜜提示 |
-| 朱 Zhu | `#DC3C3C` | 危险、失律者、Boss、受击 |
-| 白 Bai | `#F5F5F5` | 蜂巢、安全区、结算、澄澈的匮乏 |
-
-**材质原则 / Material Principles**：低饱和低对比，叠加宣纸/岩彩纹理，避免纯色塑料感。完整色谱见 `docs/COLOR_SYSTEM.md`。
-
-### 4.3 四季招牌机制 / Seasonal Signature Mechanics
-
-**中文 / CN**：2026-08-18 全量实现四季差异化玩法（数据驱动，`seasons.json` mechanics 槽位 + `season_mechanics.gd` 调度层）：
-
-**English / EN**: All four seasonal signature mechanics were fully implemented on 2026-08-18 (data-driven: `mechanics` slots in `seasons.json` + dispatcher `season_mechanics.gd`):
-
-| 季 / Season | 机制 / Mechanic | 玩法 / Gameplay | 生态依据 / Ecology |
-|------------|----------------|-----------------|-------------------|
-| 春 / Spring | 授粉 Pollination | 花田是活的：久不采则休眠（蜜保留）；低蜜量触发授粉长新花 | 授粉是生态的一部分 |
-| 夏 / Summer | 征召 Conscription | 巢口/花区告急交替，响应哪边都是贡献；不响应不惩罚 | 被需要的方式在变化 |
-| 秋 / Autumn | 储备 Reserve | 季末分配：储备冬蜜 vs 哺育幼虫（两种集体投资） | 无私有财产；为来年投资 |
-| 冬 / Winter | 抱团 Huddle | 体温系统、带蜜归巢耗储备恢复、储备≥5 解锁侦察+摇摆舞 | 共御严寒；风险留给老兵 |
-
----
-
-## 5. 敌人系统 / Enemy System
-
-### 普通敌人 / Regular Enemies
-
-1. **蚊虫 / Mosquito**：在巢外警戒范围内追击，接触后损失体力和少量携蜜；无法越过蜂巢安全边界，震翼会令其实际向外惊退。
-2. **掠蜜蚁 / Honey-Thief Ant**：移动较慢，优先追逐掉落或携带的蜜；被击退后会绕路再次靠近。
-
-### 失律者 / The Unregulated (Boss)
-
-- **主题 / Theme**：只索取、不流转 / Takes without giving back
-- **玩法 / Gameplay**：玩家通过震翼打断吸取、引导其撞入花粉团并完成三次共振"调律"。胜利条件是调律或驱离，而非削空传统生命条。
-- **落位 / Placement**：四正色节点（春分/夏至/秋分/冬至）各设守关 Boss；原型对应分配（蚊/油葫芦/画眉/熊）待定。
-- **参数 / Parameters**：速度 78，碰撞范围 39，调律半径 82，需 3 次调律
-
----
-
-## 6. 蜂巢成长与身份 / Hive Upgrades & Identity
-
-每个节令结束后展示三选一，只在本局有效，同类可叠加两次：
-
-| 选项 / Option | 符号 / Symbol | 效果 / Effect |
-|---------------|--------------|---------------|
-| 长翼蜂 Long-Winged | 疾 | 飞行速度 +10%，振翅耗能 -15% |
-| 采蜜蜂 Forager | 蜜 | 采蜜间隔 -15%，每朵花额外保留 1 滴 |
-| 守卫蜂 Guard | 守 | 惊退范围 +18%，震翼冷却 -15% |
-
-**身份系统方向 / Identity Direction**（设计已定案，未实现）：三选一升级将**去职业化**为纯属性节点（不承担身份语义）；明确身份 = **成就徽章系统**——基于实际行为 + 完成程度事后授予，徽章集合构成身份画像，结算时组合生成一句身份描述。侦察 = 采集徽章达阶解锁。详见 `docs/PROJECT_LOG.md` 十三节。
-
----
-
-## 7. 反馈与可读性 / Feedback & Readability
-
-- 采蜜：花朵收缩、花粉粒子、音高递增
-- 受击：短暂闪白、屏幕震动、蜜滴飞散
-- 危险：敌人靠近时环境声与边缘暗角增强
-- 归巢：携蜜飞向蜂房、储备数字滚动增加
-- 节令变化：调色连续过渡，而非硬切主题皮肤
-- 所有关键状态同时使用颜色与形状表达，不能只依赖色觉
+- PR #63 已以 `4537151` 进入主线；PR #64 的匿名盲听工具已以 `b03811c4` 进入主线，不改变可玩内容基线；
+- Alan 的“可以”是方向门禁，不是逐项可用性通过；
+- 8 组 Godot 回归、视觉快照和构建哈希属于开发者证据；
+- 外部玩家证据为 0；
+- 时长、难度、四季辨识、Boss 规则复述、音乐品质和重玩意愿都仍需真实记录。
