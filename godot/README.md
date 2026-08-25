@@ -50,4 +50,15 @@ godot --path godot --headless --export-debug "Windows Desktop"
 
 构建来源脚本会从 `package.json` 读取产品版本、从当前 `HEAD` 读取提交号，生成不纳入 Git 的 `data/build_provenance.json`；标题与暂停覆盖层会显示该版本和短提交号，未提交工作区会额外标记 `+dirty`。`npm run test:godot` 和桌面构建流水线会自动执行这一步。
 
+## 秋季实机混音试听（内部工具）
+
+正式候选固定从首节点开始，没有选关或续关。需要单独检查秋季音乐与真实玩法音效的遮蔽、爆音和循环接缝时，可在干净的专用工具分支运行：
+
+```bash
+scripts/run_autumn_mix_audition.sh explore
+scripts/run_autumn_mix_audition.sh boss
+```
+
+入口使用本机 Godot 4.6.2、真实 `main.tscn`、MusicDirector、SoundFeedback 和 CoreAudio，但用内存 SaveManager 隔离正式存档。画面顶部会永久显示“内部音乐复查 · 不计玩法/流程通过”。Boss 模式只延长蜜蜂体力，保留受击音效，避免无人操作时在听完两轮前中断；因此它不是难度测试。该工具不是发行包，也不覆盖前置成长、季节切换、完整流程或长期耐循环，不能把这次记录写成玩法／发行验收通过。
+
 仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出，生成包与 SHA-256 artifact；默认不创建 Release，只有主分支运行且明确选择 `publish_prerelease` 才会发布预发布版本。

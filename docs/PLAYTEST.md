@@ -196,3 +196,9 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 PR #76 合并为完整提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd` 后，GitHub [`Desktop client builds` run 32840904829](https://github.com/alanthssss/nameless-becoming/actions/runs/32840904829) 从该精确 `main` 提交生成 macOS universal 与 Windows x86_64 artifact。两个下载文件均以随包 sidecar 复验 SHA-256，PCK provenance 绑定 `0.9.5-rc.2`、完整 `de78f2c` 和 `dirty: false`；详细 artifact ID、文件大小、哈希、到期日与签名验证见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
 该构建包含首次采蜜修复和已获选择的秋季探索／Boss 双轨，但这是构建事实，不是新试玩或游戏内混音结果。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机证据仍为缺失。
+
+### 秋季内部混音试听器：证据边界
+
+专用工具分支提供 `scripts/run_autumn_mix_audition.sh explore|boss`，以源码级 Godot 4.6.2 运行时分别直达第一个秋季普通节点和失律之画眉。它调用真实 `main.tscn`、MusicDirector、SoundFeedback、玩法和 HUD，并在主场景进入树前替换为不读写磁盘的内存 SaveManager；画面永久标记“内部音乐复查 · 不计玩法/流程通过”。
+
+该入口只用于记录 Alan 在真实 SFX 下是否听到遮蔽、爆音、明显循环不适，以及探索/Boss 的情绪与节奏是否仍成立。Boss 模式会把蜜蜂体力延长到 99,999，以保留受击音效但避免无人操作时过早中断；所以不能拿该入口判断难度、失败压力或流程平衡。它不是 `de78f2c` 发行 artifact，不包含前置升级／储备，不验证上一季到秋季或蜂巢到 Boss 的切换，也不能替代完整流程、长期耐循环、外部玩家或设备发行验收。试听结果须另行归档后才能关闭对应混音门禁。
