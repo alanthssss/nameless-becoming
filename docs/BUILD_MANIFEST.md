@@ -1,6 +1,6 @@
 # 0.9.5 候选构建历史与校验清单
 
-本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。此前固定人工验收候选 `0.9.5-rc.2` / `21a44bd64e100231548fa2663a7b4d6f472a88dd` 已确认误带 Godot 测试资源，自 2026-08-25 起只保留为历史可追溯构建，不能继续作为交付或人工验收入口；其 artifact、SHA-256 与降级原因见“2026-08-25 Boss 失败／暂停修复候选”。下一个固定候选必须从带内部资源导出门禁的新完整提交重建；`de78f2c` 及更早表格同样只作历史记录。
+本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选为 `0.9.5-rc.2` / `29e719fff1621df35f88972f3bdeed98e37d8af9`，见“2026-08-25 内部资源导出门禁替代候选”。此前的 `21a44bd64e100231548fa2663a7b4d6f472a88dd` 因误带 Godot 测试资源已降为历史可追溯构建，不得继续作为交付或人工验收入口；`de78f2c` 及更早表格同样只作历史记录。
 
 ## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 
@@ -158,4 +158,21 @@ macOS PCK 与 Windows EXE 均内嵌产品版本 `0.9.5-rc.2`、完整提交 `21a
 
 该发现证明的是导出范围与包体卫生缺陷。仅凭测试字节码被打包，不能得出存在可利用安全漏洞或已造成安全事件的结论；安全定性需要独立威胁分析。但 `21a44bd` 双端 artifact 已不满足预期交付边界，必须停止继续验收，并由修复后的新完整提交重建替代。旧文件和哈希继续保留为历史证据，不得改写为已通过过滤的候选。
 
-修复把 macOS、Windows Desktop、Web 三个 Godot 4.6.2 preset 的排除 glob 统一为 `tests/**,tools/**`。自动门禁不是 grep 配置：质量流水线会对三个 preset 逐一执行真实 `--export-pack` 并由 Godot 挂载检查；桌面构建流水线还会在 `package_macos.sh` 完成签名与重新打包后，从最终 macOS ZIP 解包并直接挂载其中的 PCK，同时检查最终 Windows EXE 的内嵌 PCK。任一包出现 `res://tests/` 或 `res://tools/`、缺少主场景 remap，或检查脚本没有显式成功标记都会失败。新的双端 artifact、sidecar 与人工验收入口仍须在本修复合入后的完整提交上生成并另行记录。
+修复把 macOS、Windows Desktop、Web 三个 Godot 4.6.2 preset 的排除 glob 统一为 `tests/**,tools/**`。自动门禁不是 grep 配置：质量流水线会对三个 preset 逐一执行真实 `--export-pack` 并由 Godot 挂载检查；桌面构建流水线还会在 `package_macos.sh` 完成签名与重新打包后，从最终 macOS ZIP 解包并直接挂载其中的 PCK，同时检查最终 Windows EXE 的内嵌 PCK。任一包出现 `res://tests/` 或 `res://tools/`、缺少主场景 remap，或检查脚本没有显式成功标记都会失败。下述 `29e719f` 双端 artifact 已在修复合入后的完整提交上重建，并由该新检查器直接确认最终交付包边界。
+
+## 2026-08-25 内部资源导出门禁替代候选
+
+当前固定人工验收 artifact 来自完整 `main` 提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。该提交是 PR #82 的合并提交：在 `21a44bd` 已有玩法、首次采蜜、秋季双轨和 Boss 失败／暂停修复之上，包含 PR #81 的外围弹层键盘焦点／切出暂停修复，以及 PR #82 的三 preset 内部资源排除与最终包检查门禁。`21a44bd` 继续作为包含历史缺陷的可追溯记录，不是当前验收入口。
+
+GitHub [`Desktop client builds` run 32851917691](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从上述精确提交生成双端 artifact。两个下载文件均已用随包 sidecar 在本机复验 SHA-256；下表大小与哈希指 artifact 解包后的 macOS ZIP／Windows EXE payload，不是 GitHub Actions 外层下载归档：
+
+| 平台 | GitHub artifact | 本机持久副本 | 到期时间 | payload 文件大小 | payload SHA-256 | 已完成验证 |
+| --- | --- | --- | --- | ---: | --- | --- |
+| macOS universal | `9564658342` / `NamelessBecoming-macOS-v0.9.5-rc.2` | `nameless-becoming-candidates/29e719f-run-32851917691/macOS/NamelessBecoming-macOS.zip` | `2026-09-24T13:13:49Z` | 70,315,673 bytes | `be1e269c529e651de71c9658f9d16bad3822b27eba4b6841df2d080208114e4e` | sidecar 复验通过；干净解包后 `codesign --verify --deep --strict` 通过；Mach-O 为 x86_64 + arm64，bundle id `com.alanthssss.namelessbecoming`，short version `0.9.5`，bundle version `0.9.5-rc.2`；内嵌 PCK SHA-256 为 `8af383ff36607d3a6200c6d789f6ecc0cc39603684ac43c20550cef51598b1f7`；无界面 smoke 通过 |
+| Windows x86_64 | `9564653395` / `NamelessBecoming-Windows-v0.9.5-rc.2` | `nameless-becoming-candidates/29e719f-run-32851917691/Windows/NamelessBecoming-Windows.exe` | `2026-09-24T13:13:40Z` | 116,831,112 bytes | `48195830e70ca78f68316dc9c6a8a9193ed85c894ca2601f33f951f0252ff074` | sidecar 复验通过；本机确认为 PE32+ GUI x86-64；Windows 真机尚未验证 |
+
+新的最终包检查器直接复核了 macOS ZIP 内的实际 PCK 和 Windows EXE 的内嵌 PCK：两者均不含 `res://tests/` 或 `res://tools/`，且 provenance 均为产品版本 `0.9.5-rc.2`、完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`和 `dirty: false`。标题／暂停层应显示 `v0.9.5-rc.2 · 29e719ff`，不含 `+dirty`。
+
+macOS 无界面 smoke 前后，真实存档 `nameless.cfg` 的 SHA-256 均为 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime 均为 `1787640643`、大小均为 143 bytes，本次启动检查未改写已有存档。仓库外本机副本根目录为 `nameless-becoming-candidates/29e719f-run-32851917691/`；该目录不是 Git 资产或公开发行渠道。
+
+以上关闭了 `21a44bd` 的内部资源边界构建阻断，并证明 PR #81 与 PR #82 已进入可追溯的双端交付包。它仍不等于 Alan 真人完整流程、Windows 真机、外部玩家、八轨总体／长期耐循环或游戏内完整混音通过。标准包仍没有秋季直达入口；macOS 包仍只是 ad-hoc 签名且未公证，Windows 包仍未做 Authenticode 签名。

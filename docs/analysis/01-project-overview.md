@@ -3,7 +3,7 @@
 > 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
 > A lightweight action-extraction prototype centered on bee ecology, the 24-solar-term cycle, and the risk of making it home.
 
-当前源码候选与固定 artifact / Current source candidate and fixed artifact：`0.9.5-rc.2` / `21a44bd`，包含 PR #76 秋季双轨与 PR #79 Boss 失败／暂停修复。
+当前源码候选与固定 artifact / Current source candidate and fixed artifact：`0.9.5-rc.2` / `29e719f`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停与 PR #82 导出门禁。
 
 ---
 
@@ -66,11 +66,11 @@ Each requires three tunings, with faster phases and shorter windows; they no lon
 | 教学 / Tutorial | 老师傅“示范 → 模仿 → 无提示实践”已接入，关键动作由真实结果推进 | 陌生玩家无口头帮助；当前正常路线没有固定的延迟急转复测机会 |
 | 音乐 / Music | 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；Alan 已完成 A–H 评论，PR #70 否决后经方向草图与 PR #76 全长最终 A/B，两组均选择新版秋季候选 | 秋季双轨创作者替换门禁已通过；总体偏好、四组配对、长期循环疲劳、外部听者和实机混音仍缺，不能判定整套音乐通过 |
 | 视觉 / Visuals | 低噪地表、独立蜂巢、8 种季节花与机制实体已接入 | 运动中的画风统一和目标可读性 |
-| 发行 / Release | `21a44bd` 固定候选 artifact 已构建并复验 SHA-256 | 新候选首分钟重测、Windows 真机、完整人工流程、秋季实机混音和外部试玩 |
+| 发行 / Release | `29e719f` 固定候选 artifact 已构建并复验 SHA-256 与最终包 tests/tools 边界 | 当前候选首分钟重测、Windows 真机、完整人工流程、秋季实机混音和外部试玩 |
 
 ## 5. 证据边界 / Evidence Boundary
 
-- **实现事实 / Implemented facts**：PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD／输入形成 `f57ea02c`，PR #69 形成历史 artifact `4b57d856`，PR #76 形成历史 artifact `de78f2c`，PR #79 合并后形成当前固定 artifact `21a44bd`。PR #67、#68、#75 只增加证据工具／文档。旧 A 包不能迁移为新候选通过证据。
+- **实现事实 / Implemented facts**：PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD／输入形成 `f57ea02c`，PR #69 形成历史 artifact `4b57d856`，PR #76 形成历史 artifact `de78f2c`，PR #79 形成历史 artifact `21a44bd`，PR #81／#82 合并后形成当前固定 artifact `29e719f`。PR #67、#68、#75 只增加证据工具／文档。旧 A 包不能迁移为新候选通过证据。
 - **开发者自测 / Developer verification**：自动流程、构建、哈希、静态快照。
 - **Alan 方向门禁 / Alan direction gate**：PR #63 整体方向与 PR #65 HUD 视觉／按钮方向允许合并；PR #76 最终 A/B 两组均选择正式秋季候选。后者只通过秋季双轨替换，不等于完整八轨、长期耐循环、实机混音、原生触屏或发行验收。
 - **外部玩家 / Independent players**：当前证据数为 **0**。
