@@ -20,6 +20,22 @@ const LEAF_TEXT := Color("65705e")
 const CREAM_TEXT := Color("f5edcf")
 const DANGER := Color("bd5a43")
 
+# The world is authored on one logical canvas. Godot's `keep` stretch mode fits
+# this canvas uniformly into each desktop output; centralizing the landmarks here
+# makes that responsive contract testable instead of scattering physical-size
+# assumptions through main.gd.
+const REFERENCE_SIZE := Vector2(1280, 720)
+const TOP_TRAY_RECT := Rect2(26, 14, 1228, 118)
+const STAT_SHELF_RECT := Rect2(42, 65, 966, 59)
+const WORLD_RECT := Rect2(34, 146, 970, 538)
+const STATUS_CARD_RECT := Rect2(1018, 146, 232, 220)
+const ACTION_CARD_RECT := Rect2(1018, 386, 232, 194)
+const HISTORY_CARD_RECT := Rect2(1018, 618, 232, 66)
+const TUTORIAL_RECT := Rect2(276, 612, 486, 58)
+const SENSE_BUTTON_RECT := Rect2(1034, 458, 136, 56)
+const RETURN_BUTTON_RECT := Rect2(1176, 458, 58, 56)
+const DRINK_BUTTON_RECT := Rect2(1034, 520, 200, 56)
+
 var host
 var phase_label: Label
 var tutorial_visible := false
@@ -27,9 +43,42 @@ var tutorial_visible := false
 func _ready() -> void:
 	name = "ProductionHUD"
 	position = Vector2.ZERO
-	size = Vector2(1280, 720)
+	size = REFERENCE_SIZE
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_process(false)
+
+## Output-space geometry used by automated checks and desktop shell integration.
+## project.godot owns the actual uniform fit; this exposes the same safe frame
+## and mapped landmarks for a physical window size.
+static func layout_for_output(output_size: Vector2) -> Dictionary:
+	if output_size.x <= 0.0 or output_size.y <= 0.0:
+		return {}
+	var scale_factor := minf(output_size.x / REFERENCE_SIZE.x, output_size.y / REFERENCE_SIZE.y)
+	var fitted_size := REFERENCE_SIZE * scale_factor
+	var safe_frame := Rect2((output_size - fitted_size) * 0.5, fitted_size)
+	var result := {
+		"scale": scale_factor,
+		"safe_frame": safe_frame,
+	}
+	var reference_rects := {
+		"top_tray": TOP_TRAY_RECT,
+		"stat_shelf": STAT_SHELF_RECT,
+		"world": WORLD_RECT,
+		"status_card": STATUS_CARD_RECT,
+		"action_card": ACTION_CARD_RECT,
+		"history_card": HISTORY_CARD_RECT,
+		"tutorial": TUTORIAL_RECT,
+		"sense_button": SENSE_BUTTON_RECT,
+		"return_button": RETURN_BUTTON_RECT,
+		"drink_button": DRINK_BUTTON_RECT,
+	}
+	for key in reference_rects:
+		var reference_rect: Rect2 = reference_rects[key]
+		result[key] = Rect2(
+			safe_frame.position + reference_rect.position * scale_factor,
+			reference_rect.size * scale_factor
+		)
+	return result
 
 func apply_to(main, ui: CanvasLayer) -> void:
 	host = main
@@ -107,6 +156,7 @@ func apply_to(main, ui: CanvasLayer) -> void:
 			_style_button(node, node == main.overlay_button, false)
 	_style_button(main.sense_button, true, false)
 	_style_button(main.return_button, false, false)
+	_style_button(main.drink_button, true, false)
 	queue_redraw()
 
 func _reflow_context(main) -> void:
@@ -150,9 +200,11 @@ func _reflow_context(main) -> void:
 	main.context_hint_label.add_theme_font_size_override("font_size", 11)
 	main.context_hint_label.add_theme_color_override("font_color", Color("c8d5bf"))
 	main.sense_button.position = Vector2(16, 312)
-	main.sense_button.size = Vector2(136, 42)
+	main.sense_button.size = Vector2(136, 56)
 	main.return_button.position = Vector2(158, 312)
-	main.return_button.size = Vector2(58, 42)
+	main.return_button.size = Vector2(58, 56)
+	main.drink_button.position = Vector2(16, 374)
+	main.drink_button.size = Vector2(200, 56)
 
 	# Old separator ColorRects remain as lightweight ornaments instead of office
 	# rules spanning a white sheet.
@@ -186,8 +238,8 @@ func update_state(main) -> void:
 func _draw() -> void:
 	# A single top tray unifies title, system state and all resources. The warm
 	# inner shelf is wax, not a set of spreadsheet cells.
-	_draw_panel(Rect2(26, 14, 1228, 118), DEEP_MOSS, Color("a98543"), 16, 2, Color(0, 0, 0, 0.22), 5)
-	_draw_panel(Rect2(42, 65, 966, 59), WAX, Color("c6a45a"), 12, 1)
+	_draw_panel(TOP_TRAY_RECT, DEEP_MOSS, Color("a98543"), 16, 2, Color(0, 0, 0, 0.22), 5)
+	_draw_panel(STAT_SHELF_RECT, WAX, Color("c6a45a"), 12, 1)
 	draw_line(Vector2(346, 73), Vector2(346, 116), Color("b69a61", 0.48), 1.0)
 	draw_line(Vector2(666, 73), Vector2(666, 116), Color("b69a61", 0.48), 1.0)
 	_draw_hex(Vector2(45, 39), 10, HONEY, 2.0)
@@ -201,21 +253,21 @@ func _draw() -> void:
 
 	# Context is split into compact cards; the gaps deliberately reveal the page
 	# background so this no longer reads as a permanent office sidebar.
-	_draw_panel(Rect2(1018, 146, 232, 220), Color("20372e", 0.97), Color("6e825f"), 12, 1, Color(0, 0, 0, 0.20), 4)
-	_draw_panel(Rect2(1018, 386, 232, 120), Color("294438", 0.96), Color("8a7848"), 12, 1, Color(0, 0, 0, 0.17), 4)
+	_draw_panel(STATUS_CARD_RECT, Color("20372e", 0.97), Color("6e825f"), 12, 1, Color(0, 0, 0, 0.20), 4)
+	_draw_panel(ACTION_CARD_RECT, Color("294438", 0.96), Color("8a7848"), 12, 1, Color(0, 0, 0, 0.17), 4)
 	draw_string(host.zh_font, Vector2(1038, 415), "当下动作", HORIZONTAL_ALIGNMENT_LEFT, 120, 10, HONEY_LIGHT)
 	draw_line(Vector2(1038, 425), Vector2(1229, 425), Color("8fa17d", 0.34), 1.0)
 	if host.runs_meter.visible or host.runs_meter_farthest.visible:
-		_draw_panel(Rect2(1018, 618, 232, 66), Color("1d3028", 0.90), Color("5d735f"), 11, 1)
+		_draw_panel(HISTORY_CARD_RECT, Color("1d3028", 0.90), Color("5d735f"), 11, 1)
 
 	# A restrained comb spine makes the negative space intentional and visually
 	# connects the contextual controls to colony history.
-	draw_line(Vector2(1233, 524), Vector2(1233, 608), Color(HONEY, 0.22), 1.0)
+	draw_line(Vector2(1233, 590), Vector2(1233, 608), Color(HONEY, 0.22), 1.0)
 	for i in 3:
-		_draw_hex(Vector2(1233, 542 + i * 30), 7, Color(HONEY, 0.25 - i * 0.04), 1.0)
+		_draw_hex(Vector2(1233, 590 + i * 9), 5, Color(HONEY, 0.25 - i * 0.04), 1.0)
 
 	if tutorial_visible:
-		_draw_panel(Rect2(276, 612, 486, 58), Color("1d3028", 0.96), Color("d0a94b"), 14, 1, Color(0, 0, 0, 0.25), 4)
+		_draw_panel(TUTORIAL_RECT, Color("1d3028", 0.96), Color("d0a94b"), 14, 1, Color(0, 0, 0, 0.25), 4)
 		draw_line(Vector2(414, 622), Vector2(414, 659), Color(HONEY, 0.32), 1.0)
 
 func _style_stat_labels(panel: Control) -> void:

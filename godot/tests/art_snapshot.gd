@@ -32,6 +32,15 @@ func capture() -> void:
 			game.mentor_tutorial.phase = "imitate"
 			game.mentor_tutorial.lesson_id = "evade"
 			game.update_interface()
+		"drink_honey":
+			game.tutorial_complete = true
+			game.tutorial_step = 6
+			game.mentor_tutorial.profile_id = ""
+			game.mentor_tutorial.phase = "inactive"
+			game.carried = 2
+			game.crop_fuel_used = 0
+			game.bee.energy = 40.0
+			game.update_interface()
 		"pollination_ecology":
 			game.tutorial_complete = true
 			game.tutorial_step = 6
