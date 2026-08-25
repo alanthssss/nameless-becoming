@@ -58,6 +58,8 @@ func run_test() -> void:
 	expect_rejected(PackedStringArray(["--playtest-ticket=res://playtest-ticket.json"]), "PT-ARG-PATH")
 	expect_rejected(PackedStringArray(["--playtest-ticket=user://playtest-ticket.json"]), "PT-ARG-PATH")
 	expect_rejected(PackedStringArray(["--playtest-ticket=file:///tmp/playtest-ticket.json"]), "PT-ARG-PATH")
+	expect_rejected(PackedStringArray(["--playtest-ticket=file:/tmp/playtest-ticket.json"]), "PT-ARG-PATH")
+	expect_rejected(PackedStringArray(["--playtest-ticket=https:/example.invalid/playtest-ticket.json"]), "PT-ARG-PATH")
 	expect_rejected(PackedStringArray(["--playtest-ticket=/one.json", "--playtest-ticket=/two.json"]), "PT-ARG-COUNT")
 
 	var unreadable_path := test_root.path_join("missing/playtest-ticket.json")

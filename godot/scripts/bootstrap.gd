@@ -57,9 +57,15 @@ func _ready() -> void:
 
 func _is_external_filesystem_path(path: String) -> bool:
 	# Godot considers res:// and user:// absolute, but a playtest ticket must be
-	# an external OS path distributed beside its artifact manifest. Reject every
-	# URI/resource scheme while preserving POSIX, drive-letter and UNC paths.
-	return not path.is_empty() and path.is_absolute_path() and not path.contains("://")
+	# an external OS path distributed beside its artifact manifest. Use a syntax
+	# whitelist because single-slash URI forms such as file:/ are also reported as
+	# absolute. Preserve POSIX, drive-letter and UNC paths.
+	if path.is_empty() or not path.is_absolute_path():
+		return false
+	if path.begins_with("/") or path.begins_with("\\\\"):
+		return true
+	var drive_path := RegEx.new()
+	return drive_path.compile("^[A-Za-z]:[\\\\/]") == OK and drive_path.search(path) != null
 
 func _activate_scene(instance: Node) -> void:
 	launched_scene = instance

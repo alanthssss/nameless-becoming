@@ -120,8 +120,14 @@ func validate_ticket(ticket_path: String) -> Dictionary:
 
 func _is_external_filesystem_path(path: String) -> bool:
 	# String.is_absolute_path() also accepts res:// and user://. Identity files
-	# are deliberately external OS files, never bundled resources or app data.
-	return not path.is_empty() and path.is_absolute_path() and not path.contains("://")
+	# are deliberately external OS files, never bundled resources, app data or a
+	# single-slash URI form such as file:/.
+	if path.is_empty() or not path.is_absolute_path():
+		return false
+	if path.begins_with("/") or path.begins_with("\\\\"):
+		return true
+	var drive_path := RegEx.new()
+	return drive_path.compile("^[A-Za-z]:[\\\\/]") == OK and drive_path.search(path) != null
 
 func _validate_ticket_shape(ticket: Dictionary) -> String:
 	if not _has_exact_keys(ticket, ["artifact", "catalog_sha256", "product", "schema_version", "session_id", "task"]):

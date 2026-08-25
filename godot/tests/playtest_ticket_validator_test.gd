@@ -42,7 +42,7 @@ func run_test() -> void:
 
 	var relative_result := PlaytestTicketValidator.new().validate_ticket("relative/playtest-ticket.json")
 	expect_code(relative_result, "PT-TICKET-PATH", "相对 ticket")
-	for virtual_path in ["res://playtest-ticket.json", "user://playtest-ticket.json", "file:///tmp/playtest-ticket.json"]:
+	for virtual_path in ["res://playtest-ticket.json", "user://playtest-ticket.json", "file:///tmp/playtest-ticket.json", "file:/tmp/playtest-ticket.json", "https:/example.invalid/playtest-ticket.json"]:
 		expect_code(PlaytestTicketValidator.new().validate_ticket(virtual_path), "PT-TICKET-PATH", "非外部文件路径 %s" % virtual_path)
 	var missing_path := test_root.path_join("missing/playtest-ticket.json")
 	expect_code(PlaytestTicketValidator.new().validate_ticket(missing_path), "PT-READ", "不可读 ticket")
