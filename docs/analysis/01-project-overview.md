@@ -65,7 +65,7 @@ Each requires three tunings, with faster phases and shorter windows; they no lon
 | --- | --- | --- |
 | 工程 / Engineering | Web、macOS universal、Windows x86_64 同源导出；9 组 Godot 回归和 Web 门禁通过；标准输出尺寸的等比 HUD 安全框与饮蜜指针入口已接入 | Windows 真机完整流程、真实原生触屏与未覆盖设备表现 |
 | 教学 / Tutorial | 老师傅“示范 → 模仿 → 无提示实践”已接入，关键动作由真实结果推进 | 陌生玩家无口头帮助；当前正常路线没有固定的延迟急转复测机会 |
-| 音乐 / Music | 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；A–H 匿名盲听工具已合并并自动校验 | Alan 尚未完成主观盲听；配对、情绪、耐循环和实机混音待验证 |
+| 音乐 / Music | 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；Alan 已完成 A–H 逐轨评论，D/G 触发定向 A/B | 总体偏好、四组配对、长期循环疲劳、D/G 复听和实机混音仍缺，不能判定整套音乐通过 |
 | 视觉 / Visuals | 低噪地表、独立蜂巢、8 种季节花与机制实体已接入 | 运动中的画风统一和目标可读性 |
 | 发行 / Release | `4b57d856` 固定候选 artifact 已构建并复验 SHA-256 | 新候选首分钟重测、Windows 真机、完整人工流程和外部试玩 |
 

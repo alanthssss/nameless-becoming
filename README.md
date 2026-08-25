@@ -8,7 +8,7 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-当前 `0.9.5-rc.2` 为所有者私有验证候选，需使用获授权的 ChatGPT 账号访问 Web；旧 Cloudflare Pages 地址不再作为当前候选基线。
+当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。下文 `4b57d856` 固定人工验收候选只指已校验的 macOS／Windows 桌面 artifact；现有 Web 部署尚未证明来自该精确提交，在重新部署并核对来源前不得用它采集 `4b57d856` 候选证据。
 
 ## 当前版本：Godot 候选 MVP 0.9.5-rc.2
 
