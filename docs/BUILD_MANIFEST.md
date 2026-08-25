@@ -76,3 +76,16 @@ Web 外壳增加启动、加载、20 秒超时和重试状态，并明确标记�
 | Windows x86_64 | `builds/NamelessBecoming-Windows.exe` | 105,037,008 bytes | `57353aa7638e127ed5e9d8c58b8649802a673a39652e7704aa8a8105140736d0` | PE32+ GUI x86-64；PCK 内嵌；仍需 Windows 真机试玩 |
 
 GitHub runner 重建值可能因官方 runner 的 ZIP 元数据不同而与本机 macOS ZIP 哈希不同；流水线产出的 `.sha256` 才是对应下载 artifact 的权威校验值。首次 run `32383642710` 暴露并修复 sidecar 路径前缀；修复后的权威 run [`32384928730`](https://github.com/alanthssss/nameless-becoming/actions/runs/32384928730) 生成 macOS（62,093,143 bytes，SHA-256 `c10c20393b337ca175c8f6aaedd940baffef5d6a3ab5b385a29b6d39e54d172b`）与 Windows（105,037,008 bytes，SHA-256 `a530ada249f2d40d7c58dec7cc1eefe2efdbde7916a81d1aa4ec034d3f933bfb`）。两个 artifact 下载解包后均以随包 sidecar 直接校验通过；保留 30 天，尚未创建 GitHub prerelease。
+
+## 2026-08-25 玩家反馈验收候选
+
+本候选固定于 PR #63 提交 `dd4d4f08d33d743c8d4a67e50dedbcac2a70fdb1`，包含本轮关卡、四季、8 轨音乐、老师傅教学、授粉生态、条件卡与急转因果整改，以及游戏内构建来源显示。标题与暂停覆盖层显示 `v0.9.5-rc.2 · dd4d4f08`；未提交工作区会额外显示 `+dirty`，桌面包内嵌的 provenance 为 `dirty: false`。
+
+GitHub [`Desktop client builds` run 32769425753](https://github.com/alanthssss/nameless-becoming/actions/runs/32769425753) 使用官方 SHA-512 清单校验 Godot 4.6.2 编辑器与导出模板，在 macOS/Ubuntu runner 分别重跑 8 组 Godot 测试后导出：
+
+| 平台 | Artifact | 大小 | SHA-256 | 自动验证 |
+| --- | --- | ---: | --- | --- |
+| macOS universal | `NamelessBecoming-macOS-v0.9.5-rc.2/NamelessBecoming-macOS.zip` | 70,583,701 bytes | `005d00ee08217c07639d8861b437de9932e24a05844450d9b5150917e92ab39e` | universal 包导出、ad-hoc 签名严格校验、artifact 上传；下载后 sidecar 再校验通过，本机解包后 `codesign --verify --deep --strict` 通过 |
+| Windows x86_64 | `NamelessBecoming-Windows-v0.9.5-rc.2/NamelessBecoming-Windows.exe` | 116,575,264 bytes | `f6e0d8019525d480af404424a854a9b2ede944bfd612dde16903e0d268431b26` | PE32+ GUI x86-64 格式检查、artifact 上传；下载后 sidecar 再校验通过 |
+
+两个 artifact 保留 30 天，本轮没有创建 prerelease。上述证明产物与提交一致且可被工具解析；Windows 真机启动、macOS 实际手感、声音、全屏/DPI、完整流程和玩家理解仍是人工门禁。

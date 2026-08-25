@@ -58,7 +58,7 @@
 | 震翼惊退 / Repel | 空格（近敌）/ Space near enemy | 推开敌人并使其持续远离 | 8 点体力 + 冷却；非麻痹非蜂针 |
 | 触角寻迹 / Sense | 空格（静止）/ Space while still | 显示蜜量、警戒区、归巢方向、推荐花 | 3 秒持续，7 秒冷却 |
 | 投蜜诱饵 / Decoy | 松开后长按空格 / Long-press after release | 投 1 滴蜜吸引蚊虫 5 秒 | 诱饵结束后蜜回归花田 |
-| 急转闪避 / Evade | 双击方向 / Double-tap direction | 快速侧掠并短暂无伤 | 12 点体力，1.6 秒冷却 |
+| 急转闪避 / Evade | 同方向快速连按两次 / Double-tap one direction | 沿输入方向侧掠；避开已锁定的攻击通道 | 0.34 秒连按窗，12 点体力，1.6 秒冷却 |
 | 归巢 / Return | Q | 自动飞回蜂巢 / Auto-return to hive | 需亲自回巢蜜才入储备 |
 | 暂停 / Pause | Esc | 暂停并显示操作 | — |
 

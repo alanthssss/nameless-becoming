@@ -69,10 +69,10 @@
 | 震翼惊退 | 空格（近敌时） | 8 体力 + 冷却，敌人实际向外移动 | `main.gd` / `balance.json` |
 | 触角寻迹 | 空格（静止时） | 3 秒持续、7 秒冷却 | `main.gd:on_sense_started` |
 | 投蜜诱饵 | 松开空格后长按（需携蜜） | 1 滴携蜜、5 秒、结束归回花田 | `main.gd:drop_honey_decoy` |
-| 急转闪避 | 双击方向键 | 12 体力、1.6 秒冷却、短暂无伤 | `main.gd` 双击检测 / `bee_player.gd:try_evade` |
+| 急转闪避 | 锁线后同方向 0.34 秒内连按两次 | 从第一次输入位置沿该方向侧掠；12 体力、1.6 秒冷却、0.18 秒短暂无伤 | `main.gd` 双击与锁线判定 / `bee_player.gd:try_evade(direction, first_tap_origin)` |
 | 归巢结算 / 失败 | Q 自动飞回；失败不按键 | 失败损失携蜜但资源守恒 | `main.gd:update_hive_rest / fail_expedition` |
 
-> 输入映射仅剩 `move_*` / `action`（空格+回车）/ `return_hive`（Q），旧的 I/O/U/J/K/L/E/Shift 独立按键已全部移除（`smoke_test.gd` 断言旧 action 不存在）。
+> 输入映射保留 `move_*`、情境 `action`（空格+回车）、`return_hive`（Q）与有限续力 `drink_honey`（E）；旧的 I/O/U/J/K/L/Shift 独立动作已移除（`smoke_test.gd` 断言旧 action 不存在）。
 
 **差距**：
 - "战斗"维度仍薄：玩家唯一对抗手段是惊退/闪避/诱饵，无主动进攻性互动；与"移动↔采集↔战斗"的切换节奏还有设计空间。

@@ -23,11 +23,11 @@ npm run test:godot
 - 震翼惊退、明确体力消耗与敌人状态条，蜂针不作为普通攻击；
 - 触角寻迹显示蜜量、警戒范围、归巢方向与推荐目标；
 - 花蜜总量守恒、返蜜花与可追回的蚂蚁赃蜜；
-- U/I/O/J/K/L 六键技能区、WASD 独立映射与四节令旋律/低音/节奏环境音乐；
+- 空格／回车情境动作、同方向双击急转、长按投蜜诱饵、WASD 独立映射与四季探索／Boss 共 8 轨音乐；
 - 花朵生成保持至少 82 像素间距，体力采用不受主题最小尺寸影响的细条；
 - 蜂巢安全边界与不依赖携蜜的归巢休息恢复；
 - 回到蜂巢后才结算携带花蜜；
-- 春分、夏至、秋分、冬至四个数据驱动关卡；
+- 四季 × 6 节点共 24 个数据驱动关卡；
 - 阴阳比例与节令色彩；
 - 成功、失败及完整循环。
 
@@ -40,8 +40,11 @@ npm run test:godot
 工程已配置 macOS 与 Windows Desktop 导出预设。需要安装与编辑器版本一致的 Godot 4.6.2 Export Templates，随后可执行：
 
 ```bash
+node scripts/generate_build_provenance.mjs
 godot --path godot --headless --export-debug "macOS"
 godot --path godot --headless --export-debug "Windows Desktop"
 ```
+
+构建来源脚本会从 `package.json` 读取产品版本、从当前 `HEAD` 读取提交号，生成不纳入 Git 的 `data/build_provenance.json`；标题与暂停覆盖层会显示该版本和短提交号，未提交工作区会额外标记 `+dirty`。`npm run test:godot` 和桌面构建流水线会自动执行这一步。
 
 仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出，生成包与 SHA-256 artifact；默认不创建 Release，只有主分支运行且明确选择 `publish_prerelease` 才会发布预发布版本。

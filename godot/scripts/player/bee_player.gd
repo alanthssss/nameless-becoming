@@ -5,6 +5,10 @@ signal sense_started
 
 const WORLD_BOUNDS := Rect2(34, 146, 970, 538)
 const AUTO_DASH_THRESHOLD := 0.35
+const EVADE_SPEED := 520.0
+const EVADE_DURATION := 0.18
+const EVADE_COST := 12.0
+const EVADE_COOLDOWN := 1.6
 const PLAYER_BEE_TEXTURE := preload("res://assets/art/player_bee_textile.svg")
 const SPRING_PLAYER_BEE_PATH := "res://assets/art/launch/player_bee_v1.png"
 
@@ -24,12 +28,20 @@ var sense_time := 0.0
 var sense_cooldown := 0.0
 var facing := 0.0
 var speed_multiplier := 1.0
+## Environment-owned movement modifier. Seasonal mechanics may slow or restore the
+## bee without overwriting permanent Long Wing upgrades.
+var environment_speed_multiplier := 1.0
 var dash_cost_multiplier := 1.0
 var evade_time := 0.0
 var evade_cooldown := 0.0
 # 闪避无敌时长：由 main 从 balance.json player.evade_invuln_seconds 注入
 var evade_invuln := 0.18
 var invulnerable_time := 0.0
+var evade_sequence := 0
+var last_evade_origin := Vector2.ZERO
+var last_evade_direction := Vector2.RIGHT
+var evade_tap_time := 0.0
+var evade_tap_direction := Vector2.RIGHT
 var move_duration := 0.0
 var spring_player_bee_texture: Texture2D
 var use_spring_launch_art := false
@@ -50,6 +62,7 @@ func configure(stage_drain: float) -> void:
 
 func reset_upgrades() -> void:
 	speed_multiplier = 1.0
+	environment_speed_multiplier = 1.0
 	dash_cost_multiplier = 1.0
 
 func apply_upgrade(upgrade_id: String) -> void:
@@ -68,7 +81,13 @@ func reset_for_expedition(at: Vector2) -> void:
 	evade_time = 0.0
 	evade_cooldown = 0.0
 	invulnerable_time = 0.0
+	evade_sequence = 0
+	last_evade_origin = at
+	last_evade_direction = Vector2.RIGHT
+	evade_tap_time = 0.0
+	evade_tap_direction = Vector2.RIGHT
 	move_duration = 0.0
+	environment_speed_multiplier = 1.0
 	active = true
 	queue_redraw()
 
@@ -82,13 +101,33 @@ func spend_energy(amount: float) -> bool:
 	energy -= amount
 	return true
 
-func try_evade() -> bool:
-	if evade_cooldown > 0.0 or not spend_energy(12.0):
+func show_evade_first_tap(direction: Vector2, duration: float) -> void:
+	if direction.length_squared() < 0.01:
+		return
+	evade_tap_direction = direction.normalized()
+	evade_tap_time = duration
+	queue_redraw()
+
+func clear_evade_first_tap() -> void:
+	evade_tap_time = 0.0
+	queue_redraw()
+
+func try_evade(input_direction := Vector2.ZERO, input_origin = null) -> bool:
+	if evade_cooldown > 0.0 or not spend_energy(EVADE_COST):
 		return false
-	var direction := velocity.normalized() if velocity.length_squared() > 4.0 else Vector2.from_angle(facing)
-	velocity = direction * 520.0
-	evade_time = 0.18
-	evade_cooldown = 1.6
+	var direction: Vector2 = input_direction.normalized()
+	if direction.length_squared() < 0.01:
+		direction = velocity.normalized() if velocity.length_squared() > 4.0 else Vector2.from_angle(facing)
+	# For a double tap, the causal attempt begins on the first tap. Recording that
+	# point prevents normal movement between taps from invalidating a legal evade,
+	# while still rejecting an unrelated evade begun after leaving the locked path.
+	last_evade_origin = position if input_origin == null else Vector2(input_origin)
+	last_evade_direction = direction
+	evade_tap_time = 0.0
+	evade_sequence += 1
+	velocity = direction * EVADE_SPEED
+	evade_time = EVADE_DURATION
+	evade_cooldown = EVADE_COOLDOWN
 	invulnerable_time = evade_invuln
 	has_target = false
 	return true
@@ -105,6 +144,7 @@ func _physics_process(delta: float) -> void:
 	evade_time = maxf(0.0, evade_time - delta)
 	evade_cooldown = maxf(0.0, evade_cooldown - delta)
 	invulnerable_time = maxf(0.0, invulnerable_time - delta)
+	evade_tap_time = maxf(0.0, evade_tap_time - delta)
 	if not active:
 		velocity = velocity.move_toward(Vector2.ZERO, braking * delta)
 		return
@@ -125,7 +165,7 @@ func _physics_process(delta: float) -> void:
 		move_duration = 0.0
 
 	var auto_dashing := move_duration > AUTO_DASH_THRESHOLD and energy > 8.0 and evade_time <= 0.0
-	var desired_speed := (dash_speed if auto_dashing else base_speed) * speed_multiplier
+	var desired_speed := (dash_speed if auto_dashing else base_speed) * speed_multiplier * environment_speed_multiplier
 	if evade_time > 0.0:
 		velocity = velocity.move_toward(velocity.normalized() * 520.0, 180.0 * delta)
 	elif is_moving:
@@ -149,7 +189,20 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, facing, Vector2(1.0, wing_pulse))
 	var player_texture: Texture2D = spring_player_bee_texture if use_spring_launch_art else PLAYER_BEE_TEXTURE
 	var player_size := Vector2(82, 60) if use_spring_launch_art else Vector2(58, 42)
+	if evade_time > 0.0:
+		var evade_ratio := clampf(evade_time / EVADE_DURATION, 0.0, 1.0)
+		for trail_index in [2, 1]:
+			var trail_offset := Vector2(-16.0 * float(trail_index), 0.0)
+			var trail_alpha := evade_ratio * (0.10 + float(2 - trail_index) * 0.08)
+			draw_texture_rect(player_texture, Rect2(player_size * -0.5 + trail_offset, player_size), false, Color(0.82, 0.90, 1.0, trail_alpha))
 	draw_texture_rect(player_texture, Rect2(player_size * -0.5, player_size), false)
 	if sense_time > 0.0:
 		draw_arc(Vector2.ZERO, 27 + sin(Time.get_ticks_msec() * 0.012) * 4, 0, TAU, 28, Color("f1d46d", 0.72), 2)
 	draw_set_transform(Vector2.ZERO)
+	if evade_tap_time > 0.0 and evade_time <= 0.0:
+		for tap_index in 2:
+			var tip: Vector2 = evade_tap_direction * (34.0 + float(tap_index) * 14.0)
+			var wing: Vector2 = evade_tap_direction.orthogonal() * 5.0
+			var tap_alpha := 0.92 if tap_index == 0 else 0.24
+			draw_line(tip - evade_tap_direction * 9.0 + wing, tip, Color("f4d36f", tap_alpha), 3.0)
+			draw_line(tip - evade_tap_direction * 9.0 - wing, tip, Color("f4d36f", tap_alpha), 3.0)

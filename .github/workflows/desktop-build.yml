@@ -70,6 +70,7 @@ jobs:
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot.app/Contents/MacOS/Godot
         run: |
+          node scripts/generate_build_provenance.mjs
           mkdir -p builds
           "$GODOT_BIN" --path godot --headless --export-release macOS
           ./scripts/package_macos.sh
@@ -116,6 +117,7 @@ jobs:
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         run: |
+          node scripts/generate_build_provenance.mjs
           mkdir -p builds
           "$GODOT_BIN" --path godot --headless --export-release "Windows Desktop"
           test -s builds/NamelessBecoming-Windows.exe

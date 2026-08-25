@@ -1,4 +1,4 @@
-# 修复验证：boss 上下文延续到 boss_victory + 通关横幅预告失律者节点 + 相位护栏
+# 验证：Boss 上下文延续、普通转场不重复节令名、相位护栏
 extends SceneTree
 
 var failures: Array[String] = []
@@ -17,14 +17,14 @@ func run_test() -> void:
 	await process_frame
 	game.persistence_enabled = false
 
-	# --- 场景 1：惊蛰(index 5)通关 → 蜂巢成长界面应预告春分失律之蚊 ---
+	# --- 场景 1：普通关通关 → 只预告失律者，不重复灌输节令名 ---
 	game.spawn_stage(5)
 	await process_frame
 	game.show_between()
 	await process_frame
 	expect(game.phase == "between", "惊蛰通关后未进入 between")
-	expect("春分" in game.overlay_body.text and "失律之蚊" in game.overlay_body.text,
-		"通关横幅未预告下一个正色节点（春分 · 失律之蚊）：%s" % game.overlay_body.text)
+	expect("失律之蚊" in game.overlay_body.text and not "春分" in game.overlay_body.text,
+		"转场应以失律者预告替代节令解释：%s" % game.overlay_body.text)
 
 	# --- 场景 2：春分 boss 通关 → boss_victory 期间顶栏/侧栏保持失律者上下文 ---
 	game.spawn_stage(6)
@@ -34,9 +34,9 @@ func run_test() -> void:
 	game.show_boss_victory()
 	await process_frame
 	expect(game.phase == "boss_victory", "调律完成后未进入 boss_victory")
-	expect(game.term_label.text == "春 · 春分", "boss_victory 顶栏节令错误：%s" % game.term_label.text)
+	expect(game.term_label.text.is_empty(), "行动 HUD 不应重复显示节令名：%s" % game.term_label.text)
 	expect(game.season_label.text == "失律之蚊", "boss_victory 侧栏未保持失律者名称：%s" % game.season_label.text)
-	expect(game.delivered_label.text == "调律 3 / 3", "boss_victory 调律计数错误：%s" % game.delivered_label.text)
+	expect(game.delivered_title_label.text == "调律" and game.delivered_label.text == "3 / 3", "boss_victory 调律计数错误：%s %s" % [game.delivered_title_label.text, game.delivered_label.text])
 
 	# --- 场景 3：boss_victory 点继续 → 进入清明（普通关） ---
 	game.on_overlay_button()
@@ -58,7 +58,7 @@ func run_test() -> void:
 	expect(game.phase == "boss_victory", "boss_victory 下 focus out 被误暂停：%s" % game.phase)
 
 	if failures.is_empty():
-		print("FIX TEST PASSED: boss 上下文延续 / 失律者预告 / 相位护栏 / focus 自动暂停 全部通过")
+		print("FIX TEST PASSED: boss 上下文延续 / 无节令复读 / 相位护栏 / focus 自动暂停 全部通过")
 	else:
 		for failure in failures:
 			printerr("FAIL: " + failure)
