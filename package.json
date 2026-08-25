@@ -11,6 +11,7 @@
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs tests/build-provenance.test.mjs tests/audio-blind-review.test.mjs tests/music-generation.test.mjs tests/autumn-full-loop-ab.test.mjs tests/playtest-evidence.test.mjs",
     "test:godot": "./scripts/test_godot.sh",
+    "verify:godot-export": "./scripts/verify_godot_export_contents.sh",
     "audio:review": "node scripts/prepare_audio_blind_review.mjs",
     "audio:autumn-final-ab": "node scripts/prepare_autumn_full_loop_ab.mjs",
     "playtest:prepare": "node scripts/prepare_playtest_evidence.mjs",

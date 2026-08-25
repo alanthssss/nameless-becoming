@@ -54,3 +54,7 @@ jobs:
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         run: npm run test:godot
+      - name: Verify exported resource boundaries
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        run: npm run verify:godot-export
