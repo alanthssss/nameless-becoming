@@ -74,12 +74,12 @@ TRACKS = {
         "stop-time punk with clipped synthesized dizi punctuation", True,
     ),
     "autumn_explore": TrackSpec(
-        "autumn_explore", 84.0, 5, 4, 8, 1,
-        "dry chamber five-four with sparse synthesized erhu-like replies and an empty fifth beat",
+        "autumn_explore", 124.0, 4, 4, 16, 1,
+        "amber-circuit electro-funk with antiphonal stepped hooks, sparse seed pickups and four-bar air gaps",
     ),
     "autumn_boss": TrackSpec(
-        "autumn_boss", 126.0, 6, 8, 16, 1,
-        "psychedelic six-eight with false stereo thrush echoes", True,
+        "autumn_boss", 128.0, 4, 4, 16, 1,
+        "post-punk dub lure with finite echo taps and stop-time industrial counterphrases", True,
     ),
     "winter_explore": TrackSpec(
         "winter_explore", 108.0, 6, 8, 16, 4,
@@ -96,8 +96,8 @@ MACRO_GAINS = {
     "spring_boss": (0.74, 0.94, 1.00, 0.80),
     "summer_explore": (0.76, 1.00, 0.86),
     "summer_boss": (0.84, 1.00, 0.76, 0.94),
-    "autumn_explore": (0.70, 1.00),
-    "autumn_boss": (0.72, 0.94, 1.00, 0.80),
+    "autumn_explore": (0.84, 1.00, 0.90, 0.82),
+    "autumn_boss": (0.88, 1.00, 0.94, 0.84),
     "winter_explore": (0.66, 0.82, 1.00, 0.74),
     "winter_boss": (0.74, 1.00, 0.84),
 }
@@ -105,12 +105,31 @@ MACRO_GAINS = {
 PEAK_TARGETS = {
     "spring_explore": 0.80,
     "summer_explore": 0.80,
-    "autumn_explore": 0.72,
+    "autumn_explore": 0.70,
     "winter_explore": 0.62,
     "spring_boss": 0.86,
     "summer_boss": 0.86,
-    "autumn_boss": 0.86,
+    "autumn_boss": 0.76,
     "winter_boss": 0.86,
+}
+
+# These two roles were selected in a dedicated direction gate.  Loudness is
+# normalized after the common peak/loop finishing pass so a louder crest does
+# not win the final A/B merely because it was rendered hotter.
+AUTUMN_LOUDNESS_TARGETS = {
+    "autumn_explore": -17.3,
+    "autumn_boss": -18.7,
+}
+
+# A machine-readable arrangement contract keeps the selected hierarchy honest:
+# Z's post-punk/dub backbone is present in all 16 bars and receives nine full
+# bars; T is a seven-bar upper counterphrase, including only the final bar of
+# the closure.  Tests import this contract instead of trusting prose comments.
+AUTUMN_BOSS_STRUCTURE = {
+    "z_backbone_bars": tuple(range(16)),
+    "z_full_bars": (0, 1, 2, 3, 8, 10, 12, 13, 14),
+    "t_counter_bars": (4, 5, 6, 7, 9, 11, 15),
+    "dub_send_bars": (0, 2, 8, 12),
 }
 
 
@@ -359,6 +378,104 @@ def add_tom(buffer: StereoBuffer, spec: TrackSpec, start_q: float, midi_note: fl
     add_note(buffer, spec, start_q, 0.20, midi_note, gain, "muted", pan)
 
 
+def mix_buffer(target: StereoBuffer, source: StereoBuffer, gain: float = 1.0) -> None:
+    for index in range(target.frames):
+        target.left[index] += source.left[index] * gain
+        target.right[index] += source.right[index] * gain
+
+
+def _autumn_envelope(index: int, frames: int, attack: float, release: float,
+                     decay: float, sustain: float) -> float:
+    attack_frames = max(1, round(attack * RATE))
+    release_frames = max(1, round(release * RATE))
+    attack_gain = min(1.0, index / attack_frames)
+    release_gain = min(1.0, (frames - 1 - index) / release_frames)
+    decay_gain = sustain + (1.0 - sustain) * math.exp(-index / max(1.0, decay * RATE))
+    return attack_gain * release_gain * decay_gain
+
+
+def add_autumn_voice(buffer: StereoBuffer, spec: TrackSpec, start_q: float,
+                     length_q: float, note: float, gain: float, voice: str,
+                     seed: int, pan: float = 0.0) -> None:
+    """Add a stepped-pitch autumn voice without portamento or a held drone."""
+    start = round(start_q * 60.0 / spec.bpm * RATE)
+    frames = max(2, round(length_q * 60.0 / spec.bpm * RATE))
+    if start >= buffer.frames:
+        return
+    left_gain, right_gain = _pan_gains(pan)
+    phase = 0.0
+    phase_step = TAU * midi_hz(note) / RATE
+    rng = random.Random(seed + start + round(note * 17))
+    low_state = 0.0
+
+    for local in range(min(frames, buffer.frames - start)):
+        if voice == "amber_gate":
+            env = _autumn_envelope(local, frames, 0.002, 0.035, 0.12, 0.03)
+            mod = math.sin(phase * 2.0) * 1.35 * math.exp(-local / max(1.0, RATE * 0.08))
+            raw = 0.78 * math.sin(phase + mod) + 0.22 * math.sin(phase * 3.0)
+        elif voice == "husk_bass":
+            env = _autumn_envelope(local, frames, 0.003, 0.055, 0.16, 0.18)
+            raw = 0.72 * math.sin(phase) + 0.20 * math.sin(phase * 2.0) + 0.08 * math.sin(phase * 3.0)
+            low_state += 0.18 * (raw - low_state)
+            raw = math.tanh(low_state * 1.25)
+        elif voice == "dry_chord":
+            env = _autumn_envelope(local, frames, 0.002, 0.040, 0.11, 0.04)
+            raw = math.tanh(1.35 * (0.58 * math.sin(phase) + 0.26 * math.sin(phase * 2.0) + 0.16 * math.sin(phase * 4.0)))
+        elif voice == "wire_pick":
+            env = _autumn_envelope(local, frames, 0.001, 0.035, 0.09, 0.025)
+            raw = math.tanh(1.8 * (0.45 * math.sin(phase) + 0.27 * math.sin(phase * 3.0)
+                                   + 0.18 * math.sin(phase * 7.0) + 0.10 * math.sin(phase * 11.0)))
+        elif voice == "dub_stab":
+            env = _autumn_envelope(local, frames, 0.004, 0.070, 0.18, 0.06)
+            raw = 0.60 * math.sin(phase) + 0.24 * math.sin(phase * 2.0) + 0.16 * math.sin(phase * 4.0)
+            low_state += 0.10 * (raw - low_state)
+            raw = low_state
+        elif voice == "iron_pulse":
+            env = _autumn_envelope(local, frames, 0.001, 0.030, 0.12, 0.025)
+            raw = math.tanh(2.2 * (0.32 * math.sin(phase) + 0.27 * math.sin(phase * 2.0)
+                                   + 0.20 * math.sin(phase * 4.0) + 0.13 * math.sin(phase * 9.0)
+                                   + 0.08 * math.sin(phase * 13.0)))
+        elif voice == "rust_bell":
+            env = _autumn_envelope(local, frames, 0.001, 0.080, 0.14, 0.0)
+            raw = 0.52 * math.sin(phase) + 0.31 * math.sin(phase * 2.71) + 0.17 * math.sin(phase * 4.19)
+        else:
+            raise ValueError(f"unknown autumn voice: {voice}")
+
+        if voice in {"wire_pick", "iron_pulse"} and local < RATE * 0.012:
+            raw += rng.uniform(-1.0, 1.0) * 0.055 * (1.0 - local / (RATE * 0.012))
+        value = raw * env * gain
+        target = start + local
+        buffer.left[target] += value * left_gain
+        buffer.right[target] += value * right_gain
+        phase += phase_step
+
+
+def add_autumn_chord(buffer: StereoBuffer, spec: TrackSpec, start_q: float,
+                     length_q: float, notes: tuple[int, ...], gain: float,
+                     voice: str, seed: int, pan: float = 0.0) -> None:
+    spread = 0.14
+    divisor = math.sqrt(len(notes))
+    for index, note in enumerate(notes):
+        offset = (index - (len(notes) - 1) / 2.0) * spread
+        add_autumn_voice(buffer, spec, start_q, length_q, note, gain / divisor,
+                         voice, seed + index * 37, pan + offset)
+
+
+def add_autumn_dub_reply(buffer: StereoBuffer, spec: TrackSpec, start_q: float,
+                         notes: tuple[int, ...], gain: float, seed: int,
+                         latest_q: float) -> None:
+    """Write one dry lure and three finite, tempo-locked dark replies."""
+    add_autumn_chord(buffer, spec, start_q, 0.34, notes, gain, "dub_stab", seed)
+    for tap, (offset, tap_gain, pan) in enumerate((
+        (0.75, 0.44, -0.46),
+        (1.50, 0.25, 0.42),
+        (2.25, 0.13, -0.24),
+    )):
+        if start_q + offset < latest_q:
+            add_autumn_chord(buffer, spec, start_q + offset, 0.22, notes,
+                             gain * tap_gain, "dub_stab", seed + 100 + tap * 17, pan)
+
+
 def bar_start(spec: TrackSpec, bar: int) -> float:
     return bar * spec.quarter_beats_per_bar
 
@@ -504,56 +621,189 @@ def render_summer_boss(spec: TrackSpec) -> StereoBuffer:
 
 
 def render_autumn_explore(spec: TrackSpec) -> StereoBuffer:
-    buffer = StereoBuffer(round(spec.duration * RATE))
-    falling = (1, 0, -1, -2, -1)
+    mix = StereoBuffer(round(spec.duration * RATE))
+    drums = StereoBuffer(mix.frames)
+    bass = StereoBuffer(mix.frames)
+    hook = StereoBuffer(mix.frames)
+    texture = StereoBuffer(mix.frames)
+    roots = (38, 38, 41, 43, 41, 45, 43, 38,
+             38, 41, 43, 45, 41, 43, 45, 38)
+    section_drop = (1.00, 2.00, 2.50, 1.25)
+
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
-        add_tom(buffer, spec, base, 47.0, 0.038, -0.16)
-        add_tom(buffer, spec, base + 2.5, 52.0, 0.028, 0.18)
-        for position in (0.0, 2.5):
-            add_noise_hit(buffer, spec, base + position, 0.050, 0.032,
-                          5000 + bar * 8 + int(position * 2), -0.28 if position else 0.28, "bright")
-        add_noise_hit(buffer, spec, base + 1.5, 0.16, 0.026, 5100 + bar, 0.10, "dark")
-        for position, degree in ((0.0, 1 - 5), (2.0, -1 - 5), (3.25, 0 - 5)):
-            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.080, 0.46)
-        for index, (position, degree) in enumerate(zip((0.25, 1.0, 1.75, 2.5, 3.25), falling)):
-            add_note(buffer, spec, base + position, 0.34 if index < 4 else 0.48,
-                     penta_midi(degree + 5), 0.095, "pizz", -0.32 if bar % 2 == 0 else 0.32)
-        add_dyad(buffer, spec, base + 2.75, 0.26, (1, 3), 0.043, "metal", 0.35)
-        if bar in (2, 6):
-            gesture_pan = -0.26 if bar == 2 else 0.26
-            add_gesture_lead(buffer, spec, base + 0.48, 0.96, penta_midi(6), penta_midi(5),
-                             0.044, "erhu", 5300 + bar, gesture_pan)
-            add_gesture_lead(buffer, spec, base + 2.42, 0.76, penta_midi(4), penta_midi(3),
-                             0.037, "erhu", 5350 + bar, -gesture_pan)
-    return buffer
+        section = bar // 4
+        stop_after = section_drop[section] if bar % 4 == 3 else 4.0
+
+        # K's half-time circuit remains the whole-track skeleton.  Each fourth
+        # bar stops early enough to create a musically obvious reset.
+        if 0.0 < stop_after:
+            add_kick(drums, spec, base, 0.130)
+        if 2.0 < stop_after:
+            add_snare(drums, spec, base + 2.0, 0.078, 5000 + bar)
+        if bar % 2 == 0 and 2.75 < stop_after:
+            add_kick(drums, spec, base + 2.75, 0.066)
+        for step in ((0.5, 1.5, 3.25) if bar % 2 == 0 else (0.75, 2.5, 3.5)):
+            if step < stop_after:
+                add_noise_hit(drums, spec, base + step, 0.028, 0.024,
+                              5050 + bar * 16 + round(step * 4),
+                              -0.24 if step < 2.0 else 0.24, "bright")
+
+        root = roots[bar]
+        bass_cell = ((0.0, root), (1.5, root + 7), (2.75, root + 12))
+        if section == 0:
+            bass_cell = ((0.0, root), (2.75, root + 12))
+        for step, note in bass_cell:
+            if step < stop_after:
+                add_autumn_voice(bass, spec, base + step, 0.31, note, 0.235,
+                                 "husk_bass", 5100 + bar * 32 + round(step * 8))
+
+        transposition = (0, 3, 0, 2)[section]
+        cell_a = ((0.0, 62), (0.5, 69), (1.0, 65))
+        cell_b = ((2.5, 67), (3.0, 72), (3.5, 69))
+        if bar % 2 == 1:
+            cell_b = ((2.5, 65), (3.0, 72), (3.5, 67))
+        for step, note in cell_a + cell_b:
+            if step < stop_after:
+                add_autumn_voice(hook, spec, base + step, 0.20 if step <= 1.0 else 0.18,
+                                 note + transposition, 0.245 if step <= 1.0 else 0.215,
+                                 "amber_gate", 5200 + bar * 64 + round(step * 8),
+                                 -0.08 if step < 2.0 else 0.08)
+
+        if bar in {1, 5, 9, 13} and 1.75 < stop_after:
+            chord = (50, 57, 62) if section % 2 == 0 else (53, 60, 65)
+            add_autumn_chord(texture, spec, base + 1.75, 0.25, chord, 0.175,
+                             "dry_chord", 5300 + bar)
+        # Q contributed only an opening pickup idea.  Its later high event
+        # density is intentionally absent from this arrangement.
+        if bar == 0:
+            add_noise_hit(texture, spec, base + 1.75, 0.034, 0.052, 5400,
+                          -0.30, "bright")
+        elif bar == 1:
+            add_noise_hit(texture, spec, base + 3.50, 0.034, 0.045, 5401,
+                          0.30, "bright")
+
+    mix_buffer(mix, drums, 0.88)
+    mix_buffer(mix, bass, 0.90)
+    mix_buffer(mix, hook, 0.96)
+    mix_buffer(mix, texture, 0.74)
+    return mix
 
 
 def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
-    buffer = StereoBuffer(round(spec.duration * RATE))
-    truth = (1, 0, -1, -2, -1)
+    mix = StereoBuffer(round(spec.duration * RATE))
+    drums = StereoBuffer(mix.frames)
+    drive = StereoBuffer(mix.frames)
+    hook = StereoBuffer(mix.frames)
+    effects = StereoBuffer(mix.frames)
+    roots = (38, 38, 41, 43, 38, 45, 43, 38,
+             41, 43, 38, 45, 38, 41, 43, 38)
+    industrial_cells = (
+        ((0.0, 38), (0.5, 38), (1.0, 41), (2.5, 43), (3.0, 38)),
+        ((0.0, 38), (0.5, 45), (1.5, 43), (2.0, 41), (3.5, 38)),
+        ((0.0, 41), (0.5, 41), (1.0, 43), (2.75, 45)),
+        ((0.0, 38), (0.75, 38), (2.5, 50)),
+    )
+    section_drop = (2.50, 1.50, 2.25, 1.00)
+
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
-        for position in (0.0, 1.5):
-            add_kick(buffer, spec, base + position, 0.135)
-        add_snare(buffer, spec, base + 1.0, 0.100, 6000 + bar)
-        for step in range(6):
-            add_hat(buffer, spec, base + step * 0.5, 0.030 if step % 3 else 0.043,
-                    6100 + bar * 12 + step, -0.42 if step % 2 else 0.42, step == 5)
-        if bar % 2 == 0:
-            add_rim(buffer, spec, base + 0.5, 0.026, 6180 + bar, -0.28)
-        for position, degree in ((0.0, 1 - 5), (1.0, 0 - 5), (1.5, -1 - 5), (2.5, 0 - 5)):
-            add_bass_hit(buffer, spec, base + position, penta_midi(degree), 0.065, 0.30)
-        degree = truth[bar % len(truth)]
-        add_note(buffer, spec, base + 0.25, 0.45, penta_midi(degree + 10), 0.105, "echo", 0.0)
-        add_note(buffer, spec, base + 0.75, 0.34, penta_midi(degree + 11), 0.070, "buzz", -0.78)
-        add_note(buffer, spec, base + 1.25, 0.30, penta_midi(degree + 9), 0.065, "echo", 0.78)
-        if bar % 4 != 3:
-            add_dyad(buffer, spec, base + 2.0, 0.30, (degree + 10, degree + 12), 0.065,
-                     "rock", -0.12 if bar % 2 else 0.12)
+        section = bar // 4
+        stop_after = section_drop[section] if bar % 4 == 3 else 4.0
+        z_full = bar in AUTUMN_BOSS_STRUCTURE["z_full_bars"]
+        t_counter = bar in AUTUMN_BOSS_STRUCTURE["t_counter_bars"]
+        root = roots[bar]
+
+        if z_full:
+            for step in (0.0, 2.0):
+                if step < stop_after:
+                    add_kick(drums, spec, base + step, 0.165)
+            for step in (1.0, 3.0):
+                if step < stop_after:
+                    add_snare(drums, spec, base + step, 0.092, 6000 + bar * 4 + round(step))
+            for eighth in range(8):
+                step = eighth * 0.5
+                if step < stop_after:
+                    add_hat(drums, spec, base + step, 0.046 if eighth % 2 else 0.058,
+                            6100 + bar * 16 + eighth, -0.42 if eighth % 2 else 0.42,
+                            eighth == 7)
+
+            for eighth in range(8):
+                step = eighth * 0.5
+                if step >= stop_after:
+                    continue
+                if eighth in {0, 4}:
+                    note = root
+                elif eighth in {3, 6}:
+                    note = root + 24
+                else:
+                    note = root + 12 + (5 if eighth == 5 else 0)
+                add_autumn_voice(drive, spec, base + step, 0.25, note, 0.265,
+                                 "wire_pick", 6200 + bar * 32 + eighth,
+                                 -0.14 if eighth % 2 else 0.14)
+            if bar in {1, 2, 8, 12, 13}:
+                phrase = (62, 65, 67, 72) if bar < 8 or bar == 12 else (65, 67, 72, 69)
+                for step, note in zip((0.0, 0.75, 1.5, 2.25), phrase):
+                    if step < stop_after:
+                        add_autumn_voice(hook, spec, base + step, 0.20, note, 0.225,
+                                         "wire_pick", 6300 + bar * 32 + round(step * 8),
+                                         -0.04 if step < 1.5 else 0.04)
         else:
-            add_note(buffer, spec, base + 2.15, 0.28, penta_midi(1 + 10), 0.095, "metal", 0.0)
-    return buffer
+            # Even during T's counterphrase, Z keeps the downbeat, backbeat and
+            # low wire-pick answer.  T therefore interrupts a continuing lure
+            # instead of replacing it with a second unrelated song.
+            add_kick(drums, spec, base, 0.150)
+            if 2.0 < stop_after:
+                add_snare(drums, spec, base + 2.0, 0.076, 6050 + bar)
+            for step, pan in ((0.50, -0.34), (2.50, 0.34)):
+                if step < stop_after:
+                    add_hat(drums, spec, base + step, 0.037,
+                            6150 + bar * 8 + round(step * 2), pan)
+            for step, note, pan in ((0.0, root, 0.12), (2.0, root + 12, -0.12)):
+                if step < stop_after:
+                    add_autumn_voice(drive, spec, base + step, 0.30, note, 0.235,
+                                     "wire_pick", 6250 + bar * 8 + round(step * 2), pan)
+
+        if bar in AUTUMN_BOSS_STRUCTURE["dub_send_bars"]:
+            chord = (50, 57, 62) if bar in {0, 8, 12} else (53, 60, 65)
+            add_autumn_dub_reply(effects, spec, base + 0.25, chord, 0.255,
+                                 6400 + bar, base + stop_after)
+
+        if t_counter:
+            transpose = 0 if section == 1 else (3 if bar == 9 else 5 if bar == 11 else 0)
+            cell = industrial_cells[bar % 4]
+            for step, note in cell:
+                if step >= stop_after:
+                    continue
+                voiced_note = note + transpose + 12
+                if step >= 2.0:
+                    voiced_note += 12
+                add_autumn_voice(drive, spec, base + step, 0.25 if step < 2.0 else 0.31,
+                                 voiced_note, 0.275, "iron_pulse",
+                                 6500 + bar * 32 + round(step * 8),
+                                 -0.16 if round(step * 4) % 2 else 0.16)
+                if step in {2.5, 2.75}:
+                    add_kick(drums, spec, base + step, 0.135)
+            if bar % 4 != 3:
+                for step in (0.25, 1.75, 3.50):
+                    if step < stop_after:
+                        add_hat(drums, spec, base + step, 0.038,
+                                6650 + bar * 16 + round(step * 4),
+                                -0.38 if step < 2.0 else 0.38)
+            if bar in {5, 6, 9, 11, 15}:
+                for step, note, pan in ((1.50, 74, -0.20), (2.00, 69, 0.20)):
+                    if step < stop_after:
+                        add_autumn_voice(effects, spec, base + step, 0.24, note, 0.145,
+                                         "rust_bell", 6700 + bar * 8 + round(step * 2), pan)
+            if bar in {5, 9} and 2.75 < stop_after:
+                add_noise_hit(effects, spec, base + 2.75, 0.16, 0.068,
+                              6750 + bar, 0.16, "dark")
+
+    mix_buffer(mix, drums, 0.98)
+    mix_buffer(mix, drive, 0.82)
+    mix_buffer(mix, hook, 0.90)
+    mix_buffer(mix, effects, 0.94)
+    return mix
 
 
 def render_winter_explore(spec: TrackSpec) -> StereoBuffer:
@@ -631,6 +881,14 @@ RENDERERS = {
 }
 
 
+def saturate_mix(buffer: StereoBuffer, drive: float) -> None:
+    """Apply a track-local VCA-like crest clamp before loudness matching."""
+    ceiling = math.tanh(drive)
+    for channel in (buffer.left, buffer.right):
+        for index, sample in enumerate(channel):
+            channel[index] = math.tanh(sample * drive) / ceiling
+
+
 def apply_macro_dynamics(buffer: StereoBuffer, spec: TrackSpec) -> None:
     """Give each four-bar phrase a real rise/drop instead of flat normalization."""
     gains = MACRO_GAINS[spec.name]
@@ -677,6 +935,74 @@ def finish_mix(buffer: StereoBuffer, spec: TrackSpec) -> None:
     buffer.left[0] = buffer.right[0] = buffer.left[-1] = buffer.right[-1] = 0.0
 
 
+def _biquad(samples: array, b0: float, b1: float, b2: float,
+            a1: float, a2: float) -> array:
+    result = array("f", [0.0]) * len(samples)
+    x1 = x2 = y1 = y2 = 0.0
+    for index, sample in enumerate(samples):
+        output = b0 * sample + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
+        result[index] = output
+        x2, x1 = x1, sample
+        y2, y1 = y1, output
+    return result
+
+
+def _k_weight_44k1(samples: array) -> array:
+    """ITU-R BS.1770 K-weighting at the generator's fixed 44.1 kHz."""
+    stage_one = _biquad(
+        samples,
+        1.530841230050347, -2.650979995154729, 1.169079079921586,
+        -1.663655113256020, 0.712595428073225,
+    )
+    return _biquad(
+        stage_one,
+        1.0, -2.0, 1.0,
+        -1.989169673629795, 0.989199035787039,
+    )
+
+
+def integrated_lufs(buffer: StereoBuffer) -> float:
+    weighted = (_k_weight_44k1(buffer.left), _k_weight_44k1(buffer.right))
+    block = round(0.400 * RATE)
+    hop = round(0.100 * RATE)
+    energies = []
+    for start in range(0, buffer.frames - block + 1, hop):
+        energy = sum(
+            sum(value * value for value in channel[start:start + block]) / block
+            for channel in weighted
+        )
+        loudness = -0.691 + 10.0 * math.log10(max(energy, 1e-20))
+        if loudness >= -70.0:
+            energies.append(energy)
+    if not energies:
+        return -120.0
+    ungated = -0.691 + 10.0 * math.log10(sum(energies) / len(energies))
+    threshold = ungated - 10.0
+    gated = [
+        energy for energy in energies
+        if -0.691 + 10.0 * math.log10(max(energy, 1e-20)) >= threshold
+    ]
+    return -0.691 + 10.0 * math.log10(sum(gated) / len(gated))
+
+
+def normalize_autumn_loudness(buffer: StereoBuffer, target_lufs: float) -> None:
+    measured = integrated_lufs(buffer)
+    scale = 10.0 ** ((target_lufs - measured) / 20.0)
+    projected_peak = max(
+        max(abs(value) for value in buffer.left),
+        max(abs(value) for value in buffer.right),
+    ) * scale
+    # Leave more than a dB of sample-peak headroom for inter-sample peaks.  A
+    # failure here means the arrangement needs crest control, not silent clip.
+    if projected_peak > 0.82:
+        raise RuntimeError(
+            f"autumn loudness target would exceed the peak fence: {projected_peak:.4f}"
+        )
+    for channel in (buffer.left, buffer.right):
+        for index in range(len(channel)):
+            channel[index] *= scale
+
+
 def write_wav(path: Path, buffer: StereoBuffer) -> None:
     interleaved = array("h")
     append = interleaved.append
@@ -696,7 +1022,13 @@ def render_track(name: str) -> Path:
     spec = TRACKS[name]
     buffer = RENDERERS[name](spec)
     apply_macro_dynamics(buffer, spec)
+    if name == "autumn_explore":
+        saturate_mix(buffer, 1.70)
+    elif name == "autumn_boss":
+        saturate_mix(buffer, 1.55)
     finish_mix(buffer, spec)
+    if name in AUTUMN_LOUDNESS_TARGETS:
+        normalize_autumn_loudness(buffer, AUTUMN_LOUDNESS_TARGETS[name])
     path = OUTPUT / f"{name}.wav"
     write_wav(path, buffer)
     print(

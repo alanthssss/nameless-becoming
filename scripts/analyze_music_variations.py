@@ -35,6 +35,7 @@ THRESHOLDS = {
     "max_low_mid_occupancy": 0.80,
     "min_spectral_centroid_hz": 350.0,
     "min_active_dynamic_range_db": 3.0,
+    "min_autumn_dropout_ms": 750,
     "max_stereo_correlation": 0.995,
     "max_same_season_cosine": 0.92,
 }
@@ -136,6 +137,23 @@ def active_dynamic_range(mono: array, rate: int) -> float:
     return percentile(levels, 95.0) - percentile(levels, 10.0)
 
 
+def longest_dropout_ms(left: array, right: array, rate: int) -> int:
+    """Measure consecutive 50 ms windows below -45 dBFS."""
+    window = max(1, round(rate * 0.050))
+    longest = current = 0
+    for start in range(0, len(left) - window + 1, window):
+        energy = sum(
+            (left[index] * left[index] + right[index] * right[index]) * 0.5
+            for index in range(start, start + window)
+        ) / window
+        if 10.0 * math.log10(max(energy, 1e-20)) < -45.0:
+            current += 1
+            longest = max(longest, current)
+        else:
+            current = 0
+    return longest * 50
+
+
 def analyze_track(path: Path, spec) -> tuple[dict[str, float | int | str], list[float]]:
     rate, channels, left, right = read_pcm(path)
     frames = len(left)
@@ -202,6 +220,7 @@ def analyze_track(path: Path, spec) -> tuple[dict[str, float | int | str], list[
         "peak_dbfs": round(20.0 * math.log10(max(peak, 1e-20)), 3),
         "crest_db": round(20.0 * math.log10(max(peak / max(rms, 1e-20), 1e-20)), 3),
         "active_dynamic_range_db": round(active_dynamic_range(mono, rate), 3),
+        "longest_dropout_ms": longest_dropout_ms(left, right, rate),
         "spectral_centroid_hz": round(centroid, 3),
         "rolloff_85_hz": round(rolloff, 3),
         "low_mid_40_250_share": round(low_mid_energy / max(1e-20, total_energy), 5),
@@ -245,6 +264,8 @@ def main() -> None:
             failures.append(f"{name}: spectral centroid")
         if metrics["active_dynamic_range_db"] < THRESHOLDS["min_active_dynamic_range_db"]:
             failures.append(f"{name}: active dynamic range")
+        if name.startswith("autumn_") and metrics["longest_dropout_ms"] < THRESHOLDS["min_autumn_dropout_ms"]:
+            failures.append(f"{name}: missing four-bar reset dropout")
         if metrics["stereo_correlation"] > THRESHOLDS["max_stereo_correlation"]:
             failures.append(f"{name}: effectively mono")
 

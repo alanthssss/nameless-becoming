@@ -9,7 +9,7 @@ const TRACK_PATHS := [
 const EXPECTED_DURATIONS := [
 	[27.692313, 25.945941],
 	[24.827596, 22.325578],
-	[28.571429, 22.857143],
+	[30.967755, 30.0],
 	[26.666667, 30.0],
 ]
 const ANALYSIS_PATH := "res://assets/music/analysis.json"
@@ -95,6 +95,8 @@ func run_test() -> void:
 			expect(float(metrics.get("low_mid_40_250_share", 1.0)) <= float(thresholds.get("max_low_mid_share", 0.7)), "%s 低中频再次堆积" % track_name)
 			expect(float(metrics.get("low_mid_occupancy", 1.0)) <= float(thresholds.get("max_low_mid_occupancy", 0.8)), "%s 出现持续低频地毯" % track_name)
 			expect(float(metrics.get("active_dynamic_range_db", 0.0)) >= float(thresholds.get("min_active_dynamic_range_db", 3.0)), "%s 缺乏呼吸和留白" % track_name)
+			if String(track_name).begins_with("autumn_"):
+				expect(int(metrics.get("longest_dropout_ms", 0)) >= int(thresholds.get("min_autumn_dropout_ms", 750)), "%s 缺少四小节段落重置留白" % track_name)
 		var similarities: Dictionary = report.get("same_season_explore_boss_cosine", {})
 		for season_name in similarities:
 			expect(float(similarities[season_name]) <= float(thresholds.get("max_same_season_cosine", 0.92)), "%s 探索/Boss 听感骨架仍过近" % season_name)

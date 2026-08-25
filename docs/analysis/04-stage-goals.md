@@ -3,8 +3,8 @@
 > 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
 > The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
 
-当前可玩实现基线 / Current playable baseline：`4b57d856`（PR #69）；玩法与资产来自 PR #63，盲听工具来自 PR #64，HUD 与输入来自 PR #65；PR #67、#68 只增加证据工具与文档。
-固定验收候选 / Fixed acceptance candidate：`4b57d856`。
+当前源码候选 / Current source candidate：`4b57d856` 玩法基线＋PR #76 秋季双轨。
+固定验收 artifact / Fixed acceptance artifact：`4b57d856`，不含 PR #76 新音乐。
 
 ---
 
@@ -26,15 +26,16 @@ This section records history only; the old four stages, first-boss prototype, ol
 | PR #69 | 首次采蜜距离、持续按住、`蜜囊 +1` 成功证据与老师傅演示 | 当前固定候选 `4b57d856`；自动回归通过，但旧 A 包不能替代新候选复测 |
 | PR #70（不合并） | D 秋 Boss 与 G 秋探索的定向减层／缩滑音 A/B 候选 | Alan 两组均选 `tie`、“都不好”和 `neither`；创作者门禁失败，秋季双轨转入结构性新方向 |
 | Draft PR #74（不合并） | 四条 15–20 秒秋季结构方向草图与匿名选择工具 | Alan 选择探索 K，并认为 Boss T/Z 两条都可继续；只允许制作全长候选，不是正式音频替换通过 |
+| PR #76 | 16 小节秋季探索／Boss 正式候选、确定性生成与最终等响度 A/B | Alan 在探索、Boss 两组均盲选正式候选；秋季双轨创作者替换门禁通过，固定新 artifact 与实机混音仍待后续 |
 
 ## 2. 当前阶段结论 / Current Stage Conclusion
 
 | 证据层 / Evidence layer | 状态 / Status | 结论 / Conclusion |
 | --- | --- | --- |
-| 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具、PR #65 的 HUD／输入和 PR #69 的首次采蜜修复形成固定可玩实现 `4b57d856`；PR #67、#68 不改游戏二进制 |
-| 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
+| 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具、PR #65 的 HUD／输入和 PR #69 的首次采蜜修复形成固定 artifact `4b57d856`；当前源码另含 PR #76 秋季双轨替换，但尚未生成新固定 artifact |
+| 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、旧 artifact 与 SHA-256 复验、正式秋季双轨确定性重生成、分析与答案隔离校验通过 |
 | Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
-| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`4b57d856` 尚待重新采证。八轨逐轨评论已完成；D/G A/B 失败后，Draft PR #74 已选出可继续的秋季方向，但全长替换 A/B、总体配对与实机混音仍缺失 |
+| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | 旧 `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；`4b57d856` 尚待重新采证。秋季双轨全长最终 A/B 已在两组均选择正式候选；总体配对、长期耐循环、实机混音与完整玩法流程仍缺失 |
 | Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
 | 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
@@ -58,7 +59,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 5. 体验夏季袭扰、秋季留种、冬季暖点并描述实际改过的路线或选择；
 6. 分别复述四位 Boss 的暴露规则；
 7. 记录各节点／Boss 用时、失败点和无决策重复时长；
-8. D/G 修改前后 A/B 已失败；Draft PR #74 已选择探索 K 与 Boss T/Z 方向。另做全长候选，并在最终替换 A/B 前匹配到 `±0.3 LU`。再补同季配对、总体区分度和实机混音；其余六轨不因本次证据重写。
+8. D/G 修改前后 A/B 已失败；Draft PR #74 已选择方向，PR #76 全长最终 A/B 又在探索与 Boss 两组均选择正式候选。下一步只补同季配对、总体区分度、长期耐循环和实机混音；其余六轨不因本次证据重写。
 
 ### 3.3 发布人工流程 / Release Manual Pass
 
@@ -110,7 +111,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 | 四组仍被概括为“都是采蜜” | 四季路线深化 | 每组至少观察到一次不同路线、顺序、撤离或资源选择 |
 | 节点仍短或只是机械重复 | 节奏与 Boss 调律 | 依据用时、失败原因和重复劳动改内容，不只抬目标 |
 | 视觉仍不协调 | 单代表场景画风切片 | 先通过一张实机场景，再批量生产 |
-| PR #70 与主线基线均被否决，Draft PR #74 已选出 K 与 T/Z | 秋季两轨全长候选 | 不续接被否决候选；K 保持整段清楚，Boss 统一结构不变乱；响度匹配 `±0.3 LU` 后取得正式 candidate 偏好与 replacement readiness |
+| PR #70 与主线基线均被否决，Draft PR #74 已选出 K 与 T/Z（已完成） | PR #76 秋季两轨全长候选 | 不续接被否决候选；最终组内响度精确一致，探索与 Boss 均选正式 candidate；该条件任务关闭，实机混音另测 |
 | 中继巢确实带来主动改线 | 第二据点实验 | 不破坏主巢、Q 归巢与交付语义唯一性 |
 
 未出现触发证据时，这些不是已排产功能。

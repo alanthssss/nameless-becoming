@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前可玩实现基线 / Current playable baseline：`4b57d856`（PR #69）；玩法与资产来自 PR #63，盲听工具来自 PR #64，HUD 与输入来自 PR #65；PR #67、#68 只增加证据工具与文档。
+当前源码候选 / Current source candidate：`4b57d856` 玩法基线＋PR #76 秋季双轨；固定桌面 artifact 仍为不含新音乐的 `4b57d856`。
 
 ---
 

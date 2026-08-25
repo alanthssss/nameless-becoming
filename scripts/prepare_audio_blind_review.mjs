@@ -16,10 +16,10 @@ export const BLIND_TRACKS = Object.freeze([
   Object.freeze({ id: "A", source: "summer_explore.wav", sha256: "9ea49bc76c610dc0fcad3c74d3a308662637d48558a68cf2d7f216c1d239f353" }),
   Object.freeze({ id: "B", source: "winter_boss.wav", sha256: "a11aaca193b51483d572e9411854970940e7d12e43b86001f6226e3cc915eeaa" }),
   Object.freeze({ id: "C", source: "spring_explore.wav", sha256: "b443b5efe895bb5365c2b66d135def4656a6b2a409bbd3757c4784ce5bea4f6c" }),
-  Object.freeze({ id: "D", source: "autumn_boss.wav", sha256: "d9ff59d8de8fb35c9200251dc7ce18eb7740dd71d17cb5f44004eb51c92c6d84" }),
+  Object.freeze({ id: "D", source: "autumn_boss.wav", sha256: "b571d75a05be755422214ddf7fd851fa31148c3a7feae7fa896d558340d95701" }),
   Object.freeze({ id: "E", source: "winter_explore.wav", sha256: "26f5e344a6f83fb8beba8574b2db687c8b7015927113c3d21af750e294902910" }),
   Object.freeze({ id: "F", source: "summer_boss.wav", sha256: "7fcdbc2d35242f8981ce11d48844443621fd1a3ad00104d44fe721c1bf7e634e" }),
-  Object.freeze({ id: "G", source: "autumn_explore.wav", sha256: "e22b01786dfb50041aa76f3fb43ea769ce5239bd9f2c7f7e9bafb74bb3dd1d66" }),
+  Object.freeze({ id: "G", source: "autumn_explore.wav", sha256: "de25c797c9dcb49eabee9adc61630dba21493a985ec2dc79ddb115f2d8f4b23a" }),
   Object.freeze({ id: "H", source: "spring_boss.wav", sha256: "df1b22d280ba3e3d18627d48bea1ad02cb1f2164007176180e6d39b1f438b3ed" }),
 ]);
 
