@@ -12,8 +12,8 @@ const MOSQUITO_TEXTURE := preload("res://assets/art/launch/mosquito_v1.png")
 const FONT := preload("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
 const EXPLORE_MUSIC := preload("res://assets/music/spring_explore.wav")
 
-const WORLD := Rect2(34.0, 146.0, 970.0, 538.0)
-const BEE_CENTER_BOUNDS := Rect2(52.0, 164.0, 934.0, 502.0)
+const WORLD := Rect2(34.0, 146.0, 1178.0, 538.0)
+const BEE_CENTER_BOUNDS := Rect2(52.0, 164.0, 1142.0, 502.0)
 const DEMONSTRATION_SECONDS := 2.8
 const GUIDED_MAX_SECONDS := 90.0
 const GUIDED_MAX_ATTEMPTS := 4
@@ -36,11 +36,11 @@ const RESULT_INCOMPLETE := "attempted_incomplete"
 const RESULT_NOT_ATTEMPTED := "not_attempted"
 
 const POLLEN_POINTS: Array[Vector2] = [
-	Vector2(310.0, 280.0),
-	Vector2(510.0, 520.0),
-	Vector2(760.0, 260.0),
-	Vector2(875.0, 520.0),
-	Vector2(585.0, 360.0),
+	Vector2(250.0, 280.0),
+	Vector2(455.0, 535.0),
+	Vector2(695.0, 270.0),
+	Vector2(930.0, 515.0),
+	Vector2(1110.0, 335.0),
 ]
 
 var playtest_session_context: Dictionary = {}
@@ -144,7 +144,9 @@ func _build_world() -> void:
 	# explicitly pausable so inheriting from that root cannot advance movement.
 	bee.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(bee)
-	bee.reset_for_expedition(Vector2(520.0, 410.0))
+	var bounds_error := bee.set_movement_bounds(WORLD)
+	assert(bounds_error == OK, "B01 movement bounds must remain valid")
+	bee.reset_for_expedition(Vector2(620.0, 410.0))
 	bee.configure(0.0)
 	bee.set_spring_launch_art(true)
 	bee.active = false
@@ -195,13 +197,13 @@ func _build_interface() -> void:
 	_instruction_panel = ColorRect.new()
 	_instruction_panel.color = Color("22252fe8")
 	_instruction_panel.position = Vector2(82.0, 568.0)
-	_instruction_panel.size = Vector2(874.0, 104.0)
+	_instruction_panel.size = Vector2(1082.0, 104.0)
 	_instruction_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(_instruction_panel)
 	_instruction_label = _label("", 21)
 	_instruction_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_instruction_label.position = Vector2(24.0, 16.0)
-	_instruction_label.size = Vector2(826.0, 76.0)
+	_instruction_label.size = Vector2(1034.0, 76.0)
 	_instruction_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_instruction_panel.add_child(_instruction_label)
 
@@ -387,6 +389,14 @@ func _begin_unprompted_retest() -> void:
 	input_enabled = true
 	_hide_instruction()
 	_status_label.text = ""
+	# The 180-second interference route is allowed to exhaust ordinary flight
+	# resources, but it must not silently invalidate the one measured evade.
+	# Restore only the action resources; attack timing and input grammar stay exact.
+	bee.energy = bee.max_energy
+	bee.evade_time = 0.0
+	bee.evade_cooldown = 0.0
+	bee.invulnerable_time = 0.0
+	bee.clear_evade_first_tap()
 	_start_encounter()
 
 func _advance_pollen_route(delta: float) -> void:
@@ -545,7 +555,12 @@ func _update_interface() -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, Vector2(1280.0, 720.0)), Color("0f1117"))
-	draw_texture_rect(FIELD_TEXTURE, WORLD, false, Color(0.82, 0.88, 0.72, 0.92))
+	draw_texture_rect_region(
+		FIELD_TEXTURE,
+		WORLD,
+		cover_source_region(FIELD_TEXTURE.get_size(), WORLD.size),
+		Color(0.82, 0.88, 0.72, 0.92)
+	)
 	draw_rect(WORLD, Color("f1d46d66"), false, 3.0)
 	for point in POLLEN_POINTS:
 		draw_texture_rect(FLOWER_TEXTURE, Rect2(point - Vector2(34.0, 34.0), Vector2(68.0, 68.0)), false, Color(1.0, 1.0, 1.0, 0.82))
@@ -596,7 +611,7 @@ func _draw_encounter() -> void:
 		var geometry := Rules.committed_corridor_geometry(encounter.locked_origin, encounter.aim_direction, WORLD, Rules.PATH_CLEARANCE)
 		_draw_corridor(geometry, 0.34)
 	if phase == PHASE_GUIDED and encounter.state in [B01EvadeEncounter.STATE_LOCKED, B01EvadeEncounter.STATE_DASH]:
-		for direction in Rules.cardinal_escape_directions(encounter.locked_target, encounter.aim_direction, BEE_CENTER_BOUNDS):
+		for direction in escape_directions_for(encounter.locked_target, encounter.aim_direction):
 			_draw_escape_arrow(encounter.locked_target, direction)
 	_draw_mosquito(encounter.attacker_position, encounter.aim_direction, encounter.state == B01EvadeEncounter.STATE_DASH)
 	draw_circle(encounter.attacker_position, 34.0, Color("d95d5448"), false, 3.0)
@@ -609,12 +624,54 @@ func _draw_corridor(geometry: Dictionary, alpha: float) -> void:
 	draw_line(Vector2(geometry.start), Vector2(geometry.finish), Color(0.91, 0.34, 0.31, alpha + 0.34), 4.0)
 
 func _draw_escape_arrow(origin: Vector2, direction: Vector2) -> void:
-	var start := origin + direction * 34.0
-	var finish := origin + direction * 86.0
-	var side := direction.orthogonal() * 9.0
-	draw_line(start, finish, Color("f4d36f"), 5.0)
-	draw_line(finish, finish - direction * 18.0 + side, Color("f4d36f"), 5.0)
-	draw_line(finish, finish - direction * 18.0 - side, Color("f4d36f"), 5.0)
+	var geometry := escape_arrow_geometry(origin, direction)
+	if not bool(geometry.get("valid", false)):
+		return
+	draw_line(Vector2(geometry.start), Vector2(geometry.finish), Color("f4d36f"), 5.0)
+	draw_line(Vector2(geometry.finish), Vector2(geometry.head_a), Color("f4d36f"), 5.0)
+	draw_line(Vector2(geometry.finish), Vector2(geometry.head_b), Color("f4d36f"), 5.0)
+
+static func cover_source_region(source_size: Vector2, destination_size: Vector2) -> Rect2:
+	if source_size.x <= 0.0 or source_size.y <= 0.0 or destination_size.x <= 0.0 or destination_size.y <= 0.0:
+		return Rect2()
+	var cover_scale := maxf(destination_size.x / source_size.x, destination_size.y / source_size.y)
+	var visible_size := destination_size / cover_scale
+	return Rect2((source_size - visible_size) * 0.5, visible_size)
+
+static func escape_arrow_geometry(origin: Vector2, direction: Vector2) -> Dictionary:
+	var normalized := direction.normalized()
+	if normalized.length_squared() < 0.01:
+		return {"valid": false}
+	var available := INF
+	if normalized.x > 0.001:
+		available = minf(available, (BEE_CENTER_BOUNDS.end.x - origin.x) / normalized.x)
+	elif normalized.x < -0.001:
+		available = minf(available, (BEE_CENTER_BOUNDS.position.x - origin.x) / normalized.x)
+	if normalized.y > 0.001:
+		available = minf(available, (BEE_CENTER_BOUNDS.end.y - origin.y) / normalized.y)
+	elif normalized.y < -0.001:
+		available = minf(available, (BEE_CENTER_BOUNDS.position.y - origin.y) / normalized.y)
+	var finish_distance := minf(86.0, available)
+	if finish_distance < Rules.PATH_CLEARANCE + 1.0:
+		return {"valid": false}
+	var start_distance := minf(34.0, finish_distance * 0.46)
+	var head_length := minf(18.0, maxf(9.0, (finish_distance - start_distance) * 0.44))
+	var start := origin + normalized * start_distance
+	var finish := origin + normalized * finish_distance
+	var side := normalized.orthogonal() * minf(9.0, head_length * 0.5)
+	return {
+		"valid": true,
+		"start": start,
+		"finish": finish,
+		"head_a": finish - normalized * head_length + side,
+		"head_b": finish - normalized * head_length - side,
+	}
+
+static func escape_directions_for(target: Vector2, attack_direction: Vector2) -> Array[Vector2]:
+	# Rect2.has_point excludes its end edge while BeePlayer's physical clamp is
+	# inclusive. A sub-pixel expansion makes both representations agree without
+	# moving the bee or changing the shared 36px causal clearance.
+	return Rules.cardinal_escape_directions(target, attack_direction, BEE_CENTER_BOUNDS.grow(0.01))
 
 func _draw_mentor_bee(position: Vector2, facing_direction: Vector2) -> void:
 	var facing := facing_direction.angle() if facing_direction.length_squared() > 0.01 else 0.0

@@ -98,7 +98,7 @@ func test_context_contract() -> void:
 
 func test_encounter_causality() -> void:
 	var encounter := EncounterScript.new()
-	encounter.begin(Vector2(980.0, 170.0), 5)
+	encounter.begin(Vector2(1193.0, 165.0), 5)
 	expect(EncounterScript.ATTACKER_BOUNDS.has_point(encounter.attacker_position), "边界蜂位使 attacker 生成到 WORLD 外")
 	expect(not encounter.mark_evade_attempted(), "aim 阶段抢跑被记录为有效尝试")
 	var event: Dictionary = encounter.advance(EncounterScript.AIM_SECONDS, Vector2(960.0, 180.0), 9)
@@ -108,6 +108,76 @@ func test_encounter_causality() -> void:
 	expect(encounter.mark_evade_attempted(), "locked 后输入未记录为有效尝试")
 	var signature: Dictionary = encounter.config_signature()
 	expect(signature.path_clearance == Rules.PATH_CLEARANCE and signature.attack_cross_radius == Rules.ATTACK_CROSS_RADIUS, "encounter 未使用共享 EvadeRules 事实")
+	encounter.state = B01EvadeEncounter.STATE_DASH
+	encounter.state_seconds = B01EvadeEncounter.DASH_SECONDS
+	encounter.attacker_position = EncounterScript.ATTACKER_BOUNDS.end - Vector2(2.0, EncounterScript.ATTACKER_BOUNDS.size.y * 0.5)
+	encounter.aim_direction = Vector2.RIGHT
+	encounter.locked_target = Vector2(100.0, 300.0)
+	encounter.advance(0.5, Vector2.ZERO, 9)
+	expect(EncounterScript.ATTACKER_BOUNDS.has_point(encounter.attacker_position), "attacker 冲刺越过全宽场地安全边界")
+
+func test_full_width_world_and_cover_crop() -> void:
+	var slice := runtime_slice()
+	if slice == null:
+		return
+	expect(B01EvadeSlice.WORLD == Rect2(34.0, 146.0, 1178.0, 538.0), "B01 WORLD 没有覆盖 1178px 游戏宽度")
+	expect(B01EvadeSlice.WORLD.end.x == 1212.0, "B01 右侧仍留下 276px 空区")
+	expect(B01EvadeSlice.BEE_CENTER_BOUNDS == B01EvadeSlice.WORLD.grow(-18.0), "B01 角色中心边界未与全宽 WORLD 同步")
+	expect(slice.bee.get_movement_bounds() == B01EvadeSlice.WORLD, "B01 BeePlayer 没有使用实例全宽边界")
+	expect(EncounterScript.ATTACKER_BOUNDS == B01EvadeSlice.WORLD.grow(-36.0), "attacker bounds 未随全宽 WORLD 扩展")
+	expect(slice._instruction_panel.size.x == B01EvadeSlice.WORLD.size.x - 96.0, "教学面板仍停留在旧 970px 布局")
+	expect(slice._instruction_panel.position.x + slice._instruction_panel.size.x == B01EvadeSlice.WORLD.end.x - 48.0, "教学面板右缘未与全宽游戏区对齐")
+
+	var cover_region := B01EvadeSlice.cover_source_region(Vector2(1280.0, 720.0), B01EvadeSlice.WORLD.size)
+	expect(is_equal_approx(cover_region.position.x, 0.0) and cover_region.position.y > 0.0, "16:9 背景没有通过裁上下覆盖超宽 B01")
+	expect(is_equal_approx(cover_region.size.x, 1280.0) and cover_region.size.y < 720.0, "B01 cover crop 错误裁左右或没有裁切")
+	expect(is_equal_approx(cover_region.size.x / cover_region.size.y, B01EvadeSlice.WORLD.size.x / B01EvadeSlice.WORLD.size.y), "背景 cover region 与目标比例不一致，会发生横向拉伸")
+
+	var pointer_result: Dictionary = slice.input_controller.handle_world_tap(
+		Vector2(1200.0, 410.0),
+		30.0,
+		slice.bee,
+		B01EvadeSlice.WORLD,
+		false
+	)
+	expect(bool(pointer_result.consumed), "B01 全宽右侧指针输入仍被旧 WORLD 拒绝")
+	var outside_result: Dictionary = slice.input_controller.handle_world_tap(
+		Vector2(1220.0, 410.0),
+		31.0,
+		slice.bee,
+		B01EvadeSlice.WORLD,
+		false
+	)
+	expect(not bool(outside_result.consumed), "B01 WORLD 外指针输入被错误消费")
+	slice.bee.position = Vector2(1300.0, 410.0)
+	slice.bee.active = true
+	slice.bee._physics_process(0.001)
+	expect(is_equal_approx(slice.bee.position.x, B01EvadeSlice.BEE_CENTER_BOUNDS.end.x), "B01 角色无法到达旧 Main 边界右侧")
+	expect(slice.bee.position.x > BeePlayer.WORLD_BOUNDS.end.x, "B01 角色仍被 Main 默认宽度限制")
+
+	var route_reaches_right := false
+	for point in B01EvadeSlice.POLLEN_POINTS:
+		route_reaches_right = route_reaches_right or point.x > BeePlayer.WORLD_BOUNDS.end.x
+		expect(B01EvadeSlice.WORLD.grow(-34.0).has_point(point), "花间路线点超出全宽背景安全区")
+	expect(route_reaches_right, "花间路线没有使用新增的右侧游戏空间")
+
+	var edge_targets: Array[Vector2] = [
+		B01EvadeSlice.BEE_CENTER_BOUNDS.position,
+		B01EvadeSlice.BEE_CENTER_BOUNDS.end,
+	]
+	for target in edge_targets:
+		for attack_direction in [Vector2.RIGHT, Vector2.DOWN]:
+			var directions := B01EvadeSlice.escape_directions_for(target, attack_direction)
+			for direction in directions:
+				var arrow := B01EvadeSlice.escape_arrow_geometry(target, direction)
+				expect(bool(arrow.get("valid", false)), "共享规则给出的侧标无法生成边界内箭头")
+				if bool(arrow.get("valid", false)):
+					for key in ["start", "finish", "head_a", "head_b"]:
+						expect(B01EvadeSlice.WORLD.has_point(Vector2(arrow[key])), "侧标箭头越过全宽 WORLD：%s" % key)
+
+	var source := FileAccess.get_file_as_string("res://scripts/playtest/b01_evade_slice.gd")
+	expect(source.contains("draw_texture_rect_region(") and not source.contains("draw_texture_rect(FIELD_TEXTURE"), "B01 背景仍走 16:9 横向拉伸绘制路径")
+	slice.free()
 
 func test_timeline_and_pause() -> void:
 	var slice := runtime_slice()
@@ -208,6 +278,45 @@ func test_terminal_results_and_limits() -> void:
 	expect(practice_timeout.phase == B01EvadeSlice.PHASE_COMPLETE and practice_timeout.result_code == B01EvadeSlice.RESULT_NOT_ATTEMPTED, "实践未在 90s 上限中性结束")
 	practice_timeout.free()
 
+func test_delay_exhaustion_keeps_retest_operable() -> void:
+	var slice := runtime_slice()
+	if slice == null:
+		return
+	slice._begin_active_delay_route()
+	var teaching_count := slice.teaching_display_count
+	slice.bee.active = true
+	Input.action_press("move_right")
+	for second in 179:
+		slice.bee._physics_process(1.0)
+		slice._advance_session(1.0, true)
+	slice.bee._physics_process(1.0)
+	Input.action_release("move_right")
+	expect(slice.bee.energy < BeePlayer.EVADE_COST, "持续移动对照没有覆盖复测前低于急转成本的状态")
+	# Exercise the same stale action state that a frame-boundary transition can carry.
+	slice.bee.evade_time = 0.1
+	slice.bee.evade_cooldown = 0.8
+	slice._advance_session(1.0, true)
+	expect(slice.phase == B01EvadeSlice.PHASE_RETEST and slice.retest_opportunities == 1, "180s 持续移动后没有进入唯一复测")
+	expect(slice.bee.energy == slice.bee.max_energy and slice.bee.evade_time == 0.0 and slice.bee.evade_cooldown == 0.0, "复测没有原子恢复一次急转所需资源")
+	expect(slice.teaching_display_count == teaching_count and slice.current_instruction.is_empty() and not slice._instruction_panel.visible, "复测补能被显示成重新教学")
+
+	var lock_event: Dictionary = slice.encounter.advance(
+		B01EvadeEncounter.AIM_SECONDS,
+		slice.bee.position,
+		slice.bee.evade_sequence
+	)
+	expect(lock_event.kind == "locked", "耗能路线后的复测没有进入锁定")
+	var escape_directions := B01EvadeSlice.escape_directions_for(slice.encounter.locked_target, slice.encounter.aim_direction)
+	expect(not escape_directions.is_empty(), "耗能路线后的边界位置没有合法侧向急转")
+	if not escape_directions.is_empty():
+		var direction: Vector2 = escape_directions[0]
+		var direction_key := "right" if direction.x > 0.5 else "left" if direction.x < -0.5 else "down" if direction.y > 0.5 else "up"
+		var first: Dictionary = slice.input_controller.register_direction_tap(direction_key, direction, 50.0, slice.bee)
+		var second: Dictionary = slice.input_controller.register_direction_tap(direction_key, direction, 50.2, slice.bee)
+		expect(not bool(first.evade_started) and bool(second.evade_started), "180s 持续移动后正确同向双击仍无法发动急转")
+		expect(slice.bee.energy == slice.bee.max_energy - BeePlayer.EVADE_COST, "唯一复测急转没有只消费正常的 12 点能量")
+	slice.free()
+
 func test_shared_rule_runtime_wiring() -> void:
 	var slice := runtime_slice()
 	slice._begin_unprompted_retest()
@@ -263,8 +372,10 @@ func test_no_save_or_private_runtime() -> void:
 func run_test() -> void:
 	test_context_contract()
 	test_encounter_causality()
+	test_full_width_world_and_cover_crop()
 	test_timeline_and_pause()
 	test_terminal_results_and_limits()
+	test_delay_exhaustion_keeps_retest_operable()
 	test_shared_rule_runtime_wiring()
 	test_no_save_or_private_runtime()
 	root.get_tree().paused = false

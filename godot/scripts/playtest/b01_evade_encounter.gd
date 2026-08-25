@@ -14,7 +14,7 @@ const LOCK_SECONDS := 0.48
 const DASH_SECONDS := 0.85
 const DASH_SPEED := 520.0
 const SPAWN_OFFSET := Vector2(190.0, -36.0)
-const ATTACKER_BOUNDS := Rect2(70.0, 182.0, 898.0, 466.0)
+const ATTACKER_BOUNDS := Rect2(70.0, 182.0, 1106.0, 466.0)
 
 var state := STATE_IDLE
 var state_seconds := 0.0
@@ -28,10 +28,7 @@ var evade_attempted := false
 func begin(bee_position: Vector2, evade_sequence: int) -> void:
 	var horizontal_offset := SPAWN_OFFSET.x if bee_position.x <= ATTACKER_BOUNDS.get_center().x else -SPAWN_OFFSET.x
 	var requested_position := bee_position + Vector2(horizontal_offset, SPAWN_OFFSET.y)
-	attacker_position = Vector2(
-		clampf(requested_position.x, ATTACKER_BOUNDS.position.x, ATTACKER_BOUNDS.end.x - 1.0),
-		clampf(requested_position.y, ATTACKER_BOUNDS.position.y, ATTACKER_BOUNDS.end.y - 1.0)
-	)
+	attacker_position = clamp_attacker_position(requested_position)
 	aim_direction = (bee_position - attacker_position).normalized()
 	locked_origin = attacker_position
 	locked_target = bee_position
@@ -83,7 +80,7 @@ func advance(delta: float, bee_position: Vector2, current_evade_sequence: int) -
 				return _event("dash_started")
 		STATE_DASH:
 			var previous := attacker_position
-			attacker_position += aim_direction * DASH_SPEED * delta
+			attacker_position = clamp_attacker_position(attacker_position + aim_direction * DASH_SPEED * delta)
 			if Rules.attack_crossed_locked_target(previous, attacker_position, locked_target):
 				state = STATE_RESOLVED
 				return _event("crossed")
@@ -91,6 +88,12 @@ func advance(delta: float, bee_position: Vector2, current_evade_sequence: int) -
 				state = STATE_RESOLVED
 				return _event("expired")
 	return _event("")
+
+static func clamp_attacker_position(requested_position: Vector2) -> Vector2:
+	return Vector2(
+		clampf(requested_position.x, ATTACKER_BOUNDS.position.x, ATTACKER_BOUNDS.end.x - 1.0),
+		clampf(requested_position.y, ATTACKER_BOUNDS.position.y, ATTACKER_BOUNDS.end.y - 1.0)
+	)
 
 func _event(kind: String) -> Dictionary:
 	return {
