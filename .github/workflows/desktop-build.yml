@@ -78,12 +78,18 @@ jobs:
           ./scripts/verify_godot_export_contents.sh --pack "$RUNNER_TEMP/macos-verify/无名：成蜂.app/Contents/Resources/无名：成蜂.pck"
           codesign --verify --deep --strict --verbose=2 "$RUNNER_TEMP/macos-verify/无名：成蜂.app"
           (cd builds && shasum -a 256 NamelessBecoming-macOS.zip > NamelessBecoming-macOS.zip.sha256)
+          node scripts/generate_artifact_manifest.mjs \
+            --artifact builds/NamelessBecoming-macOS.zip \
+            --platform macos-universal \
+            --source-ref "$GITHUB_REF" \
+            --github-run-id "$GITHUB_RUN_ID"
       - uses: actions/upload-artifact@v4
         with:
           name: NamelessBecoming-macOS-${{ inputs.release_tag }}
           path: |
             builds/NamelessBecoming-macOS.zip
             builds/NamelessBecoming-macOS.zip.sha256
+            builds/NamelessBecoming-macOS.zip.manifest.json
           if-no-files-found: error
           retention-days: 30
 
@@ -125,12 +131,18 @@ jobs:
           file builds/NamelessBecoming-Windows.exe | grep 'PE32+ executable.*x86-64'
           ./scripts/verify_godot_export_contents.sh --pack builds/NamelessBecoming-Windows.exe
           (cd builds && sha256sum NamelessBecoming-Windows.exe > NamelessBecoming-Windows.exe.sha256)
+          node scripts/generate_artifact_manifest.mjs \
+            --artifact builds/NamelessBecoming-Windows.exe \
+            --platform windows-x86_64 \
+            --source-ref "$GITHUB_REF" \
+            --github-run-id "$GITHUB_RUN_ID"
       - uses: actions/upload-artifact@v4
         with:
           name: NamelessBecoming-Windows-${{ inputs.release_tag }}
           path: |
             builds/NamelessBecoming-Windows.exe
             builds/NamelessBecoming-Windows.exe.sha256
+            builds/NamelessBecoming-Windows.exe.manifest.json
           if-no-files-found: error
           retention-days: 30
 

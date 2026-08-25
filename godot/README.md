@@ -58,4 +58,17 @@ npm run verify:godot-export
 
 该门禁使用 Godot 4.6.2 对 macOS、Windows Desktop、Web 各执行一次真实资源包导出，再由隔离的 Godot 检查进程挂载 PCK 并遍历内容；它不会只读取或 grep `export_presets.cfg`。也可用 `./scripts/verify_godot_export_contents.sh --pack <路径>` 直接检查已有 PCK、ZIP resource pack 或内嵌 PCK 的可执行文件。桌面 CI 会用后一种方式检查实际 macOS PCK 和最终 Windows EXE。
 
-仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出，生成包与 SHA-256 artifact；默认不创建 Release，只有主分支运行且明确选择 `publish_prerelease` 才会发布预发布版本。
+仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出；最终包完成内容检查（macOS 另含严格验签）后，流水线为包生成 SHA-256 sidecar 和同名 `.manifest.json`，再把三者作为一个 artifact 上传。manifest schema v1 直接读取最终 ZIP／EXE bytes；generator 会从 macOS ZIP 中唯一的 app PCK 或 Windows EXE 内嵌 PCK 重新读取 `res://data/build_provenance.json`，拒绝把旧包与当前工作区 provenance 拼接成错误身份。包内与工作区 provenance 必须逐字段一致，并同时匹配当前 `package.json` 与 `project.godot` 产品版本、完整 40 位 `HEAD`、`dirty: false`、干净工作区、平台固定文件名、byte 大小及 sidecar 哈希。GitHub run/ref 只从显式流水线输入写入，manifest 不猜测稍后才由上传步骤分配的 artifact ID。
+
+本地只有在 release 包已经完成同等验证、工作区干净、可用 Godot 4.6.2 且系统提供 ZIP 读取工具（macOS 使用 `tar`，其他系统使用 `unzip`）时，才能生成同一核心 schema（没有 GitHub run/ref）：
+
+```bash
+node scripts/generate_artifact_manifest.mjs \
+  --artifact builds/NamelessBecoming-macOS.zip \
+  --platform macos-universal
+node scripts/generate_artifact_manifest.mjs \
+  --artifact builds/NamelessBecoming-Windows.exe \
+  --platform windows-x86_64
+```
+
+manifest 是包身份与完整性的机器可读证据，不是启动、玩法、设备兼容、真人体验或公开发行验收。默认只生成保留期有限的 GitHub artifacts，只有主分支运行且明确选择 `publish_prerelease` 才会发布预发布版本。
