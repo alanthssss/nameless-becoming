@@ -12,7 +12,7 @@ macOS 命令行验证：
 npm run test:godot
 ```
 
-脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、strict playtest ticket、bootstrap、save namespace 隔离、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢、老师傅教学和 HUD 响应式／饮蜜指针输入共 12 组回归。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。
+脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、strict playtest ticket、bootstrap、save namespace 隔离、共享急转运行时、B01 固定切片、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢、老师傅教学和 HUD 响应式／饮蜜指针输入共 14 组回归。B01 组覆盖 2.8 秒示范、有界引导／无提示实践、恰好 180 秒 active 时钟、一次复测和三个互斥结果。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。这是开发者自动验证，不是玩家学会急转的证据。
 
 ## 当前内容
 
@@ -31,6 +31,7 @@ npm run test:godot
 - 开放花授粉、实体袭扰、野外留种和三暖点路线四组当前机制；
 - 四位 Boss 分别以吸取、落地、寻迹真声和闪避撞暖花暴露，再完成 3 次调律；
 - 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；
+- 固定 B01 急转切片使用与主流程相同的共享输入／因果规则，以独立 typed scene 完成“2.8 秒示范 → 有界引导 → 无提示实践 → 180 秒 active 花间路线 → 一次无字同配置复测”；它不实例化 Main、MentorTutorial 或 SaveManager，也不读写存档；
 - 阴阳比例与节令色彩；
 - 成功、失败及完整循环。
 
@@ -56,7 +57,7 @@ godot --path godot --headless --export-debug "Windows Desktop"
 npm run verify:godot-export
 ```
 
-该门禁使用 Godot 4.6.2 对 macOS、Windows Desktop、Web 各执行一次真实资源包导出，再由隔离的 Godot 检查进程挂载 PCK 并遍历内容；它不会只读取或 grep `export_presets.cfg`。包内必须同时存在 bootstrap、原 Main 和中性 `data/playtest_slices.json`，并且不能出现 tests／tools。也可用 `./scripts/verify_godot_export_contents.sh --pack <路径>` 直接检查已有 PCK、ZIP resource pack 或内嵌 PCK 的可执行文件。桌面 CI 会用后一种方式检查实际 macOS PCK 和最终 Windows EXE。
+该门禁使用 Godot 4.6.2 对 macOS、Windows Desktop、Web 各执行一次真实资源包导出，再由隔离的 Godot 检查进程挂载 PCK 并遍历内容；它不会只读取或 grep `export_presets.cfg`。包内必须同时存在 bootstrap、原 Main、生产 `ready` 的中性 `data/playtest_slices.json` 和编译注册的 B01 typed scene，并且不能出现 tests／tools。也可用 `./scripts/verify_godot_export_contents.sh --pack <路径>` 直接检查已有 PCK、ZIP resource pack 或内嵌 PCK 的可执行文件。桌面 CI 会用后一种方式检查实际 macOS PCK 和最终 Windows EXE。
 
 仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出；最终包完成内容检查（macOS 另含严格验签）后，流水线为包生成 SHA-256 sidecar 和同名 `.manifest.json`，再把三者作为一个 artifact 上传。manifest schema v1 直接读取最终 ZIP／EXE bytes；generator 会从 macOS ZIP 中唯一的 app PCK 或 Windows EXE 内嵌 PCK 重新读取 `res://data/build_provenance.json`，拒绝把旧包与当前工作区 provenance 拼接成错误身份。包内与工作区 provenance 必须逐字段一致，并同时匹配当前 `package.json` 与 `project.godot` 产品版本、完整 40 位 `HEAD`、`dirty: false`、干净工作区、平台固定文件名、byte 大小及 sidecar 哈希。GitHub run/ref 只从显式流水线输入写入，manifest 不猜测稍后才由上传步骤分配的 artifact ID。
 
