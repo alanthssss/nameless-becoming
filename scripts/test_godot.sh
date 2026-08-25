@@ -34,7 +34,7 @@ run_with_timeout \
   --log-file "$project_root/godot/.godot/import-test.log" \
   --import
 
-for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd boss_encounter_director_test.gd season_mechanics_test.gd relay_hive_test.gd mentor_tutorial_test.gd; do
+for test_file in smoke_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd boss_encounter_director_test.gd season_mechanics_test.gd relay_hive_test.gd mentor_tutorial_test.gd hud_responsive_test.gd; do
   echo "Running $test_file"
   test_log="$project_root/godot/.godot/${test_file%.gd}.log"
   test_command=(

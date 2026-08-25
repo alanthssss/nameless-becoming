@@ -168,6 +168,9 @@ var sound_button: Button
 var quit_button: Button
 var sense_button: Button
 var return_button: Button
+var drink_button: Button
+var drink_touch_index := -1
+var drink_touch_armed := false
 var context_hint_label: Label
 var tutorial_panel: ColorRect
 var tutorial_title: Label
@@ -591,6 +594,19 @@ func build_interface() -> void:
 	# 情境动作按钮：近花=采蜜 / 近敌=惊退 / 静止=寻迹 / 长按携蜜=诱饵
 	sense_button = make_mouse_action(side, "动作", "action", Vector2(14, 402), true, Vector2(135, 36))
 	return_button = make_mouse_action(side, "归巢", "return_hive", Vector2(155, 402), false, Vector2(62, 36))
+	# 饮蜜按钮不走一帧全局 Input 状态：测试中可能同时有多个 game 实例，
+	# 否则所有实例都会响应。这里先确认动作是否可用，再直接饮蜜；Button
+	# 默认松手确认，滑出控件不会误触。
+	drink_button = Button.new()
+	drink_button.name = "DrinkHoneyButton"
+	drink_button.text = "饮蜜续力"
+	drink_button.tooltip_text = "消耗 1 滴携带蜜，恢复飞行体力"
+	drink_button.position = Vector2(16, 374)
+	drink_button.size = Vector2(200, 56)
+	drink_button.action_mode = BaseButton.ACTION_MODE_BUTTON_RELEASE
+	drink_button.pressed.connect(on_drink_honey_pressed)
+	drink_button.visible = false
+	side.add_child(drink_button)
 	# 历史信息是跨 run 的持久状态，留给 HUD 侧栏底部常驻显示——属于状态不属于弹窗
 	var meter_rule := ColorRect.new()
 	meter_rule.color = Color("c7c0a4", 0.6)
@@ -1971,10 +1987,13 @@ func _drink_honey() -> bool:
 	if crop_fuel_used >= int(balance_value("player", "crop_fuel_limit", 2)):
 		message = "这趟出勤，蜜囊续力已到尽头。"
 		return false
+	if bee.energy >= effective_energy_cap() - 0.01:
+		message = "翅膀正有力，先留下这滴蜜。"
+		return false
 	carried -= 1
 	crop_fuel_used += 1
 	# 续力是加法而非设定：旧自动续命只在体力见底时触发，「设为 refill」碰巧等价于
-	# 「+refill」；显式饮蜜可在任意体力值触发，必须改成增量并钳到体力上限，
+	# 「+refill」；显式饮蜜可在体力未满时主动触发，必须改成增量并钳到体力上限，
 	# 否则高体力时饮蜜只回零头、甚至被倒扣。飘字显示真实增量而非绝对值。
 	var before_energy := bee.energy
 	bee.energy = clampf(bee.energy + balance_value("player", "crop_fuel_refill", 22.0), 0.0, effective_energy_cap())
@@ -1985,6 +2004,79 @@ func _drink_honey() -> bool:
 	sound.play_cue("drink")
 	message = "你饮下蜜囊里的一滴蜜，翅膀重新有了力气。"
 	return true
+
+## 鼠标/触控的饮蜜入口只在动作真实有效时出现；公开这个判定也让 HUD、
+## 键盘路径和自动测试共用一份事实，避免“按钮看得见但按了没反应”。
+func can_drink_honey() -> bool:
+	return (
+		phase == "playing"
+		and bee != null
+		and mentor_tutorial.allows_action("drink")
+		and carried > 0
+		and crop_fuel_used < int(balance_value("player", "crop_fuel_limit", 2))
+		and bee.energy < effective_energy_cap() - 0.01
+	)
+
+func on_drink_honey_pressed() -> void:
+	if not can_drink_honey():
+		return
+	_drink_honey()
+	update_interface()
+
+## The project deliberately disables touch-to-mouse emulation so one physical
+## tap cannot count twice toward evade. BaseButton therefore owns mouse input,
+## while this small state machine gives the drink control equivalent single-touch
+## semantics: start inside, keep the same finger inside, release to confirm.
+func _handle_drink_touch_input(event: InputEvent) -> bool:
+	if drink_button == null:
+		return false
+	if event is InputEventScreenTouch:
+		var touch := event as InputEventScreenTouch
+		if touch.pressed:
+			if not drink_button.visible or drink_button.disabled or not can_drink_honey():
+				return false
+			if not drink_button.get_global_rect().has_point(touch.position):
+				return false
+			# Extra fingers over the same button are consumed but never replace the
+			# finger that began the action.
+			if drink_touch_index < 0:
+				drink_touch_index = touch.index
+				drink_touch_armed = true
+				drink_button.set_pressed_no_signal(drink_touch_armed)
+			return true
+		if touch.index != drink_touch_index:
+			return false
+		var should_drink := (
+			drink_touch_armed
+			and not touch.canceled
+			and drink_button.visible
+			and not drink_button.disabled
+			and drink_button.get_global_rect().has_point(touch.position)
+			and can_drink_honey()
+		)
+		_cancel_drink_touch()
+		if should_drink:
+			on_drink_honey_pressed()
+		return true
+	if event is InputEventScreenDrag:
+		var drag := event as InputEventScreenDrag
+		if drag.index != drink_touch_index:
+			return false
+		drink_touch_armed = (
+			drink_button.visible
+			and not drink_button.disabled
+			and drink_button.get_global_rect().has_point(drag.position)
+			and can_drink_honey()
+		)
+		drink_button.set_pressed_no_signal(drink_touch_armed)
+		return true
+	return false
+
+func _cancel_drink_touch() -> void:
+	drink_touch_index = -1
+	drink_touch_armed = false
+	if drink_button != null:
+		drink_button.set_pressed_no_signal(false)
 
 # 力竭停顿拍：蜜尽才真正倒下。短暂静止 + 画面转暗，让玩家看清
 # 体力条归零与损失清单（此前同帧重置导致体力条从未显示过 0）。
@@ -2877,6 +2969,10 @@ func _handle_world_tap(world_position: Vector2) -> bool:
 	bee.set_move_target(world_position)
 	return true
 
+func _input(event: InputEvent) -> void:
+	if _handle_drink_touch_input(event):
+		get_viewport().set_input_as_handled()
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		# overlay 阶段 Esc 路由：
@@ -2911,6 +3007,7 @@ func _unhandled_input(event: InputEvent) -> void:
 # toggle_pause 内部有相位护栏，between/boss_victory 等静态界面不会被误暂停覆盖。
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_cancel_drink_touch()
 		toggle_pause()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		if overlay_button != null and overlay.visible and overlay_button.visible:
@@ -2989,8 +3086,17 @@ func set_pause_system_controls_visible(visible: bool) -> void:
 # Each tool should be performed once; unfinished steps may continue across stages
 # and never override a completed stage objective.
 func update_progressive_guidance() -> void:
-	if tutorial_panel == null or sense_button == null or return_button == null:
+	if tutorial_panel == null or sense_button == null or return_button == null or drink_button == null:
 		return
+	var drink_available := can_drink_honey()
+	drink_button.visible = drink_available
+	drink_button.disabled = not drink_available
+	if not drink_available and drink_touch_index >= 0:
+		_cancel_drink_touch()
+	if drink_available:
+		var refill := minf(balance_value("player", "crop_fuel_refill", 22.0), effective_energy_cap() - bee.energy)
+		var drinks_left := int(balance_value("player", "crop_fuel_limit", 2)) - crop_fuel_used
+		drink_button.text = "饮蜜 +%d · 余%d" % [ceili(refill), drinks_left]
 	if phase == "boss":
 		tutorial_panel.visible = false
 		return_button.visible = false
