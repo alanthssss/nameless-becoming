@@ -216,3 +216,11 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 `21a44bd` 曾在 PR #79 合入后取代带 Boss P1 的 `de78f2c`，但随后因实包误带测试资源降为历史 artifact。PR #81 闭合弹层键盘焦点／切出暂停，PR #82 建立导出资源门禁并合并为完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。GitHub [`Desktop client builds` run 32851917691](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从该精确提交生成 macOS universal 与 Windows x86_64 artifact。两个下载文件均以随包 sidecar 复验 SHA-256，新检查器确认不含 `res://tests/` 或 `res://tools/`，PCK／EXE provenance 绑定 `0.9.5-rc.2`、完整 `29e719fff1621df35f88972f3bdeed98e37d8af9` 和 `dirty: false`；详细构建证据见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
 该构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨和 Boss P1 修复，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机证据仍为缺失。
+
+### Draft PR #78 秋野探索源码内混音复核：Alan 制作人听感门禁通过（秋 Boss 待测）
+
+2026-08-25，Alan 通过 Draft PR #78 提交 `4b863281798cfa2d2820180bccf7897d062af438` 的 `explore` 内部入口复核秋野探索音乐。该提交的唯一父提交是固定候选来源 `21a44bd64e100231548fa2663a7b4d6f472a88dd`；PR #78 未修改正式 WAV、`main.gd`、MusicDirector、SoundFeedback、玩法或平衡，只提供 macOS／Godot 4.6.2／CoreAudio 的源码试听路径。入口运行真实 `main.tscn`、秋季普通节点与现有音效路径，并隔离正式存档。
+
+Alan 原话为：“可以 挺好”。该记录定级为 **Alan 本人自测／制作人-创作者本机听感门禁**，不是自动化结论，也不是未参与开发的外部玩家证据。由此可接受当前源码运行时、当前真实音效上下文中的秋野探索混音方向，并关闭秋野探索这一项定向门禁。
+
+本轮没有结构化记录试听时长、实际覆盖的循环次数或逐项音效事件，因此不得改写为“已证明无爆音、无遮挡、完整听满多轮”。它也不覆盖秋 Boss、进入秋季的转场、前置成长／储备、固定桌面 artifact、完整流程疲劳、玩法难度、Windows 设备、其余六轨、整套音乐或外部玩家验收。
