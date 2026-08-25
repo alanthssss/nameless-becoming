@@ -1,6 +1,6 @@
 # 0.9.5 候选构建历史与校验清单
 
-本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选是 `0.9.5-rc.2` / `21a44bd64e100231548fa2663a7b4d6f472a88dd`，其 artifact 与 SHA-256 见“2026-08-25 Boss 失败／暂停修复候选”；`de78f2c` 及更早表格均为历史记录，不是当前候选。
+本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。此前固定人工验收候选 `0.9.5-rc.2` / `21a44bd64e100231548fa2663a7b4d6f472a88dd` 已确认误带 Godot 测试资源，自 2026-08-25 起只保留为历史可追溯构建，不能继续作为交付或人工验收入口；其 artifact、SHA-256 与降级原因见“2026-08-25 Boss 失败／暂停修复候选”。下一个固定候选必须从带内部资源导出门禁的新完整提交重建；`de78f2c` 及更早表格同样只作历史记录。
 
 ## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 
@@ -139,7 +139,7 @@ PCK provenance 为产品版本 `0.9.5-rc.2`、完整提交 `de78f2c8965ee06c5a64
 
 ## 2026-08-25 Boss 失败／暂停修复候选
 
-当前固定人工验收 artifact 来自完整 `main` 提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd`。该提交是 PR #79 的合并提交，在 `de78f2c` 的玩法、HUD、首次采蜜修复和正式秋季双轨基础上，修复 Boss 可重试失败、Boss 中暂停、最后一命失败与循环终点熊战的 HUD 上下文，并在进入 Boss 前结束上一普通节点的季节机制。它取代 `de78f2c` 作为当前固定桌面候选，但不会把旧候选的试玩或人工验收结论迁移为通过。
+该历史固定 artifact 来自完整 `main` 提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd`。该提交是 PR #79 的合并提交，在 `de78f2c` 的玩法、HUD、首次采蜜修复和正式秋季双轨基础上，修复 Boss 可重试失败、Boss 中暂停、最后一命失败与循环终点熊战的 HUD 上下文，并在进入 Boss 前结束上一普通节点的季节机制。它曾取代 `de78f2c` 作为固定桌面候选，但不会把旧候选的试玩或人工验收结论迁移为通过。
 
 GitHub [`Desktop client builds` run 32844593593](https://github.com/alanthssss/nameless-becoming/actions/runs/32844593593) 以 `workflow_dispatch` 从上述精确 `main` 提交运行，版本校验、官方 Godot 4.6.2 编辑器／模板 SHA-512 校验、9 组 Godot 测试和双端导出均成功。`publish_prerelease=false`，所以没有创建或覆盖 GitHub prerelease：
 
@@ -151,3 +151,11 @@ GitHub [`Desktop client builds` run 32844593593](https://github.com/alanthssss/n
 macOS PCK 与 Windows EXE 均内嵌产品版本 `0.9.5-rc.2`、完整提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd` 和 `dirty: false`；标题／暂停层应显示 `v0.9.5-rc.2 · 21a44bd6`，不含 `+dirty`。macOS 无界面 smoke 前后，真实存档 SHA-256 均为 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime 均为 `1787640643`、大小均为 143 bytes，证明本次启动检查未改写已有存档。
 
 以上是构建、来源、签名、格式和开发者 smoke 事实，不是 Alan 完整人工流程、秋季实机混音、Windows 真机或外部玩家验收。标准包仍没有秋季直达入口或固定秋季存档；macOS 包仍只是 ad-hoc 签名且未公证，Windows 包仍未做 Authenticode 签名。
+
+### 内部资源边界复核与候选降级
+
+2026-08-25 使用 Godot 4.6.2 的 `ProjectSettings.load_resource_pack()` 分别挂载上述本机持久副本中的 macOS PCK 与 Windows 内嵌 PCK，两个真实交付包都检出 10 个 `res://tests/*.gdc` 和对应 10 个 `.gd.remap`。当时的来源树没有 `res://tools/`，因此这两个固定包未检出 tools 资源；这不改变交付包不应包含测试资源的边界。
+
+该发现证明的是导出范围与包体卫生缺陷。仅凭测试字节码被打包，不能得出存在可利用安全漏洞或已造成安全事件的结论；安全定性需要独立威胁分析。但 `21a44bd` 双端 artifact 已不满足预期交付边界，必须停止继续验收，并由修复后的新完整提交重建替代。旧文件和哈希继续保留为历史证据，不得改写为已通过过滤的候选。
+
+修复把 macOS、Windows Desktop、Web 三个 Godot 4.6.2 preset 的排除 glob 统一为 `tests/**,tools/**`。自动门禁不是 grep 配置：质量流水线会对三个 preset 逐一执行真实 `--export-pack` 并由 Godot 挂载检查；桌面构建流水线还会在 `package_macos.sh` 完成签名与重新打包后，从最终 macOS ZIP 解包并直接挂载其中的 PCK，同时检查最终 Windows EXE 的内嵌 PCK。任一包出现 `res://tests/` 或 `res://tools/`、缺少主场景 remap，或检查脚本没有显式成功标记都会失败。新的双端 artifact、sidecar 与人工验收入口仍须在本修复合入后的完整提交上生成并另行记录。

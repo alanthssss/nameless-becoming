@@ -50,4 +50,12 @@ godot --path godot --headless --export-debug "Windows Desktop"
 
 构建来源脚本会从 `package.json` 读取产品版本、从当前 `HEAD` 读取提交号，生成不纳入 Git 的 `data/build_provenance.json`；标题与暂停覆盖层会显示该版本和短提交号，未提交工作区会额外标记 `+dirty`。`npm run test:godot` 和桌面构建流水线会自动执行这一步。
 
+三个 export preset 都会排除仅供开发的 `res://tests/**` 与 `res://tools/**`。修改导出配置或增加内部资源后，运行：
+
+```bash
+npm run verify:godot-export
+```
+
+该门禁使用 Godot 4.6.2 对 macOS、Windows Desktop、Web 各执行一次真实资源包导出，再由隔离的 Godot 检查进程挂载 PCK 并遍历内容；它不会只读取或 grep `export_presets.cfg`。也可用 `./scripts/verify_godot_export_contents.sh --pack <路径>` 直接检查已有 PCK、ZIP resource pack 或内嵌 PCK 的可执行文件。桌面 CI 会用后一种方式检查实际 macOS PCK 和最终 Windows EXE。
+
 仓库也提供 GitHub Actions 手动打包：在 **Actions → Desktop client builds** 输入与 `package.json` 一致的版本 tag。macOS 与 Windows 在独立 runner 上运行测试和 release 导出，生成包与 SHA-256 artifact；默认不创建 Release，只有主分支运行且明确选择 `publish_prerelease` 才会发布预发布版本。
