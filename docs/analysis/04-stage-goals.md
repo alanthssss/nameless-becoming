@@ -31,7 +31,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 | 实现 / Implementation | 已完成当前批次 | PR #63 的玩法／资产、PR #64 的盲听工具和 PR #65 的 HUD 响应式／饮蜜指针输入形成固定可玩实现 `f57ea02c`；PR #67 不改游戏二进制 |
 | 开发者自测 / Developer verification | 通过 | 9 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
 | Alan 方向门禁 / Direction gate | 通过 | PR #63 整体方向与 PR #65 HUD 视觉／按钮方向均获准合并；不代表逐项、原生触屏或发行通过 |
-| Alan 完整人工流程 / Full manual pass | 未完成 | 首节点、四季、Boss、音乐与节奏仍需记录；当前路线没有固定的延迟急转复测机会 |
+| Alan 完整人工流程 / Full manual pass | 部分记录、未通过 | `f57ea02c` 首份 A 包在首分钟采蜜反馈处卡住且后半问卷疲劳；八轨逐轨评论已完成，D/G 触发 A/B，但总体配对与实机混音缺失；四季、Boss、节奏仍需记录 |
 | Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
 | 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
@@ -48,14 +48,14 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 ### 3.2 Alan 固定候选人工流程 / Alan Fixed-Build Pass
 
-1. 不经口头提示完成首节点；
+1. 先在新候选复测“贴近花心并持续按住”的首分钟采蜜反馈，再不经口头提示完成首节点；
 2. 急转真实完成 `1/2 → 2/2`；
 3. 用自己的话说明寻迹、惊退与急转的事实、操作和成功证据；如需验证约 3 分钟后的保持，先提供固定复测切片；
 4. 不看说明分辨花药、柱头、蜂身散粉和结籽，并复述授粉因果；
 5. 体验夏季袭扰、秋季留种、冬季暖点并描述实际改过的路线或选择；
 6. 分别复述四位 Boss 的暴露规则；
 7. 记录各节点／Boss 用时、失败点和无决策重复时长；
-8. 对 8 轨做盲听／实机 A/B，优先复核夏 Boss 与秋探索。
+8. 对 D 秋 Boss 与 G 秋探索完成修改前后 A/B，再补同季配对、总体区分度和实机混音；其余六轨不因本次证据重写。
 
 ### 3.3 发布人工流程 / Release Manual Pass
 
@@ -67,7 +67,7 @@ This section records history only; the old four stages, first-boss prototype, ol
 
 ### 3.4 外部玩家 / Independent Playtests
 
-当前样本为 0。首轮记录：
+当前样本为 0。会话 `NB-20260825-D9EFAA79` 虽自报外部玩家，但填写者与开发关系尚未由协调者确认，确认前不计样本。首轮记录：
 
 - 首次移动、采蜜、交蜜时间与所有口头求助；
 - 急转两次及玩家对因果的自由复述；当前路线未提供固定延迟复测机会，缺失记录不得算迁移失败；
