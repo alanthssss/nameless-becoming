@@ -11,6 +11,7 @@ import {
   BLIND_TRACKS,
   CANONICAL_PAIRS,
   generateAudioBlindReview,
+  validateAudioExportAnswers,
 } from "../scripts/prepare_audio_blind_review.mjs";
 
 const repositoryRoot = new URL("../", import.meta.url);
@@ -67,6 +68,15 @@ function exerciseExclusivePlayback(listenerJavaScript) {
     "#reset-button": new FakeTarget(),
   };
   const document = {
+    body: {
+      dataset: {
+        productVersion: "0.9.5-rc.2",
+        generatorCommit: "f57ea02c",
+        generatorFullCommit: "f".repeat(40),
+        generatorDirty: "false",
+        trackManifestSha256: "a".repeat(64),
+      },
+    },
     querySelector(selector) {
       if (selector === "#review-form") return form;
       if (selector === "#save-status") return { textContent: "" };
@@ -135,6 +145,13 @@ test("pins all eight reviewed WAV sources and the fixed blind mapping", async ()
   }
 });
 
+test("blocks an export whose overall section and all pair guesses are blank", () => {
+  assert.match(validateAudioExportAnswers({}), /整段空白/);
+  assert.match(validateAudioExportAnswers({ overall_drums_bass: "   ", pair_guess_1: "" }), /整段空白/);
+  assert.equal(validateAudioExportAnswers({ overall_distinction: "大多数能区分" }), "");
+  assert.equal(validateAudioExportAnswers({ pair_guess_1: "AF" }), "");
+});
+
 test("generates byte-identical anonymized audio and a separate developer answer key", async () => {
   const temporaryRoot = await mkdtemp(join(tmpdir(), "nameless-audio-review-"));
   const output = join(temporaryRoot, "package");
@@ -148,6 +165,9 @@ test("generates byte-identical anonymized audio and a separate developer answer 
     }
 
     const key = JSON.parse(await readFile(join(output, "reviewer", "answer-key.json"), "utf8"));
+    assert.equal(key.schema_version, 1, "package identity is an additive field for existing answer-key readers");
+    assert.match(key.package_identity.generator_full_commit, /^[0-9a-f]{40}$/u);
+    assert.match(key.package_identity.track_manifest_sha256, /^[0-9a-f]{64}$/u);
     assert.deepEqual(key.sequence.map(({ blind_id, source }) => [blind_id, source]),
       BLIND_TRACKS.map(({ id, source }) => [id, `godot/assets/music/${source}`]));
     assert.deepEqual(key.canonical_pairs, CANONICAL_PAIRS);
@@ -205,6 +225,8 @@ test("keeps source names, roles, seasons, hashes, and canonical pairs out of lis
     assert.match(listenerText, /overall_drums_bass/);
     assert.match(listenerText, /overall_folk/);
     assert.match(listenerText, /pair_guess_4/);
+    assert.match(listenerText, /track_manifest_sha256/);
+    assert.match(listenerText, /整段空白无法区分/);
     assert.match(listenerText, /导出 JSON/);
     assert.match(listenerText, /localStorage/);
     assert.match(listenerJavaScript, /function pauseOtherTracks/);
