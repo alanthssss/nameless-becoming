@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`21a44bd`，包含 PR #76 秋季双轨与 PR #79 Boss 失败／暂停修复。
+当前源码候选与固定桌面 artifact / Current source candidate and fixed desktop artifact：`29e719f`，包含 PR #76 秋季双轨、PR #79 Boss 失败／暂停、PR #81 弹层焦点／切出暂停与 PR #82 导出门禁。
 
 ---
 
@@ -95,7 +95,7 @@ intro
 | `season_mechanics_test.gd` | 授粉、实体袭扰、留种和暖点的成功／失败／资源分支 |
 | `relay_hive_test.gd` | 中继巢激活、65% 恢复上限与非交付边界 |
 | `mentor_tutorial_test.gd` | 示范／模仿／实践，真实急转 `1/2 → 2/2` 与恢复重演 |
-| `hud_responsive_test.gd` | 1920×1080、1440×900、1024×768 等比安全框，以及饮蜜按钮的鼠标／显式触摸路由、条件可见性和取消边界 |
+| `hud_responsive_test.gd` | 等比安全框、饮蜜按钮指针路由，以及标题、成长、全满继续和分配弹层的真实键盘焦点／单次确认边界 |
 
 `art_snapshot.gd` 用于生成开发者视觉快照，不属于上述 9 组发布回归，也不能替代真人动态复核。
 
@@ -107,7 +107,7 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 - Web WASM 通过传输分片部署，浏览器加载时重组；
 - macOS universal 与 Windows x86_64 由手动桌面流水线在独立 runner 构建；
 - 流水线校验 Godot 4.6.2 编辑器／模板，运行 9 组回归，导出后附带 SHA-256；
-- 固定候选 `21a44bd` 的 artifact 与哈希见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
+- 固定候选 `29e719f` 的 artifact、哈希与最终包内部资源检查见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
 - macOS 使用 ad-hoc 签名只适合内部候选，公开发行仍需 Developer ID 签名和公证；
 - Windows artifact 的格式与哈希已验证，但真实 Windows 设备流程尚未完成。
 
@@ -119,7 +119,7 @@ PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈�
 v0.9.5-rc.2 · <8 位提交号>[+dirty]
 ```
 
-固定验收候选应显示 `v0.9.5-rc.2 · 21a44bd6`，不带 `+dirty`。此前 `de78f2c`、`4b57d856`、`f57ea02c`、`dd4d4f08` 候选及 PR #63 合并提交 `4537151` 都是构建历史，不再表示当前固定候选；旧候选的人工证据也不能迁移为当前候选通过。
+固定验收候选应显示 `v0.9.5-rc.2 · 29e719ff`，不带 `+dirty`。此前 `21a44bd`、`de78f2c`、`4b57d856`、`f57ea02c`、`dd4d4f08` 候选及 PR #63 合并提交 `4537151` 都是构建历史，不再表示当前固定候选；旧候选的人工证据也不能迁移为当前候选通过。
 
 ## 8. 当前技术边界 / Current Technical Boundaries
 

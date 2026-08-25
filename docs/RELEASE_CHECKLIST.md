@@ -1,13 +1,13 @@
 # 0.9.5-rc.2 候选发布检查
 
-本次过滤修复建立在 2026-08-25 的 `origin/main` 完整提交 `da7c1655bf15632d992f18dd60f36ce6d9cad1f2` 上。此前固定人工验收 artifact `21a44bd` 已因误带 `res://tests/` 降级为历史包；当前没有可继续验收的固定 artifact，须从过滤修复合入后的新完整提交重建。
+当前固定人工验收 artifact 来自 2026-08-25 的 `origin/main` 完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。它包含 PR #81 的外围弹层键盘焦点／切出暂停修复和 PR #82 的内部资源导出门禁；GitHub run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 已从该精确提交重建并复验 macOS／Windows 双端包。此前的 `21a44bd` 因误带 `res://tests/` 继续只作历史包。
 详细 artifact 与 SHA-256：[`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)
 
 > Alan 已批准继续合并和展开后续工作的**方向门禁**，并在 PR #76 最终 A/B 两组均选择正式秋季候选；这不等于完整人工流程、整套音乐、长期耐循环、实机混音、Windows 真机或发行验收。未参与开发的外部玩家证据仍为 **0**。
 
 > **已关闭的 P1：** `de78f2c` artifact 在 Boss 可重试失败、Boss 中暂停和最后一命失败时会让 HUD 逐帧读取不存在的普通关目标；终点熊战还可能绘制上一节点残留的暖点花索引。PR #79 已把源码修复与回归合入 `21a44bd`，并从该精确提交重新生成、复验固定双端 artifact。旧 `de78f2c` 包保持历史可追溯，但不得继续用于验收。
 
-> **待替代的交付包：** Godot 4.6.2 对 `21a44bd` 本机持久副本的实际 macOS PCK 和 Windows 内嵌 PCK 复核均检出 10 个测试 `.gdc` 与 10 个 remap；当时来源中没有 `tools/`。这是已确认的导出边界缺陷，不是仅凭该事实即可成立的安全漏洞结论，但足以阻止该包继续作为验收或发行候选。旧文件只保留溯源，替代构建必须通过 `res://tests/`、`res://tools/` 实包门禁。
+> **已替代的历史包：** Godot 4.6.2 对 `21a44bd` 本机持久副本的实际 macOS PCK 和 Windows 内嵌 PCK 复核均检出 10 个测试 `.gdc` 与 10 个 remap；当时来源中没有 `tools/`。这是已确认的导出边界缺陷，不是仅凭该事实即可成立的安全漏洞结论。PR #82 合入后，`29e719f` 双端最终包已由新检查器确认不含 `res://tests/` 或 `res://tools/`，因此它取代 `21a44bd` 作为当前固定验收入口。
 
 ## 1. 事实源与范围
 
@@ -20,6 +20,8 @@
 - [x] PR #69 合并为 `4b57d856`，补齐首次采蜜的有效距离、持续按住、成功反馈和老师傅演示；
 - [x] PR #76 合并为 `de78f2c`，把新版秋季双轨带入主线；
 - [x] PR #79 合并为 `21a44bd`，修复 Boss 失败／暂停 HUD 上下文与终点熊战残留机制；该提交的桌面 artifact 现因内部资源边界缺陷只作历史包；
+- [x] PR #81 合并为 `da7c165`，闭合成长／分配弹层的纯键盘焦点与应用切出／恢复暂停状态；
+- [x] PR #82 合并为 `29e719f`，建立三 preset 真实导出和 macOS ZIP／Windows EXE 最终包内部资源门禁；
 - [x] 当前推进保留 `seasons.json` 的 24 个数据节点，不是旧四关或已废止的 `4 × 3`；
 - [x] 春分、夏至、秋分为显式 Boss 节点，大雪后进入冬至失律之熊；
 - [x] 当前音乐为 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；
@@ -44,8 +46,8 @@
 - [x] macOS、Windows Desktop、Web 三个 preset 使用 Godot 4.6.2 实测可用的 `tests/**,tools/**` 排除 glob；
 - [x] `npm run verify:godot-export` 对三个 preset 执行真实 `--export-pack`，再由 Godot 挂载 PCK 检查内部路径与主场景，不以 grep 配置代替导出；
 - [x] 桌面构建流水线直接检查解包后的 macOS PCK 和 Windows 最终 EXE 内嵌 PCK，出现 `res://tests/`、`res://tools/` 或缺失明确成功标记即失败；
-- [x] 开发者本机使用官方 Godot 4.6.2 完成三 preset resource pack 门禁、三端 release 导出、实际 macOS PCK／Windows EXE／Web PCK 内容检查及 macOS 无界面启动；这些 `+dirty` 输出只算自测，不是替代候选；
-- [ ] 过滤修复合入后的 GitHub Quality gates 与 Desktop client builds 尚待从新完整提交运行并记录，不能用本机自测代替 CI artifact 证据；
+- [x] 开发者本机使用官方 Godot 4.6.2 完成三 preset resource pack 门禁、三端 release 导出、实际 macOS PCK／Windows EXE／Web PCK 内容检查及 macOS 无界面启动；这些 `+dirty` 输出只算开发者自测；
+- [x] GitHub `Desktop client builds` run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从新完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9` 运行，双端最终包检查器均显式通过；
 
 ### 玩法可解性与完成条件
 
@@ -71,7 +73,7 @@
 - [x] 首次采蜜回归通过真实 `action` 输入验证：贴近花心后持续按住约一个采集间隔才增加 1 滴，界面在期间显示“按住采蜜”→“继续按住”与“蜜囊 +1”成功证据；
 - [x] 完成条件、消息和动作卡在 1280×720 基线不重叠；
 - [x] 1024×768、1280×720、1440×900 和 1920×1080 的等比安全框与 HUD 边界已由自动化覆盖；
-- [ ] 上述弹层键盘条目目前是源码实现与 Godot 4.6.2 开发者自动回归，不是 Alan、外部玩家或真实浏览器／操作系统的人工通过；当前固定 `21a44bd` artifact 也早于这项修改，需待新候选生成后再做实机验收；
+- [ ] 上述弹层键盘条目已进入当前固定 `29e719f` artifact，但目前只有源码实现、Godot 4.6.2 开发者自动回归与可追溯构建，不是 Alan、外部玩家或真实浏览器／操作系统的人工通过；
 - [ ] 真实系统缩放、极端宽高比与原生触摸屏仍需设备人工验证，鼠标自动化不能替代这项证据。
 
 ### Web、音乐与构建链
@@ -80,11 +82,13 @@
 - [x] Web、macOS universal、Windows x86_64 从同一 Godot 工程导出；
 - [x] 固定候选流水线校验官方 Godot 4.6.2 编辑器和导出模板并重跑 9 组测试；
 - [x] GitHub run [`32844593593`](https://github.com/alanthssss/nameless-becoming/actions/runs/32844593593) 从精确 `21a44bd` 生成 macOS artifact `9561860219` 与 Windows artifact `9561841115`，分别于 `2026-09-24T11:54:52Z` 与 `2026-09-24T11:54:16Z` 到期；`publish_prerelease=false`；这两份 artifact 现只作历史溯源；
-- [x] 两个 artifact 下载后均以随包 sidecar 复验 SHA-256；
+- [x] 当前 run [`32851917691`](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从精确 `29e719f` 生成 macOS artifact `9564658342` 与 Windows artifact `9564653395`，分别于 `2026-09-24T13:13:49Z` 与 `2026-09-24T13:13:40Z` 到期；
+- [x] 当前两个 artifact 下载后均以随包 sidecar 复验 SHA-256；macOS ZIP 为 70,315,673 bytes / `be1e269c529e651de71c9658f9d16bad3822b27eba4b6841df2d080208114e4e`，Windows EXE 为 116,831,112 bytes / `48195830e70ca78f68316dc9c6a8a9193ed85c894ca2601f33f951f0252ff074`；
 - [x] macOS 包为 universal，ad-hoc 签名通过 `codesign --verify --deep --strict`；
-- [x] macOS 干净解包后为 x86_64 + arm64 universal，bundle id 为 `com.alanthssss.namelessbecoming`，0.9.5 / 0.9.5-rc.2，严格验签和无界面 smoke 通过；PCK provenance 为完整 `21a44bd`、`dirty: false`；
+- [x] macOS 干净解包后为 x86_64 + arm64 universal，bundle id 为 `com.alanthssss.namelessbecoming`，0.9.5 / 0.9.5-rc.2，严格验签和无界面 smoke 通过；PCK SHA-256 为 `8af383ff36607d3a6200c6d789f6ecc0cc39603684ac43c20550cef51598b1f7`，provenance 为完整 `29e719f`、`dirty: false`；
 - [x] macOS 无界面 smoke 前后真实存档 SHA-256 `eaafa078fb10522376ab1e05af3c183f597a8a2a5d4de1135d4aac4e92c26bbc`、mtime `1787640643`、大小 143 bytes 均不变；
-- [x] Windows 包通过 PE32+ x86-64 格式检查，内嵌完整 `21a44bd`、产品 `0.9.5-rc.2` 与 `dirty: false`；
+- [x] Windows 包通过 PE32+ GUI x86-64 格式检查，内嵌完整 `29e719f`、产品 `0.9.5-rc.2` 与 `dirty: false`；
+- [x] 新检查器已直接确认最终 macOS PCK 与 Windows EXE 均不含 `res://tests/` 或 `res://tools/`；
 - [x] 8 轨均为独立 WAV，资源格式、循环接缝、路由与频谱差异通过开发者回归；
 - [x] `npm run audio:review` 生成的 A–H 听众包、隔离答案、WAV 哈希和安全输出经 PR #64 Node 测试通过；
 - [x] Alan 已在固定八轨上完成 A–H 逐轨听感：六轨总体正向，D 秋 Boss 与 G 秋探索触发定向 A/B；
@@ -99,7 +103,8 @@
 - [x] Alan 打开此前固定候选后明确允许方向继续并批准合并 PR #63；
 - [x] Alan 直接检查 HUD 候选后允许合并当前视觉与饮蜜按钮方向；
 - [x] 旧 `f57ea02c` 首份 A 包的候选提交与 artifact 哈希已核对，首分钟“用空格采蜜采不成功”和问卷过长已进入 P0；该包未完成首关门禁，也不能迁移为新候选通过；
-- [ ] 先从过滤修复合入后的新完整提交生成、复验并固定替代 artifact，再完成首分钟采蜜与无口头提示的整轮体验；不得继续使用 `21a44bd` 历史包补验；
+- [x] 已从过滤修复合入后的新完整提交生成、复验并固定 `29e719f` 替代 artifact；不得继续使用 `21a44bd` 历史包补验；
+- [ ] 从 `29e719f` 固定包完成首分钟采蜜与无口头提示的整轮体验；
 - [ ] 不经口头提示完成首节点；
 - [ ] 急转真实完成 `1/2 → 2/2`，并能用自己的话说明躲什么、怎么按、什么画面才算成功；
 - [ ] 若本轮要验证急转迁移，先提供一个固定的无额外提示复测切片；当前正常路线没有稳定的“约 3 分钟后同语法再现”，缺失记录不得算玩家失败；
@@ -111,17 +116,17 @@
 - [x] 完成秋季结构方向草图选择：探索 K 整段可继续，Boss T/Z 两条都可继续；
 - [x] 完成秋季全长候选与基线的最终 A/B；两组均选择正式候选；
 - [ ] 补齐四组同季配对、总体区分度、连续多轮疲劳与游戏内混音记录；秋季替换通过不能代替这些验收；
-- [ ] 替代候选若仍没有秋季直达入口，定向复核秋季实机混音前须先提供固定入口或沿完整流程到达，不得把未到达记成听感失败；`21a44bd` 历史包不得继续用于该复核；
+- [ ] `29e719f` 当前候选仍没有秋季直达入口；定向复核秋季实机混音前须先提供固定入口或沿完整流程到达，不得把未到达记成听感失败；`21a44bd` 历史包不得继续用于该复核；
 - [ ] 记录各节点／Boss 用时、失败原因和无决策重复时长，不套用固定总时长；
 - [ ] 暂停、继续、声音、全屏、设置重启和退出正常。
-- [ ] 在包含本焦点修复的新固定候选中，只用键盘完成标题 → 成长选择 → 收成分配 → 全满继续，并在游玩、Boss、手动暂停、成长页和分配页分别切出／切回应用；记录是否出现后台运行、反向解暂停、丢焦、跳项或一次确认推进两步。
+- [ ] 在包含本焦点修复的 `29e719f` 固定候选中，只用键盘完成标题 → 成长选择 → 收成分配 → 全满继续，并在游玩、Boss、手动暂停、成长页和分配页分别切出／切回应用；记录是否出现后台运行、反向解暂停、丢焦、跳项或一次确认推进两步。
 
 ## 4. 真实设备发布流程
 
 ### macOS
 
 - [x] `21a44bd` 历史固定 artifact 可解包，universal 与签名校验通过；该历史事实不抵消内部资源边界缺陷；
-- [ ] `21a44bd` 历史包因内部资源边界缺陷停止整轮人工复核；须先生成通过实包过滤门禁的替代候选；旧 `f57ea02c` A 包同样只提供修复输入；
+- [x] `29e719f` 替代包已通过实包过滤门禁、universal 与严格签名校验；`21a44bd` 和旧 `f57ea02c` A 包仍只提供历史溯源，不得用于当前整轮复核；
 - [ ] 从标题完成整轮、失败／重试和设置持久化；
 - [ ] 连续试听 8 轨并检查音效遮蔽、爆音和循环疲劳；
 - [ ] 正式公开发行前使用 Developer ID 签名并完成 Apple 公证；ad-hoc 签名不能冒充发行签名。
@@ -155,7 +160,7 @@
 ## 6. 发布阻断项
 
 - [x] Boss 失败／暂停 P1 已由 PR #79 合入，并从精确 `21a44bd` 重新生成、复验固定双端 artifact；旧 `de78f2c` 包停止继续验收；
-- [ ] `21a44bd` 双端 artifact 误带测试资源，须由过滤修复合入后的新完整提交重建替代，并记录新 artifact、sidecar 与实包门禁结果；
+- [x] `21a44bd` 双端 artifact 误带测试资源的构建阻断已由 `29e719f` 替代包关闭；新 artifact、sidecar 与实包门禁结果已记录；
 - [ ] Windows 真机尚未完成；
 - [ ] Alan 完整人工流程尚未完成；
 - [ ] 外部玩家证据为 0；

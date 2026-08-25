@@ -191,8 +191,8 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 
 该结论仍不是外部玩家证据，也不证明游戏内混音、四组同季配对、整套八轨总体区分度或长时间耐循环。播放秒数是累计值且不记录 seek／实际覆盖区间；尤其 Y 的累计 25 秒短于其 30.968 秒完整循环，所以不能把本次选择改写成“完整听完多轮后无疲劳”。
 
-### 当前固定人工验收 artifact `21a44bd`：等待完整流程与实机混音
+### 当前固定人工验收 artifact `29e719f`：等待完整流程与实机混音
 
-PR #76 先把秋季双轨合并为历史提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`；开发者内部试听随后发现该构建在 Boss 失败／暂停 HUD 与终点熊战机制清理上有 P1，因此旧 artifact 停止继续验收。PR #79 将修复合并为完整提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd` 后，GitHub [`Desktop client builds` run 32844593593](https://github.com/alanthssss/nameless-becoming/actions/runs/32844593593) 从该精确 `main` 提交生成 macOS universal 与 Windows x86_64 artifact。两个下载文件均以随包 sidecar 复验 SHA-256，PCK／EXE provenance 绑定 `0.9.5-rc.2`、完整 `21a44bd` 和 `dirty: false`；详细 artifact ID、文件大小、哈希、到期日与签名验证见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
+`21a44bd` 曾在 PR #79 合入后取代带 Boss P1 的 `de78f2c`，但随后因实包误带测试资源降为历史 artifact。PR #81 闭合弹层键盘焦点／切出暂停，PR #82 建立导出资源门禁并合并为完整提交 `29e719fff1621df35f88972f3bdeed98e37d8af9`。GitHub [`Desktop client builds` run 32851917691](https://github.com/alanthssss/nameless-becoming/actions/runs/32851917691) 从该精确提交生成 macOS universal 与 Windows x86_64 artifact。两个下载文件均以随包 sidecar 复验 SHA-256，新检查器确认不含 `res://tests/` 或 `res://tools/`，PCK／EXE provenance 绑定 `0.9.5-rc.2`、完整 `29e719fff1621df35f88972f3bdeed98e37d8af9` 和 `dirty: false`；详细构建证据见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
 该构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨和 Boss P1 修复，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机证据仍为缺失。
