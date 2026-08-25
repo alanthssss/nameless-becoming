@@ -1,128 +1,127 @@
 # 04 · 阶段目标 / Stage Goals
 
-> 从规则原型到候选 MVP 的完整路径，以及通往 1.0 MVP 的验收标准。
-> The full path from rules prototype to candidate MVP, plus the acceptance criteria on the road to a 1.0 MVP.
+> 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
+> The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
+
+当前仓库基线 / Current repository baseline：`origin/main` `b03811c4`（PR #64）；玩法与资产基线为 PR #63 合并提交 `4537151`。
+固定验收候选 / Fixed acceptance candidate：`dd4d4f08`。
 
 ---
 
-## 1. 版本历程 / Version History
+## 1. 历史里程碑 / Historical Milestones
 
-| 版本 / Version | 阶段目标 / Stage Goal | 核心成果 / Key Outcome | 结论 / Conclusion |
-|----------------|----------------------|------------------------|-------------------|
-| 0.1 | 规则原型 / Rules prototype | 按钮式选择验证搜打撤宏观闭环 | 规则成立但缺空间感与动作感 |
-| 0.2 | 核心交互原型 / Core interaction | 直接控制飞行、持续采蜜、体力与冲刺、蚊虫追击、必须归巢结算、四压缩节令 | 需要真实试玩验证"贪与撤"犹豫 |
-| 0.3 | Godot 单机垂直切片 / Godot vertical slice | 技术路线确定为 Godot 4；首个单机切片 | 转向手感验证，非内容生产 |
-| 0.4 | 飞行手感与玩家控制拆分 | 拆分 BeePlayer；加速/惯性/制动模型；感知技能 E；统一体力消费接口 | 为成长、敌人、设置预留扩展点 |
-| 0.5 | 生态压力与失律者 | 掠蜜蚁；四节令敌人组合差异；失律之蚊非传统 Boss（三处共鸣花粉调律） | 验证生态叙事 |
-| 0.6 | 蜂巢分工成长 | 节令间三选一成长；长翼/采蜜/守卫蜂；JSON 驱动 | 轻量构筑差异 |
-| 0.8 | 单机产品外壳（第一轮） | 标题界面、暂停、窗口/全屏、本地存档（不存局中状态） | 产品化起步 |
-| 0.9 | 候选 MVP（进行中） | 程序化音效、外部 balance.json、发布清单、双平台构建、GitHub 预发布 | 迈向 1.0 MVP |
-| 0.9.x | 世界规则修订与打磨 | 移除感知→重做为触角寻迹；蜂针退出普通攻击→震翼惊退；资源守恒；六键区；四季 BGM | 每轮试玩反馈驱动 |
-| 0.9.x (2026-08-18) | 四季机制与色彩体系 | 四季招牌机制全量实现（授粉/征召/储备/抱团 + 调度层）；二十四节气色彩体系定稿（4 大关 × 6 小关 + 四正色 Boss） | 数据驱动全参数化；设计已定稿，代码未铺开 |
+本节只记录版本演化；“四关”“首个 Boss”“旧四季机制”和早期时长均是当时事实，不是当前规格。
+This section records history only; the old four stages, first-boss prototype, old seasonal mechanics, and early duration targets are not current specifications.
 
----
+| 版本 / Version | 当时交付 / Historical delivery | 当前意义 / Current interpretation |
+| --- | --- | --- |
+| 0.1–0.3 | 规则原型、直接控制与 Godot 垂直切片 | 证明技术和空间操作方向，不代表当前内容范围 |
+| 0.4 | 飞行、惯性、体力与玩家控制拆分 | 当前移动骨架来源 |
+| 0.5–0.7 | 普通敌害、蜂巢成长、首个失律之蚊 | 已被四位独立 Boss 和 24 节点结构扩展 |
+| 0.8 | 标题、暂停、设置、结算与本地存档 | 当前产品外壳基础 |
+| 0.9.4–rc.1 | 数据、CI、三端导出、字体与桌面候选 | 当前构建链基础 |
+| 0.9.5-rc.2 / PR #63 | 24 节点可感知整改、老师傅教学、四组季节行为、四位 Boss、8 轨音乐、产品 HUD、构建来源 | 当前候选实现基线 |
+| PR #64 | 8 轨 A–H 匿名盲听包、独立答案和自动校验 | 解除主观盲听的工具依赖，不代表 Alan 已完成听感验收 |
 
-## 2. 当前阶段目标 / Current Stage Goals
+## 2. 当前阶段结论 / Current Stage Conclusion
 
-**中文 / CN**：当前处于 **0.9 候选 MVP 收尾**，核心目标是让外部试玩者能下载并完成完整流程，收集真实试玩数据。
+| 证据层 / Evidence layer | 状态 / Status | 结论 / Conclusion |
+| --- | --- | --- |
+| 实现 / Implementation | 已完成当前批次 | PR #63 已以 `4537151` 进入主线；PR #64 盲听工具已以 `b03811c4` 进入主线 |
+| 开发者自测 / Developer verification | 通过 | 8 组 Godot 回归、Web 门禁、artifact 与 SHA-256 复验、盲听工具自动校验通过 |
+| Alan 方向门禁 / Direction gate | 通过 | 允许合并并创建后续独立工作线，不代表逐项体验或发行通过 |
+| Alan 完整人工流程 / Full manual pass | 未完成 | 首节点、3 分钟迁移、四季、Boss、音乐与节奏仍需记录 |
+| Windows 真机 / Windows hardware | 未完成 | artifact 格式与哈希已验证，设备流程未验证 |
+| 外部玩家 / Independent players | **0** | 不能声明教学、趣味、时长、审美或音乐已获玩家认可 |
 
-**English / EN**: Currently closing out **v0.9 Candidate MVP**, the core goal is getting external playtesters to download and complete the full flow, collecting real playtest data.
+## 3. 当前 P0 / Current P0
 
-### 待完成事项 / Open Items
+### 3.1 文档事实源一致性 / Documentation Consistency
 
-| 事项 / Item | 说明 / Note |
-|-------------|-------------|
-| 桌面构建验证 / Desktop build validation | 仅 macOS 完成原生启动验证，Windows 待验证 |
-| 人工全流程测试 / Manual full-flow testing | 键盘 + 鼠标两条路线 |
-| 外部试玩 / External playtesting | 至少 5 名未参与策划的人 |
-| 升级 1.0 MVP 判定 / 1.0 MVP gate | 上述全部通过后才升级 |
+- 当前规格统一为 24 节气节点推进，不写早期“四个压缩关卡”或废止的 `4 × 3`；
+- 四位 Boss 均已接入，分别使用吸取、落地、寻迹真声、急转撞暖花作为暴露条件；
+- 音乐为 4 首探索 + 4 首 Boss 变奏；
+- 春季为开放花药 → 蜂身散粉 → 同型开放柱头 → 结籽，授粉不产蜜；
+- 夏、秋、冬当前主行为分别为实体袭扰、野外留种、三暖点路线；
+- 总时长只记录，不设 15～25 或 32～42 分钟通过门槛。
 
-### 版本判定条件 / Version Gate
+### 3.2 Alan 固定候选人工流程 / Alan Fixed-Build Pass
 
-> 只有桌面构建、人工全流程和外部试玩全部通过后，才升级为 1.0 MVP。
+1. 不经口头提示完成首节点；
+2. 急转真实完成 `1/2 → 2/2`；
+3. 约 3 分钟后再次完成寻迹、惊退和急转；
+4. 不看说明分辨花药、柱头、蜂身散粉和结籽，并复述授粉因果；
+5. 体验夏季袭扰、秋季留种、冬季暖点并描述实际改过的路线或选择；
+6. 分别复述四位 Boss 的暴露规则；
+7. 记录各节点／Boss 用时、失败点和无决策重复时长；
+8. 对 8 轨做盲听／实机 A/B，优先复核夏 Boss 与秋探索。
 
----
+### 3.3 发布人工流程 / Release Manual Pass
 
-## 3. MVP 验收标准 / MVP Acceptance Criteria
+- Windows x86_64 真机完成启动、DPI／全屏、中文字体、声音、设置持久化与退出；
+- macOS 固定候选完成一整轮和设置重启；
+- 验证标题／暂停层来源为 `v0.9.5-rc.2 · dd4d4f08`，不含 `+dirty`；
+- 当前 HUD 只承诺 1280×720；1920×1080、1440×900 和窄屏安全区由响应式任务验证；
+- 补齐饮蜜的鼠标／触摸入口前，不宣称键盘操作全部有指针等价路径。
+
+### 3.4 外部玩家 / Independent Playtests
+
+当前样本为 0。首轮记录：
+
+- 首次移动、采蜜、交蜜时间与所有口头求助；
+- 急转两次和约 3 分钟迁移；
+- 授粉因果与四组季节行为的玩家原话；
+- 各节点／Boss 用时、失败原因、退出点、主动撤离和重开；
+- 8 轨配对、情绪、不舒服音色与循环疲劳；
+- 不把开发者解释改写成玩家证据。
+
+## 4. 当前验收标准 / Current Acceptance Criteria
+
+### 自动与构建 / Automated and Build
+
+- Godot 4.6.2 的 8 组测试均显式报告 `TEST PASSED`；
+- Web build/test/lint 通过；
+- 24 节点数据、资源预算、完成条件、四组机制、四位 Boss、8 轨路由和构建来源受门禁覆盖；
+- macOS universal／Windows x86_64 artifact 的 sidecar SHA-256 复验通过。
 
 ### 可玩性 / Playability
 
-- 新玩家不阅读外部说明，60 秒内完成第一次采蜜和归巢
-- 从标题开始可完整经历四节令、一次蜂巢成长和 Boss 结算
-- 正常一局 15～25 分钟
-- 不存在无法继续、无法撤离或资源必然不足的状态
-- 键盘和鼠标均可完成整个流程
+- 所有阻塞结算的条件从节点开始常驻，最后一项完成后立即结算；
+- 首节点真实世界结果推进教学，单纯按键不能通过；
+- 不存在资源必然不足、隐藏门禁、无法撤离或不可恢复的教学软锁；
+- 四组季节行为和四位 Boss 的独立规则能被真人从操作、画面或声音描述；
+- 记录实际时长和重复劳动，不用固定总时长替代节奏判断。
 
-### 技术 / Technical
+### 发行 / Release
 
-- Godot 4.6.2 启动与主场景无脚本错误
-- 关卡、敌人和成长数值来自外部数据
-- 自动检查覆盖数据结构、场景加载和核心公式
-- 目标机器持续达到 60 FPS
-- 可导出 macOS 与 Windows 调试包
-- GitHub 的 `main` 始终保持可运行
+- Windows 真机、macOS 完整流程、设置持久化与失败／重试路径有人工记录；
+- 商店声明的平台、输入、语言和功能与实际一致；
+- 外部玩家证据达到发布计划要求前，只能称内部／封闭验证候选，不能称玩家验收完成。
 
-### 试玩 / Playtesting
+## 5. 条件任务 / Evidence-Triggered Work
 
-- 至少 5 名未参与策划的人试玩
-- 至少 3 人在一次出巢中主动选择放弃远花并归巢
-- 至少 3 人失败后主动开始第二局
-- 记录首次归巢时间、死亡原因、最紧张时刻和最困惑时刻
+| 触发证据 / Trigger | 才允许开始的任务 / Conditional task | 成功判据 / Success criterion |
+| --- | --- | --- |
+| 约 3 分钟后不能再次急转 | 普通敌害复用锁线语法 | 无文字再次闪过 |
+| 四组仍被概括为“都是采蜜” | 四季路线深化 | 每组至少观察到一次不同路线、顺序、撤离或资源选择 |
+| 节点仍短或只是机械重复 | 节奏与 Boss 调律 | 依据用时、失败原因和重复劳动改内容，不只抬目标 |
+| 视觉仍不协调 | 单代表场景画风切片 | 先通过一张实机场景，再批量生产 |
+| 某轨／民乐标点不舒服 | 定向音乐修订 | 只修被盲听指出的轨并提交 A/B |
+| 中继巢确实带来主动改线 | 第二据点实验 | 不破坏主巢、Q 归巢与交付语义唯一性 |
 
----
+未出现触发证据时，这些不是已排产功能。
 
-## 4. 里程碑表 / Milestone Map
-
-| 版本 / Version | 交付物 / Deliverable | 完成条件 / Completion Criteria |
-|----------------|----------------------|-------------------------------|
-| 0.4 | 工程重构与手感 | 核心系统拆分，操作与反馈稳定 |
-| 0.5 | 四节令内容 | 两类敌人、四关均可完成 |
-| 0.6 | 蜂巢成长 | 三选一成长改变实际手感 |
-| 0.7 | 失律者 | 首个非传统 Boss 可完成 |
-| 0.8 | 产品外壳 | 标题、教程、暂停、设置、结算、存档 |
-| 0.9 | 候选 MVP | 自动测试、平衡、音画占位、桌面构建 |
-| 1.0 | MVP 试玩交付 | 全流程验收并完成首轮外部试玩 |
-
----
-
-## 5. 下一阶段候选 / Next-Phase Candidates
-
-**中文 / CN**：核心互动通过试玩后，进入下列工作（MVP 已定稿 4 大关 × 6 小关结构，但 24 节点与四正色 Boss 尚未在代码中铺开）：
-
-**English / EN**: Once the core interaction passes playtesting, the following work begins (the MVP has finalized the 4×6 stage structure, but the 24 nodes and four zhengse bosses are not yet implemented in code):
-
-1. 调整飞行惯性、采蜜时间、敌人速度和撤离距离
-2. 增加一种与蚊虫行为明显不同的小怪
-3. 将一个节气大关扩展为包含路线选择的小地图
-4. 增加蜂巢中的一次资源分配决策
-5. 定案四正色守关 Boss 原型分配并逐季实现
-6. 把 24 节点色谱接入场景（`CanvasModulate` + UI 调色板）
-
----
-
-## 6. 明确不做 / Explicitly Out of Scope
+## 6. 明确不做／未承诺 / Out of Scope or Uncommitted
 
 | 中文 / CN | English / EN |
-|-----------|--------------|
-| 二十四个彼此独立的完整大关卡（现有结构为 4 大关 × 6 小关的参数化递进） | 24 independent full stages (current structure is a 4×6 parameterized progression) |
-| 每个节气节点都做独立 Boss（只做四正色节点） | A unique boss per solar-term node (only the four zhengse nodes) |
-| 开放世界、地图传送与支线任务 | Open world, fast travel, side quests |
-| 装备、背包、品质、抽卡、商店和货币体系 | Gear, inventory, rarity, gacha, shops, currency |
-| 大量剧情对白与完整配音 | Extensive dialogue and full voice acting |
-| 联机、排行榜、账号、付费与广告 | Multiplayer, leaderboards, accounts, monetization, ads |
-| 最终商业美术 | Final commercial art |
-| 手机正式适配 | Formal mobile adaptation |
+| --- | --- |
+| 废止的 `4 × 3` 大关重构 | Rejected `4 × 3` stage restructure |
+| 固定 15～25 或 32～42 分钟通过目标 | Fixed 15–25 or 32–42 minute pass target |
+| 24 套独立美术、24 首音乐或每节点独立 Boss | 24 unique art sets, 24 tracks, or a unique boss per node |
+| 多个等价主巢、开放世界和第二模式 | Multiple equivalent main hives, open world, or second mode |
+| 新可玩蜂种、身份徽章和深度元进度 | New playable bee species, identity badges, or deep meta progression |
+| 联机、排行榜、账号、付费、广告与手机正式适配 | Multiplayer, leaderboards, accounts, monetization, ads, or formal mobile support |
 
----
+## 7. 下一版本判定 / Next Version Gate
 
-## 7. 建议的协作节奏 / Suggested Collaboration Cadence
-
-**中文 / CN**：基于当前阶段目标，建议以下迭代节奏：
-
-**English / EN**: Based on the current stage goals, here is the suggested iteration cadence:
-
-| 周期 / Cadence | 活动 / Activity | 产出 / Output |
-|----------------|-----------------|---------------|
-| 每次试玩后 / After each playtest | 收集反馈 → 定位根因 → 调整数据/代码 | 版本记录 + 修复 |
-| 每周 / Weekly | 全流程自动测试 + 平衡审查 | 测试报告 |
-| 里程碑 / Per milestone | 对照验收标准逐项核对 | 版本判定 |
+`1.0 MVP` 或公开 Demo 的命名必须基于人工设备流程和独立玩家证据，而不是当前代码量、自动化数量、固定时长或 Alan 的方向批准。详细执行矩阵以 [`../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md) 为准。

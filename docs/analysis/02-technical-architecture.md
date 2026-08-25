@@ -1,120 +1,129 @@
 # 02 · 技术架构 / Technical Architecture
 
-> Godot 4.6 单机核心 + Vite/React Web 承载外壳 + 外部 JSON 数据驱动 · 三端同源导出
-> Godot 4.6 standalone core + Vite/React web shell + external JSON data-driven · single-source export to three platforms
+> Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
+> Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
+
+当前仓库基线 / Current repository baseline：`origin/main` `b03811c4`（PR #64）；玩法与资产基线为 `4537151`（PR #63）。
 
 ---
 
 ## 1. 总体架构 / Overall Architecture
 
+```text
+Godot 4.6.2 游戏核心
+├─ main.gd：24 节点推进、输入、敌害、UI 与系统集成
+├─ mentor_tutorial.gd：示范 → 模仿 → 无提示实践
+├─ season_mechanics.gd
+│  ├─ pollination_mechanic.gd：开放花器官与结籽
+│  ├─ conscription_mechanic.gd：实体袭扰与花蜜追回
+│  ├─ reserve_mechanic.gd：野外留种与跨季分配
+│  └─ huddle_mechanic.gd：寒冷、暖点与路线开放
+├─ boss_encounter_director.gd：四位 Boss 独立暴露状态机
+├─ music_director.gd：4 探索 + 4 Boss 音乐路由
+├─ relay_hive_mechanic.gd：立夏中继巢切片
+└─ production_hud.gd：当前状态、完成条件与动作卡
+        │
+        ├─ godot/data/*.json：节气、Boss、花、成长与平衡数据
+        └─ godot/assets/：8 轨音乐、季节花、背景与 UI 资源
+
+Godot Web 导出
+        ↓
+React 19 / Vite / RSC 承载外壳
+        ↓
+Web · macOS universal · Windows x86_64
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                 Godot 4.6 游戏核心 / Game Core               │
-│  main.gd · bee_player.gd · sound_feedback.gd · save_manager │
-└──────────────┬──────────────────────────┬───────────────────┘
-               │ 读取 / reads              │ 导出嵌入 / embeds
-┌──────────────▼──────────┐   ┌────────────▼──────────────────┐
-│ 数据驱动层 / Data Layer  │   │ Web 承载外壳 / Web Shell       │
-│ seasons.json            │   │ app/page.tsx (React 19)       │
-│ balance.json            │   │ Vite + RSC + Cloudflare       │
-│ upgrades.json           │   └───────────────────────────────┘
-└─────────────────────────┘
-               │
-┌──────────────▼──────────────────────────────────────────────┐
-│ 三端同源导出 / Single-source export                          │
-│ Web (WASM) · macOS universal · Windows x86_64               │
-└─────────────────────────────────────────────────────────────┘
+
+## 2. 核心文件 / Core Files
+
+| 文件 / File | 当前职责 / Current responsibility |
+| --- | --- |
+| `godot/scripts/main.gd` | 24 节点状态流、归巢结算、普通敌害、四位 Boss 的场景集成、输入与主 UI |
+| `godot/scripts/player/bee_player.gd` | 飞行、自动振翅、体力、急转位移与环境速度倍率 |
+| `godot/scripts/tutorial/mentor_tutorial.gd` | 首节点及季节首次机制的示范／模仿／实践状态机 |
+| `godot/scripts/mechanics/season_mechanics.gd` | 按节点 `mechanics` 列表启停子系统并转发采蜜、归巢、动作与完成钩子 |
+| `godot/scripts/mechanics/pollination_mechanic.gd` | 开放花药取粉、同可见花型兼容、蜂身散粉、柱头结籽；不修改花蜜 |
+| `godot/scripts/mechanics/conscription_mechanic.gd` | 首次真实卸蜜后生成实体袭扰者；移动、偷蜜、持赃、惊退与返蜜 |
+| `godot/scripts/mechanics/reserve_mechanic.gd` | 最后一滴前暂停、松手确认、留种成熟／采尽后果，以及段末跨季分配 |
+| `godot/scripts/mechanics/huddle_mechanic.gd` | 体温、环境减速、3 个顺序暖点与远花路线开放 |
+| `godot/scripts/mechanics/relay_hive_mechanic.gd` | 立夏单个中继巢：消耗携蜜激活，只恢复至 65%，不交付或结算 |
+| `godot/scripts/boss_encounter_director.gd` | 蚊／油葫芦／画眉／熊的暴露条件、3 阶段参数与窗口收束 |
+| `godot/scripts/music_director.gd` | 探索、归巢柔化、Boss 变奏与调律进度映射 |
+| `godot/scripts/sound_feedback.gd` | 高频动作提示音；旧单一程序化背景循环已移除 |
+| `godot/scripts/ui/production_hud.gd` | 1280×720 产品壳、常驻完成条件、情境动作与教学文案布局 |
+| `godot/scripts/save_manager.gd` | 本地 `ConfigFile` 保存声音开关、全屏状态、最远节点、开始／完成次数和上次运行秒数；不保存教程或局中状态，也没有连续音量值 |
+| `app/page.tsx` | Godot Web 导出的 React 承载入口 |
+| `scripts/prepare_audio_blind_review.mjs` | 从 8 个固定 WAV 生成 A–H 匿名听众包和隔离的开发者答案 |
+
+## 3. 数据层 / Data Layer
+
+| 文件 / File | 当前内容 / Current contents |
+| --- | --- |
+| `godot/data/seasons.json` | 24 个节点；目标、花量、普通敌害、色彩、`flower_set`、`mechanics`、显式 Boss 与立夏中继巢配置 |
+| `godot/data/bosses.json` | 四位失律者的身份、节点、移动模式、伤害、调律半径与演出文案 |
+| `godot/data/balance.json` | 玩家、普通敌害、Boss 公共参数和四组机制参数 |
+| `godot/data/flowers.json` | 花蜜基础量、权重与花型行为数据 |
+| `godot/data/upgrades.json` | 长翼、采蜜、守卫三类成长 |
+
+数据优先支持可调参数；部分状态机与表现常量仍位于脚本中，因此不能再写成“所有数值零硬编码”。代码与文档冲突时，以当前代码／数据为实现事实，并在同一任务修正文档。
+
+## 4. 当前状态流 / Current State Flow
+
+```text
+intro
+→ playing（普通节点；所有完成条件常驻）
+→ between（交付、留种成熟、跨季分配、成长）
+→ boss（显式正色节点或循环终点熊）
+→ boss_victory
+→ 下一节点 / won
 ```
 
----
-
-## 2. 核心代码文件 / Core Files
-
-| 文件 / File | 职责 / Responsibility | 规模 / Scale |
-|-------------|----------------------|--------------|
-| `godot/scripts/main.gd` | 游戏主循环：关卡、敌人、Boss、UI、结算 | ~41 KB |
-| `godot/scripts/player/bee_player.gd` | 玩家飞行控制（加速/惯性/制动模型） | ~4 KB |
-| `godot/scripts/mechanics/season_mechanics.gd` | 季节机制调度层（按 stage 启停，四节点钩子） | 新增（0.9.x） |
-| `godot/scripts/mechanics/pollination_mechanic.gd` | 春·授粉：花田休眠与新生 | 新增（0.9.x） |
-| `godot/scripts/mechanics/conscription_mechanic.gd` | 夏·征召：巢口/花区告急事件 | 新增（0.9.x） |
-| `godot/scripts/mechanics/reserve_mechanic.gd` | 秋·储备：季末分配面板 | 新增（0.9.x） |
-| `godot/scripts/mechanics/huddle_mechanic.gd` | 冬·抱团：体温、储备消耗、侦察解锁 | 新增（0.9.x） |
-| `godot/scripts/sound_feedback.gd` | 程序化音效反馈（采蜜/受击/归巢/四季 BGM） | ~4.6 KB |
-| `godot/scripts/save_manager.gd` | 本地 ConfigFile 存档 | ~1.6 KB |
-| `app/page.tsx` | Godot Web 版启动外壳（iframe 承载） | 1 组件 |
-| `app/globals.css` | 网页承载界面与响应式布局 | — |
-
----
-
-## 3. 数据驱动层 / Data-Driven Layer
-
-**中文 / CN**：所有游戏数值均外部化到 JSON 文件，调整平衡不需要修改代码。这是 0.9 版本的核心工程决策。
-
-**English / EN**: All game values are externalized to JSON files, so balance tuning requires no code changes. This is the core engineering decision of v0.9.
-
-| 文件 / File | 内容 / Contents | 示例字段 / Example Fields |
-|-------------|-----------------|---------------------------|
-| `seasons.json` | 四季节令参数 + 机制槽位 | 阴阳比例 yin/yang、目标蜜量 goal、花量 flowers、敌人 enemies、体力消耗 energy_drain、配色 colors、`mechanics`（授粉/征召/储备/抱团） |
-| `balance.json` | 数值平衡（含 mechanics 分区） | 玩家采蜜/惊退成本、蚊虫感知/速度、掠蜜蚁偷蜜、Boss 调律半径、四机制参数 |
-| `upgrades.json` | 蜂巢成长选项 | 长翼蜂 long_wing、采蜜蜂 forager、守卫蜂 guard |
-
----
-
-## 4. Web 承载外壳 / Web Shell
-
-**中文 / CN**：Web 端不是第二套玩法代码，而是 Godot Web 导出的承载外壳。启动页嵌入 `<iframe src="/game/index.html">`，由 React 19 + Vite + RSC 构建，部署于 Cloudflare Workers。
-
-**English / EN**: The web build is not a second set of gameplay code — it is a shell that hosts the Godot Web export. The launch page embeds `<iframe src="/game/index.html">`, built with React 19 + Vite + RSC and deployed on Cloudflare Workers.
-
-- **启动流程 / Launch flow**：点击"启动 Web 版" → 浏览器允许自动播放音乐 → iframe 加载 Godot WASM
-- **传输分片 / Transfer sharding**：WASM 超过 Sites 单文件限制，发布时拆为两个分片，浏览器加载时重新组装；只改变传输方式，不产生第四套游戏代码
-
----
+- `seasons.json` 有 24 个条目；春分、夏至、秋分条目含 `boss`，大雪后由 `advance_stage()` 进入默认熊遭遇；
+- 普通节点只有“归巢蜜 + 当前机制 + 当前教学”全部完成才可结算，且条件必须从开局可见；
+- 四组机制由 `flower_set` 和 `mechanics` 路由，不应只用 `season` 文本字段推断当前玩法或资产。
 
 ## 5. 自动测试 / Automated Tests
 
-| 测试 / Test | 覆盖范围 / Coverage |
-|-------------|---------------------|
-| `godot/tests/smoke_test.gd` | 数据结构、场景加载、核心公式（含节令数据自动检查） |
-| `godot/tests/flow_test.gd` | 无存档副作用的全流程状态测试（结算、标题、游玩时长） |
-| `tests/rendered-html.test.mjs` | Web 外壳渲染的 HTML 检查（`npm run test`） |
+`npm run test:godot` 生成构建来源、准备导入缓存，然后顺序执行 8 组测试；每组除了进程退出码，还必须在独立日志中输出 `TEST PASSED`。
 
-**运行方式 / How to Run**：
+| 测试 / Test | 当前覆盖 / Current coverage |
+| --- | --- |
+| `smoke_test.gd` | 数据结构、场景、字体、输入、核心公式与资源引用 |
+| `flow_test.gd` | 24 节点状态流、完成条件、资源预算、急转因果、构建来源与产品壳 |
+| `fix_boss_term_test.gd` | 正色节点与循环终点 Boss 上下文 |
+| `music_test.gd` | 8 轨资源格式、确定性、循环与探索／Boss／归巢路由 |
+| `boss_encounter_director_test.gd` | 四位 Boss 独立暴露条件、窗口与阶段参数 |
+| `season_mechanics_test.gd` | 授粉、实体袭扰、留种和暖点的成功／失败／资源分支 |
+| `relay_hive_test.gd` | 中继巢激活、65% 恢复上限与非交付边界 |
+| `mentor_tutorial_test.gd` | 示范／模仿／实践，真实急转 `1/2 → 2/2` 与恢复重演 |
 
-```bash
-# Godot 单机测试 / Standalone tests
-godot --path godot --headless --script res://tests/smoke_test.gd
-godot --path godot --headless --script res://tests/flow_test.gd
+`art_snapshot.gd` 用于生成开发者视觉快照，不属于上述 8 组发布回归，也不能替代真人动态复核。
 
-# Web 外壳 / Web shell
-npm install
-npm run dev     # 本地开发 / local dev
-npm run build   # 构建 / build
-npm run test    # 渲染测试 / render test
+PR #64（`b03811c4`）另增 Node 级音频盲听工具测试，覆盖 WAV 哈希、固定匿名映射、答案隔离、单轨播放和安全输出。它进入 `npm test`，但不计入上述 8 组 Godot 回归，也不能代替 Alan 的主观盲听。
+
+## 6. Web 与三端构建 / Web and Three-Target Builds
+
+- Web 不是第二套玩法代码，而是同一 Godot Web 导出的承载外壳；
+- Web WASM 通过传输分片部署，浏览器加载时重组；
+- macOS universal 与 Windows x86_64 由手动桌面流水线在独立 runner 构建；
+- 流水线校验 Godot 4.6.2 编辑器／模板，运行 8 组回归，导出后附带 SHA-256；
+- 固定候选 `dd4d4f08` 的 artifact 与哈希见 [`../BUILD_MANIFEST.md`](../BUILD_MANIFEST.md)；
+- macOS 使用 ad-hoc 签名只适合内部候选，公开发行仍需 Developer ID 签名和公证；
+- Windows artifact 的格式与哈希已验证，但真实 Windows 设备流程尚未完成。
+
+## 7. 构建来源 / Build Provenance
+
+`scripts/generate_build_provenance.mjs` 从 `package.json` 和当前 Git 状态生成不入库的 `godot/data/build_provenance.json`。标题与暂停层显示：
+
+```text
+v0.9.5-rc.2 · <8 位提交号>[+dirty]
 ```
 
----
+固定验收候选应显示 `v0.9.5-rc.2 · dd4d4f08`，不带 `+dirty`。PR #63 的合并提交为 `4537151`；两者分别表示固定可玩候选和合并后的仓库事实，不应混为同一个哈希。
 
-## 6. 三端导出 / Three-Platform Export
+## 8. 当前技术边界 / Current Technical Boundaries
 
-**中文 / CN**：Web、macOS universal、Windows x86_64 三端均由同一个 Godot 工程导出，不再分别维护网页玩法代码。macOS 包在导出后重新临时签名，正式公开发行仍需 Apple Developer ID 签名与公证。
-
-**English / EN**: Web, macOS universal, and Windows x86_64 are all exported from the same Godot project; web gameplay code is no longer maintained separately. The macOS package is re-signed ad hoc after export; public release still requires Apple Developer ID signing and notarization.
-
-| 平台 / Platform | 产物 / Artifact | 说明 / Note |
-|-----------------|-----------------|-------------|
-| Web | `public/game/` | WASM 双分片传输 |
-| macOS | `builds/*.zip` (universal) | 临时签名验证通过 |
-| Windows | `builds/*.exe` | x86_64 调试包 |
-
----
-
-## 7. 工程与依赖 / Tooling & Dependencies
-
-| 层 / Layer | 技术 / Tech | 版本 / Version |
-|-----------|-------------|----------------|
-| 游戏引擎 / Game engine | Godot | 4.6.2+ |
-| Web 框架 / Web framework | React + Vite + RSC | React 19.2 |
-| 构建 / Build | vinext + wrangler | vinext 1.0.0-beta.2 |
-| 数据库 ORM / DB ORM | Drizzle | 0.45.2 (SQLite, 预留) |
-| 部署 / Deploy | Cloudflare Workers + Sites | — |
+- `main.gd` 仍承担大量集成，多个核心分支不得并行覆盖同一区域；
+- HUD 当前以 1280×720 为交付基线，响应式分辨率仍在后续任务；
+- 饮蜜只有 E 键，缺少指针／触摸等价入口；
+- 自动化和 artifact 验证不能证明 Windows 真机、教学理解、节奏、审美或音乐品质；
+- Alan 已批准方向门禁，不是完整人工验收；外部玩家证据仍为 0。

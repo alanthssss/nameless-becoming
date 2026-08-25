@@ -1,4 +1,8 @@
-# 0.9.5-rc.1 候选 MVP 构建清单
+# 0.9.5 候选构建历史与校验清单
+
+本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前固定人工验收候选是 `0.9.5-rc.2` / `dd4d4f08`，其 artifact 与 SHA-256 见“2026-08-25 玩家反馈验收候选”；开头表格只是 2026-08-20 的 rc.1 历史记录，不是当前候选。
+
+## 2026-08-20 · 0.9.5-rc.1 首个三目标候选
 
 构建日期：2026-08-20（Asia/Shanghai）
 
@@ -79,7 +83,7 @@ GitHub runner 重建值可能因官方 runner 的 ZIP 元数据不同而与本�
 
 ## 2026-08-25 玩家反馈验收候选
 
-本候选固定于 PR #63 提交 `dd4d4f08d33d743c8d4a67e50dedbcac2a70fdb1`，包含本轮关卡、四季、8 轨音乐、老师傅教学、授粉生态、条件卡与急转因果整改，以及游戏内构建来源显示。标题与暂停覆盖层显示 `v0.9.5-rc.2 · dd4d4f08`；未提交工作区会额外显示 `+dirty`，桌面包内嵌的 provenance 为 `dirty: false`。
+本候选固定于 PR #63 提交 `dd4d4f08d33d743c8d4a67e50dedbcac2a70fdb1`，包含本轮关卡、四季、8 轨音乐、老师傅教学、授粉生态、条件卡与急转因果整改，以及游戏内构建来源显示。标题与暂停覆盖层显示 `v0.9.5-rc.2 · dd4d4f08`；未提交工作区会额外显示 `+dirty`，桌面包内嵌的 provenance 为 `dirty: false`。PR #63 随后已合并为 `main` 提交 `4537151`；`dd4d4f08` 是固定 artifact 来源，`4537151` 是合并后的仓库事实，两者不得混作同一哈希。
 
 GitHub [`Desktop client builds` run 32769425753](https://github.com/alanthssss/nameless-becoming/actions/runs/32769425753) 使用官方 SHA-512 清单校验 Godot 4.6.2 编辑器与导出模板，在 macOS/Ubuntu runner 分别重跑 8 组 Godot 测试后导出：
 

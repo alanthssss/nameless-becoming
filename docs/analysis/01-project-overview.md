@@ -1,90 +1,95 @@
 # 01 · 项目总览 / Project Overview
 
-> 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、四季循环与东方节气为核心的轻量"搜、打、撤"肉鸽游戏原型。
-> Nameless: Becoming — a lightweight "search, fight, extract" roguelike prototype centered on bee ecology, seasonal cycles, and Eastern solar terms.
+> 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
+> A lightweight action-extraction prototype centered on bee ecology, the 24-solar-term cycle, and the risk of making it home.
+
+当前仓库基线 / Current repository baseline：`0.9.5-rc.2`；`origin/main` `b03811c4`（PR #64），玩法与资产基线为 `4537151`（PR #63）。
+固定候选 / Fixed candidate：`dd4d4f08`。
 
 ---
 
 ## 1. 一句话定位 / One-Line Positioning
 
-**中文 / CN**：玩家控制一只离巢蜜蜂，在逐渐失衡的四个节令中寻找花蜜、对抗生态威胁，并在体力耗尽前带着收获归巢；每次归巢都要选择蜂群接下来如何生存。
+**中文 / CN**：玩家控制一只离巢蜜蜂，在 24 个节气节点流转的花田中采蜜、处理生态威胁，并在体力耗尽前把收获带回蜂巢。
 
-**English / EN**: You control a bee away from the hive, gathering nectar across four gradually unbalancing solar terms, fending off ecological threats, and returning home with your harvest before your stamina runs out — each return is a decision about how the colony will survive next.
+**English / EN**: You control a bee across a field progressing through 24 solar-term nodes, gathering nectar, responding to ecological threats, and returning the harvest before stamina runs out.
 
-> 核心问题 / Core question：玩家是否会因为"再采一朵"的诱惑承担风险，并在撤离成功后愿意继续下一节令？
-> Will players take risks for the temptation of "one more flower," and be willing to continue into the next solar term after a successful extraction?
+> 核心问题 / Core question：再采一朵，还是现在归巢？
+> One more flower, or return home now?
 
----
-
-## 2. 项目愿景与设计原则 / Vision & Design Principles
-
-**中文 / CN**：以蜜蜂文明为载体，制作一款具有东方生态寓言气质的游戏。玩家不是被台词告知答案，而是在采集、劳动、归巢、季节变化和生命循环中自行感受世界。
-
-**English / EN**: A game carrying a bee civilization as its vessel, with the temperament of an Eastern ecological fable. Players are not told answers through dialogue; they feel the world through gathering, labor, returning home, seasonal change, and the cycle of life.
-
-**设计原则 / Design Principles**：
+## 2. 愿景与原则 / Vision & Principles
 
 | 中文 / CN | English / EN |
-|-----------|--------------|
-| 体验大于解释 | Experience over exposition |
-| 大 Boss 保持民间寓言感，小怪与环境负责生态叙事 | Big bosses keep a folk-fable feel; mobs and environments carry ecological narrative |
-| Boss 是偏离自然循环的"失律者"，并非绝对恶人 | Bosses are "the Unregulated" deviating from the natural cycle, not absolute villains |
-| 四季既是自然变化，也是文明与精神状态 | Seasons are both natural change and civilizational/mental states |
-| 所有扩展内容必须建立在可玩的核心互动上 | All extensions must build on a playable core interaction |
+| --- | --- |
+| 体验大于解释；玩家应从操作、画面和声音读懂因果 | Experience over exposition; causality should be readable through play, visuals, and sound |
+| 蜂群而非孤胆英雄；归巢和公共资源比击杀重要 | The colony, not a lone hero; returning and shared resources matter more than kills |
+| Boss 是偏离循环的“失律者”，胜利是调律而非削血条 | Bosses are “the Unregulated”; victory comes through tuning, not health depletion |
+| 四组季节行为必须改变路线、顺序、撤离或资源选择 | Seasonal groups must change route, order, retreat, or resource decisions |
+| 自动测试证明实现，不证明理解、有趣、审美或音乐品质 | Automation proves implementation, not comprehension, fun, aesthetics, or music quality |
 
----
+## 3. 当前可玩结构 / Current Playable Structure
 
-## 3. 世界观共识 / Worldview Consensus
+- `godot/data/seasons.json` 保留 24 个数据节点；不再是早期“四个压缩关卡”，也未改成已废止的 `4 × 3`。
+  `seasons.json` retains 24 data nodes; the game is neither the old four compressed stages nor the rejected `4 × 3` restructuring.
+- 春分、夏至、秋分是显式 Boss 节点；大雪后进入冬至失律之熊。
+  Spring Equinox, Summer Solstice, and Autumn Equinox are explicit boss nodes; after Major Snow, the loop ends with the Winter Solstice bear encounter.
+- 普通目标为 10～15，基础携带上限为 8，因此至少需要两次归巢。
+  Normal goals are 10–15 against a base carry cap of 8, requiring at least two returns.
+- 总时长只记录，不设 15～25 或 32～42 分钟通过区间。
+  Total duration is measured, not judged against a fixed 15–25 or 32–42 minute range.
 
-### 主角 / Protagonist
+### 四组季节行为 / Four Seasonal Behavior Groups
 
-**中文 / CN**：人在梦中变成一只蜜蜂，最初并不知道自己属于工蜂、雄蜂、蜂王或其他身份。主角的意义通过行动与循环显现，而不是通过大量独白解释。
+| 组 / Group | 当前行为 / Current behavior |
+| --- | --- |
+| 春／授粉 Spring / Pollination | 开放花药取粉 → 蜂身松散散粉 → 同型开放柱头 → 结籽；不增加花蜜 / Open anther → loose pollen on bee → compatible visible stigma → seed setting; nectar is unchanged |
+| 夏／袭扰 Summer / Raid | 首次真实卸蜜触发有翅劫掠者；其偷取真实花蜜，玩家逐只惊退并追回 / First real deposit triggers winged raiders that steal actual nectar; repel each to recover it |
+| 秋／留种 Autumn / Seed | 最后一滴前强制松手，选择采尽或留种；真实归巢使种核成熟 / Release before the final drop, then harvest all or leave seed; a real return matures it |
+| 冬／暖点 Winter / Warmth | 寒区降温减速；携蜜依次点亮 3 个暖点，逐段开放路线 / Cold slows the bee; spend carried nectar on three sequential warm relays to open the route |
 
-**English / EN**: A person becomes a bee in a dream, initially unaware whether they are a worker, a drone, a queen, or something else. The protagonist's meaning emerges through action and cycles, not through lengthy monologue.
+### 四位失律者 / Four Unregulated Bosses
 
-### 失律者 Boss 原型 / "The Unregulated" Boss Archetypes
+| Boss | 暴露条件 / Exposure condition |
+| --- | --- |
+| 失律之蚊 / Mosquito | 完成一次真实吸取 / Completes a real feed |
+| 失律之油葫芦 / Field cricket | 跳跃真实落地 / Actually lands after a jump |
+| 失律之画眉 / Thrush | 寻迹揭出真声 / Sense reveals the true echo |
+| 失律之熊 / Bear | 玩家闪过冲锋，熊撞上暖息花 / Player evades the charge and the bear hits a warm bloom |
 
-| 原型 / Archetype | 主题方向 / Theme | 季节状态 / Season |
-|------------------|------------------|-------------------|
-| 蚊 / Mosquito | 贪婪、持续索取 / Greed, endless taking | 春末至盛夏 / Late spring to midsummer |
-| 油葫芦 / Field Cricket | 油滑、漂泊、不愿归巢 / Slippery, drifting, refusing home | 夏末 / Late summer |
-| 熊 / Bear | 停滞、疲惫、不愿苏醒 / Stagnation, fatigue, refusing to wake | 冬 / Winter |
-| 画眉 / Thrush | 诱惑、沉溺、不愿告别 / Allure, indulgence, refusing farewell | 秋 / Autumn |
+四位都需要 3 次调律，但后续阶段更快、窗口更短；不再把四位写成共用“引到花粉团按三次”的旧 Boss。
+Each requires three tunings, with faster phases and shorter windows; they no longer share the old “lure to pollen and press three times” description.
 
-### 架空节令 / Fictional World States
+## 4. 当前产品状态 / Current Product Status
 
-**中文 / CN**：曾讨论的世界状态包括初蜜、盛鸣、长渴、静巢、逆潮、空花、无昼、灰雨。未来可作为普通二十四节气之外的异常关卡或终局章节。
+| 领域 / Area | 当前事实 / Current fact | 尚未证明 / Not yet proven |
+| --- | --- | --- |
+| 工程 / Engineering | Web、macOS universal、Windows x86_64 同源导出；8 组 Godot 回归和 Web 门禁通过 | Windows 真机完整流程、所有设备表现 |
+| 教学 / Tutorial | 老师傅“示范 → 模仿 → 无提示实践”已接入，关键动作由真实结果推进 | 陌生玩家无口头帮助和 3 分钟迁移 |
+| 音乐 / Music | 4 首探索 + 4 首 Boss 变奏，共 8 个独立 WAV；A–H 匿名盲听工具已合并并自动校验 | Alan 尚未完成主观盲听；配对、情绪、耐循环和实机混音待验证 |
+| 视觉 / Visuals | 低噪地表、独立蜂巢、8 种季节花与机制实体已接入 | 运动中的画风统一和目标可读性 |
+| 发行 / Release | 固定候选 artifact 已构建并复验 SHA-256 | Windows 真机、完整人工流程和外部试玩 |
 
-**English / EN**: Previously discussed world states include First Honey, Loud Singing, Long Thirst, Still Nest, Reversed Tide, Empty Flowers, Sunless Days, and Gray Rain. They may serve as anomalous stages or an endgame chapter beyond the regular 24 solar terms.
+## 5. 证据边界 / Evidence Boundary
 
----
+- **实现事实 / Implemented facts**：PR #63 已以 `4537151` 进入主线；PR #64 盲听工具已以 `b03811c4` 进入主线。
+- **开发者自测 / Developer verification**：自动流程、构建、哈希、静态快照。
+- **Alan 方向门禁 / Alan direction gate**：允许合并并展开后续任务，不等于逐项验收。
+- **外部玩家 / Independent players**：当前证据数为 **0**。
 
-## 4. 当前状态 / Current Status
+详细状态以 [`../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md) 为准。
+For detailed status, use [`PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](../PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md).
 
-**中文 / CN**：当前版本为 **候选 MVP 0.9.4**，维护 Web、macOS universal、Windows x86_64 三个发行端，均由同一个 `godot/` 工程导出。正式单机方向已转入 Godot 4，旧网页原型作为历史验证保留。
+## 6. 当前验证问题 / Current Validation Questions
 
-**English / EN**: Current version is **Candidate MVP 0.9.4**, maintaining three distribution targets — Web, macOS universal, and Windows x86_64 — all exported from the same `godot/` project. The official single-player direction has moved to Godot 4; the older web prototype is kept as historical validation.
-
-**2026-08-18 最新进展 / Latest (2026-08-18)**：
-- **四季机制全量实现**：授粉/征召/储备/抱团四招牌机制 + `season_mechanics.gd` 调度层（`feat/season-mechanics` 分支，PR #2 待合并）；
-- **二十四节气色彩体系定稿**：`docs/COLOR_SYSTEM.md`，四正色（玄/青/朱/白）+ 四季大关 × 6 小关（24 节气节点）+ 四正色守关 Boss（春分/夏至/秋分/冬至）（`docs/color-system` 分支，PR #3 待合并）；
-- **身份徽章系统定案**：属性节点 × 成就徽章（PR #1 已合并，未实现）。
-
-**在线试玩 / Play Online**: https://hivebound-seasons-game.pages.dev（注：线上仍为 0.9.4，不含四季机制与色彩体系）
-
----
-
-## 5. 核心验证问题 / Core Validation Questions
-
-**中文 / CN**：项目仍处于早期原型阶段，以下四个问题决定后续方向：
-
-**English / EN**: The project is still an early prototype; these four questions decide the next direction:
-
-1. 飞行与采蜜是否让玩家感觉自己在控制一只蜜蜂？
-   Does flying and harvesting make players feel they are controlling a bee?
-2. 蚊虫靠近时，是否会产生"再采一点还是立即撤退"的犹豫？
-   When mosquitoes close in, does the player hesitate between "one more sip" and "retreat now"?
-3. 四个压缩节令的压力变化是否清晰？
-   Is the pressure change across the four compressed solar terms clear?
-4. 失败后是否愿意马上再进行一次循环？
-   After failure, does the player immediately want to run the cycle again?
+1. 陌生玩家能否不经口头提示完成第一趟，并在约 3 分钟后再次正确寻迹、惊退与急转？
+   Can a new player complete the first trip unaided and repeat sense, repel, and evade roughly three minutes later?
+2. 玩家能否不看文字分辨开放花药、同型柱头、蜂身散粉与结籽？
+   Can players distinguish open anthers, compatible stigmas, pollen on the bee, and seed setting without text?
+3. 四组机制是否真实改变路线、顺序、撤离或资源选择，而不是仍被概括为“都是采蜜”？
+   Do the four groups change route, order, retreat, or resource choices instead of still feeling like “just harvesting”?
+4. 四位 Boss 的失败原因能否分别复述？
+   Can players explain the distinct failure rule of each boss?
+5. 8 轨能否盲听配对并在循环中保持舒适？
+   Can the eight tracks be paired in blind listening and remain comfortable in loops?
+6. 各节点／Boss 的实际时长中，有多少是有判断的行动，多少是无决策重复？
+   How much node/boss time is decision-making versus repetition?

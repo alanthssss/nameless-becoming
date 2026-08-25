@@ -1,6 +1,6 @@
 # 无名：成蜂 · Nameless: Becoming
 
-一款以蜜蜂生态、四季循环与东方节气为核心的轻量“搜、打、撤”肉鸽游戏原型。
+一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
 
 > 再采一朵，还是现在归巢？
 
@@ -8,54 +8,87 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-当前 0.9.5-rc.2 为所有者私有验证候选，需使用获授权的 ChatGPT 账号访问 Web；旧 Cloudflare Pages 地址不再作为当前候选基线。
+当前 `0.9.5-rc.2` 为所有者私有验证候选，需使用获授权的 ChatGPT 账号访问 Web；旧 Cloudflare Pages 地址不再作为当前候选基线。
 
 ## 当前版本：Godot 候选 MVP 0.9.5-rc.2
 
-当前维护三个发行端：Web、macOS universal、Windows x86_64。三端均由同一个 `godot/` 工程导出，不再分别维护网页玩法代码。
+当前 `origin/main` 为 `b03811c4`（PR #64）。玩法、资产与产品壳基线由 PR #63 以合并提交 `4537151` 进入主线；PR #64 只新增 8 轨音乐盲听工具与自动校验。固定人工验收候选仍为 `dd4d4f08`，标题／暂停层应显示：
 
-正式单机方向已转入 Godot 4。玩家直接控制蜜蜂在花田中飞行：
+```text
+v0.9.5-rc.2 · dd4d4f08
+```
 
-- **搜**：寻找仍有花蜜的花朵，越远通常收益越高；
-- **驱**：用震翼让近身敌虫实际惊退；蜂针不是普通攻击；
-- **撤**：在体力耗尽前亲自飞回左侧蜂巢，携带的蜜才会转化为储备；
-- **循环**：四季大关 × 6 小关（24 个节气节点），四正色（春分/夏至/秋分/冬至）为守关 Boss 节点。
+不应出现 `+dirty`。Alan 已批准的是继续合并和展开后续任务的**方向门禁**，不是逐项玩法、音乐、设备或发行验收；未参与开发的外部玩家证据仍为 **0**。
+
+当前维护 Web、macOS universal、Windows x86_64 三个发行端，均由同一个 `godot/` 工程导出。玩家直接控制蜜蜂在花田中飞行：
+
+- **搜**：寻找花蜜、隐藏花和当组机制目标；
+- **驱**：用震翼惊退可惊退敌害；蜂针不是普通攻击；
+- **撤**：在体力耗尽前回到左侧唯一主蜂巢，站稳卸蜜后才计入“归巢蜜”；
+- **循环**：沿 24 个节气数据节点推进，普通目标 10～15、基础携带上限 8，需要多次归巢；
+- **四组行为**：开放花授粉、实体袭扰、野外留种、三暖点路线；
+- **失律者**：蚊、油葫芦、画眉、熊分别通过吸取、落地、寻迹真声和闪避撞暖花暴露，再完成 3 次调律；
+- **音乐**：春夏秋冬各 1 首探索和 1 首 Boss 变奏，共 8 个独立 WAV。
+
+当前结构不是早期“四个压缩关卡”，也不是已废止的 `4 × 3` 大关方案。首局总时长只记录，不使用 15～25 或 32～42 分钟作为通过条件。
 
 ### 操作
 
-| 操作 | 键盘 | 触摸设备 |
+| 操作 | 键盘 | 触摸／指针 |
 | --- | --- | --- |
-| 移动 | WASD / 方向键（持续飞自动振翅加速） | 点击花田移动 |
-| 采蜜 | 空格（近花时） | 点击界面按钮 |
-| 震翼惊退 | 空格（近敌时） | 点击界面按钮 |
-| 触角寻迹 | 空格（静止时） | 点击界面按钮 |
-| 投蜜诱饵 | 松开空格后长按（需携蜜） | 点击界面按钮 |
-| 急转闪避 | 同方向快速连按两次 | 双击想要急转的一侧花田 |
-| 饮蜜续力 | E（需携蜜，每节气限 2 次） | —（当前仅键盘） |
-| 归巢 | Q（自动飞回蜂巢） | 点击界面按钮 |
+| 移动 | WASD / 方向键（持续飞行自动振翅加速） | 点击花田移动 |
+| 情境动作 | 空格 / 回车（采蜜、惊退、寻迹或机制交互） | 情境按钮 |
+| 投蜜诱饵 | 松开情境键后长按（需携蜜） | 情境按钮 |
+| 急转闪避 | 锁线后同方向快速连按两次 | 双击要急转的一侧花田 |
+| 饮蜜续力 | E（需携蜜，每节点最多 2 次） | **尚无入口** |
+| 归巢 | Q（自动飞回主巢） | 归巢按钮 |
+| 暂停 | Esc | 顶部暂停入口 |
 
-## 设计方向
+## 当前设计事实
 
-游戏不是单纯的昆虫战斗，也不是传统经营模拟。核心张力来自：
+### 完成条件
 
-```text
-发现稀有花
-→ 停留采集
-→ 危险靠近、体力下降
-→ 决定继续贪、战斗或撤退
-→ 带着资源亲自飞回蜂巢
+普通节点从开局常驻显示所有会阻止结算的条件：归巢蜜、当前机制，以及首节点的老师傅要求。最后一项已列条件完成后必须立即结算；未显示的隐藏门禁不得阻止推进。
+
+### 四组季节行为
+
+| 组 | 玩家实际做什么 |
+| --- | --- |
+| 春／授粉 | 从已开放花药取粉，蜂身出现松散散粉，再送到同一可见花型的开放柱头；柱头结籽，花蜜不变 |
+| 夏／袭扰 | 第一次真实卸蜜触发有翅劫掠者；它们移动、偷蜜、持赃，玩家逐只惊退并让花蜜落回花田 |
+| 秋／留种 | 最后一滴前自动停采；松手后决定采尽或留种，真实归巢使种核成熟 |
+| 冬／暖点 | 寒区降低体温和速度；用携蜜依次点亮 3 个蜂蜡暖点，逐段开放远花路线 |
+
+### 老师傅教学
+
+首节点和三组首次机制采用“示范 → 模仿 → 无提示实践”。示范不改变真实世界；模仿和实践只由真实结果推进。急转必须在锁线后从旧位置附近侧移出真实危险通道，敌害穿过旧位置且蜂在线外才算成功。
+
+## 8 轨音乐盲听
+
+PR #64（`b03811c4`）已实现固定 A–H 匿名顺序、本地填写／JSON 导出页和与听众端分离的开发者答案。在最新 `origin/main` 上执行：
+
+```bash
+npm run audio:review
 ```
 
-视觉以布艺贴花作为清楚、可动画的主体表现，以毛毡微缩控制温暖体积，以蜂蜡、浅色植鞣革和刺绣分别表达生命能量、蜂群设施与信息轨迹；不转为像素风，剪纸仅为已停用的历史候选。色彩继续以二十四节气阴阳消长色系组织（四正色：玄/青/朱/白）。完整色谱见 [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)，生产规则见 [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)。
+默认输出位于 `outputs/music-blind-review/`。给听者的唯一入口是 `listener/index.html`；`reviewer/` 含季节、探索／Boss 角色和正确配对，必须在听者导出结果前与其隔离。工具、WAV 哈希与匿名映射已自动校验；Alan 尚未完成主观盲听，因此配对辨识度、情绪、耐循环和民乐点缀都不得标记为通过。
+
+## 视觉方向
+
+视觉以布艺贴花作为清楚、可动画的主体表现，以毛毡微缩控制温暖体积，以蜂蜡、浅色植鞣革和刺绣分别表达生命能量、蜂群设施与信息轨迹；不转为像素风，剪纸仅为已停用的历史候选。
+
+低噪地表、独立蜂巢、8 种季节花和四组机制实体已进入构建。它们是实现事实和开发者快照证据，不等于 Alan 已逐项通过画风，也不等于外部玩家已读懂。完整生产规则见 [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)，当前美术门禁见 [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)。
 
 ## 开发
 
-正式单机版需要 Godot 4.6 或更高版本：
+正式单机版需要 Godot 4.6.2 或更高版本：
 
 ```bash
 godot --path godot --editor
-godot --path godot --headless --script res://tests/smoke_test.gd
+npm run test:godot
 ```
+
+`npm run test:godot` 会生成构建来源、准备导入缓存并执行 8 组 Godot 回归；每组必须在独立日志中报告 `TEST PASSED`。
 
 Web 端由 Godot 导出后，通过 Node.js 站点外壳承载：
 
@@ -63,35 +96,49 @@ Web 端由 Godot 导出后，通过 Node.js 站点外壳承载：
 npm install
 npm run dev
 npm run build
+npm run test
 ```
 
-桌面候选包可在 GitHub 的 **Actions → Desktop client builds → Run workflow** 手动生成。`release_tag` 必须与 `package.json` 版本一致；默认只生成保留 30 天的 macOS/Windows artifacts，确认后可勾选 `publish_prerelease` 创建 GitHub 预发布版本。流水线会校验 Godot 编辑器与导出模板、运行 Godot 测试、导出双端客户端并附带 SHA-256 文件。
+桌面候选包可在 GitHub 的 **Actions → Desktop client builds → Run workflow** 手动生成。`release_tag` 必须与 `package.json` 版本一致；流水线校验 Godot 编辑器与模板、运行测试、导出 macOS／Windows 并附带 SHA-256。默认只生成保留期有限的 artifacts，只有明确选择 `publish_prerelease` 才创建预发布版本。
 
 主要实现位于：
 
-- `godot/`：正式单机版工程；
-- `godot/scripts/main.gd`：Godot 核心游戏循环；
-- `godot/data/seasons.json`：节令数据（含四季机制槽位 mechanics）；
-- `godot/scripts/mechanics/`：四季招牌机制（授粉/征召/储备/抱团）与调度层；
-- `app/page.tsx`：Godot Web 版启动外壳；
-- `public/game/`：与桌面端同源的 Godot Web 导出；
-- `app/globals.css`：网页承载界面与响应式布局；
-- `docs/COLOR_SYSTEM.md`：二十四节气色彩体系（四正色 + 四季六阶色谱）；
-- `docs/PROJECT_LOG.md`：策划与版本决策记录。
-- `docs/COLLABORATION_PROTOCOL.md`：Alan 与 Codex 的职责边界、想法状态与验证式协作流程。
-- `docs/MVP_SPEC.md`：完整 MVP 范围、验收标准与里程碑。
-- `docs/DEMO_TO_PLAYTEST_PLAN.md`：从当前原型收敛为 Steam 公开 Demo 的产品化计划。
-- `docs/STEAM_NEXT_FEST_2026_PLAN.md`：2026 年 10 月新品节报名、提审、素材与运营待办。
-- `docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`：游戏成熟度、核心循环、市场、美术音乐、试玩边界与生产排期评估。
-- `docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`：玩家反馈后的实际整改、证据等级与外部复测标准。
-- `docs/design/ART_IMPLEMENTATION_STANDARD.md`：正式美术媒介、资产尺寸、制作管线和首个引擎切片验收标准。
-- `docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`：正式上线美术方向样板、生产门禁、春季资产包、排期与验收标准。
+- `godot/scripts/main.gd`：24 节点状态流、敌害、归巢结算和主集成；
+- `godot/data/seasons.json`：24 个节气节点、玩法组、敌害、色彩和目标；
+- `godot/data/bosses.json`：四位失律者数据；
+- `godot/scripts/mechanics/`：授粉、袭扰、留种、暖点与中继巢；
+- `godot/scripts/tutorial/mentor_tutorial.gd`：老师傅因果教学；
+- `godot/scripts/boss_encounter_director.gd`：四位 Boss 独立暴露状态机；
+- `godot/scripts/music_director.gd`：8 轨音乐路由；
+- `scripts/prepare_audio_blind_review.mjs`：生成 A–H 匿名盲听包和独立答案；
+- `godot/scripts/ui/production_hud.gd`：当前状态、完成条件和动作卡；
+- `app/page.tsx`：Godot Web 版启动外壳。
+
+## 文档事实源与边界
+
+按用途读取，避免把历史方案误当当前决定：
+
+1. [`docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md)：**当前整改、实现事实、证据等级、执行矩阵和外测标准的主记录**；
+2. [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md)：**当前候选范围与验收口径**；
+3. [`docs/DESIGN_CONSENSUS.md`](docs/DESIGN_CONSENSUS.md)：**当前稳定设计共识、差距和证据触发任务**；
+4. [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) 与 [`docs/BUILD_MANIFEST.md`](docs/BUILD_MANIFEST.md)：当前发布门禁与构建事实；
+5. [`docs/PLAYTEST.md`](docs/PLAYTEST.md)：人工与外部玩家记录模板／记录；
+6. [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)：**历史记录**，有意保留当时成立、后来被推翻的四关、旧 Boss、旧四季和旧时长描述；
+7. [`docs/DEMO_TO_PLAYTEST_PLAN.md`](docs/DEMO_TO_PLAYTEST_PLAN.md)：**已废止的历史结构方案**，仅用于追溯，不得执行；
+8. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
+9. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界；
+10. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
+11. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：成熟度与市场评估，其中历史结构判断须服从上述当前事实源；
+12. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；
+13. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：当前上线美术证据与生产门禁。
 
 ## 当前验证问题
 
-1. 飞行与采蜜是否让玩家感觉自己在控制一只蜜蜂？
-2. 蚊虫靠近时，是否会产生“再采一点还是立即撤退”的犹豫？
-3. 四个压缩节令的压力变化是否清晰？
-4. 失败后是否愿意马上再进行一次循环？
+1. 陌生玩家能否不经口头提示完成首趟，并在约 3 分钟后再次寻迹、惊退和急转？
+2. 玩家能否从开放花器官和蜂身散粉读懂授粉，而不是理解为“碰花开花／产蜜”？
+3. 四组行为是否真实改变路线、顺序、撤离或资源选择？
+4. 四位 Boss 的失败原因能否分别复述？
+5. 8 轨能否盲听配对并在循环中保持舒适？
+6. 各节点／Boss 的实际时长中，有多少是有判断的行动，多少是无决策重复？
 
-项目仍处于早期原型阶段。当前代码与美术不代表最终品质，所有系统都服务于验证核心互动。
+当前仍是封闭验证候选。自动化、构建哈希和 Alan 方向门禁都不能替代完整人工流程与外部玩家证据。
