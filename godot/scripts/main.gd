@@ -1571,11 +1571,20 @@ func _active_evade_attack_direction() -> Vector2:
 	return Vector2.ZERO
 
 func _process_evade_pressed_directions(pressed_directions: Array[String], now: float, attack_direction_override := Vector2.ZERO) -> bool:
+	# Keep the compatibility/test entry point subject to the same mentor gate as
+	# real keyboard input. The reusable controller deliberately knows nothing
+	# about Main's tutorial state.
+	if not mentor_tutorial.allows_action("evade"):
+		_clear_evade_tap_buffers()
+		return false
 	var attack_direction: Vector2 = attack_direction_override.normalized() if attack_direction_override.length_squared() > 0.01 else _active_evade_attack_direction()
 	var result: Dictionary = evade_input_controller.process_pressed_directions(pressed_directions, now, bee, attack_direction)
 	return _apply_evade_input_result(result)
 
 func _register_direction_tap(direction_key: String, direction: Vector2, now: float) -> bool:
+	if not mentor_tutorial.allows_action("evade"):
+		_clear_evade_tap_buffers()
+		return false
 	var result: Dictionary = evade_input_controller.register_direction_tap(direction_key, direction, now, bee)
 	return _apply_evade_input_result(result)
 
