@@ -576,7 +576,7 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
     assert.doesNotMatch(participantText, /(?<![\p{L}\p{N}])(?:pollination|evade|nectar|deposit|handler|profile|observer)(?![\p{L}\p{N}])/iu);
     assert.doesNotMatch(participantText, /contact_|event_[1-4]|observation_|evidence_channel|windows_environment|input_methods|prior_external_explanation|timeline|contacts|objective_observations|learning_transfer|help_request_quote|evade_retest|internal_assignment/iu);
     assert.doesNotMatch(participantText, /answer_key|answer_explanation|expected_answer|expected_result|success_condition|success_criteria|正确答案|答案说明/iu);
-    assert.doesNotMatch(participantText, /main[._/-]?tscn|scripts[._/-]?main[._/-]?gd|mentor[._/-]?tutorial|save[._/-]?manager|stage[._/-]?index|spawn[._/-]?stage|tutorial[._/-]?(?:step|complete)/iu);
+    assert.doesNotMatch(participantText, /main[._/-]*tscn|scripts[._/-]*main[._/-]*gd|mentor[._/-]*tutorial|save[._/-]*manager|stage[._/-]*index|spawn[._/-]*stage|tutorial[._/-]*(?:step|complete)/iu);
 
     const leakingFixture = await writeArtifactFixture(join(temporaryRoot, "leaking-distribution"), {
       commit: fixture.commit,
@@ -649,6 +649,24 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
       sessionId: "NB-20260825-LEAK0004",
     }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
     assert.equal(await pathDoesNotExist(separatedRouteOutput), true);
+
+    const repeatedSeparatorFixture = await writeArtifactFixture(join(temporaryRoot, "repeated-separator-distribution"), {
+      commit: fixture.commit,
+      version: "0.9.5-rc.2",
+      sourceMetadata: true,
+      manifestOverrides: { source_ref: "refs/heads/save--._/manager" },
+    });
+    const repeatedSeparatorOutput = join(temporaryRoot, "must-not-leak-repeated-separator-route");
+    await assert.rejects(generatePlaytestEvidence(repeatedSeparatorOutput, {
+      repositoryRoot: fixture.root,
+      artifactPath: repeatedSeparatorFixture.artifactPath,
+      artifactManifestPath: repeatedSeparatorFixture.artifactManifestPath,
+      taskCode: "B",
+      sliceCode: "B01",
+      testerRelation: "external_player",
+      sessionId: "NB-20260825-LEAK0005",
+    }), /leaks coordinator-only vocabulary in artifact-manifest\.json/u);
+    assert.equal(await pathDoesNotExist(repeatedSeparatorOutput), true);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
