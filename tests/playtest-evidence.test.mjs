@@ -569,9 +569,14 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
 
     const participantFiles = await readParticipantTree(join(output, "participant"));
     const participantText = participantFiles.map(({ path, text }) => `${path}\n${text}`).join("\n");
+    const coordinatorText = await readFile(join(output, "coordinator/README.md"), "utf8");
     assert.match(participantText, /固定切片 B01/u);
     assert.match(participantText, /10 分钟/u);
     assert.match(participantText, /"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket\.json 的绝对路径>"/u);
+    assert.match(participantText, /PT-ARG-SEPARATOR/u);
+    assert.match(coordinatorText, /npm run playtest:launch/u);
+    assert.match(coordinatorText, /Playtest ready receipt verified/u);
+    assert.match(coordinatorText, /playtest-ready-receipt\.json/u);
     assert.doesNotMatch(participantText, /完成条件|传粉|授粉|急转|饮蜜|交蜜|采蜜|正确答案|答案说明/iu);
     const compactParticipantText = participantText.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
     for (const forbiddenTerm of [

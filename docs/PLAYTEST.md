@@ -51,7 +51,8 @@ npm run playtest:prepare -- \
 生产源码已完成 B01 的独立 typed scene 和固定身份链，当前双端 artifact 与 Alan 自测 B 包也已按精确身份流程生成；这些是**实现、构建与包生成事实**，不等于已取得玩家结果：
 
 - `godot/data/playtest_slices.json` 的公开 schema v1 只含中性编号、公开任务文案、时限和状态；生产 catalog 唯一条目是 `B01 / 固定切片 B01 / 10 分钟 / ready`，不含机制名、scene、handler、stage、seed、存档路径或 patch／override；编译期 registry 直接 preload B01 scene，不从 ticket 或 catalog 接受路径；
-- 导出主入口是 bootstrap。没有 user argument 时仍实例化原 `main.tscn`；试玩的完整启动命令必须是 `"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket.json 的绝对路径>"`，其中 `--` 把唯一一个 user argument 与引擎参数分开。ticket、同目录固定名 `artifact-manifest.json`、包内 build provenance、运行平台、产品版本、完整 clean commit、artifact 字段、catalog 原始字节 SHA-256 和编译期 registry 任一不一致都会 fail closed；
+- 导出主入口是 bootstrap。没有 user argument 且 raw engine arguments 也没有 ticket 时仍实例化原 `main.tscn`；试玩的完整启动命令必须是 `"<游戏可执行文件的绝对路径>" -- "--playtest-ticket=<playtest-ticket.json 的绝对路径>"`，其中 `--` 把唯一一个 user argument 与引擎参数分开。若 ticket 被错误放在分隔符前，bootstrap 必须显示稳定错误码 `PT-ARG-SEPARATOR`，不得静默进入 Main。ticket、同目录固定名 `artifact-manifest.json`、包内 build provenance、运行平台、产品版本、完整 clean commit、artifact 字段、catalog 原始字节 SHA-256 和编译期 registry 任一不一致都会 fail closed；
+- 每次正确测试必须生成新的 session／ticket，不得复用旧会话。仓库启动助手会先清除该 ticket 同目录的固定旧 `playtest-ready-receipt.json`，始终插入 `--`，并只在 B01 typed scene 完成配置且真正进入场景树、receipt 的 session／slice／commit／ticket SHA-256 全部匹配后报告 `Playtest ready receipt verified`。该 receipt 是启动链机器证据，不是玩家完成、理解或迁移证据；它不使用 SaveManager，也不读写普通或试玩存档；
 - B01 使用与主流程共享的急转输入与因果规则，但不实例化 Main、MentorTutorial 或 SaveManager，也不读写任何存档。基础设施仍能为其他未来切片从 ticket 原始 bytes 派生隔离 namespace，但 B01 本身不走存档流程；
 - B01 的时序固定为：2.8 秒老师傅因果示范 → 有界引导模仿（最多 90 秒或 4 次有效机会）→ 无提示实践（最多 90 秒或 3 次机会）→ 实践首次成功后恰好 180 秒 active 花间路线 → 恰好一次无字、同配置复测 → 中性结束。暂停或失去焦点不计入 180 秒 active 时钟；内部结果互斥为 `completed_independent`、`attempted_incomplete` 或 `not_attempted`，玩家端不显示通过／失败评价或重试引导；
 - B 生成器读取实际 distribution bytes，严格复核 manifest 的文件名、平台、大小、SHA-256、版本、完整提交和 `dirty:false`，计算 manifest 自身 SHA-256，再以 `git show <manifest commit>:godot/data/playtest_slices.json` 读取精确 catalog bytes。只有 artifact 与该精确 clean commit 中的 `ready` catalog 一致时才会生成输出。
@@ -68,6 +69,16 @@ npm run playtest:prepare -- \
   --artifact /absolute/path/NamelessBecoming-macOS.zip \
   --artifact-manifest /absolute/path/NamelessBecoming-macOS.zip.manifest.json
 ```
+
+每个新 B01 会话生成后，由协调者从仓库根目录通过助手启动已解压的 macOS `.app` 或 Windows `.exe`：
+
+```bash
+npm run playtest:launch -- \
+  --executable "/absolute/path/to/无名：成蜂.app" \
+  --ticket "/absolute/path/to/new-session/participant/playtest-ticket.json"
+```
+
+命令未打印 `Playtest ready receipt verified` 时不得开始记录 B01；看到 `PT-ARG-SEPARATOR` 时只修正启动链，不得继续普通 Main，也不得把这次尝试计入玩法结果。
 
 当前固定 artifact 来自 PR #87 的完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)；双端 manifest 均绑定 `source_ref: refs/heads/main`、该 run 和 `dirty: false`。仓库外持久副本根目录为 `nameless-becoming-candidates/57aefc4-run-32867365895/`。旧 `29e719f` artifact 早于固定切片基础与 B01 运行时，已降为历史，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
 
