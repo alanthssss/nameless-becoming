@@ -133,7 +133,7 @@ npm run playtest:prepare -- \
 
 PR #69 将上述首分钟反馈转化为首次采蜜的有效距离提示、持续按住操作、`蜜囊 +1` 成功证据和老师傅演示，并以完整提交 `4b57d85607c9811efcfd5fcc83f7c976bdebdb4d` 生成新候选。GitHub run [`32817220563`](https://github.com/alanthssss/nameless-becoming/actions/runs/32817220563) 的 macOS ZIP SHA-256 为 `30613b93e6a23b218c49070ac4afdd444cf41b128f7c995415713a69ade508ab`，Windows EXE SHA-256 为 `a364c48c05e7c14629db2590d80fc6e429e57c31de0ee3f0ff9ccb7259aa2727`；两个 sidecar 均已复验。
 
-这些是实现与构建事实，不是新试玩结果。`f57ea02c` A 包的原话、身份状态和未通过门禁继续按历史证据保留，不能迁移为 `4b57d856` 的采蜜、首关或完整流程通过。该包后来被 `de78f2c` 固定 artifact 替代；它早于 PR #76，不能用于试听新秋季双轨。
+这些是实现与构建事实，不是新试玩结果。`f57ea02c` A 包的原话、身份状态和未通过门禁继续按历史证据保留，不能迁移为 `4b57d856` 的采蜜、首关或完整流程通过。该包后来先被 `de78f2c`、再被 `21a44bd` 固定 artifact 替代；它早于 PR #76，不能用于试听新秋季双轨。
 
 ### 历史固定候选 `f57ea02c`：Alan 八轨逐轨盲听
 
@@ -191,8 +191,8 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 
 该结论仍不是外部玩家证据，也不证明游戏内混音、四组同季配对、整套八轨总体区分度或长时间耐循环。播放秒数是累计值且不记录 seek／实际覆盖区间；尤其 Y 的累计 25 秒短于其 30.968 秒完整循环，所以不能把本次选择改写成“完整听完多轮后无疲劳”。
 
-### 当前固定人工验收 artifact `de78f2c`：等待完整流程与实机混音
+### 当前固定人工验收 artifact `21a44bd`：等待完整流程与实机混音
 
-PR #76 合并为完整提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd` 后，GitHub [`Desktop client builds` run 32840904829](https://github.com/alanthssss/nameless-becoming/actions/runs/32840904829) 从该精确 `main` 提交生成 macOS universal 与 Windows x86_64 artifact。两个下载文件均以随包 sidecar 复验 SHA-256，PCK provenance 绑定 `0.9.5-rc.2`、完整 `de78f2c` 和 `dirty: false`；详细 artifact ID、文件大小、哈希、到期日与签名验证见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
+PR #76 先把秋季双轨合并为历史提交 `de78f2c8965ee06c5a6431c71eeb47a9a1be9abd`；开发者内部试听随后发现该构建在 Boss 失败／暂停 HUD 与终点熊战机制清理上有 P1，因此旧 artifact 停止继续验收。PR #79 将修复合并为完整提交 `21a44bd64e100231548fa2663a7b4d6f472a88dd` 后，GitHub [`Desktop client builds` run 32844593593](https://github.com/alanthssss/nameless-becoming/actions/runs/32844593593) 从该精确 `main` 提交生成 macOS universal 与 Windows x86_64 artifact。两个下载文件均以随包 sidecar 复验 SHA-256，PCK／EXE provenance 绑定 `0.9.5-rc.2`、完整 `21a44bd` 和 `dirty: false`；详细 artifact ID、文件大小、哈希、到期日与签名验证见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
-该构建包含首次采蜜修复和已获选择的秋季探索／Boss 双轨，但这是构建事实，不是新试玩或游戏内混音结果。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机证据仍为缺失。
+该构建包含首次采蜜修复、已获选择的秋季探索／Boss 双轨和 Boss P1 修复，但这些是实现、开发者回归与构建事实，不是新试玩或游戏内混音结果。标准包没有秋季直达入口或固定秋季存档；如果测试者没有沿完整流程到达秋季，不能把“未听到”记成音乐失败。当前包仍须重新采集首分钟、急转、授粉器官、四季路线、Boss、秋季实机遮蔽／循环疲劳和完整流程证据；Windows 真机证据仍为缺失。
