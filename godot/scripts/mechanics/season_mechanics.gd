@@ -117,6 +117,13 @@ func hud_status() -> String:
 	return "　".join(parts)
 
 
+func sense_focus_active() -> bool:
+	for mechanic in active:
+		if mechanic.has_method("sense_focus_active") and bool(mechanic.sense_focus_active()):
+			return true
+	return false
+
+
 func is_flower_available(index: int) -> bool:
 	for mechanic in active:
 		if mechanic.has_method("is_flower_available") and not bool(mechanic.is_flower_available(index)):

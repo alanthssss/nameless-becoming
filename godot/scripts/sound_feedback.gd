@@ -19,6 +19,8 @@ const CUE_TONES := {
 	"win": Vector3(880.0, 0.55, 0.13),
 	"loss": Vector3(145.0, 0.48, 0.12),
 	"drink": Vector3(440.0, 0.15, 0.12),
+	"pollinate": Vector3(720.0, 0.20, 0.12),
+	"mismatch": Vector3(230.0, 0.11, 0.10),
 }
 
 var player: AudioStreamPlayer

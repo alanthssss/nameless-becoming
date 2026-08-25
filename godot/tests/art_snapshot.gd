@@ -24,6 +24,8 @@ func capture() -> void:
 	if stage_index > 0:
 		game.stage_index = mini(stage_index, game.stages.size() - 1)
 		game.spawn_stage(game.stage_index)
+	var frozen_feedback_mechanic = null
+	var frozen_feedback_kind := ""
 	match snapshot_state:
 		"completion_card":
 			game.delivered = 4
@@ -75,7 +77,81 @@ func capture() -> void:
 					game.season_mechanics.on_harvest(donor_index)
 					game.bee.position = Vector2(game.flowers[first_target].position)
 					game.season_mechanics.try_context_action(game.bee.position)
+					pollination.process(0.47)
 					game.bee.position = Vector2(game.flowers[second_target].position) + Vector2(-44, 20)
+			game.update_interface()
+		"pollination_dual_carry_sense":
+			game.tutorial_complete = true
+			game.tutorial_step = 6
+			game.mentor_tutorial.profile_id = ""
+			game.mentor_tutorial.phase = "inactive"
+			for flower_index in game.flowers.size():
+				var visible_flower: Dictionary = game.flowers[flower_index]
+				visible_flower["tutorial_locked"] = false
+				visible_flower["tutorial_hidden"] = false
+				visible_flower["discovered"] = true
+				game.flowers[flower_index] = visible_flower
+			var pollination = game.season_mechanics.mechanic_by_id("pollination")
+			if pollination != null:
+				for variant in 2:
+					for candidate in pollination.donor_indices:
+						if int(game.flowers[candidate].get("pollen_variant", -1)) == variant:
+							game.season_mechanics.on_harvest(candidate)
+							game.season_mechanics.on_harvest(candidate)
+							break
+			game.bee.position = Vector2(560, 430)
+			game.bee.sense_time = 3.0
+			game.update_interface()
+		"pollination_transfer":
+			game.tutorial_complete = true
+			game.tutorial_step = 6
+			game.mentor_tutorial.profile_id = ""
+			game.mentor_tutorial.phase = "inactive"
+			for flower_index in game.flowers.size():
+				var visible_flower: Dictionary = game.flowers[flower_index]
+				visible_flower["tutorial_locked"] = false
+				visible_flower["tutorial_hidden"] = false
+				visible_flower["discovered"] = true
+				game.flowers[flower_index] = visible_flower
+			var pollination = game.season_mechanics.mechanic_by_id("pollination")
+			frozen_feedback_mechanic = pollination
+			frozen_feedback_kind = "deposit"
+			if pollination != null and not pollination.receptive_indices.is_empty():
+				var target_index := int(pollination.receptive_indices[0])
+				var target_variant := int(game.flowers[target_index].get("stigma_variant", -1))
+				for candidate in pollination.donor_indices:
+					if int(game.flowers[candidate].get("pollen_variant", -2)) == target_variant:
+						game.season_mechanics.on_harvest(candidate)
+						game.season_mechanics.on_harvest(candidate)
+						break
+				game.bee.position = Vector2(game.flowers[target_index].position) + Vector2(-48, 0)
+				game.season_mechanics.try_context_action(game.bee.position)
+				pollination.process(0.20)
+			game.update_interface()
+		"pollination_mismatch":
+			game.tutorial_complete = true
+			game.tutorial_step = 6
+			game.mentor_tutorial.profile_id = ""
+			game.mentor_tutorial.phase = "inactive"
+			for flower_index in game.flowers.size():
+				var visible_flower: Dictionary = game.flowers[flower_index]
+				visible_flower["tutorial_locked"] = false
+				visible_flower["tutorial_hidden"] = false
+				visible_flower["discovered"] = true
+				game.flowers[flower_index] = visible_flower
+			var pollination = game.season_mechanics.mechanic_by_id("pollination")
+			frozen_feedback_mechanic = pollination
+			frozen_feedback_kind = "rejection"
+			if pollination != null and not pollination.receptive_indices.is_empty():
+				var target_index := int(pollination.receptive_indices[0])
+				var target_variant := int(game.flowers[target_index].get("stigma_variant", -1))
+				for candidate in pollination.donor_indices:
+					if int(game.flowers[candidate].get("pollen_variant", -1)) != target_variant:
+						game.season_mechanics.on_harvest(candidate)
+						break
+				game.bee.position = Vector2(game.flowers[target_index].position) + Vector2(-48, 0)
+				game.season_mechanics.try_context_action(game.bee.position)
+				pollination.process(0.18)
 			game.update_interface()
 		"mentor_sortie":
 			game.mentor_tutorial.demo_time = game.mentor_tutorial.demo_duration * 0.58
@@ -188,6 +264,15 @@ func capture() -> void:
 			# Move away from the doorway so the player and hive silhouettes do not overlap.
 			game.bee.position = Vector2(300, 390)
 	game.bee.facing = 0.0
+	if not frozen_feedback_kind.is_empty():
+		if not assert_frozen_feedback(game, frozen_feedback_mechanic, frozen_feedback_kind):
+			quit(1)
+			return
+		# Main is the only owner that advances SeasonMechanics feedback. Freeze both
+		# process domains before waiting for the renderer so the requested image cannot
+		# silently become a landed/expired state on a slow desktop frame.
+		game.set_process(false)
+		game.bee.set_physics_process(false)
 	for frame in 4:
 		await process_frame
 	# The snapshot runner briefly loses focus while the desktop harness returns
@@ -195,6 +280,9 @@ func capture() -> void:
 	if game.phase == "paused":
 		game.toggle_pause()
 		await process_frame
+	if not frozen_feedback_kind.is_empty() and not assert_frozen_feedback(game, frozen_feedback_mechanic, frozen_feedback_kind):
+		quit(1)
+		return
 	RenderingServer.force_draw()
 	var image := root.get_texture().get_image()
 	if image == null:
@@ -208,3 +296,35 @@ func capture() -> void:
 		return
 	print("ART SNAPSHOT SAVED: %s" % output_path)
 	quit(0)
+
+
+func assert_frozen_feedback(game, mechanic, expected_kind: String) -> bool:
+	if mechanic == null or String(mechanic.feedback_event.get("kind", "")) != expected_kind:
+		push_error("美术快照目标状态已过期：期待 %s，实际 %s" % [expected_kind, String(mechanic.feedback_event.get("kind", "")) if mechanic != null else "missing"])
+		return false
+	var event: Dictionary = mechanic.feedback_event
+	var flower_index := int(event.get("flower_index", -1))
+	if flower_index < 0 or flower_index >= game.flowers.size():
+		push_error("美术快照反馈目标花索引无效")
+		return false
+	if expected_kind == "deposit" and not bool(game.flowers[flower_index].get("pollination_pending", false)):
+		push_error("传粉中途快照没有保持 pollination_pending")
+		return false
+	if expected_kind == "rejection":
+		var authority_total := 0
+		var body_total := 0
+		for value in mechanic.pollen_charges:
+			authority_total += int(value)
+		for value in game.bee.pollen_loads:
+			body_total += int(value)
+		if body_total + 1 != authority_total:
+			push_error("异型中途快照没有保持身体 + 飞行粒 = 权威载粉")
+			return false
+		var duration := maxf(0.01, float(event.get("duration", 0.01)))
+		var progress := 1.0 - clampf(float(event.get("remaining", 0.0)) / duration, 0.0, 1.0)
+		var grain_position: Vector2 = mechanic._rejection_grain_position(event, progress)
+		var grain_local: Vector2 = (grain_position - Vector2(game.bee.position)).rotated(-float(game.bee.facing))
+		if absf(grain_local.x) <= 41.0 and absf(grain_local.y) <= 30.0:
+			push_error("异型中途快照的飞行粒仍被 82×60 蜂轮廓遮挡")
+			return false
+	return true

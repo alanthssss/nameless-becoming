@@ -1,10 +1,19 @@
 extends SceneTree
 
+const PollenVisualLanguageScript := preload("res://scripts/mechanics/pollen_visual_language.gd")
+
 var failures: Array[String] = []
 
 func expect(condition: bool, message: String) -> void:
 	if not condition:
 		failures.append(message)
+
+
+func pollen_total(values: Array[int]) -> int:
+	var total := 0
+	for value in values:
+		total += value
+	return total
 
 func _init() -> void:
 	call_deferred("run_test")
@@ -86,6 +95,29 @@ func run_test() -> void:
 		filtered["tutorial_hidden"] = false
 		filtered["discovered"] = true
 		game.flowers[receptive_index] = filtered
+		# Random flower selection may initially expose only one visible variant. Add
+		# deterministic open flowers until both variants have a donor and receptor so
+		# the dual-load truth can be tested without depending on RNG.
+		for variant in 2:
+			for ensure_attempt in 3:
+				var has_variant_donor: bool = spring.donor_indices.any(func(index): return int(game.flowers[index].pollen_variant) == variant)
+				var has_variant_receptor: bool = spring.receptive_indices.any(func(index): return int(game.flowers[index].stigma_variant) == variant)
+				if has_variant_donor and has_variant_receptor:
+					break
+				var ensured_index: int = game.flowers.size()
+				game.flowers.append({
+					"id": 9800 + ensured_index,
+					"position": Vector2(720 + ensured_index * 4, 575 - variant * 45),
+					"nectar": 2,
+					"max_nectar": 2,
+					"kind": variant,
+					"visual_variant": variant,
+					"large_bloom": bool(variant),
+					"phase": 0.0,
+					"recovery": false,
+					"type": "nectar_bloom"
+				})
+				spring.process(0.0)
 		var matching_donor := -1
 		var mismatching_donor := -1
 		for candidate in spring.donor_indices:
@@ -95,21 +127,95 @@ func run_test() -> void:
 			elif mismatching_donor < 0:
 				mismatching_donor = candidate
 		expect(matching_donor >= 0, "柱头找不到同可见花型的花粉")
+		expect(mismatching_donor >= 0, "柱头找不到可验证拒绝反馈的异型花粉")
 		var nectar_before: int = int(game.flowers[receptive_index].nectar)
 		game.bee.position = Vector2(game.flowers[receptive_index].position)
+		var empty_charges: Array[int] = spring.pollen_charges.duplicate()
+		game.sound.last_cue = ""
+		expect(game.season_mechanics.context_action_id(game.bee.position) == "needs_pollen", "零载粉靠近柱头时动作位仍谎称可以传粉")
+		game.update_interface()
+		expect(game.sense_button.visible and game.sense_button.text == "先取散粉" and game.context_hint_label.text == "蜂身没有散粉", "零载粉动作位没有提前说明先取散粉")
+		expect(game.season_mechanics.try_context_action(game.bee.position), "零载粉柱头附近没有消费说明动作")
+		expect(String(spring.last_feedback.get("kind", "")) == "empty_load" and int(spring.last_feedback.get("variant", -2)) == -1, "零载粉错误伪造成某种异型散粉")
+		expect(game.sound.last_cue != "mismatch" and game.message.contains("没有散粉"), "零载粉错误播放形态不匹配音或给出不真实说明")
+		expect(spring.pollen_charges == empty_charges, "零载粉说明动作改变了散粉状态")
+		spring.process(0.43)
 		if mismatching_donor >= 0:
 			game.season_mechanics.on_harvest(mismatching_donor)
+			var charges_before_rejection: Array[int] = spring.pollen_charges.duplicate()
+			game.sound.last_cue = ""
 			expect(game.season_mechanics.try_context_action(game.bee.position), "异花型柱头附近没有消费传粉动作")
-			expect(not bool(game.flowers[receptive_index].pollinated) and int(game.flowers[receptive_index].nectar) == nectar_before, "异花型散粉错误授粉或改变花蜜")
+			expect(String(spring.last_feedback.get("kind", "")) == "rejection" and int(spring.last_feedback.variant) != required_variant, "异花型尝试没有显示实际携粉弹回")
+			expect(game.sound.last_cue == "mismatch", "异花型拒绝没有独立短音")
+			expect(spring.pollen_charges == charges_before_rejection, "异花型拒绝错误扣除了散粉")
+			expect(not bool(game.flowers[receptive_index].pollinated) and not bool(game.flowers[receptive_index].seed_setting) and int(game.flowers[receptive_index].nectar) == nectar_before, "异花型散粉错误授粉、结籽或改变花蜜")
+			var rejected_variant := int(spring.last_feedback.variant)
+			var visible_during_rejection: Array[int] = charges_before_rejection.duplicate()
+			visible_during_rejection[rejected_variant] -= 1
+			expect(game.bee.pollen_loads == visible_during_rejection, "异型散粉飞出时蜂身没有临时少画同一粒，造成展示重复")
+			expect(pollen_total(game.bee.pollen_loads) + 1 == pollen_total(spring.pollen_charges), "异型拒绝的蜂身与飞行粒没有保持展示总量守恒")
+			var frozen_source := Vector2(spring.feedback_event.source_position)
+			var source_local: Vector2 = (frozen_source - Vector2(game.bee.position)).rotated(-float(game.bee.facing))
+			expect(absf(source_local.x) > 41.0 or absf(source_local.y) > 30.0, "异型散粉从 82×60 蜂轮廓内部起飞，第一拍会被贴图遮挡")
+			expect(spring._rejection_grain_position(spring.feedback_event, 0.0).is_equal_approx(frozen_source), "异型散粉轨迹没有从已知外侧体表锚区连续起飞")
+			var outbound_mid: Vector2 = spring._rejection_grain_position(spring.feedback_event, 0.25)
+			var outbound_local: Vector2 = (outbound_mid - Vector2(spring.feedback_event.bee_origin)).rotated(-float(spring.feedback_event.bee_facing))
+			expect(absf(outbound_local.x) > 41.0 or absf(outbound_local.y) > 30.0, "异型散粉出发到转折的中段重新穿过蜂轮廓")
+			spring._clear_feedback_event()
+			expect(spring.pollen_charges == charges_before_rejection and game.bee.pollen_loads == charges_before_rejection, "取消异型反馈后没有恢复身体显示，或错误改写权威散粉")
+			expect(game.season_mechanics.try_context_action(game.bee.position), "取消后无法重新触发异型拒绝")
+			expect(String(spring.feedback_event.get("kind", "")) == "rejection", "重新触发后没有进入异型拒绝")
+			var fixed_bee_position := Vector2(game.bee.position)
+			game.bee.facing = PI * 0.5
+			# Independent geometry: do not call the production exterior-slot helper. The
+			# expected endpoint is the load-slot ray intersecting a 41×30 body plus 9px.
+			var local_slot: Vector2 = PollenVisualLanguageScript.load_slot(rejected_variant)
+			var exterior_half: Vector2 = Vector2(41.0, 30.0) + Vector2.ONE * 9.0
+			var exterior_scale: float = minf(exterior_half.x / absf(local_slot.x), exterior_half.y / absf(local_slot.y))
+			var expected_return_slot: Vector2 = fixed_bee_position + (local_slot * exterior_scale).rotated(float(game.bee.facing))
+			var rejection_end: Vector2 = spring._rejection_grain_position(spring.feedback_event, 1.0)
+			expect(game.bee.position == fixed_bee_position and rejection_end.is_equal_approx(expected_return_slot), "只转向不移动时，异型散粉没有回到当前朝向的轮廓外体表锚区")
+			expect(spring.pollen_charges == charges_before_rejection and game.bee.pollen_loads == visible_during_rejection, "转向中的弹回改写权威散粉或提前恢复身体重复显示")
+			game.bee.position += Vector2(36.0, -18.0)
+			for route_progress in [0.0, 0.12, 0.25, 0.5, 0.72, 0.90, 1.0]:
+				var moving_route_position: Vector2 = spring._rejection_grain_position(spring.feedback_event, route_progress)
+				var moving_route_local: Vector2 = (moving_route_position - Vector2(game.bee.position)).rotated(-float(game.bee.facing))
+				expect(absf(moving_route_local.x) > 41.0 or absf(moving_route_local.y) > 30.0, "蜜蜂移动后的拒绝轨迹有一拍重新进入 82×60 蜂轮廓")
+			var moved_expected_return_slot: Vector2 = Vector2(game.bee.position) + (local_slot * exterior_scale).rotated(float(game.bee.facing))
+			expect(spring._rejection_grain_position(spring.feedback_event, 1.0).is_equal_approx(moved_expected_return_slot), "蜜蜂移动后拒绝回程没有实时追到当前轮廓外体表锚区")
+			game.bee.facing = 0.0
+			spring.process(0.43)
+			expect(spring.feedback_event.is_empty() and game.bee.pollen_loads == charges_before_rejection, "异型拒绝结束后没有准确恢复身体载粉显示")
 		if matching_donor >= 0:
-			game.season_mechanics.on_harvest(matching_donor)
-			expect(spring.carried_pollen_variant == required_variant and int(spring.pollen_charges[required_variant]) > 0, "采花药没有在蜂身留下可用散粉")
+			for harvest_repeat in 3:
+				game.season_mechanics.on_harvest(matching_donor)
+			expect(int(spring.pollen_charges[required_variant]) == 2, "同类松散花粉没有在两份上限准确封顶")
+			expect(game.bee.pollen_loads == spring.pollen_charges, "蜂身体表散粉锚区没有逐类精确镜像 0/1/2 份规则状态")
+			expect(spring.active_pollen_variants() == [0, 1], "同时携带两类散粉时状态被坍缩成单一 current")
+			expect(spring.motif_id_for_variant(0) != spring.motif_id_for_variant(1), "两类散粉仍只靠颜色区分")
 			expect(spring.nearest_matching_receptive(required_variant, game.bee.position) >= 0, "携粉后找不到同花型柱头")
+			game.bee.sense_time = 3.0
+			var sense_targets: Dictionary = spring.matching_sense_targets()
+			expect(sense_targets.size() == 2 and game.season_mechanics.sense_focus_active(), "双载粉寻迹没有为两类分别接管同型柱头目标")
+			for sensed_variant in sense_targets:
+				var sensed_index := int(sense_targets[sensed_variant])
+				expect(int(game.flowers[sensed_index].stigma_variant) == int(sensed_variant), "寻迹路线指向了异型柱头")
 			expect(game.season_mechanics.context_action_id(game.bee.position) == "deposit_pollen", "柱头附近没有暴露传粉情境动作")
+			var required_charge_before := int(spring.pollen_charges[required_variant])
 			expect(game.season_mechanics.try_context_action(game.bee.position), "同花型传粉动作未消费")
-			expect(bool(game.flowers[receptive_index].pollinated) and bool(game.flowers[receptive_index].seed_setting), "同花型散粉没有标记授粉与结籽")
+			expect(bool(game.flowers[receptive_index].pollination_pending) and not bool(game.flowers[receptive_index].pollinated), "散粉起飞时没有进入防重复 pending，或过早结籽")
+			expect(int(spring.pollen_charges[required_variant]) == required_charge_before - 1 and game.bee.pollen_loads[required_variant] == required_charge_before - 1, "散粉起飞时身体没有先准确减一")
+			expect(String(spring.last_feedback.kind) == "deposit_started" and spring.visual_state_for_flower(receptive_index) == "pollination_pending", "传递起点和 pending 可见状态没有留下诊断证据")
+			var charges_during_flight: Array[int] = spring.pollen_charges.duplicate()
+			expect(game.season_mechanics.try_context_action(game.bee.position), "飞行中的重复传粉按键没有被安全消费")
+			expect(spring.pollen_charges == charges_during_flight and int(spring.pollinated_flowers) == 0 and bool(game.flowers[receptive_index].pollination_pending), "重复按键覆盖了飞行事件、重复扣粉或提前计数")
+			spring.process(0.23)
+			expect(not bool(game.flowers[receptive_index].pollinated) and int(game.flowers[receptive_index].nectar) == nectar_before, "散粉仍在飞行时过早结籽或改变花蜜")
+			spring.process(0.24)
+			expect(bool(game.flowers[receptive_index].pollinated) and bool(game.flowers[receptive_index].seed_setting), "同花型散粉落地后没有标记授粉与结籽")
 			expect(int(game.flowers[receptive_index].nectar) == nectar_before, "成功授粉改变了柱头花的花蜜")
-			expect(spring.visual_state_for_flower(receptive_index) == "seed_setting", "授粉后没有切换到可见结籽状态")
+			expect(String(spring.last_feedback.kind) == "deposit_landed" and game.sound.last_cue == "pollinate", "散粉落地没有独立成功因果与音色")
+			expect(spring.visual_state_for_flower(receptive_index) == "seed_setting", "散粉落地后没有切换到可见结籽状态")
 			expect(spring.hud_status() == "传粉 1 / 2", "第一次传粉后状态栏没有更新数字进度")
 			expect(game.season_mechanics.can_complete() == (spring.required_pollination_count() <= 1), "春季只授粉一朵就错误完成")
 			if spring.required_pollination_count() > 1:
@@ -128,6 +234,8 @@ func run_test() -> void:
 					var second_nectar_before := int(game.flowers[second_receptive].nectar)
 					game.bee.position = Vector2(game.flowers[second_receptive].position)
 					expect(game.season_mechanics.try_context_action(game.bee.position), "第二次开花传粉未消费")
+					expect(bool(game.flowers[second_receptive].pollination_pending) and not spring.can_complete(), "第二粒尚未落地就提前完成春季")
+					spring.process(0.47)
 					expect(int(game.flowers[second_receptive].nectar) == second_nectar_before, "第二次授粉产生了花蜜")
 					expect(game.season_mechanics.can_complete(), "两朵花进入结籽后仍阻止结算")
 		var completed_pollinations := int(spring.pollinated_flowers)
@@ -167,8 +275,16 @@ func run_test() -> void:
 			expect(spring.donor_indices.has(dynamic_index) or spring.receptive_indices.has(dynamic_index), "后加花没有进入传粉查询")
 			expect(spring.visual_state_for_flower(dynamic_index) in ["donor_anthers", "receptive_stigma"], "后加花没有对应的可见花心")
 
+		# Stage-end cancellation must clear both the transient withheld grain and all
+		# spring loads before another seasonal mechanic owns the bee presentation.
+		if mismatching_donor >= 0:
+			spring.on_harvest(mismatching_donor)
+			spring._start_rejection(receptive_index, required_variant)
+			expect(String(spring.feedback_event.get("kind", "")) == "rejection" and game.bee.pollen_loads != spring.pollen_charges, "阶段结束用例没有建立飞行中的异型反馈")
+
 	# 夏：只有真实卸蜜才触发；实体逐滴偷取，惊退会归还赃蜜。
 	game.spawn_stage(7)
+	expect(game.bee.pollen_loads == [0, 0], "春季在异型反馈中结束后没有清空身体载粉显示")
 	var summer = game.season_mechanics.mechanic_by_id("conscription")
 	expect(summer != null, "夏季机制未启动")
 	if summer != null:

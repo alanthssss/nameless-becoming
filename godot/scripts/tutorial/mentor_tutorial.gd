@@ -9,6 +9,8 @@ const SHOWCASE_STAGES := [0, 7, 13, 19]
 const INDIGO := Color("69758f")
 const SILVER_WING := Color("dce3df")
 const HONEY := Color("f0ca59")
+const MENTOR_SCALE := 0.82
+const PollenVisualLanguageScript := preload("res://scripts/mechanics/pollen_visual_language.gd")
 
 var main
 var profile_id := ""
@@ -24,6 +26,9 @@ var first_evade_seen := false
 var seed_practice_baseline := 0
 var seed_seen_decisions := 0
 var seed_active_flower := -1
+var pollination_demo_variant := -1
+var pollination_demo_source_index := -1
+var pollination_demo_target_index := -1
 var practice_flower_id := 8800
 var seed_practice_flower_id := 8810
 
@@ -38,6 +43,9 @@ func start_stage(index: int, data: Dictionary) -> void:
 	seed_practice_baseline = 0
 	seed_seen_decisions = 0
 	seed_active_flower = -1
+	pollination_demo_variant = -1
+	pollination_demo_source_index = -1
+	pollination_demo_target_index = -1
 	if profile_id.is_empty() or not SHOWCASE_STAGES.has(index):
 		return
 	if index == 0 and bool(main.tutorial_complete):
@@ -155,26 +163,44 @@ func prompt() -> Dictionary:
 func draw() -> void:
 	if phase != "demo" or main == null:
 		return
-	if lesson_id != "evade":
+	if lesson_id not in ["evade", "pollination"]:
 		main.draw_dashed_line(demo_start, demo_target, Color(HONEY, 0.30), 2.0, 8.0)
 	_draw_lesson_ghosts()
 	if main.colony_bee_texture == null:
 		return
-	var facing_vector := demo_target - mentor_position
-	if lesson_id == "evade":
-		var progress := 1.0 - clampf(demo_time / maxf(0.01, demo_duration), 0.0, 1.0)
-		var lock_target := demo_start.lerp(demo_target, 0.55)
-		facing_vector = Vector2.UP if progress >= 0.58 else lock_target - mentor_position
-		if facing_vector.length_squared() < 0.01:
-			facing_vector = Vector2.RIGHT
+	var facing_vector := _mentor_facing_vector()
 	var facing := facing_vector.angle()
-	main.draw_set_transform(main.field_draw_offset + mentor_position, facing, Vector2(0.82, 0.82))
+	main.draw_set_transform(main.field_draw_offset + mentor_position, facing, Vector2(MENTOR_SCALE, MENTOR_SCALE))
 	main.draw_texture_rect(main.colony_bee_texture, Rect2(-34, -24, 68, 48), false, Color("d6ddd7"))
 	# One indigo wing binding distinguishes the elder without introducing a hat,
 	# portrait or another illustration style.
 	main.draw_line(Vector2(-10, -13), Vector2(11, 13), INDIGO, 5.0)
 	main.draw_circle(Vector2(-16, -17), 4.0, SILVER_WING)
+	if lesson_id == "pollination" and pollination_demo_visual_phase() == "carry":
+		PollenVisualLanguageScript.draw_cluster(
+			main,
+			PollenVisualLanguageScript.load_slot(pollination_demo_variant),
+			pollination_demo_variant,
+			1,
+			1.18
+		)
 	main.draw_set_transform(main.field_draw_offset)
+
+
+func _mentor_facing_vector() -> Vector2:
+	var facing_vector := demo_target - mentor_position
+	if lesson_id == "evade":
+		var progress := 1.0 - clampf(demo_time / maxf(0.01, demo_duration), 0.0, 1.0)
+		var lock_target := demo_start.lerp(demo_target, 0.55)
+		facing_vector = Vector2.UP if progress >= 0.58 else lock_target - mentor_position
+	if facing_vector.length_squared() < 0.01:
+		return Vector2.RIGHT
+	return facing_vector
+
+
+func _mentor_load_world(variant: int) -> Vector2:
+	var local_slot: Vector2 = PollenVisualLanguageScript.load_slot(variant) * MENTOR_SCALE
+	return mentor_position + local_slot.rotated(_mentor_facing_vector().angle())
 
 func _process_first_trip() -> void:
 	match lesson_id:
@@ -275,6 +301,9 @@ func _start_lesson(id: String) -> void:
 					if int(main.flowers[candidate].get("stigma_variant", -1)) == source_variant:
 						receptive_index = int(candidate)
 						break
+				pollination_demo_variant = source_variant
+				pollination_demo_source_index = source_index
+				pollination_demo_target_index = receptive_index
 				demo_start = Vector2(main.flowers[source_index].position)
 				demo_target = Vector2(main.flowers[receptive_index].position)
 			else:
@@ -313,6 +342,16 @@ func _update_demo_position() -> void:
 		else:
 			var sidestep := clampf((progress - 0.58) / 0.20, 0.0, 1.0)
 			mentor_position = lock_target + Vector2(0, -95.0 * sidestep)
+	elif lesson_id == "pollination":
+		# Four embodied beats: collect at the anther, carry a persistent body load,
+		# stop beside the compatible stigma, then release one grain into it.
+		var staging_position := demo_target + Vector2(-42, 20)
+		if progress < 0.22:
+			mentor_position = demo_start
+		elif progress < 0.68:
+			mentor_position = demo_start.lerp(staging_position, (progress - 0.22) / 0.46)
+		else:
+			mentor_position = staging_position
 	else:
 		var travel := clampf(progress / 0.70, 0.0, 1.0)
 		mentor_position = demo_start.lerp(demo_target, travel)
@@ -436,12 +475,40 @@ func _draw_lesson_ghosts() -> void:
 					drop + Vector2(0, -6), drop + Vector2(-4, 1),
 					drop + Vector2(0, 6), drop + Vector2(4, 1)
 				]), Color(HONEY, 0.90))
-		"sense", "pollination":
+		"sense":
 			for mote in 6:
 				var ratio := fmod(progress * 0.65 + float(mote) / 6.0, 1.0)
 				var pos := demo_start.lerp(demo_target, ratio)
 				pos.y -= sin(ratio * PI) * 20.0
 				main.draw_circle(pos, 2.5 + ratio, Color(HONEY, 0.38 + ratio * 0.40))
+		"pollination":
+			var visual_phase := pollination_demo_visual_phase()
+			if visual_phase == "pickup":
+				var pickup_progress := clampf(progress / 0.22, 0.0, 1.0)
+				for mote in 4:
+					var angle := float(mote) * TAU / 4.0 + _demo_rotation()
+					var radius := lerpf(24.0, 5.0, pickup_progress)
+					PollenVisualLanguageScript.draw_grain(
+						main,
+						demo_start + Vector2.from_angle(angle) * radius,
+						pollination_demo_variant,
+						0.62 + pickup_progress * 0.28,
+						0.82
+					)
+			elif visual_phase == "transfer":
+				var transfer_progress := clampf((progress - 0.68) / 0.20, 0.0, 1.0)
+				var source := _mentor_load_world(pollination_demo_variant)
+				var grain_position := source.lerp(demo_target, transfer_progress)
+				grain_position.y -= sin(transfer_progress * PI) * 12.0
+				PollenVisualLanguageScript.draw_grain(main, grain_position, pollination_demo_variant, 0.95, 0.96)
+			elif visual_phase == "seed":
+				main.draw_colored_polygon(PackedVector2Array([
+					demo_target + Vector2(0, -11), demo_target + Vector2(-8, -3),
+					demo_target + Vector2(-6, 9), demo_target + Vector2(0, 14),
+					demo_target + Vector2(6, 9), demo_target + Vector2(8, -3)
+				]), Color("86a85f", 0.92))
+				for seed in 3:
+					main.draw_circle(demo_target + Vector2(0, -3 + seed * 5), 2.2, Color("f3d474"))
 		"defense":
 			var ghost := demo_target + Vector2(20, -6)
 			for ray in 4:
@@ -488,7 +555,20 @@ func _draw_lesson_ghosts() -> void:
 			main.draw_colored_polygon(PackedVector2Array([
 				lamp + Vector2(0, -29), lamp + Vector2(-7, -14),
 				lamp + Vector2(0, -8), lamp + Vector2(7, -14)
-			]), Color("f6a43d", 0.84))
+				]), Color("f6a43d", 0.84))
+
+
+func pollination_demo_visual_phase() -> String:
+	if lesson_id != "pollination" or phase != "demo" or demo_duration <= 0.0:
+		return "inactive"
+	var progress := 1.0 - clampf(demo_time / demo_duration, 0.0, 1.0)
+	if progress < 0.22:
+		return "pickup"
+	if progress < 0.68:
+		return "carry"
+	if progress < 0.88:
+		return "transfer"
+	return "seed"
 
 func _demo_rotation() -> float:
 	return (1.0 - clampf(demo_time / maxf(0.01, demo_duration), 0.0, 1.0)) * TAU * 1.5
