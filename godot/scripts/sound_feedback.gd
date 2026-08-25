@@ -2,6 +2,24 @@ class_name SoundFeedback
 extends Node
 
 const MIX_RATE := 22050.0
+const CUE_TONES := {
+	"harvest": Vector3(620.0, 0.07, 0.08),
+	"home": Vector3(330.0, 0.22, 0.14),
+	"repel": Vector3(190.0, 0.09, 0.13),
+	"evade": Vector3(410.0, 0.08, 0.10),
+	"attack_lock": Vector3(265.0, 0.06, 0.11),
+	"evade_clear": Vector3(760.0, 0.16, 0.13),
+	"sense": Vector3(470.0, 0.18, 0.08),
+	"decoy": Vector3(540.0, 0.16, 0.09),
+	"full": Vector3(175.0, 0.12, 0.13),
+	"hurt": Vector3(105.0, 0.18, 0.16),
+	"upgrade": Vector3(520.0, 0.28, 0.12),
+	"tune": Vector3(760.0, 0.32, 0.15),
+	"relay": Vector3(590.0, 0.18, 0.10),
+	"win": Vector3(880.0, 0.55, 0.13),
+	"loss": Vector3(145.0, 0.48, 0.12),
+	"drink": Vector3(440.0, 0.15, 0.12),
+}
 
 var player: AudioStreamPlayer
 var playback: AudioStreamGeneratorPlayback
@@ -10,6 +28,9 @@ var phase := 0.0
 var frequency := 440.0
 var amplitude := 0.12
 var enabled := true
+## Read-only-by-convention diagnostic hook. Headless tests can verify that a
+## production cue was requested without creating an audio device or changing it.
+var last_cue := ""
 
 func _ready() -> void:
 	if DisplayServer.get_name() == "headless":
@@ -35,25 +56,13 @@ func set_enabled(value: bool) -> void:
 		player.stream_paused = not enabled
 
 func play_cue(cue: String) -> void:
-	if not enabled or playback == null:
+	if not enabled or not CUE_TONES.has(cue):
 		return
-	match cue:
-		"harvest": start_tone(620.0, 0.07, 0.08)
-		"home": start_tone(330.0, 0.22, 0.14)
-		"repel": start_tone(190.0, 0.09, 0.13)
-		"evade": start_tone(410.0, 0.08, 0.10)
-		"attack_lock": start_tone(265.0, 0.06, 0.11)
-		"evade_clear": start_tone(760.0, 0.16, 0.13)
-		"sense": start_tone(470.0, 0.18, 0.08)
-		"decoy": start_tone(540.0, 0.16, 0.09)
-		"full": start_tone(175.0, 0.12, 0.13)
-		"hurt": start_tone(105.0, 0.18, 0.16)
-		"upgrade": start_tone(520.0, 0.28, 0.12)
-		"tune": start_tone(760.0, 0.32, 0.15)
-		"relay": start_tone(590.0, 0.18, 0.10)
-		"win": start_tone(880.0, 0.55, 0.13)
-		"loss": start_tone(145.0, 0.48, 0.12)
-		"drink": start_tone(440.0, 0.15, 0.12)
+	last_cue = cue
+	if playback == null:
+		return
+	var tone: Vector3 = CUE_TONES[cue]
+	start_tone(tone.x, tone.y, tone.z)
 
 func start_tone(next_frequency: float, duration: float, next_amplitude: float) -> void:
 	frequency = next_frequency

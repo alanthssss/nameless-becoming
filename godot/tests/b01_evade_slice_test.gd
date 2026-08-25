@@ -172,8 +172,10 @@ func test_full_width_world_and_cover_crop() -> void:
 				var arrow := B01EvadeSlice.escape_arrow_geometry(target, direction)
 				expect(bool(arrow.get("valid", false)), "共享规则给出的侧标无法生成边界内箭头")
 				if bool(arrow.get("valid", false)):
-					for key in ["start", "finish", "head_a", "head_b"]:
-						expect(B01EvadeSlice.WORLD.has_point(Vector2(arrow[key])), "侧标箭头越过全宽 WORLD：%s" % key)
+					expect(Array(arrow.chevrons).size() == 2, "B01 侧标没有复用 Main 的双 chevron 语法")
+					for chevron in arrow.chevrons:
+						for key in ["tip", "back_a", "back_b"]:
+							expect(B01EvadeSlice.WORLD.has_point(Vector2(chevron[key])), "侧标 chevron 越过全宽 WORLD：%s" % key)
 
 	var source := FileAccess.get_file_as_string("res://scripts/playtest/b01_evade_slice.gd")
 	expect(source.contains("draw_texture_rect_region(") and not source.contains("draw_texture_rect(FIELD_TEXTURE"), "B01 背景仍走 16:9 横向拉伸绘制路径")
@@ -203,6 +205,7 @@ func test_timeline_and_pause() -> void:
 	var hard_before_pause := slice.hard_elapsed_seconds
 	root.get_tree().paused = true
 	slice._physics_process(25.0)
+	expect(not slice._sound.can_process(), "SceneTree 暂停时 SoundFeedback 未继承冻结")
 	root.get_tree().paused = false
 	expect(slice.delay_active_seconds == 0.0, "暂停仍推进 180s active delay")
 	expect(slice.hard_elapsed_seconds == hard_before_pause + 25.0, "暂停时 600s hard clock 未继续")
@@ -317,6 +320,80 @@ func test_delay_exhaustion_keeps_retest_operable() -> void:
 		expect(slice.bee.energy == slice.bee.max_energy - BeePlayer.EVADE_COST, "唯一复测急转没有只消费正常的 12 点能量")
 	slice.free()
 
+func exercise_feedback_success(slice: B01EvadeSlice, retest: bool) -> Array[String]:
+	var cues: Array[String] = []
+	var teaching_count := slice.teaching_display_count
+	var music_stream := slice._music.stream
+	slice._sound.last_cue = ""
+	if retest:
+		slice._begin_unprompted_retest()
+	else:
+		slice._begin_unprompted_practice()
+		slice._start_encounter()
+	expect(slice._sound.last_cue.is_empty(), "进入实践／复测前额外播放了答案提示音")
+	expect(slice._music.stream == music_stream and slice._music.stream == B01EvadeSlice.EXPLORE_MUSIC, "实践与复测切换了音乐或编码答案")
+	expect(slice.teaching_display_count == teaching_count and slice.current_instruction.is_empty(), "反馈接入重新显示了教学文字")
+
+	slice._advance_encounter(B01EvadeEncounter.AIM_SECONDS)
+	cues.append(slice._sound.last_cue)
+	expect(slice._sound.last_cue == "attack_lock", "攻击锁定没有调用生产 attack_lock cue")
+	var escape_directions := B01EvadeSlice.escape_directions_for(slice.encounter.locked_target, slice.encounter.aim_direction)
+	expect(not escape_directions.is_empty(), "反馈对照没有合法侧向输入")
+	if escape_directions.is_empty():
+		return cues
+	var direction: Vector2 = escape_directions[0]
+	var direction_key := "right" if direction.x > 0.5 else "left" if direction.x < -0.5 else "down" if direction.y > 0.5 else "up"
+	slice._sound.last_cue = ""
+	var first: Dictionary = slice.input_controller.register_direction_tap(direction_key, direction, 70.0, slice.bee)
+	var second: Dictionary = slice.input_controller.register_direction_tap(direction_key, direction, 70.2, slice.bee)
+	slice._consume_evade_input(first)
+	slice._consume_evade_input(second)
+	cues.append(slice._sound.last_cue)
+	expect(bool(second.evade_started) and slice._sound.last_cue == "evade", "真实同向双击没有调用生产 evade cue")
+
+	slice.bee.position = slice.encounter.locked_target + direction * (Rules.PATH_CLEARANCE + 2.0)
+	slice.encounter.advance(B01EvadeEncounter.LOCK_SECONDS, slice.bee.position, slice.bee.evade_sequence)
+	slice._sound.last_cue = ""
+	slice._advance_encounter(0.5)
+	cues.append(slice._sound.last_cue)
+	expect(slice._sound.last_cue == "evade_clear", "因果离线成功没有调用生产 evade_clear cue")
+	expect(is_equal_approx(slice.evade_confirmation_time, B01EvadeSlice.EVADE_CONFIRMATION_SECONDS), "成功没有生成 Main 等价的 0.8s 圆环残影")
+	expect(slice.teaching_display_count == teaching_count and slice.current_instruction.is_empty(), "成功声画反馈泄露了文字答案")
+	return cues
+
+func test_production_nonverbal_feedback() -> void:
+	var practice := runtime_slice()
+	if practice == null:
+		return
+	expect(practice._sound != null and practice._sound.process_mode == Node.PROCESS_MODE_PAUSABLE, "B01 SoundFeedback 未作为可暂停子节点接入")
+	var practice_cues := exercise_feedback_success(practice, false)
+	expect(practice.phase == B01EvadeSlice.PHASE_DELAY, "实践成功反馈改变了既有阶段流")
+	practice.free()
+
+	var retest := runtime_slice()
+	var retest_cues := exercise_feedback_success(retest, true)
+	expect(retest_cues == practice_cues and retest_cues == ["attack_lock", "evade", "evade_clear"], "实践与复测没有复用完全相同的非文字反馈语法")
+	expect(retest.phase == B01EvadeSlice.PHASE_COMPLETE and retest._sound.enabled and retest._sound.can_process(), "复测成功结算截断了 SoundFeedback 短尾音")
+	retest.free()
+
+	var failure := runtime_slice()
+	failure._begin_unprompted_retest()
+	failure._advance_encounter(B01EvadeEncounter.AIM_SECONDS)
+	expect(failure._sound.last_cue == "attack_lock", "失败对照未先经历中性锁定 cue")
+	failure._sound.last_cue = ""
+	failure._resolve_current_encounter(false, true)
+	expect(failure._sound.last_cue.is_empty(), "失败结算增加了评价音或答案音")
+	failure.free()
+
+	var focus := runtime_slice()
+	focus._sound.last_cue = ""
+	focus._set_focus_active(false)
+	focus._sound.play_cue("evade")
+	expect(not focus._sound.enabled and focus._sound.last_cue.is_empty(), "失焦后 SoundFeedback 仍接受 cue")
+	focus._set_focus_active(true)
+	expect(focus._sound.enabled, "回焦没有恢复非文字反馈")
+	focus.free()
+
 func test_shared_rule_runtime_wiring() -> void:
 	var slice := runtime_slice()
 	slice._begin_unprompted_retest()
@@ -351,6 +428,7 @@ func test_no_save_or_private_runtime() -> void:
 		"res://playtest/b01_evade_slice.tscn",
 		"res://scripts/playtest/b01_evade_encounter.gd",
 		"res://scripts/playtest/b01_evade_slice.gd",
+		"res://scripts/sound_feedback.gd",
 	]
 	var combined := ""
 	for source_path in source_paths:
@@ -367,6 +445,8 @@ func test_no_save_or_private_runtime() -> void:
 	var encounter_source := FileAccess.get_file_as_string("res://scripts/playtest/b01_evade_encounter.gd")
 	expect(source.contains("evade_input_controller.gd") and encounter_source.contains("evade_rules.gd"), "B01 未接入共享输入／因果规则")
 	expect(source.contains("player_bee_v1.png") and source.contains("mosquito_v1.png") and source.contains("_draw_demo_double_tap_cues"), "B01 示范仍用抽象圆点或没有可见双击节奏")
+	expect(source.contains("sound_feedback.gd") and source.contains("attack_lock") and source.contains("evade_clear"), "B01 未复用生产 SoundFeedback 急转 cue")
+	expect(source.contains("start + side * Rules.PATH_CLEARANCE") and source.contains("geometry.chevrons") and source.contains("_draw_evade_confirmation"), "B01 通道边界、双 chevron 或成功残影未与 Main 声画语法对齐")
 	expect(not ordinary_save_sha.is_empty() and FileAccess.get_sha256(ordinary_save_path) == ordinary_save_sha, "B01 session 改写了普通存档 sentinel")
 
 func run_test() -> void:
@@ -376,6 +456,7 @@ func run_test() -> void:
 	test_timeline_and_pause()
 	test_terminal_results_and_limits()
 	test_delay_exhaustion_keeps_retest_operable()
+	test_production_nonverbal_feedback()
 	test_shared_rule_runtime_wiring()
 	test_no_save_or_private_runtime()
 	root.get_tree().paused = false

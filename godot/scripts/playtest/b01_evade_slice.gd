@@ -5,6 +5,7 @@ const BeePlayerScript := preload("res://scripts/player/bee_player.gd")
 const EncounterScript := preload("res://scripts/playtest/b01_evade_encounter.gd")
 const InputControllerScript := preload("res://scripts/player/evade_input_controller.gd")
 const Rules := preload("res://scripts/mechanics/evade_rules.gd")
+const SoundFeedbackScript := preload("res://scripts/sound_feedback.gd")
 const FIELD_TEXTURE := preload("res://assets/art/launch/spring_field_v2.png")
 const FLOWER_TEXTURE := preload("res://assets/art/launch/flower_common_v1.png")
 const MENTOR_TEXTURE := preload("res://assets/art/launch/player_bee_v1.png")
@@ -22,6 +23,7 @@ const PRACTICE_MAX_ATTEMPTS := 3
 const DELAY_ACTIVE_SECONDS := 180.0
 const HARD_LIMIT_SECONDS := 600.0
 const ENCOUNTER_RECOVERY_SECONDS := 0.72
+const EVADE_CONFIRMATION_SECONDS := 0.8
 
 const PHASE_UNCONFIGURED := "unconfigured"
 const PHASE_DEMONSTRATION := "demonstration"
@@ -55,6 +57,9 @@ var practice_attempts := 0
 var retest_opportunities := 0
 var teaching_display_count := 0
 var current_instruction := ""
+var evade_confirmation_time := 0.0
+var evade_confirmation_position := Vector2.ZERO
+var evade_confirmation_direction := Vector2.LEFT
 
 var bee: BeePlayer
 var encounter := EncounterScript.new()
@@ -74,6 +79,7 @@ var _timer_label: Label
 var _pause_panel: ColorRect
 var _end_panel: ColorRect
 var _music: AudioStreamPlayer
+var _sound: SoundFeedback
 
 func configure_playtest_session(context: Dictionary) -> Error:
 	if is_inside_tree() or _configured:
@@ -150,6 +156,11 @@ func _build_world() -> void:
 	bee.configure(0.0)
 	bee.set_spring_launch_art(true)
 	bee.active = false
+
+	_sound = SoundFeedbackScript.new()
+	_sound.name = "SoundFeedback"
+	_sound.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(_sound)
 
 	_music = AudioStreamPlayer.new()
 	_music.name = "ExploreMusic"
@@ -257,6 +268,7 @@ func _advance_session(delta: float, gameplay_active: bool) -> void:
 		return
 	if not gameplay_active:
 		return
+	evade_confirmation_time = maxf(0.0, evade_confirmation_time - delta)
 	phase_active_seconds += delta
 	match phase:
 		PHASE_DEMONSTRATION:
@@ -290,6 +302,7 @@ func _advance_encounter(delta: float) -> void:
 	match String(event.kind):
 		"locked":
 			input_controller.clear(bee)
+			_sound.play_cue("attack_lock")
 		"crossed":
 			var success := Rules.cleared_locked_path(
 				bee,
@@ -317,6 +330,8 @@ func _resolve_current_encounter(success: bool, attempted: bool) -> void:
 	if _settled or phase not in [PHASE_GUIDED, PHASE_PRACTICE, PHASE_RETEST]:
 		return
 	_any_player_attempt = _any_player_attempt or attempted
+	if success:
+		_show_evade_confirmation(encounter.locked_target, encounter.aim_direction)
 	match phase:
 		PHASE_GUIDED:
 			guided_attempts += 1
@@ -494,6 +509,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _consume_evade_input(result: Dictionary) -> void:
+	if bool(result.get("evade_started", false)):
+		_sound.play_cue("evade")
 	if bool(result.get("evade_attempted", false)):
 		# Only an input committed after the attack locks is a measured attempt.
 		# Early input remains visible movement but cannot change the outcome label.
@@ -529,6 +546,8 @@ func _set_focus_active(active: bool) -> void:
 	_set_bee_gameplay_enabled(active and input_enabled and not get_tree().paused and not _settled)
 	if _music != null:
 		_music.stream_paused = not active
+	if _sound != null:
+		_sound.set_enabled(active)
 	# Losing focus before a retest route commits cannot consume the only measured
 	# opportunity. Restart the same configuration from aim with clean input.
 	if not active and phase == PHASE_RETEST and encounter.state in [B01EvadeEncounter.STATE_AIM, B01EvadeEncounter.STATE_LOCKED]:
@@ -570,6 +589,7 @@ func _draw() -> void:
 		_draw_demonstration()
 	elif phase in [PHASE_GUIDED, PHASE_PRACTICE, PHASE_RETEST]:
 		_draw_encounter()
+	_draw_evade_confirmation()
 
 func _draw_pollen_route() -> void:
 	var target := POLLEN_POINTS[_route_target_index]
@@ -595,7 +615,7 @@ func _draw_demonstration() -> void:
 		draw_dashed_line(attacker_start, old_position, Color("d95d5488"), 3.0, 12.0)
 	else:
 		var geometry := Rules.committed_corridor_geometry(attacker_start, attack_direction, WORLD, Rules.PATH_CLEARANCE)
-		_draw_corridor(geometry, 0.28)
+		_draw_corridor(geometry, 0.72)
 	_draw_mosquito(attacker_position, attack_direction, progress >= 0.68)
 	_draw_mentor_bee(mentor_position, Vector2.UP if progress >= 0.50 else attack_direction)
 	_draw_demo_double_tap_cues(mentor_position, attack_direction.orthogonal(), progress)
@@ -609,8 +629,9 @@ func _draw_encounter() -> void:
 		draw_dashed_line(encounter.attacker_position, bee.position, Color("d95d5499"), 3.0, 12.0)
 	else:
 		var geometry := Rules.committed_corridor_geometry(encounter.locked_origin, encounter.aim_direction, WORLD, Rules.PATH_CLEARANCE)
-		_draw_corridor(geometry, 0.34)
-	if phase == PHASE_GUIDED and encounter.state in [B01EvadeEncounter.STATE_LOCKED, B01EvadeEncounter.STATE_DASH]:
+		var corridor_alpha := 0.88 + sin(Time.get_ticks_msec() * 0.018) * 0.12 if encounter.state == B01EvadeEncounter.STATE_LOCKED else 0.55
+		_draw_corridor(geometry, corridor_alpha)
+	if phase == PHASE_GUIDED and encounter.state == B01EvadeEncounter.STATE_LOCKED:
 		for direction in escape_directions_for(encounter.locked_target, encounter.aim_direction):
 			_draw_escape_arrow(encounter.locked_target, direction)
 	_draw_mosquito(encounter.attacker_position, encounter.aim_direction, encounter.state == B01EvadeEncounter.STATE_DASH)
@@ -619,17 +640,22 @@ func _draw_encounter() -> void:
 func _draw_corridor(geometry: Dictionary, alpha: float) -> void:
 	if not bool(geometry.get("valid", false)):
 		return
+	var side: Vector2 = geometry.side
+	var start: Vector2 = geometry.start
+	var finish: Vector2 = geometry.finish
 	var polygon: PackedVector2Array = geometry.polygon
-	draw_colored_polygon(polygon, Color(0.85, 0.25, 0.24, alpha * 0.32))
-	draw_line(Vector2(geometry.start), Vector2(geometry.finish), Color(0.91, 0.34, 0.31, alpha + 0.34), 4.0)
+	draw_colored_polygon(polygon, Color("d95d54", 0.11 * alpha))
+	draw_line(start + side * Rules.PATH_CLEARANCE, finish + side * Rules.PATH_CLEARANCE, Color("d95d54", 0.44 * alpha), 2.0)
+	draw_line(start - side * Rules.PATH_CLEARANCE, finish - side * Rules.PATH_CLEARANCE, Color("d95d54", 0.44 * alpha), 2.0)
+	draw_line(start, finish, Color("f06b60", 0.70 * alpha), 3.0)
 
 func _draw_escape_arrow(origin: Vector2, direction: Vector2) -> void:
 	var geometry := escape_arrow_geometry(origin, direction)
 	if not bool(geometry.get("valid", false)):
 		return
-	draw_line(Vector2(geometry.start), Vector2(geometry.finish), Color("f4d36f"), 5.0)
-	draw_line(Vector2(geometry.finish), Vector2(geometry.head_a), Color("f4d36f"), 5.0)
-	draw_line(Vector2(geometry.finish), Vector2(geometry.head_b), Color("f4d36f"), 5.0)
+	for chevron in geometry.chevrons:
+		draw_line(Vector2(chevron.back_a), Vector2(chevron.tip), Color("f4d36f"), 3.0)
+		draw_line(Vector2(chevron.back_b), Vector2(chevron.tip), Color("f4d36f"), 3.0)
 
 static func cover_source_region(source_size: Vector2, destination_size: Vector2) -> Rect2:
 	if source_size.x <= 0.0 or source_size.y <= 0.0 or destination_size.x <= 0.0 or destination_size.y <= 0.0:
@@ -654,17 +680,21 @@ static func escape_arrow_geometry(origin: Vector2, direction: Vector2) -> Dictio
 	var finish_distance := minf(86.0, available)
 	if finish_distance < Rules.PATH_CLEARANCE + 1.0:
 		return {"valid": false}
-	var start_distance := minf(34.0, finish_distance * 0.46)
-	var head_length := minf(18.0, maxf(9.0, (finish_distance - start_distance) * 0.44))
-	var start := origin + normalized * start_distance
-	var finish := origin + normalized * finish_distance
-	var side := normalized.orthogonal() * minf(9.0, head_length * 0.5)
+	# Match Main's two 42/57px chevrons. At a physical edge, scale both marks
+	# together so the complete cue remains visible instead of clipping one beat.
+	var marker_scale := minf(1.0, available / 57.0)
+	var wing := normalized.orthogonal() * (6.0 * marker_scale)
+	var chevrons: Array[Dictionary] = []
+	for tap_index in 2:
+		var tip := origin + normalized * ((42.0 + float(tap_index) * 15.0) * marker_scale)
+		chevrons.append({
+			"tip": tip,
+			"back_a": tip - normalized * (11.0 * marker_scale) + wing,
+			"back_b": tip - normalized * (11.0 * marker_scale) - wing,
+		})
 	return {
 		"valid": true,
-		"start": start,
-		"finish": finish,
-		"head_a": finish - normalized * head_length + side,
-		"head_b": finish - normalized * head_length - side,
+		"chevrons": chevrons,
 	}
 
 static func escape_directions_for(target: Vector2, attack_direction: Vector2) -> Array[Vector2]:
@@ -672,6 +702,22 @@ static func escape_directions_for(target: Vector2, attack_direction: Vector2) ->
 	# inclusive. A sub-pixel expansion makes both representations agree without
 	# moving the bee or changing the shared 36px causal clearance.
 	return Rules.cardinal_escape_directions(target, attack_direction, BEE_CENTER_BOUNDS.grow(0.01))
+
+func _show_evade_confirmation(locked_target: Vector2, attack_direction: Vector2) -> void:
+	evade_confirmation_time = EVADE_CONFIRMATION_SECONDS
+	evade_confirmation_position = locked_target
+	evade_confirmation_direction = attack_direction.normalized()
+	_sound.play_cue("evade_clear")
+
+func _draw_evade_confirmation() -> void:
+	if evade_confirmation_time <= 0.0:
+		return
+	var ratio := clampf(evade_confirmation_time / EVADE_CONFIRMATION_SECONDS, 0.0, 1.0)
+	var radius := 20.0 + (1.0 - ratio) * 34.0
+	draw_arc(evade_confirmation_position, radius, 0.0, TAU, 32, Color("f4d36f", ratio * 0.85), 4.0)
+	draw_set_transform(evade_confirmation_position, evade_confirmation_direction.angle(), Vector2(0.72, 0.72))
+	draw_texture_rect(MENTOR_TEXTURE, Rect2(-41.0, -30.0, 82.0, 60.0), false, Color(0.88, 0.92, 1.0, ratio * 0.30))
+	draw_set_transform(Vector2.ZERO)
 
 func _draw_mentor_bee(position: Vector2, facing_direction: Vector2) -> void:
 	var facing := facing_direction.angle() if facing_direction.length_squared() > 0.01 else 0.0
