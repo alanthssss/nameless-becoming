@@ -125,6 +125,7 @@ var save_manager := NamelessSaveManager.new()
 var sound := SoundFeedback.new()
 var music := MusicDirector.new()
 var paused_from_phase := "playing"
+var lost_from_phase := "playing"
 var persistence_enabled := true
 
 # 花物候学：花型配置与连环花状态
@@ -323,7 +324,8 @@ func is_in_hive_entry(world_position: Vector2) -> bool:
 	return HIVE_ENTRY_AREA.has_point(world_position)
 
 func current_flower_set() -> String:
-	if phase == "boss" or phase == "boss_victory" or phase == "boss_loss":
+	# HUD and world art must preserve the same Boss origin behind static overlays.
+	if _uses_boss_interface_context():
 		return ["spring", "summer", "autumn", "winter"][clampi(current_boss_index, 0, 3)]
 	if stage_index < 0 or stage_index >= stages.size():
 		return "spring"
@@ -769,6 +771,7 @@ func show_intro() -> void:
 func start_game() -> void:
 	hive_lives = 3
 	stage_index = 0
+	lost_from_phase = "playing"
 	run_elapsed = 0.0
 	chosen_upgrades.clear()
 	upgrade_counts = {"long_wing": 0, "forager": 0, "guard": 0}
@@ -1027,10 +1030,10 @@ func on_overlay_button() -> void:
 				show_win()
 		# 失律者战败但还有命：从当前节令重开，不把玩家发配回立春
 		"boss_loss":
-			if is_boss_stage(stage_index):
-				start_boss()
-			else:
-				spawn_stage(stage_index)
+			# This phase can only be entered by update_boss(). The terminal bear
+			# reuses the ordinary final-stage index, so stage shape is not a safe
+			# discriminator for retry routing.
+			start_boss()
 		"between":
 			advance_stage()
 
@@ -2229,6 +2232,9 @@ func start_boss() -> void:
 	if boss_catalog.is_empty():
 		push_error("失律者数据缺失，无法开启调律遭遇")
 		return
+	# Boss encounters own their exposure rules and tuning blooms. End ordinary
+	# stage mechanics before clearing flowers so no stale route index can draw.
+	season_mechanics.end_stage()
 	# 失律者由所在节气节点决定；循环终点（大雪之后）默认回到失律之熊
 	current_boss_data = boss_data_for_stage(stage_index)
 	if current_boss_data.is_empty():
@@ -2595,6 +2601,10 @@ func show_win() -> void:
 	overlay_button.grab_focus()
 
 func show_loss() -> void:
+	# `lost` is shared by ordinary gathering and the last life of a Boss fight.
+	# Keep the origin before changing phase so the always-updating HUD does not
+	# read the goal-less Boss stage dictionary as an ordinary gathering stage.
+	lost_from_phase = phase
 	phase = "lost"
 	bee.active = false
 	overlay.visible = true
@@ -2878,9 +2888,11 @@ func update_interface() -> void:
 	if stages.is_empty():
 		return
 	var data: Dictionary = stages[stage_index]
-	# 失律者上下文从 boss 延续到 boss_victory：调律完成的瞬间，
-	# 顶栏与侧栏不应突然切回关卡数据（春分无 goal/flowers，会显示「目标 · 0 滴」的空状态）
-	var boss_context := (phase == "boss" or phase == "boss_victory") and not current_boss_data.is_empty()
+	# The HUD still updates every frame behind overlays. Preserve Boss context
+	# through victory, retry, pause and final loss. Explicit Boss stages have no
+	# `goal`, while the terminal bear reuses an ordinary stage index, so phase
+	# origin is the only safe discriminator.
+	var boss_context := _uses_boss_interface_context()
 	if boss_context:
 		term_label.text = ""
 	else:
@@ -2935,6 +2947,17 @@ func update_interface() -> void:
 		detail_label.text = "\n".join(condition_parts)
 	if production_hud != null:
 		production_hud.update_state(self)
+
+func _uses_boss_interface_context() -> bool:
+	if current_boss_data.is_empty():
+		return false
+	if phase in ["boss", "boss_victory", "boss_loss"]:
+		return true
+	if phase == "paused":
+		return paused_from_phase == "boss"
+	if phase == "lost":
+		return lost_from_phase == "boss"
+	return false
 
 func _handle_world_tap(world_position: Vector2) -> bool:
 	if not WORLD.has_point(world_position):

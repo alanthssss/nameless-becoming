@@ -21,11 +21,15 @@ func configure(game) -> void:
 	main = game
 
 
-func start_stage(index: int) -> void:
+func end_stage() -> void:
 	for mechanic in active:
 		if mechanic.has_method("end"):
 			mechanic.end()
 	active.clear()
+
+
+func start_stage(index: int) -> void:
+	end_stage()
 	if main == null or main.stages.is_empty():
 		return
 	var data: Dictionary = main.stages[index]

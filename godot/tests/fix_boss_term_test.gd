@@ -30,6 +30,7 @@ func run_test() -> void:
 	game.spawn_stage(6)
 	await process_frame
 	expect(game.phase == "boss", "春分节点未进入 boss 相位")
+	expect(game.season_mechanics.active.is_empty(), "普通节点机制残留到春分 Boss")
 	game.boss.hits = 3
 	game.show_boss_victory()
 	await process_frame
@@ -57,8 +58,80 @@ func run_test() -> void:
 	game._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
 	expect(game.phase == "boss_victory", "boss_victory 下 focus out 被误暂停：%s" % game.phase)
 
+	# --- 场景 6：Boss 可重试失败页仍使用调律 HUD，不能读取无 goal 的节点 ---
+	game.spawn_stage(6)
+	await process_frame
+	game.boss.hits = 1
+	game.hive_lives = 2
+	game.show_boss_loss()
+	game.update_interface()
+	expect(game.phase == "boss_loss" and game._uses_boss_interface_context(), "boss_loss 丢失 Boss HUD 上下文")
+	expect(game.delivered_title_label.text == "调律" and game.delivered_label.text == "1 / 3",
+		"boss_loss 调律进度错误：%s %s" % [game.delivered_title_label.text, game.delivered_label.text])
+	expect(game.season_label.text == "失律之蚊", "boss_loss 侧栏未保持失律者名称：%s" % game.season_label.text)
+	expect(game.production_hud.phase_label.text == "调律中", "boss_loss 产品 HUD 相位错误：%s" % game.production_hud.phase_label.text)
+
+	# --- 场景 7：重试回到同一 Boss；Boss 中暂停也保持调律上下文 ---
+	game.on_overlay_button()
+	await process_frame
+	expect(game.phase == "boss" and game.stage_index == 6 and game.hive_lives == 2,
+		"boss_loss 重试未回到同一 Boss 或错误重置蜂巢机会")
+	game.toggle_pause()
+	game.update_interface()
+	expect(game.phase == "paused" and game.paused_from_phase == "boss", "Boss 中暂停没有记录来源")
+	expect(game._uses_boss_interface_context() and game.delivered_title_label.text == "调律",
+		"Boss 暂停页丢失调律 HUD 上下文")
+	expect(game.current_flower_set() == "spring", "春分 Boss 暂停时世界主题错误切季：%s" % game.current_flower_set())
+	game.toggle_pause()
+
+	# --- 场景 8：显式 Boss 最后一命进入整轮失败，仍不得读取 data.goal ---
+	game.hive_lives = 0
+	game.show_loss()
+	game.update_interface()
+	expect(game.phase == "lost" and game.lost_from_phase == "boss", "Boss 整轮失败没有记录来源")
+	expect(game._uses_boss_interface_context() and game.delivered_title_label.text == "调律",
+		"Boss 整轮失败页丢失调律 HUD 上下文")
+	expect(game.current_flower_set() == "spring", "春分 Boss 整轮失败时世界主题错误切季：%s" % game.current_flower_set())
+
+	# --- 场景 9：终点熊战复用普通大雪节点，不能靠 is_boss_stage 推断 ---
+	game.spawn_stage(game.stages.size() - 1)
+	await process_frame
+	game.start_boss()
+	await process_frame
+	expect(game.phase == "boss" and String(game.current_boss_data.name) == "失律之熊",
+		"循环终点未进入失律之熊")
+	expect(game.season_mechanics.active.is_empty(), "大雪暖点机制残留到终点熊战")
+	game.boss.hits = 1
+	game.hive_lives = 2
+	game.show_boss_loss()
+	game.update_interface()
+	game.on_overlay_button()
+	await process_frame
+	expect(game.phase == "boss" and game.stage_index == game.stages.size() - 1,
+		"终点熊战可重试失败后错误返回大雪采集关")
+	expect(String(game.current_boss_data.name) == "失律之熊" and game.hive_lives == 2,
+		"终点熊战重试没有保持失律者或蜂巢机会")
+	game.hive_lives = 0
+	game.show_loss()
+	game.update_interface()
+	expect(game.phase == "lost" and game._uses_boss_interface_context(), "终点熊战失败丢失 Boss HUD 上下文")
+	expect(game.season_label.text == "失律之熊" and game.delivered_title_label.text == "调律",
+		"终点熊战失败页上下文错误：%s %s" % [game.season_label.text, game.delivered_title_label.text])
+
+	# --- 场景 10：普通关失败即使残留 Boss 数据，也必须回到普通目标 HUD ---
+	game.spawn_stage(7)
+	await process_frame
+	game.hive_lives = 1
+	game.phase = "exhausted"
+	game.fail_expedition()
+	game.update_interface()
+	expect(game.phase == "lost" and game.lost_from_phase == "exhausted", "普通关失败来源记录错误")
+	expect(not game._uses_boss_interface_context(), "普通关失败被残留 Boss 数据误判为调律上下文")
+	expect(game.delivered_title_label.text == "归巢蜜" and game.season_label.text == "过关条件",
+		"普通关失败未恢复普通目标 HUD：%s %s" % [game.delivered_title_label.text, game.season_label.text])
+
 	if failures.is_empty():
-		print("FIX TEST PASSED: boss 上下文延续 / 无节令复读 / 相位护栏 / focus 自动暂停 全部通过")
+		print("FIX TEST PASSED: boss 胜败/暂停上下文 / 无节令复读 / 相位护栏 / focus 自动暂停 全部通过")
 	else:
 		for failure in failures:
 			printerr("FAIL: " + failure)
