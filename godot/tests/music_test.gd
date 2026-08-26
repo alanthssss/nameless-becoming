@@ -120,6 +120,10 @@ func run_test() -> void:
 		var feedback = feedback_script.new()
 		feedback.set_season(-1)
 		feedback.set_season(99)
+		var output_player: AudioStreamPlayer = feedback._new_output_player()
+		expect(output_player.playback_type == AudioServer.PLAYBACK_TYPE_STREAM, "程序化音效未强制使用 Web 可用的流式播放")
+		expect(output_player.stream is AudioStreamGenerator, "程序化音效播放器没有接入生成器流")
+		output_player.free()
 		feedback.free()
 
 	director.queue_free()

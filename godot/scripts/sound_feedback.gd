@@ -37,9 +37,7 @@ var last_cue := ""
 func _ready() -> void:
 	if DisplayServer.get_name() == "headless":
 		return
-	player = AudioStreamPlayer.new()
-	player.stream = _new_generator_stream()
-	player.volume_db = -8.0
+	player = _new_output_player()
 	add_child(player)
 	player.play()
 	playback = player.get_stream_playback()
@@ -73,6 +71,16 @@ func _new_generator_stream() -> AudioStreamGenerator:
 	stream.mix_rate = MIX_RATE
 	stream.buffer_length = 0.25
 	return stream
+
+func _new_output_player() -> AudioStreamPlayer:
+	var output := AudioStreamPlayer.new()
+	# Web defaults to sample playback, but a live AudioStreamGenerator can only
+	# be consumed as a stream. Force that mode on every platform so Web does not
+	# reject the procedural feedback channel during startup.
+	output.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
+	output.stream = _new_generator_stream()
+	output.volume_db = -8.0
+	return output
 
 func play_cue(cue: String) -> void:
 	if not enabled or not CUE_TONES.has(cue):
