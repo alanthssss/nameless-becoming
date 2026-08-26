@@ -96,11 +96,11 @@ npm run playtest:prepare -- \
 
 ## 视觉方向
 
-最终画风已于 2026-08-26 重新打开方向门禁：“布艺贴花主体 + 毛毡微缩体积”和 v3“矿物色套色版绘 × 局部蜂蜡”均降级为历史生产假设／否决对照。Alan 明确否决 v3 推荐图偏暗偏脏、色差不清、线条杂乱和固定单屏构图；当前 v4 候选改为**明亮生态动画 × 蜂巢地标**：高明度大色面、受控鲜明色差、极少内部线、滚动地图局部视口、暖亮蜂巢节点和最小角落 UI。该图仍等待 Alan 审阅，不能写成最终资产、HUD 或长地图已经定稿／实现。
+最终画风已于 2026-08-26 重新打开方向门禁：“布艺贴花主体 + 毛毡微缩体积”和 v3“矿物色套色版绘 × 局部蜂蜡”均降级为历史生产假设／否决对照。Alan 明确否决 v3 推荐图偏暗偏脏、色差不清、线条杂乱和固定单屏构图；v4 先改为明亮生态动画、滚动地图局部视口、暖亮蜂巢节点和最小角落 UI。本轮 v5 提案再加入**活的蜂巢共同体、真实生态分层与行为塑造角色**：允许由眼神、触角、负重、重心和群体关系形成的受控拟人化，但不采用完整人类身体／服装或无语义装饰。方向仍等待 Alan 审阅，不能写成最终资产、HUD 或长地图已经定稿／实现。
 
 低噪地表、独立蜂巢、8 种季节花和四组机制实体已进入构建。它们是实现事实和开发者快照证据，不等于 Alan 已逐项通过画风，也不等于外部玩家已读懂。完整生产规则见 [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)，当前美术门禁见 [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)。
 
-未来产品方向已决定扩大地图与游玩时间，并让蜂巢承担类似篝火的安全、休整、方向与情绪锚点；“篝火”不自动包含存档、复活、传送、刷怪或商店。当前代码仍是固定单屏、唯一主巢交付与有限中继巢，未来地图拓扑、节点服务、Q、力竭和退出规则以 [`docs/design/map-evolution.md`](docs/design/map-evolution.md) 的 D0 门禁为准。
+未来产品方向已决定扩大地图与游玩时间，并让蜂巢承担类似篝火的安全、休整、方向与情绪锚点；“篝火”不自动包含存档、复活、传送、刷怪或商店。目标口径是 1 个连续家园、5 张可加载地图、13 个主场景、4 季、24 个节气状态与 18 种花卉身份；当前代码仍是固定单屏、唯一主巢交付与有限中继巢。地图／蜂巢结构见 [`docs/design/map-evolution.md`](docs/design/map-evolution.md)，完整生态、花期、季节机制、IP 与海报提案见 [`docs/design/world-season-ecology-framework.md`](docs/design/world-season-ecology-framework.md)，一页式画面入口见 [`docs/design/visual-atlas.md`](docs/design/visual-atlas.md)。
 
 ## 开发
 
@@ -155,8 +155,10 @@ npm run test
 10. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
 11. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：成熟度与市场评估，其中历史结构判断须服从上述当前事实源；
 12. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；
-13. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：当前上线美术证据与生产门禁。
-14. [`docs/design/map-evolution.md`](docs/design/map-evolution.md)：未来长地图、蜂巢承担类似篝火作用的方向、未决机制和结构门禁。
+13. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：当前上线美术证据与生产门禁；
+14. [`docs/design/map-evolution.md`](docs/design/map-evolution.md)：未来长地图、蜂巢承担类似篝火作用的方向、未决机制和结构门禁；
+15. [`docs/design/world-season-ecology-framework.md`](docs/design/world-season-ecology-framework.md)：五图／十三场景、四季、节气、花期、机制泛化、角色 IP 与海报结构；
+16. [`docs/design/visual-atlas.md`](docs/design/visual-atlas.md)：实机、历史概念、当前世界总览与宣传构图的一页式审阅入口。
 
 ## 当前验证问题
 
