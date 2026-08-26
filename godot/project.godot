@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="无名：成蜂"
+config/name="一会儿巢里见"
 config/version="0.9.5-rc.2"
 run/main_scene="res://bootstrap.tscn"
 config/features=PackedStringArray("4.6")

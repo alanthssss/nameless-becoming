@@ -75,8 +75,8 @@ jobs:
           "$GODOT_BIN" --path godot --headless --export-release macOS
           ./scripts/package_macos.sh
           unzip -q builds/NamelessBecoming-macOS.zip -d "$RUNNER_TEMP/macos-verify"
-          ./scripts/verify_godot_export_contents.sh --pack "$RUNNER_TEMP/macos-verify/无名：成蜂.app/Contents/Resources/无名：成蜂.pck"
-          codesign --verify --deep --strict --verbose=2 "$RUNNER_TEMP/macos-verify/无名：成蜂.app"
+          ./scripts/verify_godot_export_contents.sh --pack "$RUNNER_TEMP/macos-verify/一会儿巢里见.app/Contents/Resources/一会儿巢里见.pck"
+          codesign --verify --deep --strict --verbose=2 "$RUNNER_TEMP/macos-verify/一会儿巢里见.app"
           (cd builds && shasum -a 256 NamelessBecoming-macOS.zip > NamelessBecoming-macOS.zip.sha256)
           node scripts/generate_artifact_manifest.mjs \
             --artifact builds/NamelessBecoming-macOS.zip \
@@ -169,4 +169,4 @@ jobs:
             --target "$GITHUB_SHA" \
             --prerelease \
             --generate-notes \
-            --title "无名：成蜂 $RELEASE_TAG"
+            --title "一会儿巢里见 $RELEASE_TAG"

@@ -1,16 +1,24 @@
-# 无名：成蜂 · Nameless: Becoming
+# 一会儿巢里见 · See You at the Hive
 
 一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
 
-> 再采一朵，还是现在归巢？
+> 花田有事，搭把翅膀。飞一圈，巢里见。
+
+## 春季往返产品纵切
+
+普通启动页现已可进入《一会儿巢里见》的第一条产品路线：从浅层巢门内侧出发，在超过四个旧单屏面积的春野中取得两型散粉、送到同形花心、去远区带回 6 滴蜜，可主动打开一个只能有限休息的小蜂房，也可从下方回风路返回唯一主蜂巢，由接货蜂实际把花蜜传进巢内。巢门和春野是两张真实切换的 Godot 场景，旧 24 节点循环仍作为回归基线保留。
+
+这是已实现并通过开发者自动回归／渲染检查的首个纵切，不是完整成品或最终美术通过；Alan 实机验收和独立外部玩家证据仍为 0。实现边界与下一步见 [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)。
 
 ## 在线试玩
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）。下文 `57aefc4` 只指最近一次已校验的 macOS／Windows 桌面 artifact；它现在是历史 Main 局部反馈来源，不含新的启动回执门禁，现有 Web 部署也未证明与任何当前候选精确同源。
+当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。`a58358c3ac90d6edac8a654777beb378d978b688` 只是上一轮 B01 工具记录的历史源码身份，不再代表本分支；下文 `57aefc4` 也只指最近一次已校验的 macOS／Windows 历史 artifact。线上私有部署尚未因本地导出更新而自动发布，不能据此声称已与本纵切同源。
 
-## 当前版本：Godot 候选 MVP 0.9.5-rc.2
+## 旧 24 节点候选基线：Godot MVP 0.9.5-rc.2
+
+以下内容记录仍在工程中承担规则回归的旧 `Main` 和既有构建证据，不是《一会儿巢里见》已经采纳的对外剧情、命名或完整产品结构；新产品当前已实现部分以上方“春季往返产品纵切”为准。
 
 最近已校验的桌面 artifact 来自 PR #87 的完整 `main` 提交 `57aefc4933db88968777b11ea1d1679c6374842a`。macOS／Windows 包由 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 构建并通过最终包检查；但该包早于 PR #90 的启动 fail-closed／ready receipt 与 PR #91 的短表修订，不能继续作为下一轮 B01 入口。它只保留历史证据价值，标题／暂停层显示：
 
@@ -109,7 +117,7 @@ godot --path godot --editor
 npm run test:godot
 ```
 
-`npm run test:godot` 会生成构建来源、准备导入缓存并执行 14 组 Godot 回归；其中 strict ticket validator、bootstrap 与 ticket-derived save namespace 覆盖固定切片身份基础，新增的共享急转运行时与 B01 组覆盖生产／切片同一因果规则、有界阶段、180 秒 active 时钟、单次复测和互斥结果；HUD 组继续覆盖等比安全框、饮蜜按钮状态与指针／触摸触发边界。每组都必须在独立日志中报告 `TEST PASSED`。自动回归只证明实现时序与判定成立，不证明玩家已学会急转。
+`npm run test:godot` 会生成构建来源、准备导入缓存并执行 15 组 Godot 回归；其中新旅程组覆盖场景唯一实例、大地图与 Camera2D、同形传粉、小蜂房有限休息、主巢唯一交货和单次返巢结算；strict ticket validator、bootstrap 与 ticket-derived save namespace 覆盖固定切片身份基础，共享急转运行时与 B01 组覆盖生产／切片同一因果规则、有界阶段、180 秒 active 时钟、单次复测和互斥结果；HUD 组继续覆盖等比安全框、饮蜜按钮状态与指针／触摸触发边界。每组都必须在独立日志中报告 `TEST PASSED`。自动回归只证明实现时序与判定成立，不证明玩家已经理解或喜欢路线。
 
 Web 端由 Godot 导出后，通过 Node.js 站点外壳承载：
 
@@ -125,6 +133,7 @@ npm run test
 主要实现位于：
 
 - `godot/scripts/main.gd`：24 节点状态流、敌害、归巢结算和主集成；
+- `godot/journey.tscn` 与 `godot/scripts/world/`：新产品旅程的持久会话、春季大地图、巢门场景、Camera2D、区域切换和单次返巢结算；
 - `godot/data/seasons.json`：24 个节气节点、玩法组、敌害、色彩和目标；
 - `godot/data/bosses.json`：四位失律者数据；
 - `godot/scripts/mechanics/`：授粉、袭扰、留种、暖点与中继巢；
@@ -154,6 +163,7 @@ npm run test
 11. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：成熟度与市场评估，其中历史结构判断须服从上述当前事实源；
 12. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；
 13. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：当前上线美术证据与生产门禁。
+14. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
 
 ## 当前验证问题
 

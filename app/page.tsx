@@ -31,23 +31,23 @@ export default function Home() {
   return (
     <main className="game-shell">
       <header>
-        <div><strong>无名：成蜂</strong><span>可玩垂直切片 · 私人试玩构建</span></div>
-        <p>四季循环 · 采蜜归巢 · 失律者调律</p>
+        <div><strong>一会儿巢里见</strong><span>可玩垂直切片 · 私人试玩构建</span></div>
+        <p>花田办事 · 彼此搭手 · 记得回家</p>
       </header>
       <section className="game-stage">
         {phase === "idle" ? (
           <div className="launch-card">
-            <p>四季搜打撤 · PLAYABLE DEMO</p>
-            <h1>再采一朵，还是现在归巢？</h1>
+            <p>春季往返路线 · PLAYABLE SLICE</p>
+            <h1>花田有事，搭把翅膀。</h1>
             <button onClick={launch}>进入试玩</button>
-            <small>推荐使用键盘与横屏；首次点击会允许浏览器播放音乐。</small>
+            <small>推荐使用键盘与横屏；首次点击会允许浏览器播放声音。</small>
           </div>
         ) : (
           <>
             <iframe
               key={attempt}
               src="/game/index.html"
-              title="无名：成蜂 Godot Web 游戏"
+              title="一会儿巢里见 Godot Web 游戏"
               allow="autoplay; fullscreen"
             />
             {phase === "loading" && (
@@ -60,14 +60,14 @@ export default function Home() {
             {phase === "error" && (
               <div className="load-state load-error" role="alert">
                 <strong>蜂群还没有醒来</strong>
-                <small>检查网络后重试；已完成的本地进度不会受影响。</small>
+                <small>检查网络后重试；稍后再飞也没关系。</small>
                 <button onClick={launch}>重新载入</button>
               </div>
             )}
           </>
         )}
       </section>
-      <p className="build-note">当前版本用于验证核心循环、节令机制与操作理解，不代表最终美术和音乐品质。</p>
+      <p className="build-note">当前版本用于验证往返路线、场景切换与操作可读性，不代表最终美术和音乐品质。</p>
     </main>
   );
 }

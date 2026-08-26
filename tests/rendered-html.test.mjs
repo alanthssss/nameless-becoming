@@ -32,8 +32,8 @@ test("server-renders the Nameless: Becoming launch shell", async () => {
 
   const html = await response.text();
   assert.match(html, /<html lang="zh-CN">/i);
-  assert.match(html, /<title>无名：成蜂｜Godot 四季搜打撤<\/title>/i);
-  assert.match(html, /再采一朵，还是现在归巢？/);
+  assert.match(html, /<title>一会儿巢里见｜Godot 春季往返纵切<\/title>/i);
+  assert.match(html, /花田有事，搭把翅膀。/);
   assert.match(html, /进入试玩/);
   assert.match(html, /可玩垂直切片/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Building your site/i);
@@ -47,7 +47,7 @@ test("keeps starter artifacts out of the production shell", async () => {
   ]);
 
   assert.match(page, /src="\/game\/index\.html"/);
-  assert.match(page, /title="无名：成蜂 Godot Web 游戏"/);
+  assert.match(page, /title="一会儿巢里见 Godot Web 游戏"/);
   assert.match(page, /正在唤醒蜂群/);
   assert.match(page, /重新载入/);
   assert.match(page, /role="status"/);
@@ -56,7 +56,7 @@ test("keeps starter artifacts out of the production shell", async () => {
   assert.match(page, /nameless-game-error/);
   assert.match(page, /60000/);
   assert.doesNotMatch(page, /onLoad=\{\(\) => setPhase\("ready"\)\}/);
-  assert.match(layout, /title:\s*"无名：成蜂｜Godot 四季搜打撤"/);
+  assert.match(layout, /title:\s*"一会儿巢里见｜Godot 春季往返纵切"/);
   assert.match(layout, /<html lang="zh-CN">/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
   assert.doesNotMatch(layout, /Starter Project|codex-preview|_sites-preview/);

@@ -159,7 +159,7 @@ export async function readProductIdentity(root = repositoryRoot) {
   ]);
   const fullCommit = commitOutput.trim();
   if (!/^[0-9a-f]{40}$/u.test(fullCommit)) throw new Error(`Unexpected git commit: ${fullCommit}`);
-  return { name: "无名：成蜂", version: String(packageJson.version), commit: fullCommit.slice(0, 8), full_commit: fullCommit, dirty: statusOutput.trim().length > 0 };
+  return { name: "一会儿巢里见", version: String(packageJson.version), commit: fullCommit.slice(0, 8), full_commit: fullCommit, dirty: statusOutput.trim().length > 0 };
 }
 
 export async function readCandidateIdentity(commit, root = repositoryRoot) {
@@ -169,7 +169,7 @@ export async function readCandidateIdentity(commit, root = repositoryRoot) {
   const fullCommit = stdout.trim();
   if (!/^[0-9a-f]{40}$/u.test(fullCommit)) throw new Error(`Unexpected candidate commit: ${fullCommit}`);
   const packageJson = JSON.parse((await execFileAsync("git", ["show", `${fullCommit}:package.json`], { cwd: root })).stdout);
-  return { name: "无名：成蜂", version: String(packageJson.version), commit: fullCommit.slice(0, 8), full_commit: fullCommit };
+  return { name: "一会儿巢里见", version: String(packageJson.version), commit: fullCommit.slice(0, 8), full_commit: fullCommit };
 }
 
 function escapeHtml(value) {
@@ -190,7 +190,7 @@ function participantHtml(context) {
   return `<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; media-src 'none'">
-<title>《无名：成蜂》试玩回忆 ${escapeHtml(sessionId)}</title><link rel="stylesheet" href="styles.css"></head>
+<title>《一会儿巢里见》试玩回忆 ${escapeHtml(sessionId)}</title><link rel="stylesheet" href="styles.css"></head>
 <body ${bodyData(context)}><main class="shell compact-shell">
 <header class="hero"><p class="eyebrow">LOCAL PLAYTEST · ${escapeHtml(sessionId)}</p><h1>六项，写完就结束。</h1>
 <p class="lede">${introduction}</p>
@@ -278,7 +278,7 @@ function coordinatorReadme({ product, sourceIdentity, task, sessionId, participa
     ? `B01 必须使用 participant 同目录的 \`playtest-ticket.json\` 启动，T0 为首次取得控制权，最多 ${task.maximum_minutes} 分钟；开始前不解释操作、目标或设计意图。`
     : "A 包从标题开始，T0 为首次取得控制权，最多 15 分钟；开始前不解释操作、目标或设计意图。";
   const verifiedLaunch = task.code === "B"
-    ? `\n## 可靠启动\n\n从仓库根目录运行，不要手写 Godot 参数分隔符：\n\n\`npm run playtest:launch -- --executable "/游戏绝对路径/无名：成蜂.app" --ticket "/本会话绝对路径/participant/playtest-ticket.json"\`\n\n只有命令打印 \`Playtest ready receipt verified\` 才能记录为 B01 typed scene 已启动；它会在 participant 目录生成与本 session、slice、commit 和 ticket SHA-256 绑定的 \`playtest-ready-receipt.json\`。缺少 receipt、身份不符或游戏显示 \`PT-ARG-SEPARATOR\` 时均停止，不得把普通 Main 误记为 B01。\n`
+    ? `\n## 可靠启动\n\n从仓库根目录运行，不要手写 Godot 参数分隔符：\n\n\`npm run playtest:launch -- --executable "/游戏绝对路径/一会儿巢里见.app" --ticket "/本会话绝对路径/participant/playtest-ticket.json"\`\n\n只有命令打印 \`Playtest ready receipt verified\` 才能记录为 B01 typed scene 已启动；它会在 participant 目录生成与本 session、slice、commit 和 ticket SHA-256 绑定的 \`playtest-ready-receipt.json\`。缺少 receipt、身份不符或游戏显示 \`PT-ARG-SEPARATOR\` 时均停止，不得把普通 Main 误记为 B01。\n`
     : "";
   return `# 试玩协调说明（不要发给参与者）
 
@@ -453,7 +453,7 @@ export async function readArtifactIdentity({ artifactPath, artifactManifestPath,
   const manifestSha256 = createHash("sha256").update(manifestBytes).digest("hex");
   return {
     product: {
-      name: "无名：成蜂",
+      name: "一会儿巢里见",
       version: manifest.product_version,
       commit: manifest.commit.slice(0, 8),
       full_commit: manifest.commit,

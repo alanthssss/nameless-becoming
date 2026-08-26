@@ -27,6 +27,7 @@ const RelayHiveMechanicScript := preload("res://scripts/mechanics/relay_hive_mec
 const MentorTutorialScript := preload("res://scripts/tutorial/mentor_tutorial.gd")
 const EvadeRulesScript := preload("res://scripts/mechanics/evade_rules.gd")
 const EvadeInputControllerScript := preload("res://scripts/player/evade_input_controller.gd")
+const JOURNEY_SCENE := preload("res://journey.tscn")
 const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.svg")
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
@@ -561,7 +562,7 @@ func build_interface() -> void:
 	production_hud = ProductionHUDScript.new()
 	ui.add_child(production_hud)
 
-	title_label = make_label(ui, "◆  无名：成蜂", Vector2(34, 17), Vector2(350, 42), 24, Color("26342b"))
+	title_label = make_label(ui, "◆  一会儿巢里见", Vector2(34, 17), Vector2(350, 42), 24, Color("26342b"))
 	term_label = make_label(ui, "", Vector2(520, 16), Vector2(240, 52), 25, Color("26342b"))
 	term_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -836,9 +837,9 @@ func show_intro() -> void:
 	phase = "intro"
 	bee.active = false
 	overlay.visible = true
-	overlay_title.text = "蜂巢仍在呼吸"
-	overlay_body.text = "远处还有花香。\n飞出去；行动时，世界会回应你。"
-	overlay_button.text = "出巢"
+	overlay_title.text = "一会儿巢里见"
+	overlay_body.text = "花田有事，搭把翅膀。\n飞一圈，巢里见。"
+	overlay_button.text = "开始这趟旅程"
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
 	set_pause_system_controls_visible(false)
@@ -902,7 +903,7 @@ func connect_overlay_focus_recovery() -> void:
 
 func restore_overlay_focus() -> void:
 	overlay_focus_restore_queued = false
-	if overlay == null or not overlay.visible:
+	if not is_inside_tree() or get_viewport() == null or overlay == null or not overlay.visible:
 		return
 	var current := get_viewport().gui_get_focus_owner()
 	if is_valid_overlay_focus(current):
@@ -1179,7 +1180,15 @@ func on_overlay_button() -> void:
 	if not ["intro", "won", "lost", "paused", "boss_victory", "between", "boss_loss"].has(phase):
 		return
 	match phase:
-		"intro", "won", "lost": start_game()
+		"intro":
+			# Exported/runtime Main is the active title scene and opens the new product
+			# journey. Embedded regression fixtures intentionally keep the legacy loop
+			# reachable through start_game() without replacing their SceneTree root.
+			if get_tree().current_scene == self:
+				get_tree().change_scene_to_packed(JOURNEY_SCENE)
+			else:
+				start_game()
+		"won", "lost": start_game()
 		"paused": toggle_pause()
 		"boss_victory":
 			if stage_index + 1 < stages.size():

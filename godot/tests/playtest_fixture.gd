@@ -59,7 +59,7 @@ func make_ticket(manifest_bytes: PackedByteArray, catalog_bytes: PackedByteArray
 		"task": {"code": "B", "slice_code": code},
 		"product": {
 			"id": "nameless-becoming",
-			"display_name": "无名：成蜂",
+			"display_name": "一会儿巢里见",
 			"version": String(ProjectSettings.get_setting("application/config/version")),
 			"commit": commit,
 			"dirty": false,

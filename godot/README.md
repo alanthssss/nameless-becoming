@@ -1,6 +1,6 @@
 # Godot 单机版
 
-该目录是《无名：成蜂》的 Godot 4 游戏核心。仓库根目录的 React／Vite 项目只承载这一工程的 Godot Web 导出，不保留或维护第二套早期玩法规则。Web、macOS universal 与 Windows x86_64 三个目标同源。
+该目录是《一会儿巢里见》的 Godot 4 游戏核心。普通标题页当前进入春季往返产品纵切；旧 `main.tscn` 的 24 节点循环继续作为规则回归基线。仓库根目录的 React／Vite 项目只承载同一 Godot 工程的 Web 导出。Web、macOS universal 与 Windows x86_64 三个目标同源。
 
 ## 运行
 
@@ -12,9 +12,11 @@ macOS 命令行验证：
 npm run test:godot
 ```
 
-脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、strict playtest ticket、bootstrap、save namespace 隔离、共享急转运行时、B01 固定切片、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢、老师傅教学和 HUD 响应式／饮蜜指针输入共 14 组回归。B01 组覆盖 2.8 秒示范、有界引导／无提示实践、恰好 180 秒 active 时钟、一次复测和三个互斥结果。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。这是开发者自动验证，不是玩家学会急转的证据。
+脚本先生成构建来源、执行无界面资源导入并生成全局类缓存，再依次执行 smoke、strict playtest ticket、bootstrap、save namespace 隔离、共享急转运行时、B01 固定切片、完整流程、Boss 节点、音乐、Boss 状态机、四季机制、中继巢、老师傅教学、HUD 响应式／饮蜜指针输入和新旅程世界共 15 组回归。新旅程组覆盖真实场景切换、大地图与 Camera2D、同形传粉、小蜂房边界和单次返巢结算；B01 组覆盖 2.8 秒示范、有界引导／无提示实践、恰好 180 秒 active 时钟、一次复测和三个互斥结果。每组除了进程退出码，还必须在独立日志中报告 `TEST PASSED`。默认查找 PATH 中的 `godot` 或 `godot4`；也可通过 `GODOT_BIN=/完整路径/Godot npm run test:godot` 指定可执行文件。CI 固定下载并校验官方 Godot 4.6.2 Linux 发行包后运行同一脚本。这是开发者自动验证，不是玩家已经理解或喜欢路线的证据。
 
-## 当前内容
+## 当前工程内容
+
+新产品入口已包含春季往返路线、大地图、主巢／春野场景切换、同形传粉、小蜂房有限休息和返巢接货。下列其余项目是旧 `main.tscn` 的规则回归基线；其中旧叙事术语不自动沿用到新产品。
 
 - 直接控制蜜蜂飞行；
 - 按住采蜜；

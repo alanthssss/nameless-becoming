@@ -69,6 +69,9 @@ func _init() -> void:
 		"res://project.binary",
 		"res://bootstrap.tscn.remap",
 		"res://main.tscn.remap",
+		"res://journey.tscn.remap",
+		"res://world/journey/hive_threshold.tscn.remap",
+		"res://world/journey/spring_field.tscn.remap",
 		"res://playtest/b01_evade_slice.tscn.remap",
 		"res://data/playtest_slices.json",
 	]
@@ -117,6 +120,18 @@ func _init() -> void:
 		fail("Exported pack B01 scene does not implement the typed session contract.")
 		return
 	b01_instance.free()
+
+	var journey_scene := load("res://journey.tscn") as PackedScene
+	if journey_scene == null:
+		fail("Exported pack product journey or one of its area scenes cannot be loaded.")
+		return
+	var journey_instance := journey_scene.instantiate()
+	if journey_instance == null or not journey_instance.has_method("_begin_sortie"):
+		if journey_instance != null:
+			journey_instance.free()
+		fail("Exported pack product journey does not implement its area-transition contract.")
+		return
+	journey_instance.free()
 
 	var internal_files: Array[String] = []
 	for file_path in files:

@@ -2,19 +2,17 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "无名：成蜂｜Godot 四季搜打撤",
-  description: "与 macOS、Windows 同源的 Godot Web 版：穿越四季，在体力耗尽前采蜜归巢。",
+  title: "一会儿巢里见｜Godot 春季往返纵切",
+  description: "与 macOS、Windows 同源的 Godot Web 版：去花田搭把翅膀，办完事回巢见。",
   metadataBase: new URL("https://hivebound-seasons-game.pages.dev"),
   openGraph: {
-    title: "无名：成蜂｜四季搜打撤",
-    description: "再采一朵，还是现在归巢？",
-    images: ["/og.jpg"],
+    title: "一会儿巢里见｜春季往返纵切",
+    description: "花田有事，搭把翅膀。飞一圈，巢里见。",
   },
   twitter: {
     card: "summary_large_image",
-    title: "无名：成蜂｜四季搜打撤",
-    description: "再采一朵，还是现在归巢？",
-    images: ["/og.jpg"],
+    title: "一会儿巢里见｜春季往返纵切",
+    description: "花田有事，搭把翅膀。飞一圈，巢里见。",
   },
 };
 

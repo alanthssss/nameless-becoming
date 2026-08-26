@@ -1,4 +1,6 @@
-# 《无名：成蜂》试玩证据与记录
+# 《一会儿巢里见》试玩证据与记录
+
+历史会话保留当时构建中的旧展示名；从春季往返产品纵切起，新生成的玩家材料和应用显示统一使用《一会儿巢里见》，稳定产品 ID 与旧包文件 stem 暂不迁移。
 
 本文件管理三条不能互相替代的证据流：Alan 本人自测、未参与策划／开发的外部玩家试玩、真实 Windows 设备检查。同一人在真实 Windows 设备上的外测可以同时产生两类记录，但结论仍要分别汇总；开发者自测永远不能计入外部玩家样本。
 
@@ -76,13 +78,13 @@ npm run playtest:prepare -- \
 
 ```bash
 npm run playtest:launch -- \
-  --executable "/absolute/path/to/无名：成蜂.app" \
+  --executable "/absolute/path/to/一会儿巢里见.app" \
   --ticket "/absolute/path/to/new-session/participant/playtest-ticket.json"
 ```
 
 命令未打印 `Playtest ready receipt verified` 时不得开始记录 B01；看到 `PT-ARG-SEPARATOR` 时只修正启动链，不得继续普通 Main，也不得把这次尝试计入玩法结果。
 
-当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`，已含 PR #90／#91。最近固定 artifact 来自 PR #87 的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)，仓库外副本位于 `nameless-becoming-candidates/57aefc4-run-32867365895/`；它不含新的启动防护，只作历史证据，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
+上一轮 B01 工具记录的源码身份为 `a58358c3ac90d6edac8a654777beb378d978b688`，不再代表当前产品纵切。最近固定 artifact 来自 PR #87 的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)，仓库外副本位于 `nameless-becoming-candidates/57aefc4-run-32867365895/`；它不含新的启动防护，只作历史证据，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
 
 已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。第一次 macOS exact-ticket 启动确实带有 Godot user-argument 分隔符并进入 B01；但协调者没有先说明“现在要实际试玩”，Alan 看到“可以关闭”后合理关闭，并明确反馈自己不知道需要试玩。因此第一次退出定级为**试玩交接流程失败**，不得归入 B01 内部 `not_attempted`、不得判为 Alan 未学会，也不产生玩法结果。
 
