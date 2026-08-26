@@ -27,7 +27,11 @@ let engine = await readFile(engineUrl, "utf8");
 const original = "loadPromise = preloader.loadPromise(`${loadPath}.wasm`, size, true);";
 const replacement = `loadPromise = ("DecompressionStream" in globalThis ? fetch(new URL(\`\${loadPath}.wasm.gz\`, location.href), { credentials: "same-origin" }).then((response) => {
 				if (!response.ok || !response.body) throw new Error(\`HTTP \${response.status}: \${response.url}\`);
-				return new Response(response.body.pipeThrough(new DecompressionStream("gzip")), { headers: { "content-type": "application/wasm" } });
+				// Fetch decodes Content-Encoding automatically while preserving the
+				// response header. Only decompress hosts that serve the .gz bytes raw.
+				const decodedByTransport = /\\bgzip\\b/i.test(response.headers.get("content-encoding") ?? "");
+				const body = decodedByTransport ? response.body : response.body.pipeThrough(new DecompressionStream("gzip"));
+				return new Response(body, { headers: { "content-type": "application/wasm" } });
 			}) : Promise.all(${JSON.stringify(partNames)}.map((part) => fetch(new URL(part, new URL(\`\${loadPath}.wasm\`, location.href)), { credentials: "same-origin" }))).then(async (responses) => {
 				const chunks = await Promise.all(responses.map((response) => { if (!response.ok) throw new Error(\`HTTP \${response.status}: \${response.url}\`); return response.arrayBuffer(); }));
 				const total = chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);

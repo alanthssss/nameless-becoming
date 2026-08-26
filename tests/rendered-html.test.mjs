@@ -25,7 +25,7 @@ async function render() {
   );
 }
 
-test("server-renders the Nameless: Becoming launch shell", async () => {
+test("server-renders the See You at the Hive launch shell", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -74,6 +74,8 @@ test("prepares a compressed Godot payload and signals real engine readiness", as
   assert.match(script, /gzipSync/);
   assert.match(script, /index\.wasm\.gz/);
   assert.match(script, /DecompressionStream/);
+  assert.match(script, /content-encoding/);
+  assert.match(script, /decodedByTransport \? response\.body/);
   assert.match(script, /credentials: "same-origin"/);
   assert.match(script, /nameless-game-ready/);
   assert.match(script, /nameless-game-error/);
