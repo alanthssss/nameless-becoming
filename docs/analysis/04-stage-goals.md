@@ -3,7 +3,7 @@
 > 当前目标不是继续扩写系统，而是把 `0.9.5-rc.2` 的实现事实、人工验收与外部玩家证据闭环。
 > The current goal is not to add systems, but to close the loop between implementation, manual acceptance, and independent player evidence for `0.9.5-rc.2`.
 
-当前源码基线 / Current source baseline：`a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不可用于下一轮 B01）。
+当前源码基线 / Current source baseline：`fc5e3d590ef32bf86b4a083860874198568a5c6a`（含 PR #90／#91／#92／#94／#95）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不含后续修订，不可用于下一轮 B01）。
 
 ---
 
@@ -117,9 +117,9 @@ This section records history only; the old four stages, first-boss prototype, ol
 | 节点仍短或只是机械重复 | 节奏与 Boss 调律 | 依据用时、失败原因和重复劳动改内容，不只抬目标 |
 | 视觉仍不协调 | 单代表场景画风切片 | 先通过一张实机场景，再批量生产 |
 | PR #70 与主线基线均被否决，Draft PR #74 已选出 K 与 T/Z（已完成） | PR #76 秋季两轨全长候选 | 不续接被否决候选；最终组内响度精确一致，探索与 Boss 均选正式 candidate；该条件任务关闭，实机混音另测 |
-| 中继巢确实带来主动改线 | 第二据点实验 | 不破坏主巢、Q 归巢与交付语义唯一性 |
+| 未来长地图与蜂巢节点方向已由 Alan 决定 | 先完成 D0 语义规格，再做可撤销多屏区灰盒 | 时间来自路线选择而非空跑；主巢／野外节点、Q、交付、力竭与退出均不含隐藏默认值 |
 
-未出现触发证据时，这些不是已排产功能。
+除已由 Alan 直接决定的长地图／蜂巢产品方向外，未出现触发证据时，其余项目不是已排产功能。长地图代码也仍须先过 D0，产品方向决定不等于实现规格完整。
 
 ## 6. 明确不做／未承诺 / Out of Scope or Uncommitted
 

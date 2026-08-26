@@ -3,7 +3,7 @@
 > Godot 4.6.2 单机核心 + React/Vite Web 承载外壳 + JSON 数据驱动 + 三端同源导出
 > Godot 4.6.2 standalone core + React/Vite web shell + JSON-driven data + one source for three targets
 
-当前源码基线 / Current source baseline：`a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不含新的启动回执门禁）。
+当前源码基线 / Current source baseline：`fc5e3d590ef32bf86b4a083860874198568a5c6a`（含 PR #90／#91／#92／#94／#95）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不含后续修订）。
 
 ---
 

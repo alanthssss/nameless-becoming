@@ -82,7 +82,7 @@ npm run playtest:launch -- \
 
 命令未打印 `Playtest ready receipt verified` 时不得开始记录 B01；看到 `PT-ARG-SEPARATOR` 时只修正启动链，不得继续普通 Main，也不得把这次尝试计入玩法结果。
 
-当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`，已含 PR #90／#91。最近固定 artifact 来自 PR #87 的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)，仓库外副本位于 `nameless-becoming-candidates/57aefc4-run-32867365895/`；它不含新的启动防护，只作历史证据，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
+当前源码基线为 `fc5e3d590ef32bf86b4a083860874198568a5c6a`，已含 PR #90／#91／#92／#94／#95。最近固定 artifact 来自 PR #87 的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 与 GitHub run [`32867365895`](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895)，仓库外副本位于 `nameless-becoming-candidates/57aefc4-run-32867365895/`；它不含后续启动防护、短表修订或可恢复载粉实现，只作历史证据，不能配新 ticket。参与者仍只看到 B01 与 10 分钟时限；机制映射、observer profile、答案说明和 handler 信息只留给协调者。
 
 已生成 Alan B01 自测包会话 `NB-20260825-6412D7BA`；`participant/playtest-ticket.json` SHA-256 为 `2a9586760a8783188edeb058e320c5f9683cfd9a576393cc3d629fd5cc5ebf77`，`participant/artifact-manifest.json` SHA-256 为 `e7e337a20d9718c709d89697d0af15165539f5aca59123e62ffb59a6d6d84534`。第一次 macOS exact-ticket 启动确实带有 Godot user-argument 分隔符并进入 B01；但协调者没有先说明“现在要实际试玩”，Alan 看到“可以关闭”后合理关闭，并明确反馈自己不知道需要试玩。因此第一次退出定级为**试玩交接流程失败**，不得归入 B01 内部 `not_attempted`、不得判为 Alan 未学会，也不产生玩法结果。
 
@@ -168,6 +168,7 @@ npm run playtest:launch -- \
   一句话总结原话是“整体感觉比之前好多了,但是还是有很多具体的方面需要改善的”。→ 这些原话可作为 Alan 对固定 `Main` 的局部体验反馈：自报到达时间上限时过了几关但未到第一个 Boss；`没有卡顿` 来自含歧义的问题，既不能证明没有流程困惑，也不能证明没有性能问题。闪避成功后的 buff／debuff 仍只是设计建议，不能改写成已批准机制；右／上提示的画面内化和整体美术的宣传／发售品质继续作为未关闭项。它们不能证明 B01 急转教学或完整流程通过。
 - **首分钟旧问题存在语义歧义**：历史问法“开始后一分钟，你记得自己先做了什么、卡在哪里？”中的“卡”可能被理解为性能卡顿；本次“没有卡顿”没有回答先做了什么，也不能证明流程没有受阻。→ PR #91 已改为询问先做什么、操作未成功或停下来想的地方，并保持六字段／schema；不得回写或润色本次原始答案。
 - **当前实机美术方向未通过**：Alan 随后直接指出三点：目前像“写实元素转手绘”，缺少艺术加工和游戏化；场景／地图结构尚可，但过度精细；应回查怪物与 Boss 设定，为主角、蜂巢和场景加入人情味。→ 该反馈覆盖此前“整体方向可继续”的历史门禁，只针对当前美术方向，不否定已合并玩法代码。任务升级为 P0 角色化美术语言样板：保留空间结构、主动减细节，从敌害行为提炼轮廓／姿态／运动；角色性来自习惯、动作和生活痕迹，不靠给动植物加帽子、人脸或人类身体。春季代表场景获 Alan 明确确认前不得批量生产。
+- **v3 生成式推荐图仍未通过，长地图／蜂巢方向改写后续构图**：Alan 进一步指出推荐图配色不够干净、明亮，色彩对比不清，线条杂乱且没有重点，构图也不是目标结构；要求参考初代 PVZ 的样式方法，并决定后续扩大地图与游玩时间、让蜂巢成为类似篝火的亮点。→ v3 矿物套色推荐撤回；PVZ 只借明亮统一场地、高局部对比、功能轮廓、少文字与降噪，不借角色、草坪拓扑或 UI。v4“明亮生态动画 × 蜂巢地标”只是一张生成式方向实验，等待 Alan 分别审阅色彩／线条、信息／构图和项目身份；未来长地图已成为产品方向，但当前代码、节点服务与检查点均未因此自动实现，机制边界见 `design/map-evolution.md`。
 
 ## 2026-08-25 候选证据接收
 
@@ -249,7 +250,7 @@ Alan 完成 `nameless-autumn-full-loop-ab/v1` 最终盲听，`exported_at` 为 `
 
 ### 历史固定 artifact `57aefc4`：Main 局部自测已归档，B01 无有效结果
 
-`29e719f` 曾在 PR #82 闭合导出资源门禁，但它早于固定切片身份基础与 B01 运行时，现已降为历史 artifact。PR #87 合并后的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 由 GitHub [`Desktop client builds` run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 生成 macOS universal 与 Windows x86_64 artifact；双端最终包检查通过。它现在同样是历史 artifact，因为当前源码 `a58358c3ac90d6edac8a654777beb378d978b688` 已含 PR #90／#91。详细旧 artifact 身份见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
+`29e719f` 曾在 PR #82 闭合导出资源门禁，但它早于固定切片身份基础与 B01 运行时，现已降为历史 artifact。PR #87 合并后的完整提交 `57aefc4933db88968777b11ea1d1679c6374842a` 由 GitHub [`Desktop client builds` run 32867365895](https://github.com/alanthssss/nameless-becoming/actions/runs/32867365895) 生成 macOS universal 与 Windows x86_64 artifact；双端最终包检查通过。它现在同样是历史 artifact，因为当前源码 `fc5e3d590ef32bf86b4a083860874198568a5c6a` 已含 PR #90／#91／#92／#94／#95。详细旧 artifact 身份见 [`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)。
 
 该历史构建包含首次采蜜修复、秋季探索／Boss 双轨、Boss P1 修复和 B01 切片，但这些只是实现与旧构建事实。会话 `NB-20260825-6412D7BA` 第一次为交接失败；第二次在旧 bootstrap 中因缺少分隔符进入 `Main`。同会话 JSON 只归档为 Alan 历史 Main 局部自测：参与者自报 `time_limit`，实际时长不可得，最远“还没到第一个boss, 过了几关”。旧会话与旧包不得再用于采集；下一次 B01 和完整 Main/A 都须绑定新 artifact 与各自全新 session。Windows 真机与独立外部玩家证据仍缺失。
 

@@ -3,7 +3,7 @@
 > 无名：成蜂 · Nameless: Becoming — 一款以蜜蜂生态、二十四节气循环与归巢风险为核心的轻量动作撤离原型。
 > A lightweight action-extraction prototype centered on bee ecology, the 24-solar-term cycle, and the risk of making it home.
 
-当前源码基线 / Current source baseline：`a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不可用于下一轮 B01）。
+当前源码基线 / Current source baseline：`fc5e3d590ef32bf86b4a083860874198568a5c6a`（含 PR #90／#91／#92／#94／#95）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不含后续修订，不可用于下一轮 B01）。
 
 ---
 

@@ -8,7 +8,7 @@
 
 [https://hivebound-seasons.alanthssss.chatgpt.site](https://hivebound-seasons.alanthssss.chatgpt.site)
 
-当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）。下文 `57aefc4` 只指最近一次已校验的 macOS／Windows 桌面 artifact；它现在是历史 Main 局部反馈来源，不含新的启动回执门禁，现有 Web 部署也未证明与任何当前候选精确同源。
+当前 Web 地址是需要获授权 ChatGPT 账号访问的所有者私有入口；旧 Cloudflare Pages 地址不再作为当前基线。当前源码基线为 `fc5e3d590ef32bf86b4a083860874198568a5c6a`（已含 PR #90／#91／#92／#94／#95）。下文 `57aefc4` 只指最近一次已校验的 macOS／Windows 桌面 artifact；它现在是历史 Main 局部反馈来源，不含新的启动回执门禁或 PR #94 可恢复载粉实现，现有 Web 部署也未证明与任何当前候选精确同源。
 
 ## 当前版本：Godot 候选 MVP 0.9.5-rc.2
 
@@ -96,9 +96,11 @@ npm run playtest:prepare -- \
 
 ## 视觉方向
 
-最终画风已于 2026-08-26 重新打开方向门禁：“布艺贴花主体 + 毛毡微缩体积”降级为历史生产假设，不再视为已通过结论。当前 A1 表现系统的推荐候选是**矿物色套色版绘 × 局部蜂蜡浅浮雕**：套色轮廓统一环境、角色、花、敌害与 UI，蜂蜡只表达生命和能量；不转为像素风，剪纸、毛毡玩偶、儿童布书和贴纸拼装均不进入生产。现有候选为了单独比较画风而保留顶部／右侧旧布局，未回答原始自测中“提示更简约地融入画面”的 A2 信息构图要求；两项都仍等待 Alan 明确通过，不能写成最终资产或 HUD 已定稿。
+最终画风已于 2026-08-26 重新打开方向门禁：“布艺贴花主体 + 毛毡微缩体积”和 v3“矿物色套色版绘 × 局部蜂蜡”均降级为历史生产假设／否决对照。Alan 明确否决 v3 推荐图偏暗偏脏、色差不清、线条杂乱和固定单屏构图；当前 v4 候选改为**明亮生态动画 × 蜂巢地标**：高明度大色面、受控鲜明色差、极少内部线、滚动地图局部视口、暖亮蜂巢节点和最小角落 UI。该图仍等待 Alan 审阅，不能写成最终资产、HUD 或长地图已经定稿／实现。
 
 低噪地表、独立蜂巢、8 种季节花和四组机制实体已进入构建。它们是实现事实和开发者快照证据，不等于 Alan 已逐项通过画风，也不等于外部玩家已读懂。完整生产规则见 [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)，当前美术门禁见 [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)。
+
+未来产品方向已决定扩大地图与游玩时间，并让蜂巢承担类似篝火的安全、休整、方向与情绪锚点；“篝火”不自动包含存档、复活、传送、刷怪或商店。当前代码仍是固定单屏、唯一主巢交付与有限中继巢，未来地图拓扑、节点服务、Q、力竭和退出规则以 [`docs/design/map-evolution.md`](docs/design/map-evolution.md) 的 D0 门禁为准。
 
 ## 开发
 
@@ -154,6 +156,7 @@ npm run test
 11. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：成熟度与市场评估，其中历史结构判断须服从上述当前事实源；
 12. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；
 13. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：当前上线美术证据与生产门禁。
+14. [`docs/design/map-evolution.md`](docs/design/map-evolution.md)：未来长地图、蜂巢承担类似篝火作用的方向、未决机制和结构门禁。
 
 ## 当前验证问题
 

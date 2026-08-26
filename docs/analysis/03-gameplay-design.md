@@ -3,7 +3,7 @@
 > 核心张力：发现花源 → 停留采集 → 危险与体力改变局面 → 决定继续、处理威胁或撤离 → 把资源带回蜂巢。
 > Core tension: find nectar → linger to harvest → danger and stamina reshape the situation → continue, respond, or retreat → bring resources home.
 
-当前源码基线 / Current source baseline：`0.9.5-rc.2` / `a58358c3ac90d6edac8a654777beb378d978b688`（含 PR #90／#91）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不可用于下一轮 B01）。
+当前源码基线 / Current source baseline：`0.9.5-rc.2` / `fc5e3d590ef32bf86b4a083860874198568a5c6a`（含 PR #90／#91／#92／#94／#95）；最近固定桌面 artifact / Last fixed desktop artifact：`57aefc4933db88968777b11ea1d1679c6374842a`（只作历史 Main 局部反馈来源，不含后续修订，不可用于下一轮 B01）。
 
 ---
 
@@ -39,8 +39,8 @@ The key emotion is not “defeat every enemy,” but “I already carry a harves
   Deposited nectar enters a shared reserve; between-node upgrades improve flight, gathering, or guarding.
 - 蜂针不是普通攻击；震翼、诱饵、急转和调律承担对抗。
   The sting is not a regular attack; repel, decoy, evade, and tuning handle threats.
-- 主蜂巢是唯一交付点；中继巢只能有限恢复。
-  The main hive is the only delivery point; the relay hive only offers capped recovery.
+- 当前候选中主蜂巢是唯一交付点，中继巢只能有限恢复；未来长地图的蜂巢节点已重新打开交付／检查点语义，但在 D0 前不改现有规则。
+  In the current candidate, the main hive is the only delivery point and the relay hive only offers capped recovery; future campfire-like hive nodes reopen delivery/checkpoint semantics, but current rules remain until D0 is resolved.
 
 ### 2.3 可感知因果 / Perceptible Causality
 

@@ -1,6 +1,6 @@
 # 0.9.5-rc.2 候选发布检查
 
-当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`，已含 PR #90 启动 fail-closed／ready receipt 与 PR #91 修订短表。最近固定桌面 artifact `57aefc4933db88968777b11ea1d1679c6374842a` 的双端包曾通过实包 verifier 与 sidecar 复验，但只作历史 Main 局部反馈来源，不得用于下一轮 B01；新验收 artifact 尚未重建。
+当前源码基线为 `fc5e3d590ef32bf86b4a083860874198568a5c6a`，已含 PR #90／#91／#92／#94／#95。最近固定桌面 artifact `57aefc4933db88968777b11ea1d1679c6374842a` 的双端包曾通过实包 verifier 与 sidecar 复验，但只作历史 Main 局部反馈来源，不含后续启动防护、短表修订或可恢复载粉实现，不得用于下一轮 B01；新验收 artifact 尚未重建。
 详细 artifact 与 SHA-256：[`BUILD_MANIFEST.md`](BUILD_MANIFEST.md)
 
 > Alan 已批准继续合并和展开后续工作的**方向门禁**，并在 PR #76 最终 A/B 两组均选择正式秋季候选；这不等于完整人工流程、整套音乐、长期耐循环、实机混音、Windows 真机或发行验收。未参与开发的外部玩家证据仍为 **0**。

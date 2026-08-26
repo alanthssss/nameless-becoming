@@ -1,7 +1,7 @@
 # 花物候学与蜜蜂季行：花田与活动生态化重设计 / Flower Phenology & Seasonal Bee Activities
 
 > 版本 / Version: 草案 v0.2（2026-08-25 授粉生态纠偏）
-> 状态 / Status: 主线授粉生态纠偏已实现；PR #94 可恢复载粉候选通过开发者回归，待合并及 Alan／独立玩家复核 / Mainline ecology correction implemented; PR #94 recoverable-load candidate regression-tested, awaiting merge and player review
+> 状态 / Status: 主线授粉生态纠偏与 PR #94 可恢复载粉已实现并进入 `main`；开发者回归通过，待 Alan／独立玩家复核 / Mainline ecology correction and PR #94 recoverable pollen are merged; developer regressions passed, awaiting player review
 > 关联 / Related: `docs/design/enemy-phenology.md`、`docs/DESIGN_CONSENSUS.md`、`godot/data/seasons.json`、`godot/data/balance.json`  
 > 基线 / Baseline: 候选 MVP 0.9.4 + 四季机制全量实现
 
@@ -185,7 +185,7 @@
 |------|------|
 | **给粉前件** | 花已开放，花药展开且花粉可见；蜜蜂接触后，花粉以松散颗粒附在身体上 |
 | **受粉前件** | 目标花与给粉花属于同一可见花型，已开放且具有可接受柱头；目标不隐藏，柱头与花药不同形 |
-| **携带状态** | PR #94 候选以 `pollen_charges` 为唯一规则真相；A／B 两类可同时携带、各上限 2。胸腹体表的两个散粉锚区精确显示 `0/1/2`，A 为金黄圆粒簇、B 为玫红菱粒簇，不使用单一“当前花粉”图标。锚区只总结多个接触面上的松散花粉，不是后足花粉筐 |
+| **携带状态** | PR #94 以 `pollen_charges` 为唯一规则真相；A／B 两类可同时携带、各上限 2。胸腹体表的两个散粉锚区精确显示 `0/1/2`，A 为金黄圆粒簇、B 为玫红菱粒簇，不使用单一“当前花粉”图标。锚区只总结多个接触面上的松散花粉，不是后足花粉筐 |
 | **恢复读取** | 携粉时停稳触角寻迹，每个正在携带的类型分别以同形气味点指向最近可见、未锁定、未结籽的同型柱头；此时收起普通最佳蜜花线，保留危险区与归巢线。无粉时寻迹仍按原寻蜜规则工作 |
 | **成功效果** | 按键后体表显示先减一份，目标进入约 `0.46s` pending 防重复；同形颗粒从对应体表散粉锚区离身并落向柱头，落地后才标记已受粉并进入结籽。这是“胸腹等体表松散花粉接触柱头”的可读性抽象，不表示花粉筐直接授粉；不打开花苞，不新增或恢复花蜜 |
 | **不匹配效果** | 不扣任何花粉、不结籽、不改花蜜；实际携带形态在目标前弹回，目标所需形态脉冲，并播放与成功不同的短音 |

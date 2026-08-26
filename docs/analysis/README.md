@@ -3,7 +3,7 @@
 > 本文档集将上一轮的项目分析整理为分层的中英双语文档，避免单一长文档造成阅读负担。
 > This document set restructures the project analysis into layered bilingual (中文/EN) documents, avoiding the burden of a single lengthy file.
 
-**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2（当前源码基线 `a58358c3ac90d6edac8a654777beb378d978b688` 已含 PR #90／#91；最近固定桌面 artifact `57aefc4933db88968777b11ea1d1679c6374842a` 只作历史 Main 局部反馈来源，不可用于下一轮 B01）
+**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2（当前源码基线 `fc5e3d590ef32bf86b4a083860874198568a5c6a` 已含 PR #90／#91／#92／#94／#95；最近固定桌面 artifact `57aefc4933db88968777b11ea1d1679c6374842a` 只作历史 Main 局部反馈来源，不含后续修订，不可用于下一轮 B01）
 **同步日期 / Sync Date**: 2026-08-26
 
 > Desktop build run `32867365895` 的 macOS／Windows artifact、sidecar 和 pack verifier 已通过。B01 第一次 exact-ticket 进程因交接失败没有结果，第二次经进程／代码／原话证据链判定进入 `Main`；错配短表只作 Alan Main 局部自测，尚无有效 B01 运行结果。Windows 真机和外部玩家仍待验证。
