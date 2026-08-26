@@ -161,7 +161,8 @@ npm run test
 14. [`docs/design/map-evolution.md`](docs/design/map-evolution.md)：未来长地图、蜂巢承担类似篝火作用的方向、未决机制和结构门禁；
 15. [`docs/design/world-season-ecology-framework.md`](docs/design/world-season-ecology-framework.md)：地图／场景规模建议、四季、节气、花期、机制泛化与角色 IP 框架；
 16. [`docs/design/visual-atlas.md`](docs/design/visual-atlas.md)：实机、历史概念与已否决世界地图／海报的一页式审阅入口；
-17. [`docs/design/character-visual-canon.md`](docs/design/character-visual-canon.md)：主角、蜂群与四位失律者的既有设定、缺源项、生态禁错和出图前继承门禁。
+17. [`docs/design/character-visual-canon.md`](docs/design/character-visual-canon.md)：主角、蜂群与四位失律者的既有设定、缺源项、生态禁错和出图前继承门禁；
+18. [`docs/design/hive-architecture-study.md`](docs/design/hive-architecture-study.md)：自然／人工蜂巢原型、相关建筑案例、蜂巢四案结构候选与防止软团误读的造型门禁。
 
 ## 当前验证问题
 
