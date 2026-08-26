@@ -154,7 +154,7 @@ npm run test
 11. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：成熟度与市场评估，其中历史结构判断须服从上述当前事实源；
 12. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；
 13. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：当前上线美术证据与生产门禁；
-14. [`docs/design/narrative-framework.md`](docs/design/narrative-framework.md)：叙事前期唯一入口；维护主角弧、四段主线、角色关系、表达预算和首个可玩叙事切片。当前为待审提案，不代表剧情已实现或产品可售。
+14. [`docs/design/narrative-framework.md`](docs/design/narrative-framework.md)：完整作者版剧情策划；以《一会儿巢里见》为提案标题，锁定四季邻里轻喜剧、24 节气推进重构、角色三态、巢门接货、开场结局和首个可玩叙事切片。当前仍待整版审阅，未实现，也不代表产品可售。
 
 ## 当前验证问题
 
