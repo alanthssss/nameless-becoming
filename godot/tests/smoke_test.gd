@@ -57,24 +57,31 @@ func check_cjk_glyph_coverage(failures: Array[String]) -> void:
 		failures.append("中文字体缺少项目字形：%s" % missing_characters)
 
 func check_runtime_control_fonts(failures: Array[String]) -> void:
-	var main_scene := load("res://main.tscn") as PackedScene
-	if main_scene == null:
-		failures.append("无法加载主场景进行控件字体检查")
+	const expected_font_path := "res://fonts/NotoSansCJKsc-ProjectSubset.otf"
+	var expected_font := load(expected_font_path) as Font
+	if expected_font == null:
+		failures.append("无法加载项目字体进行控件检查")
 		return
-	var game := main_scene.instantiate()
-	root.add_child(game)
-	var expected_font := load("res://fonts/NotoSansCJKsc-ProjectSubset.otf") as Font
-	for node in game.find_children("*", "Control", true, false):
-		if node is Label or node is Button:
-			var control := node as Control
-			if control.get_theme_font("font") != expected_font:
-				failures.append("文本控件未使用项目字体：%s (%s)" % [control.get_path(), control.get_class()])
-			var visible_text := String(control.get("text"))
-			for character in visible_text:
-				var codepoint := character.unicode_at(0)
-				if codepoint > 0x20 and not expected_font.has_char(codepoint):
-					failures.append("文本控件包含无法渲染的字符：%s (%s, U+%04X)" % [control.get_path(), character, codepoint])
-	game.queue_free()
+	if String(ProjectSettings.get_setting("gui/theme/custom_font", "")) != expected_font_path:
+		failures.append("项目级中文字体未配置为 gui/theme/custom_font")
+	for scene_path in ["res://main.tscn", "res://journey.tscn"]:
+		var scene := load(scene_path) as PackedScene
+		if scene == null:
+			failures.append("无法加载场景进行控件字体检查：%s" % scene_path)
+			continue
+		var game := scene.instantiate()
+		root.add_child(game)
+		for node in game.find_children("*", "Control", true, false):
+			if node is Label or node is Button:
+				var control := node as Control
+				if control.get_theme_font("font") != expected_font:
+					failures.append("文本控件未使用项目字体：%s (%s)" % [control.get_path(), control.get_class()])
+				var visible_text := String(control.get("text"))
+				for character in visible_text:
+					var codepoint := character.unicode_at(0)
+					if codepoint > 0x20 and not expected_font.has_char(codepoint):
+						failures.append("文本控件包含无法渲染的字符：%s (%s, U+%04X)" % [control.get_path(), character, codepoint])
+		game.queue_free()
 
 func _init() -> void:
 	var failures: Array[String] = []
