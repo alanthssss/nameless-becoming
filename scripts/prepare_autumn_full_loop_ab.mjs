@@ -17,7 +17,6 @@ import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const musicRoot = join(repositoryRoot, "godot", "assets", "music");
 const SENTINEL_NAME = ".nameless-autumn-full-loop-ab";
 const SENTINEL = "nameless-autumn-full-loop-ab:v1\n";
 const LISTENER_SCHEMA = "nameless-autumn-full-loop-listener/v1";
@@ -27,19 +26,19 @@ export const BASELINE_COMMIT = "69baa742fadaba567ae0ec53eeb56ebf6ab35bd2";
 export const SOURCE_HASHES = Object.freeze({
   baseline: Object.freeze({
     autumn_explore: "e22b01786dfb50041aa76f3fb43ea769ce5239bd9f2c7f7e9bafb74bb3dd1d66",
-    autumn_boss: "d9ff59d8de8fb35c9200251dc7ce18eb7740dd71d17cb5f44004eb51c92c6d84",
+    autumn_incident: "d9ff59d8de8fb35c9200251dc7ce18eb7740dd71d17cb5f44004eb51c92c6d84",
   }),
   candidate: Object.freeze({
     autumn_explore: "de25c797c9dcb49eabee9adc61630dba21493a985ec2dc79ddb115f2d8f4b23a",
-    autumn_boss: "b571d75a05be755422214ddf7fd851fa31148c3a7feae7fa896d558340d95701",
+    autumn_incident: "b571d75a05be755422214ddf7fd851fa31148c3a7feae7fa896d558340d95701",
   }),
 });
 
 export const BLIND_TRACKS = Object.freeze([
   Object.freeze({ id: "C", role: "explore", version: "baseline", target_lufs: -18.0 }),
   Object.freeze({ id: "Y", role: "explore", version: "candidate", target_lufs: -18.0 }),
-  Object.freeze({ id: "M", role: "boss", version: "candidate", target_lufs: -19.0 }),
-  Object.freeze({ id: "R", role: "boss", version: "baseline", target_lufs: -19.0 }),
+  Object.freeze({ id: "M", role: "incident", version: "candidate", target_lufs: -19.0 }),
+  Object.freeze({ id: "R", role: "incident", version: "baseline", target_lufs: -19.0 }),
 ]);
 
 function sha256(bytes) {
@@ -50,18 +49,22 @@ function git(...args) {
   return execFileSync("git", args, { cwd: repositoryRoot, encoding: "utf8" }).trim();
 }
 
-function sourcePath(role) {
-  return `godot/assets/music/autumn_${role}.wav`;
+function sourcePath(track) {
+  // The pinned 2026-08-25 baseline commit predates the incident terminology.
+  // Keep that immutable Git object address as an explicit history-only alias;
+  // every current candidate and exported runtime path uses `incident`.
+  const suffix = track.version === "baseline" && track.role === "incident" ? "boss" : track.role;
+  return `godot/assets/music/autumn_${suffix}.wav`;
 }
 
 function sourceBytes(track) {
   if (track.version === "baseline") {
-    return execFileSync("git", ["show", `${BASELINE_COMMIT}:${sourcePath(track.role)}`], {
+    return execFileSync("git", ["show", `${BASELINE_COMMIT}:${sourcePath(track)}`], {
       cwd: repositoryRoot,
       maxBuffer: 16 * 1024 * 1024,
     });
   }
-  return readFile(join(musicRoot, `autumn_${track.role}.wav`));
+  return readFile(join(repositoryRoot, sourcePath(track)));
 }
 
 function wavInfo(bytes) {
@@ -180,11 +183,14 @@ async function replaceOwnedOutput(output, staged) {
 }
 
 export function validateFinalAnswers(answers = {}) {
+	// RESULT_SCHEMA v1 already shipped `boss_choice` / `boss_note`. Keep those
+	// field names as serialization-only aliases so saved reviews remain readable;
+	// the maintained role and listener-facing label are both `incident` / 遭遇.
   if (!["C", "Y", "tie", "neither"].includes(answers.explore_choice)) {
     return "请选择采集/探索组的结果。";
   }
   if (!["M", "R", "tie", "neither"].includes(answers.boss_choice)) {
-    return "请选择遭遇/Boss 组的结果。";
+    return "请选择遭遇组的结果。";
   }
   if (["tie", "neither"].includes(answers.explore_choice)
     && !String(answers.explore_note || "").trim()) {
@@ -192,7 +198,7 @@ export function validateFinalAnswers(answers = {}) {
   }
   if (["tie", "neither"].includes(answers.boss_choice)
     && !String(answers.boss_note || "").trim()) {
-    return "遭遇/Boss 组选择“一样好”或“都不接受”时，请写明原因。";
+    return "遭遇组选择“一样好”或“都不接受”时，请写明原因。";
   }
   return "";
 }
@@ -233,7 +239,7 @@ function listenerHtml(packageSha) {
 <body data-schema="${RESULT_SCHEMA}" data-package-sha256="${packageSha}"><main class="shell"><p class="eyebrow">FULL LOOP · BLIND A/B</p><h1>判断哪一版值得留在游戏里</h1><p class="lede">四条都是完整循环，组内响度已经匹配。页面不显示制作顺序；不要猜哪条更新，只判断长期玩的时候你愿意听哪条。</p>
 <section class="protocol"><strong>建议方法</strong><p class="muted">系统音量固定。每条至少听到一次段落停顿，再在组内来回切换。重点听：节奏是否抓人但不乱、低音是否有弹性、留白是否自然、循环后会不会烦。</p></section><form id="ab-form">
 <section class="group"><h2>采集 / 探索组</h2><div class="tracks">${card("C")}${card("Y")}</div>${choices("explore_choice", "C", "Y")}<label>可选；选“一样好”或“都不接受”时必填<textarea name="explore_note" placeholder="说具体感受即可，不用音乐术语"></textarea></label></section>
-<section class="group"><h2>遭遇 / Boss 组</h2><div class="tracks">${card("M")}${card("R")}</div>${choices("boss_choice", "M", "R")}<label>可选；选“一样好”或“都不接受”时必填<textarea name="boss_note" placeholder="哪一段有力量、哪一段乱、哪里听久了不舒服？"></textarea></label></section>
+<section class="group"><h2>遭遇组</h2><div class="tracks">${card("M")}${card("R")}</div>${choices("boss_choice", "M", "R")}<label>可选；选“一样好”或“都不接受”时必填<textarea name="boss_note" placeholder="哪一段有力量、哪一段乱、哪里听久了不舒服？"></textarea></label></section>
 </form></main><div class="actions"><button id="export" type="button">导出 JSON</button><span id="status" aria-live="polite"></span></div><script>${LISTENER_JAVASCRIPT}</script></body></html>`;
 }
 
@@ -285,7 +291,7 @@ export async function generateAutumnFullLoopAb(outputPath) {
       answerTracks.push({
         ...track,
         source_commit: track.version === "baseline" ? BASELINE_COMMIT : git("rev-parse", "HEAD"),
-        source_path: sourcePath(track.role),
+        source_path: sourcePath(track),
         source_sha256: sourceHash,
         source_metrics: sourceMetrics,
         audition_gain_db: Number(gainDb.toFixed(3)),
@@ -293,7 +299,7 @@ export async function generateAutumnFullLoopAb(outputPath) {
         audition_metrics: auditionMetrics,
       });
     }
-    for (const role of ["explore", "boss"]) {
+    for (const role of ["explore", "incident"]) {
       const pair = publicTracks.filter((track) => track.role === role);
       if (pair.length !== 2 || Math.abs(pair[0].integrated_lufs - pair[1].integrated_lufs) > 0.3) {
         throw new Error(`${role}: A/B loudness mismatch exceeds 0.3 LU`);

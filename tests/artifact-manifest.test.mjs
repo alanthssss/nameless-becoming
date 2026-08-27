@@ -8,9 +8,9 @@ import test from "node:test";
 
 import { generateArtifactManifest } from "../scripts/generate_artifact_manifest.mjs";
 
-const macFilename = "NamelessBecoming-macOS.zip";
-const windowsFilename = "NamelessBecoming-Windows.exe";
-const macPackEntry = "NamelessBecoming.app/Contents/Resources/NamelessBecoming.pck";
+const macFilename = "SeeYouAtTheHive-macOS.zip";
+const windowsFilename = "SeeYouAtTheHive-Windows.exe";
+const macPackEntry = "SeeYouAtTheHive.app/Contents/Resources/SeeYouAtTheHive.pck";
 
 const fakeGodotSource = `#!/usr/bin/env node
 import { createHash } from "node:crypto";
@@ -80,7 +80,7 @@ async function writeEmbeddedArtifact(fixture, { provenance = fixture.provenance,
     await mkdir(dirname(stagedPack), { recursive: true });
     await writeFile(stagedPack, packBytes);
     await rm(fixture.artifactPath, { force: true });
-    execFileSync("zip", ["-q", "-r", fixture.artifactPath, "NamelessBecoming.app"], {
+    execFileSync("zip", ["-q", "-r", fixture.artifactPath, "SeeYouAtTheHive.app"], {
       cwd: stagingRoot,
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -92,7 +92,7 @@ async function writeEmbeddedArtifact(fixture, { provenance = fixture.provenance,
 }
 
 async function createFixture({ platform = "macos-universal", packageVersion = "0.9.5-rc.2", projectVersion = packageVersion } = {}) {
-  const root = await mkdtemp(join(tmpdir(), "nameless-artifact-manifest-"));
+  const root = await mkdtemp(join(tmpdir(), "see-you-at-the-hive-artifact-manifest-"));
   const filename = platform === "windows-x86_64" ? windowsFilename : macFilename;
   const godotBin = join(root, "fake-godot.mjs");
   await mkdir(join(root, "godot/data"), { recursive: true });
@@ -338,7 +338,7 @@ test("rejects unsupported or filename-incompatible platforms", async () => {
     );
     await assert.rejects(
       generateArtifactManifest(manifestOptions(fixture, { platform: "windows-x86_64" })),
-      /Artifact path must be .*NamelessBecoming-Windows\.exe/u,
+      /Artifact path must be .*SeeYouAtTheHive-Windows\.exe/u,
     );
   });
 });

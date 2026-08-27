@@ -110,7 +110,7 @@ test("takes generator version and source identity from the current checkout", as
   const packageJson = JSON.parse(await readFile(new URL("package.json", repositoryRoot), "utf8"));
   const { stdout } = await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: repositoryPath });
   const { stdout: statusOutput } = await execFileAsync("git", ["status", "--porcelain=v1", "--untracked-files=normal"], { cwd: repositoryPath });
-  assert.equal(identity.name, "无名：成蜂");
+  assert.equal(identity.name, "一会儿巢里见");
   assert.equal(identity.version, packageJson.version);
   assert.equal(identity.full_commit, stdout.trim());
   assert.equal(identity.commit, stdout.trim().slice(0, 8));
@@ -141,7 +141,7 @@ test("keeps the legacy identity reader available without using it for package id
 
 test("separates the six-item participant export from coordinator observation", () => {
   const artifactSha256 = "a".repeat(64);
-  const product = { name: "无名：成蜂", version: "0.9.5-rc.2", commit: "f57ea02c", full_commit: "f".repeat(40), dirty: false, artifact_sha256: artifactSha256 };
+  const product = { name: "一会儿巢里见", version: "0.9.5-rc.2", commit: "f57ea02c", full_commit: "f".repeat(40), dirty: false, artifact_sha256: artifactSha256 };
   const task = { code: "A", assignment: "首次体验：首节点", maximum_minutes: 15 };
   const participant = { participant_code: fixedSessionId, tester_relation: "external_player" };
   const participantPayload = buildEvidencePayload({
@@ -267,7 +267,7 @@ test("derives candidate identity only from a strict schema v1 manifest and actua
     await assert.rejects(readArtifactIdentity({ artifactPath: artifactFilename, artifactManifestPath: fixture.artifactManifestPath }), /--artifact must be an absolute path/u);
     await assert.rejects(readArtifactIdentity({ artifactPath: fixture.artifactPath, artifactManifestPath: `${artifactFilename}.manifest.json` }), /--artifact-manifest must be an absolute path/u);
     assert.deepEqual(identity.product, {
-      name: "无名：成蜂",
+      name: "一会儿巢里见",
       version: generator.version,
       commit: generator.full_commit.slice(0, 8),
       full_commit: generator.full_commit,
@@ -551,7 +551,7 @@ test("a ready B01 emits an exact ticket, raw manifest, and recursively blind par
       task: { code: "B", slice_code: "B01" },
       product: {
         id: "nameless-becoming",
-        display_name: "无名：成蜂",
+        display_name: "一会儿巢里见",
         version: "0.9.5-rc.2",
         commit: fixture.commit,
         dirty: false,

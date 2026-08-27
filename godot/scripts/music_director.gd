@@ -29,16 +29,23 @@ func enter_explore(next_family: int) -> void:
 	_play_current()
 
 
-func enter_boss(next_family: int) -> void:
+func enter_incident(next_family: int) -> void:
 	family = clampi(next_family, 0, 3)
-	mode = &"boss"
+	mode = &"incident"
 	tuning_progress = 0
 	_play_current()
 
 
+func enter_boss(next_family: int) -> void:
+	# Compatibility alias for the legacy Main phase schema. The maintained audio
+	# identity is an incident arrangement; the old caller does not select a Boss
+	# file or expose Boss framing in the commercial Journey package.
+	enter_incident(next_family)
+
+
 func enter_hive() -> void:
 	# The field theme remains recognisable at the hive, but breathes more softly.
-	var needs_explore_stream := mode == &"boss" or player.stream == null
+	var needs_explore_stream := mode == &"incident" or player.stream == null
 	mode = &"hive"
 	if needs_explore_stream:
 		_play_current()
@@ -48,17 +55,17 @@ func enter_hive() -> void:
 
 func set_boss_tuning_progress(value: int) -> void:
 	tuning_progress = clampi(value, 0, 3)
-	if mode != &"boss":
+	if mode != &"incident":
 		return
 	# The eight masters already contain their intended key and tempo.  Global
-	# pitch-shifting made the slower bosses sound like the same low drone, so
+	# pitch-shifting made the slower incident arrangements sound like the same low drone, so
 	# tuning now changes presence without detuning the written arrangement.
 	player.pitch_scale = 1.0
 	player.volume_db = lerpf(-11.0, -14.0, float(tuning_progress) / 3.0)
 
 
 func current_track_path() -> String:
-	var suffix := "boss" if mode == &"boss" else "explore"
+	var suffix := "incident" if mode == &"incident" else "explore"
 	return "res://assets/music/%s_%s.wav" % [FAMILY_NAMES[family], suffix]
 
 
@@ -75,7 +82,7 @@ func _play_current() -> void:
 	stream.loop_end = maxi(1, roundi(stream.get_length() * float(stream.mix_rate)))
 	player.stream = stream
 	player.pitch_scale = 1.0
-	player.volume_db = -11.0 if mode == &"boss" else -13.0
+	player.volume_db = -11.0 if mode == &"incident" else -13.0
 	if enabled:
 		player.play()
 

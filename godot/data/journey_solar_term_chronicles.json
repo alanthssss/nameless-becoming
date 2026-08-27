@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "terms": [
+    {
+      "id": "spring_lichun",
+      "order": 0,
+      "name": "立春",
+      "season": "春",
+      "unlock_return": "spring_route",
+      "work": ["授粉", "采蜜", "归巢"],
+      "title": "第一小圈，稳稳回来了",
+      "record": "风刚有一点暖。新蜂给同形花送好散粉，把第一囊花蜜交给巢门边的接货队；老师傅在旁边把落脚板扶稳。"
+    },
+    {
+      "id": "spring_yushui",
+      "order": 1,
+      "name": "雨水",
+      "season": "春",
+      "unlock_return": "spring_route",
+      "work": ["观察", "授粉", "采蜜"],
+      "title": "叶尖滴水，花路藏在下面",
+      "record": "湿叶把小路擦得亮亮的。新蜂看清两处滴水节奏，沿叶尖下面给花传粉，又把沿路花蜜稳稳带回家。"
+    },
+    {
+      "id": "spring_jingzhe",
+      "order": 2,
+      "name": "惊蛰",
+      "season": "春",
+      "unlock_return": "spring_route",
+      "work": ["震翼", "授粉", "采蜜"],
+      "title": "醒来的不只小虫，还有花心",
+      "record": "花田里动静多了。新蜂请花心旁的小虫去草茎歇一会儿，把同形散粉送对 {{pollinations}} 朵花，又把醒花那边的 {{deposit}} 滴蜜稳稳带回巢门。"
+    },
+    {
+      "id": "spring_chunfen",
+      "order": 3,
+      "name": "春分",
+      "season": "春",
+      "unlock_return": "sign_incident",
+      "work": ["观察", "采蜜", "交接"],
+      "title": "接货队排得刚刚好",
+      "record": "日光照到巢门正中，接货蜂一只接一只，把实际带回的 {{deposit}} 滴蜜照单传进储蜜架。"
+    },
+    {
+      "id": "spring_qingming",
+      "order": 4,
+      "name": "清明",
+      "season": "春",
+      "unlock_return": "sign_incident",
+      "work": ["观察", "搬运", "修补"],
+      "title": "雨一停，三块花标都找到了",
+      "record": "路面重新看得清。新蜂循着湿叶拖痕找回三块花标，把牌架两侧扶稳；蚊庄主在旁边把牌挨个数了一遍。"
+    },
+    {
+      "id": "spring_guyu",
+      "order": 5,
+      "name": "谷雨",
+      "season": "春",
+      "unlock_return": "sign_incident",
+      "work": ["找牌", "等候", "还路"],
+      "title": "花牌归架，归巢队也归队",
+      "record": "暴雨把牌路搅成一团。新蜂在雨里找齐花标，等蚊庄主核完三轮，再把通道逐段还给归巢队。"
+    },
+    {
+      "id": "summer_lixia",
+      "order": 6,
+      "name": "立夏",
+      "season": "夏",
+      "unlock_return": "summer_recovery",
+      "work": ["观察", "采蜜", "归巢"],
+      "title": "长荫路开始好用啦",
+      "record": "叶子长密，阴凉路绕一点却少挨雨。新蜂学会看云脚，不跟远路比谁飞得直。"
+    },
+    {
+      "id": "summer_xiaoman",
+      "order": 7,
+      "name": "小满",
+      "season": "夏",
+      "unlock_return": "summer_recovery",
+      "work": ["震翼", "拾取", "归巢"],
+      "title": "没装满的，正好逐个找",
+      "record": "花籽还没全鼓起来，携蜜飞虫抱着几滴在叶间绕圈。新蜂看准空隙震翼请它松开，把落下的 {{recovered_honey}} 份逐个接回。"
+    },
+    {
+      "id": "summer_mangzhong",
+      "order": 8,
+      "name": "芒种",
+      "season": "夏",
+      "unlock_return": "summer_recovery",
+      "work": ["观察", "搬运"],
+      "title": "三件家当从草芒里冒头",
+      "record": "带芒的草勾住了油葫芦的杯、绳卷和小工具。新蜂找齐 {{belongings_recovered}} 件，它把东西卷得比出门前还整齐。"
+    },
+    {
+      "id": "summer_xiazhi",
+      "order": 9,
+      "name": "夏至",
+      "season": "夏",
+      "unlock_return": "summer_recovery",
+      "work": ["观察", "搬运"],
+      "title": "白天很长，横雨只来几阵",
+      "record": "直风路晒得亮，横雨来时却没地方躲。新蜂看准云脚钻进叶棚，雨歇再去拾远处的家当。"
+    },
+    {
+      "id": "summer_xiaoshu",
+      "order": 10,
+      "name": "小暑",
+      "season": "夏",
+      "unlock_return": "summer_recovery",
+      "work": ["修补", "稳固"],
+      "title": "小蜂房换了根横梁",
+      "record": "热风钻进旧缝，新蜂把找回的材料递给修补蜂。横梁扶正后，小蜂房又能歇脚，但仍不替主巢收货。"
+    },
+    {
+      "id": "summer_dashu",
+      "order": 11,
+      "name": "大暑",
+      "season": "夏",
+      "unlock_return": "summer_recovery",
+      "work": ["辨落点", "搬运", "守棚"],
+      "title": "三件家当，都回到遮阴棚",
+      "record": "热浪映出晃眼残影。新蜂多等半拍看准真落点，把三件家当送回工位，又和修补蜂一起守稳最后三阵风。"
+    },
+    {
+      "id": "autumn_liqiu",
+      "order": 12,
+      "name": "立秋",
+      "season": "秋",
+      "unlock_return": "autumn_harvest",
+      "work": ["采蜜", "留种"],
+      "title": "风一转，花要逐朵收尾",
+      "record": "第一阵凉风翻过花背。新蜂跟着风逐朵停下，看清花心，再决定收蜜或留种。"
+    },
+    {
+      "id": "autumn_chushu",
+      "order": 13,
+      "name": "处暑",
+      "season": "秋",
+      "unlock_return": "autumn_harvest",
+      "work": ["观察", "采蜜", "交接"],
+      "title": "热气退一点，短花梗收好一点",
+      "record": "午后的热终于肯往后退。新蜂从 {{harvested}} 朵花收下成熟花蜜，短梗留在原处，蜜才跟着它回巢。"
+    },
+    {
+      "id": "autumn_bailu",
+      "order": 14,
+      "name": "白露",
+      "season": "秋",
+      "unlock_return": "autumn_harvest",
+      "work": ["留种", "搬运"],
+      "title": "露珠挂着，种头也挂着",
+      "record": "清早的露把种头照得很清楚。新蜂给 {{seeded}} 朵花留了种，先让它们在凉风里站稳，来年的忙留到来年。"
+    },
+    {
+      "id": "autumn_qiufen",
+      "order": 15,
+      "name": "秋分",
+      "season": "秋",
+      "unlock_return": "autumn_harvest",
+      "work": ["听声", "转正种壳"],
+      "title": "三只种壳，挨个坐稳",
+      "record": "巢门的影子落在路中间，画眉正好侧头听风。新蜂转正 {{echo_points}} 只听声种壳，空种荚里的风声终于一只一只分清了。"
+    },
+    {
+      "id": "autumn_hanlu",
+      "order": 16,
+      "name": "寒露",
+      "season": "秋",
+      "unlock_return": "autumn_harvest",
+      "work": ["听声", "采蜜", "留种"],
+      "title": "冷一点，真声音反而更清楚",
+      "record": "草叶带凉，回声没那么黏了。新蜂绕过遮挡找到画眉的真声，它把歪掉的听声种壳往平处挪了挪。"
+    },
+    {
+      "id": "autumn_shuangjiang",
+      "order": 17,
+      "name": "霜降",
+      "season": "秋",
+      "unlock_return": "autumn_harvest",
+      "work": ["辨真声", "逐花收尾", "送种"],
+      "title": "三阵风，这回都听清了",
+      "record": "薄霜落下前，新蜂从回声里找到真声，趁风转逐花收好秋田，再把三份轻种送过霜线。画眉在背风处侧头听完最后一阵。"
+    },
+    {
+      "id": "winter_lidong",
+      "order": 18,
+      "name": "立冬",
+      "season": "冬",
+      "unlock_return": "winter_warmth",
+      "work": ["搬运", "续暖"],
+      "title": "暖点排成一条换班路",
+      "record": "冷风刚到，工蜂就把换班点排开。新蜂沿路找暖处，巢门里外都忙着落脚、保温和接班。"
+    },
+    {
+      "id": "winter_xiaoxue",
+      "order": 19,
+      "name": "小雪",
+      "season": "冬",
+      "unlock_return": "winter_warmth",
+      "work": ["搬运", "续暖"],
+      "title": "一小段一小段，暖路接上啦",
+      "record": "细雪只盖住路边，新蜂和换班蜂把 {{warmth_links}} 处暖点接起来。飞慢一点没关系，回家的路没有关门。"
+    },
+    {
+      "id": "winter_daxue",
+      "order": 20,
+      "name": "大雪",
+      "season": "冬",
+      "unlock_return": "winter_warmth",
+      "work": ["搬运", "修补"],
+      "title": "木头很沉，雪不会替谁搬",
+      "record": "雪压住空地，三段防风木还在原处。新蜂先理绳扣，大熊在最沉的一段旁打完哈欠，大家再一段段挪到墙边。"
+    },
+    {
+      "id": "winter_dongzhi",
+      "order": 21,
+      "name": "冬至",
+      "season": "冬",
+      "unlock_return": "winter_warmth",
+      "work": ["续暖", "标路"],
+      "title": "天黑得早，大熊还是把最沉那段推完了",
+      "record": "白天短得刚够收工。大熊打着哈欠顶住最沉的木头，修补蜂在另一头收绳；今天正好轮到它多搭一把爪子。"
+    },
+    {
+      "id": "winter_xiaohan",
+      "order": 22,
+      "name": "小寒",
+      "season": "冬",
+      "unlock_return": "winter_warmth",
+      "work": ["续暖", "修补", "挡风"],
+      "title": "三段挡风墙，专挡三处钻空子的风",
+      "record": "风从叶棚边缘钻进来，大家把 {{windbreak_segments}} 段挡风墙逐段系稳。墙一立住，归巢队的翅膀就没那么歪了。"
+    },
+    {
+      "id": "winter_dahan",
+      "order": 23,
+      "name": "大寒",
+      "season": "冬",
+      "unlock_return": "winter_warmth",
+      "work": ["安全停住", "护送长木", "挡风", "立墙交棒"],
+      "title": "最后一墙，也在风里站稳啦",
+      "record": "新蜂先接亮路口暖点，陪长木慢慢过两个弯，再和修补蜂一起立起最后一墙。老师傅往旁边让了一步：这回你来。"
+    }
+  ]
+}

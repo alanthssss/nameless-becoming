@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: Version tag recorded in artifact names and an optional prerelease
+        description: Version tag recorded in internal-candidate artifact names and an optional internal prerelease
         required: true
         default: v0.9.5-rc.2
         type: string
       publish_prerelease:
-        description: Create a GitHub prerelease after both packages pass
+        description: Publish non-distribution-signed/unnotarized internal candidates after both packages pass
         required: true
         default: false
         type: boolean
@@ -32,6 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
       - name: Match workflow tag to project version
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
@@ -40,12 +43,15 @@ jobs:
           test "$RELEASE_TAG" = "v$project_version"
 
   macos:
-    name: macOS universal client
+    name: macOS universal internal candidate
     needs: validate
     runs-on: macos-14
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
       - name: Download and verify Godot and export templates
         working-directory: ${{ runner.temp }}
         run: |
@@ -66,40 +72,50 @@ jobs:
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot.app/Contents/MacOS/Godot
         run: npm run test:godot
-      - name: Export, sign and verify macOS package
+      - name: Export, ad-hoc sign and verify macOS internal candidate
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot.app/Contents/MacOS/Godot
         run: |
           node scripts/generate_build_provenance.mjs
           mkdir -p builds
-          "$GODOT_BIN" --path godot --headless --export-release macOS
+          ./scripts/with_commercial_godot_cache.sh \
+            "$GODOT_BIN" --path godot --headless --export-release macOS \
+            "$GITHUB_WORKSPACE/builds/SeeYouAtTheHive-macOS.zip"
           ./scripts/package_macos.sh
-          unzip -q builds/NamelessBecoming-macOS.zip -d "$RUNNER_TEMP/macos-verify"
-          ./scripts/verify_godot_export_contents.sh --pack "$RUNNER_TEMP/macos-verify/无名：成蜂.app/Contents/Resources/无名：成蜂.pck"
-          codesign --verify --deep --strict --verbose=2 "$RUNNER_TEMP/macos-verify/无名：成蜂.app"
-          (cd builds && shasum -a 256 NamelessBecoming-macOS.zip > NamelessBecoming-macOS.zip.sha256)
+          unzip -q builds/SeeYouAtTheHive-macOS.zip -d "$RUNNER_TEMP/macos-verify"
+          macos_app="$RUNNER_TEMP/macos-verify/一会儿巢里见.app"
+          macos_binary="$macos_app/Contents/MacOS/一会儿巢里见"
+          test -x "$macos_binary"
+          lipo "$macos_binary" -archs
+          lipo "$macos_binary" -verify_arch arm64 x86_64
+          ./scripts/verify_godot_export_contents.sh --pack "$macos_app/Contents/Resources/一会儿巢里见.pck"
+          codesign --verify --deep --strict --verbose=2 "$macos_app"
+          (cd builds && shasum -a 256 SeeYouAtTheHive-macOS.zip > SeeYouAtTheHive-macOS.zip.sha256)
           node scripts/generate_artifact_manifest.mjs \
-            --artifact builds/NamelessBecoming-macOS.zip \
+            --artifact builds/SeeYouAtTheHive-macOS.zip \
             --platform macos-universal \
             --source-ref "$GITHUB_REF" \
             --github-run-id "$GITHUB_RUN_ID"
       - uses: actions/upload-artifact@v4
         with:
-          name: NamelessBecoming-macOS-${{ inputs.release_tag }}
+          name: SeeYouAtTheHive-macOS-InternalCandidate-${{ inputs.release_tag }}
           path: |
-            builds/NamelessBecoming-macOS.zip
-            builds/NamelessBecoming-macOS.zip.sha256
-            builds/NamelessBecoming-macOS.zip.manifest.json
+            builds/SeeYouAtTheHive-macOS.zip
+            builds/SeeYouAtTheHive-macOS.zip.sha256
+            builds/SeeYouAtTheHive-macOS.zip.manifest.json
           if-no-files-found: error
           retention-days: 30
 
   windows:
-    name: Windows x86_64 client
+    name: Windows x86_64 unsigned internal candidate
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
       - name: Download and verify Godot and export templates
         working-directory: ${{ runner.temp }}
         run: |
@@ -120,34 +136,36 @@ jobs:
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         run: npm run test:godot
-      - name: Export and verify Windows package
+      - name: Export and verify unsigned Windows internal candidate
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         run: |
           node scripts/generate_build_provenance.mjs
           mkdir -p builds
-          "$GODOT_BIN" --path godot --headless --export-release "Windows Desktop"
-          test -s builds/NamelessBecoming-Windows.exe
-          file builds/NamelessBecoming-Windows.exe | grep 'PE32+ executable.*x86-64'
-          ./scripts/verify_godot_export_contents.sh --pack builds/NamelessBecoming-Windows.exe
-          (cd builds && sha256sum NamelessBecoming-Windows.exe > NamelessBecoming-Windows.exe.sha256)
+          ./scripts/with_commercial_godot_cache.sh \
+            "$GODOT_BIN" --path godot --headless --export-release "Windows Desktop" \
+            "$GITHUB_WORKSPACE/builds/SeeYouAtTheHive-Windows.exe"
+          test -s builds/SeeYouAtTheHive-Windows.exe
+          file builds/SeeYouAtTheHive-Windows.exe | grep 'PE32+ executable.*x86-64'
+          ./scripts/verify_godot_export_contents.sh --pack builds/SeeYouAtTheHive-Windows.exe
+          (cd builds && sha256sum SeeYouAtTheHive-Windows.exe > SeeYouAtTheHive-Windows.exe.sha256)
           node scripts/generate_artifact_manifest.mjs \
-            --artifact builds/NamelessBecoming-Windows.exe \
+            --artifact builds/SeeYouAtTheHive-Windows.exe \
             --platform windows-x86_64 \
             --source-ref "$GITHUB_REF" \
             --github-run-id "$GITHUB_RUN_ID"
       - uses: actions/upload-artifact@v4
         with:
-          name: NamelessBecoming-Windows-${{ inputs.release_tag }}
+          name: SeeYouAtTheHive-Windows-InternalCandidate-${{ inputs.release_tag }}
           path: |
-            builds/NamelessBecoming-Windows.exe
-            builds/NamelessBecoming-Windows.exe.sha256
-            builds/NamelessBecoming-Windows.exe.manifest.json
+            builds/SeeYouAtTheHive-Windows.exe
+            builds/SeeYouAtTheHive-Windows.exe.sha256
+            builds/SeeYouAtTheHive-Windows.exe.manifest.json
           if-no-files-found: error
           retention-days: 30
 
   prerelease:
-    name: Publish GitHub prerelease
+    name: Publish non-distribution-signed/unnotarized internal prerelease
     if: inputs.publish_prerelease && github.ref == 'refs/heads/main'
     needs: [macos, windows]
     runs-on: ubuntu-latest
@@ -156,7 +174,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: NamelessBecoming-*-${{ inputs.release_tag }}
+          pattern: SeeYouAtTheHive-*-InternalCandidate-${{ inputs.release_tag }}
           merge-multiple: true
           path: release-assets
       - name: Create prerelease
@@ -169,4 +187,4 @@ jobs:
             --target "$GITHUB_SHA" \
             --prerelease \
             --generate-notes \
-            --title "无名：成蜂 $RELEASE_TAG"
+            --title "一会儿巢里见 $RELEASE_TAG · 内部候选（未做商业发行签名／公证）"

@@ -31,7 +31,7 @@ func context_fixture() -> Dictionary:
 		"task": {"code": "B", "slice_code": "B01"},
 		"product": {
 			"id": "nameless-becoming",
-			"display_name": "无名：成蜂",
+			"display_name": "一会儿巢里见",
 			"version": String(ProjectSettings.get_setting("application/config/version")),
 			"commit": "0123456789abcdef0123456789abcdef01234567",
 			"dirty": false,

@@ -10,8 +10,8 @@ import { fileURLToPath } from "node:url";
 export const ARTIFACT_MANIFEST_SCHEMA_VERSION = 1;
 
 export const PLATFORM_ARTIFACTS = Object.freeze({
-  "macos-universal": "NamelessBecoming-macOS.zip",
-  "windows-x86_64": "NamelessBecoming-Windows.exe",
+  "macos-universal": "SeeYouAtTheHive-macOS.zip",
+  "windows-x86_64": "SeeYouAtTheHive-Windows.exe",
 });
 
 const scriptPath = fileURLToPath(import.meta.url);
@@ -172,7 +172,7 @@ function validateInspectionReport(report, expectedPackSha256) {
 }
 
 async function inspectEmbeddedProvenance({ artifactPath, artifactSha256, platform, repositoryRoot, godotBin }) {
-  const temporaryDirectory = await mkdtemp(join(tmpdir(), "nameless-artifact-inspection-"));
+  const temporaryDirectory = await mkdtemp(join(tmpdir(), "see-you-at-the-hive-artifact-inspection-"));
   try {
     const packPath = platform === "macos-universal"
       ? await extractMacosPack(artifactPath, temporaryDirectory)

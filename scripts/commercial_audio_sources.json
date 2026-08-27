@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "sample_rate": 44100,
+  "channels": 2,
+  "pcm_bits": 16,
+  "candidate_status": "Project-owned deterministic synthesis candidate; requires Alan approval and device mix confirmation; not a recording or final master.",
+  "assets": [
+    {
+      "id": "nectar_collect",
+      "file": "nectar_collect.wav",
+      "kind": "sfx",
+      "recipe": "nectar_collect",
+      "seed": 12011,
+      "frames": 24696,
+      "duration_seconds": 0.56,
+      "target_peak_dbfs": -4.8,
+      "design_layers": ["seeded liquid-noise droplet", "short bamboo pluck", "soft wing tick"]
+    },
+    {
+      "id": "pollination_bloom",
+      "file": "pollination_bloom.wav",
+      "kind": "sfx",
+      "recipe": "pollination_bloom",
+      "seed": 12029,
+      "frames": 36162,
+      "duration_seconds": 0.82,
+      "target_peak_dbfs": -5.2,
+      "design_layers": ["seeded pollen rustle", "three physical-model plucks", "petal resonance"]
+    },
+    {
+      "id": "observe_rustle",
+      "file": "observe_rustle.wav",
+      "kind": "sfx",
+      "recipe": "observe_rustle",
+      "seed": 12043,
+      "frames": 31752,
+      "duration_seconds": 0.72,
+      "target_peak_dbfs": -7.0,
+      "design_layers": ["stereo leaf-noise sweep", "two dry stem ticks", "quiet wing flutter"]
+    },
+    {
+      "id": "evade_dart",
+      "file": "evade_dart.wav",
+      "kind": "sfx",
+      "recipe": "evade_dart",
+      "seed": 12049,
+      "frames": 16758,
+      "duration_seconds": 0.38,
+      "target_peak_dbfs": -4.5,
+      "design_layers": ["fast stereo air burst", "paired wing snaps", "seeded body flutter"]
+    },
+    {
+      "id": "honey_loss",
+      "file": "honey_loss.wav",
+      "kind": "sfx",
+      "recipe": "honey_loss",
+      "seed": 12071,
+      "frames": 32634,
+      "duration_seconds": 0.74,
+      "target_peak_dbfs": -5.0,
+      "design_layers": ["descending viscous chirp", "seeded spill noise", "low wooden catch"]
+    },
+    {
+      "id": "repair_tap",
+      "file": "repair_tap.wav",
+      "kind": "sfx",
+      "recipe": "repair_tap",
+      "seed": 12073,
+      "frames": 40572,
+      "duration_seconds": 0.92,
+      "target_peak_dbfs": -5.2,
+      "design_layers": ["three non-identical wood impacts", "rope scrape", "wax-frame resonance"]
+    },
+    {
+      "id": "seed_place",
+      "file": "seed_place.wav",
+      "kind": "sfx",
+      "recipe": "seed_place",
+      "seed": 12097,
+      "frames": 25578,
+      "duration_seconds": 0.58,
+      "target_peak_dbfs": -6.0,
+      "design_layers": ["three dry seed clicks", "soft soil bed", "short husk rustle"]
+    },
+    {
+      "id": "seed_shell_rustle",
+      "file": "seed_shell_rustle.wav",
+      "kind": "sfx",
+      "recipe": "seed_shell_rustle",
+      "seed": 12101,
+      "frames": 62622,
+      "duration_seconds": 1.42,
+      "target_peak_dbfs": -6.4,
+      "design_layers": ["three dry husk rustles", "small seed taps inside hollow pods", "soft alternating wind breaths"]
+    },
+    {
+      "id": "warmth_link",
+      "file": "warmth_link.wav",
+      "kind": "sfx",
+      "recipe": "warmth_link",
+      "seed": 12107,
+      "frames": 47628,
+      "duration_seconds": 1.08,
+      "target_peak_dbfs": -7.0,
+      "design_layers": ["seeded ember crackles", "soft wax resonance", "filtered warm air"]
+    },
+    {
+      "id": "carry_log",
+      "file": "carry_log.wav",
+      "kind": "sfx",
+      "recipe": "carry_log",
+      "seed": 12109,
+      "frames": 41454,
+      "duration_seconds": 0.94,
+      "target_peak_dbfs": -4.8,
+      "design_layers": ["wood-on-snow scrape", "two worker impacts", "brief wing effort"]
+    },
+    {
+      "id": "handoff",
+      "file": "handoff.wav",
+      "kind": "sfx",
+      "recipe": "handoff",
+      "seed": 12113,
+      "frames": 45864,
+      "duration_seconds": 1.04,
+      "target_peak_dbfs": -6.0,
+      "design_layers": ["left-right call and response plucks", "shared wooden resonance", "gentle wing arrival"]
+    },
+    {
+      "id": "complete",
+      "file": "complete.wav",
+      "kind": "sfx",
+      "recipe": "complete",
+      "seed": 12119,
+      "frames": 59094,
+      "duration_seconds": 1.34,
+      "target_peak_dbfs": -6.0,
+      "design_layers": ["three-note physical-model cadence", "small worker flutter", "quiet frame knock"]
+    },
+    {
+      "id": "pouch_full",
+      "file": "pouch_full.wav",
+      "kind": "sfx",
+      "recipe": "pouch_full",
+      "seed": 12143,
+      "frames": 27342,
+      "duration_seconds": 0.62,
+      "target_peak_dbfs": -5.5,
+      "design_layers": ["rounded container knock", "paired load clicks", "short low buzz"]
+    },
+    {
+      "id": "relay_drop",
+      "file": "relay_drop.wav",
+      "kind": "sfx",
+      "recipe": "relay_drop",
+      "seed": 12149,
+      "frames": 28224,
+      "duration_seconds": 0.64,
+      "target_peak_dbfs": -5.6,
+      "design_layers": ["soft catch thump", "worker wing reply", "wax cup tick"]
+    },
+    {
+      "id": "hive_room_loop",
+      "file": "hive_room_loop.wav",
+      "kind": "ambience",
+      "recipe": "hive_room_loop",
+      "seed": 22003,
+      "frames": 441000,
+      "duration_seconds": 10.0,
+      "target_peak_dbfs": -15.0,
+      "loop_crossfade_seconds": 1.0,
+      "design_layers": ["seeded wax-room air", "distant worker wing grains", "occasional frame creaks"]
+    },
+    {
+      "id": "field_day_loop",
+      "file": "field_day_loop.wav",
+      "kind": "ambience",
+      "recipe": "field_day_loop",
+      "seed": 22013,
+      "frames": 441000,
+      "duration_seconds": 10.0,
+      "target_peak_dbfs": -14.5,
+      "loop_crossfade_seconds": 1.0,
+      "design_layers": ["seeded leaf wind", "grass-edge texture", "distant non-repeating insect grains"]
+    }
+  ]
+}

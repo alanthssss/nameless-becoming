@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "campaign_id": "solar-term-campaign-v2",
+  "total_levels": 24,
+  "levels": [
+    {
+      "id": "spring_lichun", "order": 0, "season_id": "spring", "kind": "standard",
+      "scene_key": "spring_prologue", "scenario_id": "first_circle", "reward_honey": 6,
+      "target_minutes": 8, "time_limit_seconds": 600, "energy_drain": 0.82, "hazard": "breeze", "map_variant": 0,
+      "intro": "第一次独立出门，老师傅先飞一小圈。看清花心，再把实际带回的蜜交给接货蜂。",
+      "dialogue": "老师傅：先飞一小圈，花田不会趁你慢一点搬家。",
+      "world_trace": "巢内第一格蜜架填满，接货落点开始运转。",
+      "objectives": [
+        {"type": "pollinate", "label": "给同形花送对散粉", "goal": 2},
+        {"type": "collect", "label": "把花蜜带回主巢", "goal": 6}
+      ]
+    },
+    {
+      "id": "spring_yushui", "order": 1, "season_id": "spring", "kind": "standard",
+      "scene_key": "spring_term_field", "scenario_id": "leaf_tip_route", "reward_honey": 4,
+      "target_minutes": 9, "time_limit_seconds": 660, "energy_drain": 0.72, "hazard": "rain", "map_variant": 1,
+      "intro": "雨带会把露天航道推偏。沿叶尖下面绕行，先看清滴水节奏，再完成三组授粉。",
+      "dialogue": "接货蜂：回来啦。雨没算货，但也没拦你。",
+      "world_trace": "叶沟形成稳定滴水线，之后能认作安全路线。",
+      "objectives": [
+        {"type": "observe", "label": "看清叶尖滴水", "goal": 2},
+        {"type": "pollinate", "label": "沿叶下给花传粉", "goal": 3},
+        {"type": "collect", "label": "收好沿路花蜜", "goal": 4}
+      ]
+    },
+    {
+      "id": "spring_jingzhe", "order": 2, "season_id": "spring", "kind": "standard",
+      "scene_key": "spring_term_field", "scenario_id": "waking_flowers", "reward_honey": 5,
+      "target_minutes": 10, "time_limit_seconds": 720, "energy_drain": 0.78, "hazard": "insects", "map_variant": 2,
+      "intro": "花心旁的小虫也醒了。用震翼请它们去草茎歇一会儿，再处理两种花型。",
+      "dialogue": "侦察蜂：醒得真齐，连绕路的都来上班了。",
+      "world_trace": "四枚种核留在花田，秋季会长成可处理的种头。",
+      "objectives": [
+        {"type": "frighten", "label": "震翼请小虫让开", "goal": 3},
+        {"type": "pollinate", "label": "完成两种花型传粉", "goal": 4},
+        {"type": "collect", "label": "带回醒花蜜", "goal": 5}
+      ]
+    },
+    {
+      "id": "spring_chunfen", "order": 3, "season_id": "spring", "kind": "standard",
+      "scene_key": "spring_term_field", "scenario_id": "receiving_line", "reward_honey": 8,
+      "target_minutes": 10, "time_limit_seconds": 720, "energy_drain": 0.86, "hazard": "crosswind", "map_variant": 3,
+      "intro": "风会在地图中线换向。分两趟走远近不同的路线，让巢门接货队真正忙起来。",
+      "dialogue": "接货蜂：前面慢慢放，后面传得可快了。",
+      "world_trace": "主巢增加第二个接货落点，内侧蜜架多一排。",
+      "objectives": [
+        {"type": "observe", "label": "确认两次换风方向", "goal": 2},
+        {"type": "collect", "label": "从远近花区收蜜", "goal": 8}
+      ]
+    },
+    {
+      "id": "spring_qingming", "order": 4, "season_id": "spring", "kind": "standard",
+      "scene_key": "spring_term_field", "scenario_id": "missing_signs", "reward_honey": 3,
+      "target_minutes": 11, "time_limit_seconds": 780, "energy_drain": 0.76, "hazard": "wet_glare", "map_variant": 4,
+      "intro": "雨后湿叶会照出拖痕。循着反光找回三块花标，把牌架扶稳，再试飞一遍新路线。",
+      "dialogue": "蚊庄主：牌当然没丢，它们只是集体换了位置。",
+      "world_trace": "三块天气与绕行花标永久留在春图。",
+      "objectives": [
+        {"type": "observe", "label": "找到湿叶拖痕", "goal": 3},
+        {"type": "carry", "label": "搬回三块花标", "goal": 3},
+        {"type": "repair", "label": "扶稳花标架", "goal": 1}
+      ]
+    },
+    {
+      "id": "spring_guyu", "order": 5, "season_id": "spring", "kind": "climax",
+      "scene_key": "spring_climax", "scenario_id": "sign_storm", "reward_honey": 6,
+      "target_minutes": 15, "time_limit_seconds": 1080, "energy_drain": 0.9, "hazard": "storm", "map_variant": 5,
+      "intro": "暴雨把牌路搅成一团。找牌、等蚊庄主核对完、再把通道还给归巢队。",
+      "dialogue": "蚊庄主：等等，少了一块。……怎么又少了一块？",
+      "world_trace": "花标成为全年路线系统，蚊庄主继续在自己的花地翻牌。",
+      "objectives": [{"type": "climax", "label": "完成花牌大乱三阶段", "goal": 3}],
+      "phases": [
+        {"id": "find_signs", "label": "雨里找牌", "instruction": "在雨带之间循着湿叶拖痕，拾回散在三处的花标。", "goal": 1},
+        {"id": "wait_for_check", "label": "等它核对完", "instruction": "在牌架外绕开三阵横雨；蚊庄主每核完一轮，就点亮一块花标。", "goal": 1},
+        {"id": "restore_route", "label": "把通道还给大家", "instruction": "按天气图样把花标放回三座路架，再陪归巢队飞完一圈。", "goal": 1}
+      ]
+    },
+    {
+      "id": "summer_lixia", "order": 6, "season_id": "summer", "kind": "standard",
+      "scene_key": "summer_term_field", "scenario_id": "shade_or_shortcut", "reward_honey": 4,
+      "target_minutes": 9, "time_limit_seconds": 660, "energy_drain": 0.92, "hazard": "heat", "map_variant": 0,
+      "intro": "直路短却晒，长荫路绕一点但能歇翅。看着春天留下的花标追回散落花蜜。",
+      "dialogue": "老师傅：近路省路，荫路省你。",
+      "world_trace": "花标旁增加叶荫方向记号。",
+      "objectives": [
+        {"type": "observe", "label": "辨认直晒与长荫路", "goal": 2},
+        {"type": "collect", "label": "追回散落花蜜", "goal": 5}
+      ]
+    },
+    {
+      "id": "summer_xiaoman", "order": 7, "season_id": "summer", "kind": "standard",
+      "scene_key": "summer_term_field", "scenario_id": "honey_carriers", "reward_honey": 4,
+      "target_minutes": 10, "time_limit_seconds": 720, "energy_drain": 0.94, "hazard": "insects", "map_variant": 1,
+      "intro": "别追翅膀，追它抱着的那滴。等携蜜者露出空隙，再震翼接住掉落蜜。",
+      "dialogue": "守卫蜂：别追翅膀，追它抱着的那滴。",
+      "world_trace": "守卫蜂改成新的巡飞环线，花田出现接应点。",
+      "objectives": [
+        {"type": "frighten", "label": "震翼请携蜜飞虫松开", "goal": 4},
+        {"type": "collect", "label": "接住追回蜜", "goal": 4}
+      ]
+    },
+    {
+      "id": "summer_mangzhong", "order": 8, "season_id": "summer", "kind": "standard",
+      "scene_key": "summer_term_field", "scenario_id": "three_belongings", "reward_honey": 3,
+      "target_minutes": 10, "time_limit_seconds": 720, "energy_drain": 0.88, "hazard": "grass", "map_variant": 2,
+      "intro": "草芒把三件修补材料藏得只剩晃动。找到蜡片、藤绳和树脂团，再送到工位。",
+      "dialogue": "修补蜂：它说一件没少。我先不问地上这三件。",
+      "world_trace": "三件材料按施工顺序摆在小蜂房旁。",
+      "objectives": [
+        {"type": "observe", "label": "找到草叶异常晃动", "goal": 3},
+        {"type": "carry", "label": "把修补材料送到工位", "goal": 3}
+      ]
+    },
+    {
+      "id": "summer_xiazhi", "order": 9, "season_id": "summer", "kind": "standard",
+      "scene_key": "summer_term_field", "scenario_id": "long_day_route", "reward_honey": 3,
+      "target_minutes": 11, "time_limit_seconds": 780, "energy_drain": 0.98, "hazard": "sun_rain", "map_variant": 3,
+      "intro": "晴时热量上升，横雨时露天路受推。同一条路不会从头到尾都是最优。",
+      "dialogue": "老师傅：白天长，不代表翅膀也得加班。",
+      "world_trace": "小蜂房出现横梁和叶棚骨架。",
+      "objectives": [
+        {"type": "observe", "label": "看准三次天气切换", "goal": 3},
+        {"type": "carry", "label": "送达三批修补件", "goal": 3}
+      ]
+    },
+    {
+      "id": "summer_xiaoshu", "order": 10, "season_id": "summer", "kind": "standard",
+      "scene_key": "summer_term_field", "scenario_id": "repair_order", "reward_honey": 3,
+      "target_minutes": 12, "time_limit_seconds": 840, "energy_drain": 0.9, "hazard": "gust", "map_variant": 4,
+      "intro": "先扶横梁，再压叶棚，最后封树脂。阵风会检查还没收好的工序。",
+      "dialogue": "修补蜂：先扶稳，再夸它结实。",
+      "world_trace": "小蜂房正式可以有限休息，但仍不替主巢交货。",
+      "objectives": [
+        {"type": "repair", "label": "按顺序完成三处修补", "goal": 3},
+        {"type": "anchor", "label": "通过阵风稳固检查", "goal": 1}
+      ]
+    },
+    {
+      "id": "summer_dashu", "order": 11, "season_id": "summer", "kind": "climax",
+      "scene_key": "summer_climax", "scenario_id": "scattered_belongings", "reward_honey": 7,
+      "target_minutes": 15, "time_limit_seconds": 1080, "energy_drain": 1.0, "hazard": "heat_storm", "map_variant": 5,
+      "intro": "热浪里有残影，真正落稳的只有一个。看准落点、送回家当，再顶住最后三阵风。",
+      "dialogue": "修补蜂：它落稳了——再等半拍。",
+      "world_trace": "小蜂房留下完整遮阴棚、蜡补和三处风扣。",
+      "objectives": [{"type": "climax", "label": "完成横雨抢修三阶段", "goal": 3}],
+      "phases": [
+        {"id": "true_landing", "label": "看准真落点", "instruction": "热浪会映出两道残影；多等半拍，锁定真正落稳的修补件。", "goal": 1},
+        {"id": "return_belongings", "label": "把家当送回去", "instruction": "依次把蜡片、藤绳和树脂团送进对应工位。", "goal": 1},
+        {"id": "hold_shelter", "label": "顶住最后三阵风", "instruction": "阵风到来前压住松动处，连续守稳三轮。", "goal": 1}
+      ]
+    },
+    {
+      "id": "autumn_liqiu", "order": 12, "season_id": "autumn", "kind": "standard",
+      "scene_key": "autumn_term_field", "scenario_id": "finish_each_flower", "reward_honey": 4,
+      "target_minutes": 9, "time_limit_seconds": 660, "energy_drain": 0.76, "hazard": "breeze", "map_variant": 0,
+      "intro": "先各做一次收蜜和留种，之后逐花安排。让短花梗和来年的种头一起留在风里。",
+      "dialogue": "老师傅：这一片不用整齐，收好就行。",
+      "world_trace": "地图保留短花梗、种头和未动花的混合样貌。",
+      "objectives": [
+        {"type": "collect", "label": "收下成熟秋蜜", "goal": 3},
+        {"type": "seed", "label": "给花田留下种头", "goal": 3}
+      ]
+    },
+    {
+      "id": "autumn_chushu", "order": 13, "season_id": "autumn", "kind": "standard",
+      "scene_key": "autumn_term_field", "scenario_id": "heavy_pouch", "reward_honey": 7,
+      "target_minutes": 10, "time_limit_seconds": 720, "energy_drain": 0.84, "hazard": "crosswind", "map_variant": 1,
+      "intro": "蜜囊越重，制动和转向越慢。先看返程弯道，再决定从哪片成熟花区装满。",
+      "dialogue": "接货蜂：蜜囊重了？那就别把弯拐成直角。",
+      "world_trace": "花区留下短梗，巢内秋蜜架真实填充。",
+      "objectives": [
+        {"type": "observe", "label": "看清返程弯道", "goal": 1},
+        {"type": "collect", "label": "从三处花簇收秋蜜", "goal": 7}
+      ]
+    },
+    {
+      "id": "autumn_bailu", "order": 14, "season_id": "autumn", "kind": "standard",
+      "scene_key": "autumn_term_field", "scenario_id": "dew_seed_heads", "reward_honey": 2,
+      "target_minutes": 10, "time_limit_seconds": 720, "energy_drain": 0.78, "hazard": "dew", "map_variant": 2,
+      "intro": "露珠会压弯细梗。看清它要滚向哪一侧，从另一边扶稳种头，再搬走落地种壳。",
+      "dialogue": "画眉：别急，那颗露珠还没滚完。",
+      "world_trace": "一排种头留在秋图，后续霜线会绕出不同路径。",
+      "objectives": [
+        {"type": "seed", "label": "扶稳露湿种头", "goal": 5},
+        {"type": "carry", "label": "把掉落种壳送到背风处", "goal": 2}
+      ]
+    },
+    {
+      "id": "autumn_qiufen", "order": 15, "season_id": "autumn", "kind": "standard",
+      "scene_key": "autumn_term_field", "scenario_id": "three_shells", "reward_honey": 2,
+      "target_minutes": 11, "time_limit_seconds": 780, "energy_drain": 0.8, "hazard": "echo", "map_variant": 3,
+      "intro": "三只独立种壳要朝向不同花路。声音同时有可见波纹，停下来就更容易分清。",
+      "dialogue": "画眉：左边一只，右边一只，中间那只很爱插话。",
+      "world_trace": "三只种壳成为秋图永久路线标记。",
+      "objectives": [
+        {"type": "observe", "label": "分清三条声路", "goal": 3},
+        {"type": "shell", "label": "转正独立种壳", "goal": 3}
+      ]
+    },
+    {
+      "id": "autumn_hanlu", "order": 16, "season_id": "autumn", "kind": "standard",
+      "scene_key": "autumn_term_field", "scenario_id": "clear_sound", "reward_honey": 4,
+      "target_minutes": 12, "time_limit_seconds": 840, "energy_drain": 0.86, "hazard": "fog", "map_variant": 4,
+      "intro": "飞行声会盖住远处提示。停翅一会儿，看着可视波纹找到高坡，再收好远花。",
+      "dialogue": "老师傅：翅膀一停，风就肯说清楚了。",
+      "world_trace": "玩家真实完成的收蜜与留种组合长期留在花田。",
+      "objectives": [
+        {"type": "observe", "label": "在薄雾里找到真声", "goal": 3},
+        {"type": "collect", "label": "收下远花蜜", "goal": 3},
+        {"type": "seed", "label": "留下远花种头", "goal": 3}
+      ]
+    },
+    {
+      "id": "autumn_shuangjiang", "order": 17, "season_id": "autumn", "kind": "climax",
+      "scene_key": "autumn_climax", "scenario_id": "three_misheard_winds", "reward_honey": 5,
+      "target_minutes": 15, "time_limit_seconds": 1080, "energy_drain": 0.92, "hazard": "frost", "map_variant": 5,
+      "intro": "画眉邻居把三阵风听岔了。循着回声找真声，逐花收尾，再把轻种送过霜线。",
+      "dialogue": "画眉：嗯，这回听清了——风总算排好队。",
+      "world_trace": "重排种壳、混合花田和画眉常来歇脚的停栖点长期保留。",
+      "objectives": [{"type": "climax", "label": "完成霜降听风三阶段", "goal": 3}],
+      "phases": [
+        {"id": "find_true_call", "label": "从回声里找真声", "instruction": "停翅观察声纹，连续找出三次从高坡传来的清亮叫声。", "goal": 1},
+        {"id": "finish_flowers", "label": "风转时逐花收尾", "instruction": "趁风向转换的间隙，按自己的安排逐花完成收蜜或留种。", "goal": 1},
+        {"id": "send_light_seeds", "label": "把轻种送过霜线", "instruction": "霜线转薄时，把三份轻种送到背风花地。", "goal": 1}
+      ]
+    },
+    {
+      "id": "winter_lidong", "order": 18, "season_id": "winter", "kind": "standard",
+      "scene_key": "winter_term_field", "scenario_id": "warmth_from_home", "reward_honey": 2,
+      "target_minutes": 9, "time_limit_seconds": 660, "energy_drain": 0.88, "hazard": "cold", "map_variant": 0,
+      "intro": "暖路从巢门方向接起。把实际携带的暖蜡送到三处暖点，寒区只会拖慢，不会把路关掉。",
+      "dialogue": "保温蜂：第一段亮了，后面的先别挤过来烤。",
+      "world_trace": "三个暖点永久出现在冬图。",
+      "objectives": [
+        {"type": "carry", "label": "把暖蜡送到三处暖点", "goal": 3},
+        {"type": "warmth", "label": "依次接亮暖点", "goal": 3}
+      ]
+    },
+    {
+      "id": "winter_xiaoxue", "order": 19, "season_id": "winter", "kind": "standard",
+      "scene_key": "winter_term_field", "scenario_id": "warm_shift", "reward_honey": 2,
+      "target_minutes": 10, "time_limit_seconds": 720, "energy_drain": 0.94, "hazard": "snow", "map_variant": 1,
+      "intro": "暖蜡离开暖区后会慢慢降温。接暖，也接班；雪团谁都别接。",
+      "dialogue": "换班蜂：你接暖，我接班，雪团谁都别接。",
+      "world_trace": "换班蜂流开始沿连续暖路运行。",
+      "objectives": [
+        {"type": "carry", "label": "把暖蜡送到换班点", "goal": 2},
+        {"type": "warmth", "label": "接成连续暖路", "goal": 4}
+      ]
+    },
+    {
+      "id": "winter_daxue", "order": 20, "season_id": "winter", "kind": "standard",
+      "scene_key": "winter_term_field", "scenario_id": "rope_through_snow", "reward_honey": 2,
+      "target_minutes": 11, "time_limit_seconds": 780, "energy_drain": 0.96, "hazard": "deep_snow", "map_variant": 2,
+      "intro": "拖行藤绳不能穿过雪堆尖角。先理绳路，再把备用木钉送到墙架。",
+      "dialogue": "修补蜂：先理绳扣，木头最会趁乱装沉。",
+      "world_trace": "挡风墙拉绳和木钉框架留在施工区。",
+      "objectives": [
+        {"type": "carry", "label": "铺好三条拉绳", "goal": 3},
+        {"type": "repair", "label": "钉稳三处墙架", "goal": 3}
+      ]
+    },
+    {
+      "id": "winter_dongzhi", "order": 21, "season_id": "winter", "kind": "standard",
+      "scene_key": "winter_term_field", "scenario_id": "heavy_turn", "reward_honey": 2,
+      "target_minutes": 11, "time_limit_seconds": 780, "energy_drain": 0.98, "hazard": "wind", "map_variant": 3,
+      "intro": "先铺路线标记，再和大熊慢慢挪木。每到一个转角，大家都停下来确认下一段。",
+      "dialogue": "修补蜂：它醒了半只眼，倒把整根都搬完了。",
+      "world_trace": "两段挡风木出现在施工区，大熊在旁休息。",
+      "objectives": [
+        {"type": "warmth", "label": "维持施工暖点", "goal": 2},
+        {"type": "anchor", "label": "给重木标好转角", "goal": 2}
+      ]
+    },
+    {
+      "id": "winter_xiaohan", "order": 22, "season_id": "winter", "kind": "standard",
+      "scene_key": "winter_term_field", "scenario_id": "three_gaps", "reward_honey": 2,
+      "target_minutes": 12, "time_limit_seconds": 840, "energy_drain": 1.0, "hazard": "rotating_wind", "map_variant": 4,
+      "intro": "风向会轮换，迎风面的补片还没封胶就会松。调整顺序，封好三处钻风的缝。",
+      "dialogue": "接货蜂：墙挡住风了，没挡住你带回来的雪。",
+      "world_trace": "三段墙体基本成形，只剩最后一个转角。",
+      "objectives": [
+        {"type": "warmth", "label": "维持两处暖点", "goal": 2},
+        {"type": "repair", "label": "封好三处墙缝", "goal": 3}
+      ]
+    },
+    {
+      "id": "winter_dahan", "order": 23, "season_id": "winter", "kind": "climax",
+      "scene_key": "winter_climax", "scenario_id": "last_turn", "reward_honey": 3,
+      "target_minutes": 15, "time_limit_seconds": 1080, "energy_drain": 1.02, "hazard": "blizzard", "map_variant": 5,
+      "intro": "先安全停住受惊的大熊，护送长木过两个弯，再在大风里立起最后一墙。",
+      "dialogue": "老师傅：这回你来。我这次退整整一步。",
+      "world_trace": "花标、小蜂房、种头、种壳、暖路和挡风墙同时留在世界里。",
+      "objectives": [{"type": "climax", "label": "完成大寒挡风三阶段", "goal": 3}],
+      "phases": [
+        {"id": "safe_stop", "label": "先安全停住", "instruction": "先接亮路口暖点，让刚醒的大熊看清施工蜂，再稳稳停下来。", "goal": 1},
+        {"id": "two_turns", "label": "长木过两道弯", "instruction": "用两处路线标记引导长木慢慢过弯，每个弯都等队伍站稳。", "goal": 1},
+        {"id": "raise_wall", "label": "大风里立墙", "instruction": "风歇时立木，风起时收紧绳扣，和修补蜂一起完成最后一墙。", "goal": 1}
+      ]
+    }
+  ]
+}

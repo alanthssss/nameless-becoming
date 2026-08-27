@@ -5,7 +5,7 @@ const CATALOG_PATH := "res://data/playtest_slices.json"
 const PROVENANCE_PATH := "res://data/build_provenance.json"
 const MANIFEST_FILENAME := "artifact-manifest.json"
 const PRODUCT_ID := "nameless-becoming"
-const PRODUCT_DISPLAY_NAME := "无名：成蜂"
+const PRODUCT_DISPLAY_NAME := "一会儿巢里见"
 const MAX_IDENTITY_FILE_BYTES := 262144
 const SUPPORTED_ARTIFACTS := {
 	"macos-universal": {

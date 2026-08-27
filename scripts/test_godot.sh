@@ -10,7 +10,7 @@ elif command -v godot >/dev/null 2>&1; then
 elif command -v godot4 >/dev/null 2>&1; then
   godot_bin=$(command -v godot4)
 else
-  echo "Godot 4.6.2+ was not found. Set GODOT_BIN or add godot to PATH." >&2
+  echo "Godot 4.6.2 was not found. Set GODOT_BIN or add godot to PATH." >&2
   exit 127
 fi
 
@@ -40,7 +40,7 @@ if grep -q "SCRIPT ERROR:" "$import_log"; then
   exit 1
 fi
 
-for test_file in smoke_test.gd playtest_ticket_validator_test.gd playtest_bootstrap_test.gd playtest_save_isolation_test.gd evade_runtime_test.gd b01_evade_slice_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd boss_encounter_director_test.gd season_mechanics_test.gd relay_hive_test.gd mentor_tutorial_test.gd hud_responsive_test.gd; do
+for test_file in smoke_test.gd playtest_ticket_validator_test.gd playtest_bootstrap_test.gd playtest_save_isolation_test.gd commercial_persistence_test.gd evade_runtime_test.gd b01_evade_slice_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd commercial_audio_test.gd journey_audio_director_test.gd journey_solar_term_chronicle_test.gd journey_level_catalog_test.gd journey_campaign_state_test.gd boss_encounter_director_test.gd season_mechanics_test.gd relay_hive_test.gd mentor_tutorial_test.gd hud_responsive_test.gd journey_world_test.gd; do
   echo "Running $test_file"
   test_log="$project_root/godot/.godot/${test_file%.gd}.log"
   test_command=(

@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "base": "JourneySeasonalFieldBase",
+      "class": "AutumnJourneyField",
+      "path": "res://scripts/world/autumn_journey_field.gd"
+    },
+    {
+      "base": "Node2D",
+      "class": "BeePlayer",
+      "path": "res://scripts/player/bee_player.gd"
+    },
+    {
+      "base": "Node",
+      "class": "CommercialPersistenceService",
+      "path": "res://scripts/system/commercial_persistence.gd"
+    },
+    {
+      "base": "CanvasLayer",
+      "class": "CommercialSystemMenu",
+      "path": "res://scripts/ui/commercial_system_menu.gd"
+    },
+    {
+      "base": "Node",
+      "class": "CommercialTitle",
+      "path": "res://scripts/ui/commercial_title.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "EvadeInputController",
+      "path": "res://scripts/player/evade_input_controller.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "EvadeRules",
+      "path": "res://scripts/mechanics/evade_rules.gd"
+    },
+    {
+      "base": "JourneySeasonalFieldBase",
+      "class": "FinaleHandoffField",
+      "path": "res://scripts/world/finale_handoff_field.gd"
+    },
+    {
+      "base": "Node2D",
+      "class": "HiveThresholdArea",
+      "path": "res://scripts/world/hive_threshold_area.gd"
+    },
+    {
+      "base": "Node",
+      "class": "JourneyAreaRouter",
+      "path": "res://scripts/world/journey_area_router.gd"
+    },
+    {
+      "base": "Node",
+      "class": "JourneyAudioDirector",
+      "path": "res://scripts/world/journey_audio_director.gd"
+    },
+    {
+      "base": "Node",
+      "class": "JourneyCampaignAreaRouter",
+      "path": "res://scripts/world/journey_campaign_area_router.gd"
+    },
+    {
+      "base": "JourneySeasonalFieldBase",
+      "class": "JourneyCampaignField",
+      "path": "res://scripts/world/journey_campaign_field.gd"
+    },
+    {
+      "base": "Node",
+      "class": "JourneyCampaignGame",
+      "path": "res://scripts/world/journey_campaign_game.gd"
+    },
+    {
+      "base": "Node2D",
+      "class": "JourneyCampaignHive",
+      "path": "res://scripts/world/journey_campaign_hive.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "JourneyCampaignState",
+      "path": "res://scripts/world/journey_campaign_state.gd"
+    },
+    {
+      "base": "Node",
+      "class": "JourneyGame",
+      "path": "res://scripts/world/journey_game.gd"
+    },
+    {
+      "base": "Node2D",
+      "class": "JourneySeasonalFieldBase",
+      "path": "res://scripts/world/journey_seasonal_field_base.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "JourneyLevelCatalog",
+      "path": "res://scripts/world/journey_level_catalog.gd"
+    },
+    {
+      "base": "Control",
+      "class": "JourneySolarTermBoard",
+      "path": "res://scripts/world/journey_solar_term_board.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "JourneySolarTermChronicle",
+      "path": "res://scripts/world/journey_solar_term_chronicle.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "JourneyState",
+      "path": "res://scripts/world/journey_state.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "PollenVisualLanguage",
+      "path": "res://scripts/mechanics/pollen_visual_language.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "PollinationMechanic",
+      "path": "res://scripts/mechanics/pollination_mechanic.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "RelayHiveMechanic",
+      "path": "res://scripts/mechanics/relay_hive_mechanic.gd"
+    },
+    {
+      "base": "Node",
+      "class": "SoundFeedback",
+      "path": "res://scripts/sound_feedback.gd"
+    },
+    {
+      "base": "Node2D",
+      "class": "SpringJourneyField",
+      "path": "res://scripts/world/spring_journey_field.gd"
+    },
+    {
+      "base": "Node2D",
+      "class": "SpringSignIncident",
+      "path": "res://scripts/world/spring_sign_incident.gd"
+    },
+    {
+      "base": "JourneySeasonalFieldBase",
+      "class": "SummerJourneyField",
+      "path": "res://scripts/world/summer_journey_field.gd"
+    },
+    {
+      "base": "JourneySeasonalFieldBase",
+      "class": "WinterJourneyField",
+      "path": "res://scripts/world/winter_journey_field.gd"
+    }
+  ]
+}

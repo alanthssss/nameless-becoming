@@ -1,4 +1,4 @@
-import { readFile, writeFile, rename } from "node:fs/promises";
+import { readFile, writeFile, rename, readdir, stat, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { gzipSync } from "node:zlib";
@@ -10,6 +10,10 @@ const htmlUrl = new URL("index.html", gameDir);
 const wasm = new Uint8Array(await readFile(wasmUrl));
 const compressed = gzipSync(wasm, { level: 9 });
 await writeFile(new URL("index.wasm.gz", gameDir), compressed);
+
+for (const entry of await readdir(gameDir)) {
+  if (/^index\.wasm\.part\d+$/.test(entry)) await unlink(new URL(entry, gameDir));
+}
 
 // Sites limits individual files to 25 MB. Modern browsers use the much smaller
 // gzip payload; split raw chunks remain as a compatibility fallback.
@@ -27,7 +31,11 @@ let engine = await readFile(engineUrl, "utf8");
 const original = "loadPromise = preloader.loadPromise(`${loadPath}.wasm`, size, true);";
 const replacement = `loadPromise = ("DecompressionStream" in globalThis ? fetch(new URL(\`\${loadPath}.wasm.gz\`, location.href), { credentials: "same-origin" }).then((response) => {
 				if (!response.ok || !response.body) throw new Error(\`HTTP \${response.status}: \${response.url}\`);
-				return new Response(response.body.pipeThrough(new DecompressionStream("gzip")), { headers: { "content-type": "application/wasm" } });
+				// Fetch decodes Content-Encoding automatically while preserving the
+				// response header. Only decompress hosts that serve the .gz bytes raw.
+				const decodedByTransport = /\\bgzip\\b/i.test(response.headers.get("content-encoding") ?? "");
+				const body = decodedByTransport ? response.body : response.body.pipeThrough(new DecompressionStream("gzip"));
+				return new Response(body, { headers: { "content-type": "application/wasm" } });
 			}) : Promise.all(${JSON.stringify(partNames)}.map((part) => fetch(new URL(part, new URL(\`\${loadPath}.wasm\`, location.href)), { credentials: "same-origin" }))).then(async (responses) => {
 				const chunks = await Promise.all(responses.map((response) => { if (!response.ok) throw new Error(\`HTTP \${response.status}: \${response.url}\`); return response.arrayBuffer(); }));
 				const total = chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);
@@ -44,8 +52,20 @@ if (!html.includes("\t\tconsole.error(err);") || !html.includes("\t\t\tsetStatus
   throw new Error("Godot Web shell signature changed; parent signal patch not applied.");
 }
 html = html
-  .replace("\t\tconsole.error(err);", "\t\tconsole.error(err);\n\t\twindow.parent.postMessage({ type: 'nameless-game-error', message: err instanceof Error ? err.message : String(err) }, window.location.origin);")
-  .replace("\t\t\tsetStatusMode('hidden');", "\t\t\tsetStatusMode('hidden');\n\t\t\twindow.parent.postMessage({ type: 'nameless-game-ready' }, window.location.origin);");
+  .replace("\t\tconsole.error(err);", "\t\tconsole.error(err);\n\t\twindow.parent.postMessage({ type: 'see-you-at-the-hive-error', message: err instanceof Error ? err.message : String(err) }, window.location.origin);")
+  .replace("\t\t\tsetStatusMode('hidden');", "\t\t\tsetStatusMode('hidden');\n\t\t\twindow.parent.postMessage({ type: 'see-you-at-the-hive-ready' }, window.location.origin);");
 await writeFile(htmlUrl, html);
+
+const sitesFileLimit = 25 * 1024 * 1024;
+const oversizedFiles = [];
+for (const entry of await readdir(gameDir)) {
+  const details = await stat(new URL(entry, gameDir));
+  if (details.isFile() && details.size > sitesFileLimit) {
+    oversizedFiles.push(`${entry} (${details.size} bytes)`);
+  }
+}
+if (oversizedFiles.length > 0) {
+  throw new Error(`Web payload exceeds the 25 MiB per-file hosting limit: ${oversizedFiles.join(", ")}`);
+}
 
 console.log(`Prepared ${compressed.length}-byte gzip WebAssembly plus ${partNames.length} fallback chunks (${wasm.length} bytes raw).`);

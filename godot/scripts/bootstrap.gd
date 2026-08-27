@@ -1,6 +1,6 @@
 extends Node
 
-const MAIN_SCENE := preload("res://main.tscn")
+const DEFAULT_SCENE := preload("res://commercial_title.tscn")
 const TicketValidatorScript := preload("res://scripts/playtest/playtest_ticket_validator.gd")
 const TICKET_ARGUMENT_NAME := "--playtest-ticket"
 const TICKET_ARGUMENT_PREFIX := "--playtest-ticket="
@@ -29,7 +29,7 @@ func _ready() -> void:
 		_show_failure("PT-ARG-SEPARATOR", "A playtest ticket was supplied before Godot's user-argument separator. Relaunch with -- before the ticket argument.")
 		return
 	if arguments.is_empty():
-		_activate_scene(MAIN_SCENE.instantiate())
+		_activate_scene(DEFAULT_SCENE.instantiate())
 		return
 	if arguments.size() != 1:
 		_show_failure("PT-ARG-COUNT", "Bootstrap accepts either no user arguments or exactly one playtest ticket argument; received %d." % arguments.size())

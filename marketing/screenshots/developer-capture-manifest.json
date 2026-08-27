@@ -1,0 +1,74 @@
+{
+  "capture_method": "Godot Journey.tscn runtime framebuffer",
+  "captures": [
+    {
+      "actual_runtime_ui": true,
+      "developer_state_injection": true,
+      "file": "01-hive-developer-capture.png",
+      "height": 720,
+      "id": "hive",
+      "runtime_scene": "hive_threshold",
+      "sha256": "20f454faa1c4da1d167dc44e020847b0bf48e1c4405a40f0a85b04310349eb30",
+      "width": 1280
+    },
+    {
+      "actual_runtime_ui": true,
+      "developer_state_injection": true,
+      "file": "02-spring-developer-capture.png",
+      "height": 720,
+      "id": "spring",
+      "runtime_scene": "spring_field",
+      "sha256": "1b99cb2852012dfd7360f24a2bb3df4592e053934245a069e56177dec2d68150",
+      "width": 1280
+    },
+    {
+      "actual_runtime_ui": true,
+      "developer_state_injection": true,
+      "file": "03-summer-developer-capture.png",
+      "height": 720,
+      "id": "summer",
+      "runtime_scene": "summer_field",
+      "sha256": "9d7e237b93f292d73968cce4d4ed17e5c5f16a552180b70ef035f1d7fac28309",
+      "width": 1280
+    },
+    {
+      "actual_runtime_ui": true,
+      "developer_state_injection": true,
+      "file": "04-autumn-developer-capture.png",
+      "height": 720,
+      "id": "autumn",
+      "runtime_scene": "autumn_field",
+      "sha256": "10b5bc2dbeef3b12eab2a6a38e410bcec7ccdb36fe802c7b8e12276437e6746a",
+      "width": 1280
+    },
+    {
+      "actual_runtime_ui": true,
+      "developer_state_injection": true,
+      "file": "05-winter-developer-capture.png",
+      "height": 720,
+      "id": "winter",
+      "runtime_scene": "winter_field",
+      "sha256": "18e3f70b33b9719f31951e9925b2c8d93168e38451896d4ff6831509600861b8",
+      "width": 1280
+    },
+    {
+      "actual_runtime_ui": true,
+      "developer_state_injection": true,
+      "file": "06-finale-developer-capture.png",
+      "height": 720,
+      "id": "finale",
+      "runtime_scene": "finale_handoff",
+      "sha256": "78417f42db8cd37573b61fbb8b04150cdc0e091cc500116f6083ac56e5635547",
+      "width": 1280
+    }
+  ],
+  "concept_art_substitution": false,
+  "evidence_level": "developer_capture",
+  "post_processing": "none",
+  "resolution": [
+    1280,
+    720
+  ],
+  "schema_version": 1,
+  "store_ready": false
+}

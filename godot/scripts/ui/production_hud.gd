@@ -104,7 +104,7 @@ func apply_to(main, ui: CanvasLayer) -> void:
 		hive_panel.color = Color.TRANSPARENT
 		_style_stat_labels(hive_panel)
 
-	main.title_label.text = "无名 · 成蜂"
+	main.title_label.text = "一会儿巢里见"
 	main.title_label.position = Vector2(60, 24)
 	main.title_label.size = Vector2(330, 34)
 	main.title_label.add_theme_font_size_override("font_size", 19)

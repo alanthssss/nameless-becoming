@@ -104,7 +104,7 @@ func configure_playtest_session(context: Dictionary) -> Error:
 	if not context.get("product") is Dictionary or not _has_exact_keys(context.product, ["commit", "dirty", "display_name", "id", "version"]):
 		return ERR_INVALID_DATA
 	var product: Dictionary = context.product
-	if product.get("id") != "nameless-becoming" or product.get("display_name") != "无名：成蜂" or not product.get("version") is String:
+	if product.get("id") != "nameless-becoming" or product.get("display_name") != "一会儿巢里见" or not product.get("version") is String:
 		return ERR_INVALID_DATA
 	if String(product.version) != String(ProjectSettings.get_setting("application/config/version", "")):
 		return ERR_INVALID_DATA

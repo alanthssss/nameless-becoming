@@ -35,7 +35,7 @@ test("builds direct and macOS bundle argv with an explicit Godot separator", asy
   try {
     const executable = join(temporaryRoot, "game");
     const ticket = join(temporaryRoot, "playtest-ticket.json");
-    const app = join(temporaryRoot, "无名：成蜂.app");
+    const app = join(temporaryRoot, "一会儿巢里见.app");
     await writeFile(executable, "#!/bin/sh\nexit 0\n", "utf8");
     await chmod(executable, 0o755);
     await writeFile(ticket, `${JSON.stringify({

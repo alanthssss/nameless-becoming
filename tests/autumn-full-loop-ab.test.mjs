@@ -12,7 +12,7 @@ import {
 
 test("final autumn A/B requires a role choice and explains unresolved outcomes", () => {
   assert.match(validateFinalAnswers({}), /采集/);
-  assert.match(validateFinalAnswers({ explore_choice: "C" }), /Boss/);
+  assert.match(validateFinalAnswers({ explore_choice: "C" }), /遭遇/);
   assert.match(validateFinalAnswers({ explore_choice: "tie", boss_choice: "M" }), /原因/);
   assert.match(validateFinalAnswers({ explore_choice: "Y", boss_choice: "neither" }), /原因/);
   assert.equal(validateFinalAnswers({
@@ -35,9 +35,9 @@ test("final autumn A/B is loudness-matched and keeps the answer outside listener
 
     assert.equal(result.packageSha, manifest.package_identity_sha256);
     assert.equal(key.package_identity_sha256, manifest.package_identity_sha256);
-    assert.doesNotMatch(`${html}\n${manifestText}`, /candidate|baseline|autumn_(?:explore|boss)\.wav|codex\//iu);
+    assert.doesNotMatch(`${html}\n${manifestText}`, /candidate|baseline|autumn_(?:explore|incident|boss)\.wav|codex\//iu);
     assert.match(html, /采集 \/ 探索组/);
-    assert.match(html, /遭遇 \/ Boss 组/);
+    assert.match(html, /遭遇组/);
     assert.deepEqual(manifest.tracks.map(({ id }) => id), BLIND_TRACKS.map(({ id }) => id));
     assert.deepEqual(key.tracks.map(({ id, version }) => [id, version]), [
       ["C", "baseline"],
@@ -45,7 +45,7 @@ test("final autumn A/B is loudness-matched and keeps the answer outside listener
       ["M", "candidate"],
       ["R", "baseline"],
     ]);
-    for (const role of ["explore", "boss"]) {
+    for (const role of ["explore", "incident"]) {
       const pair = manifest.tracks.filter((track) => track.role === role);
       assert.equal(pair.length, 2);
       assert.ok(Math.abs(pair[0].integrated_lufs - pair[1].integrated_lufs) <= 0.3);

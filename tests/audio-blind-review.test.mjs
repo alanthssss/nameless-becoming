@@ -203,13 +203,13 @@ function exercisePackageScopedRestore(listenerJavaScript, savedSnapshot) {
 test("pins all eight reviewed WAV sources and the fixed blind mapping", async () => {
   assert.deepEqual(BLIND_TRACKS.map(({ id, source }) => [id, source]), [
     ["A", "summer_explore.wav"],
-    ["B", "winter_boss.wav"],
+    ["B", "winter_incident.wav"],
     ["C", "spring_explore.wav"],
-    ["D", "autumn_boss.wav"],
+    ["D", "autumn_incident.wav"],
     ["E", "winter_explore.wav"],
-    ["F", "summer_boss.wav"],
+    ["F", "summer_incident.wav"],
     ["G", "autumn_explore.wav"],
-    ["H", "spring_boss.wav"],
+    ["H", "spring_incident.wav"],
   ]);
   assert.deepEqual(CANONICAL_PAIRS, [["A", "F"], ["B", "E"], ["C", "H"], ["D", "G"]]);
   assert.equal(new Set(BLIND_TRACKS.map(({ id }) => id)).size, 8);
@@ -291,7 +291,7 @@ test("keeps source names, roles, seasons, hashes, and canonical pairs out of lis
     const listenerText = listenerAssets.join("\n");
     const listenerJavaScript = listenerAssets[2];
 
-    assert.doesNotMatch(listenerText, /spring|summer|autumn|winter|explore|boss|春|夏|秋|冬/i);
+    assert.doesNotMatch(listenerText, /spring|summer|autumn|winter|explore|incident|boss|春|夏|秋|冬/i);
     for (const { source, sha256: sourceSha256 } of BLIND_TRACKS) {
       assert.doesNotMatch(listenerText, new RegExp(source.replace(".", "\\."), "i"));
       assert.doesNotMatch(listenerText, new RegExp(sourceSha256, "i"));
