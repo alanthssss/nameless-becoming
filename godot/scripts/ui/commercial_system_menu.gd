@@ -79,6 +79,13 @@ func current_view() -> String:
 	return _view
 
 
+func show_pause_notice(text: String) -> void:
+	## Hosts use this for actionable persistence warnings without reaching into
+	## the menu's controls. The notice remains visible while the pause view is up.
+	if pause_note != null:
+		pause_note.text = text
+
+
 func open_pause(focus_was_lost := false) -> void:
 	_settings_return_view = "pause"
 	_new_journey_armed = false

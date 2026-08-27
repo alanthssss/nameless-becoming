@@ -58,6 +58,31 @@
     },
     {
       "base": "Node",
+      "class": "JourneyCampaignAreaRouter",
+      "path": "res://scripts/world/journey_campaign_area_router.gd"
+    },
+    {
+      "base": "JourneySeasonalFieldBase",
+      "class": "JourneyCampaignField",
+      "path": "res://scripts/world/journey_campaign_field.gd"
+    },
+    {
+      "base": "Node",
+      "class": "JourneyCampaignGame",
+      "path": "res://scripts/world/journey_campaign_game.gd"
+    },
+    {
+      "base": "Node2D",
+      "class": "JourneyCampaignHive",
+      "path": "res://scripts/world/journey_campaign_hive.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "JourneyCampaignState",
+      "path": "res://scripts/world/journey_campaign_state.gd"
+    },
+    {
+      "base": "Node",
       "class": "JourneyGame",
       "path": "res://scripts/world/journey_game.gd"
     },
@@ -65,6 +90,11 @@
       "base": "Node2D",
       "class": "JourneySeasonalFieldBase",
       "path": "res://scripts/world/journey_seasonal_field_base.gd"
+    },
+    {
+      "base": "RefCounted",
+      "class": "JourneyLevelCatalog",
+      "path": "res://scripts/world/journey_level_catalog.gd"
     },
     {
       "base": "Control",

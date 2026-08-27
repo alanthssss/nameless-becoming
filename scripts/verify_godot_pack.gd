@@ -5,7 +5,10 @@ const REPORT_SCHEMA_VERSION := 1
 
 const REQUIRED_SCENE_REMAPS: Array[String] = [
 	"res://commercial_title.tscn.remap",
+	"res://campaign.tscn.remap",
 	"res://journey.tscn.remap",
+	"res://world/journey/campaign_field.tscn.remap",
+	"res://world/journey/campaign_hive.tscn.remap",
 	"res://world/journey/autumn_field.tscn.remap",
 	"res://world/journey/finale_handoff.tscn.remap",
 	"res://world/journey/hive_threshold.tscn.remap",
@@ -19,6 +22,7 @@ const REQUIRED_DYNAMIC_FILES: Array[String] = [
 	"res://data/build_provenance.json",
 	"res://data/commercial_script_class_allowlist.json",
 	"res://data/credits_and_licenses.json",
+	"res://data/journey_levels.json",
 	"res://data/journey_solar_term_chronicles.json",
 	"res://assets/audio/commercial/manifest.json",
 	"res://fonts/OFL-NotoSansCJK.txt",
@@ -473,6 +477,18 @@ func validate_commercial_resources() -> bool:
 		return false
 	commercial_instance.free()
 
+	var campaign_scene := load("res://campaign.tscn") as PackedScene
+	if campaign_scene == null:
+		fail("Formal campaign scene or one of its area dependencies cannot load from the pack.")
+		return false
+	var campaign_instance := campaign_scene.instantiate()
+	if campaign_instance == null or not campaign_instance.has_method("_begin_level") or not campaign_instance.has_method("_return_to_title"):
+		if campaign_instance != null:
+			campaign_instance.free()
+		fail("Formal campaign does not expose its level and title-return contracts.")
+		return false
+	campaign_instance.free()
+
 	var journey_scene := load("res://journey.tscn") as PackedScene
 	if journey_scene == null:
 		fail("Commercial Journey scene or one of its area dependencies cannot load from the pack.")
@@ -486,7 +502,7 @@ func validate_commercial_resources() -> bool:
 	journey_instance.free()
 
 	for scene_remap in REQUIRED_SCENE_REMAPS:
-		if scene_remap in ["res://commercial_title.tscn.remap", "res://journey.tscn.remap"]:
+		if scene_remap in ["res://commercial_title.tscn.remap", "res://campaign.tscn.remap", "res://journey.tscn.remap"]:
 			continue
 		var scene_path := scene_remap.trim_suffix(".remap")
 		var area_scene := load(scene_path) as PackedScene
@@ -684,6 +700,36 @@ func validate_dynamic_documents() -> Dictionary:
 			return {}
 		ids[term_id] = true
 		names[term_name] = true
+
+	var campaign_catalog := parse_json_object("res://data/journey_levels.json", "formal campaign catalog")
+	if campaign_catalog.is_empty():
+		return {}
+	var campaign_levels = campaign_catalog.get("levels", [])
+	if (
+		int(campaign_catalog.get("schema_version", 0)) != 1
+		or int(campaign_catalog.get("total_levels", 0)) != 24
+		or not campaign_levels is Array
+		or campaign_levels.size() != 24
+	):
+		fail("Formal campaign catalog must contain exactly 24 schema-v1 levels.")
+		return {}
+	var climax_orders: Array[int] = []
+	for index in campaign_levels.size():
+		if not campaign_levels[index] is Dictionary:
+			fail("Formal campaign level %d is not an object." % index)
+			return {}
+		var level: Dictionary = campaign_levels[index]
+		if String(level.get("id", "")) != String((terms[index] as Dictionary).get("id", "")) or int(level.get("order", -1)) != index:
+			fail("Formal campaign level %d does not align with its solar term." % index)
+			return {}
+		if String(level.get("kind", "")) == "climax":
+			climax_orders.append(index)
+			if not level.get("phases", []) is Array or (level.get("phases", []) as Array).size() != 3:
+				fail("Formal campaign climax level %d does not have exactly three phases." % index)
+				return {}
+	if climax_orders != [5, 11, 17, 23]:
+		fail("Formal campaign climax levels are not fixed at 6/12/18/24.")
+		return {}
 	return provenance
 
 
@@ -744,7 +790,7 @@ func _init() -> void:
 		report_file.close()
 
 	print(
-		"%s: %s (commercial title + Journey dependency closure + exact %d-texture and 16-audio candidate sets; no prototype, playtest, tests, tools, or rejected art)"
+		"%s: %s (commercial title + formal campaign closure + exact %d-texture and 16-audio candidate sets; no prototype, playtest, tests, tools, or rejected art)"
 		% [SUCCESS_MARKER, pack_path, COMMERCIAL_TEXTURES.size()]
 	)
 	quit(0)

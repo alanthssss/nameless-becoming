@@ -13,6 +13,7 @@ const explicitFiles = [
   "godot/commercial_title.tscn",
   "godot/journey.tscn",
   "godot/data/credits_and_licenses.json",
+  "godot/data/journey_levels.json",
   "godot/data/journey_solar_term_chronicles.json",
   "godot/scripts/player/bee_player.gd",
   "godot/scripts/sound_feedback.gd",
@@ -93,6 +94,10 @@ test("commercial copy stays in the neighborhood instead of rebutting design requ
     /按下归巢键/u,
     /自动完成/u,
     /不会自己回/u,
+    /没有标准比例/u,
+    /哪一种结果更高尚/u,
+    /不是身体乐器/u,
+    /不是追逐战/u,
   ];
   for (const repositoryPath of sources) {
     const copy = await readFile(resolve(repositoryRoot, repositoryPath), "utf8");
@@ -125,7 +130,10 @@ test("README current-product section stays clean while preserving marked history
   const readme = await readFile(resolve(repositoryRoot, "README.md"), "utf8");
   const currentProduct = readme.split("## 历史私有部署（非当前产品试玩）", 1)[0];
   assert.ok(currentProduct.includes("一会儿巢里见"));
-  for (const pattern of [/再采一朵/u, /无名[：:]?成蜂/u, /失律/u, /调律/u, /三弦/u, /回声板/u, /校(?:回)?声/u, /\bboss\b/iu, /trichord/iu]) {
+  // Production documentation may call the four requested season finales Boss
+  // levels. Shipping data and player-facing copy remain covered by the stricter
+  // audit above and use concrete incident names plus the internal `climax` kind.
+  for (const pattern of [/再采一朵/u, /无名[：:]?成蜂/u, /失律/u, /调律/u, /三弦/u, /回声板/u, /校(?:回)?声/u, /trichord/iu]) {
     assert.doesNotMatch(currentProduct, pattern, `README current-product section contains rejected framing ${pattern}`);
   }
 });

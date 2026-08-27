@@ -11,6 +11,7 @@ signal settings_changed(settings: Dictionary)
 signal progress_changed(has_progress: bool)
 
 const JourneyStateScript := preload("res://scripts/world/journey_state.gd")
+const CampaignStateScript := preload("res://scripts/world/journey_campaign_state.gd")
 const FORMAT_ID := "see-you-at-the-hive"
 const SCHEMA_VERSION := 1
 const PROGRESS_KIND := "journey_progress"
@@ -167,11 +168,15 @@ func progress_summary() -> Dictionary:
 	if not _validate_progress_payload(payload):
 		return {"ok": false, "error": ERR_INVALID_DATA}
 	var saved_state: Dictionary = payload.get("state", {})
+	var campaign_save := int(saved_state.get("schema_version", 0)) == JourneyCampaignState.SAVE_SCHEMA_VERSION
 	return {
 		"ok": true,
 		"reserve": int(saved_state.get("reserve", 0)),
 		"next_segment": String(payload.get("next_segment", "")),
 		"journey_complete": bool(saved_state.get("journey_complete", false)),
+		"campaign_save": campaign_save,
+		"completed_count": int((saved_state.get("completed_level_ids", []) as Array).size()) if campaign_save else 0,
+		"total_count": JourneyLevelCatalog.TOTAL_LEVELS if campaign_save else 0,
 		"saved_at_unix": int(result.get("saved_at_unix", 0)),
 		"recovered_from_backup": bool(result.get("recovered_from_backup", false)),
 	}
@@ -303,7 +308,12 @@ func _validate_progress_payload(payload: Variant) -> bool:
 		return false
 	if not dictionary.get("next_segment", null) is String:
 		return false
-	var probe = JourneyStateScript.new()
+	var state_data := dictionary.state as Dictionary
+	var campaign_save := (
+		int(state_data.get("schema_version", 0)) == JourneyCampaignState.SAVE_SCHEMA_VERSION
+		and state_data.has("campaign_id")
+	)
+	var probe = CampaignStateScript.new() if campaign_save else JourneyStateScript.new()
 	if probe.restore_from_save_dictionary(dictionary.state) != OK:
 		return false
 	return String(dictionary.next_segment) == String(probe.next_segment_id())
