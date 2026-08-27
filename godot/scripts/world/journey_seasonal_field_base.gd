@@ -37,6 +37,7 @@ var bee: BeePlayer
 var sound: SoundFeedback
 var camera: Camera2D
 var input_enabled := true
+var _action_release_gate := false
 var completion_emitted := false
 var elapsed := 0.0
 var message := ""
@@ -130,7 +131,16 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	bee.active = true
-	if Input.is_action_just_pressed("action"):
+	# Space / gamepad A is both the field action and GUI accept. If a visible
+	# button owns focus, Godot will emit that button once; polling the same frame
+	# used to dispatch a second world action (or even a different action when the
+	# secondary button was focused).
+	var focused_control := get_viewport().gui_get_focus_owner()
+	var gui_button_handles_accept := focused_control is BaseButton and (focused_control as BaseButton).is_visible_in_tree()
+	if _action_release_gate:
+		if not Input.is_action_pressed("action"):
+			_action_release_gate = false
+	elif Input.is_action_just_pressed("action") and not gui_button_handles_accept:
 		_handle_primary_action()
 	if Input.is_action_just_pressed("return_hive"):
 		_handle_secondary_action()
@@ -144,6 +154,8 @@ func _process(delta: float) -> void:
 
 func set_input_enabled(enabled: bool) -> void:
 	input_enabled = enabled
+	if enabled and Input.is_action_pressed("action"):
+		_action_release_gate = true
 	if bee == null:
 		return
 	bee.active = enabled and not completion_emitted

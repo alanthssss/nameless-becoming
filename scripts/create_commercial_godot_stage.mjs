@@ -9,6 +9,30 @@ import { writeCanonicalCommercialClassCache } from "./prepare_commercial_script_
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const reviewedSourceRoot = resolve(repositoryRoot, "godot");
 
+export const commercialArtFilenames = Object.freeze([
+  "autumn_world_ground_v1.png",
+  "bear_helper_states_v1.png",
+  "dahan_result_hero_v1.png",
+  "dashu_result_hero_v1.png",
+  "flower_states_topdown_v1.png",
+  "guyu_result_hero_v1.png",
+  "hive_threshold_interior_v1.png",
+  "listening_seed_shell_states_v1.png",
+  "main_hive_exterior_v1.png",
+  "mentor_bee_topdown_v1.png",
+  "mosquito_keeper_states_v1.png",
+  "oil_cricket_repairer_states_v2.png",
+  "player_bee_topdown_states_v1.png",
+  "rest_hive_exterior_v1.png",
+  "seasonal_work_props_v1.png",
+  "shuangjiang_result_hero_v1.png",
+  "spring_world_ground_v1.png",
+  "summer_world_ground_v1.png",
+  "thrush_neighbor_states_v3.png",
+  "winter_world_ground_v1.png",
+  "worker_bee_topdown_v1.png",
+]);
+
 function fail(message) {
   throw new Error(`Commercial Godot staging refused: ${message}`);
 }
@@ -28,6 +52,26 @@ async function collectGdScripts(directoryPath, output) {
     const entryPath = resolve(directoryPath, entry.name);
     if (entry.isDirectory()) await collectGdScripts(entryPath, output);
     else if (entry.isFile() && entry.name.endsWith(".gd")) output.push(entryPath);
+  }
+}
+
+export async function validateCommercialArtClosure(godotRoot) {
+  const artRoot = resolve(godotRoot, "assets/art/commercial");
+  const entries = (await readdir(artRoot)).sort();
+  const pngs = entries.filter((name) => name.endsWith(".png")).sort();
+  const imports = entries.filter((name) => name.endsWith(".png.import")).sort();
+  const expectedPngs = [...commercialArtFilenames].sort();
+  const expectedImports = expectedPngs.map((name) => `${name}.import`);
+  const expectedEntries = [...expectedPngs, ...expectedImports].sort();
+  const unreviewedEntries = entries.filter((name) => !expectedEntries.includes(name));
+  if (unreviewedEntries.length > 0) {
+    fail(`staged commercial art contains unreviewed entries: ${unreviewedEntries.join(", ")}`);
+  }
+  if (JSON.stringify(pngs) !== JSON.stringify(expectedPngs)) {
+    fail(`staged commercial art is not the exact reviewed source set: ${pngs.join(", ")}`);
+  }
+  if (JSON.stringify(imports) !== JSON.stringify(expectedImports)) {
+    fail(`staged commercial art imports are not the exact reviewed sidecar set: ${imports.join(", ")}`);
   }
 }
 
@@ -72,6 +116,7 @@ export async function createCommercialGodotStage({ sourceRoot, destinationRoot }
   ]) {
     await rm(resolve(destinationRoot, excludedPath), { recursive: true, force: true });
   }
+  await validateCommercialArtClosure(destinationRoot);
   const allowlist = JSON.parse(await readFile(resolve(destinationRoot, "data/commercial_script_class_allowlist.json"), "utf8"));
   if (allowlist?.schema_version !== 1 || !Array.isArray(allowlist.entries) || allowlist.entries.length === 0) {
     fail("copied project has no schema-v1 commercial script-class allowlist");
@@ -106,7 +151,7 @@ export async function createCommercialGodotStage({ sourceRoot, destinationRoot }
   }
 
   await writeCanonicalCommercialClassCache({ godotRoot: destinationRoot });
-  console.log(`Commercial Godot stage prepared with ${remainingPaths.length} scripts; ${removedScripts} non-commercial scripts removed.`);
+  console.log(`Commercial Godot stage prepared with ${remainingPaths.length} scripts and ${commercialArtFilenames.length} reviewed art sources; ${removedScripts} non-commercial scripts removed.`);
   return { destinationRoot, remainingPaths, removedScripts };
 }
 

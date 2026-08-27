@@ -17,6 +17,12 @@ const PollenVisualLanguage := preload("res://scripts/mechanics/pollen_visual_lan
 var max_energy := 100.0
 var energy := max_energy
 var drain_rate := 1.45
+## Most legacy sorties treat the configured drain as an always-on expedition
+## clock. Larger campaign maps opt into movement-only drain so pausing to read
+## the field never spends energy behind the player's back.
+var drain_while_idle := true
+var auto_dash_delay := AUTO_DASH_THRESHOLD
+var auto_dash_drain_per_second := 9.5
 var base_speed := 215.0
 var dash_speed := 360.0
 var acceleration := 1050.0
@@ -33,6 +39,12 @@ var speed_multiplier := 1.0
 ## bee without overwriting permanent Long Wing upgrades.
 var environment_speed_multiplier := 1.0
 var dash_cost_multiplier := 1.0
+## Cargo is a handling profile, not a second stamina bar. Heavy loads visibly
+## widen turns, lower top speed and make sustained acceleration costlier; fields
+## must reset the profile as soon as the parcel leaves the bee.
+var load_speed_multiplier := 1.0
+var load_acceleration_multiplier := 1.0
+var load_dash_cost_multiplier := 1.0
 var evade_time := 0.0
 var evade_cooldown := 0.0
 # 闪避无敌时长：由 main 从 balance.json player.evade_invuln_seconds 注入
@@ -96,6 +108,44 @@ func set_pollen_loads(charges: Array[int]) -> void:
 func configure(stage_drain: float) -> void:
 	drain_rate = stage_drain
 
+
+func configure_energy_usage(
+	should_drain_while_idle: bool,
+	dash_drain_per_second: float,
+	dash_delay_seconds: float
+) -> Error:
+	if (
+		not is_finite(dash_drain_per_second)
+		or not is_finite(dash_delay_seconds)
+		or dash_drain_per_second < 0.0
+		or dash_delay_seconds < 0.0
+	):
+		return ERR_INVALID_PARAMETER
+	drain_while_idle = should_drain_while_idle
+	auto_dash_drain_per_second = dash_drain_per_second
+	auto_dash_delay = dash_delay_seconds
+	return OK
+
+
+func set_load_movement_profile(
+	speed_scale: float = 1.0,
+	acceleration_scale: float = 1.0,
+	dash_cost_scale: float = 1.0
+) -> Error:
+	if (
+		not is_finite(speed_scale)
+		or not is_finite(acceleration_scale)
+		or not is_finite(dash_cost_scale)
+		or speed_scale <= 0.0
+		or acceleration_scale <= 0.0
+		or dash_cost_scale <= 0.0
+	):
+		return ERR_INVALID_PARAMETER
+	load_speed_multiplier = clampf(speed_scale, 0.35, 1.25)
+	load_acceleration_multiplier = clampf(acceleration_scale, 0.25, 1.25)
+	load_dash_cost_multiplier = clampf(dash_cost_scale, 0.5, 2.5)
+	return OK
+
 func set_movement_bounds(bounds: Rect2) -> Error:
 	if (
 		not is_finite(bounds.position.x)
@@ -117,6 +167,7 @@ func reset_upgrades() -> void:
 	speed_multiplier = 1.0
 	environment_speed_multiplier = 1.0
 	dash_cost_multiplier = 1.0
+	set_load_movement_profile()
 
 func apply_upgrade(upgrade_id: String) -> void:
 	if upgrade_id == "long_wing":
@@ -141,6 +192,7 @@ func reset_for_expedition(at: Vector2) -> void:
 	evade_tap_direction = Vector2.RIGHT
 	move_duration = 0.0
 	environment_speed_multiplier = 1.0
+	set_load_movement_profile()
 	active = true
 	queue_redraw()
 
@@ -217,12 +269,20 @@ func _physics_process(delta: float) -> void:
 	else:
 		move_duration = 0.0
 
-	var auto_dashing := move_duration > AUTO_DASH_THRESHOLD and energy > 8.0 and evade_time <= 0.0
-	var desired_speed := (dash_speed if auto_dashing else base_speed) * speed_multiplier * environment_speed_multiplier
+	var auto_dashing := move_duration > auto_dash_delay and energy > 8.0 and evade_time <= 0.0
+	var desired_speed := (
+		(dash_speed if auto_dashing else base_speed)
+		* speed_multiplier
+		* environment_speed_multiplier
+		* load_speed_multiplier
+	)
 	if evade_time > 0.0:
 		velocity = velocity.move_toward(velocity.normalized() * 520.0, 180.0 * delta)
 	elif is_moving:
-		velocity = velocity.move_toward(input_direction.normalized() * desired_speed, acceleration * delta)
+		velocity = velocity.move_toward(
+			input_direction.normalized() * desired_speed,
+			acceleration * load_acceleration_multiplier * delta
+		)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, braking * delta)
 
@@ -230,7 +290,13 @@ func _physics_process(delta: float) -> void:
 		facing = velocity.angle()
 	position += velocity * delta
 	_clamp_to_movement_bounds()
-	energy = maxf(0.0, energy - drain_rate * delta - (9.5 * dash_cost_multiplier * delta if auto_dashing else 0.0))
+	var cruise_cost := drain_rate * delta if (drain_while_idle or is_moving) else 0.0
+	var dash_cost := (
+		auto_dash_drain_per_second * dash_cost_multiplier * load_dash_cost_multiplier * delta
+		if auto_dashing
+		else 0.0
+	)
+	energy = maxf(0.0, energy - cruise_cost - dash_cost)
 
 	queue_redraw()
 
@@ -249,7 +315,7 @@ func _draw() -> void:
 	if has_spring_launch_art():
 		var frame_index := 0
 		if use_spring_launch_art:
-			if evade_time > 0.0 or move_duration > AUTO_DASH_THRESHOLD:
+			if evade_time > 0.0 or move_duration > auto_dash_delay:
 				frame_index = 1
 			elif visual_load_ratio >= 0.5:
 				frame_index = 2

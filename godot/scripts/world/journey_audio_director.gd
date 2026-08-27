@@ -9,6 +9,9 @@ extends Node
 signal route_changed(area_id: StringName, route_id: StringName, track_path: String)
 signal playback_gate_changed(audible: bool)
 signal environment_mix_changed(hive_indoor_db: float, field_outdoor_db: float)
+signal hive_result_started(strength: StringName)
+signal hive_result_cue(cue_id: StringName, asset_path: String)
+signal hive_result_finished
 
 const MUSIC_FAMILIES: Array[String] = ["spring", "summer", "autumn", "winter"]
 const SILENCE_DB := -60.0
@@ -20,6 +23,11 @@ const ENVIRONMENT_LAYERS: Array[StringName] = [LAYER_HIVE_INDOOR, LAYER_FIELD_OU
 const DEFAULT_ENVIRONMENT_PATHS := {
 	LAYER_HIVE_INDOOR: "res://assets/audio/commercial/hive_room_loop.wav",
 	LAYER_FIELD_OUTDOOR: "res://assets/audio/commercial/field_day_loop.wav",
+}
+const HIVE_RESULT_CUE_PATHS := {
+	"arrival": "res://assets/audio/commercial/handoff.wav",
+	"relay": "res://assets/audio/commercial/relay_drop.wav",
+	"response": "res://assets/audio/commercial/complete.wav",
 }
 
 ## Every planned commercial chapter has an explicit musical destination. The
@@ -109,8 +117,10 @@ var _current_track_path := ""
 
 var music_players: Array[AudioStreamPlayer] = []
 var environment_players: Dictionary = {}
+var hive_result_players: Array[AudioStreamPlayer] = []
 var active_music_index := -1
 var outgoing_music_index := -1
+var hive_result_cue_log: Array[StringName] = []
 
 var _router: Node
 var _fade_active := false
@@ -128,6 +138,11 @@ var _environment_target_db := {
 	LAYER_FIELD_OUTDOOR: SILENCE_DB,
 }
 var _tree_was_paused := false
+var _hive_result_active := false
+var _hive_result_elapsed := 0.0
+var _hive_result_cursor := 0
+var _hive_result_voice := 0
+var _hive_result_schedule: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -165,6 +180,13 @@ func _create_players() -> void:
 			environment_player.stream = _prepare_looped_environment(ambience_source)
 		add_child(environment_player)
 		environment_players[layer_id] = environment_player
+	for voice_index in 3:
+		var result_player := AudioStreamPlayer.new()
+		result_player.name = "HiveResultVoice%d" % (voice_index + 1)
+		result_player.playback_type = AudioServer.PLAYBACK_TYPE_SAMPLE
+		result_player.bus = &"SFX" if AudioServer.get_bus_index(&"SFX") >= 0 else &"Master"
+		add_child(result_player)
+		hive_result_players.append(result_player)
 
 
 func bind_router(router: Node) -> Error:
@@ -290,6 +312,42 @@ func set_environment_stream_path(layer_id: StringName, path: String) -> Error:
 	return set_environment_stream(layer_id, stream)
 
 
+func begin_hive_result(climax: bool, reduced_motion := false) -> Error:
+	if hive_result_players.is_empty():
+		_create_players()
+	for player in hive_result_players:
+		player.stop()
+		player.stream = null
+	hive_result_cue_log.clear()
+	_hive_result_elapsed = 0.0
+	_hive_result_cursor = 0
+	_hive_result_voice = 0
+	_hive_result_schedule = _result_schedule(climax, reduced_motion)
+	_hive_result_active = not _hive_result_schedule.is_empty()
+	if not _hive_result_active:
+		return ERR_INVALID_DATA
+	hive_result_started.emit(&"climax" if climax else &"standard")
+	if is_playback_audible():
+		_dispatch_due_hive_result_cues()
+	return OK
+
+
+func finish_hive_result() -> void:
+	if not _hive_result_active and _hive_result_schedule.is_empty():
+		return
+	_hive_result_active = false
+	_hive_result_schedule.clear()
+	_hive_result_cursor = 0
+	for player in hive_result_players:
+		player.stop()
+		player.stream = null
+	hive_result_finished.emit()
+
+
+func hive_result_active() -> bool:
+	return _hive_result_active
+
+
 func finish_transition() -> void:
 	if not _fade_active:
 		return
@@ -303,6 +361,9 @@ func _process(delta: float) -> void:
 		_sync_playback_gate()
 	if _fade_active and is_playback_audible():
 		_advance_mix(delta)
+	if _hive_result_active and is_playback_audible():
+		_hive_result_elapsed += maxf(0.0, delta)
+		_dispatch_due_hive_result_cues()
 
 
 func _notification(what: int) -> void:
@@ -324,6 +385,12 @@ func _exit_tree() -> void:
 		var environment_player := environment_players[layer_id] as AudioStreamPlayer
 		environment_player.stop()
 		environment_player.stream = null
+	for result_player in hive_result_players:
+		result_player.stop()
+		result_player.stream = null
+	hive_result_players.clear()
+	_hive_result_schedule.clear()
+	_hive_result_active = false
 	_current_track_path = ""
 
 
@@ -483,6 +550,12 @@ func _sync_playback_gate() -> void:
 		_sync_player_gate(player, audible)
 	for layer_id in environment_players:
 		_sync_player_gate(environment_players[layer_id] as AudioStreamPlayer, audible)
+	if not audible:
+		# Result cues are one-shots, not loops. Drop only the currently sounding
+		# samples at a pause/focus boundary; the unplayed later beats remain queued.
+		for result_player in hive_result_players:
+			result_player.stop()
+			result_player.stream = null
 	playback_gate_changed.emit(audible)
 
 
@@ -504,6 +577,58 @@ func _stop_music_player(index: int) -> void:
 	player.stop()
 	player.stream = null
 	player.volume_db = SILENCE_DB
+
+
+func _result_schedule(climax: bool, _reduced_motion: bool) -> Array[Dictionary]:
+	var schedule: Array[Dictionary] = []
+	if climax:
+		schedule.assign([
+			{"at": 0.0, "id": &"arrival", "cue": "arrival", "volume_db": -4.5, "pitch": 1.0},
+			{"at": 0.38, "id": &"first_relay", "cue": "relay", "volume_db": -3.0, "pitch": 0.98},
+			{"at": 0.86, "id": &"line_answer", "cue": "relay", "volume_db": -4.0, "pitch": 1.05},
+			{"at": 1.46, "id": &"group_response", "cue": "response", "volume_db": -1.5, "pitch": 1.0},
+			{"at": 2.12, "id": &"tray_settle", "cue": "arrival", "volume_db": -6.0, "pitch": 0.94},
+		])
+	else:
+		schedule.assign([
+			{"at": 0.0, "id": &"arrival", "cue": "arrival", "volume_db": -6.0, "pitch": 1.0},
+			{"at": 0.48, "id": &"relay", "cue": "relay", "volume_db": -4.5, "pitch": 1.0},
+			{"at": 1.28, "id": &"group_response", "cue": "response", "volume_db": -4.0, "pitch": 1.0},
+		])
+	# Reduced motion changes the picture, not the listening time. Keeping the
+	# authored clock stable also means toggling accessibility midway cannot skip
+	# a relay response or cut the final tray-settle cue.
+	return schedule
+
+
+func _dispatch_due_hive_result_cues() -> void:
+	while _hive_result_cursor < _hive_result_schedule.size():
+		var cue: Dictionary = _hive_result_schedule[_hive_result_cursor]
+		if float(cue.at) > _hive_result_elapsed:
+			break
+		_play_hive_result_cue(cue)
+		_hive_result_cursor += 1
+
+
+func _play_hive_result_cue(cue: Dictionary) -> void:
+	var cue_name := String(cue.get("cue", ""))
+	var path := String(HIVE_RESULT_CUE_PATHS.get(cue_name, ""))
+	if path.is_empty():
+		return
+	var stream := load(path) as AudioStream
+	if stream == null or hive_result_players.is_empty():
+		return
+	var player := hive_result_players[_hive_result_voice]
+	_hive_result_voice = (_hive_result_voice + 1) % hive_result_players.size()
+	player.stop()
+	player.stream = stream
+	player.volume_db = float(cue.get("volume_db", -4.0))
+	player.pitch_scale = float(cue.get("pitch", 1.0))
+	if is_playback_audible() and DisplayServer.get_name() != "headless":
+		player.play()
+	var cue_id := StringName(String(cue.get("id", cue_name)))
+	hive_result_cue_log.append(cue_id)
+	hive_result_cue.emit(cue_id, path)
 
 
 func _has_property(object: Object, property_name: StringName) -> bool:

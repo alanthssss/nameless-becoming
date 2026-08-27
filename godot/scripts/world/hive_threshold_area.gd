@@ -144,7 +144,7 @@ func body_text() -> String:
 					int(world_results.get("autumn_seeded", 0)),
 				]
 			JourneyState.WINTER_WARMTH:
-				return "四段暖路都接上了。大熊和修补蜂搬成的三段挡风墙，正在替归巢队挡风。"
+				return "四段暖路都接上了。大熊和修补蜂搬成的三段挡风墙，正在替晚班蜂挡风。"
 			JourneyState.FINALE_HANDOFF:
 				return "新蜂照着你的动作飞了一遍。老师傅留在旁边，和大家一起看它找到巢门。"
 			_:

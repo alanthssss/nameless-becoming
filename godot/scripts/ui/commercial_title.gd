@@ -131,7 +131,7 @@ func _build_dream_card() -> void:
 	dream_card.mouse_filter = Control.MOUSE_FILTER_STOP
 	dream_card.visible = false
 	root_control.add_child(dream_card)
-	var heading := _label(dream_card, "今晚的梦很具体", Vector2(55, 36), Vector2(660, 48), 29, Color("263d34"))
+	var heading := _label(dream_card, "明天从哪片花田开始？", Vector2(55, 36), Vector2(660, 48), 29, Color("263d34"))
 	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var body := _label(
 		dream_card,
@@ -216,8 +216,14 @@ func _refresh_slot() -> void:
 	new_button.text = "重新开始新旅程" if file_present else "开始新旅程"
 	if can_continue:
 		var summary := persistence.progress_summary()
-		if bool(summary.get("campaign_save", false)):
-			status_label.text = "主蜂巢检查点 · %d / %d 关 · 储备 %d" % [
+		if bool(summary.get("legacy_archived", false)):
+			status_label.text = _legacy_migration_status(summary)
+		elif bool(summary.get("campaign_save", false)):
+			var checkpoint_name := "主蜂巢"
+			if int(summary.get("checkpoint_pentads_completed", 0)) > 0:
+				checkpoint_name = "第%d候" % int(summary.checkpoint_pentads_completed)
+			status_label.text = "%s检查点 · %d / %d 关 · 储备 %d" % [
+				checkpoint_name,
 				int(summary.get("completed_count", 0)),
 				int(summary.get("total_count", 24)),
 				int(summary.get("reserve", 0)),
@@ -227,10 +233,37 @@ func _refresh_slot() -> void:
 		if bool(summary.get("recovered_from_backup", false)):
 			status_label.text += " · 已从安全备份恢复"
 	elif file_present:
-		status_label.text = "这个存档暂时无法安全读取；本版本不会覆盖它。"
+		if persistence.protected_v2_archive_exists():
+			status_label.text = "这里只剩旧版保护档，不能直接继续；开始新旅程需再次确认清除。"
+		else:
+			status_label.text = "这个存档暂时无法安全读取；本版本不会覆盖它。"
 	else:
 		status_label.text = "单机买断游戏 · 进度只保存在本机"
 	continue_button.grab_focus() if can_continue else new_button.grab_focus()
+
+
+func _legacy_migration_status(summary: Dictionary) -> String:
+	var formal_completed := int(summary.get("completed_count", 0))
+	var formal_total := int(summary.get("total_count", 24))
+	var message := "旧版 %d/24 已封存 · 正式 %d/%d" % [
+		int(summary.get("legacy_completed_count", 0)),
+		formal_completed,
+		formal_total,
+	]
+	if bool(summary.get("journey_complete", false)):
+		message += " 已完成"
+		if bool(summary.get("protected_v2_backup", false)):
+			message += "\n原始旧档已另存保护"
+		return message
+	var next_term_name := String(summary.get("next_term_name", "下一关"))
+	if next_term_name.is_empty():
+		next_term_name = "下一关"
+	message += "\n正式进度从%s继续" % next_term_name
+	if bool(summary.get("protected_v2_backup", false)):
+		message += " · 原始旧档已保护"
+	elif bool(summary.get("migrated_v2", false)):
+		message += " · 首次保存会另存旧档"
+	return message
 
 
 func _continue_journey() -> void:

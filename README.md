@@ -1,21 +1,20 @@
-# 一会儿巢里见 · See You at the Hive
+# 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-一款以蜜蜂生态、四季邻里劳动、二十四节气与真实归巢交接为核心的单机 2D 动作冒险，目前处于**商业游戏制作中**，不是可售卖成品。
-
-> 花田有事，搭把翅膀。飞一圈，巢里见。
+一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
 ## 当前产品：二十四节气 Campaign
 
 - `[实现事实]` 普通商业标题的新旅程／继续入口现已进入独立 `campaign.tscn`。正式目录从立春到大寒恰好 **24 关**，每季 6 关；第 6／12／18／24 关是三阶段高潮关，共 20 个常规关与 4 个高潮关，第 24 关返巢后直接交棒，不生成第 25 关。
-- `[实现事实]` Campaign 使用独立目录、路由和 schema v2 状态，不扩写旧 `JourneyState` 或复活旧 `Main`。只允许顺序完成的严格前缀推进；关卡、尝试令牌、目标与真实归巢全部验证后才 exact-once 写入奖励、纪事和世界痕迹；已完成关可重飞并记录最好成绩，但不会重复发放奖励。
-- `[实现事实]` 合法旧短 Journey 存档会安全迁移设置与只读 `legacy_journey_completed` 纪念标记，新 Campaign 仍从立春开始，不虚报新关卡或补发奖励；矛盾、乱序、未来版本和损坏状态继续 fail-closed。
+- `[实现事实]` Campaign 使用独立目录、路由和 schema v3 状态，不扩写旧 `JourneyState` 或复活旧 `Main`。只允许顺序完成的严格前缀推进；关卡、尝试令牌、目标与真实返程全部验证后才 exact-once 写入奖励、纪事和世界痕迹；已完成关可重飞并记录最好成绩，但不会重复发放奖励。15 事件章节只在完整完成第一候或第二候后保存检查点，分别从第 6／11 项恢复，不把任意半项进度伪装成可恢复状态。
+- `[实现事实]` 合法 schema v2 Campaign 存档最多保留未改写的立春前缀，并把旧完成 ID、完成数、储备与完成标记收进有界只读 `legacy_campaign_progress`；原档已完成立春时从雨水继续，零进度档仍从立春开始。合法旧短 Journey 只迁移设置与 `legacy_journey_completed` 纪念标记。两种迁移都不虚报 30／360 事件完成或补发奖励；矛盾、乱序、未来版本和损坏状态继续 fail-closed。
 - `[实现事实]` 24 关共用横纵各约三屏的 3600 × 2000 大地图运行时，每季按 `map_variant 0—5` 提供 6 种路线／天气拓扑。目录覆盖授粉、采集、观察、震翼请路、搬运、修补、送种、转壳、续暖、固定与三阶段高潮组合 11 类多步工作；采到的蜜只有亲自抵达主巢接货线后才计入目标。
 - `[实现事实]` 主巢是可见的 24 关关卡板、接货线与唯一结算点；出巢会卸载主巢并装入花田 `PackedScene`，返巢会先切回主巢再提交结算，区域宿主始终只保留一个活动场景。四张现有商业邻居状态图——蚊庄主、油葫芦、普通完整身体的画眉邻居和大熊——已经分别进入四个高潮关。
-- `[开发者自测]` 当前共享工作树已通过 Node **65／65**、ESLint、macOS／Windows／Web 三个 preset 的商业资源 pack 内容验证和登记的 **21／21 组 Godot 回归**，包括关卡目录、Campaign 状态、旧 Journey 隔离与字体覆盖；这些结果来自 dirty 工作树，不是 clean 平台候选包、真实设备或真人试玩。
-- `[Alan 实机反馈]` 扩产前的短 Journey 已被实际走通并被评价为“是个完整的游戏”，但通关明显过快；这构成扩成 24 关的产品决定，不等于 Alan 已走通或批准当前新 Campaign。
-- `[边界]` 当前地图运行时、任务物、邻居状态图、UI、音乐和音效仍是商业制作候选；完整动画、人工清稿、终稿混音、手柄重映射／断开重连、完整无障碍矩阵、平台性能、许可总表和正式商店物料尚未过关。独立外部玩家有效样本仍为 **0**，6～8 小时目标也尚无真人全轮数据。
+- `[开发者自测候选]` 当前扩产切片保留 24 关目录，并为雨水与谷雨各接入三候 × 5 条事件矩阵；固定右侧大任务栏已改成紧凑可收起 HUD，飞行体力统一为 100 点，主动急闪、时机／载荷／协作等动作进入运行时。谷雨、大暑、霜降与大寒现各有 1 张只在对应高潮首通后展示的结果插画，结果音频按季节结果编排。这 30 条只是首批生产切片，不代表其余 330 条、四场正式大型事件玩法或全年内容完成。
+- `[开发者自测]` 当前分支 `codex/commercial-gameplay-expansion` 以 `main` 合并提交 `985ad749f385be60f290d648b009df13466a47bd` 为基点；dirty 工作树已通过 Node **66／66**、Godot **23／23 组**完整回归与 ESLint。它们是开发者自动验证，不是 clean CI、平台候选包或真人验收。
+- `[Alan 实机反馈]` 扩产前短 Journey 与 v2 24 关 Campaign 均已实际走通：结构完整、惬意休闲，但通关明显过快，右栏、体力、剧情和峰值不足。Alan 尚未试玩本轮 P0／30 事件切片，旧反馈不能写成本轮验收。
+- `[边界]` 当前地图运行时、任务物、邻居状态图、UI、音乐和音效仍是商业制作候选；其余 330 条事件、四场正式大型事件的完整玩法与演出、蜂巢储存／育幼／清扫／保温等完整可玩链、完整动画、人工清稿、终稿混音、手柄重映射／断开重连、完整无障碍矩阵、平台性能和正式商店物料尚未制作或过关。四张首通结果图均为运行候选，状态仍是 `AUTH-PENDING`／`ALAN-PENDING`／`PLAYER-PENDING`／`MKT-NO`，不代表“哇塞”体验或可售门禁通过。Alan 尚未试玩本轮扩产候选，独立外部玩家有效样本仍为 **0**；18～24 小时正式主线目标没有真人全轮数据。
 
-24 关的唯一制作规格见 [`docs/design/solar-term-campaign-production-spec.md`](docs/design/solar-term-campaign-production-spec.md)；整个产品的商业成品清单见 [`docs/design/commercial-product-requirements.md`](docs/design/commercial-product-requirements.md)；17 张运行候选 PNG 的逐文件来源、用途、切片、授权缺口与审批状态见 [`docs/design/art-source-register.md`](docs/design/art-source-register.md)。被否决的旧角色图已从仓库和导出物移除，不作为“退役素材”继续保留。
+24 关的唯一制作规格见 [`docs/design/solar-term-campaign-production-spec.md`](docs/design/solar-term-campaign-production-spec.md)；整个产品的商业成品清单见 [`docs/design/commercial-product-requirements.md`](docs/design/commercial-product-requirements.md)；21 张运行候选 PNG 的逐文件来源、用途、切片、授权缺口与审批状态见 [`docs/design/art-source-register.md`](docs/design/art-source-register.md)。被否决的旧角色图已从仓库和导出物移除，不作为“退役素材”继续保留。
 
 ## 历史私有部署（非当前产品试玩）
 
@@ -111,9 +110,9 @@ npm run playtest:prepare -- \
 
 ## 视觉方向
 
-`[实现事实]` 当前商业路径接入 17 张 ImageGen 候选 PNG：四季地表、主／小蜂巢、巢内门槛、玩家／老师傅／工蜂、花、四位邻居、独立听声种壳与季节工作物；旧油葫芦和旧画眉候选因风格／身体设定不符已从代码、仓库与导出物完全移除，并由新的油葫芦修理状态、普通完整身体的画眉、独立种壳状态和季节工作物图集替换。路线、部分任务物、特效和 UI 仍有程序化绘制。纸雕、毛毡／布书、贴纸拼贴、像素滤镜、照片转绘、脏灰恐怖和过曝高饱和都不是当前全局方向。
+`[实现事实]` 当前商业路径接入 21 张 ImageGen 候选 PNG：四季地表、主／小蜂巢、巢内门槛、玩家／老师傅／工蜂、花、四位邻居、独立听声种壳、季节工作物，以及谷雨／大暑／霜降／大寒四张高潮首通结果图；旧油葫芦和旧画眉候选因风格／身体设定不符已从代码、仓库与导出物完全移除，并由新的油葫芦修理状态、普通完整身体的画眉、独立种壳状态和季节工作物图集替换。路线、部分任务物、特效和 UI 仍有程序化绘制。纸雕、毛毡／布书、贴纸拼贴、像素滤镜、照片转绘、脏灰恐怖和过曝高饱和都不是当前全局方向。
 
-`[专家启发式]` 这批图能作为统一母版的首轮运行候选，但完整线条／透视／材质／色值规范、人工清稿、逐图生成记录、可编辑源和运行尺寸审查仍缺。`[需 Alan 确认]` 没有任何一套候选获商业终稿或营销批准；`[需独立玩家验证]` 主体、状态、蜂巢功能和路线可读性尚无样本。逐文件审计见 [`docs/design/art-source-register.md`](docs/design/art-source-register.md)，强制门槛见 [`docs/design/commercial-product-requirements.md`](docs/design/commercial-product-requirements.md)。
+`[专家启发式]` 这批图能作为统一母版的首轮运行候选，但完整线条／透视／材质／色值规范、人工清稿、逐图生成记录、可编辑源和运行尺寸审查仍缺。四张首通结果图只证明结果画面已接入，不能替代四场正式大型事件的完整玩法，也不能证明“哇塞”或可售。`[需 Alan 确认]` 所有候选仍为 `AUTH-PENDING`／`ALAN-PENDING`／`PLAYER-PENDING`／`MKT-NO`，没有任何一套获商业终稿或营销批准；`[需独立玩家验证]` 主体、状态、蜂巢功能和路线可读性尚无样本。逐文件审计见 [`docs/design/art-source-register.md`](docs/design/art-source-register.md)，强制门槛见 [`docs/design/commercial-product-requirements.md`](docs/design/commercial-product-requirements.md)。
 
 `[实现事实]` `marketing/` 另有一张无文字 ImageGen 概念主视觉、一个中英文字标、8 个 Steam 尺寸候选和 6 张带哈希的 1280 × 720 Godot developer capture。主视觉不是玩法画面，截图清单标记 `store_ready: false`；它们都未获 Alan 终稿／发布批准，不能写成商店素材已完成。边界见 [`marketing/README.md`](marketing/README.md)。
 
@@ -126,7 +125,7 @@ godot --path godot --editor
 npm run test:godot
 ```
 
-`npm run test:godot` 会生成构建来源、准备导入缓存并执行当前登记的 21 组完整 Godot 回归，其中包括 24 关目录、Campaign 严格前缀／exact-once／重玩／v2 迁移，以及原有标题、存档、场景、玩法、输入、音频和旧隔离基线。每组都必须在独立日志中报告 `TEST PASSED`；当前共享工作树为 **21／21 通过**。自动回归只证明实现时序与判定成立，不证明玩家已经理解、喜欢或愿意购买。
+`npm run test:godot` 会生成构建来源、准备导入缓存并执行当前登记的 23 组完整 Godot 回归，其中包括 24 关目录、30 事件矩阵运行时、Campaign HUD、严格前缀／exact-once／重玩／v2 迁移，以及原有标题、存档、场景、玩法、输入、音频和旧隔离基线。每组都必须在独立日志中报告 `TEST PASSED`；当前 dirty 共享工作树为 **23／23 通过**。自动回归只证明实现时序与判定成立，不证明玩家已经理解、喜欢或愿意购买。
 
 Web 端由 Godot 导出后，通过 Node.js 站点外壳承载：
 
@@ -144,10 +143,10 @@ npm run test
 - `godot/commercial_title.tscn` 与 `godot/scripts/ui/commercial_title.gd`：当前普通启动标题、梦卡、继续／新旅程、设置和许可入口；
 - `godot/campaign.tscn`、`godot/world/journey/campaign_*.tscn` 与 `godot/scripts/world/journey_campaign_*.gd`：当前普通启动使用的 24 关 Campaign、3600 × 2000 花田、主巢关卡板、真实场景切换、任务运行时、高潮关、失败／重试和返巢结算；
 - `godot/data/journey_levels.json` 与 `godot/scripts/world/journey_level_catalog.gd`：24 关唯一机器可读目录、20／4 数量、6／12／18／24 高潮落点、6 种季内拓扑、11 类工作和节气纪事一一对齐合同；
-- `godot/scripts/world/journey_campaign_state.gd`、`godot/scripts/system/commercial_persistence.gd` 与 `godot/scripts/ui/commercial_system_menu.gd`：独立 schema v2 Campaign 状态、严格前缀、exact-once、重玩无重复奖励、旧 Journey 安全迁移、原子备份、暂停、设置、制作人员和许可；
+- `godot/scripts/world/journey_campaign_state.gd`、`godot/scripts/system/commercial_persistence.gd` 与 `godot/scripts/ui/commercial_system_menu.gd`：独立 schema v3 Campaign 状态、整候边界检查点、严格前缀、exact-once、重玩无重复奖励、schema v2／旧 Journey 安全迁移、原子备份、暂停、设置、制作人员和许可；
 - `godot/scripts/world/journey_audio_director.gd`、`godot/scripts/sound_feedback.gd` 与 `godot/assets/audio/commercial/`：8 条现有音乐 WAV 的 Journey 路由，以及 14 条项目自有确定性合成动作音效、2 条环境循环、Music／SFX 总线、Web 播放和暂停／失焦门控；这些音频是可重建的运行候选，不是已通过 Alan 与真实设备终混的发行终稿；
 - `godot/data/journey_solar_term_chronicles.json`：当前产品旅程唯一的 24 节气纪事内容源，每条对应具体物候、小事件、行为和返巢解锁落点；
-- `godot/assets/art/commercial/`：17 张进入运行包的 ImageGen 源候选 PNG；被否决的旧候选不在仓库或导出物中；现有候选仍不等于授权或美术定稿；
+- `godot/assets/art/commercial/`：21 张进入运行闭包的 ImageGen 源候选 PNG，其中 4 张为四季高潮首通结果图；被否决的旧候选不在仓库或导出物中；现有候选仍不等于授权、美术定稿、正式大型事件完成或可售；
 - `godot/scripts/main.gd`：旧 `Main` 的 24 节点状态流、敌害和归巢结算，仅保留源码回归，不是普通启动或正式导出入口；
 - `godot/data/seasons.json`：旧 `main.tscn` 规则回归基线的 24 节点、玩法组、敌害、色彩和目标，不再定义当前产品旅程剧情；
 - `godot/data/bosses.json`、`godot/scripts/boss_encounter_director.gd`、`godot/scripts/music_director.gd`、`godot/scripts/tutorial/` 与其余旧机制：只承担旧基线回归；
@@ -162,9 +161,9 @@ npm run test
 按用途读取，避免把历史方案误当当前决定：
 
 1. [`docs/design/commercial-product-requirements.md`](docs/design/commercial-product-requirements.md)：**当前唯一商业成品要求与最终验收清单**，覆盖命名、剧情、玩法、美术、商业化、证据和发行退出门禁；
-2. [`docs/design/solar-term-campaign-production-spec.md`](docs/design/solar-term-campaign-production-spec.md)：**24 节气三候正式战役与现有 v2 迁移边界的单一制作规格**，定义 360 项内容目标、连续剧情、四场大型事件、推进／重玩、存档迁移和完成契约；
+2. [`docs/design/solar-term-campaign-production-spec.md`](docs/design/solar-term-campaign-production-spec.md)：**24 节气三候正式战役、schema v3 进度与旧 v2 迁移边界的单一制作规格**，定义 360 项内容目标、连续剧情、四场大型事件、推进／重玩、存档迁移和完成契约；
 3. [`docs/design/narrative-framework.md`](docs/design/narrative-framework.md)：**当前四季剧情、角色、词汇、语气和结尾的作者版基线及实现对照**；其中旧关卡数量／落点服从正式战役规格；
-4. [`docs/design/art-source-register.md`](docs/design/art-source-register.md)：**当前 17 张运行候选 PNG 与概念主视觉的来源、用途、切片、哈希、授权缺口和审批状态**；
+4. [`docs/design/art-source-register.md`](docs/design/art-source-register.md)：**当前 21 张运行候选 PNG 与概念主视觉的来源、用途、切片、哈希、授权缺口和审批状态**；
 5. [`docs/design/ecology-and-apiculture-source-register.md`](docs/design/ecology-and-apiculture-source-register.md)：**蜂群生态与养蜂资料的逐页事实、现代复核状态、游戏转译与禁止误用登记**；用户提供的完整扫描本不进入仓库；
 6. [`marketing/README.md`](marketing/README.md)：开发者实机截图、生成式概念主视觉、文字标与商店尺寸候选的证据边界；全部仍未获发布批准；
 7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：7 款官方竞品快照、可验证差异、价格锚点和商业门槛；市场判断只算专家启发式；
@@ -189,9 +188,9 @@ npm run test
 2. `[需独立玩家验证]` 每季六种拓扑和 11 类工作是否真实改变路线、时机、搬运、损失或资源选择，而不是同一张图换坐标、换文字？
 3. `[需独立玩家验证]` 玩家能否从动作与物件辨认蚊庄主、油葫芦、画眉邻居和大熊的习惯与帮助关系，并理解他们是需要搭把手的普通邻居？
 4. `[需独立玩家验证]` 主巢 24 关板、接货、纪事和逐关痕迹是否形成“回家／共同体”，还是仍像关卡选择与结算页；完成后去向是否清楚？
-5. `[需独立玩家验证]` schema v2 单存档、旧 Journey 迁移、失败重试、重飞不重复奖励、继续／新旅程确认和无障碍设置是否符合玩家预期？
+5. `[需独立玩家验证]` schema v3 单存档、整候检查点恢复、旧 v2／旧 Journey 迁移、失败重试、重飞不重复奖励、继续／新旅程确认和无障碍设置是否符合玩家预期？
 6. `[需 Alan 确认]` 当前名称、语气、四季视觉、角色、蜂巢、UI、8 轨音乐与 16 条动作／环境音频候选是否可进入定稿；哪些候选必须重做？
 7. `[开发者自测]` clean macOS／Windows／Web 候选包能否从商业标题全程走到结局，并通过存档升级、强退、性能、音频和包内容审计？
-8. `[需独立玩家验证]` 24 关完整首轮中有多少是有判断的行动，多少是无决策往返、说明阅读或重复固定；6～8 小时目标是否真实成立并支持 Demo 边界与未来售价？
+8. `[需独立玩家验证]` 24 关完整首轮中有多少是有判断的行动，多少是无决策往返、说明阅读或重复固定；18～24 小时目标是否真实成立并支持 Demo 边界与未来售价？
 
 当前仍是封闭开发构建。实现事实、自动化和资产哈希都不能替代 Alan 最终批准、真实设备 QA 与独立外部玩家证据。
