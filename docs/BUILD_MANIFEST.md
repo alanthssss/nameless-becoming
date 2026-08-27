@@ -1,8 +1,43 @@
-# 0.9.5 候选构建历史与校验清单
+# 《一会儿巢里见》当前工作树与 0.9.5 历史构建校验清单
 
-本文按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的构建证据。当前源码基线为 `a58358c3ac90d6edac8a654777beb378d978b688`，已含 PR #90／#91；最近固定桌面 artifact 为 `0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，见“2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包”。该旧包及更早构建均只作历史记录，不得继续作为下一轮 B01 或当前交付入口。
+本文先记录当前 24 关 Campaign 共享工作树的自动事实，再按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的历史构建证据。最近固定桌面 artifact 仍是 `0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，见“2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包”；它早于当前产品、只作历史记录，不得继续作为 24 关 Campaign、下一轮 B01 或当前交付入口。
 
-PR #85 实现固定切片身份基础；PR #87 将 B01 独立 typed scene、共享急转运行时、编译期 registry 与生产 catalog `ready` 合入完整提交 `57aefc4933db88968777b11ea1d1679c6374842a`。该历史双端 artifact 和 Alan B01 包曾生成；PR #90／#91 后的新 artifact 尚未构建。自动测试、包检查和进程启动事实仍不构成 Alan 完成 B01、玩家已学会或外部玩家证据。
+当前工作树位于 `codex/24-solar-term-campaign`，以提交 `4d8b6d18640651104c32f02bc23f417c82d5654f` 为基点并含未提交变更；尚无绑定这些 Campaign 变更的 clean commit、桌面 artifact 或发行哈希。下述当前验证只能证明 dirty 工作树中的实现和内容闭包，不构成 Alan 当前 Campaign 全流程、独立玩家、商业美术终稿、真实设备或发行证据。
+
+## 2026-08-27 · 二十四节气 Campaign 共享工作树
+
+### 当前实现清单
+
+- `godot/data/journey_levels.json` 与节气纪事组成 24 关正式目录：四季各 6 关、20 个常规关、4 个三阶段高潮关，高潮固定在第 6／12／18／24 关。
+- 普通商业标题进入 `campaign.tscn`；独立 `JourneyCampaignState` 使用严格完成前缀、目录奖励、尝试令牌和 exact-once 结算。已完成关可以重飞并更新最好结果，不会重复奖励、纪事、世界痕迹或解锁。
+- schema v2 保存记录关卡前缀、奖励账本、结果、最好成绩、世界痕迹与节气；合法旧短 Journey 只迁移设置、标题状态与 `legacy_journey_completed` 纪念标记，新 Campaign 从立春开始。旧 `Main` 进度不导入。
+- 花田运行边界为 3600 × 2000，相对 1280 × 720 参考视口横纵各约三屏；每季按 `map_variant 0—5` 使用六种任务点、风险带、遮蔽与歇脚拓扑。运行时覆盖授粉、采集、观察、震翼请路、搬运、修补、送种、转壳、续暖、固定与三阶段高潮组合 11 类多步工作；采蜜在抵达主巢接货线前不计入目标。
+- `campaign_hive.tscn` 提供 24 关关卡板和接货线，`campaign_field.tscn` 提供可卸载花田；路由切换时只保留一个活动区域。蚊庄主、油葫芦、普通完整身体的画眉邻居和大熊四张现有商业状态图已分别进入四个高潮关。
+
+### 当前自动验证
+
+| 检查 | 当前结果 | 证据边界 |
+| --- | --- | --- |
+| Node 测试 | **65／65 通过** | 覆盖站点、构建来源、证据工具、商业文案／脚本闭包与 24 关目录静态合同；不是 Godot 全轮试玩 |
+| ESLint | 通过 | 只证明当前 JS／TS lint 门禁 |
+| 三 preset 商业 pack 内容验证 | macOS／Windows／Web 全部通过 | 证明当前 Campaign 目录、场景、运行脚本、17 张纹理和 16 条音频进入三个 preset 的精确闭包，并继续排除旧 Main、B01、测试与工具；不是 clean 平台 artifact 或真实设备全流程 |
+| `journey_level_catalog_test.gd` | `TEST PASSED` | 覆盖 24／20+4、四季各 6、高潮位置、节气对齐、场景键、目标与变体合同 |
+| `journey_campaign_state_test.gd` | `TEST PASSED` | 覆盖严格前缀、exact-once、重飞无重复奖励、伪造结果拒绝、schema v2 往返、旧 Journey 迁移、24 关真实 hive→field→hive 场景链、暂停层输入隔离、返巢路由故障恢复，以及持续存档失败时的首次退出拦截与二次确认提示 |
+| 完整 Godot 回归 | **21／21 组通过** | 每组均在独立日志报告 `TEST PASSED`；共享工作树仍为 dirty 身份，资源退出警告不等于 clean 候选或设备验收 |
+
+### 当前中文字体清单
+
+| 项目 | 值 |
+| --- | --- |
+| 官方源 | Noto Sans CJK SC Regular |
+| 上游 Git blob | `dc15562470b4f842321894787a0d066879ccff8b` |
+| 上游源文件 SHA-256 | `2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b` |
+| 本次运行时扫描 | 77 个来源／1219 个字符 |
+| 子集文件 | `godot/fonts/NotoSansCJKsc-ProjectSubset.otf` |
+| 子集大小 | 547180 bytes |
+| 子集 SHA-256 | `a3ef2ee31a0d36bd41b151306660ac6118bf217d57ed1882d5846c2cbb312d2e` |
+
+该子集及三 preset 资源 pack 仍来自 dirty 共享工作树。只有从同一 clean commit 重生成并构建真实平台 artifact、通过完整字体覆盖与最终包检查后，才能进入候选 artifact 清单。
 
 ## 2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包
 

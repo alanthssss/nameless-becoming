@@ -3,9 +3,9 @@ extends RefCounted
 
 ## Formal Journey-world solar-term catalog and exact-once progress ledger.
 ##
-## The legacy prototype also owns a 24-node stage table. This class deliberately
-## does not read it: the commercial Journey uses solar terms as short records of
-## work that actually happened, not as twenty-four reskinned levels.
+## The formal campaign unlocks one record after each matching level. The earlier
+## six-sortie Journey still calls record_return(), so both save generations can
+## be read while the title migrates to the twenty-four-level campaign.
 
 const CATALOG_PATH := "res://data/journey_solar_term_chronicles.json"
 const SAVE_SCHEMA_VERSION := 1
@@ -148,6 +148,26 @@ func record_return(return_kind: String, payload: Dictionary = {}) -> Array[Dicti
 		_rendered_records[term_id] = _render_record(String(entry.record), payload)
 		newly_unlocked.append(_resolved_entry(entry))
 	return newly_unlocked
+
+
+func record_level(term_id: String, payload: Dictionary = {}) -> Dictionary:
+	## Campaign progress is an exact catalog prefix. A replay may refresh its best
+	## time elsewhere, but it can never append or duplicate a chronicle entry.
+	_last_unlock_ids.clear()
+	if not catalog_valid or not _entry_by_id.has(term_id):
+		return {}
+	if _unlocked_set.has(term_id):
+		return {}
+	if _unlocked_ids.size() >= _entries.size():
+		return {}
+	var next_entry := _entries[_unlocked_ids.size()]
+	if String(next_entry.id) != term_id:
+		return {}
+	_unlocked_set[term_id] = true
+	_unlocked_ids.append(term_id)
+	_last_unlock_ids.append(term_id)
+	_rendered_records[term_id] = _render_record(String(next_entry.record), payload)
+	return _resolved_entry(next_entry)
 
 
 func unlocked_entries() -> Array[Dictionary]:

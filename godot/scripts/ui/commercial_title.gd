@@ -6,7 +6,7 @@ extends Node
 
 const PersistenceScript := preload("res://scripts/system/commercial_persistence.gd")
 const CommercialMenuScript := preload("res://scripts/ui/commercial_system_menu.gd")
-const JOURNEY_SCENE := preload("res://journey.tscn")
+const JOURNEY_SCENE := preload("res://campaign.tscn")
 const SPRING_GROUND := preload("res://assets/art/commercial/spring_world_ground_v1.png")
 const MAIN_HIVE := preload("res://assets/art/commercial/main_hive_exterior_v1.png")
 const PLAYER_BEE := preload("res://assets/art/commercial/player_bee_topdown_states_v1.png")
@@ -216,7 +216,14 @@ func _refresh_slot() -> void:
 	new_button.text = "重新开始新旅程" if file_present else "开始新旅程"
 	if can_continue:
 		var summary := persistence.progress_summary()
-		status_label.text = "主蜂巢检查点 · 巢中蜜 %d" % int(summary.get("reserve", 0))
+		if bool(summary.get("campaign_save", false)):
+			status_label.text = "主蜂巢检查点 · %d / %d 关 · 储备 %d" % [
+				int(summary.get("completed_count", 0)),
+				int(summary.get("total_count", 24)),
+				int(summary.get("reserve", 0)),
+			]
+		else:
+			status_label.text = "旧版四季记录 · 继续后从正式立春开始"
 		if bool(summary.get("recovered_from_backup", false)):
 			status_label.text += " · 已从安全备份恢复"
 	elif file_present:

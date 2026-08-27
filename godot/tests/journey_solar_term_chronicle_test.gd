@@ -10,7 +10,7 @@ const EXPECTED_NAMES := [
 	"立秋", "处暑", "白露", "秋分", "寒露", "霜降",
 	"立冬", "小雪", "大雪", "冬至", "小寒", "大寒",
 ]
-const EXPECTED_WORK := ["采蜜", "授粉", "搬运", "修补", "留种", "听声", "挡风", "协作"]
+const EXPECTED_WORK := ["采蜜", "授粉", "搬运", "修补", "留种", "听声", "挡风", "交接"]
 const FORBIDDEN_COPY := ["失律", "调律", "净化", "堕落", "预言", "命定", "真正身份", "三弦", "回声板", "校声", "校回声"]
 
 var failures: Array[String] = []
@@ -150,7 +150,7 @@ func run_test() -> void:
 	board.open_latest()
 	expect(board.is_open(), "巢内纪事入口无法打开回看面板")
 	expect(String(board.current_entry().name) == "大寒", "纪事面板没有默认翻到最新落成的一张")
-	expect("最冷这天" in board.title_label.text and "接货换班" in board.title_label.text, "纪事面板没有显示当前小事件标题")
+	expect("最后一墙" in board.title_label.text and "站稳" in board.title_label.text, "纪事面板没有显示当前小事件标题")
 	board.show_previous()
 	expect(String(board.current_entry().name) == "小寒", "纪事面板无法逐张回看")
 	board.close()

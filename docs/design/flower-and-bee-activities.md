@@ -5,6 +5,8 @@
 > 关联 / Related: `docs/design/enemy-phenology.md`、`docs/DESIGN_CONSENSUS.md`、`godot/data/seasons.json`、`godot/data/balance.json`  
 > 基线 / Baseline: 候选 MVP 0.9.4 + 四季机制全量实现
 
+> **2026-08-28 v3 边界修订**：第 1.1 节的授粉链仍是当前可追溯依据；第 2 节以后六花型、全国节令分布、“暖花／冰封花”、蚊虫争蜜、搬种子、旧 Boss／失律与冬花月份等均为历史设计草案，不是已确认生态事实，也不再是 360 项生产数据源。后续只按 [`ecology-and-apiculture-source-register.md`](ecology-and-apiculture-source-register.md) 的地域、主体、现代复核与游戏抽象合同重写；在重写前不得把表中数字或“现实生态”标签直接实现或用于宣传。
+
 ---
 
 ## 0. 摘要 / Summary

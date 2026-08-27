@@ -64,7 +64,7 @@ func check_runtime_control_fonts(failures: Array[String]) -> void:
 		return
 	if String(ProjectSettings.get_setting("gui/theme/custom_font", "")) != expected_font_path:
 		failures.append("项目级中文字体未配置为 gui/theme/custom_font")
-	for scene_path in ["res://main.tscn", "res://journey.tscn"]:
+	for scene_path in ["res://main.tscn", "res://journey.tscn", "res://campaign.tscn"]:
 		var scene := load(scene_path) as PackedScene
 		if scene == null:
 			failures.append("无法加载场景进行控件字体检查：%s" % scene_path)
