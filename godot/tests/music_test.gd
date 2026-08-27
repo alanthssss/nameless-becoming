@@ -1,10 +1,10 @@
 extends SceneTree
 
 const TRACK_PATHS := [
-	["res://assets/music/spring_explore.wav", "res://assets/music/spring_boss.wav"],
-	["res://assets/music/summer_explore.wav", "res://assets/music/summer_boss.wav"],
-	["res://assets/music/autumn_explore.wav", "res://assets/music/autumn_boss.wav"],
-	["res://assets/music/winter_explore.wav", "res://assets/music/winter_boss.wav"],
+	["res://assets/music/spring_explore.wav", "res://assets/music/spring_incident.wav"],
+	["res://assets/music/summer_explore.wav", "res://assets/music/summer_incident.wav"],
+	["res://assets/music/autumn_explore.wav", "res://assets/music/autumn_incident.wav"],
+	["res://assets/music/winter_explore.wav", "res://assets/music/winter_incident.wav"],
 ]
 const EXPECTED_DURATIONS := [
 	[27.692313, 25.945941],
@@ -47,6 +47,7 @@ func run_test() -> void:
 				director.enter_explore(family_index)
 			else:
 				director.enter_boss(family_index)
+				expect(director.mode == &"incident", "旧 Main 的 enter_boss 兼容入口没有迁移到 incident 音乐模式")
 			var expected_path: String = TRACK_PATHS[family_index][mode_index]
 			var actual_path: String = director.current_track_path()
 			expect(actual_path == expected_path, "音乐映射错误：期望 %s，实际 %s" % [expected_path, actual_path])
@@ -63,13 +64,13 @@ func run_test() -> void:
 				expect(stream.loop_mode == AudioStreamWAV.LOOP_FORWARD, "音乐未设置为向前循环：%s" % actual_path)
 				expect(stream.loop_begin == 0 and stream.loop_end > 0, "音乐循环区间无效：%s" % actual_path)
 				if mode_index == 1:
-					expect(is_equal_approx(director.player.pitch_scale, 1.0), "Boss 音乐不应再被全局降调：%s" % actual_path)
+					expect(is_equal_approx(director.player.pitch_scale, 1.0), "事故段音乐不应再被全局降调：%s" % actual_path)
 			var digest := FileAccess.get_sha256(actual_path)
 			expect(not digest.is_empty(), "无法计算音乐哈希：%s" % actual_path)
 			unique_paths[actual_path] = true
 			unique_hashes[digest] = actual_path
 
-	expect(unique_paths.size() == 8, "四季探索/Boss 应映射到 8 个不同路径，实际 %d 个" % unique_paths.size())
+	expect(unique_paths.size() == 8, "四季探索/事故段应映射到 8 个不同路径，实际 %d 个" % unique_paths.size())
 	expect(unique_hashes.size() == 8, "8 个音乐文件内容不应复用，实际只有 %d 个唯一哈希" % unique_hashes.size())
 
 	# Hashes prove only that bytes differ.  The durable analysis also gates the
@@ -97,20 +98,20 @@ func run_test() -> void:
 			expect(float(metrics.get("active_dynamic_range_db", 0.0)) >= float(thresholds.get("min_active_dynamic_range_db", 3.0)), "%s 缺乏呼吸和留白" % track_name)
 			if String(track_name).begins_with("autumn_"):
 				expect(int(metrics.get("longest_dropout_ms", 0)) >= int(thresholds.get("min_autumn_dropout_ms", 750)), "%s 缺少四小节段落重置留白" % track_name)
-		var similarities: Dictionary = report.get("same_season_explore_boss_cosine", {})
+		var similarities: Dictionary = report.get("same_season_explore_incident_cosine", {})
 		for season_name in similarities:
-			expect(float(similarities[season_name]) <= float(thresholds.get("max_same_season_cosine", 0.92)), "%s 探索/Boss 听感骨架仍过近" % season_name)
+			expect(float(similarities[season_name]) <= float(thresholds.get("max_same_season_cosine", 0.92)), "%s 探索/事故段听感骨架仍过近" % season_name)
 
 	director.enter_boss(3)
 	director.set_boss_tuning_progress(0)
-	expect(is_equal_approx(director.player.pitch_scale, 1.0), "Boss 调律 0 不应降低整曲音高")
+	expect(is_equal_approx(director.player.pitch_scale, 1.0), "事故段调律 0 不应降低整曲音高")
 	director.set_boss_tuning_progress(3)
-	expect(is_equal_approx(director.player.pitch_scale, 1.0), "Boss 调律完成不应依赖恢复全局音高")
+	expect(is_equal_approx(director.player.pitch_scale, 1.0), "事故段调律完成不应依赖恢复全局音高")
 
-	# Hive reuses the current family's exploration arrangement, never its Boss file.
+	# Hive reuses the current family's exploration arrangement, never its incident file.
 	director.enter_boss(2)
 	director.enter_hive()
-	expect(director.current_track_path() == TRACK_PATHS[2][0], "蜂巢状态错误复用了 Boss 音轨")
+	expect(director.current_track_path() == TRACK_PATHS[2][0], "蜂巢状态错误复用了事故段音轨")
 	expect(director.player.stream != null and director.player.stream.resource_path == TRACK_PATHS[2][0], "蜂巢状态未切回本季探索音轨")
 
 	# Existing callers may still invoke SoundFeedback.set_season during migration.

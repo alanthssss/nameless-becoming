@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bstp3epl2a0v2"
-path="res://.godot/imported/autumn_boss.wav-2c739d365c8e3f731dd63e477c06d06a.sample"
+path="res://.godot/imported/autumn_incident.wav-d489312e103663b870ca4726e936eda0.sample"
 
 [deps]
 
-source_file="res://assets/music/autumn_boss.wav"
-dest_files=["res://.godot/imported/autumn_boss.wav-2c739d365c8e3f731dd63e477c06d06a.sample"]
+source_file="res://assets/music/autumn_incident.wav"
+dest_files=["res://.godot/imported/autumn_incident.wav-d489312e103663b870ca4726e936eda0.sample"]
 
 [params]
 

@@ -9,33 +9,37 @@ const PollinationMechanicScript := preload("res://scripts/mechanics/pollination_
 const RelayHiveMechanicScript := preload("res://scripts/mechanics/relay_hive_mechanic.gd")
 const SoundFeedbackScript := preload("res://scripts/sound_feedback.gd")
 
-const FIELD_TEXTURE_PATH := "res://assets/art/launch/spring_field_v2.png"
-const FLOWER_COMMON_PATH := "res://assets/art/launch/flower_common_v1.png"
-const FLOWER_HIGH_PATH := "res://assets/art/launch/flower_high_value_v1.png"
-const HIVE_TEXTURE_PATH := "res://assets/art/launch/hive_city_entrance_v1.png"
-const COLONY_BEE_PATH := "res://assets/art/launch/player_bee_v1.png"
-const TEXTILE_OVERLAY := preload("res://assets/art/field_textile_overlay.svg")
-
+const FIELD_TEXTURE_PATH := "res://assets/art/commercial/spring_world_ground_v1.png"
+const FLOWER_STATES_PATH := "res://assets/art/commercial/flower_states_topdown_v1.png"
+const FLOWER_FRAME_SIZE := Vector2(256.0, 256.0)
+const HIVE_TEXTURE_PATH := "res://assets/art/commercial/main_hive_exterior_v1.png"
+const REST_HIVE_TEXTURE_PATH := "res://assets/art/commercial/rest_hive_exterior_v1.png"
+const COLONY_BEE_PATH := "res://assets/art/commercial/worker_bee_topdown_v1.png"
+const MENTOR_BEE_PATH := "res://assets/art/commercial/mentor_bee_topdown_v1.png"
 const WORLD_BOUNDS := Rect2(0.0, 0.0, 2140.0, 1180.0)
 const VIEWPORT_SIZE := Vector2(1280.0, 720.0)
 # The persistent HUD covers y=0..90 and x=1018..1280. The rotated 82×60 bee has
 # a 50.8px circumscribed radius, so the playable range reserves 51px around its
 # center even while turning. This keeps the full silhouette out of the HUD.
-const PLAYABLE_BOUNDS := Rect2(33.0, 123.0, 1812.0, 1024.0)
+const PLAYABLE_BOUNDS := Rect2(33.0, 123.0, 1734.0, 1024.0)
 const HUD_SAFE_RECT := Rect2(0.0, 90.0, 1018.0, 630.0)
 const BEE_VISUAL_SAFE_EXTENTS := Vector2(51.0, 51.0)
-const HIVE_RETURN_POS := Vector2(176.0, 570.0)
-const HIVE_ENTRY_AREA := Rect2(70.0, 490.0, 190.0, 145.0)
+const HIVE_RETURN_POS := Vector2(235.0, 455.0)
+const HIVE_ENTRY_AREA := Rect2(135.0, 355.0, 190.0, 150.0)
 const RELAY_POSITION := Vector2(1115.0, 575.0)
 const RETURN_BREEZE := Rect2(650.0, 880.0, 1300.0, 170.0)
 const CARRY_CAPACITY := 8
 const DELIVERY_GOAL := 6
 const HARVEST_INTERVAL := 0.42
 const DEPOSIT_DWELL := 0.78
+const STORY_BUMP_END := 1.05
+const STORY_PETAL_END := 2.15
+const STORY_DEMO_END := 4.45
 
 var journey_token := 0
 var starting_reserve := 0
 var sortie_count := 0
+var first_sortie := false
 var bee: BeePlayer
 var camera: Camera2D
 var sound: SoundFeedback
@@ -55,17 +59,26 @@ var completion_emitted := false
 var exhaustion_notice_shown := false
 var input_enabled := true
 var field_texture: Texture2D
-var flower_common_texture: Texture2D
-var flower_high_texture: Texture2D
+var flower_state_texture: Texture2D
+var flower_state_frames: Array[Texture2D] = []
 var hive_texture: Texture2D
+var rest_hive_texture: Texture2D
 var colony_bee_texture: Texture2D
+var mentor_bee_texture: Texture2D
 var _status_clock := 0.0
+var story_intro_active := false
+var story_intro_elapsed := 0.0
+var story_intro_phase := ""
+var mentor_demonstration_completed := false
+var mentor_story_position := Vector2.ZERO
 
 
 func configure(context: Dictionary) -> Error:
 	journey_token = int(context.get("journey_token", 0))
 	starting_reserve = maxi(0, int(context.get("reserve", 0)))
 	sortie_count = maxi(0, int(context.get("sortie_count", 0)))
+	first_sortie = bool(context.get("first_sortie", sortie_count <= 1))
+	sound = context.get("sound_feedback") as SoundFeedback
 	if journey_token <= 0:
 		return ERR_INVALID_DATA
 	return OK
@@ -73,20 +86,34 @@ func configure(context: Dictionary) -> Error:
 
 func _ready() -> void:
 	field_texture = _load_texture(FIELD_TEXTURE_PATH)
-	flower_common_texture = _load_texture(FLOWER_COMMON_PATH)
-	flower_high_texture = _load_texture(FLOWER_HIGH_PATH)
+	flower_state_texture = _load_texture(FLOWER_STATES_PATH)
+	if flower_state_texture != null:
+		for row in 2:
+			for column in 3:
+				var frame := AtlasTexture.new()
+				frame.atlas = flower_state_texture
+				frame.region = Rect2(
+					Vector2(float(column) * FLOWER_FRAME_SIZE.x, float(row) * FLOWER_FRAME_SIZE.y),
+					FLOWER_FRAME_SIZE
+				)
+				flower_state_frames.append(frame)
 	hive_texture = _load_texture(HIVE_TEXTURE_PATH)
+	rest_hive_texture = _load_texture(REST_HIVE_TEXTURE_PATH)
 	colony_bee_texture = _load_texture(COLONY_BEE_PATH)
+	mentor_bee_texture = _load_texture(MENTOR_BEE_PATH)
 
-	sound = SoundFeedbackScript.new()
-	add_child(sound)
+	if sound == null:
+		sound = SoundFeedbackScript.new()
+		add_child(sound)
 	bee = BeePlayerScript.new()
 	bee.max_energy = 120.0
 	bee.configure(0.9)
 	bee.set_movement_bounds(PLAYABLE_BOUNDS)
 	bee.reset_for_expedition(HIVE_RETURN_POS + Vector2(92.0, 0.0))
 	add_child(bee)
+	bee.sense_started.connect(_on_bee_sense_started)
 	bee.set_spring_launch_art(true)
+	bee.set_visual_load_ratio(0.0)
 
 	camera = Camera2D.new()
 	camera.name = "FieldCamera"
@@ -110,6 +137,8 @@ func _ready() -> void:
 		"energy_restore_per_second": 12.0,
 		"energy_cap_ratio": 0.65,
 	})
+	if first_sortie:
+		_start_story_intro()
 	_emit_status()
 	queue_redraw()
 
@@ -126,10 +155,10 @@ func _build_authored_route() -> void:
 		_flower(1, Vector2(455, 700), 1, 1, false),
 		_flower(2, Vector2(650, 320), 1, 0, false),
 		_flower(3, Vector2(760, 690), 1, 1, false),
-		_flower(4, Vector2(965, 330), 0, 0, false),
+		_flower(4, Vector2(830, 490), 0, 0, false),
 		_flower(5, Vector2(1015, 805), 0, 1, false),
 		_flower(6, Vector2(1660, 310), 4, 0, true),
-		_flower(7, Vector2(1815, 775), 4, 1, true),
+		_flower(7, Vector2(1770, 775), 4, 1, true),
 	]
 
 
@@ -157,7 +186,17 @@ func _process(delta: float) -> void:
 		_update_camera()
 		queue_redraw()
 		return
+	if story_intro_active:
+		bee.active = false
+		_update_story_intro(delta)
+		_update_camera()
+		if _status_clock <= 0.0:
+			_status_clock = 0.08
+			_emit_status()
+		queue_redraw()
+		return
 	bee.active = true
+	bee.set_visual_load_ratio(float(carried) / float(CARRY_CAPACITY))
 	pollination.process(delta)
 	_handle_actions(delta)
 	_update_relay(delta)
@@ -179,11 +218,57 @@ func set_input_enabled(enabled: bool) -> void:
 	input_enabled = enabled
 	if bee == null:
 		return
-	bee.active = enabled and not completion_emitted
+	bee.active = enabled and not completion_emitted and not story_intro_active
 	if not enabled:
 		bee.velocity = Vector2.ZERO
 		bee.has_target = false
 		harvest_clock = 0.0
+
+
+func _start_story_intro() -> void:
+	story_intro_active = true
+	story_intro_elapsed = 0.0
+	story_intro_phase = "bumped_flower"
+	mentor_demonstration_completed = false
+	mentor_story_position = bee.position + Vector2(170.0, -55.0)
+	bee.set_story_petal(true)
+	message = "新蜂一头飞进花里。再飞出来时，头上多了一片粉色花片。"
+
+
+func _update_story_intro(delta: float) -> void:
+	if not story_intro_active:
+		return
+	story_intro_elapsed += maxf(0.0, delta)
+	if story_intro_elapsed < STORY_BUMP_END:
+		story_intro_phase = "bumped_flower"
+		mentor_story_position = bee.position + Vector2(175.0, -55.0)
+		message = "新蜂一头飞进花里。再飞出来时，头上多了一片粉色花片。"
+	elif story_intro_elapsed < STORY_PETAL_END:
+		story_intro_phase = "petal_removed"
+		mentor_story_position = bee.position + Vector2(58.0, -24.0)
+		bee.set_story_petal(false)
+		message = "老师傅停在身边，把花片取下来：先看一次。"
+	elif story_intro_elapsed < STORY_DEMO_END:
+		story_intro_phase = "mentor_demonstration"
+		# The mentor traces donor -> matching stigma in presentation space only.
+		# No flower dictionary or PollinationMechanic state is touched here.
+		var ratio := clampf(
+			(story_intro_elapsed - STORY_PETAL_END) / (STORY_DEMO_END - STORY_PETAL_END),
+			0.0,
+			1.0
+		)
+		var donor_position := Vector2(flowers[0].position)
+		var receptive_position := Vector2(flowers[4].position)
+		mentor_story_position = donor_position.lerp(receptive_position, ratio)
+		message = "老师傅贴过带散粉的花心，再把同形散粉送到第二朵花。花蜜一点没动。"
+	else:
+		story_intro_active = false
+		story_intro_phase = "first_job"
+		mentor_demonstration_completed = true
+		bee.set_story_petal(false)
+		bee.active = input_enabled and not completion_emitted
+		message = "老师傅往后让了让：这回你来。两朵花心和 6 滴花蜜都在等。"
+	_emit_status()
 
 
 func _handle_actions(delta: float) -> void:
@@ -205,7 +290,6 @@ func _handle_actions(delta: float) -> void:
 			pass
 		elif flower_index < 0:
 			bee.trigger_sense()
-			sound.play_cue("sense")
 			message = "风里有散粉、花心和回家的方向。"
 
 	if Input.is_action_pressed("action") and flower_index >= 0 and bee.energy > 0.0:
@@ -230,6 +314,11 @@ func _handle_actions(delta: float) -> void:
 				message = "一滴蜜进了蜜囊。"
 	else:
 		harvest_clock = 0.0
+
+
+func _on_bee_sense_started() -> void:
+	if sound != null:
+		sound.play_cue("sense")
 
 
 func nearest_flower(radius: float) -> int:
@@ -312,6 +401,7 @@ func _complete_journey() -> void:
 	bee.active = false
 	message = "都送到了。巢门里面有人接着。"
 	journey_completed.emit({
+		"journey_kind": JourneyState.SPRING_ROUTE,
 		"journey_token": journey_token,
 		"deposit": delivered,
 		"pollinations": int(pollination.pollinated_flowers),
@@ -383,6 +473,7 @@ func status_snapshot() -> Dictionary:
 	var pollinated := int(pollination.pollinated_flowers) if pollination != null else 0
 	var relay_state := relay_hive.status_id()
 	return {
+		"journey_kind": JourneyState.SPRING_ROUTE,
 		"area": area_name_for(bee.position) if bee != null else "春野",
 		"carried": carried,
 		"capacity": CARRY_CAPACITY,
@@ -394,6 +485,9 @@ func status_snapshot() -> Dictionary:
 		"pollinated": mini(pollinated, 2),
 		"pollination_goal": 2,
 		"relay_state": relay_state,
+		"story_phase": story_intro_phase,
+		"story_intro_active": story_intro_active,
+		"mentor_demonstration_complete": mentor_demonstration_completed,
 		"message": message,
 	}
 
@@ -421,46 +515,25 @@ func _draw() -> void:
 		_draw_flower(flower)
 	if pollination != null:
 		pollination.draw()
+	_draw_story_intro()
 	_draw_navigation()
 	if flash > 0.0:
 		draw_rect(WORLD_BOUNDS, Color("fff0a0", flash * 0.18))
 
 
 func _draw_ground() -> void:
-	draw_rect(WORLD_BOUNDS, Color("a9c78a"))
 	if field_texture != null:
-		# One continuous source spans the whole route. Its aspect is close to the
-		# authored 2×2 world, avoiding the repeated landmarks and hard seams that a
-		# tiled prototype produced.
-		draw_texture_rect(field_texture, WORLD_BOUNDS, false, Color(0.92, 1.0, 0.90, 0.78))
+		# The commercial ground master already carries the route hierarchy and the
+		# single light/value system. Keep it unfiltered by prototype color bands.
+		draw_texture_rect(field_texture, WORLD_BOUNDS, false)
 	else:
 		draw_rect(WORLD_BOUNDS, Color("b6d391"))
-	draw_texture_rect(TEXTILE_OVERLAY, WORLD_BOUNDS, false, Color(1, 1, 1, 0.12))
-	draw_rect(Rect2(0, 0, 710, WORLD_BOUNDS.size.y), Color("f4e4ad", 0.035))
-	draw_rect(Rect2(710, 0, 710, WORLD_BOUNDS.size.y), Color("8fc596", 0.035))
-	draw_rect(Rect2(1420, 0, 720, WORLD_BOUNDS.size.y), Color("e1b96f", 0.045))
-	# Low-detail patches mark distance without filling the enlarged map with more
-	# objects than the player can read.
-	for patch_index in 28:
-		var x := 300.0 + fmod(float(patch_index * 173), 1760.0)
-		var y := 140.0 + fmod(float(patch_index * 257), 880.0)
-		draw_circle(Vector2(x, y), 34.0 + float(patch_index % 3) * 14.0, Color("688b62", 0.10))
 
 
 func _draw_routes() -> void:
-	var outbound := PackedVector2Array([
-		Vector2(225, 565), Vector2(480, 505), Vector2(720, 380),
-		Vector2(990, 360), Vector2(1220, 500), Vector2(1510, 370), Vector2(1810, 320)
-	])
-	for index in range(outbound.size() - 1):
-		draw_line(outbound[index], outbound[index + 1], Color("a88958", 0.16), 28.0)
-		draw_line(outbound[index], outbound[index + 1], Color("eadcaf", 0.20), 3.0)
-	var return_route := PackedVector2Array([
-		Vector2(1820, 790), Vector2(1510, 950), Vector2(1170, 955),
-		Vector2(850, 960), Vector2(560, 865), Vector2(270, 615)
-	])
-	for index in range(return_route.size() - 1):
-		draw_line(return_route[index], return_route[index + 1], Color("967b54", 0.14), 24.0)
+	# The authored ground already contains the outbound and return paths. Only the
+	# earned tailwind remains animated; permanent debug-like route paint would
+	# compete with flowers and make the commercial background look double-drawn.
 	if pollination != null and pollination.can_complete():
 		for stitch in 18:
 			var ratio := float(stitch) / 17.0
@@ -471,20 +544,35 @@ func _draw_routes() -> void:
 func _draw_hive() -> void:
 	var activity := 0.28 + 0.16 * sin(elapsed * 2.2)
 	draw_colored_polygon(PackedVector2Array([
-		Vector2(60, 505), Vector2(220, 505), Vector2(280, 655), Vector2(48, 655)
+		Vector2(118, 355), Vector2(328, 355), Vector2(385, 520), Vector2(82, 520)
 	]), Color("f3d47a", 0.18 + activity * 0.16))
 	if hive_texture != null:
-		draw_texture_rect(hive_texture, Rect2(32, 365, 210, 258), false)
+		draw_texture_rect(hive_texture, Rect2(40, 130, 330, 412), false)
 	else:
-		draw_rect(Rect2(46, 390, 175, 220), Color("b99058"))
+		draw_rect(Rect2(62, 180, 285, 340), Color("b99058"))
 	for worker in 3:
-		var worker_pos := Vector2(205.0 + sin(elapsed * 1.8 + worker) * 28.0, 520.0 + float(worker) * 34.0)
+		var worker_pos := Vector2(308.0 + sin(elapsed * 1.8 + worker) * 32.0, 430.0 + float(worker) * 31.0)
 		_draw_worker(worker_pos, false)
 
 
 func _draw_relay_hive() -> void:
 	var active := bool(relay_hive.active)
 	var pos := RELAY_POSITION
+	if rest_hive_texture != null:
+		var tint := Color.WHITE if active else Color(0.72, 0.73, 0.68, 0.94)
+		draw_texture_rect(
+			rest_hive_texture,
+			Rect2(pos + Vector2(-112.0, -88.0), Vector2(224.0, 168.0)),
+			false,
+			tint
+		)
+		# A waiting worker and the open landing board communicate rest availability;
+		# the shelter never gains a literal fire or universal checkpoint aura.
+		_draw_worker(pos + Vector2(70.0, 35.0 + sin(elapsed * 1.7) * 4.0), false)
+		if active:
+			for frame in 3:
+				draw_circle(pos + Vector2(-22.0 + float(frame) * 22.0, 3.0), 4.0, Color("f3cf68", 0.86))
+		return
 	draw_colored_polygon(PackedVector2Array([
 		pos + Vector2(-70, 42), pos + Vector2(68, 42),
 		pos + Vector2(92, 88), pos + Vector2(-94, 88)
@@ -514,25 +602,34 @@ func _draw_relay_hive() -> void:
 
 
 func _draw_worker(position: Vector2, mentor: bool) -> void:
-	if colony_bee_texture == null:
+	var texture := mentor_bee_texture if mentor else colony_bee_texture
+	if texture == null:
 		draw_circle(position, 8.0, Color("e2bc49"))
 		return
 	draw_set_transform(position, sin(elapsed * 2.3 + position.x) * 0.12, Vector2(0.42, 0.42))
-	draw_texture_rect(colony_bee_texture, Rect2(-41, -30, 82, 60), false, Color("c6d8e8") if mentor else Color.WHITE)
+	draw_texture_rect(texture, Rect2(-50, -42, 100, 84), false)
 	draw_set_transform(Vector2.ZERO)
 
 
 func _draw_flower(flower: Dictionary) -> void:
 	var pos := Vector2(flower.position)
 	var large := bool(flower.get("large_bloom", false))
-	var texture := flower_high_texture if large else flower_common_texture
+	var texture: Texture2D = null
+	if flower_state_frames.size() == 6:
+		var row := clampi(int(flower.get("visual_variant", 0)), 0, 1)
+		var column := 0
+		if bool(flower.get("seed_setting", false)) or bool(flower.get("pollinated", false)):
+			column = 2
+		elif bool(flower.get("receptive_stigma", false)):
+			column = 1
+		texture = flower_state_frames[row * 3 + column]
 	var alive := int(flower.get("nectar", 0)) > 0 or bool(flower.get("receptive_stigma", false))
 	var alpha := 1.0 if alive else 0.42
 	draw_set_transform(pos, 0.0, Vector2(1.0, 0.34))
 	draw_circle(Vector2.ZERO, 23.0 if large else 17.0, Color("26352a", 0.20 * alpha))
 	draw_set_transform(Vector2.ZERO)
 	if texture != null:
-		var height := 92.0 if large else 70.0
+		var height := 104.0 if large else 82.0
 		var ratio := float(texture.get_width()) / maxf(1.0, float(texture.get_height()))
 		var size := Vector2(height * ratio, height)
 		draw_texture_rect(texture, Rect2(pos - Vector2(size.x * 0.5, size.y * 0.42), size), false, Color(1, 1, 1, alpha))
@@ -551,3 +648,39 @@ func _draw_navigation() -> void:
 		draw_dashed_line(bee.position, HIVE_RETURN_POS, Color("f8dfa1", 0.46), 3.0, 18.0)
 		if not relay_hive.active:
 			draw_dashed_line(bee.position, RELAY_POSITION, Color("d8c58d", 0.34), 2.0, 16.0)
+
+
+func _draw_story_intro() -> void:
+	if not story_intro_active:
+		return
+	if story_intro_phase == "mentor_demonstration":
+		var donor_position := Vector2(flowers[0].position)
+		var receptive_position := Vector2(flowers[4].position)
+		draw_dashed_line(donor_position, receptive_position, Color("f7e2a6", 0.62), 3.0, 18.0)
+		var route_ratio := clampf(
+			(story_intro_elapsed - STORY_PETAL_END) / (STORY_DEMO_END - STORY_PETAL_END),
+			0.0,
+			1.0
+		)
+		var pollen_position := donor_position.lerp(receptive_position, clampf(route_ratio + 0.08, 0.0, 1.0))
+		draw_circle(pollen_position + Vector2(0, -22), 5.0, Color("f5cf54"))
+	_draw_story_mentor(mentor_story_position)
+
+
+func _draw_story_mentor(position: Vector2) -> void:
+	if mentor_bee_texture != null:
+		draw_set_transform(position, -0.12)
+		draw_texture_rect(mentor_bee_texture, Rect2(-58, -48, 116, 96), false)
+		draw_set_transform(Vector2.ZERO)
+		return
+	draw_set_transform(position, -0.12)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-10, -6), Vector2(-31, -27), Vector2(2, -23)
+	]), Color("d4e0db", 0.78))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-10, 6), Vector2(-31, 27), Vector2(2, 23)
+	]), Color("d4e0db", 0.78))
+	draw_circle(Vector2(-8, 0), 17.0, Color("c99f3f"))
+	draw_circle(Vector2(14, 0), 12.0, Color("806a3d"))
+	draw_line(Vector2(-19, -9), Vector2(-19, 9), Color("51442f"), 4.0)
+	draw_set_transform(Vector2.ZERO)

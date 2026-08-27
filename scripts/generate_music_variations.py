@@ -41,7 +41,7 @@ class TrackSpec:
     bars: int
     centre_degree: int
     description: str
-    boss: bool = False
+    incident: bool = False
 
     @property
     def quarter_beats_per_bar(self) -> float:
@@ -61,45 +61,45 @@ TRACKS = {
         "spring_explore", 104.0, 4, 4, 12, 2,
         "wood-electronic chamber folk, 3+3+2 pulse and sparse synthesized dizi turns",
     ),
-    "spring_boss": TrackSpec(
-        "spring_boss", 148.0, 4, 4, 16, 2,
+    "spring_incident": TrackSpec(
+        "spring_incident", 148.0, 4, 4, 16, 2,
         "wing-beat breakbeat with clipped spring cadences", True,
     ),
     "summer_explore": TrackSpec(
         "summer_explore", 116.0, 4, 4, 12, 3,
         "syncopated funk with hocketed gathering motif",
     ),
-    "summer_boss": TrackSpec(
-        "summer_boss", 172.0, 4, 4, 16, 3,
+    "summer_incident": TrackSpec(
+        "summer_incident", 172.0, 4, 4, 16, 3,
         "stop-time punk with clipped synthesized dizi punctuation", True,
     ),
     "autumn_explore": TrackSpec(
         "autumn_explore", 124.0, 4, 4, 16, 1,
         "amber-circuit electro-funk with antiphonal stepped hooks, sparse seed pickups and four-bar air gaps",
     ),
-    "autumn_boss": TrackSpec(
-        "autumn_boss", 128.0, 4, 4, 16, 1,
+    "autumn_incident": TrackSpec(
+        "autumn_incident", 128.0, 4, 4, 16, 1,
         "post-punk dub lure with finite echo taps and stop-time industrial counterphrases", True,
     ),
     "winter_explore": TrackSpec(
         "winter_explore", 108.0, 6, 8, 16, 4,
         "warm sparse six-eight pulse with two synthesized xiao-like breaths (dotted-quarter = 72)",
     ),
-    "winter_boss": TrackSpec(
-        "winter_boss", 96.0, 4, 4, 12, 4,
+    "winter_incident": TrackSpec(
+        "winter_incident", 96.0, 4, 4, 12, 4,
         "half-time rock with charge, silence and collision", True,
     ),
 }
 
 MACRO_GAINS = {
     "spring_explore": (0.72, 1.00, 0.84),
-    "spring_boss": (0.74, 0.94, 1.00, 0.80),
+    "spring_incident": (0.74, 0.94, 1.00, 0.80),
     "summer_explore": (0.76, 1.00, 0.86),
-    "summer_boss": (0.84, 1.00, 0.76, 0.94),
+    "summer_incident": (0.84, 1.00, 0.76, 0.94),
     "autumn_explore": (0.84, 1.00, 0.90, 0.82),
-    "autumn_boss": (0.88, 1.00, 0.94, 0.84),
+    "autumn_incident": (0.88, 1.00, 0.94, 0.84),
     "winter_explore": (0.66, 0.82, 1.00, 0.74),
-    "winter_boss": (0.74, 1.00, 0.84),
+    "winter_incident": (0.74, 1.00, 0.84),
 }
 
 PEAK_TARGETS = {
@@ -107,10 +107,10 @@ PEAK_TARGETS = {
     "summer_explore": 0.80,
     "autumn_explore": 0.70,
     "winter_explore": 0.62,
-    "spring_boss": 0.86,
-    "summer_boss": 0.86,
-    "autumn_boss": 0.76,
-    "winter_boss": 0.86,
+    "spring_incident": 0.86,
+    "summer_incident": 0.86,
+    "autumn_incident": 0.76,
+    "winter_incident": 0.86,
 }
 
 # These two roles were selected in a dedicated direction gate.  Loudness is
@@ -118,14 +118,14 @@ PEAK_TARGETS = {
 # not win the final A/B merely because it was rendered hotter.
 AUTUMN_LOUDNESS_TARGETS = {
     "autumn_explore": -17.3,
-    "autumn_boss": -18.7,
+    "autumn_incident": -18.7,
 }
 
 # A machine-readable arrangement contract keeps the selected hierarchy honest:
 # Z's post-punk/dub backbone is present in all 16 bars and receives nine full
 # bars; T is a seven-bar upper counterphrase, including only the final bar of
 # the closure.  Tests import this contract instead of trusting prose comments.
-AUTUMN_BOSS_STRUCTURE = {
+AUTUMN_INCIDENT_STRUCTURE = {
     "z_backbone_bars": tuple(range(16)),
     "z_full_bars": (0, 1, 2, 3, 8, 10, 12, 13, 14),
     "t_counter_bars": (4, 5, 6, 7, 9, 11, 15),
@@ -515,7 +515,7 @@ def render_spring_explore(spec: TrackSpec) -> StereoBuffer:
     return buffer
 
 
-def render_spring_boss(spec: TrackSpec) -> StereoBuffer:
+def render_spring_incident(spec: TrackSpec) -> StereoBuffer:
     buffer = StereoBuffer(round(spec.duration * RATE))
     clipped = (2, 3, 4)
     for bar in range(spec.bars):
@@ -580,7 +580,7 @@ def render_summer_explore(spec: TrackSpec) -> StereoBuffer:
     return buffer
 
 
-def render_summer_boss(spec: TrackSpec) -> StereoBuffer:
+def render_summer_incident(spec: TrackSpec) -> StereoBuffer:
     buffer = StereoBuffer(round(spec.duration * RATE))
     jump_motif = (3, 6, 4, 7, 5)
     for bar in range(spec.bars):
@@ -690,7 +690,7 @@ def render_autumn_explore(spec: TrackSpec) -> StereoBuffer:
     return mix
 
 
-def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
+def render_autumn_incident(spec: TrackSpec) -> StereoBuffer:
     mix = StereoBuffer(round(spec.duration * RATE))
     drums = StereoBuffer(mix.frames)
     drive = StereoBuffer(mix.frames)
@@ -710,8 +710,8 @@ def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
         base = bar_start(spec, bar)
         section = bar // 4
         stop_after = section_drop[section] if bar % 4 == 3 else 4.0
-        z_full = bar in AUTUMN_BOSS_STRUCTURE["z_full_bars"]
-        t_counter = bar in AUTUMN_BOSS_STRUCTURE["t_counter_bars"]
+        z_full = bar in AUTUMN_INCIDENT_STRUCTURE["z_full_bars"]
+        t_counter = bar in AUTUMN_INCIDENT_STRUCTURE["t_counter_bars"]
         root = roots[bar]
 
         if z_full:
@@ -764,7 +764,7 @@ def render_autumn_boss(spec: TrackSpec) -> StereoBuffer:
                     add_autumn_voice(drive, spec, base + step, 0.30, note, 0.235,
                                      "wire_pick", 6250 + bar * 8 + round(step * 2), pan)
 
-        if bar in AUTUMN_BOSS_STRUCTURE["dub_send_bars"]:
+        if bar in AUTUMN_INCIDENT_STRUCTURE["dub_send_bars"]:
             chord = (50, 57, 62) if bar in {0, 8, 12} else (53, 60, 65)
             add_autumn_dub_reply(effects, spec, base + 0.25, chord, 0.255,
                                  6400 + bar, base + stop_after)
@@ -837,7 +837,7 @@ def render_winter_explore(spec: TrackSpec) -> StereoBuffer:
     return buffer
 
 
-def render_winter_boss(spec: TrackSpec) -> StereoBuffer:
+def render_winter_incident(spec: TrackSpec) -> StereoBuffer:
     buffer = StereoBuffer(round(spec.duration * RATE))
     for bar in range(spec.bars):
         base = bar_start(spec, bar)
@@ -871,13 +871,13 @@ def render_winter_boss(spec: TrackSpec) -> StereoBuffer:
 
 RENDERERS = {
     "spring_explore": render_spring_explore,
-    "spring_boss": render_spring_boss,
+    "spring_incident": render_spring_incident,
     "summer_explore": render_summer_explore,
-    "summer_boss": render_summer_boss,
+    "summer_incident": render_summer_incident,
     "autumn_explore": render_autumn_explore,
-    "autumn_boss": render_autumn_boss,
+    "autumn_incident": render_autumn_incident,
     "winter_explore": render_winter_explore,
-    "winter_boss": render_winter_boss,
+    "winter_incident": render_winter_incident,
 }
 
 
@@ -1024,7 +1024,7 @@ def render_track(name: str) -> Path:
     apply_macro_dynamics(buffer, spec)
     if name == "autumn_explore":
         saturate_mix(buffer, 1.70)
-    elif name == "autumn_boss":
+    elif name == "autumn_incident":
         saturate_mix(buffer, 1.55)
     finish_mix(buffer, spec)
     if name in AUTUMN_LOUDNESS_TARGETS:

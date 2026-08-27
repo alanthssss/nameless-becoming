@@ -2,7 +2,7 @@
 set -eu
 
 project_dir=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
-archive="$project_dir/builds/NamelessBecoming-macOS.zip"
+archive="$project_dir/builds/SeeYouAtTheHive-macOS.zip"
 staging=$(mktemp -d)
 trap 'rm -rf "$staging"' EXIT
 

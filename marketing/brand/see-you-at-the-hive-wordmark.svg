@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img" aria-labelledby="title description">
+  <title id="title">一会儿巢里见 · See You at the Hive</title>
+  <description id="description">深绿与蜂蜜金构成的中英双语商业候选字标。</description>
+  <defs>
+    <style>
+      .cn { font-family: "Noto Sans CJK SC", "PingFang SC", sans-serif; font-size: 190px; font-weight: 700; letter-spacing: 12px; }
+      .en { font-family: "Noto Sans CJK SC", "Avenir Next", sans-serif; font-size: 54px; font-weight: 700; letter-spacing: 19px; }
+    </style>
+  </defs>
+  <path d="M105 365 C330 438 612 446 825 377 C1018 315 1219 311 1491 382" fill="none" stroke="#dcb95a" stroke-width="18" stroke-linecap="round"/>
+  <path d="M1320 352 l24 -14 l24 14 v28 l-24 14 l-24 -14z" fill="#dcb95a"/>
+  <path d="M1374 365 l20 -12 l20 12 v24 l-20 12 l-20 -12z" fill="#dcb95a" opacity=".72"/>
+  <text class="cn" x="92" y="255" fill="#243d33">一会儿巢里见</text>
+  <text class="en" x="105" y="455" fill="#435e50">SEE YOU AT THE HIVE</text>
+</svg>

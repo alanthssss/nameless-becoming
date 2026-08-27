@@ -28,6 +28,7 @@ const MentorTutorialScript := preload("res://scripts/tutorial/mentor_tutorial.gd
 const EvadeRulesScript := preload("res://scripts/mechanics/evade_rules.gd")
 const EvadeInputControllerScript := preload("res://scripts/player/evade_input_controller.gd")
 const JOURNEY_SCENE := preload("res://journey.tscn")
+const CommercialMenuScript := preload("res://scripts/ui/commercial_system_menu.gd")
 const FLOWER_COMMON_TEXTURE := preload("res://assets/art/flower_textile_common.svg")
 const FLOWER_HIGH_VALUE_TEXTURE := preload("res://assets/art/flower_textile_high_value.svg")
 const HIVE_ENTRANCE_TEXTURE := preload("res://assets/art/hive_textile_entrance.svg")
@@ -106,6 +107,7 @@ var extra_nectar := 0
 var elapsed := 0.0
 var run_elapsed := 0.0
 var shake := 0.0
+var commercial_screen_shake_enabled := true
 var flash := 0.0
 var message := "飞向花朵，采蜜后亲自返回左侧蜂巢。"
 var action_hold_time := 0.0
@@ -183,6 +185,11 @@ var overlay_body: Label
 var overlay_button: Button
 var secondary_link: Button
 var build_provenance_label: Label
+var title_settings_button: Button
+var title_credits_button: Button
+var title_exit_button: Button
+var commercial_system_menu: CommercialSystemMenu
+var new_journey_confirmation_armed := false
 var upgrade_buttons: Array[Button] = []
 # 历史信息是「持久状态」（跨 run 的轮回计数 + 最远记录），
 # 属于 HUD 侧栏常驻元素 runs_meter，不寄生在 overlay 弹窗里——
@@ -332,6 +339,17 @@ func _ready() -> void:
 	add_child(music)
 	music.set_enabled(save_manager.sound_enabled)
 	build_interface()
+	var commercial_persistence := _commercial_persistence()
+	if commercial_persistence != null:
+		commercial_system_menu = CommercialMenuScript.new()
+		commercial_system_menu.name = "CommercialSystemMenu"
+		commercial_system_menu.configure(commercial_persistence)
+		add_child(commercial_system_menu)
+		commercial_system_menu.quit_requested.connect(func(): get_tree().quit())
+		commercial_system_menu.menu_closed.connect(_on_title_system_menu_closed)
+		commercial_persistence.settings_changed.connect(_apply_title_commercial_settings)
+		commercial_persistence.apply_runtime_settings()
+		_apply_title_commercial_settings(commercial_persistence.settings_snapshot())
 	get_viewport().gui_focus_changed.connect(_on_gui_focus_changed)
 	connect_overlay_focus_recovery()
 	season_mechanics = SeasonMechanicsScript.new()
@@ -726,8 +744,8 @@ func build_interface() -> void:
 	secondary_link = Button.new()
 	secondary_link.flat = true
 	secondary_link.text = ""
-	secondary_link.position = Vector2(334, 412)
-	secondary_link.size = Vector2(300, 28)
+	secondary_link.position = Vector2(334, 404)
+	secondary_link.size = Vector2(300, 44)
 	secondary_link.add_theme_font_size_override("font_size", 13)
 	secondary_link.add_theme_color_override("font_color", Color("a8aa90"))
 	secondary_link.add_theme_color_override("font_hover_color", Color("fff8d9"))
@@ -735,7 +753,28 @@ func build_interface() -> void:
 	secondary_link.pressed.connect(on_secondary_link)
 	secondary_link.visible = false
 	overlay.add_child(secondary_link)
-	build_provenance_label = make_label(overlay, build_provenance_text(), Vector2(190, 492), Vector2(590, 20), 11, Color("89978b"))
+	title_settings_button = Button.new()
+	title_settings_button.text = "设置"
+	title_settings_button.position = Vector2(280, 452)
+	title_settings_button.size = Vector2(130, 44)
+	title_settings_button.pressed.connect(_open_title_settings)
+	title_settings_button.visible = false
+	overlay.add_child(title_settings_button)
+	title_credits_button = Button.new()
+	title_credits_button.text = "制作人员与许可"
+	title_credits_button.position = Vector2(420, 452)
+	title_credits_button.size = Vector2(180, 44)
+	title_credits_button.pressed.connect(_open_title_credits)
+	title_credits_button.visible = false
+	overlay.add_child(title_credits_button)
+	title_exit_button = Button.new()
+	title_exit_button.text = "退出游戏"
+	title_exit_button.position = Vector2(610, 452)
+	title_exit_button.size = Vector2(130, 44)
+	title_exit_button.pressed.connect(func(): get_tree().quit())
+	title_exit_button.visible = false
+	overlay.add_child(title_exit_button)
+	build_provenance_label = make_label(overlay, build_provenance_text(), Vector2(190, 512), Vector2(590, 18), 10, Color("89978b"))
 	build_provenance_label.name = "BuildProvenanceLabel"
 	build_provenance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	for spec in [["全屏", toggle_fullscreen], ["声音", toggle_sound], ["退出", func(): get_tree().quit()]]:
@@ -835,15 +874,34 @@ func pulse_action(action: String) -> void:
 
 func show_intro() -> void:
 	phase = "intro"
+	new_journey_confirmation_armed = false
 	bee.active = false
 	overlay.visible = true
 	overlay_title.text = "一会儿巢里见"
 	overlay_body.text = "花田有事，搭把翅膀。\n飞一圈，巢里见。"
-	overlay_button.text = "开始这趟旅程"
+	var commercial_persistence := _commercial_persistence()
+	var save_file_present := commercial_persistence != null and commercial_persistence.progress_file_exists()
+	var can_continue := commercial_persistence != null and commercial_persistence.has_progress()
+	overlay_button.disabled = save_file_present and not can_continue
+	if can_continue:
+		overlay_button.text = "继续旅程"
+	elif save_file_present:
+		overlay_button.text = "旧存档暂时无法载入"
+		overlay_body.text += "\n这个版本不会覆盖它；可更新游戏，或在下方明确清除。"
+	else:
+		overlay_button.text = "开始新旅程"
 	overlay_button.visible = true
 	set_upgrade_buttons_visible(false)
 	set_pause_system_controls_visible(false)
-	set_secondary_link("或者退出游戏", true)
+	set_secondary_link("清除存档并开始新旅程" if save_file_present else "", save_file_present)
+	if title_settings_button != null:
+		title_settings_button.visible = true
+		title_credits_button.visible = true
+		title_exit_button.visible = true
+	if can_continue:
+		var summary := commercial_persistence.progress_summary()
+		if bool(summary.get("ok", false)):
+			overlay_body.text += "\n巢中蜜 %d · 从主蜂巢继续" % int(summary.get("reserve", 0))
 	focus_overlay_primary()
 	refresh_runs_meter()
 
@@ -928,6 +986,9 @@ func _on_gui_focus_changed(control: Control) -> void:
 	queue_overlay_focus_restore()
 
 func start_game() -> void:
+	for title_control in [title_settings_button, title_credits_button, title_exit_button]:
+		if title_control != null:
+			title_control.visible = false
 	hive_lives = 3
 	stage_index = 0
 	lost_from_phase = "playing"
@@ -1185,6 +1246,15 @@ func on_overlay_button() -> void:
 			# journey. Embedded regression fixtures intentionally keep the legacy loop
 			# reachable through start_game() without replacing their SceneTree root.
 			if get_tree().current_scene == self:
+				var commercial_persistence := _commercial_persistence()
+				if commercial_persistence != null:
+					var save_file_present := commercial_persistence.progress_file_exists()
+					var can_continue := commercial_persistence.has_progress()
+					if save_file_present and not can_continue:
+						show_intro()
+						return
+					var mode := "continue" if can_continue else "new"
+					commercial_persistence.request_journey_launch(mode)
 				get_tree().change_scene_to_packed(JOURNEY_SCENE)
 			else:
 				start_game()
@@ -2346,6 +2416,22 @@ func on_secondary_link() -> void:
 	# boss_loss 已被 on_overlay_button 路由，不允许用此函数逃避重玩。
 	if phase not in ["intro", "won", "lost", "paused"]:
 		return
+	if phase == "intro" and get_tree().current_scene == self:
+		var commercial_persistence := _commercial_persistence()
+		if commercial_persistence != null and commercial_persistence.progress_file_exists():
+			if not new_journey_confirmation_armed:
+				new_journey_confirmation_armed = true
+				secondary_link.text = "再按一次：清除旧旅程"
+				overlay_body.text = "旧旅程会被清除；声音、显示与无障碍设置会保留。\n若不想清除，请选择继续或按 Esc 离开。"
+				secondary_link.grab_focus()
+				return
+			var delete_error := commercial_persistence.delete_progress()
+			if delete_error != OK:
+				overlay_body.text = "旧旅程没有安全清除（错误 %d）。没有开始新旅程。" % delete_error
+				return
+			commercial_persistence.request_journey_launch("new")
+			get_tree().change_scene_to_packed(JOURNEY_SCENE)
+			return
 	# Web 平台浏览器拦截主动关闭窗口：玩家已主动点「或者退出游戏」时，
 	# 直接调 quit() 让浏览器兜底拦截（关 tab 即可离开），避免重复弹窗干扰。
 	get_tree().quit()
@@ -3126,6 +3212,10 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and commercial_system_menu != null and commercial_system_menu.is_open():
+		commercial_system_menu.request_cancel()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("ui_cancel"):
 		# overlay 阶段 Esc 路由：
 		# boss_loss = 鼓励再试（等同 Enter，触发再入节令）
@@ -3133,7 +3223,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		# playing/boss = 暂停
 		if phase == "boss_loss":
 			on_overlay_button()
-		elif phase in ["intro", "won", "lost", "paused"]:
+		elif phase == "intro":
+			get_tree().quit()
+		elif phase in ["won", "lost", "paused"]:
 			on_secondary_link()
 		else:
 			toggle_pause()
@@ -3469,6 +3561,8 @@ func toggle_sound() -> void:
 	refresh_setting_labels()
 
 func apply_display_settings() -> void:
+	if OS.has_feature("web") or DisplayServer.get_name().to_lower() == "headless":
+		return
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if save_manager.fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
 
 func refresh_setting_labels() -> void:
@@ -3478,6 +3572,47 @@ func refresh_setting_labels() -> void:
 		sound_button.text = "声音：开" if save_manager.sound_enabled else "声音：关"
 	if phase == "paused":
 		set_pause_system_controls_visible(true)
+
+
+func _commercial_persistence() -> CommercialPersistenceService:
+	return get_node_or_null("/root/CommercialPersistence") as CommercialPersistenceService
+
+
+func _open_title_settings() -> void:
+	if phase == "intro" and commercial_system_menu != null:
+		new_journey_confirmation_armed = false
+		commercial_system_menu.open_settings_only()
+
+
+func _open_title_credits() -> void:
+	if phase == "intro" and commercial_system_menu != null:
+		new_journey_confirmation_armed = false
+		commercial_system_menu.open_credits_only()
+
+
+func _on_title_system_menu_closed() -> void:
+	if phase == "intro":
+		show_intro()
+
+
+func _apply_title_commercial_settings(next_settings: Dictionary) -> void:
+	if overlay == null:
+		return
+	commercial_screen_shake_enabled = bool(next_settings.get("screen_shake", true)) and not bool(next_settings.get("reduce_motion", false))
+	if not commercial_screen_shake_enabled:
+		shake = 0.0
+	var ui_scale := float(next_settings.get("ui_scale", 1.0))
+	for node in overlay.find_children("*", "Control", true, false):
+		var control := node as Control
+		if control == null:
+			continue
+		if not control.has_meta("commercial_base_font_size"):
+			var inherited_size := control.get_theme_font_size("font_size")
+			if inherited_size > 0:
+				control.set_meta("commercial_base_font_size", inherited_size)
+		if control.has_meta("commercial_base_font_size"):
+			var base_size := int(control.get_meta("commercial_base_font_size"))
+			control.add_theme_font_size_override("font_size", roundi(float(base_size) * ui_scale))
 
 func progress_name() -> String:
 	if not stages.is_empty() and save_manager.best_stage >= stages.size():
@@ -3646,7 +3781,11 @@ func draw_hive_workers() -> void:
 func _draw() -> void:
 	if stages.is_empty():
 		return
-	var offset := Vector2(rng.randf_range(-shake, shake), rng.randf_range(-shake, shake)) if shake > 0 else Vector2.ZERO
+	var offset := (
+		Vector2(rng.randf_range(-shake, shake), rng.randf_range(-shake, shake))
+		if commercial_screen_shake_enabled and shake > 0
+		else Vector2.ZERO
+	)
 	field_draw_offset = offset
 	draw_set_transform(offset)
 	var coherent_world := world_art_ready()

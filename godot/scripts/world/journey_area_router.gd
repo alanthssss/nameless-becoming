@@ -6,6 +6,11 @@ signal area_changed(area_id: String, area: Node)
 const AREA_SCENES := {
 	"hive_threshold": preload("res://world/journey/hive_threshold.tscn"),
 	"spring_field": preload("res://world/journey/spring_field.tscn"),
+	"spring_sign_incident": preload("res://world/journey/spring_sign_incident.tscn"),
+	"summer_field": preload("res://world/journey/summer_field.tscn"),
+	"autumn_field": preload("res://world/journey/autumn_field.tscn"),
+	"winter_field": preload("res://world/journey/winter_field.tscn"),
+	"finale_handoff": preload("res://world/journey/finale_handoff.tscn"),
 }
 
 var host: Node

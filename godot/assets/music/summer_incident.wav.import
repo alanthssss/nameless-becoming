@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://dypxm8nsnp8my"
-path="res://.godot/imported/summer_boss.wav-24aace97f47dbc793294ac997de7e97f.sample"
+path="res://.godot/imported/summer_incident.wav-a1c6cb80ffd2e7574bdaa6129504d7d1.sample"
 
 [deps]
 
-source_file="res://assets/music/summer_boss.wav"
-dest_files=["res://.godot/imported/summer_boss.wav-24aace97f47dbc793294ac997de7e97f.sample"]
+source_file="res://assets/music/summer_incident.wav"
+dest_files=["res://.godot/imported/summer_incident.wav-a1c6cb80ffd2e7574bdaa6129504d7d1.sample"]
 
 [params]
 

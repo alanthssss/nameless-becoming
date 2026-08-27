@@ -99,6 +99,19 @@ if [[ ${1:-} == --pack ]]; then
   exit 0
 fi
 
+expected_main_scene='run/main_scene="res://commercial_title.tscn"'
+if ! grep -Fqx "$expected_main_scene" "$project_root/godot/project.godot"; then
+  echo "Commercial exports must boot directly into res://commercial_title.tscn." >&2
+  exit 1
+fi
+
+# The title reads provenance through FileAccess, so selected-scene export cannot
+# discover it as a resource dependency. Generate the exact current identity before
+# every source export. The cache wrapper temporarily replaces Godot's project-wide
+# global class registry with the reviewed commercial allowlist and restores the
+# full regression cache afterward; --pack/--pack-report inspect immutable artifacts.
+node "$project_root/scripts/generate_build_provenance.mjs"
+
 if [[ $# -eq 0 ]]; then
   presets=("macOS" "Windows Desktop" "Web")
 else
@@ -125,6 +138,7 @@ for preset in "${presets[@]}"; do
   export_log="$verification_root/$slug-export.log"
   echo "Exporting resource pack with Godot 4.6.2: $preset"
   if ! run_with_timeout \
+    "$project_root/scripts/with_commercial_godot_cache.sh" \
     "$godot_bin" \
     --path "$project_root/godot" \
     --headless \

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "product": "一会儿巢里见 · See You at the Hive",
+  "credits": [
+    {
+      "role": "创作、产品方向与制作",
+      "name": "Alan"
+    },
+    {
+      "role": "共同开发工具",
+      "name": "OpenAI Codex"
+    },
+    {
+      "role": "当前商业候选美术生成工具",
+      "name": "OpenAI ImageGen"
+    }
+  ],
+  "privacy": "游戏本体使用设备本地单存档与本地设置文件，不上传个人数据或游戏进度。商店、系统与托管平台可能按各自规则处理账号或技术数据。",
+  "build_notice": "当前为商业游戏制作构建。正式发行前仍须完成全部资产来源、生成记录与授权清单审计。",
+  "asset_provenance": [
+    {
+      "asset_set": "commercial_sfx_and_ambience_v1",
+      "kind": "project_owned_audio_candidates",
+      "creation_method": "项目自有的确定性程序合成：由仓库内 Node 生成器和固定源参数渲染，不含外部采样，不是录音，也不是终稿。",
+      "generator_path": "scripts/generate_commercial_audio.mjs",
+      "generator_sha256": "d5ac82c9c1df5ad0a31f64745450a22c4eeb668b0ec4412ec474993136d6e648",
+      "parameters_path": "scripts/commercial_audio_sources.json",
+      "parameters_sha256": "e939f04d9a589113f38107b591b951b3ed77ad91f70f69d62c996f1af12cce0d",
+      "runtime_manifest_path": "res://assets/audio/commercial/manifest.json",
+      "runtime_manifest_sha256": "eedd7ee2d3c8724abc6bdf2f667f9bc9ce9391762ed62207e04cca9defca34fb",
+      "third_party_sources": [],
+      "approval_status": "candidate_requires_alan_and_device_mix_confirmation",
+      "approved_by": null,
+      "approved_at": null,
+      "files": [
+        {"path": "res://assets/audio/commercial/nectar_collect.wav", "sha256": "d3505a88bc6495ae5e8f02fd6cf02681b86e7a9eca886cc4bae2af5d804be4b1", "role": "nectar_collect", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/pollination_bloom.wav", "sha256": "a3f1c4a9f84045056ed22012406d326a0af7f50d28c97ef68162cf5fae77990b", "role": "pollination_bloom", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/observe_rustle.wav", "sha256": "9ef020ac54ae509740bf3c08b0b7bd285211a577f71cddba4fd85417424ea199", "role": "observe_rustle", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/evade_dart.wav", "sha256": "920f2567603eb74cc21d91fbde95cd692221e1a716f01aab4714977887e41c08", "role": "evade_dart", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/honey_loss.wav", "sha256": "fe1f2ccc0f4c8328f23bb6f423159059685295c8ccf8a6f3565bbea788023210", "role": "honey_loss", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/repair_tap.wav", "sha256": "80ec05bb06a3c57caf0cac9e3b63220bc769e117b1b73dc677e64be20adc5028", "role": "repair_tap", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/seed_place.wav", "sha256": "42b79c196b2eb9cb50bd90a3bc3a8189d6f905e82295d693c9cf71596429466f", "role": "seed_place", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/seed_shell_rustle.wav", "sha256": "5b00278df94b0a447d9d5f8a9120e5e7c215a1df06d5c90c4929811b9bf33b96", "role": "seed_shell_rustle", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/warmth_link.wav", "sha256": "685e6e2e2051dd1899f95ef425b6c13b4f1d96136ecdae16c1f2454b4d84efdd", "role": "warmth_link", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/carry_log.wav", "sha256": "0724b98a0291cb571225c9e3a9f224bf52ed57b8462505b5a451d218a45dccb7", "role": "carry_log", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/handoff.wav", "sha256": "2a5dc0fb3519bc330f7f1e0c4659a6735515a49e5e3d459b8899e0a0b4e0d4ae", "role": "handoff", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/complete.wav", "sha256": "1ca016e4aad92bfa204582bd8f240150da90ea3daf12b6ac182f0ef8104de106", "role": "complete", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/pouch_full.wav", "sha256": "e6a23b55404b565b54591980ea1e7771ffcc00b62750f539de215e76aec21d2c", "role": "pouch_full", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/relay_drop.wav", "sha256": "8eb8d023d143a68cc530213f15494f0fe8dfda87991f4fbffbcdd68f36aa995c", "role": "relay_drop", "kind": "sfx"},
+        {"path": "res://assets/audio/commercial/hive_room_loop.wav", "sha256": "2d0afdd20227aa90b6207b88d812cec3e8db2927909f07dca24c36bef010b673", "role": "hive_room_loop", "kind": "ambience"},
+        {"path": "res://assets/audio/commercial/field_day_loop.wav", "sha256": "8e6ff377e6d0c382920d7308b9b3c73a630dc4e7d57fba75458a6d25a79dd5ec", "role": "field_day_loop", "kind": "ambience"}
+      ]
+    }
+  ],
+  "third_party": [
+    {
+      "name": "Godot Engine",
+      "license": "MIT License",
+      "copyright": "Copyright (c) 2014-present Godot Engine contributors. Copyright (c) 2007-2014 Juan Linietsky, Ariel Manzur.",
+      "text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    },
+    {
+      "name": "Noto Sans CJK SC",
+      "license": "SIL Open Font License 1.1",
+      "copyright": "Copyright 2014-2021 Adobe. Noto is a trademark of Google Inc.",
+      "license_file": "res://fonts/OFL-NotoSansCJK.txt"
+    }
+  ]
+}

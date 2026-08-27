@@ -266,10 +266,13 @@ func _init() -> void:
 
 	var scene := load("res://main.tscn")
 	if scene == null:
-		failures.append("主场景无法加载")
+		failures.append("旧 Main 回归场景无法加载")
+	var commercial_title_scene := load("res://commercial_title.tscn")
+	if commercial_title_scene == null:
+		failures.append("商业标题场景无法加载")
 	var bootstrap_scene := load("res://bootstrap.tscn")
 	if bootstrap_scene == null:
-		failures.append("bootstrap 场景无法加载")
+		failures.append("历史试玩 bootstrap 场景无法加载")
 	var b01_scene := load("res://playtest/b01_evade_slice.tscn") as PackedScene
 	if b01_scene == null:
 		failures.append("B01 typed scene 无法加载")
@@ -279,8 +282,8 @@ func _init() -> void:
 	for evade_runtime_path in ["res://scripts/mechanics/evade_rules.gd", "res://scripts/player/evade_input_controller.gd"]:
 		if load(evade_runtime_path) == null:
 			failures.append("共享急转运行时无法加载：%s" % evade_runtime_path)
-	if String(ProjectSettings.get_setting("application/run/main_scene", "")) != "res://bootstrap.tscn":
-		failures.append("导出主入口必须是 bootstrap.tscn")
+	if String(ProjectSettings.get_setting("application/run/main_scene", "")) != "res://commercial_title.tscn":
+		failures.append("正式导出主入口必须是 commercial_title.tscn")
 
 	var bee_script := load("res://scripts/player/bee_player.gd")
 	if bee_script == null:
@@ -313,17 +316,22 @@ func _init() -> void:
 	if load("res://scripts/sound_feedback.gd") == null:
 		failures.append("程序化音效脚本无法加载")
 
-	for action in ["move_left", "move_right", "move_up", "move_down", "action", "return_hive", "drink_honey"]:
+	for action in ["move_left", "move_right", "move_up", "move_down", "action", "return_hive", "drink_honey", "pause_menu"]:
 		if not InputMap.has_action(action):
 			failures.append("缺少玩家动作映射 %s" % action)
 	for removed_action in ["harvest", "dash", "repel", "sense", "evade", "decoy", "sting"]:
 		if InputMap.has_action(removed_action):
 			failures.append("已移除的旧动作仍存在：%s" % removed_action)
 	for movement_action in ["move_left", "move_right", "move_up", "move_down"]:
-		if InputMap.action_get_events(movement_action).size() < 2:
+		if InputMap.action_get_events(movement_action).size() < 3:
 			failures.append("WASD/方向键双映射缺失：%s" % movement_action)
+		if not InputMap.action_get_events(movement_action).any(func(event): return event is InputEventJoypadMotion):
+			failures.append("左摇杆移动映射缺失：%s" % movement_action)
 	if InputMap.action_get_events("action").size() < 2:
 		failures.append("动作键缺少 Space/Enter 双映射")
+	for controller_action in ["action", "return_hive", "drink_honey", "pause_menu"]:
+		if not InputMap.action_get_events(controller_action).any(func(event): return event is InputEventJoypadButton):
+			failures.append("手柄动作映射缺失：%s" % controller_action)
 	if bool(ProjectSettings.get_setting("input_devices/pointing/emulate_mouse_from_touch", true)):
 		failures.append("触摸已由主循环显式处理，不应再模拟鼠标把一次触摸误算成双击")
 

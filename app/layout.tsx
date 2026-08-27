@@ -2,16 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "一会儿巢里见｜Godot 春季往返纵切",
-  description: "与 macOS、Windows 同源的 Godot Web 版：去花田搭把翅膀，办完事回巢见。",
-  metadataBase: new URL("https://hivebound-seasons-game.pages.dev"),
+  title: "一会儿巢里见｜See You at the Hive",
+  description: "一款四季邻里动作冒险：去花田搭把翅膀，办完事回巢见。",
   openGraph: {
-    title: "一会儿巢里见｜春季往返纵切",
+    title: "一会儿巢里见｜See You at the Hive",
     description: "花田有事，搭把翅膀。飞一圈，巢里见。",
   },
   twitter: {
     card: "summary_large_image",
-    title: "一会儿巢里见｜春季往返纵切",
+    title: "一会儿巢里见｜See You at the Hive",
     description: "花田有事，搭把翅膀。飞一圈，巢里见。",
   },
 };

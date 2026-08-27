@@ -32,10 +32,10 @@ test("server-renders the See You at the Hive launch shell", async () => {
 
   const html = await response.text();
   assert.match(html, /<html lang="zh-CN">/i);
-  assert.match(html, /<title>一会儿巢里见｜Godot 春季往返纵切<\/title>/i);
+  assert.match(html, /<title>一会儿巢里见｜See You at the Hive<\/title>/i);
   assert.match(html, /花田有事，搭把翅膀。/);
-  assert.match(html, /进入试玩/);
-  assert.match(html, /可玩垂直切片/);
+  assert.match(html, /进入游戏/);
+  assert.match(html, /四季邻里动作冒险/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Building your site/i);
 });
 
@@ -48,15 +48,15 @@ test("keeps starter artifacts out of the production shell", async () => {
 
   assert.match(page, /src="\/game\/index\.html"/);
   assert.match(page, /title="一会儿巢里见 Godot Web 游戏"/);
-  assert.match(page, /正在唤醒蜂群/);
+  assert.match(page, /正在开巢门/);
   assert.match(page, /重新载入/);
   assert.match(page, /role="status"/);
   assert.match(page, /role="alert"/);
-  assert.match(page, /nameless-game-ready/);
-  assert.match(page, /nameless-game-error/);
+  assert.match(page, /see-you-at-the-hive-ready/);
+  assert.match(page, /see-you-at-the-hive-error/);
   assert.match(page, /60000/);
   assert.doesNotMatch(page, /onLoad=\{\(\) => setPhase\("ready"\)\}/);
-  assert.match(layout, /title:\s*"一会儿巢里见｜Godot 春季往返纵切"/);
+  assert.match(layout, /title:\s*"一会儿巢里见｜See You at the Hive"/);
   assert.match(layout, /<html lang="zh-CN">/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
   assert.doesNotMatch(layout, /Starter Project|codex-preview|_sites-preview/);
@@ -77,7 +77,7 @@ test("prepares a compressed Godot payload and signals real engine readiness", as
   assert.match(script, /content-encoding/);
   assert.match(script, /decodedByTransport \? response\.body/);
   assert.match(script, /credentials: "same-origin"/);
-  assert.match(script, /nameless-game-ready/);
-  assert.match(script, /nameless-game-error/);
+  assert.match(script, /see-you-at-the-hive-ready/);
+  assert.match(script, /see-you-at-the-hive-error/);
   assert.match(script, /index\.wasm\.part/);
 });

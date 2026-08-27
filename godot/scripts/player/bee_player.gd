@@ -9,8 +9,8 @@ const EVADE_SPEED := 520.0
 const EVADE_DURATION := 0.18
 const EVADE_COST := 12.0
 const EVADE_COOLDOWN := 1.6
-const PLAYER_BEE_TEXTURE := preload("res://assets/art/player_bee_textile.svg")
-const SPRING_PLAYER_BEE_PATH := "res://assets/art/launch/player_bee_v1.png"
+const PLAYER_BEE_TEXTURE := preload("res://assets/art/commercial/player_bee_topdown_states_v1.png")
+const SPRING_PLAYER_FRAME_SIZE := Vector2(256.0, 256.0)
 const PollenVisualLanguage := preload("res://scripts/mechanics/pollen_visual_language.gd")
 
 # 出巢体力上限：由 main 从 balance.json player.max_energy 注入，避免调参时改代码
@@ -45,22 +45,44 @@ var evade_tap_time := 0.0
 var evade_tap_direction := Vector2.RIGHT
 var move_duration := 0.0
 var spring_player_bee_texture: Texture2D
+var spring_player_bee_frames: Array[Texture2D] = []
 var use_spring_launch_art := false
+var visual_load_ratio := 0.0
 var _movement_bounds := WORLD_BOUNDS
+## N01 opening prop. It is a short-lived posture cue, not equipment or a new
+## character identity: the mentor removes the petal before the first real job.
+var story_petal_visible := false
 ## Presentation mirror only. PollinationMechanic owns the authoritative charges;
 ## this copy exists so the load can be drawn after the bee texture instead of
 ## disappearing underneath it in Main's parent canvas.
 var pollen_loads: Array[int] = [0, 0]
 
 func _ready() -> void:
-	if ResourceLoader.exists(SPRING_PLAYER_BEE_PATH):
-		spring_player_bee_texture = ResourceLoader.load(SPRING_PLAYER_BEE_PATH, "Texture2D") as Texture2D
+	spring_player_bee_texture = PLAYER_BEE_TEXTURE
+	for frame_index in 4:
+		var frame := AtlasTexture.new()
+		frame.atlas = spring_player_bee_texture
+		frame.region = Rect2(
+			Vector2(float(frame_index) * SPRING_PLAYER_FRAME_SIZE.x, 0.0),
+			SPRING_PLAYER_FRAME_SIZE
+		)
+		spring_player_bee_frames.append(frame)
 
 func has_spring_launch_art() -> bool:
-	return spring_player_bee_texture != null
+	return spring_player_bee_frames.size() == 4
 
 func set_spring_launch_art(enabled: bool) -> void:
 	use_spring_launch_art = enabled and has_spring_launch_art()
+	queue_redraw()
+
+
+func set_story_petal(visible: bool) -> void:
+	story_petal_visible = visible
+	queue_redraw()
+
+
+func set_visual_load_ratio(ratio: float) -> void:
+	visual_load_ratio = clampf(ratio, 0.0, 1.0)
 	queue_redraw()
 
 
@@ -221,15 +243,33 @@ func _draw() -> void:
 	# A slight vertical pulse keeps the wings alive before a full frame sheet exists.
 	var wing_pulse := 0.96 + sin(Time.get_ticks_msec() * 0.03) * 0.04
 	draw_set_transform(Vector2.ZERO, facing, Vector2(1.0, wing_pulse))
-	var player_texture: Texture2D = spring_player_bee_texture if use_spring_launch_art else PLAYER_BEE_TEXTURE
-	var player_size := Vector2(82, 60) if use_spring_launch_art else Vector2(58, 42)
+	var player_texture: Texture2D = spring_player_bee_frames[0] if has_spring_launch_art() else PLAYER_BEE_TEXTURE
+	var player_size := Vector2(104, 82)
+	var player_anchor_offset := Vector2.ZERO
+	if has_spring_launch_art():
+		var frame_index := 0
+		if use_spring_launch_art:
+			if evade_time > 0.0 or move_duration > AUTO_DASH_THRESHOLD:
+				frame_index = 1
+			elif visual_load_ratio >= 0.5:
+				frame_index = 2
+			elif energy <= max_energy * 0.28:
+				frame_index = 3
+		player_texture = spring_player_bee_frames[frame_index]
+		# The 256px cells deliberately include breathing room. At this draw size the
+		# actual silhouette lands near 72x52 and stays inside the existing HUD-safe
+		# movement radius while retaining clean antialiasing.
+		# Generated poses had different transparent margins. Register all four on the
+		# same thorax pivot so changing load/speed never makes the bee jump sideways.
+		var source_anchor_shift: float = float([-26.0, -4.0, -6.0, 12.0][frame_index])
+		player_anchor_offset.x = source_anchor_shift * player_size.x / SPRING_PLAYER_FRAME_SIZE.x
 	if evade_time > 0.0:
 		var evade_ratio := clampf(evade_time / EVADE_DURATION, 0.0, 1.0)
 		for trail_index in [2, 1]:
 			var trail_offset := Vector2(-16.0 * float(trail_index), 0.0)
 			var trail_alpha := evade_ratio * (0.10 + float(2 - trail_index) * 0.08)
-			draw_texture_rect(player_texture, Rect2(player_size * -0.5 + trail_offset, player_size), false, Color(0.82, 0.90, 1.0, trail_alpha))
-	draw_texture_rect(player_texture, Rect2(player_size * -0.5, player_size), false)
+			draw_texture_rect(player_texture, Rect2(player_size * -0.5 + player_anchor_offset + trail_offset, player_size), false, Color(0.82, 0.90, 1.0, trail_alpha))
+	draw_texture_rect(player_texture, Rect2(player_size * -0.5 + player_anchor_offset, player_size), false)
 	# Two stable body-surface pollen anchors summarize loose grains distributed on
 	# contact hairs. They are not hind-leg pollen baskets. Shape and color match
 	# the corresponding anther, stigma and scent route; 0/1/2 charges are drawn
@@ -242,6 +282,18 @@ func _draw() -> void:
 			pollen_loads[variant],
 			1.15
 		)
+	if story_petal_visible:
+		# A deliberately simple loose petal sits above the head for a few seconds.
+		# It is drawn after the bee so the action reads at runtime even before the
+		# final animation sheet replaces this procedural story prop.
+		var petal_center := Vector2(17.0, -18.0)
+		draw_colored_polygon(PackedVector2Array([
+			petal_center + Vector2(-7, 0),
+			petal_center + Vector2(0, -9),
+			petal_center + Vector2(8, -1),
+			petal_center + Vector2(1, 6),
+		]), Color("f5a6bd"))
+		draw_circle(petal_center + Vector2(1, -1), 2.3, Color("f4d56e"))
 	if sense_time > 0.0:
 		draw_arc(Vector2.ZERO, 27 + sin(Time.get_ticks_msec() * 0.012) * 4, 0, TAU, 28, Color("f1d46d", 0.72), 2)
 	draw_set_transform(Vector2.ZERO)

@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bxnedn3auga7n"
-path="res://.godot/imported/spring_boss.wav-77ea128160f710d3cf1b0092ae23d4b6.sample"
+path="res://.godot/imported/spring_incident.wav-e7197e22c29d4329ee5e9c6bae90c54b.sample"
 
 [deps]
 
-source_file="res://assets/music/spring_boss.wav"
-dest_files=["res://.godot/imported/spring_boss.wav-77ea128160f710d3cf1b0092ae23d4b6.sample"]
+source_file="res://assets/music/spring_incident.wav"
+dest_files=["res://.godot/imported/spring_incident.wav-e7197e22c29d4329ee5e9c6bae90c54b.sample"]
 
 [params]
 

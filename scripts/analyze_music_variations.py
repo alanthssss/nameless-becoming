@@ -271,16 +271,16 @@ def main() -> None:
 
     similarities: dict[str, float] = {}
     for season in ("spring", "summer", "autumn", "winter"):
-        similarity = cosine(vectors[f"{season}_explore"], vectors[f"{season}_boss"])
+        similarity = cosine(vectors[f"{season}_explore"], vectors[f"{season}_incident"])
         similarities[season] = round(similarity, 5)
         if similarity > THRESHOLDS["max_same_season_cosine"]:
-            failures.append(f"{season}: explore/boss spectrum too similar")
+            failures.append(f"{season}: explore/incident spectrum too similar")
 
     report = {
         "method": "64 sampled 4096-point Hann FFTs; automated regression evidence, not a listening verdict",
         "thresholds": THRESHOLDS,
         "tracks": tracks,
-        "same_season_explore_boss_cosine": similarities,
+        "same_season_explore_incident_cosine": similarities,
         "passed": not failures,
         "failures": failures,
     }

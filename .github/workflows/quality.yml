@@ -39,6 +39,9 @@ jobs:
       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
       - name: Download and verify Godot
         working-directory: ${{ runner.temp }}
         run: |
@@ -58,3 +61,49 @@ jobs:
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         run: npm run verify:godot-export
+
+  web-candidate:
+    name: Clean Web game and site candidate
+    needs: [web, godot]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GODOT_VERSION: 4.6.2
+      GODOT_RELEASE: 4.6.2-stable
+      GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
+      TEMPLATE_ARCHIVE: Godot_v4.6.2-stable_export_templates.tpz
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+          cache: npm
+      - run: npm ci
+      - name: Download and verify Godot Web exporter
+        working-directory: ${{ runner.temp }}
+        run: |
+          release_url=https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}
+          curl --fail --silent --show-error --location --output SHA512-SUMS.txt "$release_url/SHA512-SUMS.txt"
+          for archive in "$GODOT_ARCHIVE" "$TEMPLATE_ARCHIVE"; do
+            curl --fail --silent --show-error --location --output "$archive" "$release_url/$archive"
+            grep " $archive$" SHA512-SUMS.txt | sha512sum --check --strict
+          done
+          unzip -q "$GODOT_ARCHIVE" -d godot-bin
+          unzip -q "$TEMPLATE_ARCHIVE" -d template-archive
+          template_dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$template_dir"
+          cp -R template-archive/templates/. "$template_dir/"
+      - name: Export verified Web game and build launch site
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        run: |
+          npm run build:web-game
+          npm run build
+          node --test tests/rendered-html.test.mjs
+          test -s dist/server/index.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SeeYouAtTheHive-Web-InternalCandidate-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14

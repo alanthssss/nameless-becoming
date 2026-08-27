@@ -1,5 +1,5 @@
 {
-  "name": "nameless-becoming",
+  "name": "see-you-at-the-hive",
   "version": "0.9.5-rc.2",
   "private": true,
   "engines": {
@@ -8,12 +8,14 @@
   "scripts": {
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
     "build": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
+    "build:web-game": "./scripts/build_web_game.sh",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/build-provenance.test.mjs tests/artifact-manifest.test.mjs tests/audio-blind-review.test.mjs tests/music-generation.test.mjs tests/autumn-full-loop-ab.test.mjs tests/playtest-evidence.test.mjs tests/playtest-launch.test.mjs",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/build-provenance.test.mjs tests/artifact-manifest.test.mjs tests/audio-blind-review.test.mjs tests/music-generation.test.mjs tests/commercial-audio-generation.test.mjs tests/commercial-outward-copy.test.mjs tests/commercial-script-class-cache.test.mjs tests/autumn-full-loop-ab.test.mjs tests/playtest-evidence.test.mjs tests/playtest-launch.test.mjs",
     "test:godot": "./scripts/test_godot.sh",
     "verify:godot-export": "./scripts/verify_godot_export_contents.sh",
     "audio:review": "node scripts/prepare_audio_blind_review.mjs",
     "audio:autumn-final-ab": "node scripts/prepare_autumn_full_loop_ab.mjs",
+    "audio:commercial": "node scripts/generate_commercial_audio.mjs",
     "playtest:prepare": "node scripts/prepare_playtest_evidence.mjs",
     "playtest:launch": "node scripts/launch_playtest.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",

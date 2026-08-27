@@ -1,0 +1,64 @@
+{
+	"schema_version": 1,
+	"identity": "commercial_store_candidate",
+	"product": "一会儿巢里见 · See You at the Hive",
+	"source": {
+		"file": "../key-art/see-you-at-the-hive-key-art-base-v1.png",
+		"sha256": "65f065e4caf5af8d4ca128faa37b82362c74bf1ad4c140b3dab9d9fae594ce65",
+		"kind": "imagegen_key_art_concept"
+	},
+	"compositor": "Godot project font renderer",
+	"gameplay_screenshot": false,
+	"store_ready": false,
+	"owner_approved": false,
+	"outputs": [
+		{
+			"file": "library-capsule-600x900.png",
+			"width": 600,
+			"height": 900,
+			"sha256": "72b4241d839442e5cc554112b9482980a46236057879d5865e177b8675a0f189"
+		},
+		{
+			"file": "library-hero-3840x1240.png",
+			"width": 3840,
+			"height": 1240,
+			"sha256": "0b4123ae9c0f8f2eded15e888ae4ac44db90942d24939684dbdf537fdb6d0901"
+		},
+		{
+			"file": "library-logo-dark-1600x520.png",
+			"width": 1600,
+			"height": 520,
+			"sha256": "d3ea84eaa24af70c001fc90707c3489102a707b1df054a82240af638bd18fd5e"
+		},
+		{
+			"file": "library-logo-light-1600x520.png",
+			"width": 1600,
+			"height": 520,
+			"sha256": "0644a5ef28244fe5b5aed7b30e99a977718f58b1461c5d7b07a67cfb177b26fc"
+		},
+		{
+			"file": "store-header-920x430.png",
+			"width": 920,
+			"height": 430,
+			"sha256": "27f17a9b21b186dbf71d3be3f604c9af2c0c36f79ed0007864c41120c7f2ec2f"
+		},
+		{
+			"file": "store-main-1232x706.png",
+			"width": 1232,
+			"height": 706,
+			"sha256": "ba293d9ac78496574f844c21087339beeab9bea9c5949fdcb5a2c76b916db16b"
+		},
+		{
+			"file": "store-small-462x174.png",
+			"width": 462,
+			"height": 174,
+			"sha256": "5f9d93628dfcb4a0e60ec777d26cb2b1f0cd6caf95912050b72ceb221df43d36"
+		},
+		{
+			"file": "store-vertical-748x896.png",
+			"width": 748,
+			"height": 896,
+			"sha256": "fe6022d7f7973c041d758db1fb7970f52629e3a4364211576b0925c75aa1c56a"
+		}
+	]
+}

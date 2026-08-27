@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://b41vycsoqvqgd"
-path="res://.godot/imported/winter_boss.wav-1aa20fa9131d4a0031adfaedd9a6493a.sample"
+path="res://.godot/imported/winter_incident.wav-a962151f252d1567a28f425042bccc0e.sample"
 
 [deps]
 
-source_file="res://assets/music/winter_boss.wav"
-dest_files=["res://.godot/imported/winter_boss.wav-1aa20fa9131d4a0031adfaedd9a6493a.sample"]
+source_file="res://assets/music/winter_incident.wav"
+dest_files=["res://.godot/imported/winter_incident.wav-a962151f252d1567a28f425042bccc0e.sample"]
 
 [params]
 
