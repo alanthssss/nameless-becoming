@@ -64,6 +64,7 @@ const allowedObjectiveTypes = new Set([
   "carry",
   "climax",
   "collect",
+  "event",
   "frighten",
   "observe",
   "pollinate",
@@ -89,7 +90,7 @@ test("24-level campaign catalog is an exact one-to-one solar-term sequence", asy
 
   assert.deepEqual(Object.keys(catalog).sort(), ["campaign_id", "levels", "schema_version", "total_levels"]);
   assert.equal(catalog.schema_version, 1);
-  assert.equal(catalog.campaign_id, "solar-term-campaign-v2");
+  assert.equal(catalog.campaign_id, "solar-term-campaign-v3");
   assert.equal(catalog.total_levels, 24);
   assert.equal(catalog.levels.length, catalog.total_levels);
   assert.deepEqual(catalog.levels.map(({ order }) => order), Array.from({ length: 24 }, (_, index) => index));

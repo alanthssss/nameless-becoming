@@ -11,6 +11,36 @@ const EXPECTED_ROUTES := {
 	"winter_windbreak": "res://assets/music/winter_incident.wav",
 	"ending": "res://assets/music/spring_explore.wav",
 }
+const CLIMAX_HERO_CASES := [
+	{
+		"id": "spring_guyu",
+		"completed": 6,
+		"term_name": "谷雨",
+		"path": "res://assets/art/commercial/guyu_result_hero_v1.png",
+		"caption": "花路重新接上了",
+	},
+	{
+		"id": "summer_dashu",
+		"completed": 12,
+		"term_name": "大暑",
+		"path": "res://assets/art/commercial/dashu_result_hero_v1.png",
+		"caption": "盛夏的接力稳稳送到了",
+	},
+	{
+		"id": "autumn_shuangjiang",
+		"completed": 18,
+		"term_name": "霜降",
+		"path": "res://assets/art/commercial/shuangjiang_result_hero_v1.png",
+		"caption": "霜前的收成稳稳入了库",
+	},
+	{
+		"id": "winter_dahan",
+		"completed": 24,
+		"term_name": "大寒",
+		"path": "res://assets/art/commercial/dahan_result_hero_v1.png",
+		"caption": "最冷的风里，暖路也接上了",
+	},
+]
 
 var failures: Array[String] = []
 
@@ -22,6 +52,45 @@ func expect(condition: bool, message: String) -> void:
 
 func _init() -> void:
 	call_deferred("run_test")
+
+
+func campaign_entries(completed: int) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	for index in 24:
+		var level_id := "campaign_level_%02d" % (index + 1)
+		var term_name := "节气 %02d" % (index + 1)
+		if index == 0:
+			level_id = "spring_lichun"
+		for climax_case in CLIMAX_HERO_CASES:
+			if index == int(climax_case.completed) - 1:
+				level_id = String(climax_case.id)
+				term_name = String(climax_case.term_name)
+				break
+		entries.append({
+			"id": level_id,
+			"number": index + 1,
+			"term_name": term_name,
+			"kind": "climax" if index % 6 == 5 else "standard",
+			"available": index <= completed,
+			"completed": index < completed,
+			"intro": "门外正好有活。",
+		})
+	return entries
+
+
+func hive_context(completed: int, return_level_id: String, reward: int, replay := false) -> Dictionary:
+	return {
+		"returning": true,
+		"return_level_id": return_level_id,
+		"return_replay": replay,
+		"reward": reward,
+		"reserve": 30,
+		"completed_count": completed,
+		"total_count": 24,
+		"journey_complete": completed == 24,
+		"legacy_journey_completed": false,
+		"level_entries": campaign_entries(completed),
+	}
 
 
 func run_test() -> void:
@@ -165,6 +234,232 @@ func run_test() -> void:
 		"后接入的环境流没有采用当前场景混音快照"
 	)
 	expect(director.set_environment_stream(&"unknown_layer", replacement_ambience) == ERR_DOES_NOT_EXIST, "未知环境层没有被拒绝")
+
+	# A hive return is a three-beat authored result, not a single completion blip.
+	# Climaxes add a relay answer and a final physical tray-settle beat, while the
+	# reduced-motion version keeps the same result information on a shorter clock.
+	director.set_enabled(true)
+	expect(director.hive_result_players.size() == 3, "返巢结果没有独立的一次性音效声部")
+	for player in director.hive_result_players:
+		expect(player.playback_type == AudioServer.PLAYBACK_TYPE_SAMPLE, "返巢短音效没有走 Web 低延迟采样路径")
+		expect(player.bus == &"SFX", "返巢结果音效没有进入可独立静音的 SFX 总线")
+	expect(director.begin_hive_result(false) == OK, "普通关返巢结果无法开始")
+	expect(director.hive_result_cue_log == [&"arrival"], "普通关没有从接住货物的第一拍开始")
+	director._process(0.50)
+	expect(director.hive_result_cue_log.size() == 2 and director.hive_result_cue_log[-1] == &"relay", "普通关接货链没有第二拍传递声")
+	director._process(0.80)
+	expect(director.hive_result_cue_log.size() == 3 and director.hive_result_cue_log[-1] == &"group_response", "普通关缺少群蜂收货响应")
+	for path in director.HIVE_RESULT_CUE_PATHS.values():
+		expect(FileAccess.file_exists(String(path)), "返巢结果复用的商业音效不存在：%s" % path)
+	director.finish_hive_result()
+	expect(not director.hive_result_active(), "普通关结果结束后仍占用音频时间线")
+	expect(director.begin_hive_result(true) == OK, "高潮关返巢结果无法开始")
+	director._process(0.90)
+	expect(director.hive_result_cue_log.size() == 3, "高潮关接货队没有形成前后呼应")
+	director._process(0.60)
+	expect(director.hive_result_cue_log[-1] == &"group_response", "高潮关没有在接货链后形成群蜂响应")
+	director._process(0.70)
+	expect(director.hive_result_cue_log.size() == 5 and director.hive_result_cue_log[-1] == &"tray_settle", "高潮关缺少更强的最终入库落点")
+	director.finish_hive_result()
+	director.begin_hive_result(false, true)
+	director._process(0.95)
+	expect(director.hive_result_cue_log.size() == 2, "减少动态错误压缩了返巢结果音频时钟")
+	director._process(0.40)
+	expect(
+		director.hive_result_cue_log.size() == 3 and director.hive_result_cue_log[-1] == &"group_response",
+		"减少动态没有保留完整、等时长的返巢音频信息"
+	)
+	director.finish_hive_result()
+	director.begin_hive_result(false)
+	var cue_count_before_focus_loss: int = director.hive_result_cue_log.size()
+	director.set_focus_active(false)
+	director._process(2.0)
+	expect(director.hive_result_cue_log.size() == cue_count_before_focus_loss, "失焦时返巢音效时间线仍在后台偷跑")
+	director.set_focus_active(true)
+	director.finish_hive_result()
+
+	# Exercise the hive-owned visual contract in the same shipping test without
+	# adding a second runner entry. Each sixth seasonal return owns one reviewed
+	# commercial hero; standard, stale and replay results never claim that beat.
+	var hive_game := Node.new()
+	var hive_director = director_script.new()
+	hive_director.name = "JourneyAudioDirector"
+	var hive_host := Node2D.new()
+	hive_host.name = "AreaHost"
+	hive_game.add_child(hive_director)
+	hive_game.add_child(hive_host)
+	root.add_child(hive_game)
+	var hive_script := load("res://scripts/world/journey_campaign_hive.gd") as Script
+	expect(hive_script != null, "JourneyCampaignHive 脚本无法加载")
+	if hive_script != null:
+		for climax_case in CLIMAX_HERO_CASES:
+			var hero_texture := load(String(climax_case.path)) as Texture2D
+			expect(hero_texture != null, "季度高潮插画无法加载：%s" % climax_case.path)
+			if hero_texture != null:
+				expect(hero_texture.get_size() == Vector2(1672, 941), "季度高潮插画没有保留 1672 x 941 源尺寸：%s" % climax_case.path)
+		var invalid_replay_hive = hive_script.new()
+		expect(
+			invalid_replay_hive.configure(hive_context(24, "spring_guyu", 8, true)) == ERR_INVALID_DATA,
+			"重飞结果仍可携带并绘制伪造的新奖励"
+		)
+		invalid_replay_hive.free()
+		# JourneyCampaignGame creates the hub before settlement, then reconfigures
+		# that already-ready instance with the committed result.  Protect that real
+		# lifecycle; direct construction with a final context alone is insufficient.
+		var lifecycle_hive = hive_script.new()
+		var preview_context := hive_context(5, "spring_guyu", 0)
+		preview_context["returning"] = false
+		preview_context["return_level_id"] = ""
+		preview_context["reward"] = 0
+		preview_context["level_entries"] = campaign_entries(5)
+		expect(lifecycle_hive.configure(preview_context) == OK, "结算前蜂巢预览配置失败")
+		hive_host.add_child(lifecycle_hive)
+		await process_frame
+		expect(lifecycle_hive._hero_layer == null, "结算前蜂巢预览提前加载了高潮插画")
+		expect(
+			lifecycle_hive.configure(hive_context(6, "spring_guyu", 8)) == OK,
+			"已 ready 的蜂巢不能接收谷雨结算上下文"
+		)
+		await process_frame
+		expect(
+			lifecycle_hive._hero_layer != null
+				and lifecycle_hive._hero_layer.visible
+				and lifecycle_hive._hero_image.texture.resource_path == String(CLIMAX_HERO_CASES[0].path),
+			"真实预览→结算重配流程没有懒加载并显示高潮插画"
+		)
+		lifecycle_hive.skip_receiving_presentation()
+		lifecycle_hive.queue_free()
+		await process_frame
+
+		var climax_hive = hive_script.new()
+		expect(climax_hive.configure(hive_context(6, "spring_guyu", 8)) == OK, "谷雨返巢结果配置失败")
+		hive_host.add_child(climax_hive)
+		await process_frame
+		await process_frame
+		var climax_snapshot: Dictionary = climax_hive.result_snapshot()
+		expect(climax_snapshot.strength == &"climax", "谷雨没有进入高潮强度的接货演出")
+		expect(climax_hive.presentation_duration == climax_hive.CLIMAX_RECEIVING_DURATION, "高潮返巢没有获得更完整的演出时长")
+		expect(Rect2(climax_snapshot.visible_stage_rect).position.x >= 960.0, "结果轨道仍藏在 930px 关卡板后面")
+		expect(
+			int(climax_snapshot.completed_cell) == 5
+				and int(climax_snapshot.return_level_index) == 5
+				and int(climax_snapshot.reward) == 8
+				and int(climax_snapshot.visible_reward_count) == 8,
+			"右侧结果轨道没有使用谷雨实际索引或完整画出 8 份奖励"
+		)
+		expect(climax_hive._uses_return_hero(), "谷雨首次收尾没有选择季度高潮插画")
+		expect(climax_hive._hero_layer != null and climax_hive._hero_layer.visible, "谷雨商业结果卡没有在 UI 上层出现")
+		expect(climax_hive._hero_skip_button != null, "谷雨结果卡没有为鼠标提供整幅可跳过表面")
+		expect(
+			climax_hive._hero_caption_scrim != null
+				and climax_hive._hero_caption_scrim.color.a >= 0.6
+				and climax_hive._hero_caption_scrim.mouse_filter == Control.MOUSE_FILTER_IGNORE,
+			"季度结果字幕没有稳定的深色底板，或底板错误吞掉了鼠标输入"
+		)
+		expect(
+			climax_hive._hero_image.texture.resource_path == String(CLIMAX_HERO_CASES[0].path)
+				and String(CLIMAX_HERO_CASES[0].caption) in climax_hive._hero_caption.text,
+			"谷雨结果卡没有使用对应插画与专属结果文案"
+		)
+		expect(hive_director.hive_result_active(), "蜂巢没有启动分段返巢音频")
+		var remaining_before_reduce: float = climax_hive.presentation_time
+		climax_hive.set_reduce_motion(true)
+		expect(is_zero_approx(float(climax_hive.result_snapshot().motion_scale)), "减少动态仍在移动返巢蜂群")
+		expect(
+			is_equal_approx(climax_hive.presentation_duration, climax_hive.CLIMAX_RECEIVING_DURATION)
+				and is_equal_approx(climax_hive.presentation_time, remaining_before_reduce)
+				and hive_director.hive_result_active(),
+			"中途开启减少动态缩短了演出或截断了返巢音频"
+		)
+		climax_hive._on_settings_changed({"ui_scale": 1.3, "reduce_motion": true})
+		expect(
+			climax_hive._hero_caption != null
+				and climax_hive._hero_caption.get_theme_font_size("font_size") == 39
+				and climax_hive._hero_caption.size.y >= 120.0,
+			"结果插画字幕没有随 130% UI 缩放并保留两行高度"
+		)
+		var finish_holder := {"count": 0}
+		climax_hive.presentation_finished.connect(func(): finish_holder.count = int(finish_holder.count) + 1)
+		expect(not climax_hive.request_selected_sortie(), "第一次互动跳过结果时错误启动了下一关")
+		expect(int(finish_holder.count) == 1 and not bool(climax_hive.result_snapshot().skippable), "结果卡无法一次跳过或重复发出结束信号")
+		expect(not climax_hive._hero_layer.visible and not hive_director.hive_result_active(), "跳过结果后插画或音频仍遮住蜂巢")
+		expect(climax_hive.request_selected_sortie(), "跳过结果后的第二次互动无法正常出发")
+		climax_hive.queue_free()
+		await process_frame
+
+		for case_index in range(1, CLIMAX_HERO_CASES.size()):
+			var climax_case: Dictionary = CLIMAX_HERO_CASES[case_index]
+			var seasonal_climax_hive = hive_script.new()
+			expect(
+				seasonal_climax_hive.configure(
+					hive_context(int(climax_case.completed), String(climax_case.id), 8)
+				) == OK,
+				"季度高潮返巢结果配置失败：%s" % climax_case.id
+			)
+			hive_host.add_child(seasonal_climax_hive)
+			await process_frame
+			await process_frame
+			expect(seasonal_climax_hive._uses_return_hero(), "首次季度高潮没有选择结果插画：%s" % climax_case.id)
+			expect(
+				seasonal_climax_hive._hero_layer != null
+					and seasonal_climax_hive._hero_layer.visible
+					and seasonal_climax_hive._hero_image.texture.resource_path == String(climax_case.path),
+				"首次季度高潮没有显示对应的商业结果卡：%s" % climax_case.id
+			)
+			expect(
+				String(climax_case.term_name) in seasonal_climax_hive._hero_caption.text
+					and String(climax_case.caption) in seasonal_climax_hive._hero_caption.text,
+				"季度高潮没有使用对应节气与结果文案：%s" % climax_case.id
+			)
+			seasonal_climax_hive.skip_receiving_presentation()
+			seasonal_climax_hive.queue_free()
+			await process_frame
+
+		var standard_hive = hive_script.new()
+		expect(standard_hive.configure(hive_context(7, "spring_lichun", 8)) == OK, "普通返巢结果配置失败")
+		hive_host.add_child(standard_hive)
+		await process_frame
+		expect(standard_hive.presentation_strength == &"standard", "普通关错误升级成高潮返巢")
+		expect(not standard_hive._uses_return_hero(), "季度高潮插画错误出现在普通关")
+		expect(standard_hive._hero_layer == null, "普通关不应加载或创建季度高潮插画层")
+		expect(
+			int(standard_hive.result_snapshot().completed_cell) == 0
+				and int(standard_hive.result_snapshot().visible_reward_count) == 8,
+			"普通返巢错误使用 completed_count-1 或漏画第八份奖励"
+		)
+		standard_hive._process(standard_hive.RECEIVING_DURATION + 0.1)
+		expect(standard_hive.presentation_phase() == &"settled", "普通接货演出结束后没有停在可见结果态")
+		standard_hive.queue_free()
+		await process_frame
+
+		var stale_climax_hive = hive_script.new()
+		expect(stale_climax_hive.configure(hive_context(12, "spring_guyu", 0)) == OK, "非当前进度高潮上下文配置失败")
+		expect(not stale_climax_hive._uses_return_hero(), "非当前进度高潮错误重播了首次收尾插画")
+		stale_climax_hive.free()
+
+		for climax_case in CLIMAX_HERO_CASES:
+			var replay_hive = hive_script.new()
+			expect(
+				replay_hive.configure(hive_context(24, String(climax_case.id), 0, true)) == OK,
+				"季度高潮重飞结果配置失败：%s" % climax_case.id
+			)
+			hive_host.add_child(replay_hive)
+			await process_frame
+			var replay_snapshot: Dictionary = replay_hive.result_snapshot()
+			expect(
+				bool(replay_snapshot.replay)
+					and int(replay_snapshot.return_level_index) == int(climax_case.completed) - 1
+					and int(replay_snapshot.completed_cell) == -1
+					and int(replay_snapshot.visible_reward_count) == 0,
+				"重飞没有保留实际关卡索引，或伪造了最后完成格/新奖励：%s" % climax_case.id
+			)
+			expect(not replay_hive._uses_return_hero(), "季度高潮重飞误播了首次收尾结果卡：%s" % climax_case.id)
+			expect(replay_hive._hero_layer == null, "季度高潮重飞不应加载或创建首次收尾插画层：%s" % climax_case.id)
+			expect("重飞" in replay_hive.body_text() and "没有重复发货" in replay_hive.body_text(), "重飞结果文案没有使用显式 replay 语义")
+			replay_hive.queue_free()
+			await process_frame
+	hive_game.queue_free()
+	await process_frame
 
 	# The production scene owns the director as an independent child and its
 	# deferred binder follows the Journey router's initial main-hive scene.

@@ -45,7 +45,10 @@ const FORBIDDEN_CLASS_CACHE_TERMS: Array[String] = [
 const COMMERCIAL_TEXTURES: Array[String] = [
 	"res://assets/art/commercial/autumn_world_ground_v1.png",
 	"res://assets/art/commercial/bear_helper_states_v1.png",
+	"res://assets/art/commercial/dahan_result_hero_v1.png",
+	"res://assets/art/commercial/dashu_result_hero_v1.png",
 	"res://assets/art/commercial/flower_states_topdown_v1.png",
+	"res://assets/art/commercial/guyu_result_hero_v1.png",
 	"res://assets/art/commercial/hive_threshold_interior_v1.png",
 	"res://assets/art/commercial/listening_seed_shell_states_v1.png",
 	"res://assets/art/commercial/main_hive_exterior_v1.png",
@@ -55,6 +58,7 @@ const COMMERCIAL_TEXTURES: Array[String] = [
 	"res://assets/art/commercial/player_bee_topdown_states_v1.png",
 	"res://assets/art/commercial/rest_hive_exterior_v1.png",
 	"res://assets/art/commercial/seasonal_work_props_v1.png",
+	"res://assets/art/commercial/shuangjiang_result_hero_v1.png",
 	"res://assets/art/commercial/spring_world_ground_v1.png",
 	"res://assets/art/commercial/summer_world_ground_v1.png",
 	"res://assets/art/commercial/thrush_neighbor_states_v3.png",
@@ -420,6 +424,9 @@ func validate_commercial_resources() -> bool:
 		if texture == null:
 			fail("Commercial texture is absent or cannot load from the pack: %s" % texture_path)
 			return false
+		if texture_path.ends_with("_result_hero_v1.png") and texture.get_size() != Vector2(1672, 941):
+			fail("Seasonal result illustration must retain its reviewed 1672 x 941 source dimensions: %s" % texture_path)
+			return false
 	for music_path in COMMERCIAL_MUSIC:
 		var stream := load(music_path) as AudioStreamWAV
 		if stream == null:
@@ -714,6 +721,11 @@ func validate_dynamic_documents() -> Dictionary:
 		fail("Formal campaign catalog must contain exactly 24 schema-v1 levels.")
 		return {}
 	var climax_orders: Array[int] = []
+	var content_slice_optional_counts := {
+		"spring_yushui": 6,
+		"spring_guyu": 4,
+	}
+	var content_slice_ids := {}
 	for index in campaign_levels.size():
 		if not campaign_levels[index] is Dictionary:
 			fail("Formal campaign level %d is not an object." % index)
@@ -727,8 +739,60 @@ func validate_dynamic_documents() -> Dictionary:
 			if not level.get("phases", []) is Array or (level.get("phases", []) as Array).size() != 3:
 				fail("Formal campaign climax level %d does not have exactly three phases." % index)
 				return {}
+		var level_id := String(level.get("id", ""))
+		if content_slice_optional_counts.has(level_id):
+			var matrix = level.get("event_matrix", [])
+			if not matrix is Array or matrix.size() != 15:
+				fail("Commercial content slice %s must contain exactly 15 events." % level_id)
+				return {}
+			var event_ids := {}
+			var mechanics := {}
+			var optional_count := 0
+			for event_index in matrix.size():
+				if not matrix[event_index] is Dictionary:
+					fail("Commercial content slice %s event %d is not an object." % [level_id, event_index])
+					return {}
+				var event: Dictionary = matrix[event_index]
+				var event_id := String(event.get("id", ""))
+				var mechanic := String(event.get("mechanic", ""))
+				if (
+					event_id.is_empty()
+					or event_ids.has(event_id)
+					or int(event.get("order", -1)) != event_index + 1
+					or int(event.get("pentad", -1)) != floori(float(event_index) / 5.0) + 1
+					or typeof(event.get("optional", null)) != TYPE_BOOL
+					or mechanic.is_empty()
+					or String(event.get("decision", "")).is_empty()
+					or String(event.get("operation", "")).is_empty()
+					or String(event.get("consequence", "")).is_empty()
+					or String(event.get("verification_status", "")) not in ["approved-for-gameplay", "approved-for-player-facing-science"]
+					or not event.get("source_ids", []) is Array
+					or (event.get("source_ids", []) as Array).is_empty()
+					or not event.get("fact_ids", []) is Array
+				):
+					fail("Commercial content slice %s event %d violates the shipping contract." % [level_id, event_index])
+					return {}
+				event_ids[event_id] = true
+				mechanics[mechanic] = true
+				if bool(event.get("optional", false)):
+					optional_count += 1
+			if optional_count != int(content_slice_optional_counts[level_id]) or mechanics.size() < 10:
+				fail("Commercial content slice %s has the wrong main/optional split or too little mechanic variety." % level_id)
+				return {}
+			content_slice_ids[level_id] = true
 	if climax_orders != [5, 11, 17, 23]:
 		fail("Formal campaign climax levels are not fixed at 6/12/18/24.")
+		return {}
+	if content_slice_ids.size() != content_slice_optional_counts.size():
+		fail("Formal campaign pack is missing the reviewed 30-event content slice.")
+		return {}
+	var catalog_script := load("res://scripts/world/journey_level_catalog.gd") as Script
+	if catalog_script == null:
+		fail("Formal campaign runtime catalog validator is absent from the pack.")
+		return {}
+	var runtime_catalog = catalog_script.new()
+	if runtime_catalog == null or not bool(runtime_catalog.catalog_valid):
+		fail("Formal campaign runtime catalog rejected the packed 30-event source and verification contracts.")
 		return {}
 	return provenance
 

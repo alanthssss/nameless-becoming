@@ -29,10 +29,12 @@ var last_checkpoint_error := OK
 var unsaved_exit_confirmation := ""
 
 var ui_layer: CanvasLayer
+var transition_layer: CanvasLayer
 var top_panel: ColorRect
 var title_label: Label
 var area_label: Label
 var energy_label: Label
+var cargo_label: Label
 var reserve_label: Label
 var timer_label: Label
 var save_label: Label
@@ -48,7 +50,10 @@ var level_buttons: Dictionary = {}
 var field_panel: ColorRect
 var field_heading_label: Label
 var objective_label: Label
+var objective_toggle_button: Button
+var toast_panel: ColorRect
 var message_label: Label
+var action_panel: ColorRect
 var action_button: Button
 var return_button: Button
 var controls_label: Label
@@ -60,6 +65,19 @@ var retry_button: Button
 var back_hive_button: Button
 var fade: ColorRect
 var fade_label: Label
+var field_hud_visible := false
+var field_hud_collapsed := false
+var controls_hint_enabled := true
+var toast_time := 0.0
+var last_toast_message := ""
+var current_ui_scale := 1.0
+var pending_hive_story_text := ""
+var pending_hive_story_duration := 0.0
+
+const FIELD_TOAST_SECONDS := 4.8
+const FIELD_OBJECTIVE_SIZE := Vector2(620, 84)
+const FIELD_OBJECTIVE_COLLAPSED_SIZE := Vector2(86, 54)
+const FIELD_PLAY_SAFE_RIGHT := 1008.0
 
 
 func _ready() -> void:
@@ -116,6 +134,26 @@ func _ready() -> void:
 	_show_hive(false, true)
 	if restore_error != OK:
 		_show_story("存档没有安全载入，已经从立春重新开始（错误 %d）。" % restore_error, 5.0)
+	elif not state.legacy_campaign_progress.is_empty():
+		var archived_count := int(state.legacy_campaign_progress.get("completed_count", 0))
+		var migration_summary := persistence.progress_summary() if session_persistence_active else {}
+		var backup_note := (
+			"原始旧档已另存保护。"
+			if bool(migration_summary.get("protected_v2_backup", false))
+			else "原始旧档会在首次保存前另存保护。"
+		)
+		if state.journey_complete:
+			_show_story(
+				"旧版 %d/24 已封存，正式 24/24 也已完成。%s" % [archived_count, backup_note],
+				6.0
+			)
+		else:
+			var next_term_name := String(state.next_level().get("term_name", "下一关"))
+			_show_story(
+				"旧版 %d/24 已封存，正式进度从%s继续。旧版完成不会代替新关卡里的事件；%s"
+				% [archived_count, next_term_name, backup_note],
+				7.0
+			)
 	elif state.legacy_journey_completed:
 		_show_story("上一版的四季短旅程已收进纪念格。正式二十四关从立春开始，每一关都等你亲自飞完。", 6.0)
 	if session_persistence_active:
@@ -126,19 +164,27 @@ func _build_interface() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.name = "CampaignInterface"
 	add_child(ui_layer)
+	transition_layer = CanvasLayer.new()
+	transition_layer.name = "CampaignTransitionLayer"
+	transition_layer.layer = 100
+	add_child(transition_layer)
 	top_panel = ColorRect.new()
 	top_panel.position = Vector2(18, 14)
 	top_panel.size = Vector2(1244, 76)
 	top_panel.color = Color("f4e8c8", 0.96)
 	ui_layer.add_child(top_panel)
-	title_label = _label(top_panel, "一会儿巢里见", Vector2(18, 6), Vector2(365, 36), 24, Color("263a31"))
-	area_label = _label(top_panel, "主蜂巢 · 二十四趟", Vector2(20, 44), Vector2(340, 22), 12, Color("687166"))
-	energy_label = _label(top_panel, "体力 —", Vector2(390, 20), Vector2(170, 34), 16, Color("4c4535"))
-	reserve_label = _label(top_panel, "巢中储备 0", Vector2(575, 20), Vector2(170, 34), 16, Color("4c4535"))
-	timer_label = _label(top_panel, "", Vector2(750, 20), Vector2(160, 34), 16, Color("4c4535"))
-	save_label = _label(top_panel, "巢里已记好", Vector2(900, 24), Vector2(185, 28), 11, Color("687166"))
+	title_label = _label(top_panel, "一会儿巢里见", Vector2(18, 6), Vector2(305, 36), 24, Color("263a31"))
+	area_label = _label(top_panel, "主蜂巢 · 二十四趟", Vector2(20, 44), Vector2(303, 22), 12, Color("687166"))
+	energy_label = _label(top_panel, "体力 —", Vector2(344, 20), Vector2(142, 34), 16, Color("4c4535"))
+	cargo_label = _label(top_panel, "蜜囊 —", Vector2(494, 20), Vector2(130, 34), 16, Color("4c4535"))
+	reserve_label = _label(top_panel, "储备 0", Vector2(632, 20), Vector2(130, 34), 16, Color("4c4535"))
+	timer_label = _label(top_panel, "", Vector2(770, 20), Vector2(150, 34), 16, Color("4c4535"))
+	save_label = _label(top_panel, "巢里已记好", Vector2(928, 24), Vector2(145, 28), 11, Color("687166"))
 	save_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	pause_button = _button(top_panel, "暂停 / 菜单", Vector2(1092, 12), Vector2(134, 50), _open_pause_menu, false, 14)
+	pause_button = _button(top_panel, "暂停 / 菜单", Vector2(1082, 12), Vector2(144, 50), _open_pause_menu, false, 14)
+	var top_labels: Array[Label] = [title_label, area_label, energy_label, cargo_label, reserve_label, timer_label, save_label]
+	for top_label in top_labels:
+		_prepare_single_line_label(top_label)
 
 	_build_board()
 	_build_field_panel()
@@ -150,7 +196,7 @@ func _build_interface() -> void:
 	fade.size = Vector2(1280, 720)
 	fade.color = Color("20372f", 1.0)
 	fade.mouse_filter = Control.MOUSE_FILTER_STOP
-	ui_layer.add_child(fade)
+	transition_layer.add_child(fade)
 	fade_label = _label(fade, "", Vector2(260, 300), Vector2(760, 92), 29, Color("fff0b5"))
 	fade_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	fade_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -187,7 +233,8 @@ func _build_board() -> void:
 		var season_fill: Color = [Color("f0d6c7"), Color("ece2aa"), Color("ead3b3"), Color("d7e4e1")][row]
 		button.add_theme_stylebox_override("disabled", _button_style(Color(season_fill, 0.76), Color("8b816d", 0.48)))
 		button.add_theme_color_override("font_disabled_color", Color("6f7169", 0.72))
-		button.tooltip_text = String(entry.intro)
+		# The fixed detail pane below is the only long-form explanation surface.
+		# Native hover tooltips float across the board and obscure other terms.
 		level_buttons[level_id] = button
 	var divider := ColorRect.new()
 	divider.position = Vector2(34, 406)
@@ -204,20 +251,66 @@ func _build_board() -> void:
 
 func _build_field_panel() -> void:
 	field_panel = ColorRect.new()
-	field_panel.position = Vector2(1008, 106)
-	field_panel.size = Vector2(254, 586)
-	field_panel.color = Color("f4edda", 0.94)
-	field_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	field_panel.name = "CurrentObjectiveCard"
+	field_panel.position = Vector2(18, 104)
+	field_panel.size = FIELD_OBJECTIVE_SIZE
+	field_panel.color = Color("f4edda", 0.92)
+	# The card is visual decoration except for its explicit toggle. Empty paper
+	# must not steal a mouse/touch destination from the field underneath.
+	field_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui_layer.add_child(field_panel)
-	field_heading_label = _label(field_panel, "这一趟", Vector2(18, 16), Vector2(218, 26), 13, Color("6a705e"))
-	objective_label = _label(field_panel, "", Vector2(18, 50), Vector2(218, 190), 15, Color("29382f"))
-	objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	message_label = _label(field_panel, "", Vector2(18, 252), Vector2(218, 150), 13, Color("4d594f"))
+	field_heading_label = _label(field_panel, "当前", Vector2(16, 11), Vector2(72, 62), 13, Color("6a705e"))
+	field_heading_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_prepare_single_line_label(field_heading_label)
+	objective_label = _label(field_panel, "", Vector2(100, 11), Vector2(418, 62), 14, Color("29382f"))
+	objective_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_prepare_single_line_label(objective_label)
+	# Keep the actual control outside the click-through decoration subtree so its
+	# keyboard, mouse and touch behavior is explicit on every Godot backend.
+	objective_toggle_button = _button(ui_layer, "收起", Vector2(548, 120), Vector2(76, 52), _toggle_field_hud, false, 13)
+	objective_toggle_button.name = "ObjectiveToggleButton"
+	objective_toggle_button.tooltip_text = "收起当前目标；操作按钮和资源状态会继续保留"
+
+	toast_panel = ColorRect.new()
+	toast_panel.name = "FieldMessageToast"
+	toast_panel.position = Vector2(250, 586)
+	toast_panel.size = Vector2(630, 62)
+	toast_panel.color = Color("283d34", 0.91)
+	toast_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	toast_panel.visible = false
+	ui_layer.add_child(toast_panel)
+	message_label = _label(toast_panel, "", Vector2(20, 7), Vector2(590, 48), 13, Color("fff4d2"))
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	action_button = _button(field_panel, "情境动作", Vector2(15, 421), Vector2(132, 58), _press_field_action, true, 15)
-	return_button = _button(field_panel, "归巢", Vector2(154, 421), Vector2(84, 58), _press_return, false, 14)
-	controls_label = _label(field_panel, "WASD / 左摇杆移动\n空格 / A 互动 · Q / Y 归巢", Vector2(18, 502), Vector2(218, 58), 11, Color("737866"))
+	message_label.max_lines_visible = 2
+	message_label.clip_text = true
+	message_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+
+	action_panel = ColorRect.new()
+	action_panel.name = "FieldActionTray"
+	# Campaign fields clamp all actors and work markers at x=1008. Keep the
+	# entire interactive tray to the right of that same authoritative boundary.
+	action_panel.position = Vector2(FIELD_PLAY_SAFE_RIGHT + 10.0, 514)
+	action_panel.size = Vector2(244, 188)
+	action_panel.color = Color("f4edda", 0.94)
+	action_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	ui_layer.add_child(action_panel)
+	action_button = _button(action_panel, "情境动作", Vector2(10, 10), Vector2(224, 76), _press_field_action, true, 15)
+	return_button = _button(action_panel, "指路回巢", Vector2(10, 102), Vector2(224, 76), _press_return, false, 14)
+	_prepare_button_text(action_button)
+	_prepare_button_text(return_button)
+
+	controls_label = _label(
+		ui_layer,
+		"WASD/摇杆 移动 · 双击方向 急转 · 空格/A 主动作 · Q/Y 次动作",
+		Vector2(18, 672),
+		Vector2(850, 30),
+		11,
+		Color("f7edcf")
+	)
 	controls_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	controls_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_prepare_single_line_label(controls_label)
+	_set_field_hud_visible(false)
 
 
 func _build_story_card() -> void:
@@ -256,11 +349,28 @@ func _label(parent: Node, text: String, position: Vector2, size: Vector2, font_s
 	label.text = text
 	label.position = position
 	label.size = size
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
 	label.set_meta("commercial_base_font_size", font_size)
 	parent.add_child(label)
 	return label
+
+
+func _prepare_single_line_label(label: Label) -> void:
+	if label == null:
+		return
+	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	label.max_lines_visible = 1
+	label.clip_text = true
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+
+
+func _prepare_button_text(button: Button) -> void:
+	if button == null:
+		return
+	button.clip_text = true
+	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 
 
 func _button(
@@ -280,12 +390,16 @@ func _button(
 	button.add_theme_font_size_override("font_size", font_size)
 	button.set_meta("commercial_base_font_size", font_size)
 	button.add_theme_color_override("font_color", Color("273c32"))
+	button.add_theme_color_override("font_hover_color", Color("1f3c31"))
+	button.add_theme_color_override("font_pressed_color", Color("1b322a"))
+	button.add_theme_color_override("font_focus_color", Color("273c32"))
 	button.add_theme_color_override("font_disabled_color", Color("8b8a7d"))
 	button.add_theme_stylebox_override("normal", _button_style(Color("dfbb5d") if primary else Color("e8ddbd"), Color("6d5b38")))
 	button.add_theme_stylebox_override("hover", _button_style(Color("f0cf72") if primary else Color("f4e9c9"), Color("405d50"), 3))
 	button.add_theme_stylebox_override("pressed", _button_style(Color("cda84c") if primary else Color("d8cba8"), Color("334b40"), 3))
 	button.add_theme_stylebox_override("focus", _button_style(Color("000000", 0.0), Color("fff0a8"), 4))
 	button.add_theme_stylebox_override("disabled", _button_style(Color("ded5bc", 0.82), Color("8b806b", 0.42)))
+	_prepare_button_text(button)
 	button.pressed.connect(callback)
 	parent.add_child(button)
 	return button
@@ -307,6 +421,10 @@ func _process(delta: float) -> void:
 		story_time = maxf(0.0, story_time - delta)
 		if story_time <= 0.0:
 			story_card.visible = false
+	if toast_time > 0.0 and not get_tree().paused:
+		toast_time = maxf(0.0, toast_time - delta)
+		if toast_time <= 0.0 and toast_panel != null:
+			toast_panel.visible = false
 
 
 func _show_hive(returning: bool, immediate := false) -> void:
@@ -321,7 +439,7 @@ func _show_hive(returning: bool, immediate := false) -> void:
 		return
 	_connect_hive(router.current_area as JourneyCampaignHive)
 	board_panel.visible = true
-	field_panel.visible = false
+	_set_field_hud_visible(false)
 	failure_panel.visible = false
 	_refresh_hive_interface()
 	_finish_fade(immediate)
@@ -331,23 +449,55 @@ func _connect_hive(hive: JourneyCampaignHive) -> void:
 	if hive == null:
 		return
 	hive.sortie_requested.connect(_begin_level)
-	hive.presentation_finished.connect(_refresh_hive_interface)
+	hive.presentation_finished.connect(_on_hive_presentation_finished)
 	hive.selection_changed.connect(_on_hive_selection_changed)
+
+
+func _on_hive_presentation_finished() -> void:
+	_refresh_hive_interface()
+	if pending_hive_story_text.is_empty():
+		return
+	var text := pending_hive_story_text
+	var duration := pending_hive_story_duration
+	pending_hive_story_text = ""
+	pending_hive_story_duration = 0.0
+	_show_story(text, duration)
+
+
+func _queue_hive_story(text: String, duration: float) -> void:
+	pending_hive_story_text = text
+	pending_hive_story_duration = maxf(0.1, duration)
+	# The result illustration and receiving line get their full beat first. The
+	# story timer starts only from presentation_finished, so no reading time is
+	# consumed behind that presentation.
+	story_time = 0.0
+	if story_card != null:
+		story_card.visible = false
 
 
 func _refresh_hive_interface() -> void:
 	var hive := router.current_area as JourneyCampaignHive
 	if hive == null:
 		return
-	board_heading.text = hive.heading()
+	var keepsake_line := hive.legacy_keepsake_text()
+	board_heading.text = hive.heading() if hive.presentation_time > 0.0 or keepsake_line.is_empty() else keepsake_line
+	_set_base_font_size(board_heading, 17 if board_heading.text == keepsake_line else 25)
 	board_progress.text = "%d / %d · 储备 %d" % [state.completed_count(), JourneyLevelCatalog.TOTAL_LEVELS, state.reserve]
 	title_label.text = "一会儿巢里见"
+	_set_base_font_size(title_label, 24)
 	area_label.text = "主蜂巢 · 四季接货台"
 	energy_label.text = "体力 —"
-	reserve_label.text = "巢中储备 %d" % state.reserve
+	cargo_label.text = "蜜囊 —"
+	reserve_label.text = "储备 %d" % state.reserve
 	timer_label.text = ""
 	_refresh_level_buttons()
 	_on_hive_selection_changed(hive.selected_entry())
+	if hive.presentation_time > 0.0:
+		board_detail_title.text = hive.heading()
+		board_detail_body.text = hive.body_text()
+		board_detail_trace.text = "结果演出结束后，再显示这一趟的纪事。"
+		board_primary_button.text = hive.action_text()
+		board_primary_button.disabled = false
 
 
 func _refresh_level_buttons() -> void:
@@ -395,6 +545,11 @@ func _request_hive_sortie() -> void:
 func _begin_level(level_id: String, replay: bool) -> void:
 	if transitioning:
 		return
+	pending_hive_story_text = ""
+	pending_hive_story_duration = 0.0
+	story_time = 0.0
+	if story_card != null:
+		story_card.visible = false
 	var token := state.begin_level(level_id, replay)
 	if token < 0:
 		var hive := router.current_area as JourneyCampaignHive
@@ -417,8 +572,9 @@ func _begin_level(level_id: String, replay: bool) -> void:
 	field.status_changed.connect(_on_field_status)
 	field.journey_completed.connect(_on_level_completed)
 	field.attempt_failed.connect(_on_attempt_failed)
+	field.event_checkpoint_reached.connect(_on_event_checkpoint_reached)
 	board_panel.visible = false
-	field_panel.visible = true
+	_set_field_hud_visible(true)
 	_on_field_status(field.status_snapshot())
 	_finish_fade(false)
 
@@ -426,38 +582,181 @@ func _begin_level(level_id: String, replay: bool) -> void:
 func _on_field_status(snapshot: Dictionary) -> void:
 	current_status = snapshot.duplicate(true)
 	var climax := bool(snapshot.get("is_climax", false))
+	var event_runtime: Dictionary = snapshot.get("event_runtime", {})
 	if climax:
 		title_label.text = "%02d · %s · %s" % [
 			int(snapshot.get("level_number", 1)),
 			String(snapshot.get("term_name", "花田")),
 			String(snapshot.get("display_name", "季节大忙")),
 		]
-		title_label.add_theme_font_size_override("font_size", 20)
-		field_heading_label.text = "季节大忙 · 第 %d / 3 回" % int(snapshot.get("phase", 1))
+		_set_base_font_size(title_label, 20)
+		field_heading_label.text = "第%d/3回" % int(snapshot.get("phase", 1))
 	else:
 		title_label.text = "%02d · %s" % [int(snapshot.get("level_number", 1)), String(snapshot.get("term_name", "花田"))]
-		title_label.add_theme_font_size_override("font_size", 24)
-		field_heading_label.text = "这一趟"
+		_set_base_font_size(title_label, 24)
+		field_heading_label.text = "当前"
+	if not event_runtime.is_empty():
+		field_heading_label.text = "%02d/%02d" % [
+			int(event_runtime.get("current_event_number", 1)),
+			int(event_runtime.get("event_count", 15)),
+		]
 	area_label.text = String(snapshot.get("area", "四季花田"))
 	energy_label.text = "体力 %d / %d" % [roundi(float(snapshot.get("energy", 0.0))), roundi(float(snapshot.get("energy_cap", 360.0)))]
-	reserve_label.text = "巢中储备 %d" % state.reserve
-	timer_label.text = "天气窗 %s" % _format_time(float(snapshot.get("time_remaining", 0.0)))
-	var lines: Array = snapshot.get("objective_lines", [])
-	objective_label.text = "\n".join(lines)
-	if climax:
-		objective_label.text += "\n\n" + String(snapshot.get("phase_instruction", ""))
 	if bool(snapshot.get("has_collection", false)):
-		objective_label.text += "\n\n蜜囊 %d / %d · 已交 %d" % [
-			int(snapshot.get("honey_cargo", 0)),
-			int(snapshot.get("capacity", 4)),
-			int(snapshot.get("delivered_cargo", 0)),
-		]
-	message_label.text = String(snapshot.get("message", ""))
-	if bool(snapshot.get("hazard_active", false)):
-		message_label.text += "\n\n天气正在过路；叶棚内更稳。"
+		cargo_label.text = "蜜囊 %d / %d" % [int(snapshot.get("honey_cargo", 0)), int(snapshot.get("capacity", 4))]
+	else:
+		cargo_label.text = "蜜囊 —"
+	reserve_label.text = "储备 %d" % state.reserve
+	timer_label.text = "天气 %s" % _format_time(float(snapshot.get("time_remaining", 0.0)))
+	objective_label.text = _current_objective_text(snapshot)
+	var toast_text := _field_toast_text(snapshot, objective_label.text)
+	_show_field_toast(toast_text)
 	action_button.text = String(snapshot.get("action_label", "看看最近花标"))
 	action_button.disabled = not bool(snapshot.get("action_enabled", true))
 	return_button.text = String(snapshot.get("return_label", "指路回巢"))
+	controls_label.text = _field_controls_text(action_button.text, return_button.text)
+
+
+func _current_objective_text(snapshot: Dictionary) -> String:
+	if bool(snapshot.get("ready_to_return", false)):
+		return "回主蜂巢，把这一趟工作交给接货蜂"
+	var event_runtime: Dictionary = snapshot.get("event_runtime", {})
+	if not event_runtime.is_empty():
+		var title := _single_line_text(String(event_runtime.get("current_event_title", "")))
+		var hint := _single_line_text(String(event_runtime.get("ui_hint", "")))
+		if title.is_empty():
+			return hint if not hint.is_empty() else "看看最近发亮的花标"
+		return title if hint.is_empty() else "%s · %s" % [title, hint]
+	if bool(snapshot.get("is_climax", false)):
+		var phase_instruction := _single_line_text(String(snapshot.get("phase_instruction", "")))
+		if not phase_instruction.is_empty():
+			return phase_instruction
+	var lines: Array = snapshot.get("objective_lines", [])
+	var counts: Array = snapshot.get("objective_counts", [])
+	var goals: Array = snapshot.get("objective_goals", [])
+	for index in mini(lines.size(), mini(counts.size(), goals.size())):
+		if int(counts[index]) < int(goals[index]):
+			return _single_line_text(String(lines[index]))
+	for line in lines:
+		var candidate := _single_line_text(String(line))
+		if not candidate.is_empty() and not candidate.begins_with("✓") and not _objective_line_complete(candidate):
+			return candidate
+	if not lines.is_empty():
+		return _single_line_text(String(lines[0]))
+	return "看看最近发亮的花标"
+
+
+func _single_line_text(text: String) -> String:
+	return text.replace("\r", " ").replace("\n", " · ").replace("  ", " ").strip_edges()
+
+
+func _field_toast_text(snapshot: Dictionary, objective_text: String) -> String:
+	var text := _single_line_text(String(snapshot.get("message", "")))
+	if text.is_empty():
+		return ""
+	var event_runtime: Dictionary = snapshot.get("event_runtime", {})
+	if event_runtime.is_empty():
+		return text
+	# Event setup used to put the same authored title + hint in both the objective
+	# card and the transient toast. Keep the card as the single source of that
+	# instruction; reserve the toast for a new consequence, warning or reaction.
+	var title := _single_line_text(String(event_runtime.get("current_event_title", "")))
+	var hint := _single_line_text(String(event_runtime.get("ui_hint", "")))
+	var authored_instruction := title if hint.is_empty() else "%s · %s" % [title, hint]
+	for repeated_text in [objective_text, authored_instruction, title, hint]:
+		var phrase := _single_line_text(String(repeated_text))
+		if phrase.is_empty():
+			continue
+		if text == phrase:
+			return ""
+		if text.ends_with(phrase):
+			# Completion messages deliberately append the next objective so movement
+			# can continue immediately. Remove only that repeated suffix; never hide
+			# the consequence that precedes it.
+			return text.trim_suffix(phrase).strip_edges()
+	return text
+
+
+func _field_controls_text(primary_label: String, secondary_label: String) -> String:
+	var primary := _single_line_text(primary_label)
+	var secondary := _single_line_text(secondary_label)
+	if primary.is_empty():
+		primary = "主动作"
+	if secondary.is_empty():
+		secondary = "次动作"
+	return "WASD/摇杆 移动 · 双击方向 急转 · 空格/A %s · Q/Y %s" % [primary, secondary]
+
+
+func _objective_line_complete(text: String) -> bool:
+	var halves := text.split("/", false, 1)
+	if halves.size() != 2:
+		return false
+	var left_tokens := String(halves[0]).strip_edges().split(" ", false)
+	var right_tokens := String(halves[1]).strip_edges().split(" ", false)
+	if left_tokens.is_empty() or right_tokens.is_empty():
+		return false
+	var current_text := String(left_tokens[left_tokens.size() - 1])
+	var goal_text := String(right_tokens[0])
+	if not current_text.is_valid_int() or not goal_text.is_valid_int():
+		return false
+	return int(current_text) >= int(goal_text)
+
+
+func _show_field_toast(text: String) -> void:
+	if message_label == null or toast_panel == null:
+		return
+	if text.is_empty():
+		message_label.text = ""
+		last_toast_message = ""
+		toast_time = 0.0
+		toast_panel.visible = false
+		return
+	message_label.text = text
+	if text != last_toast_message:
+		last_toast_message = text
+		toast_time = FIELD_TOAST_SECONDS
+		toast_panel.visible = field_hud_visible
+
+
+func _set_field_hud_visible(visible: bool) -> void:
+	field_hud_visible = visible
+	if not visible:
+		toast_time = 0.0
+		last_toast_message = ""
+		if message_label != null:
+			message_label.text = ""
+	if field_panel != null:
+		field_panel.visible = visible
+	if objective_toggle_button != null:
+		objective_toggle_button.visible = visible
+	if action_panel != null:
+		action_panel.visible = visible
+	if controls_label != null:
+		controls_label.visible = visible and controls_hint_enabled
+	if toast_panel != null:
+		toast_panel.visible = visible and toast_time > 0.0 and not last_toast_message.is_empty()
+
+
+func _toggle_field_hud() -> void:
+	field_hud_collapsed = not field_hud_collapsed
+	if field_panel == null:
+		return
+	field_panel.size = FIELD_OBJECTIVE_COLLAPSED_SIZE if field_hud_collapsed else FIELD_OBJECTIVE_SIZE
+	field_heading_label.visible = not field_hud_collapsed
+	objective_label.visible = not field_hud_collapsed
+	objective_toggle_button.text = "目标" if field_hud_collapsed else "收起"
+	objective_toggle_button.position = Vector2(23, 109) if field_hud_collapsed else Vector2(548, 120)
+	objective_toggle_button.size = Vector2(76, 44) if field_hud_collapsed else Vector2(76, 52)
+	objective_toggle_button.tooltip_text = (
+		"展开当前目标" if field_hud_collapsed else "收起当前目标；操作按钮和资源状态会继续保留"
+	)
+
+
+func _set_base_font_size(control: Control, font_size: int) -> void:
+	if control == null:
+		return
+	control.set_meta("commercial_base_font_size", font_size)
+	control.add_theme_font_size_override("font_size", roundi(float(font_size) * current_ui_scale))
 
 
 func _press_field_action() -> void:
@@ -474,6 +773,13 @@ func _press_return() -> void:
 
 func _on_level_completed(payload: Dictionary) -> void:
 	call_deferred("_settle_and_return", payload.duplicate(true))
+
+
+func _on_event_checkpoint_reached(checkpoint: Dictionary) -> void:
+	if not state.record_event_checkpoint(state.active_token, checkpoint):
+		push_error("候级检查点没有通过 Campaign 状态合同")
+		return
+	_save_checkpoint("第%d候" % int(checkpoint.get("pentads_completed", 0)))
 
 
 func _settle_and_return(payload: Dictionary) -> void:
@@ -501,21 +807,21 @@ func _settle_and_return(payload: Dictionary) -> void:
 		push_error("关卡结算合同在场景切换后失效")
 		return
 	var hive := router.current_area as JourneyCampaignHive
-	hive.configure(state.hive_context(true))
+	var return_context := state.hive_context(true)
+	return_context["return_replay"] = bool(settlement.replay)
+	hive.configure(return_context)
 	_connect_hive(hive)
 	board_panel.visible = true
-	field_panel.visible = false
+	_set_field_hud_visible(false)
 	failure_panel.visible = false
 	_refresh_hive_interface()
-	if sound != null:
-		sound.play_cue("complete")
 	_save_checkpoint()
 	var story := "%s · %s\n%s" % [String(level.term_name), String(level.chronicle_title), String(level.world_trace)]
 	if bool(settlement.replay):
 		story = "%s重飞完成。储备没有重复增加，最好用时已照实比较。" % String(level.term_name)
 	elif bool(settlement.journey_complete):
 		story = "大寒 · 最后一墙立稳啦\n你给新蜂示范了回巢路线。老师傅往旁边让了一步：这回你来。\n你：一会儿巢里见。"
-	_show_story(story, 6.0 if bool(settlement.journey_complete) else 4.8)
+	_queue_hive_story(story, 6.0 if bool(settlement.journey_complete) else 4.8)
 	_finish_fade(false)
 
 
@@ -526,9 +832,9 @@ func _on_attempt_failed(reason: String, snapshot: Dictionary) -> void:
 	failed_replay = state.active_run_mode == JourneyCampaignState.RUN_REPLAY
 	failed_token = state.active_token
 	state.abandon_attempt(failed_token)
-	failure_label.text = reason + "\n已经完成的关卡、储备与纪事都不会受影响。"
+	failure_label.text = reason + "\n已完成的关卡不会受影响；若本关已有整候检查点，会从下一候继续。"
 	failure_panel.visible = true
-	field_panel.visible = false
+	_set_field_hud_visible(false)
 	retry_button.grab_focus()
 
 
@@ -700,7 +1006,7 @@ func _quit_game() -> void:
 	get_tree().quit()
 
 
-func _save_checkpoint() -> Error:
+func _save_checkpoint(checkpoint_label := "主蜂巢") -> Error:
 	if not session_persistence_active or persistence == null:
 		last_checkpoint_error = OK
 		unsaved_exit_confirmation = ""
@@ -708,7 +1014,7 @@ func _save_checkpoint() -> Error:
 	var error := persistence.save_journey_state(state)
 	last_checkpoint_error = error
 	if error == OK:
-		save_label.text = "已保存 · 主蜂巢"
+		save_label.text = "已保存 · %s" % checkpoint_label
 		unsaved_exit_confirmation = ""
 	else:
 		save_label.text = "存档失败 · 请暂停重试"
@@ -727,7 +1033,7 @@ func _checkpoint_allows_exit(action: String) -> bool:
 	if system_menu != null:
 		var action_name := "返回标题" if action == "return_to_title" else "退出游戏"
 		system_menu.show_pause_notice(
-			"自动保存再次失败（错误 %d），本次返巢后的进度还只在内存里。\n再按一次“%s”会明确放弃这部分进度；也可以继续游戏，处理存储空间后再试。"
+			"自动保存再次失败（错误 %d），最近一次检查点还只在内存里。\n再按一次“%s”会明确放弃这部分进度；也可以继续游戏，处理存储空间后再试。"
 			% [last_checkpoint_error, action_name]
 		)
 	return false
@@ -735,12 +1041,13 @@ func _checkpoint_allows_exit(action: String) -> bool:
 
 func _apply_settings(next_settings: Dictionary) -> void:
 	transition_duration = 0.0 if bool(next_settings.get("reduce_motion", false)) else full_transition_duration
+	controls_hint_enabled = bool(next_settings.get("show_control_hints", true))
 	if controls_label != null:
-		controls_label.visible = bool(next_settings.get("show_control_hints", true))
+		controls_label.visible = field_hud_visible and controls_hint_enabled
 	if ui_layer == null:
 		return
-	var scale := float(next_settings.get("ui_scale", 1.0))
+	current_ui_scale = clampf(float(next_settings.get("ui_scale", 1.0)), 0.9, 1.3)
 	for node in ui_layer.find_children("*", "Control", true, false):
 		var control := node as Control
 		if control != null and control.has_meta("commercial_base_font_size"):
-			control.add_theme_font_size_override("font_size", roundi(float(control.get_meta("commercial_base_font_size")) * scale))
+			control.add_theme_font_size_override("font_size", roundi(float(control.get_meta("commercial_base_font_size")) * current_ui_scale))

@@ -67,7 +67,7 @@ export default function Home() {
           </>
         )}
       </section>
-      <p className="build-note">四季旅程 · 本机存档 · 键盘、手柄与触控 · 进度在主蜂巢安全保存</p>
+      <p className="build-note">四季旅程 · 本机存档 · 键盘、手柄与触控 · 主蜂巢结算 / 整候断点</p>
     </main>
   );
 }

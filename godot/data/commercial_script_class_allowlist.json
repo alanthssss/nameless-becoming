@@ -82,6 +82,11 @@
       "path": "res://scripts/world/journey_campaign_state.gd"
     },
     {
+      "base": "RefCounted",
+      "class": "JourneyEventMatrixRuntime",
+      "path": "res://scripts/world/journey_event_matrix_runtime.gd"
+    },
+    {
       "base": "Node",
       "class": "JourneyGame",
       "path": "res://scripts/world/journey_game.gd"

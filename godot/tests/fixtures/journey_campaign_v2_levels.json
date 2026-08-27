@@ -1,0 +1,31 @@
+{
+  "source": "git show HEAD:godot/data/journey_levels.json",
+  "campaign_id": "solar-term-campaign-v2",
+  "schema_version": 2,
+  "levels": [
+    {"id":"spring_lichun","season_id":"spring","reward":6,"climax":false,"goals":[2,6],"trace":"巢内第一格蜜架填满，接货落点开始运转。"},
+    {"id":"spring_yushui","season_id":"spring","reward":4,"climax":false,"goals":[2,3,4],"trace":"叶沟形成稳定滴水线，之后能认作安全路线。"},
+    {"id":"spring_jingzhe","season_id":"spring","reward":5,"climax":false,"goals":[3,4,5],"trace":"四枚种核留在花田，秋季会长成可处理的种头。"},
+    {"id":"spring_chunfen","season_id":"spring","reward":8,"climax":false,"goals":[2,8],"trace":"主巢增加第二个接货落点，内侧蜜架多一排。"},
+    {"id":"spring_qingming","season_id":"spring","reward":3,"climax":false,"goals":[3,3,1],"trace":"三块天气与绕行花标永久留在春图。"},
+    {"id":"spring_guyu","season_id":"spring","reward":6,"climax":true,"goals":[3],"trace":"花标成为全年路线系统，蚊庄主继续在自己的花地翻牌。"},
+    {"id":"summer_lixia","season_id":"summer","reward":4,"climax":false,"goals":[2,5],"trace":"花标旁增加叶荫方向记号。"},
+    {"id":"summer_xiaoman","season_id":"summer","reward":4,"climax":false,"goals":[4,4],"trace":"守卫蜂改成新的巡飞环线，花田出现接应点。"},
+    {"id":"summer_mangzhong","season_id":"summer","reward":3,"climax":false,"goals":[3,3],"trace":"三件材料按施工顺序摆在小蜂房旁。"},
+    {"id":"summer_xiazhi","season_id":"summer","reward":3,"climax":false,"goals":[3,3],"trace":"小蜂房出现横梁和叶棚骨架。"},
+    {"id":"summer_xiaoshu","season_id":"summer","reward":3,"climax":false,"goals":[3,1],"trace":"小蜂房正式可以有限休息，但仍不替主巢交货。"},
+    {"id":"summer_dashu","season_id":"summer","reward":7,"climax":true,"goals":[3],"trace":"小蜂房留下完整遮阴棚、蜡补和三处风扣。"},
+    {"id":"autumn_liqiu","season_id":"autumn","reward":4,"climax":false,"goals":[3,3],"trace":"地图保留短花梗、种头和未动花的混合样貌。"},
+    {"id":"autumn_chushu","season_id":"autumn","reward":7,"climax":false,"goals":[1,7],"trace":"花区留下短梗，巢内秋蜜架真实填充。"},
+    {"id":"autumn_bailu","season_id":"autumn","reward":2,"climax":false,"goals":[5,2],"trace":"一排种头留在秋图，后续霜线会绕出不同路径。"},
+    {"id":"autumn_qiufen","season_id":"autumn","reward":2,"climax":false,"goals":[3,3],"trace":"三只种壳成为秋图永久路线标记。"},
+    {"id":"autumn_hanlu","season_id":"autumn","reward":4,"climax":false,"goals":[3,3,3],"trace":"玩家真实完成的收蜜与留种组合长期留在花田。"},
+    {"id":"autumn_shuangjiang","season_id":"autumn","reward":5,"climax":true,"goals":[3],"trace":"重排种壳、混合花田和画眉常来歇脚的停栖点长期保留。"},
+    {"id":"winter_lidong","season_id":"winter","reward":2,"climax":false,"goals":[3,3],"trace":"三个暖点永久出现在冬图。"},
+    {"id":"winter_xiaoxue","season_id":"winter","reward":2,"climax":false,"goals":[2,4],"trace":"换班蜂流开始沿连续暖路运行。"},
+    {"id":"winter_daxue","season_id":"winter","reward":2,"climax":false,"goals":[3,3],"trace":"挡风墙拉绳和木钉框架留在施工区。"},
+    {"id":"winter_dongzhi","season_id":"winter","reward":2,"climax":false,"goals":[2,2],"trace":"两段挡风木出现在施工区，大熊在旁休息。"},
+    {"id":"winter_xiaohan","season_id":"winter","reward":2,"climax":false,"goals":[2,3],"trace":"三段墙体基本成形，只剩最后一个转角。"},
+    {"id":"winter_dahan","season_id":"winter","reward":3,"climax":true,"goals":[3],"trace":"花标、小蜂房、种头、种壳、暖路和挡风墙同时留在世界里。"}
+  ]
+}

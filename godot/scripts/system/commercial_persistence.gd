@@ -18,6 +18,7 @@ const PROGRESS_KIND := "journey_progress"
 const SETTINGS_KIND := "settings"
 const DEFAULT_PROGRESS_PATH := "user://see-you-at-the-hive-progress.json"
 const DEFAULT_SETTINGS_PATH := "user://see-you-at-the-hive-settings.json"
+const LEGACY_V2_BACKUP_SUFFIX := ".legacy-v2.bak"
 const MUSIC_BUS := &"Music"
 const SFX_BUS := &"SFX"
 
@@ -153,11 +154,18 @@ func has_progress() -> bool:
 func progress_file_exists() -> bool:
 	## Presence is intentionally separate from validity. The title screen uses it
 	## to require an explicit second confirmation before deleting a damaged or
-	## newer-version save that this build cannot continue.
+	## newer-version save that this build cannot continue. A migration archive is
+	## also user data which a new journey must not erase without that confirmation,
+	## but has_progress() deliberately does not treat it as a current checkpoint.
 	return (
 		FileAccess.file_exists(ProjectSettings.globalize_path(progress_path))
 		or FileAccess.file_exists(ProjectSettings.globalize_path(_backup_path(progress_path)))
+		or protected_v2_archive_exists()
 	)
+
+
+func protected_v2_archive_exists() -> bool:
+	return FileAccess.file_exists(ProjectSettings.globalize_path(_legacy_v2_backup_path(progress_path)))
 
 
 func progress_summary() -> Dictionary:
@@ -168,15 +176,40 @@ func progress_summary() -> Dictionary:
 	if not _validate_progress_payload(payload):
 		return {"ok": false, "error": ERR_INVALID_DATA}
 	var saved_state: Dictionary = payload.get("state", {})
-	var campaign_save := int(saved_state.get("schema_version", 0)) == JourneyCampaignState.SAVE_SCHEMA_VERSION
+	var campaign_save := _is_supported_campaign_state(saved_state)
+	var summary_state = CampaignStateScript.new() if campaign_save else JourneyStateScript.new()
+	if summary_state.restore_from_save_dictionary(saved_state) != OK:
+		return {"ok": false, "error": ERR_INVALID_DATA}
+	var migrated_v2 := (
+		campaign_save
+		and int(saved_state.get("schema_version", 0)) == JourneyCampaignState.PREVIOUS_CAMPAIGN_SCHEMA_VERSION
+	)
+	var event_checkpoint: Dictionary = {}
+	if campaign_save and not migrated_v2:
+		event_checkpoint = summary_state.event_checkpoint.duplicate(true)
+	var legacy_progress: Dictionary = {}
+	if campaign_save:
+		legacy_progress = summary_state.legacy_campaign_progress.duplicate(true)
+	var next_segment := String(summary_state.next_segment_id())
+	var next_term_name := ""
+	if campaign_save and not next_segment.is_empty():
+		next_term_name = String(summary_state.catalog.level_by_id(next_segment).get("term_name", ""))
 	return {
 		"ok": true,
-		"reserve": int(saved_state.get("reserve", 0)),
-		"next_segment": String(payload.get("next_segment", "")),
-		"journey_complete": bool(saved_state.get("journey_complete", false)),
+		"reserve": int(summary_state.reserve),
+		"next_segment": next_segment,
+		"next_term_name": next_term_name,
+		"journey_complete": bool(summary_state.journey_complete),
 		"campaign_save": campaign_save,
-		"completed_count": int((saved_state.get("completed_level_ids", []) as Array).size()) if campaign_save else 0,
+		"completed_count": int(summary_state.completed_count()) if campaign_save else 0,
 		"total_count": JourneyLevelCatalog.TOTAL_LEVELS if campaign_save else 0,
+		"migrated_v2": migrated_v2,
+		"legacy_archived": not legacy_progress.is_empty(),
+		"legacy_completed_count": int(legacy_progress.get("completed_count", 0)),
+		"legacy_journey_complete": bool(legacy_progress.get("journey_complete", false)),
+		"protected_v2_backup": _has_valid_protected_v2_backup(),
+		"checkpoint_level_id": String(event_checkpoint.get("level_id", "")),
+		"checkpoint_pentads_completed": int(event_checkpoint.get("pentads_completed", 0)),
 		"saved_at_unix": int(result.get("saved_at_unix", 0)),
 		"recovered_from_backup": bool(result.get("recovered_from_backup", false)),
 	}
@@ -193,6 +226,9 @@ func save_journey_state(journey_state: Object) -> Error:
 	var state_data = journey_state.call("to_save_dictionary")
 	if not state_data is Dictionary:
 		return ERR_INVALID_DATA
+	# These two envelope strings remain wire-compatible with earlier campaign
+	# slots: Continue still boots at the hive threshold, while schema-v3 state may
+	# resume an authored event chapter from its last whole-pentad boundary.
 	var payload := {
 		"checkpoint_area": "hive_threshold",
 		"checkpoint_policy": "restart_active_sortie",
@@ -201,6 +237,10 @@ func save_journey_state(journey_state: Object) -> Error:
 	}
 	if not _validate_progress_payload(payload):
 		return ERR_INVALID_DATA
+	var legacy_protection_error := _protect_v2_before_v3_write(state_data as Dictionary)
+	if legacy_protection_error != OK:
+		last_progress_error = legacy_protection_error
+		return legacy_protection_error
 	var error := _write_envelope_atomic(progress_path, PROGRESS_KIND, payload)
 	last_progress_error = error
 	if error == OK:
@@ -230,7 +270,13 @@ func restore_journey_state(journey_state: Object) -> Error:
 
 func delete_progress() -> Error:
 	var first_error := OK
-	for candidate in [progress_path, _temporary_path(progress_path), _backup_path(progress_path)]:
+	for candidate in [
+		progress_path,
+		_temporary_path(progress_path),
+		_backup_path(progress_path),
+		_legacy_v2_backup_path(progress_path),
+		_temporary_path(_legacy_v2_backup_path(progress_path)),
+	]:
 		var absolute := ProjectSettings.globalize_path(candidate)
 		if not FileAccess.file_exists(absolute):
 			continue
@@ -309,14 +355,107 @@ func _validate_progress_payload(payload: Variant) -> bool:
 	if not dictionary.get("next_segment", null) is String:
 		return false
 	var state_data := dictionary.state as Dictionary
-	var campaign_save := (
-		int(state_data.get("schema_version", 0)) == JourneyCampaignState.SAVE_SCHEMA_VERSION
-		and state_data.has("campaign_id")
-	)
+	var campaign_save := _is_supported_campaign_state(state_data)
+	if state_data.has("campaign_id") and not campaign_save:
+		return false
 	var probe = CampaignStateScript.new() if campaign_save else JourneyStateScript.new()
 	if probe.restore_from_save_dictionary(dictionary.state) != OK:
 		return false
+	if (
+		campaign_save
+		and int(state_data.get("schema_version", 0)) == JourneyCampaignState.PREVIOUS_CAMPAIGN_SCHEMA_VERSION
+	):
+		return String(dictionary.next_segment) == _v2_saved_next_segment(state_data)
 	return String(dictionary.next_segment) == String(probe.next_segment_id())
+
+
+func _is_supported_campaign_state(state_data: Dictionary) -> bool:
+	if (
+		not state_data.has("campaign_id")
+		or not state_data.get("campaign_id", null) is String
+		or typeof(state_data.get("schema_version", null)) not in [TYPE_INT, TYPE_FLOAT]
+		or not is_equal_approx(
+			float(state_data.get("schema_version", 0)),
+			roundf(float(state_data.get("schema_version", 0)))
+		)
+	):
+		return false
+	var schema_version := int(state_data.get("schema_version", 0))
+	if schema_version == JourneyCampaignState.SAVE_SCHEMA_VERSION:
+		return String(state_data.get("campaign_id", "")) == String(CampaignStateScript.new().catalog.campaign_id)
+	return (
+		schema_version == JourneyCampaignState.PREVIOUS_CAMPAIGN_SCHEMA_VERSION
+		and String(state_data.get("campaign_id", "")) == JourneyCampaignState.PREVIOUS_CAMPAIGN_ID
+	)
+
+
+func _v2_saved_next_segment(state_data: Dictionary) -> String:
+	var completed = state_data.get("completed_level_ids", [])
+	if not completed is Array:
+		return ""
+	var level_count := (completed as Array).size()
+	if level_count >= JourneyLevelCatalog.TOTAL_LEVELS:
+		return ""
+	return String(CampaignStateScript.new().catalog.level_at(level_count).id)
+
+
+func _protect_v2_before_v3_write(next_state: Dictionary) -> Error:
+	## The rotating .bak is crash recovery for ordinary saves. It cannot also be
+	## the historical migration archive because the second v3 checkpoint would
+	## replace it. Before the first v3 write, copy the exact valid v2 envelope to
+	## a separate slot which routine checkpoints never touch.
+	if (
+		int(next_state.get("schema_version", 0)) != JourneyCampaignState.SAVE_SCHEMA_VERSION
+		or String(next_state.get("campaign_id", "")) != String(CampaignStateScript.new().catalog.campaign_id)
+	):
+		return OK
+	var current := _load_envelope(progress_path, PROGRESS_KIND, true)
+	if not bool(current.get("ok", false)):
+		return OK
+	var current_payload = current.get("payload", {})
+	if not _payload_is_v2_campaign(current_payload):
+		return OK
+	var protected_path := _legacy_v2_backup_path(progress_path)
+	if FileAccess.file_exists(ProjectSettings.globalize_path(protected_path)):
+		return OK if _has_valid_protected_v2_backup() else ERR_FILE_CORRUPT
+	var source_path := _backup_path(progress_path) if bool(current.get("recovered_from_backup", false)) else progress_path
+	var temporary_path := _temporary_path(protected_path)
+	var source_absolute := ProjectSettings.globalize_path(source_path)
+	var temporary_absolute := ProjectSettings.globalize_path(temporary_path)
+	var protected_absolute := ProjectSettings.globalize_path(protected_path)
+	var directory_error := DirAccess.make_dir_recursive_absolute(protected_absolute.get_base_dir())
+	if directory_error != OK:
+		return directory_error
+	DirAccess.remove_absolute(temporary_absolute)
+	var copy_error := DirAccess.copy_absolute(source_absolute, temporary_absolute)
+	if copy_error != OK:
+		return copy_error
+	var verification := _read_envelope(temporary_path, PROGRESS_KIND)
+	if not bool(verification.get("ok", false)) or not _payload_is_v2_campaign(verification.get("payload", {})):
+		DirAccess.remove_absolute(temporary_absolute)
+		return ERR_FILE_CORRUPT
+	var move_error := DirAccess.rename_absolute(temporary_absolute, protected_absolute)
+	if move_error != OK:
+		DirAccess.remove_absolute(temporary_absolute)
+		return move_error
+	return OK
+
+
+func _has_valid_protected_v2_backup() -> bool:
+	var result := _read_envelope(_legacy_v2_backup_path(progress_path), PROGRESS_KIND)
+	return bool(result.get("ok", false)) and _payload_is_v2_campaign(result.get("payload", {}))
+
+
+func _payload_is_v2_campaign(payload: Variant) -> bool:
+	if not payload is Dictionary:
+		return false
+	var state_data = (payload as Dictionary).get("state", null)
+	return (
+		state_data is Dictionary
+		and int((state_data as Dictionary).get("schema_version", 0)) == JourneyCampaignState.PREVIOUS_CAMPAIGN_SCHEMA_VERSION
+		and String((state_data as Dictionary).get("campaign_id", "")) == JourneyCampaignState.PREVIOUS_CAMPAIGN_ID
+		and _validate_progress_payload(payload)
+	)
 
 
 func _write_envelope_atomic(path: String, kind: String, payload: Dictionary) -> Error:
@@ -515,3 +654,7 @@ func _temporary_path(path: String) -> String:
 
 func _backup_path(path: String) -> String:
 	return "%s.bak" % path
+
+
+func _legacy_v2_backup_path(path: String) -> String:
+	return "%s%s" % [path, LEGACY_V2_BACKUP_SUFFIX]

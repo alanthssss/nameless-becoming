@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "campaign_id": "solar-term-campaign-v2",
+  "campaign_id": "solar-term-campaign-v3",
   "total_levels": 24,
   "levels": [
     {
@@ -19,13 +19,188 @@
       "id": "spring_yushui", "order": 1, "season_id": "spring", "kind": "standard",
       "scene_key": "spring_term_field", "scenario_id": "leaf_tip_route", "reward_honey": 4,
       "target_minutes": 9, "time_limit_seconds": 660, "energy_drain": 0.72, "hazard": "rain", "map_variant": 1,
-      "intro": "雨带会把露天航道推偏。沿叶尖下面绕行，先看清滴水节奏，再完成三组授粉。",
+      "intro": "雨带会把露天航道推偏。开出三候花路，途中既有授粉和搬运，也有观察、接应与并飞。",
       "dialogue": "接货蜂：回来啦。雨没算货，但也没拦你。",
       "world_trace": "叶沟形成稳定滴水线，之后能认作安全路线。",
       "objectives": [
-        {"type": "observe", "label": "看清叶尖滴水", "goal": 2},
-        {"type": "pollinate", "label": "沿叶下给花传粉", "goal": 3},
-        {"type": "collect", "label": "收好沿路花蜜", "goal": 4}
+        {"type": "event", "label": "完成三候主线", "goal": 9},
+        {"type": "event", "label": "发现邻里小事", "goal": 6}
+      ],
+      "event_matrix": [
+        {
+          "id": "yushui_01_takeoff_window", "order": 1, "pentad": 1, "optional": false,
+          "title": "雨线越过巢门", "mechanic": "weather_window", "ui_hint": "听叶响，自己选起飞窗",
+          "decision": "在短雨隙立刻起飞，或等待更长但更远的第二个窗口。",
+          "choice_options": {
+            "swift": {"label": "抢短雨隙", "effect": "first_rain_gap", "steps": 2},
+            "steady": {"label": "等长雨隙", "effect": "second_rain_gap", "steps": 3}
+          },
+          "operation": "停翅观察雨影与叶响，在选择的窗口内越过巢门雨线。",
+          "consequence": "同期新蜂照着玩家选中的节拍出门，第一段雨班开始运行。",
+          "source_ids": ["G-FICTION", "APIC-JX-1976-01"], "fact_ids": ["BEE-WORK-01", "BEE-HOMEOSTASIS-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把天气观察压缩成两段可读的起飞窗口。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_02_underleaf_flight", "order": 2, "pentad": 1, "optional": false,
+          "title": "贴叶背飞", "mechanic": "stabilize_lane", "ui_hint": "贴叶、短刹、再穿滴水线",
+          "decision": "沿叶背窄线连续稳身，用急转把三段横雨逐段拆开。",
+          "operation": "连续使用短制动与稳身穿过三段有节拍的滴水线。",
+          "consequence": "叶背留下可复飞的干线，下一趟同伴会真实使用。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "以动作窗口表现雨中飞行，不声称真实蜜蜂按键急转。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_03_dry_landing", "order": 3, "pentad": 1, "optional": true,
+          "title": "干落脚板", "mechanic": "coop_anchor", "ui_hint": "和接货蜂把遮雨叶扣稳",
+          "decision": "把叶片偏向卸粉位或卸蜜位，两种选择改变本节气接货动线。",
+          "choice_options": {
+            "swift": {"label": "偏卸粉位", "effect": "pollen_landing", "steps": 2},
+            "steady": {"label": "偏卸蜜位", "effect": "nectar_landing", "steps": 3}
+          },
+          "operation": "分别托住叶片两端，在阵风间隙完成旋转与双侧固定。",
+          "consequence": "本趟巢门落脚板会朝所选工位偏转，并留下对应的小叶饰。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01"], "fact_ids": ["BEE-HIVEWORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "将群体补位转译成双端协作固定。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_04_pollen_rainline", "order": 4, "pentad": 1, "optional": true,
+          "title": "花粉过滴水线", "mechanic": "pollen_delivery", "ui_hint": "保持两侧花粉负载平衡",
+          "decision": "选择一次重载穿窄隙，或分两次走较安全的宽隙。",
+          "choice_options": {
+            "swift": {"label": "一趟重载", "effect": "heavy_single", "steps": 1},
+            "steady": {"label": "两趟轻载", "effect": "light_split", "steps": 2}
+          },
+          "operation": "维持左右配重，把同型花粉依次送到两处柱头。",
+          "consequence": "授粉当下只留下花粉痕迹，第三候才出现结籽变化。",
+          "source_ids": ["G-FICTION", "APIC-JX-1976-01", "APIC-CAS-1999-01", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-POLLEN-01", "POLLINATION-LAG-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "放大花粉配重的飞行影响；植物结果延迟到后续事件。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_05_three_drops_gap", "order": 5, "pentad": 1, "optional": false,
+          "title": "三滴一空", "mechanic": "rhythm_lane", "ui_hint": "三滴之后，穿过短空拍",
+          "decision": "把三次滴水声和叶片下压对齐，只在亮起的空拍穿过。",
+          "operation": "在三次滴水后的空拍连续穿过两片叶下窄口。",
+          "consequence": "第一段叶下路开放，并在地图上留下可复飞的节拍记号。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把复杂降雨压缩成可学习的短节拍。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_06_vein_backroute", "order": 6, "pentad": 2, "optional": false,
+          "title": "叶脉背面", "mechanic": "route_reveal", "ui_hint": "跟水流和侦察蜂找支路",
+          "decision": "逐一核对水滴、地标与侦察蜂停点，确认完整支路。",
+          "operation": "连接三处水流、地标与同伴停点，画出被遮住的支路。",
+          "consequence": "地图出现本节气可反复使用的捷径。",
+          "source_ids": ["G-FICTION", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-SCOUT-01", "BEE-ORIENT-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把舞蹈与地标信息转成一段可验证的路线阅读。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_07_blocked_gutter", "order": 7, "pentad": 2, "optional": false,
+          "title": "堵住的叶沟", "mechanic": "sequence_carry", "ui_hint": "顺着水流搬，不要先堵下游",
+          "decision": "决定三枚种壳的搬运顺序，错误顺序会暂时改变滴水落点而非直接失败。",
+          "choice_options": {
+            "swift": {"label": "先搬上游", "effect": "upstream_first", "steps": 3},
+            "steady": {"label": "先试侧沟", "effect": "side_channel_first", "steps": 4}
+          },
+          "operation": "观察流向后依次托起、绕行并放稳三枚种壳。",
+          "consequence": "叶沟把雨引离第二片花区，旧落点随顺序真实改变。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用三步搬运表现水路因果，不提供现实排水建议。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_08_wet_handoff", "order": 8, "pentad": 2, "optional": true,
+          "title": "湿载荷上晾架", "mechanic": "handoff_timing", "ui_hint": "看触角动作再交接",
+          "decision": "等接货蜂举起前足再交接，连续完成三次湿载荷上架。",
+          "operation": "在移动中完成三次接货—转手—上架的节拍传递。",
+          "consequence": "本候后续卸货更快，巢内晾架出现实际载荷。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-NECTAR-01", "BEE-HIVEWORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把巢门接货与处理链压缩成可见的三拍协作。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_09_beetle_shelter", "order": 9, "pentad": 2, "optional": true,
+          "title": "替小甲虫撑叶", "mechanic": "escort_shelter", "ui_hint": "让叶篷始终罩住同行者",
+          "decision": "从侧下方接稳叶篷，分两段送到小甲虫前方。",
+          "operation": "在移动雨点下接住叶篷，再把它送到小甲虫等候的临时桩。",
+          "consequence": "小甲虫在后续花区留下不挡路的草茎歇脚点。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "友好邻居协作事件，不建立物种优劣或敌我关系。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_10_moving_rain_window", "order": 10, "pentad": 2, "optional": false,
+          "title": "雨窗会移动", "mechanic": "moving_shelter", "ui_hint": "跟着遮蔽边缘换位",
+          "decision": "先托起易散花粉，再连续追随三处移动叶影完成投递。",
+          "operation": "携带易散花粉连续换三次移动遮蔽并完成投递。",
+          "consequence": "叶沟改道，第二片花区不再直接淋雨。",
+          "source_ids": ["G-FICTION", "APIC-JX-1976-01"], "fact_ids": ["BEE-POLLEN-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用移动安全区表现天气路线判断。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_11_heavy_or_light", "order": 11, "pentad": 3, "optional": false,
+          "title": "一趟重载还是两趟轻载", "mechanic": "load_choice", "ui_hint": "重载省路，轻载更稳",
+          "decision": "选择一趟重载的转向风险，或两趟轻载的额外路程。",
+          "choice_options": {
+            "swift": {"label": "一趟重载", "effect": "heavy_single", "steps": 1},
+            "steady": {"label": "两趟轻载", "effect": "light_split", "steps": 2}
+          },
+          "operation": "按所选方案完成装载、雨线通过和真实返巢交接。",
+          "consequence": "接货蜂记住玩家的工作习惯，但不作道德评分。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01"], "fact_ids": ["BEE-HIVEWORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用载荷改变制动和路线长度，数值不取自旧手册。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_12_partner_rescue", "order": 12, "pentad": 3, "optional": false,
+          "title": "接住同期新蜂", "mechanic": "partner_rescue", "ui_hint": "先稳住自己，再并飞接应",
+          "decision": "先从侧下稳稳接住同期新蜂，再分两段并飞到叶棚。",
+          "operation": "带一点飞行速度接应同伴，并把并飞关系保持到两处安全点。",
+          "consequence": "同期新蜂之后会在玩家重载时主动补位。",
+          "source_ids": ["G-FICTION", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-WORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "将群体补位转译为温暖的同行接应，不声称真实个体关系。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_13_dry_mastery", "order": 13, "pentad": 3, "optional": true,
+          "title": "一滴不沾", "mechanic": "mastery_lane", "ui_hint": "不用路线线条，读叶尖节拍",
+          "decision": "接受少指引熟练挑战，读叶尖节拍完成整段滴水路线。",
+          "operation": "连续用稳身、短刹和一次急转通过整段滴水区。",
+          "consequence": "这段花路留下小叶饰，并在本关结果中记下熟练挑战。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "可选动作熟练挑战；不阻断主线。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_14_shifted_dropline", "order": 14, "pentad": 3, "optional": true,
+          "title": "换风后的滴水线", "mechanic": "weather_reread", "ui_hint": "旧路偏了，重新读落点",
+          "decision": "逐一比较三处新旧落点，按修正后的叶背线复飞。",
+          "operation": "比较三处新旧落点并重飞一条修正路线。",
+          "consequence": "花历记录同一地点在换风后的不确定窗口。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01"], "fact_ids": ["PHENOLOGY-DIARY-01", "PLANT-MICROCLIMATE-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用局部天气变奏训练重新观察，不提供固定现实阈值。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "yushui_15_full_rain_route", "order": 15, "pentad": 3, "optional": false,
+          "title": "雨停前整条花路", "mechanic": "convoy_setpiece", "ui_hint": "领大家飞完你打开的路",
+          "decision": "在最后一阵雨前选轻载快线或带完整花粉的稳线。",
+          "choice_options": {
+            "swift": {"label": "轻载快线", "effect": "fast_convoy", "steps": 4},
+            "steady": {"label": "完整稳线", "effect": "full_pollen_convoy", "steps": 5}
+          },
+          "operation": "连续组合节拍、贴叶、载荷判断与伙伴接应，领蜂流通过整条路线。",
+          "consequence": "花带分段落瓣并开始结籽，短彩虹水线打开叶下路，接货队沿玩家身后飞过。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-WORK-01", "POLLINATION-LAG-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把前十四项学到的动作压成一段可操作群飞演出。", "verification_status": "approved-for-gameplay"
+        }
       ]
     },
     {
@@ -70,14 +245,190 @@
       "id": "spring_guyu", "order": 5, "season_id": "spring", "kind": "climax",
       "scene_key": "spring_climax", "scenario_id": "sign_storm", "reward_honey": 6,
       "target_minutes": 15, "time_limit_seconds": 1080, "energy_drain": 0.9, "hazard": "storm", "map_variant": 5,
-      "intro": "暴雨把牌路搅成一团。找牌、等蚊庄主核对完、再把通道还给归巢队。",
+      "intro": "暴雨把牌路搅成一团。找牌、等蚊庄主核对完、再把通道还给回来的蜂群。",
       "dialogue": "蚊庄主：等等，少了一块。……怎么又少了一块？",
       "world_trace": "花标成为全年路线系统，蚊庄主继续在自己的花地翻牌。",
       "objectives": [{"type": "climax", "label": "完成花牌大乱三阶段", "goal": 3}],
       "phases": [
         {"id": "find_signs", "label": "雨里找牌", "instruction": "在雨带之间循着湿叶拖痕，拾回散在三处的花标。", "goal": 1},
         {"id": "wait_for_check", "label": "等它核对完", "instruction": "在牌架外绕开三阵横雨；蚊庄主每核完一轮，就点亮一块花标。", "goal": 1},
-        {"id": "restore_route", "label": "把通道还给大家", "instruction": "按天气图样把花标放回三座路架，再陪归巢队飞完一圈。", "goal": 1}
+        {"id": "restore_route", "label": "把通道还给大家", "instruction": "按天气图样把花标放回三座路架，再陪晚班蜂飞完一圈。", "goal": 1}
+      ],
+      "event_matrix": [
+        {
+          "id": "guyu_01_route_in_use", "order": 1, "pentad": 1, "optional": false,
+          "title": "花牌开始管用", "mechanic": "convoy_route", "ui_hint": "和蜂流同行一趟",
+          "decision": "在队首带蜂流飞过三处转角，观察队伍在哪处开始拉长。",
+          "operation": "沿清明修好的花牌路完成一次不断流的同行。",
+          "consequence": "玩家先体验自己修路的成果，路线板记录拥堵转角。",
+          "source_ids": ["G-FICTION", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-SCOUT-01", "BEE-ORIENT-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把招募与地标信息转成群飞路线，不展示神奇控制信号。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_02_wind_review", "order": 2, "pentad": 1, "optional": false,
+          "title": "风口复习", "mechanic": "evade_lane", "ui_hint": "贴叶后急转穿侧风",
+          "decision": "在两次短风窗各用一次急转，把安全转角实际试出来。",
+          "operation": "连续使用贴叶、稳身和急转通过两段侧风。",
+          "consequence": "全队试飞时会采用玩家确认的安全转角。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "非杀伤飞行动作复习。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_03_keeper_inventory", "order": 3, "pentad": 1, "optional": true,
+          "title": "蚊庄主来盘点", "mechanic": "spatial_match", "ui_hint": "用摆放帮它对齐",
+          "decision": "按形状先排，或按路线先排；两种顺序会触发不同的俏皮反应。",
+          "choice_options": {
+            "swift": {"label": "按形状排", "effect": "shape_first", "steps": 3},
+            "steady": {"label": "按路线排", "effect": "route_first", "steps": 3}
+          },
+          "operation": "在它边翻边数错时，把三块牌实际摆进对应槽位。",
+          "consequence": "蚊庄主记住玩家的排法，第三候核对顺序随之改变。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用动作建立角色性格，不靠文字笑话墙。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_04_replace_wet_rope", "order": 4, "pentad": 1, "optional": true,
+          "title": "给牌桩换湿绳", "mechanic": "coop_anchor", "ui_hint": "搬绳、绕桩、两边扣紧",
+          "decision": "优先加固窄近路，或给宽绕行路增加更长的容错窗。",
+          "choice_options": {
+            "swift": {"label": "加固近路", "effect": "reinforce_short", "steps": 2},
+            "steady": {"label": "加固宽路", "effect": "reinforce_wide", "steps": 3}
+          },
+          "operation": "携带藤绳绕过两个固定点，再与修补蜂同时扣紧。",
+          "consequence": "高潮对应路线获得一次抗风支援。",
+          "source_ids": ["G-FICTION", "APIC-JX-1976-01"], "fact_ids": ["BEE-HIVEWORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "以自然材料和群体补位构成修路协作。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_05_team_trial", "order": 5, "pentad": 1, "optional": false,
+          "title": "第一次全队试飞", "mechanic": "route_trial", "ui_hint": "找出最窄的转角",
+          "decision": "在队首控制速度，带固定班组飞完整条试飞线。",
+          "operation": "跟随固定班组飞完整路，实际标记一次拥堵和一次掉队。",
+          "consequence": "路线板生成雨前基线，而不是提前给出答案。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01"], "fact_ids": ["BEE-WORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用同伴位置表现路线质量。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_06_wet_leaf_trace", "order": 6, "pentad": 2, "optional": false,
+          "title": "湿叶拖痕", "mechanic": "trace_search", "ui_hint": "看反光、压痕和滴水方向",
+          "decision": "逐一核对反光、压痕与水滴方向，确认三处线索指向同一条拖痕。",
+          "operation": "在三处观察圈停稳核对，沿一致的环境线索找到第一块失牌。",
+          "consequence": "正确拖痕成为之后空中追牌的预告。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01"], "fact_ids": ["PHENOLOGY-DIARY-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用观察方法启发环境寻迹，不把旧调查法当谜题定理。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_07_puddle_spare", "order": 7, "pentad": 2, "optional": true,
+          "title": "水洼底的旧牌", "mechanic": "optional_recovery", "ui_hint": "从倒影判断牌的真实位置",
+          "decision": "从水洼上方看准倒影位置，接住备用牌并送回临时桩。",
+          "operation": "利用倒影判断移动中的牌位，再完成一次空中接牌与送达。",
+          "consequence": "第三候获得一次接牌失误容错。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "可选支路奖励支援，不堆永久数值。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_08_first_sign_rain", "order": 8, "pentad": 2, "optional": false,
+          "title": "第一阵牌雨", "mechanic": "air_catch", "ui_hint": "对准落势，在空中接牌",
+          "decision": "跟随旋转牌的移动落势，在较低位置连续接住三块牌。",
+          "operation": "连续接住三块空中旋转花牌并送到临时桩。",
+          "consequence": "蚊庄主开始用动作提示牌形，三块临时桩依次亮起。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "真正的移动接物窗口，不在地面按拾取。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_09_seal_or_rope", "order": 9, "pentad": 2, "optional": true,
+          "title": "蜡封还是长绳", "mechanic": "support_choice", "ui_hint": "选近路稳固或绕路容错",
+          "decision": "用蜡封加固近路，或用长绳保护绕行路。",
+          "choice_options": {
+            "swift": {"label": "蜡封近路", "effect": "wax_short", "steps": 2},
+            "steady": {"label": "长绳宽路", "effect": "rope_wide", "steps": 3}
+          },
+          "operation": "沿所选支援线到两个工位，依次完成两侧处理。",
+          "consequence": "只改变高潮支援方式，不判好坏，也不形成永久构筑压力。",
+          "source_ids": ["G-FICTION", "APIC-JX-1976-01"], "fact_ids": ["BEE-WAX-01", "BEE-HIVEWORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "轻量局内支援选择；不冒充真实筑巢材料配方。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_10_wide_sign_crosswind", "order": 10, "pentad": 2, "optional": false,
+          "title": "宽牌过横风", "mechanic": "heavy_carry", "ui_hint": "宽牌会拖慢转向",
+          "decision": "托起宽牌后提前收弯，带着真实转向拖拽穿过横风。",
+          "operation": "携带真实改变转向与受风面积的宽牌完成投递。",
+          "consequence": "临时桩获得最后一块牌，第三候路线完整可用。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用载荷物理差异制造路线判断。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_11_setpiece_read", "order": 11, "pentad": 3, "optional": false,
+          "title": "大型事件准备", "mechanic": "weather_window", "runtime_steps": 3, "ui_hint": "读旗角、叶响和绳张力",
+          "decision": "从三种信号判断移动风窗，确认蜂流共同使用的起跑位置。",
+          "operation": "不弹长规则卡，连续确认三次风窗并带队到准备线。",
+          "consequence": "三种信号依次留在准备线上，高潮路线正式亮起。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01"], "fact_ids": ["PLANT-MICROCLIMATE-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "用多模态环境信号替代大段提示。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_12_air_chase", "order": 12, "pentad": 3, "optional": false,
+          "title": "阶段一 · 空中追牌", "mechanic": "air_catch", "ui_hint": "追旋转落势，不追图标",
+          "decision": "按顺序接稳三牌，或冒险改变顺序缩短总路程。",
+          "choice_options": {
+            "swift": {"label": "抢近牌顺序", "effect": "nearest_first", "steps": 3},
+            "steady": {"label": "照牌号接", "effect": "sign_order", "steps": 3}
+          },
+          "operation": "在暴雨与横风里连续接住三块旋转花牌。",
+          "consequence": "每接住一牌，接货蜂都会用动作确认，临时桩随之亮起。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "动作高潮第一段，失败只掉牌并可重新接。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_13_moving_match", "order": 13, "pentad": 3, "optional": false,
+          "title": "阶段二 · 核对不停飞", "mechanic": "moving_match", "ui_hint": "看牌形，移动中送对位置",
+          "decision": "看蚊庄主举起的牌形，在移动中把三种牌送到对应槽位。",
+          "operation": "蚊庄主举出牌形时，在移动中送对相应牌并避开缠绳。",
+          "consequence": "三种牌形依次对上，蚊庄主的动作也从忙乱变得合拍。",
+          "source_ids": ["G-FICTION"], "fact_ids": [],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把角色核对变成移动空间匹配。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_14_convoy_anchor", "order": 14, "pentad": 3, "optional": false,
+          "title": "阶段三 · 蜂流通过时立牌", "mechanic": "convoy_anchor", "ui_hint": "沿队伍前方逐桩固定",
+          "decision": "先稳住风口桩，或优先处理蜂流即将抵达的近桩。",
+          "choice_options": {
+            "swift": {"label": "先扣近桩", "effect": "convoy_first", "steps": 3},
+            "steady": {"label": "先稳风口", "effect": "windward_first", "steps": 4}
+          },
+          "operation": "在移动队伍前方完成三座牌桩的双侧固定。",
+          "consequence": "开放路线在玩家身后依次被真实蜂流使用。",
+          "source_ids": ["G-FICTION", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-WORK-01", "BEE-ORIENT-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "群体蜂流是可见结果，不是可控制的装饰粒子。", "verification_status": "approved-for-gameplay"
+        },
+        {
+          "id": "guyu_15_full_route", "order": 15, "pentad": 3, "optional": false,
+          "title": "带队试完整路线", "mechanic": "convoy_setpiece", "ui_hint": "飞在前面，把全年路网带亮",
+          "decision": "用近路完成速度收束，或带全队走更宽的稳线路线。",
+          "choice_options": {
+            "swift": {"label": "收束近路", "effect": "short_finale", "steps": 4},
+            "steady": {"label": "全队宽路", "effect": "wide_finale", "steps": 5}
+          },
+          "operation": "领蜂流通过全年路网，并在末牌处完成最后一次空中转正。",
+          "consequence": "全年路网分段亮起；末牌贴在蚊庄主背后，它自己翻正；镜头拉远并展示春季结果插画。",
+          "source_ids": ["G-FICTION", "APIC-CAS-1999-01", "APIC-CAAS-2001-02"], "fact_ids": ["BEE-SCOUT-01", "BEE-ORIENT-01", "BEE-WORK-01"],
+          "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",
+          "gameplay_abstraction": "把路线、伙伴和导演演出组合成可操作春季收束。", "verification_status": "approved-for-gameplay"
+        }
       ]
     },
     {

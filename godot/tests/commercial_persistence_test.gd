@@ -2,14 +2,38 @@ extends SceneTree
 
 const PersistenceScript := preload("res://scripts/system/commercial_persistence.gd")
 const JourneyStateScript := preload("res://scripts/world/journey_state.gd")
+const CampaignStateScript := preload("res://scripts/world/journey_campaign_state.gd")
+const EventMatrixRuntimeScript := preload("res://scripts/world/journey_event_matrix_runtime.gd")
+const SolarTermChronicleScript := preload("res://scripts/world/journey_solar_term_chronicle.gd")
 const MenuScript := preload("res://scripts/ui/commercial_system_menu.gd")
 const TitleScript := preload("res://scripts/ui/commercial_title.gd")
+const CampaignHiveScript := preload("res://scripts/world/journey_campaign_hive.gd")
 const JourneyScene := preload("res://journey.tscn")
 
 var failures: Array[String] = []
 var test_prefix := ""
 var progress_path := ""
 var settings_path := ""
+
+
+class V2CampaignCheckpoint:
+	extends RefCounted
+
+	var state_data: Dictionary
+	var next_id: String
+
+
+	func _init(source: Dictionary, next_segment: String) -> void:
+		state_data = source.duplicate(true)
+		next_id = next_segment
+
+
+	func to_save_dictionary() -> Dictionary:
+		return state_data.duplicate(true)
+
+
+	func next_segment_id() -> String:
+		return next_id
 
 
 func _init() -> void:
@@ -19,6 +43,29 @@ func _init() -> void:
 func expect(condition: bool, message: String) -> void:
 	if not condition:
 		failures.append(message)
+
+
+func event_checkpoint_for(level: Dictionary, pentads: int) -> Dictionary:
+	var runtime = EventMatrixRuntimeScript.new()
+	if runtime.configure(level.get("event_matrix", [])) != OK:
+		return {}
+	var target_index := pentads * EventMatrixRuntimeScript.EVENTS_PER_PENTAD
+	while runtime.current_index < target_index:
+		if runtime.optional_pending():
+			runtime.accept_optional()
+		if runtime.choice_pending():
+			runtime.choose_route("steady")
+		if runtime.requires_evade():
+			runtime.note_evade()
+		var result: Dictionary = runtime.record_step(runtime.current_kind())
+		if not bool(result.get("accepted", false)):
+			return {}
+	var checkpoint := runtime.checkpoint_snapshot()
+	checkpoint["level_id"] = String(level.get("id", ""))
+	checkpoint["energy"] = 68.0
+	checkpoint["elapsed_seconds"] = 142.5
+	checkpoint["actions"] = 17
+	return checkpoint
 
 
 func run_test() -> void:
@@ -124,6 +171,250 @@ func run_test() -> void:
 	expect(
 		mid_sortie.restore_from_save_dictionary(mid_sortie.to_save_dictionary()) == ERR_INVALID_DATA,
 		"野外未交接快照被误当成主蜂巢检查点"
+	)
+
+	# Commercial persistence recognizes a legal v2 campaign envelope as a
+	# migratable checkpoint.  It exposes the v3-safe summary (Lichun retained,
+	# Yushui next) and rewrites v3 only after restore, rather than reporting damage.
+	var one_level_campaign = CampaignStateScript.new()
+	var lichun: Dictionary = one_level_campaign.catalog.level_at(0)
+	var campaign_token: int = one_level_campaign.begin_level(String(lichun.id))
+	var campaign_counts: Array[int] = []
+	for objective in lichun.objectives:
+		campaign_counts.append(int((objective as Dictionary).goal))
+	one_level_campaign.settle_level({
+		"journey_token": campaign_token,
+		"level_id": String(lichun.id),
+		"objectives_complete": true,
+		"returned_home": true,
+		"objective_counts": campaign_counts,
+		"phases_completed": 0,
+		"elapsed_seconds": 180.0,
+		"energy_remaining": 72.0,
+		"actions": 8,
+		"failed": false,
+	})
+	var v2_campaign_data := one_level_campaign.to_save_dictionary()
+	v2_campaign_data.schema_version = CampaignStateScript.PREVIOUS_CAMPAIGN_SCHEMA_VERSION
+	v2_campaign_data.campaign_id = CampaignStateScript.PREVIOUS_CAMPAIGN_ID
+	v2_campaign_data.erase("legacy_campaign_progress")
+	v2_campaign_data.erase("event_checkpoint")
+	# Extend the envelope with the actual pre-v3 Yushui contract archived from
+	# git HEAD. This is intentionally [2,3,4], not today's two event counters.
+	var old_yushui_result := {
+		"level_id": "spring_yushui",
+		"number": 2,
+		"run_mode": "progression",
+		"reward": 4,
+		"elapsed_seconds": 540.0,
+		"energy_remaining": 318.0,
+		"objective_counts": [2, 3, 4],
+		"phases_completed": 0,
+		"actions": 11,
+	}
+	v2_campaign_data.completed_level_ids.append("spring_yushui")
+	v2_campaign_data.reward_ledger.spring_yushui = 4
+	v2_campaign_data.level_results.spring_yushui = old_yushui_result.duplicate(true)
+	v2_campaign_data.best_results.spring_yushui = old_yushui_result.duplicate(true)
+	v2_campaign_data.world_traces.append({
+		"level_id": "spring_yushui",
+		"number": 2,
+		"season_id": "spring",
+		"trace": "叶沟形成稳定滴水线，之后能认作安全路线。",
+	})
+	v2_campaign_data.reserve = 10
+	v2_campaign_data.sortie_count = 2
+	v2_campaign_data.attempt_serial = 2
+	v2_campaign_data.last_return_level_id = "spring_yushui"
+	v2_campaign_data.last_reward = 4
+	var old_terms = SolarTermChronicleScript.new()
+	old_terms.record_level("spring_lichun", {})
+	old_terms.record_level("spring_yushui", {})
+	v2_campaign_data.solar_terms = old_terms.to_save_data()
+	var v2_checkpoint := V2CampaignCheckpoint.new(v2_campaign_data, "spring_jingzhe")
+	expect(manager.save_journey_state(v2_checkpoint) == OK, "测试无法写入合法 v2 Campaign 检查点")
+	var v2_primary_bytes := FileAccess.get_file_as_bytes(ProjectSettings.globalize_path(progress_path))
+	expect(manager.has_progress(), "合法 v2 Campaign 被商业持久化当作损坏存档")
+	var v2_summary := manager.progress_summary()
+	expect(
+		bool(v2_summary.get("ok", false))
+		and bool(v2_summary.get("campaign_save", false))
+		and bool(v2_summary.get("migrated_v2", false))
+		and bool(v2_summary.get("legacy_archived", false))
+		and int(v2_summary.get("completed_count", 0)) == 1
+		and int(v2_summary.get("legacy_completed_count", 0)) == 2
+		and String(v2_summary.get("next_segment", "")) == "spring_yushui"
+		and String(v2_summary.get("next_term_name", "")) == "雨水"
+		and not bool(v2_summary.get("protected_v2_backup", true)),
+		"v2 Campaign 继续游戏摘要没有反映安全迁移结果"
+	)
+	var migration_title_logic := TitleScript.new()
+	expect(
+		migration_title_logic._legacy_migration_status(v2_summary)
+		== "旧版 2/24 已封存 · 正式 1/24\n正式进度从雨水继续 · 首次保存会另存旧档",
+		"标题没有在首次 v3 保存前说明旧版封存、正式续点与可恢复备份"
+	)
+	var protected_pending_summary := v2_summary.duplicate(true)
+	protected_pending_summary.protected_v2_backup = true
+	expect(
+		migration_title_logic._legacy_migration_status(protected_pending_summary)
+		== "旧版 2/24 已封存 · 正式 1/24\n正式进度从雨水继续 · 原始旧档已保护",
+		"v3 写入重试时标题把已经保护的旧档误报成尚未另存"
+	)
+	var migrated_campaign = CampaignStateScript.new()
+	expect(manager.restore_journey_state(migrated_campaign) == OK, "商业持久化无法迁移合法 v2 Campaign")
+	expect(
+		migrated_campaign.completed_level_ids == ["spring_lichun"]
+		and migrated_campaign.next_segment_id() == "spring_yushui"
+		and int(migrated_campaign.legacy_campaign_progress.completed_count) == 2,
+		"商业持久化迁移丢失了立春前缀或 legacy 纪念"
+	)
+	expect(manager.save_journey_state(migrated_campaign) == OK, "迁移后无法重写为 v3 Campaign 检查点")
+	var protected_v2_path := "%s%s" % [progress_path, PersistenceScript.LEGACY_V2_BACKUP_SUFFIX]
+	var protected_v2_absolute := ProjectSettings.globalize_path(protected_v2_path)
+	expect(
+		FileAccess.file_exists(protected_v2_absolute)
+		and FileAccess.get_file_as_bytes(protected_v2_absolute) == v2_primary_bytes,
+		"第一次 v3 写入前没有逐字保留独立、受保护的 v2 原始信封"
+	)
+	var protected_envelope = JSON.parse_string(FileAccess.get_file_as_string(protected_v2_absolute))
+	var protected_restore = CampaignStateScript.new()
+	expect(
+		protected_envelope is Dictionary
+		and protected_restore.restore_from_save_dictionary(
+			(protected_envelope as Dictionary).get("payload", {}).get("state", {})
+		) == OK
+		and int(protected_restore.legacy_campaign_progress.get("completed_count", 0)) == 2,
+		"受保护 v2 副本不能作为合法旧档恢复"
+	)
+	var rewritten_campaign_summary := manager.progress_summary()
+	expect(
+		bool(rewritten_campaign_summary.get("ok", false))
+		and not bool(rewritten_campaign_summary.get("migrated_v2", true))
+		and bool(rewritten_campaign_summary.get("legacy_archived", false))
+		and bool(rewritten_campaign_summary.get("protected_v2_backup", false))
+		and int(rewritten_campaign_summary.get("legacy_completed_count", 0)) == 2,
+		"v2 Campaign 重写后仍被误报为待迁移存档"
+	)
+	expect(
+		migration_title_logic._legacy_migration_status(rewritten_campaign_summary)
+		== "旧版 2/24 已封存 · 正式 1/24\n正式进度从雨水继续 · 原始旧档已保护",
+		"标题在迁移后没有继续显示旧版封存与正式续点"
+	)
+	var completed_migration_summary := rewritten_campaign_summary.duplicate(true)
+	completed_migration_summary.completed_count = 24
+	completed_migration_summary.journey_complete = true
+	completed_migration_summary.next_term_name = ""
+	expect(
+		migration_title_logic._legacy_migration_status(completed_migration_summary)
+		== "旧版 2/24 已封存 · 正式 24/24 已完成\n原始旧档已另存保护",
+		"正式 24/24 后迁移摘要退回了不存在的“下一关”"
+	)
+	var keepsake_hive = CampaignHiveScript.new()
+	expect(
+		keepsake_hive.configure(migrated_campaign.hive_context(false)) == OK
+		and keepsake_hive.legacy_keepsake_text()
+		== "纪念格 · 旧版2/24封存 · 正式从雨水继续",
+		"主蜂巢没有提供只读旧版纪念摘要"
+	)
+	keepsake_hive.free()
+	var completed_hive_context := migrated_campaign.hive_context(false)
+	completed_hive_context.completed_count = 24
+	completed_hive_context.journey_complete = true
+	completed_hive_context.next_level = {}
+	var completed_keepsake_hive = CampaignHiveScript.new()
+	expect(
+		completed_keepsake_hive.configure(completed_hive_context) == OK
+		and completed_keepsake_hive.legacy_keepsake_text()
+		== "纪念格 · 旧版2/24封存 · 正式24/24完成",
+		"主蜂巢在正式 24/24 后显示了不存在的续点"
+	)
+	completed_keepsake_hive.free()
+	# An archive can outlive both active rotating slots. It remains protected user
+	# data for the new-journey confirmation, but must never enable Continue.
+	var archive_only_progress_path := "%s-archive-only-progress.json" % test_prefix
+	var archive_only_settings_path := "%s-archive-only-settings.json" % test_prefix
+	var archive_only_absolute := ProjectSettings.globalize_path(
+		"%s%s" % [archive_only_progress_path, PersistenceScript.LEGACY_V2_BACKUP_SUFFIX]
+	)
+	expect(
+		DirAccess.copy_absolute(protected_v2_absolute, archive_only_absolute) == OK,
+		"archive-only 回归无法建立独立旧版保护档"
+	)
+	var archive_only_manager := PersistenceScript.new()
+	expect(
+		archive_only_manager.configure_storage_for_test(
+			archive_only_progress_path,
+			archive_only_settings_path
+		) == OK,
+		"archive-only 回归无法隔离持久化路径"
+	)
+	expect(
+		archive_only_manager.progress_file_exists()
+		and archive_only_manager.protected_v2_archive_exists()
+		and not archive_only_manager.has_progress(),
+		"只剩旧版保护档时被误报为空槽，或错误启用了继续游戏"
+	)
+	var archive_only_title := TitleScript.new()
+	archive_only_title.persistence = archive_only_manager
+	var archive_only_ui := Control.new()
+	root.add_child(archive_only_ui)
+	archive_only_title.continue_button = Button.new()
+	archive_only_title.new_button = Button.new()
+	archive_only_title.status_label = Label.new()
+	archive_only_ui.add_child(archive_only_title.continue_button)
+	archive_only_ui.add_child(archive_only_title.new_button)
+	archive_only_ui.add_child(archive_only_title.status_label)
+	archive_only_title._refresh_slot()
+	expect(
+		archive_only_title.continue_button.disabled
+		and archive_only_title.new_button.text == "重新开始新旅程"
+		and "这里只剩旧版保护档" in archive_only_title.status_label.text,
+		"archive-only 标题没有禁用继续并说明二次清档确认"
+	)
+	archive_only_title._prepare_new_journey()
+	expect(
+		archive_only_title._new_journey_armed
+		and archive_only_title.new_button.text == "再按一次：从立春重新开始",
+		"archive-only 新旅程没有先停在二次确认"
+	)
+	expect(
+		archive_only_manager.delete_progress() == OK
+		and not archive_only_manager.progress_file_exists()
+		and not FileAccess.file_exists(archive_only_absolute),
+		"明确清档后 archive-only 保护资料没有一起清除"
+	)
+	archive_only_title.free()
+	archive_only_ui.free()
+	archive_only_manager.free()
+	migration_title_logic.free()
+	var yushui_level: Dictionary = migrated_campaign.catalog.level_by_id("spring_yushui")
+	var yushui_token: int = migrated_campaign.begin_level("spring_yushui")
+	var yushui_checkpoint := event_checkpoint_for(yushui_level, 1)
+	expect(
+		not yushui_checkpoint.is_empty()
+		and migrated_campaign.record_event_checkpoint(yushui_token, yushui_checkpoint),
+		"商业持久化测试无法建立合法候级检查点"
+	)
+	migrated_campaign.abandon_attempt(yushui_token)
+	expect(manager.save_journey_state(migrated_campaign) == OK, "候级检查点无法写入真实信封")
+	expect(
+		FileAccess.get_file_as_bytes(protected_v2_absolute) == v2_primary_bytes,
+		"后续 v3 自动保存覆盖了受保护的 v2 原始副本"
+	)
+	var pentad_summary := manager.progress_summary()
+	expect(
+		String(pentad_summary.get("checkpoint_level_id", "")) == "spring_yushui"
+		and int(pentad_summary.get("checkpoint_pentads_completed", 0)) == 1
+		and String(pentad_summary.get("next_segment", "")) == "spring_yushui",
+		"继续游戏摘要没有区分主蜂巢与整候检查点"
+	)
+	var restored_pentad = CampaignStateScript.new()
+	expect(
+		manager.restore_journey_state(restored_pentad) == OK
+		and int(restored_pentad.event_checkpoint.get("next_event_number", 0)) == 6
+		and is_equal_approx(float(restored_pentad.event_checkpoint.get("energy", -1.0)), 68.0),
+		"真实信封往返没有保留候级进度与体力"
 	)
 
 	expect(manager.set_setting("music_volume", 0.45) == OK, "音乐音量无法保存")
@@ -284,6 +575,8 @@ func _cleanup_files() -> void:
 		progress_path,
 		"%s.tmp" % progress_path,
 		"%s.bak" % progress_path,
+		"%s%s" % [progress_path, PersistenceScript.LEGACY_V2_BACKUP_SUFFIX],
+		"%s%s.tmp" % [progress_path, PersistenceScript.LEGACY_V2_BACKUP_SUFFIX],
 		settings_path,
 		"%s.tmp" % settings_path,
 		"%s.bak" % settings_path,

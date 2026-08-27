@@ -58,8 +58,8 @@
       "season": "春",
       "unlock_return": "sign_incident",
       "work": ["找牌", "等候", "还路"],
-      "title": "花牌归架，归巢队也归队",
-      "record": "暴雨把牌路搅成一团。新蜂在雨里找齐花标，等蚊庄主核完三轮，再把通道逐段还给归巢队。"
+      "title": "花牌归架，大家顺路回家",
+      "record": "暴雨把牌路搅成一团。新蜂在雨里找齐花标，等蚊庄主核完三轮，再把通道逐段还给回来的蜂群。"
     },
     {
       "id": "summer_lixia",
@@ -229,7 +229,7 @@
       "unlock_return": "winter_warmth",
       "work": ["续暖", "修补", "挡风"],
       "title": "三段挡风墙，专挡三处钻空子的风",
-      "record": "风从叶棚边缘钻进来，大家把 {{windbreak_segments}} 段挡风墙逐段系稳。墙一立住，归巢队的翅膀就没那么歪了。"
+      "record": "风从叶棚边缘钻进来，大家把 {{windbreak_segments}} 段挡风墙逐段系稳。墙一立住，晚班蜂的翅膀就没那么歪了。"
     },
     {
       "id": "winter_dahan",
