@@ -827,6 +827,48 @@ func run_test() -> void:
 		"紧凑边缘指引自身仍会伸进 HUD"
 	)
 
+	# Ordinary chapters and event chapters share one authoritative navigation
+	# target. Put the current standard task behind the live action tray, then prove
+	# mouse and native touch both hit the same single guide and preserve world data.
+	var standard_navigation_target: Vector2 = standard_field._navigation_target()
+	standard_field.camera.position = (
+		standard_navigation_target - Vector2(1210.0, 610.0)
+		+ standard_field.VIEWPORT_SIZE * 0.5
+	)
+	var standard_guide: Dictionary = standard_field.active_navigation_guide_snapshot()
+	expect(
+		not standard_guide.is_empty()
+			and Vector2(standard_guide.get("world_target", Vector2.ZERO))
+				.is_equal_approx(standard_navigation_target),
+		"标准任务藏在 HUD 后时没有只暴露一个指向 _navigation_target 的 guide"
+	)
+	if not standard_guide.is_empty():
+		var standard_guide_screen := Vector2(standard_guide.get("screen_position", Vector2.ZERO))
+		var standard_mouse_press := InputEventMouseButton.new()
+		standard_mouse_press.button_index = MOUSE_BUTTON_LEFT
+		standard_mouse_press.position = standard_guide_screen
+		standard_mouse_press.pressed = true
+		standard_field.bee.has_target = false
+		standard_field._unhandled_input(standard_mouse_press)
+		expect(
+			standard_field.bee.has_target
+				and standard_field.bee.target.is_equal_approx(standard_navigation_target),
+			"鼠标点击标准任务边缘指引没有只导航到真实当前目标"
+		)
+		var standard_touch_press := InputEventScreenTouch.new()
+		standard_touch_press.index = 3
+		standard_touch_press.position = standard_guide_screen
+		standard_touch_press.pressed = true
+		standard_field.bee.has_target = false
+		standard_field._unhandled_input(standard_touch_press)
+		expect(
+			standard_field.bee.has_target
+				and standard_field.bee.target.is_equal_approx(standard_navigation_target),
+			"触摸标准任务边缘指引没有复用同一真实当前目标"
+		)
+	standard_field.camera.position = standard_field.camera_target_for(standard_field.bee.position)
+	standard_field.bee.has_target = false
+
 	# Campaign stamina pays for explicit exertion, never for permission to travel.
 	# Freeze both the authored rates and their real BeePlayer/Field effects so a
 	# later one-line tuning change cannot recreate Rain Water's event-02 softlock.
@@ -1053,7 +1095,17 @@ func run_test() -> void:
 			+ yushui_field.VIEWPORT_SIZE * 0.5
 		)
 		expect(yushui_field._navigation_uses_edge_guide(), "右侧越界事件没有切成边缘指引")
-		var navigation_guide_screen := yushui_field.event_edge_guide_screen_position(real_navigation_target)
+		var event_guide: Dictionary = yushui_field.active_navigation_guide_snapshot()
+		expect(
+			not event_guide.is_empty()
+				and Vector2(event_guide.get("world_target", Vector2.ZERO))
+					.is_equal_approx(real_navigation_target),
+			"事件边缘指引没有由唯一 _navigation_target 快照生成"
+		)
+		var navigation_guide_screen := Vector2(event_guide.get(
+			"screen_position",
+			yushui_field.event_edge_guide_screen_position(real_navigation_target)
+		))
 		yushui_field.bee.has_target = false
 		var guide_press := InputEventMouseButton.new()
 		guide_press.button_index = MOUSE_BUTTON_LEFT
@@ -1066,11 +1118,16 @@ func run_test() -> void:
 				and yushui_field._event_navigation_target().is_equal_approx(real_navigation_target),
 			"点击边缘指引没有一次重定向到真实导航目标，或修改了世界交互坐标"
 		)
+		yushui_field.bee.position = real_navigation_target + Vector2(-40.0, 0.0)
+		expect(
+			yushui_field._navigation_uses_edge_guide(),
+			"玩家靠近 HUD 后方真实目标时，完整图形和唯一边缘指引同时消失"
+		)
 
 		# Three unavailable match sources used to clamp independently: two are truly
 		# behind the live action tray and one extends outside the viewport. The layout
-		# emits only the required source's group arrow until the real arrangement is
-		# fully visible; upper-right empty screen is no longer treated as a fixed strip.
+		# now emits no proxy objects; the shared guide belongs only to the authoritative
+		# target, and upper-right empty screen is no longer treated as a fixed strip.
 		var saved_match_sources: Array[Vector2] = yushui_field.event_match_sources.duplicate()
 		var synthetic_origin: Vector2 = yushui_field.camera.position - yushui_field.VIEWPORT_SIZE * 0.5
 		var offscreen_match_sources: Array[Vector2] = [
@@ -1080,12 +1137,13 @@ func run_test() -> void:
 		]
 		yushui_field.event_match_sources = offscreen_match_sources
 		var collapsed_layout: Array[Dictionary] = yushui_field._moving_match_marker_layout()
+		var proxy_count := 0
+		for marker in collapsed_layout:
+			if bool(marker.get("edge_guide", false)):
+				proxy_count += 1
 		expect(
-			collapsed_layout.size() == 1
-				and bool(collapsed_layout[0].get("edge_guide", false))
-				and int(collapsed_layout[0].get("shape_index", -1))
-					== yushui_field._moving_match_required_shape(),
-			"屏外移动匹配来源仍独立折叠重叠，没有收成单一所需组指引"
+			collapsed_layout.is_empty() and proxy_count == 0,
+			"隐藏的移动匹配来源仍制造了独立边缘替身"
 		)
 		yushui_field.event_match_sources = saved_match_sources
 		yushui_field.camera.position = yushui_field.camera_target_for(yushui_field.bee.position)
@@ -1135,6 +1193,60 @@ func run_test() -> void:
 				and yushui_field.event_runtime.current_index == 2,
 			"雨水 02 的三次零体力辅助急转没有完成主线事件"
 		)
+
+	# Event art uses the same target as movement. Before a cargo pickup, only the
+	# source owns the active pulse; after pickup, that role transfers to delivery.
+	expect(
+		advance_field_runtime_to_event(yushui_field, "yushui_04_pollen_rainline"),
+		"雨水搬运视觉目标回归无法抵达第 04 项"
+	)
+	if String(yushui_field.event_runtime.current_event().get("id", "")) == "yushui_04_pollen_rainline":
+		if yushui_field.event_runtime.optional_pending():
+			yushui_field.event_runtime.accept_optional()
+			yushui_field._prepare_current_event()
+		yushui_field.event_carrying = false
+		var cargo_source: Vector2 = yushui_field.event_source_position
+		var cargo_destination: Vector2 = yushui_field._event_interaction_target()
+		var cargo_source_marker: Dictionary = yushui_field.active_navigation_marker_snapshot()
+		expect(
+			Vector2(cargo_source_marker.get("world_target", Vector2.ZERO))
+				.is_equal_approx(cargo_source)
+				and not cargo_source.is_equal_approx(cargo_destination),
+			"搬运未接货时，活动脉冲仍落在未来交付点而不是当前货源"
+		)
+		# Place the cargo body just clear of a synthetic HUD edge while its 62px
+		# active pulse still intersects. Visibility must include the full active art.
+		var saved_hud_rects: Array[Rect2] = yushui_field.hud_occlusion_rects.duplicate()
+		var pulse_test_hud: Array[Rect2] = [Rect2(600.0, 200.0, 300.0, 300.0)]
+		yushui_field.set_hud_occlusion_rects(pulse_test_hud)
+		yushui_field.camera.position = (
+			cargo_source - Vector2(550.0, 300.0) + yushui_field.VIEWPORT_SIZE * 0.5
+		)
+		var cargo_half := (
+			Vector2(37.0, 28.0)
+			if yushui_field.event_runtime.uses_heavy_load()
+			else Vector2(27.0, 20.0)
+		)
+		cargo_source_marker = yushui_field.active_navigation_marker_snapshot()
+		expect(
+			yushui_field._world_visual_fully_visible(
+				cargo_source,
+				Rect2(-cargo_half, cargo_half * 2.0)
+			)
+				and not bool(cargo_source_marker.get("fully_visible", true))
+				and not yushui_field.active_navigation_guide_snapshot().is_empty(),
+			"货物本体虽避开 HUD、活动脉冲却相交时，没有继续保留唯一边缘指引"
+		)
+		yushui_field.set_hud_occlusion_rects(saved_hud_rects)
+		yushui_field.camera.position = yushui_field.camera_target_for(yushui_field.bee.position)
+		yushui_field.event_carrying = true
+		var cargo_delivery_marker: Dictionary = yushui_field.active_navigation_marker_snapshot()
+		expect(
+			Vector2(cargo_delivery_marker.get("world_target", Vector2.ZERO))
+				.is_equal_approx(cargo_destination),
+			"搬运接货后，活动脉冲没有从货源转交到真实交付点"
+		)
+		yushui_field.event_carrying = false
 
 	# Heavy carrying has an additive 0.35/s cost while moving. Drive the authored
 	# heavy branch and keep weather inactive so the assertion isolates that cost.
@@ -1208,6 +1320,36 @@ func run_test() -> void:
 				and not yushui_field.bee.last_evade_was_assisted,
 			"雨水 13 自选熟练挑战错误获得零体力主线辅助"
 		)
+	# Convoy stage three briefly becomes a cargo handoff. Freeze that authored stage
+	# to prove the active marker changes role without inventing a second destination.
+	expect(
+		advance_field_runtime_to_event(yushui_field, "yushui_15_full_rain_route"),
+		"雨水蜂流搬运视觉目标回归无法抵达第 15 项"
+	)
+	if String(yushui_field.event_runtime.current_event().get("id", "")) == "yushui_15_full_rain_route":
+		if yushui_field.event_runtime.choice_pending():
+			yushui_field.event_runtime.choose_route("steady")
+		yushui_field.event_runtime.current_progress = 2
+		yushui_field.event_carrying = false
+		yushui_field._prepare_current_event()
+		var convoy_source: Vector2 = yushui_field.event_source_position
+		var convoy_destination: Vector2 = yushui_field._event_interaction_target()
+		var convoy_source_marker: Dictionary = yushui_field.active_navigation_marker_snapshot()
+		expect(
+			yushui_field._convoy_stage_uses_cargo()
+				and Vector2(convoy_source_marker.get("world_target", Vector2.ZERO))
+					.is_equal_approx(convoy_source)
+				and not convoy_source.is_equal_approx(convoy_destination),
+			"蜂流载荷阶段未接货时，活动脉冲仍错误亮在队首交付点"
+		)
+		yushui_field.event_carrying = true
+		var convoy_delivery_marker: Dictionary = yushui_field.active_navigation_marker_snapshot()
+		expect(
+			Vector2(convoy_delivery_marker.get("world_target", Vector2.ZERO))
+				.is_equal_approx(convoy_destination),
+			"蜂流载荷接稳后，活动脉冲没有转交到队首交付点"
+		)
+		yushui_field.event_carrying = false
 	yushui_field.queue_free()
 	yushui_state.abandon_attempt(stamina_yushui_token)
 	await process_frame
@@ -1241,6 +1383,62 @@ func run_test() -> void:
 		"谷雨季末关没有用三候十五项 mechanic 运行时取代旧九任务"
 	)
 	expect(String(climax_field.status_snapshot().phase_instruction).length() > 12, "季末阶段缺少具体行动说明")
+	expect(
+		advance_field_runtime_to_event(climax_field, "guyu_13_moving_match"),
+		"谷雨移动匹配指引回归无法抵达第 13 项"
+	)
+	if String(climax_field.event_runtime.current_event().get("id", "")) == "guyu_13_moving_match":
+		# All alternatives keep their real coordinates. Hidden shapes produce no
+		# clamped proxies; one guide is derived from the same target used by movement.
+		var match_camera_origin: Vector2 = (
+			climax_field.camera.position - climax_field.VIEWPORT_SIZE * 0.5
+		)
+		var hidden_match_sources: Array[Vector2] = [
+			match_camera_origin + Vector2(1160.0, 600.0),
+			match_camera_origin + Vector2(1210.0, 600.0),
+			match_camera_origin + Vector2(1260.0, 600.0),
+		]
+		climax_field.event_match_sources = hidden_match_sources
+		climax_field.event_carrying = false
+		var required_match_source: Vector2 = (
+			climax_field.event_match_sources[climax_field._moving_match_required_shape()]
+		)
+		var match_source_marker: Dictionary = climax_field.active_navigation_marker_snapshot()
+		expect(
+			Vector2(match_source_marker.get("world_target", Vector2.ZERO))
+				.is_equal_approx(required_match_source),
+			"移动配对未拿牌时，活动脉冲没有落在当前所需的真实牌形"
+		)
+		climax_field.event_carrying = true
+		var match_delivery_marker: Dictionary = climax_field.active_navigation_marker_snapshot()
+		expect(
+			Vector2(match_delivery_marker.get("world_target", Vector2.ZERO))
+				.is_equal_approx(climax_field.event_dynamic_position)
+				and not climax_field.event_dynamic_position.is_equal_approx(required_match_source),
+			"移动配对拿牌后，活动脉冲没有转交到移动工位"
+		)
+		climax_field.event_carrying = false
+		var hidden_match_layout: Array[Dictionary] = climax_field._moving_match_marker_layout()
+		var hidden_proxy_count := 0
+		for marker in hidden_match_layout:
+			if bool(marker.get("edge_guide", false)):
+				hidden_proxy_count += 1
+		var real_match_target: Vector2 = climax_field._navigation_target()
+		var active_guide: Dictionary = climax_field.active_navigation_guide_snapshot()
+		expect(
+			hidden_proxy_count == 0
+				and hidden_match_layout.is_empty()
+				and not active_guide.is_empty()
+				and Vector2(active_guide.get("world_target", Vector2.ZERO))
+					.is_equal_approx(real_match_target)
+				and real_match_target.is_equal_approx(
+					climax_field.event_match_sources[climax_field._moving_match_required_shape()]
+				)
+				and Vector2(active_guide.get("screen_position", Vector2.ZERO)).is_equal_approx(
+					climax_field.event_edge_guide_screen_position(real_match_target)
+				),
+			"屏外移动匹配仍生成多个假来源，或唯一 guide 没有对准真实 _navigation_target"
+		)
 	var climax_payload_holder := {"payload": {}}
 	climax_field.journey_completed.connect(
 		func(payload: Dictionary): climax_payload_holder.payload = payload.duplicate(true)
