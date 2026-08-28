@@ -43,7 +43,7 @@ npm run test:godot
 
 Alan 已试玩并评价的是扩产前的 24 短关版本，不是本轮 30 事件／schema v3 候选；本轮 Alan 验收尚未开始，独立外部玩家有效样本仍为 0。美术商业授权、市场定位／定价／商店转化及公开 Demo 门禁也均未关闭。
 
-界面中文使用 Noto Sans CJK SC Regular 的项目文案子集，字体文件位于 `fonts/NotoSansCJKsc-ProjectSubset.otf`，按同目录 `OFL-NotoSansCJK.txt` 中的 SIL Open Font License 1.1 分发。当前子集扫描 78 个运行来源、覆盖 1300 个字符，文件为 575876 bytes，SHA-256 为 `c684bf26336bf3980fd1f6ac761a751b86510e99e7cbe035ae4dbcbac5c9dad1`。子集由官方完整字体和当前游戏数据、场景、项目设置及界面源码生成；smoke 测试递归扫描全部运行时 `.gd/.godot/.json/.tres/.tscn`，验证每个 Label/Button 实际使用项目字体，并逐字检查当前可见文本可渲染。新增中文导致测试失败时，用仓库根目录的 `scripts/build_cjk_font_subset.py <已核验的官方完整字体>` 重生成子集后再导出；若上游完整字体本身不含某个装饰符，应改用已有字形或文字标签。
+界面中文使用 Noto Sans CJK SC Regular 的项目文案子集，字体文件位于 `fonts/NotoSansCJKsc-ProjectSubset.otf`，按同目录 `OFL-NotoSansCJK.txt` 中的 SIL Open Font License 1.1 分发。当前子集扫描 78 个运行来源、覆盖 1302 个字符，文件为 579368 bytes，SHA-256 为 `909581fa4cbf5d9be2173e81e6b6e151a242bd45d7f72673208055effd345754`。子集由官方完整字体和当前游戏数据、场景、项目设置及界面源码生成；smoke 测试递归扫描全部运行时 `.gd/.godot/.json/.tres/.tscn`，验证每个 Label/Button 实际使用项目字体，并逐字检查当前可见文本可渲染。新增中文导致测试失败时，用仓库根目录的 `scripts/build_cjk_font_subset.py <已核验的官方完整字体>` 重生成子集后再导出；若上游完整字体本身不含某个装饰符，应改用已有字形或文字标签。
 
 ## 桌面导出
 

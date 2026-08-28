@@ -5,6 +5,8 @@
 >
 > 相关文档：难度调优框架见 `docs/DESIGN_CONSENSUS.md` 与 `docs/PROJECT_LOG.md`；推演工具 `scripts/difficulty_table.py`。
 
+> **Campaign 纠正（2026-08-28）：** 雨水真实试玩证明“100 点 + 被动自动加速高耗 + 仅隐藏歇脚点恢复”会在 02/15 锁住主线。旧 Expedition 数值继续适用于旧场景；正式 24 关 Campaign 改用短时用力合同：普通移动免费，急转／可见逆风／明确重载消耗，任意停稳回气到 30，地图恢复点快速回满。权威规则与验收见 `../DESIGN_DISCUSSION_LOG.md` 同日条目，不得再把下文旧场景的 `100 / drain_rate` 公式套到 Campaign。
+
 ---
 
 ## 0. 设计总则（为什么数值是这样组织的）
