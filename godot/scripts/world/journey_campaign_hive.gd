@@ -588,6 +588,9 @@ func _build_return_hero_overlay() -> void:
 	_hero_skip_button.flat = true
 	_hero_skip_button.self_modulate = Color(1, 1, 1, 0)
 	_hero_skip_button.focus_mode = Control.FOCUS_NONE
+	# Confirm on down so the release cannot land on the story modal that this
+	# result reveal creates synchronously.
+	_hero_skip_button.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
 	_hero_skip_button.tooltip_text = "收好这一趟"
 	_hero_skip_button.pressed.connect(skip_receiving_presentation)
 	_hero_root.add_child(_hero_skip_button)

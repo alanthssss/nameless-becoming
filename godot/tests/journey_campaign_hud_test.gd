@@ -29,6 +29,29 @@ func controls_overlap(first: Control, second: Control) -> bool:
 	return first.visible and second.visible and first.get_global_rect().intersects(second.get_global_rect())
 
 
+func action_key_event(pressed: bool, echo := false) -> InputEventKey:
+	var event := InputEventKey.new()
+	event.physical_keycode = KEY_SPACE
+	event.pressed = pressed
+	event.echo = echo
+	return event
+
+
+func screen_touch_event(index: int, position: Vector2, pressed: bool) -> InputEventScreenTouch:
+	var event := InputEventScreenTouch.new()
+	event.index = index
+	event.position = position
+	event.pressed = pressed
+	return event
+
+
+func gamepad_action_event(pressed: bool) -> InputEventJoypadButton:
+	var event := InputEventJoypadButton.new()
+	event.button_index = JOY_BUTTON_A
+	event.pressed = pressed
+	return event
+
+
 func run_test() -> void:
 	var game = CampaignScene.instantiate()
 	root.add_child(game)
@@ -36,6 +59,24 @@ func run_test() -> void:
 	game.full_transition_duration = 0.0
 	game.transition_duration = 0.0
 	game._set_field_hud_visible(true)
+	expect(game.modal_barrier is Button, "Campaign 没有建立统一模态输入屏障")
+	if game.modal_barrier is Button:
+		var modal_rect: Rect2 = game.modal_barrier.get_global_rect()
+		expect(
+			modal_rect.position.is_equal_approx(Vector2.ZERO)
+				and modal_rect.size.is_equal_approx(Vector2(1280, 720))
+				and game.modal_barrier.mouse_filter == Control.MOUSE_FILTER_STOP
+				and game.modal_barrier.focus_mode == Control.FOCUS_NONE
+				and game.modal_barrier.action_mode == BaseButton.ACTION_MODE_BUTTON_PRESS,
+			"模态屏障没有覆盖全屏并在鼠标按下时确认"
+		)
+		expect(
+			game.modal_barrier.get_parent() == game.ui_layer
+				and game.modal_barrier.get_index() > game.action_panel.get_index()
+				and game.modal_barrier.get_index() < game.story_card.get_index()
+				and game.modal_barrier.get_index() < game.failure_panel.get_index(),
+			"模态屏障没有处在普通 HUD 之上、剧情和失败选择之下"
+		)
 	for level_button in game.level_buttons.values():
 		expect(
 			String((level_button as Button).tooltip_text).is_empty(),
@@ -345,6 +386,22 @@ func run_test() -> void:
 				and minf(game.objective_toggle_button.size.x, game.objective_toggle_button.size.y) >= 44.0,
 			"%d%% 字体下三行目标或 44px 触控命中区失效" % roundi(ui_scale * 100.0)
 		)
+		var story_prompt_font: Font = game.story_continue_label.get_theme_font("font")
+		var story_prompt_width := story_prompt_font.get_string_size(
+			game.story_continue_label.text,
+			HORIZONTAL_ALIGNMENT_LEFT,
+			-1,
+			game.story_continue_label.get_theme_font_size("font_size")
+		).x
+		expect(
+			game.story_continue_label.max_lines_visible == 1
+				and story_prompt_width <= game.story_continue_label.size.x
+				and game.story_card.get_global_rect().encloses(
+					game.story_continue_label.get_global_rect()
+				),
+			"%d%% 字体下剧情继续提示换行、截断或越出卡片"
+				% roundi(ui_scale * 100.0)
+		)
 
 	game._toggle_field_hud()
 	expect(game.field_hud_collapsed and game.field_panel.size == game.FIELD_OBJECTIVE_COLLAPSED_SIZE, "目标卡无法收起")
@@ -413,28 +470,186 @@ func run_test() -> void:
 		var return_hive := game.router.current_area as JourneyCampaignHive
 		expect(return_hive != null and return_hive.presentation_time > 0.0, "完成第一趟后没有进入返巢接货演出")
 		expect(
-			not game.story_card.visible and is_zero_approx(game.story_time) and not game.pending_hive_story_text.is_empty(),
+			not game.story_card.visible
+				and is_zero_approx(game.story_time)
+				and not game.pending_hive_story_text.is_empty()
+				and game.modal_barrier.visible,
 			"返巢故事在 presentation_finished 之前已经显示或开始倒计时"
 		)
 		expect(game.sound.last_cue != "complete", "通用 complete 音效仍与蜂巢结果时间线重叠")
 		game._process(1.0)
 		expect(is_zero_approx(game.story_time), "接货演出期间故事阅读时间被提前消耗")
 		if return_hive != null:
-			return_hive.skip_receiving_presentation()
+			var settlement_hive: Node = game.router.current_area
+			var settlement_load_count: int = game.router.load_count
+			var result_touch_down := screen_touch_event(7, Vector2(640, 360), true)
+			game._input(result_touch_down)
 			expect(
-				game.story_card.visible and game.story_time > 4.7 and game.pending_hive_story_text.is_empty(),
-				"presentation_finished 没有准确启动并清空待播故事"
+				is_zero_approx(return_hive.presentation_time)
+					and game.story_card.visible
+					and game.story_time > 4.7
+					and game.pending_hive_story_text.is_empty()
+					and game.modal_barrier.visible
+					and game.captured_modal_touches.has(7)
+					and game.router.current_area == settlement_hive
+					and game.router.load_count == settlement_load_count,
+				"原生触摸按下没有只跳过结果并准确启动剧情"
 			)
-			var story_time_before: float = game.story_time
-			game._process(0.5)
-			expect(game.story_time < story_time_before, "故事出现后计时器没有正常推进")
+			game._input(screen_touch_event(9, Vector2(700, 360), true))
+			expect(
+				game.story_card.visible and game.captured_modal_touches.has(9),
+				"同一手势未抬起时，第二根手指又推进了剧情"
+			)
+			game._input(screen_touch_event(9, Vector2(700, 360), false))
+			var result_drag := InputEventScreenDrag.new()
+			result_drag.index = 7
+			result_drag.position = Vector2(680, 380)
+			game._input(result_drag)
+			expect(game.story_card.visible, "跳过结果的同一触点移动又关闭了剧情")
+			game._input(screen_touch_event(7, Vector2(680, 380), false))
+			expect(
+				game.story_card.visible
+					and not game.captured_modal_touches.has(7)
+					and game.router.current_area == settlement_hive,
+				"跳过结果的同一触点抬起又关闭了剧情或启动出巢"
+			)
+			game._process(10.0)
+			expect(
+				game.story_card.visible and is_zero_approx(game.story_time),
+				"剧情阅读时间到点后自动消失，没有等待玩家确认"
+			)
+
+			game._input(screen_touch_event(8, Vector2(640, 360), true))
+			expect(
+				not game.story_card.visible
+					and game.captured_modal_touches.has(8)
+					and game.router.current_area == settlement_hive
+					and game.router.load_count == settlement_load_count,
+				"第二笔原生触摸没有只关闭剧情"
+			)
+			game._input(screen_touch_event(8, Vector2(640, 360), false))
+			expect(
+				game.router.current_area == settlement_hive
+					and game.router.load_count == settlement_load_count
+					and game.state.active_level_id.is_empty(),
+				"关闭剧情的触摸抬起穿透成了下一趟"
+			)
+
+			game._show_story("手柄确认也要先松开", 1.0)
+			game._unhandled_input(gamepad_action_event(true))
+			expect(not game.story_card.visible, "手柄 A 没有关闭当前剧情层")
+			game._unhandled_input(gamepad_action_event(true))
+			expect(
+				game.router.current_area == settlement_hive
+					and game.router.load_count == settlement_load_count,
+				"未松开的手柄 A 重复按下穿透成了下一趟"
+			)
+			game._unhandled_input(gamepad_action_event(false))
+
+			# Keyboard repeat after a story dismissal is still the same physical press.
+			# It cannot leave the hive until release and a new down event arrive.
+			game._show_story("按住确认也只能关闭这一层", 0.1)
+			game._process(1.0)
+			expect(game.story_card.visible, "短剧情在键盘确认前自行消失")
+			game._unhandled_input(action_key_event(true))
+			expect(not game.story_card.visible, "新的 Space 按下没有关闭剧情")
+			game._unhandled_input(action_key_event(true, true))
+			expect(
+				game.router.current_area == settlement_hive
+					and game.router.load_count == settlement_load_count
+					and game.state.active_level_id.is_empty(),
+				"按住 Space 的重复事件穿透剧情并启动出巢"
+			)
+			game._unhandled_input(action_key_event(false))
+			game._unhandled_input(action_key_event(true))
 			await process_frame
+			expect(
+				game.router.current_area is JourneyCampaignField
+					and game.router.load_count == settlement_load_count + 1
+					and game.state.active_level_id == "spring_yushui",
+				"松开后的新确认没有恰好启动下一趟"
+			)
 
 	var campaign_audio := game.get_node_or_null("JourneyAudioDirector")
 	if campaign_audio != null:
 		campaign_audio.queue_free()
 		await process_frame
 	game.queue_free()
+	await process_frame
+	await process_frame
+
+	# Failure choices also need explicit native-touch hit testing because campaign
+	# touch-to-mouse emulation is disabled. Blank space never chooses for the player;
+	# retry and return each fire once on touch-down and capture their matching release.
+	var failure_game = CampaignScene.instantiate()
+	root.add_child(failure_game)
+	await process_frame
+	failure_game.full_transition_duration = 0.0
+	failure_game.transition_duration = 0.0
+	failure_game._begin_level("spring_lichun", false)
+	await process_frame
+	var failure_field := failure_game.router.current_area as JourneyCampaignField
+	expect(failure_field != null, "失败触摸回归无法进入正式花田")
+	if failure_field != null:
+		failure_game._on_attempt_failed("触摸失败选择测试", {"level_id": "spring_lichun"})
+		var failed_area: Node = failure_game.router.current_area
+		var failed_load_count: int = failure_game.router.load_count
+		expect(
+			failure_game.failure_panel.visible
+				and failure_game.modal_barrier.visible
+				and not failure_field.input_enabled
+				and failure_game.retry_button.has_focus(),
+			"失败页没有接管模态、世界输入与默认焦点"
+		)
+		failure_game._input(screen_touch_event(20, Vector2(40, 120), true))
+		failure_game._input(screen_touch_event(20, Vector2(40, 120), false))
+		expect(
+			failure_game.failure_panel.visible
+				and failure_game.router.current_area == failed_area
+				and failure_game.router.load_count == failed_load_count,
+			"失败页空白触摸替玩家做了选择或穿透世界"
+		)
+
+		var retry_position: Vector2 = failure_game.retry_button.get_global_rect().get_center()
+		failure_game._input(screen_touch_event(21, retry_position, true))
+		await process_frame
+		var retry_field := failure_game.router.current_area as JourneyCampaignField
+		expect(
+			retry_field != null
+				and failure_game.router.load_count == failed_load_count + 1
+				and failure_game.state.active_level_id == "spring_lichun"
+				and failure_game.captured_modal_touches.has(21),
+			"触摸“再飞一次”没有恰好建立一次新尝试"
+		)
+		failure_game._input(screen_touch_event(21, retry_position, false))
+		expect(
+			not failure_game.captured_modal_touches.has(21)
+				and failure_game.router.current_area == retry_field,
+			"重试触摸的抬起事件没有被原模态捕获"
+		)
+
+		failure_game._on_attempt_failed("触摸回巢选择测试", {"level_id": "spring_lichun"})
+		var back_position: Vector2 = failure_game.back_hive_button.get_global_rect().get_center()
+		var retry_load_count: int = failure_game.router.load_count
+		failure_game._input(screen_touch_event(22, back_position, true))
+		await process_frame
+		expect(
+			failure_game.router.current_area is JourneyCampaignHive
+				and failure_game.router.load_count == retry_load_count + 1
+				and failure_game.state.active_level_id.is_empty(),
+			"触摸“先回主巢”没有恰好返回一次主巢"
+		)
+		failure_game._input(screen_touch_event(22, back_position, false))
+		expect(
+			not failure_game.captured_modal_touches.has(22)
+				and failure_game.router.current_area is JourneyCampaignHive,
+			"回巢触摸的抬起事件穿透了新的主巢界面"
+		)
+	var failure_audio := failure_game.get_node_or_null("JourneyAudioDirector")
+	if failure_audio != null:
+		failure_audio.queue_free()
+		await process_frame
+	failure_game.queue_free()
 	await process_frame
 	await process_frame
 	if failures.is_empty():

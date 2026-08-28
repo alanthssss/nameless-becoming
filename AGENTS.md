@@ -20,3 +20,12 @@
 - Prefer updating an existing open pull request when the new work has the same scope and branch history.
 - Create a separate pull request when the work is independently reviewable or would make the existing pull request materially mixed in purpose.
 - PR descriptions must summarize decisions, scope, risks, and verification.
+
+## Anti-stall short-loop protocol
+
+- Treat each reviewable outcome as one closed loop: latest `origin/main` → dedicated worktree and focused branch → targeted verification → review → commit and push → CI → merge → branch/worktree cleanup → confirm no unexpected open pull requests. Do not begin the next outcome before the current loop is closed and reported.
+- Freeze the file and behavior scope before editing. Adjacent discoveries go into a follow-up note or a separate pull request unless they are required to make the current change correct. Preserve an oversized or dirty branch as read-only scratch; never keep piling unrelated fixes onto it.
+- Use no more than two active agents for routine work, give them disjoint scopes, and do not allow nested delegation unless the task explicitly requires it. Stop surplus agents before testing or integration so shared-worktree edits and background commands cannot compete.
+- Keep an observable progress heartbeat. If 90 seconds pass without a new artifact, test result, review finding, or resolved decision—or if the same command/approach fails twice—stop the process, capture the blocker, and reduce the scope or change the approach. Do not repeat an unchanged wait or retry indefinitely.
+- Verify in ascending cost: the smallest relevant test while editing, then freeze the code, then run the full required suite once. After a failure, rerun the failing slice first; repeat the full suite only after the slice is green.
+- At every handoff, state what is implemented, what was actually tested, what remains outside scope, and whether the PR was merged and cleaned up. Automated tests and developer self-test must not be described as player validation.
