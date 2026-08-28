@@ -1,15 +1,15 @@
-# 无名：成蜂 · 项目分析文档集
+# 历史项目分析与专项参考文档集
 
-> 本文档集将上一轮的项目分析整理为分层的中英双语文档，避免单一长文档造成阅读负担。
-> This document set restructures the project analysis into layered bilingual (中文/EN) documents, avoiding the burden of a single lengthy file.
+> 本文档集保留上一轮的分层项目分析和专项参考；其中旧标题、旧循环与旧范围只作历史追溯，不能覆盖当前商业规格。
+> This document set preserves a historical layered analysis and dated specialist references. It is not the current product specification.
 
-**项目版本 / Project Version**: 候选 MVP 0.9.5-rc.2（当前源码基线 `a58358c3ac90d6edac8a654777beb378d978b688` 已含 PR #90／#91；最近固定桌面 artifact `57aefc4933db88968777b11ea1d1679c6374842a` 只作历史 Main 局部反馈来源，不可用于下一轮 B01）
+**历史快照版本 / Historical Snapshot**: 候选 MVP 0.9.5-rc.2（当时源码基线 `a58358c3ac90d6edac8a654777beb378d978b688` 已含 PR #90／#91；最近固定桌面 artifact `57aefc4933db88968777b11ea1d1679c6374842a` 只作历史 Main 局部反馈来源，不可用于下一轮 B01）
 **同步日期 / Sync Date**: 2026-08-26
 
 > Desktop build run `32867365895` 的 macOS／Windows artifact、sidecar 和 pack verifier 已通过。B01 第一次 exact-ticket 进程因交接失败没有结果，第二次经进程／代码／原话证据链判定进入 `Main`；错配短表只作 Alan Main 局部自测，尚无有效 B01 运行结果。Windows 真机和外部玩家仍待验证。
 
-> 01–04 描述当前产品与执行边界；05–07 是专项参考，若与当前实现冲突，应回到 `godot/`、`MVP_SPEC.md` 和 `PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` 核对。`PROJECT_LOG.md` 是历史记录，不是现行规格。
-> Documents 01–04 describe the current product and execution boundary. Documents 05–07 are specialist references; when they conflict with implementation, check `godot/`, `MVP_SPEC.md`, and `PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`. `PROJECT_LOG.md` is historical, not a current spec.
+> 01–05 是旧 MVP 阶段的历史分析；06 是当前／历史混合的数值专项，必须按章节证据日期使用；07 是需要按核查日期更新的竞品专项。当前产品身份与商业范围只由 [`../design/commercial-product-requirements.md`](../design/commercial-product-requirements.md) 和 [`../design/solar-term-campaign-production-spec.md`](../design/solar-term-campaign-production-spec.md) 定义；根目录 README 只提供摘要与索引。
+> Documents 01–05 are historical MVP analysis. Document 06 mixes dated and current numeric snapshots, while 07 is a dated competitive reference. Current identity and scope are defined only by the commercial requirements and campaign production specification; the repository README is an index and summary.
 
 ---
 
@@ -22,16 +22,16 @@
 | 03 | [玩法与设计](03-gameplay-design.md) | 核心循环、操作、四季、敌人、Boss、成长 | 设计者 / Designers |
 | 04 | [阶段目标](04-stage-goals.md) | 版本历程、当前目标、MVP 验收、里程碑 | 项目管理者 / PMs |
 | 05 | [关键词表](05-keyword-glossary.md) | 中英术语对照表 | 所有人 / Everyone |
-| 06 | [数值设计总览](06-numeric-design.md) | 关键数值、设置依据、交互与反馈清单、调参工作流 | 设计者 / Designers |
-| 07 | [竞品对比分析](07-competitive-analysis.md) | 品类坐标、8 款竞品详析、六维矩阵、优劣与机会威胁 | 设计者/发行 / Designers & Publishing |
+| 06 | [数值设计总览](06-numeric-design.md) | 当前／历史混合的数值快照、设置依据与调参工作流；按章节日期使用 | 设计者 / Designers |
+| 07 | [竞品对比分析](07-competitive-analysis.md) | 7 款官方竞品快照、品类坐标、差异矩阵与商业门槛 | 设计者/发行 / Designers & Publishing |
 
 ---
 
 ## 阅读建议 / How to Read
 
-- **快速了解项目**：读 01 与 05 即可 / For a quick overview, read 01 and 05.
-- **技术协作**：读 02 与 04 / For technical collaboration, read 02 and 04.
-- **设计讨论**：读 03 / For design discussion, read 03.
+- **了解当前产品**：从根目录 README 的“文档事实源与边界”开始，不把 01–05 当现行规格；06 只按具体章节的证据日期使用。
+- **追溯旧 MVP**：按 01 → 04 阅读；05 提供当时的术语背景。
+- **竞品参考**：读取 07，并在做商业决定前按文档日期重新核查外部数据。
 
 > 每个文档内部采用「中文在前、英文在后」的双语段落结构。
 > Each document uses a bilingual section structure: Chinese first, then English.
@@ -42,8 +42,12 @@
 
 | 文档 / Document | 路径 / Path | 说明 / Note |
 |-----------------|-------------|-------------|
-| 玩家反馈整改与验证 / Feedback Implementation & Validation | `docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` | 当前实现事实、证据等级、执行矩阵与外测标准（中文） |
-| MVP 规格 / MVP Spec | `docs/MVP_SPEC.md` | 当前候选范围与验收标准（中文） |
-| 设计共识与实现差距 / Design Consensus & Gaps | `docs/DESIGN_CONSENSUS.md` | 当前稳定共识、实现边界与证据触发任务（中文） |
+| 商业成品要求 / Commercial Product Requirements | `docs/design/commercial-product-requirements.md` | 当前商业身份、完整范围与发行退出清单的唯一事实源（中文） |
+| 三候战役制作规格 / Campaign Production Spec | `docs/design/solar-term-campaign-production-spec.md` | 当前 24 章节、360 项内容目标与存档边界的唯一专项规格（中文） |
+| 成熟度与生产重量 / Maturity & Production Weight | `docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md` | 从两份权威规格派生的当前评估，不另立范围（中文） |
+| 下一款轻量产品探索 / Lightweight Next-game Exploration | `docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md` | 未立项的专家启发式提案与验证门槛（中文） |
+| 玩家反馈整改与验证 / Feedback Implementation & Validation | `docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` | 历史执行记录、证据等级与外测方法；冲突时服从当前规格（中文） |
+| MVP 规格 / MVP Spec | `docs/MVP_SPEC.md` | 旧 MVP 范围与验收标准，不是当前商业范围（中文） |
+| 设计共识与实现差距 / Design Consensus & Gaps | `docs/DESIGN_CONSENSUS.md` | 历史共识与实现差距；冲突时服从当前规格（中文） |
 | 项目策划记录 / Project Log | `docs/PROJECT_LOG.md` | 历史版本决策；保留被后续推翻的旧方案（中文） |
 | 色彩体系 / Color System | `docs/COLOR_SYSTEM.md` | 二十四节气阴阳消长色谱：四正色与连续色彩区间；不定义现行关卡拓扑（中文） |
