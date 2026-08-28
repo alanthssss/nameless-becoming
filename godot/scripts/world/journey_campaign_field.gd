@@ -92,6 +92,10 @@ const SEASON_COLORS := {
 	"winter": [Color("a9c5c8"), Color("d9d8c8"), Color("e2ad58")],
 }
 const TWO_STEP_TYPES := ["pollinate", "carry", "seed", "warmth"]
+const TASK_ROLE_ACTIVE: StringName = &"active"
+const TASK_ROLE_INACTIVE: StringName = &"inactive"
+const TASK_ROLE_MEMORY: StringName = &"memory"
+const TASK_FOCUS_SWITCH_MARGIN := 32.0
 const TYPE_COLORS := {
 	"pollinate": Color("ef91ae"),
 	"collect": Color("efc85c"),
@@ -122,6 +126,7 @@ var carried_task_index := -1
 var collected_cargo := 0
 var delivered_cargo := 0
 var focus_task_index := -1
+var navigation_task_index := -1
 var focus_time := 0.0
 var action_count := 0
 var weather_window_elapsed := 0.0
@@ -1198,11 +1203,7 @@ func _handle_primary_action() -> void:
 		bee.trigger_sense()
 		message = "蜜囊已经装满。沿亮路回主巢卸货，再继续这一项。"
 		return
-	var source_index := _nearest_source_task()
-	if source_index >= 0:
-		_pick_up_task(source_index)
-		return
-	var target_index := _nearest_target_task()
+	var target_index := _active_standard_task_index()
 	if target_index < 0:
 		if collected_cargo > 0:
 			bee.set_move_target(home_position)
@@ -1212,12 +1213,34 @@ func _handle_primary_action() -> void:
 		bee.trigger_sense()
 		message = "附近没有正等着处理的活。波纹会指出当前路线。"
 		return
+	_handle_standard_task_action(target_index)
+
+
+func _handle_standard_task_action(target_index: int) -> void:
+	if not _task_is_navigation_candidate(target_index):
+		return
 	var task := tasks[target_index]
-	match String(task.type):
+	var work_type := String(task.type)
+	var action_position := _standard_task_target_position(target_index)
+	if bee.position.distance_to(action_position) > INTERACTION_RADIUS:
+		bee.trigger_sense()
+		message = (
+			"波纹正指着这件工作的取件花标；靠近后再拿稳。"
+			if work_type in TWO_STEP_TYPES and int(task.state) == 0
+			else "波纹正指着当前花标；靠近后再做右下角写着的动作。"
+		)
+		return
+	if work_type in TWO_STEP_TYPES:
+		if int(task.state) == 0:
+			_pick_up_task(target_index)
+		else:
+			# A two-step task can only reach state 1 through _pick_up_task(), which also
+			# owns carried_task_index. Refuse a corrupted orphan state instead of
+			# silently granting delivery without the item.
+			message = "这件东西现在不在身上。回到取件花标重新接稳。"
+		return
+	match work_type:
 		"observe":
-			if focus_task_index == target_index:
-				message = "正在观察。继续停稳，不用重复按键。"
-				return
 			focus_task_index = target_index
 			focus_time = 0.0
 			bee.has_target = false
@@ -1234,7 +1257,7 @@ func _handle_primary_action() -> void:
 		"frighten":
 			_resolve_task(target_index, "震翼声一到，它松开手里的东西，去旁边草茎歇着了。", "evade")
 		_:
-			_resolve_task(target_index, "这一处收好了。", _cue_for_type(String(task.type)))
+			_resolve_task(target_index, "这一处收好了。", _cue_for_type(work_type))
 
 
 func _handle_event_primary_action() -> void:
@@ -1704,34 +1727,6 @@ func _emit_event_checkpoint_if_ready() -> void:
 	message = "%s 大家换班歇了一会儿，体力也回满了。" % message
 
 
-func _nearest_source_task() -> int:
-	var nearest := -1
-	var nearest_distance := INTERACTION_RADIUS
-	for index in tasks.size():
-		var task := tasks[index]
-		if not _task_is_active(task) or bool(task.resolved) or int(task.state) != 0 or String(task.type) not in TWO_STEP_TYPES:
-			continue
-		var distance := bee.position.distance_to(Vector2(task.source_position))
-		if distance < nearest_distance:
-			nearest = index
-			nearest_distance = distance
-	return nearest
-
-
-func _nearest_target_task() -> int:
-	var nearest := -1
-	var nearest_distance := INTERACTION_RADIUS
-	for index in tasks.size():
-		var task := tasks[index]
-		if not _task_is_active(task) or bool(task.resolved) or String(task.type) in TWO_STEP_TYPES:
-			continue
-		var distance := bee.position.distance_to(Vector2(task.position))
-		if distance < nearest_distance:
-			nearest = index
-			nearest_distance = distance
-	return nearest
-
-
 func _pick_up_task(index: int) -> void:
 	var task := tasks[index]
 	task.state = 1
@@ -1829,14 +1824,37 @@ func _active_objective_index() -> int:
 	return -1
 
 
+func _standard_task_target_position(index: int) -> Vector2:
+	if index < 0 or index >= tasks.size():
+		return bee.position if bee != null else home_position
+	var task := tasks[index]
+	if String(task.get("type", "")) in TWO_STEP_TYPES and int(task.get("state", 0)) == 0:
+		return Vector2(task.get("source_position", task.get("position", home_position)))
+	return Vector2(task.get("position", home_position))
+
+
+func _task_is_navigation_candidate(index: int) -> bool:
+	if index < 0 or index >= tasks.size():
+		return false
+	var task := tasks[index]
+	return not bool(task.get("resolved", false)) and _task_is_active(task)
+
+
 func _active_standard_task_index() -> int:
-	if event_matrix_mode or is_climax or bee == null:
+	# Event-matrix chapters own a separate runtime. Legacy phase-based climaxes still
+	# use real tasks, so they must pass through this selector and let
+	# _task_is_active() expose only the current phase.
+	if event_matrix_mode or bee == null:
+		navigation_task_index = -1
 		return -1
 	if carried_task_index >= 0 and carried_task_index < tasks.size():
+		navigation_task_index = carried_task_index
 		return carried_task_index
 	if focus_task_index >= 0 and focus_task_index < tasks.size():
+		navigation_task_index = focus_task_index
 		return focus_task_index
 	if collected_cargo >= CARGO_CAPACITY:
+		navigation_task_index = -1
 		return -1
 	var nearest := -1
 	var nearest_distance := INF
@@ -1844,14 +1862,26 @@ func _active_standard_task_index() -> int:
 		var task := tasks[index]
 		if bool(task.resolved) or not _task_is_active(task):
 			continue
-		var target_position := Vector2(task.position)
-		if String(task.type) in TWO_STEP_TYPES and int(task.state) == 0:
-			target_position = Vector2(task.source_position)
+		var target_position := _standard_task_target_position(index)
 		var distance := bee.position.distance_to(target_position)
 		if distance < nearest_distance:
 			nearest = index
 			nearest_distance = distance
-	return nearest
+	if nearest < 0:
+		navigation_task_index = -1
+		return -1
+	if _task_is_navigation_candidate(navigation_task_index) and navigation_task_index != nearest:
+		var current_distance := bee.position.distance_to(
+			_standard_task_target_position(navigation_task_index)
+		)
+		var clearly_closer := nearest_distance + TASK_FOCUS_SWITCH_MARGIN < current_distance
+		# Outside action range, a small margin prevents two distant markers from
+		# swapping every frame. Once any real task is actionable, always obey the
+		# nearest marker so standing on one prop can never operate its neighbour.
+		if nearest_distance > INTERACTION_RADIUS and not clearly_closer:
+			return navigation_task_index
+	navigation_task_index = nearest
+	return navigation_task_index
 
 
 func _active_phase_tasks_complete() -> bool:
@@ -2225,16 +2255,23 @@ func _action_label() -> String:
 		return "蜜囊已满，回巢卸货"
 	if focus_task_index >= 0:
 		return "正在观察…"
-	var source_index := _nearest_source_task()
-	if source_index >= 0:
-		match String(tasks[source_index].type):
-			"pollinate": return "取同形散粉"
-			"warmth": return "接一小段暖蜡"
-			"seed": return "托稳一枚种核"
-			_: return "拿稳这件东西"
-	var target_index := _nearest_target_task()
+	var target_index := _active_standard_task_index()
 	if target_index >= 0:
-		match String(tasks[target_index].type):
+		var task := tasks[target_index]
+		var work_type := String(task.type)
+		if bee.position.distance_to(_standard_task_target_position(target_index)) > INTERACTION_RADIUS:
+			return (
+				"看看取件花标"
+				if work_type in TWO_STEP_TYPES and int(task.state) == 0
+				else "看看当前花标"
+			)
+		if work_type in TWO_STEP_TYPES:
+			match work_type:
+				"pollinate": return "取同形散粉"
+				"warmth": return "接一小段暖蜡"
+				"seed": return "托稳一枚种核"
+				_: return "拿稳这件东西"
+		match work_type:
 			"observe": return "停翅看清"
 			"collect": return "收进蜜囊"
 			"repair": return "扣紧支架"
@@ -2925,24 +2962,43 @@ func _draw_tasks() -> void:
 			continue
 		var work_type := String(task.type)
 		var color: Color = TYPE_COLORS.get(work_type, accent_color)
-		if bool(task.resolved):
+		var task_resolved := bool(task.resolved)
+		if work_type in TWO_STEP_TYPES:
+			var source_position := Vector2(task.source_position)
 			if _world_visual_fully_visible(
-				Vector2(task.position),
+				source_position,
 				_task_marker_visual_bounds(work_type)
 			):
-				_draw_task_marker(Vector2(task.position), work_type, color.darkened(0.18), false, int(task.hits), true)
-			continue
-		if work_type in TWO_STEP_TYPES and int(task.state) == 0:
-			if _world_visual_fully_visible(
-				Vector2(task.source_position),
-				_task_marker_visual_bounds(work_type)
-			):
-				_draw_task_marker(Vector2(task.source_position), work_type, color.lightened(0.14), true, int(task.hits), false)
+				var source_role := task_marker_role(index, true)
+				var source_color := (
+					color.darkened(0.18)
+					if source_role == TASK_ROLE_MEMORY
+					else color.lightened(0.14)
+				)
+				_draw_task_marker(
+					source_position,
+					work_type,
+					source_color,
+					true,
+					int(task.hits),
+					task_resolved,
+					source_role
+				)
+		var destination := Vector2(task.position)
 		if _world_visual_fully_visible(
-			Vector2(task.position),
+			destination,
 			_task_marker_visual_bounds(work_type)
 		):
-			_draw_task_marker(Vector2(task.position), work_type, color, false, int(task.hits), false)
+			var destination_role := task_marker_role(index, false)
+			_draw_task_marker(
+				destination,
+				work_type,
+				color.darkened(0.18) if destination_role == TASK_ROLE_MEMORY else color,
+				false,
+				int(task.hits),
+				task_resolved,
+				destination_role
+			)
 	if carried_task_index >= 0 and carried_task_index < tasks.size():
 		var destination := Vector2(tasks[carried_task_index].position)
 		if _world_visual_fully_visible(
@@ -2957,47 +3013,138 @@ func _task_marker_visual_bounds(_work_type: String) -> Rect2:
 	return Rect2(-64.0, -64.0, 128.0, 128.0)
 
 
-func _draw_task_marker(position: Vector2, work_type: String, color: Color, source: bool, hits: int, resolved: bool) -> void:
-	var pulse := 1.0 + sin(elapsed * 3.2 + position.x * 0.01) * 0.08
-	draw_circle(position, 48.0 * pulse, Color(color, 0.12 if resolved else 0.22))
-	draw_arc(position, 55.0 * pulse, 0.0, TAU, 24, Color("fff2b5", 0.30 if resolved else 0.72), 3.0)
-	if _draw_commercial_task_art(position, work_type, source, resolved, color, hits):
+func task_marker_role(index: int, source: bool) -> StringName:
+	if index < 0 or index >= tasks.size():
+		return TASK_ROLE_INACTIVE
+	var task := tasks[index]
+	if bool(task.get("resolved", false)):
+		return TASK_ROLE_MEMORY
+	var active_index := _active_standard_task_index()
+	var work_type := String(task.get("type", ""))
+	if work_type in TWO_STEP_TYPES:
+		if int(task.get("state", 0)) == 0:
+			return TASK_ROLE_ACTIVE if source and index == active_index else TASK_ROLE_INACTIVE
 		if source:
-			draw_arc(position, 62.0, 0.0, TAU, 24, Color("fff5c7", 0.78), 3.0)
-		elif resolved:
-			draw_line(position + Vector2(-15, 3), position + Vector2(-3, 15), Color("fff5c7"), 5.0)
-			draw_line(position + Vector2(-3, 15), position + Vector2(20, -15), Color("fff5c7"), 5.0)
+			return TASK_ROLE_MEMORY
+	return TASK_ROLE_ACTIVE if not source and index == active_index else TASK_ROLE_INACTIVE
+
+
+func task_marker_visual_style(role: StringName) -> Dictionary:
+	match role:
+		TASK_ROLE_ACTIVE:
+			return {
+				"pulses": true,
+				"fill_alpha": 0.22,
+				"ring_alpha": 0.78,
+				"art_alpha": 1.0,
+				"marker_alpha": 1.0,
+				"progress_alpha": 0.90,
+			}
+		TASK_ROLE_MEMORY:
+			return {
+				"pulses": false,
+				"fill_alpha": 0.09,
+				"ring_alpha": 0.28,
+				"art_alpha": 0.62,
+				"marker_alpha": 0.65,
+				"progress_alpha": 0.42,
+			}
+		_:
+			return {
+				"pulses": false,
+				"fill_alpha": 0.05,
+				"ring_alpha": 0.15,
+				"art_alpha": 0.46,
+				"marker_alpha": 0.48,
+				"progress_alpha": 0.30,
+			}
+
+
+func _draw_task_marker(
+	position: Vector2,
+	work_type: String,
+	color: Color,
+	source: bool,
+	hits: int,
+	resolved: bool,
+	role: StringName
+) -> void:
+	var style := task_marker_visual_style(role)
+	var pulse := (
+		1.0 + sin(elapsed * 3.2 + position.x * 0.01) * 0.08
+		if bool(style.get("pulses", false))
+		else 1.0
+	)
+	var marker_alpha := float(style.get("marker_alpha", 0.48))
+	var marker_color := Color(color, marker_alpha)
+	draw_circle(position, 48.0 * pulse, Color(color, float(style.get("fill_alpha", 0.05))))
+	draw_arc(
+		position,
+		55.0 * pulse,
+		0.0,
+		TAU,
+		24,
+		Color("fff2b5", float(style.get("ring_alpha", 0.15))),
+		3.0
+	)
+	if _draw_commercial_task_art(position, work_type, source, resolved, color, hits, role):
+		_draw_task_state_overlay(position, source, hits, role)
 		return
 	match work_type:
 		"pollinate":
 			for petal in 5:
-				draw_circle(position + Vector2.from_angle(float(petal) / 5.0 * TAU) * 17.0, 10.0, color)
-			draw_circle(position, 8.0, Color("f4d069"))
+				draw_circle(position + Vector2.from_angle(float(petal) / 5.0 * TAU) * 17.0, 10.0, marker_color)
+			draw_circle(position, 8.0, Color("f4d069", marker_alpha))
 		"collect", "warmth":
-			draw_circle(position, 15.0, color)
-			draw_circle(position + Vector2(-5, -5), 5.0, color.lightened(0.32))
+			draw_circle(position, 15.0, marker_color)
+			draw_circle(position + Vector2(-5, -5), 5.0, marker_color.lightened(0.32))
 		"observe":
-			draw_arc(position, 22.0, 0.3, TAU - 0.3, 20, color, 5.0)
-			draw_circle(position, 5.0, color.lightened(0.3))
+			draw_arc(position, 22.0, 0.3, TAU - 0.3, 20, marker_color, 5.0)
+			draw_circle(position, 5.0, marker_color.lightened(0.3))
 		"carry", "repair", "anchor":
-			draw_rect(Rect2(position - Vector2(17, 13), Vector2(34, 26)), color, true)
-			draw_line(position + Vector2(-13, 0), position + Vector2(13, 0), color.lightened(0.3), 3.0)
+			draw_rect(Rect2(position - Vector2(17, 13), Vector2(34, 26)), marker_color, true)
+			draw_line(position + Vector2(-13, 0), position + Vector2(13, 0), marker_color.lightened(0.3), 3.0)
 		"seed", "shell":
-			draw_circle(position, 14.0, color)
+			draw_circle(position, 14.0, marker_color)
 			for ray in 6:
-				draw_line(position, position + Vector2.from_angle(float(ray) / 6.0 * TAU) * 23.0, color.lightened(0.15), 3.0)
+				draw_line(position, position + Vector2.from_angle(float(ray) / 6.0 * TAU) * 23.0, marker_color.lightened(0.15), 3.0)
 		"frighten":
-			draw_colored_polygon(PackedVector2Array([position + Vector2(-18, 0), position + Vector2(0, -13), position + Vector2(18, 0), position + Vector2(0, 13)]), color)
+			draw_colored_polygon(PackedVector2Array([position + Vector2(-18, 0), position + Vector2(0, -13), position + Vector2(18, 0), position + Vector2(0, 13)]), marker_color)
 		_:
-			draw_circle(position, 16.0, color)
-	if source:
-		draw_arc(position, 62.0, 0.0, TAU, 24, Color("fff5c7", 0.75), 3.0)
+			draw_circle(position, 16.0, marker_color)
+	_draw_task_state_overlay(position, source, hits, role)
+
+
+func _draw_task_state_overlay(position: Vector2, source: bool, hits: int, role: StringName) -> void:
+	var style := task_marker_visual_style(role)
+	if role == TASK_ROLE_ACTIVE and source:
+		draw_arc(position, 62.0, 0.0, TAU, 24, Color("fff5c7", 0.82), 3.0)
+	elif role == TASK_ROLE_MEMORY:
+		draw_line(position + Vector2(-15, 3), position + Vector2(-3, 15), Color("fff5c7", 0.76), 5.0)
+		draw_line(position + Vector2(-3, 15), position + Vector2(20, -15), Color("fff5c7", 0.76), 5.0)
 	elif hits > 0:
-		draw_arc(position, 62.0, -PI * 0.5, -PI * 0.5 + PI * float(hits), 24, Color("fff5c7"), 4.0)
+		draw_arc(
+			position,
+			62.0,
+			-PI * 0.5,
+			-PI * 0.5 + PI * float(hits),
+			24,
+			Color("fff5c7", float(style.get("progress_alpha", 0.30))),
+			4.0
+		)
 
 
-func _draw_commercial_task_art(position: Vector2, work_type: String, source: bool, resolved: bool, color: Color, hits: int) -> bool:
-	var modulate := Color(1.0, 1.0, 1.0, 0.48 if resolved else 1.0)
+func _draw_commercial_task_art(
+	position: Vector2,
+	work_type: String,
+	source: bool,
+	resolved: bool,
+	color: Color,
+	hits: int,
+	role: StringName
+) -> bool:
+	var style := task_marker_visual_style(role)
+	var modulate := Color(1.0, 1.0, 1.0, float(style.get("art_alpha", 0.46)))
 	if work_type in ["pollinate", "collect", "seed"] and flower_states_texture != null:
 		var column := 0
 		if work_type == "collect": column = 1
@@ -3061,10 +3208,7 @@ func _navigation_target() -> Vector2:
 	var active_task_index := _active_standard_task_index()
 	if active_task_index < 0:
 		return home_position if collected_cargo > 0 else bee.position
-	var active_task := tasks[active_task_index]
-	if String(active_task.type) in TWO_STEP_TYPES and int(active_task.state) == 0:
-		return Vector2(active_task.source_position)
-	return Vector2(active_task.position)
+	return _standard_task_target_position(active_task_index)
 
 
 func _event_navigation_target() -> Vector2:
