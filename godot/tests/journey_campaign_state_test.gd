@@ -1067,15 +1067,16 @@ func run_test() -> void:
 			"点击边缘指引没有一次重定向到真实导航目标，或修改了世界交互坐标"
 		)
 
-		# Three off-screen match sources used to clamp independently; sources 0 and 2
-		# could occupy the same edge pixel. The layout now emits only the required
-		# source's group arrow until the real arrangement enters view.
+		# Three unavailable match sources used to clamp independently: two are truly
+		# behind the live action tray and one extends outside the viewport. The layout
+		# emits only the required source's group arrow until the real arrangement is
+		# fully visible; upper-right empty screen is no longer treated as a fixed strip.
 		var saved_match_sources: Array[Vector2] = yushui_field.event_match_sources.duplicate()
 		var synthetic_origin: Vector2 = yushui_field.camera.position - yushui_field.VIEWPORT_SIZE * 0.5
 		var offscreen_match_sources: Array[Vector2] = [
-			synthetic_origin + Vector2(1160.0, 420.0),
-			synthetic_origin + Vector2(1210.0, 360.0),
-			synthetic_origin + Vector2(1260.0, 420.0),
+			synthetic_origin + Vector2(1160.0, 600.0),
+			synthetic_origin + Vector2(1210.0, 600.0),
+			synthetic_origin + Vector2(1260.0, 600.0),
 		]
 		yushui_field.event_match_sources = offscreen_match_sources
 		var collapsed_layout: Array[Dictionary] = yushui_field._moving_match_marker_layout()
