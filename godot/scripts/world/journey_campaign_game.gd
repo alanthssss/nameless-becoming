@@ -73,6 +73,7 @@ var last_toast_message := ""
 var current_ui_scale := 1.0
 var pending_hive_story_text := ""
 var pending_hive_story_duration := 0.0
+var energy_tutorial_version_seen := 0
 
 const FIELD_TOAST_SECONDS := 4.8
 const FIELD_OBJECTIVE_SIZE := Vector2(620, 118)
@@ -97,6 +98,10 @@ func _ready() -> void:
 		persistence = PersistenceScript.new()
 		persistence.name = "LocalCommercialPersistence"
 		add_child(persistence)
+	energy_tutorial_version_seen = maxi(
+		0,
+		int(persistence.setting("campaign_energy_tutorial_version", 0))
+	)
 	var developer_no_persistence := "--developer-no-persistence" in OS.get_cmdline_user_args()
 	var launch_requested := persistence.has_pending_launch_request() and not developer_no_persistence
 	var running_as_product_scene := get_tree().current_scene == self
@@ -595,6 +600,7 @@ func _begin_level(level_id: String, replay: bool) -> void:
 		return
 	var context := state.active_level_context()
 	context["sound_feedback"] = sound
+	context["campaign_energy_tutorial_version"] = energy_tutorial_version_seen
 	var level: Dictionary = context.level
 	transitioning = true
 	_show_fade("%02d · %s" % [int(level.number), String(level.term_name)], false)
@@ -652,6 +658,7 @@ func _on_field_status(snapshot: Dictionary) -> void:
 	objective_label.text = _current_objective_text(snapshot)
 	var toast_text := _field_toast_text(snapshot, objective_label.text)
 	_show_field_toast(toast_text)
+	_acknowledge_energy_tutorial_if_visible(snapshot, toast_text)
 	action_button.text = String(snapshot.get("action_label", "看看最近花标"))
 	action_button.disabled = not bool(snapshot.get("action_enabled", true))
 	return_button.text = String(snapshot.get("return_label", "指路回巢"))
@@ -693,6 +700,15 @@ func _current_objective_text(snapshot: Dictionary) -> String:
 	var lines: Array = snapshot.get("objective_lines", [])
 	var counts: Array = snapshot.get("objective_counts", [])
 	var goals: Array = snapshot.get("objective_goals", [])
+	var active_index := int(snapshot.get("active_objective_index", -1))
+	if (
+		active_index >= 0
+		and active_index < lines.size()
+		and active_index < counts.size()
+		and active_index < goals.size()
+		and int(counts[active_index]) < int(goals[active_index])
+	):
+		return _single_line_text(String(lines[active_index]))
 	for index in mini(lines.size(), mini(counts.size(), goals.size())):
 		if int(counts[index]) < int(goals[index]):
 			return _single_line_text(String(lines[index]))
@@ -775,6 +791,38 @@ func _show_field_toast(text: String) -> void:
 		last_toast_message = text
 		toast_time = FIELD_TOAST_SECONDS
 		toast_panel.visible = field_hud_visible
+
+
+func _acknowledge_energy_tutorial_if_visible(
+	snapshot: Dictionary,
+	toast_text: String
+) -> void:
+	var delivery_version := int(snapshot.get("energy_tutorial_delivery_version", 0))
+	var delivery_text := String(snapshot.get("energy_tutorial_delivery_text", ""))
+	if delivery_version <= energy_tutorial_version_seen or delivery_text.is_empty():
+		return
+	if (
+		toast_text != delivery_text
+		or message_label == null
+		or toast_panel == null
+		or not field_hud_visible
+		or not toast_panel.visible
+		or message_label.text != delivery_text
+	):
+		return
+	# A signal is not proof that the player received the lesson. Persist it only
+	# after the production label confirms every wrapped line fits the visible cap.
+	var rendered_lines := message_label.get_line_count()
+	if rendered_lines <= 0 or rendered_lines > message_label.max_lines_visible:
+		return
+	energy_tutorial_version_seen = delivery_version
+	if persistence != null:
+		var save_error := persistence.set_setting(
+			"campaign_energy_tutorial_version",
+			delivery_version
+		)
+		if save_error != OK:
+			push_error("体力教学已经完整显示，但确认状态无法保存：%d" % save_error)
 
 
 func _set_field_hud_visible(visible: bool) -> void:

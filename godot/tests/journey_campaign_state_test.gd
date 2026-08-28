@@ -1111,11 +1111,17 @@ func run_test() -> void:
 			yushui_field._register_evade_direction_tap("right")
 			yushui_field._register_evade_direction_tap("right")
 			if gate_index == 0:
+				yushui_field._emit_status()
+				var first_cost_snapshot := yushui_field.status_snapshot()
 				expect(
 					"1 / 3" in yushui_field.message
-						and "急转" in yushui_field.message
-						and "普通飞行不消耗" in yushui_field.message
-						and "停稳回气" in yushui_field.message,
+						and yushui_field.energy_state.begins_with("急转")
+						and String(first_cost_snapshot.get("message", ""))
+							== yushui_field.CAMPAIGN_ENERGY_TUTORIAL_TEXT
+						and int(first_cost_snapshot.get(
+							"energy_tutorial_delivery_version",
+							0
+						)) == yushui_field.CAMPAIGN_ENERGY_TUTORIAL_VERSION,
 					"雨水 02 第一次实际扣费后，进度提示覆盖了体力机制教学"
 				)
 			expect(
@@ -1144,6 +1150,8 @@ func run_test() -> void:
 		yushui_field.bee.velocity = Vector2(100.0, 0.0)
 		yushui_field.bee.has_target = false
 		yushui_field.bee.energy = 50.0
+		yushui_field.energy_feedback_hold = 0.0
+		yushui_field.energy_state = ""
 		yushui_field._process_chapter(1.0)
 		expect(
 			absf(yushui_field.bee.energy - 49.65) <= 0.01

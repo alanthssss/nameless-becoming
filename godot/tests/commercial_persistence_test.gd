@@ -79,6 +79,59 @@ func run_test() -> void:
 	root.add_child(manager)
 	await process_frame
 	expect(not manager.has_progress(), "空测试目录被误报为有旅程存档")
+	expect(
+		int(manager.setting("campaign_energy_tutorial_version", -1)) == 0,
+		"缺少教学版本的旧设置没有安全补成 0"
+	)
+	var legacy_settings_path := "%s-legacy-missing-tutorial-settings.json" % test_prefix
+	var legacy_progress_path := "%s-legacy-missing-tutorial-progress.json" % test_prefix
+	var legacy_writer := PersistenceScript.new()
+	expect(
+		legacy_writer.configure_storage_for_test(
+			legacy_progress_path,
+			legacy_settings_path
+		) == OK,
+		"旧设置迁移写入器无法隔离"
+	)
+	var legacy_settings_payload := legacy_writer.settings_snapshot()
+	legacy_settings_payload.erase("campaign_energy_tutorial_version")
+	expect(
+		legacy_writer._write_envelope_atomic(
+			legacy_settings_path,
+			PersistenceScript.SETTINGS_KIND,
+			legacy_settings_payload
+		) == OK,
+		"无法建立缺少体力教学字段的合法旧设置信封"
+	)
+	legacy_writer.free()
+	var legacy_reader := PersistenceScript.new()
+	expect(
+		legacy_reader.configure_storage_for_test(
+			legacy_progress_path,
+			legacy_settings_path
+		) == OK,
+		"旧设置迁移读取器无法隔离"
+	)
+	root.add_child(legacy_reader)
+	await process_frame
+	expect(
+		legacy_reader.last_settings_error == OK
+		and int(legacy_reader.setting("campaign_energy_tutorial_version", -1)) == 0,
+		"真实旧设置信封缺少教学字段时没有无损补成 0"
+	)
+	legacy_reader.queue_free()
+	await process_frame
+	for legacy_path in [
+		legacy_settings_path,
+		"%s.tmp" % legacy_settings_path,
+		"%s.bak" % legacy_settings_path,
+		legacy_progress_path,
+		"%s.tmp" % legacy_progress_path,
+		"%s.bak" % legacy_progress_path,
+	]:
+		var legacy_absolute := ProjectSettings.globalize_path(legacy_path)
+		if FileAccess.file_exists(legacy_absolute):
+			DirAccess.remove_absolute(legacy_absolute)
 	expect(manager.request_journey_launch("continue") == OK, "继续旅程启动请求被拒绝")
 	expect(manager.has_pending_launch_request(), "启动请求没有跨场景保留")
 	expect(manager.consume_journey_launch() == "continue" and not manager.has_pending_launch_request(), "启动请求没有恰好消费一次")
@@ -425,9 +478,22 @@ func run_test() -> void:
 	expect(manager.set_setting("reduce_motion", true) == OK, "减少动态无法保存")
 	expect(not bool(manager.setting("screen_shake", true)), "减少动态没有可靠关闭屏幕震动")
 	expect(manager.set_setting("show_control_hints", false) == OK, "操作提示开关无法保存")
+	expect(
+		manager.set_setting("campaign_energy_tutorial_version", 1) == OK,
+		"体力教学版本无法保存"
+	)
 	var previous_volume := float(manager.setting("music_volume"))
 	expect(manager.set_setting("music_volume", "loud") == ERR_INVALID_DATA, "错误类型的音量设置被写入")
 	expect(is_equal_approx(float(manager.setting("music_volume")), previous_volume), "错误设置没有回滚")
+	for invalid_tutorial_version in [-1, 1.5, "one"]:
+		expect(
+			manager.set_setting(
+				"campaign_energy_tutorial_version",
+				invalid_tutorial_version
+			) == ERR_INVALID_DATA
+			and int(manager.setting("campaign_energy_tutorial_version", -1)) == 1,
+			"非法体力教学版本没有被拒绝并回滚：%s" % str(invalid_tutorial_version)
+		)
 
 	var reloaded_settings := PersistenceScript.new()
 	expect(reloaded_settings.configure_storage_for_test(progress_path, settings_path) == OK, "重载设置管理器无法隔离")
@@ -439,7 +505,8 @@ func run_test() -> void:
 		and is_equal_approx(float(reloaded_settings.setting("sfx_volume")), 0.65)
 		and is_equal_approx(float(reloaded_settings.setting("ui_scale")), 1.3)
 		and bool(reloaded_settings.setting("reduce_motion"))
-		and not bool(reloaded_settings.setting("show_control_hints")),
+		and not bool(reloaded_settings.setting("show_control_hints"))
+		and int(reloaded_settings.setting("campaign_energy_tutorial_version", 0)) == 1,
 		"音频、显示或无障碍设置没有跨启动恢复"
 	)
 	expect(AudioServer.get_bus_index(&"Music") >= 0 and AudioServer.get_bus_index(&"SFX") >= 0, "音乐与音效没有独立混音总线")

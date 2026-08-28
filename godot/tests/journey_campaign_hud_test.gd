@@ -5,6 +5,17 @@ const CampaignScene := preload("res://campaign.tscn")
 var failures: Array[String] = []
 
 
+class TutorialPersistence:
+	extends CommercialPersistenceService
+
+	var writes: Array[Dictionary] = []
+
+
+	func set_setting(key: String, value: Variant) -> Error:
+		writes.append({"key": key, "value": value})
+		return OK
+
+
 func _init() -> void:
 	call_deferred("run_test")
 
@@ -100,6 +111,74 @@ func run_test() -> void:
 			and "Q/Y 指路回巢" in game.controls_label.text,
 		"底部操作说明没有跟随当前两个情境动作：%s" % game.controls_label.text
 	)
+
+	# A lesson is durable only after the production toast is visible and every
+	# wrapped line fits. Exercise the exact product text at normal and maximum UI
+	# scale, and verify the HUD->settings acknowledgement bridge writes once.
+	var actual_persistence: CommercialPersistenceService = game.persistence
+	var original_tutorial_version: int = game.energy_tutorial_version_seen
+	var tutorial_persistence := TutorialPersistence.new()
+	game.persistence = tutorial_persistence
+	var tutorial_text := JourneyCampaignField.CAMPAIGN_ENERGY_TUTORIAL_TEXT
+	var tutorial_snapshot := {
+		"level_number": 2,
+		"term_name": "雨水",
+		"area": "雨后花路",
+		"energy": 94.0,
+		"energy_cap": 100.0,
+		"energy_state": "急转 -6",
+		"time_remaining": 480.0,
+		"ready_to_return": false,
+		"message": tutorial_text,
+		"action_label": "穿过雨线",
+		"action_enabled": true,
+		"return_label": "指路回巢",
+		"event_runtime": {
+			"current_event_number": 2,
+			"event_count": 15,
+			"current_event_title": "穿过滴水线",
+			"ui_hint": "看清亮缝再急转",
+			"optional": false,
+		},
+		"player_instruction": "飞进黄色圆圈，连续按两次同一个方向",
+		"progress_label": "已通过 1/3",
+		"energy_tutorial_delivery_version": 1,
+		"energy_tutorial_delivery_text": tutorial_text,
+	}
+	for ui_scale in [1.0, 1.3]:
+		tutorial_persistence.writes.clear()
+		game.energy_tutorial_version_seen = 0
+		game._apply_settings({
+			"ui_scale": ui_scale,
+			"reduce_motion": false,
+			"show_control_hints": true,
+		})
+		game._on_field_status(tutorial_snapshot)
+		await process_frame
+		# If font shaping was not ready during the first status, the next normal
+		# field tick retries acknowledgement without producing a duplicate write.
+		game._on_field_status(tutorial_snapshot)
+		expect(
+			game.toast_panel.visible
+			and game.message_label.text == tutorial_text
+			and game.message_label.get_line_count() > 0
+			and game.message_label.get_line_count()
+				<= game.message_label.max_lines_visible,
+			"%d%% 字体下体力教学没有完整装进双行现场提示：lines=%d"
+			% [roundi(ui_scale * 100.0), game.message_label.get_line_count()]
+		)
+		expect(
+			game.energy_tutorial_version_seen == 1
+			and tutorial_persistence.writes.size() == 1
+			and String(tutorial_persistence.writes[0].get("key", ""))
+				== "campaign_energy_tutorial_version"
+			and int(tutorial_persistence.writes[0].get("value", 0)) == 1,
+			"%d%% 字体下 HUD 未在完整显示后恰好一次确认体力教学"
+			% roundi(ui_scale * 100.0)
+		)
+	game.persistence = actual_persistence
+	game.energy_tutorial_version_seen = original_tutorial_version
+	tutorial_persistence.free()
 
 	# Feed the longest authored Guyu title+hint through the real production HUD;
 	# this catches clipping regressions when content writers revise the matrix.

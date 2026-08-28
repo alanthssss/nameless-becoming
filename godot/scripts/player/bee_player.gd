@@ -54,6 +54,7 @@ var evade_cooldown := 0.0
 var allow_exhausted_evade := false
 var last_evade_was_assisted := false
 var evade_energy_cost := EVADE_COST
+var last_evade_energy_spent := 0.0
 var assisted_evade_speed_scale := 0.75
 var assisted_evade_cooldown := 2.4
 # 闪避无敌时长：由 main 从 balance.json player.evade_invuln_seconds 注入
@@ -197,6 +198,7 @@ func reset_for_expedition(at: Vector2) -> void:
 	evade_cooldown = 0.0
 	allow_exhausted_evade = false
 	last_evade_was_assisted = false
+	last_evade_energy_spent = 0.0
 	invulnerable_time = 0.0
 	evade_sequence = 0
 	last_evade_origin = at
@@ -219,6 +221,15 @@ func spend_energy(amount: float) -> bool:
 	energy -= amount
 	return true
 
+func current_evade_energy_cost() -> float:
+	# Urgent turns are the discrete counterpart of sustained dash movement. The
+	# same global/load multipliers must affect both; otherwise a load can visibly
+	# slow the bee while its promised extra exertion remains fake.
+	return maxf(
+		0.0,
+		evade_energy_cost * dash_cost_multiplier * load_dash_cost_multiplier
+	)
+
 func show_evade_first_tap(direction: Vector2, duration: float) -> void:
 	if direction.length_squared() < 0.01:
 		return
@@ -232,18 +243,22 @@ func clear_evade_first_tap() -> void:
 
 func try_evade(input_direction := Vector2.ZERO, input_origin = null) -> bool:
 	last_evade_was_assisted = false
+	last_evade_energy_spent = 0.0
 	if evade_cooldown > 0.0:
 		return false
-	if energy < evade_energy_cost:
+	var effective_cost := current_evade_energy_cost()
+	if energy < effective_cost:
 		if not allow_exhausted_evade:
 			return false
 		# Mandatory campaign gates must never become a permanent story lock.  The
 		# assisted turn spends whatever remains and still enters the normal
 		# cooldown; it is not available for free roaming or optional shortcuts.
+		last_evade_energy_spent = energy
 		energy = 0.0
 		last_evade_was_assisted = true
 	else:
-		energy -= evade_energy_cost
+		energy -= effective_cost
+		last_evade_energy_spent = effective_cost
 	var direction: Vector2 = input_direction.normalized()
 	if direction.length_squared() < 0.01:
 		direction = velocity.normalized() if velocity.length_squared() > 4.0 else Vector2.from_angle(facing)

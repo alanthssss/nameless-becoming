@@ -1,10 +1,10 @@
-# 《一会儿巢里见》当前工作树与 0.9.5 历史构建校验清单
+# 《一会儿巢里见》2026-08-28 系统合同候选与历史构建校验清单
 
-本文先记录当前 24 关 Campaign 共享工作树的自动事实，再按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的历史构建证据。最近固定桌面 artifact 仍是 `0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，见“2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包”；它早于当前产品、只作历史记录，不得继续作为 24 关 Campaign、下一轮 B01 或当前交付入口。
+本文先记录 2026-08-28 的 24 关 Campaign 系统合同候选快照，再按时间保留 rc.1、rc.2、Web 修复与玩家反馈候选的历史构建证据。最近固定桌面 artifact 仍是 `0.9.5-rc.2` / `57aefc4933db88968777b11ea1d1679c6374842a`，见“2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包”；它早于当前产品、只作历史记录，不得继续作为 24 关 Campaign、下一轮 B01 或当前交付入口。
 
-当前工作树位于 `codex/commercial-gameplay-expansion`，以 `main` 合并提交 `985ad749f385be60f290d648b009df13466a47bd` 为基点并含未提交变更；尚无绑定这些扩产变更的 clean commit、桌面 artifact 或发行哈希。下述当前验证只能证明 dirty 工作树中的实现和内容闭包，不构成 Alan 对本轮切片的验收、独立玩家、商业美术终稿、真实设备或发行证据。
+该候选快照来自 `codex/systemic-campaign-regression`，以 `main` 合并提交 `6f7e3719` 为基点；下述验证在合并前针对同一文件差异完成，尚未生成绑定本批变更的桌面 artifact 或发行哈希。它只能证明开发工作树中的实现和 Web 内容闭包，不构成 Alan 对本轮切片的验收、独立玩家、商业美术终稿、真实设备或发行证据；合并后的准确来源以对应 Git 提交与 PR 记录为准。
 
-## 2026-08-28 · P0 与首批 30 事件共享工作树
+## 2026-08-28 · P0、首批 30 事件与跨章节系统合同工作树
 
 ### 当前实现清单
 
@@ -15,18 +15,20 @@
 - 花田运行边界为 3600 × 2000，相对 1280 × 720 参考视口横纵各约三屏；每季按 `map_variant 0—5` 使用六种任务点、风险带、遮蔽与歇脚拓扑。运行时覆盖授粉、采集、观察、震翼请路、搬运、修补、送种、转壳、续暖、固定与三阶段高潮组合 11 类多步工作；采蜜在抵达主巢接货线前不计入目标。
 - `campaign_hive.tscn` 提供 24 关关卡板和接货线，`campaign_field.tscn` 提供可卸载花田；路由切换时只保留一个活动区域。蚊庄主、油葫芦、普通完整身体的画眉邻居和大熊四张现有商业状态图已分别进入四个高潮关。
 - `godot/assets/art/commercial/` 当前精确闭包为 21 张运行候选 PNG；谷雨／大暑／霜降／大寒四张结果图只在对应高潮首通后展示。四张图均为 `AUTH-PENDING`／`ALAN-PENDING`／`PLAYER-PENDING`／`MKT-NO`，不表示四场正式大型事件玩法、“哇塞”体验或可售门禁通过。当前只完成雨水／谷雨 30 事件生产切片，其余 330 事件与储存／育幼／清扫／保温等蜂巢生活链仍未制作；Alan 尚未试玩本轮，独立外部玩家有效样本为 0。
+- Campaign 体力、负载、恢复、主线急转保底、观察输入锁、自选事务、目标／导航／动作和候档恢复已收进跨章节合同。普通飞行不扣体力；离散扣费／奖励状态跨真实帧可见；不足一整囊的最后一批也会引导并真实交回主巢。体力教学使用持久化版本，旧设置补教一次，且只有生产 HUD 确认双行提示完整可见后才记为已学。第 5／10 项还比较现场与恢复后的全部事件标记、路线支援落点和休息点。该合同解决系统一致性，不增加其余 330 条内容。
 
 ### 当前自动验证
 
 | 检查 | 当前结果 | 证据边界 |
 | --- | --- | --- |
-| Node 测试 | **当前 dirty 工作树 66／66 通过** | 覆盖站点、构建来源、证据工具、商业文案／脚本闭包与 24 关目录静态合同；不是 Godot 全轮试玩或玩家证据 |
-| ESLint | **当前 dirty 工作树通过** | 只证明当前 JS／TS lint 门禁 |
-| 三 preset 商业 pack 内容验证 | **当前 dirty tree 的 macOS／Windows／Web 全部通过** | 精确证明当前 Campaign 入口、运行脚本／场景、21 张纹理与 16 条音频进入三个 preset，并排除 prototype、playtest、tests、tools 与被否决美术；仍不是 clean 平台 artifact、签名安装包或真实设备全流程证据 |
-| `journey_level_catalog_test.gd` | **当前 dirty 工作树 `TEST PASSED`** | 覆盖 24／20+4、四季各 6、高潮位置、节气对齐、场景键、目标、雨水／谷雨各 15 项及来源／批准状态合同 |
-| `journey_event_matrix_runtime_test.gd`／`journey_campaign_hud_test.gd` | **当前 dirty 工作树 `TEST PASSED`** | 覆盖 30 事件顺序／主线自选推进、短提示／结果记录，以及 100%／115%／130% Campaign HUD 安全布局 |
-| `journey_campaign_state_test.gd` | **当前 dirty 工作树 `TEST PASSED`** | 覆盖严格前缀、exact-once、重飞无重复奖励、伪造结果拒绝、schema v3 候档、v2→v3 收束迁移与旧 Journey 迁移 |
-| 完整 Godot 回归 | **当前 dirty 工作树 23／23 组通过** | 每组均在独立日志报告 `TEST PASSED`；不能外推为 clean 候选、真实设备或玩家验收 |
+| Node 测试 | **本轮候选工作树 66／66 通过** | 覆盖站点、构建来源、证据工具、商业文案／脚本闭包与 24 关目录静态合同；不是 Godot 全轮试玩或玩家证据 |
+| ESLint | **本轮候选工作树通过** | 只证明本轮 JS／TS lint 门禁 |
+| Web 商业 pack 内容验证 | **本轮候选工作树通过** | 精确证明本轮 Campaign 入口、运行脚本／场景、21 张纹理与 16 条音频进入 Web preset，并排除 prototype、playtest、tests、tools 与被否决美术；macOS／Windows 三端闭包证据属于前序扩产工作树，本批尚未重跑桌面 preset |
+| `journey_level_catalog_test.gd` | **本轮候选工作树 `TEST PASSED`** | 覆盖 24／20+4、四季各 6、高潮位置、节气对齐、场景键、目标、雨水／谷雨各 15 项及来源／批准状态合同 |
+| `journey_event_matrix_runtime_test.gd`／`journey_campaign_hud_test.gd` | **本轮候选工作树 `TEST PASSED`** | 覆盖 30 事件顺序／主线自选推进、短提示／结果记录，以及 100%／115%／130% Campaign HUD 安全布局 |
+| `journey_campaign_state_test.gd` | **本轮候选工作树 `TEST PASSED`** | 覆盖严格前缀、exact-once、重飞无重复奖励、伪造结果拒绝、schema v3 候档、v2→v3 收束迁移与旧 Journey 迁移 |
+| `campaign_systemic_contract_test.gd` | **本轮候选工作树 `TEST PASSED`** | 逐帧覆盖 24 关普通移动／恢复、30 事件按钮与结算、负载成本、触控／鼠标首次落点、0／0.001／0.01 候档、观察锁、部分蜜囊交货、教学版本交付，以及事件 5／10 的现场／恢复地标与休息点同构 |
+| 完整 Godot 回归 | **本轮候选工作树 24／24 组通过** | 每组均在独立日志报告 `TEST PASSED`；不能外推为 clean 候选、真实设备或玩家验收 |
 
 ### 当前中文字体清单
 
@@ -40,7 +42,7 @@
 | 子集大小 | 579368 bytes |
 | 子集 SHA-256 | `909581fa4cbf5d9be2173e81e6b6e151a242bd45d7f72673208055effd345754` |
 
-该子集及已通过内容门禁的三 preset 资源 pack 仍来自 dirty 共享工作树。只有从同一 clean commit 重生成并构建真实平台 artifact、通过完整字体覆盖与最终包检查后，才能进入候选 artifact 清单。
+该子集及当前 Web 资源 pack 仍来自 dirty 共享工作树；前序工作树的三 preset 闭包不能替本批桌面重建。只有从同一 clean commit 重生成并构建真实平台 artifact、通过完整字体覆盖与最终包检查后，才能进入候选 artifact 清单。
 
 ## 2026-08-25 · B01 固定桌面 artifact 与 Alan 自测包
 

@@ -32,6 +32,11 @@ const DEFAULT_SETTINGS := {
 	"reduce_motion": false,
 	"screen_shake": true,
 	"show_control_hints": true,
+	# This is product help memory rather than campaign progress. Missing keys in
+	# older settings files intentionally sanitize to 0, so upgraded players see
+	# the revised stamina rule once instead of being guessed "already taught" from
+	# their completed-level count.
+	"campaign_energy_tutorial_version": 0,
 }
 
 var progress_path := DEFAULT_PROGRESS_PATH
@@ -337,6 +342,18 @@ func _sanitize_settings(source: Variant) -> Dictionary:
 	if typeof(ui_scale_value) not in [TYPE_INT, TYPE_FLOAT]:
 		return {}
 	result.ui_scale = clampf(float(ui_scale_value), 0.9, 1.3)
+	var tutorial_version = dictionary.get(
+		"campaign_energy_tutorial_version",
+		result.campaign_energy_tutorial_version
+	)
+	if (
+		typeof(tutorial_version) not in [TYPE_INT, TYPE_FLOAT]
+		or not is_finite(float(tutorial_version))
+		or float(tutorial_version) < 0.0
+		or not is_equal_approx(float(tutorial_version), roundf(float(tutorial_version)))
+	):
+		return {}
+	result.campaign_energy_tutorial_version = int(tutorial_version)
 	if bool(result.reduce_motion):
 		result.screen_shake = false
 	return result
