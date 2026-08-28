@@ -57,8 +57,10 @@ var action_panel: ColorRect
 var action_button: Button
 var return_button: Button
 var controls_label: Label
+var modal_barrier: Button
 var story_card: ColorRect
 var story_label: Label
+var story_continue_label: Label
 var failure_panel: ColorRect
 var failure_label: Label
 var retry_button: Button
@@ -74,6 +76,8 @@ var current_ui_scale := 1.0
 var pending_hive_story_text := ""
 var pending_hive_story_duration := 0.0
 var energy_tutorial_version_seen := 0
+var modal_action_armed := true
+var captured_modal_touches: Dictionary = {}
 
 const FIELD_TOAST_SECONDS := 4.8
 const FIELD_OBJECTIVE_SIZE := Vector2(620, 118)
@@ -198,6 +202,7 @@ func _build_interface() -> void:
 
 	_build_board()
 	_build_field_panel()
+	_build_modal_barrier()
 	_build_story_card()
 	_build_failure_panel()
 
@@ -338,6 +343,25 @@ func _build_field_panel() -> void:
 	_set_field_hud_visible(false)
 
 
+func _build_modal_barrier() -> void:
+	# The barrier sits above ordinary HUD and below story/failure controls. Mouse
+	# confirms on button-down, so a release after result -> story cannot advance a
+	# second layer. Native touch is routed explicitly in _unhandled_input because
+	# this project deliberately disables touch-to-mouse emulation.
+	modal_barrier = Button.new()
+	modal_barrier.name = "ModalInputBarrier"
+	modal_barrier.position = Vector2.ZERO
+	modal_barrier.size = Vector2(1280, 720)
+	modal_barrier.flat = true
+	modal_barrier.self_modulate = Color(1, 1, 1, 0)
+	modal_barrier.focus_mode = Control.FOCUS_NONE
+	modal_barrier.mouse_filter = Control.MOUSE_FILTER_STOP
+	modal_barrier.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
+	modal_barrier.visible = false
+	modal_barrier.pressed.connect(_confirm_active_modal)
+	ui_layer.add_child(modal_barrier)
+
+
 func _build_story_card() -> void:
 	story_card = ColorRect.new()
 	story_card.position = Vector2(245, 218)
@@ -346,10 +370,21 @@ func _build_story_card() -> void:
 	story_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	story_card.visible = false
 	ui_layer.add_child(story_card)
-	story_label = _label(story_card, "", Vector2(42, 30), Vector2(636, 170), 21, Color("2f4238"))
+	story_label = _label(story_card, "", Vector2(42, 24), Vector2(636, 150), 21, Color("2f4238"))
 	story_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	story_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	story_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	story_continue_label = _label(
+		story_card,
+		"按空格 / A，或轻点继续",
+		Vector2(42, 184),
+		Vector2(636, 28),
+		12,
+		Color("6a705e")
+	)
+	story_continue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	story_continue_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_prepare_single_line_label(story_continue_label)
 
 
 func _build_failure_panel() -> void:
@@ -459,10 +494,10 @@ func _style_objective_toggle() -> void:
 
 
 func _process(delta: float) -> void:
+	# Duration remains useful for authored pacing and tests, but story is a modal
+	# acknowledgement rather than a toast. Reaching zero never hides it.
 	if story_time > 0.0 and not get_tree().paused:
 		story_time = maxf(0.0, story_time - delta)
-		if story_time <= 0.0:
-			story_card.visible = false
 	if toast_time > 0.0 and not get_tree().paused:
 		toast_time = maxf(0.0, toast_time - delta)
 		if toast_time <= 0.0 and toast_panel != null:
@@ -483,6 +518,7 @@ func _show_hive(returning: bool, immediate := false) -> void:
 	board_panel.visible = true
 	_set_field_hud_visible(false)
 	failure_panel.visible = false
+	_sync_modal_input_state()
 	_refresh_hive_interface()
 	_finish_fade(immediate)
 
@@ -498,6 +534,7 @@ func _connect_hive(hive: JourneyCampaignHive) -> void:
 func _on_hive_presentation_finished() -> void:
 	_refresh_hive_interface()
 	if pending_hive_story_text.is_empty():
+		_sync_modal_input_state()
 		return
 	var text := pending_hive_story_text
 	var duration := pending_hive_story_duration
@@ -515,6 +552,7 @@ func _queue_hive_story(text: String, duration: float) -> void:
 	story_time = 0.0
 	if story_card != null:
 		story_card.visible = false
+	_sync_modal_input_state()
 
 
 func _refresh_hive_interface() -> void:
@@ -573,19 +611,23 @@ func _on_hive_selection_changed(entry: Dictionary) -> void:
 
 
 func _select_level(level_id: String) -> void:
+	if _confirm_active_modal():
+		return
 	var hive := router.current_area as JourneyCampaignHive
 	if hive != null and hive.select_level(level_id):
 		_on_hive_selection_changed(hive.selected_entry())
 
 
 func _request_hive_sortie() -> void:
+	if _confirm_active_modal():
+		return
 	var hive := router.current_area as JourneyCampaignHive
 	if hive != null:
 		hive.request_selected_sortie()
 
 
 func _begin_level(level_id: String, replay: bool) -> void:
-	if transitioning:
+	if transitioning or _modal_input_active():
 		return
 	pending_hive_story_text = ""
 	pending_hive_story_duration = 0.0
@@ -594,15 +636,14 @@ func _begin_level(level_id: String, replay: bool) -> void:
 		story_card.visible = false
 	var token := state.begin_level(level_id, replay)
 	if token < 0:
-		var hive := router.current_area as JourneyCampaignHive
-		if hive != null:
-			hive.set_departure_input_enabled(true)
+		_sync_modal_input_state()
 		return
 	var context := state.active_level_context()
 	context["sound_feedback"] = sound
 	context["campaign_energy_tutorial_version"] = energy_tutorial_version_seen
 	var level: Dictionary = context.level
 	transitioning = true
+	_sync_modal_input_state()
 	_show_fade("%02d · %s" % [int(level.number), String(level.term_name)], false)
 	var error := router.change_area(String(level.scene_key), context)
 	if error != OK:
@@ -845,6 +886,8 @@ func _set_field_hud_visible(visible: bool) -> void:
 
 
 func _toggle_field_hud() -> void:
+	if _confirm_active_modal():
+		return
 	field_hud_collapsed = not field_hud_collapsed
 	if field_panel == null:
 		return
@@ -872,12 +915,16 @@ func _set_base_font_size(control: Control, font_size: int) -> void:
 
 
 func _press_field_action() -> void:
+	if _confirm_active_modal():
+		return
 	var field := router.current_area as JourneyCampaignField
 	if field != null:
 		field.request_primary_action()
 
 
 func _press_return() -> void:
+	if _confirm_active_modal():
+		return
 	var field := router.current_area as JourneyCampaignField
 	if field != null:
 		field.request_secondary_action()
@@ -934,6 +981,7 @@ func _settle_and_return(payload: Dictionary) -> void:
 	elif bool(settlement.journey_complete):
 		story = "大寒 · 最后一墙立稳啦\n你给新蜂示范了回巢路线。老师傅往旁边让了一步：这回你来。\n你：一会儿巢里见。"
 	_queue_hive_story(story, 6.0 if bool(settlement.journey_complete) else 4.8)
+	_sync_modal_input_state()
 	_finish_fade(false)
 
 
@@ -947,7 +995,7 @@ func _on_attempt_failed(reason: String, snapshot: Dictionary) -> void:
 	failure_label.text = reason + "\n已完成的关卡不会受影响；若本关已有整候检查点，会从下一候继续。"
 	failure_panel.visible = true
 	_set_field_hud_visible(false)
-	retry_button.grab_focus()
+	_sync_modal_input_state()
 
 
 func _retry_failed_level() -> void:
@@ -970,6 +1018,86 @@ func _show_story(text: String, duration := 4.0) -> void:
 	story_label.text = text
 	story_card.visible = true
 	story_time = maxf(0.1, duration)
+	_sync_modal_input_state()
+
+
+func _dismiss_story() -> void:
+	story_time = 0.0
+	if story_card != null:
+		story_card.visible = false
+	_sync_modal_input_state()
+
+
+func _hive_presentation_active() -> bool:
+	if router == null:
+		return false
+	var hive := router.current_area as JourneyCampaignHive
+	return hive != null and hive.presentation_time > 0.0
+
+
+func _modal_input_active() -> bool:
+	return (
+		(story_card != null and story_card.visible)
+		or (failure_panel != null and failure_panel.visible)
+		or _hive_presentation_active()
+	)
+
+
+func _confirm_active_modal() -> bool:
+	# Failure requires a deliberate choice; outside input is consumed without
+	# silently choosing for the player.
+	if failure_panel != null and failure_panel.visible:
+		return true
+	if story_card != null and story_card.visible:
+		_dismiss_story()
+		return true
+	var hive := router.current_area as JourneyCampaignHive if router != null else null
+	if hive != null and hive.presentation_time > 0.0:
+		# Directly skip exactly this presentation. The signal may reveal story
+		# synchronously, but this input path returns without touching that new layer.
+		hive.skip_receiving_presentation()
+		_sync_modal_input_state()
+		return true
+	return false
+
+
+func _field_input_should_be_enabled() -> bool:
+	return (
+		not transitioning
+		and not paused_for_focus
+		and not paused_by_menu
+		and not _modal_input_active()
+		and (system_menu == null or not system_menu.is_open())
+	)
+
+
+func _sync_modal_input_state() -> void:
+	var modal_active := _modal_input_active()
+	if modal_barrier != null:
+		modal_barrier.visible = modal_active
+	var hive := router.current_area as JourneyCampaignHive if router != null else null
+	if hive != null:
+		hive.set_departure_input_enabled(
+			not modal_active
+			and not transitioning
+			and not paused_by_menu
+			and not paused_for_focus
+			and (system_menu == null or not system_menu.is_open())
+		)
+	# A stale focused HUD button can receive Space/A before _unhandled_input. Only
+	# the failure panel keeps focus because it owns two explicit choices.
+	if modal_active and not paused_by_menu and not paused_for_focus:
+		var focus_owner := get_viewport().gui_get_focus_owner()
+		var failure_active := failure_panel != null and failure_panel.visible
+		if failure_active:
+			if (
+				retry_button != null
+				and (focus_owner == null or not failure_panel.is_ancestor_of(focus_owner))
+			):
+				retry_button.grab_focus()
+		elif focus_owner != null:
+			focus_owner.release_focus()
+	_set_field_input_enabled(_field_input_should_be_enabled())
 
 
 func _show_fade(caption: String, immediate: bool) -> void:
@@ -999,7 +1127,7 @@ func _finish_transition() -> void:
 	if paused_for_focus and not paused_by_menu:
 		call_deferred("_open_pause_menu", true)
 		return
-	_set_field_input_enabled(not paused_for_focus and not paused_by_menu)
+	_sync_modal_input_state()
 
 
 func _set_field_input_enabled(enabled: bool) -> void:
@@ -1020,7 +1148,7 @@ func _notification(what: int) -> void:
 		paused_for_focus = true
 		if sound != null:
 			sound.set_enabled(false)
-		_set_field_input_enabled(false)
+		_sync_modal_input_state()
 		if not paused_by_menu and not transitioning:
 			call_deferred("_open_pause_menu", true)
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN or what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
@@ -1028,10 +1156,90 @@ func _notification(what: int) -> void:
 		if sound != null and not paused_by_menu:
 			sound.set_enabled(true)
 		if not transitioning and not paused_by_menu:
-			_set_field_input_enabled(true)
+			_sync_modal_input_state()
+
+
+func _fresh_action_press(event: InputEvent) -> bool:
+	if not event.is_action_pressed("action"):
+		return false
+	if event is InputEventKey and (event as InputEventKey).echo:
+		return false
+	if not modal_action_armed:
+		return false
+	modal_action_armed = false
+	return true
+
+
+func _handle_native_modal_touch(event: InputEvent) -> bool:
+	if event is InputEventScreenDrag:
+		return (
+			captured_modal_touches.has((event as InputEventScreenDrag).index)
+			or transitioning
+			or _modal_input_active()
+		)
+	if not event is InputEventScreenTouch:
+		return false
+	var touch := event as InputEventScreenTouch
+	if captured_modal_touches.has(touch.index):
+		if not touch.pressed:
+			captured_modal_touches.erase(touch.index)
+		return true
+	# Until every finger from the current gesture is up, additional fingers are
+	# captured but cannot confirm a newly revealed layer or act in the world.
+	if touch.pressed and not captured_modal_touches.is_empty():
+		captured_modal_touches[touch.index] = true
+		return true
+	# The transition curtain is visually above every modal. Capture a touch that
+	# begins there so its later release cannot become a confirmation after fade-out.
+	if transitioning:
+		if touch.pressed:
+			captured_modal_touches[touch.index] = true
+		return true
+	if not _modal_input_active():
+		return false
+	# A finger that started before this modal may release over it. Swallow that
+	# release, but never treat release as a confirmation.
+	if not touch.pressed:
+		return true
+	captured_modal_touches[touch.index] = true
+	if failure_panel != null and failure_panel.visible:
+		_handle_failure_touch_press(touch.position)
+	else:
+		_confirm_active_modal()
+	return true
+
+
+func _input(event: InputEvent) -> void:
+	# _input runs before Control GUI dispatch. This is the reliable native-touch
+	# path when pointing/emulate_mouse_from_touch is disabled; _unhandled_input is
+	# retained as a defensive fallback and for keyboard/gamepad ownership.
+	if paused_by_menu or paused_for_focus or (system_menu != null and system_menu.is_open()):
+		return
+	if _handle_native_modal_touch(event):
+		get_viewport().set_input_as_handled()
+
+
+func _handle_failure_touch_press(position: Vector2) -> void:
+	if (
+		retry_button != null
+		and retry_button.visible
+		and not retry_button.disabled
+		and retry_button.get_global_rect().has_point(position)
+	):
+		_retry_failed_level()
+		return
+	if (
+		back_hive_button != null
+		and back_hive_button.visible
+		and not back_hive_button.disabled
+		and back_hive_button.get_global_rect().has_point(position)
+	):
+		_leave_failed_level()
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_released("action"):
+		modal_action_armed = true
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause_menu"):
 		if system_menu != null and system_menu.is_open():
 			system_menu.request_cancel()
@@ -1044,10 +1252,25 @@ func _unhandled_input(event: InputEvent) -> void:
 	# to the hive behind it.
 	if paused_by_menu or paused_for_focus or (system_menu != null and system_menu.is_open()):
 		if event.is_action_pressed("action"):
+			_fresh_action_press(event)
 			get_viewport().set_input_as_handled()
 		return
+	if _handle_native_modal_touch(event):
+		get_viewport().set_input_as_handled()
+		return
+	if _modal_input_active():
+		if _fresh_action_press(event):
+			_confirm_active_modal()
+		get_viewport().set_input_as_handled()
+		return
+	if transitioning:
+		if event.is_action_pressed("action"):
+			_fresh_action_press(event)
+		get_viewport().set_input_as_handled()
+		return
 	if router != null and router.current_area_id == "hive_threshold" and event.is_action_pressed("action"):
-		_request_hive_sortie()
+		if _fresh_action_press(event):
+			_request_hive_sortie()
 		get_viewport().set_input_as_handled()
 
 
@@ -1057,9 +1280,10 @@ func _open_pause_menu(focus_was_lost := false) -> void:
 	if paused_by_menu or transitioning or system_menu == null:
 		return
 	paused_by_menu = true
+	captured_modal_touches.clear()
 	if sound != null:
 		sound.set_enabled(false)
-	_set_field_input_enabled(false)
+	_sync_modal_input_state()
 	get_tree().paused = true
 	system_menu.open_pause(focus_was_lost)
 	if last_checkpoint_error != OK:
@@ -1082,7 +1306,7 @@ func _resume_from_menu() -> void:
 		sound.set_enabled(true)
 	system_menu.close()
 	if not transitioning:
-		_set_field_input_enabled(true)
+		_sync_modal_input_state()
 
 
 func _return_to_title() -> void:

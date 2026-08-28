@@ -1355,6 +1355,14 @@ func run_test() -> void:
 			await process_frame
 			expect(campaign_game.router.current_area is JourneyCampaignHive, "第 %d 关完成后没有切回主巢" % (order + 1))
 			expect(campaign_game.state.completed_count() == order + 1, "第 %d 关真实场景链没有 exact-once 结算" % (order + 1))
+			var returned_hive := campaign_game.router.current_area as JourneyCampaignHive
+			if returned_hive != null:
+				returned_hive.skip_receiving_presentation()
+				expect(
+					campaign_game.story_card.visible,
+					"第 %d 关结果结束后没有进入独立剧情层" % (order + 1)
+				)
+				campaign_game._dismiss_story()
 		expect(campaign_game.state.journey_complete, "真实场景链走完 24 关后没有进入交棒完成态")
 		expect(campaign_game.state.next_level().is_empty(), "真实场景链在大寒之后制造了第 25 关")
 		expect(campaign_game.state.solar_terms.unlocked_count() == 24, "真实场景链没有恰好写入 24 条节气纪事")
