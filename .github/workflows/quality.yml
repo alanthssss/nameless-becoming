@@ -9,8 +9,75 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    name: Change scope and documentation checks
+    runs-on: ubuntu-latest
+    outputs:
+      full_ci: ${{ steps.changes.outputs.full_ci }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Classify changes and check whitespace
+        id: changes
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          zero_sha=0000000000000000000000000000000000000000
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            base_sha="$PR_BASE_SHA"
+            head_sha="$PR_HEAD_SHA"
+            diff_spec="$base_sha...$head_sha"
+          else
+            base_sha="$PUSH_BEFORE_SHA"
+            head_sha="$CURRENT_SHA"
+            diff_spec="$base_sha..$head_sha"
+          fi
+
+          full_ci=true
+          if (
+            [[ -n "$base_sha" ]]
+            [[ -n "$head_sha" ]]
+            [[ "$base_sha" != "$zero_sha" ]]
+            git cat-file -e "$base_sha^{commit}"
+            git cat-file -e "$head_sha^{commit}"
+          ); then
+            if classified="$(
+              # Disable rename detection so both sides of a rename are
+              # classified; moving source code to a .md path must run full CI.
+              git diff --name-only -z --no-renames "$diff_spec" \
+                | bash scripts/classify_ci_changes.sh
+            )"; then
+              case "$classified" in
+                true|false) full_ci="$classified" ;;
+                *) full_ci=true ;;
+              esac
+            fi
+            git diff --check "$diff_spec"
+          else
+            # A missing/all-zero base occurs on unusual history events. Keep the
+            # gate safe by running full CI and at least checking the head commit.
+            git show --check --format= "$head_sha"
+          fi
+
+          printf 'full_ci=%s\n' "$full_ci" >> "$GITHUB_OUTPUT"
+          if [[ "$full_ci" == "true" ]]; then
+            printf 'Full Web, Godot, and clean-export CI required.\n' >> "$GITHUB_STEP_SUMMARY"
+          else
+            printf 'Markdown-only change: heavy CI jobs are skipped.\n' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   web:
     name: Web build, tests and lint
+    needs: scope
+    if: ${{ needs.scope.outputs.full_ci == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +99,8 @@ jobs:
 
   godot:
     name: Godot 4.6.2 tests
+    needs: scope
+    if: ${{ needs.scope.outputs.full_ci == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -64,7 +133,8 @@ jobs:
 
   web-candidate:
     name: Clean Web game and site candidate
-    needs: [web, godot]
+    needs: [scope, web, godot]
+    if: ${{ always() && needs.scope.outputs.full_ci == 'true' && needs.web.result == 'success' && needs.godot.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
