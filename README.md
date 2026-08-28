@@ -177,10 +177,14 @@ npm run test
 15. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
 16. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界；
 17. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
-18. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：成熟度与市场评估，其中历史结构判断须服从商业成品清单；
+18. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，区分最近有真人证据版本的偏轻体验、中重的工程骨架和很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
 19. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 20. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
 21. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
+
+## 下一款产品探索（不属于当前 Campaign）
+
+[`docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md`](docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md) 记录“轻入口、窄核心、高组合、强反馈、高复玩”的下一款产品假设、建议范围上限和形成性玩家门槛。它当前是**需 Alan 确认、未立项的独立探索**，不修改、替代或暗中缩减本作的商业成品清单；若未来决定暂停当前产品或正式立项新产品，必须另行记录明确的产品组合决定。
 
 ## 当前验证问题
 
