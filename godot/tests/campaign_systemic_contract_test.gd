@@ -3,6 +3,7 @@ extends SceneTree
 const CatalogScript := preload("res://scripts/world/journey_level_catalog.gd")
 const CampaignFieldScript := preload("res://scripts/world/journey_campaign_field.gd")
 const CampaignGameScript := preload("res://scripts/world/journey_campaign_game.gd")
+const CampaignStateScript := preload("res://scripts/world/journey_campaign_state.gd")
 const EventRuntimeScript := preload("res://scripts/world/journey_event_matrix_runtime.gd")
 
 const EVENT_LEVEL_IDS := ["spring_yushui", "spring_guyu"]
@@ -1930,6 +1931,156 @@ func verify_observation_lock_and_partial_cargo_return(catalog) -> void:
 	dispose_field(partial_field)
 
 
+func progression_payload(token: int, level: Dictionary) -> Dictionary:
+	var counts: Array[int] = []
+	for objective in level.get("objectives", []):
+		counts.append(int((objective as Dictionary).get("goal", 0)))
+	return {
+		"journey_token": token,
+		"level_id": String(level.get("id", "")),
+		"objectives_complete": true,
+		"returned_home": true,
+		"objective_counts": counts,
+		"phases_completed": 0,
+		"elapsed_seconds": 1.0,
+		"energy_remaining": 100.0,
+		"actions": 1,
+		"failed": false,
+	}
+
+
+func exercise_standard_level_to_return(field: JourneyCampaignField) -> Dictionary:
+	var completions: Array[Dictionary] = []
+	field.journey_completed.connect(
+		func(payload: Dictionary): completions.append(payload.duplicate(true))
+	)
+	# Zero energy must never turn a standard story level into a progression lock.
+	field.bee.energy = 0.0
+	var guard := 0
+	while not field.completion_emitted and guard < 80:
+		guard += 1
+		expect(not field.failed, "%s 在真实任务链中失败" % field.level_id)
+		if field.failed:
+			break
+		if field.carried_task_index >= 0:
+			var carried := field.tasks[field.carried_task_index] as Dictionary
+			field.bee.position = Vector2(carried.get("position", Vector2.ZERO))
+			field.bee.velocity = Vector2.ZERO
+			field.request_primary_action()
+			continue
+		if field.collected_cargo >= field.CARGO_CAPACITY:
+			field.bee.position = field.home_position
+			field.bee.velocity = Vector2.ZERO
+			field._process_chapter(0.08)
+			continue
+		var task_index := -1
+		for candidate_index in field.tasks.size():
+			if field._task_is_navigation_candidate(candidate_index):
+				task_index = candidate_index
+				break
+		if task_index < 0:
+			if field.collected_cargo > 0 or field._all_work_complete():
+				field.bee.position = field.home_position
+				field.bee.velocity = Vector2.ZERO
+				field._process_chapter(0.08)
+				continue
+			expect(false, "%s 尚未完成却没有可执行任务" % field.level_id)
+			break
+		var task := field.tasks[task_index] as Dictionary
+		var work_type := String(task.get("type", ""))
+		field.bee.position = field._standard_task_target_position(task_index)
+		field.bee.velocity = Vector2.ZERO
+		field.request_primary_action()
+		if work_type == "observe" and field.focus_task_index >= 0:
+			field._update_observation(field.OBSERVE_SECONDS + 0.01)
+		elif work_type in ["repair", "anchor", "shell"]:
+			var hit_guard := 0
+			while not bool((field.tasks[task_index] as Dictionary).get("resolved", false)) and hit_guard < 3:
+				hit_guard += 1
+				field.request_primary_action()
+	if not field.completion_emitted:
+		expect(false, "%s 在 %d 步内未能返巢结算" % [field.level_id, guard])
+	return completions[0] if completions.size() == 1 else {}
+
+
+func exercise_event_level_to_return(field: JourneyCampaignField) -> Dictionary:
+	var completions: Array[Dictionary] = []
+	field.journey_completed.connect(
+		func(payload: Dictionary): completions.append(payload.duplicate(true))
+	)
+	var guard := 0
+	while field.event_runtime != null and not field.event_runtime.is_finished() and guard < 20:
+		guard += 1
+		if not exercise_current_event(field):
+			break
+	field.bee.position = field.home_position
+	field.bee.velocity = Vector2.ZERO
+	field._process_chapter(0.08)
+	expect(field.completion_emitted, "%s 的前置事件链无法返巢结算" % field.level_id)
+	return completions[0] if completions.size() == 1 else {}
+
+
+func verify_spring_bridge_unlocks_sixth_level() -> void:
+	var state = CampaignStateScript.new()
+	expect(state.is_ready(), "三至六关解锁回归无法建立正式战役状态")
+	# The bridge starts after the first two already-completed levels.
+	var lichun: Dictionary = state.catalog.level_by_id("spring_lichun")
+	var lichun_token := state.begin_level("spring_lichun")
+	expect(lichun_token > 0, "spring_lichun 无法建立前置进度")
+	expect(
+		not state.settle_level(progression_payload(lichun_token, lichun)).is_empty(),
+		"spring_lichun 无法形成前置完成记录"
+	)
+	var yushui_token := state.begin_level("spring_yushui")
+	expect(yushui_token > 0, "spring_yushui 无法建立前置进度")
+	var yushui_field = CampaignFieldScript.new()
+	var yushui_error := yushui_field.configure(state.active_level_context())
+	expect(yushui_error == OK, "spring_yushui 无法建立真实前置关卡")
+	if yushui_error != OK:
+		yushui_field.free()
+		return
+	root.add_child(yushui_field)
+	var yushui_payload := exercise_event_level_to_return(yushui_field)
+	expect(
+		not yushui_payload.is_empty() and not state.settle_level(yushui_payload).is_empty(),
+		"spring_yushui 无法形成前置完成记录"
+	)
+	dispose_field(yushui_field)
+	var bridge := [
+		{"id": "spring_jingzhe", "tasks": 12, "next": "spring_chunfen"},
+		{"id": "spring_chunfen", "tasks": 10, "next": "spring_qingming"},
+		{"id": "spring_qingming", "tasks": 7, "next": "spring_guyu"},
+	]
+	for contract in bridge:
+		var level_id := String(contract.id)
+		expect(state.next_segment_id() == level_id, "%s 没有成为当前必经关" % level_id)
+		var token := state.begin_level(level_id)
+		expect(token > 0, "%s 无法从大地图进度链开始" % level_id)
+		if token <= 0:
+			return
+		var field = CampaignFieldScript.new()
+		var configure_error := field.configure(state.active_level_context())
+		expect(configure_error == OK, "%s 无法建立真实关卡" % level_id)
+		if configure_error != OK:
+			field.free()
+			return
+		root.add_child(field)
+		expect(field.tasks.size() == int(contract.tasks), "%s 真实任务数量发生漂移" % level_id)
+		var payload := exercise_standard_level_to_return(field)
+		expect(not payload.is_empty(), "%s 没有发出合法返巢结果" % level_id)
+		if not payload.is_empty():
+			expect(state.can_settle_level(payload), "%s 真实返巢结果被进度状态拒绝" % level_id)
+			expect(not state.settle_level(payload).is_empty(), "%s 没有写入完成进度" % level_id)
+		expect(state.next_segment_id() == String(contract.next), "%s 完成后没有解锁 %s" % [level_id, String(contract.next)])
+		dispose_field(field)
+	expect(
+		state.completed_count() == 5
+			and state.next_segment_id() == "spring_guyu"
+			and state.can_begin_level("spring_guyu"),
+		"三、四、五关完成后第六关谷雨仍不可进入"
+	)
+
+
 func run_test() -> void:
 	var catalog = CatalogScript.new()
 	expect(catalog.catalog_valid, "系统契约测试无法加载正式战役目录：%s" % catalog.catalog_error)
@@ -1952,6 +2103,7 @@ func run_test() -> void:
 	verify_accepted_optional_can_be_abandoned(catalog)
 	verify_standard_objective_alignment(catalog)
 	verify_observation_lock_and_partial_cargo_return(catalog)
+	verify_spring_bridge_unlocks_sixth_level()
 
 	if failures.is_empty():
 		print("CAMPAIGN SYSTEMIC CONTRACT TEST PASSED")
