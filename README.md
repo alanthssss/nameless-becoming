@@ -136,7 +136,7 @@ npm run build
 npm run test
 ```
 
-PR 与 `main` push 会先运行轻量的变更范围／空白检查。只有全部变更都是 Markdown（`.md`／`.mdx`／`.markdown`）时，Web、Godot 与 clean Web candidate 三项重型任务才会按 job 条件跳过；任何代码、数据、资源、构建配置或无法可靠分类的变更都会保守地运行完整质量门禁。
+PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变更都是 Markdown（`.md`／`.mdx`／`.markdown`）或仅涉及这项轻量门禁自身（`.github/workflows/quality.yml`、`scripts/classify_ci_changes.sh`）时，Web、Godot 与 clean Web candidate 三项游戏重型任务会按 job 条件跳过；任何产品代码、数据、资源、构建输入或无法可靠分类的变更都会保守地运行完整质量门禁。
 
 桌面候选包可在 GitHub 的 **Actions → Desktop client builds → Run workflow** 手动生成。`release_tag` 必须与 `package.json` 版本一致；流水线校验 Godot 编辑器与模板、运行测试、导出 macOS／Windows 并附带 SHA-256。默认只生成保留期有限的 artifacts，只有明确选择 `publish_prerelease` 才创建预发布版本。
 
