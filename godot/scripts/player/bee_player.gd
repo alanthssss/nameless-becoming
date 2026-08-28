@@ -23,6 +23,7 @@ var drain_rate := 1.45
 var drain_while_idle := true
 var auto_dash_delay := AUTO_DASH_THRESHOLD
 var auto_dash_drain_per_second := 9.5
+var auto_dash_requires_energy := true
 var base_speed := 215.0
 var dash_speed := 360.0
 var acceleration := 1050.0
@@ -47,6 +48,14 @@ var load_acceleration_multiplier := 1.0
 var load_dash_cost_multiplier := 1.0
 var evade_time := 0.0
 var evade_cooldown := 0.0
+# Campaign story gates may explicitly allow one assisted urgent turn when the
+# meter is empty.  Ordinary/optional evades still require the full cost; the
+# field enables this flag only while the bee is beside a mandatory evade gate.
+var allow_exhausted_evade := false
+var last_evade_was_assisted := false
+var evade_energy_cost := EVADE_COST
+var assisted_evade_speed_scale := 0.75
+var assisted_evade_cooldown := 2.4
 # 闪避无敌时长：由 main 从 balance.json player.evade_invuln_seconds 注入
 var evade_invuln := 0.18
 var invulnerable_time := 0.0
@@ -112,7 +121,8 @@ func configure(stage_drain: float) -> void:
 func configure_energy_usage(
 	should_drain_while_idle: bool,
 	dash_drain_per_second: float,
-	dash_delay_seconds: float
+	dash_delay_seconds: float,
+	dash_needs_energy := true
 ) -> Error:
 	if (
 		not is_finite(dash_drain_per_second)
@@ -124,6 +134,7 @@ func configure_energy_usage(
 	drain_while_idle = should_drain_while_idle
 	auto_dash_drain_per_second = dash_drain_per_second
 	auto_dash_delay = dash_delay_seconds
+	auto_dash_requires_energy = dash_needs_energy
 	return OK
 
 
@@ -184,6 +195,8 @@ func reset_for_expedition(at: Vector2) -> void:
 	sense_cooldown = 0.0
 	evade_time = 0.0
 	evade_cooldown = 0.0
+	allow_exhausted_evade = false
+	last_evade_was_assisted = false
 	invulnerable_time = 0.0
 	evade_sequence = 0
 	last_evade_origin = at
@@ -218,8 +231,19 @@ func clear_evade_first_tap() -> void:
 	queue_redraw()
 
 func try_evade(input_direction := Vector2.ZERO, input_origin = null) -> bool:
-	if evade_cooldown > 0.0 or not spend_energy(EVADE_COST):
+	last_evade_was_assisted = false
+	if evade_cooldown > 0.0:
 		return false
+	if energy < evade_energy_cost:
+		if not allow_exhausted_evade:
+			return false
+		# Mandatory campaign gates must never become a permanent story lock.  The
+		# assisted turn spends whatever remains and still enters the normal
+		# cooldown; it is not available for free roaming or optional shortcuts.
+		energy = 0.0
+		last_evade_was_assisted = true
+	else:
+		energy -= evade_energy_cost
 	var direction: Vector2 = input_direction.normalized()
 	if direction.length_squared() < 0.01:
 		direction = velocity.normalized() if velocity.length_squared() > 4.0 else Vector2.from_angle(facing)
@@ -230,9 +254,9 @@ func try_evade(input_direction := Vector2.ZERO, input_origin = null) -> bool:
 	last_evade_direction = direction
 	evade_tap_time = 0.0
 	evade_sequence += 1
-	velocity = direction * EVADE_SPEED
+	velocity = direction * EVADE_SPEED * (assisted_evade_speed_scale if last_evade_was_assisted else 1.0)
 	evade_time = EVADE_DURATION
-	evade_cooldown = EVADE_COOLDOWN
+	evade_cooldown = assisted_evade_cooldown if last_evade_was_assisted else EVADE_COOLDOWN
 	invulnerable_time = evade_invuln
 	has_target = false
 	return true
@@ -269,7 +293,11 @@ func _physics_process(delta: float) -> void:
 	else:
 		move_duration = 0.0
 
-	var auto_dashing := move_duration > auto_dash_delay and energy > 8.0 and evade_time <= 0.0
+	var auto_dashing := (
+		move_duration > auto_dash_delay
+		and (not auto_dash_requires_energy or energy > 8.0)
+		and evade_time <= 0.0
+	)
 	var desired_speed := (
 		(dash_speed if auto_dashing else base_speed)
 		* speed_multiplier

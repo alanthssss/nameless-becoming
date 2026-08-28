@@ -400,8 +400,9 @@ func verify_field_checkpoint_signal(level: Dictionary) -> void:
 		)
 		expect(emitted_checkpoints.is_empty(), "Field 在五项收齐前提前发出了候级信号")
 
-	# Freeze recognizable live values immediately before the boundary.  The signal
-	# must carry these values, rather than defaults or a stale state-layer copy.
+	# Freeze recognizable live values immediately before the boundary. A completed
+	# five-activity shift deliberately refills stamina before saving, while elapsed
+	# time and actions must still come from this exact live Field instance.
 	field.bee.energy = 67.25
 	field.elapsed = field.time_limit_seconds - 0.05
 	field.weather_window_elapsed = field.time_limit_seconds - 0.05
@@ -418,10 +419,11 @@ func verify_field_checkpoint_signal(level: Dictionary) -> void:
 			"候级信号没有标明当前关卡与第 6 项续接边界"
 		)
 		expect(
-			is_equal_approx(float(emitted.get("energy", -1.0)), 67.25)
+			is_equal_approx(float(emitted.get("energy", -1.0)), field.bee.max_energy)
+			and is_equal_approx(field.bee.energy, field.bee.max_energy)
 			and is_equal_approx(float(emitted.get("elapsed_seconds", -1.0)), field.time_limit_seconds - 0.05)
 			and int(emitted.get("actions", -1)) == 19,
-			"候级信号没有携带边界瞬间的体力、用时与行动数"
+			"候级信号没有携带换班后的满体力、边界用时与行动数"
 		)
 		expect(
 			field._runtime_checkpoint_payload(emitted) == runtime_checkpoint,
@@ -491,7 +493,9 @@ func verify_field_mechanic_fidelity(yushui: Dictionary, guyu: Dictionary) -> voi
 	expect(
 		rain_field.event_runtime.choice_effect() == "heavy_single"
 		and rain_field.event_runtime.current_required_steps() == 1
-		and rain_field.bee.load_speed_multiplier < 0.75,
+		and is_equal_approx(rain_field.bee.load_speed_multiplier, rain_field.EVENT_HEAVY_SPEED_SCALE)
+		and is_equal_approx(rain_field.bee.load_acceleration_multiplier, rain_field.EVENT_HEAVY_ACCELERATION_SCALE)
+		and rain_field.bee.load_speed_multiplier < 1.0,
 		"一趟重载没有形成独立步数与操控代价"
 	)
 
@@ -574,8 +578,16 @@ func verify_field_mechanic_fidelity(yushui: Dictionary, guyu: Dictionary) -> voi
 		"风口内急转没有推进一段，或一次急转仍残留给下一段"
 	)
 	evade_field.bee.position = evade_field._current_event_point()
+	var second_gate_energy_before: float = evade_field.bee.energy
 	evade_field.request_primary_action()
-	expect(evade_field.event_runtime.current_progress == 1, "下一风口未重新急转就被普通互动放行")
+	expect(
+		"guyu_02_wind_review" in evade_field.event_runtime.completed_mandatory_ids
+		and is_equal_approx(
+			evade_field.bee.energy,
+			second_gate_energy_before - evade_field.CAMPAIGN_EVADE_COST
+		),
+		"动作按钮没有为下一风口执行一次新的有成本急转"
+	)
 	evade_field.queue_free()
 	await process_frame
 
@@ -646,11 +658,18 @@ func verify_playable_branches_and_finales(yushui: Dictionary, guyu: Dictionary) 
 	rain_finale.request_primary_action()
 	expect(rain_finale.event_runtime.current_progress == 1, "雨水终局没有通过第一段节拍门")
 	rain_finale.bee.position = rain_finale._current_event_point()
+	var convoy_evade_sequence_before: int = rain_finale.bee.evade_sequence
+	var convoy_evade_energy_before: float = rain_finale.bee.energy
 	rain_finale.request_primary_action()
-	expect(rain_finale.event_runtime.current_progress == 1, "雨水终局未急转就通过了第二段风口")
-	rain_finale.event_runtime.note_evade()
-	rain_finale.request_primary_action()
-	expect(rain_finale.event_runtime.current_progress == 2, "雨水终局急转后没有带蜂流过风口")
+	expect(
+		rain_finale.event_runtime.current_progress == 2
+			and rain_finale.bee.evade_sequence == convoy_evade_sequence_before + 1
+			and is_equal_approx(
+				rain_finale.bee.energy,
+				convoy_evade_energy_before - rain_finale.CAMPAIGN_EVADE_COST
+			),
+		"雨水终局的急转带队按钮没有真实发动有成本急转并通过第二段风口"
+	)
 	expect(
 		rain_finale._event_navigation_target().distance_to(rain_finale.event_source_position) < 0.01,
 		"雨水终局载荷段没有先指向真实花粉叶托"
@@ -683,14 +702,18 @@ func verify_playable_branches_and_finales(yushui: Dictionary, guyu: Dictionary) 
 		sign_finale.request_primary_action()
 	expect(sign_finale.event_runtime.current_progress == 3, "谷雨终局前三段路线没有依次亮起")
 	sign_finale.bee.position = sign_finale._current_event_point()
-	sign_finale.request_primary_action()
-	expect(sign_finale.event_runtime.current_progress == 3, "谷雨终局未急转就收掉了最后风口")
-	sign_finale.event_runtime.note_evade()
+	var sign_evade_sequence_before: int = sign_finale.bee.evade_sequence
+	var sign_evade_energy_before: float = sign_finale.bee.energy
 	sign_finale.request_primary_action()
 	expect(
 		sign_finale.event_runtime.is_finished()
-		and bool(sign_finale.event_runtime.world_state.get("setpiece_complete", false)),
-		"谷雨终局最后急转没有完成全年路网收线"
+		and bool(sign_finale.event_runtime.world_state.get("setpiece_complete", false))
+		and sign_finale.bee.evade_sequence == sign_evade_sequence_before + 1
+		and is_equal_approx(
+			sign_finale.bee.energy,
+			sign_evade_energy_before - sign_finale.CAMPAIGN_EVADE_COST
+		),
+		"谷雨终局急转带队按钮没有真实发动急转并完成全年路网收线"
 	)
 	sign_finale.queue_free()
 	await process_frame

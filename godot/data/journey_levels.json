@@ -43,9 +43,9 @@
         },
         {
           "id": "yushui_02_underleaf_flight", "order": 2, "pentad": 1, "optional": false,
-          "title": "贴叶背飞", "mechanic": "stabilize_lane", "ui_hint": "贴叶、短刹、再穿滴水线",
-          "decision": "沿叶背窄线连续稳身，用急转把三段横雨逐段拆开。",
-          "operation": "连续使用短制动与稳身穿过三段有节拍的滴水线。",
+          "title": "穿过滴水", "mechanic": "stabilize_lane", "ui_hint": "飞进黄色圆圈，连按两次同一方向",
+          "decision": "看清三段横雨的间隔，用急转逐段穿过。",
+          "operation": "飞进三个黄色圆圈，并在每个圆圈里完成一次急转。",
           "consequence": "叶背留下可复飞的干线，下一趟同伴会真实使用。",
           "source_ids": ["G-FICTION"], "fact_ids": [],
           "claim_scope": "design-fiction", "actor_scope": "fictional-character", "regional_scope": "jiangxi-inspired-fictional-county",

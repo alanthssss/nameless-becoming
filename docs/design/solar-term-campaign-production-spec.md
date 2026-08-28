@@ -117,7 +117,7 @@ verification_status
 | 候 | # | 性质 | 可玩内容与真实后果 |
 | --- | ---: | --- | --- |
 | 一候 | 1 | 主线 | **雨线越过巢门：**观察雨影和叶响决定第一次起飞窗口；老师傅只在门边看，不用文字倒数 |
-| 一候 | 2 | 主线 | **贴叶背飞：**用稳身与短制动穿过连续滴水区，建立新动作 |
+| 一候 | 2 | 主线 | **穿过滴水：**在三个黄色圆圈里完成急转，学会雨中转向 |
 | 一候 | 3 | 自选 | **干落脚板：**与接货蜂转动并固定一片遮雨叶，巢门外观和后续卸载位置改变 |
 | 一候 | 4 | 自选 | **花粉过滴水线：**携带易散花粉，从两个不同雨隙送到同型柱头 |
 | 一候 | 5 | 主线 | **三滴一空：**从叶片下压和滴水声读出节拍；完成后第一段叶下路开始被蜂流使用 |
@@ -499,7 +499,7 @@ Alan 已实机走通扩产前的短 Journey，并明确判断它“是个完整�
 
 截至 2026-08-28，本节区分合并基线与当前 dirty 工作树，不是 clean 候选或发行批准：
 
-- `[开发者自测]` 当前分支 `codex/commercial-gameplay-expansion` 以 `main` 合并提交 `985ad749f385be60f290d648b009df13466a47bd` 为基点；dirty 工作树 Node 66／66、Godot 23／23、lint 与 macOS／Windows／Web 三 preset pack 精确内容门禁已通过。
-- `[开发者自测]` 新增 `journey_campaign_hud_test.gd`、`journey_event_matrix_runtime_test.gd`，并扩展关卡目录、Campaign 状态和音频导演测试，覆盖 30 条事件合同、HUD 字号、100 点体力／急闪、四季首通结果层、schema v3 候档与 v2→v3 收束迁移；三平台 clean CI 与候选 artifact 仍须以本轮最终提交为准。
-- 运行时中文字体子集来自官方 Noto Sans CJK SC Regular：上游 Git blob `dc15562470b4f842321894787a0d066879ccff8b`，源文件 SHA-256 `2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b`。本次生成范围为 78 个运行时来源、1300 个字符；`NotoSansCJKsc-ProjectSubset.otf` 为 575876 bytes，SHA-256 `c684bf26336bf3980fd1f6ac761a751b86510e99e7cbe035ae4dbcbac5c9dad1`。
+- `[开发者自测]` 当前修复分支为 `codex/stamina-softlock-fix`，以 `origin/main` 的合并提交 `1438694031bc270044491d509150e80a9ed46f47` 为基点；本节记录的是本轮 dirty 工作树证据，不是 clean 发行候选。
+- `[开发者自测]` `journey_campaign_hud_test.gd`、`journey_campaign_state_test.gd` 与 `journey_event_matrix_runtime_test.gd` 覆盖 30 条事件合同、HUD 字号、100 点体力／急转、普通飞行免费、停稳与休息点恢复、零体力主线保底、四季首通结果层、schema v3 候档与 v2→v3 收束迁移；三平台 clean CI 与候选 artifact 仍须以本轮最终提交为准。
+- 运行时中文字体子集来自官方 Noto Sans CJK SC Regular：上游 Git blob `dc15562470b4f842321894787a0d066879ccff8b`，源文件 SHA-256 `2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b`。本次生成范围为 78 个运行时来源、1302 个字符；`NotoSansCJKsc-ProjectSubset.otf` 为 579368 bytes，SHA-256 `909581fa4cbf5d9be2173e81e6b6e151a242bd45d7f72673208055effd345754`。
 - 以上没有验证 v3 的 18～24 小时主线、360 项差异、商业美术终稿、完整动画、终稿混音、独立玩家、真实设备或正式发行构建；Alan 已完成 v2 Campaign，反馈按第 0.1 节归档。

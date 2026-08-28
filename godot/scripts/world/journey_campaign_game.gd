@@ -75,8 +75,11 @@ var pending_hive_story_text := ""
 var pending_hive_story_duration := 0.0
 
 const FIELD_TOAST_SECONDS := 4.8
-const FIELD_OBJECTIVE_SIZE := Vector2(620, 84)
-const FIELD_OBJECTIVE_COLLAPSED_SIZE := Vector2(86, 54)
+const FIELD_OBJECTIVE_SIZE := Vector2(620, 118)
+const FIELD_OBJECTIVE_COLLAPSED_SIZE := Vector2(56, 54)
+const FIELD_OBJECTIVE_TOGGLE_SIZE := Vector2(44, 44)
+const FIELD_OBJECTIVE_TOGGLE_EXPANDED_POS := Vector2(616, 108)
+const FIELD_OBJECTIVE_TOGGLE_COLLAPSED_POS := Vector2(24, 109)
 const FIELD_PLAY_SAFE_RIGHT := 1008.0
 
 
@@ -173,13 +176,15 @@ func _build_interface() -> void:
 	top_panel.size = Vector2(1244, 76)
 	top_panel.color = Color("f4e8c8", 0.96)
 	ui_layer.add_child(top_panel)
-	title_label = _label(top_panel, "一会儿巢里见", Vector2(18, 6), Vector2(305, 36), 24, Color("263a31"))
-	area_label = _label(top_panel, "主蜂巢 · 二十四趟", Vector2(20, 44), Vector2(303, 22), 12, Color("687166"))
-	energy_label = _label(top_panel, "体力 —", Vector2(344, 20), Vector2(142, 34), 16, Color("4c4535"))
-	cargo_label = _label(top_panel, "蜜囊 —", Vector2(494, 20), Vector2(130, 34), 16, Color("4c4535"))
-	reserve_label = _label(top_panel, "储备 0", Vector2(632, 20), Vector2(130, 34), 16, Color("4c4535"))
-	timer_label = _label(top_panel, "", Vector2(770, 20), Vector2(150, 34), 16, Color("4c4535"))
-	save_label = _label(top_panel, "巢里已记好", Vector2(928, 24), Vector2(145, 28), 11, Color("687166"))
+	title_label = _label(top_panel, "一会儿巢里见", Vector2(18, 6), Vector2(250, 36), 24, Color("263a31"))
+	area_label = _label(top_panel, "主蜂巢 · 二十四趟", Vector2(20, 44), Vector2(248, 22), 12, Color("687166"))
+	# The reason text is part of the stamina contract, so reserve enough width for
+	# states such as "休息点 · 快速回满" even at 130% UI scale.
+	energy_label = _label(top_panel, "体力 —", Vector2(280, 20), Vector2(274, 34), 13, Color("4c4535"))
+	cargo_label = _label(top_panel, "蜜囊 —", Vector2(562, 20), Vector2(120, 34), 16, Color("4c4535"))
+	reserve_label = _label(top_panel, "储备 0", Vector2(690, 20), Vector2(110, 34), 16, Color("4c4535"))
+	timer_label = _label(top_panel, "", Vector2(808, 20), Vector2(120, 34), 16, Color("4c4535"))
+	save_label = _label(top_panel, "巢里已记好", Vector2(936, 24), Vector2(128, 28), 11, Color("687166"))
 	save_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	pause_button = _button(top_panel, "暂停 / 菜单", Vector2(1082, 12), Vector2(144, 50), _open_pause_menu, false, 14)
 	var top_labels: Array[Label] = [title_label, area_label, energy_label, cargo_label, reserve_label, timer_label, save_label]
@@ -259,17 +264,32 @@ func _build_field_panel() -> void:
 	# must not steal a mouse/touch destination from the field underneath.
 	field_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui_layer.add_child(field_panel)
-	field_heading_label = _label(field_panel, "当前", Vector2(16, 11), Vector2(72, 62), 13, Color("6a705e"))
+	field_heading_label = _label(field_panel, "当前", Vector2(18, 8), Vector2(520, 26), 13, Color("6a705e"))
 	field_heading_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_prepare_single_line_label(field_heading_label)
-	objective_label = _label(field_panel, "", Vector2(100, 11), Vector2(418, 62), 14, Color("29382f"))
-	objective_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_prepare_single_line_label(objective_label)
+	objective_label = _label(field_panel, "", Vector2(18, 35), Vector2(574, 76), 14, Color("29382f"))
+	objective_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	objective_label.max_lines_visible = 3
+	objective_label.clip_text = true
+	objective_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	# Keep the actual control outside the click-through decoration subtree so its
-	# keyboard, mouse and touch behavior is explicit on every Godot backend.
-	objective_toggle_button = _button(ui_layer, "收起", Vector2(548, 120), Vector2(76, 52), _toggle_field_hud, false, 13)
+	# keyboard, mouse and touch behavior is explicit on every Godot backend.  The
+	# arrow is visually small, while its full 44px square remains easy to tap.
+	objective_toggle_button = _button(
+		ui_layer,
+		"→",
+		FIELD_OBJECTIVE_TOGGLE_EXPANDED_POS,
+		FIELD_OBJECTIVE_TOGGLE_SIZE,
+		_toggle_field_hud,
+		false,
+		16
+	)
 	objective_toggle_button.name = "ObjectiveToggleButton"
 	objective_toggle_button.tooltip_text = "收起当前目标；操作按钮和资源状态会继续保留"
+	objective_toggle_button.pivot_offset = FIELD_OBJECTIVE_TOGGLE_SIZE * 0.5
+	objective_toggle_button.rotation_degrees = -90.0
+	_style_objective_toggle()
 
 	toast_panel = ColorRect.new()
 	toast_panel.name = "FieldMessageToast"
@@ -414,6 +434,23 @@ func _button_style(fill: Color, border: Color, width := 2) -> StyleBoxFlat:
 	style.content_margin_left = 10
 	style.content_margin_right = 10
 	return style
+
+
+func _style_objective_toggle() -> void:
+	if objective_toggle_button == null:
+		return
+	objective_toggle_button.add_theme_stylebox_override(
+		"normal", _button_style(Color("f4edda", 0.18), Color("6d5b38", 0.0), 0)
+	)
+	objective_toggle_button.add_theme_stylebox_override(
+		"hover", _button_style(Color("f4e9c9", 0.82), Color("405d50", 0.72), 2)
+	)
+	objective_toggle_button.add_theme_stylebox_override(
+		"pressed", _button_style(Color("d8cba8", 0.88), Color("334b40", 0.78), 2)
+	)
+	objective_toggle_button.add_theme_stylebox_override(
+		"focus", _button_style(Color("000000", 0.0), Color("fff0a8"), 3)
+	)
 
 
 func _process(delta: float) -> void:
@@ -596,12 +633,16 @@ func _on_field_status(snapshot: Dictionary) -> void:
 		_set_base_font_size(title_label, 24)
 		field_heading_label.text = "当前"
 	if not event_runtime.is_empty():
-		field_heading_label.text = "%02d/%02d" % [
+		field_heading_label.text = "%s %02d/%02d" % [
+			"自选" if bool(event_runtime.get("optional", false)) else "主线",
 			int(event_runtime.get("current_event_number", 1)),
 			int(event_runtime.get("event_count", 15)),
 		]
 	area_label.text = String(snapshot.get("area", "四季花田"))
-	energy_label.text = "体力 %d / %d" % [roundi(float(snapshot.get("energy", 0.0))), roundi(float(snapshot.get("energy_cap", 360.0)))]
+	energy_label.text = "体力 %d / %d" % [roundi(float(snapshot.get("energy", 0.0))), roundi(float(snapshot.get("energy_cap", 100.0)))]
+	var energy_state := _single_line_text(String(snapshot.get("energy_state", "")))
+	if not energy_state.is_empty():
+		energy_label.text += " · %s" % energy_state
 	if bool(snapshot.get("has_collection", false)):
 		cargo_label.text = "蜜囊 %d / %d" % [int(snapshot.get("honey_cargo", 0)), int(snapshot.get("capacity", 4))]
 	else:
@@ -623,10 +664,28 @@ func _current_objective_text(snapshot: Dictionary) -> String:
 	var event_runtime: Dictionary = snapshot.get("event_runtime", {})
 	if not event_runtime.is_empty():
 		var title := _single_line_text(String(event_runtime.get("current_event_title", "")))
-		var hint := _single_line_text(String(event_runtime.get("ui_hint", "")))
-		if title.is_empty():
-			return hint if not hint.is_empty() else "看看最近发亮的花标"
-		return title if hint.is_empty() else "%s · %s" % [title, hint]
+		var instruction := _single_line_text(String(snapshot.get(
+			"player_instruction",
+			event_runtime.get("player_instruction", event_runtime.get("ui_hint", ""))
+		)))
+		var progress := _single_line_text(String(snapshot.get(
+			"progress_label",
+			event_runtime.get("progress_label", "")
+		)))
+		var has_explicit_progress := snapshot.has("progress_label") or event_runtime.has("progress_label")
+		if progress.is_empty() and not has_explicit_progress:
+			var required := maxi(1, int(event_runtime.get("required", 1)))
+			progress = "已完成 %d/%d" % [clampi(int(event_runtime.get("progress", 0)), 0, required), required]
+		var lines: Array[String] = []
+		if not title.is_empty():
+			lines.append(title)
+		if not instruction.is_empty() and instruction != title:
+			lines.append(instruction)
+		if not progress.is_empty() and progress != instruction and progress != title:
+			lines.append(progress)
+		if lines.is_empty():
+			return "看看最近发亮的花标"
+		return "\n".join(lines)
 	if bool(snapshot.get("is_climax", false)):
 		var phase_instruction := _single_line_text(String(snapshot.get("phase_instruction", "")))
 		if not phase_instruction.is_empty():
@@ -744,9 +803,14 @@ func _toggle_field_hud() -> void:
 	field_panel.size = FIELD_OBJECTIVE_COLLAPSED_SIZE if field_hud_collapsed else FIELD_OBJECTIVE_SIZE
 	field_heading_label.visible = not field_hud_collapsed
 	objective_label.visible = not field_hud_collapsed
-	objective_toggle_button.text = "目标" if field_hud_collapsed else "收起"
-	objective_toggle_button.position = Vector2(23, 109) if field_hud_collapsed else Vector2(548, 120)
-	objective_toggle_button.size = Vector2(76, 44) if field_hud_collapsed else Vector2(76, 52)
+	objective_toggle_button.text = "→"
+	objective_toggle_button.rotation_degrees = 90.0 if field_hud_collapsed else -90.0
+	objective_toggle_button.position = (
+		FIELD_OBJECTIVE_TOGGLE_COLLAPSED_POS
+		if field_hud_collapsed
+		else FIELD_OBJECTIVE_TOGGLE_EXPANDED_POS
+	)
+	objective_toggle_button.size = FIELD_OBJECTIVE_TOGGLE_SIZE
 	objective_toggle_button.tooltip_text = (
 		"展开当前目标" if field_hud_collapsed else "收起当前目标；操作按钮和资源状态会继续保留"
 	)

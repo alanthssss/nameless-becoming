@@ -359,6 +359,86 @@ func verify_game_checkpoint_handler() -> void:
 	game.free()
 
 
+func advance_field_runtime_to_event(field: JourneyCampaignField, event_id: String) -> bool:
+	if field == null or field.event_runtime == null:
+		return false
+	var guard := 0
+	while (
+		not field.event_runtime.is_finished()
+		and String(field.event_runtime.current_event().get("id", "")) != event_id
+		and guard < 128
+	):
+		guard += 1
+		if field.event_runtime.optional_pending():
+			field.event_runtime.accept_optional()
+		if field.event_runtime.choice_pending():
+			field.event_runtime.choose_route("swift")
+		if field.event_runtime.requires_evade():
+			field.event_runtime.note_evade()
+		var result: Dictionary = field.event_runtime.record_step(field.event_runtime.current_kind())
+		if not bool(result.get("accepted", false)):
+			return false
+	var reached := (
+		not field.event_runtime.is_finished()
+		and String(field.event_runtime.current_event().get("id", "")) == event_id
+	)
+	if reached:
+		field._prepare_current_event()
+	return reached
+
+
+func safe_moving_point(field: JourneyCampaignField, inside_hazard: bool) -> Vector2:
+	var search_area: Rect2 = (
+		field.hazard_bands[0]
+		if inside_hazard and not field.hazard_bands.is_empty()
+		else field.playable_bounds
+	)
+	for row in 9:
+		for column in 9:
+			var ratio := Vector2((float(column) + 0.5) / 9.0, (float(row) + 0.5) / 9.0)
+			var candidate := search_area.position + search_area.size * ratio
+			if (
+				field.playable_bounds.has_point(candidate)
+				and not field._is_sheltered(candidate)
+				and (not inside_hazard or field._in_hazard_band(candidate))
+				and candidate.distance_to(field.home_position) > 140.0
+			):
+				return candidate
+	return field.playable_bounds.get_center()
+
+
+func verify_zero_energy_checkpoint_floor() -> void:
+	var prepared := progression_state_for("spring_yushui")
+	var level: Dictionary = prepared.catalog.level_by_id("spring_yushui")
+	var checkpoint := pentad_checkpoint(level, 1)
+	checkpoint["energy"] = 0.0
+	var token: int = prepared.begin_level("spring_yushui")
+	expect(
+		token > 0 and prepared.record_event_checkpoint(token, checkpoint),
+		"雨水零体力候档无法写入真实 Campaign 状态"
+	)
+	if token <= 0 or prepared.event_checkpoint.is_empty():
+		return
+	prepared.abandon_attempt(token)
+	var resumed_token: int = prepared.begin_level("spring_yushui")
+	var field = CampaignFieldScript.new()
+	var configure_error := field.configure(prepared.active_level_context())
+	expect(configure_error == OK, "雨水零体力候档无法恢复 Field")
+	if configure_error != OK:
+		field.free()
+		prepared.abandon_attempt(resumed_token)
+		return
+	root.add_child(field)
+	expect(
+		field.bee.energy >= field.CAMPAIGN_BREATHER_CAP
+			and field.bee.energy <= field.bee.max_energy,
+		"雨水候档记录为零体力后仍以零体力开局，没有至少恢复到停稳储备"
+	)
+	field.queue_free()
+	prepared.abandon_attempt(resumed_token)
+	await process_frame
+
+
 func run_test() -> void:
 	var state = CampaignStateScript.new()
 	expect(state.is_ready(), "正式战役状态无法加载目录与纪事")
@@ -719,41 +799,153 @@ func run_test() -> void:
 					<= standard_field.CAMPAIGN_HUD_SAFE_RECT.end.x + 0.01,
 				"正式战役任务标记生成到了右侧 HUD 后面"
 			)
+	# Full event art stays at its authoritative world coordinate. If its complete
+	# mechanic-specific bounds touch HUD, only a compact edge arrow may be clamped;
+	# rhythm dots and spatial-match side slots must not leak back under either card.
+	standard_field.camera.position = standard_field.camera_target_for(standard_field.home_position)
+	var camera_origin: Vector2 = standard_field.camera.position - standard_field.VIEWPORT_SIZE * 0.5
+	var right_occluded_world := camera_origin + Vector2(1210.0, 610.0)
+	var spatial_bounds := Rect2(-80.0, -72.0, 160.0, 144.0)
+	expect(
+		not standard_field._event_marker_full_visible(right_occluded_world, spatial_bounds),
+		"空间匹配完整图形仍被误判为可画进右侧操作区"
+	)
+	var card_occluded_world := camera_origin + Vector2(330.0, 175.0)
+	var rhythm_bounds := Rect2(-80.0, -96.0, 160.0, 176.0)
+	expect(
+		not standard_field._event_marker_full_visible(card_occluded_world, rhythm_bounds),
+		"节拍点完整图形仍被误判为可画在左上目标卡后面"
+	)
+	var guide_screen := standard_field.event_edge_guide_screen_position(card_occluded_world)
+	expect(
+		guide_screen.x - standard_field.EVENT_EDGE_GUIDE_EXTENT
+			>= standard_field.CAMPAIGN_HUD_SAFE_RECT.position.x - 0.01
+			and guide_screen.x + standard_field.EVENT_EDGE_GUIDE_EXTENT
+				<= standard_field.CAMPAIGN_HUD_SAFE_RECT.end.x + 0.01
+			and guide_screen.y - standard_field.EVENT_EDGE_GUIDE_EXTENT
+				>= standard_field.CAMPAIGN_OBJECTIVE_OCCLUSION_RECT.end.y - 0.01,
+		"紧凑边缘指引自身仍会伸进 HUD"
+	)
 
-	# Campaign energy is a short, visible loop: waiting is free, a brief cruise is
-	# cheap, sustained acceleration costs more, and a shelter takes time to refill.
+	# Campaign stamina pays for explicit exertion, never for permission to travel.
+	# Freeze both the authored rates and their real BeePlayer/Field effects so a
+	# later one-line tuning change cannot recreate Rain Water's event-02 softlock.
+	expect(
+		is_equal_approx(standard_field.CAMPAIGN_EVADE_COST, 6.0)
+			and is_equal_approx(standard_field.CAMPAIGN_WIND_DRAIN_PER_SECOND, 0.8)
+			and is_equal_approx(standard_field.CAMPAIGN_HEAVY_DRAIN_PER_SECOND, 0.35)
+			and is_equal_approx(standard_field.CAMPAIGN_BREATHER_DELAY, 0.75)
+			and is_equal_approx(standard_field.CAMPAIGN_BREATHER_RECOVERY_PER_SECOND, 6.0)
+			and is_equal_approx(standard_field.CAMPAIGN_BREATHER_CAP, 30.0)
+			and is_equal_approx(standard_field.CAMPAIGN_REST_RECOVERY_PER_SECOND, 18.0),
+		"战役体力预算常量偏离已验证的 100 点制合同"
+	)
 	standard_field.bee.energy = 80.0
 	standard_field.bee.velocity = Vector2.ZERO
 	standard_field.bee.has_target = false
 	standard_field.bee.move_duration = 0.0
 	standard_field.bee._physics_process(0.5)
 	expect(is_equal_approx(standard_field.bee.energy, 80.0), "原地看路线仍在暗中消耗战役体力")
+	var travel_origin: Vector2 = standard_field.bee.position
 	standard_field.bee.set_move_target(standard_field.bee.position + Vector2(700.0, 0.0))
 	standard_field.bee._physics_process(0.5)
-	var energy_after_short_cruise: float = standard_field.bee.energy
+	standard_field.bee._physics_process(0.5)
 	standard_field.bee._physics_process(0.5)
 	expect(
-		80.0 - energy_after_short_cruise < 1.0
-			and energy_after_short_cruise - standard_field.bee.energy > 1.0,
-		"短巡航与持续加速没有形成清楚不同的体力成本"
+		is_equal_approx(standard_field.bee.energy, 80.0)
+			and standard_field.bee.position.distance_to(travel_origin) > 100.0
+			and standard_field.bee.move_duration > standard_field.bee.auto_dash_delay,
+		"普通移动或自动巡航仍扣体力，或为了省体力而让蜂无法真实移动"
 	)
+
+	# A visible headwind owns exactly the advertised 0.8/s cost. Choose a real
+	# unsheltered point so this covers Field state, not merely a constant value.
+	standard_field.breather_elapsed = 0.0
+	standard_field.elapsed = 0.0
+	standard_field.weather_window_elapsed = 0.0
+	standard_field.bee.position = safe_moving_point(standard_field, true)
+	standard_field.bee.velocity = Vector2(100.0, 0.0)
+	standard_field.bee.has_target = false
+	standard_field.bee.energy = 50.0
+	standard_field._process_chapter(1.0)
+	expect(
+		absf(standard_field.bee.energy - 49.2) <= 0.01
+			and standard_field.energy_state == "逆风",
+		"可见逆风没有按 0.8/秒消耗，或体力 HUD 无法说明消耗原因"
+	)
+
+	# Anywhere outside a rest point, stopping for 0.75s begins a 6/s recovery
+	# which intentionally stops at 30: enough for required actions, not a free full
+	# refill that erases the value of visible rest points.
+	standard_field.elapsed = 4.0
+	standard_field.weather_window_elapsed = 0.0
+	standard_field.bee.position = safe_moving_point(standard_field, false)
+	standard_field.bee.velocity = Vector2.ZERO
+	standard_field.bee.has_target = false
+	standard_field.bee.evade_time = 0.0
+	standard_field.bee.energy = 0.0
+	standard_field.breather_elapsed = 0.0
+	standard_field._process_chapter(0.75)
+	expect(is_zero_approx(standard_field.bee.energy), "停稳不足 0.75 秒就提前恢复体力")
+	standard_field._process_chapter(1.0)
+	expect(absf(standard_field.bee.energy - 6.0) <= 0.01, "停稳后没有按 6/秒恢复体力")
+	standard_field._process_chapter(10.0)
+	expect(absf(standard_field.bee.energy - 30.0) <= 0.01, "普通停稳恢复没有在 30 点储备处停止")
+
+	# Carrying changes speed and adds an explicit movement cost, but it must not
+	# silently remove the universal escape hatch promised by the same HUD copy.
+	standard_field.event_carrying = true
+	standard_field.bee.position = safe_moving_point(standard_field, false)
+	standard_field.bee.velocity = Vector2.ZERO
+	standard_field.bee.has_target = false
+	standard_field.bee.evade_time = 0.0
+	standard_field.bee.energy = 0.0
+	standard_field.breather_elapsed = 0.0
+	standard_field._process_chapter(0.75)
+	standard_field._process_chapter(1.0)
+	expect(
+		absf(standard_field.bee.energy - 6.0) <= 0.01,
+		"搬运时停稳回气被悄悄禁用，体力规则再次因事件状态而改变"
+	)
+	standard_field.event_carrying = false
+
+	# The exhausted state is a handling penalty, never a movement lock.
+	standard_field.bee.position = standard_field.home_position
+	standard_field.bee.velocity = Vector2.ZERO
+	standard_field.bee.has_target = false
+	standard_field.bee.energy = 0.0
+	standard_field.breather_elapsed = 0.0
+	standard_field._process_chapter(0.1)
+	var exhausted_origin: Vector2 = standard_field.bee.position
+	standard_field.bee.set_move_target(exhausted_origin + Vector2(500.0, 0.0))
+	standard_field.bee._physics_process(0.5)
+	expect(
+		not standard_field.failed
+			and not standard_field.completion_emitted
+			and standard_field.bee.position.distance_to(exhausted_origin) > 20.0
+			and is_zero_approx(standard_field.bee.energy)
+			and standard_field.bee.environment_speed_multiplier >= 0.82,
+		"战役体力归零仍触发失败、锁住移动，或施加过重的疲惫惩罚"
+	)
+
+	# A visible rest point restores at 18/s all the way to full.
 	standard_field.bee.has_target = false
 	standard_field.bee.velocity = Vector2.ZERO
 	standard_field.bee.position = standard_field.rest_points[0]
 	standard_field.bee.energy = 40.0
 	standard_field._process_chapter(1.0)
 	expect(
-		standard_field.bee.energy >= 47.9 and standard_field.bee.energy < standard_field.bee.max_energy,
-		"叶棚休息没有稳定缓慢恢复，或一碰就瞬间回满"
+		absf(standard_field.bee.energy - 58.0) <= 0.01
+			and standard_field.energy_state.begins_with("休息点"),
+		"休息点没有按 18/秒快速恢复，或没有给出可读的恢复反馈"
 	)
-	standard_field.bee.position = standard_field.home_position
-	standard_field.bee.energy = 0.0
-	standard_field._process_chapter(0.1)
+	standard_field.bee.energy = 40.0
+	standard_field.bee.velocity = Vector2(100.0, 0.0)
+	standard_field._process_chapter(1.0)
 	expect(
-		not standard_field.failed
-			and not standard_field.completion_emitted
-			and standard_field.bee.environment_speed_multiplier <= 0.46,
-		"战役体力归零仍触发失败，或没有进入可慢飞的疲惫态"
+		absf(standard_field.bee.energy - 40.0) <= 0.01
+			and not standard_field.resting,
+		"只是飞过休息点就自动回满，实际规则与‘停在休息点’教学不一致"
 	)
 
 	# Keyboard/gamepad directions and pointer/touch share the same active urgent
@@ -772,8 +964,9 @@ func run_test() -> void:
 	standard_field._play_evade_result(campaign_evade_result)
 	expect(
 		bool(campaign_evade_result.evade_started)
-			and is_equal_approx(standard_field.bee.energy, 38.0)
-			and "体力 -12" in standard_field.message,
+			and is_equal_approx(standard_field.bee.energy, 44.0)
+			and "体力" in standard_field.message
+			and "6" in standard_field.message,
 		"正式战役没有接入带明确响应与成本的双击急转"
 	)
 	standard_field.bee.position = standard_field.home_position
@@ -791,7 +984,7 @@ func run_test() -> void:
 	)
 	expect(
 		bool(campaign_touch_evade.evade_started)
-			and is_equal_approx(standard_field.bee.energy, 38.0),
+			and is_equal_approx(standard_field.bee.energy, 44.0),
 		"正式战役触屏／鼠标的重复方向点击没有发动同一套急转"
 	)
 	standard_field.bee.energy = standard_field.bee.max_energy
@@ -825,6 +1018,191 @@ func run_test() -> void:
 	expect(bool(emitted_payload.get("returned_home", false)) and bool(emitted_payload.get("objectives_complete", false)), "常规关强制自测没有经过返巢完成合同")
 	standard_field.queue_free()
 	await process_frame
+
+	# Rain Water's mandatory second event must remain completable from the exact
+	# player-reported failure state: zero stamina, already beside the highlighted
+	# gate. Exercise Field's keyboard/gamepad double-tap path three times rather
+	# than granting progress directly through the event runtime.
+	var yushui_state := progression_state_for("spring_yushui")
+	var yushui_level: Dictionary = yushui_state.catalog.level_by_id("spring_yushui")
+	var stamina_yushui_token: int = yushui_state.begin_level("spring_yushui")
+	var yushui_field = CampaignFieldScript.new()
+	expect(yushui_field.configure({
+		"campaign_mode": true,
+		"journey_token": stamina_yushui_token,
+		"level": yushui_level,
+		"run_mode": "progression",
+		"reserve": yushui_state.reserve,
+		"sortie_count": yushui_state.sortie_count,
+		"world_results": yushui_state.world_memory(),
+		"sound_feedback": sound,
+	}) == OK, "雨水体力软锁回归无法配置真实 Field")
+	root.add_child(yushui_field)
+	await process_frame
+	expect(
+		advance_field_runtime_to_event(yushui_field, "yushui_02_underleaf_flight"),
+		"雨水体力软锁回归无法抵达第 02 项"
+	)
+	if String(yushui_field.event_runtime.current_event().get("id", "")) == "yushui_02_underleaf_flight":
+		# Put the real first gate behind the right HUD relative to a synthetic camera
+		# origin. Clicking the visible edge arrow must route to that unchanged world
+		# target in one step; it must not turn the proxy coordinate into a fake gate.
+		var real_navigation_target: Vector2 = yushui_field._event_navigation_target()
+		yushui_field.camera.position = (
+			real_navigation_target - Vector2(1210.0, 610.0)
+			+ yushui_field.VIEWPORT_SIZE * 0.5
+		)
+		expect(yushui_field._navigation_uses_edge_guide(), "右侧越界事件没有切成边缘指引")
+		var navigation_guide_screen := yushui_field.event_edge_guide_screen_position(real_navigation_target)
+		yushui_field.bee.has_target = false
+		var guide_press := InputEventMouseButton.new()
+		guide_press.button_index = MOUSE_BUTTON_LEFT
+		guide_press.position = navigation_guide_screen
+		guide_press.pressed = true
+		yushui_field._unhandled_input(guide_press)
+		expect(
+			yushui_field.bee.has_target
+				and yushui_field.bee.target.is_equal_approx(real_navigation_target)
+				and yushui_field._event_navigation_target().is_equal_approx(real_navigation_target),
+			"点击边缘指引没有一次重定向到真实导航目标，或修改了世界交互坐标"
+		)
+
+		# Three off-screen match sources used to clamp independently; sources 0 and 2
+		# could occupy the same edge pixel. The layout now emits only the required
+		# source's group arrow until the real arrangement enters view.
+		var saved_match_sources: Array[Vector2] = yushui_field.event_match_sources.duplicate()
+		var synthetic_origin: Vector2 = yushui_field.camera.position - yushui_field.VIEWPORT_SIZE * 0.5
+		var offscreen_match_sources: Array[Vector2] = [
+			synthetic_origin + Vector2(1160.0, 420.0),
+			synthetic_origin + Vector2(1210.0, 360.0),
+			synthetic_origin + Vector2(1260.0, 420.0),
+		]
+		yushui_field.event_match_sources = offscreen_match_sources
+		var collapsed_layout: Array[Dictionary] = yushui_field._moving_match_marker_layout()
+		expect(
+			collapsed_layout.size() == 1
+				and bool(collapsed_layout[0].get("edge_guide", false))
+				and int(collapsed_layout[0].get("shape_index", -1))
+					== yushui_field._moving_match_required_shape(),
+			"屏外移动匹配来源仍独立折叠重叠，没有收成单一所需组指引"
+		)
+		yushui_field.event_match_sources = saved_match_sources
+		yushui_field.camera.position = yushui_field.camera_target_for(yushui_field.bee.position)
+		yushui_field.touch_input_mode = false
+		expect(
+			"连续按两次同一个方向" in yushui_field._event_player_instruction(),
+			"雨水 02 键鼠教学没有说明真实急转输入"
+		)
+		yushui_field.touch_input_mode = true
+		expect(
+			"朝同一边连点两下" in yushui_field._event_player_instruction()
+				and "右下动作" in yushui_field._event_player_instruction(),
+			"雨水 02 触屏教学仍显示键盘话术，或没有说明可见主动作"
+		)
+		for gate_index in 3:
+			yushui_field.bee.position = yushui_field._event_interaction_target()
+			yushui_field.bee.velocity = Vector2.ZERO
+			yushui_field.bee.has_target = false
+			yushui_field.bee.energy = 0.0
+			yushui_field.bee.evade_time = 0.0
+			yushui_field.bee.evade_cooldown = 0.0
+			yushui_field.evade_input_controller.clear(yushui_field.bee)
+			var sequence_before: int = yushui_field.bee.evade_sequence
+			yushui_field._register_evade_direction_tap("right")
+			yushui_field._register_evade_direction_tap("right")
+			if gate_index == 0:
+				expect(
+					"1 / 3" in yushui_field.message
+						and "急转" in yushui_field.message
+						and "普通飞行不消耗" in yushui_field.message
+						and "停稳回气" in yushui_field.message,
+					"雨水 02 第一次实际扣费后，进度提示覆盖了体力机制教学"
+				)
+			expect(
+				yushui_field.bee.evade_sequence == sequence_before + 1
+					and yushui_field.bee.last_evade_was_assisted,
+				"雨水 02 第 %d 道主线门在零体力时没有发动辅助急转" % (gate_index + 1)
+			)
+		expect(
+			"yushui_02_underleaf_flight" in yushui_field.event_runtime.completed_mandatory_ids
+				and yushui_field.event_runtime.current_index == 2,
+			"雨水 02 的三次零体力辅助急转没有完成主线事件"
+		)
+
+	# Heavy carrying has an additive 0.35/s cost while moving. Drive the authored
+	# heavy branch and keep weather inactive so the assertion isolates that cost.
+	expect(
+		advance_field_runtime_to_event(yushui_field, "yushui_11_heavy_or_light"),
+		"雨水重载体力回归无法抵达第 11 项"
+	)
+	if String(yushui_field.event_runtime.current_event().get("id", "")) == "yushui_11_heavy_or_light":
+		yushui_field._select_event_route("swift")
+		yushui_field.event_carrying = true
+		yushui_field.elapsed = 4.0
+		yushui_field.weather_window_elapsed = 0.0
+		yushui_field.bee.position = safe_moving_point(yushui_field, false)
+		yushui_field.bee.velocity = Vector2(100.0, 0.0)
+		yushui_field.bee.has_target = false
+		yushui_field.bee.energy = 50.0
+		yushui_field._process_chapter(1.0)
+		expect(
+			absf(yushui_field.bee.energy - 49.65) <= 0.01
+				and yushui_field.energy_state == "重载",
+			"雨水重载移动没有按 0.35/秒消耗，或体力 HUD 无法说明消耗原因"
+		)
+
+	# Partner rescue is a warm parallel-flight beat, not an object-delivery beat.
+	# Both stages must name the new bee and the visible safe leaf destination.
+	expect(
+		advance_field_runtime_to_event(yushui_field, "yushui_12_partner_rescue"),
+		"雨水同期新蜂文案回归无法抵达第 12 项"
+	)
+	if String(yushui_field.event_runtime.current_event().get("id", "")) == "yushui_12_partner_rescue":
+		yushui_field.event_carrying = false
+		expect(
+			"同期新蜂" in yushui_field._event_player_instruction()
+				and yushui_field._event_action_label() == "并飞接住新蜂",
+			"同期新蜂接应阶段仍被写成通用物件拾取"
+		)
+		yushui_field.event_carrying = true
+		expect(
+			"黄色安全点" in yushui_field._event_player_instruction()
+				and "叶棚" in yushui_field._event_player_instruction()
+				and yushui_field._event_action_label() == "陪新蜂到安全点",
+			"同期新蜂并飞阶段仍要求把同伴送到临时桩"
+		)
+		yushui_field.event_carrying = false
+
+	# The same safeguard is deliberately absent from the optional mastery lane.
+	# Players can stop to recover or skip it; accepting a challenge must not grant
+	# a hidden free action and flatten the distinction between story and mastery.
+	expect(
+		advance_field_runtime_to_event(yushui_field, "yushui_13_dry_mastery"),
+		"雨水自选熟练挑战回归无法抵达第 13 项"
+	)
+	if String(yushui_field.event_runtime.current_event().get("id", "")) == "yushui_13_dry_mastery":
+		yushui_field._handle_event_primary_action()
+		yushui_field.bee.position = yushui_field._event_interaction_target()
+		yushui_field.bee.velocity = Vector2.ZERO
+		yushui_field.bee.energy = 0.0
+		yushui_field.bee.evade_time = 0.0
+		yushui_field.bee.evade_cooldown = 0.0
+		yushui_field.evade_input_controller.clear(yushui_field.bee)
+		var optional_sequence_before: int = yushui_field.bee.evade_sequence
+		var optional_progress_before: int = yushui_field.event_runtime.current_progress
+		yushui_field._register_evade_direction_tap("right")
+		yushui_field._register_evade_direction_tap("right")
+		expect(
+			not yushui_field._mandatory_evade_assist_available()
+				and yushui_field.bee.evade_sequence == optional_sequence_before
+				and yushui_field.event_runtime.current_progress == optional_progress_before
+				and not yushui_field.bee.last_evade_was_assisted,
+			"雨水 13 自选熟练挑战错误获得零体力主线辅助"
+		)
+	yushui_field.queue_free()
+	yushui_state.abandon_attempt(stamina_yushui_token)
+	await process_frame
+	await verify_zero_energy_checkpoint_floor()
 
 	var climax_state = CampaignStateScript.new()
 	for order in 5:

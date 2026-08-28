@@ -35,10 +35,10 @@
 | 官方源 | Noto Sans CJK SC Regular |
 | 上游 Git blob | `dc15562470b4f842321894787a0d066879ccff8b` |
 | 上游源文件 SHA-256 | `2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b` |
-| 本次运行时扫描 | 78 个来源／1300 个字符 |
+| 本次运行时扫描 | 78 个来源／1302 个字符 |
 | 子集文件 | `godot/fonts/NotoSansCJKsc-ProjectSubset.otf` |
-| 子集大小 | 575876 bytes |
-| 子集 SHA-256 | `c684bf26336bf3980fd1f6ac761a751b86510e99e7cbe035ae4dbcbac5c9dad1` |
+| 子集大小 | 579368 bytes |
+| 子集 SHA-256 | `909581fa4cbf5d9be2173e81e6b6e151a242bd45d7f72673208055effd345754` |
 
 该子集及已通过内容门禁的三 preset 资源 pack 仍来自 dirty 共享工作树。只有从同一 clean commit 重生成并构建真实平台 artifact、通过完整字体覆盖与最终包检查后，才能进入候选 artifact 清单。
 

@@ -61,7 +61,7 @@ func run_test() -> void:
 		game.transition_layer != null and game.transition_layer.layer > 40,
 		"转场遮罩层级低于结果插画，高潮画面会抢在转场前闪现"
 	)
-	expect(game.field_panel.position.x < 100.0 and game.field_panel.size.y <= 90.0, "当前目标没有变成左上紧凑卡")
+	expect(game.field_panel.position.x < 100.0 and game.field_panel.size.y <= 130.0, "当前目标没有保持为左上紧凑卡")
 	var right_play_lane := Rect2(1000, 104, 262, 500)
 	expect(not game.field_panel.get_global_rect().intersects(right_play_lane), "紧凑目标卡仍遮住右侧主要玩法区")
 	expect(
@@ -86,7 +86,7 @@ func run_test() -> void:
 			and game.return_button.get_global_rect().end.y <= game.action_panel.get_global_rect().end.y,
 		"纵向动作按钮越出了右侧托盘"
 	)
-	expect(game.objective_label.max_lines_visible == 1 and not "\n" in game.objective_label.text, "当前目标不是严格单句")
+	expect(game.objective_label.max_lines_visible == 3, "当前目标卡没有预留标题、操作与进度三行")
 	expect(
 		game.objective_label.text == "送轻种过霜线 1 / 4",
 		"目标卡没有跳过已完成事项并只显示当前动作：%s" % game.objective_label.text
@@ -106,6 +106,8 @@ func run_test() -> void:
 	var event_title := ""
 	var event_hint := ""
 	var event_number := 1
+	var player_instruction := "飞进黄色圆圈，连续按两次同一个方向"
+	var progress_label := "已通过 0/3"
 	var guyu_level: Dictionary = game.state.catalog.level_by_id("spring_guyu")
 	for authored_event in guyu_level.get("event_matrix", []):
 		var candidate_title := String((authored_event as Dictionary).get("title", ""))
@@ -123,6 +125,7 @@ func run_test() -> void:
 		"area": "雨后接货坡",
 		"energy": 88.0,
 		"energy_cap": 100.0,
+		"energy_state": "逆风",
 		"time_remaining": 240.0,
 		"ready_to_return": false,
 		"message": "%s · %s" % [event_title, event_hint],
@@ -135,17 +138,21 @@ func run_test() -> void:
 			"event_count": 15,
 			"current_event_title": event_title,
 			"ui_hint": event_hint,
+			"optional": false,
 			"choice_pending": true,
 		},
+		"player_instruction": player_instruction,
+		"progress_label": progress_label,
 	})
 	expect(
-		game.field_heading_label.text == "%02d/15" % event_number,
-		"三候事件进度没有移到短标题：%s" % game.field_heading_label.text
+		game.field_heading_label.text == "主线 %02d/15" % event_number,
+		"三候事件没有同时标明主线与进度：%s" % game.field_heading_label.text
 	)
 	expect(
-		game.objective_label.text == "%s · %s" % [event_title, event_hint],
-		"真实事件的正文没有只保留标题与可操作 hint：%s" % game.objective_label.text
+		game.objective_label.text == "%s\n%s\n%s" % [event_title, player_instruction, progress_label],
+		"真实事件没有分行显示标题、白话操作和进度：%s" % game.objective_label.text
 	)
+	expect(game.energy_label.text == "体力 88 / 100 · 逆风", "体力 HUD 没有告诉玩家正在为什么消耗或恢复")
 	expect(
 		not game.toast_panel.visible and game.message_label.text.is_empty(),
 		"事件准备把目标卡已有的标题与提示又弹成了 toast"
@@ -161,6 +168,7 @@ func run_test() -> void:
 		"area": "雨后接货坡",
 		"energy": 88.0,
 		"energy_cap": 100.0,
+		"energy_state": "休息点 · 快速回满",
 		"time_remaining": 240.0,
 		"ready_to_return": false,
 		"message": "第一块花牌扣稳了。 %s · %s" % [event_title, event_hint],
@@ -172,8 +180,16 @@ func run_test() -> void:
 			"event_count": 15,
 			"current_event_title": event_title,
 			"ui_hint": event_hint,
+			"optional": true,
 		},
+		"player_instruction": player_instruction,
+		"progress_label": "",
 	})
+	expect(game.field_heading_label.text == "自选 %02d/15" % event_number, "自选内容在目标卡上被误标为主线")
+	expect(
+		game.objective_label.text == "%s\n%s" % [event_title, player_instruction],
+		"自选/选路的空进度标签被 HUD 擅自补成了假进度"
+	)
 	expect(
 		game.toast_panel.visible and game.message_label.text == "第一块花牌扣稳了。",
 		"去重下一目标时把前面的事件后果一起吞掉了：%s" % game.message_label.text
@@ -227,22 +243,38 @@ func run_test() -> void:
 			"%d%% 字体下动态操作说明被截断：%.1f > %.1f"
 				% [roundi(ui_scale * 100.0), controls_width, game.controls_label.size.x]
 		)
-		if is_equal_approx(ui_scale, 1.3):
-			var objective_font: Font = game.objective_label.get_theme_font("font")
-			var measured_width := objective_font.get_string_size(
-				game.objective_label.text,
-				HORIZONTAL_ALIGNMENT_LEFT,
-				-1,
-				game.objective_label.get_theme_font_size("font_size")
-			).x
-			expect(
-				measured_width <= game.objective_label.size.x,
-				"130%% 字体把真实事件 hint 截掉了：%.1f > %.1f" % [measured_width, game.objective_label.size.x]
-			)
+		var energy_font: Font = game.energy_label.get_theme_font("font")
+		var energy_width := energy_font.get_string_size(
+			game.energy_label.text,
+			HORIZONTAL_ALIGNMENT_LEFT,
+			-1,
+			game.energy_label.get_theme_font_size("font_size")
+		).x
+		expect(
+			energy_width <= game.energy_label.size.x,
+			"%d%% 字体下体力原因被截断：%.1f > %.1f"
+				% [roundi(ui_scale * 100.0), energy_width, game.energy_label.size.x]
+		)
+		expect(
+			game.field_panel.get_global_rect().encloses(game.objective_label.get_global_rect())
+				and game.objective_toggle_button.get_global_rect().end.x <= 1280.0
+				and game.objective_toggle_button.get_global_rect().end.y <= 720.0,
+			"%d%% 字体下目标正文或角落箭头越出容器" % roundi(ui_scale * 100.0)
+		)
+		expect(
+			game.objective_label.max_lines_visible == 3
+				and minf(game.objective_toggle_button.size.x, game.objective_toggle_button.size.y) >= 44.0,
+			"%d%% 字体下三行目标或 44px 触控命中区失效" % roundi(ui_scale * 100.0)
+		)
 
 	game._toggle_field_hud()
 	expect(game.field_hud_collapsed and game.field_panel.size == game.FIELD_OBJECTIVE_COLLAPSED_SIZE, "目标卡无法收起")
-	expect(not game.objective_label.visible and game.objective_toggle_button.text == "目标", "收起后仍保留大段目标文字")
+	expect(
+		not game.objective_label.visible
+			and game.objective_toggle_button.text == "→"
+			and is_equal_approx(game.objective_toggle_button.rotation_degrees, 90.0),
+		"收起后仍保留大段目标文字或箭头方向错误"
+	)
 	expect(
 		game.action_panel.visible and game.energy_label.visible and game.cargo_label.visible,
 		"收起目标时误藏了必要动作或资源"
@@ -250,7 +282,12 @@ func run_test() -> void:
 	expect(game.objective_toggle_button.focus_mode == Control.FOCUS_ALL, "目标开关不能由键盘或手柄聚焦")
 	expect(minf(game.objective_toggle_button.size.x, game.objective_toggle_button.size.y) >= 44.0, "收起后的目标开关小于 44px")
 	game._toggle_field_hud()
-	expect(not game.field_hud_collapsed and game.objective_label.visible, "目标卡无法重新展开")
+	expect(
+		not game.field_hud_collapsed
+			and game.objective_label.visible
+			and is_equal_approx(game.objective_toggle_button.rotation_degrees, -90.0),
+		"目标卡无法重新展开"
+	)
 
 	game._apply_settings({"ui_scale": 1.0, "reduce_motion": false, "show_control_hints": false})
 	expect(not game.controls_label.visible, "关闭操作提示的无障碍设置没有作用")
