@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   scope:
-    name: Change scope and documentation checks
+    name: Change scope and lightweight CI checks
     runs-on: ubuntu-latest
     outputs:
       full_ci: ${{ steps.changes.outputs.full_ci }}
@@ -29,6 +29,13 @@ jobs:
           CURRENT_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
+
+          bash -n scripts/classify_ci_changes.sh
+          test "$(printf 'README.md\0docs/design-note.md\0' | bash scripts/classify_ci_changes.sh)" = false
+          test "$({ printf '.github/workflows/quality.yml\0'; printf 'scripts/classify_ci_changes.sh\0'; } | bash scripts/classify_ci_changes.sh)" = false
+          test "$(printf 'README.md\0godot/project.godot\0' | bash scripts/classify_ci_changes.sh)" = true
+          test "$(printf 'godot/source.gd\0docs/source.md\0' | bash scripts/classify_ci_changes.sh)" = true
+          test "$(printf '' | bash scripts/classify_ci_changes.sh)" = true
 
           zero_sha=0000000000000000000000000000000000000000
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
@@ -71,7 +78,7 @@ jobs:
           if [[ "$full_ci" == "true" ]]; then
             printf 'Full Web, Godot, and clean-export CI required.\n' >> "$GITHUB_STEP_SUMMARY"
           else
-            printf 'Markdown-only change: heavy CI jobs are skipped.\n' >> "$GITHUB_STEP_SUMMARY"
+            printf 'Documentation/CI-infrastructure-only change: heavy game CI jobs are skipped.\n' >> "$GITHUB_STEP_SUMMARY"
           fi
 
   web:
