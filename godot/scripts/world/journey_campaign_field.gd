@@ -41,6 +41,7 @@ const TASK_MARKER_SAFE_EXTENT := 64.0
 # host has built the HUD, visibility is decided from its live Control rectangles.
 const CAMPAIGN_HUD_SAFE_RECT := Rect2(0.0, 90.0, 1008.0, 630.0)
 const CAMPAIGN_OBJECTIVE_OCCLUSION_RECT := Rect2(18.0, 104.0, 620.0, 118.0)
+const ACTIVE_NAVIGATION_PULSE_BOUNDS := Rect2(-64.0, -64.0, 128.0, 128.0)
 const EVENT_EDGE_GUIDE_EXTENT := 34.0
 const EVENT_EDGE_GUIDE_HIT_RADIUS := 48.0
 const EVENT_INTERACTION_RADIUS := 112.0
@@ -368,26 +369,48 @@ func _current_event_visual_bounds() -> Rect2:
 
 
 func _navigation_marker_visual_bounds() -> Rect2:
+	if not event_matrix_mode:
+		var active_index := _active_standard_task_index()
+		if active_index >= 0 and active_index < tasks.size():
+			return _task_marker_visual_bounds(
+				String(tasks[active_index].get("type", ""))
+			).merge(ACTIVE_NAVIGATION_PULSE_BOUNDS)
+		return Rect2(-72.0, -72.0, 144.0, 144.0).merge(ACTIVE_NAVIGATION_PULSE_BOUNDS)
 	if event_runtime == null or event_runtime.is_finished():
-		return Rect2(-72.0, -72.0, 144.0, 144.0)
+		return Rect2(-72.0, -72.0, 144.0, 144.0).merge(ACTIVE_NAVIGATION_PULSE_BOUNDS)
 	var kind := event_runtime.current_kind()
 	if kind == JourneyEventMatrixRuntime.KIND_CARGO and not event_carrying:
 		if event_runtime.current_mechanic() == "moving_match":
-			return Rect2(-42.0, -42.0, 84.0, 84.0)
+			return Rect2(-42.0, -42.0, 84.0, 84.0).merge(ACTIVE_NAVIGATION_PULSE_BOUNDS)
 		var half := Vector2(37.0, 28.0) if event_runtime.uses_heavy_load() else Vector2(27.0, 20.0)
-		return Rect2(-half, half * 2.0)
+		return Rect2(-half, half * 2.0).merge(ACTIVE_NAVIGATION_PULSE_BOUNDS)
 	if kind == JourneyEventMatrixRuntime.KIND_CONVOY and _convoy_stage_uses_cargo() and not event_carrying:
-		return Rect2(-27.0, -20.0, 54.0, 40.0)
-	return _current_event_visual_bounds()
+		return Rect2(-27.0, -20.0, 54.0, 40.0).merge(ACTIVE_NAVIGATION_PULSE_BOUNDS)
+	return _current_event_visual_bounds().merge(ACTIVE_NAVIGATION_PULSE_BOUNDS)
+
+
+func active_navigation_marker_snapshot() -> Dictionary:
+	if bee == null or completion_emitted:
+		return {}
+	var navigation_target := _navigation_target()
+	var visual_bounds := _navigation_marker_visual_bounds()
+	return {
+		"world_target": navigation_target,
+		"visual_bounds": visual_bounds,
+		"fully_visible": _world_visual_fully_visible(navigation_target, visual_bounds),
+	}
 
 
 func _navigation_uses_edge_guide() -> bool:
-	if event_runtime == null or event_runtime.is_finished():
+	var marker := active_navigation_marker_snapshot()
+	if marker.is_empty():
 		return false
-	return not _event_marker_full_visible(
-		_event_navigation_target(),
-		_navigation_marker_visual_bounds()
-	)
+	var navigation_target := Vector2(marker.get("world_target", bee.position))
+	# _navigation_target() deliberately returns the bee itself when there is no
+	# actionable destination. That sentinel must not manufacture a guide.
+	if navigation_target.is_equal_approx(bee.position):
+		return false
+	return not bool(marker.get("fully_visible", false))
 
 
 func event_edge_guide_screen_position(world_position: Vector2) -> Vector2:
@@ -396,17 +419,41 @@ func event_edge_guide_screen_position(world_position: Vector2) -> Vector2:
 	)
 
 
-func _handle_event_edge_guide_press(screen_position: Vector2) -> bool:
-	if not _navigation_uses_edge_guide():
+func active_navigation_guide_snapshot() -> Dictionary:
+	var marker := active_navigation_marker_snapshot()
+	if marker.is_empty():
+		return {}
+	var navigation_target := Vector2(marker.get("world_target", bee.position))
+	if navigation_target.is_equal_approx(bee.position) or bool(marker.get("fully_visible", false)):
+		return {}
+	return {
+		"world_target": navigation_target,
+		"screen_position": event_edge_guide_screen_position(navigation_target),
+	}
+
+
+func _handle_navigation_edge_guide_press(screen_position: Vector2) -> bool:
+	var guide := active_navigation_guide_snapshot()
+	if guide.is_empty():
 		return false
-	var navigation_target := _event_navigation_target()
-	var guide_position := event_edge_guide_screen_position(navigation_target)
+	var navigation_target := Vector2(guide.get("world_target", bee.position))
+	var guide_position := Vector2(guide.get("screen_position", Vector2.ZERO))
 	if screen_position.distance_to(guide_position) > EVENT_EDGE_GUIDE_HIT_RADIUS:
 		return false
 	bee.set_move_target(navigation_target)
 	bee.trigger_sense()
-	message = "沿边缘指引飞过去；到达附近后，按空格或右下动作继续。"
+	message = (
+		"沿边缘指引飞过去；到达附近后，按空格或右下动作继续。"
+		if event_matrix_mode
+		else "沿边缘指引飞到当前花标；靠近后再做右下角写着的动作。"
+	)
 	return true
+
+
+func _handle_event_edge_guide_press(screen_position: Vector2) -> bool:
+	# Compatibility alias for focused event tests. Events and ordinary chapters
+	# now resolve through the same single guide and authoritative target.
+	return _handle_navigation_edge_guide_press(screen_position)
 
 
 func _load_campaign_art() -> void:
@@ -1947,7 +1994,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		pressed = event.pressed
 	if not pressed:
 		return
-	if _handle_event_edge_guide_press(screen_position):
+	if _handle_navigation_edge_guide_press(screen_position):
 		get_viewport().set_input_as_handled()
 		return
 	var world_position := get_canvas_transform().affine_inverse() * screen_position
@@ -2537,12 +2584,14 @@ func _draw_chapter() -> void:
 		_draw_event_world_state()
 		_draw_current_event()
 		_draw_route_pointer()
+		_draw_active_navigation_edge_guide()
 		_draw_climax_neighbour()
 		if hazard_active:
 			_draw_weather_motion()
 		return
 	_draw_tasks()
 	_draw_route_pointer()
+	_draw_active_navigation_edge_guide()
 	_draw_climax_neighbour()
 	if hazard_active:
 		_draw_weather_motion()
@@ -2634,16 +2683,16 @@ func _draw_current_event() -> void:
 	var kind := event_runtime.current_kind()
 	var raw_target := _event_interaction_target()
 	var target_visible := _event_marker_full_visible(raw_target, _current_event_visual_bounds())
-	var navigation_target := _event_navigation_target()
-	if not target_visible and navigation_target.is_equal_approx(raw_target):
-		_draw_event_edge_guide(navigation_target)
-		return
 	var target := raw_target
 	var pulse := 1.0 + sin(elapsed * 3.4) * 0.08
 	var pending_alpha := 0.40 if event_runtime.optional_pending() else 0.82
-	if target_visible:
-		draw_circle(target, 55.0 * pulse, Color("fff0a5", 0.12))
-		draw_arc(target, 62.0 * pulse, 0.0, TAU, 28, Color("fff0a5", pending_alpha), 4.0)
+	var active_marker := active_navigation_marker_snapshot()
+	if not active_marker.is_empty() and bool(active_marker.get("fully_visible", false)):
+		var active_target := Vector2(active_marker.get("world_target", target))
+		# The pulse is gameplay language: it belongs to the one place the player can
+		# act now. Cargo destinations remain readable scenery until the load is held.
+		draw_circle(active_target, 55.0 * pulse, Color("fff0a5", 0.12))
+		draw_arc(active_target, 62.0 * pulse, 0.0, TAU, 28, Color("fff0a5", pending_alpha), 4.0)
 	match kind:
 		JourneyEventMatrixRuntime.KIND_OBSERVATION:
 			if not target_visible:
@@ -2664,7 +2713,7 @@ func _draw_current_event() -> void:
 				if event_carrying and target_visible:
 					draw_dashed_line(bee.position, target, Color("ffe594", 0.68), 4.0, 18.0)
 			elif not event_carrying:
-				_draw_event_parcel_marker(event_source_position, event_runtime.uses_heavy_load(), true)
+				_draw_event_parcel_marker(event_source_position, event_runtime.uses_heavy_load())
 			if target_visible:
 				_draw_event_receiving_station(target)
 		JourneyEventMatrixRuntime.KIND_AIR_CATCH:
@@ -2700,7 +2749,7 @@ func _draw_current_event() -> void:
 				draw_line(target + Vector2(0, -45), target + Vector2(0, 36), Color("75543d"), 8.0)
 				draw_colored_polygon(PackedVector2Array([target + Vector2(0, -41), target + Vector2(42, -27), target + Vector2(0, -10)]), Color("e2b85d"))
 			if _convoy_stage_uses_cargo() and not event_carrying:
-				_draw_event_parcel_marker(event_source_position, false, true)
+				_draw_event_parcel_marker(event_source_position, false)
 			if _convoy_stage_requires_evade() and target_visible:
 				draw_arc(target, 78.0, -2.65, -0.55, 18, Color("b8e4e5", 0.78), 6.0)
 			_draw_event_convoy()
@@ -2727,6 +2776,13 @@ func _draw_event_edge_guide(world_target: Vector2) -> void:
 		tip - direction * 9.0 - side,
 	]), Color("ffe38b", 0.98))
 	draw_circle(guide_position - direction * 9.0, 5.0, Color("f4edda", 0.90))
+
+
+func _draw_active_navigation_edge_guide() -> void:
+	var guide := active_navigation_guide_snapshot()
+	if guide.is_empty():
+		return
+	_draw_event_edge_guide(Vector2(guide.get("world_target", bee.position)))
 
 
 func _draw_event_memory_glyph(position: Vector2, mechanic: String, color: Color) -> void:
@@ -2769,9 +2825,6 @@ func _draw_moving_match_sources() -> void:
 	for marker in _moving_match_marker_layout():
 		var shape_index := int(marker.get("shape_index", -1))
 		var source := Vector2(marker.get("position", Vector2.ZERO))
-		if bool(marker.get("edge_guide", false)):
-			_draw_event_edge_guide(Vector2(marker.get("world_target", source)))
-			continue
 		var source_color := Color("f0cf72") if shape_index == required_shape else Color("b5b790")
 		_draw_event_shape(shape_index, source, Color(source_color, 0.92))
 		draw_arc(source, 31.0, 0.0, TAU, 16, Color("fff2b0", 0.72), 3.0)
@@ -2781,7 +2834,6 @@ func _draw_moving_match_sources() -> void:
 
 func _moving_match_marker_layout() -> Array[Dictionary]:
 	var layout: Array[Dictionary] = []
-	var required_shape := _moving_match_required_shape()
 	var source_bounds := Rect2(-42.0, -42.0, 84.0, 84.0)
 	for shape_index in event_match_sources.size():
 		var source := event_match_sources[shape_index]
@@ -2792,17 +2844,8 @@ func _moving_match_marker_layout() -> Array[Dictionary]:
 				"world_target": source,
 				"edge_guide": false,
 			})
-		elif shape_index == required_shape:
-			# Off-screen alternatives are intentionally not clamped independently:
-			# doing so can collapse different shapes onto one pixel. One arrow leads to
-			# the currently required source; the full group appears in its real layout
-			# once the camera is close enough.
-			layout.append({
-				"shape_index": shape_index,
-				"position": event_marker_draw_position(source, EVENT_EDGE_GUIDE_EXTENT),
-				"world_target": source,
-				"edge_guide": true,
-			})
+		# Hidden alternatives never create proxy objects. The one shared guide is
+		# derived from _navigation_target(), which points only at the required shape.
 	return layout
 
 
@@ -2843,12 +2886,10 @@ func _draw_event_parcel(position: Vector2, heavy: bool) -> void:
 	draw_line(position + Vector2(-half.x * 0.7, -4), position + Vector2(half.x * 0.7, 5), Color("efd692"), 4.0)
 
 
-func _draw_event_parcel_marker(world_position: Vector2, heavy: bool, current_navigation: bool) -> void:
+func _draw_event_parcel_marker(world_position: Vector2, heavy: bool) -> void:
 	var half := Vector2(37.0, 28.0) if heavy else Vector2(27.0, 20.0)
 	if _event_marker_full_visible(world_position, Rect2(-half, half * 2.0)):
 		_draw_event_parcel(world_position, heavy)
-	elif current_navigation:
-		_draw_event_edge_guide(world_position)
 
 
 func _draw_event_receiving_station(position: Vector2) -> void:
