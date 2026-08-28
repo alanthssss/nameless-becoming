@@ -1034,11 +1034,264 @@ func run_test() -> void:
 	standard_field.bee.evade_cooldown = 0.0
 	standard_field.bee.velocity = Vector2.ZERO
 	expect(standard_field.tasks.size() == 8, "立春没有按 2 次授粉 + 6 次收蜜生成实际工作")
-	var has_two_step := false
-	for task in standard_field.tasks:
-		if String(task.type) in standard_field.TWO_STEP_TYPES and Vector2(task.source_position) != Vector2(task.position):
-			has_two_step = true
-	expect(has_two_step, "常规关没有发现／拾取到对应投递的多步行为")
+	var two_step_indices: Array[int] = []
+	var collect_indices: Array[int] = []
+	for task_index in standard_field.tasks.size():
+		var generated_task: Dictionary = standard_field.tasks[task_index]
+		if (
+			String(generated_task.type) in standard_field.TWO_STEP_TYPES
+			and Vector2(generated_task.source_position) != Vector2(generated_task.position)
+		):
+			two_step_indices.append(task_index)
+		elif String(generated_task.type) == "collect":
+			collect_indices.append(task_index)
+	expect(not two_step_indices.is_empty(), "常规关没有发现／拾取到对应投递的多步行为")
+	expect(collect_indices.size() >= 2, "常规关缺少可验证单段三态的两处采集工作")
+
+	# Active is the only pulsing role. Inactive remains readable map context, while
+	# memory is a stronger static result rather than another actionable beacon.
+	var active_style: Dictionary = standard_field.task_marker_visual_style(
+		standard_field.TASK_ROLE_ACTIVE
+	)
+	var inactive_style: Dictionary = standard_field.task_marker_visual_style(
+		standard_field.TASK_ROLE_INACTIVE
+	)
+	var memory_style: Dictionary = standard_field.task_marker_visual_style(
+		standard_field.TASK_ROLE_MEMORY
+	)
+	expect(
+		bool(active_style.get("pulses", false))
+			and not bool(inactive_style.get("pulses", true))
+			and not bool(memory_style.get("pulses", true))
+			and float(active_style.get("art_alpha", 0.0))
+				> float(memory_style.get("art_alpha", 0.0))
+			and float(memory_style.get("art_alpha", 0.0))
+				> float(inactive_style.get("art_alpha", 1.0)),
+		"任务三态没有形成 active 动态强调、inactive 安静候选、memory 静态结果的层级"
+	)
+
+	if not two_step_indices.is_empty():
+		var role_task_index := two_step_indices[0]
+		var saved_role_task: Dictionary = standard_field.tasks[role_task_index].duplicate(true)
+		var saved_role_focus: int = standard_field.focus_task_index
+		var saved_role_carried: int = standard_field.carried_task_index
+		var saved_role_navigation: int = standard_field.navigation_task_index
+		standard_field.focus_task_index = role_task_index
+		standard_field.carried_task_index = -1
+		expect(
+			standard_field.task_marker_role(role_task_index, true)
+				== standard_field.TASK_ROLE_ACTIVE
+			and standard_field.task_marker_role(role_task_index, false)
+				== standard_field.TASK_ROLE_INACTIVE,
+			"两段任务拿取前没有只让 source 成为 active"
+		)
+		var carried_role_task: Dictionary = saved_role_task.duplicate(true)
+		carried_role_task.state = 1
+		standard_field.tasks[role_task_index] = carried_role_task
+		standard_field.focus_task_index = -1
+		standard_field.carried_task_index = role_task_index
+		expect(
+			standard_field.task_marker_role(role_task_index, true)
+				== standard_field.TASK_ROLE_MEMORY
+			and standard_field.task_marker_role(role_task_index, false)
+				== standard_field.TASK_ROLE_ACTIVE
+			and standard_field._navigation_target().is_equal_approx(
+				Vector2(carried_role_task.position)
+			),
+			"两段任务拿取后没有把 source 留作 memory，并把 active／导航转交给 destination"
+		)
+		var resolved_role_task: Dictionary = carried_role_task.duplicate(true)
+		resolved_role_task.resolved = true
+		resolved_role_task.state = 2
+		standard_field.tasks[role_task_index] = resolved_role_task
+		standard_field.carried_task_index = -1
+		standard_field.navigation_task_index = -1
+		expect(
+			standard_field.task_marker_role(role_task_index, true)
+				== standard_field.TASK_ROLE_MEMORY
+			and standard_field.task_marker_role(role_task_index, false)
+				== standard_field.TASK_ROLE_MEMORY
+			and not standard_field._task_is_navigation_candidate(role_task_index),
+			"两段任务完成后仍把 source 或 destination 当成可导航工作"
+		)
+		standard_field.tasks[role_task_index] = saved_role_task
+		standard_field.focus_task_index = saved_role_focus
+		standard_field.carried_task_index = saved_role_carried
+		standard_field.navigation_task_index = saved_role_navigation
+
+	if collect_indices.size() >= 2:
+		var single_role_index := collect_indices[0]
+		var other_single_index := collect_indices[1]
+		var saved_single_role_task: Dictionary = standard_field.tasks[single_role_index].duplicate(true)
+		var saved_single_bee_position: Vector2 = standard_field.bee.position
+		standard_field.bee.position = Vector2(saved_single_role_task.position)
+		standard_field.navigation_task_index = -1
+		expect(
+			standard_field.task_marker_role(single_role_index, false)
+				== standard_field.TASK_ROLE_ACTIVE
+			and standard_field.task_marker_role(other_single_index, false)
+				== standard_field.TASK_ROLE_INACTIVE,
+			"单段任务没有只把最近未完成项标成 active"
+		)
+		var resolved_single_role_task: Dictionary = saved_single_role_task.duplicate(true)
+		resolved_single_role_task.resolved = true
+		standard_field.tasks[single_role_index] = resolved_single_role_task
+		expect(
+			standard_field.task_marker_role(single_role_index, false)
+				== standard_field.TASK_ROLE_MEMORY,
+			"单段任务完成后没有转成静态 memory"
+		)
+		standard_field.tasks[single_role_index] = saved_single_role_task
+		standard_field.bee.position = saved_single_bee_position
+		standard_field.navigation_task_index = -1
+
+	# Cross a two-step source with a closer one-step target. The old action search
+	# preferred any source in range and could execute an inactive job. Now focus,
+	# button copy, navigation and the actual action all consume one active index.
+	if not two_step_indices.is_empty() and not collect_indices.is_empty():
+		var cross_tasks: Array[Dictionary] = standard_field.tasks.duplicate(true)
+		var cross_objective_counts: Array[int] = standard_field.objective_counts.duplicate()
+		var cross_collected: int = standard_field.collected_cargo
+		var cross_action_count: int = standard_field.action_count
+		var cross_message: String = standard_field.message
+		var cross_carried: int = standard_field.carried_task_index
+		var cross_focus: int = standard_field.focus_task_index
+		var cross_navigation: int = standard_field.navigation_task_index
+		var cross_bee_position: Vector2 = standard_field.bee.position
+		var cross_bee_velocity: Vector2 = standard_field.bee.velocity
+		var cross_bee_has_target: bool = standard_field.bee.has_target
+		var cross_bee_target: Vector2 = standard_field.bee.target
+		var cross_visual_load: float = standard_field.bee.visual_load_ratio
+		var cross_last_cue: String = sound.last_cue
+		var cross_last_asset_path: String = sound.last_asset_path
+		var cross_last_cue_used_asset: bool = sound.last_cue_used_asset
+		var cross_two_step_index := two_step_indices[0]
+		var cross_single_index := collect_indices[0]
+		var cross_origin: Vector2 = standard_field.playable_bounds.get_center()
+		for task_index in standard_field.tasks.size():
+			var moved_task: Dictionary = standard_field.tasks[task_index]
+			var far_position: Vector2 = cross_origin + Vector2(700.0 + task_index * 18.0, 360.0)
+			moved_task.position = far_position
+			moved_task.source_position = far_position
+			standard_field.tasks[task_index] = moved_task
+		var cross_two_step_task: Dictionary = standard_field.tasks[cross_two_step_index]
+		cross_two_step_task.resolved = false
+		cross_two_step_task.state = 0
+		cross_two_step_task.source_position = cross_origin + Vector2(80.0, 0.0)
+		cross_two_step_task.position = cross_origin + Vector2(480.0, 0.0)
+		standard_field.tasks[cross_two_step_index] = cross_two_step_task
+		var cross_single_task: Dictionary = standard_field.tasks[cross_single_index]
+		cross_single_task.resolved = false
+		cross_single_task.state = 0
+		cross_single_task.position = cross_origin + Vector2(40.0, 0.0)
+		cross_single_task.source_position = cross_single_task.position
+		standard_field.tasks[cross_single_index] = cross_single_task
+		standard_field.bee.position = cross_origin
+		standard_field.bee.has_target = false
+		standard_field.focus_task_index = -1
+		standard_field.carried_task_index = -1
+		standard_field.navigation_task_index = -1
+		standard_field.collected_cargo = 0
+		expect(
+			standard_field._active_standard_task_index() == cross_single_index
+			and standard_field.task_marker_role(cross_single_index, false)
+				== standard_field.TASK_ROLE_ACTIVE
+			and standard_field.task_marker_role(cross_two_step_index, true)
+				== standard_field.TASK_ROLE_INACTIVE
+			and standard_field._action_label() == "收进蜜囊"
+			and standard_field._navigation_target().is_equal_approx(
+				Vector2(cross_single_task.position)
+			),
+			"交叉任务的 active、按钮文案与导航没有指向同一个最近目标"
+		)
+		standard_field._handle_primary_action()
+		expect(
+			bool(standard_field.tasks[cross_single_index].resolved)
+				and int(standard_field.tasks[cross_two_step_index].state) == 0
+				and standard_field.carried_task_index < 0,
+			"按主动作仍让较远的 inactive source 抢走了较近 active 单段任务"
+		)
+
+		# The destination of an uncollected two-step job is context, not a shortcut.
+		standard_field.tasks = cross_tasks.duplicate(true)
+		for task_index in standard_field.tasks.size():
+			var moved_task: Dictionary = standard_field.tasks[task_index]
+			var far_position: Vector2 = cross_origin + Vector2(700.0 + task_index * 18.0, 360.0)
+			moved_task.position = far_position
+			moved_task.source_position = far_position
+			standard_field.tasks[task_index] = moved_task
+		cross_two_step_task = standard_field.tasks[cross_two_step_index]
+		cross_two_step_task.resolved = false
+		cross_two_step_task.state = 0
+		cross_two_step_task.source_position = cross_origin + Vector2(500.0, 0.0)
+		cross_two_step_task.position = cross_origin
+		standard_field.tasks[cross_two_step_index] = cross_two_step_task
+		standard_field.bee.position = cross_origin
+		standard_field.bee.has_target = false
+		standard_field.navigation_task_index = -1
+		standard_field._handle_primary_action()
+		expect(
+			int(standard_field.tasks[cross_two_step_index].state) == 0
+				and standard_field.carried_task_index < 0
+				and standard_field._navigation_target().is_equal_approx(
+					Vector2(cross_two_step_task.source_position)
+				)
+				and "取件花标" in standard_field.message,
+			"未拿取时站在 inactive destination 仍能跳过 source 推进任务"
+		)
+
+		# A 32px handover margin stops distant near-equal candidates flickering. Inside
+		# real action range, nearest always wins so the prop under the bee owns Space.
+		standard_field.tasks = cross_tasks.duplicate(true)
+		for task_index in standard_field.tasks.size():
+			var moved_task: Dictionary = standard_field.tasks[task_index]
+			var far_position: Vector2 = cross_origin + Vector2(700.0 + task_index * 18.0, 360.0)
+			moved_task.position = far_position
+			moved_task.source_position = far_position
+			standard_field.tasks[task_index] = moved_task
+		cross_two_step_task = standard_field.tasks[cross_two_step_index]
+		cross_two_step_task.resolved = false
+		cross_two_step_task.state = 0
+		cross_two_step_task.source_position = cross_origin + Vector2(160.0, 0.0)
+		standard_field.tasks[cross_two_step_index] = cross_two_step_task
+		cross_single_task = standard_field.tasks[cross_single_index]
+		cross_single_task.resolved = false
+		cross_single_task.position = cross_origin + Vector2(170.0, 0.0)
+		cross_single_task.source_position = cross_single_task.position
+		standard_field.tasks[cross_single_index] = cross_single_task
+		standard_field.bee.position = cross_origin
+		standard_field.navigation_task_index = cross_single_index
+		expect(
+			standard_field._active_standard_task_index() == cross_single_index,
+			"两个范围外目标近似等距时 active 焦点仍逐次跳动"
+		)
+		cross_two_step_task.source_position = cross_origin
+		cross_single_task.position = cross_origin + Vector2(31.0, 0.0)
+		cross_single_task.source_position = cross_single_task.position
+		standard_field.tasks[cross_two_step_index] = cross_two_step_task
+		standard_field.tasks[cross_single_index] = cross_single_task
+		expect(
+			standard_field._active_standard_task_index() == cross_two_step_index,
+			"站到另一候选上后，32px 余量仍让邻近旧任务抢走主动作"
+		)
+
+		standard_field.tasks = cross_tasks
+		standard_field.objective_counts = cross_objective_counts
+		standard_field.collected_cargo = cross_collected
+		standard_field.action_count = cross_action_count
+		standard_field.message = cross_message
+		standard_field.bee.position = cross_bee_position
+		standard_field.bee.velocity = cross_bee_velocity
+		standard_field.bee.has_target = cross_bee_has_target
+		standard_field.bee.target = cross_bee_target
+		standard_field.carried_task_index = cross_carried
+		standard_field.focus_task_index = cross_focus
+		standard_field.navigation_task_index = cross_navigation
+		standard_field._apply_standard_load_profile()
+		standard_field.bee.set_visual_load_ratio(cross_visual_load)
+		sound.last_cue = cross_last_cue
+		sound.last_asset_path = cross_last_asset_path
+		sound.last_cue_used_asset = cross_last_cue_used_asset
 	var first_collect_index := -1
 	for task_index in standard_field.tasks.size():
 		if String(standard_field.tasks[task_index].type) == "collect":
@@ -1059,6 +1312,102 @@ func run_test() -> void:
 	var emitted_payload: Dictionary = emitted_holder.payload
 	expect(bool(emitted_payload.get("returned_home", false)) and bool(emitted_payload.get("objectives_complete", false)), "常规关强制自测没有经过返巢完成合同")
 	standard_field.queue_free()
+	await process_frame
+
+	# Three seasonal climaxes still use authored phase tasks rather than the event
+	# matrix. Exercise a real summer_dashu field so unifying action/navigation focus
+	# cannot silently turn those chapters into maps with no actionable marker.
+	var dashu_state := progression_state_for("summer_dashu")
+	expect(dashu_state.next_segment_id() == "summer_dashu", "真实大暑进度 context 无法准备")
+	var dashu_level: Dictionary = dashu_state.catalog.level_by_id("summer_dashu")
+	var dashu_token: int = dashu_state.begin_level("summer_dashu")
+	var dashu_field = CampaignFieldScript.new()
+	expect(dashu_field.configure({
+		"campaign_mode": true,
+		"journey_token": dashu_token,
+		"level": dashu_level,
+		"run_mode": "progression",
+		"reserve": dashu_state.reserve,
+		"sortie_count": dashu_state.sortie_count,
+		"world_results": dashu_state.world_memory(),
+		"sound_feedback": sound,
+	}) == OK, "真实大暑 phase Field 无法配置")
+	root.add_child(dashu_field)
+	await process_frame
+	expect(
+		dashu_field.is_climax and not dashu_field.event_matrix_mode,
+		"大暑不再走需要 phase gate 的非事件矩阵高潮运行时"
+	)
+	var dashu_phase_zero_count := 0
+	var dashu_future_count := 0
+	for phase_task_index in dashu_field.tasks.size():
+		var dashu_task: Dictionary = dashu_field.tasks[phase_task_index]
+		if int(dashu_task.phase_index) == 0:
+			dashu_phase_zero_count += 1
+		else:
+			dashu_future_count += 1
+			expect(
+				not dashu_field._task_is_active(dashu_task)
+					and not dashu_field._task_is_navigation_candidate(phase_task_index),
+				"大暑未来 phase 被提前暴露为可绘制或可导航任务"
+			)
+	expect(
+		dashu_phase_zero_count == 3 and dashu_future_count == 6,
+		"大暑没有建立当前三项、未来六项的 3×3 阶段任务"
+	)
+	var dashu_initial_active: int = dashu_field._active_standard_task_index()
+	expect(
+		dashu_initial_active >= 0
+			and int(dashu_field.tasks[dashu_initial_active].phase_index) == 0
+			and dashu_field.task_marker_role(dashu_initial_active, false)
+				== dashu_field.TASK_ROLE_ACTIVE
+			and dashu_field._navigation_target().is_equal_approx(
+				Vector2(dashu_field.tasks[dashu_initial_active].position)
+			),
+		"大暑当前 phase 没有统一 active、角色与导航"
+	)
+	var dashu_phase_guard := 0
+	while dashu_field.phases_completed == 0 and dashu_phase_guard < dashu_phase_zero_count + 1:
+		dashu_phase_guard += 1
+		var dashu_active: int = dashu_field._active_standard_task_index()
+		expect(
+			dashu_active >= 0 and int(dashu_field.tasks[dashu_active].phase_index) == 0,
+			"大暑第一阶段完成前 active 越过了 phase gate"
+		)
+		if dashu_active < 0:
+			break
+		dashu_field.bee.position = Vector2(dashu_field.tasks[dashu_active].position)
+		dashu_field.bee.velocity = Vector2.ZERO
+		dashu_field.bee.has_target = false
+		dashu_field.navigation_task_index = -1
+		expect(dashu_field._action_label() == "停翅看清", "大暑当前观察点没有给出真实主动作")
+		dashu_field.request_primary_action()
+		expect(dashu_field.focus_task_index == dashu_active, "大暑主动作没有启动当前观察任务")
+		dashu_field._update_observation(dashu_field.OBSERVE_SECONDS + 0.01)
+	expect(
+		dashu_field.phases_completed == 1
+			and dashu_field.phase_intermission > 0.0
+			and dashu_phase_guard == dashu_phase_zero_count,
+		"大暑三个真实主动作完成后没有只推进到下一 phase"
+	)
+	var dashu_phase_one_active: int = dashu_field._active_standard_task_index()
+	expect(
+		dashu_phase_one_active >= 0
+			and int(dashu_field.tasks[dashu_phase_one_active].phase_index) == 1
+			and dashu_field._navigation_target().is_equal_approx(
+				dashu_field._standard_task_target_position(dashu_phase_one_active)
+			),
+		"大暑阶段交接后 active 与导航没有一起转到第二 phase"
+	)
+	for future_task_index in dashu_field.tasks.size():
+		var gated_task: Dictionary = dashu_field.tasks[future_task_index]
+		if int(gated_task.phase_index) == 2:
+			expect(
+				not dashu_field._task_is_active(gated_task)
+					and not dashu_field._task_is_navigation_candidate(future_task_index),
+				"大暑第三 phase 在第二 phase 开始时已提前参与绘制或导航"
+			)
+	dashu_field.queue_free()
 	await process_frame
 
 	# Rain Water's mandatory second event must remain completable from the exact
