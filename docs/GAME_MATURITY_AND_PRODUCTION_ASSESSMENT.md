@@ -77,7 +77,7 @@
 - 不用更多剧情、美术或目标数量掩盖核心动作不够好玩；
 - 不把自动测试、AI 模拟或 Alan 对旧版本的反馈改写成新切片通过。
 
-下一款产品的并行与资源边界只在未立项的 [`NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md`](NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md) 中提出，不属于本作已经批准的制作规格。
+`[Alan 直接担忧]` Alan 担心换方向后再开新坑，导致项目没完没了。对应的产品组合边界在 [`NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md`](NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md) 中以 `[专家启发式提案／需 Alan 确认]` 记录：建议把正在制作与暂停待恢复的产品合计上限设为 1；当前 Campaign 占用该名额，发售或明确取消并结项前不启动下一款。本文只摘要风险，不另立产品组合政策。
 
 ## 最终结论
 

@@ -184,7 +184,7 @@ npm run test
 
 ## 下一款产品探索（不属于当前 Campaign）
 
-[`docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md`](docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md) 记录“轻入口、窄核心、高组合、强反馈、高复玩”的下一款产品假设、建议范围上限和形成性玩家门槛。它当前是**需 Alan 确认、未立项的独立探索**，不修改、替代或暗中缩减本作的商业成品清单；若未来决定暂停当前产品或正式立项新产品，必须另行记录明确的产品组合决定。
+[`docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md`](docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md) 只在停车场保留“轻入口、窄核心、高组合、强反馈、高复玩”的未来方法。它**未立项、当前不执行**；“未完成产品库存上限为 1、暂停也占名额，只有本作发售或明确取消并结项后才可另行讨论下一款”是待 Alan 确认的防开坑提案，不是已经批准的政策。停车场不建下一款游戏仓库／实现分支、不写代码、不做资产、不排期。
 
 ## 当前验证问题
 
