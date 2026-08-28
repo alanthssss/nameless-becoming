@@ -166,7 +166,7 @@ npm run test
 4. [`docs/design/art-source-register.md`](docs/design/art-source-register.md)：**当前 21 张运行候选 PNG 与概念主视觉的来源、用途、切片、哈希、授权缺口和审批状态**；
 5. [`docs/design/ecology-and-apiculture-source-register.md`](docs/design/ecology-and-apiculture-source-register.md)：**蜂群生态与养蜂资料的逐页事实、现代复核状态、游戏转译与禁止误用登记**；用户提供的完整扫描本不进入仓库；
 6. [`marketing/README.md`](marketing/README.md)：开发者实机截图、生成式概念主视觉、文字标与商店尺寸候选的证据边界；全部仍未获发布批准；
-7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：7 款官方竞品快照、可验证差异、价格锚点和商业门槛；市场判断只算专家启发式；
+7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：7 款官方竞品快照、可验证差异、价格锚点、商业门槛，以及《小丑牌》方法用于当前 Campaign 的轻量参照附录；市场与方法判断只算专家启发式；
 8. [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) 与 [`docs/BUILD_MANIFEST.md`](docs/BUILD_MANIFEST.md)：当前发布门禁与构建事实；
 9. [`docs/PLAYTEST.md`](docs/PLAYTEST.md)：人工与外部玩家记录模板／记录；
 10. [`docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md)：整改、证据等级、执行矩阵和外测标准的历史执行主记录；
@@ -181,10 +181,6 @@ npm run test
 19. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 20. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
 21. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
-
-## 下一款产品探索（不属于当前 Campaign）
-
-[`docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md`](docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md) 只在停车场保留“轻入口、窄核心、高组合、强反馈、高复玩”的未来方法。它**未立项、当前不执行**；“未完成产品库存上限为 1、暂停也占名额，只有本作发售或明确取消并结项后才可另行讨论下一款”是待 Alan 确认的防开坑提案，不是已经批准的政策。停车场不建下一款游戏仓库／实现分支、不写代码、不做资产、不排期。
 
 ## 当前验证问题
 
