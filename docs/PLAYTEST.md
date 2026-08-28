@@ -108,7 +108,7 @@ npm run playtest:launch -- \
 
 当前外部玩家样本仍为 **0**。生成器、JSON、CI 或 Alan 的方向批准都不增加样本数。
 
-当前 `codex/commercial-gameplay-expansion` 工作树保留 24 关，并新增雨水／谷雨 30 事件、schema v3 整候检查点、紧凑 HUD、100 点体力、动作组合，以及谷雨／大暑／霜降／大寒四张高潮首通结果插画和按季节编排的结果音频。这些只属于实现事实／开发者自测候选：四张图均为 `AUTH-PENDING`／`ALAN-PENDING`／`PLAYER-PENDING`／`MKT-NO`，不等于四场正式大型事件玩法完成，也不证明“哇塞”或可售。**Alan 尚未试玩本轮候选**，也没有绑定本轮 clean artifact 的 participant／observer 记录；独立外部玩家有效样本仍为 **0**。扩产前 24 短关的直接反馈只能作为本轮问题来源，不能迁移为 30 事件、存档恢复、美术、音频或市场接受度通过。
+当前 `codex/systemic-campaign-regression` 工作树保留 24 关，并新增雨水／谷雨 30 事件、schema v3 整候检查点、紧凑 HUD、100 点体力、动作组合、跨章节系统合同，以及谷雨／大暑／霜降／大寒四张高潮首通结果插画和按季节编排的结果音频。这些只属于实现事实／开发者自测候选：四张图均为 `AUTH-PENDING`／`ALAN-PENDING`／`PLAYER-PENDING`／`MKT-NO`，不等于四场正式大型事件玩法完成，也不证明“哇塞”或可售。**Alan 尚未试玩本轮候选**，也没有绑定本轮 clean artifact 的 participant／observer 记录；独立外部玩家有效样本仍为 **0**。扩产前 24 短关的直接反馈只能作为本轮问题来源，不能迁移为 30 事件、存档恢复、美术、音频或市场接受度通过。
 
 首轮先收集 3–5 名陌生玩家的 A 包。B01 typed scene 与启动防护已实现；下一门禁是从最新 clean main 重建 artifact、创建全新 session／ticket、通过 `npm run playtest:launch` 核对 ready receipt，再完成 Alan participant／observer。旧错配 JSON 不能填补该门禁。人数也不是 1.0 的唯一门槛；至少还要分别关闭 Alan 完整人工流程、Windows 真机、音乐盲听、构建和发行链路。
 

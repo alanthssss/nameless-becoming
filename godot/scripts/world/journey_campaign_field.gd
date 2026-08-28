@@ -16,11 +16,15 @@ const INTERACTION_RADIUS := 92.0
 const OBSERVE_SECONDS := 1.15
 const CLIMAX_INTERMISSION := 1.8
 const CAMPAIGN_ENERGY_CAP := 100.0
+const CAMPAIGN_ENERGY_TUTORIAL_VERSION := 1
+const CAMPAIGN_ENERGY_TUTORIAL_TEXT := (
+	"普通飞行不耗体力；急转、逆风和重载会耗，形状放错最多扣 2。"
+	+ "低于 30 时停稳可回到 30，叶子休息点可回满。"
+)
 ## Campaign stamina is a local exertion budget, not permission to move.  Normal
 ## travel—including the automatic cruise-speed transition—is free because the
 ## player never explicitly asked to sprint.  Only visible wind, heavy cargo,
 ## urgent turns and mistakes spend the meter.
-const CAMPAIGN_CRUISE_DRAIN_SCALE := 0.0
 const CAMPAIGN_DASH_DRAIN_PER_SECOND := 0.0
 const CAMPAIGN_DASH_DELAY := 1.0
 const CAMPAIGN_EVADE_COST := 6.0
@@ -46,6 +50,18 @@ const EVENT_HEAVY_WIND_COST_SCALE := 1.25
 const EVENT_RHYTHM_PERIOD := 1.55
 const EVENT_RHYTHM_OPEN_SECONDS := 0.58
 const EVENT_WRONG_MATCH_ENERGY_COST := 2.0
+const OPTIONAL_SUPPORT_LABELS := {
+	"route_fixture": "沿路固定件",
+	"bloom_help": "花路补位",
+	"handoff_rhythm": "交接节拍",
+	"leaf_shelter": "叶棚歇脚点",
+	"route_mastery": "熟练路线记录",
+	"weather_read": "天气复读提示",
+	"inventory_order": "牌架整理顺序",
+	"spare_sign": "备用花牌",
+	"storm_support": "风雨近桩支援",
+	"neighbour_help": "邻居现场帮手",
+}
 const SEASON_BACKGROUNDS := {
 	"spring": "res://assets/art/commercial/spring_world_ground_v1.png",
 	"summer": "res://assets/art/commercial/summer_world_ground_v1.png",
@@ -123,6 +139,11 @@ var was_fatigued := false
 var energy_state := ""
 var energy_rule_taught := false
 var recovery_rule_taught := false
+var energy_feedback_hold := 0.0
+var tutorial_overlay_message := ""
+var tutorial_overlay_hold := 0.0
+var energy_rule_commit_pending := false
+var recovery_rule_commit_pending := false
 var touch_input_mode := false
 var event_matrix_mode := false
 var event_runtime: JourneyEventMatrixRuntime
@@ -151,6 +172,12 @@ func configure(context: Dictionary) -> Error:
 	if not raw_checkpoint is Dictionary:
 		return ERR_INVALID_DATA
 	event_checkpoint_data = (raw_checkpoint as Dictionary).duplicate(true)
+	var tutorial_version := maxi(
+		0,
+		int(context.get("campaign_energy_tutorial_version", 0))
+	)
+	energy_rule_taught = tutorial_version >= CAMPAIGN_ENERGY_TUTORIAL_VERSION
+	recovery_rule_taught = tutorial_version >= CAMPAIGN_ENERGY_TUTORIAL_VERSION
 	return super.configure(context)
 
 
@@ -164,7 +191,11 @@ func _ready() -> void:
 		# stopping restores a small action reserve, and marked rest points refill it.
 		bee.max_energy = CAMPAIGN_ENERGY_CAP
 		bee.energy = bee.max_energy
-		bee.configure(float(level.get("energy_drain", 0.82)) * CAMPAIGN_CRUISE_DRAIN_SCALE)
+		# The catalog's legacy energy_drain values belong to the retired prototype
+		# cruise model.  Do not multiply them by a magic zero: configure the campaign
+		# contract explicitly so a later balance edit cannot silently revive passive
+		# travel drain across all twenty-four chapters.
+		bee.configure(0.0)
 		bee.configure_energy_usage(
 			false,
 			CAMPAIGN_DASH_DRAIN_PER_SECOND,
@@ -182,7 +213,11 @@ func _ready() -> void:
 				0.0,
 				bee.max_energy
 			)
-			bee.energy = maxf(restored_energy, CAMPAIGN_BREATHER_CAP)
+			bee.energy = (
+				CAMPAIGN_BREATHER_CAP
+				if restored_energy == 0.0
+				else restored_energy
+			)
 			elapsed = maxf(0.0, float(event_checkpoint_data.get("elapsed_seconds", 0.0)))
 			action_count = maxi(0, int(event_checkpoint_data.get("actions", 0)))
 			message = "从第%d候继续。前面的花标还亮着，下一件就在眼前。" % (
@@ -420,7 +455,7 @@ func _rebuild_event_world_marks() -> void:
 			"choice_effect": String((outcomes.get(event_id, {}) as Dictionary).get("choice_effect", "")),
 		})
 		if String(event.get("mechanic", "")) == "escort_shelter":
-			rest_points.append(restored_position)
+			_append_event_rest_point(restored_position)
 
 
 func _restored_event_mark_position(event: Dictionary, choice: String) -> Vector2:
@@ -428,15 +463,76 @@ func _restored_event_mark_position(event: Dictionary, choice: String) -> Vector2
 		return home_position
 	var required := maxi(1, int(event.get("steps_required", 1)))
 	var mechanic := String(event.get("mechanic", ""))
-	if mechanic == "load_choice" and choice in ["swift", "steady"]:
-		required = 1 if choice == "swift" else 2
-	elif String(event.get("runtime_kind", "")) == JourneyEventMatrixRuntime.KIND_ROUTE_CHOICE and choice == "steady":
-		required += 1
+	var choice_options := event.get("choice_options", {}) as Dictionary
+	if choice in ["swift", "steady"] and choice_options.has(choice):
+		required = maxi(
+			1,
+			int((choice_options.get(choice, {}) as Dictionary).get("steps", required))
+		)
+	if (
+		String(event.get("id", "")) == "guyu_12_air_chase"
+		and event_runtime != null
+		and int(
+			(event_runtime.world_state.get("support_effects", {}) as Dictionary).get(
+				"spare_sign",
+				0
+			)
+		) > 0
+	):
+		required = maxi(1, required - 1)
 	var base_index := (int(event.get("order", 1)) * 3 + map_variant * 5) % task_positions.size()
+	var final_step := required - 1
+	if (
+		choice == "steady"
+		and (
+			mechanic in ["sequence_carry", "spatial_match", "convoy_anchor"]
+			or String(event.get("id", "")) == "guyu_12_air_chase"
+		)
+	):
+		# These routes are genuinely traversed in reverse. Their persistent mark
+		# belongs at the point the player actually finished, not at the un-reversed
+		# array's last element.
+		final_step = 0
 	var position_index := (
-		base_index + (required - 1) * 5 + int(event.get("pentad", 1)) * 2
+		base_index + final_step * 5 + int(event.get("pentad", 1)) * 2
 	) % task_positions.size()
 	return task_positions[position_index]
+
+
+func _append_rest_point_unique(position: Vector2) -> bool:
+	for existing in rest_points:
+		if existing.distance_to(position) <= 1.0:
+			return false
+	rest_points.append(position)
+	return true
+
+
+func _append_event_rest_point(position: Vector2) -> bool:
+	# Event rewards must add a real new recovery option. Some authored event
+	# landmarks deliberately share a task coordinate with an existing leaf rest;
+	# in that case place the new grass-stem rest beside the landmark instead of
+	# silently turning the promised world change into a no-op.
+	if _append_rest_point_unique(position):
+		return true
+	for offset in [
+		Vector2(142.0, -88.0), Vector2(-142.0, -88.0),
+		Vector2(142.0, 88.0), Vector2(-142.0, 88.0),
+	]:
+		var candidate := Vector2(
+			clampf(
+				position.x + offset.x,
+				playable_bounds.position.x + TASK_MARKER_SAFE_EXTENT,
+				_hud_safe_world_right(TASK_MARKER_SAFE_EXTENT)
+			),
+			clampf(
+				position.y + offset.y,
+				playable_bounds.position.y + TASK_MARKER_SAFE_EXTENT,
+				playable_bounds.end.y - TASK_MARKER_SAFE_EXTENT
+			)
+		)
+		if _append_rest_point_unique(candidate):
+			return true
+	return false
 
 
 func _prepare_current_event() -> void:
@@ -448,6 +544,8 @@ func _prepare_current_event() -> void:
 	event_observe_time = 0.0
 	event_anchor_hits = 0
 	if bee != null:
+		bee.has_target = false
+		bee.velocity = Vector2.ZERO
 		bee.set_load_movement_profile()
 	if event_runtime == null or event_runtime.is_finished():
 		phases_completed = 3 if is_climax else 0
@@ -649,6 +747,10 @@ func _task(
 func _process_chapter(delta: float) -> void:
 	if failed:
 		return
+	tutorial_overlay_hold = maxf(0.0, tutorial_overlay_hold - maxf(0.0, delta))
+	if tutorial_overlay_hold <= 0.0:
+		tutorial_overlay_message = ""
+	energy_feedback_hold = maxf(0.0, energy_feedback_hold - maxf(0.0, delta))
 	weather_window_elapsed += maxf(0.0, delta)
 	if weather_window_elapsed >= time_limit_seconds:
 		_fail_attempt("这趟的天气窗口合上了。回巢理一理路线，再飞一次就好。")
@@ -656,19 +758,14 @@ func _process_chapter(delta: float) -> void:
 	hazard_active = fmod(elapsed + float(map_variant) * 0.73, 8.5) < (2.2 if not is_climax else 3.1)
 	var sheltered := _is_sheltered(bee.position)
 	var moving := bee.velocity.length() > 28.0
-	energy_state = ""
+	var discrete_energy_feedback_held := (
+		energy_feedback_hold > 0.0 and not energy_state.is_empty()
+	)
+	if not discrete_energy_feedback_held:
+		energy_state = ""
 	var event_hazard_scale := event_runtime.hazard_scale() if event_matrix_mode and event_runtime != null else 1.0
-	var heavy_load_active := (
-		event_matrix_mode
-		and event_runtime != null
-		and event_carrying
-		and event_runtime.uses_heavy_load()
-	)
-	var heavy_wind_scale := (
-		EVENT_HEAVY_WIND_COST_SCALE
-		if heavy_load_active
-		else 1.0
-	)
+	var heavy_load_ratio := _campaign_heavy_load_ratio()
+	var heavy_wind_scale := lerpf(1.0, EVENT_HEAVY_WIND_COST_SCALE, heavy_load_ratio)
 	if hazard_active and _in_hazard_band(bee.position) and not sheltered:
 		var raw_speed_multiplier := 0.70 if not is_climax else 0.61
 		bee.environment_speed_multiplier = lerpf(1.0, raw_speed_multiplier, event_hazard_scale)
@@ -681,12 +778,17 @@ func _process_chapter(delta: float) -> void:
 					else CAMPAIGN_CLIMAX_WIND_DRAIN_PER_SECOND
 				) * event_hazard_scale * heavy_wind_scale
 			)
-			energy_state = "逆风"
+			if not discrete_energy_feedback_held:
+				energy_state = "逆风"
 	else:
 		bee.environment_speed_multiplier = 1.0
-	if heavy_load_active and moving:
-		bee.energy = maxf(0.0, bee.energy - CAMPAIGN_HEAVY_DRAIN_PER_SECOND * delta)
-		energy_state = "逆风＋重载" if energy_state == "逆风" else "重载"
+	if heavy_load_ratio > 0.0 and moving:
+		bee.energy = maxf(
+			0.0,
+			bee.energy - CAMPAIGN_HEAVY_DRAIN_PER_SECOND * heavy_load_ratio * delta
+		)
+		if not discrete_energy_feedback_held:
+			energy_state = "逆风＋重载" if energy_state == "逆风" else "重载"
 	_teach_energy_cost_if_needed()
 	_update_campaign_recovery(delta)
 	var fatigued := bee.energy <= 0.01
@@ -695,8 +797,8 @@ func _process_chapter(delta: float) -> void:
 			bee.environment_speed_multiplier,
 			CAMPAIGN_FATIGUED_SPEED_SCALE
 		)
-		if not was_fatigued:
-			message = "翅膀累了，但基础飞行和主线动作仍可用；停稳片刻会回气。"
+		if not was_fatigued and energy_feedback_hold <= 0.0:
+			message = "翅膀累了，但基础飞行和主线动作仍可用；停稳片刻会回到 30。"
 	was_fatigued = fatigued
 	if event_matrix_mode:
 		_process_event_matrix(delta)
@@ -716,11 +818,98 @@ func _process_chapter(delta: float) -> void:
 		message = "活儿收好了。沿花标回主巢，接货蜂正在门边等你。"
 
 
-func _teach_energy_cost_if_needed() -> void:
-	if level_id != "spring_yushui" or energy_rule_taught or energy_state.is_empty():
+func _campaign_heavy_load_ratio() -> float:
+	if (
+		event_matrix_mode
+		and event_runtime != null
+		and event_carrying
+		and event_runtime.uses_heavy_load()
+	):
+		return 1.0
+	if String(level.get("scenario_id", "")) == "heavy_pouch":
+		return clampf(float(collected_cargo) / float(CARGO_CAPACITY), 0.0, 1.0)
+	return 0.0
+
+
+func _apply_standard_load_profile() -> void:
+	if bee == null:
 		return
-	energy_rule_taught = true
-	message = "体力只会用在急转、逆风和重载上；普通飞行不消耗，停稳会回气。"
+	var ratio := (
+		clampf(float(collected_cargo) / float(CARGO_CAPACITY), 0.0, 1.0)
+		if String(level.get("scenario_id", "")) == "heavy_pouch"
+		else 0.0
+	)
+	bee.set_visual_load_ratio(float(collected_cargo) / float(CARGO_CAPACITY))
+	bee.set_load_movement_profile(
+		lerpf(1.0, EVENT_HEAVY_SPEED_SCALE, ratio),
+		lerpf(1.0, EVENT_HEAVY_ACCELERATION_SCALE, ratio),
+		lerpf(1.0, EVENT_HEAVY_DASH_COST_SCALE, ratio)
+	)
+
+
+func _teach_energy_cost_if_needed() -> void:
+	if (
+		energy_rule_taught
+		or energy_rule_commit_pending
+		or energy_state.is_empty()
+	):
+		return
+	_queue_energy_tutorial()
+
+
+func _queue_energy_tutorial() -> void:
+	if (
+		(energy_rule_taught and recovery_rule_taught)
+		or (energy_rule_commit_pending and recovery_rule_commit_pending)
+	):
+		return
+	tutorial_overlay_message = CAMPAIGN_ENERGY_TUTORIAL_TEXT
+	tutorial_overlay_hold = 4.8
+	energy_rule_commit_pending = true
+	recovery_rule_commit_pending = true
+
+
+func _clear_tutorial_overlay() -> void:
+	tutorial_overlay_message = ""
+	tutorial_overlay_hold = 0.0
+	energy_rule_commit_pending = false
+	recovery_rule_commit_pending = false
+
+
+func _base_snapshot() -> Dictionary:
+	var snapshot := super._base_snapshot()
+	var tutorial_delivering := (
+		tutorial_overlay_hold > 0.0
+		and not tutorial_overlay_message.is_empty()
+		and not failed
+		and not completion_emitted
+	)
+	if tutorial_delivering:
+		snapshot["message"] = tutorial_overlay_message
+	snapshot["energy_rule_taught"] = energy_rule_taught
+	snapshot["recovery_rule_taught"] = recovery_rule_taught
+	snapshot["energy_tutorial_delivery_version"] = (
+		CAMPAIGN_ENERGY_TUTORIAL_VERSION
+		if tutorial_delivering and energy_rule_taught and recovery_rule_taught
+		else 0
+	)
+	snapshot["energy_tutorial_delivery_text"] = (
+		tutorial_overlay_message if tutorial_delivering else ""
+	)
+	return snapshot
+
+
+func _emit_status() -> void:
+	# Product help memory advances only on the exact status emission that carries
+	# the rule. Event progress may rewrite `message` in the same frame, but the
+	# overlay keeps the actually delivered snapshot authoritative.
+	if energy_rule_commit_pending:
+		energy_rule_taught = true
+	if recovery_rule_commit_pending:
+		recovery_rule_taught = true
+	super._emit_status()
+	energy_rule_commit_pending = false
+	recovery_rule_commit_pending = false
 
 
 func _update_campaign_recovery(delta: float) -> void:
@@ -730,13 +919,17 @@ func _update_campaign_recovery(delta: float) -> void:
 		if bee.position.distance_to(rest_point) <= 105.0 and stopped_for_rest:
 			resting = true
 			bee.energy = minf(bee.max_energy, bee.energy + CAMPAIGN_REST_RECOVERY_PER_SECOND * delta)
-			energy_state = "休息点 · 快速回满"
+			if energy_feedback_hold <= 0.0:
+				energy_state = "休息点 · 快速回满"
 			break
 	if resting:
 		breather_elapsed = 0.0
-		if level_id == "spring_yushui" and not recovery_rule_taught:
-			recovery_rule_taught = true
-			message = "这里是休息点：停在叶子标记里会更快回满；其他地方停稳也能回气。"
+		if (
+			not recovery_rule_taught
+			and not recovery_rule_commit_pending
+			and energy_feedback_hold <= 0.0
+		):
+			_queue_energy_tutorial()
 		return
 	var can_catch_breath := (
 		bee.velocity.length() <= 28.0
@@ -756,10 +949,14 @@ func _update_campaign_recovery(delta: float) -> void:
 			CAMPAIGN_BREATHER_CAP,
 			bee.energy + CAMPAIGN_BREATHER_RECOVERY_PER_SECOND * recovery_seconds
 		)
-		energy_state = "停稳回气"
-		if level_id == "spring_yushui" and not recovery_rule_taught:
-			recovery_rule_taught = true
-			message = "停稳正在回气；回到 30 就会停。地图上的休息点可以继续回满。"
+		if energy_feedback_hold <= 0.0:
+			energy_state = "停稳回气"
+		if (
+			not recovery_rule_taught
+			and not recovery_rule_commit_pending
+			and energy_feedback_hold <= 0.0
+		):
+			_queue_energy_tutorial()
 
 
 func _process_event_matrix(delta: float) -> void:
@@ -861,16 +1058,30 @@ func _handle_primary_action() -> void:
 	if event_matrix_mode:
 		_handle_event_primary_action()
 		return
+	if focus_task_index >= 0:
+		# The HUD disables the action while a timed observation is in progress.
+		# Keyboard/gamepad input must obey the same modal contract as the button;
+		# otherwise Space can advance a different nearby job behind the observation.
+		bee.has_target = false
+		message = "正在观察。继续停稳，不用重复按键。"
+		return
 	if carried_task_index >= 0:
 		var carried_task := tasks[carried_task_index]
 		if bee.position.distance_to(Vector2(carried_task.position)) <= INTERACTION_RADIUS:
 			_resolve_task(carried_task_index, _delivery_message(String(carried_task.type)), _cue_for_type(String(carried_task.type)))
 			carried_task_index = -1
-			bee.set_visual_load_ratio(float(collected_cargo) / float(CARGO_CAPACITY))
+			_apply_standard_load_profile()
 			if is_climax and _active_phase_tasks_complete() and collected_cargo == 0:
 				_complete_current_phase()
 		else:
-			message = "这件还在身上。发亮的对应工位在另一头，先送稳再接下一件。"
+			bee.set_move_target(Vector2(carried_task.position))
+			bee.trigger_sense()
+			message = "这件还在身上。已经标出对应工位，沿亮路送过去。"
+		return
+	if collected_cargo >= CARGO_CAPACITY:
+		bee.set_move_target(home_position)
+		bee.trigger_sense()
+		message = "蜜囊已经装满。沿亮路回主巢卸货，再继续这一项。"
 		return
 	var source_index := _nearest_source_task()
 	if source_index >= 0:
@@ -878,12 +1089,20 @@ func _handle_primary_action() -> void:
 		return
 	var target_index := _nearest_target_task()
 	if target_index < 0:
+		if collected_cargo > 0:
+			bee.set_move_target(home_position)
+			bee.trigger_sense()
+			message = "这一批已经收齐。把蜜囊送回主巢，接货蜂会逐份接走。"
+			return
 		bee.trigger_sense()
 		message = "附近没有正等着处理的活。波纹会指出当前路线。"
 		return
 	var task := tasks[target_index]
 	match String(task.type):
 		"observe":
+			if focus_task_index == target_index:
+				message = "正在观察。继续停稳，不用重复按键。"
+				return
 			focus_task_index = target_index
 			focus_time = 0.0
 			bee.has_target = false
@@ -894,7 +1113,7 @@ func _handle_primary_action() -> void:
 			else:
 				collected_cargo += 1
 				_resolve_task(target_index, "收好一份，蜜囊 %d / %d。" % [collected_cargo, CARGO_CAPACITY], "harvest")
-				bee.set_visual_load_ratio(float(collected_cargo) / float(CARGO_CAPACITY))
+				_apply_standard_load_profile()
 		"repair", "shell", "anchor":
 			_step_task(target_index)
 		"frighten":
@@ -909,8 +1128,9 @@ func _handle_event_primary_action() -> void:
 		message = "花路已经收齐，回主巢完成最后交接。"
 		return
 	if event_runtime.optional_pending():
-		event_runtime.accept_optional()
-		message = "好呀，这件小事也一起做。完成后会有同伴支援，并恢复一点体力。"
+		if not event_runtime.accept_optional():
+			return
+		message = _event_acceptance_message()
 		if sound != null:
 			sound.play_cue("relay")
 		return
@@ -921,6 +1141,9 @@ func _handle_event_primary_action() -> void:
 	var target := _event_interaction_target()
 	match kind:
 		JourneyEventMatrixRuntime.KIND_OBSERVATION:
+			if event_observing:
+				message = "正在观察。继续停稳，不用重复按键。"
+				return
 			if bee.position.distance_to(target) > EVENT_INTERACTION_RADIUS:
 				_point_to_event_target("先飞进黄色圆圈，再停下来观察。")
 				return
@@ -957,6 +1180,34 @@ func _handle_event_primary_action() -> void:
 			_handle_event_step_result(event_runtime.record_step(kind), target)
 		JourneyEventMatrixRuntime.KIND_CONVOY:
 			_handle_event_convoy(target)
+
+
+func _event_acceptance_message() -> String:
+	if event_runtime == null or event_runtime.is_finished():
+		return "这件自选小事已经不在当前路线里。"
+	var mechanic := event_runtime.current_mechanic()
+	var reward := float(
+		JourneyEventMatrixRuntime.OPTIONAL_ENERGY_REWARDS.get(mechanic, 4.0)
+	)
+	var support_effect := String(
+		JourneyEventMatrixRuntime.OPTIONAL_SUPPORT_EFFECTS.get(mechanic, "neighbour_help")
+	)
+	var support_label := String(
+		OPTIONAL_SUPPORT_LABELS.get(support_effect, OPTIONAL_SUPPORT_LABELS["neighbour_help"])
+	)
+	var exit_instruction := (
+		"先用空格／Q 选路线；选好后仍可按 Q 放下。"
+		if event_runtime.choice_pending()
+		else "途中可按 Q 放下。"
+	)
+	return (
+		"接下这件自选小事。现场支援：%s；完成后体力恢复 %s 点。%s"
+		% [support_label, _format_energy_amount(reward), exit_instruction]
+	)
+
+
+func _format_energy_amount(value: float) -> String:
+	return str(roundi(value)) if is_equal_approx(value, float(roundi(value))) else "%.1f" % value
 
 
 func _handle_event_cargo(target: Vector2) -> void:
@@ -1007,12 +1258,24 @@ func _handle_event_moving_match(target: Vector2) -> void:
 			message = "移动工位亮着%s。先从三块牌里认出同形的一块。" % _event_shape_name(required_shape)
 			return
 		if source_index != required_shape:
+			var energy_before := bee.energy
 			bee.energy = maxf(0.0, bee.energy - EVENT_WRONG_MATCH_ENERGY_COST)
-			message = "这块是%s，工位要的是%s。放回去再看一眼；体力 -%d。" % [
-				_event_shape_name(source_index),
-				_event_shape_name(required_shape),
-				roundi(EVENT_WRONG_MATCH_ENERGY_COST),
-			]
+			var actual_cost := energy_before - bee.energy
+			if actual_cost > 0.0:
+				energy_state = "误配 -%s" % _format_energy_amount(actual_cost)
+				message = "这块是%s，工位要的是%s。放回去再看一眼；体力 -%s。" % [
+					_event_shape_name(source_index),
+					_event_shape_name(required_shape),
+					_format_energy_amount(actual_cost),
+				]
+			else:
+				energy_state = "误配 · 未再扣体力"
+				message = "这块是%s，工位要的是%s。体力已经见底，这次不再扣；放回去再看一眼。" % [
+					_event_shape_name(source_index),
+					_event_shape_name(required_shape),
+				]
+			energy_feedback_hold = 1.4
+			_teach_energy_cost_if_needed()
 			bee.trigger_sense()
 			if sound != null:
 				sound.play_cue("sense")
@@ -1191,6 +1454,7 @@ func _select_event_route(choice: String) -> void:
 	var selected_label := event_runtime.choice_label(choice)
 	match event_runtime.current_mechanic():
 		"load_choice":
+			event_carrying = true
 			if choice == "swift":
 				bee.set_visual_load_ratio(0.88)
 				bee.set_load_movement_profile(
@@ -1248,16 +1512,14 @@ func _handle_event_step_result(result: Dictionary, completed_at: Vector2) -> voi
 	if not chosen_route.is_empty():
 		var choice_options := completed_event.get("choice_options", {}) as Dictionary
 		chosen_label = String((choice_options.get(chosen_route, {}) as Dictionary).get("label", ""))
+	# Persist a stable event landmark rather than the instantaneous position of a
+	# moving target. The same authored route endpoint is reconstructed after a
+	# whole-pentad reload, so completed marks and rest rewards never jump on load.
+	var mark_position := _restored_event_mark_position(completed_event, chosen_route)
 	if String(completed_event.get("mechanic", "")) == "escort_shelter":
-		var already_has_rest := false
-		for rest_point in rest_points:
-			if rest_point.distance_to(completed_at) < 8.0:
-				already_has_rest = true
-				break
-		if not already_has_rest:
-			rest_points.append(completed_at)
+		_append_event_rest_point(mark_position)
 	event_world_marks.append({
-		"position": completed_at,
+		"position": mark_position,
 		"kind": String(completed_event.get("runtime_kind", "observation")),
 		"mechanic": String(completed_event.get("mechanic", "")),
 		"optional": bool(completed_event.get("optional", false)),
@@ -1268,9 +1530,14 @@ func _handle_event_step_result(result: Dictionary, completed_at: Vector2) -> voi
 	var reward := float(result.get("energy_reward", 0.0))
 	var completion_summary := ""
 	if reward > 0.0:
+		var energy_before_reward := bee.energy
 		bee.energy = minf(bee.max_energy, bee.energy + reward)
-		completion_summary = "小事也收好了：体力 +%d。%s" % [
-			roundi(reward), _short_event_consequence(String(completed_event.get("consequence", "")))
+		var actual_reward := bee.energy - energy_before_reward
+		energy_state = "自选奖励 +%s" % _format_energy_amount(actual_reward)
+		energy_feedback_hold = 1.4
+		completion_summary = "小事也收好了：体力实际恢复 %s 点。%s" % [
+			_format_energy_amount(actual_reward),
+			_short_event_consequence(String(completed_event.get("consequence", "")))
 		]
 	else:
 		completion_summary = "%s：%s" % [
@@ -1298,7 +1565,7 @@ func _short_event_consequence(consequence: String) -> String:
 
 
 func _emit_event_checkpoint_if_ready() -> void:
-	if run_mode != "progression" or event_runtime == null or bee == null:
+	if event_runtime == null or bee == null:
 		return
 	var checkpoint := event_runtime.checkpoint_snapshot()
 	if checkpoint.is_empty():
@@ -1308,11 +1575,13 @@ func _emit_event_checkpoint_if_ready() -> void:
 	# instead of inheriting a nearly empty meter from an old checkpoint.
 	bee.energy = bee.max_energy
 	energy_state = "换班 · 体力回满"
-	checkpoint["level_id"] = level_id
-	checkpoint["energy"] = bee.max_energy
-	checkpoint["elapsed_seconds"] = maxf(0.0, elapsed)
-	checkpoint["actions"] = maxi(0, action_count)
-	event_checkpoint_reached.emit(checkpoint.duplicate(true))
+	energy_feedback_hold = maxf(energy_feedback_hold, 1.4)
+	if run_mode == "progression":
+		checkpoint["level_id"] = level_id
+		checkpoint["energy"] = bee.max_energy
+		checkpoint["elapsed_seconds"] = maxf(0.0, elapsed)
+		checkpoint["actions"] = maxi(0, action_count)
+		event_checkpoint_reached.emit(checkpoint.duplicate(true))
 	# A whole-pentad checkpoint is also a fresh weather sortie. Keep cumulative
 	# elapsed time for result records, but never restore the player one frame away
 	# from an unavoidable timeout.
@@ -1417,7 +1686,57 @@ func _complete_current_phase() -> void:
 
 
 func _task_is_active(task: Dictionary) -> bool:
-	return not is_climax or int(task.phase_index) == phases_completed
+	if is_climax:
+		return int(task.phase_index) == phases_completed
+	# Standard chapters are deliberately non-linear: every visible unfinished job
+	# is a real job.  The HUD follows the player's nearest/current job instead of
+	# silently disabling other markers until an arbitrary list order is complete.
+	return true
+
+
+func _active_objective_index() -> int:
+	if is_climax or event_matrix_mode:
+		return -1
+	if carried_task_index >= 0 and carried_task_index < tasks.size():
+		return int((tasks[carried_task_index] as Dictionary).get("objective_index", -1))
+	if focus_task_index >= 0 and focus_task_index < tasks.size():
+		return int((tasks[focus_task_index] as Dictionary).get("objective_index", -1))
+	if collected_cargo >= CARGO_CAPACITY:
+		for task in tasks:
+			if String(task.get("type", "")) == "collect" and not bool(task.get("credited", false)):
+				return int(task.get("objective_index", -1))
+	var active_task_index := _active_standard_task_index()
+	if active_task_index >= 0:
+		return int((tasks[active_task_index] as Dictionary).get("objective_index", -1))
+	for index in objective_goals.size():
+		if objective_counts[index] < objective_goals[index]:
+			return index
+	return -1
+
+
+func _active_standard_task_index() -> int:
+	if event_matrix_mode or is_climax or bee == null:
+		return -1
+	if carried_task_index >= 0 and carried_task_index < tasks.size():
+		return carried_task_index
+	if focus_task_index >= 0 and focus_task_index < tasks.size():
+		return focus_task_index
+	if collected_cargo >= CARGO_CAPACITY:
+		return -1
+	var nearest := -1
+	var nearest_distance := INF
+	for index in tasks.size():
+		var task := tasks[index]
+		if bool(task.resolved) or not _task_is_active(task):
+			continue
+		var target_position := Vector2(task.position)
+		if String(task.type) in TWO_STEP_TYPES and int(task.state) == 0:
+			target_position = Vector2(task.source_position)
+		var distance := bee.position.distance_to(target_position)
+		if distance < nearest_distance:
+			nearest = index
+			nearest_distance = distance
+	return nearest
 
 
 func _active_phase_tasks_complete() -> bool:
@@ -1463,7 +1782,9 @@ func _deposit_collected_cargo() -> void:
 	delivered_cargo += deposited_now
 	message = "接货蜂把 %d 份逐个接进巢里。蜜囊空出来了，可以再走一趟。" % deposited_now
 	collected_cargo = 0
-	bee.set_visual_load_ratio(0.0 if carried_task_index < 0 else 0.72)
+	_apply_standard_load_profile()
+	if carried_task_index >= 0:
+		bee.set_visual_load_ratio(0.72)
 	if sound != null:
 		sound.play_cue("handoff")
 	if is_climax and _active_phase_tasks_complete() and carried_task_index < 0:
@@ -1473,6 +1794,7 @@ func _deposit_collected_cargo() -> void:
 func _finish_level() -> void:
 	if completion_emitted:
 		return
+	_clear_tutorial_overlay()
 	message = String(level.get("dialogue", "接货蜂：回来啦，这一趟收得很稳。"))
 	var completion_payload := {
 		"level_id": level_id,
@@ -1501,6 +1823,7 @@ func _finish_level() -> void:
 func _fail_attempt(reason: String) -> void:
 	if failed or completion_emitted:
 		return
+	_clear_tutorial_overlay()
 	failed = true
 	completion_emitted = true
 	bee.active = false
@@ -1519,6 +1842,13 @@ func _handle_secondary_action() -> void:
 			return
 		if event_runtime.choice_pending():
 			_select_event_route("steady")
+			return
+		if event_runtime.optional_accepted():
+			var abandoned := event_runtime.skip_optional()
+			if bool(abandoned.get("accepted", false)):
+				_prepare_current_event()
+				_emit_event_checkpoint_if_ready()
+				message = "已经放下这件自选小事，不影响本候主线。%s" % message
 			return
 	bee.set_move_target(home_position)
 	message = "沿亮着的巢门回去。身上的东西和蜜囊都会跟你一起走。"
@@ -1553,7 +1883,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	var world_position := get_canvas_transform().affine_inverse() * screen_position
-	bee.allow_exhausted_evade = _mandatory_evade_assist_available()
+	var world_attempt_origin := bee.position
+	if evade_input_controller.world_tap_time > 0.0:
+		world_attempt_origin = evade_input_controller.world_tap_origin
+	bee.allow_exhausted_evade = _mandatory_evade_assist_available(world_attempt_origin)
 	var tap_result: Dictionary = evade_input_controller.handle_world_tap(
 		world_position,
 		Time.get_ticks_msec() * 0.001,
@@ -1599,7 +1932,12 @@ func _handle_joy_direction_edge(event: InputEventJoypadMotion) -> void:
 
 
 func _register_evade_direction_tap(direction_key: String) -> void:
-	bee.allow_exhausted_evade = _mandatory_evade_assist_available()
+	var direction_attempt_origin := bee.position
+	if float(evade_input_controller.direction_tap_times.get(direction_key, 0.0)) > 0.0:
+		direction_attempt_origin = Vector2(
+			evade_input_controller.direction_tap_origins.get(direction_key, bee.position)
+		)
+	bee.allow_exhausted_evade = _mandatory_evade_assist_available(direction_attempt_origin)
 	var result: Dictionary = evade_input_controller.register_direction_tap(
 		direction_key,
 		Vector2(EvadeInputControllerScript.DIRECTION_VECTORS[direction_key]),
@@ -1629,13 +1967,20 @@ func _attempt_event_evade() -> void:
 	})
 
 
-func _mandatory_evade_assist_available() -> bool:
+func _effective_evade_energy_cost() -> float:
+	return bee.current_evade_energy_cost() if bee != null else CAMPAIGN_EVADE_COST
+
+
+func _mandatory_evade_assist_available(at_position = null) -> bool:
+	var attempt_position := bee.position if bee != null else Vector2.ZERO
+	if at_position != null:
+		attempt_position = Vector2(at_position)
 	if (
 		event_runtime == null
 		or event_runtime.is_finished()
 		or bee == null
 		or bool(event_runtime.current_event().get("optional", false))
-		or bee.position.distance_to(_event_interaction_target()) > EVENT_INTERACTION_RADIUS * 1.25
+		or attempt_position.distance_to(_event_interaction_target()) > EVENT_INTERACTION_RADIUS * 1.25
 	):
 		return false
 	return (
@@ -1652,20 +1997,16 @@ func _mandatory_evade_assist_available() -> bool:
 
 func _play_evade_result(result: Dictionary) -> void:
 	if bool(result.get("evade_started", false)):
-		var evade_feedback := ""
-		if level_id == "spring_yushui" and not energy_rule_taught:
-			energy_rule_taught = true
-			evade_feedback = (
-				"急转平时消耗 %d 点；普通飞行不消耗，停稳回气。本次体力见底也已通过。" % roundi(bee.evade_energy_cost)
-				if bee.last_evade_was_assisted
-				else "急转消耗 %d 点；普通飞行不消耗，停稳回气。" % roundi(bee.evade_energy_cost)
-			)
-		else:
-			evade_feedback = (
-				"体力见底也穿过去了；这次急转会短一些，停稳就能回气。"
-				if bee.last_evade_was_assisted
-				else "穿过去了！急转消耗 %d 点体力。" % roundi(bee.evade_energy_cost)
-			)
+		var actual_cost := bee.last_evade_energy_spent
+		var attempt_origin := Vector2(result.get("origin", bee.position))
+		var needs_energy_tutorial := not energy_rule_taught and not energy_rule_commit_pending
+		energy_state = "急转 -%s" % _format_energy_amount(actual_cost)
+		energy_feedback_hold = 1.4
+		var evade_feedback := (
+			"体力见底也穿过去了；本次实际消耗 %s 点，停稳就能回到 30。" % _format_energy_amount(actual_cost)
+			if bee.last_evade_was_assisted
+			else "穿过去了！急转消耗 %s 点体力。" % _format_energy_amount(actual_cost)
+		)
 		message = evade_feedback
 		if sound != null:
 			sound.play_cue("evade")
@@ -1678,14 +2019,14 @@ func _play_evade_result(result: Dictionary) -> void:
 				event_runtime.current_kind() == JourneyEventMatrixRuntime.KIND_ROUTE
 				and event_runtime.requires_evade()
 			):
-				if bee.position.distance_to(_event_interaction_target()) <= EVENT_INTERACTION_RADIUS * 1.25:
+				if attempt_origin.distance_to(_event_interaction_target()) <= EVENT_INTERACTION_RADIUS * 1.25:
 					event_runtime.note_evade()
 					_advance_event_step(JourneyEventMatrixRuntime.KIND_ROUTE)
 			elif (
 				event_runtime.current_kind() == JourneyEventMatrixRuntime.KIND_CONVOY
 				and _convoy_stage_requires_evade()
 			):
-				if bee.position.distance_to(_event_interaction_target()) <= EVENT_INTERACTION_RADIUS * 1.25:
+				if attempt_origin.distance_to(_event_interaction_target()) <= EVENT_INTERACTION_RADIUS * 1.25:
 					event_runtime.note_evade()
 					_handle_event_convoy(_event_interaction_target())
 		# Event progress writes its own useful "1/3" feedback. Keep the stamina
@@ -1693,9 +2034,11 @@ func _play_evade_result(result: Dictionary) -> void:
 		# rule at the exact moment the player first pays for it.
 		if message != evade_feedback:
 			message = "%s %s" % [message, evade_feedback]
+		if needs_energy_tutorial:
+			_queue_energy_tutorial()
 	elif bool(result.get("evade_attempted", false)):
-		if bee.energy < bee.evade_energy_cost:
-			message = "体力不足。停稳不到两秒就能恢复一次急转，普通飞行不受影响。"
+		if bee.energy < _effective_evade_energy_cost():
+			message = "体力不够做急转。普通飞行仍可用；见底时会变慢。停稳片刻可回到 30，休息点可回满。"
 		else:
 			message = "急转还在恢复。等身后的亮痕消失，再试一次。"
 
@@ -1762,7 +2105,11 @@ func _action_label() -> String:
 		var carried_task := tasks[carried_task_index]
 		if bee.position.distance_to(Vector2(carried_task.position)) <= INTERACTION_RADIUS:
 			return "放进对应工位"
-		return "查看送达花标"
+		return "前往送达花标"
+	if collected_cargo >= CARGO_CAPACITY:
+		return "蜜囊已满，回巢卸货"
+	if focus_task_index >= 0:
+		return "正在观察…"
 	var source_index := _nearest_source_task()
 	if source_index >= 0:
 		match String(tasks[source_index].type):
@@ -1779,6 +2126,8 @@ func _action_label() -> String:
 			"shell": return "转一格种壳"
 			"anchor": return "压稳绳扣"
 			"frighten": return "轻轻震翼"
+	if collected_cargo > 0:
+		return "把这批送回主巢"
 	return "看看最近花标"
 
 
@@ -1791,12 +2140,14 @@ func _event_action_label() -> String:
 		return "做这件小事"
 	if event_runtime.choice_pending():
 		return event_runtime.choice_label("swift")
+	if event_observing:
+		return "正在观察…"
 	match event_runtime.current_kind():
 		JourneyEventMatrixRuntime.KIND_OBSERVATION:
 			return "停翅观察"
 		JourneyEventMatrixRuntime.KIND_ROUTE:
 			if event_runtime.requires_evade():
-				return "急转穿过"
+				return "急转穿过（%s 体力）" % _format_energy_amount(_effective_evade_energy_cost())
 			if event_runtime.requires_rhythm():
 				return "亮起时穿过"
 			return "穿过标记"
@@ -1816,7 +2167,7 @@ func _event_action_label() -> String:
 			if _convoy_stage_requires_rhythm():
 				return "踩准空拍"
 			if _convoy_stage_requires_evade():
-				return "急转带队"
+				return "急转带队（%s 体力）" % _format_energy_amount(_effective_evade_energy_cost())
 			if _convoy_stage_uses_cargo():
 				return "送回队首" if event_carrying else "托起花粉"
 			return "带蜂流过牌"
@@ -1829,6 +2180,8 @@ func _return_label() -> String:
 			return "这次略过"
 		if event_runtime.choice_pending():
 			return event_runtime.choice_label("steady")
+		if event_runtime.optional_accepted():
+			return "放下这件自选小事"
 	return "回巢交接" if _all_work_complete() else "指路回巢"
 
 
@@ -1860,6 +2213,12 @@ func _event_player_instruction() -> String:
 		JourneyEventMatrixRuntime.KIND_CARGO:
 			if event_runtime.current_mechanic() == "moving_match":
 				return "拿起与目标同形的牌，再送到黄色圆圈" if not event_carrying else "把手里的牌送到同形的黄色圆圈"
+			if event_runtime.current_mechanic() == "handoff_timing":
+				return (
+					"飞到发亮载荷旁按空格接起"
+					if not event_carrying
+					else "到黄色圆圈，等接货蜂举起前足时按空格交接"
+				)
 			return "飞到发亮物件旁按空格，再送到黄色圆圈" if not event_carrying else "把手里的东西送到黄色圆圈"
 		JourneyEventMatrixRuntime.KIND_AIR_CATCH:
 			if event_runtime.current_mechanic() == "partner_rescue":
@@ -1941,6 +2300,8 @@ func status_snapshot() -> Dictionary:
 		"phases_completed": phases_completed,
 		"objective_lines": objective_lines,
 		"objective_counts": objective_counts.duplicate(),
+		"objective_goals": objective_goals.duplicate(),
+		"active_objective_index": _active_objective_index(),
 		"carried": collected_cargo + (1 if carried_task_index >= 0 else 0),
 		"honey_cargo": collected_cargo,
 		"capacity": CARGO_CAPACITY,
@@ -1955,15 +2316,15 @@ func status_snapshot() -> Dictionary:
 		"sprinting": (
 			bee.move_duration > bee.auto_dash_delay and bee.evade_time <= 0.0
 		) if bee != null else false,
-		"evade_cost": bee.evade_energy_cost if bee != null else CAMPAIGN_EVADE_COST,
+		"evade_cost": _effective_evade_energy_cost(),
 		"evade_ready": (
 			bee.evade_cooldown <= 0.0
-			and (bee.energy >= bee.evade_energy_cost or _mandatory_evade_assist_available())
+			and (bee.energy >= _effective_evade_energy_cost() or _mandatory_evade_assist_available())
 		) if bee != null else false,
 		"ready_to_return": _all_work_complete(),
 		"phase_instruction": _current_phase_instruction() if is_climax else "",
 		"action_label": _action_label(),
-		"action_enabled": not failed and phase_intermission <= 0.0,
+		"action_enabled": not failed and phase_intermission <= 0.0 and focus_task_index < 0,
 		"return_label": _return_label(),
 		"failed": failed,
 	})
@@ -2015,15 +2376,15 @@ func _event_status_snapshot(snapshot: Dictionary) -> Dictionary:
 		"sprinting": (
 			bee.move_duration > bee.auto_dash_delay and bee.evade_time <= 0.0
 		) if bee != null else false,
-		"evade_cost": bee.evade_energy_cost if bee != null else CAMPAIGN_EVADE_COST,
+		"evade_cost": _effective_evade_energy_cost(),
 		"evade_ready": (
 			bee.evade_cooldown <= 0.0
-			and (bee.energy >= bee.evade_energy_cost or _mandatory_evade_assist_available())
+			and (bee.energy >= _effective_evade_energy_cost() or _mandatory_evade_assist_available())
 		) if bee != null else false,
 		"ready_to_return": ready,
 		"phase_instruction": current_line if is_climax else "",
 		"action_label": _event_action_label(),
-		"action_enabled": not failed,
+		"action_enabled": not failed and not event_observing,
 		"return_label": _return_label(),
 		"failed": failed,
 		"event_runtime": runtime_snapshot,
@@ -2543,21 +2904,17 @@ func _navigation_target() -> Vector2:
 		return _event_navigation_target()
 	if carried_task_index >= 0 and carried_task_index < tasks.size():
 		return Vector2(tasks[carried_task_index].position)
+	if collected_cargo >= CARGO_CAPACITY:
+		return home_position
 	if _all_work_complete():
 		return home_position
-	var nearest := bee.position
-	var nearest_distance := INF
-	for task in tasks:
-		if bool(task.resolved) or not _task_is_active(task):
-			continue
-		var target_position := Vector2(task.position)
-		if String(task.type) in TWO_STEP_TYPES and int(task.state) == 0:
-			target_position = Vector2(task.source_position)
-		var distance := bee.position.distance_to(target_position)
-		if distance < nearest_distance:
-			nearest = target_position
-			nearest_distance = distance
-	return nearest
+	var active_task_index := _active_standard_task_index()
+	if active_task_index < 0:
+		return home_position if collected_cargo > 0 else bee.position
+	var active_task := tasks[active_task_index]
+	if String(active_task.type) in TWO_STEP_TYPES and int(active_task.state) == 0:
+		return Vector2(active_task.source_position)
+	return Vector2(active_task.position)
 
 
 func _event_navigation_target() -> Vector2:

@@ -404,7 +404,15 @@ func choice_pending() -> bool:
 
 
 func requires_evade() -> bool:
-	return not is_finished() and bool(events[current_index].get("requires_evade", false))
+	if is_finished() or not bool(events[current_index].get("requires_evade", false)):
+		return false
+	# “一滴不沾” is a four-part mastery route whose authored operation promises
+	# one urgent turn, alongside ordinary stabilising and braking. Requiring a new
+	# paid turn at all four markers silently changed both its input grammar and its
+	# stamina budget. Keep the turn at the third gate only.
+	if current_mechanic() == "mastery_lane":
+		return current_progress == 2
+	return true
 
 
 func has_moving_target() -> bool:
@@ -445,17 +453,44 @@ func accept_optional() -> bool:
 
 
 func skip_optional() -> Dictionary:
-	if not optional_pending():
+	if not optional_pending() and not optional_accepted():
 		return {"accepted": false}
 	var skipped := current_event()
+	var abandoned_after_start := optional_accepted()
+	if abandoned_after_start:
+		_rollback_current_partial_progress()
 	skipped_optional_ids.append(String(skipped.get("id", "")))
 	_advance_event()
 	return {
 		"accepted": true,
 		"skipped": true,
+		"abandoned_after_start": abandoned_after_start,
 		"event": skipped,
 		"level_complete": is_finished(),
 	}
+
+
+func _rollback_current_partial_progress() -> void:
+	if is_finished():
+		return
+	var counter_key := ""
+	match current_kind():
+		KIND_OBSERVATION: counter_key = "observed_signals"
+		KIND_ROUTE, KIND_ROUTE_CHOICE: counter_key = "opened_route_segments"
+		KIND_CARGO: counter_key = "delivered_loads"
+		KIND_AIR_CATCH: counter_key = "caught_objects"
+		KIND_COOP_ANCHOR: counter_key = "anchored_supports"
+		KIND_CONVOY: counter_key = "convoy_segments"
+	if current_progress > 0 and not counter_key.is_empty():
+		world_state[counter_key] = maxi(
+			0,
+			int(world_state.get(counter_key, 0)) - current_progress
+		)
+	var event_id := String(events[current_index].get("id", ""))
+	(world_state.get("route_choices", {}) as Dictionary).erase(event_id)
+	current_progress = 0
+	current_choice = ""
+	evade_registered = false
 
 
 func choose_route(choice: String) -> bool:
