@@ -23,7 +23,7 @@
 | 04 | [阶段目标](04-stage-goals.md) | 版本历程、当前目标、MVP 验收、里程碑 | 项目管理者 / PMs |
 | 05 | [关键词表](05-keyword-glossary.md) | 中英术语对照表 | 所有人 / Everyone |
 | 06 | [数值设计总览](06-numeric-design.md) | 当前／历史混合的数值快照、设置依据与调参工作流；按章节日期使用 | 设计者 / Designers |
-| 07 | [竞品对比分析](07-competitive-analysis.md) | 7 款官方竞品快照、品类坐标、差异矩阵与商业门槛 | 设计者/发行 / Designers & Publishing |
+| 07 | [竞品对比分析](07-competitive-analysis.md) | 7 款官方竞品快照、品类坐标、差异矩阵、商业门槛与 Balatro 当前玩法参照附录 | 设计者/发行 / Designers & Publishing |
 
 ---
 
@@ -45,7 +45,6 @@
 | 商业成品要求 / Commercial Product Requirements | `docs/design/commercial-product-requirements.md` | 当前商业身份、完整范围与发行退出清单的唯一事实源（中文） |
 | 三候战役制作规格 / Campaign Production Spec | `docs/design/solar-term-campaign-production-spec.md` | 当前 24 章节、360 项内容目标与存档边界的唯一专项规格（中文） |
 | 成熟度与生产重量 / Maturity & Production Weight | `docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md` | 从两份权威规格派生的当前评估，不另立范围（中文） |
-| 下一款轻量产品探索 / Lightweight Next-game Exploration | `docs/NEXT_GAME_LIGHTWEIGHT_PRODUCT_BRIEF.md` | 停车场中的未来方法与待确认防开坑门禁；未立项、当前不执行（中文） |
 | 玩家反馈整改与验证 / Feedback Implementation & Validation | `docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md` | 历史执行记录、证据等级与外测方法；冲突时服从当前规格（中文） |
 | MVP 规格 / MVP Spec | `docs/MVP_SPEC.md` | 旧 MVP 范围与验收标准，不是当前商业范围（中文） |
 | 设计共识与实现差距 / Design Consensus & Gaps | `docs/DESIGN_CONSENSUS.md` | 历史共识与实现差距；冲突时服从当前规格（中文） |
