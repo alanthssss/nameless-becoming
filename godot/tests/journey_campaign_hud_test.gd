@@ -29,6 +29,73 @@ func controls_overlap(first: Control, second: Control) -> bool:
 	return first.visible and second.visible and first.get_global_rect().intersects(second.get_global_rect())
 
 
+func rect_list_has(rects: Array[Rect2], expected_rect: Rect2) -> bool:
+	for rect in rects:
+		if rect.position.is_equal_approx(expected_rect.position) and rect.size.is_equal_approx(expected_rect.size):
+			return true
+	return false
+
+
+func screen_to_world(field: JourneyCampaignField, screen_position: Vector2) -> Vector2:
+	return field.camera.position - field.VIEWPORT_SIZE * 0.5 + screen_position
+
+
+func verify_live_hud_occlusion(
+	game: JourneyCampaignGame,
+	field: JourneyCampaignField,
+	context: String
+) -> void:
+	var expected_controls: Array[Control] = []
+	for raw_control in [
+		game.top_panel,
+		game.field_panel,
+		game.objective_toggle_button,
+		game.toast_panel,
+		game.action_panel,
+		game.controls_label,
+		game.story_card,
+		game.failure_panel,
+	]:
+		var control := raw_control as Control
+		if control != null and control.visible and control.is_visible_in_tree():
+			expected_controls.append(control)
+	var live_rects: Array[Rect2] = game._visible_field_hud_rects()
+	expect(
+		live_rects.size() == expected_controls.size()
+			and field.hud_occlusion_rects.size() == expected_controls.size(),
+		"%s 没有恰好同步当帧可见 HUD Control" % context
+	)
+	var marker_bounds := field._task_marker_visual_bounds("pollinate")
+	for control in expected_controls:
+		var global_rect := control.get_global_rect()
+		expect(
+			rect_list_has(live_rects, global_rect)
+				and rect_list_has(field.hud_occlusion_rects, global_rect),
+			"%s 漏掉 %s 的真实 global rect" % [context, control.name]
+		)
+		expect(
+			not field._world_visual_fully_visible(
+				screen_to_world(field, global_rect.get_center()),
+				marker_bounds
+			),
+			"%s 仍允许完整世界标记画在 %s 后面" % [context, control.name]
+		)
+		var guide_center := field.event_edge_guide_screen_position(
+			screen_to_world(field, global_rect.get_center())
+		)
+		var guide_bounds := Rect2(
+			guide_center - Vector2.ONE * field.EVENT_EDGE_GUIDE_EXTENT,
+			Vector2.ONE * field.EVENT_EDGE_GUIDE_EXTENT * 2.0
+		)
+		var guide_clear := Rect2(Vector2.ZERO, field.VIEWPORT_SIZE).encloses(guide_bounds)
+		for occlusion in field.hud_occlusion_rects:
+			guide_clear = guide_clear and not guide_bounds.intersects(occlusion)
+		expect(
+			guide_clear,
+			"%s 为 %s 让出的边缘指引仍压住 HUD 或越出视口" % [context, control.name]
+		)
+
+
 func action_key_event(pressed: bool, echo := false) -> InputEventKey:
 	var event := InputEventKey.new()
 	event.physical_keycode = KEY_SPACE
@@ -444,6 +511,86 @@ func run_test() -> void:
 	var field := game.router.current_area as JourneyCampaignField
 	expect(field != null, "HUD 回归无法进入第一趟正式花田")
 	if field != null:
+		# Live HUD rectangles, rather than duplicated constants, own occlusion. Cover
+		# every supported text scale with the objective expanded/collapsed and toast
+		# visible/hidden, including probes whose centers are outside a panel while the
+		# complete 128px marker still overlaps it.
+		var marker_bounds := field._task_marker_visual_bounds("pollinate")
+		var layout_cases := 0
+		for ui_scale in [1.0, 1.15, 1.3]:
+			for objective_collapsed in [false, true]:
+				for toast_visible in [false, true]:
+					layout_cases += 1
+					if game.field_hud_collapsed != objective_collapsed:
+						game._toggle_field_hud()
+					game._apply_settings({
+						"ui_scale": ui_scale,
+						"reduce_motion": false,
+						"show_control_hints": true,
+					})
+					var toast_text := (
+						"%d%% HUD 遮挡同步" % roundi(ui_scale * 100.0)
+						if toast_visible
+						else ""
+					)
+					game._show_field_toast(toast_text)
+					await process_frame
+					# A normal Field status may publish its authored message on this frame.
+					# Restore the explicit matrix state after that emission before asserting.
+					game._show_field_toast(toast_text)
+					var case_label := "%d%% · 目标%s · toast %s" % [
+						roundi(ui_scale * 100.0),
+						"折叠" if objective_collapsed else "展开",
+						"显示" if toast_visible else "隐藏",
+					]
+					verify_live_hud_occlusion(game, field, case_label)
+					var open_upper_right_probe := Vector2(1150.0, 320.0)
+					expect(
+						field._world_visual_fully_visible(
+							screen_to_world(field, open_upper_right_probe),
+							marker_bounds
+						),
+						"%s 仍把没有 HUD 的右上区域误判成固定遮挡条" % case_label
+					)
+					var objective_edge_probe := Vector2(330.0, 240.0)
+					expect(
+						field._world_visual_fully_visible(
+							screen_to_world(field, objective_edge_probe),
+							marker_bounds
+						) == objective_collapsed,
+						"%s 没有按目标卡真实尺寸验收完整标记" % case_label
+					)
+					var toast_edge_probe := Vector2(565.0, 570.0)
+					expect(
+						field._world_visual_fully_visible(
+							screen_to_world(field, toast_edge_probe),
+							marker_bounds
+						) != toast_visible,
+						"%s 没有随 toast 出现/消失更新完整标记遮挡；rects=%s"
+							% [case_label, str(field.hud_occlusion_rects)]
+					)
+		expect(layout_cases == 12, "HUD 动态遮挡没有完整执行 12 个布局组合")
+		game._show_field_toast("")
+		if game.field_hud_collapsed:
+			game._toggle_field_hud()
+		game._show_story("现场剧情卡遮挡同步", 2.0)
+		await process_frame
+		verify_live_hud_occlusion(game, field, "剧情卡可见")
+		expect(
+			rect_list_has(field.hud_occlusion_rects, game.story_card.get_global_rect()),
+			"现场剧情卡没有进入 Field 的实时遮挡"
+		)
+		game._dismiss_story()
+		game.failure_panel.visible = true
+		game._sync_modal_input_state()
+		verify_live_hud_occlusion(game, field, "失败卡可见")
+		expect(
+			rect_list_has(field.hud_occlusion_rects, game.failure_panel.get_global_rect()),
+			"现场失败卡没有进入 Field 的实时遮挡"
+		)
+		game.failure_panel.visible = false
+		game._sync_modal_input_state()
+
 		var actions_before_gate: int = field.action_count
 		Input.action_press("action")
 		field.set_input_enabled(false)

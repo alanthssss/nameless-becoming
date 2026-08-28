@@ -37,6 +37,8 @@ const CAMPAIGN_CLIMAX_WIND_DRAIN_PER_SECOND := 1.2
 const CAMPAIGN_HEAVY_DRAIN_PER_SECOND := 0.35
 const CAMPAIGN_FATIGUED_SPEED_SCALE := 0.82
 const TASK_MARKER_SAFE_EXTENT := 64.0
+# This rectangle remains a world-layout budget and a startup fallback. Once the
+# host has built the HUD, visibility is decided from its live Control rectangles.
 const CAMPAIGN_HUD_SAFE_RECT := Rect2(0.0, 90.0, 1008.0, 630.0)
 const CAMPAIGN_OBJECTIVE_OCCLUSION_RECT := Rect2(18.0, 104.0, 620.0, 118.0)
 const EVENT_EDGE_GUIDE_EXTENT := 34.0
@@ -160,6 +162,13 @@ var event_carried_shape := -1
 var event_last_pentad := 1
 var joy_direction_down := {"left": false, "right": false, "up": false, "down": false}
 var event_checkpoint_data: Dictionary = {}
+var hud_occlusion_rects: Array[Rect2] = [
+	Rect2(18.0, 14.0, 1244.0, 76.0),
+	CAMPAIGN_OBJECTIVE_OCCLUSION_RECT,
+	Rect2(616.0, 108.0, 44.0, 44.0),
+	Rect2(1018.0, 514.0, 244.0, 188.0),
+	Rect2(18.0, 672.0, 850.0, 30.0),
+]
 
 
 func configure(context: Dictionary) -> Error:
@@ -235,23 +244,86 @@ func _hud_safe_world_right(visual_extent: float) -> float:
 	return world_bounds.end.x - hud_strip_width - maxf(0.0, visual_extent)
 
 
+func set_hud_occlusion_rects(next_rects: Array[Rect2]) -> void:
+	# Layout belongs to the host. The field consumes only controls that are really
+	# visible, clipped to the fixed game viewport.
+	var sanitized: Array[Rect2] = []
+	for raw_rect in next_rects:
+		var rect := raw_rect.abs()
+		if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+			continue
+		var clipped := rect.intersection(Rect2(Vector2.ZERO, VIEWPORT_SIZE))
+		if clipped.size.x > 0.0 and clipped.size.y > 0.0:
+			sanitized.append(clipped)
+	hud_occlusion_rects = sanitized
+	queue_redraw()
+
+
+func _screen_bounds_fully_visible(screen_bounds: Rect2) -> bool:
+	var normalized_bounds := screen_bounds.abs()
+	if not Rect2(Vector2.ZERO, VIEWPORT_SIZE).encloses(normalized_bounds):
+		return false
+	for occlusion in hud_occlusion_rects:
+		if normalized_bounds.intersects(occlusion):
+			return false
+	return true
+
+
+func _world_visual_fully_visible(world_position: Vector2, local_bounds: Rect2) -> bool:
+	var screen_position := _event_marker_screen_position(world_position)
+	return _screen_bounds_fully_visible(
+		Rect2(screen_position + local_bounds.position, local_bounds.size)
+	)
+
+
+func _guide_point_is_clear(point: Vector2, visual_extent: float) -> bool:
+	for occlusion in hud_occlusion_rects:
+		if occlusion.grow(visual_extent).has_point(point):
+			return false
+	return true
+
+
 func event_marker_draw_position(world_position: Vector2, visual_extent := EVENT_EDGE_GUIDE_EXTENT) -> Vector2:
-	# This helper positions the deliberately small edge arrow only. Full event art
-	# must pass _event_marker_full_visible() with its mechanic-specific bounds; it
-	# must never be moved away from the authoritative interaction coordinate.
+	# Full art remains at its real world coordinate. Only the small edge guide may
+	# move, choosing the nearest viewport point clear of every live HUD rectangle.
 	var camera_position := (
 		camera.position
 		if camera != null
 		else camera_target_for(bee.position if bee != null else world_position)
 	)
-	var screen_position := world_position - camera_position + VIEWPORT_SIZE * 0.5
-	var safe_rect := CAMPAIGN_HUD_SAFE_RECT.grow(-maxf(0.0, visual_extent))
-	screen_position.x = clampf(screen_position.x, safe_rect.position.x, safe_rect.end.x)
-	screen_position.y = clampf(screen_position.y, safe_rect.position.y, safe_rect.end.y)
-	var objective_guard := CAMPAIGN_OBJECTIVE_OCCLUSION_RECT.grow(maxf(0.0, visual_extent))
-	if objective_guard.has_point(screen_position):
-		screen_position.y = minf(safe_rect.end.y, objective_guard.end.y)
-	return camera_position - VIEWPORT_SIZE * 0.5 + screen_position
+	var desired := world_position - camera_position + VIEWPORT_SIZE * 0.5
+	var extent := maxf(0.0, visual_extent)
+	var inner := Rect2(
+		Vector2(extent, extent),
+		Vector2(
+			maxf(1.0, VIEWPORT_SIZE.x - extent * 2.0),
+			maxf(1.0, VIEWPORT_SIZE.y - extent * 2.0)
+		)
+	)
+	var clamped := Vector2(
+		clampf(desired.x, inner.position.x, inner.end.x),
+		clampf(desired.y, inner.position.y, inner.end.y)
+	)
+	var candidate_xs: Array[float] = [clamped.x, inner.position.x, inner.end.x]
+	var candidate_ys: Array[float] = [clamped.y, inner.position.y, inner.end.y]
+	for occlusion in hud_occlusion_rects:
+		var guard := occlusion.grow(extent + 1.0)
+		candidate_xs.append(clampf(guard.position.x - 1.0, inner.position.x, inner.end.x))
+		candidate_xs.append(clampf(guard.end.x + 1.0, inner.position.x, inner.end.x))
+		candidate_ys.append(clampf(guard.position.y - 1.0, inner.position.y, inner.end.y))
+		candidate_ys.append(clampf(guard.end.y + 1.0, inner.position.y, inner.end.y))
+	var best := clamped
+	var best_distance := INF
+	for candidate_x in candidate_xs:
+		for candidate_y in candidate_ys:
+			var candidate := Vector2(candidate_x, candidate_y)
+			if not _guide_point_is_clear(candidate, extent):
+				continue
+			var distance := candidate.distance_squared_to(desired)
+			if distance < best_distance:
+				best = candidate
+				best_distance = distance
+	return camera_position - VIEWPORT_SIZE * 0.5 + best
 
 
 func _event_marker_screen_position(world_position: Vector2) -> Vector2:
@@ -264,12 +336,8 @@ func _event_marker_screen_position(world_position: Vector2) -> Vector2:
 
 
 func _event_marker_full_visible(world_position: Vector2, local_bounds: Rect2) -> bool:
-	var screen_position := _event_marker_screen_position(world_position)
-	var screen_bounds := Rect2(screen_position + local_bounds.position, local_bounds.size)
-	return (
-		CAMPAIGN_HUD_SAFE_RECT.encloses(screen_bounds)
-		and not screen_bounds.intersects(CAMPAIGN_OBJECTIVE_OCCLUSION_RECT)
-	)
+	# Compatibility name used by the existing event helpers and focused tests.
+	return _world_visual_fully_visible(world_position, local_bounds)
 
 
 func _current_event_visual_bounds() -> Rect2:
@@ -2454,6 +2522,8 @@ func _draw_world_memory() -> void:
 		var trace := traces[index] as Dictionary
 		var trace_season := String(trace.get("season_id", "spring"))
 		var colors: Array = SEASON_COLORS.get(trace_season, SEASON_COLORS.spring)
+		if not _world_visual_fully_visible(point, Rect2(-14.0, -14.0, 28.0, 28.0)):
+			continue
 		draw_circle(point, 10.0, colors[2], true)
 		draw_arc(point, 13.0, 0.0, TAU, 16, Color("fff0c1", 0.86), 2.0)
 		# One notch per completed level keeps every durable trace countable in the
@@ -2480,6 +2550,8 @@ func _draw_chapter() -> void:
 
 func _draw_rest_points() -> void:
 	for point in rest_points:
+		if not _world_visual_fully_visible(point, Rect2(-58.0, -56.0, 116.0, 125.0)):
+			continue
 		draw_circle(point, 56.0, Color("f3e7ad", 0.13))
 		draw_arc(point, 35.0, -PI, 0.0, 14, Color("f5e8ac", 0.78), 7.0)
 		draw_line(point + Vector2(-34, 3), point + Vector2(34, 3), Color("7b6545", 0.76), 6.0)
@@ -2502,9 +2574,17 @@ func _draw_rest_points() -> void:
 func _draw_event_world_state() -> void:
 	if event_runtime == null:
 		return
+	var visible_marks: Array[bool] = []
 	for index in event_world_marks.size():
 		var mark := event_world_marks[index]
 		var position := Vector2(mark.get("position", home_position))
+		var visible := _world_visual_fully_visible(
+			position,
+			Rect2(-34.0, -34.0, 68.0, 68.0)
+		)
+		visible_marks.append(visible)
+		if not visible:
+			continue
 		var optional := bool(mark.get("optional", false))
 		var choice := String(mark.get("choice", ""))
 		var color := Color("f4ce70") if optional else Color("8fc28a")
@@ -2523,21 +2603,29 @@ func _draw_event_world_state() -> void:
 			draw_arc(position, 31.0, -1.15, 0.35, 8, Color(color, 0.92), 4.0)
 		elif choice == "steady":
 			draw_arc(position, 31.0, 0.55, 2.25, 8, Color(color, 0.92), 4.0)
-		if index > 0:
+		if index > 0 and visible_marks[index - 1]:
 			var previous := Vector2(event_world_marks[index - 1].get("position", position))
 			draw_dashed_line(previous, position, Color("f8df8c", 0.36), 3.0, 23.0)
 	var world: Dictionary = event_runtime.world_state
 	var bloom_stage := int(world.get("bloom_stage", 0))
 	for bloom_index in bloom_stage * 3:
 		var bloom_position := home_position + Vector2(430.0 + bloom_index * 62.0, 185.0 + sin(float(bloom_index) * 1.3) * 38.0)
+		if not _world_visual_fully_visible(bloom_position, Rect2(-16.0, -16.0, 32.0, 32.0)):
+			continue
 		for petal in 5:
 			draw_circle(bloom_position + Vector2.from_angle(float(petal) / 5.0 * TAU) * 9.0, 5.5, Color("f2a9bd", 0.72))
 		draw_circle(bloom_position, 4.5, Color("efd06b"))
-	if bool(world.get("setpiece_complete", false)) and event_world_marks.size() >= 2:
-		var route := PackedVector2Array()
-		for mark in event_world_marks:
-			route.append(Vector2(mark.get("position", home_position)))
-		draw_polyline(route, Color("ffe590", 0.72), 8.0, true)
+	if bool(world.get("setpiece_complete", false)):
+		for index in range(1, event_world_marks.size()):
+			if not visible_marks[index - 1] or not visible_marks[index]:
+				continue
+			draw_line(
+				Vector2(event_world_marks[index - 1].get("position", home_position)),
+				Vector2(event_world_marks[index].get("position", home_position)),
+				Color("ffe590", 0.72),
+				8.0,
+				true
+			)
 
 
 func _draw_current_event() -> void:
@@ -2797,14 +2885,35 @@ func _draw_tasks() -> void:
 		var work_type := String(task.type)
 		var color: Color = TYPE_COLORS.get(work_type, accent_color)
 		if bool(task.resolved):
-			_draw_task_marker(Vector2(task.position), work_type, color.darkened(0.18), false, int(task.hits), true)
+			if _world_visual_fully_visible(
+				Vector2(task.position),
+				_task_marker_visual_bounds(work_type)
+			):
+				_draw_task_marker(Vector2(task.position), work_type, color.darkened(0.18), false, int(task.hits), true)
 			continue
 		if work_type in TWO_STEP_TYPES and int(task.state) == 0:
-			_draw_task_marker(Vector2(task.source_position), work_type, color.lightened(0.14), true, int(task.hits), false)
-		_draw_task_marker(Vector2(task.position), work_type, color, false, int(task.hits), false)
+			if _world_visual_fully_visible(
+				Vector2(task.source_position),
+				_task_marker_visual_bounds(work_type)
+			):
+				_draw_task_marker(Vector2(task.source_position), work_type, color.lightened(0.14), true, int(task.hits), false)
+		if _world_visual_fully_visible(
+			Vector2(task.position),
+			_task_marker_visual_bounds(work_type)
+		):
+			_draw_task_marker(Vector2(task.position), work_type, color, false, int(task.hits), false)
 	if carried_task_index >= 0 and carried_task_index < tasks.size():
 		var destination := Vector2(tasks[carried_task_index].position)
-		draw_dashed_line(bee.position, destination, Color("fff1aa", 0.66), 4.0, 24.0)
+		if _world_visual_fully_visible(
+			destination,
+			_task_marker_visual_bounds(String(tasks[carried_task_index].type))
+		):
+			draw_dashed_line(bee.position, destination, Color("fff1aa", 0.66), 4.0, 24.0)
+
+
+func _task_marker_visual_bounds(_work_type: String) -> Rect2:
+	# Covers the largest current prop, its pulse ring, progress arc and completion tick.
+	return Rect2(-64.0, -64.0, 128.0, 128.0)
 
 
 func _draw_task_marker(position: Vector2, work_type: String, color: Color, source: bool, hits: int, resolved: bool) -> void:
@@ -2962,14 +3071,20 @@ func _draw_climax_neighbour() -> void:
 	if not is_climax:
 		return
 	var position := _climax_neighbour_position()
+	var destination_size := Vector2(210.0, 150.0)
+	if season_id == "summer": destination_size = Vector2(245.0, 176.0)
+	elif season_id == "autumn": destination_size = Vector2(225.0, 158.0)
+	elif season_id == "winter": destination_size = Vector2(240.0, 170.0)
+	var neighbour_bounds := Rect2(
+		-destination_size * 0.55,
+		Vector2(destination_size.x * 1.1, destination_size.y * 1.28)
+	)
+	if not _world_visual_fully_visible(position, neighbour_bounds):
+		return
 	if climax_neighbour_texture != null:
 		var texture_size := climax_neighbour_texture.get_size()
 		var frame_width := texture_size.x / 3.0
 		var frame_index := mini(2, phases_completed)
-		var destination_size := Vector2(210.0, 150.0)
-		if season_id == "summer": destination_size = Vector2(245.0, 176.0)
-		elif season_id == "autumn": destination_size = Vector2(225.0, 158.0)
-		elif season_id == "winter": destination_size = Vector2(240.0, 170.0)
 		draw_set_transform(position + Vector2(0, destination_size.y * 0.34), 0.0, Vector2(1.7, 0.42))
 		draw_circle(Vector2.ZERO, 45.0, Color("4a3d2f", 0.22))
 		draw_set_transform(Vector2.ZERO)

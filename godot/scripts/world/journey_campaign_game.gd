@@ -502,6 +502,7 @@ func _process(delta: float) -> void:
 		toast_time = maxf(0.0, toast_time - delta)
 		if toast_time <= 0.0 and toast_panel != null:
 			toast_panel.visible = false
+			_sync_field_hud_occlusion_rects()
 
 
 func _show_hive(returning: bool, immediate := false) -> void:
@@ -826,12 +827,14 @@ func _show_field_toast(text: String) -> void:
 		last_toast_message = ""
 		toast_time = 0.0
 		toast_panel.visible = false
+		_sync_field_hud_occlusion_rects()
 		return
 	message_label.text = text
 	if text != last_toast_message:
 		last_toast_message = text
 		toast_time = FIELD_TOAST_SECONDS
 		toast_panel.visible = field_hud_visible
+	_sync_field_hud_occlusion_rects()
 
 
 func _acknowledge_energy_tutorial_if_visible(
@@ -883,6 +886,36 @@ func _set_field_hud_visible(visible: bool) -> void:
 		controls_label.visible = visible and controls_hint_enabled
 	if toast_panel != null:
 		toast_panel.visible = visible and toast_time > 0.0 and not last_toast_message.is_empty()
+	_sync_field_hud_occlusion_rects()
+
+
+func _visible_field_hud_rects() -> Array[Rect2]:
+	var rects: Array[Rect2] = []
+	var controls: Array[Control] = [
+		top_panel,
+		field_panel,
+		objective_toggle_button,
+		toast_panel,
+		action_panel,
+		controls_label,
+		story_card,
+		failure_panel,
+	]
+	for control in controls:
+		if control == null or not control.visible or not control.is_visible_in_tree():
+			continue
+		var rect := control.get_global_rect()
+		if rect.size.x > 0.0 and rect.size.y > 0.0:
+			rects.append(rect)
+	return rects
+
+
+func _sync_field_hud_occlusion_rects() -> void:
+	if router == null:
+		return
+	var field := router.current_area as JourneyCampaignField
+	if field != null:
+		field.set_hud_occlusion_rects(_visible_field_hud_rects())
 
 
 func _toggle_field_hud() -> void:
@@ -905,6 +938,7 @@ func _toggle_field_hud() -> void:
 	objective_toggle_button.tooltip_text = (
 		"展开当前目标" if field_hud_collapsed else "收起当前目标；操作按钮和资源状态会继续保留"
 	)
+	_sync_field_hud_occlusion_rects()
 
 
 func _set_base_font_size(control: Control, font_size: int) -> void:
@@ -1098,6 +1132,7 @@ func _sync_modal_input_state() -> void:
 		elif focus_owner != null:
 			focus_owner.release_focus()
 	_set_field_input_enabled(_field_input_should_be_enabled())
+	_sync_field_hud_occlusion_rects()
 
 
 func _show_fade(caption: String, immediate: bool) -> void:
@@ -1387,3 +1422,5 @@ func _apply_settings(next_settings: Dictionary) -> void:
 		var control := node as Control
 		if control != null and control.has_meta("commercial_base_font_size"):
 			control.add_theme_font_size_override("font_size", roundi(float(control.get_meta("commercial_base_font_size")) * current_ui_scale))
+	_sync_field_hud_occlusion_rects()
+	call_deferred("_sync_field_hud_occlusion_rects")
