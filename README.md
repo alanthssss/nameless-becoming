@@ -169,21 +169,22 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 5. [`docs/design/ecology-and-apiculture-source-register.md`](docs/design/ecology-and-apiculture-source-register.md)：**蜂群生态与养蜂资料的逐页事实、现代复核状态、游戏转译与禁止误用登记**；用户提供的完整扫描本不进入仓库；
 6. [`marketing/README.md`](marketing/README.md)：开发者实机截图、生成式概念主视觉、文字标与商店尺寸候选的证据边界；全部仍未获发布批准；
 7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：7 款官方竞品快照、可验证差异、价格锚点、商业门槛，以及《小丑牌》方法用于当前 Campaign 的轻量参照附录；市场与方法判断只算专家启发式；
-8. [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) 与 [`docs/BUILD_MANIFEST.md`](docs/BUILD_MANIFEST.md)：当前发布门禁与构建事实；
-9. [`docs/PLAYTEST.md`](docs/PLAYTEST.md)：人工与外部玩家记录模板／记录；
-10. [`docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md)：整改、证据等级、执行矩阵和外测标准的历史执行主记录；
-11. [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md)：旧 MVP 候选范围与验收口径，不等于商业成品范围；
-12. [`docs/DESIGN_CONSENSUS.md`](docs/DESIGN_CONSENSUS.md)：稳定设计共识与历史差距，其中冲突内容服从商业成品清单；
-13. [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)：**历史记录**，有意保留当时成立、后来被推翻的四关、旧 Boss、旧四季和旧时长描述；
-14. [`docs/DEMO_TO_PLAYTEST_PLAN.md`](docs/DEMO_TO_PLAYTEST_PLAN.md)：**已废止的历史结构方案**，仅用于追溯，不得执行；
-15. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
-16. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、单一执行视图、在制品限制与风险分级验证；
-17. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
-18. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
-19. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，区分最近有真人证据版本的偏轻体验、中重的工程骨架和很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
-20. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
-21. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
-22. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
+8. [`docs/design/book-inspired-core-rhythm-directions.md`](docs/design/book-inspired-core-rhythm-directions.md)：结合两本游戏设计书与 Alan 偏好的《黑神话：悟空》《空洞骑士》《塞尔达传说》《宝可梦》《超级马里奥》，提出“接路”核心假设、雨水／谷雨低成本原型和真人扩产门禁；当前只算专家启发式；
+9. [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) 与 [`docs/BUILD_MANIFEST.md`](docs/BUILD_MANIFEST.md)：当前发布门禁与构建事实；
+10. [`docs/PLAYTEST.md`](docs/PLAYTEST.md)：人工与外部玩家记录模板／记录；
+11. [`docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md)：整改、证据等级、执行矩阵和外测标准的历史执行主记录；
+12. [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md)：旧 MVP 候选范围与验收口径，不等于商业成品范围；
+13. [`docs/DESIGN_CONSENSUS.md`](docs/DESIGN_CONSENSUS.md)：稳定设计共识与历史差距，其中冲突内容服从商业成品清单；
+14. [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)：**历史记录**，有意保留当时成立、后来被推翻的四关、旧 Boss、旧四季和旧时长描述；
+15. [`docs/DEMO_TO_PLAYTEST_PLAN.md`](docs/DEMO_TO_PLAYTEST_PLAN.md)：**已废止的历史结构方案**，仅用于追溯，不得执行；
+16. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
+17. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、单一执行视图、在制品限制与风险分级验证；
+18. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
+19. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
+20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，区分最近有真人证据版本的偏轻体验、中重的工程骨架和很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
+21. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
+22. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
+23. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
 
 ## 当前验证问题
 
