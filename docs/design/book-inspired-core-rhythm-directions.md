@@ -6,6 +6,8 @@
 
 补充评估：2026-08-31，挂机／半放置候选见第 11 节；前文是动作方向的条件性提案，不是排除其他方向的已批准决定。
 
+最新收束：Alan 随后明确“轻松休闲、有故事、可扩展、商业可行，不做重”。最新框架建议已进入[商业成品要求第 0 节](commercial-product-requirements.md#0-2026-08-31--轻量故事与商业范围重新收束)。本文件的动作和半放置原型保留为备选研究，不与轻量叙事方案并行扩产；具体产品形式仍待确认。
+
 适用范围：核心体验、飞行手感、章节节奏、邻居事件、世界痕迹、后续内容扩产门禁
 
 关联事实源：[`solar-term-campaign-production-spec.md`](solar-term-campaign-production-spec.md)、[`narrative-framework.md`](narrative-framework.md)、[`commercial-product-requirements.md`](commercial-product-requirements.md)
