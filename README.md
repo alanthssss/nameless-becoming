@@ -177,7 +177,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 13. [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)：**历史记录**，有意保留当时成立、后来被推翻的四关、旧 Boss、旧四季和旧时长描述；
 14. [`docs/DEMO_TO_PLAYTEST_PLAN.md`](docs/DEMO_TO_PLAYTEST_PLAN.md)：**已废止的历史结构方案**，仅用于追溯，不得执行；
 15. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
-16. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、单一执行视图、在制品限制与风险分级验证；
+16. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、Collaboration 协作要求、决策与行动收口、单一执行视图及风险分级验证；
 17. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
 18. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
 19. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，区分最近有真人证据版本的偏轻体验、中重的工程骨架和很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
