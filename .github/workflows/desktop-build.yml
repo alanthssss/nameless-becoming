@@ -164,6 +164,57 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+  art-review:
+    name: Art expert review bundle
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: SeeYouAtTheHive-*-InternalCandidate-${{ inputs.release_tag }}
+          merge-multiple: true
+          path: builds
+      - name: Download verified pack inspector
+        working-directory: ${{ runner.temp }}
+        run: |
+          editor_archive=Godot_v${GODOT_RELEASE}_linux.x86_64.zip
+          release_url=https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}
+          curl --fail --silent --show-error --location --output SHA512-SUMS.txt "$release_url/SHA512-SUMS.txt"
+          curl --fail --silent --show-error --location --output "$editor_archive" "$release_url/$editor_archive"
+          grep " $editor_archive$" SHA512-SUMS.txt | sha512sum --check --strict
+          unzip -q "$editor_archive" -d godot-bin
+      - name: Verify same-commit games and package allowlisted review materials
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        run: |
+          npm run test:art-review
+          node scripts/generate_build_provenance.mjs
+          npm run art:package
+      - uses: actions/upload-artifact@v4
+        id: review
+        with:
+          name: ArtExpertReview-${{ inputs.release_tag }}-${{ github.sha }}
+          path: |
+            outputs/art-review/*/*.zip
+            outputs/art-review/*/*.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+      - name: Share restricted download link in run summary
+        env:
+          ARTIFACT_URL: ${{ steps.review.outputs.artifact-url }}
+        run: |
+          echo "## Art expert review bundle" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Download versioned game + art ZIP]($ARTIFACT_URL)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source: $GITHUB_SHA. Retained for 30 days; repository read access required." >> "$GITHUB_STEP_SUMMARY"
+          echo "Internal expert review only. No public release, recipient message, or marketing approval." >> "$GITHUB_STEP_SUMMARY"
+
   prerelease:
     name: Publish non-distribution-signed/unnotarized internal prerelease
     if: inputs.publish_prerelease && github.ref == 'refs/heads/main'

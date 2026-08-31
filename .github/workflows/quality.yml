@@ -103,6 +103,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
+      - run: npm run test:art-review
 
   godot:
     name: Godot 4.6.2 tests
