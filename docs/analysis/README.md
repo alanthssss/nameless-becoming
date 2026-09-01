@@ -23,7 +23,7 @@
 | 04 | [阶段目标](04-stage-goals.md) | 版本历程、当前目标、MVP 验收、里程碑 | 项目管理者 / PMs |
 | 05 | [关键词表](05-keyword-glossary.md) | 中英术语对照表 | 所有人 / Everyone |
 | 06 | [数值设计总览](06-numeric-design.md) | 当前／历史混合的数值快照、设置依据与调参工作流；按章节日期使用 | 设计者 / Designers |
-| 07 | [竞品对比分析](07-competitive-analysis.md) | 7 款官方竞品快照、品类坐标、差异矩阵、商业门槛与 Balatro 当前玩法参照附录 | 设计者/发行 / Designers & Publishing |
+| 07 | [竞品对比分析](07-competitive-analysis.md) | 结合 Alan 偏好的 20 款独立及相邻游戏市场对比、参照职责、制作优先级、Demo 与验证指标 | 设计者/发行 / Designers & Publishing |
 
 ---
 
