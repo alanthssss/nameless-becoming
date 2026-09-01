@@ -2,6 +2,14 @@
 
 状态：内部专家评审交接规范；不是美术批准或公开发行。
 
+## Mac 专家优先交付
+
+如果专家使用 Mac，不再发送包含双平台且把 `.app` 嵌套在第二层 ZIP 中的通用包。发送 `MacArtReview-*.zip` 和同名 `.sha256`：专家只需解压一次，根目录直接包含 `一会儿巢里见.app`、`请先看这里.txt`、`美术资料/` 和 `美术反馈.md`，并且不含 Windows EXE。
+
+首次启动必须按住 Control 点击 App →“打开”→“打开”。若仍被阻止，进入“系统设置 → 隐私与安全性”选择“仍要打开”；不要要求专家关闭全局安全保护或运行来源不明的终端命令。当前包只有 ad-hoc 签名、没有 Apple Developer ID 公证，因此不能承诺普通双击无警告。要彻底消除该警告，需要项目方提供有效 Apple Developer 发行身份并完成 notarization；本流程不会伪造或绕过它。
+
+本地已有同提交 macOS 游戏时运行 `npm run art:package:mac`。自动化在 macOS 构建验证后生成独立的 `MacArtExpertReview-*` Actions artifact，并把直接下载链接写入 run summary；通用双平台包继续保留给需要两种系统的评审，不再作为 Mac 专家的首选入口。
+
 ## 分享范围与阅读顺序
 
 分享一个同时包含可运行游戏与材料的 ZIP，不要求专家安装 Godot、Node 或取得源码访问权。先解压并打开 `START_HERE.html`，核对版本／提交，再试玩、查看原图，最后填写 `FEEDBACK.md`。

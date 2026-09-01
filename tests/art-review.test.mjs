@@ -9,6 +9,7 @@ import {
   documents, escapeHtml, gitIdentity, materialPaths, pngDimensions, readMaterial,
   redactLocalPaths, sha256, validateArtifact,
 } from "../scripts/package_art_review.mjs";
+import { macFirstRead } from "../scripts/package_macos_art_review.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const bytes = Buffer.from("candidate game bytes");
@@ -99,4 +100,20 @@ test("workflow packages only after both platform builds, on immutable source, wi
   assert.ok(job.includes("outputs/art-review/*/*.zip"));
   assert.match(job, /npm run art:package/u);
   assert.doesNotMatch(job, /contents: write|gh release|curl.*POST/u);
+});
+
+test("Mac expert handoff is single-platform, one-unzip and security-honest", async () => {
+  const guide = macFirstRead({ product_version: identity.product_version, commit: identity.commit, generated_at: "2026-09-01T00:00:00.000Z" });
+  assert.match(guide, /Control.*打开/su);
+  assert.match(guide, /隐私与安全性/u);
+  assert.match(guide, /没有 Apple 公证/u);
+  assert.match(guide, /不要关闭 Mac 的全局安全保护/u);
+  assert.doesNotMatch(guide, /\.exe|Windows|xattr|spctl/u);
+
+  const workflow = await readFile(join(root, ".github/workflows/desktop-build.yml"), "utf8");
+  const macJob = workflow.split("  macos:")[1].split("  windows:")[0];
+  assert.match(macJob, /npm run art:package:mac/u);
+  assert.match(macJob, /name: MacArtExpertReview-/u);
+  assert.match(macJob, /outputs\/mac-art-review\/\*\/\*\.zip/u);
+  assert.match(macJob, /retention-days: 30/u);
 });

@@ -96,6 +96,7 @@ jobs:
             --platform macos-universal \
             --source-ref "$GITHUB_REF" \
             --github-run-id "$GITHUB_RUN_ID"
+          npm run art:package:mac
       - uses: actions/upload-artifact@v4
         with:
           name: SeeYouAtTheHive-macOS-InternalCandidate-${{ inputs.release_tag }}
@@ -105,6 +106,22 @@ jobs:
             builds/SeeYouAtTheHive-macOS.zip.manifest.json
           if-no-files-found: error
           retention-days: 30
+      - uses: actions/upload-artifact@v4
+        id: mac-review
+        with:
+          name: MacArtExpertReview-${{ inputs.release_tag }}-${{ github.sha }}
+          path: |
+            outputs/mac-art-review/*/*.zip
+            outputs/mac-art-review/*/*.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+      - name: Add direct Mac expert package to run summary
+        env:
+          ARTIFACT_URL: ${{ steps.mac-review.outputs.artifact-url }}
+        run: |
+          echo "## Mac art expert review package" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Download the Mac-only game + art ZIP]($ARTIFACT_URL)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Unzip once: the app, Chinese first-read guide and art folder are at the package root." >> "$GITHUB_STEP_SUMMARY"
 
   windows:
     name: Windows x86_64 unsigned internal candidate
