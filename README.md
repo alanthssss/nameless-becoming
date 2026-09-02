@@ -184,6 +184,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 20. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 21. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
 22. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
+23. [`docs/GAME_NAME_REVIEW_2026-09-02.md`](docs/GAME_NAME_REVIEW_2026-09-02.md)：200 个 IGF／indiePlay 优秀独立游戏标题样本的结构分析、五组新产品名、评分、公开同名初筛与选定后的迁移边界；当前推荐《花开正忙 · Bloom in Full Swing》，等待 Alan 五选一。
 
 ## 当前验证问题
 
