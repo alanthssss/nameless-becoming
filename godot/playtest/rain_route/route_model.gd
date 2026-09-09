@@ -123,6 +123,11 @@ func _begin_day() -> void:
 			companions[i].joined = true
 			companions[i].exposure = 0.0
 			companions[i].grace = 2.0
+	if day == 14:
+		for i in range(companions.size()):
+			companions[i].position = roof_position() + Vector2(-40 + i * 20, 24)
+			companions[i].waiting = true
+			companions[i].joined = false
 	notice = today().hint
 	dawn_state = snapshot()
 
@@ -258,7 +263,22 @@ func moving_stage_hint() -> String:
 		return "第 1 / 2 步 · 跟随移动叶影，留在叶下。避雨进度 %d%%" % mini(99, int(moving_hold / 1.2 * 100))
 	if cargo <= 0:
 		return "第 2 / 2 步 · 叶下避雨已完成。补取一份粉，再送到新叶台。"
-	return "第 2 / 2 步 · 叶下避雨已完成。到新叶台慢下来，按空格交付。"
+	return "第 2 / 2 步 · 叶下避雨已完成。到新叶台慢下来，按空格交粉。"
+
+func waiting_companion_points() -> Array:
+	var points: Array = []
+	for bee in companions:
+		if not bee.joined or bee.waiting:
+			points.append(bee.position)
+	return points
+
+func wind_stage_hint() -> String:
+	var missing := waiting_companion_points().size()
+	if missing > 0:
+		return "第 1 / 3 步 · 到伙伴身边慢下来接应。已会合 %d / 5，伙伴在叶台避雨。" % (COMPANION_COUNT - missing) if not daily_done.has("rendezvous") else "有伙伴停下了，跟随指引回去，慢下来接上它。"
+	if cargo <= 0 and day_delivered < int(today().quota):
+		return "第 2 / 3 步 · 伙伴齐了，带大家去右边花田，按空格取一份粉。"
+	return "第 3 / 3 步 · 带花粉和五位伙伴回巢，过弯时照顾队尾。"
 
 func objective_points() -> Array:
 	if day_finished or work_ready():
@@ -276,6 +296,9 @@ func objective_points() -> Array:
 		"beetle": return [today().target] if escort_roof else [beetle_position]
 		"rack": return [roof_position()] if cargo > 0 else [FLOWERS]
 		"moving": return [moving_roof_position() if moving_hold < 1.2 else roof_position()] if cargo > 0 else [FLOWERS]
+		"wind":
+			var missing := waiting_companion_points()
+			return missing if not missing.is_empty() else ([HIVE] if cargo > 0 or day_delivered > 0 else [FLOWERS])
 		"rescue":
 			var result: Array = []
 			for bee in companions:
@@ -413,6 +436,8 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 	_update_drip_hits(delta)
 	_update_companions(delta)
 	_update_day(delta)
+	if day == 14 and waiting_companion_points().is_empty():
+		daily_done["rendezvous"] = true
 
 func _update_drip_hits(delta: float) -> void:
 	if day != 5 or drip_open() or not drip_gap(position):
@@ -534,6 +559,8 @@ func action_label() -> String:
 		if escort_roof:
 			return "Shift · 慢慢带它走"
 		return "空格 · 接起叶篷" if position.distance_to(beetle_position) < 70 else "跟着指引找小甲虫"
+	if today().mode == "wind" and not waiting_companion_points().is_empty():
+		return "Shift · 靠近伙伴接应"
 	if today().mode == "moving" and cargo > 0 and moving_hold < 1.2:
 		return "跟随叶影 · 留在叶下"
 	if today().mode in ["rack", "moving"] and cargo > 0:

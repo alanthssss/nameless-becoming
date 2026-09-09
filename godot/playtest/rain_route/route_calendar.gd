@@ -15,7 +15,7 @@ const DAYS := [
 	{"mode": "delivery", "hint": "送回三份花粉。一趟带满，或分几趟轻装，自由选择。", "quota": 3},
 	{"mode": "rescue", "hint": "沿叶下路接回五只等候的新蜂，一起回巢。"},
 	{"mode": "mastery", "hint": "带一份粉走走过的路，试着不掉粉回巢。失误也能收工。", "quota": 1},
-	{"mode": "wind", "hint": "今天风向变了，借叶台等齐伙伴，把一份粉带回巢。", "quota": 1},
+	{"mode": "wind", "hint": "伙伴在新叶台避雨。先去慢飞接应，再一起到花田取粉回巢。", "quota": 1},
 	{"mode": "final", "hint": "带回最后两份花粉，大家一起走完十五天接好的路。", "quota": 2}
 ]
 

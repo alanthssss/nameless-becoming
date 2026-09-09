@@ -46,7 +46,12 @@ static func work(model, site := 0) -> void:
 		"scout":
 			for point in model.today().points:
 				fly(model, point)
-		"leaf_delivery", "delivery", "mastery", "wind", "final":
+		"wind":
+			fly(model, model.roof_position())
+			assert(model.waiting_companion_points().is_empty(), "Meet the sheltered companions before the shared forage trip")
+			home(model, false)
+			flowers(model, int(model.today().quota))
+		"leaf_delivery", "delivery", "mastery", "final":
 			flowers(model, int(model.today().quota))
 		"build":
 			assert(model.act() == "roof")

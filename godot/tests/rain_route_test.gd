@@ -21,6 +21,9 @@ func _init() -> void:
 			assert(game.restore(game.dawn_state))
 		if game.day == 5:
 			check_drip_choices(game.snapshot())
+		if game.day == 14:
+			assert(game.waiting_companion_points().size() == 5 and game.home_companions() == 0)
+			assert(not game.work_ready(), "Companions must actually be met, not spawn following")
 		Driver.work(game)
 		Driver.home(game)
 		assert(game.day_finished, "Day %d must be finishable through its actual mechanics" % expected_day)

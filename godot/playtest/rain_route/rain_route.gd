@@ -356,6 +356,8 @@ func _context_message() -> String:
 		return "它平安到家了。可以歇一会儿，再回巢。"
 	if model.work_ready():
 		return "今天的事做好了。回到巢门，按空格收工。"
+	if model.today().mode == "wind":
+		return model.wind_stage_hint()
 	if model.today().mode == "moving":
 		return model.moving_stage_hint()
 	if model.today().mode == "drips":
@@ -387,7 +389,7 @@ func _draw_hud() -> void:
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
 	_text(Vector2(50, 59), "雨水", 27, INK)
 	_text(Vector2(119, 57), "第 %d 天 · %s" % [model.day, ["一候", "二候", "三候"][model.stage]], 19, Color("566a48"))
-	_text(Vector2(50, 91), str(model.event_today().title), 17, INK)
+	_text(Vector2(50, 91), ("到叶台接伙伴" if model.day == 14 else str(model.event_today().title)), 17, INK)
 	for i in range(15):
 		var p := Vector2(54 + i * 22, 116)
 		draw_circle(p, 4, Color("729052") if i < model.completed_days.size() else Color("d8d8b9"))
@@ -442,7 +444,7 @@ func _draw() -> void:
 	if model.day_finished and not model.complete and not paused:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
 		_text(Vector2(458, 264), "雨水 · 第 %d 天收工" % model.day, 26, INK)
-		_text(Vector2(402, 315), str(model.event_today().title), 23, INK)
+		_text(Vector2(402, 315), ("到叶台接伙伴" if model.day == 14 else str(model.event_today().title)), 23, INK)
 		_text(Vector2(402, 369), Model.Calendar.AFTER[model.day - 1], 18, INK)
 	if model.complete:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
