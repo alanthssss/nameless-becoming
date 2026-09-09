@@ -80,6 +80,12 @@ func run() -> void:
 			fly(waypoint)
 		scene._act()
 		if trip == 0:
+			scene._act()
+			assert(scene.model.roof_carried)
+			fly(RouteTest.BUILD_SITE)
+			await capture("10-choose-site")
+			scene._act()
+			assert(scene.model.built_site == 0)
 			await capture("02-built")
 	assert(scene.model.complete, "Capture traversal must really complete")
 	await capture("04-complete")
@@ -88,6 +94,21 @@ func run() -> void:
 	scene._restart()
 	assert(not scene.paused and scene.model.delivered == 0 and not scene.model.complete)
 	await capture("05-restart")
+	# Exercise the other physical branch from a fresh run, with earned material.
+	for waypoint in RouteTest.SAFE_ROUTE:
+		fly(waypoint)
+	for i in range(3):
+		scene._act()
+	var way_home: Array = RouteTest.SAFE_ROUTE.duplicate()
+	way_home.reverse()
+	for waypoint in way_home:
+		fly(waypoint)
+	scene._act()
+	scene._act()
+	fly(RouteTest.BUILD_SITES[1])
+	scene._act()
+	assert(scene.model.built_site == 1)
+	await capture("11-upper-shelter")
 	scene.landscape.route = null
 	scene.queue_free()
 	await process_frame

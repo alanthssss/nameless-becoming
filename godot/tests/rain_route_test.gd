@@ -69,7 +69,11 @@ func _init() -> void:
 		game.act()
 		check(game.delivered == (trip + 1) * 3, "Safe route must deliver all cargo")
 		if trip == 0:
-			check(game.sheltered(Model.BUILD_SITE), "First handoff must alter real shelter geometry")
+			check(not game.sheltered(Model.BUILD_SITE), "Delivery must not magically build a remote roof")
+			check(game.act() == "roof" and game.cargo_capacity() == 2, "Player must take material, occupying a cargo slot")
+			fly(game, Model.BUILD_SITE)
+			check(game.act() == "build", "Player must physically deliver material to selected site")
+			check(game.sheltered(Model.BUILD_SITE) and game.cargo_capacity() == 3, "Built shelter changes route and frees cargo slot")
 		if trip == 1:
 			check(not game.complete, "Enough early cargo cannot skip the final convoy")
 	check(game.complete and game.home_companions() == Model.COMPANION_COUNT, "Three full real routes must end with all companions at home")
@@ -99,6 +103,18 @@ func _init() -> void:
 	fly(crossing, pond + Vector2(250, 0))
 	check(crossing.position.x > pond.x + 230, "Bee must fly across water without an invisible wall")
 	check(Model.COMPANION_COUNT + 1 == 6, "Party must contain six bees including the player")
+	var alternative = Model.new()
+	alternative.stage = 1
+	alternative.delivered = 6
+	check(alternative.act() == "roof", "Unbuilt chapter supplies one roof")
+	fly(alternative, Model.BUILD_SITES[1])
+	check(alternative.act() == "build" and alternative.stage == 2, "Construction advances a ready chapter without losing earlier deliveries")
+	check(alternative.sheltered(Model.BUILD_SITES[1]) and not alternative.sheltered(Model.BUILD_SITES[0]), "Site choice must affect real shelter location")
+	check(game.events_done.has("yushui_15_full_rain_route") and game.event_catalog.size() == 15, "Completion links to canonical Rain Water matrix without claiming all events")
+	check(alternative.roof_radius() > game.roof_radius(), "Longer upper route must provide a physically wider group shelter")
+	check(not game.events_done.has("yushui_12_partner_rescue"), "Simply recruiting companions must not fabricate a rescue")
+	check(game.events_done.has("yushui_03_dry_landing"), "Construction must record its matrix event")
+	check(not game.events_done.has("yushui_07_blocked_gutter"), "Unimplemented matrix mechanics must not be fabricated as complete")
 	var freshly_started = Model.new()
 	check(freshly_started.delivered == 0 and freshly_started.companions.is_empty() and not freshly_started.complete, "Restart must reset the whole experimental run")
 	if failures == 0:

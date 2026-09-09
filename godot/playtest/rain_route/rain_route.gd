@@ -183,9 +183,12 @@ func _act() -> void:
 		_burst(model.position, GOLD, 16 if result == "deliver" else 8)
 		if result == "deliver":
 			delivery_glow = 1.6
+		if result in ["roof", "build"]:
+			build_glow = 4.0
+			_burst(model.position, Color("d6e598"), 18)
 		if model.stage != last_stage:
 			build_glow = 2.0
-			_burst(Model.BUILD_SITE, Color("d6e598"), 25)
+			_burst(model.roof_position(), Color("d6e598"), 25)
 			last_stage = model.stage
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -246,18 +249,28 @@ func _physics_process(delta: float) -> void:
 	if model.position.distance_to(Model.HIVE) < 80.0:
 		action_button.text = "空格 · 一起收工" if model.delivered >= 9 else "空格 · 交到巢里"
 	elif model.position.distance_to(Model.FLOWERS) < 80.0:
-		action_button.text = "已装满 · 可以出发" if model.cargo == 3 else "空格 · 再取一份粉"
+		action_button.text = "已装满 · 可以出发" if model.cargo == model.cargo_capacity() else "空格 · 再取一份粉"
 	else:
 		action_button.text = "空格 · 接回散粉"
+	if model.position.distance_to(Model.HIVE) < 80 and model.stage == 1 and model.cargo == 0 and model.built_site < 0 and not model.roof_carried:
+		action_button.text = "空格 · 带上遮雨叶"
+	if model.roof_carried:
+		for site: Vector2 in Model.BUILD_SITES:
+			if model.position.distance_to(site) < 85:
+				action_button.text = "空格 · 在这里撑叶"
 	_update_camera(delta)
 	landscape.queue_redraw()
 	queue_redraw()
 
 func _context_message() -> String:
 	if build_glow > 0:
-		return "新叶台撑起来了，洼地中间也能避雨。" if model.stage == 1 else "风向变了，去花田接五只伙伴一起回来。"
+		return model.notice
 	if delivery_glow > 0:
 		return "花粉交好了。大家正在巢里接货。"
+	if model.roof_carried:
+		return "遮雨叶占一格载荷。中路短，上路叶台宽；到选中的支点按空格撑叶。"
+	if model.stage == 1 and model.built_site < 0:
+		return "先回巢带上遮雨叶，再亲自选一处支点，让下一趟多一条路。"
 	if model.position.distance_to(Model.FLOWERS) < 80:
 		return "一份也能出发。带得越多，转弯越要提前。" if model.stage < 2 else "慢下来等伙伴跟上，再选一条一起回家的路。"
 	if model.position.distance_to(Model.HIVE) < 80:
@@ -282,8 +295,8 @@ func _update_camera(delta: float) -> void:
 func _draw_hud() -> void:
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
 	_text(Vector2(50, 59), "雨水", 27, INK)
-	_text(Vector2(119, 57), "把雨路跑通", 19, Color("566a48"))
-	var goal: String = ["送回花粉，撑起中间的叶台", "再送一趟花粉，准备接伙伴", "接五只新蜂，一起返巢"][model.stage]
+	_text(Vector2(119, 57), Model.PENTAD_NAMES[model.stage], 19, Color("566a48"))
+	var goal: String = ["带回花粉，准备遮雨叶", "选点撑叶，再送一趟花粉", "换风了，接五只新蜂一起返巢"][model.stage]
 	_text(Vector2(50, 91), goal, 17, INK)
 	for index in range(3):
 		var rect := Rect2(50 + index * 112, 111, 99, 5)
@@ -297,7 +310,7 @@ func _draw_hud() -> void:
 	_text(Vector2(818, 54), "身上花粉", 14, Color("c0d0ab"))
 	for index in range(3):
 		var center := Vector2(828 + index * 28, 75)
-		draw_circle(center, 7.5, GOLD if index < model.cargo else Color("65765a"))
+		draw_circle(center, 7.5, GOLD if index < model.cargo else (Color("a6b798") if model.roof_carried and index == 2 else Color("65765a")))
 		if index < model.cargo:
 			draw_circle(center + Vector2(-2, -2), 2, Color("fff0b5"))
 	if model.stage >= 2:
@@ -310,6 +323,8 @@ func _draw_hud() -> void:
 	else:
 		_text(Vector2(935, 54), "载荷", 14, Color("c0d0ab"))
 		_text(Vector2(935, 80), "重" if model.cargo >= 2 else "轻", 22)
+	if model.roof_carried:
+		_text(Vector2(876, 99), "叶", 12)
 	if not model.complete:
 		_panel(Rect2(28, 624, 777, 62), Color("f7efd7", 0.97), 16, Color("fff6dd", 0.6))
 		draw_circle(Vector2(40, 653), 3, Color("79974d"))
@@ -323,9 +338,15 @@ func _draw() -> void:
 		draw_line(Vector2(40, 514) + Model.SAFE_ROUTE[i] * 0.053, Vector2(40, 514) + Model.SAFE_ROUTE[i + 1] * 0.053, Color("9ba885"), 2, true)
 	draw_polyline(PackedVector2Array([Vector2(40, 514) + Model.HIVE * 0.053, Vector2(40, 514) + Model.BUILD_SITE * 0.053, Vector2(40, 514) + Model.FLOWERS * 0.053]), Color("c1b9a0"), 1.5, true)
 	draw_rect(Rect2(Vector2(40, 514) + camera_origin * 0.053, Vector2(1280, 720) * 0.053), Color("637960", 0.4), false, 1)
+	draw_polyline(PackedVector2Array([Vector2(40, 514) + Model.HIVE * 0.053, Vector2(40, 514) + Vector2(1250, 420) * 0.053, Vector2(40, 514) + Model.BUILD_SITES[1] * 0.053, Vector2(40, 514) + Model.FLOWERS * 0.053]), Color("c1b9a0"), 1.5, true)
 	for p in [Model.HIVE, Model.FLOWERS]:
 		draw_circle(Vector2(40, 514) + p * 0.053, 4, INK)
 	draw_circle(Vector2(40, 514) + model.position * 0.053, 5, GOLD)
+	for i in range(Model.BUILD_SITES.size()):
+		var p: Vector2 = Vector2(40, 514) + Model.BUILD_SITES[i] * 0.053
+		draw_circle(p, 4, Color("79974d") if model.built_site == i else Color("c1b9a0"))
+	if model.last_event != "":
+		_text(Vector2(260, 594), "花路记事 · " + str(model.event_catalog[model.last_event].title), 16, INK)
 	if model.complete:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
 		_text(Vector2(537, 248), "一会儿巢里见", 22, INK)

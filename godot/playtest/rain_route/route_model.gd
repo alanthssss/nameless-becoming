@@ -4,6 +4,9 @@ extends RefCounted
 const HIVE := Vector2(360, 900)
 const FLOWERS := Vector2(3260, 780)
 const BUILD_SITE := Vector2(1800, 930)
+const BUILD_SITES := [BUILD_SITE, Vector2(1840, 540)]
+const ROOF_RADII := [190.0, 320.0]
+const PENTAD_NAMES := ["一候 · 认路", "二候 · 接路", "三候 · 同行"]
 const CAPACITY := 3
 const GOAL := 9
 const COMPANION_COUNT := 5
@@ -15,9 +18,16 @@ var heading := 0.0
 var position := HIVE
 var velocity := Vector2.ZERO
 var elapsed := 0.0
+var wind_travel := 0.0
 var cargo := 0
 var delivered := 0
 var stage := 0
+var roof_carried := false
+var built_site := -1
+var events_done: Dictionary = {}
+var last_event := ""
+var event_catalog: Dictionary = {}
+
 var rain_exposure := 0.0
 var drops: Array[Vector2] = []
 var companions: Array[Dictionary] = []
@@ -27,16 +37,50 @@ var spills := 0
 var rescues := 0
 var notice := "去右边花田取粉。叶下稳，直路近；装多少由你决定。"
 
+
+func _init() -> void:
+	# Reuse the canonical chapter identifiers/titles, without writing Campaign saves.
+	var data = JSON.parse_string(FileAccess.get_file_as_string("res://data/journey_levels.json"))
+	for chapter in data.levels:
+		if chapter.id == "spring_yushui":
+			for event in chapter.event_matrix:
+				event_catalog[event.id] = event
+
+func record_event(id: String) -> void:
+	if not events_done.has(id) and event_catalog.has(id):
+		events_done[id] = true
+		last_event = id
+
+func roof_position() -> Vector2:
+	return BUILD_SITES[built_site] if built_site >= 0 else BUILD_SITE
+
+func roof_radius() -> float:
+	return ROOF_RADII[built_site] if built_site >= 0 else 0.0
+
+func cargo_capacity() -> int:
+	return CAPACITY - (1 if roof_carried else 0)
+
+func wind_force() -> float:
+	return (-110.0 if stage >= 2 else 65.0) * (0.8 + sin(elapsed * 0.45) * 0.2)
+
+func _advance_chapter() -> void:
+	if stage == 1 and delivered >= 6 and built_site >= 0:
+		stage = 2
+		for index in range(COMPANION_COUNT):
+			companions.append({"position": FLOWERS + Vector2((index - (COMPANION_COUNT - 1) / 2.0) * 18, 35), "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false, "heading": PI})
+		notice = "风向变了。去花田接五只伙伴，用自己接好的路回来。"
+
+
 func sheltered(point: Vector2) -> bool:
 	if point.distance_to(HIVE) < 205.0 or point.distance_to(FLOWERS) < 180.0:
 		return true
 	for center: Vector2 in SHELTERS:
 		if point.distance_to(center) < 215.0:
 			return true
-	return stage >= 1 and point.distance_to(BUILD_SITE) < 210.0
+	return built_site >= 0 and point.distance_to(roof_position()) < roof_radius()
 
 func rain_strength() -> float:
-	return 0.6 + sin(elapsed * 0.055) * 0.25
+	return (0.72 if stage >= 2 else 0.6) + sin(elapsed * 0.055) * 0.18
 
 func raining(point: Vector2) -> bool:
 	return BOUNDS.has_point(point) and not sheltered(point)
@@ -55,19 +99,20 @@ func move_on_map(_from: Vector2, target: Vector2) -> Vector2:
 	return target
 
 func maximum_speed() -> float:
-	return 320.0 - cargo * 24.0
+	return 320.0 - (cargo + (1 if roof_carried else 0)) * 24.0
 
 func step(delta: float, steering: Vector2, braking: bool) -> void:
 	if complete or delta <= 0.0:
 		return
 	elapsed += delta
+	wind_travel += wind_force() * delta
 	if steering.length() > 0.08:
 		heading = lerp_angle(heading, steering.angle(), 1.0 - exp(-12.0 * delta))
-	var acceleration := 700.0 / (1.0 + cargo * 0.45)
+	var acceleration := 700.0 / (1.0 + (cargo + (1 if roof_carried else 0)) * 0.45)
 	var target := steering.limit_length() * maximum_speed() * (0.40 if braking else 1.0)
 	velocity = velocity.move_toward(target, acceleration * delta * (2.6 if braking else 1.0))
 	if not sheltered(position):
-		var wind := Vector2(-65.0 if stage >= 2 else 65.0, 14.0)
+		var wind := Vector2(wind_force(), 14.0)
 		velocity += wind * delta * (1.0 + cargo * 0.24) * (0.38 if braking else 1.0)
 	var next_position := position + velocity * delta
 	position = move_on_map(position, next_position)
@@ -89,33 +134,54 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 			notice = "花粉落下了。靠近黄色散粉，按空格取回；也可以先回叶下。"
 	else:
 		rain_exposure = move_toward(rain_exposure, 0.0, delta * 2.0)
+	if position.distance_to(HIVE) > 250:
+		record_event("yushui_01_takeoff_window")
+	if position.distance_to(HIVE) > 500 and sheltered(position):
+		record_event("yushui_02_underleaf_flight")
+	if stage >= 1 and built_site < 0:
+		for site: Vector2 in BUILD_SITES:
+			if position.distance_to(site) < 95:
+				record_event("yushui_06_vein_backroute")
+	if stage >= 2 and not sheltered(position):
+		record_event("yushui_14_shifted_dropline")
 	_update_companions(delta)
 
 func act() -> String:
 	if complete:
 		return ""
+	if roof_carried:
+		for index in range(BUILD_SITES.size()):
+			if position.distance_to(BUILD_SITES[index]) < 85:
+				built_site = index
+				roof_carried = false
+				record_event("yushui_03_dry_landing")
+				_advance_chapter()
+				notice = "叶台撑好了。下一趟可以从这里穿过雨地。"
+				return "build"
 	if position.distance_to(HIVE) < 80.0:
 		if cargo > 0:
+			if stage >= 2:
+				record_event("yushui_11_heavy_or_light")
 			delivered += cargo
 			cargo = 0
 			deliveries += 1
 			if delivered >= 3 and stage == 0:
 				stage = 1
-				notice = "中间的新叶台撑起来了！下一趟可以在直路中途避雨。"
-			elif delivered >= 6 and stage == 1:
-				stage = 2
-				for index in range(COMPANION_COUNT):
-					companions.append({"position": FLOWERS + Vector2((index - (COMPANION_COUNT - 1) / 2.0) * 18, 35), "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false, "heading": PI})
-				notice = "风向变了。再去花田接五只新蜂，一起把最后的花粉带回来。"
+				notice = "遮雨叶准备好了。再按空格带上，去两处支点选一个撑起来。"
 			else:
 				notice = "花粉交到巢里了。再选一条飞法。"
+			_advance_chapter()
 			_check_finish()
 			return "deliver"
+		if stage == 1 and built_site < 0 and not roof_carried:
+			roof_carried = true
+			notice = "带好遮雨叶了。中路较短，上路叶台更宽；到选中的支点按空格。"
+			return "roof"
 		_check_finish()
 		if not complete:
 			notice = "还要接回花田的伙伴。" if stage >= 2 else "先去右边的花田取粉。"
 		return ""
-	if cargo < CAPACITY:
+	if cargo < cargo_capacity():
 		for index in range(drops.size()):
 			if position.distance_to(drops[index]) < 62.0:
 				drops.remove_at(index)
@@ -125,9 +191,9 @@ func act() -> String:
 				return "recover"
 		if position.distance_to(FLOWERS) < 80.0:
 			cargo += 1
-			notice = "装了 %d / 3 份。现在出发也可以；越重越要提前转弯。" % cargo
+			notice = "装了 %d / %d 份。现在出发也可以；越重越要提前转弯。" % [cargo, cargo_capacity()]
 			return "load"
-	notice = "花粉已装满，找一条返巢的路。" if cargo == CAPACITY else "靠近花田取粉、落粉取回，或巢门交货。"
+	notice = "花粉已装满，找一条返巢的路。" if cargo == cargo_capacity() else "靠近花田取粉、落粉取回，或巢门交货。"
 	return ""
 
 func _update_companions(delta: float) -> void:
@@ -140,6 +206,7 @@ func _update_companions(delta: float) -> void:
 				bee.waiting = false
 				if bee.joined:
 					rescues += 1
+					record_event("yushui_12_partner_rescue")
 				bee.joined = true
 				bee.grace = 2.0
 				bee.exposure = 0.0
@@ -173,6 +240,7 @@ func home_companions() -> int:
 func _check_finish() -> void:
 	if delivered >= GOAL and companions.size() == COMPANION_COUNT and home_companions() == COMPANION_COUNT:
 		complete = true
+		record_event("yushui_15_full_rain_route")
 		notice = "这条路，大家都能走了。"
 	elif delivered >= GOAL:
 		notice = "花粉够了。把五只伙伴都接到巢门，再按空格一起收工。"
