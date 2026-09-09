@@ -36,3 +36,12 @@
 - Keep an observable progress heartbeat. If 90 seconds pass without a new artifact, test result, review finding, or resolved decision—or if the same command/approach fails twice—stop the process, capture the blocker, and reduce the scope or change the approach. Do not repeat an unchanged wait or retry indefinitely.
 - Verify in ascending cost: the smallest relevant test while editing, then freeze the code, then run the full required suite once. After a failure, rerun the failing slice first; repeat the full suite only after the slice is green.
 - At every handoff, state what is implemented, what was actually tested, what remains outside scope, and whether the PR was merged and cleaned up. Automated tests and developer self-test must not be described as player validation.
+
+## Workspace hygiene
+
+- At task start and final handoff, inspect `git status`, branch/HEAD, worktrees, upstream divergence and open PRs. The default checkout should rest on clean, current `main`; implement in a dedicated worktree.
+- After an authorized merge and successful checks, delete the merged task branch remotely and locally, remove its clean temporary worktree, prune stale worktree metadata, and fast-forward the default checkout. Never push directly to `main` or force-reset unrelated work.
+- Before archiving dirty or unmerged work, save a binary patch and a verified Git bundle outside the repository, record recovery instructions, and retain any untracked or ignored user artifacts. Only delete branch refs after their exact tips are recoverable.
+- Keep unresolved design/product choices as explicit draft PRs; do not merge or close them solely to make the PR list empty. Ready implementation PRs still require review and their appropriate checks. Cleaning is not product approval.
+- Keep active worktrees only for ongoing work. Relocate historical checkouts with useful ignored artifacts into a clearly named archive rather than silently deleting those artifacts. Do not switch or remove a worktree being used by another active task.
+- Apply this hygiene during each task and after delivery; do not claim continuous background monitoring unless an automation has actually been configured.
