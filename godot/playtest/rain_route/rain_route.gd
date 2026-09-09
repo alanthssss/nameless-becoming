@@ -2,13 +2,20 @@ extends Node2D
 
 const Model := preload("res://playtest/rain_route/route_model.gd")
 const BEE := preload("res://assets/art/commercial/player_bee_topdown_states_v1.png")
+const WORKER := preload("res://assets/art/commercial/worker_bee_topdown_v1.png")
 const HIVE_ART := preload("res://assets/art/commercial/main_hive_exterior_v1.png")
-const GROUND := preload("res://assets/art/commercial/spring_world_ground_v1.png")
-const FLOWER_ART := preload("res://assets/art/commercial/flower_states_topdown_v1.png")
+const GROUND := preload("res://playtest/rain_route/art/rain_garden_v1.png")
+const LEAF := preload("res://playtest/rain_route/art/leaf_canopy_v1.png")
+const SHELTER_KIT := preload("res://playtest/rain_route/art/shelter_materials_v1.png")
+const FLOWER_ART := preload("res://playtest/rain_route/art/pollen_flowers_v1.png")
 const MUSIC := preload("res://assets/music/spring_explore.wav")
 const LOAD_SOUND := preload("res://assets/audio/commercial/nectar_collect.wav")
 const DELIVER_SOUND := preload("res://assets/audio/commercial/handoff.wav")
 const FINISH_SOUND := preload("res://assets/audio/commercial/complete.wav")
+const LOSS_SOUND := preload("res://assets/audio/commercial/honey_loss.wav")
+const INK := Color("2b4438")
+const CREAM := Color("f8f0d9")
+const GOLD := Color("e9b75e")
 var model = Model.new()
 var font := preload("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
 var paused := false
@@ -17,7 +24,6 @@ var music: AudioStreamPlayer
 var pointer_target := Vector2.ZERO
 var pointer_active := false
 var touch_braking := false
-var trail: Array[Vector2] = []
 var visual_time := 0.0
 var hud: CanvasLayer
 var action_button: Button
@@ -25,8 +31,20 @@ var brake_button: Button
 var pause_button: Button
 var status: Label
 var paused_label: Label
+var effects: Array[Dictionary] = []
+var rng := RandomNumberGenerator.new()
+var build_glow := 0.0
+var delivery_glow := 0.0
+var end_time := 0.0
+var last_spills := 0
+var last_stage := 0
+var hint_label: Label
+var result_controls: Control
+var main_controls: Array[Control] = []
 
 func _ready() -> void:
+	DisplayServer.window_set_title("一会儿巢里见 · 雨水")
+	rng.seed = 91328
 	sound = AudioStreamPlayer.new()
 	sound.bus = &"SFX"
 	add_child(sound)
@@ -39,56 +57,87 @@ func _ready() -> void:
 	music.play()
 	_build_hud()
 
-func _button(text_value: String, point: Vector2, width: float, callback: Callable) -> Button:
+func _panel(rect: Rect2, color: Color, radius := 16, border := Color(0, 0, 0, 0)) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = color
+	style.set_corner_radius_all(radius)
+	style.border_color = border
+	style.set_border_width_all(1 if border.a > 0 else 0)
+	style.shadow_color = Color("112d24", 0.20)
+	style.shadow_size = 0 if rect.size.y < 10 else 7
+	style.shadow_offset = Vector2(0, 3)
+	draw_style_box(style, rect)
+
+func _button(text_value: String, point: Vector2, width: float, callback: Callable, light := false) -> Button:
 	var button := Button.new()
 	button.text = text_value
 	button.position = point
-	button.size = Vector2(width, 40)
+	button.size = Vector2(width, 44)
 	button.add_theme_font_override("font", font)
 	button.add_theme_font_size_override("font_size", 16)
-	button.add_theme_color_override("font_color", Color("f6edc9"))
+	button.add_theme_color_override("font_color", INK if light else CREAM)
+	button.add_theme_color_override("font_hover_color", INK if light else Color.WHITE)
+	button.add_theme_color_override("font_pressed_color", INK if light else Color.WHITE)
+	button.add_theme_color_override("font_disabled_color", Color("8e9e85"))
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color("294e45")
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_left = 12
-	style.corner_radius_bottom_right = 12
+	style.bg_color = Color("f5e9c8") if light else Color("284b3d")
+	style.set_corner_radius_all(13)
+	style.border_color = Color("e6cd95") if light else Color("69836a")
+	style.set_border_width_all(1)
+	style.shadow_color = Color("122e22", 0.22)
+	style.shadow_size = 6
+	style.shadow_offset = Vector2(0, 3)
 	button.add_theme_stylebox_override("normal", style)
 	var hover := style.duplicate()
-	hover.bg_color = Color("447763")
+	hover.bg_color = Color("fff4d9") if light else Color("3f6652")
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", hover)
+	var disabled := style.duplicate()
+	disabled.bg_color = Color("d8dcc9")
+	button.add_theme_stylebox_override("disabled", disabled)
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(callback)
 	hud.add_child(button)
 	return button
 
+func _label(point: Vector2, box_size: Vector2, size: int, color: Color) -> Label:
+	var label := Label.new()
+	label.position = point
+	label.size = box_size
+	label.add_theme_font_override("font", font)
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_color_override("font_color", color)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud.add_child(label)
+	return label
+
 func _build_hud() -> void:
+	action_button = null
 	hud = CanvasLayer.new()
 	add_child(hud)
-	action_button = _button("空格 · 取粉 / 交货", Vector2(836, 664), 202, _act)
-	brake_button = _button("按住慢飞", Vector2(1050, 664), 124, func(): pass)
+	action_button = _button("空格 · 取粉 / 交货", Vector2(831, 648), 229, _act)
+	brake_button = _button("Shift · 慢飞", Vector2(1072, 648), 172, func(): pass, true)
 	brake_button.button_down.connect(func(): touch_braking = true)
 	brake_button.button_up.connect(func(): touch_braking = false)
-	pause_button = _button("暂停", Vector2(1158, 28), 86, _toggle_pause)
-	_button("重来", Vector2(1058, 28), 86, _restart)
-	status = Label.new()
-	status.position = Vector2(40, 622)
-	status.size = Vector2(1195, 36)
-	status.add_theme_font_override("font", font)
-	status.add_theme_font_size_override("font_size", 18)
-	status.add_theme_color_override("font_color", Color("f4eac7"))
-	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hud.add_child(status)
-	paused_label = Label.new()
-	paused_label.text = "暂停中 · 按 Esc 或右上角继续"
-	paused_label.position = Vector2(394, 290)
-	paused_label.size = Vector2(500, 85)
+	pause_button = _button("暂停", Vector2(1162, 27), 82, _toggle_pause, true)
+	var restart := _button("重来", Vector2(1070, 27), 82, _restart, true)
+	main_controls = [action_button, brake_button, pause_button, restart]
+	status = _label(Vector2(53, 629), Vector2(720, 51), 17, INK)
+	status.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hint_label = _label(Vector2(39, 692), Vector2(1000, 24), 13, CREAM)
+	hint_label.text = "WASD / 方向键 / 点地面  飞行     Shift  慢飞接应     R  重来"
+	paused_label = _label(Vector2(394, 296), Vector2(500, 85), 25, CREAM)
+	paused_label.text = "暂停中"
 	paused_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	paused_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	paused_label.add_theme_font_override("font", font)
-	paused_label.add_theme_font_size_override("font_size", 24)
-	hud.add_child(paused_label)
+	result_controls = Control.new()
+	result_controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud.add_child(result_controls)
+	var again := _button("再飞一次", Vector2(480, 426), 320, _restart)
+	hud.remove_child(again)
+	result_controls.add_child(again)
+	result_controls.visible = false
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_instance_valid(music):
@@ -105,11 +154,20 @@ func _toggle_pause() -> void:
 
 func _restart() -> void:
 	model = Model.new()
-	trail.clear()
+	effects.clear()
+	build_glow = 0.0
+	delivery_glow = 0.0
+	end_time = 0.0
+	last_spills = 0
+	last_stage = 0
 	paused = false
 	music.stream_paused = false
 	pointer_active = false
 	touch_braking = false
+
+func _burst(point: Vector2, color: Color, count: int) -> void:
+	for index in range(count):
+		effects.append({"point": point, "velocity": Vector2.from_angle(rng.randf_range(-PI, PI)) * rng.randf_range(15, 90), "age": 0.0, "life": rng.randf_range(0.4, 1.05), "color": color, "size": rng.randf_range(1.5, 3.8)})
 
 func _act() -> void:
 	if paused or model.complete:
@@ -118,6 +176,13 @@ func _act() -> void:
 	if result != "" or model.complete:
 		sound.stream = FINISH_SOUND if model.complete else (DELIVER_SOUND if result == "deliver" else LOAD_SOUND)
 		sound.play()
+		_burst(model.position, GOLD, 16 if result == "deliver" else 8)
+		if result == "deliver":
+			delivery_glow = 1.6
+		if model.stage != last_stage:
+			build_glow = 2.0
+			_burst(Vector2(650, 320), Color("d6e598"), 25)
+			last_stage = model.stage
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -140,6 +205,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if not paused:
 		visual_time += delta
+		if model.complete:
+			end_time += delta
 		var steering := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		if steering.length() > 0.05:
 			pointer_active = false
@@ -150,15 +217,28 @@ func _physics_process(delta: float) -> void:
 			else:
 				steering = offset.normalized() * minf(1.0, offset.length() / 55.0)
 		model.step(delta, steering, Input.is_physical_key_pressed(KEY_SHIFT) or touch_braking)
-		if trail.is_empty() or (trail[-1] as Vector2).distance_to(model.position) > 9.0:
-			trail.append(model.position)
-			if trail.size() > 35:
-				trail.pop_front()
-	status.text = model.notice
+		if model.spills > last_spills:
+			_burst(model.position, GOLD, 10)
+			sound.stream = LOSS_SOUND
+			sound.play()
+			last_spills = model.spills
+		build_glow = maxf(0, build_glow - delta)
+		delivery_glow = maxf(0, delivery_glow - delta)
+		for index in range(effects.size() - 1, -1, -1):
+			var effect := effects[index]
+			effect.age = float(effect.age) + delta
+			effect.point = (effect.point as Vector2) + (effect.velocity as Vector2) * delta
+			effect.velocity = (effect.velocity as Vector2).move_toward(Vector2(0, 12), delta * 75)
+			if effect.age >= effect.life:
+				effects.remove_at(index)
+	status.text = _context_message()
 	paused_label.visible = paused
 	pause_button.text = "继续" if paused else "暂停"
 	action_button.disabled = paused or model.complete
 	brake_button.disabled = paused or model.complete
+	result_controls.visible = model.complete and not paused
+	for control in [action_button, brake_button, status, hint_label]:
+		control.visible = not model.complete
 	if model.position.distance_to(Model.HIVE) < 80.0:
 		action_button.text = "空格 · 一起收工" if model.delivered >= 9 else "空格 · 交到巢里"
 	elif model.position.distance_to(Model.FLOWERS) < 80.0:
@@ -167,97 +247,214 @@ func _physics_process(delta: float) -> void:
 		action_button.text = "空格 · 接回散粉"
 	queue_redraw()
 
-func _text(point: Vector2, value: String, size: int, color := Color("f3ebc8")) -> void:
+func _context_message() -> String:
+	if build_glow > 0:
+		return "新叶台撑起来了，直路中间也能避雨。" if model.stage == 1 else "风向变了，去花田接三只伙伴一起回来。"
+	if delivery_glow > 0:
+		return "花粉交好了。大家正在巢里接货。"
+	if model.position.distance_to(Model.FLOWERS) < 80:
+		return "一份也能出发。带得越多，转弯越要提前。" if model.stage < 2 else "慢下来等伙伴跟上，再选一条一起回家的路。"
+	if model.position.distance_to(Model.HIVE) < 80:
+		return "花田在右边。穿雨近，叶下稳，自己选一条路。" if model.cargo == 0 else "到家了，按空格把花粉交给接货蜂。"
+	if model.raining(model.position):
+		return "雨正在落下。靠向叶下，掉下的花粉还能取回。"
+	for bee in model.companions:
+		if bee.waiting:
+			return "有伙伴在等你。靠近它，按住 Shift 慢飞接回。"
+	return "叶下能避雨。看看下一阵雨，准备好再出发。" if model.sheltered(model.position) else "看雨的空隙，也可以沿下方的叶棚绕行。"
+
+func _text(point: Vector2, value: String, size: int, color := CREAM) -> void:
 	draw_string(font, point, value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
-func _bee(point: Vector2, scale_value: float, angle: float, tint := Color.WHITE) -> void:
-	draw_circle(point + Vector2(3, 9), scale_value * 0.29, Color(0.03, 0.15, 0.12, 0.22))
-	draw_set_transform(point, angle)
-	draw_texture_rect_region(BEE, Rect2(-scale_value / 2, -scale_value / 2, scale_value, scale_value), Rect2(0, 0, 256, 256), tint)
+func _shadow(point: Vector2, radius: float, opacity := 0.22) -> void:
+	draw_set_transform(point, 0, Vector2(1, 0.30))
+	for index in range(5):
+		draw_circle(Vector2.ZERO, radius + index * 2, Color("173b2a", opacity / 5.0))
 	draw_set_transform(Vector2.ZERO)
 
-func _shelter(center: Vector2, radius: float, built := false) -> void:
-	# Geometric canopy footprint is gameplay geometry, not a decorative asset.
-	draw_circle(center + Vector2(0, 10), radius + 3, Color("173e38", 0.25))
-	draw_circle(center, radius, Color("315d45", 0.88))
-	draw_arc(center, radius - 5, 0.15, 3.1, 40, Color("7d9f5b"), 3.0, true)
-	draw_line(center + Vector2(-radius * 0.72, 30), center + Vector2(radius * 0.72, -30), Color("6b8e57"), 2.0, true)
-	if built:
-		draw_arc(center, radius + 6, 0, TAU, 56, Color("f5d476"), 2.5, true)
-		_text(center + Vector2(-43, 8), "新叶台", 17)
-
-func _draw() -> void:
-	draw_rect(Rect2(0, 0, 1280, 720), Color("172f2d"))
-	draw_texture_rect(GROUND, Rect2(0, 115, 1280, 505), false, Color("a9bba7"))
-	draw_rect(Rect2(0, 115, 1280, 505), Color("244f48", 0.58))
-	for center: Vector2 in Model.SHELTERS:
-		_shelter(center, 121.0)
-	if model.stage >= 1:
-		_shelter(Vector2(650, 320), 84.0, true)
+func _bee(point: Vector2, scale_value: float, angle: float, tint := Color.WHITE, worker := false, loaded := false, fast := false) -> void:
+	_shadow(point + Vector2(2, 20), scale_value * 0.35)
+	var bob := sin(visual_time * 7 + point.x * 0.02) * 1.7
+	draw_set_transform(point + Vector2(0, bob), angle, Vector2(1 + sin(visual_time * 36) * 0.016, 1.0))
+	if worker:
+		draw_texture_rect(WORKER, Rect2(-scale_value / 2, -scale_value / 2, scale_value, scale_value), false, tint)
 	else:
-		draw_arc(Vector2(650, 320), 64, 0, TAU, 48, Color("f1d08a", 0.33), 2.0, true)
-		_text(Vector2(598, 325), "待撑叶台", 17, Color("e6d8ad", 0.60))
+		var frame := 2 if loaded else (1 if fast else 0)
+		draw_texture_rect_region(BEE, Rect2(-scale_value / 2, -scale_value / 2, scale_value, scale_value), Rect2(frame * 256, 0, 256, 256), tint)
+	draw_set_transform(Vector2.ZERO)
+
+func _shelter(center: Vector2, radius: float, built := false, index := 0) -> void:
+	_shadow(center + Vector2(5, 49), radius * 0.86, 0.42)
+	var turn: float = sin(visual_time * 1.4 + index * 1.7) * 0.012 + [-0.045, 0.035, -0.022, 0.050][index % 4]
+	var breathing := 1.0 + sin(visual_time * 1.1 + index) * 0.006
+	draw_set_transform(center + Vector2(0, 9), turn, Vector2(breathing, 1.0))
+	var tint := Color(0.88 + index * 0.025, 0.96, 0.86)
+	if built:
+		tint = Color(1.0, 1.0, 0.94)
+	var reveal := clampf((radius + 20 - (model.position as Vector2).distance_to(center)) / 40.0, 0, 1)
+	tint.a = 1.0 - reveal * 0.42
+	draw_texture_rect(LEAF, Rect2(-radius * 1.20, -radius * 1.20, radius * 2.4, radius * 2.4), false, tint)
+	draw_set_transform(Vector2.ZERO)
+	# Water leaves the physical roof edge; no debug circle marks shelter space.
+	var drop_phase := fposmod(visual_time * 0.65 + index * 0.37, 1)
+	var droplet := center + Vector2(radius * 0.10, radius * 0.98 + drop_phase * 25)
+	draw_line(droplet, droplet + Vector2(0, 4), Color("e6f4df", (1 - drop_phase) * 0.7), 1.5, true)
+	if built and build_glow > 0:
+		_text(center + Vector2(-40, -radius - 18), "叶台好了", 18, CREAM)
+
+func _rain() -> void:
+	for band_index in range(3):
+		var area: Rect2 = model.rain_band(band_index)
+		var phase: float = model.rain_phase(band_index)
+		var wet := phase < 2.5
+		var warning := phase > 3.6
+		if not wet and not warning:
+			continue
+		var strength := minf(1.0, phase / 0.25 + 0.15) if wet else (phase - 3.6) * 0.40
+		# Feathered local cloud shade and irregular falling droplets share the
+		# exact same spatial predicate as the rain/canopy gameplay collision.
+		for index in range(125):
+			var offset_x := fposmod(index * 29.371, area.size.x)
+			var speed := 235.0 + fposmod(index * 13.72, 105)
+			var direction_sign := -1.0 if model.stage >= 2 else 1.0
+			var y := 165 + fposmod(index * 53.29 + visual_time * speed * direction_sign, 450)
+			var point := Vector2(area.position.x + offset_x, y)
+			if model.sheltered(point):
+				continue
+			var direction := Vector2(-5, -15) if model.stage >= 2 else Vector2(5, 15)
+			var alpha := (0.40 + fposmod(index * 0.079, 0.33)) * strength
+			if wet:
+				draw_line(point, point + direction * (0.6 + fposmod(index * 0.13, 0.7)), Color("dbeadb", alpha), 1.0, true)
+				if index % 8 == 0:
+					var ripple_point := Vector2(area.position.x + offset_x, 180 + fposmod(index * 49.9, 420))
+					if not model.sheltered(ripple_point):
+						var ripple := fposmod(visual_time * 1.7 + index * 0.13, 1)
+						draw_set_transform(ripple_point, 0, Vector2(1, 0.35))
+						draw_arc(Vector2.ZERO, 2 + ripple * 8, 0, TAU, 14, Color("d6e2c7", (1 - ripple) * 0.30), 1, true)
+						draw_set_transform(Vector2.ZERO)
+			else:
+				draw_line(point, point + direction * 0.3, Color("c0d6c4", alpha * 0.65), 1, true)
+		# Bent grass-like wind strokes make direction visible without labels.
+		var wind_y := 226.0 + sin(visual_time * 1.6 + band_index) * 13
+		var wind_points := PackedVector2Array()
+		for j in range(12):
+			wind_points.append(Vector2(area.position.x - 10 + j * 10, wind_y + sin(j * 0.25) * (12 if model.stage < 2 else -12)))
+		draw_polyline(wind_points, Color("eff2d6", 0.22 * strength), 1, true)
+
+func _tag(point: Vector2, label: String, width: float) -> void:
+	_panel(Rect2(point, Vector2(width, 32)), Color("234936", 0.87), 11)
+	_text(point + Vector2(13, 22), label, 15)
+
+func _draw_hud() -> void:
+	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
+	_text(Vector2(50, 59), "雨水", 27, INK)
+	_text(Vector2(119, 57), "把雨路跑通", 19, Color("566a48"))
+	var goal: String = ["送回花粉，撑起中间的叶台", "再送一趟花粉，准备接伙伴", "接三只新蜂，一起返巢"][model.stage]
+	_text(Vector2(50, 91), goal, 17, INK)
 	for index in range(3):
-		var area: Rect2 = model.rain_band(index)
-		var wet: bool = model.rain_phase(index) < 2.5
-		var warning: bool = model.rain_phase(index) > 3.6
-		if wet or warning:
-			for x in range(int(area.position.x), int(area.end.x), 14):
-				for y in range(172, 608, 24):
-					var point := Vector2(x, y + fposmod(visual_time * 150.0, 24))
-					if not model.sheltered(point):
-						var direction := Vector2(-7, -15) if model.stage >= 2 else Vector2(7, 15)
-						draw_line(point, point + direction, Color("bde7e6", 0.7 if wet else 0.16), 1.7 if wet else 1.0, true)
-			_text(Vector2(area.position.x + 12, 190), "落雨" if wet else "将落雨", 14, Color("d7eddb", 0.9 if wet else 0.5))
-	draw_circle(Model.HIVE, 88.0, Color("dfbd65", 0.17))
-	draw_texture_rect(HIVE_ART, Rect2(52, 230, 150, 164), false)
-	_text(Vector2(80, 423), "巢门 · 交货", 18)
-	draw_circle(Model.FLOWERS, 85.0, Color("efd7a1", 0.17))
-	for offset in [Vector2(-25, -35), Vector2(25, 5), Vector2(-24, 38)]:
-		draw_texture_rect_region(FLOWER_ART, Rect2(Model.FLOWERS + offset - Vector2(33, 33), Vector2(66, 66)), Rect2(0, 0, 256, 256))
-	_text(Vector2(1078, 445), "花田 · 取粉", 18)
-	_text(Vector2(462, 589), "叶下绕行 · 不淋雨", 18, Color("d3dfac"))
-	for index in range(trail.size()):
-		draw_circle(trail[index], 2.5, Color("f8d68a", float(index) / maxf(1, trail.size()) * 0.4))
-	for point: Vector2 in model.drops:
-		for index in range(5):
-			draw_circle(point + Vector2.from_angle(index * TAU / 5) * 9, 3.4, Color("f7cb61"))
-		draw_arc(point, 21 + sin(visual_time * 3) * 2, 0, TAU, 24, Color("f6d683"), 1.4, true)
-	for bee in model.companions:
-		_bee(bee.position, 42.0, sin(visual_time * 3) * 0.08)
-		if bee.waiting:
-			draw_arc(bee.position, 27, 0, TAU, 32, Color("f7d087"), 2, true)
-			_text(bee.position + Vector2(-22, -31), "等你", 15)
-	_bee(model.position, 58.0, clampf(model.velocity.x / 500.0, -0.35, 0.35))
-	for index in range(model.cargo):
-		draw_circle(model.position + Vector2(-12 + index * 12, 28), 4.5, Color("ffd86d"))
-	if pointer_active:
-		draw_arc(pointer_target, 12, 0, TAU, 24, Color("f4e7b8", 0.7), 1.5, true)
-	# Quiet, fixed HUD outside all navigable and interactive world geometry.
-	draw_rect(Rect2(0, 0, 1280, 115), Color("172f2d"))
-	_text(Vector2(36, 43), "雨水", 28)
-	_text(Vector2(111, 42), "把雨路跑通", 22)
-	_text(Vector2(38, 81), ["先运三份花粉，撑起中间的叶台", "叶台已建好，再运三份，准备接伙伴", "换风了 · 接三只新蜂一起返巢"][model.stage], 17, Color("c9d5b8"))
-	_text(Vector2(645, 38), "巢里  %d / 9" % model.delivered, 21)
-	_text(Vector2(645, 77), "身上  %d / 3" % model.cargo, 18, Color("ecc66a"))
+		var rect := Rect2(50 + index * 112, 111, 99, 5)
+		_panel(rect, Color("d8d8b9"), 2)
+		var filled := clampf((model.delivered - index * 3) / 3.0, 0, 1)
+		if filled > 0:
+			draw_rect(Rect2(rect.position, Vector2(rect.size.x * filled, 5)), Color("729052"))
+	_panel(Rect2(687, 25, 361, 76), Color("264b39", 0.96), 18, Color("a4b889", 0.5))
+	_text(Vector2(711, 54), "巢里", 14, Color("c0d0ab"))
+	_text(Vector2(711, 81), "%d / 9" % model.delivered, 23)
+	_text(Vector2(818, 54), "身上花粉", 14, Color("c0d0ab"))
+	for index in range(3):
+		var center := Vector2(828 + index * 28, 75)
+		draw_circle(center, 7.5, GOLD if index < model.cargo else Color("65765a"))
+		if index < model.cargo:
+			draw_circle(center + Vector2(-2, -2), 2, Color("fff0b5"))
 	if model.stage >= 2:
 		var following := 0
 		for bee in model.companions:
 			if not bee.waiting:
 				following += 1
-		_text(Vector2(840, 77), "跟队  %d / 3" % following, 17)
+		_text(Vector2(935, 54), "伙伴", 14, Color("c0d0ab"))
+		_text(Vector2(935, 81), "%d / 3" % following, 23)
 	else:
-		_text(Vector2(840, 77), "轻载灵活 · 重载转弯慢", 16, Color("c9d5b8"))
-	draw_rect(Rect2(0, 618, 1280, 102), Color("172f2d"))
-	_text(Vector2(40, 689), "WASD / 方向键 / 点地面  飞行     Shift  慢飞接应     R  重来", 16, Color("adc4b6"))
+		_text(Vector2(935, 54), "载荷", 14, Color("c0d0ab"))
+		_text(Vector2(935, 80), "重" if model.cargo >= 2 else "轻", 22)
+	if not model.complete:
+		_panel(Rect2(28, 624, 777, 62), Color("f7efd7", 0.97), 16, Color("fff6dd", 0.6))
+		draw_circle(Vector2(40, 653), 3, Color("79974d"))
+
+func _draw() -> void:
+	draw_texture_rect(GROUND, Rect2(0, 0, 1280, 720), false)
+	# Darker edge vignette keeps the sunlit playable clearing open and readable.
+	for index in range(14):
+		draw_rect(Rect2(0, index * 3, 1280, 3), Color("153d2b", 0.18 * (1 - index / 14.0)))
+		draw_rect(Rect2(0, 720 - index * 3, 1280, 3), Color("153d2b", 0.28 * (1 - index / 14.0)))
+	for index in range(Model.SHELTERS.size()):
+		_shelter(Model.SHELTERS[index], 121.0, false, index)
+	if model.stage >= 1:
+		_shelter(Vector2(650, 320), 84.0, true)
+	# The unfinished site is a small work bundle, never a target circle.
+	else:
+		_shadow(Vector2(650, 331), 36, 0.22)
+		draw_texture_rect(SHELTER_KIT, Rect2(594, 265, 112, 112), false)
+	_rain()
+	_shadow(Model.HIVE + Vector2(0, 57), 78, 0.42)
+	draw_texture_rect(HIVE_ART, Rect2(Model.HIVE + Vector2(-94, -121), Vector2(188, 210)), false)
+	# A waiting worker and delivery motion give the entrance a living scale.
+	var host_point := Model.HIVE + Vector2(39 + sin(visual_time * 1.4) * 6, 36)
+	_bee(host_point, 35, -0.12, Color.WHITE, true)
+	if delivery_glow > 0:
+		for i in range(8):
+			var t := fposmod(visual_time * 1.5 + i / 8.0, 1)
+			draw_circle(Model.HIVE + Vector2(20 - t * 28, 10 - t * 38), 2.5, Color("f9d677", (1 - t) * delivery_glow / 1.6))
+	_shadow(Model.FLOWERS + Vector2(0, 39), 60, 0.28)
+	draw_set_transform(Model.FLOWERS, sin(visual_time * 1.7) * 0.018)
+	draw_texture_rect(FLOWER_ART, Rect2(-95, -106, 190, 190), false)
+	draw_set_transform(Vector2.ZERO)
+	for i in range(8):
+		var t := fposmod(visual_time * 0.3 + i * 0.13, 1)
+		var p := Model.FLOWERS + Vector2(sin(i * 2.1 + visual_time * 0.2) * 41, 10 - t * 47)
+		draw_circle(p, 1.7, Color("ffd875", sin(t * PI) * 0.75))
+	if model.position.distance_to(Model.HIVE) < 135:
+		_tag(Vector2(75, 432), "巢门 · 交货", 122)
+	if model.position.distance_to(Model.FLOWERS) < 135:
+		_tag(Vector2(1067, 432), "花田 · 取粉", 129)
+	for point: Vector2 in model.drops:
+		_shadow(point + Vector2(0, 8), 15, 0.30)
+		for index in range(8):
+			var p := point + Vector2.from_angle(index * TAU / 8) * (5 + index % 3 * 3)
+			draw_circle(p, 2.5, GOLD)
+			draw_circle(p + Vector2(-0.7, -0.7), 1, Color("fff2b6"))
+		var shine := fposmod(visual_time + point.x, 2.0)
+		if shine < 0.9:
+			draw_line(point + Vector2(-4, -15), point + Vector2(4, -15), Color("fff1b5", 1 - shine), 1.3, true)
+			draw_line(point + Vector2(0, -19), point + Vector2(0, -11), Color("fff1b5", 1 - shine), 1.3, true)
+	for bee in model.companions:
+		_bee(bee.position, 43.0, sin(visual_time * 3) * 0.08, Color("ede9cb") if bee.waiting else Color.WHITE, true)
+		if bee.waiting:
+			var p: Vector2 = bee.position + Vector2(-12, -45)
+			_panel(Rect2(p, Vector2(24, 26)), CREAM, 8)
+			_text(p + Vector2(8, 18), "!", 17, INK)
+	_bee(model.position, 62.0, clampf(model.velocity.x / 500.0, -0.35, 0.35), Color.WHITE, false, model.cargo > 0, model.velocity.length() > 140)
+	for index in range(model.cargo):
+		var p: Vector2 = model.position + Vector2(-9 + index * 8, 12)
+		for j in range(3):
+			draw_circle(p + Vector2((j - 1) * 3, (j % 2) * 3), 2.1, Color("edc254"))
+	for effect in effects:
+		var color: Color = effect.color
+		color.a *= 1 - float(effect.age) / float(effect.life)
+		draw_circle(effect.point, effect.size, color)
+	if pointer_active:
+		var p := pointer_target
+		draw_line(p + Vector2(-5, 0), p + Vector2(5, 0), Color("f9edbd", 0.85), 1.6, true)
+		draw_line(p + Vector2(0, -5), p + Vector2(0, 5), Color("f9edbd", 0.85), 1.6, true)
+	_draw_hud()
 	if model.complete:
-		draw_rect(Rect2(0, 115, 1280, 503), Color("153c35", 0.88))
+		draw_rect(Rect2(0, 145, 1280, 470), Color("183b2b", 0.12))
 		for index in range(12):
-			var t := fposmod(visual_time * 0.08 + float(index) / 12, 1.0)
-			_bee(Vector2(1100 - t * 920, 466 + sin(t * PI) * 65), 37, -0.2, Color("fff0b7"))
-		_text(Vector2(355, 255), "这条路，大家都能走了。", 34)
-		_text(Vector2(369, 309), "叶台撑住了雨，伙伴也跟你一起回来了。", 21)
-		_text(Vector2(414, 361), "%d 趟交货 · %d 次掉粉 · %d 次接回应援" % [model.deliveries, model.spills, model.rescues], 19, Color("cdd6b5"))
-		_text(Vector2(421, 402), "按 R 再飞一次，试试另一条路。", 21)
+			var t := fposmod(visual_time * 0.075 + float(index) / 12, 1)
+			_bee(Vector2(1110 - t * 960, 521 + sin(t * PI) * 37), 37, -0.14, Color.WHITE, true)
+		_panel(Rect2(348, 204, 584, 290), Color("f7efd7", 0.98), 24, Color("fff4cf"))
+		_text(Vector2(537, 248), "一会儿巢里见", 22, Color("74824d"))
+		_text(Vector2(403, 300), "这条路，大家都能走了。", 28, INK)
+		_text(Vector2(416, 341), "叶台撑住了雨，伙伴也一起回来了。", 19, Color("62724e"))
+		_text(Vector2(422, 386), "%d 趟交货   ·   %d 次掉粉   ·   %d 次接回" % [model.deliveries, model.spills, model.rescues], 17, Color("6e795b"))
 	if paused:
-		draw_rect(Rect2(0, 115, 1280, 503), Color("142927", 0.88))
+		draw_rect(Rect2(0, 145, 1280, 470), Color("142f24", 0.75))

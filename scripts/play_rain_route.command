@@ -13,7 +13,7 @@ else
   echo '需要 Godot 4.6.2。请设置 GODOT_BIN 后重新启动。' >&2
   exit 127
 fi
-printf 'Rain route experiment | %s | %s | %s\n' "$project_root" "$(git -C "$project_root" branch --show-current)" "$(git -C "$project_root" rev-parse --short HEAD)"
+printf 'Rain Water | %s | %s | %s\n' "$project_root" "$(git -C "$project_root" branch --show-current)" "$(git -C "$project_root" rev-parse --short HEAD)"
 if [[ -n "$(git -C "$project_root" status --porcelain --untracked-files=normal)" ]]; then
   echo 'Source includes uncommitted changes.'
 fi

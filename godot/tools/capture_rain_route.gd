@@ -36,11 +36,21 @@ func run() -> void:
 		quit(1)
 		return
 	scene = Scene.instantiate()
+	if not scene.has_method("_act"):
+		push_error("Rain route script failed to load")
+		quit(1)
+		return
 	root.add_child(scene)
 	scene.set_physics_process(false)
 	await capture("01-start")
+	scene._toggle_pause()
+	await capture("06-pause")
+	scene._toggle_pause()
 	for trip in range(3):
 		fly(Vector2(160, 545))
+		if trip == 0:
+			fly(Vector2(350, 545))
+			await capture("07-under-leaf")
 		fly(Vector2(1140, 545))
 		fly(RouteTest.FLOWERS)
 		for index in range(3):

@@ -107,3 +107,19 @@
 9. 通过后把 `AUTH-PENDING`、`ALAN-PENDING`、`PLAYER-PENDING`、`MKT-NO` 分别改为带日期、构建／资产哈希和审批人的完成状态。
 
 在上述项目完成前，当前 21 张运行图只能称为**已接入的商业美术候选**；四张首通结果图也只是**视觉结果候选**，不等于四场大型事件玩法、商业“哇塞”质量或发行门禁已完成。概念主视觉只能称为**未批准的 ImageGen 构图候选**。被否决的旧角色图不留在仓库或导出物中。这些现有资产都不能称为最终商业美术、授权完备资产或已批准商店素材。
+
+
+## 6. 2026-09-09 雨水独立场景完成资产
+
+Alan 要求本段美术达到交付级，授权新资产制作和实际接入。下列四图使用内置 OpenAI ImageGen 的新图模式，无参考输入；原始输出字节原样复制到 `godot/playtest/rain_route/art/`，未裁切、去底、改色或缩放文件。叶棚、花丛和材料具有原始透明通道；运行时只做尺寸、色调及遮挡透明度处理。背景完整铺入视口；交互实体、角色、雨、粒子和 UI 均由引擎独立控制，不烘焙在背景里。
+
+完整原始提示见 [generation-prompts.json](../../godot/playtest/rain_route/art/generation-prompts.json)，逐文件原始路径和哈希见 [manifest.json](../../godot/playtest/rain_route/art/manifest.json)。该记录保存可获得的工具产物身份，不冒充服务端 generation ID 或具体模型版本。
+
+| 文件 | 用途 | 原始 SHA-256 |
+| --- | --- | --- |
+| `rain_garden_v1.png` | 雨后花田完整底图 | `b2c2d2a4d58090710e67b566f8ad208eceb1825550b3395589988b6ce8283a55` |
+| `leaf_canopy_v1.png` | 可运动、可透视的真实叶棚 | `5d509e31958dbe8483b2cae0a227ecf319d7c62bd784d86df32fee96350d07e0` |
+| `pollen_flowers_v1.png` | 可取粉的完整花丛 | `ac0d4b7f6b165e037921ce9cbfbcf6c902b23a7d9d2c1529bbe1f83467f31968` |
+| `shelter_materials_v1.png` | 叶棚建成前的卷叶／树枝材料 | `4c6d94a4587d9067698e44bd5a05dab9a36e9ed93d5cc998947aec6d07b805f0` |
+
+本段素材制作与引擎整合已完成，Codex 用实际运行画面检查；Alan 的整段审美评价和独立玩家可读性验证尚未取得。当前仅用于雨水独立入口，不自动加入正式 Campaign 的 21 图白名单、不宣称营销批准或完整商业授权审查已完成。既有玩家蜂、工蜂、主巢图及音乐来源仍按各自原登记。
