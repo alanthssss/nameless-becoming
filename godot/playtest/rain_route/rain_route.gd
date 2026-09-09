@@ -309,7 +309,12 @@ func _context_message() -> String:
 	if model.work_ready():
 		return "今天的事做好了。回到巢门，按空格收工。"
 	if model.today().mode == "drips":
-		return "水滴停了，现在穿过叶口。" if model.drip_open() else "雨落在叶上，看看叶尖的滴水，等空隙再穿过。"
+		if model.drip_hit_flash > 0:
+			return model.notice
+		for gap: Vector2 in model.drip_gaps():
+			if model.position.distance_to(gap) < 280:
+				return "缺口停水了，可直接飞过；下方叶下也能绕行。" if model.drip_open() else "缺口在滴水，碰到会掉粉、减速。等停水，或从下方绕行。"
+		return model.today().hint
 	if model.roof_carried:
 		return "遮雨叶占一格载荷。中路短，上路叶台宽；到支点按空格撑叶。"
 	return model.today().hint + model.work_progress()

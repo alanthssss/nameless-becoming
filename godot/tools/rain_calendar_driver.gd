@@ -10,23 +10,34 @@ static func fly(model, target: Vector2, brake := true) -> void:
 	for frame in range(120):
 		model.step(1.0 / 60, Vector2.ZERO, true)
 
+static func safe_route(model) -> Array:
+	var path: Array = []
+	for i in range(model.SAFE_ROUTE.size()):
+		path.append(model.SAFE_ROUTE[i])
+		if model.day == 5 and i in [3, 4]:
+			var gap: Vector2 = model.drip_gaps()[i - 3]
+			path.append(gap + Vector2(-85, 150))
+			path.append(gap + Vector2(85, 150))
+	return path
+
 static func flowers(model, count: int) -> void:
-	for point in model.SAFE_ROUTE:
+	for point in safe_route(model):
 		fly(model, point)
 	for i in range(count):
 		model.act()
 	assert(model.cargo == count, "Flower pickup must use actual action")
 
 static func home(model, close_day := true) -> void:
+	var path := safe_route(model)
 	var nearest := 0
 	var distance := INF
-	for i in range(model.SAFE_ROUTE.size()):
-		var current: float = model.position.distance_to(model.SAFE_ROUTE[i])
+	for i in range(path.size()):
+		var current: float = model.position.distance_to(path[i])
 		if current < distance:
 			distance = current
 			nearest = i
 	for i in range(nearest, -1, -1):
-		fly(model, model.SAFE_ROUTE[i])
+		fly(model, path[i])
 	if close_day:
 		model.act()
 
@@ -47,16 +58,7 @@ static func work(model, site := 0) -> void:
 				fly(model, point)
 				assert(model.act() == "pollinate")
 		"drips":
-			for i in range(model.today().points.size()):
-				var target: Vector2 = model.today().points[i]
-				for attempt in range(8):
-					fly(model, target - Vector2(85, 0))
-					while fposmod(model.day_clock, 4.5) < 2.72:
-						model.step(1.0 / 60, Vector2.ZERO, true)
-					fly(model, target)
-					if model.visited.has(str(i)):
-						break
-				assert(model.visited.has(str(i)), "Drip gap must be crossed by flight")
+			flowers(model, 1)
 		"gutter":
 			for point in model.today().points:
 				fly(model, point)

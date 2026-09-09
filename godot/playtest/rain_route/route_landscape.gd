@@ -206,6 +206,7 @@ func _draw() -> void:
 		if visible_world.has_point(extra.point) and occupied(extra.point, extra.radius):
 			canopy(extra.point, 2, false, extra.radius)
 	layer_opacity = 1.0
+	_draw_drip_gaps(visible_world)
 	if route.model.sheltered(route.model.position) and route.model.position.distance_to(Model.HIVE) > 205:
 		label(route.model.position + Vector2(-38, 55), "叶下 · 避雨", 16)
 	if route.model.roof_carried:
@@ -277,6 +278,8 @@ func extra_roofs() -> Array:
 		roofs.append({"point": Vector2(2470, 1080), "radius": 215.0})
 	if route.model.escort_roof:
 		roofs.append({"point": route.model.position, "radius": 135.0})
+	for gap: Vector2 in route.model.drip_gaps():
+		roofs.append({"point": gap + Vector2(0, 150), "radius": 145.0})
 	return roofs
 
 func _daily_world(visible_world: Rect2) -> void:
@@ -330,13 +333,7 @@ func _daily_world(visible_world: Rect2) -> void:
 			var p: Vector2 = model.today().points[i]
 			if not visible_world.has_point(p):
 				continue
-			if model.today().mode == "drips":
-				leaf(p + Vector2(0, -65), 45, 0.4, GREEN)
-				if not model.drip_open():
-					var drop: float = fposmod(model.day_clock * 2.2, 1)
-					line([p + Vector2(0, -40 + drop * 70), p + Vector2(0, -31 + drop * 70)], Color("7d9fa2"), 3)
-				label(p + Vector2(-30, 45), "现在穿过" if model.drip_open() else "叶尖滴水", 16)
-			else:
+			if model.today().mode == "scout":
 				line([p + Vector2(0, 26), p + Vector2(0, -25)], INK, 3)
 				shape([p + Vector2(0, -25), p + Vector2(27, -18), p + Vector2(0, -10)], GREEN if model.visited.has(str(i)) else GOLD)
 	if not model.day_finished:
@@ -344,3 +341,44 @@ func _daily_world(visible_world: Rect2) -> void:
 			if visible_world.has_point(target):
 				# Small ground chevrons identify today's work without blocking flight.
 				line([target + Vector2(-9, 47), target + Vector2(0, 53), target + Vector2(9, 47)], Color("ae7d55"), 2)
+
+
+func _draw_drip_gaps(visible_world: Rect2) -> void:
+	var model = route.model
+	for p: Vector2 in model.drip_gaps():
+		if not visible_world.has_point(p):
+			continue
+		# Remove overlapping roof silhouettes at the same bounds as the exposed gap.
+		oval(p, Vector2(52, 100), Color("eae4cf"), false)
+		for side in [-1, 1]:
+			var rim: Array = []
+			for sample in range(17):
+				var angle := -PI / 2 + sample * PI / 16
+				rim.append(p + Vector2(side * cos(angle) * 52, sin(angle) * 100))
+			line(rim, Color("647c65"), 2)
+			var edge := p + Vector2(side * 72, 0)
+			line([edge + Vector2(-side * 11, -8), edge, edge + Vector2(-side * 11, 8)], GREEN, 3)
+		# A large leaf visibly channels water to its tip above the opening.
+		leaf(p + Vector2(-58, -115), 64, 0.4, GREEN)
+		if not model.drip_open():
+			var drop: Vector2 = model.drip_position(p)
+			line([drop + Vector2(0, -16), drop], Color("658f98"), 3)
+			oval(drop, Vector2(7, 11), Color("7fa7ae"))
+			var phase := fposmod(model.day_clock, 0.9) / 0.9
+			draw_arc(p + Vector2(0, 88), 4 + phase * 12, PI, TAU, 14, Color("7fa7ae", 1 - phase), 2, true)
+		for pulse in range(3):
+			draw_circle(p + Vector2(-14 + pulse * 14, -105), 3, GREEN if model.drip_open() or fposmod(model.day_clock, 4.5) >= (pulse + 1) * 0.9 else Color("b5b4a3"))
+		# Keep the player and recoverable pollen above the opened roof area.
+		for pollen: Vector2 in model.drops:
+			if Rect2(p - Vector2(60, 110), Vector2(120, 220)).has_point(pollen):
+				oval(pollen, Vector2(12, 9), GOLD)
+		if Rect2(p - Vector2(80, 130), Vector2(160, 260)).has_point(model.position):
+			bee(model.position, model.heading)
+			for i in range(model.cargo):
+				oval(model.position + Vector2(-10 + i * 9, 21), Vector2(5, 5), GOLD)
+		if model.drip_hit_flash > 0 and model.position.distance_to(p) < 125:
+			draw_arc(model.position, 32 + (1.2 - model.drip_hit_flash) * 15, 0, TAU, 24, Color("7fa7ae", model.drip_hit_flash / 1.2), 3, true)
+		draw_rect(Rect2(p + Vector2(-120, -175), Vector2(240, 30)), Color("f8f0d9"))
+		label(p + Vector2(-107, -154), "停水 · 可以飞过" if model.drip_open() else "滴水 · 等一等再飞", 19)
+		draw_rect(Rect2(p + Vector2(-88, 185), Vector2(176, 28)), Color("f8f0d9"))
+		label(p + Vector2(-73, 205), "叶下绕行 · 不用等", 17)

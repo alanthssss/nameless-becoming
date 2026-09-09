@@ -19,6 +19,8 @@ func _init() -> void:
 			assert(game.act() == "roof" and game.roof_carried)
 			assert(not game.roof_available() and game.objective_points() == Model.BUILD_SITES)
 			assert(game.restore(game.dawn_state))
+		if game.day == 5:
+			check_drip_choices(game.snapshot())
 		Driver.work(game)
 		Driver.home(game)
 		assert(game.day_finished, "Day %d must be finishable through its actual mechanics" % expected_day)
@@ -59,3 +61,47 @@ func _init() -> void:
 	assert(turn.heading == last_heading)
 	print("RAIN ROUTE TEST PASSED: fifteen actual days, 5/5/5 pentads, persistent world, dawn restore, distinct work and six-bee completion")
 	quit()
+
+
+func check_drip_choices(dawn: Dictionary) -> void:
+	var bypass = Model.new()
+	assert(bypass.restore(dawn))
+	Driver.flowers(bypass, 1)
+	Driver.home(bypass)
+	assert(bypass.day_finished and bypass.day_spills == 0 and bypass.visited.is_empty(), "Safe detour must finish without timed checkpoint credit or lost pollen")
+	var shortcut = Model.new()
+	assert(shortcut.restore(dawn))
+	Driver.flowers(shortcut, 1)
+	# Return across both exposed gaps, waiting under cover before each crossing.
+	for i in range(shortcut.SAFE_ROUTE.size() - 1, 4, -1):
+		Driver.fly(shortcut, shortcut.SAFE_ROUTE[i])
+	for i in [1, 0]:
+		var gap: Vector2 = shortcut.drip_gaps()[i]
+		Driver.fly(shortcut, gap + Vector2(85, 0))
+		while fposmod(shortcut.day_clock, 4.5) < 2.72 or fposmod(shortcut.day_clock, 4.5) > 2.8:
+			shortcut.step(1.0 / 60, Vector2.ZERO, true)
+		Driver.fly(shortcut, gap - Vector2(85, 0), false)
+		assert(shortcut.cargo == 1 and shortcut.day_spills == 0, "Waiting for the gap must preserve cargo")
+	Driver.home(shortcut)
+	assert(shortcut.day_finished)
+	var impact = Model.new()
+	assert(impact.restore(dawn))
+	var center: Vector2 = impact.drip_gaps()[0]
+	assert(not impact.sheltered(center) and impact.sheltered(center + Vector2(0, 150)))
+	impact.position = center
+	impact.cargo = 1
+	impact.velocity = Vector2(100, 0)
+	impact.day_clock = 0.45
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.cargo == 0 and impact.drops.size() == 1 and impact.velocity.length() == 25)
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.spills == 1, "One visible drop cannot repeatedly hit")
+	assert(impact.act() == "recover" and impact.cargo == 1)
+	impact.day_clock = 2.8
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.cargo == 1, "No impact during the visible dry interval")
+
+	impact.position = center + Vector2(0, 105)
+	impact.day_clock = 0.89
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.cargo == 1 and impact.sheltered(impact.position), "A water drop cannot hit through the covered leaf edge")

@@ -31,9 +31,17 @@ func run() -> void:
 	for day in range(1, 16):
 		if day == 3:
 			await capture("day-03-leaf-rack")
-		if day in [4, 5, 7, 9, 10, 12]:
+		if day in [4, 7, 9, 10, 12]:
 			Driver.fly(scene.model, scene.model.objective_points()[0])
 			await capture("day-%02d-start-work" % day)
+		if day == 5:
+			Driver.fly(scene.model, scene.model.drip_gaps()[0] - Vector2(85, 0))
+			while fposmod(scene.model.day_clock, 4.5) > 0.8:
+				scene.model.step(1.0 / 60, Vector2.ZERO, true)
+			await capture("day-05-dripping")
+			while not scene.model.drip_open():
+				scene.model.step(1.0 / 60, Vector2.ZERO, true)
+			await capture("day-05-dry-gap")
 		Driver.work(scene.model)
 		await capture("day-%02d-work" % day)
 		Driver.home(scene.model, false)

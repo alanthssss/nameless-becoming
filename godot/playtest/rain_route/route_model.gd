@@ -39,6 +39,8 @@ var beetle_home := false
 var beetle_position := Vector2(1100, 1480)
 var escort_roof := false
 var carried_seed := -1
+var drip_hit_flash := 0.0
+var drip_hit_points: Dictionary = {}
 var moving_hold := 0.0
 var day_clock := 0.0
 var dry_days := 0
@@ -105,6 +107,8 @@ func _begin_day() -> void:
 	rain_exposure = 0
 	drops.clear()
 	visited.clear()
+	drip_hit_points.clear()
+	drip_hit_flash = 0.0
 	daily_done.clear()
 	if day == 12 and companions.is_empty():
 		for i in range(COMPANION_COUNT):
@@ -216,7 +220,8 @@ func next_day() -> bool:
 
 func work_ready() -> bool:
 	match today().mode:
-		"scout", "drips": return visited.size() == today().points.size()
+		"scout": return visited.size() == today().points.size()
+		"drips": return day_delivered >= 1
 		"build": return built_site >= 0
 		"pollinate": return pollinated.size() == 2
 		"gutter": return cleared.size() == 3
@@ -237,7 +242,7 @@ func _remaining(points: Array, done: Dictionary) -> Array:
 
 func work_progress() -> String:
 	match today().mode:
-		"scout", "drips": return "  %d / %d" % [visited.size(), today().points.size()]
+		"scout": return "  %d / %d" % [visited.size(), today().points.size()]
 		"pollinate": return "  %d / 2" % pollinated.size()
 		"gutter": return "  %d / 3" % cleared.size()
 		"rescue": return "  %d / 5 回巢" % home_companions()
@@ -247,7 +252,7 @@ func objective_points() -> Array:
 	if day_finished or work_ready():
 		return [HIVE]
 	match today().mode:
-		"scout", "drips":
+		"scout":
 			var result: Array = []
 			for i in range(today().points.size()):
 				if not visited.has(str(i)):
@@ -269,9 +274,9 @@ func objective_points() -> Array:
 
 func _update_day(delta: float) -> void:
 	var mode: String = today().mode
-	if mode in ["scout", "drips"]:
+	if mode == "scout":
 		for i in range(today().points.size()):
-			if position.distance_to(today().points[i]) < 45 and (mode != "drips" or (drip_open() and velocity.length() > 35)):
+			if position.distance_to(today().points[i]) < 45:
 				visited[str(i)] = true
 	if mode == "leaf_delivery" and cargo > 0:
 		for i in range(SHELTERS.size()):
@@ -300,7 +305,24 @@ func cargo_capacity() -> int:
 func wind_force() -> float:
 	return (-110.0 if day >= 14 else 65.0) * (0.8 + sin(elapsed * 0.45) * 0.2)
 
+func drip_gaps() -> Array:
+	return Calendar.DAYS[4].points if day == 5 else []
+
+func drip_gap(point: Vector2) -> bool:
+	for center: Vector2 in drip_gaps():
+		if ((point - center) / Vector2(52, 100)).length_squared() < 1.0:
+			return true
+	return false
+
+func drip_position(center: Vector2) -> Vector2:
+	return center + Vector2(0, -90 + fposmod(day_clock, 0.9) / 0.9 * 180)
+
 func sheltered(point: Vector2) -> bool:
+	if drip_gap(point):
+		return false
+	for center: Vector2 in drip_gaps():
+		if point.distance_to(center + Vector2(0, 150)) < 145:
+			return true
 	if day == 10 and point.distance_to(moving_roof_position()) < 135:
 		return true
 	if escort_roof and point.distance_to(position) < 135:
@@ -341,6 +363,7 @@ func maximum_speed() -> float:
 func step(delta: float, steering: Vector2, braking: bool) -> void:
 	if complete or day_finished or delta <= 0.0:
 		return
+	drip_hit_flash = maxf(0.0, drip_hit_flash - delta)
 	elapsed += delta
 	day_clock += delta
 	wind_travel += wind_force() * delta
@@ -373,8 +396,31 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 			notice = "花粉落下了。靠近黄色散粉，按空格取回；也可以先回叶下。"
 	else:
 		rain_exposure = move_toward(rain_exposure, 0.0, delta * 2.0)
+	_update_drip_hits(delta)
 	_update_companions(delta)
 	_update_day(delta)
+
+func _update_drip_hits(delta: float) -> void:
+	if day != 5 or drip_open() or not drip_gap(position):
+		return
+	var pulse := int(floor(day_clock / 0.9))
+	for i in range(drip_gaps().size()):
+		var key := "%d:%d" % [i, pulse]
+		var drop := drip_position(drip_gaps()[i])
+		# Swept fall segment prevents a low frame rate skipping the impact.
+		var previous := drop - Vector2(0, minf(delta * 200, 180))
+		if Geometry2D.get_closest_point_to_segment(position, previous, drop).distance_to(position) < 23 and not drip_hit_points.has(key):
+			drip_hit_points[key] = true
+			velocity *= 0.25
+			drip_hit_flash = 1.2
+			if cargo > 0:
+				cargo -= 1
+				spills += 1
+				day_spills += 1
+				drops.append(position)
+				notice = "水滴打落一份花粉，靠近散粉按空格取回。"
+			else:
+				notice = "水滴打慢了翅膀，等停水再飞，或从下方叶下绕行。"
 
 func roof_available() -> bool:
 	return today().mode == "build" and built_site < 0 and not roof_carried and not day_finished
