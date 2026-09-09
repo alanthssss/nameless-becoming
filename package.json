@@ -18,6 +18,10 @@
     "audio:commercial": "node scripts/generate_commercial_audio.mjs",
     "playtest:prepare": "node scripts/prepare_playtest_evidence.mjs",
     "playtest:launch": "node scripts/launch_playtest.mjs",
+    "art:build": "node scripts/package_art_review.mjs --build",
+    "art:package": "node scripts/package_art_review.mjs",
+    "art:package:mac": "node scripts/package_macos_art_review.mjs",
+    "test:art-review": "node --test tests/art-review.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate"
   },

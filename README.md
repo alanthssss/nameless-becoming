@@ -187,6 +187,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 21. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 22. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
 23. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
+24. [`docs/ART_REVIEW_HANDOFF.md`](docs/ART_REVIEW_HANDOFF.md)：**美术专家游戏＋原图评审包**、版本／哈希清单、反馈模板，以及桌面构建后的自动受限分享流程；Mac 专家首选独立的 `MacArtReview-*`（本地 `npm run art:package:mac`），通用双平台包使用 `npm run art:build`／`npm run art:package`。
 
 ## 当前验证问题
 
