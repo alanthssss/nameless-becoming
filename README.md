@@ -180,10 +180,10 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 14. [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)：**历史记录**，有意保留当时成立、后来被推翻的四关、旧 Boss、旧四季和旧时长描述；
 15. [`docs/DEMO_TO_PLAYTEST_PLAN.md`](docs/DEMO_TO_PLAYTEST_PLAN.md)：**已废止的历史结构方案**，仅用于追溯，不得执行；
 16. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
-17. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、单一执行视图、在制品限制与风险分级验证；
+17. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、Collaboration 协作要求、决策与行动收口、单一执行视图及风险分级验证；
 18. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
 19. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
-20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，区分最近有真人证据版本的偏轻体验、中重的工程骨架和很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
+20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，纳入完整春季真人反馈，区分已成立的情绪体验、待验证的主体玩法与很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
 21. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 22. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
 23. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。

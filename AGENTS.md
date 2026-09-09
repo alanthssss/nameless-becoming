@@ -1,5 +1,12 @@
 # Repository workflow
 
+## Collaboration agreement
+
+- Follow `docs/COLLABORATION_PROTOCOL.md`, including the Collaboration playbook adopted in section twelve; it is the canonical agreement for Alan × Codex work.
+- State the problem, expected outcome, scope, and relevant constraints. Distinguish facts, judgments, assumptions, proposals, and decisions; verify consequential AI-generated claims against sources.
+- Close substantive discussions with a conclusion (or explicit deferral), unresolved questions, and actions with one owner, a due date or concrete checkpoint, and acceptance criteria. Record the decision-maker, rationale, and revisit trigger in the existing relevant document; do not create a second task queue.
+- Address disagreement through evidence and trade-offs, protect confidential information, and review the process after a milestone or repeated failure. Do not add approval gates for already-authorized work or reversible implementation details.
+
 ## Change discipline
 
 - Do not push directly to `main`.
