@@ -356,6 +356,8 @@ func _context_message() -> String:
 		return "它平安到家了。可以歇一会儿，再回巢。"
 	if model.work_ready():
 		return "今天的事做好了。回到巢门，按空格收工。"
+	if model.today().mode == "moving":
+		return model.moving_stage_hint()
 	if model.today().mode == "drips":
 		if model.drip_hit_flash > 0:
 			return model.notice

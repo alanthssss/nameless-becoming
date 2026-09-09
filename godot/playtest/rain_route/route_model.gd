@@ -251,6 +251,15 @@ func work_progress() -> String:
 		"rescue": return "  %d / 5 回巢" % home_companions()
 		_: return "  %d / %d" % [day_delivered, int(today().quota)] if today().has("quota") else ""
 
+func moving_stage_hint() -> String:
+	if moving_hold < 1.2:
+		if cargo <= 0:
+			return "第 1 / 2 步 · 先取一份粉，再跟随移动叶影避雨。"
+		return "第 1 / 2 步 · 跟随移动叶影，留在叶下。避雨进度 %d%%" % mini(99, int(moving_hold / 1.2 * 100))
+	if cargo <= 0:
+		return "第 2 / 2 步 · 叶下避雨已完成。补取一份粉，再送到新叶台。"
+	return "第 2 / 2 步 · 叶下避雨已完成。到新叶台慢下来，按空格交付。"
+
 func objective_points() -> Array:
 	if day_finished or work_ready():
 		return [HIVE]
@@ -525,6 +534,8 @@ func action_label() -> String:
 		if escort_roof:
 			return "Shift · 慢慢带它走"
 		return "空格 · 接起叶篷" if position.distance_to(beetle_position) < 70 else "跟着指引找小甲虫"
+	if today().mode == "moving" and cargo > 0 and moving_hold < 1.2:
+		return "跟随叶影 · 留在叶下"
 	if today().mode in ["rack", "moving"] and cargo > 0:
 		return "空格 · 慢飞交到晾架"
 	return "空格 · 取粉 / 接回散粉"
