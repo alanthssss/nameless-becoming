@@ -42,6 +42,13 @@ func run() -> void:
 			while not scene.model.drip_open():
 				scene.model.step(1.0 / 60, Vector2.ZERO, true)
 			await capture("day-05-dry-gap")
+		if day == 7:
+			assert(scene.model.act() == "seed")
+			await capture("day-07-carry-to-landing")
+			Driver.fly(scene.model, scene.model.today().target)
+			await capture("day-07-landing")
+			assert(scene.model.act() == "clear")
+			assert(scene.model.restore(scene.model.dawn_state))
 		Driver.work(scene.model)
 		await capture("day-%02d-work" % day)
 		Driver.home(scene.model, false)

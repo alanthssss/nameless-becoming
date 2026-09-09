@@ -315,6 +315,8 @@ func _context_message() -> String:
 			if model.position.distance_to(gap) < 280:
 				return "缺口停水了，可直接飞过；下方叶下也能绕行。" if model.drip_open() else "缺口在滴水，碰到会掉粉、减速。等停水，或从下方绕行。"
 		return model.today().hint
+	if model.today().mode == "gutter" and model.carried_seed >= 0:
+		return "跟随身边的指引，到黄色种壳堆放下。" + model.work_progress()
 	if model.roof_carried:
 		return "遮雨叶占一格载荷。中路短，上路叶台宽；到支点按空格撑叶。"
 	return model.today().hint + model.work_progress()

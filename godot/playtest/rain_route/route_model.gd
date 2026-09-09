@@ -509,7 +509,9 @@ func action_label() -> String:
 	if roof_carried:
 		return "空格 · 在支点撑叶"
 	if today().mode == "gutter":
-		return "空格 · 放下种壳" if carried_seed >= 0 else "空格 · 搬起种壳"
+		if carried_seed >= 0:
+			return "空格 · 放下种壳" if position.distance_to(today().target) < 75 else "跟随指引 · 到种壳堆"
+		return "空格 · 搬起种壳"
 	if today().mode == "pollinate" and cargo > 0:
 		return "空格 · 给花传粉"
 	if today().mode == "beetle":

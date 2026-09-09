@@ -207,6 +207,7 @@ func _draw() -> void:
 			canopy(extra.point, 2, false, extra.radius)
 	layer_opacity = 1.0
 	_draw_drip_gaps(visible_world)
+	_draw_seed_landing(visible_world)
 	if route.model.sheltered(route.model.position) and route.model.position.distance_to(Model.HIVE) > 205:
 		label(route.model.position + Vector2(-38, 55), "叶下 · 避雨", 16)
 	if route.model.roof_carried:
@@ -308,6 +309,13 @@ func _daily_world(visible_world: Rect2) -> void:
 					draw_circle(spot, 4, GOLD)
 		label(p + Vector2(-35, 65), "花粉已到" if model.pollinated.has(str(i)) else "待传粉", 16)
 	if model.day >= 7:
+		var landing: Vector2 = Model.Calendar.DAYS[6].target
+		if visible_world.has_point(landing):
+			oval(landing, Vector2(96, 68), Color("dfca9b"))
+			oval(landing + Vector2(0, 5), Vector2(78, 48), Color("efe1bc"))
+			for i in range(model.cleared.size()):
+				var seed := landing + Vector2(-26 + i * 26, 4 + (i % 2) * 9)
+				oval(seed, Vector2(16, 11), Color("c8ab79"))
 		var points: Array = Model.Calendar.DAYS[6].points
 		for i in range(points.size()):
 			if not model.cleared.has(str(i)) and model.carried_seed != i and visible_world.has_point(points[i]):
@@ -382,3 +390,22 @@ func _draw_drip_gaps(visible_world: Rect2) -> void:
 		label(p + Vector2(-107, -154), "停水 · 可以飞过" if model.drip_open() else "滴水 · 等一等再飞", 19)
 		draw_rect(Rect2(p + Vector2(-88, 185), Vector2(176, 28)), Color("f8f0d9"))
 		label(p + Vector2(-73, 205), "叶下绕行 · 不用等", 17)
+
+
+func _draw_seed_landing(visible_world: Rect2) -> void:
+	var model = route.model
+	if model.day < 7:
+		return
+	var target: Vector2 = Model.Calendar.DAYS[6].target
+	if visible_world.has_point(target):
+		# The destination stays legible above transparent overhead leaves.
+		draw_rect(Rect2(target + Vector2(-92, 73), Vector2(184, 30)), Color("f8f0d9"))
+		label(target + Vector2(-78, 94), "种壳放这里 · %d / 3" % model.cleared.size(), 17)
+		if model.day == 7 and model.carried_seed >= 0:
+			draw_arc(target, 75, 0, TAU, 48, Color("ae7d55"), 2, true)
+	if model.day == 7 and model.carried_seed >= 0 and model.position.distance_to(target) >= 75:
+		var direction: Vector2 = (target - model.position).normalized()
+		var tip: Vector2 = model.position + direction * 68
+		var base: Vector2 = tip - direction * 18
+		var normal := direction.orthogonal() * 9
+		shape([tip, base + normal, base - normal], GOLD)

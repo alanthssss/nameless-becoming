@@ -8,7 +8,7 @@ const DAYS := [
 	{"mode": "pollinate", "hint": "到花田取粉，给地图上的两处花送粉，再回巢。", "points": [Vector2(3020, 960), Vector2(2780, 1150)]},
 	{"mode": "drips", "hint": "取一份花粉带回巢。缺口等停水走近路，或从下方叶下绕行。", "quota": 1, "points": [Vector2(1130, 1490), Vector2(1450, 1510)]},
 	{"mode": "scout", "hint": "沿上方小路辨认三处地标，连起一条支路。", "points": [Vector2(900, 540), Vector2(1400, 420), Vector2(1840, 540)]},
-	{"mode": "gutter", "hint": "把堵在叶沟里的三枚种壳搬到下方干地。", "points": [Vector2(2470, 1060), Vector2(2520, 1100), Vector2(2420, 1120)], "target": Vector2(2590, 1230)},
+	{"mode": "gutter", "hint": "把叶沟里的三枚种壳，搬到右下方黄色的种壳堆。", "points": [Vector2(2470, 1060), Vector2(2520, 1100), Vector2(2420, 1120)], "target": Vector2(2590, 1230)},
 	{"mode": "rack", "hint": "取两份粉，带到建好的叶台，慢下来交到晾架。", "quota": 2},
 	{"mode": "beetle", "hint": "去小甲虫身边接起叶篷，慢慢带它走到右边的叶下。", "start": Vector2(1100, 1480), "target": Vector2(1510, 1500)},
 	{"mode": "moving", "hint": "带一份粉，在移动叶影下稳住一会儿，再交到叶台。", "quota": 1},
