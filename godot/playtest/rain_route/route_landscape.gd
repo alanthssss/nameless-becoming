@@ -6,6 +6,32 @@ const PAPER := Color("eee9d7")
 const GREEN := Color("a6b798")
 const GOLD := Color("e6bb62")
 var route: Node2D
+var last_draw_us := 0
+var static_pass := false
+var rain_origins := PackedVector2Array()
+
+func _ready() -> void:
+	if static_pass:
+		return
+	var background := Node2D.new()
+	background.set_script(get_script())
+	background.static_pass = true
+	background.route = route
+	# Render immutable ground once; keep the live canopy/bee/rain layers vector-based.
+	var cache := SubViewport.new()
+	cache.size = Vector2i(3600, 2100)
+	cache.disable_3d = true
+	cache.render_target_update_mode = SubViewport.UPDATE_ONCE
+	add_child(cache)
+	cache.add_child(background)
+	var ground := Sprite2D.new()
+	ground.texture = cache.get_texture()
+	ground.centered = false
+	ground.show_behind_parent = true
+	add_child(ground)
+	for i in range(3400):
+		rain_origins.append(Vector2(fposmod(sin(i * 127.1 + 31.7) * 43758.5453, 1.0) * 3600, fposmod(sin(i * 269.5 + 73.1) * 18341.137, 1.0) * 2100))
+
 
 func line(points: Array, color := INK, width := 2.0) -> void:
 	draw_polyline(PackedVector2Array(points), color, width, true)
@@ -94,8 +120,63 @@ func hive() -> void:
 	label(h + Vector2(-63, 132), "巢边 · 出发", 22)
 
 func _draw() -> void:
+	var started := Time.get_ticks_usec()
 	if not is_instance_valid(route):
 		return
+	if static_pass:
+		_draw_static()
+		return
+	var visible_world := Rect2(route.camera_origin - Vector2(280, 280), Vector2(1840, 1280))
+	for i in range(Model.SHELTERS.size()):
+		if visible_world.has_point(Model.SHELTERS[i]):
+			canopy(Model.SHELTERS[i], i)
+	if route.model.stage >= 1:
+		canopy(Model.BUILD_SITE, 3, true)
+	else:
+		for i in range(4):
+			line([Model.BUILD_SITE + Vector2(-43 + i * 20, -20), Model.BUILD_SITE + Vector2(-37 + i * 20, 30)], INK, 4)
+		label(Model.BUILD_SITE + Vector2(-70, 75), "待建 · 叶台", 20)
+	if visible_world.has_point(Model.FLOWERS):
+		canopy(Model.FLOWERS + Vector2(0, -15), 4)
+		for i in range(13):
+			var p := Model.FLOWERS + Vector2(sin(i * 2.39) * (45 + i * 5), cos(i * 2.39) * (40 + i * 5))
+			flower(p, 19 + i % 4, Color("d5a99b") if i % 3 else Color("f1e6ba"))
+	# Regional rain falls downward everywhere exposed; only wind's horizontal component changes.
+	var rain_lines := PackedVector2Array()
+	var viewport := Rect2(route.camera_origin, Vector2(1280, 720))
+	var wind_x := -65 if route.model.stage >= 2 else 65
+	var streak := Vector2(-4 if route.model.stage >= 2 else 4, 16)
+	for i in range(rain_origins.size()):
+		var origin := rain_origins[i]
+		var p := Vector2(fposmod(origin.x + route.visual_time * wind_x, 3600), fposmod(origin.y + route.visual_time * (350 + i % 90), 2100))
+		if viewport.has_point(p) and not route.model.sheltered(p):
+			rain_lines.append(p)
+			rain_lines.append(p + streak)
+	if not rain_lines.is_empty():
+		draw_multiline(rain_lines, Color("799b9b", route.model.rain_strength() * 0.6), 1.2, true)
+	for p: Vector2 in route.model.drops:
+		oval(p, Vector2(12, 9), GOLD)
+	for companion in route.model.companions:
+		bee(companion.position, float(companion.get("heading", PI)), 0.75, companion.waiting)
+		if companion.waiting:
+			label(companion.position + Vector2(-4, -32), "!", 20)
+	bee(route.model.position, route.model.heading)
+	for i in range(route.model.cargo):
+		oval(route.model.position + Vector2(-10 + i * 9, 21), Vector2(5, 5), GOLD)
+	if route.model.rain_exposure > 0.1:
+		var p: Vector2 = route.model.position + Vector2(-24, 37)
+		line([p, p + Vector2(48, 0)], Color("d3cdb8"), 4)
+		line([p, p + Vector2(48 * clampf(route.model.rain_exposure / 6, 0, 1), 0)], Color("a67863"), 4)
+	for effect in route.effects:
+		var c: Color = effect.color
+		c.a = 1 - float(effect.age) / float(effect.life)
+		draw_circle(effect.point, effect.size, c)
+	if route.pointer_active:
+		draw_arc(route.pointer_target, 8, 0, TAU, 20, INK, 1.5, true)
+
+	last_draw_us = Time.get_ticks_usec() - started
+
+func _draw_static() -> void:
 	draw_rect(Rect2(0, 0, 3600, 2100), PAPER)
 	# Authored broad ground masses, distinct from interactable roof shapes.
 	oval(Vector2(850, 1760), Vector2(1160, 430), Color("d6ddc4"), false)
@@ -110,8 +191,6 @@ func _draw() -> void:
 	# Quiet botanical marks are deterministic; no raster collage or tiled backdrops.
 	for i in range(390):
 		var p := Vector2(60 + fposmod(i * 127.731, 3480), 70 + fposmod(i * 217.193, 1940))
-		if not Rect2(route.camera_origin - Vector2(100, 100), Vector2(1480, 920)).has_point(p):
-			continue
 		if route.model.sheltered(p) or route.model.blocked(p):
 			continue
 		if i % 7 == 0:
@@ -132,46 +211,7 @@ func _draw() -> void:
 			line([edge, edge + Vector2(13, -21)], Color("70856c"), 1.5)
 		for i in range(4):
 			leaf(center + Vector2(sin(i * 4) * 90, cos(i * 6) * 100), 33, i * 1.5, GREEN)
-	for i in range(Model.SHELTERS.size()):
-		canopy(Model.SHELTERS[i], i)
-	if route.model.stage >= 1:
-		canopy(Model.BUILD_SITE, 3, true)
-	else:
-		for i in range(4):
-			line([Model.BUILD_SITE + Vector2(-43 + i * 20, -20), Model.BUILD_SITE + Vector2(-37 + i * 20, 30)], INK, 4)
-		label(Model.BUILD_SITE + Vector2(-70, 75), "待建 · 叶台", 20)
 	hive()
-	canopy(Model.FLOWERS + Vector2(0, -15), 4)
-	for i in range(13):
-		var p := Model.FLOWERS + Vector2(sin(i * 2.39) * (45 + i * 5), cos(i * 2.39) * (40 + i * 5))
-		flower(p, 19 + i % 4, Color("d5a99b") if i % 3 else Color("f1e6ba"))
 	label(Model.FLOWERS + Vector2(-57, 166), "花田 · 取粉", 22)
 	label(Vector2(1000, 1770), "叶下小径", 30)
 	label(Vector2(1850, 480), "雨中的洼地", 30)
-	# Regional rain falls downward everywhere exposed; only wind's horizontal component changes.
-	for i in range(3400):
-		var px := fposmod(sin(i * 127.1 + 31.7) * 43758.5453, 1.0) * 3600
-		var py := fposmod(sin(i * 269.5 + 73.1) * 18341.137, 1.0) * 2100
-		var p := Vector2(fposmod(px + route.visual_time * (-65 if route.model.stage >= 2 else 65), 3600), fposmod(py + route.visual_time * (350 + i % 90), 2100))
-		if not Rect2(route.camera_origin, Vector2(1280, 720)).has_point(p) or route.model.sheltered(p):
-			continue
-		line([p, p + Vector2(-4 if route.model.stage >= 2 else 4, 16)], Color("799b9b", route.model.rain_strength() * 0.6), 1.2)
-	for p: Vector2 in route.model.drops:
-		oval(p, Vector2(12, 9), GOLD)
-	for companion in route.model.companions:
-		bee(companion.position, float(companion.get("heading", PI)), 0.75, companion.waiting)
-		if companion.waiting:
-			label(companion.position + Vector2(-4, -32), "!", 20)
-	bee(route.model.position, route.model.heading)
-	for i in range(route.model.cargo):
-		oval(route.model.position + Vector2(-10 + i * 9, 21), Vector2(5, 5), GOLD)
-	if route.model.rain_exposure > 0.1:
-		var p: Vector2 = route.model.position + Vector2(-24, 37)
-		line([p, p + Vector2(48, 0)], Color("d3cdb8"), 4)
-		line([p, p + Vector2(48 * clampf(route.model.rain_exposure / 6, 0, 1), 0)], Color("a67863"), 4)
-	for effect in route.effects:
-		var c: Color = effect.color
-		c.a = 1 - float(effect.age) / float(effect.life)
-		draw_circle(effect.point, effect.size, c)
-	if route.pointer_active:
-		draw_arc(route.pointer_target, 8, 0, TAU, 20, INK, 1.5, true)
