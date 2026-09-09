@@ -208,6 +208,8 @@ func _draw() -> void:
 	layer_opacity = 1.0
 	_draw_drip_gaps(visible_world)
 	_draw_seed_landing(visible_world)
+	_draw_beetle_guest(visible_world)
+	_draw_beetle_hint()
 	if route.model.sheltered(route.model.position) and route.model.position.distance_to(Model.HIVE) > 205:
 		label(route.model.position + Vector2(-38, 55), "叶下 · 避雨", 16)
 	if route.model.roof_carried:
@@ -329,13 +331,11 @@ func _daily_world(visible_world: Rect2) -> void:
 			line([p + Vector2(-30, 30), p + Vector2(-24, -12), p + Vector2(36, -12), p + Vector2(42, 30)], INK, 3)
 			for i in range(mini(model.rack_stock, 6)):
 				oval(p + Vector2(-20 + i * 10, -7), Vector2(5, 6), GOLD)
-	if model.day >= 9 and visible_world.has_point(model.beetle_position):
-		var p: Vector2 = model.beetle_position
-		for i in range(3):
-			line([p + Vector2(-17, -10 + i * 10), p + Vector2(17, -10 + i * 10)], INK, 2)
-		oval(p, Vector2(13, 19), Color("ae9278"))
-		line([p + Vector2(0, -14), p + Vector2(0, 15)], INK, 1.5)
-		label(p + Vector2(-30, 43), "到家了" if model.beetle_home else "小甲虫", 16)
+	if model.day >= 9 and visible_world.has_point(Model.Calendar.DAYS[8].target):
+		var home: Vector2 = model.beetle_rest_position()
+		leaf(home + Vector2(0, 14), 42, 0.15, Color("c1cbaa"))
+		if model.beetle_home:
+			leaf(home + Vector2(24, 24), 16, -0.6, GREEN)
 	if model.today().mode in ["scout", "drips"]:
 		for i in range(model.today().points.size()):
 			var p: Vector2 = model.today().points[i]
@@ -409,3 +409,59 @@ func _draw_seed_landing(visible_world: Rect2) -> void:
 		var base: Vector2 = tip - direction * 18
 		var normal := direction.orthogonal() * 9
 		shape([tip, base + normal, base - normal], GOLD)
+
+
+func _draw_beetle_hint() -> void:
+	var model = route.model
+	if model.day != 9 or model.beetle_home or model.day_finished:
+		return
+	var target: Vector2 = model.today().target if model.escort_roof else model.beetle_position
+	var distance: float = model.position.distance_to(target)
+	var opacity := smoothstep(85.0, 220.0, distance)
+	if opacity > 0:
+		var direction: Vector2 = (target - model.position).normalized()
+		var tip: Vector2 = model.position + direction * 90
+		var normal := direction.orthogonal()
+		# A quiet leaf-shaped compass near the bee, rather than a route drawn across the map.
+		layer_opacity = opacity * 0.8
+		shape([tip, tip - direction * 14 + normal * 7, tip - direction * 26, tip - direction * 14 - normal * 7], Color("d5bb78"), 1.3)
+		line([tip - direction * 23, tip - direction * 4], INK, 1)
+		layer_opacity = 1.0
+	if not model.escort_roof and distance < 260:
+		var p: Vector2 = model.beetle_position
+		var glow: float = (0.35 + 0.1 * sin(route.visual_time * 2.0)) * (1.0 - smoothstep(180.0, 260.0, distance))
+		draw_arc(p, 30, 0.2, PI - 0.2, 22, Color("ae9278", glow), 1.5, true)
+		draw_arc(p, 30, PI + 0.2, TAU - 0.2, 22, Color("ae9278", glow), 1.5, true)
+		# Retain a readable name even beneath overlapping translucent leaves.
+		label(p + Vector2(-27, 44), "小甲虫", 16)
+
+
+func _draw_beetle_guest(visible_world: Rect2) -> void:
+	var model = route.model
+	if model.day < 9 or not visible_world.has_point(model.beetle_position):
+		return
+	var p: Vector2 = model.beetle_position
+	var remaining: float = route.beetle_greeting_time
+	var elapsed: float = 4.0 - remaining
+	var turn := smoothstep(0.4, 1.2, elapsed) if remaining > 0 else 0.0
+	var angle: float = lerp_angle(0, route.beetle_greeting_angle, turn)
+	if remaining > 0 and remaining < 0.7:
+		angle = lerp_angle(0, angle, remaining / 0.7)
+	draw_set_transform(p, angle)
+	for side in [-1, 1]:
+		for leg in range(3):
+			var foot := Vector2(side * 19, -10 + leg * 10)
+			if side == 1 and leg == 0 and elapsed > 1.2 and remaining > 0.7:
+				foot += Vector2(5 + sin(elapsed * 9) * 4, -9 + cos(elapsed * 9) * 4)
+			line([Vector2(side * 8, -10 + leg * 10), foot], INK, 2)
+	oval(Vector2.ZERO, Vector2(13, 19), Color("ae9278"))
+	line([Vector2(0, -14), Vector2(0, 15)], INK, 1.5)
+	oval(Vector2(0, -17), Vector2(8, 7), Color("ae9278"))
+	for side in [-1, 1]:
+		draw_circle(Vector2(side * 4, -20), 1.6, INK)
+		line([Vector2(side * 4, -23), Vector2(side * 9, -28)], INK, 1.3)
+	draw_set_transform(Vector2.ZERO)
+	if model.beetle_home:
+		label(p + Vector2(-30, 48), "到家了", 16)
+	elif model.day != 9:
+		label(p + Vector2(-30, 43), "小甲虫", 16)

@@ -13,6 +13,10 @@ const CALENDAR_SAVE := "user://rain_route_calendar_v1.json"
 var save_enabled := true
 var save_path := CALENDAR_SAVE
 var model = Model.new()
+var beetle_greeting_time := 0.0
+var beetle_greeting_angle := 0.0
+var last_beetle_home := false
+var beetle_chime: AudioStreamPlayer
 var next_button: Button
 
 var landscape: Node2D
@@ -50,6 +54,12 @@ func _ready() -> void:
 		if not data is Dictionary or not model.restore(data):
 			save_enabled = false
 			push_warning("雨水日程未能载入，保留旧文件，本次不覆盖。")
+	last_beetle_home = model.beetle_home
+	beetle_chime = AudioStreamPlayer.new()
+	beetle_chime.stream = DELIVER_SOUND
+	beetle_chime.bus = &"SFX"
+	beetle_chime.volume_db = -12.0
+	add_child(beetle_chime)
 	rng.seed = 91328
 	sound = AudioStreamPlayer.new()
 	sound.bus = &"SFX"
@@ -196,6 +206,9 @@ func _next_day() -> void:
 		_reset_feedback()
 
 func _reset_feedback() -> void:
+	beetle_greeting_time = 0.0
+	last_beetle_home = model.beetle_home
+	beetle_chime.stop()
 	camera_center = model.position
 	_update_camera(1.0)
 	effects.clear()
@@ -265,6 +278,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if not paused:
 		visual_time += delta
+		beetle_greeting_time = maxf(0, beetle_greeting_time - delta)
 		if model.complete:
 			end_time += delta
 		var steering := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -277,6 +291,13 @@ func _physics_process(delta: float) -> void:
 			else:
 				steering = offset.normalized() * minf(1.0, offset.length() / 55.0)
 		model.step(delta, steering, Input.is_physical_key_pressed(KEY_SHIFT) or touch_braking)
+		if model.beetle_home and not last_beetle_home:
+			beetle_greeting_time = 4.0
+			beetle_greeting_angle = (model.position - model.beetle_position).angle() + PI / 2
+			beetle_chime.play()
+		last_beetle_home = model.beetle_home
+		if beetle_greeting_time > 2.8:
+			beetle_greeting_angle = (model.position - model.beetle_position).angle() + PI / 2
 		if model.spills > last_spills:
 			_burst(model.position, GOLD, 10)
 			sound.stream = LOSS_SOUND
@@ -306,6 +327,8 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _context_message() -> String:
+	if beetle_greeting_time > 0:
+		return "它平安到家了。可以歇一会儿，再回巢。"
 	if model.work_ready():
 		return "今天的事做好了。回到巢门，按空格收工。"
 	if model.today().mode == "drips":
@@ -315,6 +338,8 @@ func _context_message() -> String:
 			if model.position.distance_to(gap) < 280:
 				return "缺口停水了，可直接飞过；下方叶下也能绕行。" if model.drip_open() else "缺口在滴水，碰到会掉粉、减速。等停水，或从下方绕行。"
 		return model.today().hint
+	if model.today().mode == "beetle" and not model.escort_roof:
+		return "身边的小叶尖指向小甲虫。靠近它，按空格接起叶篷。"
 	if model.today().mode == "gutter" and model.carried_seed >= 0:
 		return "跟随身边的指引，到黄色种壳堆放下。" + model.work_progress()
 	if model.roof_carried:

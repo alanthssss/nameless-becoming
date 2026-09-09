@@ -85,6 +85,9 @@ func event_today() -> Dictionary:
 			return event
 	return {}
 
+func beetle_rest_position() -> Vector2:
+	return Calendar.DAYS[8].target + Vector2(55, -32)
+
 func moving_roof_position() -> Vector2:
 	return Vector2(2050 + sin(day_clock * 0.3) * 170, 1190)
 
@@ -189,7 +192,7 @@ func restore(data: Dictionary) -> bool:
 	rack_stock = maxi(0, int(data.get("rack_stock", 0)))
 	route_revealed = data.get("route_revealed", false) == true
 	beetle_home = data.get("beetle_home", false) == true
-	beetle_position = Calendar.DAYS[8].target if beetle_home else Calendar.DAYS[8].start
+	beetle_position = beetle_rest_position() if beetle_home else Calendar.DAYS[8].start
 	delivered = maxi(0, int(data.get("delivered", 0)))
 	dry_days = maxi(0, int(data.get("dry_days", 0)))
 	deliveries = maxi(0, int(data.get("deliveries", 0)))
@@ -290,6 +293,8 @@ func _update_day(delta: float) -> void:
 		if beetle_position.distance_to(today().target) < 65:
 			beetle_home = true
 			escort_roof = false
+	if beetle_home:
+		beetle_position = beetle_position.move_toward(beetle_rest_position(), 90 * delta)
 	if day == 6 and work_ready():
 		route_revealed = true
 
@@ -515,7 +520,11 @@ func action_label() -> String:
 	if today().mode == "pollinate" and cargo > 0:
 		return "空格 · 给花传粉"
 	if today().mode == "beetle":
-		return "空格 · 接起叶篷"
+		if beetle_home:
+			return "回巢 · 收工"
+		if escort_roof:
+			return "Shift · 慢慢带它走"
+		return "空格 · 接起叶篷" if position.distance_to(beetle_position) < 70 else "跟着指引找小甲虫"
 	if today().mode in ["rack", "moving"] and cargo > 0:
 		return "空格 · 慢飞交到晾架"
 	return "空格 · 取粉 / 接回散粉"

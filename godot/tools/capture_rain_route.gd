@@ -8,6 +8,8 @@ func _initialize() -> void:
 	call_deferred("run")
 
 func capture(name: String) -> void:
+	if name != "pause":
+		scene.paused = false
 	scene.camera_center = scene.model.position
 	scene._update_camera(1)
 	scene._physics_process(0)
@@ -29,6 +31,8 @@ func run() -> void:
 	await capture("pause")
 	scene._toggle_pause()
 	for day in range(1, 16):
+		if day == 9:
+			await capture("day-09-far-hint")
 		if day == 3:
 			await capture("day-03-leaf-rack")
 		if day in [4, 7, 9, 10, 12]:
@@ -49,13 +53,33 @@ func run() -> void:
 			await capture("day-07-landing")
 			assert(scene.model.act() == "clear")
 			assert(scene.model.restore(scene.model.dawn_state))
+		if day == 9:
+			assert(scene.model.act() == "roof")
+			await capture("day-09-escort-hint")
+			assert(scene.model.restore(scene.model.dawn_state))
 		Driver.work(scene.model)
 		await capture("day-%02d-work" % day)
+		if day == 9:
+			assert(scene.beetle_greeting_time > 0)
+			scene.paused = false
+			for frame in range(108):
+				scene._physics_process(1.0 / 60)
+			await capture("day-09-thank-you")
+			var before: float = scene.beetle_greeting_time
+			scene.paused = true
+			scene._physics_process(0.5)
+			assert(scene.beetle_greeting_time == before)
+			scene.paused = false
+			for frame in range(180):
+				scene._physics_process(1.0 / 60)
+			assert(scene.beetle_greeting_time == 0, "Greeting must not replay each frame")
 		Driver.home(scene.model, false)
+		scene.paused = false
 		scene._act()
 		assert(scene.model.day_finished)
 		await capture("day-%02d-end" % day)
 		if day < 15:
+			scene.paused = false
 			scene._next_day()
 			assert(scene.model.day == day + 1)
 	assert(scene.model.complete and scene.model.completed_days.size() == 15)
