@@ -189,6 +189,8 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 23. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
 24. [`docs/ART_REVIEW_HANDOFF.md`](docs/ART_REVIEW_HANDOFF.md)：**美术专家游戏＋原图评审包**、版本／哈希清单、反馈模板，以及桌面构建后的自动受限分享流程；Mac 专家首选独立的 `MacArtReview-*`（本地 `npm run art:package:mac`），通用双平台包使用 `npm run art:build`／`npm run art:package`。
 
+25. [`docs/GAME_NAME_REVIEW_2026-09-02.md`](docs/GAME_NAME_REVIEW_2026-09-02.md)：200 个 IGF／indiePlay 优秀独立游戏标题样本的结构分析、五组新产品名、评分、公开同名初筛与选定后的迁移边界；当前推荐《花开正忙 · Bloom in Full Swing》，等待 Alan 五选一。
+
 ## 当前验证问题
 
 1. `[需独立玩家验证]` 陌生玩家能否不经口头提示完成立春至谷雨，区分花粉／花蜜、野外拾取／主巢接货，并读懂谷雨三阶段高潮？
