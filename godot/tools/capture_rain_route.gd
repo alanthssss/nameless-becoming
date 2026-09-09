@@ -29,6 +29,8 @@ func run() -> void:
 	await capture("pause")
 	scene._toggle_pause()
 	for day in range(1, 16):
+		if day == 3:
+			await capture("day-03-leaf-rack")
 		if day in [4, 5, 7, 9, 10, 12]:
 			Driver.fly(scene.model, scene.model.objective_points()[0])
 			await capture("day-%02d-start-work" % day)

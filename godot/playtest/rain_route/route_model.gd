@@ -2,6 +2,7 @@ extends RefCounted
 
 ## G-FICTION: bounded route experiment. No Campaign state or persistence writes.
 const HIVE := Vector2(360, 900)
+const ROOF_PICKUP := HIVE + Vector2(150, 55)
 const FLOWERS := Vector2(3260, 780)
 const BUILD_SITE := Vector2(1800, 930)
 const BUILD_SITES := [BUILD_SITE, Vector2(1840, 540)]
@@ -252,7 +253,7 @@ func objective_points() -> Array:
 				if not visited.has(str(i)):
 					result.append(today().points[i])
 			return result
-		"build": return BUILD_SITES if roof_carried else [HIVE]
+		"build": return BUILD_SITES if roof_carried else [ROOF_PICKUP]
 		"pollinate": return _remaining(Calendar.DAYS[3].points, pollinated) if cargo > 0 else [FLOWERS]
 		"gutter": return [today().target] if carried_seed >= 0 else _remaining(today().points, cleared)
 		"beetle": return [today().target] if escort_roof else [beetle_position]
@@ -375,10 +376,19 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 	_update_companions(delta)
 	_update_day(delta)
 
+func roof_available() -> bool:
+	return today().mode == "build" and built_site < 0 and not roof_carried and not day_finished
+
+func can_take_roof() -> bool:
+	return roof_available() and (position.distance_to(ROOF_PICKUP) < 90 or position.distance_to(HIVE) < 130)
+
 func act() -> String:
 	if complete or day_finished:
 		return ""
 	var mode: String = today().mode
+	if can_take_roof():
+		roof_carried = true
+		return "roof"
 	if mode == "build" and roof_carried:
 		for i in range(BUILD_SITES.size()):
 			if position.distance_to(BUILD_SITES[i]) < 85:
@@ -428,9 +438,6 @@ func act() -> String:
 			complete = day == 15
 			notice = "今天的事做完了，回巢歇一会儿。"
 			return "day_end"
-		if mode == "build" and built_site < 0 and not roof_carried:
-			roof_carried = true
-			return "roof"
 		notice = today().hint
 		return "deliver"
 	if cargo < cargo_capacity():
@@ -446,6 +453,8 @@ func act() -> String:
 	return ""
 
 func action_label() -> String:
+	if roof_available():
+		return "空格 · 带上遮雨叶" if can_take_roof() else "到巢门右侧带叶"
 	if position.distance_to(HIVE) < 80:
 		if work_ready() or cargo > 0:
 			return "空格 · 交货 / 收工"

@@ -4,7 +4,7 @@ extends RefCounted
 const DAYS := [
 	{"mode": "scout", "hint": "沿叶下小径，看清两处落脚点，再回巢。", "points": [Vector2(650, 1400), Vector2(970, 1490)]},
 	{"mode": "leaf_delivery", "hint": "去花田取一份粉，经过两片叶下，再带回巢。", "quota": 1},
-	{"mode": "build", "hint": "在巢门带上遮雨叶，飞到中路或上路支点撑叶。"},
+	{"mode": "build", "hint": "到巢门右侧的叶架，按空格带叶，再到中路或上路支点撑叶。"},
 	{"mode": "pollinate", "hint": "到花田取粉，给地图上的两处花送粉，再回巢。", "points": [Vector2(3020, 960), Vector2(2780, 1150)]},
 	{"mode": "drips", "hint": "看叶尖滴水，在水滴停下的空隙穿过两处叶口。", "points": [Vector2(1130, 1490), Vector2(1450, 1510)]},
 	{"mode": "scout", "hint": "沿上方小路辨认三处地标，连起一条支路。", "points": [Vector2(900, 540), Vector2(1400, 420), Vector2(1840, 540)]},

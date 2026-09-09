@@ -12,6 +12,13 @@ func _init() -> void:
 		if game.day != 3:
 			game.act()
 			assert(not game.day_finished, "Empty hive click must not complete a fresh day's work")
+		if game.day == 3:
+			assert(game.roof_available() and game.objective_points() == [Model.ROOF_PICKUP])
+			game.position = Model.HIVE + Vector2(28, 90)
+			assert(game.can_take_roof() and game.action_label() == "空格 · 带上遮雨叶")
+			assert(game.act() == "roof" and game.roof_carried)
+			assert(not game.roof_available() and game.objective_points() == Model.BUILD_SITES)
+			assert(game.restore(game.dawn_state))
 		Driver.work(game)
 		Driver.home(game)
 		assert(game.day_finished, "Day %d must be finishable through its actual mechanics" % expected_day)

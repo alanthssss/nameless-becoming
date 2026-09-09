@@ -281,6 +281,14 @@ func extra_roofs() -> Array:
 
 func _daily_world(visible_world: Rect2) -> void:
 	var model = route.model
+	if model.roof_available() and visible_world.has_point(Model.ROOF_PICKUP):
+		var p := Model.ROOF_PICKUP
+		oval(p + Vector2(0, 20), Vector2(58, 18), Color("c6c6ad"), false)
+		line([p + Vector2(-40, 25), p + Vector2(-34, -2), p + Vector2(39, -2), p + Vector2(45, 25)], INK, 3)
+		leaf(p + Vector2(-27, 0), 85, -0.25, GREEN)
+		label(p + Vector2(-48, 62), "遮雨叶", 20)
+		if model.can_take_roof():
+			label(p + Vector2(-48, 86), "空格 · 带上", 16)
 	# The two flower beds retain pollen, then show fruit only on later days.
 	for i in range(Model.Calendar.DAYS[3].points.size()):
 		var p: Vector2 = Model.Calendar.DAYS[3].points[i]
