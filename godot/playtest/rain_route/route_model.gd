@@ -6,6 +6,7 @@ const FLOWERS := Vector2(3260, 780)
 const BUILD_SITE := Vector2(1800, 930)
 const CAPACITY := 3
 const GOAL := 9
+const COMPANION_COUNT := 5
 const BOUNDS := Rect2(90, 120, 3420, 1770)
 const SHELTERS := [Vector2(420, 1180), Vector2(650, 1400), Vector2(970, 1490), Vector2(1300, 1510), Vector2(1640, 1480), Vector2(1970, 1430), Vector2(2290, 1340), Vector2(2590, 1230), Vector2(2890, 1090), Vector2(3160, 990)]
 const SAFE_ROUTE := [HIVE, Vector2(420, 1180), Vector2(650, 1400), Vector2(970, 1490), Vector2(1300, 1510), Vector2(1640, 1480), Vector2(1970, 1430), Vector2(2290, 1340), Vector2(2590, 1230), Vector2(2890, 1090), Vector2(3160, 990), FLOWERS]
@@ -40,20 +41,18 @@ func rain_strength() -> float:
 func raining(point: Vector2) -> bool:
 	return BOUNDS.has_point(point) and not sheltered(point)
 
-func blocked(point: Vector2) -> bool:
+func over_water(point: Vector2) -> bool:
 	for pond: Vector3 in PONDS:
 		if point.distance_to(Vector2(pond.x, pond.y)) < pond.z + 16:
 			return true
 	return false
 
-func move_on_map(from: Vector2, target: Vector2) -> Vector2:
-	if not blocked(target):
-		return target
-	var slide := Vector2(target.x, from.y)
-	if not blocked(slide):
-		return slide
-	slide = Vector2(from.x, target.y)
-	return slide if not blocked(slide) else from
+func blocked(_point: Vector2) -> bool:
+	# Water and bank plants are below the flight layer.
+	return false
+
+func move_on_map(_from: Vector2, target: Vector2) -> Vector2:
+	return target
 
 func maximum_speed() -> float:
 	return 320.0 - cargo * 24.0
@@ -105,9 +104,9 @@ func act() -> String:
 				notice = "中间的新叶台撑起来了！下一趟可以在直路中途避雨。"
 			elif delivered >= 6 and stage == 1:
 				stage = 2
-				for index in range(3):
-					companions.append({"position": FLOWERS + Vector2(-18 + index * 20, 35), "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false, "heading": PI})
-				notice = "风向变了。再去花田接三只新蜂，一起把最后的花粉带回来。"
+				for index in range(COMPANION_COUNT):
+					companions.append({"position": FLOWERS + Vector2((index - (COMPANION_COUNT - 1) / 2.0) * 18, 35), "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false, "heading": PI})
+				notice = "风向变了。再去花田接五只新蜂，一起把最后的花粉带回来。"
 			else:
 				notice = "花粉交到巢里了。再选一条飞法。"
 			_check_finish()
@@ -147,8 +146,9 @@ func _update_companions(delta: float) -> void:
 				notice = "跟上啦。按住 Shift 慢飞，过弯时给队尾一点余地。"
 		else:
 			var distance := p.distance_to(leader)
-			if distance > 30.0:
-				p = move_on_map(p, p.move_toward(leader, minf(300.0 * delta, distance - 30.0)))
+			var spacing := 18.0 if p.distance_to(HIVE) < 230.0 else 30.0
+			if distance > spacing:
+				p = move_on_map(p, p.move_toward(leader, minf(300.0 * delta, distance - spacing)))
 			var movement: Vector2 = p - (bee.position as Vector2)
 			if movement.length() > 0.01:
 				bee.heading = lerp_angle(float(bee.get("heading", PI)), movement.angle(), 1.0 - exp(-12.0 * delta))
@@ -171,8 +171,8 @@ func home_companions() -> int:
 	return count
 
 func _check_finish() -> void:
-	if delivered >= GOAL and companions.size() == 3 and home_companions() == 3:
+	if delivered >= GOAL and companions.size() == COMPANION_COUNT and home_companions() == COMPANION_COUNT:
 		complete = true
 		notice = "这条路，大家都能走了。"
 	elif delivered >= GOAL:
-		notice = "花粉够了。把三只伙伴都接到巢门，再按空格一起收工。"
+		notice = "花粉够了。把五只伙伴都接到巢门，再按空格一起收工。"

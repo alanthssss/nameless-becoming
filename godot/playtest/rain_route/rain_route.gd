@@ -255,7 +255,7 @@ func _physics_process(delta: float) -> void:
 
 func _context_message() -> String:
 	if build_glow > 0:
-		return "新叶台撑起来了，洼地中间也能避雨。" if model.stage == 1 else "风向变了，去花田接三只伙伴一起回来。"
+		return "新叶台撑起来了，洼地中间也能避雨。" if model.stage == 1 else "风向变了，去花田接五只伙伴一起回来。"
 	if delivery_glow > 0:
 		return "花粉交好了。大家正在巢里接货。"
 	if model.position.distance_to(Model.FLOWERS) < 80:
@@ -283,7 +283,7 @@ func _draw_hud() -> void:
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
 	_text(Vector2(50, 59), "雨水", 27, INK)
 	_text(Vector2(119, 57), "把雨路跑通", 19, Color("566a48"))
-	var goal: String = ["送回花粉，撑起中间的叶台", "再送一趟花粉，准备接伙伴", "接三只新蜂，一起返巢"][model.stage]
+	var goal: String = ["送回花粉，撑起中间的叶台", "再送一趟花粉，准备接伙伴", "接五只新蜂，一起返巢"][model.stage]
 	_text(Vector2(50, 91), goal, 17, INK)
 	for index in range(3):
 		var rect := Rect2(50 + index * 112, 111, 99, 5)
@@ -306,7 +306,7 @@ func _draw_hud() -> void:
 			if not bee.waiting:
 				following += 1
 		_text(Vector2(935, 54), "伙伴", 14, Color("c0d0ab"))
-		_text(Vector2(935, 81), "%d / 3" % following, 23)
+		_text(Vector2(935, 81), "%d / %d" % [following, Model.COMPANION_COUNT], 23)
 	else:
 		_text(Vector2(935, 54), "载荷", 14, Color("c0d0ab"))
 		_text(Vector2(935, 80), "重" if model.cargo >= 2 else "轻", 22)

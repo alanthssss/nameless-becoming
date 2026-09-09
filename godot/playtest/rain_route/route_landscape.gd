@@ -8,6 +8,7 @@ const GOLD := Color("e6bb62")
 var route: Node2D
 var last_draw_us := 0
 var static_pass := false
+var layer_opacity := 1.0
 var rain_origins := PackedVector2Array()
 
 func _ready() -> void:
@@ -34,13 +35,16 @@ func _ready() -> void:
 
 
 func line(points: Array, color := INK, width := 2.0) -> void:
+	color.a *= layer_opacity
 	draw_polyline(PackedVector2Array(points), color, width, true)
 
 func shape(points: Array, color: Color, width := 2.0) -> void:
+	# Overlapping roof leaves must not accumulate into an opaque cover.
+	color.a *= layer_opacity if layer_opacity >= 1.0 else layer_opacity * 0.25
 	var polygon := PackedVector2Array(points)
 	draw_colored_polygon(polygon, color)
 	polygon.append(polygon[0])
-	draw_polyline(polygon, INK, width, true)
+	draw_polyline(polygon, Color(INK, layer_opacity), width, true)
 
 func oval(center: Vector2, radius: Vector2, color: Color, outline := true) -> void:
 	var points: Array = []
@@ -49,7 +53,7 @@ func oval(center: Vector2, radius: Vector2, color: Color, outline := true) -> vo
 	if outline:
 		shape(points, color)
 	else:
-		draw_colored_polygon(PackedVector2Array(points), color)
+		draw_colored_polygon(PackedVector2Array(points), Color(color, color.a * layer_opacity))
 
 func label(point: Vector2, value: String, size := 24) -> void:
 	draw_string(route.font, point, value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, INK)
@@ -69,6 +73,14 @@ func leaf(center: Vector2, size: float, angle: float, tint: Color) -> void:
 		for sign_value in [-1, 1]:
 			line([center + Vector2(x - size * 0.20, 0).rotated(angle), center + Vector2(x, h * sign_value).rotated(angle)], Color("647c65"), 1.1)
 
+func occupied(center: Vector2) -> bool:
+	if route.model.position.distance_to(center) < 215:
+		return true
+	for companion in route.model.companions:
+		if (companion.position as Vector2).distance_to(center) < 215:
+			return true
+	return false
+
 func canopy(center: Vector2, index: int, built := false) -> void:
 	oval(center + Vector2(12, 35), Vector2(218, 195), Color("738765", 0.12), false)
 	var near: bool = route.model.position.distance_to(center) < 245
@@ -80,6 +92,13 @@ func canopy(center: Vector2, index: int, built := false) -> void:
 			c = c.lightened(0.24)
 		var p := center + Vector2.from_angle(angle) * 89
 		leaf(p, 139 + (i % 2) * 9, angle + sin(route.visual_time * 1.1 + index) * 0.025, c)
+	# Rain lands on the roof; runoff leaves the lower edge while the bee stays dry.
+	for i in range(3):
+		var phase: float = fposmod(route.visual_time * 1.1 + i * 0.33 + index * 0.17, 1.0)
+		var p := center + Vector2(-95 + i * 90, -45 + (i % 2) * 70)
+		draw_arc(p, 3 + phase * 9, 0, TAU, 16, Color("f5f5e1", (1 - phase) * 0.8), 1.5, true)
+	var drip: float = fposmod(route.visual_time * 1.5 + index * 0.2, 1.0)
+	line([center + Vector2(10, 203 + drip * 24), center + Vector2(10, 207 + drip * 24)], Color("789c9c", 1 - drip), 1.5)
 	if built:
 		line([center + Vector2(-90, 105), center + Vector2(-80, -50), center + Vector2(80, -50), center + Vector2(90, 105)], INK, 5)
 		label(center + Vector2(-42, 90), "新叶台", 20)
@@ -128,16 +147,18 @@ func _draw() -> void:
 		return
 	var visible_world := Rect2(route.camera_origin - Vector2(280, 280), Vector2(1840, 1280))
 	for i in range(Model.SHELTERS.size()):
-		if visible_world.has_point(Model.SHELTERS[i]):
+		if visible_world.has_point(Model.SHELTERS[i]) and not occupied(Model.SHELTERS[i]):
 			canopy(Model.SHELTERS[i], i)
 	if route.model.stage >= 1:
-		canopy(Model.BUILD_SITE, 3, true)
+		if not occupied(Model.BUILD_SITE):
+			canopy(Model.BUILD_SITE, 3, true)
 	else:
 		for i in range(4):
 			line([Model.BUILD_SITE + Vector2(-43 + i * 20, -20), Model.BUILD_SITE + Vector2(-37 + i * 20, 30)], INK, 4)
 		label(Model.BUILD_SITE + Vector2(-70, 75), "待建 · 叶台", 20)
 	if visible_world.has_point(Model.FLOWERS):
-		canopy(Model.FLOWERS + Vector2(0, -15), 4)
+		if not occupied(Model.FLOWERS):
+			canopy(Model.FLOWERS + Vector2(0, -15), 4)
 		for i in range(13):
 			var p := Model.FLOWERS + Vector2(sin(i * 2.39) * (45 + i * 5), cos(i * 2.39) * (40 + i * 5))
 			flower(p, 19 + i % 4, Color("d5a99b") if i % 3 else Color("f1e6ba"))
@@ -163,6 +184,18 @@ func _draw() -> void:
 	bee(route.model.position, route.model.heading)
 	for i in range(route.model.cargo):
 		oval(route.model.position + Vector2(-10 + i * 9, 21), Vector2(5, 5), GOLD)
+	# Roofs draw ABOVE bees inside them; translucent surfaces keep movement readable.
+	layer_opacity = 0.22
+	for i in range(Model.SHELTERS.size()):
+		if occupied(Model.SHELTERS[i]) and visible_world.has_point(Model.SHELTERS[i]):
+			canopy(Model.SHELTERS[i], i)
+	if route.model.stage >= 1 and occupied(Model.BUILD_SITE):
+		canopy(Model.BUILD_SITE, 3, true)
+	if occupied(Model.FLOWERS):
+		canopy(Model.FLOWERS + Vector2(0, -15), 4)
+	layer_opacity = 1.0
+	if route.model.sheltered(route.model.position) and route.model.position.distance_to(Model.HIVE) > 205:
+		label(route.model.position + Vector2(-38, 55), "叶下 · 避雨", 16)
 	if route.model.rain_exposure > 0.1:
 		var p: Vector2 = route.model.position + Vector2(-24, 37)
 		line([p, p + Vector2(48, 0)], Color("d3cdb8"), 4)
@@ -191,7 +224,7 @@ func _draw_static() -> void:
 	# Quiet botanical marks are deterministic; no raster collage or tiled backdrops.
 	for i in range(390):
 		var p := Vector2(60 + fposmod(i * 127.731, 3480), 70 + fposmod(i * 217.193, 1940))
-		if route.model.sheltered(p) or route.model.blocked(p):
+		if route.model.sheltered(p) or route.model.over_water(p):
 			continue
 		if i % 7 == 0:
 			flower(p, 8 + i % 5, Color("eee8cc") if i % 2 else Color("cfaba0"))

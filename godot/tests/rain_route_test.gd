@@ -64,7 +64,7 @@ func _init() -> void:
 		if trip == 2:
 			for frame in range(90):
 				game.step(1.0 / 60, Vector2.ZERO, true)
-			check(game.companions.size() == 3, "Final trip must expose three real companions")
+			check(game.companions.size() == Model.COMPANION_COUNT, "Final trip must expose five real companions")
 		homeward(game)
 		game.act()
 		check(game.delivered == (trip + 1) * 3, "Safe route must deliver all cargo")
@@ -72,7 +72,7 @@ func _init() -> void:
 			check(game.sheltered(Model.BUILD_SITE), "First handoff must alter real shelter geometry")
 		if trip == 1:
 			check(not game.complete, "Enough early cargo cannot skip the final convoy")
-	check(game.complete and game.home_companions() == 3, "Three full real routes must end with all companions at home")
+	check(game.complete and game.home_companions() == Model.COMPANION_COUNT, "Three full real routes must end with all companions at home")
 	var delivery_count: int = game.deliveries
 	game.act()
 	check(game.deliveries == delivery_count, "Completion must not duplicate delivery")
@@ -93,7 +93,12 @@ func _init() -> void:
 	turning.step(0.2, Vector2.ZERO, true)
 	check(is_equal_approx(held_heading, turning.heading), "Braking must retain heading")
 	check(turning.raining(Vector2(700, 500)) and turning.raining(Vector2(3000, 500)), "Distant exposed points share regional rainfall")
-	check(turning.blocked(Vector2(Model.PONDS[0].x, Model.PONDS[0].y)), "Map ponds must affect traversal")
+	var crossing = Model.new()
+	var pond := Vector2(Model.PONDS[0].x, Model.PONDS[0].y)
+	crossing.position = pond - Vector2(250, 0)
+	fly(crossing, pond + Vector2(250, 0))
+	check(crossing.position.x > pond.x + 230, "Bee must fly across water without an invisible wall")
+	check(Model.COMPANION_COUNT + 1 == 6, "Party must contain six bees including the player")
 	var freshly_started = Model.new()
 	check(freshly_started.delivered == 0 and freshly_started.companions.is_empty() and not freshly_started.complete, "Restart must reset the whole experimental run")
 	if failures == 0:
