@@ -183,7 +183,8 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 19. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，纳入完整春季真人反馈，区分已成立的情绪体验、待验证的主体玩法与很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
 20. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 21. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
-22. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
+22. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录；
+23. [`docs/ART_REVIEW_HANDOFF.md`](docs/ART_REVIEW_HANDOFF.md)：**美术专家游戏＋原图评审包**、版本／哈希清单、反馈模板，以及桌面构建后的自动受限分享流程；Mac 专家首选独立的 `MacArtReview-*`（本地 `npm run art:package:mac`），通用双平台包使用 `npm run art:build`／`npm run art:package`。
 
 ## 当前验证问题
 
