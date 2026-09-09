@@ -82,6 +82,8 @@ func occupied(center: Vector2, radius := 215.0) -> bool:
 	return false
 
 func canopy(center: Vector2, index: int, built := false, custom_radius := 0.0) -> void:
+	var response: float = route.reaction_age("build", center) if built else -1.0
+	var unfolding := clampf(response / 1.2, 0, 1) if response >= 0 else 1.0
 	var near: bool = route.model.position.distance_to(center) < (route.model.roof_radius() + 30 if built else 245)
 	var roof_scale: float = custom_radius / 215.0 if custom_radius > 0 else (route.model.roof_radius() / 215.0 if built else 1.0)
 	draw_set_transform(center, 0, Vector2.ONE * roof_scale)
@@ -94,7 +96,7 @@ func canopy(center: Vector2, index: int, built := false, custom_radius := 0.0) -
 		if near:
 			c = c.lightened(0.24)
 		var p := center + Vector2.from_angle(angle) * 89
-		leaf(p, 139 + (i % 2) * 9, angle + sin(route.visual_time * 1.1 + index) * 0.025, c)
+		leaf(p, (139 + (i % 2) * 9) * lerpf(0.92, 1.0, smoothstep(0, 1, unfolding)), angle + sin(route.visual_time * 1.1 + index) * 0.025 + sin(unfolding * PI * 3 + i * 0.2) * (1 - unfolding) * 0.14, c)
 	# Rain lands on the roof; runoff leaves the lower edge while the bee stays dry.
 	for i in range(3):
 		var phase: float = fposmod(route.visual_time * 1.1 + i * 0.33 + index * 0.17, 1.0)
@@ -306,7 +308,10 @@ func _daily_world(visible_world: Rect2) -> void:
 				oval(spot, Vector2(12, 16), Color("d4ad68"))
 				line([spot, spot + Vector2(0, -23)], INK, 2)
 			else:
-				flower(spot, 15, Color("e2c2ab"))
+				var response: float = route.reaction_age("pollinate", p)
+				var pulse := sin(clampf(response / 1.5, 0, 1) * PI) if response >= 0 else 0.0
+				spot += Vector2(sin(response * 6 + j * 0.6) * pulse * 4, -pulse * 5)
+				flower(spot, 15 + pulse * 3, Color("e2c2ab").lerp(Color("f1e6ba"), pulse * 0.5))
 				if model.pollinated.has(str(i)):
 					draw_circle(spot, 4, GOLD)
 		label(p + Vector2(-35, 65), "花粉已到" if model.pollinated.has(str(i)) else "待传粉", 16)
@@ -316,14 +321,29 @@ func _daily_world(visible_world: Rect2) -> void:
 			oval(landing, Vector2(96, 68), Color("dfca9b"))
 			oval(landing + Vector2(0, 5), Vector2(78, 48), Color("efe1bc"))
 			for i in range(model.cleared.size()):
-				var seed := landing + Vector2(-26 + i * 26, 4 + (i % 2) * 9)
+				var seed: Vector2 = landing + [Vector2(-44, 15), Vector2(0, 32), Vector2(44, 15)][i]
+				for reaction in route.action_reactions:
+					if reaction.kind == "clear" and int(reaction.ordinal) == i:
+						var t := clampf(float(reaction.age) / 0.65, 0, 1)
+						seed.y -= absf(sin(t * PI * 2)) * (1 - t) * 15
 				oval(seed, Vector2(16, 11), Color("c8ab79"))
 		var points: Array = Model.Calendar.DAYS[6].points
 		for i in range(points.size()):
 			if not model.cleared.has(str(i)) and model.carried_seed != i and visible_world.has_point(points[i]):
 				oval(points[i], Vector2(16, 11), Color("c8ab79"))
-		if visible_world.has_point(Vector2(2470, 1080)) and model.cleared.size() < 3:
-			line([Vector2(2410, 930), Vector2(2450, 1000), Vector2(2470, 1080), Vector2(2580, 1150)], Color("86a8aa"), 8)
+		if visible_world.has_point(Vector2(2470, 1080)) and (model.cleared.size() < 3 or (route.reaction_age("clear", landing) >= 0 and route.reaction_age("clear", landing) < 0.9)):
+			var count: float = model.cleared.size()
+			var response: float = route.reaction_age("clear", landing)
+			if response >= 0:
+				count -= 1.0 - smoothstep(0, 1, clampf(response / 0.9, 0, 1))
+			line([Vector2(2410, 930), Vector2(2450, 1000), Vector2(2470, 1080), Vector2(2580, 1150)], Color("86a8aa"), 8 - count * 2)
+			if count > 0:
+				var end := Vector2(2580, 1150).lerp(Vector2(2650, 1260), count / 3.0)
+				line([Vector2(2580, 1150), end], Color("86a8aa"), 2)
+				for ripple in range(2):
+					var phase: float = fposmod(route.visual_time * 0.8 + ripple * 0.5, 1)
+					var drop := Vector2(2580, 1150).lerp(end, phase)
+					line([drop - Vector2(2, 3), drop + Vector2(2, 3)], Color("e6eece"), 1.5)
 			label(Vector2(2410, 1155), "堵住的叶沟", 17)
 	if model.built_site >= 0:
 		var p: Vector2 = model.roof_position() + Vector2(85, 72)

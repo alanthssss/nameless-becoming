@@ -12,6 +12,7 @@ const GOLD := Color("e9b75e")
 const CALENDAR_SAVE := "user://rain_route_calendar_v1.json"
 var save_enabled := true
 var save_path := CALENDAR_SAVE
+var action_reactions: Array[Dictionary] = []
 var model = Model.new()
 var beetle_greeting_time := 0.0
 var beetle_greeting_angle := 0.0
@@ -206,6 +207,7 @@ func _next_day() -> void:
 		_reset_feedback()
 
 func _reset_feedback() -> void:
+	action_reactions.clear()
 	beetle_greeting_time = 0.0
 	last_beetle_home = model.beetle_home
 	beetle_chime.stop()
@@ -237,21 +239,38 @@ func _burst(point: Vector2, color: Color, count: int) -> void:
 	for index in range(count):
 		effects.append({"point": point, "velocity": Vector2.from_angle(rng.randf_range(-PI, PI)) * rng.randf_range(15, 90), "age": 0.0, "life": rng.randf_range(0.4, 1.05), "color": color, "size": rng.randf_range(1.5, 3.8)})
 
+func reaction_age(kind: String, point: Vector2) -> float:
+	for reaction in action_reactions:
+		if reaction.kind == kind and (reaction.point as Vector2).distance_to(point) < 1:
+			return float(reaction.age)
+	return -1.0
+
 func _act() -> void:
 	if paused or model.complete or model.day_finished:
 		return
 	var result: String = model.act()
+	if result in ["pollinate", "clear", "build"]:
+		var point: Vector2 = model.roof_position() if result == "build" else Model.Calendar.DAYS[6].target
+		if result == "pollinate":
+			for bed: Vector2 in Model.Calendar.DAYS[3].points:
+				if model.position.distance_to(bed) < 65:
+					point = bed
+		action_reactions.append({"kind": result, "point": point, "age": 0.0, "ordinal": model.cleared.size() - 1})
 	if result != "" or model.complete:
+		sound.volume_db = -10.0 if result in ["pollinate", "clear", "build"] else 0.0
+		sound.pitch_scale = 1.15 if result == "pollinate" else (0.85 if result == "clear" else 1.0)
 		sound.stream = FINISH_SOUND if model.complete else (DELIVER_SOUND if result == "deliver" else LOAD_SOUND)
 		sound.play()
-		_burst(model.position, GOLD, 16 if result == "deliver" else 8)
+		if result not in ["pollinate", "clear", "build"]:
+			_burst(model.position, GOLD, 16 if result == "deliver" else 8)
 		if result == "day_end":
 			_save_dawn()
 		if result in ["deliver", "handoff", "pollinate", "clear"]:
 			delivery_glow = 1.6
 		if result in ["roof", "build"]:
 			build_glow = 4.0
-			_burst(model.position, Color("d6e598"), 18)
+			if result == "roof":
+				_burst(model.position, Color("d6e598"), 18)
 		if model.stage != last_stage:
 			build_glow = 2.0
 			_burst(model.roof_position(), Color("d6e598"), 25)
@@ -278,6 +297,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if not paused:
 		visual_time += delta
+		for index in range(action_reactions.size() - 1, -1, -1):
+			action_reactions[index].age = float(action_reactions[index].age) + delta
+			if float(action_reactions[index].age) >= 2.0:
+				action_reactions.remove_at(index)
 		beetle_greeting_time = maxf(0, beetle_greeting_time - delta)
 		if model.complete:
 			end_time += delta
@@ -300,6 +323,8 @@ func _physics_process(delta: float) -> void:
 			beetle_greeting_angle = (model.position - model.beetle_position).angle() + PI / 2
 		if model.spills > last_spills:
 			_burst(model.position, GOLD, 10)
+			sound.volume_db = 0.0
+			sound.pitch_scale = 1.0
 			sound.stream = LOSS_SOUND
 			sound.play()
 			last_spills = model.spills

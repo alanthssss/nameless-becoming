@@ -17,6 +17,22 @@ func capture(name: String) -> void:
 	await RenderingServer.frame_post_draw
 	assert(root.get_texture().get_image().save_png(output.path_join(name + ".png")) == OK)
 
+func capture_response(kind: String, point: Vector2) -> void:
+	assert(scene.reaction_age(kind, point) == 0)
+	for frame in range(24):
+		scene._physics_process(1.0 / 60)
+	await capture("response-" + kind)
+	var age: float = scene.reaction_age(kind, point)
+	scene.paused = true
+	scene._physics_process(0.5)
+	assert(scene.reaction_age(kind, point) == age, "Pause freezes local responses")
+	scene.paused = false
+	for frame in range(108):
+		scene._physics_process(1.0 / 60)
+	assert(scene.reaction_age(kind, point) == -1, "Responses end without blocking the player")
+	assert(scene.model.restore(scene.model.dawn_state))
+	scene._reset_feedback()
+
 func run() -> void:
 	assert(OS.get_cmdline_user_args().size() == 1)
 	output = OS.get_cmdline_user_args()[0]
@@ -38,6 +54,16 @@ func run() -> void:
 		if day in [4, 7, 9, 10, 12]:
 			Driver.fly(scene.model, scene.model.objective_points()[0])
 			await capture("day-%02d-start-work" % day)
+		if day == 3:
+			scene._act()
+			Driver.fly(scene.model, scene.model.BUILD_SITES[0])
+			scene._act()
+			await capture_response("build", scene.model.roof_position())
+		if day == 4:
+			Driver.flowers(scene.model, 1)
+			Driver.fly(scene.model, scene.model.today().points[0])
+			scene._act()
+			await capture_response("pollinate", scene.model.today().points[0])
 		if day == 5:
 			Driver.fly(scene.model, scene.model.drip_gaps()[0] - Vector2(85, 0))
 			while fposmod(scene.model.day_clock, 4.5) > 0.8:
@@ -51,8 +77,8 @@ func run() -> void:
 			await capture("day-07-carry-to-landing")
 			Driver.fly(scene.model, scene.model.today().target)
 			await capture("day-07-landing")
-			assert(scene.model.act() == "clear")
-			assert(scene.model.restore(scene.model.dawn_state))
+			scene._act()
+			await capture_response("clear", scene.model.today().target)
 		if day == 9:
 			assert(scene.model.act() == "roof")
 			await capture("day-09-escort-hint")
