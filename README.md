@@ -2,6 +2,8 @@
 
 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
+**2026-08-31 评审更正：** 轻松、轻量不等于内容少或总时长短。撤回“与原规模冲突”及默认十二段／3～5 小时建议；原 360 事件／72 状态／18～24 小时制作目标和既有验证门禁继续有效，不代表内容已完成或成本已验证。主动操作、自动劳动与故事按共享事件讨论组合，不强制按类型二选一。具体依据、成本取样、Demo 与购买验证见[商业成品要求第 0 节](docs/design/commercial-product-requirements.md#0-2026-08-31--轻量故事与商业范围重新收束)；下方实现记录保留各自时点。
+
 ## 当前产品：二十四节气 Campaign
 
 - `[实现事实]` 普通商业标题的新旅程／继续入口现已进入独立 `campaign.tscn`。正式目录从立春到大寒恰好 **24 关**，每季 6 关；第 6／12／18／24 关是三阶段高潮关，共 20 个常规关与 4 个高潮关，第 24 关返巢后直接交棒，不生成第 25 关。
@@ -168,22 +170,26 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 4. [`docs/design/art-source-register.md`](docs/design/art-source-register.md)：**当前 21 张运行候选 PNG 与概念主视觉的来源、用途、切片、哈希、授权缺口和审批状态**；
 5. [`docs/design/ecology-and-apiculture-source-register.md`](docs/design/ecology-and-apiculture-source-register.md)：**蜂群生态与养蜂资料的逐页事实、现代复核状态、游戏转译与禁止误用登记**；用户提供的完整扫描本不进入仓库；
 6. [`marketing/README.md`](marketing/README.md)：开发者实机截图、生成式概念主视觉、文字标与商店尺寸候选的证据边界；全部仍未获发布批准；
-7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：7 款官方竞品快照、可验证差异、价格锚点、商业门槛，以及《小丑牌》方法用于当前 Campaign 的轻量参照附录；市场与方法判断只算专家启发式；
-8. [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) 与 [`docs/BUILD_MANIFEST.md`](docs/BUILD_MANIFEST.md)：当前发布门禁与构建事实；
-9. [`docs/PLAYTEST.md`](docs/PLAYTEST.md)：人工与外部玩家记录模板／记录；
-10. [`docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md)：整改、证据等级、执行矩阵和外测标准的历史执行主记录；
-11. [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md)：旧 MVP 候选范围与验收口径，不等于商业成品范围；
-12. [`docs/DESIGN_CONSENSUS.md`](docs/DESIGN_CONSENSUS.md)：稳定设计共识与历史差距，其中冲突内容服从商业成品清单；
-13. [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)：**历史记录**，有意保留当时成立、后来被推翻的四关、旧 Boss、旧四季和旧时长描述；
-14. [`docs/DEMO_TO_PLAYTEST_PLAN.md`](docs/DEMO_TO_PLAYTEST_PLAN.md)：**已废止的历史结构方案**，仅用于追溯，不得执行；
-15. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
-16. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、Collaboration 协作要求、决策与行动收口、单一执行视图及风险分级验证；
-17. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
-18. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
-19. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，区分最近有真人证据版本的偏轻体验、中重的工程骨架和很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
-20. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
-21. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
-22. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
+7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：20 款独立及相邻游戏的历史市场快照、待验证设计假设，以及保留的《小丑牌》轻量参照附录；市场与方法判断只算专家启发式；
+8. [`docs/design/book-inspired-core-rhythm-directions.md`](docs/design/book-inspired-core-rhythm-directions.md)：结合两本游戏设计书与 Alan 偏好的《黑神话：悟空》《空洞骑士》《塞尔达传说》《宝可梦》《超级马里奥》，提出“接路”核心假设、雨水／谷雨低成本原型和真人扩产门禁；当前只算专家启发式；
+9. [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) 与 [`docs/BUILD_MANIFEST.md`](docs/BUILD_MANIFEST.md)：当前发布门禁与构建事实；
+10. [`docs/PLAYTEST.md`](docs/PLAYTEST.md)：人工与外部玩家记录模板／记录；
+11. [`docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md`](docs/PLAYER_FEEDBACK_ACTION_PLAN_2026-08-24.md)：整改、证据等级、执行矩阵和外测标准的历史执行主记录；
+12. [`docs/MVP_SPEC.md`](docs/MVP_SPEC.md)：旧 MVP 候选范围与验收口径，不等于商业成品范围；
+13. [`docs/DESIGN_CONSENSUS.md`](docs/DESIGN_CONSENSUS.md)：稳定设计共识与历史差距，其中冲突内容服从商业成品清单；
+14. [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)：**历史记录**，有意保留当时成立、后来被推翻的四关、旧 Boss、旧四季和旧时长描述；
+15. [`docs/DEMO_TO_PLAYTEST_PLAN.md`](docs/DEMO_TO_PLAYTEST_PLAN.md)：**已废止的历史结构方案**，仅用于追溯，不得执行；
+16. [`docs/COLOR_SYSTEM.md`](docs/COLOR_SYSTEM.md)：二十四节气色彩语言；
+17. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、Collaboration 协作要求、决策与行动收口、单一执行视图及风险分级验证；
+18. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
+19. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
+20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，纳入完整春季真人反馈，区分已成立的情绪体验、待验证的主体玩法与很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
+21. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
+22. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
+23. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
+24. [`docs/ART_REVIEW_HANDOFF.md`](docs/ART_REVIEW_HANDOFF.md)：**美术专家游戏＋原图评审包**、版本／哈希清单、反馈模板，以及桌面构建后的自动受限分享流程；Mac 专家首选独立的 `MacArtReview-*`（本地 `npm run art:package:mac`），通用双平台包使用 `npm run art:build`／`npm run art:package`。
+
+25. [`docs/GAME_NAME_REVIEW_2026-09-02.md`](docs/GAME_NAME_REVIEW_2026-09-02.md)：200 个 IGF／indiePlay 优秀独立游戏标题样本的结构分析、五组新产品名、评分、公开同名初筛与选定后的迁移边界；当前推荐《花开正忙 · Bloom in Full Swing》，等待 Alan 五选一。
 
 ## 当前验证问题
 
