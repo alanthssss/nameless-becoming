@@ -5,6 +5,7 @@ func _initialize() -> void:
 
 func run() -> void:
 	var scene = load("res://playtest/rain_route/rain_route.tscn").instantiate()
+	scene.save_enabled = false
 	root.add_child(scene)
 	scene.set_physics_process(false)
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)

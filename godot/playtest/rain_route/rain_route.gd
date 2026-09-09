@@ -9,7 +9,12 @@ const LOSS_SOUND := preload("res://assets/audio/commercial/honey_loss.wav")
 const INK := Color("2b4438")
 const CREAM := Color("f8f0d9")
 const GOLD := Color("e9b75e")
+const CALENDAR_SAVE := "user://rain_route_calendar_v1.json"
+var save_enabled := true
+var save_path := CALENDAR_SAVE
 var model = Model.new()
+var next_button: Button
+
 var landscape: Node2D
 var camera_center := Model.HIVE
 var camera_origin := Vector2.ZERO
@@ -40,6 +45,11 @@ var main_controls: Array[Control] = []
 
 func _ready() -> void:
 	DisplayServer.window_set_title("一会儿巢里见 · 雨水")
+	if save_enabled and FileAccess.file_exists(save_path):
+		var data = JSON.parse_string(FileAccess.get_file_as_string(save_path))
+		if not data is Dictionary or not model.restore(data):
+			save_enabled = false
+			push_warning("雨水日程未能载入，保留旧文件，本次不覆盖。")
 	rng.seed = 91328
 	sound = AudioStreamPlayer.new()
 	sound.bus = &"SFX"
@@ -123,7 +133,7 @@ func _build_hud() -> void:
 	brake_button.button_down.connect(func(): touch_braking = true)
 	brake_button.button_up.connect(func(): touch_braking = false)
 	pause_button = _button("暂停", Vector2(1162, 27), 82, _toggle_pause, true)
-	var restart := _button("重来", Vector2(1070, 27), 82, _restart, true)
+	var restart := _button("重开今日", Vector2(1040, 27), 112, _restart, true)
 	main_controls = [action_button, brake_button, pause_button, restart]
 	status = _label(Vector2(53, 629), Vector2(720, 51), 17, INK)
 	status.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -136,10 +146,12 @@ func _build_hud() -> void:
 	result_controls = Control.new()
 	result_controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud.add_child(result_controls)
-	var again := _button("再飞一次", Vector2(480, 426), 320, _restart)
+	var again := _button("再过十五天", Vector2(480, 426), 320, _restart)
 	hud.remove_child(again)
 	result_controls.add_child(again)
 	result_controls.visible = false
+	next_button = _button("睡一晚 · 下一天", Vector2(478, 426), 324, _next_day)
+	next_button.visible = false
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_instance_valid(music):
@@ -154,34 +166,75 @@ func _toggle_pause() -> void:
 	pointer_active = false
 	touch_braking = false
 
-func _restart() -> void:
-	model = Model.new()
-	camera_center = Model.HIVE
+func _save_dawn() -> void:
+	if not save_enabled:
+		return
+	var checkpoint: Dictionary = model.snapshot() if model.day_finished else model.dawn_state
+	if model.day_finished and not model.complete:
+		checkpoint = checkpoint.duplicate(true)
+		checkpoint.day = model.day + 1
+	var temp := save_path + ".tmp"
+	var file := FileAccess.open(temp, FileAccess.WRITE)
+	if file == null:
+		push_warning("雨水日程保存失败，当前游戏仍可继续。")
+		return
+	file.store_string(JSON.stringify(checkpoint))
+	file.flush()
+	if file.get_error() != OK:
+		file.close()
+		push_warning("雨水日程保存失败，旧日程保留。")
+		return
+	file.close()
+	if DirAccess.rename_absolute(temp, save_path) != OK:
+		push_warning("雨水日程保存失败，旧日程保留。")
+
+func _next_day() -> void:
+	if paused:
+		return
+	if model.next_day():
+		_save_dawn()
+		_reset_feedback()
+
+func _reset_feedback() -> void:
+	camera_center = model.position
 	_update_camera(1.0)
 	effects.clear()
-	build_glow = 0.0
-	delivery_glow = 0.0
-	end_time = 0.0
-	last_spills = 0
-	last_stage = 0
+	build_glow = 0
+	delivery_glow = 0
+	end_time = 0
+	last_spills = model.spills
+	last_stage = model.stage
 	paused = false
 	music.stream_paused = false
 	pointer_active = false
 	touch_braking = false
+
+func _restart() -> void:
+	if model.complete:
+		model = Model.new()
+	else:
+		var dawn: Dictionary = model.dawn_state.duplicate(true)
+		var replacement = Model.new()
+		if replacement.restore(dawn):
+			model = replacement
+	_save_dawn()
+	_reset_feedback()
 
 func _burst(point: Vector2, color: Color, count: int) -> void:
 	for index in range(count):
 		effects.append({"point": point, "velocity": Vector2.from_angle(rng.randf_range(-PI, PI)) * rng.randf_range(15, 90), "age": 0.0, "life": rng.randf_range(0.4, 1.05), "color": color, "size": rng.randf_range(1.5, 3.8)})
 
 func _act() -> void:
-	if paused or model.complete:
+	if paused or model.complete or model.day_finished:
 		return
 	var result: String = model.act()
 	if result != "" or model.complete:
 		sound.stream = FINISH_SOUND if model.complete else (DELIVER_SOUND if result == "deliver" else LOAD_SOUND)
 		sound.play()
 		_burst(model.position, GOLD, 16 if result == "deliver" else 8)
-		if result == "deliver":
+		if result == "day_end":
+			_save_dawn()
+		if result in ["deliver", "handoff", "pollinate", "clear"]:
 			delivery_glow = 1.6
 		if result in ["roof", "build"]:
 			build_glow = 4.0
@@ -241,46 +294,25 @@ func _physics_process(delta: float) -> void:
 	status.text = _context_message()
 	paused_label.visible = paused
 	pause_button.text = "继续" if paused else "暂停"
-	action_button.disabled = paused or model.complete
-	brake_button.disabled = paused or model.complete
+	action_button.disabled = paused or model.day_finished
+	brake_button.disabled = paused or model.day_finished
 	result_controls.visible = model.complete and not paused
 	for control in [action_button, brake_button, status, hint_label]:
-		control.visible = not model.complete
-	if model.position.distance_to(Model.HIVE) < 80.0:
-		action_button.text = "空格 · 一起收工" if model.delivered >= 9 else "空格 · 交到巢里"
-	elif model.position.distance_to(Model.FLOWERS) < 80.0:
-		action_button.text = "已装满 · 可以出发" if model.cargo == model.cargo_capacity() else "空格 · 再取一份粉"
-	else:
-		action_button.text = "空格 · 接回散粉"
-	if model.position.distance_to(Model.HIVE) < 80 and model.stage == 1 and model.cargo == 0 and model.built_site < 0 and not model.roof_carried:
-		action_button.text = "空格 · 带上遮雨叶"
-	if model.roof_carried:
-		for site: Vector2 in Model.BUILD_SITES:
-			if model.position.distance_to(site) < 85:
-				action_button.text = "空格 · 在这里撑叶"
+		control.visible = not model.day_finished
+	action_button.text = model.action_label()
+	next_button.visible = model.day_finished and not model.complete and not paused
 	_update_camera(delta)
 	landscape.queue_redraw()
 	queue_redraw()
 
 func _context_message() -> String:
-	if build_glow > 0:
-		return model.notice
-	if delivery_glow > 0:
-		return "花粉交好了。大家正在巢里接货。"
+	if model.work_ready():
+		return "今天的事做好了。回到巢门，按空格收工。"
+	if model.today().mode == "drips":
+		return "水滴停了，现在穿过叶口。" if model.drip_open() else "雨落在叶上，看看叶尖的滴水，等空隙再穿过。"
 	if model.roof_carried:
-		return "遮雨叶占一格载荷。中路短，上路叶台宽；到选中的支点按空格撑叶。"
-	if model.stage == 1 and model.built_site < 0:
-		return "先回巢带上遮雨叶，再亲自选一处支点，让下一趟多一条路。"
-	if model.position.distance_to(Model.FLOWERS) < 80:
-		return "一份也能出发。带得越多，转弯越要提前。" if model.stage < 2 else "慢下来等伙伴跟上，再选一条一起回家的路。"
-	if model.position.distance_to(Model.HIVE) < 80:
-		return "沿叶下小径向东去花田，也可以从洼地穿过去。" if model.cargo == 0 else "到家了，按空格把花粉交给接货蜂。"
-	if model.raining(model.position):
-		return "雨正在落下。靠向叶下，掉下的花粉还能取回。"
-	for bee in model.companions:
-		if bee.waiting:
-			return "有伙伴在等你。靠近它，按住 Shift 慢飞接回。"
-	return "叶下能避雨。沿着树叶往前，路会绕回花田。" if model.sheltered(model.position) else "露天一直在下雨。留意花粉，沿叶下小径能避雨。"
+		return "遮雨叶占一格载荷。中路短，上路叶台宽；到支点按空格撑叶。"
+	return model.today().hint + model.work_progress()
 
 func _text(point: Vector2, value: String, size: int, color := CREAM) -> void:
 	draw_string(font, point, value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
@@ -295,25 +327,23 @@ func _update_camera(delta: float) -> void:
 func _draw_hud() -> void:
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
 	_text(Vector2(50, 59), "雨水", 27, INK)
-	_text(Vector2(119, 57), Model.PENTAD_NAMES[model.stage], 19, Color("566a48"))
-	var goal: String = ["带回花粉，准备遮雨叶", "选点撑叶，再送一趟花粉", "换风了，接五只新蜂一起返巢"][model.stage]
-	_text(Vector2(50, 91), goal, 17, INK)
-	for index in range(3):
-		var rect := Rect2(50 + index * 112, 111, 99, 5)
-		_panel(rect, Color("d8d8b9"), 2)
-		var filled := clampf((model.delivered - index * 3) / 3.0, 0, 1)
-		if filled > 0:
-			draw_rect(Rect2(rect.position, Vector2(rect.size.x * filled, 5)), Color("729052"))
+	_text(Vector2(119, 57), "第 %d 天 · %s" % [model.day, ["一候", "二候", "三候"][model.stage]], 19, Color("566a48"))
+	_text(Vector2(50, 91), str(model.event_today().title), 17, INK)
+	for i in range(15):
+		var p := Vector2(54 + i * 22, 116)
+		draw_circle(p, 4, Color("729052") if i < model.completed_days.size() else Color("d8d8b9"))
+		if i == model.day - 1:
+			draw_arc(p, 7, 0, TAU, 18, INK, 1.4, true)
 	_panel(Rect2(687, 25, 361, 76), Color("264b39", 0.96), 18, Color("a4b889", 0.5))
-	_text(Vector2(711, 54), "巢里", 14, Color("c0d0ab"))
-	_text(Vector2(711, 81), "%d / 9" % model.delivered, 23)
+	_text(Vector2(711, 54), "已过", 14, Color("c0d0ab"))
+	_text(Vector2(711, 81), "%d / 15" % model.completed_days.size(), 23)
 	_text(Vector2(818, 54), "身上花粉", 14, Color("c0d0ab"))
 	for index in range(3):
 		var center := Vector2(828 + index * 28, 75)
 		draw_circle(center, 7.5, GOLD if index < model.cargo else (Color("a6b798") if model.roof_carried and index == 2 else Color("65765a")))
 		if index < model.cargo:
 			draw_circle(center + Vector2(-2, -2), 2, Color("fff0b5"))
-	if model.stage >= 2:
+	if model.day >= 12:
 		var following := 0
 		for bee in model.companions:
 			if not bee.waiting:
@@ -325,7 +355,7 @@ func _draw_hud() -> void:
 		_text(Vector2(935, 80), "重" if model.cargo >= 2 else "轻", 22)
 	if model.roof_carried:
 		_text(Vector2(876, 99), "叶", 12)
-	if not model.complete:
+	if not model.day_finished:
 		_panel(Rect2(28, 624, 777, 62), Color("f7efd7", 0.97), 16, Color("fff6dd", 0.6))
 		draw_circle(Vector2(40, 653), 3, Color("79974d"))
 
@@ -338,7 +368,8 @@ func _draw() -> void:
 		draw_line(Vector2(40, 514) + Model.SAFE_ROUTE[i] * 0.053, Vector2(40, 514) + Model.SAFE_ROUTE[i + 1] * 0.053, Color("9ba885"), 2, true)
 	draw_polyline(PackedVector2Array([Vector2(40, 514) + Model.HIVE * 0.053, Vector2(40, 514) + Model.BUILD_SITE * 0.053, Vector2(40, 514) + Model.FLOWERS * 0.053]), Color("c1b9a0"), 1.5, true)
 	draw_rect(Rect2(Vector2(40, 514) + camera_origin * 0.053, Vector2(1280, 720) * 0.053), Color("637960", 0.4), false, 1)
-	draw_polyline(PackedVector2Array([Vector2(40, 514) + Model.HIVE * 0.053, Vector2(40, 514) + Vector2(1250, 420) * 0.053, Vector2(40, 514) + Model.BUILD_SITES[1] * 0.053, Vector2(40, 514) + Model.FLOWERS * 0.053]), Color("c1b9a0"), 1.5, true)
+	if model.route_revealed:
+		draw_polyline(PackedVector2Array([Vector2(40, 514) + Model.HIVE * 0.053, Vector2(40, 514) + Vector2(1250, 420) * 0.053, Vector2(40, 514) + Model.BUILD_SITES[1] * 0.053, Vector2(40, 514) + Model.FLOWERS * 0.053]), Color("c1b9a0"), 1.5, true)
 	for p in [Model.HIVE, Model.FLOWERS]:
 		draw_circle(Vector2(40, 514) + p * 0.053, 4, INK)
 	draw_circle(Vector2(40, 514) + model.position * 0.053, 5, GOLD)
@@ -347,11 +378,18 @@ func _draw() -> void:
 		draw_circle(p, 4, Color("79974d") if model.built_site == i else Color("c1b9a0"))
 	if model.last_event != "":
 		_text(Vector2(260, 594), "花路记事 · " + str(model.event_catalog[model.last_event].title), 16, INK)
+	for target: Vector2 in model.objective_points():
+		draw_circle(Vector2(40, 514) + target * 0.053, 3.5, Color("b17c54"))
+	if model.day_finished and not model.complete and not paused:
+		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
+		_text(Vector2(458, 264), "雨水 · 第 %d 天收工" % model.day, 26, INK)
+		_text(Vector2(402, 315), str(model.event_today().title), 23, INK)
+		_text(Vector2(402, 369), Model.Calendar.AFTER[model.day - 1], 18, INK)
 	if model.complete:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
 		_text(Vector2(537, 248), "一会儿巢里见", 22, INK)
-		_text(Vector2(403, 300), "这条路，大家都能走了。", 28, INK)
-		_text(Vector2(416, 341), "叶台撑住了雨，伙伴也一起回来了。", 19, INK)
+		_text(Vector2(403, 300), "十五天，花路接起来了。", 28, INK)
+		_text(Vector2(416, 341), "叶台、花和小路，留下了大家的十五天。", 19, INK)
 		_text(Vector2(422, 386), "%d 趟交货   ·   %d 次掉粉   ·   %d 次接回" % [model.deliveries, model.spills, model.rescues], 17, INK)
 	if paused:
 		draw_rect(Rect2(0, 145, 1280, 470), Color("142f24", 0.75))

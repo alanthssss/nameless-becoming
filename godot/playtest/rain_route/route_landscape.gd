@@ -81,9 +81,9 @@ func occupied(center: Vector2, radius := 215.0) -> bool:
 			return true
 	return false
 
-func canopy(center: Vector2, index: int, built := false) -> void:
+func canopy(center: Vector2, index: int, built := false, custom_radius := 0.0) -> void:
 	var near: bool = route.model.position.distance_to(center) < (route.model.roof_radius() + 30 if built else 245)
-	var roof_scale: float = route.model.roof_radius() / 215.0 if built else 1.0
+	var roof_scale: float = custom_radius / 215.0 if custom_radius > 0 else (route.model.roof_radius() / 215.0 if built else 1.0)
 	draw_set_transform(center, 0, Vector2.ONE * roof_scale)
 	center = Vector2.ZERO
 	oval(center + Vector2(12, 35), Vector2(218, 195), Color("738765", 0.12), false)
@@ -168,10 +168,14 @@ func _draw() -> void:
 		for i in range(13):
 			var p := Model.FLOWERS + Vector2(sin(i * 2.39) * (45 + i * 5), cos(i * 2.39) * (40 + i * 5))
 			flower(p, 19 + i % 4, Color("d5a99b") if i % 3 else Color("f1e6ba"))
+	_daily_world(visible_world)
+	for extra in extra_roofs():
+		if visible_world.has_point(extra.point) and not occupied(extra.point, extra.radius):
+			canopy(extra.point, 2, false, extra.radius)
 	# Regional rain falls downward everywhere exposed; only wind's horizontal component changes.
 	var rain_lines := PackedVector2Array()
 	var viewport := Rect2(route.camera_origin, Vector2(1280, 720))
-	var streak := Vector2(-4 if route.model.stage >= 2 else 4, 16)
+	var streak := Vector2(-4 if route.model.day >= 14 else 4, 16)
 	for i in range(rain_origins.size()):
 		var origin := rain_origins[i]
 		var p := Vector2(fposmod(origin.x + route.model.wind_travel, 3600), fposmod(origin.y + route.visual_time * (350 + i % 90), 2100))
@@ -198,11 +202,16 @@ func _draw() -> void:
 		canopy(route.model.roof_position(), 3, true)
 	if occupied(Model.FLOWERS):
 		canopy(Model.FLOWERS + Vector2(0, -15), 4)
+	for extra in extra_roofs():
+		if visible_world.has_point(extra.point) and occupied(extra.point, extra.radius):
+			canopy(extra.point, 2, false, extra.radius)
 	layer_opacity = 1.0
 	if route.model.sheltered(route.model.position) and route.model.position.distance_to(Model.HIVE) > 205:
 		label(route.model.position + Vector2(-38, 55), "叶下 · 避雨", 16)
 	if route.model.roof_carried:
 		leaf(route.model.position + Vector2(-18, -35), 33, -0.25, GREEN)
+	if route.model.carried_seed >= 0:
+		oval(route.model.position + Vector2(-10, -22), Vector2(10, 7), GOLD)
 	if route.model.rain_exposure > 0.1:
 		var p: Vector2 = route.model.position + Vector2(-24, 37)
 		line([p, p + Vector2(48, 0)], Color("d3cdb8"), 4)
@@ -258,3 +267,72 @@ func _draw_static() -> void:
 	label(Model.FLOWERS + Vector2(-57, 166), "花田 · 取粉", 22)
 	label(Vector2(1000, 1770), "叶下小径", 30)
 	label(Vector2(1850, 480), "雨中的洼地", 30)
+
+
+func extra_roofs() -> Array:
+	var roofs: Array = []
+	if route.model.day == 10:
+		roofs.append({"point": route.model.moving_roof_position(), "radius": 135.0})
+	if route.model.cleared.size() == 3:
+		roofs.append({"point": Vector2(2470, 1080), "radius": 215.0})
+	if route.model.escort_roof:
+		roofs.append({"point": route.model.position, "radius": 135.0})
+	return roofs
+
+func _daily_world(visible_world: Rect2) -> void:
+	var model = route.model
+	# The two flower beds retain pollen, then show fruit only on later days.
+	for i in range(Model.Calendar.DAYS[3].points.size()):
+		var p: Vector2 = Model.Calendar.DAYS[3].points[i]
+		if not visible_world.has_point(p):
+			continue
+		for j in range(3):
+			var spot := p + Vector2((j - 1) * 31, (j % 2) * 19)
+			if model.pollinated.has(str(i)) and model.day >= 11:
+				oval(spot, Vector2(12, 16), Color("d4ad68"))
+				line([spot, spot + Vector2(0, -23)], INK, 2)
+			else:
+				flower(spot, 15, Color("e2c2ab"))
+				if model.pollinated.has(str(i)):
+					draw_circle(spot, 4, GOLD)
+		label(p + Vector2(-35, 65), "花粉已到" if model.pollinated.has(str(i)) else "待传粉", 16)
+	if model.day >= 7:
+		var points: Array = Model.Calendar.DAYS[6].points
+		for i in range(points.size()):
+			if not model.cleared.has(str(i)) and model.carried_seed != i and visible_world.has_point(points[i]):
+				oval(points[i], Vector2(16, 11), Color("c8ab79"))
+		if visible_world.has_point(Vector2(2470, 1080)) and model.cleared.size() < 3:
+			line([Vector2(2410, 930), Vector2(2450, 1000), Vector2(2470, 1080), Vector2(2580, 1150)], Color("86a8aa"), 8)
+			label(Vector2(2410, 1155), "堵住的叶沟", 17)
+	if model.built_site >= 0:
+		var p: Vector2 = model.roof_position() + Vector2(85, 72)
+		if visible_world.has_point(p):
+			line([p + Vector2(-30, 30), p + Vector2(-24, -12), p + Vector2(36, -12), p + Vector2(42, 30)], INK, 3)
+			for i in range(mini(model.rack_stock, 6)):
+				oval(p + Vector2(-20 + i * 10, -7), Vector2(5, 6), GOLD)
+	if model.day >= 9 and visible_world.has_point(model.beetle_position):
+		var p: Vector2 = model.beetle_position
+		for i in range(3):
+			line([p + Vector2(-17, -10 + i * 10), p + Vector2(17, -10 + i * 10)], INK, 2)
+		oval(p, Vector2(13, 19), Color("ae9278"))
+		line([p + Vector2(0, -14), p + Vector2(0, 15)], INK, 1.5)
+		label(p + Vector2(-30, 43), "到家了" if model.beetle_home else "小甲虫", 16)
+	if model.today().mode in ["scout", "drips"]:
+		for i in range(model.today().points.size()):
+			var p: Vector2 = model.today().points[i]
+			if not visible_world.has_point(p):
+				continue
+			if model.today().mode == "drips":
+				leaf(p + Vector2(0, -65), 45, 0.4, GREEN)
+				if not model.drip_open():
+					var drop: float = fposmod(model.day_clock * 2.2, 1)
+					line([p + Vector2(0, -40 + drop * 70), p + Vector2(0, -31 + drop * 70)], Color("7d9fa2"), 3)
+				label(p + Vector2(-30, 45), "现在穿过" if model.drip_open() else "叶尖滴水", 16)
+			else:
+				line([p + Vector2(0, 26), p + Vector2(0, -25)], INK, 3)
+				shape([p + Vector2(0, -25), p + Vector2(27, -18), p + Vector2(0, -10)], GREEN if model.visited.has(str(i)) else GOLD)
+	if not model.day_finished:
+		for target: Vector2 in model.objective_points():
+			if visible_world.has_point(target):
+				# Small ground chevrons identify today's work without blocking flight.
+				line([target + Vector2(-9, 47), target + Vector2(0, 53), target + Vector2(9, 47)], Color("ae7d55"), 2)
