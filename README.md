@@ -170,7 +170,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 4. [`docs/design/art-source-register.md`](docs/design/art-source-register.md)：**当前 21 张运行候选 PNG 与概念主视觉的来源、用途、切片、哈希、授权缺口和审批状态**；
 5. [`docs/design/ecology-and-apiculture-source-register.md`](docs/design/ecology-and-apiculture-source-register.md)：**蜂群生态与养蜂资料的逐页事实、现代复核状态、游戏转译与禁止误用登记**；用户提供的完整扫描本不进入仓库；
 6. [`marketing/README.md`](marketing/README.md)：开发者实机截图、生成式概念主视觉、文字标与商店尺寸候选的证据边界；全部仍未获发布批准；
-7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：7 款官方竞品快照、可验证差异、价格锚点、商业门槛，以及《小丑牌》方法用于当前 Campaign 的轻量参照附录；市场与方法判断只算专家启发式；
+7. [`docs/analysis/07-competitive-analysis.md`](docs/analysis/07-competitive-analysis.md)：20 款独立及相邻游戏的历史市场快照、待验证设计假设，以及保留的《小丑牌》轻量参照附录；市场与方法判断只算专家启发式；
 8. [`docs/design/book-inspired-core-rhythm-directions.md`](docs/design/book-inspired-core-rhythm-directions.md)：结合两本游戏设计书与 Alan 偏好的《黑神话：悟空》《空洞骑士》《塞尔达传说》《宝可梦》《超级马里奥》，提出“接路”核心假设、雨水／谷雨低成本原型和真人扩产门禁；当前只算专家启发式；
 9. [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) 与 [`docs/BUILD_MANIFEST.md`](docs/BUILD_MANIFEST.md)：当前发布门禁与构建事实；
 10. [`docs/PLAYTEST.md`](docs/PLAYTEST.md)：人工与外部玩家记录模板／记录；
