@@ -1,13 +1,6 @@
 extends Node2D
 
 const Model := preload("res://playtest/rain_route/route_model.gd")
-const BEE := preload("res://assets/art/commercial/player_bee_topdown_states_v1.png")
-const WORKER := preload("res://assets/art/commercial/worker_bee_topdown_v1.png")
-const HIVE_ART := preload("res://assets/art/commercial/main_hive_exterior_v1.png")
-const GROUND := preload("res://playtest/rain_route/art/rain_garden_v1.png")
-const LEAF := preload("res://playtest/rain_route/art/leaf_canopy_v1.png")
-const SHELTER_KIT := preload("res://playtest/rain_route/art/shelter_materials_v1.png")
-const FLOWER_ART := preload("res://playtest/rain_route/art/pollen_flowers_v1.png")
 const MUSIC := preload("res://assets/music/spring_explore.wav")
 const LOAD_SOUND := preload("res://assets/audio/commercial/nectar_collect.wav")
 const DELIVER_SOUND := preload("res://assets/audio/commercial/handoff.wav")
@@ -17,6 +10,9 @@ const INK := Color("2b4438")
 const CREAM := Color("f8f0d9")
 const GOLD := Color("e9b75e")
 var model = Model.new()
+var landscape: Node2D
+var camera_center := Model.HIVE
+var camera_origin := Vector2.ZERO
 var font := preload("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
 var paused := false
 var sound: AudioStreamPlayer
@@ -55,7 +51,13 @@ func _ready() -> void:
 	add_child(music)
 	music.finished.connect(func(): music.play())
 	music.play()
+	landscape = Node2D.new()
+	landscape.set_script(preload("res://playtest/rain_route/route_landscape.gd"))
+	landscape.show_behind_parent = true
+	landscape.route = self
+	add_child(landscape)
 	_build_hud()
+	_update_camera(1.0)
 
 func _panel(rect: Rect2, color: Color, radius := 16, border := Color(0, 0, 0, 0)) -> void:
 	var style := StyleBoxFlat.new()
@@ -125,7 +127,7 @@ func _build_hud() -> void:
 	main_controls = [action_button, brake_button, pause_button, restart]
 	status = _label(Vector2(53, 629), Vector2(720, 51), 17, INK)
 	status.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	hint_label = _label(Vector2(39, 692), Vector2(1000, 24), 13, CREAM)
+	hint_label = _label(Vector2(39, 692), Vector2(1000, 24), 13, INK)
 	hint_label.text = "WASD / 方向键 / 点地面  飞行     Shift  慢飞接应     R  重来"
 	paused_label = _label(Vector2(394, 296), Vector2(500, 85), 25, CREAM)
 	paused_label.text = "暂停中"
@@ -154,6 +156,8 @@ func _toggle_pause() -> void:
 
 func _restart() -> void:
 	model = Model.new()
+	camera_center = Model.HIVE
+	_update_camera(1.0)
 	effects.clear()
 	build_glow = 0.0
 	delivery_glow = 0.0
@@ -181,7 +185,7 @@ func _act() -> void:
 			delivery_glow = 1.6
 		if model.stage != last_stage:
 			build_glow = 2.0
-			_burst(Vector2(650, 320), Color("d6e598"), 25)
+			_burst(Model.BUILD_SITE, Color("d6e598"), 25)
 			last_stage = model.stage
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -195,11 +199,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventJoypadButton and event.is_action_pressed("action"):
 		_act()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		if Model.BOUNDS.has_point(get_global_mouse_position()):
-			pointer_target = get_global_mouse_position()
+		if Model.BOUNDS.has_point((get_global_mouse_position() + camera_origin)):
+			pointer_target = (get_global_mouse_position() + camera_origin)
 			pointer_active = true
-	elif event is InputEventScreenTouch and event.pressed and Model.BOUNDS.has_point(event.position):
-		pointer_target = event.position
+	elif event is InputEventScreenTouch and event.pressed and Model.BOUNDS.has_point(event.position + camera_origin):
+		pointer_target = event.position + camera_origin
 		pointer_active = true
 
 func _physics_process(delta: float) -> void:
@@ -245,105 +249,35 @@ func _physics_process(delta: float) -> void:
 		action_button.text = "已装满 · 可以出发" if model.cargo == 3 else "空格 · 再取一份粉"
 	else:
 		action_button.text = "空格 · 接回散粉"
+	_update_camera(delta)
+	landscape.queue_redraw()
 	queue_redraw()
 
 func _context_message() -> String:
 	if build_glow > 0:
-		return "新叶台撑起来了，直路中间也能避雨。" if model.stage == 1 else "风向变了，去花田接三只伙伴一起回来。"
+		return "新叶台撑起来了，洼地中间也能避雨。" if model.stage == 1 else "风向变了，去花田接三只伙伴一起回来。"
 	if delivery_glow > 0:
 		return "花粉交好了。大家正在巢里接货。"
 	if model.position.distance_to(Model.FLOWERS) < 80:
 		return "一份也能出发。带得越多，转弯越要提前。" if model.stage < 2 else "慢下来等伙伴跟上，再选一条一起回家的路。"
 	if model.position.distance_to(Model.HIVE) < 80:
-		return "花田在右边。穿雨近，叶下稳，自己选一条路。" if model.cargo == 0 else "到家了，按空格把花粉交给接货蜂。"
+		return "沿叶下小径向东去花田，也可以从洼地穿过去。" if model.cargo == 0 else "到家了，按空格把花粉交给接货蜂。"
 	if model.raining(model.position):
 		return "雨正在落下。靠向叶下，掉下的花粉还能取回。"
 	for bee in model.companions:
 		if bee.waiting:
 			return "有伙伴在等你。靠近它，按住 Shift 慢飞接回。"
-	return "叶下能避雨。看看下一阵雨，准备好再出发。" if model.sheltered(model.position) else "看雨的空隙，也可以沿下方的叶棚绕行。"
+	return "叶下能避雨。沿着树叶往前，路会绕回花田。" if model.sheltered(model.position) else "露天一直在下雨。留意花粉，沿叶下小径能避雨。"
 
 func _text(point: Vector2, value: String, size: int, color := CREAM) -> void:
 	draw_string(font, point, value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
-func _shadow(point: Vector2, radius: float, opacity := 0.22) -> void:
-	draw_set_transform(point, 0, Vector2(1, 0.30))
-	for index in range(5):
-		draw_circle(Vector2.ZERO, radius + index * 2, Color("173b2a", opacity / 5.0))
-	draw_set_transform(Vector2.ZERO)
-
-func _bee(point: Vector2, scale_value: float, angle: float, tint := Color.WHITE, worker := false, loaded := false, fast := false) -> void:
-	_shadow(point + Vector2(2, 20), scale_value * 0.35)
-	var bob := sin(visual_time * 7 + point.x * 0.02) * 1.7
-	draw_set_transform(point + Vector2(0, bob), angle, Vector2(1 + sin(visual_time * 36) * 0.016, 1.0))
-	if worker:
-		draw_texture_rect(WORKER, Rect2(-scale_value / 2, -scale_value / 2, scale_value, scale_value), false, tint)
-	else:
-		var frame := 2 if loaded else (1 if fast else 0)
-		draw_texture_rect_region(BEE, Rect2(-scale_value / 2, -scale_value / 2, scale_value, scale_value), Rect2(frame * 256, 0, 256, 256), tint)
-	draw_set_transform(Vector2.ZERO)
-
-func _shelter(center: Vector2, radius: float, built := false, index := 0) -> void:
-	_shadow(center + Vector2(5, 49), radius * 0.86, 0.42)
-	var turn: float = sin(visual_time * 1.4 + index * 1.7) * 0.012 + [-0.045, 0.035, -0.022, 0.050][index % 4]
-	var breathing := 1.0 + sin(visual_time * 1.1 + index) * 0.006
-	draw_set_transform(center + Vector2(0, 9), turn, Vector2(breathing, 1.0))
-	var tint := Color(0.88 + index * 0.025, 0.96, 0.86)
-	if built:
-		tint = Color(1.0, 1.0, 0.94)
-	var reveal := clampf((radius + 20 - (model.position as Vector2).distance_to(center)) / 40.0, 0, 1)
-	tint.a = 1.0 - reveal * 0.42
-	draw_texture_rect(LEAF, Rect2(-radius * 1.20, -radius * 1.20, radius * 2.4, radius * 2.4), false, tint)
-	draw_set_transform(Vector2.ZERO)
-	# Water leaves the physical roof edge; no debug circle marks shelter space.
-	var drop_phase := fposmod(visual_time * 0.65 + index * 0.37, 1)
-	var droplet := center + Vector2(radius * 0.10, radius * 0.98 + drop_phase * 25)
-	draw_line(droplet, droplet + Vector2(0, 4), Color("e6f4df", (1 - drop_phase) * 0.7), 1.5, true)
-	if built and build_glow > 0:
-		_text(center + Vector2(-40, -radius - 18), "叶台好了", 18, CREAM)
-
-func _rain() -> void:
-	for band_index in range(3):
-		var area: Rect2 = model.rain_band(band_index)
-		var phase: float = model.rain_phase(band_index)
-		var wet := phase < 2.5
-		var warning := phase > 3.6
-		if not wet and not warning:
-			continue
-		var strength := minf(1.0, phase / 0.25 + 0.15) if wet else (phase - 3.6) * 0.40
-		# Feathered local cloud shade and irregular falling droplets share the
-		# exact same spatial predicate as the rain/canopy gameplay collision.
-		for index in range(125):
-			var offset_x := fposmod(index * 29.371, area.size.x)
-			var speed := 235.0 + fposmod(index * 13.72, 105)
-			var direction_sign := -1.0 if model.stage >= 2 else 1.0
-			var y := 165 + fposmod(index * 53.29 + visual_time * speed * direction_sign, 450)
-			var point := Vector2(area.position.x + offset_x, y)
-			if model.sheltered(point):
-				continue
-			var direction := Vector2(-5, -15) if model.stage >= 2 else Vector2(5, 15)
-			var alpha := (0.40 + fposmod(index * 0.079, 0.33)) * strength
-			if wet:
-				draw_line(point, point + direction * (0.6 + fposmod(index * 0.13, 0.7)), Color("dbeadb", alpha), 1.0, true)
-				if index % 8 == 0:
-					var ripple_point := Vector2(area.position.x + offset_x, 180 + fposmod(index * 49.9, 420))
-					if not model.sheltered(ripple_point):
-						var ripple := fposmod(visual_time * 1.7 + index * 0.13, 1)
-						draw_set_transform(ripple_point, 0, Vector2(1, 0.35))
-						draw_arc(Vector2.ZERO, 2 + ripple * 8, 0, TAU, 14, Color("d6e2c7", (1 - ripple) * 0.30), 1, true)
-						draw_set_transform(Vector2.ZERO)
-			else:
-				draw_line(point, point + direction * 0.3, Color("c0d6c4", alpha * 0.65), 1, true)
-		# Bent grass-like wind strokes make direction visible without labels.
-		var wind_y := 226.0 + sin(visual_time * 1.6 + band_index) * 13
-		var wind_points := PackedVector2Array()
-		for j in range(12):
-			wind_points.append(Vector2(area.position.x - 10 + j * 10, wind_y + sin(j * 0.25) * (12 if model.stage < 2 else -12)))
-		draw_polyline(wind_points, Color("eff2d6", 0.22 * strength), 1, true)
-
-func _tag(point: Vector2, label: String, width: float) -> void:
-	_panel(Rect2(point, Vector2(width, 32)), Color("234936", 0.87), 11)
-	_text(point + Vector2(13, 22), label, 15)
+func _update_camera(delta: float) -> void:
+	var target: Vector2 = model.position + model.velocity * 0.35
+	camera_center = camera_center.lerp(target, 1.0 - exp(-5.5 * delta))
+	camera_origin = (camera_center - Vector2(640, 360)).clamp(Vector2.ZERO, Vector2(2320, 1380))
+	if is_instance_valid(landscape):
+		landscape.position = -camera_origin
 
 func _draw_hud() -> void:
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
@@ -381,80 +315,22 @@ func _draw_hud() -> void:
 		draw_circle(Vector2(40, 653), 3, Color("79974d"))
 
 func _draw() -> void:
-	draw_texture_rect(GROUND, Rect2(0, 0, 1280, 720), false)
-	# Darker edge vignette keeps the sunlit playable clearing open and readable.
-	for index in range(14):
-		draw_rect(Rect2(0, index * 3, 1280, 3), Color("153d2b", 0.18 * (1 - index / 14.0)))
-		draw_rect(Rect2(0, 720 - index * 3, 1280, 3), Color("153d2b", 0.28 * (1 - index / 14.0)))
-	for index in range(Model.SHELTERS.size()):
-		_shelter(Model.SHELTERS[index], 121.0, false, index)
-	if model.stage >= 1:
-		_shelter(Vector2(650, 320), 84.0, true)
-	# The unfinished site is a small work bundle, never a target circle.
-	else:
-		_shadow(Vector2(650, 331), 36, 0.22)
-		draw_texture_rect(SHELTER_KIT, Rect2(594, 265, 112, 112), false)
-	_rain()
-	_shadow(Model.HIVE + Vector2(0, 57), 78, 0.42)
-	draw_texture_rect(HIVE_ART, Rect2(Model.HIVE + Vector2(-94, -121), Vector2(188, 210)), false)
-	# A waiting worker and delivery motion give the entrance a living scale.
-	var host_point := Model.HIVE + Vector2(39 + sin(visual_time * 1.4) * 6, 36)
-	_bee(host_point, 35, -0.12, Color.WHITE, true)
-	if delivery_glow > 0:
-		for i in range(8):
-			var t := fposmod(visual_time * 1.5 + i / 8.0, 1)
-			draw_circle(Model.HIVE + Vector2(20 - t * 28, 10 - t * 38), 2.5, Color("f9d677", (1 - t) * delivery_glow / 1.6))
-	_shadow(Model.FLOWERS + Vector2(0, 39), 60, 0.28)
-	draw_set_transform(Model.FLOWERS, sin(visual_time * 1.7) * 0.018)
-	draw_texture_rect(FLOWER_ART, Rect2(-95, -106, 190, 190), false)
-	draw_set_transform(Vector2.ZERO)
-	for i in range(8):
-		var t := fposmod(visual_time * 0.3 + i * 0.13, 1)
-		var p := Model.FLOWERS + Vector2(sin(i * 2.1 + visual_time * 0.2) * 41, 10 - t * 47)
-		draw_circle(p, 1.7, Color("ffd875", sin(t * PI) * 0.75))
-	if model.position.distance_to(Model.HIVE) < 135:
-		_tag(Vector2(75, 432), "巢门 · 交货", 122)
-	if model.position.distance_to(Model.FLOWERS) < 135:
-		_tag(Vector2(1067, 432), "花田 · 取粉", 129)
-	for point: Vector2 in model.drops:
-		_shadow(point + Vector2(0, 8), 15, 0.30)
-		for index in range(8):
-			var p := point + Vector2.from_angle(index * TAU / 8) * (5 + index % 3 * 3)
-			draw_circle(p, 2.5, GOLD)
-			draw_circle(p + Vector2(-0.7, -0.7), 1, Color("fff2b6"))
-		var shine := fposmod(visual_time + point.x, 2.0)
-		if shine < 0.9:
-			draw_line(point + Vector2(-4, -15), point + Vector2(4, -15), Color("fff1b5", 1 - shine), 1.3, true)
-			draw_line(point + Vector2(0, -19), point + Vector2(0, -11), Color("fff1b5", 1 - shine), 1.3, true)
-	for bee in model.companions:
-		_bee(bee.position, 43.0, sin(visual_time * 3) * 0.08, Color("ede9cb") if bee.waiting else Color.WHITE, true)
-		if bee.waiting:
-			var p: Vector2 = bee.position + Vector2(-12, -45)
-			_panel(Rect2(p, Vector2(24, 26)), CREAM, 8)
-			_text(p + Vector2(8, 18), "!", 17, INK)
-	_bee(model.position, 62.0, clampf(model.velocity.x / 500.0, -0.35, 0.35), Color.WHITE, false, model.cargo > 0, model.velocity.length() > 140)
-	for index in range(model.cargo):
-		var p: Vector2 = model.position + Vector2(-9 + index * 8, 12)
-		for j in range(3):
-			draw_circle(p + Vector2((j - 1) * 3, (j % 2) * 3), 2.1, Color("edc254"))
-	for effect in effects:
-		var color: Color = effect.color
-		color.a *= 1 - float(effect.age) / float(effect.life)
-		draw_circle(effect.point, effect.size, color)
-	if pointer_active:
-		var p := pointer_target
-		draw_line(p + Vector2(-5, 0), p + Vector2(5, 0), Color("f9edbd", 0.85), 1.6, true)
-		draw_line(p + Vector2(0, -5), p + Vector2(0, 5), Color("f9edbd", 0.85), 1.6, true)
 	_draw_hud()
+	# Compact route overview stays in screen space; positions are world coordinates.
+	_panel(Rect2(29, 490, 212, 112), CREAM, 13, INK)
+	_text(Vector2(44, 513), "雨水 · 花路", 15, INK)
+	for i in range(Model.SAFE_ROUTE.size() - 1):
+		draw_line(Vector2(40, 514) + Model.SAFE_ROUTE[i] * 0.053, Vector2(40, 514) + Model.SAFE_ROUTE[i + 1] * 0.053, Color("9ba885"), 2, true)
+	draw_polyline(PackedVector2Array([Vector2(40, 514) + Model.HIVE * 0.053, Vector2(40, 514) + Model.BUILD_SITE * 0.053, Vector2(40, 514) + Model.FLOWERS * 0.053]), Color("c1b9a0"), 1.5, true)
+	draw_rect(Rect2(Vector2(40, 514) + camera_origin * 0.053, Vector2(1280, 720) * 0.053), Color("637960", 0.4), false, 1)
+	for p in [Model.HIVE, Model.FLOWERS]:
+		draw_circle(Vector2(40, 514) + p * 0.053, 4, INK)
+	draw_circle(Vector2(40, 514) + model.position * 0.053, 5, GOLD)
 	if model.complete:
-		draw_rect(Rect2(0, 145, 1280, 470), Color("183b2b", 0.12))
-		for index in range(12):
-			var t := fposmod(visual_time * 0.075 + float(index) / 12, 1)
-			_bee(Vector2(1110 - t * 960, 521 + sin(t * PI) * 37), 37, -0.14, Color.WHITE, true)
-		_panel(Rect2(348, 204, 584, 290), Color("f7efd7", 0.98), 24, Color("fff4cf"))
-		_text(Vector2(537, 248), "一会儿巢里见", 22, Color("74824d"))
+		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
+		_text(Vector2(537, 248), "一会儿巢里见", 22, INK)
 		_text(Vector2(403, 300), "这条路，大家都能走了。", 28, INK)
-		_text(Vector2(416, 341), "叶台撑住了雨，伙伴也一起回来了。", 19, Color("62724e"))
-		_text(Vector2(422, 386), "%d 趟交货   ·   %d 次掉粉   ·   %d 次接回" % [model.deliveries, model.spills, model.rescues], 17, Color("6e795b"))
+		_text(Vector2(416, 341), "叶台撑住了雨，伙伴也一起回来了。", 19, INK)
+		_text(Vector2(422, 386), "%d 趟交货   ·   %d 次掉粉   ·   %d 次接回" % [model.deliveries, model.spills, model.rescues], 17, INK)
 	if paused:
 		draw_rect(Rect2(0, 145, 1280, 470), Color("142f24", 0.75))

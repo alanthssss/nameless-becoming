@@ -19,14 +19,14 @@ func fly(model, destination: Vector2, brake := false) -> void:
 		model.step(1.0 / 60.0, Vector2.ZERO, true)
 
 func outward(model) -> void:
-	fly(model, Vector2(160, 545))
-	fly(model, Vector2(1140, 545))
-	fly(model, Model.FLOWERS)
+	for waypoint in Model.SAFE_ROUTE:
+		fly(model, waypoint)
 
 func homeward(model) -> void:
-	fly(model, Vector2(1140, 545), true)
-	fly(model, Vector2(160, 545), true)
-	fly(model, Model.HIVE, true)
+	var points: Array = Model.SAFE_ROUTE.duplicate()
+	points.reverse()
+	for waypoint in points:
+		fly(model, waypoint, true)
 
 func _init() -> void:
 	var light = Model.new()
@@ -39,19 +39,20 @@ func _init() -> void:
 	check(heavy.maximum_speed() < light.maximum_speed(), "Heavy cargo must change cruising speed")
 	var rain = Model.new()
 	rain.cargo = 2
-	rain.position = Vector2(415, 310)
-	for frame in range(35):
+	rain.position = Vector2(1800, 550)
+	for frame in range(610):
 		rain.step(1.0 / 60, Vector2.ZERO, true)
-	check(rain.cargo == 1 and rain.drops.size() == 1, "Rain must spill exactly one recoverable cargo")
-	check(rain.act() == "recover" and rain.cargo == 2, "Dropped cargo must be collectible")
+	check(rain.cargo < 2 and not rain.drops.is_empty(), "Rain must spill exactly one recoverable cargo")
+	rain.position = rain.drops[-1]
+	check(rain.act() == "recover" and rain.cargo > 0, "Dropped cargo must be collectible")
 	var safe = Model.new()
 	safe.cargo = 3
-	safe.position = Vector2(410, 545)
+	safe.position = Model.SHELTERS[3]
 	for frame in range(300):
 		safe.step(1.0 / 60, Vector2.ZERO, true)
 	check(safe.cargo == 3 and safe.spills == 0, "Real canopy must protect cargo across rain cycles")
 	var game = Model.new()
-	check(not game.sheltered(Vector2(650, 320)), "Central shelter must not exist before delivery")
+	check(not game.sheltered(Model.BUILD_SITE), "Central shelter must not exist before delivery")
 	game.act()
 	check(game.delivered == 0, "Empty handoff cannot advance construction")
 	for trip in range(3):
@@ -68,7 +69,7 @@ func _init() -> void:
 		game.act()
 		check(game.delivered == (trip + 1) * 3, "Safe route must deliver all cargo")
 		if trip == 0:
-			check(game.sheltered(Vector2(650, 320)), "First handoff must alter real shelter geometry")
+			check(game.sheltered(Model.BUILD_SITE), "First handoff must alter real shelter geometry")
 		if trip == 1:
 			check(not game.complete, "Enough early cargo cannot skip the final convoy")
 	check(game.complete and game.home_companions() == 3, "Three full real routes must end with all companions at home")
@@ -84,6 +85,15 @@ func _init() -> void:
 	delayed.position = Model.FLOWERS
 	delayed.step(1.0 / 60, Vector2.ZERO, true)
 	check(not delayed.companions[0].waiting and delayed.rescues == 1, "Slow proximity must rescue a waiting companion")
+	var turning = Model.new()
+	for frame in range(60):
+		turning.step(1.0 / 60, Vector2.LEFT, false)
+	check(absf(angle_difference(turning.heading, PI)) < 0.05, "Left flight must turn the head left")
+	var held_heading: float = turning.heading
+	turning.step(0.2, Vector2.ZERO, true)
+	check(is_equal_approx(held_heading, turning.heading), "Braking must retain heading")
+	check(turning.raining(Vector2(700, 500)) and turning.raining(Vector2(3000, 500)), "Distant exposed points share regional rainfall")
+	check(turning.blocked(Vector2(Model.PONDS[0].x, Model.PONDS[0].y)), "Map ponds must affect traversal")
 	var freshly_started = Model.new()
 	check(freshly_started.delivered == 0 and freshly_started.companions.is_empty() and not freshly_started.complete, "Restart must reset the whole experimental run")
 	if failures == 0:

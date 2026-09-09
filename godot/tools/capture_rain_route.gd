@@ -9,7 +9,7 @@ func _initialize() -> void:
 	call_deferred("run")
 
 func fly(destination: Vector2) -> void:
-	for frame in range(2400):
+	for frame in range(6000):
 		var offset: Vector2 = destination - scene.model.position
 		if offset.length() < 9:
 			break
@@ -18,6 +18,9 @@ func fly(destination: Vector2) -> void:
 		scene.model.step(1.0 / 60, Vector2.ZERO, true)
 
 func capture(name: String) -> void:
+	scene.camera_center = scene.model.position
+	scene._update_camera(1.0)
+	scene.landscape.queue_redraw()
 	scene._physics_process(0.0)
 	await process_frame
 	await RenderingServer.frame_post_draw
@@ -42,24 +45,39 @@ func run() -> void:
 		return
 	root.add_child(scene)
 	scene.set_physics_process(false)
+	# Drive actual pointer steering through the scene, verifying camera and heading.
+	scene.pointer_target = RouteTest.HIVE + Vector2(430, -180)
+	scene.pointer_active = true
+	for frame in range(140):
+		scene._physics_process(1.0 / 60)
+	assert(scene.model.position.x > RouteTest.HIVE.x + 200, "Scene pointer must move through world space")
+	assert(scene.camera_origin.x > 0, "Camera must follow beyond initial view")
+	scene.pointer_target = scene.model.position + Vector2(-200, 0)
+	scene.pointer_active = true
+	for frame in range(30):
+		scene._physics_process(1.0 / 60)
+	assert(absf(angle_difference(scene.model.heading, PI)) < 0.1, "Actual scene must turn left")
+	await capture("09-turning-in-rain")
+	scene._restart()
 	await capture("01-start")
 	scene._toggle_pause()
 	await capture("06-pause")
 	scene._toggle_pause()
 	for trip in range(3):
-		fly(Vector2(160, 545))
-		if trip == 0:
-			fly(Vector2(350, 545))
-			await capture("07-under-leaf")
-		fly(Vector2(1140, 545))
-		fly(RouteTest.FLOWERS)
+		for index in range(RouteTest.SAFE_ROUTE.size()):
+			fly(RouteTest.SAFE_ROUTE[index])
+			if trip == 0 and index == 4:
+				await capture("07-under-leaf")
+			if trip == 0 and index == 8:
+				await capture("08-east-path")
 		for index in range(3):
 			scene._act()
 		if trip == 2:
 			await capture("03-convoy")
-		fly(Vector2(1140, 545))
-		fly(Vector2(160, 545))
-		fly(RouteTest.HIVE)
+		var returning: Array = RouteTest.SAFE_ROUTE.duplicate()
+		returning.reverse()
+		for waypoint in returning:
+			fly(waypoint)
 		scene._act()
 		if trip == 0:
 			await capture("02-built")
@@ -70,6 +88,7 @@ func run() -> void:
 	scene._restart()
 	assert(not scene.paused and scene.model.delivered == 0 and not scene.model.complete)
 	await capture("05-restart")
+	scene.landscape.route = null
 	scene.queue_free()
 	await process_frame
 	print("RAIN ROUTE SCENE TEST PASSED: actual scene actions, full traversal, result, pause and restart; captures saved")

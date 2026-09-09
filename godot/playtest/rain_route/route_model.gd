@@ -1,12 +1,16 @@
 extends RefCounted
 
 ## G-FICTION: bounded route experiment. No Campaign state or persistence writes.
-const HIVE := Vector2(125, 330)
-const FLOWERS := Vector2(1130, 330)
+const HIVE := Vector2(360, 900)
+const FLOWERS := Vector2(3260, 780)
+const BUILD_SITE := Vector2(1800, 930)
 const CAPACITY := 3
 const GOAL := 9
-const BOUNDS := Rect2(60, 165, 1160, 450)
-const SHELTERS := [Vector2(350, 545), Vector2(565, 545), Vector2(780, 545), Vector2(995, 545)]
+const BOUNDS := Rect2(90, 120, 3420, 1770)
+const SHELTERS := [Vector2(420, 1180), Vector2(650, 1400), Vector2(970, 1490), Vector2(1300, 1510), Vector2(1640, 1480), Vector2(1970, 1430), Vector2(2290, 1340), Vector2(2590, 1230), Vector2(2890, 1090), Vector2(3160, 990)]
+const SAFE_ROUTE := [HIVE, Vector2(420, 1180), Vector2(650, 1400), Vector2(970, 1490), Vector2(1300, 1510), Vector2(1640, 1480), Vector2(1970, 1430), Vector2(2290, 1340), Vector2(2590, 1230), Vector2(2890, 1090), Vector2(3160, 990), FLOWERS]
+const PONDS := [Vector3(1240, 1020, 170), Vector3(2330, 720, 200)]
+var heading := 0.0
 var position := HIVE
 var velocity := Vector2.ZERO
 var elapsed := 0.0
@@ -23,43 +27,53 @@ var rescues := 0
 var notice := "去右边花田取粉。叶下稳，直路近；装多少由你决定。"
 
 func sheltered(point: Vector2) -> bool:
-	if point.distance_to(HIVE) < 100.0 or point.distance_to(FLOWERS) < 88.0:
+	if point.distance_to(HIVE) < 205.0 or point.distance_to(FLOWERS) < 180.0:
 		return true
 	for center: Vector2 in SHELTERS:
-		if point.distance_to(center) < 121.0:
+		if point.distance_to(center) < 215.0:
 			return true
-	return stage >= 1 and point.distance_to(Vector2(650, 320)) < 84.0
+	return stage >= 1 and point.distance_to(BUILD_SITE) < 210.0
 
-func rain_band(index: int) -> Rect2:
-	var direction := -1.0 if stage >= 2 else 1.0
-	var x := 370.0 + index * 240.0 + sin(elapsed * 0.8 + index) * 45.0 * direction
-	return Rect2(x, 165, 100, 450)
-
-func rain_phase(index: int) -> float:
-	return fposmod(elapsed + index * 1.2, 4.4)
+func rain_strength() -> float:
+	return 0.6 + sin(elapsed * 0.055) * 0.25
 
 func raining(point: Vector2) -> bool:
-	if sheltered(point):
-		return false
-	for index in range(3):
-		if rain_phase(index) < 2.5 and rain_band(index).has_point(point):
+	return BOUNDS.has_point(point) and not sheltered(point)
+
+func blocked(point: Vector2) -> bool:
+	for pond: Vector3 in PONDS:
+		if point.distance_to(Vector2(pond.x, pond.y)) < pond.z + 16:
 			return true
 	return false
 
+func move_on_map(from: Vector2, target: Vector2) -> Vector2:
+	if not blocked(target):
+		return target
+	var slide := Vector2(target.x, from.y)
+	if not blocked(slide):
+		return slide
+	slide = Vector2(from.x, target.y)
+	return slide if not blocked(slide) else from
+
 func maximum_speed() -> float:
-	return 225.0 - cargo * 22.0
+	return 320.0 - cargo * 24.0
 
 func step(delta: float, steering: Vector2, braking: bool) -> void:
 	if complete or delta <= 0.0:
 		return
 	elapsed += delta
+	if steering.length() > 0.08:
+		heading = lerp_angle(heading, steering.angle(), 1.0 - exp(-12.0 * delta))
 	var acceleration := 700.0 / (1.0 + cargo * 0.45)
 	var target := steering.limit_length() * maximum_speed() * (0.40 if braking else 1.0)
 	velocity = velocity.move_toward(target, acceleration * delta * (2.6 if braking else 1.0))
 	if not sheltered(position):
-		var wind := Vector2(14.0, -65.0 if stage >= 2 else 65.0)
+		var wind := Vector2(-65.0 if stage >= 2 else 65.0, 14.0)
 		velocity += wind * delta * (1.0 + cargo * 0.24) * (0.38 if braking else 1.0)
-	position += velocity * delta
+	var next_position := position + velocity * delta
+	position = move_on_map(position, next_position)
+	if not position.is_equal_approx(next_position):
+		velocity *= 0.65
 	var clamped := position.clamp(BOUNDS.position, BOUNDS.end)
 	if clamped.x != position.x:
 		velocity.x = 0.0
@@ -67,15 +81,15 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 		velocity.y = 0.0
 	position = clamped
 	if raining(position) and cargo > 0:
-		rain_exposure += delta
-		if rain_exposure >= 0.48:
+		rain_exposure += delta * rain_strength()
+		if rain_exposure >= 6.0:
 			cargo -= 1
 			spills += 1
 			drops.append(position)
 			rain_exposure = -0.65
 			notice = "花粉落下了。靠近黄色散粉，按空格取回；也可以先回叶下。"
 	else:
-		rain_exposure = move_toward(rain_exposure, 0.0, delta)
+		rain_exposure = move_toward(rain_exposure, 0.0, delta * 2.0)
 	_update_companions(delta)
 
 func act() -> String:
@@ -92,7 +106,7 @@ func act() -> String:
 			elif delivered >= 6 and stage == 1:
 				stage = 2
 				for index in range(3):
-					companions.append({"position": FLOWERS + Vector2(-18 + index * 20, 35), "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false})
+					companions.append({"position": FLOWERS + Vector2(-18 + index * 20, 35), "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false, "heading": PI})
 				notice = "风向变了。再去花田接三只新蜂，一起把最后的花粉带回来。"
 			else:
 				notice = "花粉交到巢里了。再选一条飞法。"
@@ -134,11 +148,14 @@ func _update_companions(delta: float) -> void:
 		else:
 			var distance := p.distance_to(leader)
 			if distance > 30.0:
-				p = p.move_toward(leader, minf(190.0 * delta, distance - 30.0))
+				p = move_on_map(p, p.move_toward(leader, minf(300.0 * delta, distance - 30.0)))
+			var movement: Vector2 = p - (bee.position as Vector2)
+			if movement.length() > 0.01:
+				bee.heading = lerp_angle(float(bee.get("heading", PI)), movement.angle(), 1.0 - exp(-12.0 * delta))
 			bee.position = p
 			if raining(p) and float(bee.grace) <= 0.0:
-				bee.exposure = float(bee.exposure) + delta
-				if float(bee.exposure) > 0.5:
+				bee.exposure = float(bee.exposure) + delta * rain_strength()
+				if float(bee.exposure) > 7.0:
 					bee.waiting = true
 					bee.exposure = 0.0
 					notice = "有伙伴停下了。回到它身边，按住 Shift 稳住，就能接回。"
