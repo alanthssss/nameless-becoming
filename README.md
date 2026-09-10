@@ -6,7 +6,7 @@
 
 后续游戏工作评审入口：[Alan 雨水试玩经验 R01–R13](docs/design/commercial-product-requirements.md#rain-playtest-review)，覆盖可读性、真实任务机会、资源语义、互助回应及验证入口；按适用项复核，不将修改完成等同玩家认可。
 
-## 当前四季入口：立春到大寒
+## 当前开发评审入口：四季线条版，立春到大寒
 
 2026-09-10，按 Alan 最新授权，在同一线条世界接通 **24 节气 × 三候 × 五天，共 360 天**。双击 `scripts/play_year.command`（Godot 4.6.2）。首次读取已有春季进度，随后单独保存到 `year_route_v1.json`；原春季、雨水与 Campaign 存档保留。春夏秋在路上行动，冬季进入蜡脾与蜜房之间。
 
@@ -16,7 +16,7 @@
 
 谷雨季末新增 24 秒专属插画过场“最后一张花牌”。双击 `scripts/play_year_film.command` 可独立观看，不改存档；分镜、资产和最终生成提示词见[过场美术记录](docs/design/guyu-film-art.md)。这次只替换谷雨季末一段。
 
-## 当前春季入口：立春到谷雨
+## 春季专项验证入口：立春到谷雨
 
 2026-09-10，按 Alan“先把春天做了”的决定，将已认可的雨水飞行、线条画风与轻量互动扩成 **六节气 × 三候 × 五天，共九十天**。双击 `scripts/play_spring.command`（Godot 4.6.2），窗口标题含“春天”；首次从立春第一天开始，收工保存至下一天清晨，十五天结束后进入下一节气。操作沿用 WASD／方向键／点击飞行、空格互动、Shift 慢飞、R 重开今日、Esc 暂停。
 
@@ -24,7 +24,7 @@
 
 这是已实现、可连续操作的新春季入口，尚未替换普通商业标题／正式导出入口，也不等于九十天内容厚度、谷雨完整邻居高潮或商业品质已验收。规则自测与实际场景遍历见[制作规格中的本轮记录](docs/design/solar-term-campaign-production-spec.md#2026-09-10-春季九十日连续制作)。候选包不自动上传，当前直接验证本地游戏。 六蜂现采用错落随行与停下舒展的队形；采集回巢可触发短蜂舞，巢边有已知花源时按 Q 可再分享，移动即可离开。队形与地图方向表达为美术转译，蜂舞依据见[蜂学来源登记第 12 节](docs/design/ecology-and-apiculture-source-register.md#12-2026-09-10-蜂舞与六蜂队形的事实边界)。
 
-## 雨水：把雨路跑通
+## 雨水专项验证入口：把雨路跑通
 
 2026-09-09，Alan 授权探索转型、细化内容矩阵并按需调整美术。首个独立实验将核心循环做成“选载荷和路线 → 飞行运输与补救 → 交货改善路线 → 换风带队”。原 Campaign 保留。
 
@@ -32,7 +32,9 @@ macOS 可双击 `scripts/play_rain_route.command`；其它环境设置 `GODOT_BI
 
 [核心规则、30 项细节矩阵与当前执行状态](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。旧单屏版本被 Alan 否定后，已改为 3600×2100 连续地图、跟随镜头、线条平涂场景、完整蜜蜂朝向、区域降雨与叶下遮蔽。两条路线、水面自由飞越、载荷与建台使用真实规则；叶棚在蜂上方透明显示避雨，队伍总计六只（主角加五伙伴）；Alan 实玩后反馈“有点感觉了”，当前获得初步方向认可；开发者测试与这条反馈不代表完整产品验收。雨水现按 **三候 × 五天，共十五个游戏日** 推进，每天有可操作的工作：认路、建台、授粉、过叶尖滴水、清沟、叶台歇脚、撑叶护送和带队等。世界成果跨日保留，记事在当日实际完成后记录原雨水事件编号；这是原矩阵在新地图上的玩法转译，未宣称逐项复刻全部旧细节。独立日历存档与正式 Campaign 隔离，后者的章节入口尚未替换。
 
-## 当前产品：二十四节气 Campaign
+## 旧 Campaign：仍供商业标题与正式导出使用
+
+以下记录属于旧 Campaign 路径，其中“30 条／其余 330 条”不描述上方新四季 360 日的实现数量。新路线尚未接入商业标题与正式导出，下面的旧测试和试玩状态也不代表新版验收。当前评估见[成熟度与生产重量评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)。
 
 - `[实现事实]` 普通商业标题的新旅程／继续入口现已进入独立 `campaign.tscn`。正式目录从立春到大寒恰好 **24 关**，每季 6 关；第 6／12／18／24 关是三阶段高潮关，共 20 个常规关与 4 个高潮关，第 24 关返巢后直接交棒，不生成第 25 关。
 - `[实现事实]` Campaign 使用独立目录、路由和 schema v3 状态，不扩写旧 `JourneyState` 或复活旧 `Main`。只允许顺序完成的严格前缀推进；关卡、尝试令牌、目标与真实返程全部验证后才 exact-once 写入奖励、纪事和世界痕迹；已完成关可重飞并记录最好成绩，但不会重复发放奖励。15 事件章节只在完整完成第一候或第二候后保存检查点，分别从第 6／11 项恢复，不把任意半项进度伪装成可恢复状态。
@@ -211,7 +213,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 17. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、Collaboration 协作要求、决策与行动收口、单一执行视图及风险分级验证；
 18. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
 19. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
-20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估**，纳入完整春季真人反馈，区分已成立的情绪体验、待验证的主体玩法与很重的正式内容承诺；具体范围仍服从商业成品清单与三候制作规格；
+20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前成熟度与生产重量评估（9 月 11 日）**，纳入新版线条画风／飞行／轻量互动的整体正向反馈，区分新四季 360 日与旧 Campaign 30 事件，并诊断状态表达、日程节奏与入口并存；具体范围仍服从商业成品清单与三候制作规格；
 21. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 22. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
 23. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
