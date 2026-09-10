@@ -23,6 +23,8 @@ var pulse := 0.0
 var pulse_point := Vector2.ZERO
 var reaction_text := ""
 var chapter_departure := false
+# Derived geometry: rebuild on world load/repair, never scan history per raindrop.
+var repaired_roofs := PackedVector2Array()
 
 func configure(index: int, inherited_world: Dictionary = {}) -> void:
 	calendar = JSON.parse_string(FileAccess.get_file_as_string("res://playtest/spring/spring_calendar.json")).chapters
@@ -30,6 +32,7 @@ func configure(index: int, inherited_world: Dictionary = {}) -> void:
 	world = inherited_world.duplicate(true)
 	built_site = int(world.get("built_site", -1))
 	beetle_home = bool(world.get("beetle_home", false))
+	_rebuild_repaired_roofs()
 	day = 1
 	completed_days.clear()
 	complete = false
@@ -147,10 +150,9 @@ func raining(point: Vector2) -> bool:
 func sheltered(point: Vector2) -> bool:
 	if point.distance_to(HIVE) < 230:
 		return true
-	for value in world.values():
-		if value is Dictionary and value.get("kind") == "repair":
-			if point.distance_to(Vector2(float(value.x), float(value.y))) < 240:
-				return true
+	for roof: Vector2 in repaired_roofs:
+		if point.distance_squared_to(roof) < 240.0 * 240.0:
+			return true
 	for place: String in EXTRA_ROOF_PLACES:
 		if point.distance_to(PLACES[place]) < 155:
 			return true
@@ -328,6 +330,14 @@ func act() -> String:
 func remember(kind: String, point: Vector2, shape_index := 0) -> void:
 	var key := "%s:%d:%d" % [kind, point.x, point.y]
 	world[key] = {"kind": kind, "x": point.x, "y": point.y, "shape": shape_index}
+	if kind == "repair":
+		_rebuild_repaired_roofs()
+
+func _rebuild_repaired_roofs() -> void:
+	repaired_roofs.clear()
+	for value in world.values():
+		if value is Dictionary and value.get("kind") == "repair":
+			repaired_roofs.append(Vector2(float(value.x), float(value.y)))
 
 func hint() -> String:
 	if homecoming_time >= 0:

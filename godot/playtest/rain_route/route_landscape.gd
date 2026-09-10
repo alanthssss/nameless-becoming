@@ -10,6 +10,33 @@ var last_draw_us := 0
 var static_pass := false
 var layer_opacity := 1.0
 var rain_origins := PackedVector2Array()
+# Immutable unit geometry shared by the live layer and the ground cache.
+static var oval_outline := _unit_oval()
+static var leaf_outline := _unit_leaf()
+static var leaf_veins := _unit_veins()
+
+static func _unit_oval() -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for i in range(40):
+		points.append(Vector2.from_angle(i * TAU / 40))
+	return points
+
+static func _unit_leaf() -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for i in range(33):
+		var t := i / 32.0 * TAU
+		points.append(Vector2(cos(t), sin(t) * 0.45 * (0.8 + 0.2 * sin(t))))
+	return points
+
+static func _unit_veins() -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for i in range(1, 6):
+		var x := -1.0 + i / 3.0
+		var h := sin(i * PI / 6) * 0.32
+		for side in [-1, 1]:
+			points.append(Vector2(x - 0.20, 0))
+			points.append(Vector2(x, h * side))
+	return points
 
 func _ready() -> void:
 	if static_pass:
@@ -38,7 +65,7 @@ func line(points: Array, color := INK, width := 2.0) -> void:
 	color.a *= layer_opacity
 	draw_polyline(PackedVector2Array(points), color, width, true)
 
-func shape(points: Array, color: Color, width := 2.0) -> void:
+func shape(points: PackedVector2Array, color: Color, width := 2.0) -> void:
 	# Overlapping roof leaves must not accumulate into an opaque cover.
 	color.a *= layer_opacity if layer_opacity >= 1.0 else layer_opacity * 0.25
 	var polygon := PackedVector2Array(points)
@@ -47,31 +74,21 @@ func shape(points: Array, color: Color, width := 2.0) -> void:
 	draw_polyline(polygon, Color(INK, layer_opacity), width, true)
 
 func oval(center: Vector2, radius: Vector2, color: Color, outline := true) -> void:
-	var points: Array = []
-	for i in range(40):
-		points.append(center + Vector2(cos(i * TAU / 40), sin(i * TAU / 40)) * radius)
+	var points := Transform2D(0, radius, 0, center) * oval_outline
 	if outline:
 		shape(points, color)
 	else:
-		draw_colored_polygon(PackedVector2Array(points), Color(color, color.a * layer_opacity))
+		draw_colored_polygon(points, Color(color, color.a * layer_opacity))
 
 func label(point: Vector2, value: String, size := 24) -> void:
 	draw_string(route.font, point, value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, INK)
 
 func leaf(center: Vector2, size: float, angle: float, tint: Color) -> void:
-	var points: Array = []
-	for i in range(33):
-		var t := i / 32.0 * TAU
-		var local := Vector2(cos(t) * size, sin(t) * size * 0.45 * (0.8 + 0.2 * sin(t)))
-		points.append(center + local.rotated(angle))
-	shape(points, tint)
+	var transform := Transform2D(angle, Vector2.ONE * size, 0, center)
+	shape(transform * leaf_outline, tint)
 	var stem := Vector2(size, 0).rotated(angle)
 	line([center - stem, center + stem], INK, 1.6)
-	for i in range(1, 6):
-		var x := -size + i * size / 3.0
-		var h := sin(i * PI / 6) * size * 0.32
-		for sign_value in [-1, 1]:
-			line([center + Vector2(x - size * 0.20, 0).rotated(angle), center + Vector2(x, h * sign_value).rotated(angle)], Color("647c65"), 1.1)
+	draw_multiline(transform * leaf_veins, Color(Color("647c65"), layer_opacity), 1.1, true)
 
 func occupied(center: Vector2, radius := 215.0) -> bool:
 	if route.model.position.distance_to(center) < radius:

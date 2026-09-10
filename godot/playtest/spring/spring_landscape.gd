@@ -30,9 +30,8 @@ func extra_roofs() -> Array:
 	var result: Array = []
 	for place: String in SpringModel.EXTRA_ROOF_PLACES:
 		result.append({"point": SpringModel.PLACES[place], "radius": 155.0})
-	for value in route.model.world.values():
-		if value is Dictionary and value.get("kind") == "repair":
-			result.append({"point": Vector2(float(value.x), float(value.y)), "radius": 240.0})
+	for point: Vector2 in route.model.repaired_roofs:
+		result.append({"point": point, "radius": 240.0})
 	return result
 
 func _daily_world(visible_world: Rect2) -> void:

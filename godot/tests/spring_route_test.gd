@@ -42,6 +42,7 @@ func _init() -> void:
 	assert(total == 90 and world.beetle_home and world.cleared_gutter)
 	check_food()
 	check_recovery()
+	check_shelter_history()
 	print("SPRING ROUTE TEST PASSED: ninety actual days, distinct food handoffs, all dawn resumes, persistent world")
 	quit()
 
@@ -92,3 +93,30 @@ func check_recovery() -> void:
 	assert(model.act() == "load" and model.body_pollen and model.cargo == 0)
 	model.position = model.sources()[0]
 	assert(model.act() == "help" and model.cargo == 0, "Pollination does not turn body pollen into edible cargo")
+
+# Exercise a dense carried world, exact shelter edges, same-day repair and reload.
+func check_shelter_history() -> void:
+	var history := {}
+	for i in range(200):
+		history["wake:%d" % i] = {"kind": "wake", "x": i * 10.0, "y": 1900.0}
+	history["repair:3300:1800"] = {"kind": "repair", "x": 3300.0, "y": 1800.0}
+	var m := Spring.new()
+	m.configure(2, history)
+	for x in range(0, 3600, 37):
+		for y in range(0, 2100, 43):
+			var point := Vector2(x, y)
+			var expected := point.distance_to(m.HIVE) < 230 or point.distance_to(Vector2(3300, 1800)) < 240
+			for place in m.EXTRA_ROOF_PLACES:
+				expected = expected or point.distance_to(m.PLACES[place]) < 155
+			for roof in m.SHELTERS:
+				expected = expected or point.distance_to(roof) < 215
+			assert(m.sheltered(point) == expected, "History caching changed shelter coverage")
+	assert(m.sheltered(Vector2(3300, 2039.9)))
+	assert(not m.sheltered(Vector2(3300, 2040)))
+	m.remember("repair", Vector2(3300, 1800), 1)
+	assert(m.repaired_roofs.size() == 1, "Revisiting a repair must not multiply roofs")
+	var copy := Spring.new()
+	assert(copy.restore(JSON.parse_string(JSON.stringify(m.snapshot()))))
+	assert(copy.sheltered(Vector2(3300, 2039.9)))
+	copy.configure(2)
+	assert(not copy.sheltered(Vector2(3300, 2039.9)), "A new world must clear old shelter geometry")
