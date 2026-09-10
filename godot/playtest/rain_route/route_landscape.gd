@@ -167,7 +167,7 @@ func _draw() -> void:
 	if visible_world.has_point(Model.FLOWERS):
 		if not occupied(Model.FLOWERS):
 			canopy(Model.FLOWERS + Vector2(0, -15), 4)
-		for i in range(13):
+		for i in range(9):
 			var p := Model.FLOWERS + Vector2(sin(i * 2.39) * (45 + i * 5), cos(i * 2.39) * (40 + i * 5))
 			flower(p, 19 + i % 4, Color("d5a99b") if i % 3 else Color("f1e6ba"))
 	_daily_world(visible_world)
@@ -211,6 +211,7 @@ func _draw() -> void:
 	_draw_drip_gaps(visible_world)
 	_draw_seed_landing(visible_world)
 	_draw_beetle_guest(visible_world)
+	_draw_landmarks(visible_world)
 	_draw_beetle_hint()
 	if route.model.sheltered(route.model.position) and route.model.position.distance_to(Model.HIVE) > 205:
 		label(route.model.position + Vector2(-38, 55), "叶下 · 避雨", 16)
@@ -272,7 +273,7 @@ func _draw_static() -> void:
 	hive()
 	label(Model.FLOWERS + Vector2(-57, 166), "花田 · 取粉", 22)
 	label(Vector2(1000, 1770), "叶下小径", 30)
-	label(Vector2(1850, 480), "雨中的洼地", 30)
+	label(Vector2(1250, 345), "上方小路", 24)
 
 
 func extra_roofs() -> Array:
@@ -314,7 +315,7 @@ func _daily_world(visible_world: Rect2) -> void:
 				flower(spot, 15 + pulse * 3, Color("e2c2ab").lerp(Color("f1e6ba"), pulse * 0.5))
 				if model.pollinated.has(str(i)):
 					draw_circle(spot, 4, GOLD)
-		label(p + Vector2(-35, 65), "花粉已到" if model.pollinated.has(str(i)) else "待传粉", 16)
+		label(p + Vector2(-35, 65), "花已结籽" if model.pollinated.has(str(i)) and model.day >= 11 else ("已传粉" if model.pollinated.has(str(i)) else "待传粉"), 16)
 	if model.day >= 7:
 		var landing: Vector2 = Model.Calendar.DAYS[6].target
 		if visible_world.has_point(landing):
@@ -414,7 +415,7 @@ func _draw_seed_landing(visible_world: Rect2) -> void:
 	if visible_world.has_point(target):
 		# The destination stays legible above transparent overhead leaves.
 		draw_rect(Rect2(target + Vector2(-92, 73), Vector2(184, 30)), Color("f8f0d9"))
-		label(target + Vector2(-78, 94), "种壳放这里 · %d / 3" % model.cleared.size(), 17)
+		label(target + Vector2(-78, 94), "清好的干地" if model.cleared.size() == 3 else "种壳放这里 · %d / 3" % model.cleared.size(), 17)
 		if model.day == 7 and model.carried_seed >= 0:
 			draw_arc(target, 75, 0, TAU, 48, Color("ae7d55"), 2, true)
 	if model.day == 7 and model.carried_seed >= 0 and model.position.distance_to(target) >= 75:
@@ -455,6 +456,8 @@ func _draw_beetle_guest(visible_world: Rect2) -> void:
 	if model.day < 9 or not visible_world.has_point(model.beetle_position):
 		return
 	var p: Vector2 = model.beetle_position
+	if model.beetle_home and model.day > 9:
+		p += Vector2(sin(route.visual_time * 0.45) * 17, sin(route.visual_time * 0.9) * 4)
 	var remaining: float = route.beetle_greeting_time
 	var elapsed: float = 4.0 - remaining
 	var turn := smoothstep(0.4, 1.2, elapsed) if remaining > 0 else 0.0
@@ -465,7 +468,7 @@ func _draw_beetle_guest(visible_world: Rect2) -> void:
 	for side in [-1, 1]:
 		for leg in range(3):
 			var foot := Vector2(side * 19, -10 + leg * 10)
-			if side == 1 and leg == 0 and elapsed > 1.2 and remaining > 0.7:
+			if side == 1 and leg == 0 and ((elapsed > 1.2 and remaining > 0.7) or (model.beetle_home and model.day > 9 and p.distance_to(model.position) < 155 and fposmod(route.visual_time, 7) < 1.5)):
 				foot += Vector2(5 + sin(elapsed * 9) * 4, -9 + cos(elapsed * 9) * 4)
 			line([Vector2(side * 8, -10 + leg * 10), foot], INK, 2)
 	oval(Vector2.ZERO, Vector2(13, 19), Color("ae9278"))
@@ -476,6 +479,47 @@ func _draw_beetle_guest(visible_world: Rect2) -> void:
 		line([Vector2(side * 4, -23), Vector2(side * 9, -28)], INK, 1.3)
 	draw_set_transform(Vector2.ZERO)
 	if model.beetle_home:
-		label(p + Vector2(-30, 48), "到家了", 16)
+		label(p + Vector2(-30, 48), "到家了" if model.day == 9 else "小甲虫的家", 16)
 	elif model.day != 9:
 		label(p + Vector2(-30, 43), "小甲虫", 16)
+
+
+func _draw_landmarks(visible_world: Rect2) -> void:
+	var model = route.model
+	# Each place gets a different silhouette; these marks never alter flight collision.
+	if visible_world.has_point(Model.HIVE):
+		for i in range(3):
+			var p := Model.HIVE + Vector2(-68 + i * 68, 172)
+			oval(p, Vector2(26, 10), Color("c4b998"))
+			line([p + Vector2(-15, 0), p + Vector2(12, 0)], Color("eee2bd"), 1.5)
+	for index in range(Model.PONDS.size()):
+		var pond: Vector3 = Model.PONDS[index]
+		var bank := Vector2(pond.x - pond.z * 0.65, pond.y + pond.z * 0.75)
+		if visible_world.has_point(bank):
+			for i in range(3):
+				oval(bank + Vector2(i * 31, sin(i * 1.8) * 13), Vector2(23 - i * 3, 12), Color("c4c9b5"))
+	if visible_world.has_point(Model.FLOWERS):
+		var edge := Model.FLOWERS + Vector2(-112, 110)
+		line([edge + Vector2(-10, 24), edge, edge + Vector2(35, -13), edge + Vector2(62, -5)], Color("867b57"), 3)
+		for i in range(3):
+			flower(edge + Vector2(i * 30, -24 - i * 8), 10, Color("e3c580"))
+	if model.built_site >= 0 and visible_world.has_point(model.roof_position()):
+		var p: Vector2 = model.roof_position() + Vector2(0, 135)
+		leaf(p, 55, 0.05, Color("d8ceaa"))
+		line([p + Vector2(-57, 18), p + Vector2(-43, 34), p + Vector2(43, 34), p + Vector2(57, 18)], INK, 2)
+		label(p + Vector2(-46, 59), "叶下歇脚", 17)
+		# Familiar five companions remain the only bee group; no extra background bees.
+		if model.day == 14 and not model.waiting_companion_points().is_empty():
+			label(model.roof_position() + Vector2(-45, -90), "伙伴在这里", 17)
+	if model.beetle_home:
+		var p: Vector2 = model.beetle_rest_position() + Vector2(35, 35)
+		if visible_world.has_point(p):
+			oval(p, Vector2(21, 16), Color("c1ad8b"))
+			oval(p + Vector2(0, 6), Vector2(10, 10), INK, false)
+			leaf(p + Vector2(-3, -17), 33, -0.15, GREEN)
+	if model.cleared.size() == 3:
+		var p := Vector2(2500, 1110)
+		if visible_world.has_point(p):
+			oval(p, Vector2(74, 35), Color("e6d5ac"), false)
+			for i in range(3):
+				line([p + Vector2(-35 + i * 27, 8), p + Vector2(-31 + i * 27, -9)], Color("bfae86"), 1.5)

@@ -102,6 +102,18 @@ func run() -> void:
 		Driver.home(scene.model, false)
 		scene.paused = false
 		scene._act()
+		if day == 15:
+			assert(not scene.model.day_finished and scene.model.homecoming_time == 0)
+			for frame in range(360):
+				scene._physics_process(1.0 / 60)
+			assert(scene.model.home_companions() == 5 and scene.model.rain_strength() < 0.1)
+			var home_time: float = scene.model.homecoming_time
+			scene.paused = true
+			scene._physics_process(0.5)
+			assert(scene.model.homecoming_time == home_time)
+			scene.paused = false
+			await capture("day-15-homecoming")
+			scene._act()
 		assert(scene.model.day_finished)
 		await capture("day-%02d-end" % day)
 		if day < 15:

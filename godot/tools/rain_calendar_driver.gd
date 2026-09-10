@@ -40,6 +40,8 @@ static func home(model, close_day := true) -> void:
 		fly(model, path[i])
 	if close_day:
 		model.act()
+		if model.day == 15 and model.homecoming_time >= 0 and not model.day_finished:
+			model.act()
 
 static func work(model, site := 0) -> void:
 	match model.today().mode:

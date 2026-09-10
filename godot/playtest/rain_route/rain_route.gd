@@ -26,6 +26,7 @@ var camera_origin := Vector2.ZERO
 var font := preload("res://fonts/NotoSansCJKsc-ProjectSubset.otf")
 var paused := false
 var sound: AudioStreamPlayer
+var rain_sound: AudioStreamPlayer
 var music: AudioStreamPlayer
 var pointer_target := Vector2.ZERO
 var pointer_active := false
@@ -65,6 +66,14 @@ func _ready() -> void:
 	sound = AudioStreamPlayer.new()
 	sound.bus = &"SFX"
 	add_child(sound)
+	rain_sound = AudioStreamPlayer.new()
+	var rain_stream: AudioStreamWAV = preload("res://assets/audio/rain_route_rain.wav").duplicate()
+	rain_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	rain_stream.loop_end = int(rain_stream.get_length() * rain_stream.mix_rate)
+	rain_sound.stream = rain_stream
+	rain_sound.volume_db = -24
+	add_child(rain_sound)
+	rain_sound.play()
 	music = AudioStreamPlayer.new()
 	music.stream = MUSIC
 	music.bus = &"Music"
@@ -295,6 +304,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		pointer_active = true
 
 func _physics_process(delta: float) -> void:
+	rain_sound.stream_paused = paused
+	if not paused:
+		rain_sound.volume_db = linear_to_db(maxf(0.001, model.rain_strength() * (0.045 if model.sheltered(model.position) else 0.085)))
 	if not paused:
 		visual_time += delta
 		for index in range(action_reactions.size() - 1, -1, -1):
@@ -352,6 +364,8 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _context_message() -> String:
+	if model.homecoming_time >= 0:
+		return "大家都回来了。雨慢慢小了，可以再待一会儿；到巢门按空格收工。"
 	if beetle_greeting_time > 0:
 		return "它平安到家了。可以歇一会儿，再回巢。"
 	if model.work_ready():
@@ -442,7 +456,7 @@ func _draw() -> void:
 		var p: Vector2 = Vector2(40, 514) + Model.BUILD_SITES[i] * 0.053
 		draw_circle(p, 4, Color("79974d") if model.built_site == i else Color("c1b9a0"))
 	if model.last_event != "":
-		_text(Vector2(260, 594), "花路记事 · " + str(model.event_catalog[model.last_event].title), 16, INK)
+		_text(Vector2(260, 594), "花路记事 · " + str({8: "带粉途中歇歇脚", 13: "带大家采粉回家", 14: "到叶台接伙伴", 15: "一起带粉回家"}.get(int(model.event_catalog[model.last_event].order), model.event_catalog[model.last_event].title)), 16, INK)
 	for target: Vector2 in model.objective_points():
 		draw_circle(Vector2(40, 514) + target * 0.053, 3.5, Color("b17c54"))
 	if model.day_finished and not model.complete and not paused:

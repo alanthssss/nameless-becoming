@@ -43,6 +43,7 @@ var drip_hit_flash := 0.0
 var drip_hit_points: Dictionary = {}
 var moving_hold := 0.0
 var day_clock := 0.0
+var homecoming_time := -1.0
 var dry_days := 0
 var dawn_state: Dictionary = {}
 
@@ -106,6 +107,7 @@ func _begin_day() -> void:
 	day_delivered = 0
 	day_spills = 0
 	day_clock = 0
+	homecoming_time = -1.0
 	moving_hold = 0
 	rain_exposure = 0
 	drops.clear()
@@ -388,7 +390,7 @@ func sheltered(point: Vector2) -> bool:
 	return built_site >= 0 and point.distance_to(roof_position()) < roof_radius()
 
 func rain_strength() -> float:
-	return (0.72 if day >= 14 else 0.6) + sin(elapsed * 0.055) * 0.18
+	return ((0.72 if day >= 14 else 0.6) + sin(elapsed * 0.055) * 0.18) * (lerpf(1.0, 0.08, smoothstep(0, 6, homecoming_time)) if homecoming_time >= 0 else 1.0)
 
 func raining(point: Vector2) -> bool:
 	return BOUNDS.has_point(point) and not sheltered(point)
@@ -414,6 +416,8 @@ func maximum_speed() -> float:
 func step(delta: float, steering: Vector2, braking: bool) -> void:
 	if complete or day_finished or delta <= 0.0:
 		return
+	if homecoming_time >= 0:
+		homecoming_time += delta
 	drip_hit_flash = maxf(0.0, drip_hit_flash - delta)
 	elapsed += delta
 	day_clock += delta
@@ -525,6 +529,9 @@ func act() -> String:
 			delivered += cargo
 			cargo = 0
 			deliveries += 1
+		if day == 15 and work_ready() and homecoming_time < 0:
+			homecoming_time = 0
+			return "deliver"
 		if work_ready():
 			day_finished = true
 			completed_days.append(day)
@@ -549,6 +556,8 @@ func act() -> String:
 	return ""
 
 func action_label() -> String:
+	if homecoming_time >= 0:
+		return "空格 · 收工" if position.distance_to(HIVE) < 80 else "回巢 · 收工"
 	if roof_available():
 		return "空格 · 带上遮雨叶" if can_take_roof() else "到巢门右侧带叶"
 	if position.distance_to(HIVE) < 80:
@@ -579,6 +588,14 @@ func action_label() -> String:
 	return "空格 · 取粉 / 接回散粉"
 
 func _update_companions(delta: float) -> void:
+	if homecoming_time >= 0:
+		for i in range(companions.size()):
+			var target := HIVE + Vector2(-66 + i * 33, 56 + (i % 2) * 20)
+			var movement: Vector2 = target - companions[i].position
+			if movement.length() > 3:
+				companions[i].heading = lerp_angle(float(companions[i].heading), movement.angle(), minf(1, delta * 5))
+			companions[i].position = (companions[i].position as Vector2).move_toward(target, delta * 45)
+		return
 	var leader := position
 	for bee in companions:
 		bee.grace = maxf(0.0, float(bee.grace) - delta)
