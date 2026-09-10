@@ -16,6 +16,8 @@ const BOUNDS := Rect2(90, 120, 3420, 1770)
 const SHELTERS := [Vector2(420, 1180), Vector2(650, 1400), Vector2(970, 1490), Vector2(1300, 1510), Vector2(1640, 1480), Vector2(1970, 1430), Vector2(2290, 1340), Vector2(2590, 1230), Vector2(2890, 1090), Vector2(3160, 990)]
 const SAFE_ROUTE := [HIVE, Vector2(420, 1180), Vector2(650, 1400), Vector2(970, 1490), Vector2(1300, 1510), Vector2(1640, 1480), Vector2(1970, 1430), Vector2(2290, 1340), Vector2(2590, 1230), Vector2(2890, 1090), Vector2(3160, 990), FLOWERS]
 const PONDS := [Vector3(1240, 1020, 170), Vector3(2330, 720, 200)]
+const Social := preload("res://playtest/rain_route/bee_social.gd")
+var social := Social.new()
 var heading := 0.0
 var position := HIVE
 var velocity := Vector2.ZERO
@@ -96,6 +98,7 @@ func drip_open() -> bool:
 	return fposmod(day_clock, 4.5) >= 2.7
 
 func _begin_day() -> void:
+	social.reset()
 	stage = int((day - 1) / 5)
 	position = HIVE
 	velocity = Vector2.ZERO
@@ -120,7 +123,7 @@ func _begin_day() -> void:
 			companions.append({"position": SHELTERS[2 + i], "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false, "heading": PI})
 	elif day > 12:
 		for i in range(companions.size()):
-			companions[i].position = HIVE + Vector2(-18 * (i + 1), 0)
+			companions[i].position = HIVE + Vector2.from_angle(-PI / 2 + i * TAU / 5) * 84
 			companions[i].waiting = false
 			companions[i].joined = true
 			companions[i].exposure = 0.0
@@ -211,7 +214,7 @@ func restore(data: Dictionary) -> bool:
 	companions.clear()
 	if day >= 12:
 		for i in range(COMPANION_COUNT):
-			companions.append({"position": SHELTERS[2 + i] if day == 12 else HIVE + Vector2(-18 * (i + 1), 0), "waiting": day == 12, "joined": day > 12, "grace": 2.0, "exposure": 0.0, "heading": PI})
+			companions.append({"position": SHELTERS[2 + i] if day == 12 else HIVE + Vector2.from_angle(-PI / 2 + i * TAU / 5) * 84, "waiting": day == 12, "joined": day > 12, "grace": 2.0, "exposure": 0.0, "heading": PI})
 	complete = ended
 	_begin_day()
 	day_finished = ended
@@ -416,6 +419,12 @@ func maximum_speed() -> float:
 func step(delta: float, steering: Vector2, braking: bool) -> void:
 	if complete or day_finished or delta <= 0.0:
 		return
+	if social.step_dance(self, delta, steering):
+		elapsed += delta
+		day_clock += delta
+		wind_travel += wind_force() * delta
+		_update_companions(delta)
+		return
 	if homecoming_time >= 0:
 		homecoming_time += delta
 	drip_hit_flash = maxf(0.0, drip_hit_flash - delta)
@@ -488,6 +497,7 @@ func can_take_roof() -> bool:
 func act() -> String:
 	if complete or day_finished:
 		return ""
+	social.dance_age = -1
 	var mode: String = today().mode
 	if can_take_roof():
 		roof_carried = true
@@ -551,6 +561,7 @@ func act() -> String:
 				rain_exposure = -0.8
 				return "recover"
 		if position.distance_to(FLOWERS) < 80:
+			social.remember_forage(FLOWERS)
 			cargo += 1
 			return "load"
 	return ""
@@ -588,16 +599,12 @@ func action_label() -> String:
 	return "空格 · 取粉 / 接回散粉"
 
 func _update_companions(delta: float) -> void:
-	if homecoming_time >= 0:
-		for i in range(companions.size()):
-			var target := HIVE + Vector2(-66 + i * 33, 56 + (i % 2) * 20)
-			var movement: Vector2 = target - companions[i].position
-			if movement.length() > 3:
-				companions[i].heading = lerp_angle(float(companions[i].heading), movement.angle(), minf(1, delta * 5))
-			companions[i].position = (companions[i].position as Vector2).move_toward(target, delta * 45)
-		return
-	var leader := position
-	for bee in companions:
+	if social.dance_age < 0:
+		social.record_path(position)
+	else:
+		social.trail.clear()
+	for index in range(companions.size()):
+		var bee: Dictionary = companions[index]
 		bee.grace = maxf(0.0, float(bee.grace) - delta)
 		var p: Vector2 = bee.position
 		if bee.waiting:
@@ -610,14 +617,27 @@ func _update_companions(delta: float) -> void:
 				bee.exposure = 0.0
 				notice = "跟上啦。按住 Shift 慢飞，过弯时给队尾一点余地。"
 		else:
-			var distance := p.distance_to(leader)
-			var spacing := 18.0 if p.distance_to(HIVE) < 230.0 else 30.0
-			if distance > spacing:
-				p = move_on_map(p, p.move_toward(leader, minf(300.0 * delta, distance - spacing)))
-			var movement: Vector2 = p - (bee.position as Vector2)
+			var target: Vector2 = social.target(self, index)
+			if homecoming_time >= 0 and social.dance_age < 0:
+				target = HIVE + Vector2.from_angle(-PI / 2 + index * TAU / 5) * 84
+			var movement: Vector2 = (target - p).limit_length((355.0 if velocity.length() > 80 else 190.0) * delta)
+			p = move_on_map(p, p + movement)
+			# Gentle separation prevents crossing slots from becoming a pile of sprites.
+			for other_index in range(companions.size()):
+				if other_index == index:
+					continue
+				var difference: Vector2 = p - companions[other_index].position
+				if difference.length() > 0.1 and difference.length() < 42:
+					p += difference.normalized() * (42 - difference.length()) * minf(1, delta * 5)
+			var away: Vector2 = p - position
+			if away.length() > 0.1 and away.length() < 49:
+				p += away.normalized() * (49 - away.length()) * minf(1, delta * 8)
+			movement = p - (bee.position as Vector2)
 			if movement.length() > 0.01:
-				bee.heading = lerp_angle(float(bee.get("heading", PI)), movement.angle(), 1.0 - exp(-12.0 * delta))
-			bee.position = p
+				bee.heading = lerp_angle(float(bee.get("heading", PI)), movement.angle(), 1.0 - exp(-9.0 * delta))
+			if social.dance_age >= 0 and p.distance_to(HIVE) < 140:
+				bee.heading = lerp_angle(float(bee.heading), (position - p).angle(), 1 - exp(-8 * delta))
+			bee.position = p.clamp(BOUNDS.position, BOUNDS.end)
 			if raining(p) and float(bee.grace) <= 0.0:
 				bee.exposure = float(bee.exposure) + delta * rain_strength()
 				if float(bee.exposure) > 7.0:
@@ -626,7 +646,6 @@ func _update_companions(delta: float) -> void:
 					notice = "有伙伴停下了。回到它身边，按住 Shift 稳住，就能接回。"
 			else:
 				bee.exposure = 0.0
-		leader = p
 
 func home_companions() -> int:
 	var count := 0

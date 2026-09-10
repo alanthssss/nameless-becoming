@@ -44,6 +44,7 @@ func event_today() -> Dictionary:
 	return {"id": today().id, "title": today().title, "order": day}
 
 func start_day() -> void:
+	social.reset()
 	stage = int((day - 1) / 5)
 	position = HIVE
 	velocity = Vector2.ZERO
@@ -73,7 +74,7 @@ func start_day() -> void:
 	if mode in ["escort", "convoy"]:
 		for i in range(COMPANION_COUNT):
 			var point: Vector2 = PLACES[today().places[i % today().places.size()]] if mode == "escort" else HIVE
-			companions.append({"position": point + Vector2(-40 + i * 20, 24), "waiting": mode == "escort", "joined": mode != "escort", "exposure": 0.0, "grace": 2.0, "heading": 0.0})
+			companions.append({"position": point + Vector2.from_angle(-PI / 2 + i * TAU / 5) * (52 if mode == "escort" else 84), "waiting": mode == "escort", "joined": mode != "escort", "exposure": 0.0, "grace": 2.0, "heading": 0.0})
 	if mode == "dual":
 		food_kind = "pollen"
 	dawn_state = snapshot()
@@ -258,6 +259,7 @@ func respond(point: Vector2, message: String) -> void:
 func act() -> String:
 	if day_finished or complete:
 		return ""
+	social.dance_age = -1
 	var mode: String = today().mode
 	if work_ready() and position.distance_to(HIVE) < 80:
 		if day == 15 and homecoming_time < 0:
@@ -275,6 +277,7 @@ func act() -> String:
 			world["nectar" if food_kind == "nectar" else "pollen"] = int(world.get(food_kind, 0)) + cargo
 			respond(position, "伙伴接过花蜜，转身去处理" if food_kind == "nectar" else "花粉卸进巢房，伙伴把它压实")
 			cargo = 0
+			social.offer_report(self)
 			if mode == "dual":
 				food_kind = "nectar" if not delivered_kinds.has("nectar") else "pollen"
 			return "deliver"
@@ -284,6 +287,7 @@ func act() -> String:
 					if mode != "dual":
 						food_kind = "nectar" if mode in ["nectar", "wind"] else "pollen"
 					cargo += 1
+					social.remember_forage(sources()[i])
 					source_visits[str(i)] = true
 					respond(position, "花蜜收进蜜囊" if food_kind == "nectar" else "把花粉收在后足")
 					return "load"

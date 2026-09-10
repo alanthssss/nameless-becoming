@@ -120,6 +120,8 @@ func _act() -> void:
 	if paused or model.day_finished:
 		return
 	var response: String = model.act()
+	if model.social.dance_age >= 0:
+		pointer_active = false
 	if response != "":
 		sound.volume_db = -12
 		sound.stream = DELIVER_SOUND if response in ["help", "deliver", "day_end"] else LOAD_SOUND

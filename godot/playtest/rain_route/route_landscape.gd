@@ -109,11 +109,11 @@ func canopy(center: Vector2, index: int, built := false, custom_radius := 0.0) -
 		label(center + Vector2(-42, 90), "新叶台", 20)
 	draw_set_transform(Vector2.ZERO)
 
-func bee(point: Vector2, heading: float, scale_value := 1.0, waiting := false) -> void:
-	var bob: float = sin(route.visual_time * 8 + point.x) * 2.0
+func bee(point: Vector2, heading: float, scale_value := 1.0, waiting := false, grounded := false) -> void:
+	var bob: float = 0.0 if grounded else sin(route.visual_time * 8 + point.x) * 2.0
 	oval(point + Vector2(0, 18), Vector2(22, 8) * scale_value, Color("909b85", 0.25), false)
 	draw_set_transform(point + Vector2(0, bob), heading, Vector2.ONE * scale_value)
-	var flutter: float = 0.85 + sin(route.visual_time * 42) * 0.15
+	var flutter: float = 0.38 if grounded else 0.85 + sin(route.visual_time * 42) * 0.15
 	oval(Vector2(-3, -15), Vector2(17, 10 * flutter), Color("faf8e9"))
 	oval(Vector2(-3, 15), Vector2(17, 10 * flutter), Color("faf8e9"))
 	oval(Vector2(-5, 0), Vector2(22, 13), GOLD if not waiting else Color("b8b5a1"))
@@ -188,11 +188,12 @@ func _draw() -> void:
 		draw_multiline(rain_lines, Color("799b9b", route.model.rain_strength() * 0.6), 1.2, true)
 	for p: Vector2 in route.model.drops:
 		oval(p, Vector2(12, 9), GOLD)
+	_draw_dance_floor()
 	for companion in route.model.companions:
-		bee(companion.position, float(companion.get("heading", PI)), 0.75, companion.waiting)
+		bee(companion.position, float(companion.get("heading", PI)), 0.75, companion.waiting, route.model.social.dance_age >= 0 and companion.position.distance_to(Model.HIVE) < 140)
 		if companion.waiting:
 			label(companion.position + Vector2(-4, -32), "!", 20)
-	bee(route.model.position, route.model.heading)
+	bee(route.model.position, route.model.heading, 1.0, false, route.model.social.dance_age >= 0)
 	_draw_food()
 	# Roofs draw ABOVE bees inside them; translucent surfaces keep movement readable.
 	layer_opacity = 0.22
@@ -212,8 +213,10 @@ func _draw() -> void:
 	_draw_beetle_guest(visible_world)
 	_draw_landmarks(visible_world)
 	_draw_beetle_hint()
+	if route.model.social.can_dance(route.model):
+		label(Model.HIVE + Vector2(-64, 163), "Q · 分享花源" if route.model.social.dance_age < 0 else "巢内 · 花源交流", 16)
 	if route.model.sheltered(route.model.position) and route.model.position.distance_to(Model.HIVE) > 205:
-		label(route.model.position + Vector2(-38, 55), "叶下 · 避雨", 16)
+		label(_shelter_label_position(), "叶下 · 避雨", 16)
 	if route.model.roof_carried:
 		leaf(route.model.position + Vector2(-18, -35), 33, -0.25, GREEN)
 	if route.model.carried_seed >= 0:
@@ -530,3 +533,51 @@ func _draw_food() -> void:
 
 func flower_landmark_title() -> String:
 	return "花田 · 取粉"
+
+func _draw_dance_floor() -> void:
+	var model = route.model
+	var social = model.social
+	if social.dance_age < 0:
+		return
+	var center: Vector2 = social.anchor(model)
+	# Cutaway of wax comb inside the hive; no aerial group dance or extra bees.
+	oval(center, Vector2(113, 103), Color("e9d49d"))
+	for row in range(-2, 3):
+		for col in range(-2, 3):
+			var p: Vector2 = center + Vector2(col * 32 + (row % 2) * 16, row * 28)
+			if p.distance_to(center) < 82:
+				var vertices: Array = []
+				for i in range(7):
+					vertices.append(p + Vector2.from_angle(i * TAU / 6) * 17)
+				line(vertices, Color("bea46e", 0.65), 1.2)
+	var previous: Vector2 = social.dance_point(model, 0)
+	for i in range(1, 65):
+		var point: Vector2 = social.dance_point(model, i * (3.0 if social.dance_kind == "round" else 2.8) / 64)
+		line([previous, point], Color("9b7e4a", 0.3), 1.4)
+		previous = point
+	if model.companions.is_empty():
+		for i in range(5):
+			var p: Vector2 = social.listener(model, i)
+			bee(p, (model.position - p).angle(), 0.75, false, true)
+	var direction: Vector2 = (social.source - Model.HIVE).normalized()
+	var flower_point: Vector2 = center + direction * 133
+	flower(flower_point, 10, Color("e7bc83"))
+	line([center + direction * 111, center + direction * 120], Color("a18450"), 2)
+
+func _shelter_label_position() -> Vector2:
+	var player: Vector2 = route.model.position
+	for offset: Vector2 in [Vector2(-38, 60), Vector2(-38, -54), Vector2(65, 5), Vector2(-140, 5)]:
+		var point := player + offset
+		var label_rect := Rect2(point + Vector2(-5, -18), Vector2(95, 26))
+		var clear := true
+		for companion in route.model.companions:
+			if label_rect.intersects(Rect2(companion.position - Vector2(32, 28), Vector2(64, 56))):
+				clear = false
+				break
+		if clear:
+			return point
+	var bottom := player.y
+	for companion in route.model.companions:
+		if companion.position.distance_to(player) < 300:
+			bottom = maxf(bottom, companion.position.y)
+	return Vector2(player.x - 38, bottom + 60)

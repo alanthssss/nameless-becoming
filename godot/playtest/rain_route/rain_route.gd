@@ -261,6 +261,8 @@ func _act() -> void:
 	if paused or model.complete or model.day_finished:
 		return
 	var result: String = model.act()
+	if model.social.dance_age >= 0:
+		pointer_active = false
 	if result in ["pollinate", "clear", "build"]:
 		var point: Vector2 = model.roof_position() if result == "build" else Model.Calendar.DAYS[6].target
 		if result == "pollinate":
@@ -292,6 +294,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
 			_toggle_pause()
+		elif event.keycode == KEY_Q and not paused:
+			if model.social.begin_dance(model):
+				pointer_active = false
 		elif event.keycode == KEY_R:
 			_restart()
 		elif event.is_action_pressed("action"):
@@ -352,7 +357,7 @@ func _physics_process(delta: float) -> void:
 			effect.velocity = (effect.velocity as Vector2).move_toward(Vector2(0, 12), delta * 75)
 			if effect.age >= effect.life:
 				effects.remove_at(index)
-	status.text = _context_message()
+	status.text = ("近处有花，伙伴正在听圆舞。随时移动即可离开。" if model.social.dance_kind == "round" else "摇摆、折返，把远处花源告诉伙伴。随时移动即可离开。") if model.social.dance_age >= 0 else _context_message()
 	paused_label.visible = paused
 	pause_button.text = "继续" if paused else "暂停"
 	action_button.disabled = paused or model.day_finished
@@ -400,7 +405,7 @@ func _text(point: Vector2, value: String, size: int, color := CREAM) -> void:
 	draw_string(font, point, value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 func _update_camera(delta: float) -> void:
-	var target: Vector2 = model.position + model.velocity * 0.35
+	var target: Vector2 = model.HIVE if model.social.dance_age >= 0 else model.position + model.velocity * 0.35
 	camera_center = camera_center.lerp(target, 1.0 - exp(-5.5 * delta))
 	camera_origin = (camera_center - Vector2(640, 360)).clamp(Vector2.ZERO, Vector2(2320, 1380))
 	if is_instance_valid(landscape):
