@@ -14,6 +14,8 @@
 
 [逐日玩法比较矩阵](docs/design/year-play-matrix.md)从运行日历生成；`python3 scripts/audit_year_content.py --check` 检查同步，`bash scripts/test_godot.sh` 检查规则与真实场景，`bash scripts/profile_year.sh` 做原生性能采样和截图。证据是开发者自测，尚无本轮 Alan 全年复测、独立玩家验证或真人总时长；当前独立入口未替换商业标题与正式导出，不代表成品质量已经验收。
 
+谷雨季末新增 24 秒专属插画过场“最后一张花牌”。双击 `scripts/play_year_film.command` 可独立观看，不改存档；分镜、资产和最终生成提示词见[过场美术记录](docs/design/guyu-film-art.md)。这次只替换谷雨季末一段。
+
 ## 当前春季入口：立春到谷雨
 
 2026-09-10，按 Alan“先把春天做了”的决定，将已认可的雨水飞行、线条画风与轻量互动扩成 **六节气 × 三候 × 五天，共九十天**。双击 `scripts/play_spring.command`（Godot 4.6.2），窗口标题含“春天”；首次从立春第一天开始，收工保存至下一天清晨，十五天结束后进入下一节气。操作沿用 WASD／方向键／点击飞行、空格互动、Shift 慢飞、R 重开今日、Esc 暂停。

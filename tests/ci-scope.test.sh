@@ -15,6 +15,7 @@ full=$'web=true\ngodot=true\nexport_game=true\ngodot_suite=full'
 check "$light" README.md 'docs/有 空格.md' .github/workflows/quality.yml scripts/classify_ci_changes.sh tests/ci-scope.test.sh
 check "$routes" godot/playtest/year/year_model.gd godot/playtest/year/year_route.tscn godot/tests/year_route_test.gd docs/plan.md
 check "$engine" godot/playtest/spring/spring_model.gd godot/fonts/font.otf
+check "$routes" scripts/play_year_film.command godot/playtest/year/guyu/guyu-wide.png
 check "$engine" scripts/run_with_timeout.py
 check "$web" src/app/page.tsx
 check "$web" src/app/article.mdx

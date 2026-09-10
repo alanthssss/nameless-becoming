@@ -11,7 +11,7 @@ while IFS= read -r -d '' path; do
   case "$path" in
     godot/project.godot|godot/export_presets.cfg|godot/commercial_title.tscn|godot/main.tscn|scripts/build_web_game.sh|scripts/verify_godot_export_contents.sh|scripts/create_commercial_godot_stage.mjs|scripts/generate_build_provenance.mjs)
       web=true; godot=true; export_game=true; suite=full ;;
-    godot/playtest/*|godot/tools/spring_*|godot/tools/rain_*|godot/tools/year_*|godot/tools/capture_spring.gd|godot/tests/spring_*|godot/tests/rain_*|godot/tests/bee_social_*|godot/tests/year_*|scripts/play_spring.command|scripts/play_year.command|scripts/audit_year_content.py|scripts/profile_year.sh)
+    godot/playtest/*|godot/tools/spring_*|godot/tools/rain_*|godot/tools/year_*|godot/tools/capture_spring.gd|godot/tests/spring_*|godot/tests/rain_*|godot/tests/bee_social_*|godot/tests/year_*|scripts/play_spring.command|scripts/play_year.command|scripts/play_year_film.command|scripts/audit_year_content.py|scripts/profile_year.sh)
       godot=true ;;
     godot/fonts/*|godot/tests/*|godot/scripts/*|godot/assets/*|godot/world/*)
       godot=true; suite=full ;;

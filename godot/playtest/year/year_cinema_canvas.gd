@@ -1,11 +1,15 @@
 extends "res://playtest/rain_route/route_landscape.gd"
 
 func _ready() -> void:
- pass
+ var guyu:=Node2D.new()
+ guyu.set_script(preload("res://playtest/year/guyu/guyu_film.gd"))
+ guyu.route=route
+ add_child(guyu)
 
 func _draw() -> void:
  if not is_instance_valid(route) or not route.cinema.active: return
  var c=route.cinema
+ if c.term==5 and c.day==15: return
  var season:=int(c.term/6)
  var t: float=c.age
  var chapter: Dictionary=route.year_calendar[c.term]

@@ -43,7 +43,7 @@ func run() -> void:
    c.skip();assert(not c.active)
    assert(not c.begin(term,day))
    assert(c.replay())
-   c.advance(20,false);assert(not c.active)
+   c.advance(c.duration+1,false);assert(not c.active)
  assert(c.seen.size()==72 and Cinema.valid_seen(c.seen))
  for p in [path,source_path]: DirAccess.remove_absolute(p)
  for s in [scene,copy]:

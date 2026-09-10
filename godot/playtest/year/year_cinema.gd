@@ -13,7 +13,7 @@ func begin(chapter: int, completed_day: int, replay := false) -> bool:
  if not replay and seen.has(id): return false
  term=chapter
  day=completed_day
- duration=9.0 if chapter%6==5 and day==15 else 5.5
+ duration=24.0 if chapter==5 and day==15 else (9.0 if chapter%6==5 and day==15 else 5.5)
  last_id=id
  if not seen.has(id): seen.append(id)
  age=0
