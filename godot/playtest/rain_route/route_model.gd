@@ -180,11 +180,7 @@ func restore(data: Dictionary) -> bool:
 		return false
 	if saved_day > 6 and not data.route_revealed:
 		return false
-	if saved_day > 8 and data.rack_stock < 2:
-		return false
 	if saved_day > 9 and not data.beetle_home:
-		return false
-	if saved_day > 10 and data.rack_stock < 3:
 		return false
 	day = saved_day
 	built_site = site
@@ -236,8 +232,8 @@ func work_ready() -> bool:
 		"beetle": return beetle_home
 		"rescue": return home_companions() == COMPANION_COUNT
 		"leaf_delivery": return day_delivered >= int(today().quota) and visited.size() >= 2
-		"rack": return daily_done.has("handoff") and day_delivered >= int(today().quota)
-		"moving": return daily_done.has("handoff") and day_delivered >= int(today().quota) and moving_hold >= 1.2
+		"rack": return daily_done.has("rest") and day_delivered >= int(today().quota)
+		"moving": return daily_done.has("rest") and day_delivered >= int(today().quota) and moving_hold >= 1.2
 		"mastery", "wind", "final": return day_delivered >= int(today().quota) and home_companions() == COMPANION_COUNT
 		_: return day_delivered >= int(today().get("quota", 1))
 
@@ -258,12 +254,27 @@ func work_progress() -> String:
 
 func moving_stage_hint() -> String:
 	if moving_hold < 1.2:
-		if cargo <= 0:
-			return "第 1 / 2 步 · 先取一份粉，再跟随移动叶影避雨。"
-		return "第 1 / 2 步 · 跟随移动叶影，留在叶下。避雨进度 %d%%" % mini(99, int(moving_hold / 1.2 * 100))
+		return "第 1 / 2 步 · 取一份粉，跟随移动叶影。叶下进度 %d%%" % mini(99, int(moving_hold / 1.2 * 100))
+	return rest_stage_hint()
+
+func rest_stage_hint() -> String:
+	if daily_done.has("rest"):
+		return "已在叶台歇脚。花粉还在身上，带回蜂巢。" + delivery_hint()
 	if cargo <= 0:
-		return "第 2 / 2 步 · 叶下避雨已完成。补取一份粉，再送到新叶台。"
-	return "第 2 / 2 步 · 叶下避雨已完成。到新叶台慢下来，按空格交粉。"
+		return "先到花田取粉，再到新叶台歇脚。" + delivery_hint()
+	return "到新叶台慢下来，按空格歇脚；花粉最终送回巢。"
+
+func delivery_hint() -> String:
+	return " 已送回 %d / %d · 身上 %d / 3" % [day_delivered, int(today().get("quota", 1)), cargo]
+
+func forage_stage_hint() -> String:
+	if not waiting_companion_points().is_empty():
+		return "有伙伴停下了，沿指引回去慢飞接应。" + delivery_hint()
+	if day_delivered >= int(today().quota):
+		return "花粉已送够，等五位伙伴都到巢门，再按空格收工。"
+	if cargo <= 0:
+		return "带伙伴到右边花田，按空格取粉，再送回巢。" + delivery_hint()
+	return "带花粉和伙伴回巢，按空格交粉。途中掉粉可以接回。" + delivery_hint()
 
 func waiting_companion_points() -> Array:
 	var points: Array = []
@@ -294,8 +305,11 @@ func objective_points() -> Array:
 		"pollinate": return _remaining(Calendar.DAYS[3].points, pollinated) if cargo > 0 else [FLOWERS]
 		"gutter": return [today().target] if carried_seed >= 0 else _remaining(today().points, cleared)
 		"beetle": return [today().target] if escort_roof else [beetle_position]
-		"rack": return [roof_position()] if cargo > 0 else [FLOWERS]
-		"moving": return [moving_roof_position() if moving_hold < 1.2 else roof_position()] if cargo > 0 else [FLOWERS]
+		"rack": return ([HIVE] if daily_done.has("rest") else [roof_position()]) if cargo > 0 else [FLOWERS]
+		"moving": return [moving_roof_position() if moving_hold < 1.2 else (HIVE if daily_done.has("rest") else roof_position())] if cargo > 0 else [FLOWERS]
+		"mastery", "final":
+			var missing := waiting_companion_points()
+			return missing if not missing.is_empty() else ([HIVE] if cargo > 0 or day_delivered >= int(today().quota) else [FLOWERS])
 		"wind":
 			var missing := waiting_companion_points()
 			return missing if not missing.is_empty() else ([HIVE] if cargo > 0 or day_delivered > 0 else [FLOWERS])
@@ -500,17 +514,14 @@ func act() -> String:
 	if mode == "beetle" and not beetle_home and position.distance_to(beetle_position) < 70:
 		escort_roof = true
 		return "roof"
-	if mode in ["rack", "moving"] and cargo > 0 and position.distance_to(roof_position()) < 85 and velocity.length() < 105:
+	if mode in ["rack", "moving"] and not daily_done.has("rest") and cargo > 0 and position.distance_to(roof_position()) < 85 and velocity.length() < 105:
 		if mode != "moving" or moving_hold >= 1.2:
-			day_delivered += cargo
-			daily_done["handoff"] = true
-			rack_stock += cargo
-			cargo = 0
-			return "handoff"
+			daily_done["rest"] = true
+			rain_exposure = 0
+			return "rest"
 	if position.distance_to(HIVE) < 80:
 		if cargo > 0:
-			if mode not in ["rack", "moving"]:
-				day_delivered += cargo
+			day_delivered += cargo
 			delivered += cargo
 			cargo = 0
 			deliveries += 1
@@ -564,7 +575,7 @@ func action_label() -> String:
 	if today().mode == "moving" and cargo > 0 and moving_hold < 1.2:
 		return "跟随叶影 · 留在叶下"
 	if today().mode in ["rack", "moving"] and cargo > 0:
-		return "空格 · 慢飞交到晾架"
+		return "带粉回巢" if daily_done.has("rest") else "空格 · 叶台歇脚"
 	return "空格 · 取粉 / 接回散粉"
 
 func _update_companions(delta: float) -> void:

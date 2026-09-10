@@ -345,12 +345,6 @@ func _daily_world(visible_world: Rect2) -> void:
 					var drop := Vector2(2580, 1150).lerp(end, phase)
 					line([drop - Vector2(2, 3), drop + Vector2(2, 3)], Color("e6eece"), 1.5)
 			label(Vector2(2410, 1155), "堵住的叶沟", 17)
-	if model.built_site >= 0:
-		var p: Vector2 = model.roof_position() + Vector2(85, 72)
-		if visible_world.has_point(p):
-			line([p + Vector2(-30, 30), p + Vector2(-24, -12), p + Vector2(36, -12), p + Vector2(42, 30)], INK, 3)
-			for i in range(mini(model.rack_stock, 6)):
-				oval(p + Vector2(-20 + i * 10, -7), Vector2(5, 6), GOLD)
 	if model.day >= 9 and visible_world.has_point(Model.Calendar.DAYS[8].target):
 		var home: Vector2 = model.beetle_rest_position()
 		leaf(home + Vector2(0, 14), 42, 0.15, Color("c1cbaa"))

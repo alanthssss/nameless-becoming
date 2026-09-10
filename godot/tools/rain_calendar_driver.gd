@@ -84,7 +84,8 @@ static func work(model, site := 0) -> void:
 				for i in range(model.SAFE_ROUTE.size() - 1, 4, -1):
 					fly(model, model.SAFE_ROUTE[i])
 			fly(model, model.roof_position())
-			assert(model.act() == "handoff")
+			assert(model.act() == "rest")
+			assert(model.cargo > 0 and model.day_delivered == 0, "Rest keeps pollen aboard; only hive delivery counts")
 		"beetle":
 			fly(model, model.beetle_position)
 			assert(model.act() == "roof")

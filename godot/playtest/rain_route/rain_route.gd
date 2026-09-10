@@ -257,11 +257,11 @@ func _act() -> void:
 					point = bed
 		action_reactions.append({"kind": result, "point": point, "age": 0.0, "ordinal": model.cleared.size() - 1})
 	if result != "" or model.complete:
-		sound.volume_db = -10.0 if result in ["pollinate", "clear", "build"] else 0.0
+		sound.volume_db = -10.0 if result in ["pollinate", "clear", "build", "rest"] else 0.0
 		sound.pitch_scale = 1.15 if result == "pollinate" else (0.85 if result == "clear" else 1.0)
 		sound.stream = FINISH_SOUND if model.complete else (DELIVER_SOUND if result == "deliver" else LOAD_SOUND)
 		sound.play()
-		if result not in ["pollinate", "clear", "build"]:
+		if result not in ["pollinate", "clear", "build", "rest"]:
 			_burst(model.position, GOLD, 16 if result == "deliver" else 8)
 		if result == "day_end":
 			_save_dawn()
@@ -356,6 +356,10 @@ func _context_message() -> String:
 		return "它平安到家了。可以歇一会儿，再回巢。"
 	if model.work_ready():
 		return "今天的事做好了。回到巢门，按空格收工。"
+	if model.today().mode in ["mastery", "final"]:
+		return model.forage_stage_hint()
+	if model.today().mode == "rack":
+		return model.rest_stage_hint()
 	if model.today().mode == "wind":
 		return model.wind_stage_hint()
 	if model.today().mode == "moving":
@@ -389,7 +393,7 @@ func _draw_hud() -> void:
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
 	_text(Vector2(50, 59), "雨水", 27, INK)
 	_text(Vector2(119, 57), "第 %d 天 · %s" % [model.day, ["一候", "二候", "三候"][model.stage]], 19, Color("566a48"))
-	_text(Vector2(50, 91), ("到叶台接伙伴" if model.day == 14 else str(model.event_today().title)), 17, INK)
+	_text(Vector2(50, 91), ({8: "带粉途中歇歇脚", 13: "带大家采粉回家", 14: "到叶台接伙伴", 15: "一起带粉回家"}.get(model.day, str(model.event_today().title))), 17, INK)
 	for i in range(15):
 		var p := Vector2(54 + i * 22, 116)
 		draw_circle(p, 4, Color("729052") if i < model.completed_days.size() else Color("d8d8b9"))
@@ -444,7 +448,7 @@ func _draw() -> void:
 	if model.day_finished and not model.complete and not paused:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
 		_text(Vector2(458, 264), "雨水 · 第 %d 天收工" % model.day, 26, INK)
-		_text(Vector2(402, 315), ("到叶台接伙伴" if model.day == 14 else str(model.event_today().title)), 23, INK)
+		_text(Vector2(402, 315), ({8: "带粉途中歇歇脚", 13: "带大家采粉回家", 14: "到叶台接伙伴", 15: "一起带粉回家"}.get(model.day, str(model.event_today().title))), 23, INK)
 		_text(Vector2(402, 369), Model.Calendar.AFTER[model.day - 1], 18, INK)
 	if model.complete:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
