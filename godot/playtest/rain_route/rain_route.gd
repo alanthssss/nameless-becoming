@@ -82,12 +82,15 @@ func _ready() -> void:
 	music.finished.connect(func(): music.play())
 	music.play()
 	landscape = Node2D.new()
-	landscape.set_script(preload("res://playtest/rain_route/route_landscape.gd"))
+	landscape.set_script(landscape_script())
 	landscape.show_behind_parent = true
 	landscape.route = self
 	add_child(landscape)
 	_build_hud()
 	_update_camera(1.0)
+
+func landscape_script() -> Script:
+	return preload("res://playtest/rain_route/route_landscape.gd")
 
 func _panel(rect: Rect2, color: Color, radius := 16, border := Color(0, 0, 0, 0)) -> void:
 	var style := StyleBoxFlat.new()

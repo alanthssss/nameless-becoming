@@ -193,8 +193,7 @@ func _draw() -> void:
 		if companion.waiting:
 			label(companion.position + Vector2(-4, -32), "!", 20)
 	bee(route.model.position, route.model.heading)
-	for i in range(route.model.cargo):
-		oval(route.model.position + Vector2(-10 + i * 9, 21), Vector2(5, 5), GOLD)
+	_draw_food()
 	# Roofs draw ABOVE bees inside them; translucent surfaces keep movement readable.
 	layer_opacity = 0.22
 	for i in range(Model.SHELTERS.size()):
@@ -271,7 +270,7 @@ func _draw_static() -> void:
 		for i in range(4):
 			leaf(center + Vector2(sin(i * 4) * 90, cos(i * 6) * 100), 33, i * 1.5, GREEN)
 	hive()
-	label(Model.FLOWERS + Vector2(-57, 166), "花田 · 取粉", 22)
+	label(Model.FLOWERS + Vector2(-57, 166), flower_landmark_title(), 22)
 	label(Vector2(1000, 1770), "叶下小径", 30)
 	label(Vector2(1250, 345), "上方小路", 24)
 
@@ -523,3 +522,11 @@ func _draw_landmarks(visible_world: Rect2) -> void:
 			oval(p, Vector2(74, 35), Color("e6d5ac"), false)
 			for i in range(3):
 				line([p + Vector2(-35 + i * 27, 8), p + Vector2(-31 + i * 27, -9)], Color("bfae86"), 1.5)
+
+
+func _draw_food() -> void:
+	for i in range(route.model.cargo):
+		oval(route.model.position + Vector2(-10 + i * 9, 21), Vector2(5, 5), GOLD)
+
+func flower_landmark_title() -> String:
+	return "花田 · 取粉"

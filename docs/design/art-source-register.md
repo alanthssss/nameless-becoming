@@ -128,3 +128,8 @@ Alan 要求本段美术达到交付级，授权新资产制作和实际接入。
 ### 2026-09-09 雨水线条地图
 
 雨水场景现使用 `godot/playtest/rain_route/route_landscape.gd` 原生绘制的植物、地图、蜂巢、蜜蜂和雨水，配色与线条由代码定义；未新增外部素材或 ImageGen 资产。此前四张生成 PNG 保留来源记录，但此场景已不再加载。字体与音频继续复用项目已有资源；这是 Alan 授权尝试的单段风格，尚未获得最终审美验收或全项目替换决定。
+
+
+### 2026-09-10 春季文案字体补字
+
+沿用 Noto Sans CJK SC 与仓库 `godot/fonts/OFL-NotoSansCJK.txt` 许可，使用既有 `scripts/build_cjk_font_subset.py` 从全部运行文本重建 `godot/fonts/NotoSansCJKsc-ProjectSubset.otf`。源文件来自 Noto 官方仓库 `https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf`；下载的完整文件 SHA-256 为 `2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b`，以哈希标识本次字源而非把 main URL 当固定版本。该改动覆盖春季新增汉字，不引入新的生成式美术资源；原许可和字体用途不变。
