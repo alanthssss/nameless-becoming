@@ -6,6 +6,13 @@ static func fly(model, target: Vector2) -> void:
 
 static func work(model) -> void:
 	var mode: String = model.today().mode
+	if model.today().get("variation") == "sway":
+		for i in [1, 2]:
+			fly(model, model.sources()[i])
+			assert(model.act() == "load")
+		fly(model, model.POLLEN_DESK)
+		assert(model.act() == "deliver")
+		return
 	match mode:
 		"visit", "convoy":
 			for point in model.sources():
@@ -29,6 +36,12 @@ static func work(model) -> void:
 					assert(model.act() == "load")
 					if mode == "dual":
 						break
+				if model.today().get("variation") == "novice":
+					for frame in range(180):
+						model.step(1.0 / 60, Vector2.ZERO, true)
+						if model.novice_collected:
+							break
+					assert(model.novice_collected)
 				var desk: Vector2 = model.NECTAR_DESK if model.food_kind == "nectar" else model.POLLEN_DESK
 				fly(model, desk)
 				assert(model.act() == "deliver")

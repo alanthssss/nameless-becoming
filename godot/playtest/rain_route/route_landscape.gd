@@ -325,7 +325,7 @@ func _daily_world(visible_world: Rect2) -> void:
 		for j in range(3):
 			var spot := p + Vector2((j - 1) * 31, (j % 2) * 19)
 			if model.pollinated.has(str(i)) and model.day >= 11:
-				oval(spot, Vector2(12, 16), Color("d4ad68"))
+				oval(spot, Vector2(12, 16), Color("a7b889"))
 				line([spot, spot + Vector2(0, -23)], INK, 2)
 			else:
 				var response: float = route.reaction_age("pollinate", p)
@@ -334,7 +334,7 @@ func _daily_world(visible_world: Rect2) -> void:
 				flower(spot, 15 + pulse * 3, Color("e2c2ab").lerp(Color("f1e6ba"), pulse * 0.5))
 				if model.pollinated.has(str(i)):
 					draw_circle(spot, 4, GOLD)
-		label(p + Vector2(-35, 65), "花已结籽" if model.pollinated.has(str(i)) and model.day >= 11 else ("已传粉" if model.pollinated.has(str(i)) else "待传粉"), 16)
+		label(p + Vector2(-35, 65), "长出小青果" if model.pollinated.has(str(i)) and model.day >= 11 else ("已传粉" if model.pollinated.has(str(i)) else "待传粉"), 16)
 	if model.day >= 7:
 		var landing: Vector2 = Model.Calendar.DAYS[6].target
 		if visible_world.has_point(landing):

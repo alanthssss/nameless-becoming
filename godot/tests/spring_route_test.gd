@@ -40,6 +40,7 @@ func _init() -> void:
 			world = model.world.duplicate(true)
 		print("SPRING CHAPTER PASSED: ", term, " fifteen actual days")
 	assert(total == 90 and world.beetle_home and world.cleared_gutter)
+	check_variations()
 	check_food()
 	check_recovery()
 	check_shelter_history()
@@ -120,3 +121,29 @@ func check_shelter_history() -> void:
 	assert(copy.sheltered(Vector2(3300, 2039.9)))
 	copy.configure(2)
 	assert(not copy.sheltered(Vector2(3300, 2039.9)), "A new world must clear old shelter geometry")
+
+func check_variations() -> void:
+	var m := Spring.new()
+	m.configure(0)
+	m.day = 10
+	m.start_day()
+	var flower: Vector2 = m.sources()[0]
+	m.step(1.0, Vector2.ZERO, false)
+	assert(flower.distance_to(m.sources()[0]) > 40)
+	m.position = flower
+	assert(m.act() == "", "Old flower position is not a stationary pickup trigger")
+	m.position = m.sources()[0]
+	assert(m.act() == "load" and m.act() == "load")
+	assert(m.act() == "" and m.cargo == 2, "Each flower displays its actual remaining stock")
+	m.day = 14
+	m.start_day()
+	assert(not m.novice_collected and not m.work_ready() and m.companions.size() == 5)
+	Driver.work(m)
+	assert(m.novice_collected)
+	Driver.home(m)
+	assert(m.day_finished)
+	m.day = 7
+	m.remember("pollinate", Vector2(900,1140))
+	m.day = 14
+	m.remember("pollinate", Vector2(900,1140))
+	assert(m.world["pollinate:900:1140"].born_day == 7)
