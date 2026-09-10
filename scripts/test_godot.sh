@@ -22,6 +22,10 @@ run_with_timeout() {
   python3 "$project_root/scripts/run_with_timeout.py" 90 "$@"
 }
 
+if [[ -f "$project_root/scripts/audit_year_content.py" ]]; then
+  python3 "$project_root/scripts/audit_year_content.py" --check
+fi
+
 echo "Preparing Godot imports and global class cache"
 import_log="$project_root/godot/.godot/import-test.log"
 mkdir -p "$(dirname "$import_log")"

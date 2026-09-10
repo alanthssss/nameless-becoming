@@ -195,7 +195,7 @@ func _draw() -> void:
 	var rain_lines := PackedVector2Array()
 	var viewport := Rect2(route.camera_origin, Vector2(1280, 720))
 	var streak := Vector2(-4 if route.model.day >= 14 else 4, 16)
-	for i in range(rain_origins.size()):
+	for i in range(rain_origins.size() if route.model.rain_strength() > 0.001 else 0):
 		var origin := rain_origins[i]
 		var p := Vector2(fposmod(origin.x + route.model.wind_travel, 3600), fposmod(origin.y + route.visual_time * (350 + i % 90), 2100))
 		if viewport.has_point(p) and not route.model.sheltered(p):
