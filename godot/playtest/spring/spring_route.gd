@@ -10,6 +10,15 @@ var spring_save_enabled := true
 var spring_save_path := SAVE
 var seed_world: Dictionary = {}
 
+func term_names() -> Array:
+	return TERM_NAMES
+
+func chapter_count() -> int:
+	return 6
+
+func journey_title() -> String:
+	return "春天"
+
 func landscape_script() -> Script:
 	return preload("res://playtest/spring/spring_landscape.gd")
 
@@ -29,10 +38,10 @@ func _ready() -> void:
 			spring_save_enabled = false
 			push_warning("春季存档未能载入，旧文件保留，本次不覆盖。")
 	super._ready()
-	DisplayServer.window_set_title("一会儿巢里见 · 春天 · " + TERM_NAMES[term_index])
+	DisplayServer.window_set_title("一会儿巢里见 · " + journey_title() + " · " + term_names()[term_index])
 
 func restore_spring(data: Dictionary) -> bool:
-	if data.get("schema") != 1 or not model._whole(data.get("term"), 0, 5) or not data.get("prior_terms") is Array or not SpringModel.valid_world(data.get("world")) or not data.get("chapter") is Dictionary or not SpringModel.valid_world(data.get("seed_world", data.get("world"))):
+	if data.get("schema") != 1 or not model._whole(data.get("term"), 0, chapter_count() - 1) or not data.get("prior_terms") is Array or not SpringModel.valid_world(data.get("world")) or not data.get("chapter") is Dictionary or not SpringModel.valid_world(data.get("seed_world", data.get("world"))):
 		return false
 	var index := int(data.term)
 	if data.prior_terms.size() != index:
@@ -76,7 +85,7 @@ func _save_dawn() -> void:
 			push_warning("春季进度未能替换，旧文件保留。")
 
 func _next_term() -> void:
-	if paused or not model.complete or term_index >= 5:
+	if paused or not model.complete or term_index >= chapter_count() - 1:
 		return
 	if term_index == 1:
 		world["built_site"] = model.built_site
@@ -102,7 +111,7 @@ func _next_term() -> void:
 	landscape.show_behind_parent = true
 	add_child(landscape)
 	_update_camera(1)
-	DisplayServer.window_set_title("一会儿巢里见 · 春天 · " + TERM_NAMES[term_index])
+	DisplayServer.window_set_title("一会儿巢里见 · " + journey_title() + " · " + term_names()[term_index])
 
 func _restart() -> void:
 	if paused:
@@ -137,8 +146,8 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	for control in result_controls.get_children():
 		if control is Button:
-			control.text = "下一节气 · " + TERM_NAMES[mini(5, term_index + 1)] if term_index < 5 else "春天的路走完了"
-			control.disabled = term_index == 5
+			control.text = "下一节气 · " + term_names()[mini(chapter_count() - 1, term_index + 1)] if term_index < chapter_count() - 1 else journey_title() + "的路走完了"
+			control.disabled = term_index == chapter_count() - 1
 
 func _context_message() -> String:
 	return super._context_message() if term_index == 1 else model.hint()
@@ -148,9 +157,22 @@ func title_today() -> String:
 		return str({8: "带粉途中歇歇脚", 13: "带大家采粉回家", 14: "到叶台接伙伴", 15: "一起带粉回家"}.get(model.day, model.event_today().title))
 	return str(model.today().title)
 
+func cargo_hud_label() -> String:
+	var name: String = {"nectar":"花蜜", "water":"清水", "honey":"储蜜"}.get(model.food_kind, "花粉") if term_index != 1 else "花粉"
+	return "身上"+name
+
+func cargo_hud_value() -> String:
+	return "%d / 3" % model.cargo
+
+func companion_hud_title() -> String:
+	return "伙伴"
+
+func companion_hud_count() -> int:
+	return 5-model.waiting_companion_points().size()
+
 func _draw_hud() -> void:
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
-	_text(Vector2(50, 59), TERM_NAMES[term_index], 27, INK)
+	_text(Vector2(50, 59), term_names()[term_index], 27, INK)
 	_text(Vector2(119, 57), "第 %d 天 · %s" % [model.day, ["一候", "二候", "三候"][model.stage]], 19, Color("566a48"))
 	_text(Vector2(50, 91), title_today(), 17, INK)
 	for i in range(15):
@@ -159,21 +181,20 @@ func _draw_hud() -> void:
 		if i == model.day - 1:
 			draw_arc(p, 7, 0, TAU, 18, INK, 1.4, true)
 	_panel(Rect2(687, 25, 351, 76), Color("264b39", 0.96), 18, Color("a4b889", 0.5))
-	_text(Vector2(709, 53), "春天", 14, Color("c0d0ab"))
-	_text(Vector2(709, 81), "%d / 90 天" % (term_index * 15 + model.completed_days.size()), 21)
-	var name := "花粉" if term_index == 1 or model.food_kind != "nectar" else "花蜜"
-	_text(Vector2(837, 53), "身上" + name, 14, Color("c0d0ab"))
-	_text(Vector2(851, 81), "%d / 3" % model.cargo, 21)
+	_text(Vector2(709, 53), journey_title(), 14, Color("c0d0ab"))
+	_text(Vector2(709, 81), "%d / %d 天" % [term_index * 15 + model.completed_days.size(), chapter_count() * 15], 21)
+	_text(Vector2(837, 53), cargo_hud_label(), 14, Color("c0d0ab"))
+	_text(Vector2(851, 81), cargo_hud_value(), 21)
 	if not model.companions.is_empty():
-		_text(Vector2(950, 53), "伙伴", 14, Color("c0d0ab"))
-		_text(Vector2(954, 81), "%d / 5" % (5 - model.waiting_companion_points().size()), 21)
+		_text(Vector2(950, 53), companion_hud_title(), 14, Color("c0d0ab"))
+		_text(Vector2(954, 81), "%d / 5" % companion_hud_count(), 21)
 	if not model.day_finished:
 		_panel(Rect2(28, 624, 777, 62), Color("f7efd7", 0.97), 16, Color("fff6dd", 0.6))
 
 func _draw() -> void:
 	_draw_hud()
 	_panel(Rect2(29, 490, 212, 112), CREAM, 13, INK)
-	_text(Vector2(44, 513), TERM_NAMES[term_index] + " · 花路", 15, INK)
+	_text(Vector2(44, 513), term_names()[term_index] + " · 花路", 15, INK)
 	var origin := Vector2(40, 514)
 	for i in range(Model.SAFE_ROUTE.size() - 1):
 		draw_line(origin + Model.SAFE_ROUTE[i] * 0.053, origin + Model.SAFE_ROUTE[i + 1] * 0.053, Color("9ba885"), 2)
@@ -184,13 +205,13 @@ func _draw() -> void:
 	draw_circle(origin + model.position * 0.053, 4, INK)
 	draw_rect(Rect2(origin + camera_origin * 0.053, Vector2(1280, 720) * 0.053), Color("637960", 0.4), false)
 	for i in range(6):
-		_text(Vector2(274 + i * 78, 589), TERM_NAMES[i], 16, INK if i <= term_index else Color("a7af98"))
-		if i == term_index:
+		_text(Vector2(274 + i * 78, 589), term_names()[int(term_index / 6) * 6 + i], 16, INK if int(term_index / 6) * 6 + i <= term_index else Color("a7af98"))
+		if i == term_index % 6:
 			draw_line(Vector2(274 + i * 78, 596), Vector2(307 + i * 78, 596), GOLD, 2)
 	if model.day_finished and not paused:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
-		_text(Vector2(402, 263), TERM_NAMES[term_index] + (" · 十五天走完了" if model.complete else " · 今天收工"), 25, INK)
+		_text(Vector2(402, 263), term_names()[term_index] + (" · 十五天走完了" if model.complete else " · 今天收工"), 25, INK)
 		_text(Vector2(402, 318), title_today(), 21, INK)
-		_text(Vector2(402, 367), "路和邻居都还在，下一次回来会认得。" if term_index < 5 else "春天的路接好了，大家都能从这里走过。", 19, INK)
+		_text(Vector2(402, 367), "路和邻居都还在，下一次回来会认得。" if term_index < chapter_count() - 1 else journey_title() + "的路接好了，大家都能从这里走过。", 19, INK)
 	if paused:
 		draw_rect(Rect2(0, 145, 1280, 470), Color("142f24", 0.75))

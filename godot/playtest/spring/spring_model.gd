@@ -28,8 +28,17 @@ var repaired_roofs := PackedVector2Array()
 var source_stock: Array[int] = []
 var novice_collected := false
 
+func calendar_path() -> String:
+	return "res://playtest/spring/spring_calendar.json"
+
+func chapter_count() -> int:
+	return 6
+
+func place_point(name: String) -> Vector2:
+	return PLACES[name]
+
 func configure(index: int, inherited_world: Dictionary = {}) -> void:
-	calendar = JSON.parse_string(FileAccess.get_file_as_string("res://playtest/spring/spring_calendar.json")).chapters
+	calendar = JSON.parse_string(FileAccess.get_file_as_string(calendar_path())).chapters
 	term_index = index
 	world = inherited_world.duplicate(true)
 	built_site = int(world.get("built_site", -1))
@@ -75,12 +84,12 @@ func start_day() -> void:
 	var mode: String = today().mode
 	food_kind = "nectar" if mode in ["nectar", "wind"] else "pollen"
 	for i in range(today().places.size()):
-		var target: Vector2 = PLACES[today().places[i]]
+		var target: Vector2 = place_point(today().places[i])
 		var origin := target + Vector2(-140 - i * 22, 100 + i * 30)
 		objects.append({"point": origin, "origin": origin, "target": target, "done": false, "shape": i % 3})
 	if mode in ["escort", "convoy"] or today().get("variation") == "novice":
 		for i in range(COMPANION_COUNT):
-			var point: Vector2 = PLACES[today().places[i % today().places.size()]] if mode == "escort" else HIVE
+			var point: Vector2 = place_point(today().places[i % today().places.size()]) if mode == "escort" else HIVE
 			companions.append({"position": point + Vector2.from_angle(-PI / 2 + i * TAU / 5) * (52 if mode == "escort" else 84), "waiting": mode == "escort", "joined": mode != "escort", "exposure": 0.0, "grace": 2.0, "heading": 0.0})
 	if mode == "dual":
 		food_kind = "pollen"
@@ -101,7 +110,7 @@ static func valid_world(value) -> bool:
 			if not (item is int or item is float) or not is_finite(float(item)) or float(item) != floor(float(item)) or item < (-1 if key == "built_site" else 0) or item > (1 if key == "built_site" else 100000):
 				return false
 		elif item is Dictionary:
-			if item.get("kind") not in ["wake", "pollinate", "haul", "sign", "catch", "repair"]:
+			if item.get("kind") not in ["wake", "pollinate", "haul", "sign", "catch", "repair", "water", "fan", "wax", "clean", "warm", "seed", "fruit", "share", "festival"]:
 				return false
 			if item.has("shape") and (not (item.shape is int or item.shape is float) or not is_finite(float(item.shape)) or float(item.shape) != floor(float(item.shape)) or item.shape < 0 or item.shape > 2):
 				return false
@@ -113,7 +122,7 @@ static func valid_world(value) -> bool:
 	return true
 
 func restore(data: Dictionary) -> bool:
-	if data.get("schema") != 1 or not _whole(data.get("term"), 0, 5) or int(data.term) == 1 or not _whole(data.get("day"), 1, 15):
+	if data.get("schema") != 1 or not _whole(data.get("term"), 0, chapter_count() - 1) or int(data.term) == 1 or not _whole(data.get("day"), 1, 15):
 		return false
 	if not data.get("completed_days") is Array or not data.get("complete") is bool or not valid_world(data.get("world")):
 		return false
@@ -158,7 +167,7 @@ func sheltered(point: Vector2) -> bool:
 		if point.distance_squared_to(roof) < 240.0 * 240.0:
 			return true
 	for place: String in EXTRA_ROOF_PLACES:
-		if point.distance_to(PLACES[place]) < 155:
+		if point.distance_to(place_point(place)) < 155:
 			return true
 	for p: Vector2 in SHELTERS:
 		if point.distance_to(p) < 215:
@@ -192,7 +201,7 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 				objects[i].point = (objects[i].origin as Vector2) + Vector2(sin(day_clock * 0.6 + i) * 92, cos(day_clock * 0.5 + i) * 36)
 	if today().mode in ["visit", "convoy"]:
 		for i in range(today().places.size()):
-			var p: Vector2 = PLACES[today().places[i]]
+			var p: Vector2 = place_point(today().places[i])
 			if position.distance_to(p) < 65 and (today().mode == "visit" or all_near(p, 195)) and not visits.has(str(i)):
 				visits[str(i)] = true
 				respond(p, "认得这处了")
@@ -232,9 +241,9 @@ func work_ready() -> bool:
 func sources() -> Array:
 	var result: Array = []
 	for place: String in today().places:
-		result.append(PLACES[place])
+		result.append(place_point(place))
 	if today().get("variation") == "sway":
-		var base: Vector2 = PLACES[today().places[0]]
+		var base: Vector2 = place_point(today().places[0])
 		result = [base + Vector2(sin(day_clock * 0.85) * 78, -65), base + Vector2(-145, 100), base + Vector2(155, 85)]
 	return result
 
@@ -250,7 +259,7 @@ func objective_points() -> Array:
 		var result: Array = []
 		for i in range(today().places.size()):
 			if not visits.has(str(i)):
-				result.append(PLACES[today().places[i]])
+				result.append(place_point(today().places[i]))
 		return result if not result.is_empty() else [HIVE]
 	if mode == "escort":
 		return [HIVE]

@@ -9,8 +9,8 @@ func _draw_static() -> void:
 	if is_rain():
 		return
 	var tints := [Color("e7dcc6"), PAPER, Color("ced8ba"), Color("e3ddb5"), Color("d5dfd2"), Color("c6d6c3")]
-	oval(Vector2(2050, 1630), Vector2(530, 240), Color(tints[route.term_index], 0.55), false)
-	oval(Vector2(2430, 480), Vector2(730, 210), Color(tints[route.term_index], 0.5), false)
+	oval(Vector2(2050, 1630), Vector2(530, 240), Color(tints[route.term_index % 6], 0.55), false)
+	oval(Vector2(2430, 480), Vector2(730, 210), Color(tints[route.term_index % 6], 0.5), false)
 	# The stump, winding northern lane and meadow remain at the same coordinates.
 	var stump: Vector2 = SpringModel.PLACES["树桩"]
 	oval(stump, Vector2(64, 39), Color("c5ab81"))
