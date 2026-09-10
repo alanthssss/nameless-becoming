@@ -2,8 +2,11 @@ name: Quality gates
 
 on:
   pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -13,7 +16,10 @@ jobs:
     name: Change scope and lightweight CI checks
     runs-on: ubuntu-latest
     outputs:
-      full_ci: ${{ steps.changes.outputs.full_ci }}
+      web: ${{ steps.changes.outputs.web }}
+      godot: ${{ steps.changes.outputs.godot }}
+      export_game: ${{ steps.changes.outputs.export_game }}
+      godot_suite: ${{ steps.changes.outputs.godot_suite }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,11 +37,7 @@ jobs:
           set -euo pipefail
 
           bash -n scripts/classify_ci_changes.sh
-          test "$(printf 'README.md\0docs/design-note.md\0' | bash scripts/classify_ci_changes.sh)" = false
-          test "$({ printf '.github/workflows/quality.yml\0'; printf 'scripts/classify_ci_changes.sh\0'; } | bash scripts/classify_ci_changes.sh)" = false
-          test "$(printf 'README.md\0godot/project.godot\0' | bash scripts/classify_ci_changes.sh)" = true
-          test "$(printf 'godot/source.gd\0docs/source.md\0' | bash scripts/classify_ci_changes.sh)" = true
-          test "$(printf '' | bash scripts/classify_ci_changes.sh)" = true
+          bash tests/ci-scope.test.sh
 
           zero_sha=0000000000000000000000000000000000000000
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
@@ -48,43 +50,21 @@ jobs:
             diff_spec="$base_sha..$head_sha"
           fi
 
-          full_ci=true
-          if (
-            [[ -n "$base_sha" ]]
-            [[ -n "$head_sha" ]]
-            [[ "$base_sha" != "$zero_sha" ]]
-            git cat-file -e "$base_sha^{commit}"
-            git cat-file -e "$head_sha^{commit}"
-          ); then
-            if classified="$(
-              # Disable rename detection so both sides of a rename are
-              # classified; moving source code to a .md path must run full CI.
-              git diff --name-only -z --no-renames "$diff_spec" \
-                | bash scripts/classify_ci_changes.sh
-            )"; then
-              case "$classified" in
-                true|false) full_ci="$classified" ;;
-                *) full_ci=true ;;
-              esac
-            fi
+          classified=$(bash scripts/classify_ci_changes.sh </dev/null)
+          if [[ "$EVENT_NAME" == "pull_request" ]] && git cat-file -e "$base_sha^{commit}" && git cat-file -e "$head_sha^{commit}"; then
+            classified=$(git diff --name-only -z --no-renames "$diff_spec" | bash scripts/classify_ci_changes.sh)
             git diff --check "$diff_spec"
           else
-            # A missing/all-zero base occurs on unusual history events. Keep the
-            # gate safe by running full CI and at least checking the head commit.
+            # Manual integration runs cover all jobs; unknown history stays broad.
             git show --check --format= "$head_sha"
           fi
-
-          printf 'full_ci=%s\n' "$full_ci" >> "$GITHUB_OUTPUT"
-          if [[ "$full_ci" == "true" ]]; then
-            printf 'Full Web, Godot, and clean-export CI required.\n' >> "$GITHUB_STEP_SUMMARY"
-          else
-            printf 'Documentation/CI-infrastructure-only change: heavy game CI jobs are skipped.\n' >> "$GITHUB_STEP_SUMMARY"
-          fi
+          printf '%s\n' "$classified" >> "$GITHUB_OUTPUT"
+          printf 'Selected checks:\n```\n%s\n```\n' "$classified" >> "$GITHUB_STEP_SUMMARY"
 
   web:
     name: Web build, tests and lint
     needs: scope
-    if: ${{ needs.scope.outputs.full_ci == 'true' }}
+    if: ${{ needs.scope.outputs.web == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -108,7 +88,7 @@ jobs:
   godot:
     name: Godot 4.6.2 tests
     needs: scope
-    if: ${{ needs.scope.outputs.full_ci == 'true' }}
+    if: ${{ needs.scope.outputs.godot == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -133,6 +113,7 @@ jobs:
       - name: Run Godot tests
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+          GODOT_TEST_SCOPE: ${{ needs.scope.outputs.godot_suite }}
         run: npm run test:godot
       - name: Verify exported resource boundaries
         env:
@@ -142,7 +123,7 @@ jobs:
   web-candidate:
     name: Clean Web game and site candidate
     needs: [scope, web, godot]
-    if: ${{ always() && needs.scope.outputs.full_ci == 'true' && needs.web.result == 'success' && needs.godot.result == 'success' }}
+    if: ${{ always() && needs.scope.outputs.export_game == 'true' && needs.web.result == 'success' && needs.godot.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
