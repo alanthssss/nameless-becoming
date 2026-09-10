@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "tool": "OpenAI built-in image_gen",
+  "mode": "generate",
+  "date": "2026-09-09",
+  "references": [],
+  "prompt_file": "generation-prompts.json",
+  "postprocessing": "None. Original output bytes copied unchanged; engine handles runtime scaling and modulation.",
+  "scope": "Rain Water playable scene; formal Campaign export unchanged.",
+  "review": "Developer in-engine visual QA; not user approval or marketing clearance.",
+  "assets": [
+    {
+      "file": "rain_garden_v1.png",
+      "source": "/Users/alanthssss/.codex/generated_images/01a08511-bb7b-7b73-a9b3-3746df2bece6/exec-083c9f73-2976-4230-8a73-e29a8d6fdde4.png",
+      "sha256": "b2c2d2a4d58090710e67b566f8ad208eceb1825550b3395589988b6ce8283a55",
+      "prompt_key": "background",
+      "alpha_requested": false
+    },
+    {
+      "file": "leaf_canopy_v1.png",
+      "source": "/Users/alanthssss/.codex/generated_images/01a08511-bb7b-7b73-a9b3-3746df2bece6/exec-f3bae8ca-bc05-4f40-8f86-9bd9264bf78b.png",
+      "sha256": "5d509e31958dbe8483b2cae0a227ecf319d7c62bd784d86df32fee96350d07e0",
+      "prompt_key": "leaf",
+      "alpha_requested": true
+    },
+    {
+      "file": "pollen_flowers_v1.png",
+      "source": "/Users/alanthssss/.codex/generated_images/01a08511-bb7b-7b73-a9b3-3746df2bece6/exec-76558428-255a-4850-9c45-bcd1dcfaa186.png",
+      "sha256": "ac0d4b7f6b165e037921ce9cbfbcf6c902b23a7d9d2c1529bbe1f83467f31968",
+      "prompt_key": "flowers",
+      "alpha_requested": true
+    },
+    {
+      "file": "shelter_materials_v1.png",
+      "source": "/Users/alanthssss/.codex/generated_images/01a08511-bb7b-7b73-a9b3-3746df2bece6/exec-70c75359-f5f3-40b6-825e-4a29556fa814.png",
+      "sha256": "4c6d94a4587d9067698e44bd5a05dab9a36e9ed93d5cc998947aec6d07b805f0",
+      "prompt_key": "materials",
+      "alpha_requested": true
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+extends SceneTree
+const Model := preload("res://playtest/rain_route/route_model.gd")
+const Driver := preload("res://tools/rain_calendar_driver.gd")
+
+func _init() -> void:
+	var game = Model.new()
+	assert(not game.next_day(), "Unfinished work must not skip a day")
+	for expected_day in range(1, 16):
+		assert(game.day == expected_day and game.stage == int((expected_day - 1) / 5))
+		assert(game.completed_days.size() == expected_day - 1)
+		assert(not game.complete, "Three deliveries cannot end a fifteen-day term")
+		if game.day != 3:
+			game.act()
+			assert(not game.day_finished, "Empty hive click must not complete a fresh day's work")
+		if game.day == 3:
+			assert(game.roof_available() and game.objective_points() == [Model.ROOF_PICKUP])
+			game.position = Model.HIVE + Vector2(28, 90)
+			assert(game.can_take_roof() and game.action_label() == "空格 · 带上遮雨叶")
+			assert(game.act() == "roof" and game.roof_carried)
+			assert(not game.roof_available() and game.objective_points() == Model.BUILD_SITES)
+			assert(game.restore(game.dawn_state))
+		if game.day == 5:
+			check_drip_choices(game.snapshot())
+		if game.day == 14:
+			assert(game.waiting_companion_points().size() == 5 and game.home_companions() == 0)
+			assert(not game.work_ready(), "Companions must actually be met, not spawn following")
+		Driver.work(game)
+		Driver.home(game)
+		assert(game.day_finished, "Day %d must be finishable through its actual mechanics" % expected_day)
+		assert(game.events_done.size() == expected_day)
+		var count: int = game.completed_days.size()
+		game.act()
+		assert(game.completed_days.size() == count, "Closing a day must be idempotent")
+		if expected_day < 15:
+			assert(game.next_day())
+			var restored = Model.new()
+			assert(restored.restore(JSON.parse_string(JSON.stringify(game.snapshot()))))
+			assert(restored.day == game.day and restored.stage == game.stage and restored.built_site == game.built_site)
+			assert(restored.pollinated.size() == game.pollinated.size() and restored.cleared.size() == game.cleared.size())
+			game = restored
+	assert(game.complete and game.day == 15 and game.completed_days.size() == 15)
+	assert(game.home_companions() == 5 and game.beetle_home and game.pollinated.size() == 2)
+	assert(not game.next_day())
+	var bad: Dictionary = game.snapshot()
+	bad.completed_days = [1, 3]
+	var empty = Model.new()
+	assert(not empty.restore(bad) and empty.day == 1, "Invalid calendar must not mutate a new run")
+	var duplicate: Dictionary = game.snapshot()
+	duplicate.pollinated = ["0", "0"]
+	assert(not empty.restore(duplicate), "Duplicate world-state keys must be rejected")
+	var fraction: Dictionary = game.snapshot()
+	fraction.day = 14.5
+	assert(not empty.restore(fraction), "Fractional days must be rejected")
+	var water = Model.new()
+	water.position = Vector2(990, 1020)
+	Driver.fly(water, Vector2(1490, 1020))
+	assert(water.position.x > 1480)
+	var turn = Model.new()
+	for frame in range(60):
+		turn.step(1.0 / 60, Vector2.LEFT, false)
+	assert(absf(angle_difference(turn.heading, PI)) < 0.05)
+	var last_heading: float = turn.heading
+	turn.step(0.3, Vector2.ZERO, true)
+	assert(turn.heading == last_heading)
+	print("RAIN ROUTE TEST PASSED: fifteen actual days, 5/5/5 pentads, persistent world, dawn restore, distinct work and six-bee completion")
+	quit()
+
+
+func check_drip_choices(dawn: Dictionary) -> void:
+	var bypass = Model.new()
+	assert(bypass.restore(dawn))
+	Driver.flowers(bypass, 1)
+	Driver.home(bypass)
+	assert(bypass.day_finished and bypass.day_spills == 0 and bypass.visited.is_empty(), "Safe detour must finish without timed checkpoint credit or lost pollen")
+	var shortcut = Model.new()
+	assert(shortcut.restore(dawn))
+	Driver.flowers(shortcut, 1)
+	# Return across both exposed gaps, waiting under cover before each crossing.
+	for i in range(shortcut.SAFE_ROUTE.size() - 1, 4, -1):
+		Driver.fly(shortcut, shortcut.SAFE_ROUTE[i])
+	for i in [1, 0]:
+		var gap: Vector2 = shortcut.drip_gaps()[i]
+		Driver.fly(shortcut, gap + Vector2(85, 0))
+		while fposmod(shortcut.day_clock, 4.5) < 2.72 or fposmod(shortcut.day_clock, 4.5) > 2.8:
+			shortcut.step(1.0 / 60, Vector2.ZERO, true)
+		Driver.fly(shortcut, gap - Vector2(85, 0), false)
+		assert(shortcut.cargo == 1 and shortcut.day_spills == 0, "Waiting for the gap must preserve cargo")
+	Driver.home(shortcut)
+	assert(shortcut.day_finished)
+	var impact = Model.new()
+	assert(impact.restore(dawn))
+	var center: Vector2 = impact.drip_gaps()[0]
+	assert(not impact.sheltered(center) and impact.sheltered(center + Vector2(0, 150)))
+	impact.position = center
+	impact.cargo = 1
+	impact.velocity = Vector2(100, 0)
+	impact.day_clock = 0.45
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.cargo == 0 and impact.drops.size() == 1 and impact.velocity.length() == 25)
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.spills == 1, "One visible drop cannot repeatedly hit")
+	assert(impact.act() == "recover" and impact.cargo == 1)
+	impact.day_clock = 2.8
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.cargo == 1, "No impact during the visible dry interval")
+
+	impact.position = center + Vector2(0, 105)
+	impact.day_clock = 0.89
+	impact._update_drip_hits(1.0 / 60)
+	assert(impact.cargo == 1 and impact.sheltered(impact.position), "A water drop cannot hit through the covered leaf edge")
