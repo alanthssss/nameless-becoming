@@ -25,6 +25,8 @@ var reaction_text := ""
 var chapter_departure := false
 # Derived geometry: rebuild on world load/repair, never scan history per raindrop.
 var repaired_roofs := PackedVector2Array()
+var source_stock: Array[int] = []
+var novice_collected := false
 
 func configure(index: int, inherited_world: Dictionary = {}) -> void:
 	calendar = JSON.parse_string(FileAccess.get_file_as_string("res://playtest/spring/spring_calendar.json")).chapters
@@ -65,6 +67,8 @@ func start_day() -> void:
 	source_visits.clear()
 	delivered_kinds.clear()
 	objects.clear()
+	source_stock.assign([2, 1, 1])
+	novice_collected = false
 	companions.clear()
 	daily_done.clear()
 	pulse = 0
@@ -74,7 +78,7 @@ func start_day() -> void:
 		var target: Vector2 = PLACES[today().places[i]]
 		var origin := target + Vector2(-140 - i * 22, 100 + i * 30)
 		objects.append({"point": origin, "origin": origin, "target": target, "done": false, "shape": i % 3})
-	if mode in ["escort", "convoy"]:
+	if mode in ["escort", "convoy"] or today().get("variation") == "novice":
 		for i in range(COMPANION_COUNT):
 			var point: Vector2 = PLACES[today().places[i % today().places.size()]] if mode == "escort" else HIVE
 			companions.append({"position": point + Vector2.from_angle(-PI / 2 + i * TAU / 5) * (52 if mode == "escort" else 84), "waiting": mode == "escort", "joined": mode != "escort", "exposure": 0.0, "grace": 2.0, "heading": 0.0})
@@ -178,6 +182,10 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 		return
 	super.step(delta, steering, braking)
 	pulse = maxf(0, pulse - delta)
+	if today().get("variation") == "novice" and not novice_collected and not companions.is_empty():
+		if (companions[0].position as Vector2).distance_to(sources()[0]) < 30:
+			novice_collected = true
+			respond(companions[0].position, "新蜂也采到花粉了")
 	if today().mode == "catch":
 		for i in range(objects.size()):
 			if not objects[i].done and carried != i:
@@ -188,6 +196,14 @@ func step(delta: float, steering: Vector2, braking: bool) -> void:
 			if position.distance_to(p) < 65 and (today().mode == "visit" or all_near(p, 195)) and not visits.has(str(i)):
 				visits[str(i)] = true
 				respond(p, "认得这处了")
+
+func _companion_target(index: int) -> Vector2:
+	if today().get("variation") == "novice" and social.dance_age < 0:
+		if index > 0:
+			return HIVE + Vector2.from_angle(-PI / 2 + index * TAU / 5) * 84
+		if not novice_collected and position.distance_to(sources()[0]) < 220:
+			return sources()[0]
+	return super._companion_target(index)
 
 func all_near(point: Vector2, radius: float) -> bool:
 	for b in companions:
@@ -202,11 +218,13 @@ func objects_done() -> int:
 	return count
 
 func work_ready() -> bool:
+	if today().get("variation") == "novice" and (not novice_collected or home_companions() != 5):
+		return false
 	match today().mode:
 		"visit": return visits.size() == today().places.size()
 		"escort": return home_companions() == COMPANION_COUNT
 		"convoy": return visits.size() == today().places.size() and home_companions() == COMPANION_COUNT
-		"pollen", "nectar": return day_delivered >= today().places.size()
+		"pollen", "nectar": return day_delivered >= int(today().get("quota", today().places.size()))
 		"wind": return day_delivered >= today().places.size() and source_visits.size() == today().places.size()
 		"dual": return delivered_kinds.has("pollen") and delivered_kinds.has("nectar")
 		_: return objects_done() == objects.size()
@@ -215,6 +233,9 @@ func sources() -> Array:
 	var result: Array = []
 	for place: String in today().places:
 		result.append(PLACES[place])
+	if today().get("variation") == "sway":
+		var base: Vector2 = PLACES[today().places[0]]
+		result = [base + Vector2(sin(day_clock * 0.85) * 78, -65), base + Vector2(-145, 100), base + Vector2(155, 85)]
 	return result
 
 func objective_points() -> Array:
@@ -234,6 +255,8 @@ func objective_points() -> Array:
 	if mode == "escort":
 		return [HIVE]
 	if mode in ["pollen", "nectar", "wind", "dual"]:
+		if today().get("variation") == "novice" and not novice_collected:
+			return sources()
 		if cargo > 0:
 			return [NECTAR_DESK if food_kind == "nectar" else POLLEN_DESK]
 		if mode == "wind":
@@ -242,6 +265,12 @@ func objective_points() -> Array:
 				if not source_visits.has(str(i)):
 					unvisited.append(sources()[i])
 			return unvisited
+		if today().get("variation") == "sway":
+			var available: Array = []
+			for i in range(sources().size()):
+				if source_stock[i] > 0:
+					available.append(sources()[i])
+			return available if not available.is_empty() else drops
 		return sources()
 	if mode == "pollinate" and not body_pollen:
 		return [sources()[0] + Vector2(-90, -70)]
@@ -285,7 +314,11 @@ func act() -> String:
 			return "deliver"
 		if cargo < 3:
 			for i in range(sources().size()):
-				if position.distance_to(sources()[i]) < 70 and (mode != "wind" or not source_visits.has(str(i))):
+				if position.distance_to(sources()[i]) < (38 if today().get("variation") == "sway" else 70) and (mode != "wind" or not source_visits.has(str(i))):
+					if today().get("variation") == "sway":
+						if source_stock[i] <= 0:
+							continue
+						source_stock[i] -= 1
 					if mode != "dual":
 						food_kind = "nectar" if mode in ["nectar", "wind"] else "pollen"
 					cargo += 1
@@ -329,7 +362,10 @@ func act() -> String:
 
 func remember(kind: String, point: Vector2, shape_index := 0) -> void:
 	var key := "%s:%d:%d" % [kind, point.x, point.y]
+	var born := int(world.get(key, {}).get("born_day", term_index * 15 + day))
 	world[key] = {"kind": kind, "x": point.x, "y": point.y, "shape": shape_index}
+	if kind == "pollinate":
+		world[key]["born_day"] = born
 	if kind == "repair":
 		_rebuild_repaired_roofs()
 
@@ -345,6 +381,10 @@ func hint() -> String:
 	if work_ready():
 		return "今天的事做好了。回到巢门，按空格收工。"
 	var mode: String = today().mode
+	if today().get("variation") == "sway":
+		return "晃动花可取两份，也可到两朵稳花各取一份。带回巢：%d / 2 · 身上 %d" % [day_delivered, cargo]
+	if today().get("variation") == "novice":
+		return "陪新蜂靠近花头，让它亲自采一次；你也带一份粉。" if not novice_collected else "新蜂采到了。带它和你的花粉回巢，慢些过弯。"
 	match mode:
 		"visit": return "沿金色叶片指引认清地标，靠近后会记住。已到 %d / %d" % [visits.size(), today().places.size()]
 		"escort": return "伙伴在路边等候。靠近慢飞接上它们，带五位伙伴一起回巢。"

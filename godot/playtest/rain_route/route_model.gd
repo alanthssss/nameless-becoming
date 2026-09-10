@@ -617,7 +617,7 @@ func _update_companions(delta: float) -> void:
 				bee.exposure = 0.0
 				notice = "跟上啦。按住 Shift 慢飞，过弯时给队尾一点余地。"
 		else:
-			var target: Vector2 = social.target(self, index)
+			var target: Vector2 = _companion_target(index)
 			if homecoming_time >= 0 and social.dance_age < 0:
 				target = HIVE + Vector2.from_angle(-PI / 2 + index * TAU / 5) * 84
 			var movement: Vector2 = (target - p).limit_length((355.0 if velocity.length() > 80 else 190.0) * delta)
@@ -646,6 +646,9 @@ func _update_companions(delta: float) -> void:
 					notice = "有伙伴停下了。回到它身边，按住 Shift 稳住，就能接回。"
 			else:
 				bee.exposure = 0.0
+
+func _companion_target(index: int) -> Vector2:
+	return social.target(self, index)
 
 func home_companions() -> int:
 	var count := 0

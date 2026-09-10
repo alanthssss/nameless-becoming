@@ -82,6 +82,9 @@ func _next_term() -> void:
 		world["built_site"] = model.built_site
 		world["beetle_home"] = model.beetle_home
 		world["cleared_gutter"] = model.cleared.size() == 3
+		for id in model.pollinated:
+			var p: Vector2 = Model.Calendar.DAYS[3].points[int(id)]
+			world["pollinate:%d:%d" % [p.x, p.y]] = {"kind": "pollinate", "x": p.x, "y": p.y, "shape": 0, "born_day": 19}
 	else:
 		world = model.world.duplicate(true)
 	prior_terms.append(term_index)

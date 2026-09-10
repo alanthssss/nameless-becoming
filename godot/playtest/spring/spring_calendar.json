@@ -85,13 +85,16 @@
           "id": "spring_01_day_09"
         },
         {
-          "title": "把花粉带给家里",
+          "title": "轻晃的花头",
           "mode": "pollen",
           "places": [
             "近花",
-            "池花"
+            "近花",
+            "近花"
           ],
-          "id": "spring_01_day_10"
+          "id": "spring_01_day_10",
+          "variation": "sway",
+          "quota": 2
         },
         {
           "title": "接上慢半拍的伙伴",
@@ -120,12 +123,13 @@
           "id": "spring_01_day_13"
         },
         {
-          "title": "先送粉再探路",
+          "title": "陪新蜂认花路",
           "mode": "pollen",
           "places": [
             "池花"
           ],
-          "id": "spring_01_day_14"
+          "id": "spring_01_day_14",
+          "variation": "novice"
         },
         {
           "title": "这趟由你领路",

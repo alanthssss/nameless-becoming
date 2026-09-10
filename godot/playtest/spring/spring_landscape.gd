@@ -52,7 +52,15 @@ func _daily_world(visible_world: Rect2) -> void:
 					line([p + Vector2(50, 10), p + Vector2(55, -70)], GREEN, 3)
 					oval(p + Vector2(52, -48), Vector2(14, 9), Color("b4a67e"))
 				elif value.kind == "pollinate":
-					flower(p + Vector2(50, 20), 14, Color("ecd097"))
+					var age: int = route.term_index * 15 + m.day - int(value.get("born_day", route.term_index * 15 + m.day))
+					if age < 7:
+						flower(p + Vector2(50, 20), 14, Color("ecd097"))
+					else:
+						for i in range(3):
+							var tip := p + Vector2(25 + i * 22, 10 - i % 2 * 12)
+							line([tip + Vector2(0, 30), tip], GREEN, 2)
+							oval(tip, Vector2(5, 15), Color("d4ad68") if age >= 45 else GREEN)
+						label(p + Vector2(-15, 65), "种子成熟了" if age >= 45 else "青果慢慢长大", 16)
 	if is_rain():
 		return
 	if m.world.get("cleared_gutter", false):
@@ -82,6 +90,8 @@ func _daily_world(visible_world: Rect2) -> void:
 			p = m.sources()[i]
 			if visible_world.has_point(p):
 				flower(p, 21, Color("edd19e") if mode == "pollen" else Color("dfb8b0"))
+				if m.today().get("variation") == "sway":
+					label(p + Vector2(-30, -38), ("轻晃" if i == 0 else "稳花") + " · %d" % m.source_stock[i], 16)
 			continue
 		if visible_world.has_point(item.target) and mode in ["haul", "repair", "sign", "catch"]:
 			post(item.target, int(item.shape), item.done)
