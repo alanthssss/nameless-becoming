@@ -37,4 +37,3 @@ Use case: illustration-story. Finished minimalist lineart storybook illustration
 ## 复议与检查点
 
 决定者 Alan 授权制作，Codex 负责分镜、资产选择、实现与自测；本轮 PR 为交付检查点。之后由 Alan 判断笑点是否读得懂、停留节奏是否合适、是否延续喜欢的画风。若仍只感到字幕切换或动作不明，应修改镜头和表演，不能靠增加说明文字替代演出。夏秋冬专属分镜与其余节点插画未在本轮完成。
-
