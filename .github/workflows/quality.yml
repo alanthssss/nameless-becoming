@@ -179,9 +179,5 @@ jobs:
           npm run build
           node --test tests/rendered-html.test.mjs
           test -s dist/server/index.js
-      - uses: actions/upload-artifact@v4
-        with:
-          name: SeeYouAtTheHive-Web-InternalCandidate-${{ github.sha }}
-          path: dist/
-          if-no-files-found: error
-          retention-days: 14
+      # Daily CI validates the export without retaining a candidate download.
+      # Create shareable packages only through an explicitly requested build.
