@@ -68,7 +68,7 @@ func _daily_world(visible_world: Rect2) -> void:
 		label(nectar + Vector2(-18, 25), "接蜜处", 16)
 		label(pollen + Vector2(-12, 25), "储粉处", 16)
 		# The same five workers, not additional bees, show receiving work on solo days.
-		if m.companions.is_empty():
+		if m.companions.is_empty() and m.social.dance_age < 0:
 			for i in range(5):
 				var p: Vector2 = Model.HIVE + Vector2(-80 + i * 40, 58 + (i % 2) * 12)
 				var receiving: bool = m.pulse > 0 and m.pulse_point.distance_to(Model.HIVE) < 180
@@ -150,6 +150,8 @@ func _draw() -> void:
 	if static_pass or is_rain():
 		return
 	var m = route.model
+	if m.social.dance_age >= 0:
+		return
 	if m.pulse > 0:
 		var p: Vector2 = m.pulse_point
 		draw_arc(p, 25 + (1.8 - m.pulse) * 16, 0, TAU, 26, Color("e2c275", m.pulse / 3), 1.5, true)
