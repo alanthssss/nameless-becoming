@@ -1,0 +1,84 @@
+name: Flower Step prototype
+
+on:
+  pull_request:
+    paths:
+      - 'prototypes/flower-step/**'
+      - '.github/workflows/flower-step.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'prototypes/flower-step/**'
+      - '.github/workflows/flower-step.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flower-step-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Flower Step rules and complete routes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GODOT_RELEASE: 4.6.2-stable
+      GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official Godot and verify SHA-512
+        working-directory: ${{ runner.temp }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_url="https://github.com/godotengine/godot/releases/download/$GODOT_RELEASE"
+          curl --fail --silent --show-error --location --output "$GODOT_ARCHIVE" "$release_url/$GODOT_ARCHIVE"
+          curl --fail --silent --show-error --location --output SHA512-SUMS.txt "$release_url/SHA512-SUMS.txt"
+          awk -v archive="$GODOT_ARCHIVE" '$2 == archive {print; found++} END {if (found != 1) exit 1}' SHA512-SUMS.txt > selected.sha512
+          sha512sum --check --strict selected.sha512
+          unzip -q "$GODOT_ARCHIVE" -d godot-bin
+      - name: Import isolated prototype
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path prototypes/flower-step --editor --import --quit 2>&1 | tee "$RUNNER_TEMP/flower-step-import.log"
+          if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/flower-step-import.log"; then
+            exit 1
+          fi
+      - name: Verify rules and replay complete chapter routes
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path prototypes/flower-step --script res://verify.gd 2>&1 | tee "$RUNNER_TEMP/flower-step-verify.log"
+          if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/flower-step-verify.log"; then
+            exit 1
+          fi
+          grep -q '^FLOWER STEP VERIFIED:' "$RUNNER_TEMP/flower-step-verify.log"
+      - name: Play the complete scene flow and recovery controls
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path prototypes/flower-step --script res://ui_verify.gd 2>&1 | tee "$RUNNER_TEMP/flower-step-ui.log"
+          if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/flower-step-ui.log"; then
+            exit 1
+          fi
+          grep -q '^FLOWER STEP UI VERIFIED:' "$RUNNER_TEMP/flower-step-ui.log"
+      - name: Start the main scene
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path prototypes/flower-step --quit-after 3 2>&1 | tee "$RUNNER_TEMP/flower-step-main.log"
+          if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/flower-step-main.log"; then
+            exit 1
+          fi
