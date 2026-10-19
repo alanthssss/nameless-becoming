@@ -7,6 +7,15 @@ const FLOWERS := Vector2(3260, 780)
 const BUILD_SITE := Vector2(1800, 930)
 const BUILD_SITES := [BUILD_SITE, Vector2(1840, 540)]
 const ROOF_RADII := [190.0, 320.0]
+# Natural leaves make both authored lanes flyable. The built roof closes a
+# different exposed gap in each lane; these leaves are never reward spawns.
+const ROUTE_SHELTERS := [
+	{"point": Vector2(1010, 760), "radius": 170.0},
+	{"point": Vector2(900, 540), "radius": 170.0},
+	{"point": Vector2(1400, 420), "radius": 170.0},
+	{"point": Vector2(2450, 550), "radius": 170.0},
+	{"point": Vector2(2850, 640), "radius": 170.0}
+]
 const PENTAD_NAMES := ["一候 · 认路", "二候 · 接路", "三候 · 同行"]
 const CAPACITY := 3
 const GOAL := 15
@@ -32,6 +41,7 @@ var day_delivered := 0
 var day_spills := 0
 var visited: Dictionary = {}
 var daily_done: Dictionary = {}
+var final_visitors: Dictionary = {}
 var completed_days: Array[int] = []
 var pollinated: Dictionary = {}
 var cleared: Dictionary = {}
@@ -118,6 +128,7 @@ func _begin_day() -> void:
 	drip_hit_points.clear()
 	drip_hit_flash = 0.0
 	daily_done.clear()
+	final_visitors.clear()
 	if day == 12 and companions.is_empty():
 		for i in range(COMPANION_COUNT):
 			companions.append({"position": SHELTERS[2 + i], "waiting": true, "exposure": 0.0, "grace": 0.0, "joined": false, "heading": PI})
@@ -237,9 +248,10 @@ func work_ready() -> bool:
 		"beetle": return beetle_home
 		"rescue": return home_companions() == COMPANION_COUNT
 		"leaf_delivery": return day_delivered >= int(today().quota) and visited.size() >= 2
-		"rack": return daily_done.has("rest") and day_delivered >= int(today().quota)
-		"moving": return daily_done.has("rest") and day_delivered >= int(today().quota) and moving_hold >= 1.2
-		"mastery", "wind", "final": return day_delivered >= int(today().quota) and home_companions() == COMPANION_COUNT
+		"rack": return day_delivered >= int(today().quota)
+		"moving": return day_delivered >= int(today().quota) and moving_hold >= 1.2
+		"final": return final_party_ready() and day_delivered >= int(today().quota) and home_companions() == COMPANION_COUNT
+		"mastery", "wind": return day_delivered >= int(today().quota) and home_companions() == COMPANION_COUNT
 		_: return day_delivered >= int(today().get("quota", 1))
 
 func _remaining(points: Array, done: Dictionary) -> Array:
@@ -260,14 +272,26 @@ func work_progress() -> String:
 func moving_stage_hint() -> String:
 	if moving_hold < 1.2:
 		return "第 1 / 2 步 · 取一份粉，跟随移动叶影。叶下进度 %d%%" % mini(99, int(moving_hold / 1.2 * 100))
-	return rest_stage_hint()
+	return "跟上叶影了。接着按自己的路线带粉回巢；叶台可歇脚。" + delivery_hint()
 
 func rest_stage_hint() -> String:
 	if daily_done.has("rest"):
 		return "已在叶台歇脚。花粉还在身上，带回蜂巢。" + delivery_hint()
 	if cargo <= 0:
-		return "先到花田取粉，再到新叶台歇脚。" + delivery_hint()
-	return "到新叶台慢下来，按空格歇脚；花粉最终送回巢。"
+		return "今天带回两份粉。用自己修好的路，轻装或一起带都可以。" + delivery_hint()
+	return "叶台可慢下来歇脚，也可以直接回巢。怎样走由你决定。" + delivery_hint()
+
+func final_party_ready() -> bool:
+	return final_visitors.size() == COMPANION_COUNT
+
+func final_stage_hint() -> String:
+	if not waiting_companion_points().is_empty():
+		return "有伙伴停下了。回身慢飞接应，再一起完成这趟花路。"
+	if not final_party_ready():
+		return "带全队到花田，给队尾一点时间。到过花田 %d / 5；花粉要带回两份。" % final_visitors.size()
+	if day_delivered < int(today().quota):
+		return "全队都到过花田了。选熟悉的路，一起带粉回巢。" + delivery_hint()
+	return "花粉交齐了，等五位伙伴都到巢门，再一起收工。"
 
 func delivery_hint() -> String:
 	return " 已送回 %d / %d · 身上 %d / 3" % [day_delivered, int(today().get("quota", 1)), cargo]
@@ -310,9 +334,14 @@ func objective_points() -> Array:
 		"pollinate": return _remaining(Calendar.DAYS[3].points, pollinated) if cargo > 0 else [FLOWERS]
 		"gutter": return [today().target] if carried_seed >= 0 else _remaining(today().points, cleared)
 		"beetle": return [today().target] if escort_roof else [beetle_position]
-		"rack": return ([HIVE] if daily_done.has("rest") else [roof_position()]) if cargo > 0 else [FLOWERS]
-		"moving": return [moving_roof_position() if moving_hold < 1.2 else (HIVE if daily_done.has("rest") else roof_position())] if cargo > 0 else [FLOWERS]
-		"mastery", "final":
+		"rack": return [FLOWERS, HIVE] if cargo > 0 and cargo < int(today().quota) - day_delivered else ([HIVE] if cargo > 0 else [FLOWERS])
+		"moving": return [moving_roof_position() if moving_hold < 1.2 else HIVE] if cargo > 0 else [FLOWERS]
+		"final":
+			var missing := waiting_companion_points()
+			if not missing.is_empty():
+				return missing
+			return [FLOWERS] if not final_party_ready() else ([HIVE, FLOWERS] if cargo > 0 and cargo < int(today().quota) - day_delivered else ([HIVE] if cargo > 0 or day_delivered >= int(today().quota) else [FLOWERS]))
+		"mastery":
 			var missing := waiting_companion_points()
 			return missing if not missing.is_empty() else ([HIVE] if cargo > 0 or day_delivered >= int(today().quota) else [FLOWERS])
 		"wind":
@@ -324,7 +353,7 @@ func objective_points() -> Array:
 				if not bee.joined or bee.waiting:
 					result.append(bee.position)
 			return result if not result.is_empty() else [HIVE]
-		_: return [HIVE] if cargo > 0 else [FLOWERS]
+		_: return [FLOWERS, HIVE] if cargo > 0 and cargo < int(today().get("quota", 1)) - day_delivered else ([HIVE] if cargo > 0 else [FLOWERS])
 
 func _update_day(delta: float) -> void:
 	var mode: String = today().mode
@@ -389,6 +418,9 @@ func sheltered(point: Vector2) -> bool:
 		return true
 	for center: Vector2 in SHELTERS:
 		if point.distance_to(center) < 215.0:
+			return true
+	for roof in ROUTE_SHELTERS:
+		if point.distance_to(roof.point) < float(roof.radius):
 			return true
 	return built_site >= 0 and point.distance_to(roof_position()) < roof_radius()
 
@@ -595,7 +627,11 @@ func action_label() -> String:
 	if today().mode == "moving" and cargo > 0 and moving_hold < 1.2:
 		return "跟随叶影 · 留在叶下"
 	if today().mode in ["rack", "moving"] and cargo > 0:
-		return "带粉回巢" if daily_done.has("rest") else "空格 · 叶台歇脚"
+		if position.distance_to(roof_position()) < 115 and not daily_done.has("rest"):
+			return "空格 · 歇脚，也可直接回巢"
+		if position.distance_to(FLOWERS) < 80 and cargo < cargo_capacity():
+			return "空格 · 继续取粉"
+		return "带粉回巢"
 	return "空格 · 取粉 / 接回散粉"
 
 func _update_companions(delta: float) -> void:
@@ -646,6 +682,10 @@ func _update_companions(delta: float) -> void:
 					notice = "有伙伴停下了。回到它身边，按住 Shift 稳住，就能接回。"
 			else:
 				bee.exposure = 0.0
+		# Only physical presence on this day's trip counts, never a date or a
+		# hive headcount. A lagging companion can still join later and finish.
+		if day == 15 and bee.joined and not bee.waiting and (bee.position as Vector2).distance_to(FLOWERS) < 220:
+			final_visitors[str(index)] = true
 
 func _companion_target(index: int) -> Vector2:
 	return social.target(self, index)

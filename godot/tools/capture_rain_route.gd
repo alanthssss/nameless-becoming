@@ -42,6 +42,8 @@ func run() -> void:
 	scene.save_enabled = false
 	root.add_child(scene)
 	scene.set_physics_process(false)
+	await capture("chapter-opening")
+	scene._begin_chapter()
 	await capture("day-01-start")
 	scene._toggle_pause()
 	await capture("pause")

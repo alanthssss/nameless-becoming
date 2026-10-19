@@ -22,4 +22,4 @@ if grep -q 'SCRIPT ERROR:' /tmp/see-you-hive-rain-route-import.log; then
   cat /tmp/see-you-hive-rain-route-import.log >&2
   exit 1
 fi
-exec "$godot_bin" --path "$project_root/godot" res://playtest/rain_route/rain_route.tscn
+exec "$godot_bin" --path "$project_root/godot" res://playtest/rain_route/rain_route.tscn -- --rain-chapter-review

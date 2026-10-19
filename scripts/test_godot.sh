@@ -40,9 +40,9 @@ if grep -q "SCRIPT ERROR:" "$import_log"; then
   exit 1
 fi
 
-test_files=(bee_social_test.gd spring_route_test.gd spring_persistence_test.gd rain_route_test.gd rain_calendar_persistence_test.gd smoke_test.gd playtest_ticket_validator_test.gd playtest_bootstrap_test.gd playtest_save_isolation_test.gd commercial_persistence_test.gd evade_runtime_test.gd b01_evade_slice_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd commercial_audio_test.gd journey_audio_director_test.gd journey_solar_term_chronicle_test.gd journey_level_catalog_test.gd journey_event_matrix_runtime_test.gd journey_campaign_state_test.gd campaign_systemic_contract_test.gd boss_encounter_director_test.gd season_mechanics_test.gd relay_hive_test.gd mentor_tutorial_test.gd hud_responsive_test.gd journey_campaign_hud_test.gd journey_world_test.gd)
+test_files=(bee_social_test.gd spring_route_test.gd spring_persistence_test.gd rain_route_test.gd rain_chapter_test.gd rain_calendar_persistence_test.gd smoke_test.gd playtest_ticket_validator_test.gd playtest_bootstrap_test.gd playtest_save_isolation_test.gd commercial_persistence_test.gd evade_runtime_test.gd b01_evade_slice_test.gd flow_test.gd fix_boss_term_test.gd music_test.gd commercial_audio_test.gd journey_audio_director_test.gd journey_solar_term_chronicle_test.gd journey_level_catalog_test.gd journey_event_matrix_runtime_test.gd journey_campaign_state_test.gd campaign_systemic_contract_test.gd boss_encounter_director_test.gd season_mechanics_test.gd relay_hive_test.gd mentor_tutorial_test.gd hud_responsive_test.gd journey_campaign_hud_test.gd journey_world_test.gd)
 if [[ "${GODOT_TEST_SCOPE:-full}" == routes ]]; then
-  test_files=(bee_social_test.gd spring_route_test.gd spring_persistence_test.gd rain_route_test.gd rain_calendar_persistence_test.gd)
+  test_files=(bee_social_test.gd spring_route_test.gd spring_persistence_test.gd rain_route_test.gd rain_chapter_test.gd rain_calendar_persistence_test.gd)
 fi
 for year_test in "$project_root"/godot/tests/year_*_test.gd; do
   if [[ -f "$year_test" ]]; then test_files+=("$(basename "$year_test")"); fi
