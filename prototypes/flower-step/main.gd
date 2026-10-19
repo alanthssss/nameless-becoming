@@ -16,6 +16,7 @@ var scores: Array = []
 var chapter := 0
 var mode := "title"
 var hover := Vector2i(-1,-1)
+var keyboard_aim := false
 var anim := 0.0
 var clock := 0.0
 var action_target := Vector2.ZERO
@@ -119,7 +120,7 @@ func start_chapter() -> void:
 	state = Model.start(chapter)
 	previous = state.duplicate(true)
 	history.clear()
-	hover = Vector2i(-1,-1)
+	reset_aim()
 	note = ""
 	mode = "intro"
 
@@ -128,6 +129,7 @@ func restart() -> void:
 	state = Model.start(chapter)
 	previous = state.duplicate(true)
 	history.clear()
+	reset_aim()
 	note = ""
 	mode = "play"
 	refresh()
@@ -136,6 +138,7 @@ func undo() -> void:
 	if anim > 0.0 or history.is_empty(): return
 	state = history.pop_back()
 	previous = state.duplicate(true)
+	reset_aim()
 	note = "回到刚才。试试另一种走法。"
 	mode = "play"
 	refresh()
@@ -151,9 +154,21 @@ func act(action: Dictionary) -> void:
 	previous = state.duplicate(true)
 	action_target = Vector2(action.get("to",state.player))
 	state = result
+	reset_aim()
 	anim = ACTION_DURATION
 	note = ""
 	refresh()
+
+func reset_aim() -> void:
+	hover = state.player if keyboard_aim else Vector2i(-1,-1)
+
+func aim(direction: Vector2i) -> void:
+	if mode != "play" or anim > 0.0: return
+	if not keyboard_aim: hover = state.player
+	keyboard_aim = true
+	hover = Vector2i(clampi(hover.x+direction.x,0,Model.W-1),clampi(hover.y+direction.y,0,Model.H-1))
+	note = ""
+	queue_redraw()
 
 func _process(delta: float) -> void:
 	clock += delta
@@ -167,8 +182,10 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
+		keyboard_aim = false
 		hover = Vector2i(floori((event.position.x-ORIGIN.x)/CELL),floori((event.position.y-ORIGIN.y)/CELL))
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		keyboard_aim = false
 		hover = Vector2i(floori((event.position.x-ORIGIN.x)/CELL),floori((event.position.y-ORIGIN.y)/CELL))
 		if mode == "play" and Model.inside(hover): act({"kind":"fly","to":hover})
 	elif event is InputEventKey and event.pressed and not event.echo:
@@ -177,8 +194,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				if anim == 0.0 and mode in ["play","paused"]:
 					mode = "paused" if mode == "play" else "play"
 					refresh()
-			KEY_ENTER:
-				if mode != "play": proceed()
+			KEY_ENTER, KEY_KP_ENTER:
+				if mode == "play":
+					if keyboard_aim: act({"kind":"fly","to":hover})
+				else: proceed()
 			KEY_Z:
 				if mode in ["play","lost","result"]: undo()
 			KEY_R:
@@ -194,7 +213,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					if event.keycode == KEY_RIGHT: direction.x = 1
 					if event.keycode == KEY_UP: direction.y = -1
 					if event.keycode == KEY_DOWN: direction.y = 1
-					act({"kind":"fly","to":state.player+direction})
+					aim(direction)
 
 func pos(p: Vector2) -> Vector2:
 	return ORIGIN + (p+Vector2(0.5,0.5))*CELL
@@ -264,7 +283,7 @@ func draw_title() -> void:
 		draw_line(c-Vector2(43,0),c+Vector2(43,0),Color("497353"),2,true)
 	bee(Vector2(942,330),3.5)
 	text("4 段连续遭遇 · 自由思考 · 随时撤回",Vector2(426,557),18,MUTED)
-	text("鼠标选择位置飞行    空格栖停    W 等一拍    Z 撤回    Esc 暂停",Vector2(308,744),17,MUTED)
+	text("方向键选落点 · Enter 飞行    或鼠标点亮点    空格栖停 · W 等待 · Z 撤回",Vector2(250,744),17,MUTED)
 	text("没有倒计时。还没有真人体验验证；试试看这套玩法是否成立。",Vector2(331,775),15,Color("6c897b"))
 
 func draw_game() -> void:
@@ -342,6 +361,9 @@ func draw_game() -> void:
 			draw_line(target,final,color,3,true)
 			draw_circle(final,22,color,false,2,true)
 		bee(final,0.8,0.55)
+	if anim == 0.0 and mode == "play" and keyboard_aim and Model.inside(hover):
+		var aim_color := GOLD if Model.legal_move(state,hover) or hover == state.player else RED
+		draw_rect(Rect2(pos(Vector2(hover))-Vector2(31,31),Vector2(62,62)),aim_color,false,3)
 	var bee_pos := pos(Vector2(state.player))
 	if anim > 0.0:
 		if fraction < 0.4: bee_pos = pos(Vector2(previous.player)).lerp(pos(action_target),smoothstep(0.0,0.4,fraction))
@@ -377,7 +399,7 @@ func draw_sidebar(level: Dictionary) -> void:
 	draw_line(Vector2(770,392),Vector2(1198,392),Color("3a5142"),1,true)
 	wrapped(level.goal,Vector2(771,425),420,21)
 	wrapped(level.hint,Vector2(771,471),420,18,MUTED)
-	var preview_text: String = "点击亮点飞行；叶上空格栖停。"
+	var preview_text: String = "方向键选落点，Enter 飞行。选点不走回合；也可鼠标点亮点。"
 	var preview_color := GREEN
 	if anim > 0.0: preview_text = "正在发生……"
 	elif Model.legal_move(state,hover):
@@ -386,11 +408,14 @@ func draw_sidebar(level: Dictionary) -> void:
 		preview_color = GREEN if preview.hp == state.hp else RED
 		if preview.broken > state.broken: preview_text += " 动物会打开新路。"
 		if preview.won: preview_text = "飞到所指格：这着能抵达白花。"
+	elif keyboard_aim and hover != state.player:
+		preview_text = "这个位置飞不到。用方向键选亮点；选点不走回合。"
+		preview_color = RED
 	panel(Rect2(767,566,436,53),Color("203d32"))
 	wrapped(preview_text,Vector2(781,589),408,16,preview_color,1.45)
 	wrapped(note if not note.is_empty() else state.message,Vector2(771,649),420,16,MUTED,1.4)
 	text("没有倒计时。你可以想清楚再走。",Vector2(771,751),18,MUTED)
-	text("鼠标飞行 / 方向键一格 / Esc 暂停",Vector2(771,780),15,Color("718e7c"))
+	text("方向键选点 · Enter 飞行 / 鼠标点亮点 / Esc 暂停",Vector2(771,780),15,Color("718e7c"))
 
 func draw_overlay() -> void:
 	draw_rect(Rect2(0,0,1280,800),Color(0.035,0.09,0.075,0.91))
@@ -401,7 +426,7 @@ func draw_overlay() -> void:
 		"intro":
 			title = Model.chapters()[chapter].name
 			body = Model.chapters()[chapter].intro
-			detail = Model.chapters()[chapter].hint
+			detail = Model.chapters()[chapter].hint + "\n方向键选落点，Enter 飞行；选点不走回合。"
 		"result":
 			title = "这一程，是你自己走出来的。"
 			body = Model.chapters()[chapter].outro

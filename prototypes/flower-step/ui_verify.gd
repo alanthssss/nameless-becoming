@@ -4,7 +4,7 @@ const MainScene = preload("res://main.tscn")
 const Model = preload("res://game_model.gd")
 const ROUTES := [
 	[Vector2i(1,1),Vector2i(4,1),Vector2i(7,1),Vector2i(8,1),"wait"],
-	[Vector2i(1,1),Vector2i(3,1),"wait",Vector2i(6,1),Vector2i(8,1)],
+	[Vector2i(1,2),Vector2i(3,1),Vector2i(1,1),Vector2i(4,1),Vector2i(6,1),Vector2i(8,1)],
 	[Vector2i(1,1),Vector2i(2,1),Vector2i(3,2),"wait",Vector2i(5,2),Vector2i(6,1),Vector2i(8,1)],
 	[Vector2i(1,1),Vector2i(2,2),Vector2i(3,1),Vector2i(4,2),Vector2i(6,2),Vector2i(6,1),Vector2i(8,1),"wait"],
 ]
@@ -23,6 +23,23 @@ func expect(ok: bool, label: String) -> void:
 func key(code: Key) -> void:
 	var event := InputEventKey.new()
 	event.keycode = code
+	event.pressed = true
+	game._unhandled_input(event)
+
+func select_target(target: Vector2i) -> void:
+	var before: Dictionary = game.state.duplicate(true)
+	var history_size: int = game.history.size()
+	if not game.keyboard_aim: key(KEY_UP)
+	var delta: Vector2i = target - game.hover
+	for i in range(absi(delta.x)): key(KEY_RIGHT if delta.x > 0 else KEY_LEFT)
+	for i in range(absi(delta.y)): key(KEY_DOWN if delta.y > 0 else KEY_UP)
+	expect(game.keyboard_aim and game.hover == target, "Arrow keys can select %s" % target)
+	expect(game.state == before and game.anim == 0.0 and game.history.size() == history_size, "Selecting a destination never advances the world or creates history")
+
+func mouse_click(target: Vector2i) -> void:
+	var event := InputEventMouseButton.new()
+	event.position = game.pos(Vector2(target))
+	event.button_index = MOUSE_BUTTON_LEFT
 	event.pressed = true
 	game._unhandled_input(event)
 
@@ -59,11 +76,18 @@ func run() -> void:
 		for step in ROUTES[chapter]:
 			var action: Dictionary = {"kind":"fly","to":step} if step is Vector2i else {"kind":step}
 			var old_turn: int = game.state.turn
-			game.act(action)
+			var expected: Dictionary = Model.advance(game.state,action)
+			if step is Vector2i:
+				select_target(step)
+				key(KEY_ENTER)
+			else: key(KEY_W)
 			expect(game.state.turn == old_turn + 1, "Chapter route action is accepted once")
+			expect(game.state == expected, "Actual keyboard submission matches the shared flight/wind/attack rules")
 			if not await settle("Chapter %d turn %d" % [chapter+1,old_turn+1]):
 				await finish()
 				return
+			if chapter == 1: expect(game.state.hp == 3, "Second chapter has a fully keyboard-controlled no-damage route")
+			expect(game.hover == game.state.player, "Keyboard aim resets to the actual post-wind position")
 		expect(game.mode == "result" and game.state.won and not game.state.lost, "Chapter %d reaches its result overlay" % (chapter+1))
 		expect(game.next_button.visible and not game.wait_button.visible, "Result exposes continuation rather than play controls")
 		expect(game.state.turn == ROUTES[chapter].size(), "Scene replay retains exactly the verified route's turns")
@@ -75,6 +99,7 @@ func run() -> void:
 			expect(game.mode == "intro" and game.history.is_empty() and game.state.turn == 0, "Next chapter starts with clean history and a fresh encounter")
 			key(KEY_ENTER)
 			expect(game.mode == "play", "Enter starts the next introduction")
+			expect(game.hover == game.state.player, "Chapter transition resets aim to the new start")
 	expect(game.mode == "ending" and game.scores.size() == 4, "All four results lead to the chapter ending")
 	expect(game.next_button.visible and game.home_button.visible, "Ending offers replay and return to title")
 	game.next_button.pressed.emit()
@@ -87,14 +112,33 @@ func run() -> void:
 
 func test_controls() -> void:
 	var initial: Dictionary = game.state.duplicate(true)
+	# Every board target is selectable, even when the pointer crosses plants.
+	# Legality is checked only on confirmation, exactly as for a mouse click.
+	for y in range(Model.H):
+		for x in range(Model.W): select_target(Vector2i(x,y))
+	key(KEY_RIGHT)
+	key(KEY_DOWN)
+	expect(game.hover == Vector2i(8,6) and game.state == initial, "Aim is clamped at board edges without spending a turn")
+	key(KEY_ENTER)
+	expect(game.state == initial and game.history.is_empty(), "Out-of-range confirmation is rejected without a turn")
+	select_target(Vector2i(2,2))
+	key(KEY_KP_ENTER)
+	expect(game.state == initial and game.anim == 0.0, "Blocked destination cannot be confirmed with keypad Enter")
+	select_target(initial.player)
+	key(KEY_ENTER)
+	expect(game.state == initial, "Confirming current location is not a wait action")
 	game.act({"kind":"fly","to":Vector2i(-1,3)})
 	expect(game.state == initial and game.anim == 0.0 and game.history.is_empty(), "Invalid input neither spends a turn nor starts an animation/history entry")
 	key(KEY_ESCAPE)
 	expect(game.mode == "paused" and game.next_button.visible and not game.wait_button.visible, "Escape pauses and exposes resume")
 	game.act({"kind":"wait"})
+	key(KEY_RIGHT)
 	expect(game.state == initial, "Paused scene rejects game actions")
 	game.next_button.pressed.emit()
 	expect(game.mode == "play" and game.state == initial, "Resume button restores the same decision")
+	key(KEY_ESCAPE)
+	key(KEY_ENTER)
+	expect(game.mode == "play" and game.state == initial, "Enter resumes a separately paused game without flying")
 	key(KEY_ESCAPE)
 	key(KEY_ESCAPE)
 	expect(game.mode == "play" and game.state == initial, "Escape can also resume without spending a turn")
@@ -104,18 +148,37 @@ func test_controls() -> void:
 	key(KEY_W)
 	key(KEY_Z)
 	key(KEY_R)
+	key(KEY_RIGHT)
+	key(KEY_ENTER)
 	expect(game.state == during_animation and game.history.size() == 1, "Input during an animation cannot queue extra turns, undo or restart")
+	expect(game.hover == game.state.player, "Animation input cannot move the keyboard aim")
 	if not await settle("Perch keyboard action"):
 		return
 	key(KEY_Z)
 	expect(game.mode == "play" and game.state == initial and game.history.is_empty(), "Keyboard undo restores complete state and unlocks play")
+	expect(game.hover == game.state.player, "Undo resets aim to the restored player")
 	key(KEY_W)
 	if not await settle("Wait keyboard action"):
 		return
 	expect(game.state.turn == 1 and not game.restart_button.disabled, "Wait settles with restart available")
 	game.restart_button.pressed.emit()
 	expect(game.mode == "play" and game.state == initial and game.history.is_empty(), "Restart button resets encounter and history")
-	game.act({"kind":"fly","to":Vector2i(1,1)})
+	expect(game.hover == game.state.player, "Restart resets aim to the encounter start")
+	select_target(Vector2i(1,1))
+	var held_enter := InputEventKey.new()
+	held_enter.keycode = KEY_ENTER
+	held_enter.pressed = true
+	held_enter.echo = true
+	game._unhandled_input(held_enter)
+	expect(game.state == initial, "Held confirmation key cannot repeat an action")
+	key(KEY_KP_ENTER)
+	var keyboard_result: Dictionary = game.state.duplicate(true)
+	if not await settle("Keyboard long diagonal flight"):
+		return
+	key(KEY_Z)
+	select_target(Vector2i(1,4))
+	mouse_click(Vector2i(1,1))
+	expect(game.state == keyboard_result and not game.keyboard_aim, "Mouse click uses its own target and has identical results to keyboard flight")
 	if not await settle("Fly before button undo"):
 		return
 	game.undo_button.pressed.emit()
@@ -124,7 +187,8 @@ func test_controls() -> void:
 func test_loss_recovery() -> void:
 	# Real chapter-two play: attract the cricket, then deliberately remain in
 	# successive locked attacks. No HP, enemy or scene state is injected.
-	game.act({"kind":"fly","to":Vector2i(1,2)})
+	select_target(Vector2i(1,2))
+	key(KEY_ENTER)
 	if not await settle("Attract cricket"):
 		return
 	for i in range(3):
@@ -142,7 +206,7 @@ func finish() -> void:
 	await process_frame
 	game = null
 	if failures.is_empty():
-		print("FLOWER STEP UI VERIFIED: %d assertions; title, controls, loss recovery, four results and ending." % checks)
+		print("FLOWER STEP UI VERIFIED: %d assertions; keyboard/mouse parity, no-damage second chapter, loss recovery, four keyboard results and ending." % checks)
 		quit(0)
 	else:
 		for failure in failures:
