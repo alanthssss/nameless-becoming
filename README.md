@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-10-19 当前方向：原始需求回溯，允许重做。** 完整雨水章的技术流程已走通，但 Alan 玩到第七天仍觉得主要在赶路、搬东西、缺少期待。现停止沿旧日程做细节修补，撤回仓促提出的“雨中返巢小冒险”。[需求回溯底稿](docs/design/original-requirements-recovery-20261019.md)区分原话、历史授权与助手解释；旧游戏保留，新版玩法和范围尚未重定。以下历史规模及实现记录不构成必须保留旧玩法的要求。
+**2026-10-19 当前方向：原始需求回溯，允许重做。** 完整雨水章的技术流程已走通，但 Alan 玩到第七天仍觉得主要在赶路、搬东西、缺少期待。现停止沿旧日程做细节修补，撤回仓促提出的“雨中返巢小冒险”。[需求回溯底稿](docs/design/original-requirements-recovery-20261019.md)已补回 5–7 月 ChatGPT 原对话，区分原话、历史授权与助手解释；旧游戏保留，新版玩法和范围尚未重定。以下历史规模及实现记录不构成必须保留旧玩法的要求。
 
 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
@@ -204,7 +204,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 
 按用途读取，避免把历史方案误当当前决定：
 
-- [`docs/design/original-requirements-recovery-20261019.md`](docs/design/original-requirements-recovery-20261019.md)：**本轮需求证据底稿与重做依据**，记录原聊天、历史归档、明确否定与未决项；不另设执行队列，当前行动仍只见制作规格 §0.11 Now。
+- [`docs/design/original-requirements-recovery-20261019.md`](docs/design/original-requirements-recovery-20261019.md)：**本轮需求证据底稿与重做依据**，记录 5–7 月创作原对话、后续开发反馈、历史归档与未决项；不另设执行队列，当前行动仍只见制作规格 §0.11 Now。
 
 1. [`docs/design/commercial-product-requirements.md`](docs/design/commercial-product-requirements.md)：**当前唯一商业成品要求与最终验收清单**，覆盖命名、剧情、玩法、美术、商业化、证据和发行退出门禁；
 2. [`docs/design/solar-term-campaign-production-spec.md`](docs/design/solar-term-campaign-production-spec.md)：**24 节气三候正式战役、schema v3 进度与旧 v2 迁移边界的单一制作规格**，定义 360 项内容目标、连续剧情、四场大型事件、推进／重玩、存档迁移和完成契约；
