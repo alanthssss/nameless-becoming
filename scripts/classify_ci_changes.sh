@@ -21,6 +21,10 @@ while IFS= read -r -d '' path; do
       godot=true; suite=full ;;
     src/*|app/*|public/*|tests/*.mjs|package.json|package-lock.json|*.config.*|tsconfig.json|wrangler.*)
       web=true ;;
+    prototypes/flower-step/*|.github/workflows/flower-step.yml)
+      # This standalone project has its own import/rules workflow.
+      # Keep the existing yearly game and Web builds isolated from its files.
+      ;;
     .github/workflows/quality.yml|scripts/classify_ci_changes.sh|tests/ci-scope.test.sh|*.md|*.mdx|*.markdown|*.MD|*.MDX|*.MARKDOWN)
       ;;
     *) web=true; godot=true; export_game=true; suite=full ;;

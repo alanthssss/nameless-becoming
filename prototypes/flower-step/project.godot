@@ -1,0 +1,16 @@
+config_version=5
+[application]
+config/name="花间一着 · 可玩短章"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.6")
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=800
+window/size/window_width_override=1280
+window/size/window_height_override=800
+window/stretch/mode="canvas_items"
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.06,0.12,0.12,1)
