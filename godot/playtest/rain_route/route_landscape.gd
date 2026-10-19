@@ -15,6 +15,9 @@ static var oval_outline := _unit_oval()
 static var leaf_outline := _unit_leaf()
 static var leaf_veins := _unit_veins()
 
+func is_rain() -> bool:
+	return true
+
 static func _unit_oval() -> PackedVector2Array:
 	var points := PackedVector2Array()
 	for i in range(40):
@@ -206,6 +209,15 @@ func _draw() -> void:
 	for p: Vector2 in route.model.drops:
 		oval(p, Vector2(12, 9), GOLD)
 	_draw_dance_floor()
+	if is_rain() and route.model.companions.is_empty() and route.model.social.dance_age < 0:
+		# The same five future travelling companions are visible before day 12.
+		# This is background life, not simulated collection or extra workers.
+		for i in range(5):
+			var base: Vector2 = Model.HIVE + Vector2(-86 + i * 42, 86 + (i % 2) * 20)
+			if route.model.built_site >= 0 and i >= 3:
+				base = route.model.roof_position() + Vector2(-35 + (i - 3) * 70, 45)
+			if visible_world.has_point(base):
+				bee(base + Vector2(0, sin(route.visual_time * 1.5 + i) * 3), -PI / 2, 0.72)
 	for companion in route.model.companions:
 		bee(companion.position, float(companion.get("heading", PI)), 0.75, companion.waiting, route.model.social.dance_age >= 0 and companion.position.distance_to(Model.HIVE) < 140)
 		if companion.waiting:
@@ -297,6 +309,8 @@ func _draw_static() -> void:
 
 func extra_roofs() -> Array:
 	var roofs: Array = []
+	for roof in Model.ROUTE_SHELTERS:
+		roofs.append(roof)
 	if route.model.day == 10:
 		roofs.append({"point": route.model.moving_roof_position(), "radius": 135.0})
 	if route.model.cleared.size() == 3:
@@ -522,6 +536,8 @@ func _draw_landmarks(visible_world: Rect2) -> void:
 		line([edge + Vector2(-10, 24), edge, edge + Vector2(35, -13), edge + Vector2(62, -5)], Color("867b57"), 3)
 		for i in range(3):
 			flower(edge + Vector2(i * 30, -24 - i * 8), 10, Color("e3c580"))
+		if is_rain() and model.day == 15:
+			label(Model.FLOWERS + Vector2(-82, -120), "都到花田了，一起回家。" if model.final_party_ready() else "等队尾过来 · %d / 5" % model.final_visitors.size(), 19)
 	if model.built_site >= 0 and visible_world.has_point(model.roof_position()):
 		var p: Vector2 = model.roof_position() + Vector2(0, 135)
 		leaf(p, 55, 0.05, Color("d8ceaa"))

@@ -10,6 +10,10 @@ const INK := Color("2b4438")
 const CREAM := Color("f8f0d9")
 const GOLD := Color("e9b75e")
 const CALENDAR_SAVE := "user://rain_route_calendar_v1.json"
+const CHAPTER_REVIEW_SAVE := "user://rain_chapter_review_v1.json"
+@export var chapter_presentation := false
+var chapter_cover := false
+var chapter_start_button: Button
 var save_enabled := true
 var save_path := CALENDAR_SAVE
 var action_reactions: Array[Dictionary] = []
@@ -51,6 +55,11 @@ var main_controls: Array[Control] = []
 
 func _ready() -> void:
 	DisplayServer.window_set_title("一会儿巢里见 · 雨水")
+	if chapter_presentation:
+		DisplayServer.window_set_title("雨水 · 把路走熟 · 完整章节")
+		chapter_cover = true
+		if "--rain-chapter-review" in OS.get_cmdline_user_args():
+			save_path = CHAPTER_REVIEW_SAVE
 	if save_enabled and FileAccess.file_exists(save_path):
 		var data = JSON.parse_string(FileAccess.get_file_as_string(save_path))
 		if not data is Dictionary or not model.restore(data):
@@ -175,6 +184,18 @@ func _build_hud() -> void:
 	result_controls.visible = false
 	next_button = _button("睡一晚 · 下一天", Vector2(478, 426), 324, _next_day)
 	next_button.visible = false
+	if chapter_presentation:
+		chapter_start_button = _button("从第一天出发" if model.day == 1 else ("回看这一章" if model.complete else "继续 · 第 %d 天清晨" % model.day), Vector2(464, 440), 352, _begin_chapter)
+		chapter_start_button.visible = chapter_cover
+
+func _begin_chapter() -> void:
+	chapter_cover = false
+	paused = false
+	music.stream_paused = false
+	pointer_active = false
+	if is_instance_valid(chapter_start_button):
+		chapter_start_button.visible = false
+	_save_dawn()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_instance_valid(music):
@@ -184,6 +205,8 @@ func _notification(what: int) -> void:
 		touch_braking = false
 
 func _toggle_pause() -> void:
+	if chapter_cover:
+		return
 	paused = not paused
 	music.stream_paused = paused
 	pointer_active = false
@@ -212,7 +235,7 @@ func _save_dawn() -> void:
 		push_warning("雨水日程保存失败，旧日程保留。")
 
 func _next_day() -> void:
-	if paused:
+	if paused or chapter_cover:
 		return
 	if model.next_day():
 		_save_dawn()
@@ -237,6 +260,8 @@ func _reset_feedback() -> void:
 	touch_braking = false
 
 func _restart() -> void:
+	if chapter_cover:
+		return
 	if model.complete:
 		model = Model.new()
 	else:
@@ -258,7 +283,7 @@ func reaction_age(kind: String, point: Vector2) -> float:
 	return -1.0
 
 func _act() -> void:
-	if paused or model.complete or model.day_finished:
+	if paused or chapter_cover or model.complete or model.day_finished:
 		return
 	var result: String = model.act()
 	if model.social.dance_age >= 0:
@@ -291,6 +316,10 @@ func _act() -> void:
 			last_stage = model.stage
 
 func _unhandled_input(event: InputEvent) -> void:
+	if chapter_cover:
+		if event.is_action_pressed("action") or (event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_ENTER, KEY_SPACE]):
+			_begin_chapter()
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
 			_toggle_pause()
@@ -312,10 +341,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		pointer_active = true
 
 func _physics_process(delta: float) -> void:
-	rain_sound.stream_paused = paused
+	rain_sound.stream_paused = paused or chapter_cover
+	music.stream_paused = paused or chapter_cover
 	if not paused:
 		rain_sound.volume_db = linear_to_db(maxf(0.001, model.rain_strength() * (0.045 if model.sheltered(model.position) else 0.085)))
-	if not paused:
+	if not paused and not chapter_cover:
 		visual_time += delta
 		for index in range(action_reactions.size() - 1, -1, -1):
 			action_reactions[index].age = float(action_reactions[index].age) + delta
@@ -358,15 +388,19 @@ func _physics_process(delta: float) -> void:
 			if effect.age >= effect.life:
 				effects.remove_at(index)
 	status.text = ("近处有花，伙伴正在听圆舞。随时移动即可离开。" if model.social.dance_kind == "round" else "摇摆、折返，把远处花源告诉伙伴。随时移动即可离开。") if model.social.dance_age >= 0 else _context_message()
-	paused_label.visible = paused
+	paused_label.visible = paused and not chapter_cover
 	pause_button.text = "继续" if paused else "暂停"
 	action_button.disabled = paused or model.day_finished
 	brake_button.disabled = paused or model.day_finished
-	result_controls.visible = model.complete and not paused
+	result_controls.visible = model.complete and not paused and not chapter_cover
 	for control in [action_button, brake_button, status, hint_label]:
-		control.visible = not model.day_finished
+		control.visible = not model.day_finished and not chapter_cover
 	action_button.text = model.action_label()
-	next_button.visible = model.day_finished and not model.complete and not paused
+	next_button.visible = model.day_finished and not model.complete and not paused and not chapter_cover
+	if chapter_presentation:
+		chapter_start_button.visible = chapter_cover
+		for control in main_controls:
+			control.visible = not chapter_cover and (control not in [action_button, brake_button] or not model.day_finished)
 	_update_camera(delta)
 	landscape.queue_redraw()
 	queue_redraw()
@@ -378,7 +412,9 @@ func _context_message() -> String:
 		return "它平安到家了。可以歇一会儿，再回巢。"
 	if model.work_ready():
 		return "今天的事做好了。回到巢门，按空格收工。"
-	if model.today().mode in ["mastery", "final"]:
+	if model.today().mode == "final":
+		return model.final_stage_hint()
+	if model.today().mode == "mastery":
 		return model.forage_stage_hint()
 	if model.today().mode == "rack":
 		return model.rest_stage_hint()
@@ -412,6 +448,9 @@ func _update_camera(delta: float) -> void:
 		landscape.position = -camera_origin
 
 func _draw_hud() -> void:
+	if chapter_presentation:
+		_draw_chapter_hud()
+		return
 	_panel(Rect2(28, 24, 374, 115), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
 	_text(Vector2(50, 59), "雨水", 27, INK)
 	_text(Vector2(119, 57), "第 %d 天 · %s" % [model.day, ["一候", "二候", "三候"][model.stage]], 19, Color("566a48"))
@@ -447,6 +486,16 @@ func _draw_hud() -> void:
 		draw_circle(Vector2(40, 653), 3, Color("79974d"))
 
 func _draw() -> void:
+	if chapter_presentation and chapter_cover:
+		draw_rect(Rect2(0, 0, 1280, 720), Color("f1ebda", 0.92))
+		_text(Vector2(459, 190), "雨水 · 把路走熟", 38, INK)
+		_text(Vector2(351, 253), "先独自走一趟，最后带大家一起回来。", 26, INK)
+		_text(Vector2(341, 318), "在十五天里认路、搭把手，留下能再用的地方。", 22, INK)
+		_text(Vector2(382, 358), "雨会打湿花粉；叶下可歇，掉了也能接回。", 20, INK)
+		_text(Vector2(409, 398), "带多少、走哪条路、什么时候停，都由你来。", 20, INK)
+		_text(Vector2(400, 524), "WASD / 方向键或点地面飞行 · 空格交互 · Shift 慢飞", 16, INK)
+		_text(Vector2(434, 563), "每天收工后自动保存。可以分几次玩完。", 18, INK)
+		return
 	_draw_hud()
 	# Compact route overview stays in screen space; positions are world coordinates.
 	_panel(Rect2(29, 490, 212, 112), CREAM, 13, INK)
@@ -470,13 +519,33 @@ func _draw() -> void:
 	if model.day_finished and not model.complete and not paused:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
 		_text(Vector2(458, 264), "雨水 · 第 %d 天收工" % model.day, 26, INK)
-		_text(Vector2(402, 315), ({8: "带粉途中歇歇脚", 13: "带大家采粉回家", 14: "到叶台接伙伴", 15: "一起带粉回家"}.get(model.day, str(model.event_today().title))), 23, INK)
-		_text(Vector2(402, 369), Model.Calendar.AFTER[model.day - 1], 18, INK)
+		_text(Vector2(402, 308), Model.Calendar.TITLES[model.day - 1] if chapter_presentation else str(model.event_today().title), 23, INK)
+		draw_multiline_string(font, Vector2(382, 355), Model.Calendar.AFTER[model.day - 1], HORIZONTAL_ALIGNMENT_LEFT, 516, 17, 2, INK)
+		if chapter_presentation:
+			draw_multiline_string(font, Vector2(374, 396), Model.Calendar.TOMORROW[model.day - 1], HORIZONTAL_ALIGNMENT_LEFT, 532, 15, 2, INK)
 	if model.complete:
 		_panel(Rect2(348, 204, 584, 290), CREAM, 24, INK)
 		_text(Vector2(537, 248), "一会儿巢里见", 22, INK)
-		_text(Vector2(403, 300), "十五天，花路接起来了。", 28, INK)
-		_text(Vector2(416, 341), "叶台、花和小路，留下了大家的十五天。", 19, INK)
-		_text(Vector2(422, 386), "%d 趟交货   ·   %d 次掉粉   ·   %d 次接回" % [model.deliveries, model.spills, model.rescues], 17, INK)
+		_text(Vector2(403, 300), "这条路，你带大家走过了。", 28, INK)
+		_text(Vector2(391, 341), "五位伙伴都到过花田，也都和你回到了家。", 19, INK)
+		_text(Vector2(403, 386), "叶台还在，花在长，小甲虫也有了家。", 18, INK)
 	if paused:
 		draw_rect(Rect2(0, 145, 1280, 470), Color("142f24", 0.75))
+
+func _draw_chapter_hud() -> void:
+	_panel(Rect2(28, 24, 600, 118), Color("f7efd7", 0.97), 20, Color("fff6dd", 0.65))
+	_text(Vector2(48, 57), "雨水 · 把路走熟", 24, INK)
+	_text(Vector2(332, 55), "第 %d 天 / 十五天" % model.day, 18, INK)
+	_text(Vector2(48, 89), Model.Calendar.TITLES[model.day - 1], 21, INK)
+	_text(Vector2(48, 121), ["先自己认路，走通一次往返", "让熟悉的路好用，也给邻居搭把手", "用走熟的路，带大家一起回来"][model.stage], 16, Color("566a48"))
+	_panel(Rect2(755, 25, 275, 82), Color("264b39", 0.96), 18)
+	var carrying := "遮雨叶" if model.roof_carried else ("种壳" if model.carried_seed >= 0 else "花粉 %d / %d" % [model.cargo, model.cargo_capacity()])
+	_text(Vector2(775, 55), "身上 · " + carrying, 18)
+	if model.today().has("quota"):
+		_text(Vector2(775, 85), "已送回 %d / %d" % [model.day_delivered, int(model.today().quota)], 18)
+	elif model.companions.size() == 5:
+		_text(Vector2(775, 85), "已会合 %d / 5" % (5 - model.waiting_companion_points().size()), 18)
+	else:
+		_text(Vector2(775, 85), "叶下歇脚，失误可补救", 16)
+	if not model.day_finished:
+		_panel(Rect2(28, 624, 777, 62), Color("f7efd7", 0.97), 16, Color("fff6dd", 0.6))
