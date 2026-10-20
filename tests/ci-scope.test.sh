@@ -16,6 +16,9 @@ check "$light" README.md 'docs/有 空格.md' .github/workflows/quality.yml scri
 check "$light" prototypes/flower-step/project.godot prototypes/flower-step/game_model.gd prototypes/flower-step/verify.gd prototypes/flower-step/assets/leaf.svg .github/workflows/flower-step.yml
 check "$routes" prototypes/flower-step/game_model.gd godot/playtest/year/year_model.gd
 check "$web" prototypes/flower-step/main.gd src/app/page.tsx
+check "$light" prototypes/swarm-flight/project.godot prototypes/swarm-flight/world_view.gd prototypes/swarm-flight/icon.svg .github/workflows/swarm-flight.yml
+check "$routes" prototypes/swarm-flight/main.gd godot/playtest/year/year_model.gd
+check "$web" prototypes/swarm-flight/main.gd src/app/page.tsx
 check "$full" prototypes/some-other-game/project.godot
 check "$routes" godot/playtest/year/year_model.gd godot/playtest/year/year_route.tscn godot/tests/year_route_test.gd docs/plan.md
 check "$engine" godot/playtest/spring/spring_model.gd godot/fonts/font.otf

@@ -21,7 +21,7 @@ while IFS= read -r -d '' path; do
       godot=true; suite=full ;;
     src/*|app/*|public/*|tests/*.mjs|package.json|package-lock.json|*.config.*|tsconfig.json|wrangler.*)
       web=true ;;
-    prototypes/flower-step/*|.github/workflows/flower-step.yml)
+    prototypes/flower-step/*|.github/workflows/flower-step.yml|prototypes/swarm-flight/*|.github/workflows/swarm-flight.yml)
       # This standalone project has its own import/rules workflow.
       # Keep the existing yearly game and Web builds isolated from its files.
       ;;

@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-10-19 当前状态：《花间一着》体验未通过，进入核心复议。** 独立短章及键盘修复已交付，Alan 最新反馈为“感觉没啥意思”。Codex 停止扩展当前方案，保留代码与试玩包，对照原始需求重新判断乐趣来源；新类型与新完整项目尚未决定。[游戏方案与试玩复盘](docs/design/flower-step-game-20261019.md) · [原型打开方式](prototypes/flower-step/README.md) · [原始需求](docs/design/original-requirements-recovery-20261019.md)。下文旧品牌与实现记录是历史版本，不约束后续候选。
+**2026-10-20 当前：制作《雨来之前》完整飞行短篇，待整体试玩。** Alan 授权 Codex 自主决定新方案；本轮把救出伙伴、花桥接力、暴雨前回家做成连续体验。独立 Godot 工程保留旧成果与存档，合并不代表乐趣通过。[方案与证据](docs/design/swarm-flight-game-20261020.md) · [打开方式](prototypes/swarm-flight/README.md) · [原始需求](docs/design/original-requirements-recovery-20261019.md)。下文旧品牌与实现记录是历史版本，不约束新候选。
 
 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
@@ -204,6 +204,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 
 按用途读取，避免把历史方案误当当前决定：
 
+- [《雨来之前》完整飞行短篇](docs/design/swarm-flight-game-20261020.md)：本轮自主选型、完整流程、验证边界与试玩判据。
 - [《花间一着》游戏方案与完整短章](docs/design/flower-step-game-20261019.md)：本轮玩法选择、实际规则、完整短章和正式游戏候选结构。
 
 - [`docs/design/original-requirements-recovery-20261019.md`](docs/design/original-requirements-recovery-20261019.md)：**本轮需求证据底稿与重做依据**，记录 5–7 月创作原对话、后续开发反馈、历史归档与未决项；不另设执行队列，当前行动仍只见制作规格 §0.11 Now。
