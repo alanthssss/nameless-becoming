@@ -1,9 +1,9 @@
 extends Node
-## Original, generated PCM: no external music or asset licenses.
+## Original composed PCM: no external samples, recordings or transcriptions.
 ## Three authored arrangements crossfade; one-shots use a fixed voice pool.
 const RATE := 22050
-const MUSIC_DB := -13.0
-const AMBIENCE_DB := -21.0
+const MUSIC_DB := -9.0
+const AMBIENCE_DB := -24.0
 const SFX_DB := -8.0
 var _stage := -1
 var _muted := false
@@ -32,6 +32,9 @@ func _ready() -> void:
 	for index in 3:
 		_tracks.append(_make_music(index))
 		_air.append(_make_air(index))
+	_samples["dew"] = _make_effect("dew",0.35)
+	_samples["spray"] = _make_effect("spray",0.28)
+	_samples["flower_calm"] = _make_effect("flower_calm",0.6)
 	_samples["burst"] = _make_effect("burst", 0.30)
 	_samples["rescue"] = _make_effect("rescue", 0.65)
 	_samples["ring"] = _make_effect("ring", 0.55)
@@ -104,7 +107,7 @@ func play_event(kind: String) -> void:
 	player.pitch_scale = _rng.randf_range(0.97, 1.03)
 	player.volume_db = -1.5 if kind == "burst" else 0.0
 	player.play()
-	if kind in ["rescue", "hit", "finish"]:
+	if kind in ["rescue", "hit", "finish", "flower_calm"]:
 		_duck = 0.5
 	if kind == "finish":
 		# The storm settles beneath the final chord, without overriding mute.
@@ -133,48 +136,82 @@ func _bus(bus_name: String, gain_db: float) -> void:
 	AudioServer.set_bus_volume_db(index, gain_db)
 
 func _make_music(index: int) -> AudioStreamWAV:
-	var beat := 0.64 if index == 2 else 0.8
-	var duration := beat * 16.0
+	# Eight bars / 32 beats: two distinct 4-bar phrases, composed for this game.
+	# Timing, harmony and melodies are authored here; no samples or transcriptions.
+	var beat: float = [0.52,0.49,0.46][index]
 	var buffer := PackedFloat32Array()
-	buffer.resize(int(duration * RATE))
-	var chords: Array
-	var melody: Array
-	if index == 0:
-		chords = [[55, 62, 67], [52, 59, 64], [48, 55, 62], [50, 57, 62]]
-		melody = [74, 0, 71, 69, 67, 0, 64, 67, 69, 0, 74, 71, 69, 67, 62, 0]
-	elif index == 1:
-		chords = [[52, 59, 66], [48, 55, 62], [55, 62, 69], [50, 57, 64]]
-		melody = [71, 0, 74, 76, 74, 0, 71, 69, 67, 0, 69, 71, 66, 0, 62, 0]
-	else:
-		chords = [[52, 59, 64], [48, 55, 62], [50, 57, 62], [55, 62, 67]]
-		melody = [64, 67, 71, 74, 72, 67, 64, 67, 69, 66, 62, 66, 67, 71, 74, 0]
-	for bar in 4:
-		for note in chords[bar]:
-			_mix_note(buffer, bar * beat * 4.0, beat * 4.7, float(note), 0.09, true)
-	for step in 16:
-		if melody[step] > 0:
-			_mix_note(buffer, step * beat, beat * 1.8, float(melody[step]), 0.19 if index < 2 else 0.14, false)
+	buffer.resize(int(beat*32.0*RATE))
+	var chords: Array = [[48,55,60,64],[45,52,60,64],[53,57,60,65],[43,50,59,62],[48,55,60,67],[52,55,59,64],[50,57,60,65],[43,53,59,62]]
+	var melody: Array = [72,0,76,79,0,76,74,72, 69,72,0,76,0,74,72,0, 77,0,76,74,72,0,69,72, 71,74,0,79,77,74,0,0, 76,79,81,0,79,76,72,0, 71,0,74,76,79,0,76,74, 77,76,74,0,72,69,0,74, 71,0,69,67,0,74,72,0]
+	if index == 1:
+		chords = [[50,57,62,66],[47,54,62,66],[55,59,62,67],[45,52,61,64],[50,57,62,69],[54,57,61,66],[52,59,62,67],[45,55,61,64]]
+		melody = [78,0,81,78,76,0,74,0, 73,76,78,0,81,78,76,0, 79,0,78,76,74,0,71,74, 73,76,0,81,0,79,76,0, 81,83,81,0,78,76,74,0, 73,0,76,78,81,0,85,81, 79,78,76,0,74,71,76,0, 73,76,0,69,0,73,74,0]
+	elif index == 2:
+		chords = [[45,52,57,60],[53,60,65,69],[50,57,62,65],[52,59,64,68],[45,52,60,64],[48,55,60,64],[50,57,62,65],[52,59,64,68]]
+		melody = [69,0,72,76,0,74,72,69, 77,0,76,72,69,0,72,0, 74,77,0,76,74,0,72,69, 68,71,74,0,76,0,71,0, 76,79,76,0,72,74,76,0, 79,0,76,72,0,71,72,76, 77,76,74,0,72,74,77,0, 76,74,71,0,68,71,69,0]
+	for bar in 8:
+		var chord: Array = chords[bar]
+		var base := bar*4.0
+		# Alternating roots/fifths plus a delayed pickup make the bass gently bounce.
+		for pair in [[0.0,0],[1.5,1],[2.0,0],[3.5,1]]:
+			_mix_instrument(buffer,(base+pair[0])*beat,beat*0.65,float(chord[pair[1]]-12),0.20,"bass")
+		# Short off-beat chord stabs leave breathing room for the lead.
+		for at in [0.75,2.75]:
+			for note in chord.slice(1):
+				_mix_instrument(buffer,(base+at)*beat,beat*0.7,float(note),0.055,"pluck")
+		for at in [0.0,2.0]: _mix_drum(buffer,(base+at)*beat,0.17,0.11,"kick",index*100+bar)
+		for at in [1.0,3.0]: _mix_drum(buffer,(base+at)*beat,0.10,0.055,"wood",index*100+bar+30)
+		for at in [0.5,1.5,2.5,3.5]: _mix_drum(buffer,(base+at)*beat,0.055,0.025,"hat",index*100+bar+60)
 		if index == 2:
-			_mix_note(buffer, step * beat, beat * 0.72, float(chords[step / 4][0] - 12), 0.12, false)
-	return _wav(buffer, true)
+			for at in [1.75,3.75]: _mix_drum(buffer,(base+at)*beat,0.06,0.025,"wood",bar+300)
+	for step in 64:
+		var note: int = melody[step]
+		if note <= 0: continue
+		# A small swing delay on off-eighths; every downbeat stays exact.
+		var at := (step*0.5+(0.055 if step%2 else 0.0))*beat
+		var voice := "keys" if index==0 else ("mallet" if index==1 else "pluck")
+		_mix_instrument(buffer,at,beat*(0.78 if step%4 else 1.15),float(note),0.15,voice)
+		if index == 1 and step%4 == 2:
+			_mix_instrument(buffer,at+beat*0.25,beat*0.9,float(note-12),0.035,"keys")
+	# Fixed gain, not per-run normalization. Keep measurable headroom for SFX.
+	for i in buffer.size(): buffer[i] *= 1.45
+	return _wav(buffer,true)
 
-func _mix_note(buffer: PackedFloat32Array, start: float, duration: float, midi: float, gain: float, pad: bool) -> void:
-	var begin := int(start * RATE)
-	var samples := int(duration * RATE)
-	var frequency := 440.0 * pow(2.0, (midi - 69.0) / 12.0)
-	for i in samples:
-		var t := float(i) / RATE
-		var envelope: float
-		var value: float
-		if pad:
-			envelope = minf(t / 0.30, 1.0) * minf((duration - t) / 0.65, 1.0)
-			value = sin(TAU * frequency * t) * 0.65 + sin(TAU * frequency * 1.002 * t) * 0.30 + sin(TAU * frequency * 2.0 * t) * 0.05
-		else:
-			envelope = minf(t / 0.008, 1.0) * exp(-t * 4.0 / duration) * minf((duration - t) / 0.08, 1.0)
-			value = sin(TAU * frequency * t) + sin(TAU * frequency * 2.0 * t) * exp(-t * 5.0) * 0.25 + sin(TAU * frequency * 3.0 * t) * 0.06
-		# Tails wrap into the beginning so the generated loop has no cut-off notes.
-		var offset := (begin + i) % buffer.size()
-		buffer[offset] += value * envelope * gain
+func _mix_instrument(buffer: PackedFloat32Array, start: float, duration: float, midi: float, gain: float, voice: String) -> void:
+	var begin := int(start*RATE)
+	var frequency := 440.0*pow(2.0,(midi-69.0)/12.0)
+	for i in int(duration*RATE):
+		var t := float(i)/RATE
+		var phase := TAU*frequency*t
+		var attack := minf(t/0.004,1.0)
+		var release := clampf((duration-t)/0.045,0.0,1.0)
+		var value := 0.0
+		match voice:
+			"bass":
+				value = (sin(phase)*0.8+sin(phase*2)*0.16+sin(phase*3)*0.04)*exp(-t*4.5)
+			"mallet":
+				value = sin(phase)*exp(-t*6)+sin(phase*3.99)*exp(-t*22)*0.32+sin(phase*9.96)*exp(-t*42)*0.09
+			"pluck":
+				value = (sin(phase)+sin(phase*2)*0.38+sin(phase*3)*0.15+sin(phase*4)*0.07)*exp(-t*8)
+			"keys":
+				value = sin(phase)*exp(-t*5)+sin(phase*2)*exp(-t*10)*0.28+sin(phase*3.001)*exp(-t*17)*0.10
+		buffer[(begin+i)%buffer.size()] += value*attack*release*gain
+
+func _mix_drum(buffer: PackedFloat32Array, start: float, duration: float, gain: float, kind: String, seed_value: int) -> void:
+	var noise := RandomNumberGenerator.new()
+	noise.seed = seed_value+5719
+	var begin := int(start*RATE)
+	var low := 0.0
+	for i in int(duration*RATE):
+		var t := float(i)/RATE
+		var white := noise.randf_range(-1,1)
+		low = low*0.82+white*0.18
+		var value := 0.0
+		match kind:
+			"kick": value = sin(TAU*(65*t+3*(1-exp(-t*30))))*exp(-t*28)
+			"wood": value = (sin(TAU*790*t)*0.7+sin(TAU*1230*t)*0.3+low*0.2)*exp(-t*65)
+			"hat": value = (white-low)*exp(-t*80)
+		buffer[(begin+i)%buffer.size()] += value*minf(t/0.002,1.0)*gain
 
 func _make_air(index: int) -> AudioStreamWAV:
 	var duration := 6.0
@@ -215,6 +252,12 @@ func _make_effect(kind: String, duration: float) -> AudioStreamWAV:
 		low = low * 0.86 + white * 0.14
 		var value := 0.0
 		match kind:
+			"dew":
+				value = (sin(TAU*1174.66*t)+sin(TAU*1760*t)*0.35)*exp(-t*8)*0.23
+			"spray":
+				value = low*0.85*exp(-t*9)+sin(TAU*(220*t-200*t*t))*exp(-t*15)*0.15
+			"flower_calm":
+				value = (sin(TAU*523.25*t)+sin(TAU*659.25*t)*0.65+sin(TAU*783.99*t)*0.4)*exp(-t*5)*0.2
 			"burst":
 				value = low * 1.2 + sin(TAU * (300.0 * t - 200.0 * t * t)) * 0.28
 			"gate":

@@ -72,6 +72,18 @@ jobs:
             exit 1
           fi
           grep -q '^SWARM FLIGHT UI VERIFIED:' "$RUNNER_TEMP/swarm-flight-ui.log"
+      - name: Verify garden music and new sound effects
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+          SWARM_AUDIO_DIR: ${{ runner.temp }}/garden-audio
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://audio_verify.gd 2>&1 | tee "$RUNNER_TEMP/swarm-flight-audio.log"
+          if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/swarm-flight-audio.log"; then
+            exit 1
+          fi
+          grep -q '^GARDEN_AUDIO:' "$RUNNER_TEMP/swarm-flight-audio.log"
       - name: Start the main scene
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
