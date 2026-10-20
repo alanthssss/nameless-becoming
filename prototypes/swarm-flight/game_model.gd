@@ -166,10 +166,24 @@ func advance(direction: Vector2, dt: float) -> void:
 				# Resolve each axis independently: holding against a wall still slides.
 				var proposed := p
 				p = before
-				if not r.grow(radius).has_point(Vector2(proposed.x,before.y)):
+				var expanded := r.grow(radius)
+				# Unfolding from radius 9 to 14 can begin inside the expanded wall.
+				# Depenetrate to its nearest edge before sliding; otherwise every
+				# bounded substep is rejected and the bee can never fly away.
+				if expanded.has_point(before):
+					var edges := [absf(before.x-expanded.position.x),absf(before.x-expanded.end.x),absf(before.y-expanded.position.y),absf(before.y-expanded.end.y)]
+					var nearest := edges.find(edges.min())
+					match nearest:
+						0: p.x = expanded.position.x-0.01
+						1: p.x = expanded.end.x+0.01
+						2: p.y = expanded.position.y-0.01
+						3: p.y = expanded.end.y+0.01
+				if not expanded.has_point(Vector2(proposed.x,p.y)):
 					p.x = proposed.x
-				if not r.grow(radius).has_point(Vector2(p.x,proposed.y)):
+				if not expanded.has_point(Vector2(p.x,proposed.y)):
 					p.y = proposed.y
+				if not is_equal_approx(p.x,proposed.x): velocity.x = 0
+				if not is_equal_approx(p.y,proposed.y): velocity.y = 0
 				burst_left = 0
 	for trapped in pods:
 		if not trapped.open and burst_left > 0 and p.distance_to(trapped.pos) < 48:

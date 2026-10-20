@@ -102,6 +102,16 @@ func rules_and_recovery() -> void:
 	m.burst_left = 0.54
 	m.step(Vector2.RIGHT,false,0.1)
 	expect(m.p.x < 1120,"Substepped collision prevents tunneling through a stem")
+	# Native play revealed a compact-to-spread collision softlock at a wall.
+	m.load_stage(1)
+	m.p = Vector2(1790,260)
+	m.charging = true
+	m.charge = 1.0
+	m.face = Vector2.RIGHT
+	m.step(Vector2.ZERO,false,1.0/60.0)
+	for i in range(30): m.step(Vector2.LEFT,false,1.0/60.0)
+	expect(m.p.x < 1730,"Unfolding against a wall still permits flying away")
+	m.load_stage(0)
 	m.p = Vector2(2680,420)
 	m.burst_left = 0.54
 	m.step(Vector2.RIGHT,false,0.1)

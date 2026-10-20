@@ -111,6 +111,9 @@ func build_ui() -> void:
 	hud_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast = label_at(Vector2(130,118),Vector2(1020,48),24,Color("ffe7a3"))
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.add_theme_color_override("font_shadow_color",Color(0.02,0.09,0.08,0.9))
+	toast.add_theme_constant_override("shadow_offset_x",1)
+	toast.add_theme_constant_override("shadow_offset_y",2)
 	for node in [hud_title,hud_objective,hud_bees,hud_hint,toast]:
 		canvas.add_child(node)
 	panel = Panel.new()
