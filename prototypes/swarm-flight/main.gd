@@ -3,6 +3,7 @@ const Model = preload("res://game_model.gd")
 const Save = preload("res://save_data.gd")
 const World = preload("res://world_view.gd")
 const Sound = preload("res://sound.gd")
+const HANDOFF_SECONDS := 1.6
 const TITLES := ["01   晨光菜圃","02   喷泉花桥","03   雨来之前"]
 const TRANSITIONS := [
 	["一个也没有落下。", "小蜂们学着你的样子，拢起翅膀。\n前面，弯下来的风花正在一朵朵亮起。", "一起借风过去"],
@@ -29,6 +30,12 @@ var hud_clock: Label
 var energy_trail := 100.0
 var toast: Label
 var toast_left := 0.0
+var toast_priority := 0
+var toast_guard_left := 0.0
+var transition_left := 0.0
+var handoff_panel: Panel
+var handoff_heading: Label
+var handoff_detail: Label
 var muted := false
 var saved_stage := -1
 var test_mode := false
@@ -54,6 +61,7 @@ func _ready() -> void:
 		if arg.begins_with("--capture-after="): capture_seconds = float(arg.trim_prefix("--capture-after="))
 	world = World.new()
 	world.model = model
+	world.feedback_font = font
 	world.show_behind_parent = true
 	add_child(world)
 	sound = Sound.new()
@@ -150,6 +158,19 @@ func build_ui() -> void:
 	cue_label = label_at(Vector2(12,5),Vector2(326,32),18,Color("fff0c6"))
 	cue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cue_panel.add_child(cue_label)
+	handoff_panel = Panel.new()
+	handoff_panel.position = Vector2(330,180)
+	handoff_panel.size = Vector2(620,128)
+	handoff_panel.add_theme_stylebox_override("panel",card(Color("314b2df5"),18))
+	handoff_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui_root.add_child(handoff_panel)
+	handoff_heading = label_at(Vector2(24,17),Vector2(572,38),28,Color("ffd75e"))
+	handoff_detail = label_at(Vector2(24,65),Vector2(572,44),19,Color("fff8d8"))
+	handoff_heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	handoff_detail.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	handoff_panel.add_child(handoff_heading)
+	handoff_panel.add_child(handoff_detail)
+	handoff_panel.hide()
 	panel = Panel.new()
 	panel.anchor_top = 0.5
 	panel.anchor_bottom = 0.5
@@ -160,7 +181,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     花园奇遇 0.3.0"
+	menu_kicker.text = "BEFORE THE RAIN     /     花园奇遇 0.3.1"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -202,6 +223,8 @@ func reset_menu() -> void:
 
 func show_title() -> void:
 	mode = "title"
+	held.clear()
+	handoff_panel.hide()
 	sound.set_stage(model.stage)
 	panel.show()
 	heading.text = "雨来之前"
@@ -216,6 +239,9 @@ func show_title() -> void:
 
 func begin_stage(index: int) -> void:
 	held.clear()
+	handoff_panel.hide()
+	toast_priority = 0
+	toast_guard_left = 0
 	model.load_stage(index)
 	energy_trail = Model.MAX_STAMINA
 	mode = "play"
@@ -239,15 +265,16 @@ func on_primary() -> void:
 		"pause": resume_game()
 		"transition": begin_stage(model.stage+1)
 		"ending":
-			model.load_stage(0)
-			show_title()
+			played_seconds = 0
+			model.reset_journey()
+			begin_stage(0)
 
 func on_secondary() -> void:
 	if mode == "title" and saved_stage >= 0:
 		played_seconds = 0
 		model.reset_journey()
 		begin_stage(saved_stage)
-	elif mode == "pause":
+	elif mode == "pause" and paused_from == "play":
 		model.restore_checkpoint()
 		resume_game()
 
@@ -260,8 +287,10 @@ func on_third() -> void:
 		get_tree().quit()
 
 func pause_game() -> void:
-	if mode != "play": return
+	if mode not in ["play","transition"]: return
+	paused_from = mode
 	mode = "pause"
+	handoff_panel.hide()
 	held.clear()
 	model.clear_input()
 	panel.show()
@@ -269,7 +298,8 @@ func pause_game() -> void:
 	description.text = "方向键 / WASD 飞行，空格蓄力后松开\n冲刺 −20 · 雨击 −30 · 喷嚏水珠 −12\n晨露 +12 · 安抚首次 +10 · 均可跳过\n救人 +40 · 借风 +8 · 叶下休息停表\nR 恢复点 · Esc 继续 · M 声音开关"
 	main_button.text = "继续飞行"
 	secondary_button.text = "回到就近休息点"
-	secondary_button.show()
+	secondary_button.visible = paused_from == "play"
+	if paused_from == "transition": description.text = "段落衔接已暂停。\nEsc 或 Enter 继续；伙伴在这里等你。"
 	third_button.text = "回到标题"
 	third_button.show()
 	reset_menu()
@@ -277,8 +307,9 @@ func pause_game() -> void:
 
 func resume_game() -> void:
 	held.clear()
-	mode = "play"
+	mode = paused_from
 	panel.hide()
+	handoff_panel.visible = mode == "transition"
 	refresh_hud()
 
 func _notification(what: int) -> void:
@@ -297,11 +328,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		sound.set_muted(muted)
 		return
 	if key == KEY_ESCAPE:
-		if mode == "play": pause_game()
+		if mode in ["play","transition"]: pause_game()
 		elif mode == "pause": resume_game()
 		return
 	if key == KEY_R and mode == "pause":
 		on_secondary()
+		return
+	if mode == "transition":
+		if key in [KEY_ENTER,KEY_KP_ENTER]: on_primary()
 		return
 	if mode != "play":
 		var buttons := menu_buttons()
@@ -329,50 +363,68 @@ func tick(delta: float) -> void:
 		energy_trail = maxf(model.stamina,move_toward(energy_trail,model.stamina,delta*24.0))
 		if not was_ready and model.charge >= Model.CHARGE_READY and model.can_burst(): sound.play_event("ready")
 		for event in model.events:
-			world.emit_event(event.kind,event.pos)
+			if event.kind in ["recover_rain","recover_exhaustion","recover_timeout"]: held.clear()
+			world.emit_event(event.kind,event.pos,event)
 			sound.play_event(event.kind)
 			match event.kind:
 				"rescue":
-					message("救出伙伴 · 体力 +40 · %d 只同行 · 已记住这里" % model.bees,2.8)
+					event_message(event.kind,"救出 %d 只 · 体力 +%d · %d 只同行 · 已记住这里" % [int(event.get("count",1)),int(round(event.get("reward",0))),model.bees],2.8)
 				"charge_cancel":
-					message("还没蓄好力 · 按住空格，等光环亮起再松开",2.6)
+					event_message(event.kind,"还没蓄好力 · 按住空格，等光环亮起再松开",2.6)
 				"blocked":
-					message("干叶帘可以冲开 · 按住空格，亮起后松开" if event.get("material") == "curtain" else "厚实的茎干冲不开 · 从空隙绕过去",2.5)
+					event_message(event.kind,"干叶帘可以冲开 · 按住空格，亮起后松开" if event.get("material") == "curtain" else "厚实的茎干冲不开 · 从空隙绕过去",2.5)
 				"checkpoint":
-					message("叶下休息 · 体力正在恢复，暴雨倒计时暂停",3.0)
+					event_message(event.kind,"叶下休息 · 体力正在恢复，暴雨倒计时暂停",3.0)
 				"recover_manual":
-					message("已回到本段最近的恢复点 · 伙伴都在",3.0)
+					event_message(event.kind,"已回到本段最近的恢复点 · 伙伴都在",3.0)
 				"recover_rain":
-					message("被雨打湿了 · 已回到恢复点，伙伴都在",3.5)
+					event_message(event.kind,"被雨打湿了 · 已回到恢复点，伙伴都在",3.5)
 				"recover_exhaustion":
-					message("体力耗尽 · 已回到恢复点，体力补满，伙伴都在",3.5)
+					event_message(event.kind,"体力耗尽 · 已回到恢复点，体力补满，伙伴都在",3.5)
 				"recover_timeout":
-					message("暴雨抵达 · 从恢复点再试，倒计时已重置",3.5)
+					event_message(event.kind,"暴雨抵达 · 从恢复点再试，倒计时已重置",3.5)
 				"tired":
-					message("体力不足 20 · 无法冲刺，按 R 回到恢复点补充",3.2,Color("ffd3b6"))
+					event_message(event.kind,"体力不足 20 · 无法冲刺，按 R 回到恢复点补充",3.2,Color("ffd3b6"))
 				"burst":
-					message("冲刺 · 体力 −20",1.0)
+					event_message(event.kind,"冲刺 · 体力 −20",1.0)
 				"dew":
-					message("晨露 %d / 3 · 体力 +%d" % [model.garden_awards[model.stage],int(round(event.reward))],1.9)
+					event_message(event.kind,"晨露 %d / 3 · 体力 +%d" % [model.garden_awards[model.stage],int(round(event.reward))],1.9)
 				"flower_calm":
-					message("喷嚏花安静六秒" + (" · 体力 +%d" % int(round(event.reward)) if event.reward > 0 else " · 放心过去吧"),2.0)
+					event_message(event.kind,"喷嚏花安静六秒" + (" · 体力 +%d" % int(round(event.reward)) if event.reward > 0 else " · 放心过去吧"),2.0)
 				"hit":
-					message("体力 −12 · 喷嚏水珠可绕开、冲散" if event.get("reason") == "sneeze" else "体力 −30 · 雨追上来了，寻找大叶遮蔽" if event.get("reason") == "storm" else "体力 −30 · 雨滴可以绕开，或冲刺击散",2.4,Color("ffd3b6"))
+					event_message(event.kind,"体力 −12 · 喷嚏水珠可绕开、冲散" if event.get("reason") == "sneeze" else "体力 −30 · 雨追上来了，寻找大叶遮蔽" if event.get("reason") == "storm" else "体力 −30 · 雨滴可以绕开，或冲刺击散",2.4,Color("ffd3b6"))
 				"ring":
-					message("借到风 · 体力 +8 · 花瓣收拢后就用过了",2.3)
+					event_message(event.kind,"借到风 · 体力 +%d · 花瓣已收拢" % int(round(event.get("reward",0))),2.3)
 				"gate":
-					message("叶帘打开了 · 一起过去！",1.8)
+					event_message(event.kind,"叶帘打开了 · 一起过去！",1.8)
 		model.events.clear()
 		if model.phase == "transition": show_transition()
 		elif model.phase == "ending": show_ending()
+	elif mode == "transition":
+		transition_left = maxf(0,transition_left-minf(delta,0.1))
+		if transition_left <= 0: begin_stage(model.stage+1)
 	if mode == "ending": end_time += delta
-	toast_left = maxf(0,toast_left-delta)
+	if mode == "play":
+		toast_left = maxf(0,toast_left-delta)
+		toast_guard_left = maxf(0,toast_guard_left-delta)
 	toast.visible = toast_left > 0 and mode == "play"
 	toast.modulate.a = clampf(toast_left*3.0,0.0,1.0)
 	refresh_hud()
 	queue_redraw()
 
-func message(text: String, seconds: float, tint := Color("ffe7a3")) -> void:
+func event_message(kind: String, text: String, seconds: float, tint := Color("ffe7a3")) -> void:
+	var priority := 1
+	if kind in ["rescue","checkpoint"]: priority = 3
+	elif kind in ["hit","tired","charge_cancel","blocked"]: priority = 4
+	elif kind.begins_with("recover_"): priority = 5
+	# Routine launch cost is already shown at the bee and in the stamina bar.
+	if kind == "burst": return
+	message(text,seconds,tint,priority)
+
+func message(text: String, seconds: float, tint := Color("ffe7a3"), priority := 1) -> void:
+	if toast_guard_left > 0 and priority < toast_priority: return
+	toast_priority = priority
+	toast_guard_left = minf(seconds,1.2) if priority >= 3 else 0.0
 	toast.text = text
 	toast.add_theme_color_override("font_color",tint)
 	toast_left = seconds
@@ -393,16 +445,17 @@ func capture() -> void:
 func show_transition() -> void:
 	mode = "transition"
 	held.clear()
-	panel.show()
-	heading.text = TRANSITIONS[model.stage][0]
-	description.text = TRANSITIONS[model.stage][1] + "\n\n本段晨露 %d / 3 · 本次共 %d / 9\n晨露是可选奖励，伙伴才是旅途的目的。" % [model.garden_awards[model.stage],model.garden_total()]
-	main_button.text = TRANSITIONS[model.stage][2]
-	secondary_button.hide()
-	third_button.hide()
-	reset_menu()
+	panel.hide()
+	transition_left = HANDOFF_SECONDS
+	handoff_heading.text = TRANSITIONS[model.stage][0]
+	handoff_detail.text = "接下来  %s\n稍歇片刻，自动出发 · Enter 现在出发" % TITLES[model.stage+1]
+	handoff_panel.show()
+	cue_panel.hide()
+	toast.hide()
 
 func show_ending() -> void:
 	mode = "ending"
+	handoff_panel.hide()
 	held.clear()
 	panel.show()
 	heading.text = "九只，都到家了。"

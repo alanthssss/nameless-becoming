@@ -1,6 +1,6 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.3.0",
+  "revision": "0.3.1",
   "created": "2026-10-20",
   "direction": "Original bold-outline garden cartoon: rounded leaves, large expressive eyes, warm cream and honey, three garden sets. Code-native vector drawing; no bitmap generation or imported reference assets.",
   "runtime_bitmap_assets": [],
@@ -29,7 +29,8 @@
       "sprayer idle/blink/warning/sneeze/calm",
       "diamond dew reward vs round moving spray hazards",
       "sunny vegetable garden/fountain bridge/rainy tool garden",
-      "warm tree-hollow ending; up to nine blossoms from optional collection"
+      "warm tree-hollow ending; up to nine blossoms from optional collection",
+      "charge circle fills exactly at ready threshold; local result captions for burst/rescue/wind/gate/dew/hit"
     ],
     "collision_contract": "Model authoritative. Solid stem silhouette stays within the original rectangle; visual tips taper inward. Decorative thin stems and distant garden objects have no collision. Flower direction, charge threshold, stamina eligibility and shelter location share model values. Reward dew is angular and sparkling; damaging spray is round and moving. Sprayer states read sprayer_phase directly.",
     "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget."
@@ -37,7 +38,8 @@
   "ui": {
     "source": "Project Godot drawing and controls in main.gd; operating-system Chinese font fallback",
     "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
-    "clock": "Elapsed journey time in acts 1-2; 55-second exposed-time budget in act 3, paused under shelter"
+    "clock": "Elapsed journey time in acts 1-2; 55-second exposed-time budget in act 3, paused under shelter",
+    "handoff": "1.6-second in-world handoff between stages; Enter skips; pause/focus loss freezes it; fresh input starts each stage."
   },
   "rejected_pass": {
     "status": "Removed from source/runtime/export following user feedback SF-R02: AI feeling too strong.",
@@ -80,7 +82,8 @@
       16.64,
       15.68,
       14.72
-    ]
+    ],
+    "rhythm_revision": "0.3.1 retains the original art and all music. Native input-route captures and technical checks recorded in the local rhythm-feedback delivery receipt; player feel acceptance remains pending."
   },
   "style_references": [
     {
@@ -113,7 +116,7 @@
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "c91e0743570853b1b40b1dca9b18e6444583adf5a6ac20045a0af3cba2af8648",
+    "world_view.gd": "b9dcc8c14417790c6826889ea65c97f373f4f4a85bce1ee94ad5533d22022050",
     "sound.gd": "560a73b9e3b8246a0a7ae6df2f05aab26a7aadabc79e121fa75086eae8405665"
   }
 }

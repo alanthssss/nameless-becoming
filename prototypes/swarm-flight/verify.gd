@@ -225,6 +225,99 @@ func has_event(kind: String) -> bool:
 		if event.kind == kind: return true
 	return false
 
+func control_fixture() -> RefCounted:
+	# An empty exposed lane isolates input response from authored collisions,
+	# pickups and rain. Full routes below exercise the untouched level layouts.
+	var sample = Model.new()
+	sample.load_stage(1)
+	sample.walls.clear()
+	sample.pods.clear()
+	sample.rings.clear()
+	sample.sprayers.clear()
+	sample.dew.clear()
+	sample.rain_timer = 999.0
+	sample.world_width = 10000.0
+	sample.exit_pos = Vector2(9900,420)
+	return sample
+
+func launch_measure(hold_seconds: float) -> Dictionary:
+	var sample = control_fixture()
+	for i in int(round(hold_seconds*100)):
+		sample.step(Vector2.ZERO,true,0.01)
+	var origin: Vector2 = sample.p
+	sample.step(Vector2.ZERO,false,1.0/120.0)
+	var launch_direction: Vector2 = sample.face
+	var burst_frames := 1
+	while sample.burst_left > 0 and burst_frames < 120:
+		sample.step(Vector2.ZERO,false,1.0/120.0)
+		burst_frames += 1
+	var burst_end: Vector2 = sample.p
+	var brake_frames := 0
+	while not sample.velocity.is_zero_approx() and brake_frames < 120:
+		sample.step(Vector2.ZERO,false,1.0/120.0)
+		brake_frames += 1
+	return {"distance":origin.distance_to(burst_end),"tail":burst_end.distance_to(sample.p),"brake_seconds":brake_frames/120.0,"burst_seconds":burst_frames/120.0,"direction":launch_direction,"bursts":sample.bursts,"stopped":sample.velocity.is_zero_approx()}
+
+func controls_contract() -> void:
+	var sample = control_fixture()
+	for i in 60: sample.step(Vector2.RIGHT,false,1.0/120.0)
+	var release_pos: Vector2 = sample.p
+	var stop_frames := 0
+	while not sample.velocity.is_zero_approx() and stop_frames < 120:
+		sample.step(Vector2.ZERO,false,1.0/120.0)
+		stop_frames += 1
+	var drift := release_pos.distance_to(sample.p)
+	expect(sample.velocity.is_zero_approx() and stop_frames/120.0 <= 0.10,"Releasing cruise controls stops within one tenth of a second")
+	expect(drift <= 20.0,"Cruise release travels at most twenty pixels before stopping")
+	var rest: Vector2 = sample.p
+	for i in 120: sample.step(Vector2.ZERO,false,1.0/120.0)
+	expect(sample.p == rest,"Exposed idle flight has no hidden wind drift after releasing controls")
+	for i in 120: sample.step(Vector2.ZERO,true,1.0/120.0)
+	expect(sample.p == rest and sample.face == Vector2.RIGHT,"Stationary charging keeps both aim and position until directional input")
+	sample.step(Vector2.DOWN,true,0.1)
+	expect(sample.face == Vector2.DOWN and absf(sample.velocity.length()-90.0)<0.001 and absf(sample.velocity.x)<0.001,"Charging allows deliberate ninety-pixel-per-second aiming without wind")
+	sample.step(Vector2.ZERO,false,1.0/120.0)
+	sample.step(Vector2.LEFT,false,1.0/120.0)
+	expect(sample.face == Vector2.DOWN and sample.velocity.x == 0 and sample.velocity.y > 0,"Released burst keeps the last displayed aim instead of following later steering")
+	var ready := launch_measure(0.40)
+	var full := launch_measure(1.00)
+	sample = control_fixture()
+	for i in 48: sample.step(Vector2.ZERO,true,1.0/120.0)
+	expect(sample.charge >= Model.CHARGE_READY,"A four-tenths-second charge is ready at the actual 120Hz simulation step")
+	expect(ready.bursts == 1 and full.bursts == 1,"Both a ready charge and a long-held charge launch exactly once")
+	expect(absf(ready.distance-full.distance)<0.001 and absf(ready.burst_seconds-full.burst_seconds)<0.001,"Holding past ready never secretly changes burst reach or duration")
+	expect(ready.stopped and ready.tail < 20.0 and ready.brake_seconds <= 0.10,"Burst ends with less than twenty pixels of tail travel and immediate control recovery")
+	sample = control_fixture()
+	for i in 39: sample.step(Vector2.ZERO,true,0.01)
+	sample.step(Vector2.ZERO,false,1.0/120.0)
+	expect(sample.bursts == 0 and not sample.charging,"Release just before the four-tenths ready threshold does not launch")
+	var cancelled := false
+	for event in sample.events:
+		if event.kind == "charge_cancel": cancelled = true
+	expect(cancelled,"An early release still explains why no burst occurred")
+	print("CONTROL RESPONSE: %s" % JSON.stringify({"cruise_stop_seconds":stop_frames/120.0,"cruise_tail_px":snappedf(drift,0.01),"ready_at_seconds":0.40,"burst_distance_px":snappedf(ready.distance,0.01),"burst_tail_px":snappedf(ready.tail,0.01),"burst_stop_seconds":ready.brake_seconds}))
+	# A deliberately large input frame must end exactly at the restored state,
+	# even when directions and Space were held as exhaustion/timeout occurred.
+	for reason in ["exhaustion","timeout","rain","sneeze"]:
+		m = Model.new()
+		m.load_stage(2 if reason == "timeout" else 0)
+		if reason == "rain": m.bees = 3
+		m.p = Vector2(500,420)
+		m.save_checkpoint()
+		m.p = Vector2(600,420)
+		m.invulnerable = 0
+		if reason == "timeout": m.rain_remaining = 0.001
+		else: m.spend_energy(m.stamina-0.01)
+		if reason == "rain": m.drops.assign([{"pos":m.p,"vel":Vector2.ZERO}])
+		if reason == "sneeze": m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":1.0,"source":0}])
+		# Hits need enough energy to reach their damage check before exhaustion.
+		if reason in ["rain","sneeze"]: m.gain_energy(0.99)
+		m.step(Vector2.RIGHT,true,0.1)
+		expect(m.recoveries == 1 and m.p == m.checkpoint.p and m.velocity == Vector2.ZERO,"Recovery ends all remaining movement substeps: " + reason)
+		expect(not m.started and not m.charging and m.charge == 0 and m.stamina == 100,"Recovery remains safe and fully refilled until a new input frame: " + reason)
+		m.step(Vector2.ZERO,false,0.1)
+		expect(not m.started and m.p == m.checkpoint.p and m.stamina == 100,"Cleared UI input can hold the recovery position safely: " + reason)
+
 func feedback_contract() -> void:
 	m = Model.new()
 	for i in 5: m.step(Vector2.ZERO,true,1.0/60.0)
@@ -247,6 +340,9 @@ func feedback_contract() -> void:
 	var shown_direction := Vector2(670,-210).normalized()
 	expect(m.face.distance_to(shown_direction)<0.001,"Off-center flower entry follows the advertised center-to-center direction")
 	expect(m.rings[0].active and has_event("ring"),"First wind flower becomes spent and gives a success response")
+	for event in m.events:
+		if event.kind == "ring":
+			expect(float(event.reward) >= 0 and float(event.reward) < 8.0,"Wind flower feedback reports the capped actual stamina reward")
 	m.events.clear()
 	m.p = Vector2(760,460)
 	m.burst_left = 0.4
@@ -284,6 +380,17 @@ func feedback_contract() -> void:
 	m.spend_energy(m.stamina-1)
 	m.hurt()
 	expect(has_event("recover_rain") and not has_event("recover_manual"),"Rain defeat is explained separately from manual return")
+	m.load_stage(0)
+	m.p = m.pods[0].pos-Vector2(20,0)
+	m.face = Vector2.RIGHT
+	m.burst_left = 0.5
+	m.step(Vector2.ZERO,false,1.0/120.0)
+	var found_rescue := false
+	for event in m.events:
+		if event.kind == "rescue":
+			found_rescue = true
+			expect(event.count == 2 and event.reward == 0,"Rescue feedback reports the actual companion count and no invented capped reward")
+	expect(found_rescue,"Rescue success remains visible even when stamina was already full")
 
 func garden_contract() -> void:
 	m = Model.new()
@@ -370,6 +477,12 @@ func save_contract() -> void:
 	DirAccess.remove_absolute(path)
 
 func run() -> void:
+	controls_contract()
+	if "--controls-only" in OS.get_cmdline_user_args():
+		for failure in failures: push_error(failure)
+		if failures.is_empty(): print("SWARM FLIGHT CONTROLS VERIFIED: %d checks" % checks)
+		quit(0 if failures.is_empty() else 1)
+		return
 	full_route()
 	hesitation = 120
 	route_label = "two-second hesitation before each burst"

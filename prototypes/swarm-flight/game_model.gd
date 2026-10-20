@@ -1,14 +1,19 @@
 extends RefCounted
 ## Engine-independent rules. All movement uses bounded substeps, including bursts.
-const CHARGE_SECONDS := 0.65
-const CHARGE_READY := 0.75
+const CHARGE_SECONDS := 0.50
+const CHARGE_READY := 0.80
 const MAX_STAMINA := 100.0
 const BURST_COST := 20.0
 const FLIGHT_DRAIN := 2.0
 const REST_RECOVERY := 24.0
 const STORM_SECONDS := 55.0
 const CRUISE_SPEED := 250.0
+const CHARGE_SPEED := 90.0
 const BURST_SPEED := 880.0
+const BURST_SECONDS := 0.54
+const FLIGHT_ACCELERATION := 1800.0
+const RELEASE_BRAKING := 4000.0
+const BURST_BRAKING := 30000.0
 var stage := 0
 var phase := "playing"
 var p := Vector2(180, 420)
@@ -17,6 +22,7 @@ var face := Vector2.RIGHT
 var charge := 0.0
 var charging := false
 var burst_left := 0.0
+var burst_braking := false
 var bees := 1
 var stamina := MAX_STAMINA
 var energy_spent := 0.0
@@ -68,6 +74,7 @@ func load_stage(index: int) -> void:
 	charge = 0.0
 	charging = false
 	burst_left = 0.0
+	burst_braking = false
 	stamina = MAX_STAMINA
 	energy_spent = 0.0
 	energy_gained = 0.0
@@ -152,6 +159,7 @@ func clear_input() -> void:
 	charging = false
 	charge = 0.0
 	burst_left = 0.0
+	burst_braking = false
 	velocity = Vector2.ZERO
 
 func step(direction: Vector2, held: bool, delta: float) -> void:
@@ -170,12 +178,15 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 		started = true
 		charging = true
 		charge = minf(1.0,charge + dt / CHARGE_SECONDS)
+		if is_equal_approx(charge,CHARGE_READY):
+			charge = CHARGE_READY
 	elif not held and charging:
 		charging = false
 		if charge >= CHARGE_READY and can_burst():
 			spend_energy(BURST_COST)
 			started = true
-			burst_left = 0.48 + charge * 0.06
+			burst_left = BURST_SECONDS
+			burst_braking = false
 			bursts += 1
 			emit("burst",p)
 		elif charge >= CHARGE_READY:
@@ -184,9 +195,14 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 			emit("charge_cancel",p)
 		charge = 0.0
 	var remaining := dt
+	var recoveries_before := recoveries
 	while remaining > 0.00001 and phase == "playing":
 		var sub := minf(remaining,1.0 / 120.0)
 		advance(direction,sub)
+		# A recovery is the end of this input frame. Do not let its remaining
+		# substeps move the restored bee with the old direction.
+		if recoveries != recoveries_before:
+			break
 		remaining -= sub
 	camera_x = clampf(p.x - 480,0,world_width - 1280)
 
@@ -209,12 +225,21 @@ func advance(direction: Vector2, dt: float) -> void:
 	if burst_left > 0:
 		burst_left = maxf(0,burst_left-dt)
 		velocity = face * BURST_SPEED
+		if burst_left <= 0.0:
+			burst_braking = true
 	else:
-		var target := direction * (145.0 if charging else CRUISE_SPEED)
-		# The environment moves the bee only after the player starts flying.
-		if started and shelter_index_at(p) < 0:
-			target += Vector2(12 if stage == 0 else 34,sin(time * 1.5 + p.x * 0.002) * (10 if charging else 24))
-		velocity = velocity.move_toward(target,dt * 1800)
+		var target := direction * (CHARGE_SPEED if charging else CRUISE_SPEED)
+		# Wind colors active flight; it never moves an idle or aiming bee.
+		if not charging and direction.length() > 0.01 and shelter_index_at(p) < 0:
+			target += Vector2(12 if stage == 0 else 34,sin(time * 1.5 + p.x * 0.002) * 24)
+		var acceleration := FLIGHT_ACCELERATION
+		if burst_braking:
+			acceleration = BURST_BRAKING
+		elif direction.is_zero_approx() or charging:
+			acceleration = RELEASE_BRAKING
+		velocity = velocity.move_toward(target,dt * acceleration)
+		if velocity.is_equal_approx(target):
+			burst_braking = false
 	var before := p
 	p += velocity * dt
 	p.x = clampf(p.x,35,world_width-50)
@@ -259,19 +284,24 @@ func advance(direction: Vector2, dt: float) -> void:
 		if not trapped.open and burst_left > 0 and p.distance_to(trapped.pos) < 48:
 			trapped.open = true
 			bees += int(trapped.count)
+			var before_rescue_gain := stamina
 			gain_energy(40.0)
 			emit("rescue",trapped.pos)
+			events.back()["count"] = int(trapped.count)
+			events.back()["reward"] = stamina-before_rescue_gain
 			save_checkpoint()
 	for i in range(rings.size()):
 		var flower := rings[i]
 		if burst_left > 0 and not flower.active and p.distance_to(flower.pos) < 60:
 			flower.active = true
 			rings_hit += 1
+			var before_ring_gain := stamina
 			gain_energy(8.0)
 			burst_left = 0.60
 			# Preview and launch use the same fixed direction from the flower center.
 			face = ring_direction(i)
 			emit("ring",flower.pos)
+			events.back()["reward"] = stamina-before_ring_gain
 	var old_recoveries := recoveries
 	advance_garden(dt)
 	if old_recoveries != recoveries: return

@@ -36,3 +36,8 @@
 本地交付：`outputs/gameplay-comparison/2026-10-20/合成与消除·试玩盒.app`；规则报告、6张流程图、小窗口截图和运行日志在同目录 `evidence/`，`build-receipt.json` 保存源码／App二进制／PCK哈希。对照：`outputs/swarm-flight/2026-10-20-garden-chapter/雨来之前·花园奇遇.app`。源码启动与命令见[试玩盒README](../../prototypes/garden-puzzles/README.md)。
 
 未完成且不冒充完成：Alan本轮整体试玩、独立玩家偏好、Windows实机、商业品质和发行。下一步由Alan分别完整玩一局，再选保留合成、三消或飞行；也可都不保留。此决策前不混合玩法、不批量加关卡、不推进Steam。唯一执行视图仍为生产规格中的Now。
+
+
+### 后续方向决定（同日）
+
+Alan反馈“感觉还是飞行版更有意思”，授权继续改善飞行一局的节奏和反馈。两款小样保留为已完成的比较材料，不继续扩充；后续唯一执行视图回到生产规格Now，实施与体验证据见[飞行SF-R04](swarm-flight-game-20261020.md)。没有据此认定所有玩家都偏好飞行。
