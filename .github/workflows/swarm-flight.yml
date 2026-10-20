@@ -67,7 +67,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://ui_verify.gd -- --test 2>&1 | tee "$RUNNER_TEMP/swarm-flight-ui.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://ui_verify.gd -- --swarm-qa 2>&1 | tee "$RUNNER_TEMP/swarm-flight-ui.log"
           if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/swarm-flight-ui.log"; then
             exit 1
           fi

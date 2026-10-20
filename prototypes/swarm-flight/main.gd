@@ -40,7 +40,7 @@ var capture_seconds := -1.0
 func _ready() -> void:
 	font.font_names = PackedStringArray(["PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei","sans-serif"])
 	for arg in OS.get_cmdline_user_args():
-		if arg == "--test": test_mode = true
+		if arg == "--swarm-qa": test_mode = true
 		if arg.begins_with("--capture="): capture_path = arg.trim_prefix("--capture=")
 		if arg.begins_with("--capture-after="): capture_seconds = float(arg.trim_prefix("--capture-after="))
 	world = World.new()

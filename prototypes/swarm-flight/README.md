@@ -19,8 +19,8 @@
 ```sh
 godot --headless --path . --editor --import --quit
 godot --headless --path . --script res://verify.gd
-godot --headless --path . --script res://ui_verify.gd -- --test
-godot --headless --path . --quit-after 3 -- --test
+godot --headless --path . --script res://ui_verify.gd -- --swarm-qa
+godot --headless --path . --quit-after 3 -- --swarm-qa
 ```
 
 检查退出码、成功标记以及日志中不存在 `SCRIPT ERROR` / `ERROR:`。Godot 有时会在脚本异常后返回 0，因此不能只看退出码。CI 使用独立的 `swarm-flight.yml`，不加载旧年度游戏工程。`verify.gd` 检查完整路线、连续移动、碰撞、雨滴、恢复及畸形存档；`ui_verify.gd` 通过场景输入处理器传入方向键／空格按下和释放，完成三段与可见结尾，并覆盖 WASD、暂停、失焦、重玩、静音。测试只使用自己的存档文件。
