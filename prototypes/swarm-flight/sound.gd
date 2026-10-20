@@ -40,6 +40,12 @@ func _ready() -> void:
 	_samples["recover"] = _make_effect("recover", 0.75)
 	_samples["finish"] = _make_effect("finish", 1.50)
 	_samples["ready"] = _make_effect("ready", 0.18)
+	_samples["charge_cancel"] = _make_effect("charge_cancel",0.14)
+	_samples["blocked"] = _make_effect("blocked",0.15)
+	_samples["rain_break"] = _samples["gate"]
+	_samples["tired"] = _samples["charge_cancel"]
+	for kind in ["checkpoint","recover_manual","recover_rain","recover_exhaustion","recover_timeout"]:
+		_samples[kind] = _samples["recover"]
 	set_stage(0)
 	set_muted(_muted)
 
@@ -229,6 +235,10 @@ func _make_effect(kind: String, duration: float) -> AudioStreamWAV:
 					var frequency := 440.0 * pow(2.0, (float(notes[n]) - 69.0) / 12.0)
 					var attack := minf(nt / 0.006, 1.0)
 					value += (sin(TAU * frequency * nt) + sin(TAU * frequency * 2.0 * nt) * 0.18) * exp(-nt * 3.6) * attack * 0.22
+			"charge_cancel":
+				value = sin(TAU*(540.0*t-1000.0*t*t))*0.16
+			"blocked":
+				value = sin(TAU*110.0*t)*exp(-t*24.0)*0.3+low*0.16
 			"ready":
 				value = sin(TAU * 880.0 * t) * 0.20 + sin(TAU * 1320.0 * t) * 0.07
 		buffer[i] = value * envelope * 0.75

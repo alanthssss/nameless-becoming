@@ -1,0 +1,54 @@
+{
+  "project": "Before the Rain / 雨来之前",
+  "revision": "0.2.1",
+  "created": "2026-10-20",
+  "direction": "Restrained cut-paper botanical silhouettes and limited screenprint palettes; all runtime graphics are drawn in code.",
+  "runtime_bitmap_assets": [],
+  "code_native_art": {
+    "path": "world_view.gd",
+    "source": "Original project procedural drawing, revised by Codex; no external reference images or artist imitation.",
+    "palette": {
+      "ink": "#204d43",
+      "gold": "#edc16c",
+      "cream": "#fff0c9",
+      "meadow": "#e9e5cd",
+      "wind": "#c8dcd2",
+      "storm": "#809eab"
+    },
+    "states": [
+      "rescue leaf folded/open",
+      "wind flower directional/open and spent/closed",
+      "solid tapered stem",
+      "dry curtain intact/torn",
+      "shelter unvisited/reached",
+      "bee flight/charge/ready/tired/burst/resting",
+      "tree hollow ending"
+    ],
+    "collision_contract": "Game model remains authoritative. Visual cues derive from the same flower direction, charge threshold, stamina eligibility and shelter location. Stem tips taper inside original rectangular bounds; thin decorative plant stems do not add collision."
+  },
+  "ui": {
+    "source": "Project Godot drawing and controls in main.gd; operating-system Chinese font fallback",
+    "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
+    "clock": "Elapsed journey time in acts 1-2; 55-second exposed-time budget in act 3, paused under shelter"
+  },
+  "rejected_pass": {
+    "status": "Removed from source/runtime/export following user feedback SF-R02: AI feeling too strong.",
+    "files": [
+      "meadow-painting.png",
+      "bee-storybook.png",
+      "botanical-sprites.png"
+    ],
+    "retention": "Original unchanged images, full image-generation prompts/provenance, native captures and interim app retained only in local outputs/swarm-flight/2026-10-20-finished-chapter/rejected-painted-pass; not required at runtime."
+  },
+  "validation": {
+    "engine": "Godot 4.6.2 stable, OpenGL Compatibility on Apple M1 Pro",
+    "captures": [
+      "meadow-ready",
+      "wind-open",
+      "wind-spent",
+      "shelter",
+      "ending"
+    ],
+    "result": "Developer inspected actual native-rendered states for coherent visual language, readable silhouettes, direction/state cues and menu layout. Final revision awaits whole-chapter player review; no commercial-art acceptance claimed."
+  }
+}

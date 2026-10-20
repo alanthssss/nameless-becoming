@@ -122,8 +122,13 @@ func controls() -> void:
 	key(KEY_ESCAPE,true)
 	key(KEY_ESCAPE,false)
 	var paused_pos: Vector2 = game.model.p
+	var paused_stamina: float = game.model.stamina
+	var paused_clock: float = game.model.rain_remaining
+	var paused_trip: float = game.played_seconds
 	ticks(120)
 	expect(game.mode == "pause" and game.model.p == paused_pos,"Pause freezes physical progress")
+	expect(game.model.stamina == paused_stamina and game.model.rain_remaining == paused_clock and game.played_seconds == paused_trip,"Pause freezes stamina, countdown and journey timer together")
+	expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Pause instructions fit above the first menu button")
 	key(KEY_SPACE,false)
 	key(KEY_ENTER,true)
 	key(KEY_ENTER,false)
@@ -152,6 +157,47 @@ func controls() -> void:
 	key(KEY_R,true)
 	key(KEY_R,false)
 
+func interface_feedback() -> void:
+	game.saved_stage = 1
+	game.show_title()
+	key(KEY_DOWN,true)
+	key(KEY_DOWN,false)
+	key(KEY_ENTER,true)
+	key(KEY_ENTER,false)
+	expect(game.mode == "play" and game.model.stage == 1,"Keyboard menu navigation selects the visible continue action")
+	game.show_title()
+	game.main_button.pressed.emit()
+	key(KEY_SPACE,true)
+	ticks(5)
+	key(KEY_SPACE,false)
+	ticks(1)
+	expect(game.toast.visible and game.toast.text.contains("还没蓄好力"),"An early Space release visibly explains why no burst occurred")
+	key(KEY_SPACE,true)
+	ticks(40)
+	expect(game.cue_panel.visible and game.cue_label.text.contains("松开空格"),"Ready-to-release feedback appears beside the bee")
+	expect(game.hud_energy.text.contains("体力") and game.hud_clock.text.begins_with("旅程"),"Stamina value and journey timer are visible in the HUD")
+	key(KEY_ESCAPE,true)
+	key(KEY_ESCAPE,false)
+	key(KEY_SPACE,false)
+	expect(not game.cue_panel.visible and not game.toast.visible,"Pause hides stale gameplay feedback")
+	game.main_button.pressed.emit()
+	key(KEY_R,true)
+	key(KEY_R,false)
+	ticks(1)
+	expect(game.toast.text.contains("已回到") and game.toast.text.contains("伙伴都在"),"Manual recovery has an explicit visible cause and preserved-progress message")
+	game.begin_stage(2)
+	game.model.p = Vector2(1640,400)
+	game.model.started = true
+	game.model.spend_energy(60)
+	ticks(60)
+	expect(game.hud_clock.text.contains("停") and game.cue_label.text.contains("恢复"),"Shelter HUD explains paused countdown and actual stamina recovery")
+	game.model.p += Vector2(250,0)
+	game.model.rain_remaining = 0.01
+	ticks(1)
+	expect(game.toast.text.contains("暴雨抵达") and game.toast.text.contains("重置"),"Timeout recovery explains why and what reset")
+	game.begin_stage(0)
+	release_all()
+
 func run() -> void:
 	game = Scene.instantiate()
 	game.test_mode = true
@@ -159,9 +205,9 @@ func run() -> void:
 	game.set_process(false)
 	await process_frame
 	expect(game.mode == "title" and game.main_button.visible,"Native scene starts at the title")
+	expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Title instructions fit above the first menu button")
 	expect(game.world.show_behind_parent,"World does not cover HUD contrast bands or target marker")
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
+	interface_feedback()
 	controls()
 	chapter_zero()
 	if game.mode == "transition":
@@ -173,6 +219,8 @@ func run() -> void:
 		chapter_two()
 	expect(game.mode == "ending","Whole scene flow completed without debug teleport or stage skip")
 	if game.mode == "ending":
+		expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Ending copy fits above the replay button")
+		expect(game.description.text.contains("旅程") and game.description.text.contains("恢复点"),"Whole-chapter ending reports total time and retries")
 		game.main_button.pressed.emit()
 		expect(game.mode == "title","Ending offers a working replay")
 		game.main_button.pressed.emit()

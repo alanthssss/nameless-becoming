@@ -1,6 +1,12 @@
 extends RefCounted
 ## Engine-independent rules. All movement uses bounded substeps, including bursts.
 const CHARGE_SECONDS := 0.65
+const CHARGE_READY := 0.75
+const MAX_STAMINA := 100.0
+const BURST_COST := 20.0
+const FLIGHT_DRAIN := 2.0
+const REST_RECOVERY := 24.0
+const STORM_SECONDS := 55.0
 const CRUISE_SPEED := 250.0
 const BURST_SPEED := 880.0
 var stage := 0
@@ -12,7 +18,10 @@ var charge := 0.0
 var charging := false
 var burst_left := 0.0
 var bees := 1
-var hp := 3
+var stamina := MAX_STAMINA
+var energy_spent := 0.0
+var energy_gained := 0.0
+var rain_remaining := STORM_SECONDS
 var invulnerable := 0.0
 var time := 0.0
 var camera_x := 0.0
@@ -34,6 +43,7 @@ var checkpoint: Dictionary = {}
 var rain_timer := 1.6
 var checkpoint_index := -1
 var started := false
+var blocked_cooldown := 0.0
 var rng := RandomNumberGenerator.new()
 
 func _init() -> void:
@@ -54,7 +64,10 @@ func load_stage(index: int) -> void:
 	charge = 0.0
 	charging = false
 	burst_left = 0.0
-	hp = 3
+	stamina = MAX_STAMINA
+	energy_spent = 0.0
+	energy_gained = 0.0
+	rain_remaining = STORM_SECONDS
 	invulnerable = 1.0
 	time = 0.0
 	camera_x = 0.0
@@ -69,6 +82,7 @@ func load_stage(index: int) -> void:
 	checkpoint_index = -1
 	rain_timer = 1.8
 	started = false
+	blocked_cooldown = 0.0
 	rng.seed = 91027 + stage
 	match stage:
 		0:
@@ -121,14 +135,21 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 		if burst_left <= 0:
 			face = direction
 	if held and burst_left <= 0:
+		started = true
 		charging = true
 		charge = minf(1.0,charge + dt / CHARGE_SECONDS)
 	elif not held and charging:
 		charging = false
-		if charge >= 0.75:
+		if charge >= CHARGE_READY and can_burst():
+			spend_energy(BURST_COST)
+			started = true
 			burst_left = 0.48 + charge * 0.06
 			bursts += 1
 			emit("burst",p)
+		elif charge >= CHARGE_READY:
+			emit("tired",p)
+		else:
+			emit("charge_cancel",p)
 		charge = 0.0
 	var remaining := dt
 	while remaining > 0.00001 and phase == "playing":
@@ -139,6 +160,19 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 
 func advance(direction: Vector2, dt: float) -> void:
 	time += dt
+	if started:
+		if shelter_index_at(p) >= 0:
+			gain_energy(REST_RECOVERY*dt)
+		else:
+			spend_energy(FLIGHT_DRAIN*dt)
+			if stage == 2: rain_remaining = maxf(0.0,rain_remaining-dt)
+		if stamina <= 0.0 and burst_left <= 0.0:
+			restore_checkpoint("exhaustion")
+			return
+		if stage == 2 and rain_remaining <= 0.0:
+			restore_checkpoint("timeout")
+			return
+	blocked_cooldown = maxf(0.0, blocked_cooldown-dt)
 	invulnerable = maxf(0,invulnerable-dt)
 	if burst_left > 0:
 		burst_left = maxf(0,burst_left-dt)
@@ -146,7 +180,7 @@ func advance(direction: Vector2, dt: float) -> void:
 	else:
 		var target := direction * (145.0 if charging else CRUISE_SPEED)
 		# The environment moves the bee only after the player starts flying.
-		if started:
+		if started and shelter_index_at(p) < 0:
 			target += Vector2(12 if stage == 0 else 34,sin(time * 1.5 + p.x * 0.002) * (10 if charging else 24))
 		velocity = velocity.move_toward(target,dt * 1800)
 	var before := p
@@ -163,6 +197,10 @@ func advance(direction: Vector2, dt: float) -> void:
 				obstacle.broken = true
 				emit("gate",r.get_center())
 			else:
+				if blocked_cooldown <= 0.0 and velocity.length() > 40.0:
+					emit("blocked",p)
+					events.back()["material"] = obstacle.kind
+					blocked_cooldown = 1.8
 				# Resolve each axis independently: holding against a wall still slides.
 				var proposed := p
 				p = before
@@ -189,7 +227,7 @@ func advance(direction: Vector2, dt: float) -> void:
 		if not trapped.open and burst_left > 0 and p.distance_to(trapped.pos) < 48:
 			trapped.open = true
 			bees += int(trapped.count)
-			hp = 3
+			gain_energy(40.0)
 			emit("rescue",trapped.pos)
 			save_checkpoint()
 	for i in range(rings.size()):
@@ -197,10 +235,10 @@ func advance(direction: Vector2, dt: float) -> void:
 		if burst_left > 0 and not flower.active and p.distance_to(flower.pos) < 60:
 			flower.active = true
 			rings_hit += 1
+			gain_energy(8.0)
 			burst_left = 0.60
-			var next_pos: Vector2 = rings[i+1].pos if i+1 < rings.size() else exit_pos
-			# Only chain toward nearby flowers; the final launch stays nearly level.
-			face = (next_pos-p).normalized()
+			# Preview and launch use the same fixed direction from the flower center.
+			face = ring_direction(i)
 			emit("ring",flower.pos)
 	exit_ready = true
 	for trapped in pods:
@@ -220,21 +258,21 @@ func advance_storm(dt: float) -> void:
 	var under_shelter := false
 	for i in range(shelters.size()):
 		var shelter := shelters[i]
-		if p.distance_to(shelter.pos) < 140:
+		if shelter_contains(p,shelter):
 			under_shelter = true
 			if not shelter.reached:
 				shelter.reached = true
 				checkpoint_index = i
-				hp = 3
 				storm_x = minf(storm_x,p.x - 440)
 				save_checkpoint()
-				emit("recover",p)
+				checkpoint["p"] = shelter.pos
+				emit("checkpoint",shelter.pos)
 	if started and not under_shelter:
 		storm_x += 145 * dt
 	else:
 		storm_x = minf(storm_x,p.x-300)
 	if p.x < storm_x + 45:
-		hurt()
+		hurt("storm")
 
 func advance_rain(dt: float) -> void:
 	rain_timer -= dt
@@ -250,9 +288,9 @@ func advance_rain(dt: float) -> void:
 				sheltered = true
 		if drop.pos.y > 760 or sheltered:
 			drops.remove_at(i)
-		elif p.distance_to(drop.pos) < 25:
+		elif p.distance_to(drop.pos) < 25 and shelter_index_at(p) < 0:
 			if burst_left > 0:
-				emit("gate",drop.pos)
+				emit("rain_break",drop.pos)
 			else:
 				var old_recoveries := recoveries
 				hurt()
@@ -262,19 +300,20 @@ func advance_rain(dt: float) -> void:
 			if i < drops.size():
 				drops.remove_at(i)
 
-func hurt() -> void:
+func hurt(reason := "rain") -> void:
 	if invulnerable > 0:
 		return
-	hp -= 1
+	spend_energy(30.0)
 	invulnerable = 1.8
 	emit("hit",p)
-	if hp <= 0:
-		restore_checkpoint()
+	events.back()["reason"] = reason
+	if stamina <= 0.0:
+		restore_checkpoint("rain")
 
 func save_checkpoint() -> void:
-	checkpoint = {"p":p,"bees":bees,"pods":pods.duplicate(true),"walls":walls.duplicate(true),"rings":rings.duplicate(true),"shelters":shelters.duplicate(true),"storm_x":storm_x,"checkpoint_index":checkpoint_index}
+	checkpoint = {"p":p,"bees":bees,"pods":pods.duplicate(true),"walls":walls.duplicate(true),"rings":rings.duplicate(true),"shelters":shelters.duplicate(true),"storm_x":storm_x,"checkpoint_index":checkpoint_index,"rain_remaining":rain_remaining}
 
-func restore_checkpoint() -> void:
+func restore_checkpoint(reason := "manual") -> void:
 	if checkpoint.is_empty():
 		return
 	recoveries += 1
@@ -288,13 +327,39 @@ func restore_checkpoint() -> void:
 	checkpoint_index = checkpoint.checkpoint_index
 	drops.clear()
 	phase = "playing"
-	hp = 3
+	gain_energy(MAX_STAMINA)
+	rain_remaining = maxf(20.0,checkpoint.get("rain_remaining",STORM_SECONDS))
 	invulnerable = 2.5
 	rain_timer = 2
 	clear_input()
 	started = false
 	camera_x = clampf(p.x-480,0,world_width-1280)
-	emit("recover",p)
+	emit("recover_"+reason,p)
+
+func can_burst() -> bool:
+	return stamina >= BURST_COST
+
+func spend_energy(amount: float) -> void:
+	var used := minf(stamina,maxf(0.0,amount))
+	stamina -= used
+	energy_spent += used
+
+func gain_energy(amount: float) -> void:
+	var gained := minf(MAX_STAMINA-stamina,maxf(0.0,amount))
+	stamina += gained
+	energy_gained += gained
+
+func ring_direction(index: int) -> Vector2:
+	var destination: Vector2 = rings[index+1].pos if index+1 < rings.size() else exit_pos
+	return (destination-Vector2(rings[index].pos)).normalized()
+
+func shelter_contains(point: Vector2, shelter: Dictionary) -> bool:
+	return Rect2(shelter.pos-Vector2(118,64),Vector2(236,140)).has_point(point)
+
+func shelter_index_at(point: Vector2) -> int:
+	for i in shelters.size():
+		if shelter_contains(point,shelters[i]): return i
+	return -1
 
 func target_position() -> Vector2:
 	for trapped in pods:
@@ -304,20 +369,44 @@ func target_position() -> Vector2:
 
 func objective() -> String:
 	if stage == 0:
-		return "把卷叶里的伙伴带出来" if not exit_ready else "伙伴都跟上了，穿过右边的叶帘"
+		return "救出卷叶里的六只伙伴" if not exit_ready else "伙伴到齐 · 冲开干叶帘，去花桥"
 	if stage == 1:
-		return "借风花连飞，接上最后两只伙伴" if not exit_ready else "九只都在，朝树洞出发"
-	return "越过雨线，带大家进入发光的树洞"
+		return "接上最后两只伙伴 · 风花可以借力" if not exit_ready else "九只到齐 · 穿过干叶帘，去老树"
+	return "赶在暴雨前回家 · 大叶下可以休息"
 
 func hint() -> String:
+	if charging and not can_burst():
+		return "冲刺需要 20 体力 · 按 R 返回恢复点补充；大叶下可以休息"
 	if charging:
-		return "松开空格，冲！" if charge >= 0.75 else "收拢蜂群……按住空格蓄力"
+		return "准备好了 · 松开空格冲刺，方向键可以调整朝向" if charge >= CHARGE_READY else "继续按住空格 · 等光环亮起，再松开"
+	if not started:
+		return "方向键 / WASD 飞行   ·   按住空格蓄力，亮起后松开冲刺"
 	if stage == 0 and bees == 1:
-		return "靠近卷叶 → 按住空格 → 朝卷叶松开，救出伙伴"
-	if stage == 1 and rings_hit == 0:
-		return "冲进蓝色风花，它会把蜂群接力送往下一朵"
-	if stage == 2:
-		for shelter in shelters:
-			if p.distance_to(shelter.pos) < 140:
-				return "叶下可以歇一口气。往右飞，继续最后一程。"
-	return "方向键 / WASD 飞行    按住空格收拢，松开冲刺"
+		return "飞向呼救的卷叶 · 面朝伙伴，按住空格，亮起后松开"
+	if shelter_index_at(p) >= 0:
+		return "叶下休息 · " + ("体力充足" if stamina >= MAX_STAMINA else "体力正在恢复") + "，暴雨倒计时暂停"
+	return "飞行缓慢耗体力 · 空格蓄力冲刺消耗 20 · 叶下恢复 · Esc 暂停"
+
+func context_cue() -> Dictionary:
+	# Local prompts appear only within an actionable distance, never over the whole map.
+	if charging:
+		var words := "体力不足 20 · R 返回恢复点" if not can_burst() else ("松开空格 · 冲刺消耗 20" if charge >= CHARGE_READY else "按住空格 · 蓄力中")
+		return {"pos":p,"text":words,"kind":"charge"}
+	var rest_index := shelter_index_at(p)
+	if rest_index >= 0:
+		return {"pos":shelters[rest_index].pos,"text":"叶下安全 · " + ("体力充足" if stamina >= MAX_STAMINA else "体力恢复中"),"kind":"shelter"}
+	for trapped in pods:
+		if not trapped.open and p.distance_to(trapped.pos) < 300:
+			return {"pos":trapped.pos,"text":"冲开卷叶 · 救出伙伴","kind":"pod"}
+	for obstacle in walls:
+		if obstacle.kind == "curtain" and not obstacle.broken and absf(p.x-obstacle.rect.get_center().x) < 270 and p.y > obstacle.rect.position.y-40 and p.y < obstacle.rect.end.y+40:
+			return {"pos":Vector2(obstacle.rect.get_center().x,p.y),"text":"干叶帘 · 蓄力冲开","kind":"curtain"}
+	for flower in rings:
+		if p.distance_to(flower.pos) < (115 if flower.active else 270):
+			return {"pos":flower.pos,"text":"花瓣已收拢 · 继续向前" if flower.active else "冲进风花 · 沿箭头借力一次","kind":"spent" if flower.active else "ring"}
+	for shelter in shelters:
+		if p.distance_to(shelter.pos) < 230:
+			return {"pos":shelter.pos,"text":"大叶下休息 · 恢复体力","kind":"shelter"}
+	if exit_ready and p.distance_to(exit_pos) < 330:
+		return {"pos":exit_pos,"text":"到家了 · 飞进树洞" if stage == 2 else "一起向前 · 飞过叶拱","kind":"exit"}
+	return {}
