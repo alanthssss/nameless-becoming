@@ -19,6 +19,9 @@ check "$web" prototypes/flower-step/main.gd src/app/page.tsx
 check "$light" prototypes/swarm-flight/project.godot prototypes/swarm-flight/world_view.gd prototypes/swarm-flight/icon.svg .github/workflows/swarm-flight.yml
 check "$routes" prototypes/swarm-flight/main.gd godot/playtest/year/year_model.gd
 check "$web" prototypes/swarm-flight/main.gd src/app/page.tsx
+check "$light" prototypes/garden-puzzles/project.godot prototypes/garden-puzzles/main.gd .github/workflows/garden-puzzles.yml
+check "$routes" prototypes/garden-puzzles/main.gd godot/playtest/year/year_model.gd
+check "$web" prototypes/garden-puzzles/main.gd src/app/page.tsx
 check "$full" prototypes/some-other-game/project.godot
 check "$routes" godot/playtest/year/year_model.gd godot/playtest/year/year_route.tscn godot/tests/year_route_test.gd docs/plan.md
 check "$engine" godot/playtest/spring/spring_model.gd godot/fonts/font.otf
