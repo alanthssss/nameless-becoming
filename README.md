@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-10-20 当前：《雨来之前》完整飞行短篇已实现，待整体试玩。** Alan 授权 Codex 自主决定新方案；本轮把救出伙伴、花桥接力、暴雨前回家做成连续体验。独立 Godot 工程保留旧成果与存档，合并不代表乐趣通过。[方案与证据](docs/design/swarm-flight-game-20261020.md) · [打开方式](prototypes/swarm-flight/README.md) · [原始需求](docs/design/original-requirements-recovery-20261019.md)。下文旧品牌与实现记录是历史版本，不约束新候选。
+**2026-10-20 当前：《雨来之前》核心获得 Alan 正向反馈，关卡表达与美术仍需改进。** Alan 认为核心体验不错、音乐也还行，进一步指出提示、操作或反馈不明白，美术过于粗糙。本轮保留核心，归档交互与商业完成度差距；建议下一步整体制作一章成品质量样板，尚未实施或批准扩写。[方案、反馈与评估](docs/design/swarm-flight-game-20261020.md) · [打开方式](prototypes/swarm-flight/README.md) · [原始需求](docs/design/original-requirements-recovery-20261019.md)。下文旧品牌与实现记录是历史版本，不约束新候选。
 
 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
