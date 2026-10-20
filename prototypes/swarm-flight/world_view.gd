@@ -1,6 +1,7 @@
 extends Node2D
 ## A single painter for the authored landscape; never changes simulation state.
 var model
+var feedback_font: Font
 var particles: Array[Dictionary] = []
 var ripples: Array[Dictionary] = []
 var trail: Array[Dictionary] = []
@@ -66,7 +67,17 @@ func _process(delta: float) -> void:
 			trail.append({"pos": model.p, "life": 0.28, "face": model.face})
 	queue_redraw()
 
-func emit_event(kind: String, pos: Vector2) -> void:
+func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
+	var caption := ""
+	match kind:
+		"burst": caption = "−20"
+		"rescue": caption = "+%d 伙伴" % int(details.get("count",1))
+		"ring": caption = "借到风！"
+		"gate": caption = "冲开了！"
+		"dew": caption = "+%d 体力" % int(round(details.get("reward",0)))
+		"hit": caption = "−%d 体力" % int(details.get("cost",30))
+	if not caption.is_empty():
+		_feedback.append({"kind":"caption","pos":pos,"life":0.9,"text":caption,"bad":kind=="hit"})
 	var tint := GOLD
 	var count := 12
 	var force := 150.0
@@ -480,8 +491,8 @@ func _swarm() -> void:
 			_ellipse(p - face * 16.0, Vector2(38, 17), Color(1.0, 0.89, 0.48, 0.18), face.angle())
 		_bee(p, 1.0, face, 1.0, false, 0.0)
 	if compact:
-		var fill: float = clampf(model.charge, 0.0, 1.0)
-		var ready: bool = fill >= model.CHARGE_READY and model.can_burst()
+		var fill: float = clampf(model.charge / model.CHARGE_READY, 0.0, 1.0)
+		var ready: bool = model.charge >= model.CHARGE_READY and model.can_burst()
 		var col := Color("fff4b3") if ready else Color("c5a96c")
 		draw_arc(p, 27, -PI / 2, -PI / 2 + TAU * maxf(0.005, fill), 48, col, 4.0, true)
 		var begin := p + face * 37
@@ -565,7 +576,16 @@ func _effects() -> void:
 	for feedback in _feedback:
 		var alpha: float = minf(1.0, feedback.life * 2.5)
 		var pos: Vector2 = feedback.pos
-		if feedback.kind == "blocked":
+		if feedback.kind == "caption" and feedback_font != null:
+			var words: String = feedback.text
+			var text_width := feedback_font.get_string_size(words,HORIZONTAL_ALIGNMENT_LEFT,-1,19).x
+			pos.y = clampf(pos.y-45-(0.9-feedback.life)*24,160,670)
+			pos.x = clampf(pos.x,model.camera_x+text_width*0.5+24,model.camera_x+1256-text_width*0.5)
+			var ink := Color("253d26"); ink.a = alpha
+			var tint := Color("ffd3b6") if feedback.bad else CREAM; tint.a = alpha
+			draw_style_box(_box_style(ink,Color.TRANSPARENT,0,9),Rect2(pos-Vector2(text_width*0.5+9,23),Vector2(text_width+18,31)))
+			draw_string(feedback_font,pos-Vector2(text_width*0.5,0),words,HORIZONTAL_ALIGNMENT_LEFT,-1,19,tint)
+		elif feedback.kind == "blocked":
 			for side in [-1.0, 0.0, 1.0]:
 				draw_line(pos + Vector2(-9 + side * 9, -20), pos + Vector2(-12 + side * 12, -27), Color(0.95,0.89,0.68,alpha), 2.0, true)
 		else:
