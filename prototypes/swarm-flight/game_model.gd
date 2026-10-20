@@ -33,6 +33,10 @@ var walls: Array[Dictionary] = []
 var rings: Array[Dictionary] = []
 var shelters: Array[Dictionary] = []
 var drops: Array[Dictionary] = []
+var dew: Array[Dictionary] = []
+var sprayers: Array[Dictionary] = []
+var puffs: Array[Dictionary] = []
+var garden_awards: Array[int] = [0,0,0]
 var exit_pos := Vector2.ZERO
 var exit_ready := false
 var events: Array[Dictionary] = []
@@ -78,6 +82,10 @@ func load_stage(index: int) -> void:
 	rings.clear()
 	shelters.clear()
 	drops.clear()
+	dew.clear()
+	sprayers.clear()
+	puffs.clear()
+	garden_awards[stage] = 0
 	events.clear()
 	checkpoint_index = -1
 	rain_timer = 1.8
@@ -91,6 +99,7 @@ func load_stage(index: int) -> void:
 			pods = [pod(760,400,2), pod(1500,235,2), pod(2350,525,2)]
 			walls = [wall(1120,80,50,230), wall(1120,450,50,280), wall(1870,80,50,350), wall(1870,610,50,120), wall(2700,170,42,480,"curtain")]
 			exit_pos = Vector2(2920,420)
+			add_garden([Vector2(510,365),Vector2(1560,165),Vector2(2200,610)],[Vector2(2080,540)])
 		1:
 			world_width = 4200
 			bees = 7
@@ -99,6 +108,7 @@ func load_stage(index: int) -> void:
 				rings.append({"pos":pos,"active":false})
 			walls = [wall(1110,80,45,100), wall(1110,430,45,300), wall(1800,80,45,190), wall(1800,600,45,130), wall(2530,80,45,175), wall(2530,565,45,165), wall(3660,150,42,500,"curtain")]
 			exit_pos = Vector2(3990,420)
+			add_garden([Vector2(950,210),Vector2(2260,635),Vector2(3140,285)],[Vector2(1330,390),Vector2(2730,495)])
 		2:
 			world_width = 5100
 			bees = 9
@@ -110,8 +120,30 @@ func load_stage(index: int) -> void:
 			for pos in [Vector2(530,400),Vector2(1810,420),Vector2(3510,460),Vector2(4260,430)]:
 				rings.append({"pos":pos,"active":false})
 			exit_pos = Vector2(4790,430)
+			add_garden([Vector2(1060,290),Vector2(3020,370),Vector2(4420,570)],[Vector2(2330,510),Vector2(3750,280)])
 	exit_ready = pods.is_empty()
 	save_checkpoint()
+
+func add_garden(dew_positions: Array, flower_positions: Array) -> void:
+	for pos in dew_positions:
+		dew.append({"pos":pos,"collected":false})
+	for pos in flower_positions:
+		sprayers.append({"pos":pos,"timer":2.4+sprayers.size()*0.6,"stun_left":0.0,"flash":0.0,"rewarded":false})
+
+func garden_total() -> int:
+	return garden_awards[0]+garden_awards[1]+garden_awards[2]
+
+func reset_journey() -> void:
+	bursts = 0
+	recoveries = 0
+	rings_hit = 0
+	garden_awards = [0,0,0]
+
+func sprayer_phase(index: int) -> String:
+	var flower := sprayers[index]
+	if flower.stun_left > 0: return "calm"
+	if flower.flash > 0: return "sneeze"
+	return "warning" if flower.timer <= 0.8 else "idle"
 
 func emit(kind: String, pos: Vector2) -> void:
 	events.append({"kind":kind,"pos":pos})
@@ -240,6 +272,9 @@ func advance(direction: Vector2, dt: float) -> void:
 			# Preview and launch use the same fixed direction from the flower center.
 			face = ring_direction(i)
 			emit("ring",flower.pos)
+	var old_recoveries := recoveries
+	advance_garden(dt)
+	if old_recoveries != recoveries: return
 	exit_ready = true
 	for trapped in pods:
 		if not trapped.open:
@@ -300,18 +335,72 @@ func advance_rain(dt: float) -> void:
 			if i < drops.size():
 				drops.remove_at(i)
 
-func hurt(reason := "rain") -> void:
+func advance_garden(dt: float) -> void:
+	for drop in dew:
+		if not drop.collected and p.distance_to(drop.pos) < 30:
+			drop.collected = true
+			garden_awards[stage] += 1
+			var before_gain := stamina
+			gain_energy(12.0)
+			emit("dew",drop.pos)
+			events.back()["reward"] = stamina-before_gain
+	for i in sprayers.size():
+		var flower := sprayers[i]
+		flower.flash = maxf(0,flower.flash-dt)
+		flower.stun_left = maxf(0,flower.stun_left-dt)
+		if burst_left > 0 and flower.stun_left <= 0 and p.distance_to(flower.pos) < 58:
+			flower.stun_left = 6.0
+			flower.timer = 4.5
+			flower.flash = 0.0
+			var before_gain := stamina
+			if not flower.rewarded:
+				gain_energy(10.0)
+				flower.rewarded = true
+			emit("flower_calm",flower.pos)
+			events.back()["reward"] = stamina-before_gain
+			for j in range(puffs.size()-1,-1,-1):
+				if puffs[j].source == i: puffs.remove_at(j)
+		if not started or flower.stun_left > 0 or absf(p.x-flower.pos.x) > 650: continue
+		flower.timer -= dt
+		if flower.timer <= 0:
+			flower.timer = 4.5
+			flower.flash = 0.25
+			for angle in [-0.2,0.0,0.2]:
+				puffs.append({"pos":flower.pos-Vector2(38,0),"vel":Vector2.LEFT.rotated(angle)*200,"life":4.0,"source":i})
+			emit("spray",flower.pos)
+	for i in range(puffs.size()-1,-1,-1):
+		var puff := puffs[i]
+		puff.pos += puff.vel*dt
+		puff.life -= dt
+		var blocked: bool = puff.life <= 0 or shelter_index_at(puff.pos) >= 0
+		for obstacle in walls:
+			if not obstacle.broken and obstacle.rect.grow(8).has_point(puff.pos):
+				blocked = true
+				break
+		if blocked:
+			puffs.remove_at(i)
+		elif p.distance_to(puff.pos) < 25 and shelter_index_at(p) < 0:
+			if burst_left > 0:
+				emit("rain_break",puff.pos)
+			else:
+				var old_recoveries := recoveries
+				hurt("sneeze",12.0)
+				if recoveries != old_recoveries: return
+			puffs.remove_at(i)
+
+func hurt(reason := "rain", cost := 30.0) -> void:
 	if invulnerable > 0:
 		return
-	spend_energy(30.0)
+	spend_energy(cost)
 	invulnerable = 1.8
 	emit("hit",p)
 	events.back()["reason"] = reason
+	events.back()["cost"] = cost
 	if stamina <= 0.0:
 		restore_checkpoint("rain")
 
 func save_checkpoint() -> void:
-	checkpoint = {"p":p,"bees":bees,"pods":pods.duplicate(true),"walls":walls.duplicate(true),"rings":rings.duplicate(true),"shelters":shelters.duplicate(true),"storm_x":storm_x,"checkpoint_index":checkpoint_index,"rain_remaining":rain_remaining}
+	checkpoint = {"p":p,"bees":bees,"pods":pods.duplicate(true),"walls":walls.duplicate(true),"rings":rings.duplicate(true),"shelters":shelters.duplicate(true),"dew":dew.duplicate(true),"sprayers":sprayers.duplicate(true),"storm_x":storm_x,"checkpoint_index":checkpoint_index,"rain_remaining":rain_remaining}
 
 func restore_checkpoint(reason := "manual") -> void:
 	if checkpoint.is_empty():
@@ -323,9 +412,15 @@ func restore_checkpoint(reason := "manual") -> void:
 	walls.assign(checkpoint.walls.duplicate(true))
 	rings.assign(checkpoint.rings.duplicate(true))
 	shelters.assign(checkpoint.shelters.duplicate(true))
+	dew.assign(checkpoint.dew.duplicate(true))
+	sprayers.assign(checkpoint.sprayers.duplicate(true))
+	garden_awards[stage] = 0
+	for drop in dew:
+		if drop.collected: garden_awards[stage] += 1
 	storm_x = checkpoint.storm_x
 	checkpoint_index = checkpoint.checkpoint_index
 	drops.clear()
+	puffs.clear()
 	phase = "playing"
 	gain_energy(MAX_STAMINA)
 	rain_remaining = maxf(20.0,checkpoint.get("rain_remaining",STORM_SECONDS))
@@ -401,6 +496,17 @@ func context_cue() -> Dictionary:
 	for obstacle in walls:
 		if obstacle.kind == "curtain" and not obstacle.broken and absf(p.x-obstacle.rect.get_center().x) < 270 and p.y > obstacle.rect.position.y-40 and p.y < obstacle.rect.end.y+40:
 			return {"pos":Vector2(obstacle.rect.get_center().x,p.y),"text":"干叶帘 · 蓄力冲开","kind":"curtain"}
+	for i in sprayers.size():
+		var flower := sprayers[i]
+		if p.distance_to(flower.pos) < 260:
+			var state := sprayer_phase(i)
+			var words := "喷嚏花 · 冲刺让它安静六秒"
+			if state == "warning" or state == "sneeze": words = "要打喷嚏啦 · 绕开或冲刺安抚"
+			elif state == "calm": words = "安静啦 · 可以放心通过"
+			return {"pos":flower.pos,"text":words,"kind":"sprayer"}
+	for drop in dew:
+		if not drop.collected and p.distance_to(drop.pos) < 170:
+			return {"pos":drop.pos,"text":"晨露 · 轻触收集，体力 +12","kind":"dew"}
 	for flower in rings:
 		if p.distance_to(flower.pos) < (115 if flower.active else 270):
 			return {"pos":flower.pos,"text":"花瓣已收拢 · 继续向前" if flower.active else "冲进风花 · 沿箭头借力一次","kind":"spent" if flower.active else "ring"}

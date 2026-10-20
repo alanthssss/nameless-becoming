@@ -2,6 +2,7 @@ extends SceneTree
 const Scene = preload("res://main.tscn")
 var game
 var checks := 0
+var collecting := false
 var failures: Array[String] = []
 var pressed: Dictionary = {}
 var use_wasd := false
@@ -56,6 +57,7 @@ func launch(direction: Vector2, settle := 0.63) -> void:
 	ticks(int(settle*60))
 
 func chapter_zero() -> void:
+	if collecting and not fly(game.model.dew[0].pos,"first morning dew"): return
 	if not fly(Vector2(590,400),"first pod"): return
 	launch(Vector2.RIGHT)
 	expect(game.model.bees == 3,"Arrows + Space release rescue first pair")
@@ -64,8 +66,10 @@ func chapter_zero() -> void:
 	if not fly(Vector2(1330,235),"second pod"): return
 	launch(Vector2.RIGHT)
 	expect(game.model.bees == 5,"Keyboard second rescue")
+	if collecting and not fly(game.model.dew[1].pos,"high morning dew"): return
 	if not fly(Vector2(1770,520),"lower gap approach"): return
 	if not fly(Vector2(1990,520),"lower gap"): return
+	if collecting and not fly(game.model.dew[2].pos,"low morning dew"): return
 	if not fly(Vector2(2180,525),"third pod"): return
 	launch(Vector2.RIGHT)
 	if not fly(Vector2(2560,420),"leaf curtain"): return
@@ -77,11 +81,14 @@ func chapter_one() -> void:
 	# Test a forgiving keyboard route that does not require perfect diagonal aiming.
 	if not fly(Vector2(590,460),"first wind flower"): return
 	launch(Vector2.RIGHT,0.8)
+	if collecting and not fly(game.model.dew[0].pos,"high fountain dew"): return
 	for i in range(1,4):
 		var target: Vector2 = game.model.rings[i].pos
 		# Approach on the same horizontal line and launch with a single arrow.
 		if not fly(target-Vector2(170,0),"flower %d" % i): return
 		launch(Vector2.RIGHT,0.8)
+		if collecting and i == 1 and not fly(game.model.dew[1].pos,"low fountain dew"): return
+	if collecting and not fly(game.model.dew[2].pos,"last fountain dew"): return
 	# Rescue targets are visible and can be opened independently of wind flowers.
 	if not game.model.pods[0].open:
 		failures.append("Expected wind arc to catch the first companion without backtracking")
@@ -96,6 +103,8 @@ func chapter_one() -> void:
 func chapter_two() -> void:
 	for item in [Vector2(670,390),Vector2(940,390),Vector2(1050,400)]:
 		if not fly(item,"first rain gap"): return
+	if collecting and not fly(game.model.dew[0].pos,"storm side-route dew"): return
+	if collecting and not fly(Vector2(1050,400),"return to curtain"): return
 	launch(Vector2.RIGHT)
 	if not fly(Vector2(1640,400),"shelter one"): return
 	expect(game.model.shelters[0].reached,"Actual movement reaches shelter one")
@@ -104,9 +113,13 @@ func chapter_two() -> void:
 	launch(Vector2.RIGHT)
 	if not fly(Vector2(2970,430),"shelter two"): return
 	expect(game.model.shelters[1].reached,"Actual movement reaches shelter two")
-	for item in [Vector2(3210,480),Vector2(3410,480),Vector2(3810,430)]:
+	if collecting:
+		if not fly(game.model.dew[1].pos,"sheltered morning dew"): return
+		ticks(90)
+	for item in [Vector2(3210,480),Vector2(3410,480),Vector2(3810,570 if collecting else 430)]:
 		if not fly(item,"last rain gap"): return
 	launch(Vector2.RIGHT)
+	if collecting and not fly(game.model.dew[2].pos,"final morning dew"): return
 	fly(game.model.exit_pos,"tree hollow")
 	expect(game.mode == "ending" and game.heading.text == "九只，都到家了。","Keyboard route reaches the visible ending")
 
@@ -125,9 +138,12 @@ func controls() -> void:
 	var paused_stamina: float = game.model.stamina
 	var paused_clock: float = game.model.rain_remaining
 	var paused_trip: float = game.played_seconds
+	var paused_flowers: Array = game.model.sprayers.duplicate(true)
+	var paused_puffs: Array = game.model.puffs.duplicate(true)
 	ticks(120)
 	expect(game.mode == "pause" and game.model.p == paused_pos,"Pause freezes physical progress")
 	expect(game.model.stamina == paused_stamina and game.model.rain_remaining == paused_clock and game.played_seconds == paused_trip,"Pause freezes stamina, countdown and journey timer together")
+	expect(game.model.sprayers == paused_flowers and game.model.puffs == paused_puffs,"Pause freezes flower windup, calm and water positions")
 	expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Pause instructions fit above the first menu button")
 	key(KEY_SPACE,false)
 	key(KEY_ENTER,true)
@@ -142,6 +158,10 @@ func controls() -> void:
 	key(KEY_R,true)
 	key(KEY_R,false)
 	expect(game.model.p.distance_to(start)<1,"R returns to the chapter's current checkpoint")
+	game.pause_game()
+	key(KEY_R,true)
+	key(KEY_R,false)
+	expect(game.mode == "play" and game.model.p.distance_to(start)<1,"R also works from the pause page that advertises it")
 	key(KEY_M,true)
 	key(KEY_M,false)
 	expect(game.muted and AudioServer.is_bus_mute(AudioServer.get_bus_index("SFX")),"Mute applies to sound buses")
@@ -196,6 +216,25 @@ func interface_feedback() -> void:
 	ticks(1)
 	expect(game.toast.text.contains("暴雨抵达") and game.toast.text.contains("重置"),"Timeout recovery explains why and what reset")
 	game.begin_stage(0)
+	game.model.p = game.model.dew[0].pos
+	game.model.spend_energy(20)
+	ticks(1)
+	expect(game.hud_title.text.contains("晨露 1 / 3（可选）") and game.toast.text.contains("体力 +12"),"Dew visibly updates optional count and reward")
+	game.model.p = game.model.sprayers[0].pos-Vector2(200,0)
+	game.model.camera_x = game.model.p.x-480
+	game.model.sprayers[0].timer = 0.6
+	game.refresh_hud()
+	expect(game.cue_label.text.contains("要打喷嚏") and game.cue_panel.visible,"Local warning explains the upcoming sneeze and response")
+	game.model.sprayers[0].stun_left = 3
+	game.refresh_hud()
+	expect(game.cue_label.text.contains("安静啦"),"Calm state replaces the attack warning")
+	game.model.garden_awards.assign([3,3,3])
+	game.show_ending()
+	expect(game.description.text.contains("9 / 9") and game.description.text.contains("满园"),"Ending acknowledges full optional collection")
+	expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Garden ending text fits above its replay button")
+	game.show_title()
+	game.main_button.pressed.emit()
+	expect(game.model.garden_total() == 0,"Starting again clears previous journey dew")
 	release_all()
 
 func run() -> void:
@@ -225,6 +264,17 @@ func run() -> void:
 		expect(game.mode == "title","Ending offers a working replay")
 		game.main_button.pressed.emit()
 		expect(game.model.stage == 0 and game.model.bees == 1 and game.mode == "play","Replay starts a fresh whole experience")
+	collecting = true
+	chapter_zero()
+	if game.mode == "transition":
+		expect(game.model.garden_total() == 3,"Arrow-key detour collects all meadow dew")
+		game.main_button.pressed.emit()
+		chapter_one()
+	if game.mode == "transition":
+		expect(game.model.garden_total() == 6,"Arrow-key detour retains six dew across acts")
+		game.main_button.pressed.emit()
+		chapter_two()
+	expect(game.mode == "ending" and game.model.garden_total() == 9,"Complete arrow-key detour brings all nine dew to the ending")
 	game.queue_free()
 	await process_frame
 	await create_timer(0.2).timeout

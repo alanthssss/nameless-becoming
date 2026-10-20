@@ -6,6 +6,7 @@ var failures: Array[String] = []
 var m
 var hesitation := 0
 var route_label := "direct"
+var collecting := false
 
 func _initialize() -> void:
 	call_deferred("run")
@@ -32,6 +33,7 @@ func navigate(target: Vector2, label: String) -> void:
 
 func full_route() -> void:
 	m = Model.new()
+	if collecting: navigate(m.dew[0].pos,"First morning dew")
 	navigate(Vector2(590,400),"First pod approach")
 	burst(Vector2.RIGHT)
 	expect(m.bees == 3,"Burst rescues first pair")
@@ -40,8 +42,10 @@ func full_route() -> void:
 	navigate(Vector2(1330,235),"Second pod approach")
 	burst(Vector2.RIGHT)
 	expect(m.bees == 5,"Second pair joins")
+	if collecting: navigate(m.dew[1].pos,"High morning dew")
 	navigate(Vector2(1770,520),"Lower route approach")
 	navigate(Vector2(1990,520),"Second stem gap")
+	if collecting: navigate(m.dew[2].pos,"Low morning dew")
 	navigate(Vector2(2180,525),"Third pod approach")
 	burst(Vector2.RIGHT)
 	expect(m.bees == 7 and m.exit_ready,"All six companions rescued")
@@ -50,25 +54,31 @@ func full_route() -> void:
 	navigate(m.exit_pos,"Meadow exit")
 	expect(m.phase == "transition","Stage one has a reachable ending")
 	route_report("meadow")
+	if collecting: expect(m.garden_total() == 3,"All meadow dew collected on a continuous route")
 	m.load_stage(1)
 	navigate(Vector2(580,460),"Wind bridge approach")
 	burst(Vector2.RIGHT,0.8)
+	if collecting: navigate(m.dew[0].pos,"High fountain dew")
 	# Re-enter each flower with another chosen launch, not one automated ride.
 	for i in range(1,4):
 		var target: Vector2 = m.rings[i].pos
 		var approach: Vector2 = target - (target-m.p).normalized()*155
 		navigate(approach,"Wind flower %d approach" % i)
 		burst((target-m.p).normalized(),0.82)
+		if collecting and i == 1: navigate(m.dew[1].pos,"Low fountain dew")
+	if collecting: navigate(m.dew[2].pos,"Last fountain dew")
 	navigate(Vector2(3470,405),"Final curtain approach")
 	burst(Vector2.RIGHT,0.65)
 	navigate(m.exit_pos,"Wind bridge exit")
 	expect(m.bees == 9 and m.phase == "transition","All nine bees reach the storm chapter")
 	expect(m.rings_hit == 4,"Every wind flower can be used by ordinary controls")
 	route_report("flower bridge")
+	if collecting: expect(m.garden_total() == 6,"Six dew retained across scenes")
 	m.load_stage(2)
 	# The final route works without relying on the optional wind-ring accelerators.
 	navigate(Vector2(670,390),"Storm first approach")
 	navigate(Vector2(940,390),"Storm first gap")
+	if collecting: navigate(m.dew[0].pos,"Storm side-route dew")
 	navigate(Vector2(1050,400),"Storm first curtain approach")
 	burst(Vector2.RIGHT)
 	navigate(Vector2(1640,400),"First shelter")
@@ -79,18 +89,23 @@ func full_route() -> void:
 	burst(Vector2.RIGHT)
 	navigate(Vector2(2970,430),"Second shelter")
 	expect(m.shelters[1].reached,"Second shelter is a checkpoint")
+	if collecting:
+		navigate(m.dew[1].pos,"Sheltered morning dew")
+		for i in 90: m.step(Vector2.ZERO,false,1.0/60.0)
 	navigate(Vector2(3210,480),"Last gap approach")
 	navigate(Vector2(3410,480),"Last gap")
-	navigate(Vector2(3810,430),"Last curtain approach")
+	navigate(Vector2(3810,570 if collecting else 430),"Last curtain approach")
 	burst(Vector2.RIGHT)
+	if collecting: navigate(m.dew[2].pos,"Final morning dew")
 	navigate(m.exit_pos,"Reach the hollow")
 	expect(m.phase == "ending" and m.bees == 9,"Complete three-stage route ends at home with nine bees")
 	route_report("rainfront")
+	if collecting: expect(m.garden_total() == 9,"All nine optional dew and all companions reach the ending: " + str(m.dew))
 
 func route_report(name: String) -> void:
 	expect(m.recoveries == 0,"Direct route finishes without forced recovery: " + name)
 	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Stamina ledger conserves actual capped gains and costs: " + name)
-	print("BALANCE: %s" % JSON.stringify({"route":name,"scenario":route_label,"seconds":snappedf(m.time,0.01),"stamina":snappedf(m.stamina,0.01),"spent":snappedf(m.energy_spent,0.01),"gained":snappedf(m.energy_gained,0.01),"storm_remaining":snappedf(m.rain_remaining,0.01),"recoveries":m.recoveries}))
+	print("BALANCE: %s" % JSON.stringify({"route":name,"scenario":route_label,"seconds":snappedf(m.time,0.01),"stamina":snappedf(m.stamina,0.01),"spent":snappedf(m.energy_spent,0.01),"gained":snappedf(m.energy_gained,0.01),"storm_remaining":snappedf(m.rain_remaining,0.01),"recoveries":m.recoveries,"dew":m.garden_awards[m.stage]}))
 
 func stamina_and_clock() -> void:
 	m = Model.new()
@@ -270,6 +285,79 @@ func feedback_contract() -> void:
 	m.hurt()
 	expect(has_event("recover_rain") and not has_event("recover_manual"),"Rain defeat is explained separately from manual return")
 
+func garden_contract() -> void:
+	m = Model.new()
+	expect(m.dew.size() == 3 and m.sprayers.size() == 1,"Meadow introduces three dew and one sneeze flower")
+	m.spend_energy(60)
+	m.p = m.dew[0].pos
+	m.advance_garden(0)
+	expect(m.stamina == 52 and m.garden_total() == 1 and has_event("dew"),"Dew is a visible optional +12 pickup")
+	m.advance_garden(0)
+	expect(m.stamina == 52 and m.garden_total() == 1,"A dew cannot be picked twice")
+	m.save_checkpoint()
+	m.p = m.dew[1].pos
+	m.advance_garden(0)
+	expect(m.garden_total() == 2,"A detour adds a second dew")
+	m.restore_checkpoint()
+	expect(m.garden_total() == 1 and not m.dew[1].collected,"Recovery rolls unsaved dew back with its world state")
+	m.p = m.dew[1].pos
+	m.advance_garden(0)
+	expect(m.stamina == 100 and m.garden_total() == 2,"Full stamina still collects dew without overfilling")
+	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Dew and recovery preserve resource conservation")
+	m.load_stage(1)
+	expect(m.garden_total() == 2 and m.sprayers.size() == 2,"Moving to next scene keeps prior scene dew")
+	m.reset_journey()
+	expect(m.garden_total() == 0,"New or resumed journey resets the run-only collection")
+	m.load_stage(0)
+	m.p = m.sprayers[0].pos-Vector2(260,0)
+	var initial_timer: float = m.sprayers[0].timer
+	m.advance_garden(1)
+	expect(m.sprayers[0].timer == initial_timer and m.puffs.is_empty(),"Flowers wait until the player starts")
+	m.started = true
+	m.sprayers[0].timer = 0.79
+	expect(m.sprayer_phase(0) == "warning","Flower warns before releasing water")
+	m.advance_garden(0.8)
+	expect(m.puffs.size() == 3 and has_event("spray") and m.sprayer_phase(0) == "sneeze","One predictable slow fan is emitted per sneeze")
+	m.p = m.sprayers[0].pos
+	m.spend_energy(60)
+	m.burst_left = 0.3
+	m.advance_garden(0)
+	expect(m.sprayer_phase(0) == "calm" and m.puffs.is_empty() and m.stamina == 50,"Burst calms the flower, clears its water and gives first reward")
+	m.save_checkpoint()
+	m.advance_garden(5.9)
+	expect(m.sprayer_phase(0) == "calm" and m.puffs.is_empty(),"Calmed flower remains safe for nearly six seconds")
+	m.sprayers[0].stun_left = 0
+	m.advance_garden(0)
+	expect(m.stamina == 50,"Repeated calming cannot farm stamina")
+	m.restore_checkpoint()
+	expect(m.sprayers[0].rewarded and m.sprayer_phase(0) == "calm","Checkpoint restores flower reward and calm state")
+	m.p = Vector2(400,300)
+	m.invulnerable = 0
+	m.burst_left = 0
+	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
+	m.advance_garden(0)
+	expect(m.stamina == 88 and m.puffs.is_empty() and has_event("hit"),"Sneeze water costs twelve and is consumed")
+	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
+	m.advance_garden(0)
+	expect(m.stamina == 88,"Invulnerability prevents a three-water fan causing three hits")
+	m.invulnerable = 0
+	m.burst_left = 0.3
+	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
+	m.advance_garden(0)
+	expect(m.stamina == 88 and has_event("rain_break"),"Burst scatters water without damage")
+	m.load_stage(2)
+	m.p = m.shelters[0].pos
+	m.invulnerable = 0
+	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
+	m.advance_garden(0)
+	expect(m.stamina == 100 and m.puffs.is_empty(),"Shelter also intercepts sneeze water")
+	m.puffs.assign([{"pos":m.walls[0].rect.get_center(),"vel":Vector2.ZERO,"life":2.0,"source":0}])
+	m.advance_garden(0)
+	expect(m.puffs.is_empty(),"Water cannot pass through solid stems")
+	m.puffs.assign([{"pos":Vector2(500,200),"vel":Vector2.ZERO,"life":0.01,"source":0}])
+	m.advance_garden(0.02)
+	expect(m.puffs.is_empty(),"Old water is culled instead of accumulating offscreen")
+
 func save_contract() -> void:
 	var path := "user://swarm_verify_save.json"
 	expect(Save.write_stage(2,path) and Save.read_stage(path) == 2,"Chapter save round-trips")
@@ -287,6 +375,10 @@ func run() -> void:
 	route_label = "two-second hesitation before each burst"
 	full_route()
 	hesitation = 0
+	collecting = true
+	route_label = "all-nine-dew detour"
+	full_route()
+	garden_contract()
 	rules_and_recovery()
 	feedback_contract()
 	stamina_and_clock()
