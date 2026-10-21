@@ -24,6 +24,7 @@ var hud_hint: Label
 var hud_bees: Label
 var hud_energy: Label
 var hud_clock: Label
+var hud_weather: Label
 var energy_trail := 100.0
 var toast: Label
 var toast_left := 0.0
@@ -149,6 +150,7 @@ func build_ui() -> void:
 	hud_energy.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hud_clock = label_at(Vector2(704,53),Vector2(202,30),20,Color("fff8d8"))
 	hud_clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	hud_weather = label_at(Vector2(38,115),Vector2(184,44),15,Color("d9f4f0"))
 	hud_hint = label_at(Vector2(46,737),Vector2(1188,38),19,Color("fff8d8"))
 	hud_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast = label_at(Vector2(240,116),Vector2(800,46),21,Color("ffe7a3"))
@@ -156,7 +158,7 @@ func build_ui() -> void:
 	toast.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var toast_style := card(Color("314b2df5"),12)
 	toast.add_theme_stylebox_override("normal",toast_style)
-	for node in [hud_title,hud_objective,hud_bees,hud_energy,hud_clock,hud_hint,toast]:
+	for node in [hud_title,hud_objective,hud_bees,hud_energy,hud_clock,hud_weather,hud_hint,toast]:
 		ui_root.add_child(node)
 	cue_panel = Panel.new()
 	cue_panel.size = Vector2(350,42)
@@ -189,7 +191,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.4.0"
+	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.4.1"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -256,7 +258,7 @@ func begin_stage(index: int) -> void:
 	panel.hide()
 	sound.set_stage(model.music_index())
 	last_section = model.section_index()
-	message(["先找齐这一带的伙伴 · 叶下会记住旅程", "风花是快路，宽阔的绕路同样能通过", "看准下一片大叶 · 新叶亭会重置暴雨时间", "最后一程 · 把瞄准、借风与避雨接起来"][index],4.5)
+	message(["先找齐这一带的伙伴 · 叶下会记住旅程", "冲进第一朵风花，后面的风会接住你", "暴雨从身后追来 · 借风甩开它，叶下能避雨", "最后一程 · 借风甩开暴雨，落叶下歇一口气"][index],4.5)
 	persist_progress()
 	refresh_hud()
 
@@ -410,7 +412,7 @@ func tick(delta: float) -> void:
 				"blocked":
 					event_message(event.kind,"先完成本段 · 跟随方向标救援或抵达上一处叶下" if event.get("material") == "waiting" else "干叶帘可以冲开 · 按住空格，亮起后松开" if event.get("material") == "curtain" else "厚实的茎干冲不开 · 从空隙绕过去",2.5)
 				"checkpoint":
-					event_message(event.kind,"已记住这个叶亭 · 体力恢复，雨幕时间重新开始" if model.storm_active else "已记住这个叶亭 · 体力正在恢复",3.0)
+					event_message(event.kind,"安全了 · 雨幕停在身后，体力恢复 · 已保存" if model.storm_active else "已记住这个叶亭 · 体力正在恢复",3.0)
 				"recover_manual":
 					event_message(event.kind,"已回到本段最近的恢复点 · 伙伴都在",3.0)
 				"recover_rain":
@@ -418,7 +420,7 @@ func tick(delta: float) -> void:
 				"recover_exhaustion":
 					event_message(event.kind,"体力耗尽 · 已回到恢复点，体力补满，伙伴都在",3.5)
 				"recover_timeout":
-					event_message(event.kind,"暴雨抵达 · 从恢复点再试，倒计时已重置",3.5)
+					event_message(event.kind,"在雨里待得太久了 · 已回到叶下，露天时间重置",3.5)
 				"tired":
 					event_message(event.kind,"体力不足 20 · 无法冲刺，按 R 回到恢复点补充",3.2,Color("ffd3b6"))
 				"burst":
@@ -430,7 +432,9 @@ func tick(delta: float) -> void:
 				"hit":
 					event_message(event.kind,"体力 −12 · 喷嚏水珠可绕开、冲散" if event.get("reason") == "sneeze" else "体力 −30 · 雨追上来了，寻找大叶遮蔽" if event.get("reason") == "storm" else "体力 −30 · 雨滴可以绕开，或冲刺击散",2.4,Color("ffd3b6"))
 				"ring":
-					event_message(event.kind,"借到风 · 体力 +%d · 花瓣已收拢" % int(round(event.get("reward",0))),2.3)
+					var chain := int(event.get("chain",1))
+					var wind_text := "连续借风 ×%d · 不用再蓄力！" % chain if chain > 1 else "借到风 · 顺着风花接着飞"
+					event_message(event.kind,wind_text+" · 体力 +%d" % int(round(event.get("reward",0))),1.8)
 				"gate":
 					event_message(event.kind,"叶帘打开了 · 一起过去！",1.8)
 			if event.kind in ["rescue","checkpoint"]: persist_progress()
@@ -515,6 +519,7 @@ func clock_text(seconds: float) -> String:
 func refresh_hud() -> void:
 	var active := mode == "play"
 	for l in [hud_title,hud_objective,hud_bees,hud_energy,hud_clock,hud_hint]: l.visible = active
+	hud_weather.visible = active and model.storm_active
 	cue_panel.visible = false
 	if not active: return
 	var title: String = "%s · %d/%d %s   ·   晨露 %d/%d" % [TITLES[model.stage],model.section_index()+1,model.section_count(),model.section_name(),model.garden_awards[model.stage],model.stage_dew_total()]
@@ -522,8 +527,11 @@ func refresh_hud() -> void:
 	var hint: String = model.hint()
 	var bees_text := "同行  %d 只" % model.bees
 	var energy_text := "体力 %d" % int(ceil(model.stamina))
-	var clock := ("雨幕 " + clock_text(model.rain_remaining)) if model.storm_active else ("旅程 " + clock_text(played_seconds))
+	var clock := ("露天 " + clock_text(model.rain_remaining)) if model.storm_active else ("旅程 " + clock_text(played_seconds))
 	if model.storm_active and model.shelter_index_at(model.p) >= 0: clock += " · 停"
+	if model.storm_active:
+		hud_weather.text = weather_text()
+		hud_weather.add_theme_color_override("font_color",Color("ffd3b6") if model.shelter_index_at(model.p) < 0 and model.storm_gap() < 220 else Color("d9f4f0"))
 	hud_clock.add_theme_color_override("font_color",Color("f0a486") if model.storm_active and model.rain_remaining < 15 else Color("fff8d8"))
 	hud_energy.add_theme_color_override("font_color",Color("f0a486") if not model.can_burst() else Color("fff8d8"))
 	# Continuous charge/cue positions update per frame; text nodes change only with state.
@@ -544,11 +552,22 @@ func refresh_hud() -> void:
 		cue_panel.position = Vector2(clampf(target.x-175,24,906),clampf(target.y-lift,175,652))
 		cue_label.text = cue.text
 
+func weather_text() -> String:
+	if model.shelter_index_at(model.p) >= 0:
+		return "叶下安全 · 雨幕停住\n体力恢复，准备再出发"
+	if model.storm_gap() < 220:
+		return "暴雨逼近 ››\n借风冲向下一片叶下"
+	if model.storm_gap() < 640:
+		return "暴雨从后方追来 ››\n碰到雨幕会掉体力"
+	return "已经甩开雨幕\n向下一片叶下前进"
+
 func _draw() -> void:
 	if mode != "play": return
 	draw_style_box(card_style,Rect2(24,16,902,84))
 	draw_style_box(card_style,Rect2(946,16,310,84))
 	draw_style_box(card_style,Rect2(24,729,1232,55))
+	if model.storm_active:
+		draw_style_box(card_style,Rect2(24,109,208,54))
 	var energy_rect := Rect2(966,64,268,14)
 	draw_rect(energy_rect,Color("36564e"))
 	draw_rect(Rect2(energy_rect.position,Vector2(268*energy_trail/Model.MAX_STAMINA,14)),Color("e9a88a"))

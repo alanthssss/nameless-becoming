@@ -45,6 +45,9 @@ func ticks(count: int) -> void:
 
 func shot(name: String) -> void:
 	if capture_dir.is_empty() or DisplayServer.get_name() == "headless": return
+	# Explicit scene fixtures can change stage without advancing a gameplay frame.
+	game.queue_redraw()
+	game.world._process(0.0)
 	await RenderingServer.frame_post_draw
 	var ok := get_root().get_texture().get_image().save_png(capture_dir.path_join(name+".png"))
 	expect(ok == OK,"native capture "+name)
@@ -56,6 +59,8 @@ func run_complete_route(collect: bool) -> void:
 	var old_section := -1
 	var handoffs := {}
 	var active_captures := {}
+	var relay_captured := false
+	var shelter_captured := false
 	for frame in 180000:
 		if game.mode == "ending": break
 		# Native capture may yield focus to another running app; use the real
@@ -83,6 +88,14 @@ func run_complete_route(collect: bool) -> void:
 			visited["%d:%d" % [old_stage,old_section]] = true
 			expect(not game.hud_objective.text.is_empty(),"every section has a visible objective")
 			if not collect and old_section == 3: await shot("level-%d-middle" % old_stage)
+		if not collect and not relay_captured and game.model.stage == 1 and game.model.wind_chain >= 2:
+			relay_captured = true
+			expect(game.toast.text.contains("连续借风"),"uninterrupted relay has visible feedback")
+			await shot("continuous-wind")
+		if not collect and not shelter_captured and game.model.stage == 2 and game.model.checkpoint_index >= 0 and game.model.shelter_index_at(game.model.p) >= 0:
+			shelter_captured = true
+			expect(game.hud_weather.text.contains("叶下安全"),"earned rain shelter confirms safety")
+			await shot("rain-shelter")
 		if not collect and old_section == 3 and not active_captures.has(old_stage) and game.model.p.x > game.model.sections[old_section].start_x+1100:
 			active_captures[old_stage] = true
 			await shot("level-%d-active" % old_stage)
@@ -97,9 +110,31 @@ func run_complete_route(collect: bool) -> void:
 	expect(handoffs.size() == 3,"all three level handoffs")
 	expect(visited.size() >= 28,"all twenty-eight authored sections visited")
 	expect(game.description.text.contains("第一章"),"ending identifies complete chapter")
+	expect(not game.hud_weather.visible,"ending clears the chase indicator")
 	print("CHAPTER_UI_END: "+JSON.stringify({"seconds":game.played_seconds,"recoveries":game.model.recoveries,"dew":game.model.garden_total(),"optional":collect}))
 	if collect: expect(game.model.garden_total() == game.model.journey_dew_total(),"optional route collects the chapter's authored dew")
-	if not collect: await shot("chapter-ending")
+	if not collect:
+		expect(relay_captured and shelter_captured,"complete route exercises relay and safe-leaf feedback")
+		ticks(180)
+		await shot("chapter-ending")
+
+func weather_contract() -> void:
+	# UI state fixtures only; complete input routes above earn all their own progress.
+	game.begin_stage(2)
+	game.model.p = Vector2(520,420)
+	game.model.storm_x = game.model.p.x-200
+	game.refresh_hud()
+	expect(game.hud_weather.visible and game.hud_weather.text.contains("逼近"),"nearby rain names the threat and response")
+	expect(game.hud_clock.text.begins_with("露天"),"exposure clock is distinct from the chasing rain front")
+	await shot("rain-near-fixture")
+	game.model.storm_x = game.model.p.x-900
+	game.refresh_hud()
+	expect(game.hud_weather.text.contains("甩开"),"gaining distance visibly releases pressure")
+	tap(KEY_ESCAPE)
+	expect(not game.hud_weather.visible,"pause clears chase UI")
+	tap(KEY_ESCAPE)
+	game.begin_stage(0)
+	expect(not game.hud_weather.visible,"sunny stages have no false chase warning")
 
 func boundaries() -> void:
 	tap(KEY_ENTER)
@@ -213,6 +248,7 @@ func run() -> void:
 	game.sound.set_muted(true)
 	await run_complete_route(true)
 	await saved_menu_contract()
+	await weather_contract()
 	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete four-level input routes" % checks)
 	else:
 		for failure in failures: push_error(failure)

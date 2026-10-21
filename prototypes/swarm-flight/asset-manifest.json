@@ -1,6 +1,6 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.4.0",
+  "revision": "0.4.1",
   "created": "2026-10-20",
   "direction": "Original bold-outline garden cartoon: rounded leaves, expressive bees, cream and honey; four chapter palettes and numbered safe leaves. Code-native vector drawing; no generated bitmaps or imported reference assets.",
   "runtime_bitmap_assets": [],
@@ -32,7 +32,9 @@
       "sunny vegetable garden/fountain bridge/rainy tool garden/homeward dusk",
       "warm tree-hollow ending; up to sixteen displayed blossoms from optional collection (chapter total: 28)",
       "charge circle fills exactly at ready threshold; local result captions for burst/rescue/wind/gate/dew/hit",
-      "numbered safe leaves with watering-can, pot, bench and lantern landmarks"
+      "numbered safe leaves with watering-can, pot, bench and lantern landmarks",
+      "linked breeze arrows between authored wind-chain flowers; transient relay count and mint trail",
+      "rolling storm clouds, directional rain gusts, model-aligned contact edge; storm recedes at ending"
     ],
     "collision_contract": "Model authoritative. Solid stem silhouette stays within the original rectangle; visual tips taper inward. Decorative thin stems and distant garden objects have no collision. Flower direction, charge threshold, stamina eligibility and shelter location share model values. Reward dew is angular and sparkling; damaging spray is round and moving. Sprayer states read sprayer_phase directly.",
     "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget."
@@ -40,7 +42,7 @@
   "ui": {
     "source": "Project Godot drawing and controls in main.gd; operating-system Chinese font fallback",
     "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
-    "clock": "Elapsed journey time in levels 1-2; authored 42-46-second exposed-time budgets in levels 3-4, reset at the next new leaf and paused under shelter.",
+    "clock": "Elapsed journey clock in levels 1-2; exposed-time budget labeled 露天 in levels 3-4. Separate spatial storm indicator names chase/near/escaped/sheltered states.",
     "handoff": "1.6-second in-world handoff between stages; Enter skips; pause/focus loss freezes it; fresh input starts each stage.",
     "progress": "Four levels, seven named sections each; objective points to local rescue or the next safe leaf. V2 persistence restores earned safe position and completed ending."
   },
@@ -65,9 +67,12 @@
       "handoff-1",
       "handoff-2",
       "chapter-ending",
-      "saved-leaf-continued"
+      "saved-leaf-continued",
+      "continuous-wind",
+      "rain-shelter",
+      "rain-near-fixture"
     ],
-    "result": "Developer inspected actual four-level native renders at 1280x800: HUD, objective, safe leaves, four palettes and ending. Complete native input routes passed; new-chapter human play and commercial-art acceptance remain pending.",
+    "result": "0.4.0 creator play: Alan endorsed continuous dashes and chase; ending screenshot shows game clock 12:08, nine bees and 26 dew. 0.4.1 passed 450 rule checks, 110 headless scene checks and 127 native scene/capture checks. Native wind relay, safe leaf and ending inspected; near-rain is an explicit state fixture. Player feel of this iteration remains pending.",
     "audio_pcm_peaks": [
       0.62149,
       0.64804,
@@ -89,7 +94,8 @@
       14.72
     ],
     "rhythm_revision": "0.3.1 retains the original art and all music. Native input-route captures and technical checks recorded in the local rhythm-feedback delivery receipt; player feel acceptance remains pending.",
-    "chapter_revision": "0.4.0 keeps all three original music arrangements unchanged; known-answer developer route is roughly 5-6 minutes, not evidence for the initial 20-30-minute first-play target."
+    "chapter_revision": "0.4.0 keeps all three original music arrangements unchanged; known-answer developer route is roughly 5-6 minutes, not evidence for the initial 20-30-minute first-play target.",
+    "chase_revision": "0.4.1 retains map geometry, entity counts, control physics, stamina rewards and original music; authored section storm pace and clearer relay/chase feedback. Near-rain capture is an explicit UI state fixture, not a player run."
   },
   "style_references": [
     {
@@ -122,7 +128,7 @@
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "f9dcc7fcacba90071737678a1985b870d78de3f5d6f2ec8917e137387bb7819b",
+    "world_view.gd": "6c256fc66ae2ee97d0f9008d59fc989acb8a2b208d75b64277009a5f9ccd667f",
     "sound.gd": "560a73b9e3b8246a0a7ae6df2f05aab26a7aadabc79e121fa75086eae8405665"
   },
   "updated": "2026-10-21"
