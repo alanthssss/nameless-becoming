@@ -191,7 +191,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.4.1"
+	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.4.2"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -545,7 +545,8 @@ func refresh_hud() -> void:
 		hud_energy.text = energy_text
 		hud_clock.text = clock
 	var cue: Dictionary = model.context_cue()
-	if not cue.is_empty():
+	# Spent petals now show the result in-world; keep text for actionable cues.
+	if not cue.is_empty() and cue.kind != "spent":
 		var target: Vector2 = cue.pos-Vector2(model.camera_x,0)
 		cue_panel.visible = target.x > -40 and target.x < 1320
 		var lift := 185.0 if cue.kind == "shelter" else 107.0
