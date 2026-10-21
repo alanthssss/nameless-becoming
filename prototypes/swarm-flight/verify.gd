@@ -326,9 +326,74 @@ func save_contract() -> void:
 		expect(Save.read_payload(path).is_empty(),"Malformed and old-format saves are rejected")
 	DirAccess.remove_absolute(path)
 
+func chase_contract() -> void:
+	for stage_index in [2,3]:
+		m = Model.new()
+		m.load_stage(stage_index)
+		for section_index in m.sections.size():
+			m.checkpoint_index = section_index-1
+			expect(m.storm_speed() > 0 and m.storm_speed() < Model.CRUISE_SPEED,"Every chase beat remains slower than ordinary horizontal cruise")
+		m.checkpoint_index = 2
+		var pressure: float = m.storm_speed()
+		m.checkpoint_index = 3
+		expect(m.storm_speed() < pressure,"Wind pressure is followed by a slower breathing beat")
+		m.started = true
+		var old_front: float = m.storm_x
+		var pace: float = m.storm_speed()
+		m.advance_storm(1.0)
+		expect(is_equal_approx(m.storm_x-old_front,pace),"Authored pace advances the actual storm front")
+	m.load_stage(2)
+	var idle_front: float = m.storm_x
+	m.advance_storm(5.0)
+	expect(m.storm_x == idle_front,"Rain waits for first input")
+	m.p = m.shelters[0].pos
+	m.advance_shelters()
+	m.started = true
+	m.spend_energy(50)
+	var safe_front: float = m.storm_x
+	var safe_budget: float = m.rain_remaining
+	for i in 120: m.step(Vector2.ZERO,false,1.0/60.0)
+	expect(m.storm_x == safe_front and m.rain_remaining == safe_budget and m.stamina > 97,"Earned leaf freezes chase and exposure while restoring stamina")
+	m.p += Vector2(200,0)
+	m.storm_x = m.p.x-40
+	m.invulnerable = 0
+	var energy: float = m.stamina
+	m.advance_storm(0.0)
+	expect(m.storm_gap() < 0 and is_equal_approx(energy-m.stamina,30.0) and has_event("hit"),"Crossing the visible front causes the original thirty-energy hit")
+	m.spend_energy(m.stamina-1)
+	m.invulnerable = 0
+	m.advance_storm(0.0)
+	expect(m.p == m.checkpoint.p and m.stamina == 100 and not m.started,"Lethal chase hit recovers at the earned leaf and waits for fresh input")
+	m = control_fixture()
+	for x in [400,850,1300]:
+		m.rings.append({"pos":Vector2(x,420),"active":false,"direction":Vector2.RIGHT})
+	for i in 48: m.step(Vector2.ZERO,true,1.0/120.0)
+	for i in 360: m.step(Vector2.ZERO,false,1.0/120.0)
+	var chain_events: Array[int] = []
+	for event in m.events:
+		if event.kind == "ring": chain_events.append(int(event.chain))
+	expect(chain_events == [1,2,3] and m.bursts == 1,"One launch reports first, second and third wind in sequence")
+	expect(m.wind_chain == 0,"Relay ends when the continuous dash ends")
+	m.wind_chain = 3
+	m.clear_input()
+	expect(m.wind_chain == 0,"Pause or cleared input cannot retain a relay")
+	m.wind_chain = 3
+	m.restore_checkpoint()
+	expect(m.wind_chain == 0,"Checkpoint recovery clears transient relay feedback")
+	m.wind_chain = 3
+	m.load_stage(0)
+	expect(m.wind_chain == 0,"Loading a stage clears transient relay feedback")
+
 func run() -> void:
+	if "--chase-only" in OS.get_cmdline_user_args():
+		chase_contract()
+		for failure in failures: push_error(failure)
+		if failures.is_empty(): print("CHASE VERIFIED: %d checks" % checks)
+		quit(0 if failures.is_empty() else 1)
+		return
 	controls_contract()
 	if "--controls-only" not in OS.get_cmdline_user_args():
+		chase_contract()
 		authored_content()
 		checkpoints_and_resources()
 		collision_and_garden()

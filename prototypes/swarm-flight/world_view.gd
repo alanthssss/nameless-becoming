@@ -64,7 +64,7 @@ func _process(delta: float) -> void:
 		trail_clock += delta
 		if model.burst_left > 0.0 and trail_clock > 0.022:
 			trail_clock = 0.0
-			trail.append({"pos": model.p, "life": 0.28, "face": model.face})
+			trail.append({"pos": model.p, "life": 0.28, "face": model.face, "relay":model.wind_chain > 1})
 	queue_redraw()
 
 func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
@@ -72,7 +72,7 @@ func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
 	match kind:
 		"burst": caption = "−20"
 		"rescue": caption = "+%d 伙伴" % int(details.get("count",1))
-		"ring": caption = "借到风！"
+		"ring": caption = "借风 ×%d" % int(details.get("chain",1)) if int(details.get("chain",1)) > 1 else "借到风！"
 		"gate": caption = "冲开了！"
 		"dew": caption = "+%d 体力" % int(round(details.get("reward",0)))
 		"hit": caption = "−%d 体力" % int(details.get("cost",30))
@@ -160,6 +160,7 @@ func _draw() -> void:
 		_wall(wall)
 	for shelter in model.shelters:
 		_shelter(shelter)
+	_wind_paths()
 	for i in range(model.rings.size()):
 		_ring(model.rings[i], i)
 	for pod in model.pods:
@@ -179,6 +180,8 @@ func _draw() -> void:
 	for ghost in trail:
 		var alpha: float = ghost.life / 0.28 * 0.18
 		_ellipse(ghost.pos, Vector2(22, 10), Color(1.0, 0.91, 0.56, alpha), ghost.face.angle())
+		if ghost.relay:
+			draw_line(ghost.pos-ghost.face*24,ghost.pos+ghost.face*8,Color(0.61,1.0,0.88,alpha*2.0),4,true)
 	_swarm()
 	_effects()
 	draw_set_transform(Vector2.ZERO)
@@ -361,6 +364,24 @@ func _pod(pod: Dictionary) -> void:
 	_bee(p+Vector2(0,5),0.76,Vector2.RIGHT,1.0,true,0.0)
 	_curve(p+Vector2(-26,30),p+Vector2(-7,38),p+Vector2(10,38),p+Vector2(31,28),Color("d7e789"),4)
 
+func _wind_paths() -> void:
+	# A light breeze links authored relays; it is a route hint, not a new collider.
+	for i in range(model.rings.size()-1):
+		var ring: Dictionary = model.rings[i]
+		var next: Dictionary = model.rings[i+1]
+		if ring.active or not ring.get("chain",false) or not next.get("chain",false) or ring.section != next.section:
+			continue
+		var p: Vector2 = ring.pos
+		var end: Vector2 = next.pos
+		if end.x < model.camera_x-80 or p.x > model.camera_x+1360: continue
+		var direction := p.direction_to(end)
+		var side := direction.orthogonal()
+		var distance := p.distance_to(end)
+		for j in range(5):
+			var along := 76.0+fposmod(clock*42+j*66,distance-150)
+			var center := p+direction*along
+			draw_polyline(PackedVector2Array([center-direction*6-side*5,center,center-direction*6+side*5]),Color(0.80,0.96,0.76,0.56),2,true)
+
 func _ring(ring: Dictionary, index: int) -> void:
 	var p: Vector2 = ring.pos
 	if p.x < model.camera_x-200 or p.x > model.camera_x+1400: return
@@ -451,21 +472,36 @@ func _exit(_act: int) -> void:
 func _storm(cam: float) -> void:
 	if not model.storm_active:
 		return
-	var front: float = model.storm_x
+	# The visible leading edge agrees with the model's contact threshold.
+	# Once home, the rain leaves the frame instead of lingering over the ending.
+	var front: float = model.storm_x + 45 - _ending_elapsed*190
 	if front < cam - 100:
 		return
 	var start := maxf(cam - 10.0, front - 1500.0)
-	draw_rect(Rect2(start, 0, maxf(0.0, front - start), 800), Color(0.13, 0.26, 0.36, 0.44))
-	for band in 8:
-		var x := front - 12.0 + band * 10.0
-		draw_rect(Rect2(x, 0, 11, 800), Color(0.19, 0.36, 0.46, (8 - band) * 0.025))
+	var edge := PackedVector2Array()
+	for i in 41:
+		var y := i*20.0
+		var x := front-4-absf(sin(y*0.019+clock*2))*14
+		edge.append(Vector2(x,y))
+	var body := PackedVector2Array([Vector2(start,0)])
+	body.append_array(edge)
+	body.append(Vector2(start,800))
+	if front > start+18: draw_colored_polygon(body,Color(0.13,0.26,0.36,0.44))
+	draw_polyline(edge,Color(0.70,0.90,0.99,0.42),3,true)
+	# Rounded storm-cloud masses and rightward gusts make this read as weather.
+	for i in 4:
+		var c := Vector2(front-62-i*91,195+sin(clock*0.8+i)*9)
+		_ellipse(c,Vector2(78,32),Color(0.19,0.32,0.43,0.66))
+		_ellipse(c+Vector2(-15,-22),Vector2(42,34),Color(0.25,0.39,0.50,0.74))
 	for i in 70:
 		var x := front - fposmod(i * 37.7 + clock * 140.0, 1400.0)
 		var y := fposmod(i * 63.0 + clock * 530.0, 900.0) - 50.0
 		draw_line(Vector2(x, y), Vector2(x - 9, y + 29), Color(0.65, 0.86, 0.94, 0.34), 1.3, true)
-	for i in 8:
-		var y := i * 115.0 + sin(clock * 2 + i) * 16.0
-		draw_arc(Vector2(front - 10, y), 40, -PI / 2.0, PI / 2.0, 15, Color(0.70, 0.90, 0.99, 0.20), 2.0, true)
+	for i in 5:
+		var y := 270+i*87.0+sin(clock*1.8+i)*12
+		var x := front-65+sin(clock*2+i)*12
+		draw_line(Vector2(x-50,y),Vector2(x,y),Color(0.70,0.90,0.99,0.38),2,true)
+		draw_polyline(PackedVector2Array([Vector2(x-9,y-6),Vector2(x,y),Vector2(x-9,y+6)]),Color(0.70,0.90,0.99,0.38),2,true)
 
 func _drop(p: Vector2, velocity: Vector2) -> void:
 	var direction := velocity.normalized()

@@ -40,7 +40,7 @@ static func definitions() -> Array:
 			section("最后一声等等我",420,[gap(470,540,220),rescue(1090,300),gap(1740,420,210)],Vector2(1920,620)),
 			section("九只一起借风",420,[gap(460,310,200),wind(1050,330,0.18),gap(1810,440,230)],Vector2(1950,610))
 		]},
-		{"title":"雨中停走","theme":2,"music":2,"base_bees":9,"storm":true,"sections":[
+		{"title":"雨中停走","theme":2,"music":2,"base_bees":9,"storm":true,"storm_speeds":[110.0,165.0,120.0,205.0,115.0,170.0,125.0],"sections":[
 			section("看见第一片屋檐",420,[gap(470,420,250),curtain(1100,420),gap(1740,420,240)],Vector2(1910,220),46),
 			section("从低处穿雨",540,[gap(470,550,210),flower(1110,530),gap(1750,520,200)],Vector2(1920,665),42),
 			section("留一口气再走",330,[gap(450,300,230),curtain(1090,300),gap(1740,350,210)],Vector2(1930,170),43),
@@ -49,7 +49,7 @@ static func definitions() -> Array:
 			section("两次抬头",470,[gap(390,560,210),gap(970,300,210),curtain(1550,470)],Vector2(1880,650),45),
 			section("下一片叶子有灯",420,[gap(450,420,220),wind(1060,420,0),gap(1790,420,220)],Vector2(1950,225),44)
 		]},
-		{"title":"归巢之路","theme":3,"music":2,"base_bees":9,"storm":true,"sections":[
+		{"title":"归巢之路","theme":3,"music":2,"base_bees":9,"storm":true,"storm_speeds":[155.0,120.0,210.0,215.0,115.0,185.0,135.0],"sections":[
 			section("顺着暖光飞",380,[gap(450,520,210),wind(1050,490,-0.27),gap(1800,350,200)],Vector2(1950,190),44),
 			section("树根上方",520,[gap(470,250,200),curtain(1110,490),gap(1770,520,190)],Vector2(1950,660),43),
 			section("把喷嚏留在身后",430,[gap(450,450,230),chain([Vector2(1000,450),Vector2(1450,450),Vector2(1900,450)],[],Vector2(2440,430),[],[Vector2(1800,450)],true)],Vector2(800,180),43),
@@ -70,7 +70,7 @@ static func build(index: int) -> Dictionary:
 		var spec: Dictionary = source.sections[i]
 		var origin: float = i*SECTION_WIDTH
 		var rest := Vector2(origin+2440,spec.rest_y)
-		var details := {"name":spec.name,"start_x":origin,"end_x":origin+SECTION_WIDTH,"rest":rest,"budget":spec.budget,"route_index":out.route.size(),"optional_route_index":out.optional_route.size()}
+		var details := {"name":spec.name,"start_x":origin,"end_x":origin+SECTION_WIDTH,"rest":rest,"budget":spec.budget,"storm_speed":source.storm_speeds[i] if source.storm else 0.0,"route_index":out.route.size(),"optional_route_index":out.optional_route.size()}
 		out.sections.append(details)
 		var finishes_in_leaf := false
 		for beat in spec.beats:

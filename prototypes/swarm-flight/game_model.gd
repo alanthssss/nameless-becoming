@@ -54,6 +54,8 @@ var events: Array[Dictionary] = []
 var bursts := 0
 var recoveries := 0
 var rings_hit := 0
+# Presentation only: consecutive wind flowers during one uninterrupted dash.
+var wind_chain := 0
 var checkpoint: Dictionary = {}
 var rain_timer := 1.6
 var checkpoint_index := -1
@@ -82,6 +84,7 @@ func load_stage(index: int) -> void:
 	charging = false
 	burst_left = 0.0
 	burst_braking = false
+	wind_chain = 0
 	stamina = MAX_STAMINA
 	energy_spent = 0.0
 	energy_gained = 0.0
@@ -155,6 +158,7 @@ func clear_input() -> void:
 	charge = 0.0
 	burst_left = 0.0
 	burst_braking = false
+	wind_chain = 0
 	velocity = Vector2.ZERO
 
 func step(direction: Vector2, held: bool, delta: float) -> void:
@@ -182,6 +186,7 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 			started = true
 			burst_left = BURST_SECONDS
 			burst_braking = false
+			wind_chain = 0
 			bursts += 1
 			emit("burst",p)
 		elif charge >= CHARGE_READY:
@@ -221,6 +226,7 @@ func advance(direction: Vector2, dt: float) -> void:
 		burst_left = maxf(0,burst_left-dt)
 		velocity = face * BURST_SPEED
 		if burst_left <= 0.0:
+			wind_chain = 0
 			burst_braking = true
 	else:
 		var target := direction * (CHARGE_SPEED if charging else CRUISE_SPEED)
@@ -275,6 +281,7 @@ func advance(direction: Vector2, dt: float) -> void:
 				if not is_equal_approx(p.x,proposed.x): velocity.x = 0
 				if not is_equal_approx(p.y,proposed.y): velocity.y = 0
 				burst_left = 0
+				wind_chain = 0
 	for trapped in pods:
 		if not trapped.open and burst_left > 0 and p.distance_to(trapped.pos) < 48:
 			trapped.open = true
@@ -290,12 +297,14 @@ func advance(direction: Vector2, dt: float) -> void:
 		if burst_left > 0 and not flower.active and p.distance_to(flower.pos) < 60:
 			flower.active = true
 			rings_hit += 1
+			wind_chain += 1
 			var before_ring_gain := stamina
 			gain_energy(8.0)
 			burst_left = 0.60
 			# Preview and launch use the same fixed direction from the flower center.
 			face = ring_direction(i)
 			emit("ring",flower.pos)
+			events.back()["chain"] = wind_chain
 			events.back()["reward"] = stamina-before_ring_gain
 	var old_recoveries := recoveries
 	advance_garden(dt)
@@ -329,10 +338,16 @@ func advance_shelters() -> void:
 			emit("checkpoint",shelter.pos)
 
 
+func storm_speed() -> float:
+	return float(sections[section_index()].storm_speed) if storm_active else 0.0
+
+func storm_gap() -> float:
+	return p.x-(storm_x+45.0)
+
 func advance_storm(dt: float) -> void:
 	var under_shelter := shelter_index_at(p) >= 0
 	if started and not under_shelter:
-		storm_x += 145 * dt
+		storm_x += storm_speed() * dt
 	else:
 		storm_x = minf(storm_x,p.x-300)
 	if p.x < storm_x + 45:
