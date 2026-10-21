@@ -25,6 +25,8 @@ var charge := 0.0
 var charging := false
 var burst_left := 0.0
 var burst_braking := false
+# Legacy saved total includes the player; rescued friends = bees - 1.
+# Friends leave after rescue and never participate in flight collision/damage.
 var bees := 1
 var stamina := MAX_STAMINA
 var energy_spent := 0.0
@@ -574,7 +576,7 @@ func target_position() -> Vector2:
 	return exit_pos
 
 func objective() -> String:
-	if exit_ready: return "本关已走完 · 飞向出口" if stage < STAGE_COUNT-1 else "伙伴都在 · 飞进树洞回家"
+	if exit_ready: return "本关已走完 · 飞向出口" if stage < STAGE_COUNT-1 else "伙伴在家等你 · 飞进树洞"
 	if section_rescue_total() > section_rescued():
 		return "%s · 先救出本段伙伴 %d / %d" % [section_name(),section_rescued(),section_rescue_total()]
 	return "%s · 抵达前方叶下" % section_name()
@@ -605,7 +607,7 @@ func context_cue() -> Dictionary:
 			return {"pos":trapped.pos,"text":"冲开卷叶 · 救出伙伴","kind":"pod"}
 	for obstacle in walls:
 		if obstacle.kind == "curtain" and not obstacle.broken and absf(p.x-obstacle.rect.get_center().x) < 270 and p.y > obstacle.rect.position.y-40 and p.y < obstacle.rect.end.y+40:
-			return {"pos":Vector2(obstacle.rect.get_center().x,p.y),"text":"干叶帘 · 蓄力冲开" if gate_ready(obstacle) else "本段伙伴或前方叶下尚未到齐","kind":"curtain"}
+			return {"pos":Vector2(obstacle.rect.get_center().x,p.y),"text":"干叶帘 · 蓄力冲开" if gate_ready(obstacle) else "先救出本段伙伴，并抵达前方叶下","kind":"curtain"}
 	for i in sprayers.size():
 		var flower := sprayers[i]
 		if p.distance_to(flower.pos) < 260:

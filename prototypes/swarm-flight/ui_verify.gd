@@ -118,7 +118,7 @@ func run_complete_route(collect: bool) -> void:
 	expect(game.mode == "ending","complete four-level route reaches ending")
 	expect(handoffs.size() == 3,"all three level handoffs")
 	expect(visited.size() >= 28,"all twenty-eight authored sections visited")
-	expect(game.description.text.contains("第一章"),"ending identifies complete chapter")
+	expect(game.description.text.contains("第一章") and game.description.text.contains("救出伙伴 8 只"),"ending counts rescued friends separately from player")
 	expect(not game.hud_weather.visible,"ending clears the chase indicator")
 	print("CHAPTER_UI_END: "+JSON.stringify({"seconds":game.played_seconds,"recoveries":game.model.recoveries,"dew":game.model.garden_total(),"optional":collect}))
 	if collect: expect(game.model.garden_total() == game.model.journey_dew_total(),"optional route collects the chapter's authored dew")
@@ -126,6 +126,52 @@ func run_complete_route(collect: bool) -> void:
 		expect(relay_captured and shelter_captured,"complete route exercises relay and safe-leaf feedback")
 		ticks(180)
 		await shot("chapter-ending")
+
+func rescue_departure_contract() -> void:
+	release_all()
+	game.model.reset_journey()
+	game.begin_stage(0)
+	var driver = Driver.new(game.model)
+	for frame in 2400:
+		if game.model.bees > 1: break
+		var action: Dictionary = driver.next_input()
+		if not str(action.get("error","")).is_empty(): break
+		apply_action(action)
+		ticks(1)
+	release_all()
+	expect(game.model.bees == 3 and game.world.departures.size() == 2,"real rescue spawns exactly the freed companions as temporary departures")
+	expect(game.hud_bees.text == "已救  2 / 8" and game.toast.text.contains("先回家"),"HUD excludes player and explains companions leave for home")
+	await shot("rescue-departure-start")
+	if game.mode == "pause": tap(KEY_ESCAPE)
+	tap(KEY_ESCAPE)
+	var frozen := JSON.stringify(game.world.departures)
+	var paused_at: Vector2 = game.model.p
+	ticks(180)
+	expect(JSON.stringify(game.world.departures) == frozen and game.model.p == paused_at,"pause freezes departure and player together")
+	tap(KEY_ESCAPE)
+	key(KEY_RIGHT,true)
+	ticks(24)
+	key(KEY_RIGHT,false)
+	expect(game.model.p.distance_to(paused_at) > 20,"rescue farewell never blocks player control")
+	await shot("rescue-departure-arc")
+	ticks(36)
+	await shot("rescue-departure-flight")
+	ticks(144)
+	expect(game.world.departures.is_empty() and game.model.bees == 3,"departures finish while rescued progress remains")
+	await shot("rescue-solo-after")
+	tap(KEY_R)
+	ticks(1)
+	expect(game.world.departures.is_empty() and game.model.bees == 3,"recovery preserves rescued progress without respawning companions")
+	# Explicit event fixtures isolate clearing on same-stage restart and title.
+	game.world.emit_event("rescue",game.model.p,{"count":2})
+	game.begin_stage(0)
+	expect(game.world.departures.is_empty(),"same-stage restart clears active departure effects")
+	game.world.emit_event("rescue",game.model.p,{"count":1})
+	game.show_title()
+	expect(game.world.departures.is_empty() and not game.world.presentation_active,"title clears old departures")
+	game.model.reset_journey()
+	game.played_seconds = 0
+	game.begin_stage(0)
 
 func weather_contract() -> void:
 	# UI state fixtures only; complete input routes above earn all their own progress.
@@ -233,6 +279,7 @@ func saved_menu_contract() -> void:
 	tap(KEY_ENTER)
 	expect(game.mode == "play" and game.model.p == safe and game.model.bees == companions,"title continue restores earned safe leaf and rescued companions")
 	expect(not game.model.started and game.held.is_empty() and game.model.stamina == 100,"continue is stationary, refilled and requires fresh input")
+	expect(game.world.departures.is_empty(),"continuing earned progress never replays earlier departures")
 	ticks(45)
 	await shot("saved-leaf-continued")
 	# Rendering/animation may advance while gameplay is paused; it cannot spend,
@@ -258,7 +305,9 @@ func run() -> void:
 	expect(game.test_mode,"QA never reads or writes user progress")
 	expect(game.mode == "title","normal launch starts at title")
 	await shot("chapter-title")
-	tap(KEY_ENTER)
+	await rescue_departure_contract()
+	# Contract returns a fresh active chapter.
+
 	await run_complete_route(false)
 	boundaries()
 	release_all()
