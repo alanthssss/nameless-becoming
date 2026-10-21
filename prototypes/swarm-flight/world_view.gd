@@ -5,11 +5,13 @@ var feedback_font: Font
 var particles: Array[Dictionary] = []
 var ripples: Array[Dictionary] = []
 var trail: Array[Dictionary] = []
+# Rescue departures are transient presentation actors, never model companions.
+var departures: Array[Dictionary] = []
+var presentation_active := true
 var clock := 0.0
 var trail_clock := 0.0
 var trauma := 0.0
 var _rng := RandomNumberGenerator.new()
-var _path: Array[Vector2] = []
 var _last_stage := -1
 var _ending_elapsed := 0.0
 var _feedback: Array[Dictionary] = []
@@ -31,8 +33,31 @@ const LOW_SKY := [Color("edf3ba"), Color("daeebc"), Color("9bb7b0"), Color("efd7
 func _ready() -> void:
 	_rng.seed = 14631
 
+func reset_presentation() -> void:
+	departures.clear()
+	particles.clear()
+	ripples.clear()
+	trail.clear()
+	_feedback.clear()
+	_reactions.clear()
+	_settle = 0.0
+	_rest_blend = 0.0
+	_last_speed = 0.0
+	_was_burst = false
+	_greeting = 0.0
+	_wind_kick = 0.0
+	_ending_elapsed = 0.0
+	trail_clock = 0.0
+	trauma = 0.0
+	_last_stage = model.stage if model != null else -1
+	queue_redraw()
+
 func _process(delta: float) -> void:
+	if not presentation_active: return
+	if model != null and model.stage != _last_stage:
+		reset_presentation()
 	clock += delta
+	_advance_departures(delta)
 	_settle = maxf(0.0, _settle - delta)
 	_greeting = maxf(0.0, _greeting - delta)
 	_wind_kick = maxf(0.0, _wind_kick - delta * 3.0)
@@ -62,20 +87,6 @@ func _process(delta: float) -> void:
 		if trail[i].life <= 0.0:
 			trail.remove_at(i)
 	if model != null:
-		if model.stage != _last_stage or (not _path.is_empty() and _path.back().distance_to(model.p) > 180.0):
-			_path.clear()
-			particles.clear()
-			ripples.clear()
-			trail.clear()
-			_feedback.clear()
-			_reactions.clear()
-			_settle = 0.0
-			_rest_blend = 0.0
-			_last_speed = 0.0
-			_was_burst = false
-			_greeting = 0.0
-			_wind_kick = 0.0
-			_last_stage = model.stage
 		var speed: float = model.velocity.length()
 		var bursting: bool = model.burst_left > 0.0
 		if (_was_burst and not bursting) or (_last_speed > 100.0 and speed < 35.0):
@@ -84,12 +95,6 @@ func _process(delta: float) -> void:
 		_was_burst = bursting
 		var resting: bool = model.shelter_index_at(model.p) >= 0 and speed < 12.0 and not model.charging and not bursting
 		_rest_blend = move_toward(_rest_blend, 1.0 if resting else 0.0, delta * (2.4 if resting else 9.0))
-		if _path.is_empty():
-			_path.append(model.p)
-		while _path.back().distance_to(model.p) >= 8.0:
-			_path.append(_path.back().move_toward(model.p, 8.0))
-			if _path.size() > 70:
-				_path.pop_front()
 		_ending_elapsed = _ending_elapsed + delta if model.phase == "ending" else 0.0
 		trail_clock += delta
 		if model.burst_left > 0.0 and trail_clock > 0.022:
@@ -98,19 +103,15 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
+	if model != null and model.stage != _last_stage:
+		reset_presentation()
 	if kind.begins_with("recover"):
-		_path.clear()
-		_reactions.clear()
-		_greeting = 0.0
-		_wind_kick = 0.0
-		_settle = 0.0
-		_rest_blend = 0.0
-		_last_speed = 0.0
-		_was_burst = false
+		reset_presentation()
 	if kind in ["rescue", "ring", "flower_calm", "checkpoint"]:
 		_reactions.append({"kind":kind, "pos":pos, "age":0.0})
 	if kind == "rescue":
 		_greeting = 0.85
+		_spawn_departures(pos,clampi(int(details.get("count",1)),0,15))
 	elif kind == "ring":
 		_wind_kick = 1.0
 	var caption := ""
@@ -228,7 +229,8 @@ func _draw() -> void:
 		_ellipse(ghost.pos, Vector2(22, 10), Color(1.0, 0.91, 0.56, alpha), ghost.face.angle())
 		if ghost.relay:
 			draw_line(ghost.pos-ghost.face*24,ghost.pos+ghost.face*8,Color(0.61,1.0,0.88,alpha*2.0),4,true)
-	_swarm()
+	_leader()
+	_draw_departures()
 	_effects()
 	draw_set_transform(Vector2.ZERO)
 	_foreground(act, cam)
@@ -514,6 +516,7 @@ func _exit(_act: int) -> void:
 	_leaf(p+Vector2(-115,-161),p+Vector2(-199,-228),25,Color("497e38"))
 	_leaf(p+Vector2(150,-177),p+Vector2(237,-235),27,Color("8db648"))
 
+	_waiting_friends()
 	if model.phase == "ending":
 		var bloom_count: int = mini(model.garden_total(),16)
 		for i in bloom_count:
@@ -565,7 +568,7 @@ func _drop(p: Vector2, velocity: Vector2) -> void:
 	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color("3d789b"), 2.0, true)
 	draw_circle(p + Vector2(-2, -1), 2.5, Color("f3ffff"))
 
-func _swarm() -> void:
+func _leader() -> void:
 	var p: Vector2 = model.p
 	var face: Vector2 = model.face
 	if face.length_squared() < 0.01:
@@ -573,24 +576,8 @@ func _swarm() -> void:
 	var compact: bool = model.charging
 	var burst: bool = model.burst_left > 0.0
 	if model.phase == "ending":
-		_ending_swarm()
+		_ending_arrival()
 		return
-	for i in range(mini(model.bees,16) - 1, 0, -1):
-		var side := 1.0 if i % 2 else -1.0
-		var along := float(i) * (22.0 if compact or burst else 25.0)
-		var center := _path_position(along)
-		var tangent := (_path_position(maxf(0.0, along - 6.0)) - center).normalized()
-		if tangent.is_zero_approx():
-			tangent = face
-		var across := side * (13.0 if compact or burst else 18.0 + sin(clock*2.2+i)*2.0)
-		var companion := center + tangent.orthogonal() * across
-		if not _free_visual_segment(center,companion): companion = center
-		if _rest_blend > 0.0:
-			var slot := i-1
-			var resting_pos := p+Vector2(-69.0+float(slot%4)*46.0,22.0+float(slot/4)*24.0)
-			var settled := companion.lerp(resting_pos,_rest_blend)
-			if _free_visual_segment(companion,settled): companion = settled
-		_bee(companion, 0.68, tangent.lerp(Vector2.RIGHT,_rest_blend).normalized(), 0.96, false, i)
 	if model.invulnerable <= 0.0 or sin(clock * 28.0) > -0.35:
 		if burst:
 			_ellipse(p - face * 16.0, Vector2(38, 17), Color(1.0, 0.89, 0.48, 0.18), face.angle())
@@ -608,42 +595,63 @@ func _swarm() -> void:
 		if ready:
 			draw_arc(p, 33 + sin(clock * 8.0) * 2.0, 0, TAU, 48, Color(1.0, 0.95, 0.65, 0.3), 1.5, true)
 
-func _path_position(distance: float) -> Vector2:
-	var cursor: Vector2 = model.p
-	for i in range(_path.size() - 1, -1, -1):
-		var length := cursor.distance_to(_path[i])
-		if length >= distance and length > 0.001:
-			return cursor.lerp(_path[i], distance / length)
-		distance -= length
-		cursor = _path[i]
-	# At spawn or a fresh checkpoint, extend only through a verified open corridor.
-	var extended: Vector2 = cursor-model.face*distance
-	return extended if _free_visual_segment(cursor,extended) else cursor
+func _spawn_departures(pos: Vector2, count: int) -> void:
+	if model == null: return
+	for i in count:
+		var offset := Vector2((float(i)-float(count-1)*0.5)*22.0,-8.0-float(i%2)*10.0)
+		var start: Vector2 = pos+offset-Vector2(model.camera_x,0)
+		start.y = clampf(start.y,196.0,690.0)
+		departures.append({"origin":pos+offset,"screen_pos":start,"age":0.0,"delay":0.22+minf(i,2)*0.04,"duration":1.72+minf(i,2)*0.06,"launched":false,"at_edge":false,"start":start,"control_a":start,"control_b":start,"end":start,"face":Vector2.RIGHT,"size":0.68,"seed":float(i)})
 
-func _free_visual_segment(a: Vector2, b: Vector2) -> bool:
-	var steps := maxi(1,int(ceil(a.distance_to(b)/8.0)))
-	for i in range(steps+1):
-		if not _free_visual_position(a.lerp(b,float(i)/steps)): return false
-	return true
+func _advance_departures(delta: float) -> void:
+	if model == null: return
+	for i in range(departures.size()-1,-1,-1):
+		var bee: Dictionary = departures[i]
+		bee.age += delta
+		if not bee.launched:
+			var pop: float = clampf(bee.age/bee.delay,0.0,1.0)
+			var screen: Vector2 = bee.origin-Vector2(model.camera_x,0)+Vector2(0,-18.0*sin(pop*PI*0.5))
+			screen.y = clampf(screen.y,196.0,690.0)
+			bee.screen_pos = screen
+			if bee.age >= bee.delay:
+				# From takeoff onward this arc belongs to the screen plane: turning,
+				# dashing or moving the camera cannot make a rescued bee follow.
+				bee.launched = true
+				bee.start = screen
+				bee.end = Vector2(1335.0+bee.seed*3.0,clampf(screen.y-190.0-bee.seed*12.0,188.0,500.0))
+				bee.control_a = screen+Vector2(85.0,maxf(-130.0,188.0-screen.y))
+				bee.control_b = bee.end+Vector2(-230.0,50.0)
+		if bee.launched:
+			var progress: float = clampf((bee.age-bee.delay)/(bee.duration-bee.delay),0.0,1.0)
+			var t := pow(progress,1.15)
+			var start: Vector2 = bee.start
+			var point := start.bezier_interpolate(bee.control_a,bee.control_b,bee.end,t)
+			var next := start.bezier_interpolate(bee.control_a,bee.control_b,bee.end,minf(t+0.01,1.0))
+			if point.distance_squared_to(next)>0.001: bee.face = point.direction_to(next)
+			bee.screen_pos = point
+			bee.size = lerpf(0.68,0.22,pow(progress,0.65))
+			bee.at_edge = point.x >= 1310.0
+		# Leave the complete arc at the edge for a few frames before disposal.
+		if bee.at_edge and bee.age >= bee.duration+0.06:
+			departures.remove_at(i)
 
-func _free_visual_position(point: Vector2) -> bool:
-	if point.x < 35.0 or point.x > model.world_width-50.0 or point.y < 100.0 or point.y > 710.0:
-		return false
-	for wall in model.walls:
-		if not wall.broken and wall.rect.grow(19.0).has_point(point):
-			return false
-	return true
+func _draw_departures() -> void:
+	for bee in departures:
+		var point: Vector2 = bee.screen_pos+Vector2(model.camera_x,0)
+		_bee(point,bee.size,bee.face,1.0,false,bee.seed,"depart" if bee.launched else "greet")
 
-func _ending_swarm() -> void:
-	var progress := clampf(_ending_elapsed / 1.8, 0.0, 1.0)
-	var eased := 1.0 - pow(1.0 - progress, 3.0)
-	for i in range(mini(model.bees,16) - 1, 0, -1):
-		var home: Vector2 = model.exit_pos + Vector2(-43 + (i % 5) * 18, 65 + (i / 5) * 18)
-		var start := _path_position(float(i) * 10.0)
-		var p := start.lerp(home, eased)
-		_bee(p, 0.68, Vector2.RIGHT, 1.0, false, float(i))
-	var lead: Vector2 = model.p.lerp(model.exit_pos + Vector2(-5, 42), eased)
-	_bee(lead, 1.0, Vector2.RIGHT, 1.0, false, 0.0)
+func _waiting_friends() -> void:
+	var p: Vector2 = model.exit_pos
+	if p.x < model.camera_x-200 or p.x > model.camera_x+1480: return
+	for i in maxi(0,mini(model.bees,16)-1):
+		var home := p+Vector2(-55.0+float(i%4)*37.0,63.0+float(i/4)*25.0)
+		_bee(home,0.57,Vector2.RIGHT,1.0,false,float(i),"waiting")
+
+func _ending_arrival() -> void:
+	var progress := clampf(_ending_elapsed/1.8,0.0,1.0)
+	var eased := 1.0-pow(1.0-progress,3.0)
+	var lead: Vector2 = model.p.lerp(model.exit_pos+Vector2(-5,22),eased)
+	_bee(lead,1.0,Vector2.RIGHT,1.0,false,0.0)
 
 func _ending_weather(cam: float) -> void:
 	var edge: float = model.exit_pos.x - 106.0
@@ -653,19 +661,24 @@ func _ending_weather(cam: float) -> void:
 		var y := fposmod(float(i) * 67.3 + clock * 390.0, 880.0) - 40.0
 		draw_line(Vector2(x, y), Vector2(x - 8, y + 25), Color(0.77, 0.91, 0.98, 0.29), 1.0, true)
 
-func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, seed_value: float) -> void:
+func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, seed_value: float, pose := "leader") -> void:
 	var axis := face.normalized() if not face.is_zero_approx() else Vector2.RIGHT
 	var charge := 0.0
 	var dash := 0.0
 	var rest := 0.0
 	var settle := 0.0
-	if not trapped and model != null:
+	if not trapped and model != null and pose == "leader":
 		charge = clampf(model.charge/model.CHARGE_READY,0.0,1.0) if model.charging else 0.0
 		dash = 1.0 if model.burst_left > 0.0 else 0.0
 		rest = _rest_blend
 		if model.phase == "ending": rest = clampf(_ending_elapsed/1.8,0.0,1.0)
 		if _settle > 0.0: settle = sin((0.36-_settle)/0.36*PI)*_settle/0.36
-	var stretch := Vector2(1.0-charge*0.17+dash*(0.25+_wind_kick*0.07)-settle*0.12,1.0+charge*0.15-dash*0.19+settle*0.13)
+	elif pose == "depart":
+		dash = 0.35
+	elif pose == "waiting":
+		rest = 1.0
+	var wind_kick := _wind_kick if pose == "leader" and not trapped else 0.0
+	var stretch := Vector2(1.0-charge*0.17+dash*(0.25+wind_kick*0.07)-settle*0.12,1.0+charge*0.15-dash*0.19+settle*0.13)
 	draw_set_transform(_world_offset+p,axis.angle(),stretch*size)
 	var ink := Color(0.15,0.20,0.12,alpha)
 	var yellow := Color(1.0,0.79,0.28,alpha)
@@ -715,8 +728,8 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 		draw_circle(tip,2.2,ink)
 	if charge>0.1 and not eyes_closed:
 		draw_line(Vector2(10,-11),Vector2(19,-8-charge*2.0),ink,1.7,true)
-	if _greeting > 0.0 and not trapped and dash<0.5:
-		var wave := sin((_greeting+seed_value*0.07)*17)*3.0
+	if not trapped and (pose == "greet" or (pose == "leader" and _greeting > 0.0 and dash<0.5)):
+		var wave := sin((clock+seed_value*0.07)*17)*3.0
 		_curve(Vector2(6,10),Vector2(14,18),Vector2(24,17),Vector2(23,9+wave),ink,2)
 	if size >= 0.95:
 		_silhouette([Vector2(0,9),Vector2(3,8),Vector2(8,10),Vector2(8,13),Vector2(4,17),Vector2(-2,14),Vector2(0,9)],Color("f28c5c"),ink,1.4)

@@ -29,7 +29,7 @@ static func definitions() -> Array:
 			section("露珠岔路",500,[gap(500,350,210),curtain(1100,350),gap(1700,530,210)],Vector2(1900,655)),
 			section("喷嚏前的空隙",300,[gap(460,500,220),flower(1050,420),gap(1700,280,210)],Vector2(1900,155)),
 			section("上下两扇叶",480,[gap(500,250,210),curtain(1160,520),gap(1780,430,190)],Vector2(1960,620)),
-			section("风把大家接住",420,[gap(450,520,220),wind(1050,480,-0.22),gap(1810,340,210)],Vector2(1950,220))
+			section("顺风送你出菜圃",420,[gap(450,520,220),wind(1050,480,-0.22),gap(1810,340,210)],Vector2(1950,220))
 		]},
 		{"title":"喷泉花桥","theme":1,"music":1,"base_bees":7,"storm":false,"sections":[
 			section("第一阵顺风",420,[gap(420,450,250),wind(1000,450,0.0),gap(1790,450,250)],Vector2(1950,250)),
@@ -38,7 +38,7 @@ static func definitions() -> Array:
 			section("不必都走快路",480,[chain([Vector2(700,310),Vector2(1150,450),Vector2(1600,310)],[Vector3(900,380,190),Vector3(1370,380,190)],Vector2(2070,310),[Vector2(560,310),Vector2(760,350),Vector2(830,380),Vector2(1080,380),Vector2(1230,380),Vector2(1550,380),Vector2(1830,520)])],Vector2(1950,640)),
 			section("喷泉边的转向",320,[gap(470,270,210),wind(1040,270,0.30),gap(1790,440,210)],Vector2(1960,590)),
 			section("最后一声等等我",420,[gap(470,540,220),rescue(1090,300),gap(1740,420,210)],Vector2(1920,620)),
-			section("九只一起借风",420,[gap(460,310,200),wind(1050,330,0.18),gap(1810,440,230)],Vector2(1950,610))
+			section("伙伴先回家了",420,[gap(460,310,200),wind(1050,330,0.18),gap(1810,440,230)],Vector2(1950,610))
 		]},
 		{"title":"雨中停走","theme":2,"music":2,"base_bees":9,"storm":true,"storm_speeds":[110.0,165.0,120.0,205.0,115.0,170.0,125.0],"sections":[
 			section("看见第一片屋檐",420,[gap(470,420,250),curtain(1100,420),gap(1740,420,240)],Vector2(1910,220),46),

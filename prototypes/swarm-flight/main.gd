@@ -191,7 +191,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.4.2"
+	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.4.3"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -233,12 +233,14 @@ func reset_menu() -> void:
 
 func show_title() -> void:
 	mode = "title"
+	world.reset_presentation()
+	world.presentation_active = false
 	held.clear()
 	handoff_panel.hide()
 	sound.set_stage(model.music_index())
 	panel.show()
 	heading.text = "雨来之前"
-	description.text = "第一章 · 归家\n穿过菜圃、花桥和雨庭，带伙伴回老树。\n方向键 / WASD 飞行\n空格按住蓄力，光环亮起后松开冲刺\n沿途叶下自动保存，晨露可选收集。"
+	description.text = "第一章 · 归家\n穿过菜圃、花桥和雨庭，救出伙伴再回家。\n方向键 / WASD 飞行\n空格按住蓄力，光环亮起后松开冲刺\n沿途叶下自动保存，晨露可选收集。"
 	main_button.text = "从头开始这一章"
 	secondary_button.visible = not saved_payload.is_empty()
 	secondary_button.text = "查看这一章的结尾" if saved_payload.get("completed",false) else "继续第 %d 关 · 已保存的落脚点" % (saved_stage+1)
@@ -253,12 +255,14 @@ func begin_stage(index: int) -> void:
 	toast_priority = 0
 	toast_guard_left = 0
 	model.load_stage(index)
+	world.reset_presentation()
+	world.presentation_active = true
 	energy_trail = Model.MAX_STAMINA
 	mode = "play"
 	panel.hide()
 	sound.set_stage(model.music_index())
 	last_section = model.section_index()
-	message(["先找齐这一带的伙伴 · 叶下会记住旅程", "冲进第一朵风花，后面的风会接住你", "暴雨从身后追来 · 借风甩开它，叶下能避雨", "最后一程 · 借风甩开暴雨，落叶下歇一口气"][index],4.5)
+	message(["救出这一带的伙伴 · 它们会先飞回家", "冲进第一朵风花，后面的风会接住你", "暴雨从身后追来 · 借风甩开它，叶下能避雨", "最后一程 · 借风甩开暴雨，落叶下歇一口气"][index],4.5)
 	persist_progress()
 	refresh_hud()
 
@@ -280,6 +284,8 @@ func on_secondary() -> void:
 		if not model.restore_payload(saved_payload):
 			message("保存的旅程暂时无法读取，可以从头开始。",4.0)
 			return
+		world.reset_presentation()
+		world.presentation_active = true
 		var saved_seconds = saved_payload.get("played_seconds",0.0)
 		played_seconds = float(saved_seconds) if (saved_seconds is float or saved_seconds is int) and is_finite(float(saved_seconds)) and float(saved_seconds) >= 0 else 0.0
 		held.clear()
@@ -328,6 +334,7 @@ func pause_game() -> void:
 	paused_from = mode
 	persist_progress()
 	mode = "pause"
+	world.presentation_active = false
 	handoff_panel.hide()
 	held.clear()
 	model.clear_input()
@@ -337,7 +344,7 @@ func pause_game() -> void:
 	main_button.text = "继续飞行"
 	secondary_button.text = "回到就近休息点"
 	secondary_button.visible = paused_from == "play"
-	if paused_from == "transition": description.text = "段落衔接已暂停。\nEsc 或 Enter 继续；伙伴在这里等你。"
+	if paused_from == "transition": description.text = "段落衔接已暂停。\nEsc 或 Enter 继续旅程。"
 	third_button.text = "回到标题"
 	third_button.show()
 	reset_menu()
@@ -346,6 +353,7 @@ func pause_game() -> void:
 func resume_game() -> void:
 	held.clear()
 	mode = paused_from
+	world.presentation_active = true
 	panel.hide()
 	handoff_panel.visible = mode == "transition"
 	refresh_hud()
@@ -406,7 +414,7 @@ func tick(delta: float) -> void:
 			sound.play_event(event.kind)
 			match event.kind:
 				"rescue":
-					event_message(event.kind,"救出 %d 只 · 体力 +%d · %d 只同行 · 叶下是恢复点" % [int(event.get("count",1)),int(round(event.get("reward",0))),model.bees],2.8)
+					event_message(event.kind,"救出 %d 只 · 它们先回家了！ · 体力 +%d" % [int(event.get("count",1)),int(round(event.get("reward",0)))],2.8)
 				"charge_cancel":
 					event_message(event.kind,"还没蓄好力 · 按住空格，等光环亮起再松开",2.6)
 				"blocked":
@@ -414,11 +422,11 @@ func tick(delta: float) -> void:
 				"checkpoint":
 					event_message(event.kind,"安全了 · 雨幕停在身后，体力恢复 · 已保存" if model.storm_active else "已记住这个叶亭 · 体力正在恢复",3.0)
 				"recover_manual":
-					event_message(event.kind,"已回到本段最近的恢复点 · 伙伴都在",3.0)
+					event_message(event.kind,"已回到本段最近的恢复点 · 救援成果保留",3.0)
 				"recover_rain":
-					event_message(event.kind,"被雨打湿了 · 已回到恢复点，伙伴都在",3.5)
+					event_message(event.kind,"被雨打湿了 · 已回到恢复点，救援成果保留",3.5)
 				"recover_exhaustion":
-					event_message(event.kind,"体力耗尽 · 已回到恢复点，体力补满，伙伴都在",3.5)
+					event_message(event.kind,"体力耗尽 · 已回到恢复点，体力补满，救援成果保留",3.5)
 				"recover_timeout":
 					event_message(event.kind,"在雨里待得太久了 · 已回到叶下，露天时间重置",3.5)
 				"tired":
@@ -436,7 +444,7 @@ func tick(delta: float) -> void:
 					var wind_text := "连续借风 ×%d · 不用再蓄力！" % chain if chain > 1 else "借到风 · 顺着风花接着飞"
 					event_message(event.kind,wind_text+" · 体力 +%d" % int(round(event.get("reward",0))),1.8)
 				"gate":
-					event_message(event.kind,"叶帘打开了 · 一起过去！",1.8)
+					event_message(event.kind,"叶帘打开了 · 继续向前！",1.8)
 			if event.kind in ["rescue","checkpoint"]: persist_progress()
 		model.events.clear()
 		if model.section_index() != last_section:
@@ -499,11 +507,12 @@ func show_transition() -> void:
 
 func show_ending() -> void:
 	mode = "ending"
+	world.presentation_active = true
 	handoff_panel.hide()
 	held.clear()
 	panel.show()
 	heading.text = "大家，都到家了。"
-	description.text = "四段路，终于连成了一次归途。\n“下次换我飞前面。”小蜂说。\n同行 %d 只 · 晨露 %d / %d\n旅程 %s · 返回落脚点 %d 次\n第一章 · 归家   完" % [model.bees,model.garden_total(),model.journey_dew_total(),clock_text(played_seconds),model.recoveries]
+	description.text = "四段路，终于连成了一次归途。\n“你回来啦！”伙伴们早已在树洞前等你。\n救出伙伴 %d 只 · 晨露 %d / %d\n旅程 %s · 返回落脚点 %d 次\n第一章 · 归家   完" % [model.bees-1,model.garden_total(),model.journey_dew_total(),clock_text(played_seconds),model.recoveries]
 	main_button.text = "再飞完整一章"
 	secondary_button.hide()
 	third_button.show()
@@ -525,7 +534,7 @@ func refresh_hud() -> void:
 	var title: String = "%s · %d/%d %s   ·   晨露 %d/%d" % [TITLES[model.stage],model.section_index()+1,model.section_count(),model.section_name(),model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
 	var hint: String = model.hint()
-	var bees_text := "同行  %d 只" % model.bees
+	var bees_text := "已救  %d / %d" % [model.bees-1,model.journey_bees_total()-1]
 	var energy_text := "体力 %d" % int(ceil(model.stamina))
 	var clock := ("露天 " + clock_text(model.rain_remaining)) if model.storm_active else ("旅程 " + clock_text(played_seconds))
 	if model.storm_active and model.shelter_index_at(model.p) >= 0: clock += " · 停"

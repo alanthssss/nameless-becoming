@@ -281,6 +281,33 @@ func collision_and_garden() -> void:
 	m.hurt("sneeze",12)
 	expect(m.stamina == after_hit,"Hit protection prevents a fan from dealing three simultaneous hits")
 
+func solo_rescue_contract() -> void:
+	# A saved rescue total is progress, never a second set of bodies or targets.
+	m = control_fixture()
+	m.bees = 9
+	m.invulnerable = 0
+	m.drops.assign([{"pos":m.p-Vector2(60,0),"vel":Vector2.ZERO}])
+	m.advance_rain(0.0)
+	expect(m.stamina == 100 and m.bees == 9,"Rain behind the solo player cannot hit departed companions")
+	m.drops.assign([{"pos":m.p,"vel":Vector2.ZERO}])
+	m.advance_rain(0.0)
+	expect(m.stamina == 70 and m.bees == 9,"Rain hits only player stamina; rescued total cannot be lost")
+	m = control_fixture()
+	m.bees = 9
+	m.walls.assign([m.wall(500,80,45,650)])
+	m.p = Vector2(475,420)
+	m.burst_left = 0.54
+	m.face = Vector2.RIGHT
+	m.step(Vector2.RIGHT,false,0.1)
+	var rescued_stop: Vector2 = m.p
+	m = control_fixture()
+	m.walls.assign([m.wall(500,80,45,650)])
+	m.p = Vector2(475,420)
+	m.burst_left = 0.54
+	m.face = Vector2.RIGHT
+	m.step(Vector2.RIGHT,false,0.1)
+	expect(m.p == rescued_stop,"Saved rescue total does not enlarge player collision")
+
 func save_contract() -> void:
 	m = Model.new()
 	var payload: Dictionary = m.save_payload()
@@ -397,6 +424,7 @@ func run() -> void:
 		authored_content()
 		checkpoints_and_resources()
 		collision_and_garden()
+		solo_rescue_contract()
 		save_contract()
 		chapter_routes(false)
 		chapter_routes(true)
