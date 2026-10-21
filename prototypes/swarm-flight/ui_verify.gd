@@ -101,6 +101,12 @@ func run_complete_route(collect: bool) -> void:
 		if not collect and old_section == 3 and not active_captures.has(old_stage) and game.model.p.x > game.model.chapter.encounters[old_section].start_x+1100:
 			active_captures[old_stage] = true
 			await shot("level-%d-active" % old_stage)
+		if collect and old_stage == 1 and old_section == 3 and game.model.p.x > 6450 and not poses.has("steady-route-supply"):
+			poses["steady-route-supply"] = true
+			await shot("steady-route-supply")
+		if not collect and old_stage == 2 and old_section == 3 and game.model.p.x > 5160 and not poses.has("rain-wind-supply"):
+			poses["rain-wind-supply"] = true
+			await shot("rain-wind-supply")
 		if not collect:
 			var shield_pose := "shield-route-%d" % old_stage
 			if game.model.shield_left > 0 and game.model.shield_left < 3.5 and not poses.has(shield_pose):

@@ -331,8 +331,8 @@ func advance(direction: Vector2, dt: float) -> void:
 	if storm_active:
 		advance_storm(dt)
 		if old_recoveries != recoveries: return
-	# The first controls encounter stays dry; later authored lanes have rain.
-	if started and (stage > 0 or checkpoint_index >= 0):
+	# Weather belongs to authored encounters; existing drops still move and collide.
+	if started:
 		advance_rain(dt)
 		if old_recoveries != recoveries: return
 	if p.distance_to(exit_pos) < 85 and exit_ready:
@@ -396,7 +396,8 @@ func advance_rain(dt: float) -> void:
 			for column in 4:
 				var x := area.position.x+(column+0.3+rng.randf()*0.4)*area.size.x/4.0
 				drops.append({"pos":Vector2(x,area.position.y+130.0),"vel":Vector2(-25,350)})
-	rain_timer -= dt
+	if chapter.encounters[encounter_index()].ambient_rain: rain_timer -= dt
+	else: rain_timer = 1.8
 	if rain_timer <= 0:
 		rain_timer = 1.25 if storm_active else 2.0
 		drops.append({"pos":Vector2(p.x + rng.randf_range(80,400),70),"vel":Vector2(-45,320 if storm_active else 245)})
@@ -618,7 +619,7 @@ func stage_dew_total() -> int:
 
 func journey_dew_total() -> int:
 	var total := 0
-	for item in Data.definitions(): total += item.encounters.size()
+	for index in STAGE_COUNT: total += Data.dew_count(index)
 	return total
 
 func journey_bees_total() -> int:
@@ -705,7 +706,7 @@ func save_payload() -> Dictionary:
 	var saved_sprayers: Array = []
 	for item in checkpoint.sprayers:
 		saved_sprayers.append({"rewarded":item.rewarded,"stun_left":item.stun_left,"timer":item.timer})
-	return {"version":3,"content_revision":5,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed}
+	return {"version":4,"content_revision":6,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed}
 
 func _valid_integer(value, low: int, high: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floor(float(value)) and value >= low and value <= high
@@ -719,7 +720,7 @@ func _valid_flags(value, count: int) -> bool:
 func restore_payload(data: Dictionary) -> bool:
 	# Validate every field before changing the current run. Extra UI metadata is
 	# intentionally ignored; maps and positions always come from authored data.
-	if data.get("version") != 3 or data.get("content_revision") != 5: return false
+	if data.get("version") != 4 or data.get("content_revision") != 6: return false
 	if not _valid_integer(data.get("stage"),0,STAGE_COUNT-1): return false
 	var saved_stage := int(data.stage)
 	var layout := Data.build(saved_stage)
@@ -735,7 +736,7 @@ func restore_payload(data: Dictionary) -> bool:
 			if not (value is int or value is float) or not is_finite(float(value)) or value < 0 or value > (6.0 if field == "stun_left" else 4.5): return false
 	if not data.get("garden_awards") is Array or data.garden_awards.size() != STAGE_COUNT: return false
 	for i in STAGE_COUNT:
-		if not _valid_integer(data.garden_awards[i],0,Data.definitions()[i].encounters.size()): return false
+		if not _valid_integer(data.garden_awards[i],0,Data.dew_count(i)): return false
 		if i > saved_stage and data.garden_awards[i] != 0: return false
 	if data.garden_awards[saved_stage] != data.dew.count(true): return false
 	var expected_bees: int = layout.base_bees

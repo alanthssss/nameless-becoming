@@ -191,7 +191,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.5.0"
+	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.5.1"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -535,7 +535,8 @@ func refresh_hud() -> void:
 	hud_weather.visible = active and model.storm_active
 	cue_panel.visible = false
 	if not active: return
-	var title: String = "%s · %d/%d %s   ·   晨露 %d/%d" % [TITLES[model.stage],model.encounter_index()+1,model.chapter.encounters.size(),model.encounter_name(),model.garden_awards[model.stage],model.stage_dew_total()]
+	var title: String = "%s · %d/%d %s" % [TITLES[model.stage],model.encounter_index()+1,model.chapter.encounters.size(),model.encounter_name()]
+	if model.stage_dew_total() > 0: title += "   ·   晨露 %d/%d" % [model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
 	var hint: String = model.hint()
 	var bees_text := "已救  %d / %d" % [model.bees-1,model.journey_bees_total()-1]

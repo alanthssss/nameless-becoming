@@ -1,5 +1,5 @@
 extends RefCounted
-## Authored encounters. Coordinates are local to each named section, never random.
+## Authored encounters. Coordinates are local to each named encounter, never random.
 const STAGE_COUNT := 4
 
 static func gap(x: float,y: float,width := 190.0) -> Dictionary:
@@ -8,8 +8,8 @@ static func rescue(x: float,y: float,count := 1) -> Dictionary:
 	return {"kind":"pod","x":x,"y":y,"count":count}
 static func wind(x: float,y: float,dy := 0.0) -> Dictionary:
 	return {"kind":"ring","x":x,"y":y,"direction":Vector2(1,dy).normalized()}
-static func chain(points: Array,openings: Array,landing: Vector2,slow: Array = [],flowers: Array = [],to_leaf := false) -> Dictionary:
-	return {"kind":"chain","x":points[0].x,"y":points[0].y,"points":points,"openings":openings,"landing":landing,"slow":slow,"flowers":flowers,"to_leaf":to_leaf}
+static func chain(points: Array,openings: Array,landing: Vector2,slow: Array = [],flowers: Array = []) -> Dictionary:
+	return {"kind":"chain","x":points[0].x,"y":points[0].y,"points":points,"openings":openings,"landing":landing,"slow":slow,"flowers":flowers}
 static func curtain(x: float,y: float) -> Dictionary:
 	return {"kind":"curtain","x":x,"y":y}
 static func flower(x: float,y: float) -> Dictionary:
@@ -20,40 +20,50 @@ static func weather(x: float,width: float) -> Dictionary:
 	return {"kind":"rain","x":x,"y":80.0,"width":width}
 static func shield(x: float,y: float) -> Dictionary:
 	return {"kind":"shield","x":x,"y":y}
-static func encounter(name: String,width: float,beats: Array,dew: Vector2,rest_y := -1.0,cue := "继续向前",speed := 100.0) -> Dictionary:
-	return {"name":name,"width":width,"beats":beats,"dew":dew,"rest_y":rest_y,"cue":cue,"budget":55.0,"storm_speed":speed}
+static func dew(x: float,y: float,purpose: String,route_mode := "through") -> Dictionary:
+	# Route mode only guides developer inputs; every pickup remains optional in play.
+	return {"kind":"dew","x":x,"y":y,"purpose":purpose,"route_mode":route_mode}
+static func encounter(name: String,width: float,beats: Array,rest_y := -1.0,cue := "继续向前",speed := 100.0,ambient_rain := false) -> Dictionary:
+	return {"name":name,"width":width,"beats":beats,"rest_y":rest_y,"cue":cue,"budget":55.0,"storm_speed":speed,"ambient_rain":ambient_rain}
 
 static func definitions() -> Array:
 	return [
 		{"title":"晨光菜圃","theme":0,"music":0,"base_bees":1,"storm":false,"encounters":[
-			encounter("第一声呼救",1650,[turn(380,420),rescue(850,420,2)],Vector2(1320,300),-1,"冲开卷叶，让伙伴先回家"),
-			encounter("抬头，再落下来",2050,[gap(460,290,260),gap(1110,500,270)],Vector2(1470,610),500,"上下绕过菜叶，叶亭就在前面"),
-			encounter("露珠岔路",1450,[gap(460,420,300),turn(1020,420)],Vector2(1140,220),-1,"上方晨露可补体力，也可以直接向前"),
-			encounter("卷叶上的两位",1950,[gap(400,500,260),rescue(970,270,2),gap(1450,320,280)],Vector2(1670,430),320,"抬头冲开卷叶，再到宽叶下"),
-			encounter("顺风送你出菜圃",1750,[wind(640,400),turn(1250,400)],Vector2(1380,570),420,"冲进风花，松开方向也能借风向前")
+			encounter("第一声呼救",1650,[turn(380,420),rescue(850,420,2)],-1,"冲开卷叶，让伙伴先回家"),
+			encounter("抬头，再落下来",2050,[gap(460,290,260),dew(850,390,"上下转向之间顺路补给，继续飞到第二个缺口"),gap(1110,500,270)],500,"穿过上方缺口，顺着晨露向下转"),
+			encounter("露珠岔路",1450,[gap(460,420,300),dew(1000,260,"选择抬高路线，为前方救援多留体力","detour"),turn(1200,420)],-1,"上沿晨露补给后可以返回主路，也可以直接向前"),
+			encounter("卷叶上的两位",1950,[gap(400,500,260),rescue(970,270,2),gap(1450,320,280)],-1,"救出伙伴补充体力，穿过缺口继续飞"),
+			encounter("顺风送你出菜圃",1750,[wind(640,400),turn(1250,400)],420,"用刚才的补给借风，前方宽叶下落脚")
 		]},
 		{"title":"喷泉花桥","theme":1,"music":1,"base_bees":5,"storm":false,"encounters":[
-			encounter("借风，再停稳",1600,[wind(650,450),turn(1250,450)],Vector2(1320,290),-1,"风花会送你一程，之后可以停稳转向"),
-			encounter("三朵花一口气",2350,[chain([Vector2(550,500),Vector2(1000,340),Vector2(1450,340)],[Vector3(790,410,260),Vector3(1230,340,250)],Vector2(1940,340))],Vector2(2020,190),360,"冲进第一朵，连续借风，不必重新蓄力"),
-			encounter("快路下面的声音",1800,[turn(380,420),rescue(900,570,2),turn(1450,460)],Vector2(1510,630),460,"离开快路，向下救出两位伙伴"),
-			encounter("快路还是稳路",2200,[chain([Vector2(570,290),Vector2(1020,290),Vector2(1470,290)],[],Vector2(1970,290),[Vector2(370,510),Vector2(1000,530),Vector2(1750,510),Vector2(1970,430)],[Vector2(1250,290)])],Vector2(2010,600),-1,"上方风花更快；下方宽路可以慢慢飞"),
-			encounter("一口气到宽叶下",2450,[chain([Vector2(530,440),Vector2(980,440),Vector2(1430,440)],[],Vector2(1930,440)),turn(2150,440)],Vector2(2060,280),440,"接住最后一阵风，宽叶下松开方向停稳")
+			encounter("借风，再停稳",1600,[wind(650,450),turn(1250,450)],-1,"风花会送你一程，之后可以停稳转向"),
+			encounter("三朵花一口气",2350,[chain([Vector2(550,500),Vector2(1000,340),Vector2(1450,340)],[Vector3(790,410,260),Vector3(1230,340,250)],Vector2(1940,340))],360,"冲进第一朵，连续借风，不必重新蓄力"),
+			encounter("快路下面的声音",1800,[turn(380,420),rescue(900,570,2),turn(1450,460)],-1,"向下救出伙伴，补好体力继续选择路线"),
+			encounter("快路还是稳路",2200,[chain([Vector2(570,290),Vector2(1020,290),Vector2(1470,290)],[],Vector2(1970,290),[Vector2(370,510),Vector2(900,530),Vector2(1540,510),Vector2(1970,430)],[Vector2(1250,290)]),dew(900,530,"稳路缺少风花回补，在中途补充继续飞行的体力","branch")],-1,"上方连续借风更快；下方沿晨露稳稳飞"),
+			encounter("一口气到宽叶下",2450,[chain([Vector2(530,440),Vector2(980,440),Vector2(1430,440)],[],Vector2(1930,440)),turn(2150,440)],440,"接住最后一阵风，宽叶下松开方向停稳")
 		]},
 		{"title":"雨中停走","theme":2,"music":2,"base_bees":7,"storm":true,"encounters":[
-			encounter("雨在身后",1650,[gap(650,420,300)],Vector2(1110,250),420,"雨幕追来，先到前方大叶下",95),
-			encounter("看见雨，再出发",1350,[weather(420,410),turn(350,500),turn(1050,500)],Vector2(1110,640),-1,"灰云下有落雨；看准空隙，或冲刺穿过",140),
-			encounter("护雨里转个弯",1550,[shield(620,330),weather(600,560),gap(730,300,240),gap(1100,490,260),turn(1450,490)],Vector2(1490,620),490,"接住护雨叶，五秒内可以顶着雨转向",140),
-			encounter("把雨留在后面",1600,[gap(550,330,270),wind(1010,360,0.12)],Vector2(1310,590),-1,"护雨结束，借风拉开与雨幕的距离",100),
-			encounter("叶亭旁的一声呼救",1900,[gap(430,480,280),rescue(1010,440),turn(1450,440)],Vector2(800,440),440,"最后这位在叶亭旁，冲开卷叶再歇口气",100)
+			encounter("雨在身后",1650,[gap(650,420,300)],420,"雨幕追来，先到前方大叶下",95,true),
+			encounter("看见雨，再出发",1350,[weather(420,410),turn(350,500),dew(1040,500,"穿过第一片雨后顺路补给，再接近护雨转弯"),turn(1200,500)],-1,"灰云下有落雨；穿过后顺路补给，继续向前",140,true),
+			encounter("护雨里转个弯",1550,[shield(620,330),weather(600,560),gap(730,300,240),gap(1100,490,260)],490,"接住护雨叶，五秒内可以顶着雨转向",140,true),
+			encounter("把雨留在后面",1600,[gap(550,330,270),dew(780,350,"离开叶亭不停满后，为避雨借风补足冲刺体力"),wind(1010,360,0.12)],-1,"护雨结束，借风拉开与雨幕的距离",100,true),
+			encounter("叶亭前的一声呼救",1900,[gap(430,480,280),dew(800,440,"救援前顺路补充冲刺体力"),rescue(1010,440),turn(1450,440)],440,"顺路接住晨露，冲开卷叶再到叶下",100,true)
 		]},
 		{"title":"归巢之路","theme":3,"music":2,"base_bees":8,"storm":true,"encounters":[
-			encounter("熟悉的三阵风",2200,[chain([Vector2(560,480),Vector2(1010,340),Vector2(1460,340)],[Vector3(800,410,260)],Vector2(1940,340))],Vector2(1950,180),-1,"熟悉的借风路，顺着暖光向前",110),
-			encounter("最后一位先回家",1700,[rescue(630,440),turn(1230,440)],Vector2(1290,600),440,"冲开卷叶，让最后一位伙伴先回家",110),
-			encounter("远处亮着一盏灯",1200,[turn(400,440),turn(820,440)],Vector2(780,270),440,"八位伙伴已经到家；歇好，再走最后一程",175),
-			encounter("穿过最后一阵雨",2450,[shield(400,440),weather(610,1000),chain([Vector2(800,440),Vector2(1250,440),Vector2(1700,440)],[],Vector2(2210,440)),{"kind":"curtain","x":2070.0,"y":440.0,"passive":true}],Vector2(2260,620),-1,"护雨叶、风花和冲刺，把最后一阵雨甩开",175),
-			encounter("大家在等你",1600,[gap(450,420,340),turn(1110,420)],Vector2(1190,580),420,"灯就在前面，慢慢飞进老树",105)
+			encounter("熟悉的三阵风",2200,[chain([Vector2(560,480),Vector2(1010,340),Vector2(1460,340)],[Vector3(800,410,260)],Vector2(1940,340))],-1,"熟悉的借风路，顺着暖光向前",110,true),
+			encounter("最后一位先回家",1250,[rescue(630,440),turn(1040,440)],-1,"冲开卷叶，让最后一位伙伴先回家",110),
+			encounter("远处亮着一盏灯",900,[turn(240,440),turn(620,440)],440,"大家已到家；前方叶下歇好，再穿过最后的雨",85),
+			encounter("穿过最后一阵雨",2450,[shield(400,440),weather(610,1000),chain([Vector2(800,440),Vector2(1250,440),Vector2(1700,440)],[],Vector2(2210,440)),{"kind":"curtain","x":2070.0,"y":440.0,"passive":true}],-1,"护雨叶、风花和冲刺，把最后一阵雨甩开",175,true),
+			encounter("大家在等你",1300,[gap(450,420,340),turn(970,420)],420,"前面没有新挑战了，沿灯光飞进老树",65)
 		]}
 	]
+
+static func dew_count(index: int) -> int:
+	var total := 0
+	for spec in definitions()[index].encounters:
+		for beat in spec.beats:
+			if beat.kind == "dew": total += 1
+	return total
 
 static func move_to(point: Vector2) -> Dictionary:
 	return {"kind":"move","target":point}
@@ -68,8 +78,7 @@ static func build(index: int) -> Dictionary:
 		var rest := Vector2(origin+spec.width-180,spec.rest_y)
 		if out.sections.size() == i:
 			out.sections.append({"name":spec.name,"start_x":origin,"end_x":origin+spec.width,"rest":rest,"budget":spec.budget,"storm_speed":spec.storm_speed if source.storm else 0.0,"route_index":out.route.size(),"optional_route_index":out.optional_route.size()})
-		out.encounters.append({"name":spec.name,"start_x":origin,"end_x":origin+spec.width,"section":i,"cue":spec.cue,"storm_speed":spec.storm_speed})
-		var finishes_in_leaf := false
+		out.encounters.append({"name":spec.name,"start_x":origin,"end_x":origin+spec.width,"section":i,"cue":spec.cue,"storm_speed":spec.storm_speed,"ambient_rain":spec.ambient_rain})
 		for beat in spec.beats:
 			var point := Vector2(origin+beat.x,beat.y)
 			var steps: Array = []
@@ -99,10 +108,6 @@ static func build(index: int) -> Dictionary:
 						out.sprayers.append({"pos":flower_pos+Vector2(origin,0),"timer":2.4,"stun_left":0.0,"flash":0.0,"rewarded":false})
 					steps = [move_to(point-Vector2(170,0)),{"kind":"burst","direction":Vector2.RIGHT},move_to(beat.landing+Vector2(origin,0))]
 					for slow_point in beat.slow: optional_steps.append(move_to(slow_point+Vector2(origin,0)))
-					if beat.to_leaf:
-						optional_steps = [move_to(spec.dew+Vector2(origin,0))]
-						optional_steps.append_array(steps.duplicate(true))
-					finishes_in_leaf = beat.to_leaf
 				"curtain":
 					out.walls.append({"rect":Rect2(point.x,80,42,650),"kind":"curtain","broken":false})
 					steps = [move_to(point-Vector2(170,0)),{"kind":"burst","direction":Vector2.RIGHT}]
@@ -115,12 +120,14 @@ static func build(index: int) -> Dictionary:
 				"shield":
 					out.shields.append({"pos":point,"collected":false,"section":i})
 					steps = [move_to(point)]
+				"dew":
+					out.dew.append({"pos":point,"collected":false,"section":i,"encounter":encounter_index,"purpose":beat.purpose})
+					if beat.route_mode == "through": steps = [move_to(point)]
+					elif beat.route_mode == "detour": optional_steps = [move_to(point)]
+					# Branch pickups are already on the chain's ordinary-flight alternative.
 				"turn": steps = [move_to(point)]
 			out.route.append_array(steps)
 			out.optional_route.append_array(optional_steps if not optional_steps.is_empty() else steps.duplicate(true))
-		var dew_pos: Vector2 = spec.dew+Vector2(origin,0)
-		out.dew.append({"pos":dew_pos,"collected":false,"section":i,"encounter":encounter_index})
-		if not finishes_in_leaf: out.optional_route.append(move_to(dew_pos))
 		if spec.rest_y >= 0:
 			out.sections[i].end_x = origin+spec.width
 			out.sections[i].rest = rest
