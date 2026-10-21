@@ -1,8 +1,8 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.4.1",
+  "revision": "0.4.2",
   "created": "2026-10-20",
-  "direction": "Original bold-outline garden cartoon: rounded leaves, expressive bees, cream and honey; four chapter palettes and numbered safe leaves. Code-native vector drawing; no generated bitmaps or imported reference assets.",
+  "direction": "Original garden cartoon with continuous bee silhouettes, distinct action poses and event-driven plant reactions; existing four palettes and background density retained. Code-native drawing, no generated bitmaps or imported reference assets.",
   "runtime_bitmap_assets": [],
   "code_native_art": {
     "path": "world_view.gd",
@@ -21,10 +21,10 @@
       "homeward_dusk": "#a78b99"
     },
     "states": [
-      "oversized-eye bee flight/charge/ready/tired/burst/resting",
-      "rescue leaf folded/open",
-      "wind flower directional/open and spent/closed",
-      "solid leaf stem with three value bands",
+      "continuous pear-shaped bee silhouette; charge compression, dash stretch, braking settle, blink and folded-wing rest",
+      "asymmetric rescue leaf cup unfolds over 0.65s from real rescue event",
+      "directional wind flower petals recoil then fold over 0.55s from real ring event; anchor/arrow remain model authoritative",
+      "solid full-rectangle plant face with curved leaf folds and bounded inner-vein motion",
       "dry curtain intact/torn",
       "shelter unvisited/reached",
       "sprayer idle/blink/warning/sneeze/calm",
@@ -34,9 +34,11 @@
       "charge circle fills exactly at ready threshold; local result captions for burst/rescue/wind/gate/dew/hit",
       "numbered safe leaves with watering-can, pot, bench and lantern landmarks",
       "linked breeze arrows between authored wind-chain flowers; transient relay count and mint trail",
-      "rolling storm clouds, directional rain gusts, model-aligned contact edge; storm recedes at ending"
+      "rolling storm clouds, directional rain gusts, model-aligned contact edge; storm recedes at ending",
+      "companions follow a safely checked, spaced history trail; two resting rows under earned safe leaves",
+      "presentation transients clear on stage changes, displacement and explicit recovery events"
     ],
-    "collision_contract": "Model authoritative. Solid stem silhouette stays within the original rectangle; visual tips taper inward. Decorative thin stems and distant garden objects have no collision. Flower direction, charge threshold, stamina eligibility and shelter location share model values. Reward dew is angular and sparkling; damaging spray is round and moving. Sprayer states read sprayer_phase directly.",
+    "collision_contract": "Model authoritative and unchanged. Full solid stem rectangles remain visibly filled and outlined. Decorative thin stems and distant garden objects have no collision. Flower center/direction and shelter locations read the model. Companion visual offsets check swept segments against grown wall rectangles and world bounds; presentation does not move model bodies.",
     "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget."
   },
   "ui": {
@@ -44,7 +46,8 @@
     "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
     "clock": "Elapsed journey clock in levels 1-2; exposed-time budget labeled 露天 in levels 3-4. Separate spatial storm indicator names chase/near/escaped/sheltered states.",
     "handoff": "1.6-second in-world handoff between stages; Enter skips; pause/focus loss freezes it; fresh input starts each stage.",
-    "progress": "Four levels, seven named sections each; objective points to local rescue or the next safe leaf. V2 persistence restores earned safe position and completed ending."
+    "progress": "Four levels, seven named sections each; objective points to local rescue or the next safe leaf. V2 persistence restores earned safe position and completed ending.",
+    "local_feedback": "Actionable contextual cues retained; spent-flower text hidden because folded petals show the same result."
   },
   "rejected_pass": {
     "status": "Removed from source/runtime/export following user feedback SF-R02: AI feeling too strong.",
@@ -70,9 +73,13 @@
       "saved-leaf-continued",
       "continuous-wind",
       "rain-shelter",
-      "rain-near-fixture"
+      "rain-near-fixture",
+      "motion-charge",
+      "motion-dash",
+      "motion-rescue",
+      "motion-leaf-rest"
     ],
-    "result": "0.4.0 creator play: Alan endorsed continuous dashes and chase; ending screenshot shows game clock 12:08, nine bees and 26 dew. 0.4.1 passed 450 rule checks, 110 headless scene checks and 127 native scene/capture checks. Native wind relay, safe leaf and ending inspected; near-rain is an explicit state fixture. Player feel of this iteration remains pending.",
+    "result": "Creator feedback on 0.4.1: core and basic pacing acceptable as a prototype, music retained; rigid shapes and lifeless character motion remain the main art issues. 0.4.2 visual/animation experiment awaits creator replay; native captures and technical verification are developer evidence only. Passed 450 model checks, 111 headless UI checks and 132 native UI/capture checks; 160 additional native frames sampled rescue and ring animation fixtures, including recovery clearing. Player aesthetic acceptance remains pending.",
     "audio_pcm_peaks": [
       0.62149,
       0.64804,
@@ -95,7 +102,8 @@
     ],
     "rhythm_revision": "0.3.1 retains the original art and all music. Native input-route captures and technical checks recorded in the local rhythm-feedback delivery receipt; player feel acceptance remains pending.",
     "chapter_revision": "0.4.0 keeps all three original music arrangements unchanged; known-answer developer route is roughly 5-6 minutes, not evidence for the initial 20-30-minute first-play target.",
-    "chase_revision": "0.4.1 retains map geometry, entity counts, control physics, stamina rewards and original music; authored section storm pace and clearer relay/chase feedback. Near-rain capture is an explicit UI state fixture, not a player run."
+    "chase_revision": "0.4.1 retains map geometry, entity counts, control physics, stamina rewards and original music; authored section storm pace and clearer relay/chase feedback. Near-rain capture is an explicit UI state fixture, not a player run.",
+    "living_revision": "0.4.2 retains all map, model, input, save and audio source. Revises silhouettes, action poses and bounded plant reactions. Real v2 progress is checked from an isolated copy, never overwritten by QA."
   },
   "style_references": [
     {
@@ -128,7 +136,7 @@
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "6c256fc66ae2ee97d0f9008d59fc989acb8a2b208d75b64277009a5f9ccd667f",
+    "world_view.gd": "bf2b17f82f8aa0fe0d81b3641b63106225771b92bac848b0a8bfa0c82d94689e",
     "sound.gd": "560a73b9e3b8246a0a7ae6df2f05aab26a7aadabc79e121fa75086eae8405665"
   },
   "updated": "2026-10-21"

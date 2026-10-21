@@ -61,6 +61,7 @@ func run_complete_route(collect: bool) -> void:
 	var active_captures := {}
 	var relay_captured := false
 	var shelter_captured := false
+	var poses := {}
 	for frame in 180000:
 		if game.mode == "ending": break
 		# Native capture may yield focus to another running app; use the real
@@ -99,6 +100,14 @@ func run_complete_route(collect: bool) -> void:
 		if not collect and old_section == 3 and not active_captures.has(old_stage) and game.model.p.x > game.model.sections[old_section].start_x+1100:
 			active_captures[old_stage] = true
 			await shot("level-%d-active" % old_stage)
+		if not collect:
+			var pose := ""
+			if game.model.charging and game.model.charge >= game.model.CHARGE_READY: pose = "charge"
+			elif game.model.burst_left > 0.25: pose = "dash"
+			elif game.model.bees > 1 and not poses.has("rescue"): pose = "rescue"
+			if not pose.is_empty() and not poses.has(pose):
+				poses[pose] = true
+				await shot("motion-"+pose)
 		var action: Dictionary = driver.next_input()
 		if not str(action.get("error","")).is_empty():
 			failures.append("UI route: "+str(action.error))
@@ -224,7 +233,17 @@ func saved_menu_contract() -> void:
 	tap(KEY_ENTER)
 	expect(game.mode == "play" and game.model.p == safe and game.model.bees == companions,"title continue restores earned safe leaf and rescued companions")
 	expect(not game.model.started and game.held.is_empty() and game.model.stamina == 100,"continue is stationary, refilled and requires fresh input")
+	ticks(45)
 	await shot("saved-leaf-continued")
+	# Rendering/animation may advance while gameplay is paused; it cannot spend,
+	# move, rescue, or otherwise alter simulation or persisted progress.
+	var model_before := JSON.stringify(game.model.save_payload())
+	var p_before: Vector2 = game.model.p
+	var velocity_before: Vector2 = game.model.velocity
+	var time_before: float = game.model.time
+	for i in 90: game.world._process(1.0/60.0)
+	await shot("motion-leaf-rest")
+	expect(JSON.stringify(game.model.save_payload()) == model_before and game.model.p == p_before and game.model.velocity == velocity_before and game.model.time == time_before,"presentation animation cannot mutate gameplay or saved progress")
 	game.test_mode = true
 	game.progress_file = ""
 	DirAccess.remove_absolute(path)

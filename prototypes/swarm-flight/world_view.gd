@@ -13,6 +13,14 @@ var _path: Array[Vector2] = []
 var _last_stage := -1
 var _ending_elapsed := 0.0
 var _feedback: Array[Dictionary] = []
+var _reactions: Array[Dictionary] = []
+var _world_offset := Vector2.ZERO
+var _last_speed := 0.0
+var _was_burst := false
+var _settle := 0.0
+var _rest_blend := 0.0
+var _greeting := 0.0
+var _wind_kick := 0.0
 
 const INK := Color("253d26")
 const GOLD := Color("ffc94f")
@@ -25,6 +33,13 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	clock += delta
+	_settle = maxf(0.0, _settle - delta)
+	_greeting = maxf(0.0, _greeting - delta)
+	_wind_kick = maxf(0.0, _wind_kick - delta * 3.0)
+	for i in range(_reactions.size() - 1, -1, -1):
+		_reactions[i].age += delta
+		if _reactions[i].age > 1.25:
+			_reactions.remove_at(i)
 	for i in range(_feedback.size() - 1, -1, -1):
 		_feedback[i].life -= delta
 		if _feedback[i].life <= 0.0:
@@ -53,12 +68,27 @@ func _process(delta: float) -> void:
 			ripples.clear()
 			trail.clear()
 			_feedback.clear()
+			_reactions.clear()
+			_settle = 0.0
+			_rest_blend = 0.0
+			_last_speed = 0.0
+			_was_burst = false
+			_greeting = 0.0
+			_wind_kick = 0.0
 			_last_stage = model.stage
+		var speed: float = model.velocity.length()
+		var bursting: bool = model.burst_left > 0.0
+		if (_was_burst and not bursting) or (_last_speed > 100.0 and speed < 35.0):
+			_settle = 0.36
+		_last_speed = speed
+		_was_burst = bursting
+		var resting: bool = model.shelter_index_at(model.p) >= 0 and speed < 12.0 and not model.charging and not bursting
+		_rest_blend = move_toward(_rest_blend, 1.0 if resting else 0.0, delta * (2.4 if resting else 9.0))
 		if _path.is_empty():
 			_path.append(model.p)
 		while _path.back().distance_to(model.p) >= 8.0:
 			_path.append(_path.back().move_toward(model.p, 8.0))
-			if _path.size() > 48:
+			if _path.size() > 70:
 				_path.pop_front()
 		_ending_elapsed = _ending_elapsed + delta if model.phase == "ending" else 0.0
 		trail_clock += delta
@@ -68,6 +98,21 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
+	if kind.begins_with("recover"):
+		_path.clear()
+		_reactions.clear()
+		_greeting = 0.0
+		_wind_kick = 0.0
+		_settle = 0.0
+		_rest_blend = 0.0
+		_last_speed = 0.0
+		_was_burst = false
+	if kind in ["rescue", "ring", "flower_calm", "checkpoint"]:
+		_reactions.append({"kind":kind, "pos":pos, "age":0.0})
+	if kind == "rescue":
+		_greeting = 0.85
+	elif kind == "ring":
+		_wind_kick = 1.0
 	var caption := ""
 	match kind:
 		"burst": caption = "−20"
@@ -153,7 +198,8 @@ func _draw() -> void:
 	var cam: float = model.camera_x
 	_background(act, cam)
 	var shake := Vector2(sin(clock * 53.0), sin(clock * 39.0)) * trauma * trauma * 9.0
-	draw_set_transform(Vector2(-cam, 0) + shake)
+	_world_offset = Vector2(-cam, 0) + shake
+	draw_set_transform(_world_offset)
 	_world_decor(act, cam)
 	_landmarks(act)
 	for wall in model.walls:
@@ -298,8 +344,8 @@ func _wall(wall: Dictionary) -> void:
 			else:
 				draw_polyline(PackedVector2Array([badge+Vector2(-9,-9),badge+Vector2(5,0),badge+Vector2(-9,9)]),CREAM,4,true)
 		return
-	# Solid sides match the model rectangle. A 20px inward bud cap replaces
-	# the former flat cut; the tip remains at the exact authored gap boundary.
+	# The full solid face and all four collision edges remain visible and still.
+	# Broad overlapping leaf folds carry the material; only their inner veins sway.
 	var upper := r.position.y < 100
 	var body := Rect2(r.position,r.size)
 	if upper:
@@ -309,60 +355,53 @@ func _wall(wall: Dictionary) -> void:
 		body.size.y = 840-body.position.y
 	var x := body.position.x
 	var w := body.size.x
-	var top := body.position.y
-	var bottom := body.end.y
-	var center := x+w*0.50
 	var gap_y := r.end.y if upper else r.position.y
 	var root_y := body.position.y if upper else body.end.y
 	var direction := -1.0 if upper else 1.0
-	var cap := minf(20.0,w*0.42)
-	var tip := Vector2(center+2.0,gap_y)
-	var right := Vector2(x+w,gap_y+direction*cap)
-	var left := Vector2(x,gap_y+direction*cap)
-	var outline := PackedVector2Array([Vector2(x,root_y),Vector2(x+w,root_y),right])
-	for i in range(1,13):
-		outline.append(right.bezier_interpolate(Vector2(x+w-2,gap_y+direction*7),tip+Vector2(8,direction*6),tip,float(i)/12.0))
-	for i in range(1,13):
-		outline.append(tip.bezier_interpolate(tip+Vector2(-7,direction*7),Vector2(x+2,gap_y+direction*9),left,float(i)/12.0))
-	draw_colored_polygon(outline,Color("497c35"))
-	var closed := outline.duplicate()
-	closed.append(outline[0])
-	draw_polyline(closed,INK,4.5,true)
-	# Three broad values give the stem a rounded cross-section without moving collision edges.
-	_curve(Vector2(x+w-8,root_y),Vector2(x+w-8,root_y+(gap_y-root_y)*0.4),Vector2(x+w-9,gap_y+direction*65),tip+Vector2(3,direction*12),Color("33582b"),9)
-	_curve(Vector2(x+11,root_y),Vector2(x+11,root_y+(gap_y-root_y)*0.4),Vector2(x+11,gap_y+direction*55),tip+Vector2(-3,direction*12),Color("a9cf5a"),5)
-	# The curled bud closes into a pointed, curved end instead of a flat crosscut.
-	_paper_shape([Vector2(x+3,root_y),Vector2(x+w*0.85,root_y+(gap_y-root_y)*0.25),Vector2(x+4,root_y+(gap_y-root_y)*0.67),tip+Vector2(0,direction*3),Vector2(x+w-6,gap_y+direction*30),Vector2(x+w-3,root_y+(gap_y-root_y)*0.46),Vector2(x+w-3,root_y)],Color("73a940"))
-	_curve(Vector2(center,root_y),Vector2(x+8,root_y+(gap_y-root_y)*0.35),Vector2(x+w-7,root_y+(gap_y-root_y)*0.7),tip+Vector2(0,direction*2),Color("d3e779"),1.5)
-	for i in 3:
-		var base := Vector2(center+(i-1)*w*0.24,gap_y+direction*(62+i*8))
-		_leaf(base,tip+Vector2((i-1)*3,direction*6),w*0.12,Color("86bd42") if i%2 else Color("b1d45d"))
-	for i in range(1,4):
-		var y := lerpf(root_y,gap_y,float(i)/4.0)
+	var center := x+w*0.5
+	var length := absf(root_y-gap_y)
+	draw_rect(body,Color("497c35"))
+	var fold := [Vector2(x+3,root_y),Vector2(x+w*0.88,root_y-direction*length*0.22),Vector2(x+4,gap_y+direction*length*0.31),Vector2(x+w-4,gap_y+direction*4),Vector2(x+w-1,gap_y+direction*length*0.33),Vector2(x+w-8,root_y-direction*length*0.45),Vector2(x+w-3,root_y)]
+	_paper_shape(fold,Color("83b747"))
+	_paper_shape([Vector2(x+4,root_y),Vector2(x+5,root_y-direction*length*0.38),Vector2(x+w*0.4,gap_y+direction*length*0.25),Vector2(x+8,gap_y+direction*4),Vector2(x+w*0.4+6,gap_y+direction*length*0.25),Vector2(x+11,root_y-direction*length*0.38),Vector2(x+12,root_y)],Color("b3d467"))
+	var sway := sin(clock*1.1+x*0.021)*1.5
+	_curve(Vector2(center+7,root_y),Vector2(x+6+sway,root_y-direction*length*0.35),Vector2(x+w-4,gap_y+direction*length*0.3),Vector2(x+7,gap_y+direction*8),Color("d3e779"),2.0)
+	for i in range(1,5):
+		var y := lerpf(root_y,gap_y,float(i)/5.0)
 		var flip := -1.0 if i%2 else 1.0
-		_curve(Vector2(center,y),Vector2(center+flip*7,y+direction*12),Vector2(center+flip*(w*0.35),y+direction*23),Vector2(center+flip*(w*0.43),y+direction*31),Color("bdcf67"),1.0)
+		_curve(Vector2(center,y),Vector2(center+flip*5,y+direction*12),Vector2(center+flip*w*0.30,y+direction*24),Vector2(center+flip*w*0.43,y+direction*28),Color("c3dd77"),1.4)
+	# A curled lip is painted inside the boundary, never used to disguise a collider.
+	_curve(Vector2(x+3,gap_y+direction*7),Vector2(x+11,gap_y+direction*20),Vector2(x+w-6,gap_y+direction*20),Vector2(x+w-4,gap_y+direction*5),Color("33582b"),4)
+	_curve(Vector2(x+5,gap_y+direction*5),Vector2(x+14,gap_y+direction*12),Vector2(x+w-10,gap_y+direction*13),Vector2(x+w-6,gap_y+direction*4),Color("d3e779"),2)
+	draw_rect(body,INK,false,3.5)
 	if not upper and r.end.y >= 725:
-		_leaf(Vector2(center,817),Vector2(x-65,739),24,Color("345e4c"))
-		_leaf(Vector2(center+2,820),Vector2(x+w+55,745),22,Color("5d7e5b"))
+		_cartoon_leaf(Vector2(center,817),Vector2(x-65,739)+Vector2(sway*2,0),24,Color("345e4c"))
+		_cartoon_leaf(Vector2(center+2,820),Vector2(x+w+55,745)+Vector2(sway*2,0),22,Color("5d7e5b"))
 
 func _pod(pod: Dictionary) -> void:
 	var p: Vector2 = pod.pos
 	if p.x < model.camera_x-100 or p.x > model.camera_x+1380: return
-	_curve(p+Vector2(2,40),p+Vector2(18,92),p+Vector2(-11,118),p+Vector2(-8,175),INK,6)
-	_curve(p+Vector2(2,40),p+Vector2(18,92),p+Vector2(-11,118),p+Vector2(-8,175),Color("76a841"),3)
-	_cartoon_leaf(p+Vector2(1,90),p+Vector2(-52,65),15,Color("91be4c"))
+	var age := _reaction_age("rescue",p)
+	var opened := 0.0
 	if pod.open:
-		_cartoon_leaf(p+Vector2(0,36),p+Vector2(-56,-5),22,Color("c1d967"))
-		_cartoon_leaf(p+Vector2(0,36),p+Vector2(52,-13),23,Color("99bc45"))
-		return
-	_oval(p+Vector2(3,5),Vector2(45,50),Color("739e38"),INK,4)
-	_oval(p+Vector2(-8,-6),Vector2(32,36),Color("a9cf54"),Color.TRANSPARENT,0)
-	_cartoon_leaf(p+Vector2(8,-42),p+Vector2(-32,32),24,Color("c5dd6d"))
-	_cartoon_leaf(p+Vector2(15,-42),p+Vector2(25,41),18,Color("84b63d"))
-	# The occupied fold is warm and animated; opening leaves an unmistakably empty cup.
-	_oval(p+Vector2(0,5),Vector2(25,29),Color("465d29"),INK,2)
-	_bee(p+Vector2(0,5),0.76,Vector2.RIGHT,1.0,true,0.0)
-	_curve(p+Vector2(-26,30),p+Vector2(-7,38),p+Vector2(10,38),p+Vector2(31,28),Color("d7e789"),4)
+		opened = 1.0 if age < 0.0 else 1.0-pow(1.0-clampf(age/0.65,0.0,1.0),3.0)
+	var flex := 0.0 if age < 0.0 else sin(age*12.0)*exp(-age*4.0)*8.0
+	var sway := sin(clock*1.4+p.x*0.01)*2.0
+	_curve(p+Vector2(2,38),p+Vector2(18+sway,92),p+Vector2(-11,118),p+Vector2(-8,175),INK,6)
+	_curve(p+Vector2(2,38),p+Vector2(18+sway,92),p+Vector2(-11,118),p+Vector2(-8,175),Color("76a841"),3)
+	_cartoon_leaf(p+Vector2(1,90),p+Vector2(-52+sway*2,65),15,Color("91be4c"))
+	# One asymmetrical folded cup opens at its real rescue event, then stays empty.
+	var depth := lerpf(-45.0,21.0,opened)
+	_silhouette([p+Vector2(0,39),p+Vector2(-51,27),p+Vector2(-51,depth-5),p+Vector2(-9,depth),p+Vector2(31,depth-15),p+Vector2(53,21),p+Vector2(0,39)],Color("739e38"),INK,3.2)
+	var left_tip := p+Vector2(-16,-43).lerp(Vector2(-62,3-flex),opened)+Vector2(sway,0)
+	var right_tip := p+Vector2(24,-41).lerp(Vector2(60,-11-flex),opened)+Vector2(sway,0)
+	_cartoon_leaf(p+Vector2(1,37),left_tip,lerpf(25,21,opened),Color("c5dd6d"))
+	_cartoon_leaf(p+Vector2(5,37),right_tip,lerpf(23,20,opened),Color("96bf49"))
+	if opened < 0.8:
+		var mouth := p+Vector2(0,7)
+		_silhouette([mouth+Vector2(-22,17),mouth+Vector2(-31,-11),mouth+Vector2(-8,-29),mouth+Vector2(10,-23),mouth+Vector2(31,-18),mouth+Vector2(31,23),mouth+Vector2(-22,17)],Color("465d29"),INK,2)
+		if not pod.open: _bee(mouth,0.76,Vector2.RIGHT,1.0,true,0.0)
+	_curve(p+Vector2(-24,30),p+Vector2(-7,40),p+Vector2(10,40),p+Vector2(30,27),Color("d7e789"),3)
 
 func _wind_paths() -> void:
 	# A light breeze links authored relays; it is a route hint, not a new collider.
@@ -388,24 +427,37 @@ func _ring(ring: Dictionary, index: int) -> void:
 	var used: bool = ring.active
 	var direction: Vector2 = model.ring_direction(index)
 	var side := direction.orthogonal()
-	_curve(p+Vector2(0,42),p+Vector2(-28,165),p+Vector2(38,228),Vector2(p.x-26,831),INK,10)
-	_curve(p+Vector2(0,42),p+Vector2(-28,165),p+Vector2(38,228),Vector2(p.x-26,831),Color("73b141"),6)
-	_cartoon_leaf(p+Vector2(0,105),p+Vector2(-72,61),23,Color("9acb53"))
-	if used:
-		for i in 5:
-			var a := float(i)*TAU/5-PI/2
-			_cartoon_leaf(p+Vector2.from_angle(a)*36,p+Vector2(0,18),13,Color("8fad76"))
-		_curve(p+Vector2(-14,2),p+Vector2(-7,10),p+Vector2(7,10),p+Vector2(14,2),INK,3)
-		return
+	var age := _reaction_age("ring",p)
+	var close := 1.0 if used else 0.0
+	if used and age >= 0.0: close = 1.0-pow(1.0-clampf(age/0.55,0.0,1.0),3.0)
+	var recoil := 0.0 if age < 0.0 else sin(age*13.0)*exp(-age*3.8)*12.0
+	var sway := sin(clock*1.1+index*1.7)*3.0
+	_curve(p+Vector2(0,42),p+Vector2(-28+sway+recoil,165),p+Vector2(38,228),Vector2(p.x-26,831),INK,10)
+	_curve(p+Vector2(0,42),p+Vector2(-28+sway+recoil,165),p+Vector2(38,228),Vector2(p.x-26,831),Color("73b141"),6)
+	_cartoon_leaf(p+Vector2(0,105),p+Vector2(-72+sway*1.5+recoil,61),23,Color("9acb53"))
 	for i in 7:
-		var a := float(i)*TAU/7-PI/2+sin(clock*0.8)*0.02
+		var a := float(i)*TAU/7-PI/2
 		var axis := Vector2.from_angle(a)
-		_oval(p+axis*45,Vector2(28,17),Color("63bdc6") if i%2 else Color("8ed9d2"),INK,3,a)
-		_ellipse(p+axis*47+Vector2(-3,-4),Vector2(17,7),Color("b7eee0"),a)
-	_oval(p,Vector2(35,35),Color("317f87"),INK,3)
-	draw_arc(p,29,-2.6,0.2,32,Color("9de5db"),4,true)
-	var arrow := p+direction*sin(clock*2)*2
-	draw_polyline(PackedVector2Array([arrow-direction*10-side*12,arrow+direction*7,arrow-direction*10+side*12]),CREAM,5,true)
+		var breath := sin(clock*1.6+i*0.8+index)*2.0*(1.0-close)
+		var tip := p+axis*(72.0+sin(i*2.4)*5+breath)
+		tip = tip.lerp(p+axis*30+Vector2(0,16),close)+direction*recoil
+		var base := p+axis*22
+		var width := lerpf(25.0,11.0,close)
+		var tint := (Color("63bdc6") if i%2 else Color("8ed9d2")).lerp(Color("8fad76"),close)
+		# Fold along the actual base-to-tip axis. A fixed open-flower axis
+		# would make closed upper petals cross themselves during recoil.
+		var petal_vector := tip-base
+		var petal_normal := petal_vector.normalized().orthogonal()
+		_silhouette([base,base+petal_vector*0.35-petal_normal*width,tip-petal_vector*0.12-petal_normal*width*0.65,tip,tip-petal_vector*0.12+petal_normal*width*0.72,base+petal_vector*0.35+petal_normal*width*0.65,base],tint,INK,2.6)
+		_curve(base,base+petal_vector*0.35+petal_normal*2,tip-petal_vector*0.25+petal_normal*3,tip-petal_vector*0.1,tint.lightened(0.27),1.7)
+	# The center and the directional mark always use the model's exact anchor/direction.
+	if used:
+		_oval(p,Vector2(25,23),Color("78a08a"),INK,2.6)
+		_curve(p+Vector2(-12,-2),p+Vector2(-7,7),p+Vector2(7,7),p+Vector2(12,-2),INK,2.6)
+		return
+	_silhouette([p+Vector2(0,-35),p+Vector2(25,-35),p+Vector2(39,-12),p+Vector2(34,6),p+Vector2(30,34),p+Vector2(-10,40),p+Vector2(-27,23),p+Vector2(-48,-1),p+Vector2(-27,-36),p+Vector2(0,-35)],Color("317f87"),INK,3)
+	draw_arc(p,29,-2.6,0.2,32,Color("9de5db"),3,true)
+	draw_polyline(PackedVector2Array([p-direction*10-side*12,p+direction*7,p-direction*10+side*12]),CREAM,5,true)
 	for i in 3:
 		var along := 76.0+fposmod(clock*26+i*22,66)
 		draw_line(p+direction*along,p+direction*(along+10),Color(0.25,0.62,0.62,(1-(along-76)/85)*0.65),3,true)
@@ -525,16 +577,20 @@ func _swarm() -> void:
 		return
 	for i in range(mini(model.bees,16) - 1, 0, -1):
 		var side := 1.0 if i % 2 else -1.0
-		var along := float(i) * (8.0 if compact or burst else 10.0)
+		var along := float(i) * (22.0 if compact or burst else 25.0)
 		var center := _path_position(along)
 		var tangent := (_path_position(maxf(0.0, along - 6.0)) - center).normalized()
 		if tangent.is_zero_approx():
 			tangent = face
-		var across := side * (2.5 if compact or burst else 9.0 + float(i) * 0.7)
+		var across := side * (13.0 if compact or burst else 18.0 + sin(clock*2.2+i)*2.0)
 		var companion := center + tangent.orthogonal() * across
-		if not _free_visual_position(companion):
-			companion = center
-		_bee(companion, 0.68, tangent, 0.85, false, i)
+		if not _free_visual_segment(center,companion): companion = center
+		if _rest_blend > 0.0:
+			var slot := i-1
+			var resting_pos := p+Vector2(-69.0+float(slot%4)*46.0,22.0+float(slot/4)*24.0)
+			var settled := companion.lerp(resting_pos,_rest_blend)
+			if _free_visual_segment(companion,settled): companion = settled
+		_bee(companion, 0.68, tangent.lerp(Vector2.RIGHT,_rest_blend).normalized(), 0.96, false, i)
 	if model.invulnerable <= 0.0 or sin(clock * 28.0) > -0.35:
 		if burst:
 			_ellipse(p - face * 16.0, Vector2(38, 17), Color(1.0, 0.89, 0.48, 0.18), face.angle())
@@ -560,11 +616,21 @@ func _path_position(distance: float) -> Vector2:
 			return cursor.lerp(_path[i], distance / length)
 		distance -= length
 		cursor = _path[i]
-	return cursor
+	# At spawn or a fresh checkpoint, extend only through a verified open corridor.
+	var extended: Vector2 = cursor-model.face*distance
+	return extended if _free_visual_segment(cursor,extended) else cursor
+
+func _free_visual_segment(a: Vector2, b: Vector2) -> bool:
+	var steps := maxi(1,int(ceil(a.distance_to(b)/8.0)))
+	for i in range(steps+1):
+		if not _free_visual_position(a.lerp(b,float(i)/steps)): return false
+	return true
 
 func _free_visual_position(point: Vector2) -> bool:
+	if point.x < 35.0 or point.x > model.world_width-50.0 or point.y < 100.0 or point.y > 710.0:
+		return false
 	for wall in model.walls:
-		if not wall.broken and wall.rect.grow(8.0).has_point(point):
+		if not wall.broken and wall.rect.grow(19.0).has_point(point):
 			return false
 	return true
 
@@ -588,38 +654,73 @@ func _ending_weather(cam: float) -> void:
 		draw_line(Vector2(x, y), Vector2(x - 8, y + 25), Color(0.77, 0.91, 0.98, 0.29), 1.0, true)
 
 func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, seed_value: float) -> void:
-	var axis := face.normalized()
-	var cross := axis.orthogonal()
-	var angle := axis.angle()
-	var wing := 0.6+absf(sin(clock*34.0+seed_value))*0.5
-	if model != null and model.phase == "ending": wing *= 0.3+0.7*exp(-_ending_elapsed*2)
+	var axis := face.normalized() if not face.is_zero_approx() else Vector2.RIGHT
+	var charge := 0.0
+	var dash := 0.0
+	var rest := 0.0
+	var settle := 0.0
+	if not trapped and model != null:
+		charge = clampf(model.charge/model.CHARGE_READY,0.0,1.0) if model.charging else 0.0
+		dash = 1.0 if model.burst_left > 0.0 else 0.0
+		rest = _rest_blend
+		if model.phase == "ending": rest = clampf(_ending_elapsed/1.8,0.0,1.0)
+		if _settle > 0.0: settle = sin((0.36-_settle)/0.36*PI)*_settle/0.36
+	var stretch := Vector2(1.0-charge*0.17+dash*(0.25+_wind_kick*0.07)-settle*0.12,1.0+charge*0.15-dash*0.19+settle*0.13)
+	draw_set_transform(_world_offset+p,axis.angle(),stretch*size)
 	var ink := Color(0.15,0.20,0.12,alpha)
-	for side in [-1.0,1.0]:
-		var center: Vector2 = p-axis*6*size+cross*side*12*size
-		_oval(center,Vector2(13,8*wing)*size,Color(0.9,0.99,0.91,alpha*0.95),ink,1.8*size,angle+side*0.6)
-		_ellipse(center-cross*side*2*size,Vector2(8,3*wing)*size,Color(1,1,0.96,alpha),angle+side*0.6)
-	# Round abdomen, an oversized expressive head and scarf form one original silhouette.
-	_oval(p-axis*5*size,Vector2(16,12)*size,Color(0.93,0.66,0.17,alpha),ink,2.5*size,angle)
-	_ellipse(p-axis*6*size-cross*3*size,Vector2(12,7)*size,Color(1,0.84,0.30,alpha),angle)
-	for stripe in [-12.0,-5.0]:
-		_curve(p+axis*stripe*size-cross*10*size,p+axis*(stripe-3)*size-cross*4*size,p+axis*(stripe-3)*size+cross*5*size,p+axis*stripe*size+cross*10*size,ink,3.5*size)
-	var head := p+axis*10*size-cross*1*size
-	_oval(head,Vector2(12,13)*size,Color(1,0.79,0.28,alpha),ink,2.3*size,angle)
-	_ellipse(head-axis*2*size-cross*4*size,Vector2(7,6)*size,Color(1,0.9,0.49,alpha),angle)
-	for side in [-1.0,1.0]:
-		var eye: Vector2 = head+axis*5*size+cross*side*5.5*size
-		_oval(eye,Vector2(5.5,6.6)*size,Color(1,0.99,0.91,alpha),ink,1.4*size,angle)
-		draw_circle(eye+axis*1.5*size,2.8*size,ink)
-		draw_circle(eye+axis*1.8*size-cross*1.1*size,0.9*size,Color(1,1,1,alpha))
-		var tip: Vector2 = head-axis*3*size+cross*side*19*size
-		_curve(head-axis*2*size+cross*side*10*size,head-axis*1*size+cross*side*15*size,tip+axis*3*size,tip,ink,1.8*size)
-		draw_circle(tip,2.4*size,ink)
-	if not trapped:
-		_curve(head+axis*10*size+cross*3*size,head+axis*13*size+cross*3*size,head+axis*12*size+cross*7*size,head+axis*8*size+cross*8*size,ink,1.4*size)
+	var yellow := Color(1.0,0.79,0.28,alpha)
+	var pale := Color(1.0,0.9,0.49,alpha)
+	var wing_color := Color(0.9,0.99,0.91,alpha*0.94)
+	var flutter := 0.5+0.5*sin(clock*(39.0 if charge>0.0 else 31.0)+seed_value*1.7)
+	var wing_height := lerpf(17.0+flutter*11.0,3.0,rest)
+	wing_height = lerpf(wing_height,8.0,dash)
+	# Unequal, rooted wings fold along the back at rest and sweep aft on a launch.
+	_silhouette([Vector2(0,-6),Vector2(-1,-wing_height-11),Vector2(-15,-wing_height-17),Vector2(-18,-wing_height-7),Vector2(-22,-wing_height+3),Vector2(-11,-5),Vector2(0,-6)],Color(0.77,0.92,0.84,alpha),ink,1.5)
+	_silhouette([Vector2(-4,-5),Vector2(-12,-wing_height-12),Vector2(-32,-wing_height-8),Vector2(-28,-wing_height+1),Vector2(-24,-3),Vector2(-13,-1),Vector2(-4,-5)],wing_color,ink,1.8)
+	_curve(Vector2(-7,-6),Vector2(-15,-9),Vector2(-23,-wing_height+1),Vector2(-25,-wing_height-3),Color(1.0,1.0,0.96,alpha),1.5)
+	var feet := lerpf(15.0,19.0,rest)-dash*5.0
+	for x in [-10.0,3.0]:
+		_curve(Vector2(x,8),Vector2(x-3,13),Vector2(x-5,feet),Vector2(x+1,feet),ink,1.8)
 	if size >= 0.95:
-		var scarf := PackedVector2Array([p-axis*2+cross*10,p-axis*22+cross*(19+sin(clock*8)*2),p-axis*19+cross*10])
-		_outline_polygon(scarf,Color("e66e4e"),ink,1.5)
-		_oval(p+cross*9,Vector2(6,4),Color("f28c5c"),ink,1.2,angle)
+		var flutter_tail := sin(clock*8.0)*2.0*(1.0-rest)
+		_silhouette([Vector2(-3,7),Vector2(-12,8),Vector2(-23,13+flutter_tail),Vector2(-30-dash*6,10+flutter_tail),Vector2(-23,23),Vector2(-12,17),Vector2(-3,7)],Color("e66e4e"),ink,1.6)
+	# A single pear-shaped contour joins head and abdomen, with a soft cheek and tapered tail.
+	_silhouette([Vector2(-23,2),Vector2(-23,-10),Vector2(-10,-16),Vector2(1,-12),Vector2(11,-19),Vector2(24,-12),Vector2(25,0),Vector2(27,11),Vector2(12,18),Vector2(1,14),Vector2(-11,14),Vector2(-20,10),Vector2(-23,2)],yellow,ink,2.5)
+	_paper_shape([Vector2(-21,3),Vector2(-12,9),Vector2(8,15),Vector2(23,5),Vector2(20,16),Vector2(-7,19),Vector2(-21,3)],Color(0.87,0.57,0.14,alpha))
+	_paper_shape([Vector2(-18,-5),Vector2(-10,-12),Vector2(-2,-10),Vector2(2,-7),Vector2(10,-14),Vector2(18,-12),Vector2(20,-8),Vector2(4,-4),Vector2(-9,-7),Vector2(-18,-5)],pale)
+	for stripe in [-13.0,-4.0]:
+		_curve(Vector2(stripe,-10),Vector2(stripe-4,-3),Vector2(stripe-3,6),Vector2(stripe+2,12),ink,3.5)
+	# The far eye is smaller; the larger near eye and cheek keep a readable three-quarter face.
+	var blink := fposmod(clock+seed_value*0.61,4.6)<0.13
+	var eyes_closed := blink or rest>0.72
+	if eyes_closed:
+		_curve(Vector2(11,-3),Vector2(13,0),Vector2(17,0),Vector2(19,-3),ink,1.8)
+		_curve(Vector2(20,-6),Vector2(22,-4),Vector2(24,-4),Vector2(25,-6),ink,1.4)
+	else:
+		_oval(Vector2(21,-5),Vector2(4.1,5.1),Color(1,0.99,0.91,alpha),ink,1.2)
+		draw_circle(Vector2(22,-4.5),2.1,ink)
+		_oval(Vector2(14,-3),Vector2(5.5,6.5),Color(1,0.99,0.91,alpha),ink,1.4)
+		draw_circle(Vector2(16,-2.5),2.8,ink)
+		draw_circle(Vector2(16.5,-3.7),0.9,Color(1,1,1,alpha))
+	_ellipse(Vector2(15,6),Vector2(4,2.4),Color(0.97,0.61,0.26,alpha))
+	if trapped:
+		_curve(Vector2(19,9),Vector2(21,6),Vector2(23,6),Vector2(24,8),ink,1.4)
+	else:
+		_curve(Vector2(17,8),Vector2(20,11),Vector2(23,9),Vector2(24,6),ink,1.4)
+	var feeler_sweep := dash*9.0-charge*4.0+settle*5.0
+	for i in 2:
+		var base := Vector2(6+i*9,-12)
+		var tip := Vector2(3+i*17-feeler_sweep,-24+rest*5+sin(clock*3.2+seed_value+i)*1.4)
+		_curve(base,base+Vector2(-1,-6),tip+Vector2(-3,1),tip,ink,1.6)
+		draw_circle(tip,2.2,ink)
+	if charge>0.1 and not eyes_closed:
+		draw_line(Vector2(10,-11),Vector2(19,-8-charge*2.0),ink,1.7,true)
+	if _greeting > 0.0 and not trapped and dash<0.5:
+		var wave := sin((_greeting+seed_value*0.07)*17)*3.0
+		_curve(Vector2(6,10),Vector2(14,18),Vector2(24,17),Vector2(23,9+wave),ink,2)
+	if size >= 0.95:
+		_silhouette([Vector2(0,9),Vector2(3,8),Vector2(8,10),Vector2(8,13),Vector2(4,17),Vector2(-2,14),Vector2(0,9)],Color("f28c5c"),ink,1.4)
+	draw_set_transform(_world_offset)
 
 func _effects() -> void:
 	for feedback in _feedback:
@@ -692,6 +793,30 @@ func _curve(a: Vector2, b: Vector2, c: Vector2, d: Vector2, tint: Color, width: 
 	for i in 21:
 		points.append(a.bezier_interpolate(b, c, d, float(i) / 20.0))
 	draw_polyline(points, tint, width, true)
+
+func _reaction_age(kind: String, point: Vector2) -> float:
+	for i in range(_reactions.size()-1,-1,-1):
+		if _reactions[i].kind == kind and _reactions[i].pos.distance_squared_to(point)<4.0:
+			return _reactions[i].age
+	return -1.0
+
+func _silhouette(control: Array, fill: Color, edge: Color, width: float) -> void:
+	if control.size() < 4: return
+	var points := PackedVector2Array([control[0]])
+	var at: Vector2 = control[0]
+	var i := 1
+	while i+2 < control.size():
+		var b: Vector2 = control[i]
+		var c: Vector2 = control[i+1]
+		var d: Vector2 = control[i+2]
+		for j in range(1,11): points.append(at.bezier_interpolate(b,c,d,float(j)/10.0))
+		at = d
+		i += 3
+	if points.size() < 3: return
+	draw_colored_polygon(points,fill)
+	if edge.a>0.0 and width>0.0:
+		points.append(points[0])
+		draw_polyline(points,edge,width,true)
 
 func _paper_shape(control: Array, tint: Color) -> void:
 	if control.size() < 4: return
