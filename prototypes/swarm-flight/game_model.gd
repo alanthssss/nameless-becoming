@@ -16,6 +16,7 @@ const BURST_SECONDS := 0.54
 const FLIGHT_ACCELERATION := 1800.0
 const RELEASE_BRAKING := 4000.0
 const BURST_BRAKING := 30000.0
+const SHIELD_SECONDS := 5.0
 var stage := 0
 var phase := "playing"
 var p := Vector2(180, 420)
@@ -33,6 +34,10 @@ var energy_spent := 0.0
 var energy_gained := 0.0
 var rain_remaining := STORM_SECONDS
 var invulnerable := 0.0
+var shield_left := 0.0
+var shield_feedback_left := 0.0
+var shields: Array[Dictionary] = []
+var rain_fields: Array[Dictionary] = []
 var time := 0.0
 var camera_x := 0.0
 var world_width := 3000.0
@@ -92,6 +97,8 @@ func load_stage(index: int) -> void:
 	energy_gained = 0.0
 	rain_remaining = STORM_SECONDS
 	invulnerable = 1.0
+	shield_left = 0.0
+	shield_feedback_left = 0.0
 	time = 0.0
 	camera_x = 0.0
 	storm_x = -1000.0
@@ -122,6 +129,8 @@ func load_stage(index: int) -> void:
 	shelters.assign(chapter.shelters)
 	dew.assign(chapter.dew)
 	sprayers.assign(chapter.sprayers)
+	shields.assign(chapter.shields)
+	rain_fields.assign(chapter.rain_fields)
 	exit_pos = chapter.exit_pos
 	rain_remaining = sections[0].budget
 
@@ -222,6 +231,10 @@ func advance(direction: Vector2, dt: float) -> void:
 		if storm_active and rain_remaining <= 0.0:
 			restore_checkpoint("timeout")
 			return
+	var was_shielded := shield_left > 0
+	shield_left = maxf(0.0,shield_left-dt)
+	shield_feedback_left = maxf(0.0,shield_feedback_left-dt)
+	if was_shielded and shield_left <= 0: emit("shield_end",p)
 	blocked_cooldown = maxf(0.0, blocked_cooldown-dt)
 	invulnerable = maxf(0,invulnerable-dt)
 	if burst_left > 0:
@@ -284,6 +297,8 @@ func advance(direction: Vector2, dt: float) -> void:
 				if not is_equal_approx(p.y,proposed.y): velocity.y = 0
 				burst_left = 0
 				wind_chain = 0
+	# Pickups resolve before all weather damage and rescue snapshots this substep.
+	collect_shields()
 	for trapped in pods:
 		if not trapped.open and burst_left > 0 and p.distance_to(trapped.pos) < 48:
 			trapped.open = true
@@ -323,12 +338,28 @@ func advance(direction: Vector2, dt: float) -> void:
 	if p.distance_to(exit_pos) < 85 and exit_ready:
 		phase = "ending" if stage == STAGE_COUNT-1 else "transition"
 		completed = phase == "ending"
+		drops.clear()
+		puffs.clear()
+		shield_left = 0.0
 		clear_input()
 		emit("finish",p)
+
+func collect_shields() -> void:
+	for leaf in shields:
+		if not leaf.collected and p.distance_to(leaf.pos) < 38:
+			leaf.collected = true
+			shield_left = SHIELD_SECONDS
+			emit("shield",leaf.pos)
 
 func advance_shelters() -> void:
 	for i in shelters.size():
 		var shelter: Dictionary = shelters[i]
+		if shelter_contains(p,shelter) and shelter.reached and i == checkpoint_index:
+			# A side-path pickup can happen after first crossing the wide leaf.
+			# Returning to the current safe area must retain that earned collection.
+			if _flags(dew,"collected") != _flags(checkpoint.dew,"collected") or _flags(shields,"collected") != _flags(checkpoint.shields,"collected") or _flags(rings,"active") != _flags(checkpoint.rings,"active"):
+				save_checkpoint(shelter.pos)
+				emit("checkpoint_update",shelter.pos)
 		if shelter_contains(p,shelter) and not shelter.reached:
 			# Checkpoints advance in order and never move backwards on a revisit.
 			if i != checkpoint_index+1 or not section_cleared(i): continue
@@ -341,7 +372,7 @@ func advance_shelters() -> void:
 
 
 func storm_speed() -> float:
-	return float(sections[section_index()].storm_speed) if storm_active else 0.0
+	return float(chapter.encounters[encounter_index()].storm_speed) if storm_active else 0.0
 
 func storm_gap() -> float:
 	return p.x-(storm_x+45.0)
@@ -356,6 +387,15 @@ func advance_storm(dt: float) -> void:
 		hurt("storm")
 
 func advance_rain(dt: float) -> void:
+	for field in rain_fields:
+		var area: Rect2 = field.rect
+		if not started or p.x < area.position.x-900 or p.x > area.end.x+600: continue
+		field.timer -= dt
+		if field.timer <= 0:
+			field.timer = 0.65
+			for column in 4:
+				var x := area.position.x+(column+0.3+rng.randf()*0.4)*area.size.x/4.0
+				drops.append({"pos":Vector2(x,area.position.y+130.0),"vel":Vector2(-25,350)})
 	rain_timer -= dt
 	if rain_timer <= 0:
 		rain_timer = 1.25 if storm_active else 2.0
@@ -365,7 +405,7 @@ func advance_rain(dt: float) -> void:
 		drop.pos += drop.vel * dt
 		var sheltered := false
 		for shelter in shelters:
-			if absf(drop.pos.x-shelter.pos.x) < 125 and drop.pos.y > shelter.pos.y-95:
+			if absf(drop.pos.x-shelter.pos.x) < float(shelter.get("half_width",118.0))+7 and drop.pos.y > shelter.pos.y-95:
 				sheltered = true
 		if drop.pos.y > 760 or sheltered:
 			drops.remove_at(i)
@@ -435,6 +475,12 @@ func advance_garden(dt: float) -> void:
 			puffs.remove_at(i)
 
 func hurt(reason := "rain", cost := 30.0) -> void:
+	if shield_left > 0 and reason in ["rain","sneeze","storm"]:
+		if shield_feedback_left <= 0:
+			emit("shield_block",p)
+			events.back()["reason"] = reason
+			shield_feedback_left = 0.35
+		return
 	if invulnerable > 0:
 		return
 	spend_energy(cost)
@@ -447,7 +493,7 @@ func hurt(reason := "rain", cost := 30.0) -> void:
 
 func save_checkpoint(safe_position: Vector2 = Vector2.INF) -> void:
 	if safe_position == Vector2.INF: safe_position = p
-	checkpoint = {"p":safe_position,"bees":bees,"pods":pods.duplicate(true),"walls":walls.duplicate(true),"rings":rings.duplicate(true),"shelters":shelters.duplicate(true),"dew":dew.duplicate(true),"sprayers":sprayers.duplicate(true),"storm_x":storm_x,"checkpoint_index":checkpoint_index,"rain_remaining":rain_remaining}
+	checkpoint = {"p":safe_position,"bees":bees,"pods":pods.duplicate(true),"walls":walls.duplicate(true),"rings":rings.duplicate(true),"shelters":shelters.duplicate(true),"dew":dew.duplicate(true),"sprayers":sprayers.duplicate(true),"shields":shields.duplicate(true),"storm_x":storm_x,"checkpoint_index":checkpoint_index,"rain_remaining":rain_remaining}
 
 func restore_checkpoint(reason := "manual") -> void:
 	if checkpoint.is_empty():
@@ -461,6 +507,9 @@ func restore_checkpoint(reason := "manual") -> void:
 	shelters.assign(checkpoint.shelters.duplicate(true))
 	dew.assign(checkpoint.dew.duplicate(true))
 	sprayers.assign(checkpoint.sprayers.duplicate(true))
+	shields.assign(checkpoint.shields.duplicate(true))
+	shield_left = 0.0
+	shield_feedback_left = 0.0
 	garden_awards[stage] = 0
 	for drop in dew:
 		if drop.collected: garden_awards[stage] += 1
@@ -497,7 +546,8 @@ func ring_direction(index: int) -> Vector2:
 	return (destination-Vector2(rings[index].pos)).normalized()
 
 func shelter_contains(point: Vector2, shelter: Dictionary) -> bool:
-	return Rect2(shelter.pos-Vector2(118,64),Vector2(236,140)).has_point(point)
+	var half := float(shelter.get("half_width",118.0))
+	return Rect2(shelter.pos-Vector2(half,64),Vector2(half*2,140)).has_point(point)
 
 func shelter_index_at(point: Vector2) -> int:
 	for i in shelters.size():
@@ -512,6 +562,14 @@ func theme_index() -> int:
 
 func music_index() -> int:
 	return chapter.music
+
+func encounter_index() -> int:
+	for i in chapter.encounters.size():
+		if p.x < chapter.encounters[i].end_x: return i
+	return chapter.encounters.size()-1
+
+func encounter_name() -> String:
+	return chapter.encounters[encounter_index()].name
 
 func section_index() -> int:
 	return clampi(checkpoint_index+1,0,sections.size()-1)
@@ -560,7 +618,7 @@ func stage_dew_total() -> int:
 
 func journey_dew_total() -> int:
 	var total := 0
-	for item in Data.definitions(): total += item.sections.size()
+	for item in Data.definitions(): total += item.encounters.size()
 	return total
 
 func journey_bees_total() -> int:
@@ -578,10 +636,12 @@ func target_position() -> Vector2:
 func objective() -> String:
 	if exit_ready: return "本关已走完 · 飞向出口" if stage < STAGE_COUNT-1 else "伙伴在家等你 · 飞进树洞"
 	if section_rescue_total() > section_rescued():
-		return "%s · 先救出本段伙伴 %d / %d" % [section_name(),section_rescued(),section_rescue_total()]
-	return "%s · 抵达前方叶下" % section_name()
+		return "%s · 冲开卷叶救伙伴" % encounter_name() if target_position().x < p.x-240 else str(chapter.encounters[encounter_index()].cue)
+	return str(chapter.encounters[encounter_index()].cue)
 
 func hint() -> String:
+	if shield_left > 0:
+		return "护雨 %.1f 秒 · 雨滴、喷嚏和雨幕暂时不伤体力；飞行仍耗体力" % shield_left
 	if charging and not can_burst():
 		return "冲刺需要 20 体力 · 按 R 返回恢复点补充；大叶下可以休息"
 	if charging:
@@ -599,6 +659,9 @@ func context_cue() -> Dictionary:
 	if charging:
 		var words := "体力不足 20 · R 返回恢复点" if not can_burst() else ("松开空格 · 冲刺消耗 20" if charge >= CHARGE_READY else "按住空格 · 蓄力中")
 		return {"pos":p,"text":words,"kind":"charge"}
+	for leaf in shields:
+		if not leaf.collected and p.distance_to(leaf.pos) < 270:
+			return {"pos":leaf.pos,"text":"护雨叶 · 轻触获得五秒防雨","kind":"shield"}
 	var rest_index := shelter_index_at(p)
 	if rest_index >= 0:
 		return {"pos":shelters[rest_index].pos,"text":"叶下安全 · " + ("体力充足" if stamina >= MAX_STAMINA else "体力恢复中"),"kind":"shelter"}
@@ -618,7 +681,7 @@ func context_cue() -> Dictionary:
 			return {"pos":flower.pos,"text":words,"kind":"sprayer"}
 	for drop in dew:
 		if not drop.collected and p.distance_to(drop.pos) < 170:
-			return {"pos":drop.pos,"text":"晨露 · 轻触收集，体力 +12","kind":"dew"}
+			return {"pos":drop.pos,"text":"晨露 · 轻触收集" + ("，体力已满" if stamina >= MAX_STAMINA else "，最多恢复 12 体力"),"kind":"dew"}
 	for flower in rings:
 		if p.distance_to(flower.pos) < (115 if flower.active else 270):
 			return {"pos":flower.pos,"text":"花瓣已收拢 · 继续向前" if flower.active else "冲进风花 · 沿箭头借力一次","kind":"spent" if flower.active else "ring"}
@@ -642,7 +705,7 @@ func save_payload() -> Dictionary:
 	var saved_sprayers: Array = []
 	for item in checkpoint.sprayers:
 		saved_sprayers.append({"rewarded":item.rewarded,"stun_left":item.stun_left,"timer":item.timer})
-	return {"version":2,"content_revision":1,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed}
+	return {"version":3,"content_revision":5,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed}
 
 func _valid_integer(value, low: int, high: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floor(float(value)) and value >= low and value <= high
@@ -656,13 +719,13 @@ func _valid_flags(value, count: int) -> bool:
 func restore_payload(data: Dictionary) -> bool:
 	# Validate every field before changing the current run. Extra UI metadata is
 	# intentionally ignored; maps and positions always come from authored data.
-	if data.get("version") != 2 or data.get("content_revision") != 1: return false
+	if data.get("version") != 3 or data.get("content_revision") != 5: return false
 	if not _valid_integer(data.get("stage"),0,STAGE_COUNT-1): return false
 	var saved_stage := int(data.stage)
 	var layout := Data.build(saved_stage)
 	if not _valid_integer(data.get("checkpoint_index"),-1,layout.sections.size()-1): return false
 	var saved_checkpoint := int(data.checkpoint_index)
-	for field in ["pods","walls","rings","dew"]:
+	for field in ["pods","walls","rings","dew","shields"]:
 		if not _valid_flags(data.get(field),layout[field].size()): return false
 	if not data.get("sprayers") is Array or data.sprayers.size() != layout.sprayers.size(): return false
 	for item in data.sprayers:
@@ -672,7 +735,7 @@ func restore_payload(data: Dictionary) -> bool:
 			if not (value is int or value is float) or not is_finite(float(value)) or value < 0 or value > (6.0 if field == "stun_left" else 4.5): return false
 	if not data.get("garden_awards") is Array or data.garden_awards.size() != STAGE_COUNT: return false
 	for i in STAGE_COUNT:
-		if not _valid_integer(data.garden_awards[i],0,Data.definitions()[i].sections.size()): return false
+		if not _valid_integer(data.garden_awards[i],0,Data.definitions()[i].encounters.size()): return false
 		if i > saved_stage and data.garden_awards[i] != 0: return false
 	if data.garden_awards[saved_stage] != data.dew.count(true): return false
 	var expected_bees: int = layout.base_bees
@@ -694,6 +757,7 @@ func restore_payload(data: Dictionary) -> bool:
 	for i in walls.size(): walls[i].broken = data.walls[i]
 	for i in rings.size(): rings[i].active = data.rings[i]
 	for i in dew.size(): dew[i].collected = data.dew[i]
+	for i in shields.size(): shields[i].collected = data.shields[i]
 	for i in shelters.size(): shelters[i].reached = i <= checkpoint_index
 	for i in sprayers.size():
 		sprayers[i].rewarded = data.sprayers[i].rewarded

@@ -84,11 +84,12 @@ func run_complete_route(collect: bool) -> void:
 			old_stage = game.model.stage
 			old_section = -1
 			expect(not game.model.started,"new level waits for fresh input")
-		if old_section != game.model.section_index():
-			old_section = game.model.section_index()
+		if old_section != game.model.encounter_index():
+			old_section = game.model.encounter_index()
 			visited["%d:%d" % [old_stage,old_section]] = true
 			expect(not game.hud_objective.text.is_empty(),"every section has a visible objective")
 			if not collect and old_section == 3: await shot("level-%d-middle" % old_stage)
+			if not collect and old_stage == 3 and old_section == 2: await shot("distant-home-arrival")
 		if not collect and not relay_captured and game.model.stage == 1 and game.model.wind_chain >= 2:
 			relay_captured = true
 			expect(game.toast.text.contains("连续借风"),"uninterrupted relay has visible feedback")
@@ -97,10 +98,14 @@ func run_complete_route(collect: bool) -> void:
 			shelter_captured = true
 			expect(game.hud_weather.text.contains("叶下安全"),"earned rain shelter confirms safety")
 			await shot("rain-shelter")
-		if not collect and old_section == 3 and not active_captures.has(old_stage) and game.model.p.x > game.model.sections[old_section].start_x+1100:
+		if not collect and old_section == 3 and not active_captures.has(old_stage) and game.model.p.x > game.model.chapter.encounters[old_section].start_x+1100:
 			active_captures[old_stage] = true
 			await shot("level-%d-active" % old_stage)
 		if not collect:
+			var shield_pose := "shield-route-%d" % old_stage
+			if game.model.shield_left > 0 and game.model.shield_left < 3.5 and not poses.has(shield_pose):
+				poses[shield_pose] = true
+				await shot(shield_pose)
 			var pose := ""
 			if game.model.charging and game.model.charge >= game.model.CHARGE_READY: pose = "charge"
 			elif game.model.burst_left > 0.25: pose = "dash"
@@ -117,7 +122,7 @@ func run_complete_route(collect: bool) -> void:
 	release_all()
 	expect(game.mode == "ending","complete four-level route reaches ending")
 	expect(handoffs.size() == 3,"all three level handoffs")
-	expect(visited.size() >= 28,"all twenty-eight authored sections visited")
+	expect(visited.size() == 20,"all twenty authored encounters visited")
 	expect(game.description.text.contains("第一章") and game.description.text.contains("救出伙伴 8 只"),"ending counts rescued friends separately from player")
 	expect(not game.hud_weather.visible,"ending clears the chase indicator")
 	print("CHAPTER_UI_END: "+JSON.stringify({"seconds":game.played_seconds,"recoveries":game.model.recoveries,"dew":game.model.garden_total(),"optional":collect}))
@@ -172,6 +177,38 @@ func rescue_departure_contract() -> void:
 	game.model.reset_journey()
 	game.played_seconds = 0
 	game.begin_stage(0)
+
+func shield_ui_contract() -> void:
+	# Start-position fixture for the authored introduction; pickup and pause use
+	# ordinary Viewport keys. Complete routes separately earn the whole chapter.
+	release_all()
+	game.begin_stage(2)
+	game.model.p = game.model.shields[0].pos-Vector2(60,0)
+	game.model.camera_x = game.model.p.x-480
+	game.model.storm_x = game.model.p.x-800
+	key(KEY_RIGHT,true)
+	ticks(12)
+	release_all()
+	ticks(1)
+	expect(game.model.shield_left > 4.8 and game.toast.text.contains("护雨"),"Contact pickup shows five-second weather protection")
+	await shot("shield-turn-introduction")
+	if game.mode == "pause": tap(KEY_ESCAPE)
+	tap(KEY_ESCAPE)
+	var frozen: float = game.model.shield_left
+	ticks(120)
+	expect(game.model.shield_left == frozen,"Pause freezes shield countdown")
+	tap(KEY_ESCAPE)
+	key(KEY_DOWN,true)
+	ticks(12)
+	release_all()
+	expect(game.model.shield_left < frozen and game.model.burst_left == 0,"Protected bee can steer normally without dashing")
+	game.model.shield_left = 0.7
+	game.model.invulnerable = 0
+	game.refresh_hud()
+	await shot("shield-final-second-fixture")
+	tap(KEY_R)
+	ticks(1)
+	expect(game.model.shield_left == 0,"Recovery clears shield HUD and presentation state")
 
 func weather_contract() -> void:
 	# UI state fixtures only; complete input routes above earn all their own progress.
@@ -317,6 +354,7 @@ func run() -> void:
 	await run_complete_route(true)
 	await saved_menu_contract()
 	await weather_contract()
+	await shield_ui_contract()
 	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete four-level input routes" % checks)
 	else:
 		for failure in failures: push_error(failure)

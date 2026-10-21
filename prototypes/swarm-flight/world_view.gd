@@ -23,10 +23,15 @@ var _settle := 0.0
 var _rest_blend := 0.0
 var _greeting := 0.0
 var _wind_kick := 0.0
+var _shield_flash := 0.0
+var _shield_birth := 0.0
 
 const INK := Color("253d26")
 const GOLD := Color("ffc94f")
 const CREAM := Color("fff8d8")
+const WATER := Color("8cd6dc")
+const WATER_INK := Color("346579")
+const LEAF_LIGHT := Color("cee58c")
 const SKY := [Color("91dbe3"), Color("8bcbdc"), Color("657ea1"), Color("a78b99")]
 const LOW_SKY := [Color("edf3ba"), Color("daeebc"), Color("9bb7b0"), Color("efd7aa")]
 
@@ -46,6 +51,8 @@ func reset_presentation() -> void:
 	_was_burst = false
 	_greeting = 0.0
 	_wind_kick = 0.0
+	_shield_flash = 0.0
+	_shield_birth = 0.0
 	_ending_elapsed = 0.0
 	trail_clock = 0.0
 	trauma = 0.0
@@ -61,6 +68,8 @@ func _process(delta: float) -> void:
 	_settle = maxf(0.0, _settle - delta)
 	_greeting = maxf(0.0, _greeting - delta)
 	_wind_kick = maxf(0.0, _wind_kick - delta * 3.0)
+	_shield_flash = maxf(0.0, _shield_flash - delta)
+	_shield_birth = maxf(0.0, _shield_birth - delta)
 	for i in range(_reactions.size() - 1, -1, -1):
 		_reactions[i].age += delta
 		if _reactions[i].age > 1.25:
@@ -114,14 +123,21 @@ func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
 		_spawn_departures(pos,clampi(int(details.get("count",1)),0,15))
 	elif kind == "ring":
 		_wind_kick = 1.0
+	elif kind == "shield":
+		_shield_birth = 0.4
+	elif kind == "shield_block":
+		_shield_flash = 0.24
 	var caption := ""
 	match kind:
 		"burst": caption = "−20"
 		"rescue": caption = "+%d 伙伴" % int(details.get("count",1))
 		"ring": caption = "借风 ×%d" % int(details.get("chain",1)) if int(details.get("chain",1)) > 1 else "借到风！"
 		"gate": caption = "冲开了！"
-		"dew": caption = "+%d 体力" % int(round(details.get("reward",0)))
+		"dew":
+			var reward := int(round(details.get("reward",0)))
+			caption = "+%d 体力" % reward if reward > 0 else "晨露 +1"
 		"hit": caption = "−%d 体力" % int(details.get("cost",30))
+		"shield": caption = "护雨 · 5 秒"
 	if not caption.is_empty():
 		_feedback.append({"kind":"caption","pos":pos,"life":0.9,"text":caption,"bad":kind=="hit"})
 	var tint := GOLD
@@ -133,9 +149,24 @@ func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
 			count = 30
 			force = 180.0
 		"dew":
-			tint = Color("8ef6f1")
-			count = 16
-			force = 130.0
+			tint = Color("c7f3db")
+			count = 9
+			force = 105.0
+		"shield":
+			tint = LEAF_LIGHT
+			count = 14
+			force = 90.0
+		"shield_block":
+			# Protection has its own soft, local response. Never reuse hit shake,
+			# damage captions or the red hit particles for an absorbed raindrop.
+			for i in 6:
+				var angle := -PI+float(i)*PI/5.0
+				var direction := Vector2.from_angle(angle)
+				particles.append({"pos":pos+direction*43.0,"vel":direction*70.0,"life":0.28,"max_life":0.28,"size":2.3,"color":WATER.lightened(0.3),"angle":angle})
+			return
+		"shield_end":
+			_feedback.append({"kind":"shield_end", "pos":pos, "life":0.4})
+			return
 		"flower_calm":
 			tint = Color("ffc9f0")
 			count = 25
@@ -203,6 +234,8 @@ func _draw() -> void:
 	draw_set_transform(_world_offset)
 	_world_decor(act, cam)
 	_landmarks(act)
+	for field in model.rain_fields:
+		_rain_field(field)
 	for wall in model.walls:
 		_wall(wall)
 	for shelter in model.shelters:
@@ -214,6 +247,8 @@ func _draw() -> void:
 		_pod(pod)
 	for item in model.dew:
 		_dew(item)
+	for item in model.shields:
+		_shield_pickup(item)
 	for i in model.sprayers.size():
 		_sprayer(model.sprayers[i], i)
 	for puff in model.puffs:
@@ -249,6 +284,8 @@ func _background(act: int, cam: float) -> void:
 		_ellipse(c,Vector2(100,22),cloud)
 		_ellipse(c+Vector2(-34,-17),Vector2(42,30),cloud)
 		_ellipse(c+Vector2(14,-23),Vector2(55,37),cloud)
+	if act == 3:
+		_distant_home(cam)
 	for layer in 2:
 		var hedge: Color = [Color("77b965"),Color("70b3a0"),Color("618b80"),Color("7f9580")][act].darkened(layer*0.10)
 		for i in 9:
@@ -300,6 +337,40 @@ func _background(act: int, cam: float) -> void:
 		draw_style_box(_box_style(Color("728678"),Color("577267"),3,5),Rect2(shed-Vector2(70,40),Vector2(140,118)))
 		_outline_polygon(PackedVector2Array([shed+Vector2(-86,-40),shed+Vector2(0,-100),shed+Vector2(86,-40)]),Color("8a8574"),Color("577267"),3)
 		draw_rect(Rect2(shed+Vector2(-21,1),Vector2(43,77)),Color("58776a"))
+	# Atmospheric wash keeps the garden set subordinate to outlined playable objects.
+	var haze: Color = LOW_SKY[act]
+	haze.a = 0.15 if act < 2 else 0.12
+	draw_rect(Rect2(0,0,1280,800),haze)
+
+func _distant_home(cam: float) -> void:
+	# The third homeward encounter reveals the destination across the garden.
+	# This sits behind the hedges, has no cue/collider and fades before the real tree.
+	if model.chapter.encounters.size() < 3: return
+	var reveal_x: float = model.chapter.encounters[2].start_x
+	var reveal: float = clampf((model.p.x-reveal_x+180.0)/240.0,0.0,1.0)
+	var approach: float = clampf((model.exit_pos.x-model.p.x-1100.0)/1200.0,0.0,1.0)
+	var opacity := reveal*approach
+	if opacity <= 0.001: return
+	var p := Vector2(1090.0-(cam-reveal_x+480.0)*0.055,660)
+	var trunk := Color("887b64").lerp(LOW_SKY[3],0.25)
+	trunk.a = opacity*0.78
+	var edge := Color("697569")
+	edge.a = opacity*0.40
+	_silhouette([p+Vector2(40,0),p+Vector2(28,-110),p+Vector2(56,-210),p+Vector2(34,-318),p+Vector2(2,-330),p+Vector2(-27,-326),p+Vector2(-27,-307),p+Vector2(-17,-190),p+Vector2(-35,-110),p+Vector2(-49,0),p+Vector2(-17,-11),p+Vector2(18,-9),p+Vector2(40,0)],trunk,edge,2)
+	_curve(p+Vector2(-4,-230),p+Vector2(-45,-255),p+Vector2(-88,-275),p+Vector2(-110,-319),trunk,17)
+	_curve(p+Vector2(23,-258),p+Vector2(57,-274),p+Vector2(88,-301),p+Vector2(100,-338),trunk,15)
+	var foliage := Color("859b76").lerp(LOW_SKY[3],0.18)
+	foliage.a = opacity*0.76
+	_ellipse(p+Vector2(-73,-344),Vector2(85,61),foliage)
+	_ellipse(p+Vector2(17,-383),Vector2(97,67),foliage)
+	_ellipse(p+Vector2(92,-349),Vector2(82,62),foliage)
+	var upper := foliage.lightened(0.12)
+	upper.a = opacity*0.55
+	_ellipse(p+Vector2(-16,-396),Vector2(72,47),upper)
+	var window := p+Vector2(0,-200)
+	_oval(window,Vector2(14,22),Color(1.0,0.88,0.54,opacity*0.9),edge,2)
+	_ellipse(window-Vector2(2,3),Vector2(8,15),Color(1.0,0.96,0.71,opacity*0.8))
+	_curve(window+Vector2(-21,23),window+Vector2(-8,28),window+Vector2(8,28),window+Vector2(22,21),trunk,4)
 
 func _world_decor(act: int, cam: float) -> void:
 	var start := int(floor((cam-180)/235.0))
@@ -410,7 +481,7 @@ func _wind_paths() -> void:
 	for i in range(model.rings.size()-1):
 		var ring: Dictionary = model.rings[i]
 		var next: Dictionary = model.rings[i+1]
-		if ring.active or not ring.get("chain",false) or not next.get("chain",false) or ring.section != next.section:
+		if ring.active or not ring.get("chain",false) or not next.get("chain",false) or ring.section != next.section or ring.get("encounter",-1) != next.get("encounter",-1):
 			continue
 		var p: Vector2 = ring.pos
 		var end: Vector2 = next.pos
@@ -466,23 +537,28 @@ func _ring(ring: Dictionary, index: int) -> void:
 
 func _shelter(shelter: Dictionary) -> void:
 	var p: Vector2 = shelter.pos
-	if p.x < model.camera_x-200 or p.x > model.camera_x+1480: return
+	var half := float(shelter.get("half_width",118.0))
+	if p.x+half < model.camera_x-80 or p.x-half > model.camera_x+1360: return
 	var reached: bool = shelter.reached
-	_curve(p+Vector2(120,-80),p+Vector2(137,8),p+Vector2(97,130),Vector2(p.x+86,828),INK,12)
-	_curve(p+Vector2(120,-80),p+Vector2(137,8),p+Vector2(97,130),Vector2(p.x+86,828),Color("77a945"),7)
+	var stem_x := half+4.0
+	_curve(p+Vector2(stem_x,-80),p+Vector2(stem_x+17,8),p+Vector2(stem_x-23,130),Vector2(p.x+stem_x-34,828),INK,12)
+	_curve(p+Vector2(stem_x,-80),p+Vector2(stem_x+17,8),p+Vector2(stem_x-23,130),Vector2(p.x+stem_x-34,828),Color("77a945"),7)
 	# Canopy underside stays above y=-65, the exact safe pocket starts at y=-64.
-	var canopy := [p+Vector2(-130,-80),p+Vector2(-59,-151),p+Vector2(68,-146),p+Vector2(127,-78),p+Vector2(63,-65),p+Vector2(-45,-66),p+Vector2(-130,-80)]
+	# Its overhang follows the model's width, rather than hiding a wider safe zone.
+	var canopy := [p+Vector2(-half-12,-80),p+Vector2(-half*0.50,-151),p+Vector2(half*0.58,-146),p+Vector2(half+9,-78),p+Vector2(half*0.54,-65),p+Vector2(-half*0.38,-66),p+Vector2(-half-12,-80)]
 	_paper_shape(canopy,INK)
-	_paper_shape([p+Vector2(-124,-82),p+Vector2(-51,-143),p+Vector2(63,-140),p+Vector2(120,-82),p+Vector2(60,-73),p+Vector2(-40,-73),p+Vector2(-124,-82)],Color("90be49"))
-	_curve(p+Vector2(-121,-83),p+Vector2(-45,-110),p+Vector2(54,-110),p+Vector2(119,-81),Color("d5e77f"),4)
-	for i in 6:
-		var x := -84+i*32.0
-		var lift := sin(float(i+1)*PI/7)*24
+	_paper_shape([p+Vector2(-half-6,-82),p+Vector2(-half*0.43,-143),p+Vector2(half*0.54,-140),p+Vector2(half+2,-82),p+Vector2(half*0.51,-73),p+Vector2(-half*0.34,-73),p+Vector2(-half-6,-82)],Color("90be49"))
+	_curve(p+Vector2(-half-3,-83),p+Vector2(-half*0.38,-110),p+Vector2(half*0.46,-110),p+Vector2(half+1,-81),LEAF_LIGHT,4)
+	for i in 7:
+		var x := lerpf(-half*0.72,half*0.70,float(i)/6.0)
+		var lift := sin(float(i+1)*PI/8)*24
 		_curve(p+Vector2(x,-100),p+Vector2(x+1,-103),p+Vector2(x+8,-109-lift),p+Vector2(x+17,-112-lift),Color("bedb6e"),2)
 	# A tiny hanging lamp and a low cushion mark a usable resting place.
 	draw_line(p+Vector2(-7,-91),p+Vector2(-7,-48),INK,2,true)
 	_oval(p+Vector2(-7,-40),Vector2(11,15),GOLD if reached else Color("d8c778"),INK,2)
 	_ellipse(p+Vector2(-10,-44),Vector2(3,7),CREAM)
+	# The same little leaf tray spans the safe entry/exit; no rail blocks flight.
+	_curve(p+Vector2(-half,72),p+Vector2(-half*0.35,76),p+Vector2(half*0.35,76),p+Vector2(half,72),Color(0.83,0.92,0.60,0.65),2)
 	_oval(p+Vector2(0,49),Vector2(58,12),Color("5c913d"),INK,3)
 	_ellipse(p+Vector2(-5,46),Vector2(48,6),Color("b9d36b"))
 	if reached:
@@ -562,11 +638,36 @@ func _drop(p: Vector2, velocity: Vector2) -> void:
 	var direction := velocity.normalized()
 	if direction.is_zero_approx():
 		direction = Vector2.DOWN
-	draw_line(p - direction * 28.0, p, Color(0.69, 0.94, 1.0, 0.4), 5.0, true)
-	var points := PackedVector2Array([p - direction * 17, p + direction.orthogonal() * 8, p + direction * 8, p - direction.orthogonal() * 8])
-	draw_colored_polygon(points, Color("c0ecff"))
-	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color("3d789b"), 2.0, true)
-	draw_circle(p + Vector2(-2, -1), 2.5, Color("f3ffff"))
+	var side := direction.orthogonal()
+	draw_line(p-direction*31.0,p-direction*9.0,Color(0.72,0.89,0.96,0.48),3.0,true)
+	# A moving, round-bottomed tear differs in shape and motion from faceted dew.
+	_silhouette([p-direction*17,p-direction*3-side*12,p+direction*11-side*10,p+direction*10,p+direction*11+side*10,p-direction*3+side*12,p-direction*17],Color("bde5ed"),WATER_INK,2.4)
+	draw_line(p-side*3-direction*3,p-side*4+direction*3,Color("f1ffff"),2.2,true)
+
+func _rain_field(field: Dictionary) -> void:
+	var area: Rect2 = field.rect
+	if area.end.x < model.camera_x-80 or area.position.x > model.camera_x+1360: return
+	var imminent := float(field.timer) < 0.18
+	var cloud_y := area.position.y+114.0
+	var clusters := maxi(1,ceili(area.size.x/150.0))
+	var spacing := area.size.x/float(clusters)
+	# A fixed overhead cloud marks the authored rain lane before moving drops arrive.
+	for i in clusters:
+		var c := Vector2(area.position.x+(float(i)+0.5)*spacing,cloud_y)
+		var cloud := Color("526f82") if imminent else Color("617e8a")
+		_ellipse(c,Vector2(spacing*0.54,16),cloud)
+		_ellipse(c+Vector2(-spacing*0.16,-10),Vector2(spacing*0.23,20),cloud)
+		_ellipse(c+Vector2(spacing*0.16,-15),Vector2(spacing*0.26,24),cloud)
+		_curve(c+Vector2(-spacing*0.4,5),c+Vector2(-spacing*0.12,14),c+Vector2(spacing*0.20,13),c+Vector2(spacing*0.42,4),Color("9ab9bd"),1.5)
+	# Fine streaks are a spatial forecast, never substitute for the outlined hazards.
+	var columns := maxi(4,ceili(area.size.x/43.0))
+	var rain_height := maxf(1.0,area.end.y-cloud_y-32.0)
+	for i in columns:
+		var x := area.position.x+(float(i)+0.5)*area.size.x/float(columns)
+		for j in 3:
+			var y := cloud_y+28.0+fposmod(float(i)*73.0+float(j)*rain_height/3.0+clock*155.0,rain_height)
+			var drift := (y-cloud_y)/350.0*25.0
+			draw_line(Vector2(x-drift,y),Vector2(x-drift-1.3,minf(y+18.0,area.end.y)),Color(0.75,0.90,0.94,0.20),1.0,true)
 
 func _leader() -> void:
 	var p: Vector2 = model.p
@@ -578,10 +679,14 @@ func _leader() -> void:
 	if model.phase == "ending":
 		_ending_arrival()
 		return
+	if model.shield_left > 0.0:
+		_shield_shell(p,false)
 	if model.invulnerable <= 0.0 or sin(clock * 28.0) > -0.35:
 		if burst:
 			_ellipse(p - face * 16.0, Vector2(38, 17), Color(1.0, 0.89, 0.48, 0.18), face.angle())
 		_bee(p, 1.0, face, 1.0, false, 0.0)
+	if model.shield_left > 0.0:
+		_shield_shell(p,true)
 	if compact:
 		var fill: float = clampf(model.charge / model.CHARGE_READY, 0.0, 1.0)
 		var ready: bool = model.charge >= model.CHARGE_READY and model.can_burst()
@@ -756,6 +861,10 @@ func _effects() -> void:
 		elif feedback.kind == "blocked":
 			for side in [-1.0, 0.0, 1.0]:
 				draw_line(pos + Vector2(-9 + side * 9, -20), pos + Vector2(-12 + side * 12, -27), Color(0.95,0.89,0.68,alpha), 2.0, true)
+		elif feedback.kind == "shield_end":
+			var radius: float = 46.0+(0.4-feedback.life)*20.0
+			for side in 2:
+				draw_arc(pos-Vector2(0,9),radius,float(side)*PI+0.3,float(side)*PI+2.3,20,Color(0.80,0.92,0.74,alpha*0.6),1.6,true)
 		else:
 			draw_arc(pos, 24.0 + (0.55 - feedback.life) * 12.0, -PI * 0.85, PI * 0.3, 32, Color(0.96,0.81,0.50,alpha), 1.7, true)
 	for ring in ripples:
@@ -889,6 +998,51 @@ func _dew(item: Dictionary) -> void:
 	draw_colored_polygon(PackedVector2Array([p+Vector2(0,-12),p+Vector2(0,10),p+Vector2(-8,7),p+Vector2(-9,-2)]),Color("cef8e9"))
 	draw_line(p+Vector2(18,-13),p+Vector2(18,-5),CREAM,2,true)
 	draw_line(p+Vector2(14,-9),p+Vector2(22,-9),CREAM,2,true)
+
+func _shield_pickup(item: Dictionary) -> void:
+	if item.collected: return
+	var p: Vector2 = item.pos
+	if p.x < model.camera_x-80 or p.x > model.camera_x+1360: return
+	p.y += sin(clock*2.0+p.x*0.01)*2.0
+	# A broad leaf cup around a clear membrane: unlike a dew gem or wind arrow.
+	_silhouette([p+Vector2(0,-24),p+Vector2(-13,-28),p+Vector2(-24,-18),p+Vector2(-25,-7),p+Vector2(-25,10),p+Vector2(-13,24),p+Vector2(0,29),p+Vector2(13,24),p+Vector2(25,10),p+Vector2(25,-7),p+Vector2(24,-18),p+Vector2(13,-28),p+Vector2(0,-24)],Color("d7f1ce"),INK,2.8)
+	_silhouette([p+Vector2(0,-17),p+Vector2(-10,-20),p+Vector2(-17,-12),p+Vector2(-17,-5),p+Vector2(-17,5),p+Vector2(-10,17),p+Vector2(0,21),p+Vector2(10,17),p+Vector2(17,5),p+Vector2(17,-5),p+Vector2(17,-12),p+Vector2(10,-20),p+Vector2(0,-17)],Color("7ec7b5"),Color.TRANSPARENT,0)
+	_cartoon_leaf(p+Vector2(0,24),p+Vector2(-27,-5),10,Color("9fc76b"))
+	_cartoon_leaf(p+Vector2(0,24),p+Vector2(28,-8),11,LEAF_LIGHT)
+	_curve(p+Vector2(-11,-2),p+Vector2(-12,-12),p+Vector2(-4,-16),p+Vector2(3,-13),CREAM,2.5)
+	# One gently deflected drop previews weather protection without particle clutter.
+	var angle := lerpf(-2.7,-0.4,fposmod(clock*0.45,1.0))
+	var bead := p+Vector2.from_angle(angle)*36.0
+	_ellipse(bead,Vector2(2.5,4.5),WATER_INK,angle+PI/2)
+
+func _shield_shell(p: Vector2, front: bool) -> void:
+	var center := p-Vector2(0,9)
+	var remaining: float = clampf(model.shield_left/5.0,0.0,1.0)
+	var warning: bool = model.shield_left <= 1.0
+	var pulse := 0.5+0.5*sin(clock*18.0) if warning else 0.0
+	var arrive := sin((1.0-_shield_birth/0.4)*PI)*4.0 if _shield_birth > 0.0 else 0.0
+	var radius := 46.0+arrive+pulse*2.5
+	if not front:
+		draw_circle(center,radius,Color(0.71,0.92,0.80,0.10))
+		return
+	# The outer silhouette stays present even during the warning pulse. Its arc
+	# drains from the model timer; the inner charge ring retains a separate radius.
+	draw_arc(center,radius,0,TAU,64,Color(0.16,0.36,0.33,0.65),3.5,true)
+	draw_arc(center,radius-0.5,0,TAU,64,Color(0.82,0.95,0.76,0.54+pulse*0.26),1.7,true)
+	var time_color := GOLD if warning else LEAF_LIGHT
+	draw_arc(center,radius+4.0,-PI/2,-PI/2+TAU*maxf(0.003,remaining),64,time_color,3.4,true)
+	for i in 5:
+		var direction := Vector2.from_angle(-PI/2+float(i)*TAU/5.0)
+		draw_line(center+direction*(radius+2.0),center+direction*(radius+6.0),INK,1.5,true)
+	_curve(center+Vector2(-32,-11),center+Vector2(-33,-25),center+Vector2(-23,-34),center+Vector2(-13,-35),Color(0.98,1.0,0.86,0.65),2.4)
+	if _shield_flash > 0.0:
+		var strength := _shield_flash/0.24
+		draw_arc(center,radius+(1.0-strength)*5.0,-PI*0.95,-PI*0.05,32,Color(0.97,1.0,0.85,strength),3.0,true)
+	if warning:
+		# The two closing leaf tips provide a shape cue as well as an amber tint.
+		var close := (1.0-remaining*5.0)*5.0
+		_leaf(center+Vector2(-4,-radius-6),center+Vector2(-15+close,-radius-16),4.5,LEAF_LIGHT)
+		_leaf(center+Vector2(4,-radius-6),center+Vector2(15-close,-radius-16),4.5,LEAF_LIGHT)
 
 func _sprayer(flower: Dictionary, index: int) -> void:
 	var p: Vector2 = flower.pos

@@ -191,7 +191,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.4.4"
+	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.5.0"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -261,7 +261,7 @@ func begin_stage(index: int) -> void:
 	mode = "play"
 	panel.hide()
 	sound.set_stage(model.music_index())
-	last_section = model.section_index()
+	last_section = model.encounter_index()
 	message(["救出这一带的伙伴 · 它们会先飞回家", "冲进第一朵风花，后面的风会接住你", "暴雨从身后追来 · 借风甩开它，叶下能避雨", "最后一程 · 借风甩开暴雨，落叶下歇一口气"][index],4.5)
 	persist_progress()
 	refresh_hud()
@@ -289,7 +289,7 @@ func on_secondary() -> void:
 		var saved_seconds = saved_payload.get("played_seconds",0.0)
 		played_seconds = float(saved_seconds) if (saved_seconds is float or saved_seconds is int) and is_finite(float(saved_seconds)) and float(saved_seconds) >= 0 else 0.0
 		held.clear()
-		last_section = model.section_index()
+		last_section = model.encounter_index()
 		energy_trail = model.stamina
 		sound.set_stage(model.music_index())
 		panel.hide()
@@ -340,7 +340,7 @@ func pause_game() -> void:
 	model.clear_input()
 	panel.show()
 	heading.text = "歇一口气"
-	description.text = model.chapter_title()+" · "+model.section_name()+"\n方向键飞行 · 空格蓄力后松开冲刺\n叶下休息、保存；救齐本段再冲开叶帘\n"+model.section_progress_text()+"\nR 返回落脚点 · M 声音 · Esc 继续"
+	description.text = model.chapter_title()+" · "+model.encounter_name()+"\n方向键飞行 · 空格蓄力后松开冲刺\n宽叶下自动保存、恢复体力；可以接着飞\n"+model.section_progress_text()+"\nR 返回落脚点 · M 声音 · Esc 继续"
 	main_button.text = "继续飞行"
 	secondary_button.text = "回到就近休息点"
 	secondary_button.visible = paused_from == "play"
@@ -434,7 +434,11 @@ func tick(delta: float) -> void:
 				"burst":
 					event_message(event.kind,"冲刺 · 体力 −20",1.0)
 				"dew":
-					event_message(event.kind,"本关晨露 %d / %d · 体力 +%d" % [model.garden_awards[model.stage],model.stage_dew_total(),int(round(event.reward))],1.9)
+					event_message(event.kind,"晨露 %d / %d" % [model.garden_awards[model.stage],model.stage_dew_total()] + (" · 体力 +%d" % int(round(event.reward)) if event.reward >= 0.5 else " · 体力已满"),1.9)
+				"shield":
+					event_message(event.kind,"护雨五秒 · 可以顶着雨转向，留意前方叶亭",2.6,Color("bceae0"))
+				"shield_end":
+					event_message(event.kind,"护雨结束 · 雨滴仍可绕开或冲散",1.8)
 				"flower_calm":
 					event_message(event.kind,"喷嚏花安静六秒" + (" · 体力 +%d" % int(round(event.reward)) if event.reward > 0 else " · 放心过去吧"),2.0)
 				"hit":
@@ -445,11 +449,11 @@ func tick(delta: float) -> void:
 					event_message(event.kind,wind_text+" · 体力 +%d" % int(round(event.get("reward",0))),1.8)
 				"gate":
 					event_message(event.kind,"叶帘打开了 · 继续向前！",1.8)
-			if event.kind in ["rescue","checkpoint"]: persist_progress()
+			if event.kind in ["rescue","checkpoint","checkpoint_update"]: persist_progress()
 		model.events.clear()
-		if model.section_index() != last_section:
-			last_section = model.section_index()
-			message(model.section_name()+" · "+model.section_progress_text(),3.0,Color("ffe7a3"),2)
+		if model.encounter_index() != last_section:
+			last_section = model.encounter_index()
+			message(model.encounter_name(),2.2,Color("ffe7a3"),1)
 		if model.phase == "transition": show_transition()
 		elif model.phase == "ending": show_ending()
 	elif mode == "transition":
@@ -531,7 +535,7 @@ func refresh_hud() -> void:
 	hud_weather.visible = active and model.storm_active
 	cue_panel.visible = false
 	if not active: return
-	var title: String = "%s · %d/%d %s   ·   晨露 %d/%d" % [TITLES[model.stage],model.section_index()+1,model.section_count(),model.section_name(),model.garden_awards[model.stage],model.stage_dew_total()]
+	var title: String = "%s · %d/%d %s   ·   晨露 %d/%d" % [TITLES[model.stage],model.encounter_index()+1,model.chapter.encounters.size(),model.encounter_name(),model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
 	var hint: String = model.hint()
 	var bees_text := "已救  %d / %d" % [model.bees-1,model.journey_bees_total()-1]
