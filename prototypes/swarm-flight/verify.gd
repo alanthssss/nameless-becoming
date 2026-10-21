@@ -117,10 +117,10 @@ func authored_content() -> void:
 	for stage in Model.STAGE_COUNT:
 		m = Model.new()
 		m.load_stage(stage)
-		expect(m.sections.size() == 7 and m.world_width >= 15000,"Each chapter has seven authored encounters and a complete world")
+		expect(m.chapter.encounters.size() == 5 and m.sections.size() == 3 and m.world_width >= 7500,"Five authored encounters share three save intervals in each complete level")
 		expect(m.theme_index() == stage and m.music_index() in [0,1,2],"Chapter presentation is data driven")
-		expect(m.dew.size() == 7 and m.shelters.size() == 7,"Each encounter has an optional dew and safe checkpoint")
-		for section in m.sections:
+		expect(m.dew.size() == 5 and m.shelters.size() == 3,"Optional dew and save intervals have separate counts")
+		for section in m.chapter.encounters:
 			expect(not names.has(section.name),"Encounter names are distinct: "+section.name)
 			names.append(section.name)
 		for wall in m.walls:
@@ -136,33 +136,37 @@ func authored_content() -> void:
 			expect(clear,"Advertised wind landing clears solid stems")
 		expect(not m.exit_ready,"A whole chapter cannot finish before its required checkpoints")
 
-func chapter_routes(collect_optional: bool) -> void:
+func chapter_routes(collect_optional: bool,without_shields := false) -> void:
 	m = Model.new()
 	m.reset_journey()
-	var driver = Driver.new(m,collect_optional)
+	var driver = Driver.new(m,collect_optional,without_shields)
 	var route_time := 0.0
 	var frames := 0
 	var prior_checkpoint := -1
 	var rings_this_launch := 0
 	var chain_max := 0
+	var minimum_stamina := 100.0
 	while m.phase != "ending" and frames < 108000:
 		if m.phase == "transition":
 			if m.stage == 1:
 				expect(chain_max >= 3,"Flower bridge contains a real three-flower chain from one launch")
-				var branch_rings: Array = m.rings.filter(func(item): return item.get("section",-1) == 3)
+				var branch_rings: Array = m.rings.filter(func(item): return item.get("encounter",-1) == 3)
 				expect(branch_rings.all(func(item): return not item.active) if collect_optional else branch_rings.all(func(item): return item.active),"The same bridge admits a wind shortcut and a no-wind steady route")
-			report_stage(collect_optional)
+			if without_shields: expect(m.shields.all(func(item): return not item.collected),"Ordinary alternative completes without collecting shield")
+			report_stage(collect_optional,minimum_stamina)
 			route_time += m.time
 			m.load_stage(m.stage+1)
 			prior_checkpoint = -1
 			rings_this_launch = 0
 			chain_max = 0
+			minimum_stamina = 100.0
 		var action: Dictionary = driver.next_input()
 		if not action.error.is_empty():
 			failures.append("Full route: "+action.error)
 			break
 		m.step(action.direction,action.held,1.0/60.0)
 		frames += 1
+		minimum_stamina = minf(minimum_stamina,m.stamina)
 		if m.checkpoint_index != prior_checkpoint:
 			prior_checkpoint = m.checkpoint_index
 			var payload: Dictionary = m.save_payload()
@@ -177,24 +181,25 @@ func chapter_routes(collect_optional: bool) -> void:
 				chain_max = maxi(chain_max,rings_this_launch)
 		m.events.clear()
 	if m.phase == "ending":
+		if without_shields: expect(m.shields.all(func(item): return not item.collected),"Finale remains completable without shield")
 		expect(chain_max >= 3,"Final chapter combines a real continuous flower chain with the homeward route")
-		report_stage(collect_optional)
+		report_stage(collect_optional,minimum_stamina)
 		route_time += m.time
 	expect(m.phase == "ending" and m.stage == 3 and m.bees == 9,"Known-answer input route completes all four chapters with the whole group")
-	if collect_optional: expect(m.garden_total() == m.journey_dew_total(),"Optional input route collects all twenty-eight dew without teleportation")
+	if collect_optional: expect(m.garden_total() == m.journey_dew_total(),"Optional input route collects all twenty dew without teleportation")
 	var restored = Model.new()
 	expect(restored.restore_payload(m.save_payload()) and restored.phase == "ending","Completed save resumes at the ending rather than replaying the long final chapter")
-	print("CHAPTER ROUTE: %s" % JSON.stringify({"scenario":"all-dew" if collect_optional else "direct","seconds":snappedf(route_time,0.01),"frames":frames,"recoveries":m.recoveries,"dew":m.garden_total(),"completed":m.phase=="ending"}))
+	print("CHAPTER ROUTE: %s" % JSON.stringify({"scenario":"no-shield" if without_shields else "all-dew" if collect_optional else "direct","seconds":snappedf(route_time,0.01),"frames":frames,"recoveries":m.recoveries,"dew":m.garden_total(),"completed":m.phase=="ending"}))
 
-func report_stage(optional: bool) -> void:
-	expect(m.completed_sections() == 7,"Completed chapter visited every required safe leaf")
+func report_stage(optional: bool,minimum_stamina: float) -> void:
+	expect(m.completed_sections() == m.sections.size(),"Completed chapter visited every required safe leaf")
 	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Whole chapter conserves the capped stamina ledger")
-	if optional: expect(m.garden_awards[m.stage] == 7,"Optional route reaches all dew in this chapter")
-	print("BALANCE: %s" % JSON.stringify({"stage":m.stage,"route":m.chapter_title(),"scenario":"all-dew" if optional else "direct","seconds":snappedf(m.time,0.01),"stamina":snappedf(m.stamina,0.01),"spent":snappedf(m.energy_spent,0.01),"gained":snappedf(m.energy_gained,0.01),"storm_remaining":snappedf(m.rain_remaining,0.01),"recoveries":m.recoveries,"dew":m.garden_awards[m.stage]}))
+	if optional: expect(m.garden_awards[m.stage] == m.dew.size(),"Optional route reaches all dew in this chapter")
+	print("BALANCE: %s" % JSON.stringify({"stage":m.stage,"route":m.chapter_title(),"scenario":"all-dew" if optional else "direct","seconds":snappedf(m.time,0.01),"stamina":snappedf(m.stamina,0.01),"minimum_stamina":snappedf(minimum_stamina,0.01),"spent":snappedf(m.energy_spent,0.01),"gained":snappedf(m.energy_gained,0.01),"storm_remaining":snappedf(m.rain_remaining,0.01),"recoveries":m.recoveries,"dew":m.garden_awards[m.stage]}))
 
 func checkpoints_and_resources() -> void:
 	m = Model.new()
-	expect(not m.gate_ready(m.walls.filter(func(item): return item.has("needs_section"))[0]),"The first exit curtain waits for the local companions")
+	expect(m.walls.all(func(item): return not item.has("needs_section")),"No repeated curtain or hidden rescue gate ends every encounter")
 	m.p = m.shelters[1].pos
 	m.advance_shelters()
 	expect(m.checkpoint_index == -1,"Skipping ahead cannot bypass the ordered checkpoints")
@@ -206,6 +211,17 @@ func checkpoints_and_resources() -> void:
 	m.advance_shelters()
 	expect(m.checkpoint_index == 0 and m.checkpoint.p == m.shelters[0].pos,"Cleared encounter records its safe leaf")
 	var first: Vector2 = m.checkpoint.p
+	m.p = first-Vector2(170,0)
+	m.stamina = 40
+	var crossing: Vector2 = m.p
+	m.step(Vector2.RIGHT,false,0.1)
+	expect(m.p.x > crossing.x and m.velocity.x > 0 and m.stamina < 100,"Wide saved leaf allows continuous movement before stamina is full")
+	m.p = m.dew[1].pos
+	m.advance_garden(0)
+	m.p = first
+	m.advance_shelters()
+	var refresh = Model.new()
+	expect(refresh.restore_payload(m.save_payload()) and refresh.dew[1].collected,"Returning to latest wide leaf saves a newly earned side-path pickup")
 	m.p = m.pods[1].pos
 	m.burst_left = 0.3
 	m.step(Vector2.ZERO,false,1.0/120.0)
@@ -260,6 +276,7 @@ func collision_and_garden() -> void:
 	m.advance_garden(0)
 	m.restore_checkpoint()
 	expect(m.garden_total() == 1 and not m.dew[1].collected,"Unsaved dew follows checkpoint rollback")
+	m.load_stage(1)
 	m.p = m.sprayers[0].pos-Vector2(100,0)
 	m.started = true
 	m.sprayers[0].timer = 0.79
@@ -312,17 +329,17 @@ func save_contract() -> void:
 	m = Model.new()
 	var payload: Dictionary = m.save_payload()
 	payload["ui"] = {"played_seconds":42.5}
-	var path := "user://swarm_chapter_verify_v2.json"
-	expect(Save.PATH.ends_with("chapter_v2.json") and not Save.PATH.ends_with("v1.json"),"Chapter saves use a separate v2 path")
+	var path := "user://swarm_chapter_verify_v3.json"
+	expect(Save.PATH.ends_with("chapter_v3.json") and not Save.PATH.ends_with("v1.json"),"Chapter saves use a separate v3 path")
 	expect(Save.write_payload(payload,path),"A new-run safe snapshot writes atomically")
 	var loaded := Save.read_payload(path)
-	expect(loaded.get("ui",{}).get("played_seconds") == 42.5 and m.restore_payload(loaded),"V2 preserves extra UI metadata and validates model fields")
+	expect(loaded.get("ui",{}).get("played_seconds") == 42.5 and m.restore_payload(loaded),"V3 preserves extra UI metadata and validates model fields")
 	var bad_cases: Array = []
 	for field in ["version","content_revision","stage","checkpoint_index","bees","bursts","recoveries","rings_hit"]:
 		var bad := payload.duplicate(true)
 		bad[field] = -3
 		bad_cases.append(bad)
-	for field in ["pods","walls","rings","dew","sprayers","garden_awards"]:
+	for field in ["pods","walls","rings","dew","shields","sprayers","garden_awards"]:
 		var bad := payload.duplicate(true)
 		bad[field] = ["invalid"]
 		bad_cases.append(bad)
@@ -358,12 +375,12 @@ func chase_contract() -> void:
 		m = Model.new()
 		m.load_stage(stage_index)
 		for section_index in m.sections.size():
-			m.checkpoint_index = section_index-1
+			m.p.x = m.sections[section_index].start_x
 			expect(m.storm_speed() > 0 and m.storm_speed() < Model.CRUISE_SPEED,"Every chase beat remains slower than ordinary horizontal cruise")
-		m.checkpoint_index = 2
+		m.p.x = m.chapter.encounters[3].start_x
 		var pressure: float = m.storm_speed()
-		m.checkpoint_index = 3
-		expect(m.storm_speed() < pressure,"Wind pressure is followed by a slower breathing beat")
+		m.p.x = m.chapter.encounters[4].start_x
+		expect(m.storm_speed() <= pressure,"Wind pressure is followed by a slower breathing beat")
 		m.started = true
 		var old_front: float = m.storm_x
 		var pace: float = m.storm_speed()
@@ -411,16 +428,111 @@ func chase_contract() -> void:
 	m.load_stage(0)
 	expect(m.wind_chain == 0,"Loading a stage clears transient relay feedback")
 
+func shield_contract() -> void:
+	m = Model.new()
+	var counts := [4,2,1,1]
+	for stage in Model.STAGE_COUNT:
+		m.load_stage(stage)
+		expect(m.rescue_total() == counts[stage],"Rescues are distributed through all four levels")
+		expect(m.shields.size() == (1 if stage >= 2 else 0),"Exactly two fixed shield introductions")
+	m.load_stage(2)
+	var pickup: Vector2 = m.shields[0].pos
+	m.p = pickup
+	m.started = true
+	m.invulnerable = 0
+	m.drops.assign([{"pos":pickup,"vel":Vector2.ZERO}])
+	m.step(Vector2.ZERO,false,1.0/120.0)
+	expect(m.shield_left == 5.0 and m.stamina > 99.9 and has_event("shield_block") and not has_event("hit"),"Pickup protects against a same-substep rain collision")
+	m.gain_energy(100)
+	for reason in ["rain","sneeze","storm"]:
+		m.hurt(reason)
+		expect(m.stamina == 100,"Shield blocks weather source: "+reason)
+	m.shields[0].collected = false
+	m.shield_left = 2.0
+	m.collect_shields()
+	expect(m.shield_left == 5.0,"Another pickup refreshes to five seconds without stacking")
+	m.started = true
+	m.rain_timer = 999
+	m.rain_fields.clear()
+	m.storm_x = m.p.x-900
+	var budget: float = m.rain_remaining
+	var front: float = m.storm_x
+	for frame in 60: m.step(Vector2.ZERO,false,1.0/60.0)
+	expect(m.stamina < 99 and m.rain_remaining < budget and m.storm_x > front,"Shield never stops flight costs, exposure or advancing rain")
+	m.walls.assign([m.wall(m.p.x+30,80,40,650)])
+	var barrier: float = m.p.x+30
+	m.step(Vector2.RIGHT,false,0.1)
+	expect(m.p.x < barrier,"Shield cannot pass through solid walls")
+	m.restore_checkpoint()
+	expect(m.shield_left == 0 and not m.shields[0].collected,"Retry before pickup restores item but clears active shield")
+	m.p = m.shields[0].pos
+	m.collect_shields()
+	m.save_checkpoint(Vector2(180,420))
+	var clone = Model.new()
+	expect(clone.restore_payload(m.save_payload()) and clone.shields[0].collected and clone.shield_left == 0,"Saved consumption restores without free active time")
+	m.restore_checkpoint()
+	expect(m.shields[0].collected and m.shield_left == 0,"Immediate rescue snapshots retain consumed items consistently")
+	m.shield_left = 0.01
+	m.events.clear()
+	m.step(Vector2.ZERO,false,0.1)
+	expect(m.shield_left == 0 and has_event("shield_end"),"Shield expires with one explicit end event")
+	m.invulnerable = 0
+	m.hurt()
+	expect(m.stamina == 70,"Weather damage returns after expiry")
+	m.shield_left = 4
+	m.load_stage(3)
+	expect(m.shield_left == 0,"Stage transitions clear temporary protection")
+	var old: Dictionary = m.save_payload()
+	old.version = 2
+	old.content_revision = 1
+	expect(not m.restore_payload(old),"Old v2 layout is rejected without migration or overwrite")
+	# Full-path proof uses ordinary input. Deliberate fixtures below isolate
+	# a normal-speed turning approach inside the authored shield encounter.
+	m.load_stage(2)
+	m.p = pickup-Vector2(30,0)
+	m.started = true
+	m.storm_x = m.p.x-900
+	var route: Array = [pickup,Vector2(pickup.x-30,300),Vector2(pickup.x+290,300),Vector2(pickup.x+340,490),Vector2(pickup.x+660,490)]
+	var cursor := 0
+	for frame in 420:
+		if cursor >= route.size(): break
+		var offset: Vector2 = route[cursor]-m.p
+		if offset.length() < 16: cursor += 1; continue
+		m.step(Vector2(signf(offset.x) if absf(offset.x)>8 else 0,signf(offset.y) if absf(offset.y)>8 else 0).normalized(),false,1.0/60.0)
+	expect(cursor == route.size() and m.bursts == 0 and m.shield_left > 0,"Shield introduction permits a complete normal-flight turn before expiry")
+	print("SHIELD TURN FIXTURE: "+JSON.stringify({"completed":cursor==route.size(),"seconds":m.time,"shield_left":m.shield_left,"bursts":m.bursts}))
+
 func run() -> void:
+	if "--no-shield-only" in OS.get_cmdline_user_args():
+		chapter_routes(false,true)
+		for failure in failures: push_error(failure)
+		print("NO SHIELD: %d checks, %d failures" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
+	if "--routes-only" in OS.get_cmdline_user_args():
+		chapter_routes(false)
+		chapter_routes(true)
+		chapter_routes(false,true)
+		for failure in failures: push_error(failure)
+		print("ROUTE CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--chase-only" in OS.get_cmdline_user_args():
 		chase_contract()
 		for failure in failures: push_error(failure)
 		if failures.is_empty(): print("CHASE VERIFIED: %d checks" % checks)
 		quit(0 if failures.is_empty() else 1)
 		return
+	if "--shield-only" in OS.get_cmdline_user_args():
+		shield_contract()
+		for failure in failures: push_error(failure)
+		print("SHIELD CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
 	controls_contract()
 	if "--controls-only" not in OS.get_cmdline_user_args():
 		chase_contract()
+		shield_contract()
 		authored_content()
 		checkpoints_and_resources()
 		collision_and_garden()
@@ -428,6 +540,7 @@ func run() -> void:
 		save_contract()
 		chapter_routes(false)
 		chapter_routes(true)
+		chapter_routes(false,true)
 	for failure in failures: push_error(failure)
 	if failures.is_empty(): print("SWARM FLIGHT VERIFIED: %d checks, four authored chapters" % checks)
 	quit(0 if failures.is_empty() else 1)

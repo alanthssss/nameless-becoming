@@ -24,8 +24,8 @@ func run() -> void:
 		metrics["passed"] = metrics.peak > 0.1 and metrics.peak < 0.9 and metrics.rms > 0.03 and metrics.seam_delta < 0.02 and metrics.duration > 14.0 and result == OK
 		report.music.append(metrics)
 		report.passed = report.passed and metrics.passed
-	for kind in ["dew","spray","flower_calm"]:
-		var length: float = {"dew":0.35,"spray":0.28,"flower_calm":0.6}[kind]
+	for kind in ["dew","spray","flower_calm","shield","shield_block","shield_end"]:
+		var length: float = {"dew":0.35,"spray":0.28,"flower_calm":0.6,"shield":0.48,"shield_block":0.16,"shield_end":0.28}[kind]
 		var metrics := inspect(sound._make_effect(kind,length))
 		metrics["event"] = kind
 		metrics["passed"] = metrics.peak > 0.03 and metrics.peak < 0.9

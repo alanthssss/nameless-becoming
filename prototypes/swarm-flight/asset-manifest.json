@@ -1,8 +1,8 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.4.4",
+  "revision": "0.5.0",
   "created": "2026-10-20",
-  "direction": "Original garden cartoon with continuous bee silhouettes, distinct action poses and event-driven plant reactions; existing four palettes and background density retained. Code-native drawing, no generated bitmaps or imported reference assets.",
+  "direction": "Original code-native garden cartoons; shared leaf/ink shapes, readable weather shield, diamond dew versus round rain, broad shelters and a distant home light. No generated bitmaps or imported reference assets.",
   "runtime_bitmap_assets": [],
   "code_native_art": {
     "path": "world_view.gd",
@@ -30,7 +30,7 @@
       "sprayer idle/blink/warning/sneeze/calm",
       "diamond dew reward vs round moving spray hazards",
       "sunny vegetable garden/fountain bridge/rainy tool garden/homeward dusk",
-      "warm tree-hollow ending; up to sixteen displayed blossoms from optional collection (chapter total: 28)",
+      "warm tree-hollow ending; up to sixteen displayed blossoms from optional collection (chapter total: 20)",
       "charge circle fills exactly at ready threshold; local result captions for burst/rescue/wind/gate/dew/hit",
       "numbered safe leaves with watering-can, pot, bench and lantern landmarks",
       "linked breeze arrows between authored wind-chain flowers; transient relay count and mint trail",
@@ -38,7 +38,11 @@
       "presentation transients clear on new stage, title, continue and explicit recovery events; pause freezes departures",
       "one-shot rescued companion greeting and curved shrinking flight out of viewport; independent pose, no follow/collider/damage",
       "rescued friends already waiting at final tree; solo player arrival",
-      "upright side-view horizontal mirroring with directional pitch; resting pose settles level"
+      "upright side-view horizontal mirroring with directional pitch; resting pose settles level",
+      "leaf membrane pickup; five-second protection arc and final-second closing leaf tips; soft blocked-rain particles without damage shake",
+      "fixed authored rain cloud bands below HUD and round-bottomed rain drops; backgrounds recede behind gameplay silhouettes",
+      "shelters use model-defined half-width; separate encounters never imply a false continuous wind path",
+      "distant warm tree window at homeward breathing beat fades before actual tree comes into view"
     ],
     "collision_contract": "Model authoritative, unchanged player physics. Only the player has collision and stamina. Rescued actors are bounded screen-plane departure animations with no physics or damage; follow/path and companion collision-offset logic removed. Full solid stem rectangles remain visible, flower direction and shelter position remain model-derived.",
     "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget."
@@ -48,7 +52,7 @@
     "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
     "clock": "Elapsed journey clock in levels 1-2; exposed-time budget labeled 露天 in levels 3-4. Separate spatial storm indicator names chase/near/escaped/sheltered states.",
     "handoff": "1.6-second in-world handoff between stages; Enter skips; pause/focus loss freezes it; fresh input starts each stage.",
-    "progress": "HUD counts rescued friends excluding player; original v2 bees field still includes player for compatibility. Rescue is saved immediately, departure is never persisted or replayed on continue.",
+    "progress": "Twenty spatial encounters share twelve ordered save areas. Eight friends distributed 4/2/1/1; v3 content revision 5 isolates reauthored layouts from v2. Rescue still saves immediately; departure never persists.",
     "local_feedback": "Actionable contextual cues retained; spent-flower text hidden because folded petals show the same result."
   },
   "rejected_pass": {
@@ -88,9 +92,14 @@
       "facing-left-up",
       "facing-left-down",
       "facing-left-dash",
-      "facing-left-rest-fixture"
+      "facing-left-rest-fixture",
+      "shield-route-2",
+      "shield-route-3",
+      "shield-turn-introduction",
+      "shield-final-second-fixture",
+      "distant-home-arrival"
     ],
-    "result": "0.4.4 fixes inverted left-facing art. Five targeted native pose captures reviewed; unchanged 453 model checks, 120 headless UI checks and 145 native UI/capture checks passed. Not independent-player evidence.",
+    "result": "0.5.0 rules, native UI/captures, save isolation and audio checked; counts and exact source in the delivery receipt. Developer evidence only; creator and independent-player acceptance pending.",
     "audio_pcm_peaks": [
       0.62149,
       0.64804,
@@ -116,7 +125,8 @@
     "chase_revision": "0.4.1 retains map geometry, entity counts, control physics, stamina rewards and original music; authored section storm pace and clearer relay/chase feedback. Near-rain capture is an explicit UI state fixture, not a player run.",
     "living_revision": "0.4.2 retains all map, model, input, save and audio source. Revises silhouettes, action poses and bounded plant reactions. Real v2 progress is checked from an isolated copy, never overwritten by QA.",
     "rescue_revision": "Existing geometry, resources, player collision, rain and music retained. Native ordinary-key rescue tests cover temporary departures, pause, active player control, expiry, recovery and restart; save continuation never replays rescue effects.",
-    "facing_revision": "0.4.4 fixes left-facing body inversion using horizontal mirroring plus pitch; resting bodies settle level. Model, input, saves and sound unchanged. Native directional/charge/dash/rest captures and checks recorded in the upright-flight delivery receipt."
+    "facing_revision": "0.4.4 fixes left-facing body inversion using horizontal mirroring plus pitch; resting bodies settle level. Model, input, saves and sound unchanged. Native directional/charge/dash/rest captures and checks recorded in the upright-flight delivery receipt.",
+    "chapter05_revision": "Five authored encounters per stage, three broad saves per stage, 20 optional dew, rescue distribution 4/2/1/1. Direct, all-dew and no-shield ordinary-input paths complete. Shield-turn fixture uses no dash and finishes before expiry; elapsed time is a known-answer route measurement, not first-play time."
   },
   "style_references": [
     {
@@ -143,14 +153,17 @@
     "events_added": [
       "dew",
       "spray",
-      "flower_calm"
+      "flower_calm",
+      "shield",
+      "shield_block",
+      "shield_end"
     ],
     "verification_command": "godot --headless --path prototypes/swarm-flight --script res://audio_verify.gd",
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "add836b8cdf4401d9b76391d7a6787898e67207846a5df62078ddce1e8c0c48a",
-    "sound.gd": "560a73b9e3b8246a0a7ae6df2f05aab26a7aadabc79e121fa75086eae8405665"
+    "world_view.gd": "df23377023abbb6fc40b3a7cbf7c6ae46e475240cfec337d0af2e4ac3c4f887f",
+    "sound.gd": "96c67b4433cda65d834bd1c11ef17e519b10e57151a55761dafac45453fb2e68"
   },
   "updated": "2026-10-21"
 }

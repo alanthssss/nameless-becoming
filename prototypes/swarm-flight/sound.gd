@@ -45,6 +45,9 @@ func _ready() -> void:
 	_samples["ready"] = _make_effect("ready", 0.18)
 	_samples["charge_cancel"] = _make_effect("charge_cancel",0.14)
 	_samples["blocked"] = _make_effect("blocked",0.15)
+	_samples["shield"] = _make_effect("shield",0.48)
+	_samples["shield_block"] = _make_effect("shield_block",0.16)
+	_samples["shield_end"] = _make_effect("shield_end",0.28)
 	_samples["rain_break"] = _samples["gate"]
 	_samples["tired"] = _samples["charge_cancel"]
 	for kind in ["checkpoint","recover_manual","recover_rain","recover_exhaustion","recover_timeout"]:
@@ -106,6 +109,9 @@ func play_event(kind: String) -> void:
 	player.stream = _samples[kind]
 	player.pitch_scale = _rng.randf_range(0.97, 1.03)
 	player.volume_db = -1.5 if kind == "burst" else 0.0
+	if kind == "shield": player.volume_db = -2.0
+	elif kind == "shield_block": player.volume_db = -7.0
+	elif kind == "shield_end": player.volume_db = -5.0
 	player.play()
 	if kind in ["rescue", "hit", "finish", "flower_calm"]:
 		_duck = 0.5
@@ -284,6 +290,17 @@ func _make_effect(kind: String, duration: float) -> AudioStreamWAV:
 				value = sin(TAU*110.0*t)*exp(-t*24.0)*0.3+low*0.16
 			"ready":
 				value = sin(TAU * 880.0 * t) * 0.20 + sin(TAU * 1320.0 * t) * 0.07
+			"shield":
+				# A soft opening interval, separate from the brighter dew/relay chimes.
+				value = sin(TAU*659.25*t)*exp(-t*5.0)*0.22
+				if t > 0.09:
+					var nt := t-0.09
+					value += sin(TAU*987.77*nt)*minf(nt/0.008,1.0)*exp(-nt*6.0)*0.16
+			"shield_block":
+				# A cushioned water tap: no low impact thump and no music ducking.
+				value = sin(TAU*(970.0*t-350.0*t*t))*exp(-t*24.0)*0.22+low*exp(-t*35.0)*0.08
+			"shield_end":
+				value = sin(TAU*(740.0*t-360.0*t*t))*exp(-t*11.0)*0.14+low*exp(-t*16.0)*0.10
 		buffer[i] = value * envelope * 0.75
 	return _wav(buffer, false)
 

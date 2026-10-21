@@ -4,6 +4,7 @@ extends RefCounted
 const Data = preload("res://chapter_data.gd")
 var model
 var collecting := false
+var skip_shields := false
 var stage := -1
 var commands: Array = []
 var cursor := 0
@@ -13,9 +14,10 @@ var burst_ticks := 0
 var seen_recoveries := 0
 var error := ""
 
-func _init(source,collect_optional := false) -> void:
+func _init(source,collect_optional := false,without_shields := false) -> void:
 	model = source
 	collecting = collect_optional
+	skip_shields = without_shields
 
 func output(direction := Vector2.ZERO,held := false,done := false) -> Dictionary:
 	return {"direction":direction,"held":held,"done":done,"error":error}
@@ -28,6 +30,19 @@ func next_input() -> Dictionary:
 		stage = model.stage
 		var data := Data.build(stage)
 		commands = data.optional_route if collecting else data.route
+		if skip_shields:
+			# Explicit ordinary-flight alternate paths stay clear of pickup radii.
+			# Geometry, collision, weather and stamina are never changed.
+			for leaf in data.shields:
+				for j in commands.size():
+					if commands[j].kind != "move" or commands[j].target != leaf.pos: continue
+					if stage == 2:
+						commands[j] = Data.move_to(leaf.pos+Vector2(-130,-110))
+						commands[j+1] = Data.move_to(leaf.pos+Vector2(300,-110))
+					else:
+						commands[j] = Data.move_to(leaf.pos+Vector2(-180,-130))
+						commands.insert(j+1,Data.move_to(leaf.pos+Vector2(180,-130)))
+					break
 		cursor = resume_cursor()
 		ticks_in_command = 0
 		burst_phase = 0
@@ -69,7 +84,7 @@ func next_input() -> Dictionary:
 			"rest":
 				if model.stamina < 99.9 or not model.velocity.is_zero_approx(): return output()
 				if model.checkpoint_index < command.section:
-					error = "Route reached leaf without completing section %d" % command.section
+					error = "Stage %d reached leaf %d with saved %d at %s, pods %s" % [model.stage,command.section,model.checkpoint_index,str(model.p),str(model.pods)]
 					return output()
 				advance_command()
 				continue
