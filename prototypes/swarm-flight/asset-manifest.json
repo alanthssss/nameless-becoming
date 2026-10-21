@@ -1,6 +1,6 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.4.3",
+  "revision": "0.4.4",
   "created": "2026-10-20",
   "direction": "Original garden cartoon with continuous bee silhouettes, distinct action poses and event-driven plant reactions; existing four palettes and background density retained. Code-native drawing, no generated bitmaps or imported reference assets.",
   "runtime_bitmap_assets": [],
@@ -37,7 +37,8 @@
       "rolling storm clouds, directional rain gusts, model-aligned contact edge; storm recedes at ending",
       "presentation transients clear on new stage, title, continue and explicit recovery events; pause freezes departures",
       "one-shot rescued companion greeting and curved shrinking flight out of viewport; independent pose, no follow/collider/damage",
-      "rescued friends already waiting at final tree; solo player arrival"
+      "rescued friends already waiting at final tree; solo player arrival",
+      "upright side-view horizontal mirroring with directional pitch; resting pose settles level"
     ],
     "collision_contract": "Model authoritative, unchanged player physics. Only the player has collision and stamina. Rescued actors are bounded screen-plane departure animations with no physics or damage; follow/path and companion collision-offset logic removed. Full solid stem rectangles remain visible, flower direction and shelter position remain model-derived.",
     "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget."
@@ -82,9 +83,14 @@
       "rescue-departure-start",
       "rescue-departure-arc",
       "rescue-departure-flight",
-      "rescue-solo-after"
+      "rescue-solo-after",
+      "facing-left",
+      "facing-left-up",
+      "facing-left-down",
+      "facing-left-dash",
+      "facing-left-rest-fixture"
     ],
-    "result": "0.4.3 follows explicit creator decision: rescued friends depart independently instead of following. Passed 453 model checks, 120 headless UI checks and 145 native UI/capture checks including complete four-level routes and ordinary-input departure lifecycle; new feel awaits creator replay.",
+    "result": "0.4.4 fixes inverted left-facing art. Five targeted native pose captures reviewed; unchanged 453 model checks, 120 headless UI checks and 145 native UI/capture checks passed. Not independent-player evidence.",
     "audio_pcm_peaks": [
       0.62149,
       0.64804,
@@ -109,7 +115,8 @@
     "chapter_revision": "0.4.0 keeps all three original music arrangements unchanged; known-answer developer route is roughly 5-6 minutes, not evidence for the initial 20-30-minute first-play target.",
     "chase_revision": "0.4.1 retains map geometry, entity counts, control physics, stamina rewards and original music; authored section storm pace and clearer relay/chase feedback. Near-rain capture is an explicit UI state fixture, not a player run.",
     "living_revision": "0.4.2 retains all map, model, input, save and audio source. Revises silhouettes, action poses and bounded plant reactions. Real v2 progress is checked from an isolated copy, never overwritten by QA.",
-    "rescue_revision": "Existing geometry, resources, player collision, rain and music retained. Native ordinary-key rescue tests cover temporary departures, pause, active player control, expiry, recovery and restart; save continuation never replays rescue effects."
+    "rescue_revision": "Existing geometry, resources, player collision, rain and music retained. Native ordinary-key rescue tests cover temporary departures, pause, active player control, expiry, recovery and restart; save continuation never replays rescue effects.",
+    "facing_revision": "0.4.4 fixes left-facing body inversion using horizontal mirroring plus pitch; resting bodies settle level. Model, input, saves and sound unchanged. Native directional/charge/dash/rest captures and checks recorded in the upright-flight delivery receipt."
   },
   "style_references": [
     {
@@ -142,7 +149,7 @@
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "fe2b57fb8c526891c5bc5b2d3c7aa56885e030d177652f12b96801ddf981ab2b",
+    "world_view.gd": "add836b8cdf4401d9b76391d7a6787898e67207846a5df62078ddce1e8c0c48a",
     "sound.gd": "560a73b9e3b8246a0a7ae6df2f05aab26a7aadabc79e121fa75086eae8405665"
   },
   "updated": "2026-10-21"
