@@ -5,6 +5,7 @@ const Data = preload("res://chapter_data.gd")
 var model
 var collecting := false
 var skip_shields := false
+var wait_for_full := true
 var stage := -1
 var commands: Array = []
 var cursor := 0
@@ -82,7 +83,7 @@ func next_input() -> Dictionary:
 				advance_command()
 				continue
 			"rest":
-				if model.stamina < 99.9 or not model.velocity.is_zero_approx(): return output()
+				if wait_for_full and (model.stamina < 99.9 or not model.velocity.is_zero_approx()): return output()
 				if model.checkpoint_index < command.section:
 					error = "Stage %d reached leaf %d with saved %d at %s, pods %s" % [model.stage,command.section,model.checkpoint_index,str(model.p),str(model.pods)]
 					return output()

@@ -1,7 +1,7 @@
 extends RefCounted
-## V3 uses the reauthored 0.5 layout. Previous v1/v2 files are never read/written.
+## V4 uses the 0.5.1 event layout. Previous v1/v2/v3 files are never read/written.
 const Model = preload("res://game_model.gd")
-const PATH := "user://before_the_rain_chapter_v3.json"
+const PATH := "user://before_the_rain_chapter_v4.json"
 const MAX_BYTES := 65536
 
 static func read_payload(path: String = PATH) -> Dictionary:
