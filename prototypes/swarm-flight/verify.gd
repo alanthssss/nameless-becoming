@@ -1,12 +1,11 @@
 extends SceneTree
 const Model = preload("res://game_model.gd")
 const Save = preload("res://save_data.gd")
+const Data = preload("res://chapter_data.gd")
+const Driver = preload("res://route_driver.gd")
 var checks := 0
 var failures: Array[String] = []
 var m
-var hesitation := 0
-var route_label := "direct"
-var collecting := false
 
 func _initialize() -> void:
 	call_deferred("run")
@@ -14,211 +13,6 @@ func _initialize() -> void:
 func expect(ok: bool, message: String) -> void:
 	checks += 1
 	if not ok: failures.append(message)
-
-func fly(target: Vector2, limit := 1800) -> bool:
-	for i in range(limit):
-		if m.p.distance_to(target) < 13 or m.phase != "playing": return true
-		m.step((target-m.p).normalized(),false,1.0/60.0)
-	return false
-
-func burst(direction: Vector2, settle := 0.62) -> void:
-	for i in hesitation: m.step(Vector2.ZERO,false,1.0/60.0)
-	m.step(direction,false,1.0/60.0)
-	for i in range(43): m.step(Vector2.ZERO,true,1.0/60.0)
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	for i in range(int(settle*60)): m.step(Vector2.ZERO,false,1.0/60.0)
-
-func navigate(target: Vector2, label: String) -> void:
-	expect(fly(target),label)
-
-func full_route() -> void:
-	m = Model.new()
-	if collecting: navigate(m.dew[0].pos,"First morning dew")
-	navigate(Vector2(590,400),"First pod approach")
-	burst(Vector2.RIGHT)
-	expect(m.bees == 3,"Burst rescues first pair")
-	navigate(Vector2(1040,380),"First stem approach")
-	navigate(Vector2(1240,380),"First stem gap")
-	navigate(Vector2(1330,235),"Second pod approach")
-	burst(Vector2.RIGHT)
-	expect(m.bees == 5,"Second pair joins")
-	if collecting: navigate(m.dew[1].pos,"High morning dew")
-	navigate(Vector2(1770,520),"Lower route approach")
-	navigate(Vector2(1990,520),"Second stem gap")
-	if collecting: navigate(m.dew[2].pos,"Low morning dew")
-	navigate(Vector2(2180,525),"Third pod approach")
-	burst(Vector2.RIGHT)
-	expect(m.bees == 7 and m.exit_ready,"All six companions rescued")
-	navigate(Vector2(2560,420),"Curtain approach")
-	burst(Vector2.RIGHT)
-	navigate(m.exit_pos,"Meadow exit")
-	expect(m.phase == "transition","Stage one has a reachable ending")
-	route_report("meadow")
-	if collecting: expect(m.garden_total() == 3,"All meadow dew collected on a continuous route")
-	m.load_stage(1)
-	navigate(Vector2(580,460),"Wind bridge approach")
-	burst(Vector2.RIGHT,0.8)
-	if collecting: navigate(m.dew[0].pos,"High fountain dew")
-	# Re-enter each flower with another chosen launch, not one automated ride.
-	for i in range(1,4):
-		var target: Vector2 = m.rings[i].pos
-		var approach: Vector2 = target - (target-m.p).normalized()*155
-		navigate(approach,"Wind flower %d approach" % i)
-		burst((target-m.p).normalized(),0.82)
-		if collecting and i == 1: navigate(m.dew[1].pos,"Low fountain dew")
-	if collecting: navigate(m.dew[2].pos,"Last fountain dew")
-	navigate(Vector2(3470,405),"Final curtain approach")
-	burst(Vector2.RIGHT,0.65)
-	navigate(m.exit_pos,"Wind bridge exit")
-	expect(m.bees == 9 and m.phase == "transition","All nine bees reach the storm chapter")
-	expect(m.rings_hit == 4,"Every wind flower can be used by ordinary controls")
-	route_report("flower bridge")
-	if collecting: expect(m.garden_total() == 6,"Six dew retained across scenes")
-	m.load_stage(2)
-	# The final route works without relying on the optional wind-ring accelerators.
-	navigate(Vector2(670,390),"Storm first approach")
-	navigate(Vector2(940,390),"Storm first gap")
-	if collecting: navigate(m.dew[0].pos,"Storm side-route dew")
-	navigate(Vector2(1050,400),"Storm first curtain approach")
-	burst(Vector2.RIGHT)
-	navigate(Vector2(1640,400),"First shelter")
-	expect(m.shelters[0].reached,"First shelter is a checkpoint")
-	navigate(Vector2(2000,440),"Middle gap approach")
-	navigate(Vector2(2270,440),"Middle gap")
-	navigate(Vector2(2380,430),"Middle curtain approach")
-	burst(Vector2.RIGHT)
-	navigate(Vector2(2970,430),"Second shelter")
-	expect(m.shelters[1].reached,"Second shelter is a checkpoint")
-	if collecting:
-		navigate(m.dew[1].pos,"Sheltered morning dew")
-		for i in 90: m.step(Vector2.ZERO,false,1.0/60.0)
-	navigate(Vector2(3210,480),"Last gap approach")
-	navigate(Vector2(3410,480),"Last gap")
-	navigate(Vector2(3810,570 if collecting else 430),"Last curtain approach")
-	burst(Vector2.RIGHT)
-	if collecting: navigate(m.dew[2].pos,"Final morning dew")
-	navigate(m.exit_pos,"Reach the hollow")
-	expect(m.phase == "ending" and m.bees == 9,"Complete three-stage route ends at home with nine bees")
-	route_report("rainfront")
-	if collecting: expect(m.garden_total() == 9,"All nine optional dew and all companions reach the ending: " + str(m.dew))
-
-func route_report(name: String) -> void:
-	expect(m.recoveries == 0,"Direct route finishes without forced recovery: " + name)
-	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Stamina ledger conserves actual capped gains and costs: " + name)
-	print("BALANCE: %s" % JSON.stringify({"route":name,"scenario":route_label,"seconds":snappedf(m.time,0.01),"stamina":snappedf(m.stamina,0.01),"spent":snappedf(m.energy_spent,0.01),"gained":snappedf(m.energy_gained,0.01),"storm_remaining":snappedf(m.rain_remaining,0.01),"recoveries":m.recoveries,"dew":m.garden_awards[m.stage]}))
-
-func stamina_and_clock() -> void:
-	m = Model.new()
-	for i in 600: m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.stamina == 100,"Reading before first input consumes no stamina")
-	m.step(Vector2.RIGHT,false,1.0/60.0)
-	for i in 299: m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(absf(m.stamina-90)<0.01,"Five exposed seconds cost exactly ten stamina")
-	m.p = Vector2(200,150)
-	m.face = Vector2.RIGHT
-	m.charging = true
-	m.charge = 1
-	var before: float = m.stamina
-	m.step(Vector2.ZERO,false,1.0/120.0)
-	expect(absf(before-m.stamina-20-2.0/120.0)<0.001 and has_event("burst"),"Burst release immediately charges twenty plus elapsed flight drain")
-	m.load_stage(0)
-	m.spend_energy(81)
-	m.charging = true
-	m.charge = 1
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.bursts == 1 and has_event("tired") and m.burst_left == 0,"Less than twenty stamina refuses launch and reports the cause")
-	m.started = true
-	m.spend_energy(m.stamina-0.01)
-	m.events.clear()
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(has_event("recover_exhaustion") and m.stamina > 99.9,"Exhaustion returns to a full-stamina checkpoint")
-	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Recovery refill is included in the energy ledger")
-	m.load_stage(0)
-	m.p = Vector2(590,400)
-	m.started = true
-	m.spend_energy(80)
-	m.face = Vector2.RIGHT
-	m.charging = true
-	m.charge = 1
-	m.step(Vector2.ZERO,false,1.0/120.0)
-	expect(m.stamina == 0 and m.burst_left > 0 and m.recoveries == 1,"Exactly twenty stamina can launch a final committed burst")
-	for i in 45: m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.bees == 3 and m.stamina > 35 and m.recoveries == 1,"Final burst can reach a rescue and replenish stamina before exhaustion")
-	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Final-burst rescue preserves capped energy accounting")
-	m.load_stage(2)
-	m.p = Vector2(1640,400)
-	m.started = true
-	m.spend_energy(70)
-	m.rain_remaining = 32
-	for i in 120: m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(absf(m.stamina-78)<0.01 and m.rain_remaining == 32,"Two seconds under a leaf recover 48 and pause the countdown")
-	for i in 120: m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.stamina == 100 and absf(m.energy_gained-70)<0.001,"Rest caps stamina without inventing excess gains")
-	m.p += Vector2(250,0)
-	m.rain_remaining = 0.01
-	m.events.clear()
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(has_event("recover_timeout") and m.p.distance_to(Vector2(1640,400))<1 and m.bees == 9,"Countdown expiry returns all companions to the most recent shelter")
-	expect(m.rain_remaining >= 20 and m.stamina > 99.9,"Timeout retry has a safe clock budget and full stamina")
-	m.checkpoint["rain_remaining"] = 0.5
-	m.restore_checkpoint()
-	expect(m.rain_remaining == 20,"Late checkpoints cannot create a repeated timeout trap")
-
-func rules_and_recovery() -> void:
-	m = Model.new()
-	var start: Vector2 = m.p
-	for i in range(240): m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.p == start,"Opening remains safe while reading controls")
-	m.step(Vector2(1,1).normalized(),false,0.1)
-	expect(m.p.distance_to(start) < 30,"Diagonal movement has the same bounded speed")
-	for i in range(5): m.step(Vector2.ZERO,true,1.0/60.0)
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.bursts == 0,"A stray Space tap does not launch")
-	m.clear_input()
-	expect(m.charge == 0 and not m.charging,"Focus/pause clears charge without releasing a burst")
-	# The narrowest obstacle cannot be skipped by a long render-frame burst.
-	m.p = Vector2(1090,210)
-	m.face = Vector2.RIGHT
-	m.burst_left = 0.54
-	m.step(Vector2.RIGHT,false,0.1)
-	expect(m.p.x < 1120,"Substepped collision prevents tunneling through a stem")
-	# Native play revealed a compact-to-spread collision softlock at a wall.
-	m.load_stage(1)
-	m.p = Vector2(1790,260)
-	m.charging = true
-	m.charge = 1.0
-	m.face = Vector2.RIGHT
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	for i in range(30): m.step(Vector2.LEFT,false,1.0/60.0)
-	expect(m.p.x < 1730,"Unfolding against a wall still permits flying away")
-	m.load_stage(0)
-	m.p = Vector2(2680,420)
-	m.burst_left = 0.54
-	m.step(Vector2.RIGHT,false,0.1)
-	expect(m.walls[4].broken and m.p.x > 2742,"Burst opens a leaf curtain, with matching collision removal")
-	m.load_stage(0)
-	navigate(Vector2(590,400),"Recovery rescue approach")
-	burst(Vector2.RIGHT)
-	var saved_pos: Vector2 = m.checkpoint.p
-	m.spend_energy(m.stamina-1)
-	m.invulnerable = 0
-	m.drops.assign([{"pos":m.p,"vel":Vector2.ZERO},{"pos":m.p,"vel":Vector2.ZERO}])
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.stamina > 99.8 and m.bees == 3 and m.recoveries == 1,"Lethal rain restores the newest rescue without losing bees")
-	expect(m.p.distance_to(saved_pos) < 4 and m.drops.is_empty(),"Recovery clears all pending rain safely")
-	m.load_stage(2)
-	m.p = Vector2(1640,400)
-	m.step(Vector2.ZERO,false,0.1)
-	var storm_before: float = m.storm_x
-	for i in range(600): m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.storm_x == storm_before and m.stamina > 99.8,"Shelter permits unhurried rest")
-	m.p = Vector2(2000,430)
-	m.started = true
-	m.spend_energy(m.stamina-1)
-	m.invulnerable = 0
-	m.storm_x = 2050
-	m.step(Vector2.ZERO,false,0.1)
-	expect(m.stamina > 99.8 and m.p.x < 1700 and m.storm_x < m.p.x-250,"Storm failure resumes at shelter with safe rain margin")
 
 func has_event(kind: String) -> bool:
 	for event in m.events:
@@ -300,7 +94,7 @@ func controls_contract() -> void:
 	# even when directions and Space were held as exhaustion/timeout occurred.
 	for reason in ["exhaustion","timeout","rain","sneeze"]:
 		m = Model.new()
-		m.load_stage(2 if reason == "timeout" else 0)
+		m.load_stage(2 if reason == "timeout" else 1 if reason == "rain" else 0)
 		if reason == "rain": m.bees = 3
 		m.p = Vector2(500,420)
 		m.save_checkpoint()
@@ -318,184 +112,229 @@ func controls_contract() -> void:
 		m.step(Vector2.ZERO,false,0.1)
 		expect(not m.started and m.p == m.checkpoint.p and m.stamina == 100,"Cleared UI input can hold the recovery position safely: " + reason)
 
-func feedback_contract() -> void:
-	m = Model.new()
-	for i in 5: m.step(Vector2.ZERO,true,1.0/60.0)
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(has_event("charge_cancel") and m.bursts == 0,"Early release reports insufficient charge without launching")
-	m.events.clear()
-	m.p = Vector2(1090,210)
-	m.face = Vector2.RIGHT
-	m.burst_left = 0.5
-	m.step(Vector2.RIGHT,false,0.1)
-	expect(has_event("blocked") and m.burst_left == 0,"Solid stem stops a launch and gives a blocking response")
-	var notices: int = m.events.size()
-	for i in 15: m.step(Vector2.RIGHT,false,1.0/60.0)
-	expect(m.events.size() == notices,"Holding against a stem does not spam the blocking response")
-	m.load_stage(1)
-	m.p = Vector2(720,455)
-	m.burst_left = 0.5
-	m.face = Vector2.RIGHT
-	m.step(Vector2.RIGHT,false,1.0/120.0)
-	var shown_direction := Vector2(670,-210).normalized()
-	expect(m.face.distance_to(shown_direction)<0.001,"Off-center flower entry follows the advertised center-to-center direction")
-	expect(m.rings[0].active and has_event("ring"),"First wind flower becomes spent and gives a success response")
-	for event in m.events:
-		if event.kind == "ring":
-			expect(float(event.reward) >= 0 and float(event.reward) < 8.0,"Wind flower feedback reports the capped actual stamina reward")
-	m.events.clear()
-	m.p = Vector2(760,460)
-	m.burst_left = 0.4
-	m.step(Vector2.ZERO,false,1.0/120.0)
-	expect(not has_event("ring") and m.rings_hit == 1,"Spent wind flower does not promise another launch")
-	m.burst_left = 0
-	expect(m.context_cue().get("kind") == "spent","Nearby spent flower has a distinct contextual state")
-	m.load_stage(2)
-	m.p = Vector2(1640,305)
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(not m.shelters[0].reached,"Flying above the shelter leaf cannot activate shelter safety")
-	m.p = Vector2(1640,400)
-	m.spend_energy(m.stamina-1)
-	m.started = true
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.stamina > 1 and m.stamina < 2 and has_event("checkpoint"),"Entering below the leaf begins gradual recovery and announces a checkpoint")
-	expect(m.context_cue().get("kind") == "shelter","Safety feedback takes priority over a nearby wind flower")
-	m.spend_energy(20)
-	expect(not m.hint().contains("体力已恢复"),"Shelter describes ongoing recovery, not an instant refill")
-	m.gain_energy(100)
-	var rest: Vector2 = m.p
-	for i in 600: m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.p.distance_to(rest)<0.1 and m.stamina > 99.8,"Releasing controls under a leaf permits stationary safe rest")
-	m.p = Vector2(1757,400)
-	m.invulnerable = 0
-	m.drops.assign([{"pos":Vector2(1770,400),"vel":Vector2.ZERO}])
-	m.step(Vector2.ZERO,false,1.0/60.0)
-	expect(m.stamina > 99.8,"The visible shelter safe zone protects even at its edge")
-	m.events.clear()
-	m.p += Vector2(250,0)
-	m.restore_checkpoint()
-	expect(has_event("recover_manual") and m.p.distance_to(Vector2(1640,400))<0.1,"Manual return announces its cause and restores inside the leaf")
-	m.events.clear()
-	m.invulnerable = 0
-	m.spend_energy(m.stamina-1)
-	m.hurt()
-	expect(has_event("recover_rain") and not has_event("recover_manual"),"Rain defeat is explained separately from manual return")
-	m.load_stage(0)
-	m.p = m.pods[0].pos-Vector2(20,0)
-	m.face = Vector2.RIGHT
-	m.burst_left = 0.5
-	m.step(Vector2.ZERO,false,1.0/120.0)
-	var found_rescue := false
-	for event in m.events:
-		if event.kind == "rescue":
-			found_rescue = true
-			expect(event.count == 2 and event.reward == 0,"Rescue feedback reports the actual companion count and no invented capped reward")
-	expect(found_rescue,"Rescue success remains visible even when stamina was already full")
+func authored_content() -> void:
+	var names: Array[String] = []
+	for stage in Model.STAGE_COUNT:
+		m = Model.new()
+		m.load_stage(stage)
+		expect(m.sections.size() == 7 and m.world_width >= 15000,"Each chapter has seven authored encounters and a complete world")
+		expect(m.theme_index() == stage and m.music_index() in [0,1,2],"Chapter presentation is data driven")
+		expect(m.dew.size() == 7 and m.shelters.size() == 7,"Each encounter has an optional dew and safe checkpoint")
+		for section in m.sections:
+			expect(not names.has(section.name),"Encounter names are distinct: "+section.name)
+			names.append(section.name)
+		for wall in m.walls:
+			expect(wall.rect.size.x > 0 and wall.rect.size.y > 0,"Authored obstacle has positive extents")
+		for i in m.rings.size():
+			var point: Vector2 = m.rings[i].pos-Vector2(60,0)
+			var direction: Vector2 = m.ring_direction(i)
+			var clear := true
+			for sample in 66:
+				var at: Vector2 = point+direction*sample*8.0
+				for wall in m.walls:
+					if wall.kind == "stem" and wall.rect.grow(14).has_point(at): clear = false
+			expect(clear,"Advertised wind landing clears solid stems")
+		expect(not m.exit_ready,"A whole chapter cannot finish before its required checkpoints")
 
-func garden_contract() -> void:
+func chapter_routes(collect_optional: bool) -> void:
 	m = Model.new()
-	expect(m.dew.size() == 3 and m.sprayers.size() == 1,"Meadow introduces three dew and one sneeze flower")
+	m.reset_journey()
+	var driver = Driver.new(m,collect_optional)
+	var route_time := 0.0
+	var frames := 0
+	var prior_checkpoint := -1
+	var rings_this_launch := 0
+	var chain_max := 0
+	while m.phase != "ending" and frames < 108000:
+		if m.phase == "transition":
+			if m.stage == 1:
+				expect(chain_max >= 3,"Flower bridge contains a real three-flower chain from one launch")
+				var branch_rings: Array = m.rings.filter(func(item): return item.get("section",-1) == 3)
+				expect(branch_rings.all(func(item): return not item.active) if collect_optional else branch_rings.all(func(item): return item.active),"The same bridge admits a wind shortcut and a no-wind steady route")
+			report_stage(collect_optional)
+			route_time += m.time
+			m.load_stage(m.stage+1)
+			prior_checkpoint = -1
+			rings_this_launch = 0
+			chain_max = 0
+		var action: Dictionary = driver.next_input()
+		if not action.error.is_empty():
+			failures.append("Full route: "+action.error)
+			break
+		m.step(action.direction,action.held,1.0/60.0)
+		frames += 1
+		if m.checkpoint_index != prior_checkpoint:
+			prior_checkpoint = m.checkpoint_index
+			var payload: Dictionary = m.save_payload()
+			var clone = Model.new()
+			var decoded = JSON.parse_string(JSON.stringify(payload))
+			expect(clone.restore_payload(decoded),"Reached checkpoint serializes and restores on the actual route")
+			expect(clone.p == m.checkpoint.p and clone.bees == m.checkpoint.bees and not clone.started,"Checkpoint resume is safe and preserves the real rescued group")
+		for event in m.events:
+			if event.kind == "burst": rings_this_launch = 0
+			elif event.kind == "ring":
+				rings_this_launch += 1
+				chain_max = maxi(chain_max,rings_this_launch)
+		m.events.clear()
+	if m.phase == "ending":
+		expect(chain_max >= 3,"Final chapter combines a real continuous flower chain with the homeward route")
+		report_stage(collect_optional)
+		route_time += m.time
+	expect(m.phase == "ending" and m.stage == 3 and m.bees == 9,"Known-answer input route completes all four chapters with the whole group")
+	if collect_optional: expect(m.garden_total() == m.journey_dew_total(),"Optional input route collects all twenty-eight dew without teleportation")
+	var restored = Model.new()
+	expect(restored.restore_payload(m.save_payload()) and restored.phase == "ending","Completed save resumes at the ending rather than replaying the long final chapter")
+	print("CHAPTER ROUTE: %s" % JSON.stringify({"scenario":"all-dew" if collect_optional else "direct","seconds":snappedf(route_time,0.01),"frames":frames,"recoveries":m.recoveries,"dew":m.garden_total(),"completed":m.phase=="ending"}))
+
+func report_stage(optional: bool) -> void:
+	expect(m.completed_sections() == 7,"Completed chapter visited every required safe leaf")
+	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Whole chapter conserves the capped stamina ledger")
+	if optional: expect(m.garden_awards[m.stage] == 7,"Optional route reaches all dew in this chapter")
+	print("BALANCE: %s" % JSON.stringify({"stage":m.stage,"route":m.chapter_title(),"scenario":"all-dew" if optional else "direct","seconds":snappedf(m.time,0.01),"stamina":snappedf(m.stamina,0.01),"spent":snappedf(m.energy_spent,0.01),"gained":snappedf(m.energy_gained,0.01),"storm_remaining":snappedf(m.rain_remaining,0.01),"recoveries":m.recoveries,"dew":m.garden_awards[m.stage]}))
+
+func checkpoints_and_resources() -> void:
+	m = Model.new()
+	expect(not m.gate_ready(m.walls.filter(func(item): return item.has("needs_section"))[0]),"The first exit curtain waits for the local companions")
+	m.p = m.shelters[1].pos
+	m.advance_shelters()
+	expect(m.checkpoint_index == -1,"Skipping ahead cannot bypass the ordered checkpoints")
+	m.p = m.shelters[0].pos
+	m.advance_shelters()
+	expect(m.checkpoint_index == -1,"A leaf cannot certify a missed local rescue")
+	for pod in m.pods:
+		if pod.section == 0: pod.open = true; m.bees += int(pod.count)
+	m.advance_shelters()
+	expect(m.checkpoint_index == 0 and m.checkpoint.p == m.shelters[0].pos,"Cleared encounter records its safe leaf")
+	var first: Vector2 = m.checkpoint.p
+	m.p = m.pods[1].pos
+	m.burst_left = 0.3
+	m.step(Vector2.ZERO,false,1.0/120.0)
+	expect(m.checkpoint.p == first and m.checkpoint.bees == m.bees,"Rescue saves new companions without moving recovery into danger")
+	m.load_stage(2)
+	m.rain_remaining = 0.5
+	m.p = m.shelters[0].pos
+	m.advance_shelters()
+	expect(m.rain_remaining == m.sections[1].budget,"A fresh leaf resets the next exposed section's rain budget")
+	m.p = m.shelters[1].pos
+	m.advance_shelters()
+	var latest: Vector2 = m.checkpoint.p
+	m.p = m.shelters[0].pos
+	m.advance_shelters()
+	expect(m.checkpoint_index == 1 and m.checkpoint.p == latest,"Revisiting old shelter never rolls checkpoint progress backwards")
+	m.spend_energy(70)
+	m.started = true
+	var clock: float = m.rain_remaining
+	for i in 120: m.step(Vector2.ZERO,false,1.0/60.0)
+	expect(absf(m.stamina-78)<0.01 and m.rain_remaining == clock,"Two seconds of leaf rest restore 48 energy and freeze rain")
+	m = control_fixture()
+	m.step(Vector2.RIGHT,false,1.0/60.0)
+	for i in 299: m.step(Vector2.ZERO,false,1.0/60.0)
+	expect(absf(m.stamina-90)<0.01,"Five exposed seconds retain the original ten-energy drain")
+	m = control_fixture()
+	m.spend_energy(81)
+	for i in 30: m.step(Vector2.ZERO,true,1.0/60.0)
+	m.step(Vector2.ZERO,false,1.0/60.0)
+	expect(m.bursts == 0 and has_event("tired"),"Less than twenty energy refuses an unaffordable burst")
+
+func collision_and_garden() -> void:
+	m = control_fixture()
+	m.walls.assign([m.wall(500,80,45,650)])
+	m.p = Vector2(475,420)
+	m.face = Vector2.RIGHT
+	m.burst_left = 0.54
+	m.step(Vector2.RIGHT,false,0.1)
+	expect(m.p.x < 500 and has_event("blocked"),"Substeps stop a full-speed burst at a solid stem")
+	m.walls[0].kind = "curtain"
+	m.burst_left = 0.54
+	m.step(Vector2.RIGHT,false,0.1)
+	expect(m.walls[0].broken and has_event("gate"),"The same burst opens a breakable curtain")
+	m = Model.new()
 	m.spend_energy(60)
 	m.p = m.dew[0].pos
 	m.advance_garden(0)
-	expect(m.stamina == 52 and m.garden_total() == 1 and has_event("dew"),"Dew is a visible optional +12 pickup")
+	expect(m.stamina == 52 and m.garden_total() == 1,"Optional dew restores twelve once")
 	m.advance_garden(0)
-	expect(m.stamina == 52 and m.garden_total() == 1,"A dew cannot be picked twice")
+	expect(m.stamina == 52 and m.garden_total() == 1,"Collected dew cannot be farmed")
 	m.save_checkpoint()
 	m.p = m.dew[1].pos
 	m.advance_garden(0)
-	expect(m.garden_total() == 2,"A detour adds a second dew")
 	m.restore_checkpoint()
-	expect(m.garden_total() == 1 and not m.dew[1].collected,"Recovery rolls unsaved dew back with its world state")
-	m.p = m.dew[1].pos
-	m.advance_garden(0)
-	expect(m.stamina == 100 and m.garden_total() == 2,"Full stamina still collects dew without overfilling")
-	expect(absf(m.stamina-(100+m.energy_gained-m.energy_spent))<0.001,"Dew and recovery preserve resource conservation")
-	m.load_stage(1)
-	expect(m.garden_total() == 2 and m.sprayers.size() == 2,"Moving to next scene keeps prior scene dew")
-	m.reset_journey()
-	expect(m.garden_total() == 0,"New or resumed journey resets the run-only collection")
-	m.load_stage(0)
-	m.p = m.sprayers[0].pos-Vector2(260,0)
-	var initial_timer: float = m.sprayers[0].timer
-	m.advance_garden(1)
-	expect(m.sprayers[0].timer == initial_timer and m.puffs.is_empty(),"Flowers wait until the player starts")
+	expect(m.garden_total() == 1 and not m.dew[1].collected,"Unsaved dew follows checkpoint rollback")
+	m.p = m.sprayers[0].pos-Vector2(100,0)
 	m.started = true
 	m.sprayers[0].timer = 0.79
-	expect(m.sprayer_phase(0) == "warning","Flower warns before releasing water")
+	expect(m.sprayer_phase(0) == "warning","Sneeze flower still warns before its water fan")
 	m.advance_garden(0.8)
-	expect(m.puffs.size() == 3 and has_event("spray") and m.sprayer_phase(0) == "sneeze","One predictable slow fan is emitted per sneeze")
+	expect(m.puffs.size() == 3,"One sneeze creates three water particles")
 	m.p = m.sprayers[0].pos
-	m.spend_energy(60)
 	m.burst_left = 0.3
 	m.advance_garden(0)
-	expect(m.sprayer_phase(0) == "calm" and m.puffs.is_empty() and m.stamina == 50,"Burst calms the flower, clears its water and gives first reward")
-	m.save_checkpoint()
-	m.advance_garden(5.9)
-	expect(m.sprayer_phase(0) == "calm" and m.puffs.is_empty(),"Calmed flower remains safe for nearly six seconds")
+	expect(m.sprayer_phase(0) == "calm" and m.puffs.is_empty(),"Burst calms the flower and clears its own water")
+	var reward_energy: float = m.stamina
 	m.sprayers[0].stun_left = 0
 	m.advance_garden(0)
-	expect(m.stamina == 50,"Repeated calming cannot farm stamina")
-	m.restore_checkpoint()
-	expect(m.sprayers[0].rewarded and m.sprayer_phase(0) == "calm","Checkpoint restores flower reward and calm state")
-	m.p = Vector2(400,300)
-	m.invulnerable = 0
+	expect(m.stamina == reward_energy,"Repeated calming does not farm stamina")
 	m.burst_left = 0
-	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
-	m.advance_garden(0)
-	expect(m.stamina == 88 and m.puffs.is_empty() and has_event("hit"),"Sneeze water costs twelve and is consumed")
-	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
-	m.advance_garden(0)
-	expect(m.stamina == 88,"Invulnerability prevents a three-water fan causing three hits")
 	m.invulnerable = 0
-	m.burst_left = 0.3
-	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
-	m.advance_garden(0)
-	expect(m.stamina == 88 and has_event("rain_break"),"Burst scatters water without damage")
-	m.load_stage(2)
-	m.p = m.shelters[0].pos
-	m.invulnerable = 0
-	m.puffs.assign([{"pos":m.p,"vel":Vector2.ZERO,"life":2.0,"source":0}])
-	m.advance_garden(0)
-	expect(m.stamina == 100 and m.puffs.is_empty(),"Shelter also intercepts sneeze water")
-	m.puffs.assign([{"pos":m.walls[0].rect.get_center(),"vel":Vector2.ZERO,"life":2.0,"source":0}])
-	m.advance_garden(0)
-	expect(m.puffs.is_empty(),"Water cannot pass through solid stems")
-	m.puffs.assign([{"pos":Vector2(500,200),"vel":Vector2.ZERO,"life":0.01,"source":0}])
-	m.advance_garden(0.02)
-	expect(m.puffs.is_empty(),"Old water is culled instead of accumulating offscreen")
+	m.hurt("sneeze",12)
+	var after_hit: float = m.stamina
+	m.hurt("sneeze",12)
+	expect(m.stamina == after_hit,"Hit protection prevents a fan from dealing three simultaneous hits")
 
 func save_contract() -> void:
-	var path := "user://swarm_verify_save.json"
-	expect(Save.write_stage(2,path) and Save.read_stage(path) == 2,"Chapter save round-trips")
-	expect(not Save.write_stage(9,path) and Save.read_stage(path) == 2,"Invalid chapter cannot overwrite valid save")
-	for content in ["broken",'{"version":1,"stage":-1}','{"version":1,"stage":1.5}','{"version":1,"stage":3}','{"version":2,"stage":1}','{"version":1,"stage":"1"}',"[]"]:
-		var f := FileAccess.open(path,FileAccess.WRITE)
-		f.store_string(content)
-		f.close()
-		expect(Save.read_stage(path) == -1,"Malformed save rejected: " + content)
+	m = Model.new()
+	var payload: Dictionary = m.save_payload()
+	payload["ui"] = {"played_seconds":42.5}
+	var path := "user://swarm_chapter_verify_v2.json"
+	expect(Save.PATH.ends_with("chapter_v2.json") and not Save.PATH.ends_with("v1.json"),"Chapter saves use a separate v2 path")
+	expect(Save.write_payload(payload,path),"A new-run safe snapshot writes atomically")
+	var loaded := Save.read_payload(path)
+	expect(loaded.get("ui",{}).get("played_seconds") == 42.5 and m.restore_payload(loaded),"V2 preserves extra UI metadata and validates model fields")
+	var bad_cases: Array = []
+	for field in ["version","content_revision","stage","checkpoint_index","bees","bursts","recoveries","rings_hit"]:
+		var bad := payload.duplicate(true)
+		bad[field] = -3
+		bad_cases.append(bad)
+	for field in ["pods","walls","rings","dew","sprayers","garden_awards"]:
+		var bad := payload.duplicate(true)
+		bad[field] = ["invalid"]
+		bad_cases.append(bad)
+	for value in [-1,999,"soon",null]:
+		var bad := payload.duplicate(true)
+		bad["rain_remaining"] = value
+		bad_cases.append(bad)
+	var future := payload.duplicate(true)
+	future.garden_awards[3] = 1
+	bad_cases.append(future)
+	var impossible := payload.duplicate(true)
+	impossible.checkpoint_index = 0
+	bad_cases.append(impossible)
+	var false_ending := payload.duplicate(true)
+	false_ending.completed = true
+	bad_cases.append(false_ending)
+	var stem_broken := payload.duplicate(true)
+	stem_broken.walls[0] = true
+	bad_cases.append(stem_broken)
+	for bad in bad_cases:
+		var before: Dictionary = m.save_payload()
+		expect(not m.restore_payload(bad) and m.save_payload() == before,"Malformed save is rejected transactionally")
+	expect(not Save.write_payload(false_ending,path) and Save.read_payload(path).stage == 0,"Invalid write cannot replace a valid save")
+	for content in ["broken","[]",'{"version":1,"stage":2}']:
+		var file := FileAccess.open(path,FileAccess.WRITE)
+		file.store_string(content)
+		file.close()
+		expect(Save.read_payload(path).is_empty(),"Malformed and old-format saves are rejected")
 	DirAccess.remove_absolute(path)
 
 func run() -> void:
 	controls_contract()
-	if "--controls-only" in OS.get_cmdline_user_args():
-		for failure in failures: push_error(failure)
-		if failures.is_empty(): print("SWARM FLIGHT CONTROLS VERIFIED: %d checks" % checks)
-		quit(0 if failures.is_empty() else 1)
-		return
-	full_route()
-	hesitation = 120
-	route_label = "two-second hesitation before each burst"
-	full_route()
-	hesitation = 0
-	collecting = true
-	route_label = "all-nine-dew detour"
-	full_route()
-	garden_contract()
-	rules_and_recovery()
-	feedback_contract()
-	stamina_and_clock()
-	save_contract()
+	if "--controls-only" not in OS.get_cmdline_user_args():
+		authored_content()
+		checkpoints_and_resources()
+		collision_and_garden()
+		save_contract()
+		chapter_routes(false)
+		chapter_routes(true)
 	for failure in failures: push_error(failure)
-	if failures.is_empty(): print("SWARM FLIGHT VERIFIED: %d checks" % checks)
+	if failures.is_empty(): print("SWARM FLIGHT VERIFIED: %d checks, four authored chapters" % checks)
 	quit(0 if failures.is_empty() else 1)

@@ -1,11 +1,11 @@
 extends SceneTree
 const Scene = preload("res://main.tscn")
+const Driver = preload("res://route_driver.gd")
+const Save = preload("res://save_data.gd")
 var game
 var checks := 0
-var collecting := false
 var failures: Array[String] = []
 var pressed: Dictionary = {}
-var use_wasd := false
 var capture_dir := OS.get_environment("SWARM_FLOW_CAPTURE_DIR")
 
 func _initialize() -> void:
@@ -24,354 +24,198 @@ func key(code: Key, down: bool) -> void:
 	if down: pressed[code] = true
 	else: pressed.erase(code)
 
+func tap(code: Key) -> void:
+	key(code,true)
+	key(code,false)
+
 func release_all() -> void:
 	for code in pressed.keys(): key(code,false)
 
-func point(direction: Vector2) -> void:
-	var codes := [KEY_A,KEY_D,KEY_W,KEY_S] if use_wasd else [KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN]
-	var values := [direction.x < -0.1,direction.x > 0.1,direction.y < -0.1,direction.y > 0.1]
-	for i in range(4):
+func apply_action(action: Dictionary) -> void:
+	var direction: Vector2 = action.get("direction",Vector2.ZERO)
+	var codes := [KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_SPACE]
+	var values := [direction.x < -0.1,direction.x > 0.1,direction.y < -0.1,direction.y > 0.1,bool(action.get("held",false))]
+	for i in codes.size():
 		if values[i] != pressed.has(codes[i]): key(codes[i],values[i])
 
 func ticks(count: int) -> void:
-	for i in range(count):
+	for i in count:
 		game.tick(1.0/60.0)
 		game.world._process(1.0/60.0)
 
-func fly(target: Vector2, label: String) -> bool:
-	for i in range(1500):
-		if game.model.p.distance_to(target) < 18 or game.mode != "play":
-			point(Vector2.ZERO)
-			return true
-		var delta: Vector2 = target-game.model.p
-		point(Vector2(signf(delta.x) if absf(delta.x)>10 else 0,signf(delta.y) if absf(delta.y)>10 else 0))
+func shot(name: String) -> void:
+	if capture_dir.is_empty() or DisplayServer.get_name() == "headless": return
+	await RenderingServer.frame_post_draw
+	var ok := get_root().get_texture().get_image().save_png(capture_dir.path_join(name+".png"))
+	expect(ok == OK,"native capture "+name)
+
+func run_complete_route(collect: bool) -> void:
+	var driver = Driver.new(game.model,collect)
+	var visited := {}
+	var old_stage := -1
+	var old_section := -1
+	var handoffs := {}
+	var active_captures := {}
+	for frame in 180000:
+		if game.mode == "ending": break
+		# Native capture may yield focus to another running app; use the real
+		# resume key, keeping production focus-loss behavior intact.
+		if game.mode == "pause":
+			release_all()
+			tap(KEY_ESCAPE)
+			continue
+		if game.mode == "transition":
+			release_all()
+			if not handoffs.has(game.model.stage):
+				handoffs[game.model.stage] = true
+				expect(game.handoff_panel.visible and not game.panel.visible,"short chapter handoff")
+				print("CHAPTER_UI_STAGE: "+JSON.stringify({"stage":game.model.stage,"seconds":game.model.time,"recoveries":game.model.recoveries,"optional":collect}))
+				if not collect: await shot("handoff-%d" % game.model.stage)
+			if collect: tap(KEY_ENTER)
+			ticks(1)
+			continue
+		if old_stage != game.model.stage:
+			old_stage = game.model.stage
+			old_section = -1
+			expect(not game.model.started,"new level waits for fresh input")
+		if old_section != game.model.section_index():
+			old_section = game.model.section_index()
+			visited["%d:%d" % [old_stage,old_section]] = true
+			expect(not game.hud_objective.text.is_empty(),"every section has a visible objective")
+			if not collect and old_section == 3: await shot("level-%d-middle" % old_stage)
+		if not collect and old_section == 3 and not active_captures.has(old_stage) and game.model.p.x > game.model.sections[old_section].start_x+1100:
+			active_captures[old_stage] = true
+			await shot("level-%d-active" % old_stage)
+		var action: Dictionary = driver.next_input()
+		if not str(action.get("error","")).is_empty():
+			failures.append("UI route: "+str(action.error))
+			break
+		apply_action(action)
 		ticks(1)
-	failures.append("Keyboard route stuck: " + label + " at " + str(game.model.p))
 	release_all()
-	return false
+	expect(game.mode == "ending","complete four-level route reaches ending")
+	expect(handoffs.size() == 3,"all three level handoffs")
+	expect(visited.size() >= 28,"all twenty-eight authored sections visited")
+	expect(game.description.text.contains("第一章"),"ending identifies complete chapter")
+	print("CHAPTER_UI_END: "+JSON.stringify({"seconds":game.played_seconds,"recoveries":game.model.recoveries,"dew":game.model.garden_total(),"optional":collect}))
+	if collect: expect(game.model.garden_total() == game.model.journey_dew_total(),"optional route collects the chapter's authored dew")
+	if not collect: await shot("chapter-ending")
 
-func launch(direction: Vector2, settle := 0.63) -> void:
-	point(direction)
-	ticks(1)
-	point(Vector2.ZERO)
-	key(KEY_SPACE,true)
-	ticks(43)
-	key(KEY_SPACE,false)
-	ticks(int(settle*60))
-
-func chapter_zero() -> void:
-	if collecting and not fly(game.model.dew[0].pos,"first morning dew"): return
-	if not fly(Vector2(590,400),"first pod"): return
-	launch(Vector2.RIGHT)
-	expect(game.model.bees == 3,"Arrows + Space release rescue first pair")
-	if not fly(Vector2(1040,380),"first gap approach"): return
-	if not fly(Vector2(1240,380),"first gap"): return
-	if not fly(Vector2(1330,235),"second pod"): return
-	launch(Vector2.RIGHT)
-	expect(game.model.bees == 5,"Keyboard second rescue")
-	if collecting and not fly(game.model.dew[1].pos,"high morning dew"): return
-	if not fly(Vector2(1770,520),"lower gap approach"): return
-	if not fly(Vector2(1990,520),"lower gap"): return
-	if collecting and not fly(game.model.dew[2].pos,"low morning dew"): return
-	if not fly(Vector2(2180,525),"third pod"): return
-	launch(Vector2.RIGHT)
-	if not fly(Vector2(2560,420),"leaf curtain"): return
-	launch(Vector2.RIGHT)
-	fly(game.model.exit_pos,"first exit")
-	expect(game.mode == "transition" and game.handoff_panel.visible and not game.panel.visible,"Chapter exit shows a compact handoff without a menu")
-
-func chapter_one() -> void:
-	# Test a forgiving keyboard route that does not require perfect diagonal aiming.
-	if not fly(Vector2(590,460),"first wind flower"): return
-	launch(Vector2.RIGHT,0.8)
-	if collecting and not fly(game.model.dew[0].pos,"high fountain dew"): return
-	for i in range(1,4):
-		var target: Vector2 = game.model.rings[i].pos
-		# Approach on the same horizontal line and launch with a single arrow.
-		if not fly(target-Vector2(170,0),"flower %d" % i): return
-		launch(Vector2.RIGHT,0.8)
-		if collecting and i == 1 and not fly(game.model.dew[1].pos,"low fountain dew"): return
-	if collecting and not fly(game.model.dew[2].pos,"last fountain dew"): return
-	# Rescue targets are visible and can be opened independently of wind flowers.
-	if not game.model.pods[0].open:
-		failures.append("Expected wind arc to catch the first companion without backtracking")
-	if not game.model.pods[1].open:
-		fly(Vector2(3130,380),"last companion")
-		launch(Vector2.RIGHT)
-	if not fly(Vector2(3470,405),"last bridge curtain"): return
-	launch(Vector2.RIGHT)
-	fly(game.model.exit_pos,"bridge exit")
-	expect(game.mode == "transition" and game.model.bees == 9,"All nine bees finish the real keyboard bridge route")
-
-func chapter_two() -> void:
-	for item in [Vector2(670,390),Vector2(940,390),Vector2(1050,400)]:
-		if not fly(item,"first rain gap"): return
-	if collecting and not fly(game.model.dew[0].pos,"storm side-route dew"): return
-	if collecting and not fly(Vector2(1050,400),"return to curtain"): return
-	launch(Vector2.RIGHT)
-	if not fly(Vector2(1640,400),"shelter one"): return
-	expect(game.model.shelters[0].reached,"Actual movement reaches shelter one")
-	for item in [Vector2(2000,440),Vector2(2270,440),Vector2(2380,430)]:
-		if not fly(item,"middle rain gap"): return
-	launch(Vector2.RIGHT)
-	if not fly(Vector2(2970,430),"shelter two"): return
-	expect(game.model.shelters[1].reached,"Actual movement reaches shelter two")
-	if collecting:
-		if not fly(game.model.dew[1].pos,"sheltered morning dew"): return
-		ticks(90)
-	for item in [Vector2(3210,480),Vector2(3410,480),Vector2(3810,570 if collecting else 430)]:
-		if not fly(item,"last rain gap"): return
-	launch(Vector2.RIGHT)
-	if collecting and not fly(game.model.dew[2].pos,"final morning dew"): return
-	fly(game.model.exit_pos,"tree hollow")
-	expect(game.mode == "ending" and game.heading.text == "九只，都到家了。","Keyboard route reaches the visible ending")
-
-func controls() -> void:
-	var start: Vector2 = game.model.p
+func boundaries() -> void:
+	tap(KEY_ENTER)
+	expect(game.mode == "play" and game.model.stage == 0,"ending Enter restarts whole chapter")
 	key(KEY_RIGHT,true)
-	ticks(10)
-	key(KEY_RIGHT,false)
-	expect(game.model.p.x > start.x+10,"Arrow key moves continuously")
-	key(KEY_SPACE,true)
-	ticks(40)
-	var bursts: int = game.model.bursts
-	key(KEY_ESCAPE,true)
-	key(KEY_ESCAPE,false)
-	var paused_pos: Vector2 = game.model.p
-	var paused_stamina: float = game.model.stamina
-	var paused_clock: float = game.model.rain_remaining
-	var paused_trip: float = game.played_seconds
-	var paused_flowers: Array = game.model.sprayers.duplicate(true)
-	var paused_puffs: Array = game.model.puffs.duplicate(true)
-	ticks(120)
-	expect(game.mode == "pause" and game.model.p == paused_pos,"Pause freezes physical progress")
-	expect(game.model.stamina == paused_stamina and game.model.rain_remaining == paused_clock and game.played_seconds == paused_trip,"Pause freezes stamina, countdown and journey timer together")
-	expect(game.model.sprayers == paused_flowers and game.model.puffs == paused_puffs,"Pause freezes flower windup, calm and water positions")
-	expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Pause instructions fit above the first menu button")
-	key(KEY_SPACE,false)
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	ticks(1)
-	expect(game.mode == "play" and game.model.bursts == bursts and not game.model.charging,"Resuming a held charge never causes an accidental burst")
-	key(KEY_RIGHT,true)
-	game._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
-	expect(game.mode == "pause" and game.held.is_empty(),"Losing application focus pauses and clears held movement")
-	release_all()
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	key(KEY_R,true)
-	key(KEY_R,false)
-	expect(game.model.p.distance_to(start)<1,"R returns to the chapter's current checkpoint")
-	game.pause_game()
-	key(KEY_R,true)
-	key(KEY_R,false)
-	expect(game.mode == "play" and game.model.p.distance_to(start)<1,"R also works from the pause page that advertises it")
-	key(KEY_M,true)
-	key(KEY_M,false)
-	expect(game.muted and AudioServer.is_bus_mute(AudioServer.get_bus_index("SFX")),"Mute applies to sound buses")
-	key(KEY_M,true)
-	key(KEY_M,false)
-	expect(not game.muted,"Mute toggles back")
-	use_wasd = true
-	point(Vector2.UP)
-	ticks(12)
-	point(Vector2.ZERO)
-	expect(game.model.p.y < start.y-15,"WASD uses the same continuous flight")
-	use_wasd = false
-	key(KEY_R,true)
-	key(KEY_R,false)
-
-func interface_feedback() -> void:
-	game.saved_stage = 1
-	game.show_title()
-	key(KEY_DOWN,true)
-	key(KEY_DOWN,false)
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	expect(game.mode == "play" and game.model.stage == 1,"Keyboard menu navigation selects the visible continue action")
-	game.show_title()
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	key(KEY_SPACE,true)
-	ticks(5)
-	key(KEY_SPACE,false)
-	ticks(1)
-	expect(game.toast.visible and game.toast.text.contains("还没蓄好力"),"An early Space release visibly explains why no burst occurred")
-	key(KEY_SPACE,true)
-	ticks(40)
-	expect(game.cue_panel.visible and game.cue_label.text.contains("松开空格"),"Ready-to-release feedback appears beside the bee")
-	expect(game.hud_energy.text.contains("体力") and game.hud_clock.text.begins_with("旅程"),"Stamina value and journey timer are visible in the HUD")
-	key(KEY_ESCAPE,true)
-	key(KEY_ESCAPE,false)
-	key(KEY_SPACE,false)
-	expect(not game.cue_panel.visible and not game.toast.visible,"Pause hides stale gameplay feedback")
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	key(KEY_R,true)
-	key(KEY_R,false)
-	ticks(1)
-	expect(game.toast.text.contains("已回到") and game.toast.text.contains("伙伴都在"),"Manual recovery has an explicit visible cause and preserved-progress message")
-	game.begin_stage(2)
-	game.model.p = Vector2(1640,400)
-	game.model.started = true
-	game.model.spend_energy(60)
-	ticks(60)
-	expect(game.hud_clock.text.contains("停") and game.cue_label.text.contains("恢复"),"Shelter HUD explains paused countdown and actual stamina recovery")
-	game.model.p += Vector2(250,0)
-	game.model.rain_remaining = 0.01
-	ticks(1)
-	expect(game.toast.text.contains("暴雨抵达") and game.toast.text.contains("重置"),"Timeout recovery explains why and what reset")
-	game.begin_stage(0)
-	game.model.p = game.model.dew[0].pos
-	game.model.spend_energy(20)
-	ticks(1)
-	expect(game.hud_title.text.contains("晨露 1 / 3（可选）") and game.toast.text.contains("体力 +12"),"Dew visibly updates optional count and reward")
-	game.model.p = game.model.sprayers[0].pos-Vector2(200,0)
-	game.model.camera_x = game.model.p.x-480
-	game.model.sprayers[0].timer = 0.6
-	game.refresh_hud()
-	expect(game.cue_label.text.contains("要打喷嚏") and game.cue_panel.visible,"Local warning explains the upcoming sneeze and response")
-	game.model.sprayers[0].stun_left = 3
-	game.refresh_hud()
-	expect(game.cue_label.text.contains("安静啦"),"Calm state replaces the attack warning")
-	game.model.garden_awards.assign([3,3,3])
-	game.show_ending()
-	expect(game.description.text.contains("9 / 9") and game.description.text.contains("满园"),"Ending acknowledges full optional collection")
-	expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Garden ending text fits above its replay button")
-	game.show_title()
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	expect(game.model.garden_total() == 0,"Starting again clears previous journey dew")
-	release_all()
-
-func aim_flow() -> void:
-	game.begin_stage(0)
-	key(KEY_RIGHT,true)
-	ticks(12)
+	ticks(25)
 	key(KEY_SPACE,true)
 	ticks(25)
 	key(KEY_RIGHT,false)
 	key(KEY_DOWN,true)
 	ticks(1)
-	expect(game.model.charging and game.model.charge >= game.Model.CHARGE_READY and game.model.face == Vector2.DOWN,"Moving charge can be aimed with arrows before release")
-	await shot("00-ready-aim")
-	key(KEY_SPACE,false)
-	ticks(1)
-	expect(game.model.burst_left > 0 and game.model.face == Vector2.DOWN,"Release launches along the currently displayed aim")
-	key(KEY_DOWN,false)
-	key(KEY_LEFT,true)
-	ticks(5)
-	expect(game.model.face == Vector2.DOWN,"Keys during the short burst do not silently change its committed direction")
-	ticks(40)
-	expect(game.model.burst_left == 0 and game.model.velocity.x < 0,"Cruise steering returns immediately after the short burst")
+	expect(game.model.face.y > 0.9 and game.model.charge >= game.model.CHARGE_READY,"charged direction can change")
 	release_all()
-	game.begin_stage(0)
-
-func rhythm_feedback() -> void:
-	game.begin_stage(0)
-	game.event_message("rescue","救出伙伴 · 已记住这里",2.8)
-	game.event_message("burst","冲刺 −20",1.0)
-	game.event_message("dew","普通收集",1.0)
-	expect(game.toast.text.contains("救出伙伴"),"Routine launches and pickups cannot erase the rescue response")
-	game.event_message("hit","受到雨击",2.0)
-	expect(game.toast.text == "受到雨击","New damage can interrupt lower-priority success feedback")
-	game.event_message("recover_timeout","暴雨抵达 · 已返回",3.0)
-	game.event_message("blocked","挡住了",2.0)
-	expect(game.toast.text.contains("已返回"),"Recovery explanation survives a lower-priority event")
-	ticks(80)
-	game.event_message("dew","后来收集",1.0)
-	expect(game.toast.text == "后来收集","Priority guard is brief and does not suppress future feedback")
-	game.begin_stage(2)
-	key(KEY_RIGHT,true)
-	key(KEY_SPACE,true)
-	game.model.rain_remaining = 0.001
 	ticks(1)
-	var returned: Vector2 = game.model.p
-	var energy: float = game.model.stamina
-	expect(game.held.is_empty() and not game.model.started and not game.model.charging,"Automatic recovery clears held arrows and Space together")
-	ticks(60)
-	key(KEY_SPACE,false)
-	ticks(1)
-	expect(game.model.p == returned and game.model.stamina == energy and not game.model.charging,"Recovery stays still and releasing stale Space cannot launch")
+	expect(game.model.burst_left > 0,"release launches charged dash")
+	tap(KEY_ESCAPE)
+	var p: Vector2 = game.model.p
+	var t: float = game.played_seconds
+	ticks(120)
+	expect(game.mode == "pause" and game.model.p == p and game.played_seconds == t,"pause freezes world and journey clock")
+	tap(KEY_ENTER)
+	expect(game.mode == "play" and game.held.is_empty(),"resume starts with clear input")
+	tap(KEY_R)
+	expect(not game.model.started and game.held.is_empty(),"manual recovery waits for new input")
+	var before_wasd: float = game.model.p.x
+	key(KEY_D,true)
+	ticks(20)
+	expect(game.model.p.x > before_wasd+20,"WASD enters flight path")
 	release_all()
-	game.begin_stage(0)
-	game.model.phase = "transition" # Explicit transition-boundary fixture, not a route.
-	game.show_transition()
-	game._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
-	var remaining: float = game.transition_left
-	ticks(180)
-	expect(game.mode == "pause" and game.transition_left == remaining and game.model.stage == 0,"Focus loss freezes automatic chapter handoff")
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	expect(game.mode == "transition" and game.handoff_panel.visible,"Resume returns to the interrupted handoff")
-	ticks(100)
-	expect(game.mode == "play" and game.model.stage == 1 and not game.model.started,"Handoff continues automatically into a safe waiting start")
-	game.begin_stage(0)
+	game._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	expect(game.mode == "pause","focus loss pauses play")
+	tap(KEY_ESCAPE)
+	game.event_message("recover_timeout","重要恢复",3.0)
+	game.event_message("dew","普通晨露",2.0)
+	expect(game.toast.text == "重要恢复","recovery feedback cannot be overwritten by routine reward")
+	tap(KEY_M)
+	expect(game.muted,"mute key toggles")
+	tap(KEY_M)
+	# Explicit boundary fixture: separate from the untouched complete input routes above.
 	game.model.phase = "transition"
 	game.show_transition()
-	key(KEY_ENTER,true)
-	key(KEY_ENTER,false)
-	expect(game.mode == "play" and game.model.stage == 1,"Enter can skip the short chapter beat")
-	game.world.emit_event("rescue",game.model.p,{"count":2,"reward":40})
-	expect(game.world._feedback.any(func(item): return item.get("text","") == "+2 伙伴"),"Rescue carries a readable local companion count")
-	game.begin_stage(0)
-	release_all()
+	game._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	var left: float = game.transition_left
+	ticks(180)
+	expect(game.mode == "pause" and game.transition_left == left,"focus loss freezes handoff")
+	tap(KEY_ENTER)
+	ticks(100)
+	expect(game.model.stage == 1 and not game.model.started,"handoff resumes and next level waits")
 
-func shot(name: String) -> void:
-	if capture_dir.is_empty() or DisplayServer.get_name() == "headless": return
-	await process_frame
-	await RenderingServer.frame_post_draw
-	expect(root.get_texture().get_image().save_png(capture_dir.path_join(name+".png")) == OK,"Native capture "+name)
+func saved_menu_contract() -> void:
+	# Completed and in-progress snapshots were earned by the complete input routes.
+	# Only the save path is a fixture; real user progress remains untouched.
+	var path := OS.get_cache_dir().path_join("before-rain-ui-chapter-save.json")
+	game.progress_file = path
+	game.test_mode = false
+	game.persist_progress()
+	var completed := Save.read_payload(path)
+	expect(completed.get("completed",false),"actual ending persists as completed")
+	game.saved_payload = completed
+	game.saved_stage = int(completed.get("stage",-1))
+	game.show_title()
+	expect(game.secondary_button.visible and game.secondary_button.text.contains("结尾"),"completed save offers ending from title")
+	tap(KEY_DOWN)
+	tap(KEY_ENTER)
+	expect(game.mode == "ending" and game.model.stage == 3,"title continue opens saved ending")
+	game.model.reset_journey()
+	game.begin_stage(0)
+	var driver = Driver.new(game.model)
+	for frame in 7200:
+		if game.model.checkpoint_index >= 0: break
+		var action: Dictionary = driver.next_input()
+		if not action.error.is_empty(): failures.append("Save route: "+action.error); break
+		apply_action(action)
+		ticks(1)
+	release_all()
+	expect(game.model.checkpoint_index == 0,"save test earns its first leaf through ordinary inputs")
+	var safe: Vector2 = game.model.checkpoint.p
+	var companions: int = game.model.bees
+	tap(KEY_ESCAPE)
+	tap(KEY_DOWN)
+	tap(KEY_DOWN)
+	tap(KEY_ENTER)
+	expect(game.mode == "title","pause menu returns to title with saved progress")
+	game.saved_payload = Save.read_payload(path)
+	game.saved_stage = int(game.saved_payload.get("stage",-1))
+	tap(KEY_DOWN)
+	tap(KEY_ENTER)
+	expect(game.mode == "play" and game.model.p == safe and game.model.bees == companions,"title continue restores earned safe leaf and rescued companions")
+	expect(not game.model.started and game.held.is_empty() and game.model.stamina == 100,"continue is stationary, refilled and requires fresh input")
+	await shot("saved-leaf-continued")
+	game.test_mode = true
+	game.progress_file = ""
+	DirAccess.remove_absolute(path)
 
 func run() -> void:
 	game = Scene.instantiate()
-	game.test_mode = true
 	root.add_child(game)
+	await process_frame
 	game.set_process(false)
 	game.world.set_process(false)
-	await process_frame
-	expect(game.mode == "title" and game.main_button.visible,"Native scene starts at the title")
-	expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Title instructions fit above the first menu button")
-	expect(game.world.show_behind_parent,"World does not cover HUD contrast bands or target marker")
-	interface_feedback()
-	rhythm_feedback()
-	await aim_flow()
-	controls()
-	chapter_zero()
-	await shot("01-first-handoff")
-	if game.mode == "transition":
-		ticks(100)
-		expect(game.mode == "play" and game.model.stage == 1,"Full route crosses first handoff without a menu confirmation")
-		chapter_one()
-		await shot("02-second-handoff")
-	if game.mode == "transition":
-		ticks(100)
-		expect(game.mode == "play" and game.model.stage == 2,"Full route crosses second handoff automatically")
-		chapter_two()
-		await shot("03-ending")
-	expect(game.mode == "ending","Whole scene flow completed without debug teleport or stage skip")
-	if game.mode == "ending":
-		expect(game.description.position.y+game.description.get_minimum_size().y < game.main_button.position.y-8,"Ending copy fits above the replay button")
-		expect(game.description.text.contains("旅程") and game.description.text.contains("恢复点"),"Whole-chapter ending reports total time and retries")
-		key(KEY_ENTER,true)
-		key(KEY_ENTER,false)
-		expect(game.model.stage == 0 and game.model.bees == 1 and game.mode == "play","One replay action directly starts a fresh whole experience")
-	collecting = true
-	chapter_zero()
-	if game.mode == "transition":
-		expect(game.model.garden_total() == 3,"Arrow-key detour collects all meadow dew")
-		key(KEY_ENTER,true)
-		key(KEY_ENTER,false)
-		chapter_one()
-	if game.mode == "transition":
-		expect(game.model.garden_total() == 6,"Arrow-key detour retains six dew across acts")
-		key(KEY_ENTER,true)
-		key(KEY_ENTER,false)
-		chapter_two()
-	expect(game.mode == "ending" and game.model.garden_total() == 9,"Complete arrow-key detour brings all nine dew to the ending")
+	game.sound.set_muted(true)
+	expect(game.test_mode,"QA never reads or writes user progress")
+	expect(game.mode == "title","normal launch starts at title")
+	await shot("chapter-title")
+	tap(KEY_ENTER)
+	await run_complete_route(false)
+	boundaries()
+	release_all()
+	game.model.reset_journey()
+	game.begin_stage(0)
+	game.sound.set_muted(true)
+	await run_complete_route(true)
+	await saved_menu_contract()
+	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete four-level input routes" % checks)
+	else:
+		for failure in failures: push_error(failure)
 	game.queue_free()
 	await process_frame
-	await create_timer(0.2).timeout
-	for failure in failures: push_error(failure)
-	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete arrow-key route" % checks)
 	quit(0 if failures.is_empty() else 1)

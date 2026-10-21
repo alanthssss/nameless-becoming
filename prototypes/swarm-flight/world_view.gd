@@ -17,8 +17,8 @@ var _feedback: Array[Dictionary] = []
 const INK := Color("253d26")
 const GOLD := Color("ffc94f")
 const CREAM := Color("fff8d8")
-const SKY := [Color("91dbe3"), Color("8bcbdc"), Color("657ea1")]
-const LOW_SKY := [Color("edf3ba"), Color("daeebc"), Color("9bb7b0")]
+const SKY := [Color("91dbe3"), Color("8bcbdc"), Color("657ea1"), Color("a78b99")]
+const LOW_SKY := [Color("edf3ba"), Color("daeebc"), Color("9bb7b0"), Color("efd7aa")]
 
 func _ready() -> void:
 	_rng.seed = 14631
@@ -120,6 +120,7 @@ func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
 			count = 16
 			force = 100.0
 		"finish":
+			_feedback.clear()
 			count = 42
 			force = 250.0
 		"burst", "rain_break":
@@ -148,12 +149,13 @@ func _draw() -> void:
 	if model == null:
 		draw_rect(Rect2(0, 0, 1280, 800), SKY[0])
 		return
-	var act: int = clampi(model.stage, 0, 2)
+	var act: int = clampi(model.theme_index(), 0, 3)
 	var cam: float = model.camera_x
 	_background(act, cam)
 	var shake := Vector2(sin(clock * 53.0), sin(clock * 39.0)) * trauma * trauma * 9.0
 	draw_set_transform(Vector2(-cam, 0) + shake)
 	_world_decor(act, cam)
+	_landmarks(act)
 	for wall in model.walls:
 		_wall(wall)
 	for shelter in model.shelters:
@@ -187,7 +189,7 @@ func _background(act: int, cam: float) -> void:
 		var t := float(row)/39.0
 		draw_rect(Rect2(0,row*20,1280,21),SKY[act].lerp(LOW_SKY[act],t))
 	var sun := Vector2(1070-cam*0.015,165)
-	if act < 2:
+	if act < 2 or act == 3:
 		draw_circle(sun,58,Color("f9e884"))
 		draw_circle(sun-Vector2(8,8),47,Color("fff3b5"))
 	for i in 5:
@@ -197,7 +199,7 @@ func _background(act: int, cam: float) -> void:
 		_ellipse(c+Vector2(-34,-17),Vector2(42,30),cloud)
 		_ellipse(c+Vector2(14,-23),Vector2(55,37),cloud)
 	for layer in 2:
-		var hedge: Color = [Color("77b965"),Color("70b3a0"),Color("618b80")][act].darkened(layer*0.10)
+		var hedge: Color = [Color("77b965"),Color("70b3a0"),Color("618b80"),Color("7f9580")][act].darkened(layer*0.10)
 		for i in 9:
 			var x := fposmod(i*204.0-cam*(0.06+layer*0.05),1700)-180
 			_ellipse(Vector2(x,609+layer*37),Vector2(148,108+sin(i*2.3)*25),hedge)
@@ -212,7 +214,7 @@ func _background(act: int, cam: float) -> void:
 	draw_rect(Rect2(0,608,1280,13),fence.darkened(0.11))
 	draw_rect(Rect2(0,653,1280,12),fence.darkened(0.11))
 	# Different lower sets: vegetable rows, a fountain pond, then a rainy tool garden.
-	var lawn: Color = [Color("76ba44"),Color("61aa64"),Color("426e61")][act]
+	var lawn: Color = [Color("76ba44"),Color("61aa64"),Color("426e61"),Color("688454")][act]
 	draw_rect(Rect2(0,683,1280,117),lawn)
 	for i in 11:
 		var x := fposmod(i*157.0-cam*0.23,1650)-130
@@ -282,6 +284,16 @@ func _wall(wall: Dictionary) -> void:
 		for i in 19:
 			seam.append(Vector2(r.get_center().x+(-3 if i%2 else 4),r.position.y+r.size.y*i/18.0))
 		draw_polyline(seam,CREAM,2.2,true)
+		if wall.has("needs_section"):
+			var waiting := false
+			for pod in model.pods:
+				if int(pod.get("section",-1)) == int(wall.needs_section) and not pod.open: waiting = true
+			var badge := r.get_center()
+			draw_circle(badge,23,INK)
+			if waiting:
+				_bee(badge,0.65,Vector2.RIGHT,1.0,true,0)
+			else:
+				draw_polyline(PackedVector2Array([badge+Vector2(-9,-9),badge+Vector2(5,0),badge+Vector2(-9,9)]),CREAM,4,true)
 		return
 	# Solid sides match the model rectangle. A 20px inward bud cap replaces
 	# the former flat cut; the tip remains at the exact authored gap boundary.
@@ -379,6 +391,7 @@ func _ring(ring: Dictionary, index: int) -> void:
 
 func _shelter(shelter: Dictionary) -> void:
 	var p: Vector2 = shelter.pos
+	if p.x < model.camera_x-200 or p.x > model.camera_x+1480: return
 	var reached: bool = shelter.reached
 	_curve(p+Vector2(120,-80),p+Vector2(137,8),p+Vector2(97,130),Vector2(p.x+86,828),INK,12)
 	_curve(p+Vector2(120,-80),p+Vector2(137,8),p+Vector2(97,130),Vector2(p.x+86,828),Color("77a945"),7)
@@ -400,9 +413,9 @@ func _shelter(shelter: Dictionary) -> void:
 	if reached:
 		draw_polyline(PackedVector2Array([p+Vector2(-7,44),p+Vector2(-1,50),p+Vector2(10,37)]),CREAM,3,true)
 
-func _exit(act: int) -> void:
+func _exit(_act: int) -> void:
 	var p: Vector2 = model.exit_pos
-	if act < 2:
+	if model.stage < model.STAGE_COUNT-1:
 		_curve(p+Vector2(-95,180),p+Vector2(-104,-38),p+Vector2(-25,-111),p+Vector2(50,-88),Color("49795f"),10)
 		_leaf(p+Vector2(-64,-57),p+Vector2(44,-101),28,Color("8fa77a"))
 		_leaf(p+Vector2(-77,-13),p+Vector2(-120,-63),17,Color("688d6e"))
@@ -429,9 +442,9 @@ func _exit(act: int) -> void:
 	_leaf(p+Vector2(150,-177),p+Vector2(237,-235),27,Color("8db648"))
 
 	if model.phase == "ending":
-		var bloom_count: int = model.garden_total()
+		var bloom_count: int = mini(model.garden_total(),16)
 		for i in bloom_count:
-			var flower_pos := p+Vector2(-158+i*38,246-sin(i*1.9)*24)
+			var flower_pos := p+Vector2(-158+(i%8)*38,246+(i/8)*35-sin(i*1.9)*24)
 			_curve(flower_pos+Vector2(0,60),flower_pos+Vector2(8,36),flower_pos+Vector2(-4,20),flower_pos,Color("8dbb53"),5)
 			_flower(flower_pos,21,[Color("e9a5c9"),Color("f4cb62"),Color("bca0df")][i%3],float(i))
 
@@ -474,7 +487,7 @@ func _swarm() -> void:
 	if model.phase == "ending":
 		_ending_swarm()
 		return
-	for i in range(model.bees - 1, 0, -1):
+	for i in range(mini(model.bees,16) - 1, 0, -1):
 		var side := 1.0 if i % 2 else -1.0
 		var along := float(i) * (8.0 if compact or burst else 10.0)
 		var center := _path_position(along)
@@ -522,7 +535,7 @@ func _free_visual_position(point: Vector2) -> bool:
 func _ending_swarm() -> void:
 	var progress := clampf(_ending_elapsed / 1.8, 0.0, 1.0)
 	var eased := 1.0 - pow(1.0 - progress, 3.0)
-	for i in range(model.bees - 1, 0, -1):
+	for i in range(mini(model.bees,16) - 1, 0, -1):
 		var home: Vector2 = model.exit_pos + Vector2(-43 + (i % 5) * 18, 65 + (i / 5) * 18)
 		var start := _path_position(float(i) * 10.0)
 		var p := start.lerp(home, eased)
@@ -601,7 +614,7 @@ func _effects() -> void:
 		_ellipse(bit.pos, Vector2(bit.size * 1.5, bit.size * 0.6), tint, bit.angle + clock * 1.5)
 
 func _foreground(act: int, cam: float) -> void:
-	var tint: Color = [Color("254f42"), Color("204f4a"), Color("1e3546")][act]
+	var tint: Color = [Color("254f42"), Color("204f4a"), Color("1e3546"),Color("35463d")][act]
 	for i in 40:
 		var x := fposmod(i * 43.7 - cam * 1.15, 1400.0) - 60.0
 		var high := 14.0 + float(i % 7) * 6.0
@@ -746,3 +759,36 @@ func _sprayer(flower: Dictionary, index: int) -> void:
 func _puff(p: Vector2) -> void:
 	_oval(p,Vector2(11,10),Color("91c9e9"),Color("305e80"),3)
 	_ellipse(p+Vector2(-3,-4),Vector2(4,3),Color("eafaff"))
+
+func _landmarks(act: int) -> void:
+	# Decorative objects sit below the playable corridor; leaf shelters remain authoritative.
+	for i in model.shelters.size():
+		var rest: Vector2 = model.shelters[i].pos
+		var x := rest.x-230.0
+		if x < model.camera_x-210 or x > model.camera_x+1430: continue
+		var p := Vector2(x,694)
+		match (i+act)%4:
+			0: # Watering can, tilted spout and loop handle.
+				draw_arc(p+Vector2(-66,-18),32,0.9,5.1,32,Color("547b72"),12,true)
+				draw_style_box(_box_style(Color("77a99b"),INK,3,14),Rect2(p-Vector2(53,50),Vector2(104,76)))
+				_outline_polygon(PackedVector2Array([p+Vector2(45,-19),p+Vector2(107,-69),p+Vector2(116,-59),p+Vector2(52,15)]),Color("93c3ad"),INK,3)
+				_oval(p+Vector2(112,-65),Vector2(17,10),Color("b9d5b7"),INK,2,-0.5)
+			1: # Terracotta pot with broad leaves.
+				_outline_polygon(PackedVector2Array([p+Vector2(-49,-18),p+Vector2(48,-18),p+Vector2(34,48),p+Vector2(-32,48)]),Color("c68c63"),INK,3)
+				draw_style_box(_box_style(Color("e0ad7b"),INK,3,7),Rect2(p-Vector2(57,29),Vector2(114,24)))
+				for j in 3:
+					_cartoon_leaf(p-Vector2(0,25),p+Vector2(-65+j*60,-86-24*(j%2)),22,Color("a5c956"))
+			2: # Tiny garden bench.
+				for side in [-1,1]: draw_line(p+Vector2(side*47,-2),p+Vector2(side*47,52),Color("5d6d48"),10,true)
+				draw_style_box(_box_style(Color("c7b879"),INK,3,5),Rect2(p-Vector2(72,10),Vector2(144,22)))
+				draw_style_box(_box_style(Color("decd8a"),INK,3,5),Rect2(p-Vector2(70,54),Vector2(140,30)))
+			3: # A stack of pebbles and a familiar lantern.
+				for j in 3: _oval(p+Vector2((j%2)*16,j*20),Vector2(42-j*7,16),Color("a5b6a0"),INK,2)
+				draw_line(p+Vector2(-51,36),p+Vector2(-51,-65),INK,5,true)
+				_oval(p+Vector2(-51,-44),Vector2(17,24),GOLD,INK,3)
+		if feedback_font != null:
+			var text := "叶亭 %02d" % (i+1)
+			var w := feedback_font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,17).x
+			var sign := rest+Vector2(0,83)
+			draw_style_box(_box_style(Color("fff0bf"),INK,2,7),Rect2(sign-Vector2(w*0.5+10,19),Vector2(w+20,29)))
+			draw_string(feedback_font,sign-Vector2(w*0.5,0),text,HORIZONTAL_ALIGNMENT_LEFT,-1,17,INK)

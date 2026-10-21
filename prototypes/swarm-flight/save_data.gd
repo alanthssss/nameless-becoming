@@ -1,34 +1,28 @@
 extends RefCounted
-## Only the current chapter is persisted, never executable objects or old-game data.
-const PATH := "user://before_the_rain_v1.json"
+## V2 is intentionally separate: the v1 short-prototype file is never read/written.
+const Model = preload("res://game_model.gd")
+const PATH := "user://before_the_rain_chapter_v2.json"
+const MAX_BYTES := 65536
 
-static func read_stage(path: String = PATH) -> int:
-	if not FileAccess.file_exists(path):
-		return -1
-	var f := FileAccess.open(path,FileAccess.READ)
-	if f == null or f.get_length() > 2048:
-		return -1
+static func read_payload(path: String = PATH) -> Dictionary:
+	if not FileAccess.file_exists(path): return {}
+	var file := FileAccess.open(path,FileAccess.READ)
+	if file == null or file.get_length() > MAX_BYTES: return {}
 	var parser := JSON.new()
-	if parser.parse(f.get_as_text()) != OK:
-		return -1
-	var data = parser.data
-	if not data is Dictionary or data.get("version") != 1:
-		return -1
-	var index = data.get("stage")
-	if not (index is int or index is float) or index != floor(index) or index < 0 or index > 2:
-		return -1
-	return int(index)
+	if parser.parse(file.get_as_text()) != OK or not parser.data is Dictionary: return {}
+	var model = Model.new()
+	return parser.data if model.restore_payload(parser.data) else {}
 
-static func write_stage(index: int, path: String = PATH) -> bool:
-	if index < 0 or index > 2:
-		return false
-	var f := FileAccess.open(path + ".tmp",FileAccess.WRITE)
-	if f == null:
-		return false
-	f.store_string(JSON.stringify({"version":1,"stage":index}))
-	f.flush()
-	var ok := f.get_error() == OK
-	f.close()
-	if not ok:
-		return false
-	return DirAccess.rename_absolute(path + ".tmp",path) == OK
+static func write_payload(data: Dictionary,path: String = PATH) -> bool:
+	var model = Model.new()
+	if not model.restore_payload(data): return false
+	var contents := JSON.stringify(data)
+	if contents.to_utf8_buffer().size() > MAX_BYTES: return false
+	var file := FileAccess.open(path+".tmp",FileAccess.WRITE)
+	if file == null: return false
+	file.store_string(contents)
+	file.flush()
+	var ok := file.get_error() == OK
+	file.close()
+	if not ok: return false
+	return DirAccess.rename_absolute(path+".tmp",path) == OK

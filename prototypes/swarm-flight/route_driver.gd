@@ -1,0 +1,86 @@
+extends RefCounted
+## A known-answer developer route using ordinary eight-way/Space inputs only.
+## It never changes model state, positions, health, time or authored geometry.
+const Data = preload("res://chapter_data.gd")
+var model
+var collecting := false
+var stage := -1
+var commands: Array = []
+var cursor := 0
+var ticks_in_command := 0
+var burst_phase := 0
+var burst_ticks := 0
+var seen_recoveries := 0
+var error := ""
+
+func _init(source,collect_optional := false) -> void:
+	model = source
+	collecting = collect_optional
+
+func output(direction := Vector2.ZERO,held := false,done := false) -> Dictionary:
+	return {"direction":direction,"held":held,"done":done,"error":error}
+
+func next_input() -> Dictionary:
+	if not error.is_empty(): return output()
+	if model.phase == "ending": return output(Vector2.ZERO,false,true)
+	if model.phase != "playing": return output()
+	if model.stage != stage:
+		stage = model.stage
+		var data := Data.build(stage)
+		commands = data.optional_route if collecting else data.route
+		cursor = resume_cursor()
+		ticks_in_command = 0
+		burst_phase = 0
+		seen_recoveries = model.recoveries
+	if model.recoveries != seen_recoveries:
+		seen_recoveries = model.recoveries
+		cursor = resume_cursor()
+		ticks_in_command = 0
+		burst_phase = 0
+		return output()
+	for skip in 8:
+		if cursor >= commands.size():
+			return output()
+		var command: Dictionary = commands[cursor]
+		ticks_in_command += 1
+		if ticks_in_command > 1800:
+			error = "stage %d command %d (%s), pos %s" % [stage,cursor,command.kind,str(model.p)]
+			return output()
+		match command.kind:
+			"move":
+				var offset: Vector2 = command.target-model.p
+				if offset.length() < 16:
+					advance_command()
+					continue
+				return output(Vector2(signf(offset.x) if absf(offset.x)>8 else 0,signf(offset.y) if absf(offset.y)>8 else 0).normalized())
+			"burst":
+				if burst_phase == 0:
+					burst_phase = 1
+					burst_ticks = 0
+					return output(command.direction)
+				if burst_phase == 1:
+					burst_ticks += 1
+					if burst_ticks <= 27: return output(Vector2.ZERO,true)
+					burst_phase = 2
+					return output()
+				if model.burst_left > 0 or not model.velocity.is_zero_approx(): return output()
+				advance_command()
+				continue
+			"rest":
+				if model.stamina < 99.9 or not model.velocity.is_zero_approx(): return output()
+				if model.checkpoint_index < command.section:
+					error = "Route reached leaf without completing section %d" % command.section
+					return output()
+				advance_command()
+				continue
+	return output()
+
+func advance_command() -> void:
+	cursor += 1
+	ticks_in_command = 0
+	burst_phase = 0
+
+func resume_cursor() -> int:
+	if model.checkpoint_index >= model.sections.size()-1: return commands.size()-1
+	var section: int = model.checkpoint_index+1
+	return model.sections[section].optional_route_index if collecting else model.sections[section].route_index
