@@ -679,7 +679,12 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 		rest = 1.0
 	var wind_kick := _wind_kick if pose == "leader" and not trapped else 0.0
 	var stretch := Vector2(1.0-charge*0.17+dash*(0.25+wind_kick*0.07)-settle*0.12,1.0+charge*0.15-dash*0.19+settle*0.13)
-	draw_set_transform(_world_offset+p,axis.angle(),stretch*size)
+	# Turn the side-view bee by mirroring, never by rolling its back underneath.
+	# Pitch still follows flight direction; folded resting poses settle level.
+	var mirror := -1.0 if axis.x < 0.0 else 1.0
+	var pitch := atan2(axis.y,absf(axis.x))*mirror
+	pitch = lerpf(pitch,0.0,rest)
+	draw_set_transform(_world_offset+p,pitch,stretch*Vector2(mirror,1.0)*size)
 	var ink := Color(0.15,0.20,0.12,alpha)
 	var yellow := Color(1.0,0.79,0.28,alpha)
 	var pale := Color(1.0,0.9,0.49,alpha)
