@@ -4,11 +4,19 @@ on:
   pull_request:
     paths:
       - 'prototypes/swarm-flight/**'
+      - 'scripts/check_swarm_regressions.py'
+      - 'tests/test_swarm_regressions.py'
+      - 'tools/check_delivery.py'
+      - 'tests/test_delivery_gate.py'
       - '.github/workflows/swarm-flight.yml'
   push:
     branches: [main]
     paths:
       - 'prototypes/swarm-flight/**'
+      - 'scripts/check_swarm_regressions.py'
+      - 'tests/test_swarm_regressions.py'
+      - 'tools/check_delivery.py'
+      - 'tests/test_delivery_gate.py'
       - '.github/workflows/swarm-flight.yml'
   workflow_dispatch:
 
@@ -61,6 +69,15 @@ jobs:
             exit 1
           fi
           grep -q '^SWARM FLIGHT VERIFIED:' "$RUNNER_TEMP/swarm-flight-verify.log"
+      - name: Prove known airflow regressions cannot pass the tests
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s tests -p test_swarm_regressions.py
+          python3 -B -m unittest discover -s tests -p test_delivery_gate.py
+          python3 -B scripts/check_swarm_regressions.py
       - name: Play the complete scene flow and recovery controls
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64

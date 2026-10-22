@@ -17,6 +17,9 @@ check "$light" prototypes/flower-step/project.godot prototypes/flower-step/game_
 check "$routes" prototypes/flower-step/game_model.gd godot/playtest/year/year_model.gd
 check "$web" prototypes/flower-step/main.gd src/app/page.tsx
 check "$light" prototypes/swarm-flight/project.godot prototypes/swarm-flight/world_view.gd prototypes/swarm-flight/icon.svg .github/workflows/swarm-flight.yml
+check "$light" scripts/check_swarm_regressions.py tests/test_swarm_regressions.py tools/check_delivery.py tests/test_delivery_gate.py
+check "$routes" scripts/check_swarm_regressions.py godot/playtest/year/year_model.gd
+check "$web" tools/check_delivery.py src/app/page.tsx
 check "$routes" prototypes/swarm-flight/main.gd godot/playtest/year/year_model.gd
 check "$web" prototypes/swarm-flight/main.gd src/app/page.tsx
 check "$light" prototypes/garden-puzzles/project.godot prototypes/garden-puzzles/main.gd .github/workflows/garden-puzzles.yml

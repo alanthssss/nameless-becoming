@@ -55,3 +55,16 @@ godot --headless --path prototypes/swarm-flight --script res://audio_verify.gd
 美术由`world_view.gd`程序绘制，音乐由`sound.gd`原创合成，来源与哈希见`asset-manifest.json`。1280×800逻辑画面保比例缩放；macOS universal包排除测试脚本。四季背景与角色仍是Alpha美术，未通过商业成品审美验收。Windows／手柄／Steam／独立玩家验证待后续完成；首通2～3小时仍是未验证的商业制作目标。
 
 0.7.1修复绕过风花普通入风后松键不受风的问题；13／14两处上升风边界移出台面，13-2风花冲刺穿逆风保留。验证包含1533项模型检查、449项原生完整UI检查、24条后续关卡路线及真实按键入风复现。记录见主设计文档SF-R22；截图中的明确UI状态样本与连续输入路线分别标注。
+
+### 防止同类回归与交付偏离
+
+```sh
+python3 -B -m unittest discover -s tests -p 'test_*regressions.py'
+python3 -B -m unittest discover -s tests -p test_delivery_gate.py
+python3 scripts/check_swarm_regressions.py --godot /absolute/path/to/godot
+python3 tools/check_delivery.py --contract prototypes/swarm-flight/delivery-contract.json \
+  --receipt /absolute/path/delivery-receipt.json --evidence-root /absolute/path/evidence \
+  --revision FULL_FROZEN_COMMIT --expect candidate
+```
+
+前两项测试工具；第三项在临时隔离副本恢复两个已知风区缺陷，必须被指定行为断言抓住，不修改实际工程／进度。最后一项检查SF-R23整包证据，缺少内容、美术、制作实耗时必须失败；维护通过不等于候选或用户验收。receipt字段及边界见已安装的`godot-production-workflow/references/quality-gates.md`，代码为该自有技能的同步副本。CI会运行工具回归，不自动把当前游戏记为候选。根因与机制见SF-R24；当前游戏仍为0.7.1，本轮无新试玩包。

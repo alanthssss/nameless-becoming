@@ -45,3 +45,11 @@
 - Keep unresolved design/product choices as explicit draft PRs; do not merge or close them solely to make the PR list empty. Ready implementation PRs still require review and their appropriate checks. Cleaning is not product approval.
 - Keep active worktrees only for ongoing work. Relocate historical checkouts with useful ignored artifacts into a clearly named archive rather than silently deleting those artifacts. Do not switch or remove a worktree being used by another active task.
 - Apply this hygiene during each task and after delivery; do not claim continuous background monitoring unless an automation has actually been configured.
+
+## Swarm Flight completion and regression checks
+
+- Preserve the active parent goal in the existing Now view. Internal repairs do not complete product milestones or reset their checkpoints. Batch ordinary defects within the authorized delivery; do not ask Alan to verify each basic rule.
+- For changed mechanics, derive expected observable behavior from the player rule before inspecting implementation; test relevant ordinary-input states, explicit exemptions and environmental combinations. Reproduce the user's actual path before asserting a cause. Existing tests may encode the same mistaken assumption as the code.
+- Swarm Flight CI runs `scripts/check_swarm_regressions.py`: baseline must pass and isolated copies with known wind defects must fail the specific behavior assertions. Crashes and parser errors cannot count as caught regressions. Review changed mutation anchors and expected assertions independently.
+- For SF-R23 milestone claims, run `tools/check_delivery.py` against `prototypes/swarm-flight/delivery-contract.json`, an evidence receipt and the frozen full commit. `maintenance` is internal work; `candidate` requires every product criterion; `accepted` additionally requires actual user feedback. CI testing this checker is not product acceptance. Read the evidence and its source: schema/hash validation cannot establish truth, art quality or enjoyment. Do not delete criteria merely to pass; scope changes must update the original decision.
+- The delivery checker originates in the owned `godot-production-workflow` skill. When updating it, synchronize the skill source, this copy and their tests. Do not alter gameplay or publish a new build merely to demonstrate these tools.
