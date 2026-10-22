@@ -53,7 +53,7 @@ static func move_to(point: Vector2) -> Dictionary:
 
 static func build(index: int) -> Dictionary:
 	var source: Dictionary = definitions()[clampi(index,0,STAGE_COUNT-1)]
-	var out := {"title":source.title,"theme":source.theme,"music":source.music,"base_bees":source.base_bees,"storm":source.storm,"sections":[],"encounters":[],"shields":[],"rain_fields":[],"pods":[],"walls":[],"rings":[],"shelters":[],"dew":[],"sprayers":[],"route":[],"optional_route":[],"decor":[],"region":source.get("region",0),"exit_kind":source.get("exit_kind","arch"),"entry":source.get("entry",source.encounters[0].cue),"arrival":source.get("arrival",""),"npc":source.get("npc",""),"npc_line":source.get("npc_line",""),"decision":source.get("decision","")}
+	var out := {"title":source.title,"theme":source.theme,"music":source.music,"base_bees":source.base_bees,"storm":source.storm,"sections":[],"encounters":[],"shields":[],"rain_fields":[],"pods":[],"walls":[],"rings":[],"shelters":[],"dew":[],"sprayers":[],"route":[],"optional_route":[],"decor":[],"jets":[],"airflows":[],"region":source.get("region",0),"exit_kind":source.get("exit_kind","arch"),"entry":source.get("entry",source.encounters[0].cue),"arrival":source.get("arrival",""),"npc":source.get("npc",""),"npc_line":source.get("npc_line",""),"decision":source.get("decision","")}
 	var origin := 0.0
 	var i := 0
 	for encounter_index in source.encounters.size():
@@ -62,11 +62,19 @@ static func build(index: int) -> Dictionary:
 		if out.sections.size() == i:
 			out.sections.append({"name":spec.name,"start_x":origin,"end_x":origin+spec.width,"rest":rest,"budget":spec.budget,"storm_speed":spec.storm_speed if source.storm else 0.0,"route_index":out.route.size(),"optional_route_index":out.optional_route.size()})
 		out.encounters.append({"name":spec.name,"start_x":origin,"end_x":origin+spec.width,"section":i,"cue":spec.cue,"storm_speed":spec.storm_speed,"ambient_rain":spec.ambient_rain})
+		var route_start: int = out.route.size()
+		var alternate_start: int = out.optional_route.size()
 		for beat in spec.beats:
 			var point := Vector2(origin+beat.x,beat.y)
 			var steps: Array = []
 			var optional_steps: Array = []
 			match beat.kind:
+				"terrain":
+					out.walls.append({"rect":Rect2(point,Vector2(beat.width,beat.height)),"kind":"terrain","material":beat.style,"broken":false})
+				"jet":
+					out.jets.append({"rect":Rect2(point,Vector2(beat.width,beat.height)),"period":beat.period,"active_seconds":beat.active_seconds,"offset":beat.offset})
+				"airflow":
+					out.airflows.append({"rect":Rect2(point,Vector2(beat.width,beat.height)),"direction":beat.direction,"strength":beat.strength})
 				"gap":
 					var half: float = beat.width*0.5
 					out.walls.append({"rect":Rect2(point.x,80,48,point.y-half-80),"kind":"stem","broken":false})
@@ -126,6 +134,13 @@ static func build(index: int) -> Dictionary:
 				"turn": steps = [move_to(point)]
 			out.route.append_array(steps)
 			out.optional_route.append_array(optional_steps if not optional_steps.is_empty() else steps.duplicate(true))
+		# Explicit reference routes describe ordinary inputs through authored geometry.
+		# They never alter the playable level or grant progress.
+		if spec.has("direct_route"):
+			out.route.resize(route_start)
+			out.route.append_array(translate_route(spec.direct_route,origin))
+			out.optional_route.resize(alternate_start)
+			out.optional_route.append_array(translate_route(spec.get("alternate_route",spec.direct_route),origin))
 		if spec.rest_y >= 0:
 			out.sections[i].end_x = origin+spec.width
 			out.sections[i].rest = rest
@@ -139,3 +154,14 @@ static func build(index: int) -> Dictionary:
 	# The goal is a visible threshold, not an invisible proximity sphere.
 	for route_name in ["route","optional_route"]: out[route_name].append(move_to(out.exit_pos+Vector2(45,0)))
 	return out
+
+static func translate_route(commands: Array,origin: float) -> Array:
+	var translated: Array = []
+	for command in commands:
+		if command is Vector2: translated.append(move_to(command+Vector2(origin,0)))
+		else:
+			var next: Dictionary = command.duplicate(true)
+			if next.has("target"): next.target += Vector2(origin,0)
+			if next.has("jet_x"): next.jet_x += origin
+			translated.append(next)
+	return translated

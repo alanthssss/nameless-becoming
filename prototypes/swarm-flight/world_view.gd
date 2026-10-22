@@ -249,6 +249,8 @@ func _draw() -> void:
 		_rain_field(field)
 	for wall in model.walls:
 		_wall(wall)
+	for field in model.airflows: _airflow(field)
+	for i in model.jets.size(): _jet(i)
 	for shelter in model.shelters:
 		_shelter(shelter)
 	_wind_paths()
@@ -380,7 +382,8 @@ func _region_background(cam: float) -> void:
 			draw_line(Vector2(x,330),Vector2(x+246,330),Color("93a59c"),6)
 			for j in 4: draw_circle(Vector2(x+30+j*53,230+(j%2)*40),3,CREAM)
 			draw_line(Vector2(x+123,180),Vector2(x+123,215),Color("a58e60"),2)
-			_ellipse(Vector2(x+123,230),Vector2(13,18),Color("f6d995"))
+			_outline_polygon(PackedVector2Array([Vector2(x+111,221),Vector2(x+135,221),Vector2(x+144,240),Vector2(x+102,240)]),Color("c9b78a"),Color("83958b"),2)
+			draw_line(Vector2(x+111,242),Vector2(x+135,242),Color("e8d89b"),3)
 
 func _region_landmarks(cam: float) -> void:
 	for item in model.chapter.decor:
@@ -390,8 +393,9 @@ func _region_landmarks(cam: float) -> void:
 			_curve(p+Vector2(0,170),p+Vector2(-20,60),p+Vector2(18,-10),p+Vector2(35,10),Color("8e8460"),5)
 			for i in 4: _leaf(p+Vector2(35,10),p+Vector2(15+i*13,45+i%2*15),8,Color("a5966b"))
 		elif item.style == "lamp":
-			draw_line(p-Vector2(0,45),p,INK,3)
-			_oval(p,Vector2(12,18),GOLD,INK,2)
+			draw_line(p+Vector2(0,150),p-Vector2(0,20),Color("738377"),4)
+			_outline_polygon(PackedVector2Array([p+Vector2(-12,-13),p+Vector2(12,-13),p+Vector2(22,9),p+Vector2(-22,9)]),Color("b4b28a"),Color("738377"),2)
+			draw_line(p+Vector2(-12,12),p+Vector2(12,12),Color("e8d89b"),3)
 		else:
 			# Unoutlined, small garden signs are decorative, never false walls.
 			draw_line(p+Vector2(0,10),p+Vector2(0,65),Color("8b7956"),6)
@@ -474,9 +478,83 @@ func _world_decor(act: int, cam: float) -> void:
 			var c := root+Vector2(76,-50)
 			_flower(c,17,Color("f4b977") if act==0 else Color("b79be0"),float(i))
 
+func _terrain(item: Dictionary) -> void:
+	var r: Rect2 = item.rect
+	var material: String = item.get("material","hedge")
+	var fill := Color("7aab48") if material == "hedge" else Color("bd935e") if material == "crate" else Color("779a96")
+	draw_rect(r,fill)
+	draw_rect(r,INK,false,4)
+	var inner := r.grow(-8)
+	if material != "hedge" and inner.size.x > 0 and inner.size.y > 0: draw_rect(inner,fill.lightened(0.24),false,3)
+	if material == "crate":
+		draw_line(r.position+Vector2(12,12),r.end-Vector2(12,12),Color("84613f"),7,true)
+		draw_line(Vector2(r.position.x+12,r.end.y-12),Vector2(r.end.x-12,r.position.y+12),Color("84613f"),7,true)
+		for x in range(1,int(r.size.x/85.0)):
+			draw_line(r.position+Vector2(x*85,8),Vector2(r.position.x+x*85,r.end.y-8),Color("9e764d"),2)
+	elif material == "hedge":
+		# Dense clipped foliage reads as a solid hedge, not another HUD panel.
+		for row in maxi(1,int(r.size.y/45.0)):
+			var y := r.position.y+25+row*43.0
+			for column in maxi(1,int(r.size.x/55.0)):
+				var x := r.position.x+29+column*55.0
+				var radius := Vector2(minf(29,r.end.x-x-3),minf(23,r.end.y-y-3))
+				_ellipse(Vector2(x,y),radius,Color("60943f") if (row+column)%3 == 0 else Color("8ab750"))
+				_leaf(Vector2(x-8,y+7),Vector2(x+10,y-9),7,Color("b0cf67"))
+		for x in range(1,int(r.size.x/120.0)):
+			_flower(Vector2(r.position.x+x*120,r.position.y+20),10,Color("d8b995"),float(x))
+	else:
+		draw_rect(Rect2(r.position,Vector2(r.size.x,minf(16,r.size.y))),Color("b6c7ac"))
+		draw_line(r.position+Vector2(0,16),Vector2(r.end.x,r.position.y+16),INK,3)
+
+func _jet(index: int) -> void:
+	var item: Dictionary = model.jets[index]
+	var r: Rect2 = item.rect
+	if r.end.x < model.camera_x-120 or r.position.x > model.camera_x+1400: return
+	var state: String = model.jet_phase(index)
+	var active := state == "spray"
+	var tint := Color("80d8e2") if active else Color("f1bf69") if state == "warning" else Color("679d9f")
+	draw_rect(r,Color(tint,0.24 if active else 0.07))
+	for x in [r.position.x,r.end.x]:
+		for y in range(int(r.position.y),int(r.end.y),30): draw_line(Vector2(x,y),Vector2(x,minf(y+12,r.end.y)),Color(tint,0.7),2,true)
+	if active:
+		for j in 5:
+			var x: float = r.position.x+8+(r.size.x-16)*j/4.0
+			for k in 5:
+				var y: float = r.end.y-fposmod(model.hazard_clock*360+k*r.size.y/5.0+j*13,r.size.y)
+				draw_line(Vector2(x,y),Vector2(x,clampf(y+35,r.position.y,r.end.y)),CREAM,3,true)
+	else:
+		var head := Vector2(r.get_center().x,r.end.y-15)
+		for j in 3: draw_circle(head+Vector2((j-1)*19,-absf(sin(clock*4+j))*12),3.5,tint)
+	var base := Rect2(r.position.x-10,r.end.y-4,r.size.x+20,18)
+	draw_style_box(_box_style(Color("729b97"),INK,3,5),base)
+	var words := "喷发" if active else "将喷" if state == "warning" else "停喷"
+	if feedback_font != null: draw_string(feedback_font,Vector2(r.get_center().x-30,r.end.y+36),words,HORIZONTAL_ALIGNMENT_CENTER,60,16,INK)
+
+func _airflow(item: Dictionary) -> void:
+	var r: Rect2 = item.rect
+	if r.end.x < model.camera_x-100 or r.position.x > model.camera_x+1400: return
+	draw_rect(r,Color(0.50,0.85,0.91,0.18))
+	draw_rect(r,Color(0.35,0.65,0.70,0.65),false,2)
+	var dir: Vector2 = item.direction
+	var side := dir.orthogonal()
+	for i in 15:
+		var p := r.position+Vector2(fposmod(i*73.0+clock*dir.x*75,r.size.x),fposmod(i*97.0+clock*dir.y*75,r.size.y))
+		p.x = clampf(p.x,r.position.x+12,r.end.x-12)
+		p.y = clampf(p.y,r.position.y+12,r.end.y-12)
+		draw_polyline(PackedVector2Array([p-dir*9-side*5,p,p-dir*9+side*5]),Color("edf5d7"),2.5,true)
+	var vertical := absf(dir.y) > 0.5
+	var source := Vector2(r.get_center().x,r.end.y+9) if dir.y < -0.5 else Vector2(r.get_center().x,r.position.y-9) if dir.y > 0.5 else Vector2(r.end.x+10,r.get_center().y) if dir.x < 0 else Vector2(r.position.x-10,r.get_center().y)
+	_oval(source,Vector2(27,10) if vertical else Vector2(10,27),Color("647f7d"),INK,2)
+	for j in range(-2,3):
+		if vertical: draw_line(source+Vector2(j*9,-6),source+Vector2(j*9,6),Color("c8ded2"),2)
+		else: draw_line(source+Vector2(-6,j*9),source+Vector2(6,j*9),Color("c8ded2"),2)
+
 func _wall(wall: Dictionary) -> void:
 	var r: Rect2 = wall.rect
 	if r.end.x < model.camera_x-80 or r.position.x > model.camera_x+1360: return
+	if wall.kind == "terrain":
+		_terrain(wall)
+		return
 	if wall.kind == "curtain":
 		if wall.broken:
 			_curve(r.position,r.position+Vector2(14,8),r.position+Vector2(29,-3),r.position+Vector2(r.size.x,2),Color("94713e"),2.2)
@@ -1248,7 +1326,8 @@ func _landmarks(act: int) -> void:
 			3: # A stack of pebbles and a familiar lantern.
 				for j in 3: _oval(p+Vector2((j%2)*16,j*20),Vector2(42-j*7,16),Color("a5b6a0"),INK,2)
 				draw_line(p+Vector2(-51,36),p+Vector2(-51,-65),INK,5,true)
-				_oval(p+Vector2(-51,-44),Vector2(17,24),GOLD,INK,3)
+				_outline_polygon(PackedVector2Array([p+Vector2(-63,-65),p+Vector2(-39,-65),p+Vector2(-29,-43),p+Vector2(-73,-43)]),Color("a3a17b"),Color("6d8072"),2)
+				draw_line(p+Vector2(-63,-40),p+Vector2(-39,-40),Color("e8d89b"),3)
 		if feedback_font != null:
 			var text := "叶亭 %02d" % (i+1)
 			var w := feedback_font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,17).x

@@ -193,7 +193,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     四季旅程 Alpha 0.6.0"
+	menu_kicker.text = "BEFORE THE RAIN     /     四季旅程 Alpha 0.7.0"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -434,7 +434,7 @@ func tick(delta: float) -> void:
 				"charge_cancel":
 					event_message(event.kind,"还没蓄好力 · 按住空格，等光环亮起再松开",2.6)
 				"blocked":
-					event_message(event.kind,"先完成本段 · 跟随方向标救援或抵达上一处叶下" if event.get("material") == "waiting" else "干叶帘可以冲开 · 按住空格，亮起后松开" if event.get("material") == "curtain" else "厚实的茎干冲不开 · 从空隙绕过去",2.5)
+					event_message(event.kind,"先完成本段 · 跟随方向标救援或抵达上一处叶下" if event.get("material") == "waiting" else "干叶帘可以冲开 · 按住空格，亮起后松开" if event.get("material") == "curtain" else "实心%s冲不开 · 从开口绕过去" % {"stem":"茎干","hedge":"花篱","crate":"果箱","glass":"台面"}.get(event.get("material"),"障碍"),2.5)
 				"checkpoint":
 					event_message(event.kind,"安全了 · 雨幕停在身后，体力恢复 · 已保存" if model.storm_active else "已记住这个叶亭 · 体力正在恢复",3.0)
 				"recover_manual":
@@ -458,7 +458,7 @@ func tick(delta: float) -> void:
 				"flower_calm":
 					event_message(event.kind,"喷嚏花安静六秒" + (" · 体力 +%d" % int(round(event.reward)) if event.reward > 0 else " · 放心过去吧"),2.0)
 				"hit":
-					event_message(event.kind,"体力 −12 · 喷嚏水珠可绕开、冲散" if event.get("reason") == "sneeze" else "体力 −30 · 雨追上来了，寻找大叶遮蔽" if event.get("reason") == "storm" else "体力 −30 · 雨滴可以绕开，或冲刺击散",2.4,Color("ffd3b6"))
+					event_message(event.kind,"体力 −12 · 喷泉要等停喷，或冲刺穿过" if event.get("reason") == "jet" else "体力 −12 · 喷嚏水珠可绕开、冲散" if event.get("reason") == "sneeze" else "体力 −30 · 雨追上来了，寻找大叶遮蔽" if event.get("reason") == "storm" else "体力 −30 · 雨滴可以绕开，或冲刺击散",2.4,Color("ffd3b6"))
 				"ring":
 					var chain := int(event.get("chain",1))
 					var wind_text := "连续借风 ×%d · 不用再蓄力！" % chain if chain > 1 else "借到风 · 顺着风花接着飞"

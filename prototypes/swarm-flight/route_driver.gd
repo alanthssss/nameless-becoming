@@ -69,6 +69,14 @@ func next_input() -> Dictionary:
 					advance_command()
 					continue
 				return output(Vector2(signf(offset.x) if absf(offset.x)>8 else 0,signf(offset.y) if absf(offset.y)>8 else 0).normalized())
+			"jet_window":
+				var matching := -1
+				for i in model.jets.size():
+					if absf(model.jets[i].rect.position.x-command.jet_x) < 0.1: matching = i; break
+				if matching < 0: error = "Missing authored jet at "+str(command.jet_x); return output()
+				if model.jet_quiet_remaining(matching) < float(command.get("travel_seconds",1.2)): return output()
+				advance_command()
+				continue
 			"burst":
 				if burst_phase == 0:
 					burst_phase = 1

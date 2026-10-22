@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-10-22 当前：飞行版《雨来之前》四季旅程 Alpha 0.6.0。** 春夏秋冬四区16关连接为完整旅程；保留首章核心和三首音乐，新增分路、短叶帘、邻居回应和全篇结尾。独立全篇进度保护旧四关存档。全篇Alpha不等于商业成品：美术、真人时长、Windows／Steam及外部验收仍待完成。[试玩入口](prototypes/swarm-flight/README.md) · [本轮制作与证据 SF-R20](docs/design/swarm-flight-game-20261020.md#full-alpha-today) · [唯一执行状态 Now](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。
+**2026-10-22 当前：飞行版《雨来之前》四季旅程 Alpha 0.7.0。** 四区16关完整可玩；按“季节有了、元素和路径没有”的实玩反馈，重排05–15的实体花篱／果箱、间歇喷泉与局部气流，分路在共同叶亭合流。保留春天地图、操作和音乐，独立新存档保护旧版进度。商业美术、真人时长和发行验收仍待完成。[试玩入口](prototypes/swarm-flight/README.md) · [本轮实现与证据 SF-R21](docs/design/swarm-flight-game-20261020.md#season-elements-and-routes) · [唯一执行状态 Now](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。
 
 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 

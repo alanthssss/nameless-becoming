@@ -39,6 +39,9 @@ var shield_left := 0.0
 var shield_feedback_left := 0.0
 var shields: Array[Dictionary] = []
 var rain_fields: Array[Dictionary] = []
+var jets: Array[Dictionary] = []
+var airflows: Array[Dictionary] = []
+var hazard_clock := 0.0
 var time := 0.0
 var camera_x := 0.0
 var world_width := 3000.0
@@ -102,6 +105,7 @@ func load_stage(index: int) -> void:
 	shield_left = 0.0
 	shield_feedback_left = 0.0
 	time = 0.0
+	hazard_clock = 0.0
 	camera_x = 0.0
 	storm_x = -1000.0
 	storm_active = false
@@ -133,6 +137,8 @@ func load_stage(index: int) -> void:
 	sprayers.assign(chapter.sprayers)
 	shields.assign(chapter.shields)
 	rain_fields.assign(chapter.rain_fields)
+	jets.assign(chapter.jets)
+	airflows.assign(chapter.airflows)
 	exit_pos = chapter.exit_pos
 	rain_remaining = sections[0].budget
 
@@ -223,6 +229,7 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 func advance(direction: Vector2, dt: float) -> void:
 	time += dt
 	if started:
+		hazard_clock += dt
 		if shelter_index_at(p) >= 0:
 			gain_energy(REST_RECOVERY*dt)
 		else:
@@ -251,6 +258,7 @@ func advance(direction: Vector2, dt: float) -> void:
 		# Wind colors active flight; it never moves an idle or aiming bee.
 		if not charging and direction.length() > 0.01 and shelter_index_at(p) < 0:
 			target += Vector2(12 if stage == 0 else 34,sin(time * 1.5 + p.x * 0.002) * 24)
+			target += airflow_at(p)
 		var acceleration := FLIGHT_ACCELERATION
 		if burst_braking:
 			acceleration = BURST_BRAKING
@@ -275,7 +283,7 @@ func advance(direction: Vector2, dt: float) -> void:
 			else:
 				if blocked_cooldown <= 0.0 and velocity.length() > 40.0:
 					emit("blocked",p)
-					events.back()["material"] = "waiting" if not gate_ready(obstacle) else obstacle.kind
+					events.back()["material"] = "waiting" if not gate_ready(obstacle) else obstacle.get("material",obstacle.kind)
 					blocked_cooldown = 1.8
 				# Resolve each axis independently: holding against a wall still slides.
 				var proposed := p
@@ -330,6 +338,8 @@ func advance(direction: Vector2, dt: float) -> void:
 			events.back()["reward"] = stamina-before_ring_gain
 	var old_recoveries := recoveries
 	advance_garden(dt)
+	if old_recoveries != recoveries: return
+	advance_jets()
 	if old_recoveries != recoveries: return
 	advance_shelters()
 	exit_ready = rescued_count() == rescue_total() and completed_sections() == sections.size()
@@ -399,6 +409,32 @@ func advance_storm(dt: float) -> void:
 	if p.x < storm_x + 45:
 		hurt("storm")
 
+func airflow_at(point: Vector2) -> Vector2:
+	var flow := Vector2.ZERO
+	for field in airflows:
+		if field.rect.has_point(point): flow += field.direction*field.strength
+	return flow.limit_length(240.0)
+
+func jet_cycle(index: int) -> float:
+	return fposmod(hazard_clock+jets[index].offset,jets[index].period)
+
+func jet_phase(index: int) -> String:
+	var jet: Dictionary = jets[index]
+	var remaining: float = jet.period-jet.active_seconds-jet_cycle(index)
+	if remaining <= 0.0: return "spray"
+	if remaining <= 0.8: return "warning"
+	return "quiet"
+
+func jet_quiet_remaining(index: int) -> float:
+	return maxf(0.0,jets[index].period-jets[index].active_seconds-0.8-jet_cycle(index))
+
+func advance_jets() -> void:
+	if not started or burst_left > 0 or shelter_index_at(p) >= 0: return
+	for i in jets.size():
+		if jet_phase(i) == "spray" and jets[i].rect.grow(14).has_point(p):
+			hurt("jet",12.0)
+			return
+
 func advance_rain(dt: float) -> void:
 	for field in rain_fields:
 		var area: Rect2 = field.rect
@@ -421,6 +457,8 @@ func advance_rain(dt: float) -> void:
 		for shelter in shelters:
 			if absf(drop.pos.x-shelter.pos.x) < float(shelter.get("half_width",118.0))+7 and drop.pos.y > shelter.pos.y-95:
 				sheltered = true
+		for obstacle in walls:
+			if obstacle.kind == "terrain" and obstacle.rect.has_point(drop.pos): sheltered = true
 		if drop.pos.y > 760 or sheltered:
 			drops.remove_at(i)
 		elif p.distance_to(drop.pos) < 25 and shelter_index_at(p) < 0:
@@ -489,7 +527,7 @@ func advance_garden(dt: float) -> void:
 			puffs.remove_at(i)
 
 func hurt(reason := "rain", cost := 30.0) -> void:
-	if shield_left > 0 and reason in ["rain","sneeze","storm"]:
+	if shield_left > 0 and reason in ["rain","sneeze","storm","jet"]:
 		if shield_feedback_left <= 0:
 			emit("shield_block",p)
 			events.back()["reason"] = reason
@@ -536,6 +574,7 @@ func restore_checkpoint(reason := "manual") -> void:
 	rain_remaining = maxf(20.0,checkpoint.get("rain_remaining",STORM_SECONDS))
 	invulnerable = 2.5
 	rain_timer = 2
+	hazard_clock = 0.0
 	clear_input()
 	started = false
 	camera_x = clampf(p.x-480,0,world_width-1280)
@@ -679,6 +718,18 @@ func context_cue() -> Dictionary:
 	var rest_index := shelter_index_at(p)
 	if rest_index >= 0:
 		return {"pos":shelters[rest_index].pos,"text":"叶下安全 · " + ("体力充足" if stamina >= MAX_STAMINA else "体力恢复中"),"kind":"shelter"}
+	for i in jets.size():
+		var area: Rect2 = jets[i].rect
+		if area.grow(190).has_point(p):
+			var state := jet_phase(i)
+			var words := "停喷空档 · 可以穿过"
+			if state == "warning": words = "水压升高 · 马上喷发"
+			elif state == "spray": words = "正在喷发 · 等停喷或冲刺穿过"
+			return {"pos":Vector2(area.get_center().x,clampf(p.y,area.position.y,area.end.y)),"text":words,"kind":"jet"}
+	for field in airflows:
+		if field.rect.grow(80).has_point(p):
+			var words := "上升气流 · 飞入借力，松键停稳" if field.direction.y < -0.5 else "下压气流 · 提前抬高，或从上方绕过" if field.direction.y > 0.5 else "迎面气流 · 冲刺可稳住方向" if field.direction.x < 0 else "顺向气流 · 普通飞行也能借力"
+			return {"pos":p+Vector2(70,0),"text":words,"kind":"airflow"}
 	for trapped in pods:
 		if not trapped.open and p.distance_to(trapped.pos) < 300:
 			return {"pos":trapped.pos,"text":"冲开卷叶 · 救出伙伴","kind":"pod"}
@@ -719,7 +770,7 @@ func save_payload() -> Dictionary:
 	var saved_sprayers: Array = []
 	for item in checkpoint.sprayers:
 		saved_sprayers.append({"rewarded":item.rewarded,"stun_left":item.stun_left,"timer":item.timer})
-	return {"version":5,"content_revision":7,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
+	return {"version":6,"content_revision":8,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
 
 func _valid_integer(value, low: int, high: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floor(float(value)) and value >= low and value <= high
@@ -733,7 +784,7 @@ func _valid_flags(value, count: int) -> bool:
 func restore_payload(data: Dictionary) -> bool:
 	# Validate every field before changing the current run. Extra UI metadata is
 	# intentionally ignored; maps and positions always come from authored data.
-	if data.get("version") != 5 or data.get("content_revision") != 7: return false
+	if data.get("version") != 6 or data.get("content_revision") != 8: return false
 	if not _valid_integer(data.get("stage"),0,STAGE_COUNT-1): return false
 	var saved_stage := int(data.stage)
 	var layout := Data.build(saved_stage)
