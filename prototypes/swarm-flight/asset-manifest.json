@@ -1,6 +1,6 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.7.0",
+  "revision": "0.7.1",
   "created": "2026-10-20",
   "direction": "Original code-native garden cartoons extended to four regions: spring garden, summer flower border, autumn orchard, winter glass passage. Alpha presentation, commercial art acceptance pending. No new bitmap or external audio assets.",
   "runtime_bitmap_assets": [],
@@ -48,9 +48,10 @@
       "waiting bee Xiaoman with flower cap and thrush; shelter dialogue shares one contextual cue",
       "independent fork breeze paths; only the chosen branch activates",
       "spring tree arrival continues into summer; winter tree arrival ends the full journey",
-      "Model-derived solid hedge/crate/greenhouse terrain, quiet/warning/spray fountain footprint, directional local airflow field and grille; decorative lamps have explicit shades."
+      "Model-derived solid hedge/crate/greenhouse terrain, quiet/warning/spray fountain footprint, directional local airflow field and grille; decorative lamps have explicit shades.",
+      "Effective-airflow contact arrows only while wind applies; whole strokes constrained to the actual field, absent during dash or shelter."
     ],
-    "collision_contract": "Model authoritative, unchanged player physics. Only the player has collision and stamina. Rescued actors are bounded screen-plane departure animations with no physics or damage; follow/path and companion collision-offset logic removed. Full solid stem rectangles remain visible, flower direction and shelter position remain model-derived.",
+    "collision_contract": "Model authoritative, continuous local wind during cruise, release and charge; dash keeps direction. Only the player has collision and stamina. Rescued actors are bounded screen-plane departure animations with no physics or damage; follow/path and companion collision-offset logic removed. Full solid stem rectangles remain visible, flower direction and shelter position remain model-derived.",
     "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget."
   },
   "ui": {
@@ -59,7 +60,7 @@
     "clock": "Elapsed journey in ordinary levels; exposed-time budget and spatial chase in storm levels. Both stop at earned arrival.",
     "handoff": "2.4-second earned landing; region boundaries 4.5 seconds with season text. Enter skips, pause/focus loss freezes. Stage 04 continues into summer; only stage 16 ends the full journey.",
     "progress": "16 levels / 60 encounters / 38 shared safe leaves / 15 dew. Journey v2 path uses version 6, content revision 8; old journey v1 and chapter v4 untouched. Title region selection starts a new journey; earned arrival continues next stage.",
-    "local_feedback": "Nearby fountain phase and directional airflow cues share the existing one-cue slot; canopy safety has priority. New terrain blocked feedback names the material."
+    "local_feedback": "Actual wind contact has directional pushing feedback including charge; approach is explicitly not contact. Shelter and fresh/recovery state preserve safety. Fountain phase and material feedback retained."
   },
   "rejected_pass": {
     "status": "Removed from source/runtime/export following user feedback SF-R02: AI feeling too strong.",
@@ -73,6 +74,11 @@
   "validation": {
     "engine": "Godot 4.6.2 stable, OpenGL Compatibility on Apple M1 Pro",
     "captures": [
+      "airflow-ordinary-approach",
+      "airflow-ordinary-charge-half-second",
+      "airflow-ordinary-entered",
+      "airflow-ordinary-exited",
+      "airflow-ordinary-release-one-second",
       "arrival-landed-0",
       "arrival-landed-1",
       "arrival-landed-10",
@@ -90,6 +96,9 @@
       "arrival-landed-9",
       "autumn-crates-alternate",
       "autumn-crates-direct",
+      "before-airflow-charge-half-second",
+      "before-airflow-entered",
+      "before-airflow-released-one-second",
       "chapter-ending",
       "chapter-title",
       "continuous-wind",
@@ -176,7 +185,7 @@
       "winter-flow-direct",
       "winter-flow-fixture"
     ],
-    "result": "0.7.0: 1455 model checks, 60 per-level route checks, and 431 native UI/capture checks passed. Full sixteen-level direct/all-dew ordinary-input routes complete without forced recovery. Developer evidence only; commercial art, first-player duration and release acceptance pending.",
+    "result": "0.7.1: 1533 model checks, 60 per-level route checks, 449 native full UI/capture checks; final wind visual slice 30 checks. Ordinary key reproduction bypasses wind flowers: release 1s = -159.99px, charge 0.5s = -80px, zero bursts/recoveries. 54 old 0.7.0 checkpoint fixtures and actual save copy restore; no user save writes. Developer evidence only.",
     "audio_pcm_peaks": [
       0.62149,
       0.64804,
@@ -207,7 +216,8 @@
     "pacing_revision": "Dew authored as ordered optional beats, rescue refill carries into subsequent flight, nine deliberate shelters, six dew with dynamic save/UI counts. Weather follows encounter purpose. Direct/all-dew/no-shield/flow-through complete without recovery; recovery test uses five explicit returns after rescues. Flow-through rain route reaches 2.07 stamina, not novice-tolerance proof.",
     "arrival_revision": "Level 02 supply precedes the route split. Crossing the goal aperture completes before same-substep weather damage; model/time/stamina freeze throughout presentation. All music generation functions remain byte-identical to 0.5.1; only arrival bell synthesis added.",
     "full_alpha_revision": "Twelve authored levels added; twenty-four per-level routes passed. Whole known-answer routes ~5m40s/~6m16s, not evidence for the unvalidated 2–3-hour first-play target. Original movement and sound.gd unchanged.",
-    "season_routes_revision": "05–15 reauthored with 38 real terrain areas, 5 phased fountains, 6 local airflows. Twenty-four per-level routes complete with no terrain hits, fountain damage or recovery. Whole known-answer routes ~6m28s/~6m39s; not first-player timing. Spring definition and sound.gd remain byte-identical to 0.6.0. UI fixture captures are separate from continuous-input route captures."
+    "season_routes_revision": "05–15 reauthored with 38 real terrain areas, 5 phased fountains, 6 local airflows. Twenty-four per-level routes complete with no terrain hits, fountain damage or recovery. Whole known-answer routes ~6m28s/~6m39s; not first-player timing. Spring definition and sound.gd remain byte-identical to 0.6.0. UI fixture captures are separate from continuous-input route captures.",
+    "interaction_coherence_revision": "Continuous local wind for idle/charge; dash resistance retained following explicit user clarification. All six authored airflow regions exercise state combinations, actual-key UI reproduction avoids wind flowers. Two updraft bounds clear solid terrain; existing progress layout and sound.gd unchanged."
   },
   "style_references": [
     {
@@ -244,7 +254,7 @@
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "73b883b55673fe35ae5dd89b8d294778f529c4873643e97473914f84ba496a13",
+    "world_view.gd": "411c009b455e95d1e936bc45f7711844139954329cd815585debf92a071f5e96",
     "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4"
   },
   "updated": "2026-10-22"

@@ -279,6 +279,7 @@ func _draw() -> void:
 		if ghost.relay:
 			draw_line(ghost.pos-ghost.face*24,ghost.pos+ghost.face*8,Color(0.61,1.0,0.88,alpha*2.0),4,true)
 	_leader()
+	_airflow_contact()
 	_draw_departures()
 	_effects()
 	draw_set_transform(Vector2.ZERO)
@@ -529,6 +530,26 @@ func _jet(index: int) -> void:
 	draw_style_box(_box_style(Color("729b97"),INK,3,5),base)
 	var words := "喷发" if active else "将喷" if state == "warning" else "停喷"
 	if feedback_font != null: draw_string(feedback_font,Vector2(r.get_center().x-30,r.end.y+36),words,HORIZONTAL_ALIGNMENT_CENTER,60,16,INK)
+
+func _airflow_contact() -> void:
+	# This contact feedback uses the same effective force as movement, not proximity.
+	var flow: Vector2 = model.effective_airflow()
+	if flow.is_zero_approx(): return
+	var dir := flow.normalized()
+	var side := dir.orthogonal()
+	for i in 3:
+		var along := fposmod(clock*140+i*29,84.0)-42.0
+		var tip: Vector2 = model.p+dir*along+side*(30 if i%2 == 0 else -30)
+		var arrow := PackedVector2Array([tip-dir*6-side*4,tip,tip-dir*6+side*4])
+		var contained := false
+		for field in model.airflows:
+			var inside: Rect2 = field.rect.grow(-2)
+			if inside.has_point(tip-dir*17) and inside.has_point(arrow[0]) and inside.has_point(arrow[1]) and inside.has_point(arrow[2]):
+				contained = true
+				break
+		if not contained: continue
+		draw_line(tip-dir*17,tip,Color("edf5d7"),3,true)
+		draw_polyline(arrow,Color("edf5d7"),2,true)
 
 func _airflow(item: Dictionary) -> void:
 	var r: Rect2 = item.rect

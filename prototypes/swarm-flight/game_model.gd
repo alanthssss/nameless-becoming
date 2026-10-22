@@ -255,10 +255,11 @@ func advance(direction: Vector2, dt: float) -> void:
 			burst_braking = true
 	else:
 		var target := direction * (CHARGE_SPEED if charging else CRUISE_SPEED)
-		# Wind colors active flight; it never moves an idle or aiming bee.
+		# Ambient sway accompanies steering; authored wind is a continuous force.
+		# Releasing or charging inside the visible field must not switch it off.
 		if not charging and direction.length() > 0.01 and shelter_index_at(p) < 0:
 			target += Vector2(12 if stage == 0 else 34,sin(time * 1.5 + p.x * 0.002) * 24)
-			target += airflow_at(p)
+		target += effective_airflow()
 		var acceleration := FLIGHT_ACCELERATION
 		if burst_braking:
 			acceleration = BURST_BRAKING
@@ -414,6 +415,22 @@ func airflow_at(point: Vector2) -> Vector2:
 	for field in airflows:
 		if field.rect.has_point(point): flow += field.direction*field.strength
 	return flow.limit_length(240.0)
+
+func effective_airflow() -> Vector2:
+	# Dash keeps its chosen direction; a fresh/recovered bee and safe leaves rest.
+	if not started or burst_left > 0 or shelter_index_at(p) >= 0: return Vector2.ZERO
+	return airflow_at(p)
+
+func airflow_cue() -> Dictionary:
+	var flow := airflow_at(p)
+	if flow.is_zero_approx() or shelter_index_at(p) >= 0: return {}
+	var heading := "向上" if flow.y < -0.5 else "向下" if flow.y > 0.5 else "向左" if flow.x < 0 else "向右"
+	var words := "气流 · " + heading + "推动中"
+	if burst_left > 0: words = "冲刺穿风 · 方向保持"
+	elif not started: words = "气流区 · 起飞后会" + heading + "推动"
+	elif charging:
+		words += " · " + ("体力不足 20" if not can_burst() else "蓄力就绪，松开冲刺" if charge >= CHARGE_READY else "蓄力中")
+	return {"pos":p+Vector2(70,0),"text":words,"kind":"airflow"}
 
 func jet_cycle(index: int) -> float:
 	return fposmod(hazard_clock+jets[index].offset,jets[index].period)
@@ -709,6 +726,8 @@ func hint() -> String:
 
 func context_cue() -> Dictionary:
 	# Local prompts appear only within an actionable distance, never over the whole map.
+	var wind_cue := airflow_cue()
+	if not wind_cue.is_empty(): return wind_cue
 	if charging:
 		var words := "体力不足 20 · R 返回恢复点" if not can_burst() else ("松开空格 · 冲刺消耗 20" if charge >= CHARGE_READY else "按住空格 · 蓄力中")
 		return {"pos":p,"text":words,"kind":"charge"}
@@ -728,8 +747,8 @@ func context_cue() -> Dictionary:
 			return {"pos":Vector2(area.get_center().x,clampf(p.y,area.position.y,area.end.y)),"text":words,"kind":"jet"}
 	for field in airflows:
 		if field.rect.grow(80).has_point(p):
-			var words := "上升气流 · 飞入借力，松键停稳" if field.direction.y < -0.5 else "下压气流 · 提前抬高，或从上方绕过" if field.direction.y > 0.5 else "迎面气流 · 冲刺可稳住方向" if field.direction.x < 0 else "顺向气流 · 普通飞行也能借力"
-			return {"pos":p+Vector2(70,0),"text":words,"kind":"airflow"}
+			var name := "上升气流" if field.direction.y < -0.5 else "下压气流" if field.direction.y > 0.5 else "向左气流" if field.direction.x < 0 else "顺向气流"
+			return {"pos":p+Vector2(70,0),"text":name+"在附近 · 进入箭头区域后生效","kind":"airflow_approach"}
 	for trapped in pods:
 		if not trapped.open and p.distance_to(trapped.pos) < 300:
 			return {"pos":trapped.pos,"text":"冲开卷叶 · 救出伙伴","kind":"pod"}
