@@ -61,6 +61,7 @@ func run_complete_route(collect: bool) -> void:
 	var active_captures := {}
 	var relay_captured := false
 	var shelter_captured := false
+	var home_arrival := false
 	var poses := {}
 	for frame in 180000:
 		if game.mode == "ending": break
@@ -76,7 +77,31 @@ func run_complete_route(collect: bool) -> void:
 				handoffs[game.model.stage] = true
 				expect(game.handoff_panel.visible and not game.panel.visible,"short chapter handoff")
 				print("CHAPTER_UI_STAGE: "+JSON.stringify({"stage":game.model.stage,"seconds":game.model.time,"recoveries":game.model.recoveries,"optional":collect}))
-				if not collect: await shot("handoff-%d" % game.model.stage)
+				expect(game.model.save_payload().arrived,"goal progress is saved before the handoff finishes")
+				if not collect:
+					await shot("handoff-%d" % game.model.stage)
+					var finish_clock: float = game.played_seconds
+					var finish_energy: float = game.model.stamina
+					ticks(78)
+					expect(game.played_seconds == finish_clock and game.model.stamina == finish_energy,"landing animation does not advance journey time or spend stamina")
+					await shot("arrival-landed-%d" % game.model.stage)
+			if collect: tap(KEY_ENTER)
+			ticks(1)
+			continue
+		if game.mode == "arrival":
+			release_all()
+			if not home_arrival:
+				home_arrival = true
+				expect(not game.panel.visible and game.handoff_panel.visible,"final landing is visible before the ending card")
+				var arrival_time: float = game.world._arrival_elapsed
+				var countdown: float = game.transition_left
+				tap(KEY_ESCAPE)
+				ticks(60)
+				expect(game.mode == "pause" and game.transition_left == countdown and game.world._arrival_elapsed == arrival_time,"pause freezes the final landing and its countdown")
+				tap(KEY_ESCAPE)
+				if not collect:
+					ticks(78)
+					await shot("home-arrival-before-card")
 			if collect: tap(KEY_ENTER)
 			ticks(1)
 			continue
@@ -101,9 +126,9 @@ func run_complete_route(collect: bool) -> void:
 		if not collect and old_section == 3 and not active_captures.has(old_stage) and game.model.p.x > game.model.chapter.encounters[old_section].start_x+1100:
 			active_captures[old_stage] = true
 			await shot("level-%d-active" % old_stage)
-		if collect and old_stage == 1 and old_section == 3 and game.model.p.x > 6450 and not poses.has("steady-route-supply"):
-			poses["steady-route-supply"] = true
-			await shot("steady-route-supply")
+		if collect and old_stage == 1 and old_section == 3 and game.model.p.x > 5890 and not poses.has("wind-entry-supply"):
+			poses["wind-entry-supply"] = true
+			await shot("wind-entry-supply")
 		if not collect and old_stage == 2 and old_section == 3 and game.model.p.x > 5160 and not poses.has("rain-wind-supply"):
 			poses["rain-wind-supply"] = true
 			await shot("rain-wind-supply")
@@ -128,6 +153,7 @@ func run_complete_route(collect: bool) -> void:
 	release_all()
 	expect(game.mode == "ending","complete four-level route reaches ending")
 	expect(handoffs.size() == 3,"all three level handoffs")
+	expect(home_arrival,"finale uses the same earned arrival before showing results")
 	expect(visited.size() == 20,"all twenty authored encounters visited")
 	expect(game.description.text.contains("第一章") and game.description.text.contains("救出伙伴 8 只"),"ending counts rescued friends separately from player")
 	expect(not game.hud_weather.visible,"ending clears the chase indicator")
@@ -279,7 +305,7 @@ func boundaries() -> void:
 	ticks(180)
 	expect(game.mode == "pause" and game.transition_left == left,"focus loss freezes handoff")
 	tap(KEY_ENTER)
-	ticks(100)
+	ticks(150)
 	expect(game.model.stage == 1 and not game.model.started,"handoff resumes and next level waits")
 
 func saved_menu_contract() -> void:
@@ -334,6 +360,40 @@ func saved_menu_contract() -> void:
 	for i in 90: game.world._process(1.0/60.0)
 	await shot("motion-leaf-rest")
 	expect(JSON.stringify(game.model.save_payload()) == model_before and game.model.p == p_before and game.model.velocity == velocity_before and game.model.time == time_before,"presentation animation cannot mutate gameplay or saved progress")
+	# Continue the earned run through the goal, then leave during its landing.
+	# This covers the actual menu path, not just a model snapshot round-trip.
+	if game.mode == "pause": tap(KEY_ESCAPE)
+	driver = Driver.new(game.model)
+	for frame in 7200:
+		if game.mode == "transition": break
+		var action: Dictionary = driver.next_input()
+		if not action.error.is_empty(): failures.append("Arrival save route: "+action.error); break
+		apply_action(action)
+		ticks(1)
+	release_all()
+	var arrived_save := Save.read_payload(path)
+	expect(game.mode == "transition" and arrived_save.get("arrived",false) and not arrived_save.get("completed",true),"crossing the first goal immediately writes its completion to disk")
+	var arrived_seconds: float = game.played_seconds
+	var arrived_dew: int = game.model.garden_total()
+	# A file cannot contain a child file: isolate the write-failure path without
+	# changing filesystem permissions or touching the player's save directory.
+	game.progress_file = path.path_join("unwritable.json")
+	tap(KEY_ESCAPE)
+	expect(not game.has_saved and game.description.text.contains("保存失败") and not game.description.text.contains("进度已保存"),"failed arrival save stays visible in pause instead of claiming success")
+	game.progress_file = path
+	tap(KEY_ESCAPE)
+	tap(KEY_ESCAPE)
+	expect(game.has_saved and game.description.text.contains("进度已保存"),"successful arrival save retry reports its actual result")
+	tap(KEY_DOWN)
+	tap(KEY_ENTER)
+	expect(game.mode == "title" and game.secondary_button.text.contains("继续第 2 关"),"leaving the landing offers the next level from title")
+	game.saved_payload = Save.read_payload(path)
+	tap(KEY_DOWN)
+	tap(KEY_ENTER)
+	expect(game.mode == "play" and game.model.stage == 1 and not game.model.started and game.held.is_empty(),"continue after arrival starts next level safely without replaying the tail")
+	expect(is_equal_approx(game.played_seconds,arrived_seconds),"arrival continuation preserves journey time through JSON round-trip")
+	expect(game.model.garden_total() == arrived_dew and game.model.bees == 5,"arrival continuation preserves collected dew and rescued friends")
+	await shot("saved-arrival-continued")
 	game.test_mode = true
 	game.progress_file = ""
 	DirAccess.remove_absolute(path)

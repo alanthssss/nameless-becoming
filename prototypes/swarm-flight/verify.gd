@@ -375,6 +375,10 @@ func save_contract() -> void:
 	var false_ending := payload.duplicate(true)
 	false_ending.completed = true
 	bad_cases.append(false_ending)
+	for value in [true,"yes",1]:
+		var false_arrival := payload.duplicate(true)
+		false_arrival.arrived = value
+		bad_cases.append(false_arrival)
 	var stem_broken := payload.duplicate(true)
 	stem_broken.walls[0] = true
 	bad_cases.append(stem_broken)
@@ -388,6 +392,56 @@ func save_contract() -> void:
 		file.close()
 		expect(Save.read_payload(path).is_empty(),"Malformed and old-format saves are rejected")
 	DirAccess.remove_absolute(path)
+
+func arrival_fixture(stage_index: int) -> RefCounted:
+	# Boundary fixture only. Full routes separately earn these requirements.
+	var sample = Model.new()
+	sample.load_stage(stage_index)
+	for pod in sample.pods:
+		pod.open = true
+		sample.bees += int(pod.count)
+	for leaf in sample.shelters:
+		sample.p = leaf.pos
+		sample.advance_shelters()
+	sample.p = sample.exit_pos-Vector2(40,0)
+	sample.events.clear()
+	return sample
+
+func arrival_contract() -> void:
+	m = Model.new()
+	m.p = m.exit_pos+Vector2(10,0)
+	m.step(Vector2.RIGHT,false,0.1)
+	expect(m.phase == "playing" and not has_event("finish"),"Flying to the goal cannot skip required rescues or leaves")
+	for stage_index in [0,2,3]:
+		for dash in [false,true]:
+			m = arrival_fixture(stage_index)
+			m.step(Vector2.ZERO,false,0.01)
+			expect(m.phase == "playing","Being near the goal cannot complete it before crossing")
+			m.p = m.exit_pos+Vector2(1,-Model.EXIT_HALF_HEIGHT-8)
+			m.step(Vector2.ZERO,false,0.01)
+			expect(m.phase == "playing","Flying above the visible aperture does not finish the level")
+			m.p = m.exit_pos-Vector2(1,0)
+			m.velocity = Vector2.RIGHT*Model.CRUISE_SPEED
+			m.face = Vector2.RIGHT
+			m.burst_left = 0.5 if dash else 0.0
+			m.invulnerable = 0
+			m.drops.assign([{"pos":m.exit_pos,"vel":Vector2.ZERO}])
+			m.storm_x = m.p.x-10
+			m.step(Vector2.RIGHT,false,1.0/120.0)
+			expect(m.phase == ("ending" if stage_index == 3 else "transition") and has_event("finish"),"Ordinary and dash entry both finish the real aperture")
+			expect(not has_event("hit") and m.recoveries == 0 and m.drops.is_empty(),"Arrival resolves before coincident rain or storm contact")
+			var frozen := [m.p,m.stamina,m.time,m.rain_remaining,m.storm_x,m.bursts,m.events.size()]
+			for i in 240: m.step(Vector2.RIGHT,true,1.0/60.0)
+			expect(frozen == [m.p,m.stamina,m.time,m.rain_remaining,m.storm_x,m.bursts,m.events.size()],"Finished simulation freezes and emits exactly one result")
+			var payload: Dictionary = m.save_payload()
+			var restored = Model.new()
+			expect(payload.arrived and restored.restore_payload(JSON.parse_string(JSON.stringify(payload))) and restored.phase == m.phase,"Arrival survives save round-trip before the presentation ends")
+			payload.erase("arrived")
+			expect(restored.restore_payload(payload) and restored.phase == ("ending" if stage_index == 3 else "playing"),"Earlier 0.5.1 v4 saves still resume safely without the optional arrival field")
+	m.load_stage(1)
+	var first: Dictionary = m.rings.filter(func(item): return item.get("encounter",-1)==3)[0]
+	var drop: Dictionary = m.dew[0]
+	expect(drop.pos.x < first.pos.x-170 and absf(drop.pos.y-420)<60,"Flower-bridge supply is before the launch approach at the incoming flight height")
 
 func chase_contract() -> void:
 	for stage_index in [2,3]:
@@ -559,6 +613,13 @@ func pacing_contract() -> void:
 	expect(supply_step >= 0 and supply_step < rescue_step,"Rescue supply is visited before the launch, never after it")
 
 func run() -> void:
+	if "--arrival-only" in OS.get_cmdline_user_args():
+		arrival_contract()
+		save_contract()
+		for failure in failures: push_error(failure)
+		print("ARRIVAL CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--pacing-only" in OS.get_cmdline_user_args():
 		pacing_contract()
 		chapter_routes(false,false,true)
@@ -598,6 +659,7 @@ func run() -> void:
 		chase_contract()
 		shield_contract()
 		pacing_contract()
+		arrival_contract()
 		authored_content()
 		checkpoints_and_resources()
 		collision_and_garden()

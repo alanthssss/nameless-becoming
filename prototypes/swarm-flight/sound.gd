@@ -42,6 +42,7 @@ func _ready() -> void:
 	_samples["hit"] = _make_effect("hit", 0.20)
 	_samples["recover"] = _make_effect("recover", 0.75)
 	_samples["finish"] = _make_effect("finish", 1.50)
+	_samples["arrival_bell"] = _make_effect("arrival_bell",0.70)
 	_samples["ready"] = _make_effect("ready", 0.18)
 	_samples["charge_cancel"] = _make_effect("charge_cancel",0.14)
 	_samples["blocked"] = _make_effect("blocked",0.15)
@@ -290,6 +291,9 @@ func _make_effect(kind: String, duration: float) -> AudioStreamWAV:
 				value = sin(TAU*110.0*t)*exp(-t*24.0)*0.3+low*0.16
 			"ready":
 				value = sin(TAU * 880.0 * t) * 0.20 + sin(TAU * 1320.0 * t) * 0.07
+			"arrival_bell":
+				# A short flower-bell stroke. Existing music generators are unchanged.
+				value = (sin(TAU*783.99*t)*0.32+sin(TAU*1568.0*t)*0.10+sin(TAU*2117.0*t)*0.035)*exp(-t*6.0)
 			"shield":
 				# A soft opening interval, separate from the brighter dew/relay chimes.
 				value = sin(TAU*659.25*t)*exp(-t*5.0)*0.22

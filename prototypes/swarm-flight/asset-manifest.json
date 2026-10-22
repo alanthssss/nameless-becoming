@@ -1,6 +1,6 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.5.1",
+  "revision": "0.5.2",
   "created": "2026-10-20",
   "direction": "Original code-native garden cartoons; shared leaf/ink shapes, readable weather shield, diamond dew versus round rain, broad shelters and a distant home light. No generated bitmaps or imported reference assets.",
   "runtime_bitmap_assets": [],
@@ -42,7 +42,8 @@
       "leaf membrane pickup; five-second protection arc and final-second closing leaf tips; soft blocked-rain particles without damage shake",
       "fixed authored rain cloud bands below HUD and round-bottomed rain drops; backgrounds recede behind gameplay silhouettes",
       "shelters use model-defined half-width; separate encounters never imply a false continuous wind path",
-      "distant warm tree window at homeward breathing beat fades before actual tree comes into view"
+      "distant warm tree window at homeward breathing beat fades before actual tree comes into view",
+      "visible flower-bell goal arch; earned crossing rings the bell, opens leaves and eases the solo bee into a 1.2-second landing before handoff"
     ],
     "collision_contract": "Model authoritative, unchanged player physics. Only the player has collision and stamina. Rescued actors are bounded screen-plane departure animations with no physics or damage; follow/path and companion collision-offset logic removed. Full solid stem rectangles remain visible, flower direction and shelter position remain model-derived.",
     "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget."
@@ -51,8 +52,8 @@
     "source": "Project Godot drawing and controls in main.gd; operating-system Chinese font fallback",
     "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
     "clock": "Elapsed journey clock in levels 1-2; exposed-time budget labeled 露天 in levels 3-4. Separate spatial storm indicator names chase/near/escaped/sheltered states.",
-    "handoff": "1.6-second in-world handoff between stages; Enter skips; pause/focus loss freezes it; fresh input starts each stage.",
-    "progress": "Twenty spatial encounters share nine ordered save areas (2/2/3/2). Six purpose-authored dew (2/1/3/0), no collection quota during homecoming. Eight friends distributed 4/2/1/1; separate v4 content revision 6 preserves old v3 progress. Rescue still saves immediately; departure never persists.",
+    "handoff": "2.4-second in-world landing at every earned goal; Enter skips, pause/focus loss freezes; finish immediately stops gameplay and saves. Final landing precedes ending card. Continuing a saved nonfinal arrival enters the next stage.",
+    "progress": "Twenty spatial encounters share nine ordered save areas (2/2/3/2). Six purpose-authored dew (2/1/3/0), no collection quota during homecoming. Eight friends distributed 4/2/1/1; separate v4 content revision 6 preserves old v3 progress. Rescue still saves immediately; departure never persists. Compatible optional arrived flag in v4/rev6; 0.5.1 files remain readable. Level 02 dew moved to the route-split approach without changing entity indices.",
     "local_feedback": "Actionable contextual cues retained; spent-flower text hidden because folded petals show the same result."
   },
   "rejected_pass": {
@@ -98,10 +99,15 @@
       "shield-turn-introduction",
       "shield-final-second-fixture",
       "distant-home-arrival",
-      "steady-route-supply",
-      "rain-wind-supply"
+      "wind-entry-supply",
+      "rain-wind-supply",
+      "arrival-landed-0",
+      "arrival-landed-1",
+      "arrival-landed-2",
+      "home-arrival-before-card",
+      "saved-arrival-continued"
     ],
-    "result": "0.5.1: 405 rules, 108 headless UI and 140 native UI/capture checks; earned v4 save round-trip and copied v3 rejection. Original art and music sources unchanged. Developer evidence only; new pacing awaits creator playthrough.",
+    "result": "0.5.2: 452 model checks, 130 headless UI and 167 native UI/capture checks passed. Old v4 compatibility, immediate arrival save, actual title continuation and failed-save/retry paths checked. Developer evidence only; this arrival revision awaits creator playthrough.",
     "audio_pcm_peaks": [
       0.62149,
       0.64804,
@@ -129,7 +135,8 @@
     "rescue_revision": "Existing geometry, resources, player collision, rain and music retained. Native ordinary-key rescue tests cover temporary departures, pause, active player control, expiry, recovery and restart; save continuation never replays rescue effects.",
     "facing_revision": "0.4.4 fixes left-facing body inversion using horizontal mirroring plus pitch; resting bodies settle level. Model, input, saves and sound unchanged. Native directional/charge/dash/rest captures and checks recorded in the upright-flight delivery receipt.",
     "chapter05_revision": "Five authored encounters per stage, three broad saves per stage, 20 optional dew, rescue distribution 4/2/1/1. Direct, all-dew and no-shield ordinary-input paths complete. Shield-turn fixture uses no dash and finishes before expiry; elapsed time is a known-answer route measurement, not first-play time.",
-    "pacing_revision": "Dew authored as ordered optional beats, rescue refill carries into subsequent flight, nine deliberate shelters, six dew with dynamic save/UI counts. Weather follows encounter purpose. Direct/all-dew/no-shield/flow-through complete without recovery; recovery test uses five explicit returns after rescues. Flow-through rain route reaches 2.07 stamina, not novice-tolerance proof."
+    "pacing_revision": "Dew authored as ordered optional beats, rescue refill carries into subsequent flight, nine deliberate shelters, six dew with dynamic save/UI counts. Weather follows encounter purpose. Direct/all-dew/no-shield/flow-through complete without recovery; recovery test uses five explicit returns after rescues. Flow-through rain route reaches 2.07 stamina, not novice-tolerance proof.",
+    "arrival_revision": "Level 02 supply precedes the route split. Crossing the goal aperture completes before same-substep weather damage; model/time/stamina freeze throughout presentation. All music generation functions remain byte-identical to 0.5.1; only arrival bell synthesis added."
   },
   "style_references": [
     {
@@ -159,14 +166,15 @@
       "flower_calm",
       "shield",
       "shield_block",
-      "shield_end"
+      "shield_end",
+      "arrival_bell"
     ],
     "verification_command": "godot --headless --path prototypes/swarm-flight --script res://audio_verify.gd",
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "df23377023abbb6fc40b3a7cbf7c6ae46e475240cfec337d0af2e4ac3c4f887f",
-    "sound.gd": "96c67b4433cda65d834bd1c11ef17e519b10e57151a55761dafac45453fb2e68"
+    "world_view.gd": "dc6c276a46ee5b20be07b2a4487656c01931118583390e7cdb405bd44e8982c4",
+    "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4"
   },
-  "updated": "2026-10-21"
+  "updated": "2026-10-22"
 }
