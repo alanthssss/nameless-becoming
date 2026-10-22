@@ -115,8 +115,8 @@ static func definitions() -> Array:
 			encounter("沿新枝飞到果园外",1720,[chain([Vector2(500,440),Vector2(920,350)],[],Vector2(1380,350)),deco(1430,250,"withered")],420,"最后一组短风，新的落脚点就在枯枝旁",80)
 		]},
 		{"title":"霜窗里的暖廊","region":3,"theme":3,"music":0,"base_bees":9,"storm":false,"exit_kind":"arch",
-		"entry":"暖廊的通风口向上送风，台面下方则是背风处。","arrival":"你已经能分清：哪阵风可借，哪阵风可以绕。","npc":"bee","npc_line":"小满：风有方向，台面也有背面。","decision":"主动飞行会受风口推动；松开方向或蓄力时仍能停稳。","encounters":[
-			_routed(encounter("借上升风越过台面",1770,[terrain(650,500,620,90,"glass"),airflow(480,300,260,290,Vector2.UP,180.0)],420,"箭头向上：边飞边借风抬升；也能从台面下方绕过"),
+		"entry":"暖廊的通风口向上送风，台面下方则是背风处。","arrival":"你已经能分清：哪阵风可借，哪阵风可以绕。","npc":"bee","npc_line":"小满：风有方向，台面也有背面。","decision":"风口会持续推动你，松键和蓄力也不例外；可修正方向、冲刺抵风，或绕开。","encounters":[
+			_routed(encounter("借上升风越过台面",1770,[terrain(650,500,620,90,"glass"),airflow(430,300,190,290,Vector2.UP,180.0)],420,"箭头向上：进入风口就会抬升；也能从台面下方绕过"),
 				[Vector2(400,560),Vector2(580,360),Vector2(1370,360),Vector2(1480,420)],
 				[Vector2(350,660),Vector2(1380,660),Vector2(1480,420)]),
 			_routed(encounter("逆风上路与背风下路",1710,[terrain(560,380,510,90,"glass"),airflow(520,160,360,200,Vector2.LEFT,160.0),wind(430,250),dew(940,580,"绕台面背风处继续飞行的顺路补给","branch")],-1,"上方气流向左，冲刺不受它偏转；台面下方可以避风"),
@@ -133,7 +133,7 @@ static func definitions() -> Array:
 				[Vector2(400,580),Vector2(1540,580),Vector2(1840,420)]),
 			_routed(encounter("背风处慢慢转过",1500,[terrain(500,80,600,300,"glass")],-1,"这里没有追赶，绕过台面的下侧再重新抬高"),
 				[Vector2(370,500),Vector2(1220,500),Vector2(1360,420)]),
-			_routed(encounter("向上送你一小程",1770,[terrain(680,500,540,90,"glass"),airflow(480,300,260,290,Vector2.UP,160.0),wind(880,330)],420,"借上升风到台面上方，再选是否起冲；台面下方仍通向叶下"),
+			_routed(encounter("向上送你一小程",1770,[terrain(680,500,540,90,"glass"),airflow(480,300,170,290,Vector2.UP,160.0),wind(880,330)],420,"借上升风到台面上方，离开风口再蓄力；下方也通向叶下"),
 				[Vector2(400,560),Vector2(580,360),Vector2(710,330),_burst(),Vector2(1390,330),Vector2(1480,420)],
 				[Vector2(350,660),Vector2(1330,660),Vector2(1480,420)])
 		]},
@@ -145,10 +145,10 @@ static func definitions() -> Array:
 			_routed(encounter("护雨高路与有顶低路",2420,[shield(350,430),terrain(700,340,1000,90,"crate"),weather(620,1080),chain([Vector2(720,250),Vector2(1140,250),Vector2(1560,250)],[],Vector2(2020,250)),last_curtain],430,"高处冲刺穿短帘；箱下挡雨并绕帘，末端同一片宽叶",115),
 				[Vector2(350,430),Vector2(550,250),_burst(),Vector2(2060,250),Vector2(2190,430)],
 				[Vector2(350,430),Vector2(550,600),Vector2(1840,600),Vector2(2070,600),Vector2(2190,430)]),
-			_routed(encounter("箱角后留下最后一次起冲",1650,[terrain(600,490,420,240,"crate"),dew(1260,340,"最后一次绕箱后，为末段起冲留足体力")],-1,"雨已经停了，先绕箱顶；露珠留给最后一段借风",90),
+			_routed(encounter("箱角后留下最后一次起冲",1650,[terrain(600,490,420,240,"crate"),dew(1260,340,"最后一次绕箱后，为末段起冲留足体力")],-1,"先绕箱顶，为末段补给；雨幕还在身后",90),
 				[Vector2(430,340),Vector2(1140,340),Vector2(1260,340)]),
-			_routed(encounter("把天气留在身后",1760,[airflow(300,300,200,280,Vector2.UP,140.0),terrain(640,540,460,90,"glass"),chain([Vector2(500,300),Vector2(920,440)],[],Vector2(1380,440))],440,"上升风通向熟悉的短接力；也可从台面下方慢慢绕过",80),
-				[Vector2(250,560),Vector2(330,300),_burst(),Vector2(1420,440)],
+			_routed(encounter("把天气留在身后",1760,[airflow(300,300,200,280,Vector2.UP,140.0),terrain(640,540,460,90,"glass"),chain([Vector2(500,300),Vector2(920,440)],[],Vector2(1380,440))],440,"借上升风离开风口后蓄力；台面下方也能绕过",80),
+				[Vector2(250,560),Vector2(330,270),_burst(),Vector2(1420,440)],
 				[Vector2(250,670),Vector2(1210,670),Vector2(1450,440)])
 		]},
 		{"title":"老树下见","region":3,"theme":3,"music":0,"base_bees":9,"storm":false,"exit_kind":"home",

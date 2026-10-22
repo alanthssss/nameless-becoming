@@ -644,6 +644,61 @@ func pacing_contract() -> void:
 		if route[i].target == rescue_pos-Vector2(170,0): rescue_step = i
 	expect(supply_step >= 0 and supply_step < rescue_step,"Rescue supply is visited before the launch, never after it")
 
+func airflow_contract() -> void:
+	# Explicit state fixtures exercise every authored region independently. The UI
+	# regression separately reaches 13-2 through real keys without a wind flower.
+	var regions := 0
+	for stage_index in range(12,15):
+		var layout: Dictionary = Data.build(stage_index)
+		for field in layout.airflows:
+			regions += 1
+			var direction: Vector2 = field.direction
+			var center: Vector2 = field.rect.get_center()
+			for mode in ["release","charge","countersteer"]:
+				m = Model.new()
+				m.load_stage(stage_index)
+				m.p = center
+				m.started = true
+				var input_dir := -direction if mode == "countersteer" else Vector2.ZERO
+				for i in 42: m.step(input_dir,mode == "charge",1.0/120.0)
+				var travel: float = (m.p-center).dot(direction)
+				expect(travel < -12 if mode == "countersteer" else travel > 30,"Authored airflow %d/%d continuously affects %s (%.1f px)" % [stage_index+1,regions,mode,travel])
+				if mode != "countersteer":
+					expect(m.context_cue().get("kind","") == "airflow" and "推动中" in m.context_cue().get("text",""),"Inside-field cue describes a force that is actually acting")
+				if mode == "charge":
+					for i in 12: m.step(Vector2.ZERO,true,1.0/120.0)
+					m.step(Vector2.RIGHT,false,1.0/120.0)
+					expect(m.burst_left > 0 and m.velocity == Vector2.RIGHT*Model.BURST_SPEED and m.effective_airflow() == Vector2.ZERO,"Charged dash keeps its aimed direction through authored airflow")
+			# Leaving the rendered rectangle ends the force and its contact status.
+			m = Model.new()
+			m.load_stage(stage_index)
+			m.started = true
+			m.p = Vector2(field.rect.end.x+35,field.rect.get_center().y)
+			expect(m.airflow_at(m.p).is_zero_approx() and m.effective_airflow().is_zero_approx(),"Force ends at the visible field boundary")
+			expect(m.context_cue().get("kind","") != "airflow" and not "推动中" in m.context_cue().get("text",""),"Nearby wind never claims it is already pushing the player")
+			m.p = center
+			m.phase = "paused"
+			m.step(Vector2.RIGHT,false,0.5)
+			expect(m.p == center,"Pause freezes an exposed bee inside every wind field")
+			m.phase = "playing"
+			m.restore_checkpoint()
+			var safe: Vector2 = m.p
+			for i in 60: m.step(Vector2.ZERO,false,1.0/60.0)
+			expect(m.p == safe and not m.started,"Recovery remains still until fresh player input")
+			for wall in m.walls:
+				if wall.kind == "terrain": expect(not field.rect.intersects(wall.rect),"Visible wind never overlaps impassable authored terrain")
+	expect(regions == 6,"All six authored wind regions participate in the interaction matrix")
+	# Shelter precedence also holds if later content places wind across a safe leaf.
+	m = control_fixture()
+	m.p = m.shelters[0].pos
+	m.started = true
+	m.stamina = 50
+	m.airflows.append({"rect":Rect2(m.p-Vector2(200,200),Vector2(400,400)),"direction":Vector2.LEFT,"strength":180.0})
+	var safe: Vector2 = m.p
+	for i in 60: m.step(Vector2.ZERO,false,1.0/60.0)
+	expect(m.p == safe and m.stamina > 50 and m.effective_airflow().is_zero_approx(),"Safe leaf shelter blocks airflow and restores stamina")
+	expect(m.context_cue().get("kind","") == "shelter","Sheltered bee receives safe-leaf feedback instead of wind feedback")
+
 func season_elements_contract() -> void:
 	# Isolated rule fixtures, not authored routes or player observations.
 	for material in ["hedge","crate","glass"]:
@@ -663,8 +718,13 @@ func season_elements_contract() -> void:
 	m.drops.append({"pos":Vector2(450,298),"vel":Vector2(0,350)})
 	m.advance_rain(1.0/120.0)
 	expect(m.drops.is_empty(),"The visible solid roof stops a falling raindrop")
+	m.storm_active = true
+	m.storm_x = 0
+	var chase_before: float = m.storm_x
+	var time_before: float = m.rain_remaining
 	m.step(Vector2.ZERO,false,0.1)
 	expect(m.stamina < 60 and m.checkpoint_index == -1,"Terrain cover does not masquerade as a refill or checkpoint")
+	expect(m.storm_x > chase_before and m.rain_remaining < time_before,"A solid roof blocks drops but never freezes the pursuing weather or its clock")
 	m = control_fixture()
 	m.jets.append({"rect":Rect2(100,100,600,600),"period":6.0,"active_seconds":2.2,"offset":0.0})
 	for i in 60: m.step(Vector2.ZERO,false,1.0/60.0)
@@ -692,23 +752,7 @@ func season_elements_contract() -> void:
 	expect(m.hazard_clock == 4.0,"Paused simulation cannot advance a fountain's phase")
 	m.restore_checkpoint()
 	expect(m.hazard_clock == 0 and m.jet_phase(0) == "quiet" and not m.started,"Recovery resets to a readable quiet fountain")
-	m = control_fixture()
-	var baseline = control_fixture()
-	m.airflows.append({"rect":Rect2(100,100,1500,600),"direction":Vector2.UP,"strength":180.0})
-	for i in 50:
-		m.step(Vector2.UP,false,0.01)
-		baseline.step(Vector2.UP,false,0.01)
-	expect(m.p.y < baseline.p.y-50,"Local updraft changes actual ordinary-flight motion")
-	for i in 30: m.step(Vector2.ZERO,false,0.01)
-	var stopped: Vector2 = m.p
-	for i in 60: m.step(Vector2.ZERO,false,0.01)
-	expect(m.p == stopped,"Releasing input stops safely inside a wind field")
-	for i in 50: m.step(Vector2.ZERO,true,0.01)
-	expect(m.p == stopped,"Local wind does not push a stationary charge")
-	m.face = Vector2.RIGHT
-	m.step(Vector2.ZERO,false,0.01)
-	expect(m.velocity.y == 0 and m.velocity.x == Model.BURST_SPEED,"Dash retains its aimed direction through local wind")
-	expect(m.airflow_at(Vector2(1800,420)) == Vector2.ZERO,"Wind influence ends at its visible field boundary")
+	airflow_contract()
 	# An ordinary-input driver waits for a sufficiently long quiet window at any
 	# arrival phase; the test advances real time rather than changing a live phase.
 	for start_phase in [0.0,2.8,3.5,4.8,5.8]:

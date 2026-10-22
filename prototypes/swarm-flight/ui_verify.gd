@@ -460,6 +460,76 @@ func season_ui_contract() -> void:
 		expect(game.model.context_cue().get("kind","") == "airflow","wind field explains its actual effect")
 		await shot("winter-flow-fixture")
 
+func fly_without_burst(target: Vector2) -> bool:
+	# Independent of the authored route driver: only ordinary Viewport keys.
+	# This deliberately passes the wind flower without ever pressing Space.
+	for frame in 1800:
+		if game.mode == "pause":
+			release_all()
+			tap(KEY_ESCAPE)
+		var offset: Vector2 = target-game.model.p
+		if offset.length() < 16:
+			release_all()
+			return true
+		apply_action({"direction":Vector2(signf(offset.x) if absf(offset.x)>8 else 0,signf(offset.y) if absf(offset.y)>8 else 0)})
+		ticks(1)
+	release_all()
+	expect(false,"ordinary input reaches %s without teleporting; stopped at %s" % [str(target),str(game.model.p)])
+	return false
+
+func airflow_input_contract() -> void:
+	# Reproduce the reported approach from the real chapter menu. No position,
+	# velocity, checkpoint, wind or stamina fixture is used in this contract.
+	release_all()
+	game.show_title()
+	for i in 3: tap(KEY_TAB)
+	tap(KEY_ENTER)
+	expect(game.mode == "play" and game.model.stage == 12 and not game.model.started,"real chapter selector starts the winter airflow reproduction")
+	if game.model.stage != 12: return
+	for point in [Vector2(400,560),Vector2(580,360),Vector2(1370,360),Vector2(1590,420),Vector2(2030,250)]:
+		if not fly_without_burst(point): return
+	expect(game.model.checkpoint_index == 0,"ordinary input earns the leaf before the reported counterwind")
+	var field: Rect2 = game.model.airflows[1].rect
+	if not fly_without_burst(Vector2(field.position.x-50,field.get_center().y)): return
+	ticks(1)
+	expect(game.model.airflow_at(game.model.p).is_zero_approx(),"approach sample is physically outside the wind field")
+	expect(game.model.context_cue().get("kind","") == "airflow_approach" and game.cue_panel.visible and not game.cue_label.text.contains("推动中"),"actual HUD distinguishes approaching wind from being pushed")
+	await shot("airflow-ordinary-approach")
+	var sample := Vector2(field.position.x+field.size.x*0.72,field.get_center().y)
+	if not fly_without_burst(sample): return
+	ticks(15)
+	expect(field.has_point(game.model.p) and game.model.airflow_at(game.model.p).x < -100,"ordinary keys enter the real counterwind without triggering the wind flower")
+	expect(game.model.context_cue().get("kind","") == "airflow" and game.cue_panel.visible and game.cue_label.text.contains("推动中"),"actual HUD reports pushing inside the wind field")
+	await shot("airflow-ordinary-entered")
+	if game.mode == "pause": tap(KEY_ESCAPE)
+	var idle_start: Vector2 = game.model.p
+	ticks(60)
+	var idle_delta: Vector2 = game.model.p-idle_start
+	expect(idle_delta.x < -100 and field.has_point(game.model.p),"releasing ordinary flight drifts left visibly for one second inside counterwind")
+	expect(game.cue_panel.visible and game.cue_label.text.contains("推动中"),"idle drift keeps the actual wind-state HUD visible")
+	await shot("airflow-ordinary-release-one-second")
+	if not fly_without_burst(sample): return
+	ticks(15)
+	key(KEY_SPACE,true)
+	var charge_start: Vector2 = game.model.p
+	ticks(30)
+	var charge_delta: Vector2 = game.model.p-charge_start
+	expect(charge_delta.x < -35 and field.has_point(game.model.p) and game.model.charging,"holding charge also drifts left visibly for half a second")
+	expect(game.model.context_cue().get("kind","") == "airflow" and game.cue_panel.visible and game.cue_label.text.contains("蓄力"),"actual HUD explains airflow during charging rather than hiding it with a generic charge prompt")
+	expect(game.model.bursts == 0 and game.model.rings_hit == 0 and game.model.recoveries == 0,"ordinary airflow reproduction never dashes, borrows a flower or recovers")
+	await shot("airflow-ordinary-charge-half-second")
+	print("AIRFLOW_UI_INPUT: "+JSON.stringify({"stage":game.model.stage,"idle_one_second":str(idle_delta),"charge_half_second":str(charge_delta),"bursts":game.model.bursts,"recoveries":game.model.recoveries}))
+	# Cancel charge through the real pause input before releasing Space, so the
+	# test itself cannot silently finish by launching a dash.
+	if game.mode != "pause": tap(KEY_ESCAPE)
+	release_all()
+	tap(KEY_ESCAPE)
+	expect(game.model.bursts == 0 and not game.model.charging,"pause cancels the sampled charge without launching")
+	if not fly_without_burst(Vector2(field.end.x+55,field.get_center().y)): return
+	ticks(15)
+	expect(game.model.airflow_at(game.model.p).is_zero_approx() and not game.cue_label.text.contains("推动中"),"leaving the real wind field removes the pushing HUD state")
+	await shot("airflow-ordinary-exited")
+
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
@@ -469,6 +539,7 @@ func run() -> void:
 	game.sound.set_muted(true)
 	if "--season-elements-only" in OS.get_cmdline_user_args():
 		await season_ui_contract()
+		await airflow_input_contract()
 		for failure in failures: push_error(failure)
 		print("SEASON UI CHECKS: %d, failures %d" % [checks,failures.size()])
 		game.queue_free()
@@ -499,6 +570,7 @@ func run() -> void:
 	await weather_contract()
 	await shield_ui_contract()
 	await season_ui_contract()
+	await airflow_input_contract()
 	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete sixteen-level input routes" % checks)
 	else:
 		for failure in failures: push_error(failure)
