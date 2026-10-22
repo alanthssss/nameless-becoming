@@ -17,6 +17,7 @@ const FLIGHT_ACCELERATION := 1800.0
 const RELEASE_BRAKING := 4000.0
 const BURST_BRAKING := 30000.0
 const SHIELD_SECONDS := 5.0
+const EXIT_HALF_HEIGHT := 96.0
 var stage := 0
 var phase := "playing"
 var p := Vector2(180, 420)
@@ -297,6 +298,8 @@ func advance(direction: Vector2, dt: float) -> void:
 				if not is_equal_approx(p.y,proposed.y): velocity.y = 0
 				burst_left = 0
 				wind_chain = 0
+	# Crossing the visible goal wins this substep; weather cannot undo an arrival.
+	if try_arrival(): return
 	# Pickups resolve before all weather damage and rescue snapshots this substep.
 	collect_shields()
 	for trapped in pods:
@@ -335,14 +338,22 @@ func advance(direction: Vector2, dt: float) -> void:
 	if started:
 		advance_rain(dt)
 		if old_recoveries != recoveries: return
-	if p.distance_to(exit_pos) < 85 and exit_ready:
-		phase = "ending" if stage == STAGE_COUNT-1 else "transition"
-		completed = phase == "ending"
-		drops.clear()
-		puffs.clear()
-		shield_left = 0.0
-		clear_input()
-		emit("finish",p)
+
+func try_arrival() -> bool:
+	exit_ready = rescued_count() == rescue_total() and completed_sections() == sections.size()
+	if phase != "playing" or not exit_ready or p.x < exit_pos.x or absf(p.y-exit_pos.y) > EXIT_HALF_HEIGHT:
+		return false
+	var arrived_dashing := burst_left > 0.0
+	phase = "ending" if stage == STAGE_COUNT-1 else "transition"
+	completed = phase == "ending"
+	drops.clear()
+	puffs.clear()
+	shield_left = 0.0
+	clear_input()
+	save_checkpoint()
+	emit("finish",p)
+	events.back()["dashing"] = arrived_dashing
+	return true
 
 func collect_shields() -> void:
 	for leaf in shields:
@@ -635,7 +646,7 @@ func target_position() -> Vector2:
 	return exit_pos
 
 func objective() -> String:
-	if exit_ready: return "本关已走完 · 飞向出口" if stage < STAGE_COUNT-1 else "伙伴在家等你 · 飞进树洞"
+	if exit_ready: return "前方花铃叶拱 · 飞过去就抵达了" if stage < STAGE_COUNT-1 else "伙伴在家等你 · 飞进树洞"
 	if section_rescue_total() > section_rescued():
 		return "%s · 冲开卷叶救伙伴" % encounter_name() if target_position().x < p.x-240 else str(chapter.encounters[encounter_index()].cue)
 	return str(chapter.encounters[encounter_index()].cue)
@@ -690,7 +701,7 @@ func context_cue() -> Dictionary:
 		if p.distance_to(shelter.pos) < 230:
 			return {"pos":shelter.pos,"text":"大叶下休息 · 恢复体力","kind":"shelter"}
 	if exit_ready and p.distance_to(exit_pos) < 330:
-		return {"pos":exit_pos,"text":"到家了 · 飞进树洞" if stage == STAGE_COUNT-1 else "一起向前 · 飞过叶拱","kind":"exit"}
+		return {"pos":exit_pos,"text":"到家了 · 飞进树洞" if stage == STAGE_COUNT-1 else "飞过花铃叶拱 · 完成本关","kind":"exit"}
 	return {}
 
 func _flags(items: Array, property: String) -> Array:
@@ -706,7 +717,7 @@ func save_payload() -> Dictionary:
 	var saved_sprayers: Array = []
 	for item in checkpoint.sprayers:
 		saved_sprayers.append({"rewarded":item.rewarded,"stun_left":item.stun_left,"timer":item.timer})
-	return {"version":4,"content_revision":6,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed}
+	return {"version":4,"content_revision":6,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
 
 func _valid_integer(value, low: int, high: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floor(float(value)) and value >= low and value <= high
@@ -752,6 +763,12 @@ func restore_payload(data: Dictionary) -> bool:
 	if not (remaining is int or remaining is float) or not is_finite(float(remaining)) or remaining < 0 or remaining > STORM_SECONDS: return false
 	if not data.get("completed") is bool: return false
 	if data.completed and (saved_stage != STAGE_COUNT-1 or saved_checkpoint != layout.sections.size()-1): return false
+	# Optional field keeps existing v4/rev6 saves compatible. An arrival may only
+	# persist after the same complete checkpoint/rescue requirements as live play.
+	var arrived = data.get("arrived",data.completed)
+	if not arrived is bool: return false
+	if arrived and saved_checkpoint != layout.sections.size()-1: return false
+	if data.completed != (arrived and saved_stage == STAGE_COUNT-1): return false
 	load_stage(saved_stage)
 	checkpoint_index = saved_checkpoint
 	for i in pods.size(): pods[i].open = data.pods[i]
@@ -776,8 +793,8 @@ func restore_payload(data: Dictionary) -> bool:
 	exit_ready = completed_sections() == section_count() and rescued_count() == rescue_total()
 	completed = data.completed
 	save_checkpoint()
-	if completed:
+	if arrived:
 		p = exit_pos
-		phase = "ending"
+		phase = "ending" if completed else "transition"
 	camera_x = clampf(p.x-480,0,world_width-1280)
 	return true

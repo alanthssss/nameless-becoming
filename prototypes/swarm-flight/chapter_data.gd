@@ -39,7 +39,7 @@ static func definitions() -> Array:
 			encounter("借风，再停稳",1600,[wind(650,450),turn(1250,450)],-1,"风花会送你一程，之后可以停稳转向"),
 			encounter("三朵花一口气",2350,[chain([Vector2(550,500),Vector2(1000,340),Vector2(1450,340)],[Vector3(790,410,260),Vector3(1230,340,250)],Vector2(1940,340))],360,"冲进第一朵，连续借风，不必重新蓄力"),
 			encounter("快路下面的声音",1800,[turn(380,420),rescue(900,570,2),turn(1450,460)],-1,"向下救出伙伴，补好体力继续选择路线"),
-			encounter("快路还是稳路",2200,[chain([Vector2(570,290),Vector2(1020,290),Vector2(1470,290)],[],Vector2(1970,290),[Vector2(370,510),Vector2(900,530),Vector2(1540,510),Vector2(1970,430)],[Vector2(1250,290)]),dew(900,530,"稳路缺少风花回补，在中途补充继续飞行的体力","branch")],-1,"上方连续借风更快；下方沿晨露稳稳飞"),
+			encounter("借风，或从下方绕行",2200,[dew(240,420,"进入分路前顺路补给，再选择抬头借风或从下方绕行"),chain([Vector2(570,290),Vector2(1020,290),Vector2(1470,290)],[],Vector2(1970,290),[Vector2(370,510),Vector2(900,530),Vector2(1540,510),Vector2(1970,430)],[Vector2(1250,290)])],-1,"抬头连续借风；也可以从下方绕过喷嚏花"),
 			encounter("一口气到宽叶下",2450,[chain([Vector2(530,440),Vector2(980,440),Vector2(1430,440)],[],Vector2(1930,440)),turn(2150,440)],440,"接住最后一阵风，宽叶下松开方向停稳")
 		]},
 		{"title":"雨中停走","theme":2,"music":2,"base_bees":7,"storm":true,"encounters":[
@@ -138,5 +138,6 @@ static func build(index: int) -> Dictionary:
 		origin += spec.width
 	out["world_width"] = origin+520
 	out["exit_pos"] = Vector2(out.world_width-180,420)
-	for route_name in ["route","optional_route"]: out[route_name].append(move_to(out.exit_pos))
+	# The goal is a visible threshold, not an invisible proximity sphere.
+	for route_name in ["route","optional_route"]: out[route_name].append(move_to(out.exit_pos+Vector2(45,0)))
 	return out

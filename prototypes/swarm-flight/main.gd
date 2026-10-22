@@ -3,9 +3,8 @@ const Model = preload("res://game_model.gd")
 const Save = preload("res://save_data.gd")
 const World = preload("res://world_view.gd")
 const Sound = preload("res://sound.gd")
-const HANDOFF_SECONDS := 1.6
+const HANDOFF_SECONDS := 2.4
 const TITLES := ["01  晨光菜圃", "02  喷泉花桥", "03  雨中停走", "04  归巢之路"]
-const TRANSITIONS := ["菜圃里的呼救声，终于停了。", "花桥把大家送到了雨庭。", "最后一程，老树就在前面。"]
 var model = Model.new()
 var world
 var sound
@@ -191,7 +190,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.5.1"
+	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.5.2"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -244,6 +243,8 @@ func show_title() -> void:
 	main_button.text = "从头开始这一章"
 	secondary_button.visible = not saved_payload.is_empty()
 	secondary_button.text = "查看这一章的结尾" if saved_payload.get("completed",false) else "继续第 %d 关 · 已保存的落脚点" % (saved_stage+1)
+	if saved_payload.get("arrived",false) and not saved_payload.get("completed",false):
+		secondary_button.text = "继续第 %d 关 · 上一关已抵达" % (saved_stage+2)
 	third_button.show()
 	third_button.text = "退出"
 	reset_menu()
@@ -274,6 +275,7 @@ func on_primary() -> void:
 			begin_stage(0)
 		"pause": resume_game()
 		"transition": begin_stage(model.stage+1)
+		"arrival": show_ending()
 		"ending":
 			played_seconds = 0
 			model.reset_journey()
@@ -288,6 +290,9 @@ func on_secondary() -> void:
 		world.presentation_active = true
 		var saved_seconds = saved_payload.get("played_seconds",0.0)
 		played_seconds = float(saved_seconds) if (saved_seconds is float or saved_seconds is int) and is_finite(float(saved_seconds)) and float(saved_seconds) >= 0 else 0.0
+		if model.phase == "transition":
+			begin_stage(model.stage+1)
+			return
 		held.clear()
 		last_section = model.encounter_index()
 		energy_trail = model.stamina
@@ -330,7 +335,7 @@ func quit_game() -> void:
 	get_tree().quit()
 
 func pause_game() -> void:
-	if mode not in ["play","transition"]: return
+	if mode not in ["play","transition","arrival"]: return
 	paused_from = mode
 	persist_progress()
 	mode = "pause"
@@ -344,7 +349,8 @@ func pause_game() -> void:
 	main_button.text = "继续飞行"
 	secondary_button.text = "回到就近休息点"
 	secondary_button.visible = paused_from == "play"
-	if paused_from == "transition": description.text = "段落衔接已暂停。\nEsc 或 Enter 继续旅程。"
+	if paused_from in ["transition","arrival"]:
+		description.text = "已经抵达，进度已保存。\n抵达演出已暂停，Esc 或 Enter 继续。" if has_saved else "已经抵达，但保存失败；退出游戏可能丢失这次抵达。\nEsc 或 Enter 继续；可稍后再次尝试保存。"
 	third_button.text = "回到标题"
 	third_button.show()
 	reset_menu()
@@ -355,7 +361,7 @@ func resume_game() -> void:
 	mode = paused_from
 	world.presentation_active = true
 	panel.hide()
-	handoff_panel.visible = mode == "transition"
+	handoff_panel.visible = mode in ["transition","arrival"]
 	refresh_hud()
 
 func _notification(what: int) -> void:
@@ -374,13 +380,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		sound.set_muted(muted)
 		return
 	if key == KEY_ESCAPE:
-		if mode in ["play","transition"]: pause_game()
+		if mode in ["play","transition","arrival"]: pause_game()
 		elif mode == "pause": resume_game()
 		return
 	if key == KEY_R and mode == "pause":
 		on_secondary()
 		return
-	if mode == "transition":
+	if mode in ["transition","arrival"]:
 		if key in [KEY_ENTER,KEY_KP_ENTER]: on_primary()
 		return
 	if mode != "play":
@@ -404,14 +410,15 @@ func input_direction() -> Vector2:
 func tick(delta: float) -> void:
 	if mode == "play":
 		var was_ready: bool = model.charge >= Model.CHARGE_READY and model.can_burst()
+		var before_time: float = model.time
 		model.step(input_direction(),held.has(KEY_SPACE),delta)
-		if model.started: played_seconds += minf(delta,0.1)
+		if model.started: played_seconds += model.time-before_time
 		energy_trail = maxf(model.stamina,move_toward(energy_trail,model.stamina,delta*24.0))
 		if not was_ready and model.charge >= Model.CHARGE_READY and model.can_burst(): sound.play_event("ready")
 		for event in model.events:
 			if event.kind in ["recover_rain","recover_exhaustion","recover_timeout"]: held.clear()
 			world.emit_event(event.kind,event.pos,event)
-			sound.play_event(event.kind)
+			sound.play_event("arrival_bell" if event.kind == "finish" and model.stage < Model.STAGE_COUNT-1 else event.kind)
 			match event.kind:
 				"rescue":
 					event_message(event.kind,"救出 %d 只 · 它们先回家了！ · 体力 +%d" % [int(event.get("count",1)),int(round(event.get("reward",0)))],2.8)
@@ -449,16 +456,15 @@ func tick(delta: float) -> void:
 					event_message(event.kind,wind_text+" · 体力 +%d" % int(round(event.get("reward",0))),1.8)
 				"gate":
 					event_message(event.kind,"叶帘打开了 · 继续向前！",1.8)
-			if event.kind in ["rescue","checkpoint","checkpoint_update"]: persist_progress()
+			if event.kind in ["rescue","checkpoint","checkpoint_update","finish"]: persist_progress()
 		model.events.clear()
 		if model.encounter_index() != last_section:
 			last_section = model.encounter_index()
 			message(model.encounter_name(),2.2,Color("ffe7a3"),1)
-		if model.phase == "transition": show_transition()
-		elif model.phase == "ending": show_ending()
-	elif mode == "transition":
+		if model.phase in ["transition","ending"]: show_transition()
+	elif mode in ["transition","arrival"]:
 		transition_left = maxf(0,transition_left-minf(delta,0.1))
-		if transition_left <= 0: begin_stage(model.stage+1)
+		if transition_left <= 0: on_primary()
 	if mode == "ending": end_time += delta
 	if mode == "play":
 		toast_left = maxf(0,toast_left-delta)
@@ -499,12 +505,12 @@ func capture() -> void:
 	get_tree().quit()
 
 func show_transition() -> void:
-	mode = "transition"
+	mode = "arrival" if model.phase == "ending" else "transition"
 	held.clear()
 	panel.hide()
 	transition_left = HANDOFF_SECONDS
-	handoff_heading.text = TRANSITIONS[model.stage]
-	handoff_detail.text = "接下来  %s\n自动出发 · Enter 提前 · Esc 歇一会儿" % TITLES[model.stage+1]
+	handoff_heading.text = "到家了，大家都在。" if mode == "arrival" else "%s · 已抵达" % TITLES[model.stage]
+	handoff_detail.text = "终于可以收起翅膀，歇一口气。\nEnter 看结尾 · Esc 歇一会儿" if mode == "arrival" else "接下来  %s\n自动出发 · Enter 提前 · Esc 歇一会儿" % TITLES[model.stage+1]
 	handoff_panel.show()
 	cue_panel.hide()
 	toast.hide()

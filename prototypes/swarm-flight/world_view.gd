@@ -25,6 +25,9 @@ var _greeting := 0.0
 var _wind_kick := 0.0
 var _shield_flash := 0.0
 var _shield_birth := 0.0
+var _arrival_elapsed := -1.0
+var _arrival_from := Vector2.ZERO
+var _arrival_dash := false
 
 const INK := Color("253d26")
 const GOLD := Color("ffc94f")
@@ -54,6 +57,8 @@ func reset_presentation() -> void:
 	_shield_flash = 0.0
 	_shield_birth = 0.0
 	_ending_elapsed = 0.0
+	_arrival_elapsed = -1.0
+	_arrival_dash = false
 	trail_clock = 0.0
 	trauma = 0.0
 	_last_stage = model.stage if model != null else -1
@@ -64,6 +69,7 @@ func _process(delta: float) -> void:
 	if model != null and model.stage != _last_stage:
 		reset_presentation()
 	clock += delta
+	if _arrival_elapsed >= 0.0: _arrival_elapsed += delta
 	_advance_departures(delta)
 	_settle = maxf(0.0, _settle - delta)
 	_greeting = maxf(0.0, _greeting - delta)
@@ -127,6 +133,10 @@ func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
 		_shield_birth = 0.4
 	elif kind == "shield_block":
 		_shield_flash = 0.24
+	elif kind == "finish":
+		_arrival_elapsed = 0.0
+		_arrival_from = pos
+		_arrival_dash = bool(details.get("dashing",false))
 	var caption := ""
 	match kind:
 		"burst": caption = "−20"
@@ -567,13 +577,25 @@ func _shelter(shelter: Dictionary) -> void:
 func _exit(_act: int) -> void:
 	var p: Vector2 = model.exit_pos
 	if model.stage < model.STAGE_COUNT-1:
-		_curve(p+Vector2(-95,180),p+Vector2(-104,-38),p+Vector2(-25,-111),p+Vector2(50,-88),Color("49795f"),10)
-		_leaf(p+Vector2(-64,-57),p+Vector2(44,-101),28,Color("8fa77a"))
-		_leaf(p+Vector2(-77,-13),p+Vector2(-120,-63),17,Color("688d6e"))
-		if model.exit_ready:
+		# An open, leaf-framed threshold: the player crosses the bell's vertical
+		# line within the same wide aperture used by the model (no hidden radius).
+		var ready: bool = model.exit_ready
+		var bloom := clampf(_arrival_elapsed/0.35,0.0,1.0)
+		if ready:
+			_ellipse(p+Vector2(22,0),Vector2(66,model.EXIT_HALF_HEIGHT),Color(1.0,0.91,0.55,0.10))
+		_curve(p+Vector2(80,318),p+Vector2(113,116),p+Vector2(114,-149),p+Vector2(-42,-139),INK,13)
+		_curve(p+Vector2(80,318),p+Vector2(113,116),p+Vector2(114,-149),p+Vector2(-42,-139),Color("77a945"),7)
+		_leaf(p+Vector2(13,-129),p+Vector2(-97,-123-bloom*18),24,LEAF_LIGHT if ready else Color("8fa77a"))
+		_leaf(p+Vector2(78,-66),p+Vector2(123,-108-bloom*10),18,Color("8bb95b"))
+		_leaf(p+Vector2(-64,108),p+Vector2(111,107),20,Color("5c913d"))
+		_leaf(p+Vector2(-57,106),p+Vector2(100,104),10,LEAF_LIGHT)
+		_goal_bell(p+Vector2(0,-143))
+		if ready and _arrival_elapsed < 0.0:
 			for i in 2:
-				var x := p.x-16+i*27+sin(clock*2.3)*3
+				var x := p.x-46+i*25+sin(clock*2.3)*3
 				draw_polyline(PackedVector2Array([Vector2(x,p.y-10),Vector2(x+11,p.y),Vector2(x,p.y+10)]),CREAM,3,true)
+		elif _arrival_elapsed >= 0.0:
+			draw_polyline(PackedVector2Array([p+Vector2(-21,-41),p+Vector2(-9,-29),p+Vector2(15,-54)]),GOLD,4,true)
 		return
 	# Authored cut-paper trunk: three broad curved layers and one warm, clear hollow.
 	_paper_shape([p+Vector2(-126,-510),p+Vector2(-61,-270),p+Vector2(-136,-33),p+Vector2(-110,171),p+Vector2(-103,278),p+Vector2(-170,351),p+Vector2(-225,397),p+Vector2(-32,356),p+Vector2(119,386),p+Vector2(226,398),p+Vector2(149,245),p+Vector2(167,41),p+Vector2(145,-141),p+Vector2(135,-270),p+Vector2(189,-406),p+Vector2(182,-510)],Color("4d3d2d"))
@@ -591,6 +613,7 @@ func _exit(_act: int) -> void:
 	_leaf(p+Vector2(-76,119),p+Vector2(81,117),8,Color("b3d66b"))
 	_leaf(p+Vector2(-115,-161),p+Vector2(-199,-228),25,Color("497e38"))
 	_leaf(p+Vector2(150,-177),p+Vector2(237,-235),27,Color("8db648"))
+	_goal_bell(p+Vector2(0,-163))
 
 	_waiting_friends()
 	if model.phase == "ending":
@@ -600,12 +623,28 @@ func _exit(_act: int) -> void:
 			_curve(flower_pos+Vector2(0,60),flower_pos+Vector2(8,36),flower_pos+Vector2(-4,20),flower_pos,Color("8dbb53"),5)
 			_flower(flower_pos,21,[Color("e9a5c9"),Color("f4cb62"),Color("bca0df")][i%3],float(i))
 
+func _goal_bell(anchor: Vector2) -> void:
+	var swing := sin(clock*1.8)*0.035
+	if _arrival_elapsed >= 0.0:
+		swing = sin(_arrival_elapsed*15.0)*exp(-_arrival_elapsed*2.4)*(0.55 if _arrival_dash else 0.4)
+	var bell := anchor+Vector2(0,35).rotated(swing)
+	draw_line(anchor,bell,INK,2.5,true)
+	var tint := GOLD if model.exit_ready else Color("b0b382")
+	_silhouette([bell+Vector2(-14,-8),bell+Vector2(-9,-19),bell+Vector2(8,-20),bell+Vector2(14,-7),bell+Vector2(19,8),bell+Vector2(7,12),bell+Vector2(-5,10),bell+Vector2(-19,7),bell+Vector2(-14,-8)],tint,INK,2.5)
+	_curve(bell+Vector2(-10,-3),bell+Vector2(-5,-12),bell+Vector2(4,-13),bell+Vector2(8,-5),CREAM,2)
+	draw_circle(bell+Vector2(0,13),4,INK)
+	if _arrival_elapsed >= 0.0 and _arrival_elapsed < 0.8:
+		var radius := 28+_arrival_elapsed*34
+		var tint_wave := Color(1.0,0.93,0.64,(1.0-_arrival_elapsed/0.8)*0.7)
+		draw_arc(bell,radius,-0.7,0.7,16,tint_wave,2,true)
+		draw_arc(bell,radius,PI-0.7,PI+0.7,16,tint_wave,2,true)
+
 func _storm(cam: float) -> void:
 	if not model.storm_active:
 		return
 	# The visible leading edge agrees with the model's contact threshold.
 	# Once home, the rain leaves the frame instead of lingering over the ending.
-	var front: float = model.storm_x + 45 - _ending_elapsed*190
+	var front: float = model.storm_x + 45 - maxf(_ending_elapsed,_arrival_elapsed)*190
 	if front < cam - 100:
 		return
 	var start := maxf(cam - 10.0, front - 1500.0)
@@ -676,6 +715,13 @@ func _leader() -> void:
 		face = Vector2.RIGHT
 	var compact: bool = model.charging
 	var burst: bool = model.burst_left > 0.0
+	if _arrival_elapsed >= 0.0 and model.phase in ["transition","ending"]:
+		var t := clampf(_arrival_elapsed/1.2,0.0,1.0)
+		var eased := 1.0-pow(1.0-t,3.0)
+		var landing: Vector2 = model.exit_pos+Vector2(-5,22) if model.phase == "ending" else model.exit_pos+Vector2(35,82)
+		var lead := _arrival_from.bezier_interpolate(_arrival_from+Vector2(45,-12),landing-Vector2(0,38),landing,eased)
+		_bee(lead,1.0,Vector2.RIGHT,1.0,false,0.0)
+		return
 	if model.phase == "ending":
 		_ending_arrival()
 		return
@@ -777,6 +823,7 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 		dash = 1.0 if model.burst_left > 0.0 else 0.0
 		rest = _rest_blend
 		if model.phase == "ending": rest = clampf(_ending_elapsed/1.8,0.0,1.0)
+		if _arrival_elapsed >= 0.0: rest = clampf((_arrival_elapsed-0.35)/0.85,0.0,1.0)
 		if _settle > 0.0: settle = sin((0.36-_settle)/0.36*PI)*_settle/0.36
 	elif pose == "depart":
 		dash = 0.35
