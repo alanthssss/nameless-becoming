@@ -242,6 +242,7 @@ func _draw() -> void:
 	var shake := Vector2(sin(clock * 53.0), sin(clock * 39.0)) * trauma * trauma * 9.0
 	_world_offset = Vector2(-cam, 0) + shake
 	draw_set_transform(_world_offset)
+	_region_landmarks(cam)
 	_world_decor(act, cam)
 	_landmarks(act)
 	for field in model.rain_fields:
@@ -264,6 +265,7 @@ func _draw() -> void:
 	for puff in model.puffs:
 		_puff(puff.pos)
 	_exit(act)
+	_neighbors()
 	_storm(cam)
 	if model.phase == "ending":
 		_ending_weather(cam)
@@ -294,7 +296,7 @@ func _background(act: int, cam: float) -> void:
 		_ellipse(c,Vector2(100,22),cloud)
 		_ellipse(c+Vector2(-34,-17),Vector2(42,30),cloud)
 		_ellipse(c+Vector2(14,-23),Vector2(55,37),cloud)
-	if act == 3:
+	if model.stage == 3:
 		_distant_home(cam)
 	for layer in 2:
 		var hedge: Color = [Color("77b965"),Color("70b3a0"),Color("618b80"),Color("7f9580")][act].darkened(layer*0.10)
@@ -347,10 +349,89 @@ func _background(act: int, cam: float) -> void:
 		draw_style_box(_box_style(Color("728678"),Color("577267"),3,5),Rect2(shed-Vector2(70,40),Vector2(140,118)))
 		_outline_polygon(PackedVector2Array([shed+Vector2(-86,-40),shed+Vector2(0,-100),shed+Vector2(86,-40)]),Color("8a8574"),Color("577267"),3)
 		draw_rect(Rect2(shed+Vector2(-21,1),Vector2(43,77)),Color("58776a"))
+	_region_background(cam)
 	# Atmospheric wash keeps the garden set subordinate to outlined playable objects.
 	var haze: Color = LOW_SKY[act]
 	haze.a = 0.15 if act < 2 else 0.12
 	draw_rect(Rect2(0,0,1280,800),haze)
+
+
+func _region_background(cam: float) -> void:
+	var region: int = model.chapter.region
+	if region == 1:
+		# Warm flower-border arches remain visibly behind the playable plants.
+		for i in 6:
+			var x := fposmod(i*300.0-cam*0.12,1800)-200
+			_curve(Vector2(x,700),Vector2(x-50,270),Vector2(x+155,270),Vector2(x+135,700),Color("8cb28b"),12)
+			for j in 3: _flower(Vector2(x+16+j*45,360-sin(j*1.5)*30),19,Color("d6a09e"),float(j))
+	elif region == 2:
+		for i in 5:
+			var x := fposmod(i*350.0-cam*0.11,1750)-170
+			_curve(Vector2(x,715),Vector2(x+20,550),Vector2(x-10,430),Vector2(x+15,300),Color("998267"),27)
+			for j in 3:
+				_ellipse(Vector2(x-60+j*65,332-sin(j*1.5)*45),Vector2(85,75),Color("c0ad65") if j%2 else Color("c78b64"))
+			for j in 4: draw_circle(Vector2(x-44+j*32,345+sin(j*1.8)*30),9,Color("ae6f54"))
+	elif region == 3:
+		# Frost is outside the warm glass passage; it has no damage contract.
+		for i in 6:
+			var x := fposmod(i*270.0-cam*0.10,1620)-180
+			draw_rect(Rect2(x,180,246,475),Color(0.82,0.92,0.87,0.17))
+			draw_rect(Rect2(x,180,246,475),Color("93a59c"),false,8)
+			draw_line(Vector2(x,330),Vector2(x+246,330),Color("93a59c"),6)
+			for j in 4: draw_circle(Vector2(x+30+j*53,230+(j%2)*40),3,CREAM)
+			draw_line(Vector2(x+123,180),Vector2(x+123,215),Color("a58e60"),2)
+			_ellipse(Vector2(x+123,230),Vector2(13,18),Color("f6d995"))
+
+func _region_landmarks(cam: float) -> void:
+	for item in model.chapter.decor:
+		var p: Vector2 = item.pos
+		if p.x < cam-120 or p.x > cam+1400: continue
+		if item.style == "withered" or item.style == "dead_flower":
+			_curve(p+Vector2(0,170),p+Vector2(-20,60),p+Vector2(18,-10),p+Vector2(35,10),Color("8e8460"),5)
+			for i in 4: _leaf(p+Vector2(35,10),p+Vector2(15+i*13,45+i%2*15),8,Color("a5966b"))
+		elif item.style == "lamp":
+			draw_line(p-Vector2(0,45),p,INK,3)
+			_oval(p,Vector2(12,18),GOLD,INK,2)
+		else:
+			# Unoutlined, small garden signs are decorative, never false walls.
+			draw_line(p+Vector2(0,10),p+Vector2(0,65),Color("8b7956"),6)
+			_oval(p,Vector2(31,15),Color("b9ad7c"),Color("8b7956"),2)
+			draw_line(p-Vector2(16,0),p+Vector2(16,0),CREAM,2)
+
+func _bird(p: Vector2) -> void:
+	_oval(p+Vector2(0,-8),Vector2(23,18),Color("aa8564"),INK,2.5)
+	_oval(p+Vector2(16,-23),Vector2(14,14),Color("c7a67b"),INK,2)
+	draw_colored_polygon(PackedVector2Array([p+Vector2(28,-25),p+Vector2(40,-19),p+Vector2(28,-16)]),GOLD)
+	draw_circle(p+Vector2(20,-26),3,INK)
+	_leaf(p+Vector2(-5,0),p+Vector2(-36,-22),11,Color("7e6651"))
+	draw_line(p+Vector2(-7,8),p+Vector2(-7,17),INK,2)
+	draw_line(p+Vector2(6,8),p+Vector2(6,17),INK,2)
+
+func _neighbors() -> void:
+	if model.chapter.npc.is_empty() or model.shelters.is_empty(): return
+	var indices := [0]
+	if model.shelters.size() > 1 and model.stage != model.STAGE_COUNT-1: indices.append(model.shelters.size()-1)
+	for index in indices:
+		var p: Vector2 = model.shelters[index].pos+Vector2(94,22)
+		if p.x < model.camera_x-140 or p.x > model.camera_x+1380: continue
+		if model.chapter.npc == "bird": _bird(p)
+		else:
+			_bee(p,0.85,Vector2.LEFT,1.0,false,0.0,"waiting")
+			_flower(p+Vector2(6,-19),7,Color("e6a6b7"),0.0)
+
+func neighbor_words() -> String:
+	# Share the existing shelter cue so dialogue cannot obscure a second cue.
+	if model.chapter.npc.is_empty(): return ""
+	var index: int = model.shelter_index_at(model.p)
+	if index < 0 or (index != 0 and index != model.shelters.size()-1): return ""
+	if index == model.shelters.size()-1 and model.stage == model.STAGE_COUNT-1: return ""
+	if index != model.shelters.size()-1: return model.chapter.npc_line
+	if model.chapter.npc == "bird": return "画眉：这条新路，我也记住了。"
+	var top: bool = model.rings.any(func(r): return r.get("branch","") == "top" and r.active)
+	var bottom: bool = model.rings.any(func(r): return r.get("branch","") == "bottom" and r.active)
+	if top: return "小满：你选了高处的落点。"
+	if bottom: return "小满：原来从下面也能到这里。"
+	return "小满：你也到了，歇一会儿吧。"
 
 func _distant_home(cam: float) -> void:
 	# The third homeward encounter reveals the destination across the garden.
@@ -491,7 +572,7 @@ func _wind_paths() -> void:
 	for i in range(model.rings.size()-1):
 		var ring: Dictionary = model.rings[i]
 		var next: Dictionary = model.rings[i+1]
-		if ring.active or not ring.get("chain",false) or not next.get("chain",false) or ring.section != next.section or ring.get("encounter",-1) != next.get("encounter",-1):
+		if ring.active or not ring.get("chain",false) or not next.get("chain",false) or ring.section != next.section or ring.get("encounter",-1) != next.get("encounter",-1) or ring.get("branch","") != next.get("branch",""):
 			continue
 		var p: Vector2 = ring.pos
 		var end: Vector2 = next.pos
@@ -576,7 +657,7 @@ func _shelter(shelter: Dictionary) -> void:
 
 func _exit(_act: int) -> void:
 	var p: Vector2 = model.exit_pos
-	if model.stage < model.STAGE_COUNT-1:
+	if model.chapter.exit_kind != "home":
 		# An open, leaf-framed threshold: the player crosses the bell's vertical
 		# line within the same wide aperture used by the model (no hidden radius).
 		var ready: bool = model.exit_ready
@@ -718,7 +799,7 @@ func _leader() -> void:
 	if _arrival_elapsed >= 0.0 and model.phase in ["transition","ending"]:
 		var t := clampf(_arrival_elapsed/1.2,0.0,1.0)
 		var eased := 1.0-pow(1.0-t,3.0)
-		var landing: Vector2 = model.exit_pos+Vector2(-5,22) if model.phase == "ending" else model.exit_pos+Vector2(35,82)
+		var landing: Vector2 = model.exit_pos+Vector2(-5,22) if model.chapter.exit_kind == "home" else model.exit_pos+Vector2(35,82)
 		var lead := _arrival_from.bezier_interpolate(_arrival_from+Vector2(45,-12),landing-Vector2(0,38),landing,eased)
 		_bee(lead,1.0,Vector2.RIGHT,1.0,false,0.0)
 		return
@@ -797,6 +878,8 @@ func _waiting_friends() -> void:
 	for i in maxi(0,mini(model.bees,16)-1):
 		var home := p+Vector2(-55.0+float(i%4)*37.0,63.0+float(i/4)*25.0)
 		_bee(home,0.57,Vector2.RIGHT,1.0,false,float(i),"waiting")
+		if model.stage == model.STAGE_COUNT-1 and i == 0: _flower(home+Vector2(4,-13),5,Color("e6a6b7"),0.0)
+	if model.stage == model.STAGE_COUNT-1: _bird(p+Vector2(110,66))
 
 func _ending_arrival() -> void:
 	var progress := clampf(_ending_elapsed/1.8,0.0,1.0)

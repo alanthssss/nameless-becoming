@@ -4,7 +4,8 @@ const Save = preload("res://save_data.gd")
 const World = preload("res://world_view.gd")
 const Sound = preload("res://sound.gd")
 const HANDOFF_SECONDS := 2.4
-const TITLES := ["01  晨光菜圃", "02  喷泉花桥", "03  雨中停走", "04  归巢之路"]
+const Data = preload("res://chapter_data.gd")
+var titles: Array[String] = []
 var model = Model.new()
 var world
 var sound
@@ -53,8 +54,10 @@ var hud_cache := ""
 var card_style: StyleBoxFlat
 var capture_path := ""
 var capture_seconds := -1.0
+var start_region := 0
 
 func _ready() -> void:
+	for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
 	font.font_names = PackedStringArray(["PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei","sans-serif"])
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--swarm-qa": test_mode = true
@@ -169,12 +172,12 @@ func build_ui() -> void:
 	cue_panel.add_child(cue_label)
 	handoff_panel = Panel.new()
 	handoff_panel.position = Vector2(330,180)
-	handoff_panel.size = Vector2(620,128)
+	handoff_panel.size = Vector2(620,156)
 	handoff_panel.add_theme_stylebox_override("panel",card(Color("314b2df5"),18))
 	handoff_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui_root.add_child(handoff_panel)
 	handoff_heading = label_at(Vector2(24,17),Vector2(572,38),28,Color("ffd75e"))
-	handoff_detail = label_at(Vector2(24,65),Vector2(572,44),19,Color("fff8d8"))
+	handoff_detail = label_at(Vector2(24,65),Vector2(572,74),19,Color("fff8d8"))
 	handoff_heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	handoff_detail.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	handoff_panel.add_child(handoff_heading)
@@ -190,7 +193,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     第一章 · 归家 0.5.2"
+	menu_kicker.text = "BEFORE THE RAIN     /     四季旅程 Alpha 0.6.0"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -232,6 +235,7 @@ func reset_menu() -> void:
 
 func show_title() -> void:
 	mode = "title"
+	start_region = 0
 	world.reset_presentation()
 	world.presentation_active = false
 	held.clear()
@@ -239,10 +243,10 @@ func show_title() -> void:
 	sound.set_stage(model.music_index())
 	panel.show()
 	heading.text = "雨来之前"
-	description.text = "第一章 · 归家\n穿过菜圃、花桥和雨庭，救出伙伴再回家。\n方向键 / WASD 飞行\n空格按住蓄力，光环亮起后松开冲刺\n沿途叶下自动保存，晨露可选收集。"
-	main_button.text = "从头开始这一章"
+	description.text = "梦里醒来，你成了一只小蜂。\n从第一次归家，到走过四季，找到自己的路。\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\n16关完整旅程 · 沿途叶下自动保存\nEnter 出发 · Tab 选择起始章节"
+	main_button.text = "从春天出发 · 完整旅程"
 	secondary_button.visible = not saved_payload.is_empty()
-	secondary_button.text = "查看这一章的结尾" if saved_payload.get("completed",false) else "继续第 %d 关 · 已保存的落脚点" % (saved_stage+1)
+	secondary_button.text = "重温旅程结尾" if saved_payload.get("completed",false) else "继续第 %d 关 · 已保存的落脚点" % (saved_stage+1)
 	if saved_payload.get("arrived",false) and not saved_payload.get("completed",false):
 		secondary_button.text = "继续第 %d 关 · 上一关已抵达" % (saved_stage+2)
 	third_button.show()
@@ -263,7 +267,7 @@ func begin_stage(index: int) -> void:
 	panel.hide()
 	sound.set_stage(model.music_index())
 	last_section = model.encounter_index()
-	message(["救出这一带的伙伴 · 它们会先飞回家", "冲进第一朵风花，后面的风会接住你", "暴雨从身后追来 · 借风甩开它，叶下能避雨", "最后一程 · 借风甩开暴雨，落叶下歇一口气"][index],4.5)
+	message(Data.REGIONS[model.chapter.region]+" · "+model.chapter.entry,4.5)
 	persist_progress()
 	refresh_hud()
 
@@ -272,7 +276,7 @@ func on_primary() -> void:
 		"title":
 			played_seconds = 0
 			model.reset_journey()
-			begin_stage(0)
+			begin_stage(start_region*4)
 		"pause": resume_game()
 		"transition": begin_stage(model.stage+1)
 		"arrival": show_ending()
@@ -388,6 +392,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if mode in ["transition","arrival"]:
 		if key in [KEY_ENTER,KEY_KP_ENTER]: on_primary()
+		return
+	if mode == "title" and key == KEY_TAB:
+		start_region = (start_region+1)%Data.REGIONS.size()
+		main_button.text = "从%s出发 · %02d关" % [Data.REGIONS[start_region],start_region*4+1]
+		reset_menu()
 		return
 	if mode != "play":
 		var buttons := menu_buttons()
@@ -509,8 +518,11 @@ func show_transition() -> void:
 	held.clear()
 	panel.hide()
 	transition_left = HANDOFF_SECONDS
-	handoff_heading.text = "到家了，大家都在。" if mode == "arrival" else "%s · 已抵达" % TITLES[model.stage]
-	handoff_detail.text = "终于可以收起翅膀，歇一口气。\nEnter 看结尾 · Esc 歇一会儿" if mode == "arrival" else "接下来  %s\n自动出发 · Enter 提前 · Esc 歇一会儿" % TITLES[model.stage+1]
+	handoff_heading.text = "到家了，大家都在。" if mode == "arrival" else "%s · 已抵达" % titles[model.stage]
+	if (model.stage+1)%4 == 0 and model.stage < Model.STAGE_COUNT-1: transition_left = 4.5
+	handoff_detail.text = "终于可以收起翅膀，歇一口气。\nEnter 看结尾 · Esc 歇一会儿" if mode == "arrival" else "接下来  %s\n自动出发 · Enter 提前 · Esc 歇一会儿" % titles[model.stage+1]
+	if not model.chapter.arrival.is_empty() and mode != "arrival":
+		handoff_detail.text = model.chapter.arrival+"\nEnter 继续 · Esc 暂停"
 	handoff_panel.show()
 	cue_panel.hide()
 	toast.hide()
@@ -522,8 +534,8 @@ func show_ending() -> void:
 	held.clear()
 	panel.show()
 	heading.text = "大家，都到家了。"
-	description.text = "四段路，终于连成了一次归途。\n“你回来啦！”伙伴们早已在树洞前等你。\n救出伙伴 %d 只 · 晨露 %d / %d\n旅程 %s · 返回落脚点 %d 次\n第一章 · 归家   完" % [model.bees-1,model.garden_total(),model.journey_dew_total(),clock_text(played_seconds),model.recoveries]
-	main_button.text = "再飞完整一章"
+	description.text = "从春天的第一次归家，走到冬天的灯下。\n小满留着空位，画眉落在新枝头。\n你已经能为自己选路。明天，也会有新的风。\n伙伴 %d 只 · 晨露 %d / %d\n旅程 %s · 返回落脚点 %d 次 · 全篇完" % [model.bees-1,model.garden_total(),model.journey_dew_total(),clock_text(played_seconds),model.recoveries]
+	main_button.text = "再走一趟四季旅程"
 	secondary_button.hide()
 	third_button.show()
 	third_button.text = "留在这一刻，退出"
@@ -541,7 +553,7 @@ func refresh_hud() -> void:
 	hud_weather.visible = active and model.storm_active
 	cue_panel.visible = false
 	if not active: return
-	var title: String = "%s · %d/%d %s" % [TITLES[model.stage],model.encounter_index()+1,model.chapter.encounters.size(),model.encounter_name()]
+	var title: String = "%s · %d/%d %s" % [titles[model.stage],model.encounter_index()+1,model.chapter.encounters.size(),model.encounter_name()]
 	if model.stage_dew_total() > 0: title += "   ·   晨露 %d/%d" % [model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
 	var hint: String = model.hint()
@@ -561,7 +573,7 @@ func refresh_hud() -> void:
 		hud_title.text = title
 		hud_objective.text = objective
 		hud_hint.text = hint
-		hud_bees.text = bees_text
+		hud_bees.text = bees_text if model.stage < 4 else "%s · %d/4" % [["春","夏","秋","冬"][model.chapter.region],model.stage%4+1]
 		hud_energy.text = energy_text
 		hud_clock.text = clock
 	var cue: Dictionary = model.context_cue()
@@ -571,7 +583,9 @@ func refresh_hud() -> void:
 		cue_panel.visible = target.x > -40 and target.x < 1320
 		var lift := 185.0 if cue.kind == "shelter" else 107.0
 		cue_panel.position = Vector2(clampf(target.x-175,24,906),clampf(target.y-lift,175,652))
-		cue_label.text = cue.text
+		var neighbor: String = world.neighbor_words() if cue.kind == "shelter" else ""
+		cue_label.text = cue.text if neighbor.is_empty() else neighbor
+		cue_label.add_theme_font_size_override("font_size",18 if neighbor.is_empty() else 16)
 
 func weather_text() -> String:
 	if model.shelter_index_at(model.p) >= 0:
@@ -601,7 +615,7 @@ func _draw() -> void:
 		draw_rect(Rect2(cost_start,64,53.6,14),Color(1,0.87,0.65,0.4+sin(model.time*8)*0.15))
 	for i in Model.STAGE_COUNT:
 		var color := Color("e9d099") if i <= model.stage else Color("5b7a67")
-		draw_line(Vector2(44+i*42,95),Vector2(75+i*42,95),color,2.0,true)
+		draw_line(Vector2(44+i*11,95),Vector2(52+i*11,95),color,2.0,true)
 	var section_fill: float = float(model.completed_sections()) / model.section_count()
 	draw_line(Vector2(236,95),Vector2(902,95),Color("5b7a67"),2)
 	draw_line(Vector2(236,95),Vector2(236+666*section_fill,95),Color("e9d099"),3)

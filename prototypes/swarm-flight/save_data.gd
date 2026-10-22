@@ -1,8 +1,7 @@
 extends RefCounted
-## V4 retains the 0.5.1 entity layout; 0.5.2 adds optional arrival completion.
-## Previous v1/v2/v3 files are never read/written.
+## Whole-journey Alpha has a separate path/version; chapter v4 remains untouched.
 const Model = preload("res://game_model.gd")
-const PATH := "user://before_the_rain_chapter_v4.json"
+const PATH := "user://before_the_rain_journey_v1.json"
 const MAX_BYTES := 65536
 
 static func read_payload(path: String = PATH) -> Dictionary:

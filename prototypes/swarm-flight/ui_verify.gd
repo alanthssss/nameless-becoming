@@ -6,6 +6,7 @@ var game
 var checks := 0
 var failures: Array[String] = []
 var pressed: Dictionary = {}
+var regional_saves: Array[Dictionary] = []
 var capture_dir := OS.get_environment("SWARM_FLOW_CAPTURE_DIR")
 
 func _initialize() -> void:
@@ -75,6 +76,10 @@ func run_complete_route(collect: bool) -> void:
 			release_all()
 			if not handoffs.has(game.model.stage):
 				handoffs[game.model.stage] = true
+				if collect and game.model.stage in [3,7,11]:
+					var earned: Dictionary = game.model.save_payload()
+					earned["played_seconds"] = game.played_seconds
+					regional_saves.append(earned)
 				expect(game.handoff_panel.visible and not game.panel.visible,"short chapter handoff")
 				print("CHAPTER_UI_STAGE: "+JSON.stringify({"stage":game.model.stage,"seconds":game.model.time,"recoveries":game.model.recoveries,"optional":collect}))
 				expect(game.model.save_payload().arrived,"goal progress is saved before the handoff finishes")
@@ -113,7 +118,7 @@ func run_complete_route(collect: bool) -> void:
 			old_section = game.model.encounter_index()
 			visited["%d:%d" % [old_stage,old_section]] = true
 			expect(not game.hud_objective.text.is_empty(),"every section has a visible objective")
-			if not collect and old_section == 3: await shot("level-%d-middle" % old_stage)
+			if not collect and old_section == (3 if old_stage < 4 else 1): await shot("level-%d-middle" % old_stage)
 			if not collect and old_stage == 3 and old_section == 2: await shot("distant-home-arrival")
 		if not collect and not relay_captured and game.model.stage == 1 and game.model.wind_chain >= 2:
 			relay_captured = true
@@ -144,6 +149,10 @@ func run_complete_route(collect: bool) -> void:
 			if not pose.is_empty() and not poses.has(pose):
 				poses[pose] = true
 				await shot("motion-"+pose)
+		if not collect and old_stage >= 4 and game.model.shelter_index_at(game.model.p) == 0 and not poses.has("neighbor-%d" % old_stage):
+			poses["neighbor-%d" % old_stage] = true
+			expect(not game.world.neighbor_words().is_empty(),"new regions greet at the earned safe leaf")
+			await shot("neighbor-%d" % old_stage)
 		var action: Dictionary = driver.next_input()
 		if not str(action.get("error","")).is_empty():
 			failures.append("UI route: "+str(action.error))
@@ -151,11 +160,13 @@ func run_complete_route(collect: bool) -> void:
 		apply_action(action)
 		ticks(1)
 	release_all()
-	expect(game.mode == "ending","complete four-level route reaches ending")
-	expect(handoffs.size() == 3,"all three level handoffs")
+	expect(game.mode == "ending","complete sixteen-level route reaches ending")
+	expect(handoffs.size() == game.model.STAGE_COUNT-1,"all fifteen level handoffs")
 	expect(home_arrival,"finale uses the same earned arrival before showing results")
-	expect(visited.size() == 20,"all twenty authored encounters visited")
-	expect(game.description.text.contains("第一章") and game.description.text.contains("救出伙伴 8 只"),"ending counts rescued friends separately from player")
+	var expected_encounters := 0
+	for definition in game.Data.definitions(): expected_encounters += definition.encounters.size()
+	expect(visited.size() == expected_encounters,"every authored encounter is visited")
+	expect(game.description.text.contains("全篇完") and game.description.text.contains("伙伴 8 只"),"ending counts rescued friends separately from player")
 	expect(not game.hud_weather.visible,"ending clears the chase indicator")
 	print("CHAPTER_UI_END: "+JSON.stringify({"seconds":game.played_seconds,"recoveries":game.model.recoveries,"dew":game.model.garden_total(),"optional":collect}))
 	if collect: expect(game.model.garden_total() == game.model.journey_dew_total(),"optional route collects the chapter's authored dew")
@@ -323,7 +334,7 @@ func saved_menu_contract() -> void:
 	expect(game.secondary_button.visible and game.secondary_button.text.contains("结尾"),"completed save offers ending from title")
 	tap(KEY_DOWN)
 	tap(KEY_ENTER)
-	expect(game.mode == "ending" and game.model.stage == 3,"title continue opens saved ending")
+	expect(game.mode == "ending" and game.model.stage == game.model.STAGE_COUNT-1,"title continue opens saved ending")
 	game.model.reset_journey()
 	game.begin_stage(0)
 	var driver = Driver.new(game.model)
@@ -394,6 +405,17 @@ func saved_menu_contract() -> void:
 	expect(is_equal_approx(game.played_seconds,arrived_seconds),"arrival continuation preserves journey time through JSON round-trip")
 	expect(game.model.garden_total() == arrived_dew and game.model.bees == 5,"arrival continuation preserves collected dew and rescued friends")
 	await shot("saved-arrival-continued")
+	# These three snapshots come from the full input run, not fabricated flags.
+	for payload in regional_saves:
+		expect(Save.write_payload(payload,path),"earned regional snapshot writes successfully")
+		game.saved_payload = Save.read_payload(path)
+		game.saved_stage = int(payload.stage)
+		game.show_title()
+		tap(KEY_DOWN)
+		tap(KEY_ENTER)
+		expect(game.mode == "play" and game.model.stage == int(payload.stage)+1 and not game.model.started,"earned regional arrival continues at the next season")
+		expect(is_equal_approx(game.played_seconds,float(payload.played_seconds)),"season continuation preserves earned journey time")
+		expect(game.model.garden_total() == int(payload.garden_awards.reduce(func(a,b): return a+b,0)),"season continuation keeps collected dew")
 	game.test_mode = true
 	game.progress_file = ""
 	DirAccess.remove_absolute(path)
@@ -408,6 +430,13 @@ func run() -> void:
 	expect(game.test_mode,"QA never reads or writes user progress")
 	expect(game.mode == "title","normal launch starts at title")
 	await shot("chapter-title")
+	tap(KEY_DOWN)
+	expect(game.menu_index > 0,"chapter selector is tested from another menu action")
+	tap(KEY_TAB)
+	expect(game.menu_index == 0,"selecting a region focuses its start button")
+	tap(KEY_ENTER)
+	expect(game.model.stage == 4 and game.mode == "play" and not game.model.started,"title chapter selector starts summer with fresh input")
+	game.show_title()
 	await rescue_departure_contract()
 	# Contract returns a fresh active chapter.
 
@@ -421,7 +450,7 @@ func run() -> void:
 	await saved_menu_contract()
 	await weather_contract()
 	await shield_ui_contract()
-	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete four-level input routes" % checks)
+	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete sixteen-level input routes" % checks)
 	else:
 		for failure in failures: push_error(failure)
 	game.queue_free()

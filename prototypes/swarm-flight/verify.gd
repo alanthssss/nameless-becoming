@@ -117,12 +117,13 @@ func authored_content() -> void:
 	for stage in Model.STAGE_COUNT:
 		m = Model.new()
 		m.load_stage(stage)
-		expect(m.chapter.encounters.size() == 5 and m.sections.size() >= 2 and m.world_width >= 7000,"Five authored encounters share content-driven save intervals")
-		expect(m.theme_index() == stage and m.music_index() in [0,1,2],"Chapter presentation is data driven")
+		expect(m.chapter.encounters.size() >= 2 and m.sections.size() >= 1 and m.world_width >= 1800,"Every level has authored progression and a closed final checkpoint")
+		if stage < 4: expect(m.chapter.encounters.size() == 5 and m.world_width >= 7000,"Original four-level layouts retain their encounter scale")
+		expect(m.theme_index() in [0,1,2,3] and m.music_index() in [0,1,2] and m.chapter.region == stage/4,"Chapter presentation is data driven")
 		expect(m.dew.size() == Model.Data.dew_count(stage) and m.shelters.size() == m.sections.size(),"Optional dew and save intervals have separate counts")
 		for section in m.chapter.encounters:
-			expect(not names.has(section.name),"Encounter names are distinct: "+section.name)
-			names.append(section.name)
+			expect(not names.has(str(stage)+section.name),"Encounter names are distinct: "+section.name)
+			names.append(str(stage)+section.name)
 		for wall in m.walls:
 			expect(wall.rect.size.x > 0 and wall.rect.size.y > 0,"Authored obstacle has positive extents")
 		for i in m.rings.size():
@@ -144,19 +145,22 @@ func chapter_routes(collect_optional: bool,without_shields := false,flowing := f
 	var recovered_pods := {}
 	var recovery_pending := false
 	var pickup_report: Array = []
+	var last_stage := 3 if without_shields or flowing or recover_after_rescue else Model.STAGE_COUNT-1
 	var route_time := 0.0
 	var frames := 0
 	var prior_checkpoint := -1
 	var rings_this_launch := 0
 	var chain_max := 0
 	var minimum_stamina := 100.0
-	while m.phase != "ending" and frames < 108000:
+	while m.phase != "ending" and not (m.phase == "transition" and m.stage == last_stage) and frames < 108000:
 		if m.phase == "transition":
+			if m.stage == 3: expect(chain_max >= 3,"Spring climax retains a three-flower relay")
 			if m.stage == 1:
 				expect(chain_max >= 3,"Flower bridge contains a real three-flower chain from one launch")
 				var branch_rings: Array = m.rings.filter(func(item): return item.get("encounter",-1) == 3)
 				expect(branch_rings.all(func(item): return not item.active) if collect_optional else branch_rings.all(func(item): return item.active),"The same bridge admits a wind shortcut and a no-wind steady route")
 			if without_shields: expect(m.shields.all(func(item): return not item.collected),"Ordinary alternative completes without collecting shield")
+			check_fork_choice(collect_optional)
 			report_stage(collect_optional,minimum_stamina)
 			route_time += m.time
 			m.load_stage(m.stage+1)
@@ -182,7 +186,9 @@ func chapter_routes(collect_optional: bool,without_shields := false,flowing := f
 			expect(clone.restore_payload(decoded),"Reached checkpoint serializes and restores on the actual route")
 			expect(clone.p == m.checkpoint.p and clone.bees == m.checkpoint.bees and not clone.started,"Checkpoint resume is safe and preserves the real rescued group")
 		for event in m.events:
-			if event.kind == "dew": pickup_report.append({"stage":m.stage,"position":str(event.pos),"restored":snappedf(event.reward,0.01),"stamina_after_step":snappedf(m.stamina,0.01)})
+			if event.kind == "dew":
+				pickup_report.append({"stage":m.stage,"position":str(event.pos),"restored":snappedf(event.reward,0.01),"stamina_after_step":snappedf(m.stamina,0.01)})
+				expect(event.reward >= 1.0,"Authored supply has a measurable use on the known-answer route")
 			if recover_after_rescue and event.kind == "rescue":
 				var key: String = "%d:%s" % [m.stage,str(event.pos)]
 				if not recovered_pods.has(key):
@@ -193,18 +199,23 @@ func chapter_routes(collect_optional: bool,without_shields := false,flowing := f
 				rings_this_launch += 1
 				chain_max = maxi(chain_max,rings_this_launch)
 		m.events.clear()
-	if m.phase == "ending":
+	if m.phase in ["ending","transition"] and m.stage == last_stage:
 		if without_shields: expect(m.shields.all(func(item): return not item.collected),"Finale remains completable without shield")
-		expect(chain_max >= 3,"Final chapter combines a real continuous flower chain with the homeward route")
+		if last_stage == 3: expect(chain_max >= 3,"First-region climax retains its real continuous flower chain")
 		report_stage(collect_optional,minimum_stamina)
 		route_time += m.time
-	expect(m.phase == "ending" and m.stage == 3 and m.bees == 9,"Known-answer input route completes all four chapters with the whole group")
+	expect(m.phase == ("ending" if last_stage == Model.STAGE_COUNT-1 else "transition") and m.stage == last_stage and m.bees == 9,"Known-answer route completes the requested journey with rescued progress intact")
 	if collect_optional: expect(m.garden_total() == m.journey_dew_total(),"Optional input route collects all authored dew without teleportation")
 	if recover_after_rescue: expect(recovered_pods.size() == 5 and m.recoveries == 5,"Every rescue is followed by an ordinary checkpoint recovery and replay")
 	else: expect(m.recoveries == 0,"Authored input route completes without forced recovery")
 	var restored = Model.new()
-	expect(restored.restore_payload(m.save_payload()) and restored.phase == "ending","Completed save resumes at the ending rather than replaying the long final chapter")
-	print("CHAPTER ROUTE: %s" % JSON.stringify({"scenario":"rescue-recovery" if recover_after_rescue else "flow-through" if flowing else "no-shield" if without_shields else "all-dew" if collect_optional else "direct","seconds":snappedf(route_time,0.01),"frames":frames,"recoveries":m.recoveries,"dew":m.garden_total(),"completed":m.phase=="ending","pickups":pickup_report}))
+	expect(restored.restore_payload(m.save_payload()) and restored.phase == m.phase,"Completed save restores the correct chapter/full-journey completion")
+	print("CHAPTER ROUTE: %s" % JSON.stringify({"scenario":"rescue-recovery" if recover_after_rescue else "flow-through" if flowing else "no-shield" if without_shields else "all-dew" if collect_optional else "direct","seconds":snappedf(route_time,0.01),"frames":frames,"recoveries":m.recoveries,"dew":m.garden_total(),"levels":last_stage+1,"route_completed":m.phase in ["transition","ending"] and m.stage == last_stage,"full_journey_completed":m.phase=="ending","pickups":pickup_report}))
+
+func check_fork_choice(optional: bool) -> void:
+	for ring in m.rings:
+		if ring.get("branch","") not in ["top","bottom"]: continue
+		expect(ring.active == (ring.branch == ("bottom" if optional else "top")),"Fork route activates only its chosen branch in level %d" % (m.stage+1))
 
 func report_stage(optional: bool,minimum_stamina: float) -> void:
 	expect(m.completed_sections() == m.sections.size(),"Completed chapter visited every required safe leaf")
@@ -344,11 +355,11 @@ func save_contract() -> void:
 	m = Model.new()
 	var payload: Dictionary = m.save_payload()
 	payload["ui"] = {"played_seconds":42.5}
-	var path := "user://swarm_chapter_verify_v4.json"
-	expect(Save.PATH.ends_with("chapter_v4.json") and not Save.PATH.ends_with("v1.json"),"Chapter saves use a separate v4 path")
+	var path := OS.get_cache_dir().path_join("swarm-journey-verify.json")
+	expect(Save.PATH.ends_with("journey_v1.json") and not Save.PATH.contains("chapter_v4"),"Full journey never replaces the four-level save")
 	expect(Save.write_payload(payload,path),"A new-run safe snapshot writes atomically")
 	var loaded := Save.read_payload(path)
-	expect(loaded.get("ui",{}).get("played_seconds") == 42.5 and m.restore_payload(loaded),"V4 preserves extra UI metadata and validates model fields")
+	expect(loaded.get("ui",{}).get("played_seconds") == 42.5 and m.restore_payload(loaded),"Whole-journey save preserves extra UI metadata and validates model fields")
 	var bad_cases: Array = []
 	for field in ["version","content_revision","stage","checkpoint_index","bees","bursts","recoveries","rings_hit"]:
 		var bad := payload.duplicate(true)
@@ -363,8 +374,8 @@ func save_contract() -> void:
 		bad["rain_remaining"] = value
 		bad_cases.append(bad)
 	var old_layout := payload.duplicate(true)
-	old_layout.version = 3
-	old_layout.content_revision = 5
+	old_layout.version = 4
+	old_layout.content_revision = 6
 	bad_cases.append(old_layout)
 	var future := payload.duplicate(true)
 	future.garden_awards[3] = 1
@@ -412,7 +423,7 @@ func arrival_contract() -> void:
 	m.p = m.exit_pos+Vector2(10,0)
 	m.step(Vector2.RIGHT,false,0.1)
 	expect(m.phase == "playing" and not has_event("finish"),"Flying to the goal cannot skip required rescues or leaves")
-	for stage_index in [0,2,3]:
+	for stage_index in [0,2,3,7,11,15]:
 		for dash in [false,true]:
 			m = arrival_fixture(stage_index)
 			m.step(Vector2.ZERO,false,0.01)
@@ -428,7 +439,7 @@ func arrival_contract() -> void:
 			m.drops.assign([{"pos":m.exit_pos,"vel":Vector2.ZERO}])
 			m.storm_x = m.p.x-10
 			m.step(Vector2.RIGHT,false,1.0/120.0)
-			expect(m.phase == ("ending" if stage_index == 3 else "transition") and has_event("finish"),"Ordinary and dash entry both finish the real aperture")
+			expect(m.phase == ("ending" if stage_index == Model.STAGE_COUNT-1 else "transition") and has_event("finish"),"Ordinary and dash entry both finish the real aperture")
 			expect(not has_event("hit") and m.recoveries == 0 and m.drops.is_empty(),"Arrival resolves before coincident rain or storm contact")
 			var frozen := [m.p,m.stamina,m.time,m.rain_remaining,m.storm_x,m.bursts,m.events.size()]
 			for i in 240: m.step(Vector2.RIGHT,true,1.0/60.0)
@@ -437,7 +448,7 @@ func arrival_contract() -> void:
 			var restored = Model.new()
 			expect(payload.arrived and restored.restore_payload(JSON.parse_string(JSON.stringify(payload))) and restored.phase == m.phase,"Arrival survives save round-trip before the presentation ends")
 			payload.erase("arrived")
-			expect(restored.restore_payload(payload) and restored.phase == ("ending" if stage_index == 3 else "playing"),"Earlier 0.5.1 v4 saves still resume safely without the optional arrival field")
+			expect(restored.restore_payload(payload) and restored.phase == ("ending" if stage_index == Model.STAGE_COUNT-1 else "playing"),"Save restoration handles the optional arrival field without inventing completion")
 	m.load_stage(1)
 	var first: Dictionary = m.rings.filter(func(item): return item.get("encounter",-1)==3)[0]
 	var drop: Dictionary = m.dew[0]
@@ -504,7 +515,7 @@ func chase_contract() -> void:
 func shield_contract() -> void:
 	m = Model.new()
 	var counts := [4,2,1,1]
-	for stage in Model.STAGE_COUNT:
+	for stage in 4:
 		m.load_stage(stage)
 		expect(m.rescue_total() == counts[stage],"Rescues are distributed through all four levels")
 		expect(m.shields.size() == (1 if stage >= 2 else 0),"Exactly two fixed shield introductions")
@@ -612,7 +623,31 @@ func pacing_contract() -> void:
 		if route[i].target == rescue_pos-Vector2(170,0): rescue_step = i
 	expect(supply_step >= 0 and supply_step < rescue_step,"Rescue supply is visited before the launch, never after it")
 
+func new_level_routes() -> void:
+	for stage_index in range(4,Model.STAGE_COUNT):
+		for optional in [false,true]:
+			m = Model.new()
+			m.load_stage(stage_index)
+			var driver = Driver.new(m,optional)
+			var frames := 0
+			while m.phase == "playing" and frames < 18000:
+				var action: Dictionary = driver.next_input()
+				if not action.error.is_empty(): failures.append("NEW LEVEL: "+action.error); break
+				m.step(action.direction,action.held,1.0/60.0)
+				m.events.clear()
+				frames += 1
+			expect(m.phase != "playing" and m.recoveries == 0,"New level %d alternate=%s completes without forced recovery" % [stage_index+1,optional])
+			check_fork_choice(optional)
+			if optional: expect(m.garden_awards[stage_index] == m.dew.size(),"New alternate route collects its authored supply")
+			print("NEW_LEVEL: "+JSON.stringify({"level":stage_index+1,"optional":optional,"phase":m.phase,"position":str(m.p),"seconds":m.time,"recoveries":m.recoveries}))
+
 func run() -> void:
+	if "--new-levels" in OS.get_cmdline_user_args():
+		new_level_routes()
+		for failure in failures: push_error(failure)
+		print("NEW_LEVEL_CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--arrival-only" in OS.get_cmdline_user_args():
 		arrival_contract()
 		save_contract()
@@ -671,5 +706,5 @@ func run() -> void:
 		chapter_routes(false,false,true)
 		chapter_routes(false,false,false,true)
 	for failure in failures: push_error(failure)
-	if failures.is_empty(): print("SWARM FLIGHT VERIFIED: %d checks, four authored chapters" % checks)
+	if failures.is_empty(): print("SWARM FLIGHT VERIFIED: %d checks, sixteen authored levels" % checks)
 	quit(0 if failures.is_empty() else 1)
