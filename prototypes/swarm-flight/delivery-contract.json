@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "goal": "SF-R23",
+  "source": "docs/design/swarm-flight-game-20261020.md#production-finish-boundary",
+  "criteria": [
+    {
+      "id": "whole_journey",
+      "kind": "technical",
+      "requirement": "同一冻结四区包的标题、16关、过场、结尾、继续进度和基础机制验证"
+    },
+    {
+      "id": "content_review",
+      "kind": "content_review",
+      "requirement": "全篇内容／节奏复核：各关独立判断、重复遭遇及实际处理，不能以空路凑时长"
+    },
+    {
+      "id": "visual_standard",
+      "kind": "in_engine_visual",
+      "requirement": "首章一关与05代表关在实际游戏中的成品视觉、动画、交互和路线体验及可复制资产标准"
+    },
+    {
+      "id": "production_forecast",
+      "kind": "production_record",
+      "requirement": "代表关实际制作／返工成本、全篇应用的剩余工作和有依据的完工预测；缺少自然试玩证据明确单列"
+    }
+  ]
+}
