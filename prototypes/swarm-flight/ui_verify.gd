@@ -153,6 +153,12 @@ func run_complete_route(collect: bool) -> void:
 			poses["neighbor-%d" % old_stage] = true
 			expect(not game.world.neighbor_words().is_empty(),"new regions greet at the earned safe leaf")
 			await shot("neighbor-%d" % old_stage)
+		# These captures come from the continuous ordinary-input playthrough.
+		for feature in ["summer-branch","autumn-crates","winter-flow"]:
+			var stage_for_feature: int = {"summer-branch":4,"autumn-crates":9,"winter-flow":12}[feature]
+			if old_stage == stage_for_feature and old_section == 0 and game.model.p.x > 650 and not poses.has(feature):
+				poses[feature] = true
+				await shot(feature+("-alternate" if collect else "-direct"))
 		var action: Dictionary = driver.next_input()
 		if not str(action.get("error","")).is_empty():
 			failures.append("UI route: "+str(action.error))
@@ -420,6 +426,40 @@ func saved_menu_contract() -> void:
 	game.progress_file = ""
 	DirAccess.remove_absolute(path)
 
+func season_ui_contract() -> void:
+	# Explicit UI state fixtures for warning readability and pause, separate from
+	# the continuous input-route screenshots above.
+	release_all()
+	game.model.reset_journey()
+	game.begin_stage(4)
+	expect(not game.model.jets.is_empty(),"summer introduces a real fountain")
+	if game.model.jets.is_empty(): return
+	var area: Rect2 = game.model.jets[0].rect
+	game.model.p = Vector2(area.position.x-100,area.get_center().y)
+	game.model.camera_x = maxf(0,game.model.p.x-480)
+	game.model.started = true
+	for state in ["quiet","warning","spray"]:
+		game.model.hazard_clock = {"quiet":0.1,"warning":3.1,"spray":4.1}[state]
+		ticks(1)
+		expect(game.model.context_cue().get("kind","") == "jet","fountain has a nearby actionable cue in "+state)
+		await shot("fountain-"+state+"-fixture")
+	var phase_time: float = game.model.hazard_clock
+	tap(KEY_ESCAPE)
+	ticks(60)
+	expect(game.mode == "pause" and game.model.hazard_clock == phase_time,"real Escape pauses fountain timing")
+	tap(KEY_ESCAPE)
+	ticks(1)
+	expect(game.mode == "play" and game.model.hazard_clock > phase_time,"real resume continues the same fountain cycle")
+	game.model.reset_journey()
+	game.begin_stage(12)
+	expect(not game.model.airflows.is_empty(),"winter introduces a real wind field")
+	if not game.model.airflows.is_empty():
+		game.model.p = game.model.airflows[0].rect.get_center()
+		game.model.camera_x = maxf(0,game.model.p.x-480)
+		ticks(1)
+		expect(game.model.context_cue().get("kind","") == "airflow","wind field explains its actual effect")
+		await shot("winter-flow-fixture")
+
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
@@ -427,6 +467,14 @@ func run() -> void:
 	game.set_process(false)
 	game.world.set_process(false)
 	game.sound.set_muted(true)
+	if "--season-elements-only" in OS.get_cmdline_user_args():
+		await season_ui_contract()
+		for failure in failures: push_error(failure)
+		print("SEASON UI CHECKS: %d, failures %d" % [checks,failures.size()])
+		game.queue_free()
+		await process_frame
+		quit(0 if failures.is_empty() else 1)
+		return
 	expect(game.test_mode,"QA never reads or writes user progress")
 	expect(game.mode == "title","normal launch starts at title")
 	await shot("chapter-title")
@@ -450,6 +498,7 @@ func run() -> void:
 	await saved_menu_contract()
 	await weather_contract()
 	await shield_ui_contract()
+	await season_ui_contract()
 	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete sixteen-level input routes" % checks)
 	else:
 		for failure in failures: push_error(failure)

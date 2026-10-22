@@ -28,3 +28,10 @@ static func fork(top: Array,top_landing: Vector2,bottom: Array,bottom_landing: V
 	return {"kind":"fork","x":minf(top[0].x,bottom[0].x),"y":420.0,"top":top,"top_landing":top_landing,"bottom":bottom,"bottom_landing":bottom_landing,"merge":merge}
 static func deco(x: float,y: float,style: String) -> Dictionary:
 	return {"kind":"deco","x":x,"y":y,"style":style}
+
+static func terrain(x: float,y: float,w: float,h: float,style := "hedge") -> Dictionary:
+	return {"kind":"terrain","x":x,"y":y,"width":w,"height":h,"style":style}
+static func jet(x: float,y: float,w: float,h: float,period := 6.0,active_seconds := 2.2,offset := 0.0) -> Dictionary:
+	return {"kind":"jet","x":x,"y":y,"width":w,"height":h,"period":period,"active_seconds":active_seconds,"offset":offset}
+static func airflow(x: float,y: float,w: float,h: float,direction: Vector2,strength := 180.0) -> Dictionary:
+	return {"kind":"airflow","x":x,"y":y,"width":w,"height":h,"direction":direction.normalized(),"strength":strength}

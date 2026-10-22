@@ -1,7 +1,7 @@
 extends RefCounted
-## Whole-journey Alpha has a separate path/version; chapter v4 remains untouched.
+## Changed route geometry uses a new path; journey v1 and chapter v4 stay untouched.
 const Model = preload("res://game_model.gd")
-const PATH := "user://before_the_rain_journey_v1.json"
+const PATH := "user://before_the_rain_journey_v2.json"
 const MAX_BYTES := 65536
 
 static func read_payload(path: String = PATH) -> Dictionary:

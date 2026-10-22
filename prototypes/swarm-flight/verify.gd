@@ -113,10 +113,14 @@ func controls_contract() -> void:
 		expect(not m.started and m.p == m.checkpoint.p and m.stamina == 100,"Cleared UI input can hold the recovery position safely: " + reason)
 
 func authored_content() -> void:
+	var totals := {"levels":Model.STAGE_COUNT,"encounters":0,"shelters":0,"dew":0,"terrain":0,"jets":0,"airflows":0}
 	var names: Array[String] = []
 	for stage in Model.STAGE_COUNT:
 		m = Model.new()
 		m.load_stage(stage)
+		totals.encounters += m.chapter.encounters.size()
+		for field in ["shelters","dew","jets","airflows"]: totals[field] += m.get(field).size()
+		totals.terrain += m.walls.filter(func(w): return w.kind == "terrain").size()
 		expect(m.chapter.encounters.size() >= 2 and m.sections.size() >= 1 and m.world_width >= 1800,"Every level has authored progression and a closed final checkpoint")
 		if stage < 4: expect(m.chapter.encounters.size() == 5 and m.world_width >= 7000,"Original four-level layouts retain their encounter scale")
 		expect(m.theme_index() in [0,1,2,3] and m.music_index() in [0,1,2] and m.chapter.region == stage/4,"Chapter presentation is data driven")
@@ -133,9 +137,22 @@ func authored_content() -> void:
 			for sample in 66:
 				var at: Vector2 = point+direction*sample*8.0
 				for wall in m.walls:
-					if wall.kind == "stem" and wall.rect.grow(14).has_point(at): clear = false
-			expect(clear,"Advertised wind landing clears solid stems")
+					if wall.kind in ["stem","terrain"] and wall.rect.grow(14).has_point(at): clear = false
+			expect(clear,"Advertised wind landing clears every solid obstacle")
+		for pickup in m.dew+m.shields+m.rings:
+			for obstacle in m.walls:
+				if obstacle.kind in ["stem","terrain"]:
+					expect(not obstacle.rect.grow(14).has_point(pickup.pos),"A visible pickup is reachable outside solid terrain")
+		for leaf in m.shelters:
+			for obstacle in m.walls:
+				if obstacle.kind == "terrain":
+					expect(not obstacle.rect.intersects(Rect2(leaf.pos-Vector2(180,64),Vector2(360,144))),"Both paths rejoin at a clear shared checkpoint")
+		if stage in range(4,15): expect(m.walls.any(func(w): return w.kind == "terrain"),"Each revised level has actual terrain")
+		if stage in range(4,8): expect(not m.jets.is_empty(),"Each summer level uses an actual timing hazard")
+		if stage in range(12,15): expect(not m.airflows.is_empty(),"Winter levels use actual local airflow")
 		expect(not m.exit_ready,"A whole chapter cannot finish before its required checkpoints")
+
+	print("CONTENT: "+JSON.stringify(totals))
 
 func chapter_routes(collect_optional: bool,without_shields := false,flowing := false,recover_after_rescue := false) -> void:
 	m = Model.new()
@@ -356,7 +373,7 @@ func save_contract() -> void:
 	var payload: Dictionary = m.save_payload()
 	payload["ui"] = {"played_seconds":42.5}
 	var path := OS.get_cache_dir().path_join("swarm-journey-verify.json")
-	expect(Save.PATH.ends_with("journey_v1.json") and not Save.PATH.contains("chapter_v4"),"Full journey never replaces the four-level save")
+	expect(Save.PATH.ends_with("journey_v2.json") and not Save.PATH.contains("chapter_v4"),"New geometry keeps both prior full-journey and four-level saves separate")
 	expect(Save.write_payload(payload,path),"A new-run safe snapshot writes atomically")
 	var loaded := Save.read_payload(path)
 	expect(loaded.get("ui",{}).get("played_seconds") == 42.5 and m.restore_payload(loaded),"Whole-journey save preserves extra UI metadata and validates model fields")
@@ -377,6 +394,10 @@ func save_contract() -> void:
 	old_layout.version = 4
 	old_layout.content_revision = 6
 	bad_cases.append(old_layout)
+	var prior_journey := payload.duplicate(true)
+	prior_journey.version = 5
+	prior_journey.content_revision = 7
+	bad_cases.append(prior_journey)
 	var future := payload.duplicate(true)
 	future.garden_awards[3] = 1
 	bad_cases.append(future)
@@ -623,6 +644,90 @@ func pacing_contract() -> void:
 		if route[i].target == rescue_pos-Vector2(170,0): rescue_step = i
 	expect(supply_step >= 0 and supply_step < rescue_step,"Rescue supply is visited before the launch, never after it")
 
+func season_elements_contract() -> void:
+	# Isolated rule fixtures, not authored routes or player observations.
+	for material in ["hedge","crate","glass"]:
+		for dash in [false,true]:
+			m = control_fixture()
+			m.p = Vector2(250,420)
+			m.walls.append({"rect":Rect2(350,200,160,400),"kind":"terrain","material":material,"broken":false})
+			if dash:
+				for i in 50: m.step(Vector2.ZERO,true,0.01)
+			for i in 90: m.step(Vector2.RIGHT,false,1.0/120.0)
+			expect(m.p.x < 337 and not m.walls[0].broken,"Solid seasonal terrain blocks both normal flight and dash: "+material)
+	m = control_fixture()
+	m.p = Vector2(450,500)
+	m.started = true
+	m.stamina = 60
+	m.walls.append({"rect":Rect2(300,300,400,80),"kind":"terrain","material":"hedge","broken":false})
+	m.drops.append({"pos":Vector2(450,298),"vel":Vector2(0,350)})
+	m.advance_rain(1.0/120.0)
+	expect(m.drops.is_empty(),"The visible solid roof stops a falling raindrop")
+	m.step(Vector2.ZERO,false,0.1)
+	expect(m.stamina < 60 and m.checkpoint_index == -1,"Terrain cover does not masquerade as a refill or checkpoint")
+	m = control_fixture()
+	m.jets.append({"rect":Rect2(100,100,600,600),"period":6.0,"active_seconds":2.2,"offset":0.0})
+	for i in 60: m.step(Vector2.ZERO,false,1.0/60.0)
+	expect(m.hazard_clock == 0 and m.jet_phase(0) == "quiet","Fresh start leaves the fountain quiet until the player acts")
+	m.hazard_clock = 3.1
+	expect(m.jet_phase(0) == "warning","Fountain warns before its spray begins")
+	m.hazard_clock = 4.0
+	expect(m.jet_phase(0) == "spray","Fountain has a real active hazard phase")
+	m.started = true
+	m.invulnerable = 0
+	m.advance_jets()
+	expect(m.stamina == 88 and has_event("hit"),"Ordinary contact with active fountain spends twelve stamina")
+	m.advance_jets()
+	expect(m.stamina == 88,"Fountain respects the existing hit grace period")
+	m.invulnerable = 0
+	m.burst_left = 0.3
+	m.advance_jets()
+	expect(m.stamina == 88,"A moving dash passes through fountain spray")
+	m.burst_left = 0
+	m.shield_left = 1
+	m.advance_jets()
+	expect(m.stamina == 88 and has_event("shield_block"),"The existing shield also protects against fountain spray")
+	m.phase = "paused"
+	m.step(Vector2.RIGHT,false,0.1)
+	expect(m.hazard_clock == 4.0,"Paused simulation cannot advance a fountain's phase")
+	m.restore_checkpoint()
+	expect(m.hazard_clock == 0 and m.jet_phase(0) == "quiet" and not m.started,"Recovery resets to a readable quiet fountain")
+	m = control_fixture()
+	var baseline = control_fixture()
+	m.airflows.append({"rect":Rect2(100,100,1500,600),"direction":Vector2.UP,"strength":180.0})
+	for i in 50:
+		m.step(Vector2.UP,false,0.01)
+		baseline.step(Vector2.UP,false,0.01)
+	expect(m.p.y < baseline.p.y-50,"Local updraft changes actual ordinary-flight motion")
+	for i in 30: m.step(Vector2.ZERO,false,0.01)
+	var stopped: Vector2 = m.p
+	for i in 60: m.step(Vector2.ZERO,false,0.01)
+	expect(m.p == stopped,"Releasing input stops safely inside a wind field")
+	for i in 50: m.step(Vector2.ZERO,true,0.01)
+	expect(m.p == stopped,"Local wind does not push a stationary charge")
+	m.face = Vector2.RIGHT
+	m.step(Vector2.ZERO,false,0.01)
+	expect(m.velocity.y == 0 and m.velocity.x == Model.BURST_SPEED,"Dash retains its aimed direction through local wind")
+	expect(m.airflow_at(Vector2(1800,420)) == Vector2.ZERO,"Wind influence ends at its visible field boundary")
+	# An ordinary-input driver waits for a sufficiently long quiet window at any
+	# arrival phase; the test advances real time rather than changing a live phase.
+	for start_phase in [0.0,2.8,3.5,4.8,5.8]:
+		m = control_fixture()
+		m.jets.append({"rect":Rect2(300,100,180,600),"period":6.0,"active_seconds":2.2,"offset":0.0})
+		m.started = true
+		m.hazard_clock = start_phase
+		var driver = Driver.new(m)
+		driver.stage = m.stage
+		driver.commands = [{"kind":"jet_window","jet_x":300.0,"travel_seconds":1.3},Data.move_to(Vector2(550,420))]
+		var hit := false
+		for frame in 600:
+			var action: Dictionary = driver.next_input()
+			m.step(action.direction,action.held,1.0/60.0)
+			if has_event("hit"): hit = true
+			m.events.clear()
+			if driver.cursor >= 2: break
+		expect(driver.error.is_empty() and driver.cursor >= 2 and not hit,"Fountain timing route is safe from arrival phase %.1f" % start_phase)
+
 func new_level_routes() -> void:
 	for stage_index in range(4,Model.STAGE_COUNT):
 		for optional in [false,true]:
@@ -630,18 +735,38 @@ func new_level_routes() -> void:
 			m.load_stage(stage_index)
 			var driver = Driver.new(m,optional)
 			var frames := 0
+			var hits := {}
+			var blocked := 0
 			while m.phase == "playing" and frames < 18000:
 				var action: Dictionary = driver.next_input()
 				if not action.error.is_empty(): failures.append("NEW LEVEL: "+action.error); break
 				m.step(action.direction,action.held,1.0/60.0)
+				for event in m.events:
+					if event.kind == "hit": hits[event.reason] = hits.get(event.reason,0)+1
+					if event.kind == "blocked": blocked += 1
 				m.events.clear()
 				frames += 1
 			expect(m.phase != "playing" and m.recoveries == 0,"New level %d alternate=%s completes without forced recovery" % [stage_index+1,optional])
+			expect(blocked == 0 and hits.get("jet",0) == 0,"Season route never depends on hitting terrain or tanking fountain damage")
 			check_fork_choice(optional)
 			if optional: expect(m.garden_awards[stage_index] == m.dew.size(),"New alternate route collects its authored supply")
-			print("NEW_LEVEL: "+JSON.stringify({"level":stage_index+1,"optional":optional,"phase":m.phase,"position":str(m.p),"seconds":m.time,"recoveries":m.recoveries}))
+			print("NEW_LEVEL: "+JSON.stringify({"level":stage_index+1,"optional":optional,"phase":m.phase,"position":str(m.p),"seconds":m.time,"recoveries":m.recoveries,"spent":m.energy_spent,"gained":m.energy_gained,"bursts":m.bursts,"flowers":m.rings_hit,"hits":hits,"blocked":blocked}))
 
 func run() -> void:
+	if "--content-only" in OS.get_cmdline_user_args():
+		authored_content()
+		pacing_contract()
+		for failure in failures: push_error(failure)
+		print("CONTENT CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
+	if "--season-elements-only" in OS.get_cmdline_user_args():
+		season_elements_contract()
+		save_contract()
+		for failure in failures: push_error(failure)
+		print("SEASON ELEMENT CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--new-levels" in OS.get_cmdline_user_args():
 		new_level_routes()
 		for failure in failures: push_error(failure)
@@ -691,6 +816,7 @@ func run() -> void:
 		return
 	controls_contract()
 	if "--controls-only" not in OS.get_cmdline_user_args():
+		season_elements_contract()
 		chase_contract()
 		shield_contract()
 		pacing_contract()
