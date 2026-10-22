@@ -1,33 +1,11 @@
-extends RefCounted
-## Authored encounters. Coordinates are local to each named encounter, never random.
-const STAGE_COUNT := 4
-
-static func gap(x: float,y: float,width := 190.0) -> Dictionary:
-	return {"kind":"gap","x":x,"y":y,"width":width}
-static func rescue(x: float,y: float,count := 1) -> Dictionary:
-	return {"kind":"pod","x":x,"y":y,"count":count}
-static func wind(x: float,y: float,dy := 0.0) -> Dictionary:
-	return {"kind":"ring","x":x,"y":y,"direction":Vector2(1,dy).normalized()}
-static func chain(points: Array,openings: Array,landing: Vector2,slow: Array = [],flowers: Array = []) -> Dictionary:
-	return {"kind":"chain","x":points[0].x,"y":points[0].y,"points":points,"openings":openings,"landing":landing,"slow":slow,"flowers":flowers}
-static func curtain(x: float,y: float) -> Dictionary:
-	return {"kind":"curtain","x":x,"y":y}
-static func flower(x: float,y: float) -> Dictionary:
-	return {"kind":"flower","x":x,"y":y}
-static func turn(x: float,y: float) -> Dictionary:
-	return {"kind":"turn","x":x,"y":y}
-static func weather(x: float,width: float) -> Dictionary:
-	return {"kind":"rain","x":x,"y":80.0,"width":width}
-static func shield(x: float,y: float) -> Dictionary:
-	return {"kind":"shield","x":x,"y":y}
-static func dew(x: float,y: float,purpose: String,route_mode := "through") -> Dictionary:
-	# Route mode only guides developer inputs; every pickup remains optional in play.
-	return {"kind":"dew","x":x,"y":y,"purpose":purpose,"route_mode":route_mode}
-static func encounter(name: String,width: float,beats: Array,rest_y := -1.0,cue := "继续向前",speed := 100.0,ambient_rain := false) -> Dictionary:
-	return {"name":name,"width":width,"beats":beats,"rest_y":rest_y,"cue":cue,"budget":55.0,"storm_speed":speed,"ambient_rain":ambient_rain}
+extends "res://event_data.gd"
+## Authored whole-game encounter catalogue.
+const Extra = preload("res://campaign_content.gd")
+const STAGE_COUNT := 16
+const REGIONS := ["春 · 归家", "夏 · 花篱外", "秋 · 旧果园", "冬 · 暖廊与老树"]
 
 static func definitions() -> Array:
-	return [
+	var original := [
 		{"title":"晨光菜圃","theme":0,"music":0,"base_bees":1,"storm":false,"encounters":[
 			encounter("第一声呼救",1650,[turn(380,420),rescue(850,420,2)],-1,"冲开卷叶，让伙伴先回家"),
 			encounter("抬头，再落下来",2050,[gap(460,290,260),dew(850,390,"上下转向之间顺路补给，继续飞到第二个缺口"),gap(1110,500,270)],500,"穿过上方缺口，顺着晨露向下转"),
@@ -57,6 +35,11 @@ static func definitions() -> Array:
 			encounter("大家在等你",1300,[gap(450,420,340),turn(970,420)],420,"前面没有新挑战了，沿灯光飞进老树",65)
 		]}
 	]
+	for i in original.size():
+		original[i]["region"] = 0
+		original[i]["exit_kind"] = "home" if i == 3 else "arch"
+	original[3]["arrival"] = "春天，八位伙伴都到家了。\n夏天到了，小满想去看看花篱外。"
+	return original+Extra.definitions()
 
 static func dew_count(index: int) -> int:
 	var total := 0
@@ -70,7 +53,7 @@ static func move_to(point: Vector2) -> Dictionary:
 
 static func build(index: int) -> Dictionary:
 	var source: Dictionary = definitions()[clampi(index,0,STAGE_COUNT-1)]
-	var out := {"title":source.title,"theme":source.theme,"music":source.music,"base_bees":source.base_bees,"storm":source.storm,"sections":[],"encounters":[],"shields":[],"rain_fields":[],"pods":[],"walls":[],"rings":[],"shelters":[],"dew":[],"sprayers":[],"route":[],"optional_route":[]}
+	var out := {"title":source.title,"theme":source.theme,"music":source.music,"base_bees":source.base_bees,"storm":source.storm,"sections":[],"encounters":[],"shields":[],"rain_fields":[],"pods":[],"walls":[],"rings":[],"shelters":[],"dew":[],"sprayers":[],"route":[],"optional_route":[],"decor":[],"region":source.get("region",0),"exit_kind":source.get("exit_kind","arch"),"entry":source.get("entry",source.encounters[0].cue),"arrival":source.get("arrival",""),"npc":source.get("npc",""),"npc_line":source.get("npc_line",""),"decision":source.get("decision","")}
 	var origin := 0.0
 	var i := 0
 	for encounter_index in source.encounters.size():
@@ -95,11 +78,23 @@ static func build(index: int) -> Dictionary:
 				"ring":
 					out.rings.append({"pos":point,"active":false,"direction":beat.direction,"section":i,"encounter":encounter_index})
 					steps = [move_to(point-Vector2(170,0)),{"kind":"burst","direction":Vector2.RIGHT}]
+				"fork":
+					for branch in ["top","bottom"]:
+						var points: Array = beat[branch]
+						var landing: Vector2 = beat[branch+"_landing"]
+						for j in points.size():
+							var next: Vector2 = points[j+1] if j+1 < points.size() else landing
+							out.rings.append({"pos":points[j]+Vector2(origin,0),"active":false,"direction":points[j].direction_to(next),"chain":true,"section":i,"encounter":encounter_index,"branch":branch})
+						var path := [move_to(points[0]+Vector2(origin-170,0)),{"kind":"burst","direction":Vector2.RIGHT},move_to(landing+Vector2(origin,0)),move_to(beat.merge+Vector2(origin,0))]
+						if branch == "top": steps = path
+						else: optional_steps = path
+				"deco":
+					out.decor.append({"pos":point,"style":beat.style})
 				"chain":
 					for j in beat.points.size():
 						var current: Vector2 = beat.points[j]
 						var following: Vector2 = beat.points[j+1] if j+1 < beat.points.size() else beat.landing
-						out.rings.append({"pos":current+Vector2(origin,0),"active":false,"direction":(following-current).normalized(),"chain":true,"section":i,"encounter":encounter_index})
+						out.rings.append({"pos":current+Vector2(origin,0),"active":false,"direction":(following-current).normalized(),"chain":true,"section":i,"encounter":encounter_index,"branch":"chain_%d" % encounter_index})
 					for opening in beat.openings:
 						var half: float = opening.z*0.5
 						out.walls.append({"rect":Rect2(origin+opening.x,80,48,opening.y-half-80),"kind":"stem","broken":false})
@@ -109,12 +104,15 @@ static func build(index: int) -> Dictionary:
 					steps = [move_to(point-Vector2(170,0)),{"kind":"burst","direction":Vector2.RIGHT},move_to(beat.landing+Vector2(origin,0))]
 					for slow_point in beat.slow: optional_steps.append(move_to(slow_point+Vector2(origin,0)))
 				"curtain":
-					out.walls.append({"rect":Rect2(point.x,80,42,650),"kind":"curtain","broken":false})
+					var curtain_height: float = beat.get("height",650.0)
+					out.walls.append({"rect":Rect2(point.x,80 if not beat.has("height") else point.y-curtain_height*0.5,42,curtain_height),"kind":"curtain","broken":false})
 					steps = [move_to(point-Vector2(170,0)),{"kind":"burst","direction":Vector2.RIGHT}]
 					if beat.get("passive",false): steps = []
+					if beat.has("bypass_y"): optional_steps = [move_to(Vector2(point.x-180,beat.bypass_y)),move_to(Vector2(point.x+280,beat.bypass_y))]
 				"flower":
 					out.sprayers.append({"pos":point,"timer":2.4,"stun_left":0.0,"flash":0.0,"rewarded":false})
 					steps = [move_to(point-Vector2(170,0)),{"kind":"burst","direction":Vector2.RIGHT}]
+					if beat.has("bypass_y"): optional_steps = [move_to(Vector2(point.x-180,beat.bypass_y)),move_to(Vector2(point.x+300,beat.bypass_y))]
 				"rain":
 					out.rain_fields.append({"rect":Rect2(point.x,80,beat.width,650),"timer":0.2})
 				"shield":

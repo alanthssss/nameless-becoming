@@ -52,7 +52,7 @@ var drops: Array[Dictionary] = []
 var dew: Array[Dictionary] = []
 var sprayers: Array[Dictionary] = []
 var puffs: Array[Dictionary] = []
-var garden_awards: Array[int] = [0,0,0,0]
+var garden_awards: Array[int] = []
 var sections: Array[Dictionary] = []
 var chapter: Dictionary = {}
 var completed := false
@@ -72,6 +72,7 @@ var blocked_cooldown := 0.0
 var rng := RandomNumberGenerator.new()
 
 func _init() -> void:
+	reset_journey()
 	load_stage(0)
 
 func pod(x: float, y: float, count: int) -> Dictionary:
@@ -153,7 +154,8 @@ func reset_journey() -> void:
 	bursts = 0
 	recoveries = 0
 	rings_hit = 0
-	garden_awards = [0,0,0,0]
+	garden_awards.resize(STAGE_COUNT)
+	garden_awards.fill(0)
 	completed = false
 
 func sprayer_phase(index: int) -> String:
@@ -646,7 +648,7 @@ func target_position() -> Vector2:
 	return exit_pos
 
 func objective() -> String:
-	if exit_ready: return "前方花铃叶拱 · 飞过去就抵达了" if stage < STAGE_COUNT-1 else "伙伴在家等你 · 飞进树洞"
+	if exit_ready: return "前方花铃叶拱 · 飞过去就抵达了" if chapter.exit_kind != "home" else "伙伴在家等你 · 飞进树洞"
 	if section_rescue_total() > section_rescued():
 		return "%s · 冲开卷叶救伙伴" % encounter_name() if target_position().x < p.x-240 else str(chapter.encounters[encounter_index()].cue)
 	return str(chapter.encounters[encounter_index()].cue)
@@ -701,7 +703,7 @@ func context_cue() -> Dictionary:
 		if p.distance_to(shelter.pos) < 230:
 			return {"pos":shelter.pos,"text":"大叶下休息 · 恢复体力","kind":"shelter"}
 	if exit_ready and p.distance_to(exit_pos) < 330:
-		return {"pos":exit_pos,"text":"到家了 · 飞进树洞" if stage == STAGE_COUNT-1 else "飞过花铃叶拱 · 完成本关","kind":"exit"}
+		return {"pos":exit_pos,"text":"到家了 · 飞进树洞" if chapter.exit_kind == "home" else "飞过花铃叶拱 · 完成本关","kind":"exit"}
 	return {}
 
 func _flags(items: Array, property: String) -> Array:
@@ -717,7 +719,7 @@ func save_payload() -> Dictionary:
 	var saved_sprayers: Array = []
 	for item in checkpoint.sprayers:
 		saved_sprayers.append({"rewarded":item.rewarded,"stun_left":item.stun_left,"timer":item.timer})
-	return {"version":4,"content_revision":6,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
+	return {"version":5,"content_revision":7,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
 
 func _valid_integer(value, low: int, high: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floor(float(value)) and value >= low and value <= high
@@ -731,7 +733,7 @@ func _valid_flags(value, count: int) -> bool:
 func restore_payload(data: Dictionary) -> bool:
 	# Validate every field before changing the current run. Extra UI metadata is
 	# intentionally ignored; maps and positions always come from authored data.
-	if data.get("version") != 4 or data.get("content_revision") != 6: return false
+	if data.get("version") != 5 or data.get("content_revision") != 7: return false
 	if not _valid_integer(data.get("stage"),0,STAGE_COUNT-1): return false
 	var saved_stage := int(data.stage)
 	var layout := Data.build(saved_stage)
@@ -763,7 +765,7 @@ func restore_payload(data: Dictionary) -> bool:
 	if not (remaining is int or remaining is float) or not is_finite(float(remaining)) or remaining < 0 or remaining > STORM_SECONDS: return false
 	if not data.get("completed") is bool: return false
 	if data.completed and (saved_stage != STAGE_COUNT-1 or saved_checkpoint != layout.sections.size()-1): return false
-	# Optional field keeps existing v4/rev6 saves compatible. An arrival may only
+	# The full-journey save is separate from the four-level prototype. Arrival may only
 	# persist after the same complete checkpoint/rescue requirements as live play.
 	var arrived = data.get("arrived",data.completed)
 	if not arrived is bool: return false
