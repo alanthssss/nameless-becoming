@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Reject the three shipped supply/flight split layouts in disposable projects."""
+"""Reject shipped supply/flight split layouts in both content catalogues."""
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 from check_swarm_regressions import GateError, prepare_project, replace_once
@@ -26,6 +27,51 @@ def run(project):
     if checks < 80 or failures != len(errors) or result.returncode != bool(failures):
         raise GateError("Incomplete supply test or inconsistent error/exit counts")
     return errors
+
+
+def check_long_layouts(project):
+    for name in ("long_journey_model.gd", "long_journey_content.gd",
+                 "long_journey_verify.gd", "long_supply_contract.gd"):
+        shutil.copy2(SOURCE / name, project / name)
+    def run_long():
+        result = subprocess.run(
+            [os.environ.get("GODOT_BIN", "godot"), "--headless", "--path", str(project),
+             "--script", "res://long_journey_verify.gd", "--", "--long-supply-only"],
+            capture_output=True, text=True, timeout=30)
+        output = result.stdout + result.stderr
+        summary = re.findall(r"^LONG SUPPLY CHECKS: (\d+), failures (\d+)$", output, re.M)
+        errors = re.findall(r"^FAIL: (.+)$", output, re.M)
+        if re.search(r"SCRIPT ERROR|Parse Error|Compile Error|^ERROR:", output, re.M) or len(summary) != 1:
+            raise GateError("Long supply checks did not finish normally: " + output[-3000:])
+        checks, failures = map(int, summary[0])
+        if checks < 100 or failures != len(errors) or result.returncode != bool(failures):
+            raise GateError("Incomplete long supply checks")
+        return errors
+    content = project / "long_journey_content.gd"
+    original = content.read_text()
+    if run_long():
+        raise GateError("Long supply baseline failed")
+    mutants = {
+        "long_upper_relay_lower_dew": (
+            'dew(1900,420,"借风或绕篱后，在共同出口补给")',
+            'dew(980,600,"篱下路线自己的补给","branch")'),
+        "long_lower_relay_upper_dew": (
+            'dew(1900,420,"借下方风或从上沿绕行后共同补给")',
+            'dew(1080,190,"上沿路线自己的补给","branch")'),
+    }
+    for name, (old, new) in mutants.items():
+        content.write_text(replace_once(original, old, new))
+        errors = run_long()
+        if not any(e.startswith("Long shared supply restores real stamina after chosen action:") for e in errors):
+            raise GateError(name + " was not rejected by actual input pickup ordering")
+        allowed = ("Long journey supply never rewards abandoning flight",
+                   "Both long-journey routes pass their supply",
+                   "Long shared supply restores real stamina after chosen action:",
+                   "Shared supply restores its full amount when needed:")
+        if not all(e.startswith(allowed) for e in errors):
+            raise GateError(name + " failed unrelated assertions: " + str(errors))
+        print(f"LONG SUPPLY REGRESSION CAUGHT: {name}, {len(errors)} assertions", flush=True)
+    content.write_text(original)
 
 
 def main():
@@ -68,7 +114,9 @@ def main():
             ):
                 raise GateError(f"{name} did not fail actual input pickup ordering")
             print(f"SUPPLY REGRESSION CAUGHT: {name}, {len(errors)} assertions", flush=True)
-    print("SWARM SUPPLY REGRESSIONS VERIFIED: 3/3 layouts rejected")
+        content.write_text(original)
+        check_long_layouts(project)
+    print("SWARM SUPPLY REGRESSIONS VERIFIED: 5/5 layouts rejected")
 
 
 if __name__ == "__main__":

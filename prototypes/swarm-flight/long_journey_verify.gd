@@ -2,6 +2,7 @@ extends SceneTree
 const Model = preload("res://long_journey_model.gd")
 const Driver = preload("res://route_driver.gd")
 const Save = preload("res://save_data.gd")
+const Supply = preload("res://long_supply_contract.gd")
 var checks := 0
 var failures := 0
 
@@ -29,6 +30,11 @@ func roundtrip(model,label: String) -> void:
 	model.restore_payload(raw)
 
 func run() -> void:
+	Supply.run(check)
+	if "--long-supply-only" in OS.get_cmdline_user_args():
+		print("LONG SUPPLY CHECKS: %d, failures %d" % [checks,failures])
+		quit(0 if failures == 0 else 1)
+		return
 	for alternate in [false,true]:
 		var model := Model.new()
 		var driver := Driver.new(model,alternate)

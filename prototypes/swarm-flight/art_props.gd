@@ -28,17 +28,20 @@ static func sprite(v: Node2D, texture: Texture2D, source: Rect2, rect: Rect2, ti
 	v.draw_texture_rect_region(texture,rect,source,tint)
 
 static func stem(v: Node2D, r: Rect2, upper: bool) -> void:
-	# Opaque shaft uses the entire physical rectangle. Cap stays inside the gap edge.
-	var atlas: Texture2D = Winter.ATLAS if Winter.active(v) else TERRAIN
-	var core: Rect2 = Winter.STEM_CORE if Winter.active(v) else Rect2(285,151,113,553)
-	sprite(v,atlas,core,r)
-	var cap: Rect2 = Winter.STEM_CAP if Winter.active(v) else Rect2(276,110,133,47)
-	if upper:
-		v.draw_set_transform(v._world_offset+Vector2(r.get_center().x,r.end.y),PI)
-		sprite(v,atlas,cap,Rect2(-r.size.x/2,0,r.size.x,16))
-		v.draw_set_transform(v._world_offset)
-	else:
-		sprite(v,atlas,cap,Rect2(r.position,Vector2(r.size.x,16)))
+	if r.size.y <= 0.0: return
+	var winter := Winter.active(v)
+	var atlas: Texture2D = Winter.ATLAS if winter else TERRAIN
+	var cap: Rect2 = Winter.STEM_CAP if winter else Rect2(276,110,133,47)
+	# Adjacent atlas slices share their horizontal bounds. The shaft starts
+	# behind the rim, never behind its transparent rounded corners.
+	var core := Rect2(cap.position.x,cap.end.y,cap.size.x,650.0-cap.end.y if winter else 704.0-cap.end.y)
+	var cap_height := minf(16.0,r.size.y)
+	var origin := Vector2(r.get_center().x,r.end.y if upper else r.position.y)
+	v.draw_set_transform(v._world_offset+origin,PI if upper else 0.0)
+	sprite(v,atlas,cap,Rect2(-r.size.x/2,0,r.size.x,cap_height))
+	if r.size.y > cap_height:
+		sprite(v,atlas,core,Rect2(-r.size.x/2,cap_height,r.size.x,r.size.y-cap_height))
+	v.draw_set_transform(v._world_offset)
 
 static func stalk(v: Node2D, a: Vector2, b: Vector2, c: Vector2, d: Vector2, width: float) -> void:
 	var winter := Winter.active(v)
