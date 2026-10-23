@@ -541,6 +541,7 @@ func sample_visual_contract() -> void:
 			var flight_shot := false
 			var charge_shot := false
 			var leaf_shot := false
+			var exit_hint_seen := false
 			var suffix := "%02d-%s" % [stage+1,"lower" if alternate else "upper"]
 			for frame in 15000:
 				if game.mode in ["transition","arrival"]: break
@@ -553,6 +554,10 @@ func sample_visual_contract() -> void:
 					break
 				apply_action(action)
 				ticks(1)
+				if stage == 4 and not exit_hint_seen and game.model.exit_ready and game.model.shelter_index_at(game.model.p) >= 0:
+					exit_hint_seen = true
+					expect(game.hud_objective.text.contains("花铃叶拱"),"last summer leaf preserves the earned exit instruction")
+					await shot("sample-"+suffix+"-last-leaf")
 				if not charge_shot and game.model.charging and game.model.charge >= 0.3:
 					charge_shot = true
 					if stage == 4 and game.model.encounter_index() == 0:
@@ -578,7 +583,12 @@ func sample_visual_contract() -> void:
 						await shot("sample-05-lower-small-window")
 						root.size = old_size
 						await process_frame
+					if stage == 4:
+						release_all()
+						ticks(90)
+						await shot("sample-"+suffix+"-rest")
 			expect(flight_shot and leaf_shot and game.mode == "transition","sample level reaches its shared leaves and goal through ordinary input")
+			if stage == 4: expect(exit_hint_seen,"summer route reaches its final leaf and exit instruction")
 			await shot("sample-"+suffix+"-arrival")
 	# UI text measured at the shipped logical resolution, including every cue.
 	for definition in game.Data.definitions():

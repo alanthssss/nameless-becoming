@@ -1,65 +1,808 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.8.0",
+  "revision": "0.9.0",
   "created": "2026-10-20",
-  "direction": "Code-native garden cartoons retained. Levels 01 and 05 use two representative light-background sets with layered silhouettes, quieter scenic props and exact-collider hedge detail. Shared HUD refined; remaining 14 world sets retain Alpha art. Visual target pending Alan review.",
-  "runtime_bitmap_assets": [],
+  "direction": "Alan accepted the stage-05 visual direction and explicitly authorized completing remaining elements and applying the coherent art family to all sixteen levels (SF-R28). Original generated painted sprites combine with model-driven presentation. This is direction approval and rollout authorization, not whole-game experience, commercial quality or PVZ-parity acceptance.",
+  "runtime_bitmap_assets": [
+    {
+      "path": "art/revision-atlas.png",
+      "role": "Shared bee body, wind-flower head and shelter leaf; hedge cluster used only where authored",
+      "family": "approved_seed",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "source": "Built-in image_gen; complete original prompts in art/provenance.json",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "source_bytes": 1182338,
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/revision-garden.png",
+      "role": "Approved summer scenery plate reused for levels 05-08; no baked gameplay or HUD",
+      "family": "background",
+      "classification": "regional",
+      "levels": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "source": "Built-in image_gen; complete original prompts in art/provenance.json",
+      "size_px": [
+        1585,
+        992
+      ],
+      "mode": "RGB",
+      "source_bytes": 1837956,
+      "sha256": "e8cc94cfddc9dad1dada27c5c427d2e5dd32fddd0addd0af39582f45e01c5a14",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-terrain.png",
+      "role": "Solid stalk, dry leaf curtain, wooden crate and greenhouse platform",
+      "family": "terrain",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "source": "Built-in image_gen; full generation and layout-correction prompts in art/rollout-provenance.json",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "source_bytes": 1180173,
+      "sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-flora.png",
+      "role": "Empty rescue pod, blank-faced sneeze flower, thrush and fountain/air source",
+      "family": "flora",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "source": "Built-in image_gen; full generation and layout-correction prompts in art/rollout-provenance.json",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "source_bytes": 1358858,
+      "sha256": "2df7c7a844bd7ab53909eee6adf2667d68e4fd4729e38214d0668158f58f55ef",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-landmarks.png",
+      "role": "Open vine arch, bell and blank sign; original atlas tree is superseded by garden-home.png",
+      "family": "landmarks",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "source": "Built-in image_gen; full generation and layout-correction prompts in art/rollout-provenance.json",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "source_bytes": 917991,
+      "sha256": "857662ab28409c1aab026f3a7a9ab7fcb5e55d91720b5c189309674947855b6a",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-weather.png",
+      "role": "Storm cloud, dew reward, protection leaf and lantern",
+      "family": "weather",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "source": "Built-in image_gen; full generation and layout-correction prompts in art/rollout-provenance.json",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "source_bytes": 1019148,
+      "sha256": "0a701aa4ed07312d057e79075efb199d63d758cc294c205c58508306abfbbe1a",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-spring.png",
+      "role": "Quiet spring vegetable-garden scenery plate",
+      "family": "background",
+      "classification": "regional",
+      "levels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "source": "Built-in image_gen; full generation and layout-correction prompts in art/rollout-provenance.json",
+      "size_px": [
+        1586,
+        992
+      ],
+      "mode": "RGB",
+      "source_bytes": 1834196,
+      "sha256": "6b63354fa38c7cb51a349324bd8a11f3a0e2d36929cdcf0e011b0c9e0af4d175",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-autumn.png",
+      "role": "Quiet autumn orchard scenery plate",
+      "family": "background",
+      "classification": "regional",
+      "levels": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "source": "Built-in image_gen; full generation and layout-correction prompts in art/rollout-provenance.json",
+      "size_px": [
+        1586,
+        992
+      ],
+      "mode": "RGB",
+      "source_bytes": 1808211,
+      "sha256": "a684f2c38f6ffb37eead17b88daa8075e417e75a67cb9acb1aebe00637bb90e3",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-winter.png",
+      "role": "Quiet winter garden and sheltered glasshouse scenery plate",
+      "family": "background",
+      "classification": "regional",
+      "levels": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "source": "Built-in image_gen; full generation and layout-correction prompts in art/rollout-provenance.json",
+      "size_px": [
+        1586,
+        992
+      ],
+      "mode": "RGB",
+      "source_bytes": 1899678,
+      "sha256": "fe9c52d739afe90dd02df6e963fac565e5b16cb8aaaea951dab1756a3933bd78",
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "path": "art/garden-home.png",
+      "role": "Naturally tall tree home, original uniform proportions; source hollow point aligns with real goal",
+      "family": "home",
+      "classification": "exclusive",
+      "levels": [
+        4,
+        16
+      ],
+      "source": "Built-in image_gen; full prompt/reference/source in art/rollout-provenance.json",
+      "size_px": [
+        1159,
+        1357
+      ],
+      "mode": "RGBA",
+      "sha256": "ef15485ae2fb4cfe8ae02b822218f23eaf3cd4f8b89ad2d2843c35afe19d2ab6",
+      "source_bytes": 1587975,
+      "metadata_status": "Frozen original source; dimensions and hashes verified",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    }
+  ],
   "code_native_art": {
-    "path": "world_view.gd",
-    "source": "Original project procedural drawing, revised by Codex following user direction toward playful garden cartoons.",
+    "paths": [
+      "world_view.gd",
+      "art_sprites.gd",
+      "art_props.gd",
+      "sample_landscape.gd"
+    ],
+    "source": "All sixteen levels use the approved painted family. Native drawing remains for state-driven wings/legs/faces, arrows, warning fields, readable text, timer arcs and transient particles; former whole-object vector render paths are removed.",
     "palette": {
-      "outline": "#253d26",
+      "outline": "#58452c",
       "honey": "#ffc94f",
       "cream": "#fff8d8",
-      "sunny_sky": "#91dbe3",
-      "flower_bridge": "#8bcbdc",
-      "rain_garden": "#657ea1",
-      "lawn": "#76ba44",
-      "leaf": "#a9cf54",
-      "sprayer_petals": "#bf7ba9",
-      "dew": "#72e0df",
-      "homeward_dusk": "#a78b99"
+      "water_edge": "#436c70",
+      "leaf_light": "#cee58c"
     },
-    "states": [
-      "continuous pear-shaped bee silhouette; charge compression, dash stretch, braking settle, blink and folded-wing rest",
-      "asymmetric rescue leaf cup unfolds over 0.65s from real rescue event",
-      "directional wind flower petals recoil then fold over 0.55s from real ring event; anchor/arrow remain model authoritative",
-      "solid full-rectangle plant face with curved leaf folds and bounded inner-vein motion",
-      "dry curtain intact/torn",
-      "shelter unvisited/reached",
-      "sprayer idle/blink/warning/sneeze/calm",
-      "diamond dew reward vs round moving spray hazards",
-      "sunny vegetable garden/fountain bridge/rainy tool garden/homeward dusk",
-      "warm tree-hollow ending; up to sixteen displayed blossoms from optional collection (journey total: 14)",
-      "charge circle fills exactly at ready threshold; local result captions for burst/rescue/wind/gate/dew/hit",
-      "numbered safe leaves with watering-can, pot, bench and lantern landmarks",
-      "linked breeze arrows between authored wind-chain flowers; transient relay count and mint trail",
-      "rolling storm clouds, directional rain gusts, model-aligned contact edge; storm recedes at ending",
-      "presentation transients clear on new stage, title, continue and explicit recovery events; pause freezes departures",
-      "one-shot rescued companion greeting and curved shrinking flight out of viewport; independent pose, no follow/collider/damage",
-      "rescued friends already waiting at final tree; solo player arrival",
-      "upright side-view horizontal mirroring with directional pitch; resting pose settles level",
-      "leaf membrane pickup; five-second protection arc and final-second closing leaf tips; soft blocked-rain particles without damage shake",
-      "fixed authored rain cloud bands below HUD and round-bottomed rain drops; backgrounds recede behind gameplay silhouettes",
-      "shelters use model-defined half-width; separate encounters never imply a false continuous wind path",
-      "distant warm tree window at homeward breathing beat fades before actual tree comes into view",
-      "visible flower-bell goal arch; earned crossing rings the bell, opens leaves and eases the solo bee into a 1.2-second landing before handoff",
-      "four-region background landmarks; decor is never collision",
-      "waiting bee Xiaoman with flower cap and thrush; shelter dialogue shares one contextual cue",
-      "independent fork breeze paths; only the chosen branch activates",
-      "spring tree arrival continues into summer; winter tree arrival ends the full journey",
-      "Model-derived solid hedge/crate/greenhouse terrain, quiet/warning/spray fountain footprint, directional local airflow field and grille; decorative lamps have explicit shades.",
-      "Effective-airflow contact arrows only while wind applies; whole strokes constrained to the actual field, absent during dash or shelter."
+    "collision_contract": "Model, coordinates and rules unchanged. Solids keep opaque coverage of full authored rectangles; player collision radius stays14 (9 while charging). No new collision is inferred from art, soft fringes or background. Shelter safe rectangle is p±half_width and y[-64,+76]; crown bottom <=p.y-65. Goal aperture and ring direction remain model-authoritative.",
+    "frame": "Godot 4.6.2, Compatibility, Apple M1 Pro; 1280x800 native and 960x600 sample checked.",
+    "background_selection": "Select by chapter.region, not theme. Theme/storm supply light and weather; backgrounds have no hard foreground promises in the flight corridor.",
+    "animation_contract": "Real model flags/timers and presentation clock drive states. Pause freezes presentation; new stage, title, continue and recovery clear transients. Restored consumed/open/broken states do not replay their events.",
+    "implementation_status": "All sixteen levels integrated and native screenshots checked; full source and exported-pack routes passed."
+  },
+  "ui": {
+    "source": "Project Godot drawing and controls in main.gd; operating-system Chinese font fallback",
+    "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
+    "clock": "Elapsed journey in ordinary levels; exposed-time budget and spatial chase in storm levels. Both stop at earned arrival.",
+    "handoff": "2.4-second earned landing; region boundaries 4.5 seconds with season text. Enter skips, pause/focus loss freezes. Stage 04 continues into summer; only stage 16 ends the full journey.",
+    "progress": "16 levels / 60 encounters / 38 shared safe leaves / 15 dew. Standard journey v2 still uses version6/content_revision8. Full art entry uses before_the_rain_art_full_20261023.json; dedicated05 entry is separate. Title selection restarts the current entry journey. Final path-isolation/continuation evidence must be read from the current receipt.",
+    "local_feedback": "Actual wind contact has directional pushing feedback including charge; approach is explicitly not contact. Shelter and fresh/recovery state preserve safety. Fountain phase and material feedback retained.",
+    "sample_revision": "Light objective/stamina cards, measured cue/toast widths, small context-dependent footer, high-flight charge prompt below the bee. Five stamina segments and visible numeric drain remain.",
+    "art_revision": "0.9.0 extends the compact warm wood/cream/gold family to all sixteen levels. Preserve five stamina segments, numeric drain, actual context cues, state timings and no duplicate generic charge/rest prompt. Native source and packaged 1280x800 / 960x600 layout evidence recorded in the rollout receipt."
+  },
+  "rejected_pass": {
+    "status": "Removed from source/runtime/export following user feedback SF-R02: AI feeling too strong.",
+    "files": [
+      "meadow-painting.png",
+      "bee-storybook.png",
+      "botanical-sprites.png"
     ],
-    "collision_contract": "Model authoritative, continuous local wind during cruise, release and charge; dash keeps direction. Only the player has collision and stamina. Rescued actors are bounded screen-plane departure animations with no physics or damage; follow/path and companion collision-offset logic removed. Full solid stem rectangles remain visible, flower direction and shelter position remain model-derived.",
-    "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget.",
+    "retention": "Original unchanged images, full image-generation prompts/provenance, native captures and interim app retained only in local outputs/swarm-flight/2026-10-20-finished-chapter/rejected-painted-pass; not required at runtime."
+  },
+  "validation": {
+    "status": "passed_developer_checks",
+    "revision": "0.9.0",
+    "receipt": "outputs/swarm-flight/2026-10-23-art-rollout/build-receipt.json",
+    "required_evidence": [
+      "Final atlas bounds/alpha and frozen source hashes",
+      "Four-region native captures and smaller-window checks",
+      "All authored object states, effects, collision readability and unobscured cues",
+      "Complete sixteen-level ordinary-input routes",
+      "Isolated full-entry save, continuation and export-package launch",
+      "Required model/audio/regression checks and CI"
+    ],
+    "claim_limit": "Developer checks and code/image review only. Alan approved the 05 art direction and all-level rollout; no whole-game player acceptance, PVZ parity or commercial completion claim.",
+    "model_checks": 1577,
+    "source_native_ui_checks": 538,
+    "exported_pack_native_ui_checks": 538,
+    "state_fixture_checks": 24,
+    "airflow_regression_baseline": 140,
+    "known_bug_classes_rejected": 2,
+    "warning": "Exported-pack QA exits with ObjectDB instances leaked warning after all checks pass; standalone release bootstrap has no such warning."
+  },
+  "style_references": [
+    {
+      "url": "https://www.ea.com/games/plants-vs-zombies/plants-vs-zombies",
+      "use": "Broad garden-cartoon visual reference only; no characters, sprites, logos or screenshots are shipped."
+    },
+    {
+      "url": "https://laurashigihara.bandcamp.com/album/plants-vs-zombies-soundtrack",
+      "use": "Official soundtrack context for light, playful garden mood; no audio download, transcription or melody reuse."
+    }
+  ],
+  "audio": {
+    "path": "sound.gd",
+    "source": "Original deterministic PCM synthesis authored in project code. No external samples, recordings or transcriptions.",
+    "sample_rate": 22050,
+    "format": "16-bit mono PCM, forward loop",
+    "arrangements": "Three original eight-bar / 32-beat A/B arrangements, 64 eighth-note slots. Offbeat plucks, toy keys/wooden mallets, alternating bass root/fifth, light percussion. Third act shifts to minor harmony and denser pulse.",
+    "buses": {
+      "Music_db": -9,
+      "SFX_db": -8,
+      "Ambience_db": -24
+    },
+    "mix": "Fixed synthesis gain 1.45; 1.2s stage music crossfade, 4dB event duck, retained mute and fixed 8-voice SFX pool.",
+    "events_added": [
+      "dew",
+      "spray",
+      "flower_calm",
+      "shield",
+      "shield_block",
+      "shield_end",
+      "arrival_bell"
+    ],
+    "verification_command": "godot --headless --path prototypes/swarm-flight --script res://audio_verify.gd",
+    "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
+  },
+  "source_sha256": {
+    "world_view.gd": "d857433fa6d9d38ed9119b64b0df575733d1f337b0dcc1c42fd1e73b27c176fd",
+    "art_sprites.gd": "67804425fcfdbf844f930b0b69a9d2bebfb2d2ebb1ca99829fd0320c3dd8256c",
+    "art_props.gd": "b6ac7850d6ec9e316e823ad089a6a3046edb528a9ebb348f95760b7b99bd22d3",
+    "sample_landscape.gd": "1207edb566f1f4a920caa66112aa6cd9a6b091c6a1428f953e2fa85f90f4310a",
+    "main.gd": "ac196e540a73141f7bce9d5a12af705928ed01663eb474d26f6808af919789fd",
+    "game_model.gd": "0446d0ed356e27bb1271f595deaf584e13bb5540f9bbd1fcb7d40883e115336f",
+    "chapter_data.gd": "cc2927379a8202068020b0e6f0adf454ed3648df5d5701450650620fa70339fb",
+    "save_data.gd": "cb331e05bf20e1f57f74eff4ccb42fd74fb78b2fe1f09ff60214dc1e93036874",
+    "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4"
+  },
+  "updated": "2026-10-23",
+  "approval": {
+    "user_quote": "可以不错 但是这关还有别的元素没有统一画风 要合理安排 修改后应用到每一个关卡",
+    "accepted": "Stage-05 art direction",
+    "authorized": "Complete remaining inconsistent elements and apply the visual system to every level",
+    "not_accepted": [
+      "New complete-package experience",
+      "PVZ parity",
+      "Commercial release readiness"
+    ],
+    "scope_supersession": "The prior stage-05-only production restriction is superseded by this explicit authorization. The 200+40-hour control amount, single concentrated revision and existing checkpoints are not reset."
+  },
+  "applicability_convention": "Level numbers are one-based. Shared means reused across the game; it does not assert that each object occurs in every level. Regional identifies a place-specific family; exclusive identifies authored chapter-end or dialogue use. Object-level mappings below are authoritative.",
+  "level_coverage": [
+    {
+      "region": 0,
+      "name": "spring",
+      "levels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "background": "art/garden-spring.png",
+      "status": "Asset integration; current technical result is in the rollout build receipt"
+    },
+    {
+      "region": 1,
+      "name": "summer",
+      "levels": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "background": "art/revision-garden.png",
+      "status": "Asset integration; current technical result is in the rollout build receipt"
+    },
+    {
+      "region": 2,
+      "name": "autumn",
+      "levels": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "background": "art/garden-autumn.png",
+      "status": "Asset integration; current technical result is in the rollout build receipt"
+    },
+    {
+      "region": 3,
+      "name": "winter",
+      "levels": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "background": "art/garden-winter.png",
+      "status": "Asset integration; current technical result is in the rollout build receipt"
+    }
+  ],
+  "object_state_mapping": [
+    {
+      "object": "bee",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "asset_family": "revision-atlas",
+      "state_mapping": "Cruise, horizontal mirror and pitch, charge compression, dash stretch, braking settle, blink, rest, hurt visibility, trapped, greeting, departure, arrival. Body uses art; wings/legs and state timing remain native."
+    },
+    {
+      "object": "wind_flower",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "asset_family": "revision-atlas",
+      "state_mapping": "Unused direction uses model.ring_direction; consumed petals recoil and close over 0.55s, then no arrow. Restore keeps consumed state without replay."
+    },
+    {
+      "object": "shelter",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "asset_family": "revision-atlas + weather/landmarks",
+      "state_mapping": "Unreached/reached lamp and check; idle rest animation. Canopy width follows model half_width; underside stays above the safe pocket."
+    },
+    {
+      "object": "stem",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        11,
+        16
+      ],
+      "asset_family": "terrain",
+      "state_mapping": "Solid 48px-wide authored rectangles, upper/lower orientation; caps cannot narrow the actual gap. Any roots extend away from the opening."
+    },
+    {
+      "object": "hedge",
+      "classification": "regional",
+      "levels": [
+        5,
+        6,
+        7,
+        8,
+        15
+      ],
+      "asset_family": "revision-atlas",
+      "state_mapping": "Solid unchanged rectangles covered by opaque leaf cores. Whole overlapping clusters retain a 35px soft visual fringe outside the collider."
+    },
+    {
+      "object": "crate",
+      "classification": "regional",
+      "levels": [
+        9,
+        10,
+        11,
+        12,
+        15
+      ],
+      "asset_family": "terrain",
+      "state_mapping": "Solid rectangle; exterior material follows actual top, underside and corners; no transparent holes through a solid core."
+    },
+    {
+      "object": "platform",
+      "classification": "regional",
+      "levels": [
+        13,
+        14,
+        15
+      ],
+      "asset_family": "terrain",
+      "state_mapping": "Greenhouse solid rectangular top/support; actual bounds remain unchanged."
+    },
+    {
+      "object": "curtain",
+      "classification": "shared",
+      "levels": [
+        4,
+        10,
+        11,
+        15
+      ],
+      "asset_family": "terrain",
+      "state_mapping": "Intact blocks normal flight; model broken flag removes whole curtain and keeps a small torn remnant. Gate reaction supplies short visual flex; restored broken state does not replay."
+    },
+    {
+      "object": "rescue_pod",
+      "classification": "regional",
+      "levels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "asset_family": "flora",
+      "state_mapping": "Closed rear/front layers surround a visible trapped bee. Real rescue drives 0.65s opening; opened pod stays empty; freed bees depart on independent screen-space arcs."
+    },
+    {
+      "object": "sneeze_flower",
+      "classification": "shared",
+      "levels": [
+        2,
+        6
+      ],
+      "asset_family": "flora",
+      "state_mapping": "Idle/blink; last-0.8s warning; 0.25s sneeze flash; six-second calm from model. Runtime face preserves leftward nozzle and actual state."
+    },
+    {
+      "object": "fountain",
+      "classification": "shared",
+      "levels": [
+        5,
+        6,
+        7,
+        8,
+        15
+      ],
+      "asset_family": "flora",
+      "state_mapping": "Quiet/warning/spray from model.jet_phase; native water and warning field keep exact authored footprint. Base is scenery, not a new collider."
+    },
+    {
+      "object": "air_source",
+      "classification": "regional",
+      "levels": [
+        13,
+        14,
+        15
+      ],
+      "asset_family": "flora",
+      "state_mapping": "Source faces field direction; native arrows map the actual field and effective force. No contact arrows during dash/shelter exemptions."
+    },
+    {
+      "object": "thrush",
+      "classification": "shared",
+      "levels": [
+        6,
+        9,
+        11,
+        12,
+        15,
+        16
+      ],
+      "asset_family": "flora",
+      "state_mapping": "Waiting neighbor; final appearance at stage16 home. No escort physics or damage."
+    },
+    {
+      "object": "dew",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        8,
+        10,
+        11,
+        12,
+        13,
+        15
+      ],
+      "asset_family": "weather",
+      "state_mapping": "Stationary reward with bounded bob and glint; collected flag hides it. Must remain distinct from moving rain/sneeze hazards."
+    },
+    {
+      "object": "protection_leaf",
+      "classification": "shared",
+      "levels": [
+        3,
+        4,
+        8,
+        15
+      ],
+      "asset_family": "weather",
+      "state_mapping": "Uncollected leaf pickup; collected hidden. Native five-second shell/arc, blocked-weather flash and final-second warning use the model timer."
+    },
+    {
+      "object": "rain_cloud",
+      "classification": "shared",
+      "levels": [
+        3,
+        4,
+        8,
+        12,
+        15
+      ],
+      "asset_family": "weather",
+      "state_mapping": "Authored cloud bands and chasing storm; current front/field controls placement. Hazard drops and warning streaks remain native."
+    },
+    {
+      "object": "goal_arch",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "asset_family": "landmarks",
+      "state_mapping": "Open center; not-ready/ready/arrival presentation. Threshold remains x>=exit.x and y within plus/minus96."
+    },
+    {
+      "object": "home",
+      "classification": "exclusive",
+      "levels": [
+        4,
+        16
+      ],
+      "asset_family": "home",
+      "state_mapping": "Real hollow centered on the existing goal; waiting friends and solo arrival retained. Stage04 distant preview fades at the authored breathing beat; stage04 continues into summer, stage16 ends."
+    },
+    {
+      "object": "bell_and_sign",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "asset_family": "landmarks",
+      "state_mapping": "Bell readiness and arrival swing; sign artwork has no baked text, native leaf number stays readable."
+    },
+    {
+      "object": "lantern",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "asset_family": "weather",
+      "state_mapping": "Shelter unreached/reached state; stage16 additional decorative lamps. No collision."
+    },
+    {
+      "object": "withered_decor",
+      "classification": "regional",
+      "levels": [
+        9,
+        12
+      ],
+      "asset_family": "terrain + approved leaf family",
+      "state_mapping": "Decorative old branch/leaves only; no collision or reward promise."
+    },
+    {
+      "object": "xiaoman_route_reply",
+      "classification": "exclusive",
+      "levels": [
+        5
+      ],
+      "asset_family": "native text + shared bee",
+      "state_mapping": "Top/bottom reply from real recorded approach; absent evidence yields neutral greeting. Other stages keep their own authored dialogue."
+    }
+  ],
+  "historical_art_notes": {
+    "revision": "0.8.1",
     "sample_sets": {
       "path": "sample_landscape.gd",
       "levels": [
         1,
         5
       ],
-      "format": "Original GDScript vector paths, no generated/raster asset or new third-party source",
+      "format": "Level 01: historical code-native 0.8.0 set. Level 05: 0.8.1 independent sprite family and scenery plate with native state-driven presentation.",
       "frame": "1280x800 keep-aspect; 960x600 native-window capture; Compatibility renderer. Filled shapes use same-color line AA, no unsupported 2D MSAA.",
       "planes": "sky / unoutlined low-contrast distant set / exact model-backed interaction silhouettes / bottom foliage",
       "roles": {
@@ -72,29 +815,12 @@
         "hud_ink": "#294b3b"
       },
       "states": "Existing charge, launch, rescue, leaf rest and goal landing retained and checked in actual input routes; additional wing veins and Xiaoman periodic local greeting. Presentation clock freezes on pause.",
-      "repeat_rule": "Preserve authored collision footprint and gameplay hue roles. No decorative dark-outline props in sampled flight corridor; background objects do not acquire colliders. No bitmap production before this visual target is reviewed.",
-      "status": "representative visual target, not approved commercial art"
-    }
+      "repeat_rule": "Preserve model anchors and directions. Each hedge partition sits in an opaque sprite core with a forgiving 35-pixel foliage fringe outside its unchanged collider; broad beds use overlapping full clusters, not clipped or flattened tiles. Canopy underside remains above the safe pocket. Background bounded shift avoids a wrap seam. Do not bulk-expand other levels before the art direction decision.",
+      "status": "0.8.0 art rejected by Alan; 0.8.1 stage-05 target pending visual review"
+    },
+    "scope": "Historical stage-05 target; its prior no-rollout restriction was superseded by SF-R28. Old technical checks do not verify 0.9.0."
   },
-  "ui": {
-    "source": "Project Godot drawing and controls in main.gd; operating-system Chinese font fallback",
-    "stamina": "Five 20-point segments, numeric current stamina, pending burst cost highlight and delayed loss trail",
-    "clock": "Elapsed journey in ordinary levels; exposed-time budget and spatial chase in storm levels. Both stop at earned arrival.",
-    "handoff": "2.4-second earned landing; region boundaries 4.5 seconds with season text. Enter skips, pause/focus loss freezes. Stage 04 continues into summer; only stage 16 ends the full journey.",
-    "progress": "16 levels / 60 encounters / 38 shared safe leaves / 15 dew. Journey v2 path uses version 6, content revision 8; old journey v1 and chapter v4 untouched. Title region selection starts a new journey; earned arrival continues next stage.",
-    "local_feedback": "Actual wind contact has directional pushing feedback including charge; approach is explicitly not contact. Shelter and fresh/recovery state preserve safety. Fountain phase and material feedback retained.",
-    "sample_revision": "Light objective/stamina cards, measured cue/toast widths, small context-dependent footer, high-flight charge prompt below the bee. Five stamina segments and visible numeric drain remain."
-  },
-  "rejected_pass": {
-    "status": "Removed from source/runtime/export following user feedback SF-R02: AI feeling too strong.",
-    "files": [
-      "meadow-painting.png",
-      "bee-storybook.png",
-      "botanical-sprites.png"
-    ],
-    "retention": "Original unchanged images, full image-generation prompts/provenance, native captures and interim app retained only in local outputs/swarm-flight/2026-10-20-finished-chapter/rejected-painted-pass; not required at runtime."
-  },
-  "validation": {
+  "historical_validation": {
     "engine": "Godot 4.6.2 stable, OpenGL Compatibility on Apple M1 Pro",
     "captures": [
       "airflow-ordinary-approach",
@@ -241,46 +967,29 @@
     "full_alpha_revision": "Twelve authored levels added; twenty-four per-level routes passed. Whole known-answer routes ~5m40s/~6m16s, not evidence for the unvalidated 2–3-hour first-play target. Original movement and sound.gd unchanged.",
     "season_routes_revision": "05–15 reauthored with 38 real terrain areas, 5 phased fountains, 6 local airflows. Twenty-four per-level routes complete with no terrain hits, fountain damage or recovery. Whole known-answer routes ~6m28s/~6m39s; not first-player timing. Spring definition and sound.gd remain byte-identical to 0.6.0. UI fixture captures are separate from continuous-input route captures.",
     "interaction_coherence_revision": "Continuous local wind for idle/charge; dash resistance retained following explicit user clarification. All six authored airflow regions exercise state combinations, actual-key UI reproduction avoids wind flowers. Two updraft bounds clear solid terrain; existing progress layout and sound.gd unchanged.",
-    "sample_revision": "0.8.0: 1577 model checks, 530 native complete UI/capture checks (two complete sixteen-level input routes), 140-rule airflow baseline and two old defects rejected by 12/6 behavior assertions. 12 targeted 05/actual-0.7.1-save continuation routes, all without collision/damage/recovery. Native 1280x800 plus 960x600 sample capture. Developer evidence only; no new player acceptance."
+    "sample_revision": "0.8.0: 1577 model checks, 530 native complete UI/capture checks (two complete sixteen-level input routes), 140-rule airflow baseline and two old defects rejected by 12/6 behavior assertions. 12 targeted 05/actual-0.7.1-save continuation routes, all without collision/damage/recovery. Native 1280x800 plus 960x600 sample capture. Developer evidence only; no new player acceptance.",
+    "art_revision": "0.8.1: 1577 rules, 538 native full UI checks and 89 focused sample checks; ordinary-input upper/lower routes plus 1280x800 and 960x600 captures. Final-leaf exit text regression checked. Developer evidence only, no player validation or PVZ-parity claim.",
+    "scope": "Historical developer checks through0.8.1; not current-rollout passes. Counts retain their original version labels; historical captures are not0.9.0 evidence."
   },
-  "style_references": [
-    {
-      "url": "https://www.ea.com/games/plants-vs-zombies/plants-vs-zombies",
-      "use": "Broad garden-cartoon visual reference only; no characters, sprites, logos or screenshots are shipped."
-    },
-    {
-      "url": "https://laurashigihara.bandcamp.com/album/plants-vs-zombies-soundtrack",
-      "use": "Official soundtrack context for light, playful garden mood; no audio download, transcription or melody reuse."
+  "historical_source_sha256": {
+    "revision": "0.8.1",
+    "values": {
+      "world_view.gd": "f65ffb92ef6acbc8278278a12d268e8a3885c83c5de8b9764ad5e7ac4be00f38",
+      "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4",
+      "sample_landscape.gd": "ff1d531895d2ddbe165db597cf4c516b87c82a357a670b2ca73c3f26e3c12ab1",
+      "art_sprites.gd": "93acef3864482021cc86f8584ce892e05539c5a05f643650ea8bd74d8b948023"
     }
-  ],
-  "audio": {
-    "path": "sound.gd",
-    "source": "Original deterministic PCM synthesis authored in project code. No external samples, recordings or transcriptions.",
-    "sample_rate": 22050,
-    "format": "16-bit mono PCM, forward loop",
-    "arrangements": "Three original eight-bar / 32-beat A/B arrangements, 64 eighth-note slots. Offbeat plucks, toy keys/wooden mallets, alternating bass root/fifth, light percussion. Third act shifts to minor harmony and denser pulse.",
-    "buses": {
-      "Music_db": -9,
-      "SFX_db": -8,
-      "Ambience_db": -24
-    },
-    "mix": "Fixed synthesis gain 1.45; 1.2s stage music crossfade, 4dB event duck, retained mute and fixed 8-voice SFX pool.",
-    "events_added": [
-      "dew",
-      "spray",
-      "flower_calm",
-      "shield",
-      "shield_block",
-      "shield_end",
-      "arrival_bell"
-    ],
-    "verification_command": "godot --headless --path prototypes/swarm-flight --script res://audio_verify.gd",
-    "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
-  "source_sha256": {
-    "world_view.gd": "c37abb4cadaebc8911b37975822084800150842ed62c10681be06e4f9ab8a81a",
-    "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4",
-    "sample_landscape.gd": "c951b4abe55720b85dbd67f766283317fee4850b24604e6b12c436ef6b868e99"
-  },
-  "updated": "2026-10-23"
+  "hash_status": "Frozen original PNG and implementation hashes recorded; build revision and PCK hash in external receipt.",
+  "delivery": {
+    "version": "0.9.0",
+    "directory": "outputs/swarm-flight/2026-10-23-art-rollout",
+    "app": "雨来之前·统一美术.app",
+    "full_entry": "开始完整试玩.command",
+    "full_entry_save": "before_the_rain_art_full_20261023.json",
+    "quick_entry": "开始05试玩.command",
+    "receipt": "outputs/swarm-flight/2026-10-23-art-rollout/build-receipt.json",
+    "status": "macOS exported and bootstrapped; same exported PCK passed both full native input routes",
+    "quick_entry_save": "before_the_rain_art_quick_20261023.json"
+  }
 }
