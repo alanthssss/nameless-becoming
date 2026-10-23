@@ -273,7 +273,7 @@ func _draw() -> void:
 	_exit(act)
 	_neighbors()
 	_storm(cam)
-	if model.phase == "ending":
+	if model.phase == "ending" and model.chapter.exit_kind == "home":
 		_ending_weather(cam)
 	for drop in model.drops:
 		_drop(drop.pos, drop.vel)
