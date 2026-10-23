@@ -26,10 +26,10 @@ static func definitions() -> Array:
 	last_curtain["passive"] = true
 	return [
 		{"title":"花篱另一边","region":1,"theme":1,"music":1,"base_bees":9,"storm":false,"exit_kind":"arch",
-		"entry":"花篱上方能借风，下方有晨露，最后在叶下会合。","arrival":"从花篱的两侧，回到同一片叶下。","npc":"bee","npc_line":"小满：你从那一侧来的呀！","decision":"先选花篱的一侧，别把两条路当成两排必吃的风花。","encounters":[
-			_routed(encounter("花篱真正分成两路",1320,[terrain(500,335,360,150,"hedge"),chain([Vector2(420,230),Vector2(720,230)],[],Vector2(1000,230)),dew(650,580,"沿花篱下路继续飞行时补给，合流后再选择下一次起冲","branch")],420,"花篱上方借风；下方绕行取露，两路前方合流"),
+		"entry":"花篱上方能连续借风，也能从下方绕行，最后在叶下会合。","arrival":"从花篱的两侧，回到同一片叶下。","npc":"bee","npc_line":"小满：你从那一侧来的呀！","decision":"先选花篱的一侧，别把两条路当成两排必吃的风花。","encounters":[
+			_routed(encounter("花篱真正分成两路",1320,[terrain(500,335,360,150,"hedge"),chain([Vector2(420,230),Vector2(720,230)],[],Vector2(1000,230))],420,"花篱上方连续借风；下方自由绕行，两路前方合流"),
 				[Vector2(250,230),_burst(),Vector2(1140,420)],
-				[Vector2(360,580),Vector2(650,580),Vector2(990,580),Vector2(1140,420)]),
+				[Vector2(360,580),Vector2(990,580),Vector2(1140,420)]),
 			encounter("停稳后换个高度",1650,[gap(460,300,320),dew(820,400,"从分路汇合后，为重新转向和起冲补给"),gap(1120,510,320)],-1,"风停后用普通飞行转向，不必急着再次冲刺"),
 			_routed(encounter("喷口上方与篱下",1870,[terrain(620,450,510,100,"hedge"),jet(700,100,220,350)],420,"喷口冒小泡后会喷水；等停喷穿上路，或从篱下绕过"),
 				[Vector2(580,420),_window(700,1.8),Vector2(1010,420),Vector2(1300,420),Vector2(1450,420)],
@@ -87,9 +87,9 @@ static func definitions() -> Array:
 				[Vector2(300,580),Vector2(1010,580),Vector2(1060,200),Vector2(1570,200),Vector2(1720,420)]),
 			_routed(encounter("斜着穿过箱口",1750,[terrain(650,80,300,200,"crate"),terrain(1080,520,250,210,"crate"),chain([Vector2(520,520),Vector2(940,320)],[],Vector2(1400,320))],360,"对准低处第一朵，沿箭头斜着穿过箱口"),
 				[Vector2(350,520),_burst(),Vector2(1430,320)]),
-			_routed(encounter("穿箱道或绕箱外",1650,[terrain(550,280,550,70,"crate"),terrain(550,510,550,70,"crate"),_short_curtain(800,430,160,650),dew(930,650,"绕箱外继续飞行的补给，末段还有一次起冲","branch")],-1,"中间叶帘用冲刺穿；也可从整摞箱子的下方绕过"),
+			_routed(encounter("穿箱道或绕箱外",1650,[terrain(550,280,550,70,"crate"),terrain(550,510,550,70,"crate"),_short_curtain(800,430,160,650),dew(1360,420,"穿帘或绕箱完成后在共同出口补给，接着斜向借风")],-1,"中间叶帘用冲刺穿；也可从整摞箱子的下方绕过"),
 				[Vector2(380,430),Vector2(630,430),_burst(),Vector2(1180,430),Vector2(1360,420)],
-				[Vector2(390,650),Vector2(930,650),Vector2(1210,650),Vector2(1360,420)]),
+				[Vector2(390,650),Vector2(1210,650),Vector2(1360,420)]),
 			_routed(encounter("斜向离开果箱",1760,[terrain(620,550,410,180,"crate"),chain([Vector2(520,340),Vector2(940,440)],[],Vector2(1400,440))],440,"这次向下接力，箱子上方留着清楚的落点"),
 				[Vector2(350,340),_burst(),Vector2(1440,440)])
 		]},
@@ -119,9 +119,9 @@ static func definitions() -> Array:
 			_routed(encounter("借上升风越过台面",1770,[terrain(650,500,620,90,"glass"),airflow(430,300,190,290,Vector2.UP,180.0)],420,"箭头向上：进入风口就会抬升；也能从台面下方绕过"),
 				[Vector2(400,560),Vector2(580,360),Vector2(1370,360),Vector2(1480,420)],
 				[Vector2(350,660),Vector2(1380,660),Vector2(1480,420)]),
-			_routed(encounter("逆风上路与背风下路",1710,[terrain(560,380,510,90,"glass"),airflow(520,160,360,200,Vector2.LEFT,160.0),wind(430,250),dew(940,580,"绕台面背风处继续飞行的顺路补给","branch")],-1,"上方气流向左，冲刺不受它偏转；台面下方可以避风"),
+			_routed(encounter("逆风上路与背风下路",1710,[terrain(560,380,510,90,"glass"),airflow(520,160,360,200,Vector2.LEFT,160.0),wind(430,250),dew(1340,460,"越过台面后在共同出口补给，接着穿过下一段侧风")],-1,"上方气流向左，冲刺不受它偏转；台面下方可以避风"),
 				[Vector2(260,250),_burst(),Vector2(1120,250),Vector2(1340,460)],
-				[Vector2(350,580),Vector2(940,580),Vector2(1180,580),Vector2(1340,460)]),
+				[Vector2(350,580),Vector2(1180,580),Vector2(1340,460)]),
 			_routed(encounter("侧风前重新看方向",1550,[terrain(650,560,420,100,"glass"),airflow(650,310,420,180,Vector2.DOWN,140.0)],460,"中间风口向下推；向上修正，或提前绕到风口上方"),
 				[Vector2(430,420),Vector2(1150,420),Vector2(1280,460)],
 				[Vector2(430,220),Vector2(1150,220),Vector2(1280,460)])

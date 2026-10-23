@@ -1,4 +1,4 @@
-import { readFile, writeFile, rename, readdir, stat, unlink } from "node:fs/promises";
+import { readFile, writeFile, copyFile, readdir, stat, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { gzipSync } from "node:zlib";
@@ -25,7 +25,10 @@ for (let offset = 0, index = 0; offset < wasm.length; offset += chunkSize, index
   await writeFile(new URL(partName, gameDir), wasm.subarray(offset, offset + chunkSize));
 }
 
-await rename(wasmUrl, join(tmpdir(), `${basename(process.cwd())}-${Date.now()}-index.wasm`));
+// CI workspaces and the OS temporary directory may be separate filesystems.
+// Keep the exported original until its temporary copy succeeds.
+await copyFile(wasmUrl, join(tmpdir(), `${basename(process.cwd())}-${Date.now()}-index.wasm`));
+await unlink(wasmUrl);
 
 let engine = await readFile(engineUrl, "utf8");
 const original = "loadPromise = preloader.loadPromise(`${loadPath}.wasm`, size, true);";

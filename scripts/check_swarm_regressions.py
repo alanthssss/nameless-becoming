@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prove that the existing seasonal tests reject two previously shipped wind bugs.
 
-Only a disposable seven-script project is mutated. A crash, timeout, missing test
+Only a disposable script-only project is mutated. A crash, timeout, missing test
 summary, or unrelated failure is an infrastructure failure, never a caught bug.
 """
 import argparse
@@ -18,7 +18,7 @@ import tempfile
 
 SCRIPTS = (
     "verify.gd", "game_model.gd", "save_data.gd", "chapter_data.gd",
-    "campaign_content.gd", "event_data.gd", "route_driver.gd",
+    "campaign_content.gd", "event_data.gd", "route_driver.gd", "supply_contract.gd",
 )
 SUMMARY = re.compile(r"^SEASON ELEMENT CHECKS: (\d+), failures (\d+)$", re.M)
 ERROR = re.compile(r"^ERROR:\s*(.+)$", re.M)

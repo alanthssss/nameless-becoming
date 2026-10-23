@@ -879,6 +879,12 @@ func sample_approach_contract() -> void:
 		expect(sample.checkpoint_index == 0 and sample.sample_approach == expected,"05 authored route records its actual "+expected+" approach")
 
 func run() -> void:
+	if "--supply-only" in OS.get_cmdline_user_args():
+		load("res://supply_contract.gd").run(expect)
+		for failure in failures: push_error(failure)
+		print("SUPPLY CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--sample-approach-only" in OS.get_cmdline_user_args():
 		sample_approach_contract()
 		save_contract()
@@ -954,6 +960,7 @@ func run() -> void:
 		chase_contract()
 		shield_contract()
 		pacing_contract()
+		load("res://supply_contract.gd").run(expect)
 		arrival_contract()
 		authored_content()
 		checkpoints_and_resources()
