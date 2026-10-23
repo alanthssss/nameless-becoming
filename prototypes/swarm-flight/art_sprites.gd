@@ -9,7 +9,7 @@ const HEDGE := Rect2(634,790,605,322)
 const BEE_PIVOT := Vector2(316,468)
 const FLOWER_PIVOT := Vector2(918,420)
 
-static func bee_body(v: Node2D, alpha: float, eyes_closed: bool, charge: float) -> void:
+static func bee_body(v: Node2D, alpha: float, eyes_closed: bool, charge: float, trapped := false) -> void:
 	var scale := 60.0/BEE.size.x
 	v.draw_texture_rect_region(ATLAS,Rect2((BEE.position-BEE_PIVOT)*scale,BEE.size*scale),BEE,Color(1,1,1,alpha))
 	# Small lids remain inside the painted sclera; retain its outer eye contour.
@@ -21,9 +21,9 @@ static func bee_body(v: Node2D, alpha: float, eyes_closed: bool, charge: float) 
 			var radius := Vector2(5.1*eye.z,5.3 if eye.z > 0.5 else 3.0)
 			v._ellipse(p,radius,lid)
 			v._curve(p+Vector2(-radius.x,0),p+Vector2(-radius.x*0.4,2),p+Vector2(radius.x*0.5,2),p+Vector2(radius.x,0),ink,1.0)
-	elif charge > 0.1:
+	elif charge > 0.1 or trapped:
 		var p := (Vector2(398,358)-BEE_PIVOT)*scale
-		v.draw_line(p+Vector2(-4,-1),p+Vector2(4,charge*1.5),Color(0.22,0.12,0.035,alpha),1.1,true)
+		v.draw_line(p+Vector2(-4,2 if trapped else -1),p+Vector2(4,-1 if trapped else charge*1.5),Color(0.22,0.12,0.035,alpha),1.1,true)
 
 static func flower(v: Node2D, p: Vector2, direction: Vector2, close: float, recoil: float, used: bool) -> void:
 	var scale := 154.0/FLOWER.size.x
