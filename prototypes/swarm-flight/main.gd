@@ -199,7 +199,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     Garden Journey 0.9.0"
+	menu_kicker.text = "BEFORE THE RAIN     /     Garden Journey 0.9.1"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -542,7 +542,7 @@ func show_ending() -> void:
 	held.clear()
 	panel.show()
 	heading.text = "大家，都到家了。"
-	description.text = "从春天的第一次归家，走到冬天的灯下。\n小满留着空位，画眉落在新枝头。\n你已经能为自己选路。明天，也会有新的风。\n伙伴 %d 只 · 晨露 %d / %d\n旅程 %s · 返回落脚点 %d 次 · 全篇完" % [model.bees-1,model.garden_total(),model.journey_dew_total(),clock_text(played_seconds),model.recoveries]
+	description.text = "从春天的第一次归家，走到冬天的灯下。\n小满留着空位，画眉落在新枝头。\n你已经能为自己选路。明天，也会有新的风。\n伙伴 %d 只 · 晨露 %d\n旅程 %s · 返回落脚点 %d 次 · 全篇完" % [model.bees-1,model.garden_total(),clock_text(played_seconds),model.recoveries]
 	main_button.text = "再走一趟四季旅程"
 	secondary_button.hide()
 	third_button.show()

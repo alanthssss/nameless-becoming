@@ -56,6 +56,8 @@ var dew: Array[Dictionary] = []
 var sprayers: Array[Dictionary] = []
 var puffs: Array[Dictionary] = []
 var garden_awards: Array[int] = []
+# Historical rewards from revision 8's retired 05 supply. They never spawn pickups.
+var legacy_dew_awards := 0
 var sections: Array[Dictionary] = []
 var chapter: Dictionary = {}
 var completed := false
@@ -155,7 +157,7 @@ func add_garden(dew_positions: Array, flower_positions: Array) -> void:
 		sprayers.append({"pos":pos,"timer":2.4+sprayers.size()*0.6,"stun_left":0.0,"flash":0.0,"rewarded":false})
 
 func garden_total() -> int:
-	var total := 0
+	var total := legacy_dew_awards
 	for value in garden_awards: total += value
 	return total
 
@@ -165,6 +167,7 @@ func reset_journey() -> void:
 	rings_hit = 0
 	garden_awards.resize(STAGE_COUNT)
 	garden_awards.fill(0)
+	legacy_dew_awards = 0
 	completed = false
 
 func sprayer_phase(index: int) -> String:
@@ -808,7 +811,7 @@ func save_payload() -> Dictionary:
 	var saved_sprayers: Array = []
 	for item in checkpoint.sprayers:
 		saved_sprayers.append({"rewarded":item.rewarded,"stun_left":item.stun_left,"timer":item.timer})
-	return {"version":6,"content_revision":8,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"sample_approach":checkpoint.get("sample_approach",""),"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
+	return {"version":6,"content_revision":9,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"sample_approach":checkpoint.get("sample_approach",""),"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"legacy_dew_awards":legacy_dew_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
 
 func _valid_integer(value, low: int, high: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floor(float(value)) and value >= low and value <= high
@@ -822,9 +825,13 @@ func _valid_flags(value, count: int) -> bool:
 func restore_payload(data: Dictionary) -> bool:
 	# Validate every field before changing the current run. Extra UI metadata is
 	# intentionally ignored; maps and positions always come from authored data.
-	if data.get("version") != 6 or data.get("content_revision") != 8: return false
+	if data.get("version") != 6 or (data.get("content_revision") != 8 and data.get("content_revision") != 9): return false
+	var previous_layout: bool = data.content_revision == 8
 	if not _valid_integer(data.get("stage"),0,STAGE_COUNT-1): return false
 	var saved_stage := int(data.stage)
+	var saved_legacy = data.get("legacy_dew_awards",0)
+	var legacy_limit := 0 if previous_layout or saved_stage < 4 else 1 if saved_stage == 4 else 2
+	if not _valid_integer(saved_legacy,0,legacy_limit): return false
 	var layout := Data.build(saved_stage)
 	if not _valid_integer(data.get("checkpoint_index"),-1,layout.sections.size()-1): return false
 	var saved_checkpoint := int(data.checkpoint_index)
@@ -832,7 +839,9 @@ func restore_payload(data: Dictionary) -> bool:
 	if not saved_approach is String or saved_approach not in ["","top","bottom"]: return false
 	if not saved_approach.is_empty() and (saved_stage != 4 or saved_checkpoint < 0): return false
 	for field in ["pods","walls","rings","dew","shields"]:
-		if not _valid_flags(data.get(field),layout[field].size()): return false
+		var expected_count: int = layout[field].size()
+		if previous_layout and saved_stage == 4 and field == "dew": expected_count += 1
+		if not _valid_flags(data.get(field),expected_count): return false
 	if not data.get("sprayers") is Array or data.sprayers.size() != layout.sprayers.size(): return false
 	for item in data.sprayers:
 		if not item is Dictionary or not item.get("rewarded") is bool: return false
@@ -841,9 +850,13 @@ func restore_payload(data: Dictionary) -> bool:
 			if not (value is int or value is float) or not is_finite(float(value)) or value < 0 or value > (6.0 if field == "stun_left" else 4.5): return false
 	if not data.get("garden_awards") is Array or data.garden_awards.size() != STAGE_COUNT: return false
 	for i in STAGE_COUNT:
-		if not _valid_integer(data.garden_awards[i],0,Data.dew_count(i)): return false
+		var award_limit: int = Data.dew_count(i)+(1 if previous_layout and i == 4 else 0)
+		if not _valid_integer(data.garden_awards[i],0,award_limit): return false
 		if i > saved_stage and data.garden_awards[i] != 0: return false
 	if data.garden_awards[saved_stage] != data.dew.count(true): return false
+	# An old 05 could award at most two. History and its surviving pickup cannot
+	# be stacked into three, nor injected before the chapter has been reached.
+	if not previous_layout and int(saved_legacy)+int(data.garden_awards[4]) > 2: return false
 	var expected_bees: int = layout.base_bees
 	for i in layout.pods.size():
 		if data.pods[i]: expected_bees += int(layout.pods[i].count)
@@ -863,20 +876,34 @@ func restore_payload(data: Dictionary) -> bool:
 	if not arrived is bool: return false
 	if arrived and saved_checkpoint != layout.sections.size()-1: return false
 	if data.completed != (arrived and saved_stage == STAGE_COUNT-1): return false
+	var restored_dew: Array = data.dew.duplicate()
+	var restored_awards: Array = data.garden_awards.duplicate()
+	if previous_layout:
+		if saved_stage == 4:
+			# Current 05 still has both old flags, so retirement is exact.
+			saved_legacy = 1 if restored_dew[0] else 0
+			restored_dew.remove_at(0)
+			restored_awards[4] = restored_dew.count(true)
+		elif saved_stage > 4:
+			# Older saves retain only past-chapter totals. Preserve that whole
+			# known total as history instead of guessing which old dew was taken.
+			saved_legacy = int(restored_awards[4])
+			restored_awards[4] = 0
 	load_stage(saved_stage)
+	legacy_dew_awards = int(saved_legacy)
 	checkpoint_index = saved_checkpoint
 	sample_approach = saved_approach
 	for i in pods.size(): pods[i].open = data.pods[i]
 	for i in walls.size(): walls[i].broken = data.walls[i]
 	for i in rings.size(): rings[i].active = data.rings[i]
-	for i in dew.size(): dew[i].collected = data.dew[i]
+	for i in dew.size(): dew[i].collected = restored_dew[i]
 	for i in shields.size(): shields[i].collected = data.shields[i]
 	for i in shelters.size(): shelters[i].reached = i <= checkpoint_index
 	for i in sprayers.size():
 		sprayers[i].rewarded = data.sprayers[i].rewarded
 		sprayers[i].stun_left = float(data.sprayers[i].stun_left)
 		sprayers[i].timer = float(data.sprayers[i].timer)
-	for i in STAGE_COUNT: garden_awards[i] = int(data.garden_awards[i])
+	for i in STAGE_COUNT: garden_awards[i] = int(restored_awards[i])
 	bees = expected_bees
 	bursts = int(data.bursts)
 	recoveries = int(data.recoveries)

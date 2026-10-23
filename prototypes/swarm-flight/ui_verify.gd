@@ -596,6 +596,49 @@ func sample_visual_contract() -> void:
 			expect(game.font.get_string_size(str(encounter.cue),HORIZONTAL_ALIGNMENT_LEFT,-1,20).x <= game.hud_objective.size.x,"objective fits: "+str(encounter.name))
 	release_all()
 
+func supply_input_contract() -> void:
+	var contract = load("res://supply_contract.gd")
+	for spec in contract.cases():
+		for lower in [false,true]:
+			release_all()
+			game.model.reset_journey()
+			game.begin_stage(spec.stage)
+			var entrance = Driver.new(game.model)
+			for frame in 6000:
+				if game.mode == "pause": tap(KEY_ESCAPE)
+				if game.model.checkpoint_index >= spec.checkpoint: break
+				apply_action(entrance.next_input())
+				ticks(1)
+			release_all()
+			expect(game.model.checkpoint_index == spec.checkpoint,"native supply route earns its preceding checkpoint")
+			var driver = Driver.new(game.model)
+			driver.stage = game.model.stage
+			driver.commands = contract.commands(spec,lower)
+			var before_shot := false
+			var pickup_shot := false
+			var action_shot := false
+			var start_bursts: int = game.model.bursts
+			var suffix := "%02d-%s" % [spec.stage+1,"lower" if lower else "upper"]
+			for frame in 2400:
+				if game.mode == "pause": tap(KEY_ESCAPE)
+				if driver.cursor >= driver.commands.size(): break
+				apply_action(driver.next_input())
+				ticks(1)
+				if not before_shot and game.model.p.x > spec.supply.x-170:
+					before_shot = true
+					await shot("supply-"+suffix+"-shared-exit")
+				var picked: bool = game.model.dew.any(func(drop): return drop.encounter == spec.encounter and drop.collected)
+				if picked and not pickup_shot:
+					pickup_shot = true
+					expect(driver.cursor == (spec.lower.size() if lower else spec.upper.size()),"native input collects shared exit supply before the next action")
+					await shot("supply-"+suffix+"-collected")
+				if not lower and not action_shot and game.model.p.x > spec.approach.x+600:
+					action_shot = true
+					await shot("supply-"+suffix+"-flight")
+			release_all()
+			expect(pickup_shot and driver.error.is_empty() and driver.cursor == driver.commands.size() and game.model.recoveries == 0,"native input preserves supply and chosen branch without recovery")
+			print("SUPPLY_UI_INPUT: "+JSON.stringify({"level":spec.stage+1,"lower":lower,"collected_before_next_action":pickup_shot,"remaining":game.model.stamina,"recoveries":game.model.recoveries}))
+
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
@@ -603,6 +646,14 @@ func run() -> void:
 	game.set_process(false)
 	game.world.set_process(false)
 	game.sound.set_muted(true)
+	if "--supply-only" in OS.get_cmdline_user_args():
+		await supply_input_contract()
+		for failure in failures: push_error(failure)
+		print("SUPPLY UI CHECKS: %d, failures %d" % [checks,failures.size()])
+		game.queue_free()
+		await process_frame
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--sample-visuals-only" in OS.get_cmdline_user_args():
 		await sample_visual_contract()
 		for failure in failures: push_error(failure)
@@ -646,6 +697,7 @@ func run() -> void:
 	await season_ui_contract()
 	await airflow_input_contract()
 	await sample_visual_contract()
+	await supply_input_contract()
 	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete sixteen-level input routes" % checks)
 	else:
 		for failure in failures: push_error(failure)
