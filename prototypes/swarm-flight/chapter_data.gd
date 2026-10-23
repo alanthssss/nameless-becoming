@@ -52,8 +52,11 @@ static func move_to(point: Vector2) -> Dictionary:
 	return {"kind":"move","target":point}
 
 static func build(index: int) -> Dictionary:
-	var source: Dictionary = definitions()[clampi(index,0,STAGE_COUNT-1)]
+	return build_source(definitions()[clampi(index,0,STAGE_COUNT-1)])
+
+static func build_source(source: Dictionary) -> Dictionary:
 	var out := {"title":source.title,"theme":source.theme,"music":source.music,"base_bees":source.base_bees,"storm":source.storm,"sections":[],"encounters":[],"shields":[],"rain_fields":[],"pods":[],"walls":[],"rings":[],"shelters":[],"dew":[],"sprayers":[],"route":[],"optional_route":[],"decor":[],"jets":[],"airflows":[],"region":source.get("region",0),"exit_kind":source.get("exit_kind","arch"),"entry":source.get("entry",source.encounters[0].cue),"arrival":source.get("arrival",""),"npc":source.get("npc",""),"npc_line":source.get("npc_line",""),"decision":source.get("decision","")}
+	if source.has("neighbor_stops"): out["neighbor_stops"] = source.neighbor_stops
 	var origin := 0.0
 	var i := 0
 	for encounter_index in source.encounters.size():

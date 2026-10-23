@@ -307,6 +307,9 @@ func _neighbors() -> void:
 	if model.chapter.npc.is_empty() or model.shelters.is_empty(): return
 	var indices := [0]
 	if model.shelters.size() > 1 and model.stage != model.STAGE_COUNT-1: indices.append(model.shelters.size()-1)
+	if model.chapter.has("neighbor_stops"):
+		indices.clear()
+		for stop in model.chapter.neighbor_stops: indices.append(int(stop.index))
 	for index in indices:
 		var p: Vector2 = model.shelters[index].pos+Vector2(94,22)
 		if p.x < model.camera_x-140 or p.x > model.camera_x+1380: continue
@@ -320,6 +323,17 @@ func neighbor_words() -> String:
 	# Share the existing shelter cue so dialogue cannot obscure a second cue.
 	if model.chapter.npc.is_empty(): return ""
 	var index: int = model.shelter_index_at(model.p)
+	if model.chapter.has("neighbor_stops"):
+		for stop in model.chapter.neighbor_stops:
+			if index != int(stop.index): continue
+			if model.stage == 0 and index == 0:
+				if model.sample_approach == "top": return "小满：你从花篱上面飞来的呀！"
+				if model.sample_approach == "bottom": return "小满：你走了下面那条路呀！"
+			if model.stage == 1:
+				for flower in model.sprayers:
+					if flower.rewarded: return "画眉：花朵安静下来，我也能歇一会儿了。"
+			return stop.line
+		return ""
 	if index < 0 or (index != 0 and index != model.shelters.size()-1): return ""
 	if index == model.shelters.size()-1 and model.stage == model.STAGE_COUNT-1: return ""
 	if model.stage == 4:

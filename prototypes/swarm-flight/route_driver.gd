@@ -29,7 +29,7 @@ func next_input() -> Dictionary:
 	if model.phase != "playing": return output()
 	if model.stage != stage:
 		stage = model.stage
-		var data := Data.build(stage)
+		var data: Dictionary = model.chapter
 		commands = data.optional_route if collecting else data.route
 		if skip_shields:
 			# Explicit ordinary-flight alternate paths stay clear of pickup radii.

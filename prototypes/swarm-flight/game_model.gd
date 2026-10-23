@@ -88,9 +88,15 @@ func pod(x: float, y: float, count: int) -> Dictionary:
 func wall(x: float, y: float, w: float, h: float, kind := "stem") -> Dictionary:
 	return {"rect": Rect2(x,y,w,h), "kind": kind, "broken": false}
 
+func build_stage(index: int) -> Dictionary:
+	return Data.build(index)
+
+func last_stage_index() -> int:
+	return STAGE_COUNT-1
+
 func load_stage(index: int) -> void:
-	stage = clampi(index, 0, STAGE_COUNT-1)
-	chapter = Data.build(stage)
+	stage = clampi(index, 0, last_stage_index())
+	chapter = build_stage(stage)
 	completed = false
 	phase = "playing"
 	p = Vector2(180,420)
@@ -377,7 +383,7 @@ func try_arrival() -> bool:
 	if phase != "playing" or not exit_ready or p.x < exit_pos.x or absf(p.y-exit_pos.y) > EXIT_HALF_HEIGHT:
 		return false
 	var arrived_dashing := burst_left > 0.0
-	phase = "ending" if stage == STAGE_COUNT-1 else "transition"
+	phase = "ending" if stage == last_stage_index() else "transition"
 	completed = phase == "ending"
 	drops.clear()
 	puffs.clear()
