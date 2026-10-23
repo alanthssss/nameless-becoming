@@ -1,5 +1,6 @@
 extends RefCounted
 ## Regional scenery plates share one art direction; weather is a separate state.
+const Winter = preload("res://winter_art.gd")
 const Sprites = preload("res://art_sprites.gd")
 const PLATES = [preload("res://art/garden-spring.png"),preload("res://art/revision-garden.png"),preload("res://art/garden-autumn.png"),preload("res://art/garden-winter.png")]
 
@@ -20,4 +21,4 @@ static func foreground(v: Node2D, cam: float, clock: float) -> void:
 	for i in 4:
 		var x := fposmod(i*430.0-cam*0.65,1720.0)-230.0
 		var y := 782.0+sin(clock*0.7+i)*1.5
-		v.draw_texture_rect_region(Sprites.ATLAS,Rect2(x,y,220,61),Sprites.LEAF,Color("a7c780"))
+		v.draw_texture_rect_region(Winter.ATLAS if Winter.active(v) else Sprites.ATLAS,Rect2(x,y,220,61),Winter.LEAF if Winter.active(v) else Sprites.LEAF,Color.WHITE if Winter.active(v) else Color("a7c780"))

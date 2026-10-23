@@ -1,5 +1,6 @@
 extends RefCounted
 ## Shared painted prop families; coordinates and state belong to the model.
+const Winter = preload("res://winter_art.gd")
 const Sprites = preload("res://art_sprites.gd")
 const TERRAIN: Texture2D = preload("res://art/garden-terrain.png")
 const FLORA: Texture2D = preload("res://art/garden-flora.png")
@@ -28,16 +29,21 @@ static func sprite(v: Node2D, texture: Texture2D, source: Rect2, rect: Rect2, ti
 
 static func stem(v: Node2D, r: Rect2, upper: bool) -> void:
 	# Opaque shaft uses the entire physical rectangle. Cap stays inside the gap edge.
-	sprite(v,TERRAIN,Rect2(285,151,113,553),r)
-	var cap := Rect2(276,110,133,47)
+	var atlas: Texture2D = Winter.ATLAS if Winter.active(v) else TERRAIN
+	var core: Rect2 = Winter.STEM_CORE if Winter.active(v) else Rect2(285,151,113,553)
+	sprite(v,atlas,core,r)
+	var cap: Rect2 = Winter.STEM_CAP if Winter.active(v) else Rect2(276,110,133,47)
 	if upper:
 		v.draw_set_transform(v._world_offset+Vector2(r.get_center().x,r.end.y),PI)
-		sprite(v,TERRAIN,cap,Rect2(-r.size.x/2,0,r.size.x,16))
+		sprite(v,atlas,cap,Rect2(-r.size.x/2,0,r.size.x,16))
 		v.draw_set_transform(v._world_offset)
 	else:
-		sprite(v,TERRAIN,cap,Rect2(r.position,Vector2(r.size.x,16)))
+		sprite(v,atlas,cap,Rect2(r.position,Vector2(r.size.x,16)))
 
 static func stalk(v: Node2D, a: Vector2, b: Vector2, c: Vector2, d: Vector2, width: float) -> void:
+	var winter := Winter.active(v)
+	var atlas: Texture2D = Winter.ATLAS if winter else TERRAIN
+	var core: Rect2 = Winter.STEM_CORE if winter else Rect2(285,150,113,550)
 	var left := PackedVector2Array()
 	var right := PackedVector2Array()
 	var uv_left := PackedVector2Array()
@@ -49,13 +55,13 @@ static func stalk(v: Node2D, a: Vector2, b: Vector2, c: Vector2, d: Vector2, wid
 		var normal := tangent.orthogonal()*width*0.5
 		left.append(q-normal)
 		right.append(q+normal)
-		uv_left.append(Vector2(285,150+t*550)/Vector2(TERRAIN.get_size()))
-		uv_right.append(Vector2(398,150+t*550)/Vector2(TERRAIN.get_size()))
+		uv_left.append(Vector2(core.position.x,core.position.y+t*core.size.y)/Vector2(atlas.get_size()))
+		uv_right.append(Vector2(core.end.x,core.position.y+t*core.size.y)/Vector2(atlas.get_size()))
 	for i in range(18,-1,-1):
 		left.append(right[i])
 		uv_left.append(uv_right[i])
-	v._curve(a,b,c,d,INK,width+2.0)
-	v.draw_polygon(left,PackedColorArray([Color.WHITE]),uv_left,TERRAIN)
+	v._curve(a,b,c,d,Winter.INK if winter else INK,width+2.0)
+	v.draw_polygon(left,PackedColorArray([Color.WHITE]),uv_left,atlas)
 
 static func curtain(v: Node2D, r: Rect2, broken: bool, flex: float) -> void:
 	if broken:
@@ -132,7 +138,7 @@ static func bird(v: Node2D, p: Vector2, clock: float) -> void:
 static func goal_arch(v: Node2D, p: Vector2, ready: bool, arrival: float) -> void:
 	var tint := Color.WHITE if ready else Color("d5dfb8")
 	var height := 350.0+minf(maxf(arrival,0.0),1.0)*8.0
-	sprite(v,LANDMARKS,ARCH,Rect2(p+Vector2(-80,-184),Vector2(230,height)),tint)
+	sprite(v,Winter.ATLAS if Winter.active(v) else LANDMARKS,Winter.ARCH if Winter.active(v) else ARCH,Rect2(p+Vector2(-80,-184),Vector2(230,height)),tint)
 	Sprites.small_leaf(v,p+Vector2(95,107),p+Vector2(-66,107),27)
 
 static func home(v: Node2D, p: Vector2, _arrival: float, opacity := 1.0, scale := 1.0) -> void:
@@ -140,18 +146,25 @@ static func home(v: Node2D, p: Vector2, _arrival: float, opacity := 1.0, scale :
 	# around source (628,587) coincides with the model's unchanged exit center.
 	var factor := 0.556*scale
 	var origin := p-Vector2(628,587)*factor
-	sprite(v,HOME,Rect2(Vector2.ZERO,HOME.get_size()),Rect2(origin,HOME.get_size()*factor),Color(1,1,1,opacity))
+	var texture: Texture2D = Winter.HOME if Winter.active(v) else HOME
+	# Both variants preserve the same hollow anchor and natural trunk proportions.
+	sprite(v,texture,Rect2(Vector2.ZERO,texture.get_size()),Rect2(origin,texture.get_size()*factor),Color(1,1,1,opacity))
 
 static func bell(v: Node2D, p: Vector2, swing: float, ready: bool) -> void:
 	v.draw_set_transform(v._world_offset+p,swing)
-	sprite(v,LANDMARKS,BELL,Rect2(-16,-8,34,36),Color.WHITE if ready else Color("d0c49d"))
+	if Winter.active(v):
+		# Keep the brass bell; omit its fresh leafy handle in winter.
+		v.draw_arc(Vector2(0,8),5,PI,TAU,12,Winter.INK,2,true)
+		sprite(v,LANDMARKS,Rect2(128,964,303,197),Rect2(-14,7,28,21),Color.WHITE if ready else Color("d5d0bb"))
+	else:
+		sprite(v,LANDMARKS,BELL,Rect2(-16,-8,34,36),Color.WHITE if ready else Color("d0c49d"))
 	v.draw_set_transform(v._world_offset)
 
 static func pickup(v: Node2D, p: Vector2, kind: String) -> void:
 	if kind == "dew":
 		sprite(v,WEATHER,DEW,Rect2(p-Vector2(13,20),Vector2(26,39)))
 	else:
-		sprite(v,WEATHER,SHIELD,Rect2(p-Vector2(28,16),Vector2(56,31)))
+		sprite(v,Winter.ATLAS if Winter.active(v) else WEATHER,Winter.LEAF if Winter.active(v) else SHIELD,Rect2(p-Vector2(28,16),Vector2(56,31)))
 
 static func cloud(v: Node2D, r: Rect2, tint: Color) -> void:
 	sprite(v,WEATHER,CLOUD,r,tint)
@@ -159,7 +172,7 @@ static func cloud(v: Node2D, r: Rect2, tint: Color) -> void:
 static func decor(v: Node2D, p: Vector2, style: String) -> void:
 	# Do not reset the caller's transform: small flowers also use local scaling.
 	if style == "flower":
-		sprite(v,Sprites.ATLAS,Sprites.FLOWER,Rect2(p-Vector2(15,15),Vector2(30,30)),Color("ffb7d9"))
+		sprite(v,Winter.ATLAS if Winter.active(v) else Sprites.ATLAS,Winter.FLOWER if Winter.active(v) else Sprites.FLOWER,Rect2(p-Vector2(15,15),Vector2(30,30)),Color.WHITE if Winter.active(v) else Color("ffb7d9"))
 	elif style == "sign":
 		sprite(v,LANDMARKS,SIGN,Rect2(p-Vector2(48,16),Vector2(96,32)))
 	elif style in ["lamp","shelter_lamp","shelter_lamp_lit"]:

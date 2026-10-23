@@ -1,4 +1,5 @@
 extends Node2D
+const Winter = preload("res://winter_art.gd")
 const SampleLandscape = preload("res://sample_landscape.gd")
 const ArtSprites = preload("res://art_sprites.gd")
 const ArtProps = preload("res://art_props.gd")
@@ -167,7 +168,7 @@ func emit_event(kind: String, pos: Vector2, details: Dictionary = {}) -> void:
 			count = 9
 			force = 105.0
 		"shield":
-			tint = LEAF_LIGHT
+			tint = Winter.FROST if Winter.active(self) else LEAF_LIGHT
 			count = 14
 			force = 90.0
 		"shield_block":
@@ -490,7 +491,7 @@ func _shelter(shelter: Dictionary) -> void:
 	ArtSprites.canopy(self,p,half)
 	draw_line(p+Vector2(-7,-91),p+Vector2(-7,-55),INK,2,true)
 	ArtProps.decor(self,p+Vector2(-7,-40),"shelter_lamp_lit" if reached else "shelter_lamp")
-	_curve(p+Vector2(-half,72),p+Vector2(-half*0.35,76),p+Vector2(half*0.35,76),p+Vector2(half,72),Color(0.83,0.92,0.60,0.65),2)
+	_curve(p+Vector2(-half,72),p+Vector2(-half*0.35,76),p+Vector2(half*0.35,76),p+Vector2(half,72),Color(0.80,0.89,0.94,0.65) if Winter.active(self) else Color(0.83,0.92,0.60,0.65),2)
 	ArtSprites.small_leaf(self,p+Vector2(60,57),p+Vector2(-60,57),29)
 	if reached:
 		draw_polyline(PackedVector2Array([p+Vector2(-7,44),p+Vector2(-1,50),p+Vector2(10,37)]),CREAM,3,true)
@@ -937,8 +938,8 @@ func _shield_shell(p: Vector2, front: bool) -> void:
 	if warning:
 		# The two closing leaf tips provide a shape cue as well as an amber tint.
 		var close := (1.0-remaining*5.0)*5.0
-		_leaf(center+Vector2(-4,-radius-6),center+Vector2(-15+close,-radius-16),4.5,LEAF_LIGHT)
-		_leaf(center+Vector2(4,-radius-6),center+Vector2(15-close,-radius-16),4.5,LEAF_LIGHT)
+		_leaf(center+Vector2(-4,-radius-6),center+Vector2(-15+close,-radius-16),4.5,Winter.FROST if Winter.active(self) else LEAF_LIGHT)
+		_leaf(center+Vector2(4,-radius-6),center+Vector2(15-close,-radius-16),4.5,Winter.FROST if Winter.active(self) else LEAF_LIGHT)
 
 func _sprayer(flower: Dictionary, index: int) -> void:
 	var p: Vector2 = flower.pos
