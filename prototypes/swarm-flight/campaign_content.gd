@@ -139,7 +139,7 @@ static func definitions() -> Array:
 		]},
 		{"title":"最后一阵风","region":3,"theme":2,"music":2,"base_bees":9,"storm":true,"exit_kind":"arch",
 		"entry":"最后一次穿雨。喷口、箱角与风向，都已经见过了。","arrival":"穿过来了，接下来可以从容一点。","npc":"bird","npc_line":"画眉：前面是背风的树廊，慢慢来。","decision":"在熟悉元素的组合里，选自己能稳定完成的走法。","encounters":[
-			_routed(encounter("先选喷口或篱下",1870,[terrain(620,450,520,100,"hedge"),jet(740,100,220,350,6.0,2.2,0.4)],430,"先看喷口空档，或直接绕篱下；前方共用宽叶",90),
+			_routed(encounter("先选喷口或台下",1870,[terrain(620,450,520,100,"glass"),jet(740,100,220,350,6.0,2.2,0.4)],430,"先看喷口空档，或直接绕台下；前方共用宽叶",90),
 				[Vector2(630,420),_window(740,1.7),Vector2(1060,420),Vector2(1240,420),Vector2(1460,430)],
 				[Vector2(440,640),Vector2(1250,640),Vector2(1460,430)]),
 			_routed(encounter("护雨高路与有顶低路",2420,[shield(350,430),terrain(700,340,1000,90,"crate"),weather(620,1080),chain([Vector2(720,250),Vector2(1140,250),Vector2(1560,250)],[],Vector2(2020,250)),last_curtain],430,"高处冲刺穿短帘；箱下挡雨并绕帘，末端同一片宽叶",115),
