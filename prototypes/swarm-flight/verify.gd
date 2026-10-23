@@ -796,7 +796,96 @@ func new_level_routes() -> void:
 			if optional: expect(m.garden_awards[stage_index] == m.dew.size(),"New alternate route collects its authored supply")
 			print("NEW_LEVEL: "+JSON.stringify({"level":stage_index+1,"optional":optional,"phase":m.phase,"position":str(m.p),"seconds":m.time,"recoveries":m.recoveries,"spent":m.energy_spent,"gained":m.energy_gained,"bursts":m.bursts,"flowers":m.rings_hit,"hits":hits,"blocked":blocked}))
 
+func fly_sample_path(sample,points: Array) -> bool:
+	# Ordinary directional input on the authored map; no teleports or wind use.
+	var recoveries_before: int = sample.recoveries
+	for point in points:
+		var frames := 0
+		while sample.p.distance_to(point) >= 16.0 and frames < 1800:
+			var offset: Vector2 = point-sample.p
+			sample.step(Vector2(signf(offset.x) if absf(offset.x)>8 else 0,signf(offset.y) if absf(offset.y)>8 else 0).normalized(),false,1.0/60.0)
+			frames += 1
+			if sample.recoveries != recoveries_before: return false
+		if frames == 1800: return false
+	return true
+
+func sample_approach_contract() -> void:
+	for side in ["top","bottom"]:
+		var sample = Model.new()
+		sample.load_stage(4)
+		var hedge: Rect2 = sample.walls[0].rect
+		var y := hedge.position.y-100 if side == "top" else hedge.end.y+95
+		var path := [Vector2(hedge.position.x-160,y),Vector2(hedge.end.x+60,y)]
+		expect(fly_sample_path(sample,path),"05 ordinary "+side+" path crosses the hedge without recovery")
+		expect(sample.sample_approach == side,"05 records actual "+side+" crossing without triggering a wind flower")
+		expect(sample.rings_hit == 0 and sample.bursts == 0,"05 approach evidence does not require wind or dash")
+		expect(sample.save_payload().sample_approach == "","Airborne approach is not persisted before reaching a safe leaf")
+		sample.restore_checkpoint()
+		expect(sample.sample_approach == "" and sample.checkpoint_index == -1,"Recovering before the first leaf removes uncommitted approach evidence")
+		# Begin a fresh ordinary route after the explicit recovery above.
+		sample = Model.new()
+		sample.load_stage(4)
+		path.append(sample.shelters[0].pos)
+		expect(fly_sample_path(sample,path) and sample.checkpoint_index == 0,"05 "+side+" route reaches the shared first checkpoint")
+		var saved: Dictionary = sample.save_payload()
+		expect(saved.sample_approach == side,"05 checkpoint persists the observed "+side+" approach")
+		sample.restore_checkpoint()
+		expect(sample.sample_approach == side,"05 manual recovery keeps the checkpoint's observed approach")
+		var continued = Model.new()
+		expect(continued.restore_payload(saved) and continued.sample_approach == side,"05 save/continue restores the observed approach")
+		continued.restore_checkpoint()
+		expect(continued.sample_approach == side,"05 recovery after continue preserves observed approach")
+		var opposite_y := hedge.end.y+95 if side == "top" else hedge.position.y-100
+		var revisit := [Vector2(hedge.end.x+100,opposite_y),Vector2(hedge.position.x-160,opposite_y),Vector2(hedge.end.x+100,opposite_y),continued.shelters[0].pos]
+		expect(fly_sample_path(continued,revisit),"05 can revisit the opposite route after reaching the common leaf")
+		expect(continued.sample_approach == side,"A completed first approach remains stable while backtracking after its checkpoint")
+		var old: Dictionary = saved.duplicate(true)
+		old.erase("sample_approach")
+		expect(continued.restore_payload(old) and continued.sample_approach == "","An old 05 save has neutral approach, even with collected dew or used wind")
+		for invalid in ["left",1,null]:
+			var bad: Dictionary = saved.duplicate(true)
+			bad.sample_approach = invalid
+			expect(not continued.restore_payload(bad) and continued.sample_approach == "","Invalid approach metadata is rejected without mutating current state")
+		continued.load_stage(5)
+		expect(continued.sample_approach == "","Approach evidence does not carry into another level")
+		var wrong_stage: Dictionary = continued.save_payload()
+		wrong_stage.sample_approach = side
+		expect(not continued.restore_payload(wrong_stage),"A different level cannot claim 05 approach evidence")
+	var blocked = Model.new()
+	blocked.load_stage(4)
+	for i in 240: blocked.step(Vector2.RIGHT,false,1.0/60.0)
+	expect(blocked.p.x < blocked.walls[0].rect.position.x and blocked.sample_approach == "","Pushing into the hedge does not record an untraversed branch")
+	var premature: Dictionary = blocked.save_payload()
+	premature.sample_approach = "top"
+	expect(not blocked.restore_payload(premature),"A start checkpoint cannot contain an unearned approach")
+	var changed_mind = Model.new()
+	changed_mind.load_stage(4)
+	var hedge: Rect2 = changed_mind.walls[0].rect
+	var high := hedge.position.y-100
+	var low := hedge.end.y+95
+	expect(fly_sample_path(changed_mind,[Vector2(hedge.position.x-160,high),Vector2(hedge.end.x+60,high),Vector2(hedge.position.x-160,high)]),"05 can retreat after an upper crossing before the common leaf")
+	expect(changed_mind.sample_approach == "top","A backward crossing does not invent a different forward route")
+	expect(fly_sample_path(changed_mind,[Vector2(hedge.position.x-160,low),Vector2(hedge.end.x+60,low),changed_mind.shelters[0].pos]),"05 can change to the lower route before reaching the shared leaf")
+	expect(changed_mind.sample_approach == "bottom","The final actual crossing before the shared checkpoint supplies the response")
+	for optional in [false,true]:
+		var sample = Model.new()
+		sample.load_stage(4)
+		var driver = Driver.new(sample,optional)
+		for frame in 1800:
+			if sample.checkpoint_index >= 0: break
+			var action: Dictionary = driver.next_input()
+			sample.step(action.direction,action.held,1.0/60.0)
+		var expected := "bottom" if optional else "top"
+		expect(sample.checkpoint_index == 0 and sample.sample_approach == expected,"05 authored route records its actual "+expected+" approach")
+
 func run() -> void:
+	if "--sample-approach-only" in OS.get_cmdline_user_args():
+		sample_approach_contract()
+		save_contract()
+		for failure in failures: push_error(failure)
+		print("SAMPLE APPROACH CHECKS: %d, failures %d" % [checks,failures.size()])
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--content-only" in OS.get_cmdline_user_args():
 		authored_content()
 		pacing_contract()
@@ -860,6 +949,7 @@ func run() -> void:
 		return
 	controls_contract()
 	if "--controls-only" not in OS.get_cmdline_user_args():
+		sample_approach_contract()
 		season_elements_contract()
 		chase_contract()
 		shield_contract()

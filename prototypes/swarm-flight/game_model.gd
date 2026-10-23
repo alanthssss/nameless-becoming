@@ -67,6 +67,8 @@ var recoveries := 0
 var rings_hit := 0
 # Presentation only: consecutive wind flowers during one uninterrupted dash.
 var wind_chain := 0
+# The observed side of 05's first hedge, never inferred from wind/pickup use.
+var sample_approach := ""
 var checkpoint: Dictionary = {}
 var rain_timer := 1.6
 var checkpoint_index := -1
@@ -97,6 +99,7 @@ func load_stage(index: int) -> void:
 	burst_left = 0.0
 	burst_braking = false
 	wind_chain = 0
+	sample_approach = ""
 	stamina = MAX_STAMINA
 	energy_spent = 0.0
 	energy_gained = 0.0
@@ -309,6 +312,7 @@ func advance(direction: Vector2, dt: float) -> void:
 				if not is_equal_approx(p.y,proposed.y): velocity.y = 0
 				burst_left = 0
 				wind_chain = 0
+	record_sample_approach(before)
 	# Crossing the visible goal wins this substep; weather cannot undo an arrival.
 	if try_arrival(): return
 	# Pickups resolve before all weather damage and rescue snapshots this substep.
@@ -351,6 +355,19 @@ func advance(direction: Vector2, dt: float) -> void:
 	if started:
 		advance_rain(dt)
 		if old_recoveries != recoveries: return
+
+func record_sample_approach(before: Vector2) -> void:
+	# Observe the actual outward crossing after collision resolution. Freeze it
+	# at the shared leaf; backtracking before that may produce a different path.
+	if stage != 4 or checkpoint_index >= 0 or p.x <= before.x: return
+	for obstacle in walls:
+		var r: Rect2 = obstacle.rect
+		if obstacle.get("material","") != "hedge" or r.position.x >= chapter.encounters[0].end_x: continue
+		if before.x < r.end.x and p.x >= r.end.x:
+			var crossing_y := lerpf(before.y,p.y,(r.end.x-before.x)/(p.x-before.x))
+			if crossing_y < r.position.y: sample_approach = "top"
+			elif crossing_y > r.end.y: sample_approach = "bottom"
+		return
 
 func try_arrival() -> bool:
 	exit_ready = rescued_count() == rescue_total() and completed_sections() == sections.size()
@@ -563,6 +580,7 @@ func hurt(reason := "rain", cost := 30.0) -> void:
 func save_checkpoint(safe_position: Vector2 = Vector2.INF) -> void:
 	if safe_position == Vector2.INF: safe_position = p
 	checkpoint = {"p":safe_position,"bees":bees,"pods":pods.duplicate(true),"walls":walls.duplicate(true),"rings":rings.duplicate(true),"shelters":shelters.duplicate(true),"dew":dew.duplicate(true),"sprayers":sprayers.duplicate(true),"shields":shields.duplicate(true),"storm_x":storm_x,"checkpoint_index":checkpoint_index,"rain_remaining":rain_remaining}
+	checkpoint["sample_approach"] = sample_approach
 
 func restore_checkpoint(reason := "manual") -> void:
 	if checkpoint.is_empty():
@@ -584,6 +602,7 @@ func restore_checkpoint(reason := "manual") -> void:
 		if drop.collected: garden_awards[stage] += 1
 	storm_x = checkpoint.storm_x
 	checkpoint_index = checkpoint.checkpoint_index
+	sample_approach = checkpoint.get("sample_approach","")
 	drops.clear()
 	puffs.clear()
 	phase = "playing"
@@ -789,7 +808,7 @@ func save_payload() -> Dictionary:
 	var saved_sprayers: Array = []
 	for item in checkpoint.sprayers:
 		saved_sprayers.append({"rewarded":item.rewarded,"stun_left":item.stun_left,"timer":item.timer})
-	return {"version":6,"content_revision":8,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
+	return {"version":6,"content_revision":8,"stage":stage,"checkpoint_index":checkpoint.checkpoint_index,"sample_approach":checkpoint.get("sample_approach",""),"pods":_flags(checkpoint.pods,"open"),"walls":_flags(checkpoint.walls,"broken"),"rings":_flags(checkpoint.rings,"active"),"dew":saved_dew,"shields":_flags(checkpoint.shields,"collected"),"sprayers":saved_sprayers,"garden_awards":saved_awards,"bees":checkpoint.bees,"rain_remaining":checkpoint.rain_remaining,"bursts":bursts,"recoveries":recoveries,"rings_hit":rings_hit,"completed":completed,"arrived":phase in ["transition","ending"]}
 
 func _valid_integer(value, low: int, high: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) == floor(float(value)) and value >= low and value <= high
@@ -809,6 +828,9 @@ func restore_payload(data: Dictionary) -> bool:
 	var layout := Data.build(saved_stage)
 	if not _valid_integer(data.get("checkpoint_index"),-1,layout.sections.size()-1): return false
 	var saved_checkpoint := int(data.checkpoint_index)
+	var saved_approach = data.get("sample_approach","")
+	if not saved_approach is String or saved_approach not in ["","top","bottom"]: return false
+	if not saved_approach.is_empty() and (saved_stage != 4 or saved_checkpoint < 0): return false
 	for field in ["pods","walls","rings","dew","shields"]:
 		if not _valid_flags(data.get(field),layout[field].size()): return false
 	if not data.get("sprayers") is Array or data.sprayers.size() != layout.sprayers.size(): return false
@@ -843,6 +865,7 @@ func restore_payload(data: Dictionary) -> bool:
 	if data.completed != (arrived and saved_stage == STAGE_COUNT-1): return false
 	load_stage(saved_stage)
 	checkpoint_index = saved_checkpoint
+	sample_approach = saved_approach
 	for i in pods.size(): pods[i].open = data.pods[i]
 	for i in walls.size(): walls[i].broken = data.walls[i]
 	for i in rings.size(): rings[i].active = data.rings[i]

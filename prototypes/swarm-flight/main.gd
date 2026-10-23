@@ -144,18 +144,23 @@ func build_ui() -> void:
 	ui_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	canvas.add_child(ui_root)
-	card_style = card(Color("314b2df5"))
-	hud_title = label_at(Vector2(42,24),Vector2(850,26),15,Color("d3e4a1"))
-	hud_objective = label_at(Vector2(42,52),Vector2(655,38),23,Color("fff8d8"))
-	hud_bees = label_at(Vector2(966,25),Vector2(142,30),20,Color("fff8d8"))
-	hud_energy = label_at(Vector2(1110,25),Vector2(124,30),20,Color("fff8d8"))
+	card_style = card(Color("fff8e5f5"),18)
+	card_style.border_color = Color("b7bfa2")
+	card_style.set_border_width_all(1)
+	card_style.shadow_color = Color(0.12,0.24,0.18,0.12)
+	card_style.shadow_size = 5
+	card_style.shadow_offset = Vector2(0,3)
+	hud_title = label_at(Vector2(48,29),Vector2(776,25),14,Color("667657"))
+	hud_objective = label_at(Vector2(48,59),Vector2(776,32),20,Color("294b3b"))
+	hud_bees = label_at(Vector2(988,27),Vector2(138,26),16,Color("526b51"))
+	hud_energy = label_at(Vector2(1126,27),Vector2(106,26),18,Color("294b3b"))
 	hud_energy.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hud_clock = label_at(Vector2(704,53),Vector2(202,30),20,Color("fff8d8"))
+	hud_clock = label_at(Vector2(988,81),Vector2(244,24),14,Color("526b51"))
 	hud_clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hud_weather = label_at(Vector2(38,115),Vector2(184,44),15,Color("d9f4f0"))
-	hud_hint = label_at(Vector2(46,737),Vector2(1188,38),19,Color("fff8d8"))
+	hud_weather = label_at(Vector2(40,145),Vector2(188,44),15,Color("294b3b"))
+	hud_hint = label_at(Vector2(46,744),Vector2(1188,28),16,Color("fff8d8"))
 	hud_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	toast = label_at(Vector2(240,116),Vector2(800,46),21,Color("ffe7a3"))
+	toast = label_at(Vector2(340,135),Vector2(600,40),18,Color("ffe7a3"))
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var toast_style := card(Color("314b2df5"),12)
@@ -163,11 +168,11 @@ func build_ui() -> void:
 	for node in [hud_title,hud_objective,hud_bees,hud_energy,hud_clock,hud_weather,hud_hint,toast]:
 		ui_root.add_child(node)
 	cue_panel = Panel.new()
-	cue_panel.size = Vector2(350,42)
+	cue_panel.size = Vector2(330,38)
 	cue_panel.add_theme_stylebox_override("panel",card(Color("314b2df5"),12))
 	cue_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui_root.add_child(cue_panel)
-	cue_label = label_at(Vector2(12,5),Vector2(326,32),18,Color("fff0c6"))
+	cue_label = label_at(Vector2(12,3),Vector2(306,32),16,Color("fff0c6"))
 	cue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cue_panel.add_child(cue_label)
 	handoff_panel = Panel.new()
@@ -193,7 +198,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     四季旅程 Alpha 0.7.1"
+	menu_kicker.text = "BEFORE THE RAIN     /     Alpha 0.8.0"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -497,6 +502,8 @@ func message(text: String, seconds: float, tint := Color("ffe7a3"), priority := 
 	toast_priority = priority
 	toast_guard_left = minf(seconds,1.2) if priority >= 3 else 0.0
 	toast.text = text
+	toast.size.x = clampf(font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,18).x+40,400,1000)
+	toast.position.x = (1280-toast.size.x)/2
 	toast.add_theme_color_override("font_color",tint)
 	toast_left = seconds
 
@@ -557,15 +564,17 @@ func refresh_hud() -> void:
 	if model.stage_dew_total() > 0: title += "   ·   晨露 %d/%d" % [model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
 	var hint: String = model.hint()
+	if hint.begins_with("飞行缓慢耗体力"):
+		hint = "空格 蓄力冲刺  ·  Esc 暂停"
 	var bees_text := "已救  %d / %d" % [model.bees-1,model.journey_bees_total()-1]
 	var energy_text := "体力 %d" % int(ceil(model.stamina))
 	var clock := ("露天 " + clock_text(model.rain_remaining)) if model.storm_active else ("旅程 " + clock_text(played_seconds))
 	if model.storm_active and model.shelter_index_at(model.p) >= 0: clock += " · 停"
 	if model.storm_active:
 		hud_weather.text = weather_text()
-		hud_weather.add_theme_color_override("font_color",Color("ffd3b6") if model.shelter_index_at(model.p) < 0 and model.storm_gap() < 220 else Color("d9f4f0"))
-	hud_clock.add_theme_color_override("font_color",Color("f0a486") if model.storm_active and model.rain_remaining < 15 else Color("fff8d8"))
-	hud_energy.add_theme_color_override("font_color",Color("f0a486") if not model.can_burst() else Color("fff8d8"))
+		hud_weather.add_theme_color_override("font_color",Color("98543e") if model.shelter_index_at(model.p) < 0 and model.storm_gap() < 220 else Color("294b3b"))
+	hud_clock.add_theme_color_override("font_color",Color("98543e") if model.storm_active and model.rain_remaining < 15 else Color("526b51"))
+	hud_energy.add_theme_color_override("font_color",Color("98543e") if not model.can_burst() else Color("294b3b"))
 	# Continuous charge/cue positions update per frame; text nodes change only with state.
 	var cache := title+objective+hint+bees_text+energy_text+clock
 	if cache != hud_cache:
@@ -582,10 +591,18 @@ func refresh_hud() -> void:
 		var target: Vector2 = cue.pos-Vector2(model.camera_x,0)
 		cue_panel.visible = target.x > -40 and target.x < 1320
 		var lift := 185.0 if cue.kind == "shelter" else 107.0
-		cue_panel.position = Vector2(clampf(target.x-175,24,906),clampf(target.y-lift,175,652))
+		cue_panel.position = Vector2(clampf(target.x-165,24,926),clampf(target.y-lift,190,652))
 		var neighbor: String = world.neighbor_words() if cue.kind == "shelter" else ""
 		cue_label.text = cue.text if neighbor.is_empty() else neighbor
-		cue_label.add_theme_font_size_override("font_size",18 if neighbor.is_empty() else 16)
+		var cue_size := 16 if neighbor.is_empty() else 15
+		cue_label.add_theme_font_size_override("font_size",cue_size)
+		var width := clampf(font.get_string_size(cue_label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,cue_size).x+28,250,590)
+		cue_panel.size.x = width
+		cue_label.size.x = width-24
+		cue_panel.position.x = clampf(target.x-width/2,24,1256-width)
+		# High-flight cues go below the bee instead of being clamped onto its wings.
+		if cue.kind == "charge" and target.y < 285:
+			cue_panel.position.y = target.y+58
 
 func weather_text() -> String:
 	if model.shelter_index_at(model.p) >= 0:
@@ -598,27 +615,28 @@ func weather_text() -> String:
 
 func _draw() -> void:
 	if mode != "play": return
-	draw_style_box(card_style,Rect2(24,16,902,84))
-	draw_style_box(card_style,Rect2(946,16,310,84))
-	draw_style_box(card_style,Rect2(24,729,1232,55))
+	draw_style_box(card_style,Rect2(28,20,820,100))
+	draw_style_box(card_style,Rect2(968,20,284,100))
+	var hint_width := minf(1200.0,font.get_string_size(hud_hint.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16).x+44.0)
+	draw_style_box(card(Color("314b2de8"),15),Rect2((1280-hint_width)/2,739,hint_width,38))
 	if model.storm_active:
-		draw_style_box(card_style,Rect2(24,109,208,54))
-	var energy_rect := Rect2(966,64,268,14)
-	draw_rect(energy_rect,Color("36564e"))
-	draw_rect(Rect2(energy_rect.position,Vector2(268*energy_trail/Model.MAX_STAMINA,14)),Color("e9a88a"))
-	var energy_color := Color("efbc8d") if not model.can_burst() else Color("d9d8a4")
-	draw_rect(Rect2(energy_rect.position,Vector2(268*model.stamina/Model.MAX_STAMINA,14)),energy_color)
+		draw_style_box(card_style,Rect2(28,135,212,62))
+	var energy_rect := Rect2(988,61,244,12)
+	draw_rect(energy_rect,Color("d6dcc3"))
+	draw_rect(Rect2(energy_rect.position,Vector2(244*energy_trail/Model.MAX_STAMINA,12)),Color("e9a88a"))
+	var energy_color := Color("b47752") if not model.can_burst() else Color("7c9b57")
+	draw_rect(Rect2(energy_rect.position,Vector2(244*model.stamina/Model.MAX_STAMINA,12)),energy_color)
 	for i in range(1,5):
-		draw_line(Vector2(966+i*53.6,64),Vector2(966+i*53.6,78),Color("3e5d31"),2)
+		draw_line(Vector2(988+i*48.8,61),Vector2(988+i*48.8,73),Color("fff8e5"),2)
 	if model.charging and model.can_burst():
-		var cost_start: float = 966+268*(model.stamina-Model.BURST_COST)/Model.MAX_STAMINA
-		draw_rect(Rect2(cost_start,64,53.6,14),Color(1,0.87,0.65,0.4+sin(model.time*8)*0.15))
+		var cost_start: float = 988+244*(model.stamina-Model.BURST_COST)/Model.MAX_STAMINA
+		draw_rect(Rect2(cost_start,61,48.8,12),Color(1,0.87,0.65,0.4+sin(model.time*8)*0.15))
 	for i in Model.STAGE_COUNT:
-		var color := Color("e9d099") if i <= model.stage else Color("5b7a67")
-		draw_line(Vector2(44+i*11,95),Vector2(52+i*11,95),color,2.0,true)
+		var color := Color("829853") if i <= model.stage else Color("d3d9bf")
+		draw_line(Vector2(48+i*11,106),Vector2(55+i*11,106),color,2.0,true)
 	var section_fill: float = float(model.completed_sections()) / model.section_count()
-	draw_line(Vector2(236,95),Vector2(902,95),Color("5b7a67"),2)
-	draw_line(Vector2(236,95),Vector2(236+666*section_fill,95),Color("e9d099"),3)
+	draw_line(Vector2(256,106),Vector2(824,106),Color("d3d9bf"),2)
+	draw_line(Vector2(256,106),Vector2(256+568*section_fill,106),Color("829853"),3)
 	var target: Vector2 = model.target_position()-Vector2(model.camera_x,0)
 	var on_screen := target.x > 85 and target.x < 1195
 	var marker := Vector2(clampf(target.x,58,1222),clampf(target.y-75,180,680))

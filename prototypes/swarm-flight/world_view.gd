@@ -1,4 +1,5 @@
 extends Node2D
+const SampleLandscape = preload("res://sample_landscape.gd")
 ## A single painter for the authored landscape; never changes simulation state.
 var model
 var feedback_font: Font
@@ -286,6 +287,9 @@ func _draw() -> void:
 	_foreground(act, cam)
 
 func _background(act: int, cam: float) -> void:
+	if model.stage in [0,4]:
+		SampleLandscape.background(self,model.stage == 4,cam,clock)
+		return
 	for row in 40:
 		var t := float(row)/39.0
 		draw_rect(Rect2(0,row*20,1280,21),SKY[act].lerp(LOW_SKY[act],t))
@@ -421,7 +425,8 @@ func _neighbors() -> void:
 		if p.x < model.camera_x-140 or p.x > model.camera_x+1380: continue
 		if model.chapter.npc == "bird": _bird(p)
 		else:
-			_bee(p,0.85,Vector2.LEFT,1.0,false,0.0,"waiting")
+			var greeting: bool = model.stage == 4 and model.shelter_index_at(model.p) == index and fposmod(clock,4.2) < 0.7
+			_bee(p,0.85,Vector2.LEFT,1.0,false,0.0,"greet" if greeting else "waiting")
 			_flower(p+Vector2(6,-19),7,Color("e6a6b7"),0.0)
 
 func neighbor_words() -> String:
@@ -430,12 +435,12 @@ func neighbor_words() -> String:
 	var index: int = model.shelter_index_at(model.p)
 	if index < 0 or (index != 0 and index != model.shelters.size()-1): return ""
 	if index == model.shelters.size()-1 and model.stage == model.STAGE_COUNT-1: return ""
+	if model.stage == 4:
+		if model.sample_approach == "top": return "小满：你从花篱上面飞来的呀！"
+		if model.sample_approach == "bottom": return "小满：你走了下面那条路呀！"
+		return "小满：到了呀，一起歇歇脚。"
 	if index != model.shelters.size()-1: return model.chapter.npc_line
 	if model.chapter.npc == "bird": return "画眉：这条新路，我也记住了。"
-	var top: bool = model.rings.any(func(r): return r.get("branch","") == "top" and r.active)
-	var bottom: bool = model.rings.any(func(r): return r.get("branch","") == "bottom" and r.active)
-	if top: return "小满：你选了高处的落点。"
-	if bottom: return "小满：原来从下面也能到这里。"
 	return "小满：你也到了，歇一会儿吧。"
 
 func _distant_home(cam: float) -> void:
@@ -482,6 +487,9 @@ func _world_decor(act: int, cam: float) -> void:
 func _terrain(item: Dictionary) -> void:
 	var r: Rect2 = item.rect
 	var material: String = item.get("material","hedge")
+	if model.stage == 4 and material == "hedge":
+		SampleLandscape.hedge(self,r)
+		return
 	var fill := Color("7aab48") if material == "hedge" else Color("bd935e") if material == "crate" else Color("779a96")
 	draw_rect(r,fill)
 	draw_rect(r,INK,false,4)
@@ -1030,6 +1038,8 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 	_silhouette([Vector2(0,-6),Vector2(-1,-wing_height-11),Vector2(-15,-wing_height-17),Vector2(-18,-wing_height-7),Vector2(-22,-wing_height+3),Vector2(-11,-5),Vector2(0,-6)],Color(0.77,0.92,0.84,alpha),ink,1.5)
 	_silhouette([Vector2(-4,-5),Vector2(-12,-wing_height-12),Vector2(-32,-wing_height-8),Vector2(-28,-wing_height+1),Vector2(-24,-3),Vector2(-13,-1),Vector2(-4,-5)],wing_color,ink,1.8)
 	_curve(Vector2(-7,-6),Vector2(-15,-9),Vector2(-23,-wing_height+1),Vector2(-25,-wing_height-3),Color(1.0,1.0,0.96,alpha),1.5)
+	if model.stage in [0,4]:
+		_curve(Vector2(-8,-7),Vector2(-11,-12),Vector2(-12,-wing_height-3),Vector2(-15,-wing_height-8),Color(0.48,0.69,0.59,alpha*0.5),0.8)
 	var feet := lerpf(15.0,19.0,rest)-dash*5.0
 	for x in [-10.0,3.0]:
 		_curve(Vector2(x,8),Vector2(x-3,13),Vector2(x-5,feet),Vector2(x+1,feet),ink,1.8)
@@ -1107,6 +1117,9 @@ func _effects() -> void:
 		_ellipse(bit.pos, Vector2(bit.size * 1.5, bit.size * 0.6), tint, bit.angle + clock * 1.5)
 
 func _foreground(act: int, cam: float) -> void:
+	if model.stage in [0,4]:
+		SampleLandscape.foreground(self,cam,clock)
+		return
 	var tint: Color = [Color("254f42"), Color("204f4a"), Color("1e3546"),Color("35463d")][act]
 	for i in 40:
 		var x := fposmod(i * 43.7 - cam * 1.15, 1400.0) - 60.0
@@ -1127,6 +1140,10 @@ func _ellipse(center: Vector2, radius: Vector2, tint: Color, angle := 0.0) -> vo
 		var theta := i * TAU / 40.0
 		points.append(center + Vector2(cos(theta) * radius.x, sin(theta) * radius.y).rotated(angle))
 	draw_colored_polygon(points, tint)
+	if model != null and model.stage in [0,4]:
+		var outline := points.duplicate()
+		outline.append(outline[0])
+		draw_polyline(outline,tint,1.0,true)
 
 func _leaf(a: Vector2, b: Vector2, width: float, tint: Color) -> void:
 	var axis := (b-a).normalized()
@@ -1186,7 +1203,11 @@ func _paper_shape(control: Array, tint: Color) -> void:
 		for j in range(1,13): points.append(at.bezier_interpolate(b,c,d,float(j)/12.0))
 		at = d
 		i += 3
-	if points.size() >= 3: draw_colored_polygon(points,tint)
+	if points.size() >= 3:
+		draw_colored_polygon(points,tint)
+		if model != null and model.stage in [0,4]:
+			points.append(points[0])
+			draw_polyline(points,tint,1.0,true)
 
 func _oval(center: Vector2, radius: Vector2, fill: Color, edge: Color, width: float, angle := 0.0) -> void:
 	var points := PackedVector2Array()
@@ -1329,26 +1350,27 @@ func _landmarks(act: int) -> void:
 		var x := rest.x-230.0
 		if x < model.camera_x-210 or x > model.camera_x+1430: continue
 		var p := Vector2(x,694)
-		match (i+act)%4:
-			0: # Watering can, tilted spout and loop handle.
-				draw_arc(p+Vector2(-66,-18),32,0.9,5.1,32,Color("547b72"),12,true)
-				draw_style_box(_box_style(Color("77a99b"),INK,3,14),Rect2(p-Vector2(53,50),Vector2(104,76)))
-				_outline_polygon(PackedVector2Array([p+Vector2(45,-19),p+Vector2(107,-69),p+Vector2(116,-59),p+Vector2(52,15)]),Color("93c3ad"),INK,3)
-				_oval(p+Vector2(112,-65),Vector2(17,10),Color("b9d5b7"),INK,2,-0.5)
-			1: # Terracotta pot with broad leaves.
-				_outline_polygon(PackedVector2Array([p+Vector2(-49,-18),p+Vector2(48,-18),p+Vector2(34,48),p+Vector2(-32,48)]),Color("c68c63"),INK,3)
-				draw_style_box(_box_style(Color("e0ad7b"),INK,3,7),Rect2(p-Vector2(57,29),Vector2(114,24)))
-				for j in 3:
-					_cartoon_leaf(p-Vector2(0,25),p+Vector2(-65+j*60,-86-24*(j%2)),22,Color("a5c956"))
-			2: # Tiny garden bench.
-				for side in [-1,1]: draw_line(p+Vector2(side*47,-2),p+Vector2(side*47,52),Color("5d6d48"),10,true)
-				draw_style_box(_box_style(Color("c7b879"),INK,3,5),Rect2(p-Vector2(72,10),Vector2(144,22)))
-				draw_style_box(_box_style(Color("decd8a"),INK,3,5),Rect2(p-Vector2(70,54),Vector2(140,30)))
-			3: # A stack of pebbles and a familiar lantern.
-				for j in 3: _oval(p+Vector2((j%2)*16,j*20),Vector2(42-j*7,16),Color("a5b6a0"),INK,2)
-				draw_line(p+Vector2(-51,36),p+Vector2(-51,-65),INK,5,true)
-				_outline_polygon(PackedVector2Array([p+Vector2(-63,-65),p+Vector2(-39,-65),p+Vector2(-29,-43),p+Vector2(-73,-43)]),Color("a3a17b"),Color("6d8072"),2)
-				draw_line(p+Vector2(-63,-40),p+Vector2(-39,-40),Color("e8d89b"),3)
+		if model.stage not in [0,4]:
+			match (i+act)%4:
+				0: # Watering can, tilted spout and loop handle.
+					draw_arc(p+Vector2(-66,-18),32,0.9,5.1,32,Color("547b72"),12,true)
+					draw_style_box(_box_style(Color("77a99b"),INK,3,14),Rect2(p-Vector2(53,50),Vector2(104,76)))
+					_outline_polygon(PackedVector2Array([p+Vector2(45,-19),p+Vector2(107,-69),p+Vector2(116,-59),p+Vector2(52,15)]),Color("93c3ad"),INK,3)
+					_oval(p+Vector2(112,-65),Vector2(17,10),Color("b9d5b7"),INK,2,-0.5)
+				1: # Terracotta pot with broad leaves.
+					_outline_polygon(PackedVector2Array([p+Vector2(-49,-18),p+Vector2(48,-18),p+Vector2(34,48),p+Vector2(-32,48)]),Color("c68c63"),INK,3)
+					draw_style_box(_box_style(Color("e0ad7b"),INK,3,7),Rect2(p-Vector2(57,29),Vector2(114,24)))
+					for j in 3:
+						_cartoon_leaf(p-Vector2(0,25),p+Vector2(-65+j*60,-86-24*(j%2)),22,Color("a5c956"))
+				2: # Tiny garden bench.
+					for side in [-1,1]: draw_line(p+Vector2(side*47,-2),p+Vector2(side*47,52),Color("5d6d48"),10,true)
+					draw_style_box(_box_style(Color("c7b879"),INK,3,5),Rect2(p-Vector2(72,10),Vector2(144,22)))
+					draw_style_box(_box_style(Color("decd8a"),INK,3,5),Rect2(p-Vector2(70,54),Vector2(140,30)))
+				3: # A stack of pebbles and a familiar lantern.
+					for j in 3: _oval(p+Vector2((j%2)*16,j*20),Vector2(42-j*7,16),Color("a5b6a0"),INK,2)
+					draw_line(p+Vector2(-51,36),p+Vector2(-51,-65),INK,5,true)
+					_outline_polygon(PackedVector2Array([p+Vector2(-63,-65),p+Vector2(-39,-65),p+Vector2(-29,-43),p+Vector2(-73,-43)]),Color("a3a17b"),Color("6d8072"),2)
+					draw_line(p+Vector2(-63,-40),p+Vector2(-39,-40),Color("e8d89b"),3)
 		if feedback_font != null:
 			var text := "叶亭 %02d" % (i+1)
 			var w := feedback_font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,17).x

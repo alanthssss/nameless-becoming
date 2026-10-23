@@ -26,17 +26,17 @@ static func definitions() -> Array:
 	last_curtain["passive"] = true
 	return [
 		{"title":"花篱另一边","region":1,"theme":1,"music":1,"base_bees":9,"storm":false,"exit_kind":"arch",
-		"entry":"小满先飞上花篱，下方也有一条完整的路。","arrival":"从花篱的两侧，回到同一片叶下。","npc":"bee","npc_line":"小满：你从那一侧来的呀！","decision":"先选花篱的一侧，别把两条路当成两排必吃的风花。","encounters":[
-			_routed(encounter("花篱真正分成两路",1780,[terrain(590,335,520,150,"hedge"),chain([Vector2(460,230),Vector2(880,230)],[],Vector2(1340,230)),dew(840,580,"沿花篱下路继续飞行时补给，合流后再选择下一次起冲","branch")],420,"花篱上方借风；下方绕行取露，两路前方合流"),
-				[Vector2(290,230),_burst(),Vector2(1380,230),Vector2(1450,420)],
-				[Vector2(400,580),Vector2(840,580),Vector2(1250,580),Vector2(1450,420)]),
+		"entry":"花篱上方能借风，下方有晨露，最后在叶下会合。","arrival":"从花篱的两侧，回到同一片叶下。","npc":"bee","npc_line":"小满：你从那一侧来的呀！","decision":"先选花篱的一侧，别把两条路当成两排必吃的风花。","encounters":[
+			_routed(encounter("花篱真正分成两路",1320,[terrain(500,335,360,150,"hedge"),chain([Vector2(420,230),Vector2(720,230)],[],Vector2(1000,230)),dew(650,580,"沿花篱下路继续飞行时补给，合流后再选择下一次起冲","branch")],420,"花篱上方借风；下方绕行取露，两路前方合流"),
+				[Vector2(250,230),_burst(),Vector2(1140,420)],
+				[Vector2(360,580),Vector2(650,580),Vector2(990,580),Vector2(1140,420)]),
 			encounter("停稳后换个高度",1650,[gap(460,300,320),dew(820,400,"从分路汇合后，为重新转向和起冲补给"),gap(1120,510,320)],-1,"风停后用普通飞行转向，不必急着再次冲刺"),
 			_routed(encounter("喷口上方与篱下",1870,[terrain(620,450,510,100,"hedge"),jet(700,100,220,350)],420,"喷口冒小泡后会喷水；等停喷穿上路，或从篱下绕过"),
 				[Vector2(580,420),_window(700,1.8),Vector2(1010,420),Vector2(1300,420),Vector2(1450,420)],
 				[Vector2(450,640),Vector2(1220,640),Vector2(1450,420)]),
-			_routed(encounter("花篱外的第一处落脚",1800,[terrain(500,335,560,150,"hedge"),wind(400,250)],420,"沿花篱选择一侧，前方只有一处共同的落脚点"),
-				[Vector2(230,250),_burst(),Vector2(1120,250),Vector2(1300,420)],
-				[Vector2(360,580),Vector2(1160,580),Vector2(1300,420)])
+			_routed(encounter("花篱外，歇歇脚",1380,[terrain(500,650,560,80,"hedge"),wind(400,250)],420,"前方宽叶已经敞开，借风或平飞过去歇歇脚"),
+				[Vector2(230,250),_burst(),Vector2(1000,250),Vector2(1100,420)],
+				[Vector2(650,420),Vector2(1100,420)])
 		]},
 		{"title":"喷嚏前后","region":1,"theme":1,"music":1,"base_bees":9,"storm":false,"exit_kind":"arch",
 		"entry":"画眉停在花篱外，花朵却先打了个喷嚏。","arrival":"喷嚏和喷泉留在后面，果园就在前面。","npc":"bird","npc_line":"画眉：从下面绕来也行。","decision":"在花篱两侧选择安抚喷嚏或避开它，再观察喷泉的空档。","encounters":[
