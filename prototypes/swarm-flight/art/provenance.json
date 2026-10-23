@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-23",
+  "purpose": "SF-R23 concentrated revision: stage 05 in-engine art target following explicit user rejection of 0.8.0 and original-PVZ quality benchmark",
+  "mode": "built-in image_gen, no CLI/API fallback",
+  "approval_status": "unapproved visual target; not equivalent to PVZ quality or production-ready full-game art",
+  "restriction": "Original project assets; no PVZ screenshots, sprites, characters, logos or music imported into the game",
+  "assets": [
+    {
+      "file": "revision-atlas.png",
+      "source": "/Users/alanthssss/.codex/generated_images/01a16695-fd8a-7122-bbec-0d6ed9eec8fc/exec-32fde522-3f23-44c2-bc4c-eb83fe0c50ff.png",
+      "prompt": "Use case: stylized-concept. Asset type: actual 2D game sprite atlas, four separate objects on a genuinely transparent background, square 2048 x 2048 canvas in a precisely spaced 2 by 2 arrangement with generous transparent gutters and no frames or labels. This is an original bee garden adventure. The visual quality benchmark is the original Plants vs Zombies: expert appealing cartoon design, clean tapering dark warm outlines, sculpted asymmetrical silhouettes, restrained two or three tone hand-painted shading, distinctive witty shapes, no generic AI painting, no photoreal texture, no 3D render, no soft focus, no excessive glossy highlights. Consistent light from upper left, warm yellow highlights and cool deep green shadows. Each asset must remain compelling at small game scale. TOP LEFT quadrant: a single golden bumblebee hero BODY facing right in side/three-quarter view, lively face with two large expressive ivory eyes and small dark pupils, big warm cheek, plump asymmetric head and compact striped abdomen, dark brown stripes, two curved antennae, tiny orange neckerchief. BODY ONLY, NO wings and NO legs, because wings and legs are animated separately. Strong simple heroic silhouette, curious determined expression, no human hands. Body centered in quadrant, maximum bounding box about 700 wide x 600 high. TOP RIGHT quadrant: one wind-flower head seen straight on, six large overlapping sculptural turquoise petals with distinctive asymmetrical curls, dark teal rim and quiet shaded volume, cream circular center completely blank for a runtime arrow. No stalk, no leaves, no face, no arrow or symbol. Fill about 720 by 720 inside quadrant. BOTTOM LEFT quadrant: one big elegant shelter leaf canopy, wide low arch shape ratio 3.2:1, a little curled tip at the left, richly shaped lime top, dark cool green underside and strong central vein with few chunky branching veins. Side view, isolated, no stem, no pot. Width about 870 and height270, centered. BOTTOM RIGHT quadrant: one compact clipped garden hedge mass, rectangular silhouette ratio 2.4:1, irregular organic overlapping large leaf clusters with a few cream and coral blossoms, upper-left warm sunlit edge and darker lower-right mass, no wooden frame, no checkerboard, no outlines around every tiny leaf, no openings through hedge. Width850 height350 centered. Exactly these FOUR objects, each wholly inside its own quadrant, nothing touches edges. Transparent empty surroundings, no scene, floor, ground shadows, text, symbols or watermarks. The four assets must share the same skilled playful hand-inked casual-game illustration language. Not vector primitives or geometric placeholder shapes.",
+      "note": "One transparent family atlas; sprite regions interpreted by engine. Character wings/legs and interaction state remain runtime.",
+      "actual_size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8"
+    },
+    {
+      "file": "revision-garden.png",
+      "source": "/Users/alanthssss/.codex/generated_images/01a16695-fd8a-7122-bbec-0d6ed9eec8fc/exec-fe2e0763-edd1-4c13-81dc-a30c46c9e352.png",
+      "prompt": "Edit this existing original game scenery background to correct its gameplay readability, keeping the same appealing hand-painted cartoon garden style, warm upper-left lighting, turquoise sky, friendly rounded clouds and wide 16:10 composition. It is BACKGROUND SCENERY ONLY for a side-view flying bee game: no bee, no character, no UI, no text, no arrows, no game platform. Critical correction: in the central play corridor from x=150 to1450 and y=160 to810 (on a 1600x1000 canvas), there must be only OPEN SKY with a very low-contrast distant landscape. Remove the current large near fence, tall foreground plants and potting shed that fill this corridor. Move the recognizable wooden garden fence, flower beds, little terracotta pots, path and small shed down into the BOTTOM 18 PERCENT (y=820 to1000). Reduce their apparent size, soften their contrast and simplify their shapes; the shed is a small distant object near bottom right, not a giant foreground wall. Distant soft green tree masses may rise gently to y=680 but remain pale and low contrast. Keep one modest dark green framing leaf cluster in each bottom corner, entirely below y=850, none at top corners. Use broad restrained painted shapes with confident contour rhythm, not thousands of decorative tiny leaves. Preserve a welcoming believable garden identity and a coherent authored composition. Upper 80 percent remains calm pale blue/mint air where brightly colored moving gameplay sprites will be clearly readable at both high and low flight routes. Opaque background, no white margins. This is a usable polished casual-game background, not a conceptual splash illustration.",
+      "reference": "Initial revision-garden.png edited with built-in image_gen to move solid-looking scenery below the low flight corridor",
+      "note": "Opaque scenery-only background; bounded low parallax.",
+      "actual_size_px": [
+        1585,
+        992
+      ],
+      "sha256": "e8cc94cfddc9dad1dada27c5c427d2e5dd32fddd0addd0af39582f45e01c5a14",
+      "initial_generation": {
+        "source": "/Users/alanthssss/.codex/generated_images/01a16695-fd8a-7122-bbec-0d6ed9eec8fc/exec-0633092d-80d2-444b-a5d2-4c004b59d700.png",
+        "prompt": "Use case: stylized-concept. Asset type: actual background plate for a side-view 2D bee flying game, landscape 16:10 composition, 1600 by 1000. The supplied image is STYLE REFERENCE ONLY: match its assured original casual-game hand-inked shapes, rich but restrained painted shading, warm upper-left light and cool green shadows. Create a new summer backyard garden background, NOT the four objects again. Camera at small bee eye height, looking horizontally through an intimate lived-in gardener's courtyard, not a top-down lawn. The visual craftsmanship benchmark is the original Plants vs Zombies: appealing storybook shapes, solid form, deliberate readable composition, no generic dreamy AI landscape and no 3D rendered plastic. CONTENT: a pale warm blue sky with two broad hand-drawn cream clouds; distant green tree crowns and a softly weathered wooden garden fence around the lower half; one small crooked potting shed far right and a glimpse of a stone birdbath near bottom right; low lush garden beds with broad leaves, a few pink geraniums and terracotta pots along the bottom. Strong asymmetry and carefully composed large shapes, not a row of copy-pasted objects. IMPORTANT PLAY SPACE: upper-middle 70 percent of screen remains quiet and open for moving characters and interaction objects; from y=180 to650 no high-contrast foreground structures or thick stems, these are flight lanes. Background garden masses mainly occupy bottom 30 percent, far objects can rise gently but are lower contrast. Near bottom corners larger overlapping foliage frames the image. Avoid washed-out gray haze: use confident emerald/lime/terracotta colors in the ground vegetation but keep the open flight field pale warm sky/mint for dark-outline sprites. Values separate 3 depth planes, selective edge detail, few broad brush shapes, no ornamental microscopic texture. Entire image is scenery only: NO bee, NO character, NO sunflower face, NO glowing pickups, NO arrows, NO typography, NO UI, NO foreground barrier, NO floating hedge, NO shelter leaf platform. No interface and no fake screenshot. Opaque background. Must look like a cohesive professionally illustrated game environment, not a concept painting.",
+        "sha256": "5238e8adeba932114b0d882b405a3ff8c004253818e1e3803dc6b91aeaf3d781",
+        "actual_size_px": [
+          1586,
+          992
+        ]
+      }
+    }
+  ],
+  "reference_sources": [
+    {
+      "url": "https://store.steampowered.com/app/3590/Plants_vs_Zombies_GOTY_Edition/",
+      "role": "Original game listing and release information. Desktop store page unavailable in local region; no purchase."
+    },
+    {
+      "url": "https://assets-a1.kompasiana.com/items/album/2018/09/04/plantas-vs-zombie-2-5b8d7d39c112fe7ece609c43.jpg",
+      "role": "Original PVZ daytime gameplay screenshot visually inspected in browser; comparison only, not imported."
+    }
+  ],
+  "rights_note": "Generated using the built-in image tool. No external stock purchase. Generation provenance does not assert exclusive rights or legal clearance.",
+  "generation_calls": 3
+}

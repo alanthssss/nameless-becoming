@@ -1,12 +1,39 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.8.0",
+  "revision": "0.8.1",
   "created": "2026-10-20",
-  "direction": "Code-native garden cartoons retained. Levels 01 and 05 use two representative light-background sets with layered silhouettes, quieter scenic props and exact-collider hedge detail. Shared HUD refined; remaining 14 world sets retain Alpha art. Visual target pending Alan review.",
-  "runtime_bitmap_assets": [],
+  "direction": "Stage 05 art revision candidate following rejection of 0.8.0: generated original transparent sprites plus a scenery-only garden plate; real controls, presentation states and model geometry retained. The other 15 levels retain 0.8.0 art. Not an approved quality target or claim of PVZ parity.",
+  "runtime_bitmap_assets": [
+    {
+      "path": "art/revision-atlas.png",
+      "role": "Four transparent separate assets: bee body, wind-flower head, shelter leaf and hedge; source regions in art_sprites.gd",
+      "source": "Built-in image_gen; complete prompts in art/provenance.json",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "source_bytes": 1182338,
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+      "import": "lossless, mipmaps enabled, alpha border repair, linear-with-mipmaps runtime filtering",
+      "stage": 5
+    },
+    {
+      "path": "art/revision-garden.png",
+      "role": "Opaque scenery only, bounded parallax; no baked gameplay or HUD",
+      "source": "Built-in image_gen; complete prompts in art/provenance.json",
+      "size_px": [
+        1585,
+        992
+      ],
+      "source_bytes": 1837956,
+      "sha256": "e8cc94cfddc9dad1dada27c5c427d2e5dd32fddd0addd0af39582f45e01c5a14",
+      "import": "lossless, mipmaps enabled, alpha border repair, linear-with-mipmaps runtime filtering",
+      "stage": 5
+    }
+  ],
   "code_native_art": {
     "path": "world_view.gd",
-    "source": "Original project procedural drawing, revised by Codex following user direction toward playful garden cartoons.",
+    "source": "Original procedural presentation retained for 15 levels and dynamic wings, legs, world markers and gameplay feedback. Stage 05 replaces body/flowers/leaves/hedges via art_sprites.gd.",
     "palette": {
       "outline": "#253d26",
       "honey": "#ffc94f",
@@ -52,14 +79,14 @@
       "Effective-airflow contact arrows only while wind applies; whole strokes constrained to the actual field, absent during dash or shelter."
     ],
     "collision_contract": "Model authoritative, continuous local wind during cruise, release and charge; dash keeps direction. Only the player has collision and stamina. Rescued actors are bounded screen-plane departure animations with no physics or damage; follow/path and companion collision-offset logic removed. Full solid stem rectangles remain visible, flower direction and shelter position remain model-derived.",
-    "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect, code-native AA outlines; no bitmap texture budget.",
+    "frame": "Godot 4.6.2, Compatibility renderer, 1280x800 logical frame, keep-aspect; 05 uses two lossless bitmap textures with mipmaps.",
     "sample_sets": {
       "path": "sample_landscape.gd",
       "levels": [
         1,
         5
       ],
-      "format": "Original GDScript vector paths, no generated/raster asset or new third-party source",
+      "format": "Level 01: historical code-native 0.8.0 set. Level 05: 0.8.1 independent sprite family and scenery plate with native state-driven presentation.",
       "frame": "1280x800 keep-aspect; 960x600 native-window capture; Compatibility renderer. Filled shapes use same-color line AA, no unsupported 2D MSAA.",
       "planes": "sky / unoutlined low-contrast distant set / exact model-backed interaction silhouettes / bottom foliage",
       "roles": {
@@ -72,8 +99,8 @@
         "hud_ink": "#294b3b"
       },
       "states": "Existing charge, launch, rescue, leaf rest and goal landing retained and checked in actual input routes; additional wing veins and Xiaoman periodic local greeting. Presentation clock freezes on pause.",
-      "repeat_rule": "Preserve authored collision footprint and gameplay hue roles. No decorative dark-outline props in sampled flight corridor; background objects do not acquire colliders. No bitmap production before this visual target is reviewed.",
-      "status": "representative visual target, not approved commercial art"
+      "repeat_rule": "Preserve model anchors and directions. Each hedge partition sits in an opaque sprite core with a forgiving 35-pixel foliage fringe outside its unchanged collider; broad beds use overlapping full clusters, not clipped or flattened tiles. Canopy underside remains above the safe pocket. Background bounded shift avoids a wrap seam. Do not bulk-expand other levels before the art direction decision.",
+      "status": "0.8.0 art rejected by Alan; 0.8.1 stage-05 target pending visual review"
     }
   },
   "ui": {
@@ -83,7 +110,8 @@
     "handoff": "2.4-second earned landing; region boundaries 4.5 seconds with season text. Enter skips, pause/focus loss freezes. Stage 04 continues into summer; only stage 16 ends the full journey.",
     "progress": "16 levels / 60 encounters / 38 shared safe leaves / 15 dew. Journey v2 path uses version 6, content revision 8; old journey v1 and chapter v4 untouched. Title region selection starts a new journey; earned arrival continues next stage.",
     "local_feedback": "Actual wind contact has directional pushing feedback including charge; approach is explicitly not contact. Shelter and fresh/recovery state preserve safety. Fountain phase and material feedback retained.",
-    "sample_revision": "Light objective/stamina cards, measured cue/toast widths, small context-dependent footer, high-flight charge prompt below the bee. Five stamina segments and visible numeric drain remain."
+    "sample_revision": "Light objective/stamina cards, measured cue/toast widths, small context-dependent footer, high-flight charge prompt below the bee. Five stamina segments and visible numeric drain remain.",
+    "art_revision": "Stage 05 uses shorter warm wood-color panels, cream/gold type and honey stamina segments. Existing context cue owns charging/rest feedback; no duplicate generic charge/rest line. Other levels keep their existing layout."
   },
   "rejected_pass": {
     "status": "Removed from source/runtime/export following user feedback SF-R02: AI feeling too strong.",
@@ -241,7 +269,8 @@
     "full_alpha_revision": "Twelve authored levels added; twenty-four per-level routes passed. Whole known-answer routes ~5m40s/~6m16s, not evidence for the unvalidated 2–3-hour first-play target. Original movement and sound.gd unchanged.",
     "season_routes_revision": "05–15 reauthored with 38 real terrain areas, 5 phased fountains, 6 local airflows. Twenty-four per-level routes complete with no terrain hits, fountain damage or recovery. Whole known-answer routes ~6m28s/~6m39s; not first-player timing. Spring definition and sound.gd remain byte-identical to 0.6.0. UI fixture captures are separate from continuous-input route captures.",
     "interaction_coherence_revision": "Continuous local wind for idle/charge; dash resistance retained following explicit user clarification. All six authored airflow regions exercise state combinations, actual-key UI reproduction avoids wind flowers. Two updraft bounds clear solid terrain; existing progress layout and sound.gd unchanged.",
-    "sample_revision": "0.8.0: 1577 model checks, 530 native complete UI/capture checks (two complete sixteen-level input routes), 140-rule airflow baseline and two old defects rejected by 12/6 behavior assertions. 12 targeted 05/actual-0.7.1-save continuation routes, all without collision/damage/recovery. Native 1280x800 plus 960x600 sample capture. Developer evidence only; no new player acceptance."
+    "sample_revision": "0.8.0: 1577 model checks, 530 native complete UI/capture checks (two complete sixteen-level input routes), 140-rule airflow baseline and two old defects rejected by 12/6 behavior assertions. 12 targeted 05/actual-0.7.1-save continuation routes, all without collision/damage/recovery. Native 1280x800 plus 960x600 sample capture. Developer evidence only; no new player acceptance.",
+    "art_revision": "0.8.1: 1577 rules, 538 native full UI checks and 89 focused sample checks; ordinary-input upper/lower routes plus 1280x800 and 960x600 captures. Final-leaf exit text regression checked. Developer evidence only, no player validation or PVZ-parity claim."
   },
   "style_references": [
     {
@@ -278,9 +307,10 @@
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "c37abb4cadaebc8911b37975822084800150842ed62c10681be06e4f9ab8a81a",
+    "world_view.gd": "f65ffb92ef6acbc8278278a12d268e8a3885c83c5de8b9764ad5e7ac4be00f38",
     "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4",
-    "sample_landscape.gd": "c951b4abe55720b85dbd67f766283317fee4850b24604e6b12c436ef6b868e99"
+    "sample_landscape.gd": "ff1d531895d2ddbe165db597cf4c516b87c82a357a670b2ca73c3f26e3c12ab1",
+    "art_sprites.gd": "93acef3864482021cc86f8584ce892e05539c5a05f643650ea8bd74d8b948023"
   },
   "updated": "2026-10-23"
 }

@@ -1,5 +1,6 @@
 extends Node2D
 const SampleLandscape = preload("res://sample_landscape.gd")
+const ArtSprites = preload("res://art_sprites.gd")
 ## A single painter for the authored landscape; never changes simulation state.
 var model
 var feedback_font: Font
@@ -41,6 +42,7 @@ const LOW_SKY := [Color("edf3ba"), Color("daeebc"), Color("9bb7b0"), Color("efd7
 
 func _ready() -> void:
 	_rng.seed = 14631
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 
 func reset_presentation() -> void:
 	departures.clear()
@@ -474,6 +476,7 @@ func _distant_home(cam: float) -> void:
 	_curve(window+Vector2(-21,23),window+Vector2(-8,28),window+Vector2(8,28),window+Vector2(22,21),trunk,4)
 
 func _world_decor(act: int, cam: float) -> void:
+	if model.stage == 4: return
 	var start := int(floor((cam-180)/235.0))
 	for i in range(start,start+8):
 		var x := i*235.0+sin(i*2.7)*24
@@ -488,7 +491,7 @@ func _terrain(item: Dictionary) -> void:
 	var r: Rect2 = item.rect
 	var material: String = item.get("material","hedge")
 	if model.stage == 4 and material == "hedge":
-		SampleLandscape.hedge(self,r)
+		ArtSprites.hedge(self,r)
 		return
 	var fill := Color("7aab48") if material == "hedge" else Color("bd935e") if material == "crate" else Color("779a96")
 	draw_rect(r,fill)
@@ -705,6 +708,11 @@ func _ring(ring: Dictionary, index: int) -> void:
 	var sway := sin(clock*1.1+index*1.7)*3.0
 	_curve(p+Vector2(0,42),p+Vector2(-28+sway+recoil,165),p+Vector2(38,228),Vector2(p.x-26,831),INK,10)
 	_curve(p+Vector2(0,42),p+Vector2(-28+sway+recoil,165),p+Vector2(38,228),Vector2(p.x-26,831),Color("73b141"),6)
+	if model.stage == 4:
+		_curve(p+Vector2(-1,42),p+Vector2(-29+sway+recoil,165),p+Vector2(37,228),Vector2(p.x-27,831),Color("b6d76a"),2)
+		ArtSprites.small_leaf(self,p+Vector2(0,105),p+Vector2(-72+sway*1.5+recoil,61),30)
+		ArtSprites.flower(self,p,direction,close,recoil,used)
+		return
 	_cartoon_leaf(p+Vector2(0,105),p+Vector2(-72+sway*1.5+recoil,61),23,Color("9acb53"))
 	for i in 7:
 		var a := float(i)*TAU/7-PI/2
@@ -743,22 +751,29 @@ func _shelter(shelter: Dictionary) -> void:
 	_curve(p+Vector2(stem_x,-80),p+Vector2(stem_x+17,8),p+Vector2(stem_x-23,130),Vector2(p.x+stem_x-34,828),Color("77a945"),7)
 	# Canopy underside stays above y=-65, the exact safe pocket starts at y=-64.
 	# Its overhang follows the model's width, rather than hiding a wider safe zone.
-	var canopy := [p+Vector2(-half-12,-80),p+Vector2(-half*0.50,-151),p+Vector2(half*0.58,-146),p+Vector2(half+9,-78),p+Vector2(half*0.54,-65),p+Vector2(-half*0.38,-66),p+Vector2(-half-12,-80)]
-	_paper_shape(canopy,INK)
-	_paper_shape([p+Vector2(-half-6,-82),p+Vector2(-half*0.43,-143),p+Vector2(half*0.54,-140),p+Vector2(half+2,-82),p+Vector2(half*0.51,-73),p+Vector2(-half*0.34,-73),p+Vector2(-half-6,-82)],Color("90be49"))
-	_curve(p+Vector2(-half-3,-83),p+Vector2(-half*0.38,-110),p+Vector2(half*0.46,-110),p+Vector2(half+1,-81),LEAF_LIGHT,4)
-	for i in 7:
-		var x := lerpf(-half*0.72,half*0.70,float(i)/6.0)
-		var lift := sin(float(i+1)*PI/8)*24
-		_curve(p+Vector2(x,-100),p+Vector2(x+1,-103),p+Vector2(x+8,-109-lift),p+Vector2(x+17,-112-lift),Color("bedb6e"),2)
+	if model.stage == 4:
+		_curve(p+Vector2(stem_x-2,-80),p+Vector2(stem_x+15,8),p+Vector2(stem_x-25,130),Vector2(p.x+stem_x-36,828),Color("b8d472"),2)
+		ArtSprites.canopy(self,p,half)
+	else:
+		var canopy := [p+Vector2(-half-12,-80),p+Vector2(-half*0.50,-151),p+Vector2(half*0.58,-146),p+Vector2(half+9,-78),p+Vector2(half*0.54,-65),p+Vector2(-half*0.38,-66),p+Vector2(-half-12,-80)]
+		_paper_shape(canopy,INK)
+		_paper_shape([p+Vector2(-half-6,-82),p+Vector2(-half*0.43,-143),p+Vector2(half*0.54,-140),p+Vector2(half+2,-82),p+Vector2(half*0.51,-73),p+Vector2(-half*0.34,-73),p+Vector2(-half-6,-82)],Color("90be49"))
+		_curve(p+Vector2(-half-3,-83),p+Vector2(-half*0.38,-110),p+Vector2(half*0.46,-110),p+Vector2(half+1,-81),LEAF_LIGHT,4)
+		for i in 7:
+			var x := lerpf(-half*0.72,half*0.70,float(i)/6.0)
+			var lift := sin(float(i+1)*PI/8)*24
+			_curve(p+Vector2(x,-100),p+Vector2(x+1,-103),p+Vector2(x+8,-109-lift),p+Vector2(x+17,-112-lift),Color("bedb6e"),2)
 	# A tiny hanging lamp and a low cushion mark a usable resting place.
 	draw_line(p+Vector2(-7,-91),p+Vector2(-7,-48),INK,2,true)
 	_oval(p+Vector2(-7,-40),Vector2(11,15),GOLD if reached else Color("d8c778"),INK,2)
 	_ellipse(p+Vector2(-10,-44),Vector2(3,7),CREAM)
 	# The same little leaf tray spans the safe entry/exit; no rail blocks flight.
 	_curve(p+Vector2(-half,72),p+Vector2(-half*0.35,76),p+Vector2(half*0.35,76),p+Vector2(half,72),Color(0.83,0.92,0.60,0.65),2)
-	_oval(p+Vector2(0,49),Vector2(58,12),Color("5c913d"),INK,3)
-	_ellipse(p+Vector2(-5,46),Vector2(48,6),Color("b9d36b"))
+	if model.stage == 4:
+		ArtSprites.small_leaf(self,p+Vector2(60,57),p+Vector2(-60,57),29)
+	else:
+		_oval(p+Vector2(0,49),Vector2(58,12),Color("5c913d"),INK,3)
+		_ellipse(p+Vector2(-5,46),Vector2(48,6),Color("b9d36b"))
 	if reached:
 		draw_polyline(PackedVector2Array([p+Vector2(-7,44),p+Vector2(-1,50),p+Vector2(10,37)]),CREAM,3,true)
 
@@ -1043,44 +1058,48 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 	var feet := lerpf(15.0,19.0,rest)-dash*5.0
 	for x in [-10.0,3.0]:
 		_curve(Vector2(x,8),Vector2(x-3,13),Vector2(x-5,feet),Vector2(x+1,feet),ink,1.8)
-	if size >= 0.95:
-		var flutter_tail := sin(clock*8.0)*2.0*(1.0-rest)
-		_silhouette([Vector2(-3,7),Vector2(-12,8),Vector2(-23,13+flutter_tail),Vector2(-30-dash*6,10+flutter_tail),Vector2(-23,23),Vector2(-12,17),Vector2(-3,7)],Color("e66e4e"),ink,1.6)
-	# A single pear-shaped contour joins head and abdomen, with a soft cheek and tapered tail.
-	_silhouette([Vector2(-23,2),Vector2(-23,-10),Vector2(-10,-16),Vector2(1,-12),Vector2(11,-19),Vector2(24,-12),Vector2(25,0),Vector2(27,11),Vector2(12,18),Vector2(1,14),Vector2(-11,14),Vector2(-20,10),Vector2(-23,2)],yellow,ink,2.5)
-	_paper_shape([Vector2(-21,3),Vector2(-12,9),Vector2(8,15),Vector2(23,5),Vector2(20,16),Vector2(-7,19),Vector2(-21,3)],Color(0.87,0.57,0.14,alpha))
-	_paper_shape([Vector2(-18,-5),Vector2(-10,-12),Vector2(-2,-10),Vector2(2,-7),Vector2(10,-14),Vector2(18,-12),Vector2(20,-8),Vector2(4,-4),Vector2(-9,-7),Vector2(-18,-5)],pale)
-	for stripe in [-13.0,-4.0]:
-		_curve(Vector2(stripe,-10),Vector2(stripe-4,-3),Vector2(stripe-3,6),Vector2(stripe+2,12),ink,3.5)
-	# The far eye is smaller; the larger near eye and cheek keep a readable three-quarter face.
-	var blink := fposmod(clock+seed_value*0.61,4.6)<0.13
-	var eyes_closed := blink or rest>0.72
-	if eyes_closed:
-		_curve(Vector2(11,-3),Vector2(13,0),Vector2(17,0),Vector2(19,-3),ink,1.8)
-		_curve(Vector2(20,-6),Vector2(22,-4),Vector2(24,-4),Vector2(25,-6),ink,1.4)
+	if model.stage == 4:
+		var blink := fposmod(clock+seed_value*0.61,4.6)<0.13
+		ArtSprites.bee_body(self,alpha,blink or rest>0.72,charge)
 	else:
-		_oval(Vector2(21,-5),Vector2(4.1,5.1),Color(1,0.99,0.91,alpha),ink,1.2)
-		draw_circle(Vector2(22,-4.5),2.1,ink)
-		_oval(Vector2(14,-3),Vector2(5.5,6.5),Color(1,0.99,0.91,alpha),ink,1.4)
-		draw_circle(Vector2(16,-2.5),2.8,ink)
-		draw_circle(Vector2(16.5,-3.7),0.9,Color(1,1,1,alpha))
-	_ellipse(Vector2(15,6),Vector2(4,2.4),Color(0.97,0.61,0.26,alpha))
-	if trapped:
-		_curve(Vector2(19,9),Vector2(21,6),Vector2(23,6),Vector2(24,8),ink,1.4)
-	else:
-		_curve(Vector2(17,8),Vector2(20,11),Vector2(23,9),Vector2(24,6),ink,1.4)
-	var feeler_sweep := dash*9.0-charge*4.0+settle*5.0
-	for i in 2:
-		var base := Vector2(6+i*9,-12)
-		var tip := Vector2(3+i*17-feeler_sweep,-24+rest*5+sin(clock*3.2+seed_value+i)*1.4)
-		_curve(base,base+Vector2(-1,-6),tip+Vector2(-3,1),tip,ink,1.6)
-		draw_circle(tip,2.2,ink)
-	if charge>0.1 and not eyes_closed:
-		draw_line(Vector2(10,-11),Vector2(19,-8-charge*2.0),ink,1.7,true)
+		if size >= 0.95:
+			var flutter_tail := sin(clock*8.0)*2.0*(1.0-rest)
+			_silhouette([Vector2(-3,7),Vector2(-12,8),Vector2(-23,13+flutter_tail),Vector2(-30-dash*6,10+flutter_tail),Vector2(-23,23),Vector2(-12,17),Vector2(-3,7)],Color("e66e4e"),ink,1.6)
+		# A single pear-shaped contour joins head and abdomen, with a soft cheek and tapered tail.
+		_silhouette([Vector2(-23,2),Vector2(-23,-10),Vector2(-10,-16),Vector2(1,-12),Vector2(11,-19),Vector2(24,-12),Vector2(25,0),Vector2(27,11),Vector2(12,18),Vector2(1,14),Vector2(-11,14),Vector2(-20,10),Vector2(-23,2)],yellow,ink,2.5)
+		_paper_shape([Vector2(-21,3),Vector2(-12,9),Vector2(8,15),Vector2(23,5),Vector2(20,16),Vector2(-7,19),Vector2(-21,3)],Color(0.87,0.57,0.14,alpha))
+		_paper_shape([Vector2(-18,-5),Vector2(-10,-12),Vector2(-2,-10),Vector2(2,-7),Vector2(10,-14),Vector2(18,-12),Vector2(20,-8),Vector2(4,-4),Vector2(-9,-7),Vector2(-18,-5)],pale)
+		for stripe in [-13.0,-4.0]:
+			_curve(Vector2(stripe,-10),Vector2(stripe-4,-3),Vector2(stripe-3,6),Vector2(stripe+2,12),ink,3.5)
+		# The far eye is smaller; the larger near eye and cheek keep a readable three-quarter face.
+		var blink := fposmod(clock+seed_value*0.61,4.6)<0.13
+		var eyes_closed := blink or rest>0.72
+		if eyes_closed:
+			_curve(Vector2(11,-3),Vector2(13,0),Vector2(17,0),Vector2(19,-3),ink,1.8)
+			_curve(Vector2(20,-6),Vector2(22,-4),Vector2(24,-4),Vector2(25,-6),ink,1.4)
+		else:
+			_oval(Vector2(21,-5),Vector2(4.1,5.1),Color(1,0.99,0.91,alpha),ink,1.2)
+			draw_circle(Vector2(22,-4.5),2.1,ink)
+			_oval(Vector2(14,-3),Vector2(5.5,6.5),Color(1,0.99,0.91,alpha),ink,1.4)
+			draw_circle(Vector2(16,-2.5),2.8,ink)
+			draw_circle(Vector2(16.5,-3.7),0.9,Color(1,1,1,alpha))
+		_ellipse(Vector2(15,6),Vector2(4,2.4),Color(0.97,0.61,0.26,alpha))
+		if trapped:
+			_curve(Vector2(19,9),Vector2(21,6),Vector2(23,6),Vector2(24,8),ink,1.4)
+		else:
+			_curve(Vector2(17,8),Vector2(20,11),Vector2(23,9),Vector2(24,6),ink,1.4)
+		var feeler_sweep := dash*9.0-charge*4.0+settle*5.0
+		for i in 2:
+			var base := Vector2(6+i*9,-12)
+			var tip := Vector2(3+i*17-feeler_sweep,-24+rest*5+sin(clock*3.2+seed_value+i)*1.4)
+			_curve(base,base+Vector2(-1,-6),tip+Vector2(-3,1),tip,ink,1.6)
+			draw_circle(tip,2.2,ink)
+		if charge>0.1 and not eyes_closed:
+			draw_line(Vector2(10,-11),Vector2(19,-8-charge*2.0),ink,1.7,true)
 	if not trapped and (pose == "greet" or (pose == "leader" and _greeting > 0.0 and dash<0.5)):
 		var wave := sin((clock+seed_value*0.07)*17)*3.0
 		_curve(Vector2(6,10),Vector2(14,18),Vector2(24,17),Vector2(23,9+wave),ink,2)
-	if size >= 0.95:
+	if size >= 0.95 and model.stage != 4:
 		_silhouette([Vector2(0,9),Vector2(3,8),Vector2(8,10),Vector2(8,13),Vector2(4,17),Vector2(-2,14),Vector2(0,9)],Color("f28c5c"),ink,1.4)
 	draw_set_transform(_world_offset)
 

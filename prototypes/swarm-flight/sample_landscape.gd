@@ -1,8 +1,15 @@
 extends RefCounted
+const SUMMER_GARDEN = preload("res://art/revision-garden.png")
 ## Two representative sets. Decorative planes have no outlines like colliders,
-## no reward-shaped glints and no simulation state. All paths stay code-native.
+## no reward-shaped glints and no simulation state. Summer uses a painted plate.
 
 static func background(v: Node2D, summer: bool, cam: float, clock: float) -> void:
+	if summer:
+		# A scenery-only plate, with bounded parallax: no wrap seam and no baked
+		# gameplay objects, arrows, text or character states.
+		v.draw_texture_rect(SUMMER_GARDEN,Rect2(-clampf(cam*0.008,0,60),-30,1340,837.5),false)
+		v.draw_rect(Rect2(0,0,1280,800),Color(0.96,0.98,0.85,0.16))
+		return
 	var sky := Color("b9d9ce") if summer else Color("b7d8d6")
 	var horizon := Color("f0e9bd") if summer else Color("f4ebcc")
 	for row in 80:
@@ -95,6 +102,7 @@ static func _summer_set(v: Node2D, cam: float) -> void:
 			v._ellipse(top,Vector2(18,13),Color("d8b5a5") if j%2 else Color("ded1a7"))
 
 static func foreground(v: Node2D, cam: float, clock: float) -> void:
+	if v.model.stage == 4: return
 	# Only the bottom 75 pixels overlap play; wide silhouettes frame the shot.
 	for i in 13:
 		var x := fposmod(i*118.0-cam*1.08,1580.0)-150

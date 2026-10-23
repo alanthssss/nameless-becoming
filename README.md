@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-10-23 当前：飞行版《雨来之前》四季旅程 Alpha 0.8.0。** 同一16关包内完成01／05原生画面样板，05起冲前可见共同叶亭、小满回应实际来路，末段收成短抵达；其余14关世界美术保留Alpha。旧进度可继续。成品审美、自然首通、可靠总预测与发行仍待完成。[试玩入口](prototypes/swarm-flight/README.md) · [本轮成果与全篇复核 SF-R26](docs/design/swarm-flight-game-20261020.md#visual-sample-20261023) · [唯一执行状态 Now](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。
+**2026-10-23 当前：飞行版《雨来之前》0.8.1美术修订候选。** Alan否定0.8.0画面后，05关改用独立蜂体、风花、叶冠、花篱与庭院背景，保留实际状态驱动的表现；其他15关仍为0.8.0美术。此版未获视觉认可，也不代表已达到PVZ完成度。全篇16关Alpha保留，成品审美、自然首通、可靠总预测与发行仍待完成。[试玩入口](prototypes/swarm-flight/README.md) · [本轮修订 SF-R27](docs/design/swarm-flight-game-20261020.md#art-quality-revision-20261023) · [唯一执行状态 Now](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。
 
 **制作收口：** 按Alan反馈，后续普通缺陷在内部集中处理；下一主交付统一推进全篇内容与成品视觉标准，不以局部补丁替代产品进展。10月29日整包／产能检查点，11月19日Beta和11月26日RC暂为待校准内部目标。[当前交付边界 SF-R23](docs/design/swarm-flight-game-20261020.md#production-finish-boundary)。
 

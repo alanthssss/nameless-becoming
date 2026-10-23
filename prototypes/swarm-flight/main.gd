@@ -55,6 +55,7 @@ var card_style: StyleBoxFlat
 var capture_path := ""
 var capture_seconds := -1.0
 var start_region := 0
+var hud_layout_stage := -1
 
 func _ready() -> void:
 	for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
@@ -198,7 +199,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     Alpha 0.8.0"
+	menu_kicker.text = "BEFORE THE RAIN     /     Art Review 0.8.1"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -555,6 +556,7 @@ func clock_text(seconds: float) -> String:
 	return "%02d:%02d" % [total / 60,total % 60]
 
 func refresh_hud() -> void:
+	apply_hud_layout()
 	var active := mode == "play"
 	for l in [hud_title,hud_objective,hud_bees,hud_energy,hud_clock,hud_hint]: l.visible = active
 	hud_weather.visible = active and model.storm_active
@@ -564,6 +566,9 @@ func refresh_hud() -> void:
 	if model.stage_dew_total() > 0: title += "   ·   晨露 %d/%d" % [model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
 	var hint: String = model.hint()
+	if model.stage == 4 and (model.charging or model.shelter_index_at(model.p) >= 0):
+		# The nearby cue already conveys this state; keep the garden visible.
+		hint = ""
 	if hint.begins_with("飞行缓慢耗体力"):
 		hint = "空格 蓄力冲刺  ·  Esc 暂停"
 	var bees_text := "已救  %d / %d" % [model.bees-1,model.journey_bees_total()-1]
@@ -573,8 +578,8 @@ func refresh_hud() -> void:
 	if model.storm_active:
 		hud_weather.text = weather_text()
 		hud_weather.add_theme_color_override("font_color",Color("98543e") if model.shelter_index_at(model.p) < 0 and model.storm_gap() < 220 else Color("294b3b"))
-	hud_clock.add_theme_color_override("font_color",Color("98543e") if model.storm_active and model.rain_remaining < 15 else Color("526b51"))
-	hud_energy.add_theme_color_override("font_color",Color("98543e") if not model.can_burst() else Color("294b3b"))
+	hud_clock.add_theme_color_override("font_color",Color("98543e") if model.storm_active and model.rain_remaining < 15 else Color("e2c47c") if model.stage == 4 else Color("526b51"))
+	hud_energy.add_theme_color_override("font_color",Color("ffd3b6") if not model.can_burst() and model.stage == 4 else Color("98543e") if not model.can_burst() else Color("fff3d1") if model.stage == 4 else Color("294b3b"))
 	# Continuous charge/cue positions update per frame; text nodes change only with state.
 	var cache := title+objective+hint+bees_text+energy_text+clock
 	if cache != hud_cache:
@@ -603,6 +608,25 @@ func refresh_hud() -> void:
 		# High-flight cues go below the bee instead of being clamped onto its wings.
 		if cue.kind == "charge" and target.y < 285:
 			cue_panel.position.y = target.y+58
+	hud_hint.visible = not hint.is_empty()
+
+func apply_hud_layout() -> void:
+	if hud_layout_stage == model.stage: return
+	hud_layout_stage = model.stage
+	var revised: bool = model.stage == 4
+	hud_title.position.y = 21 if revised else 29
+	hud_objective.position.y = 48 if revised else 59
+	hud_bees.position.y = 21 if revised else 27
+	hud_energy.position.y = 21 if revised else 27
+	hud_clock.position.y = 67 if revised else 81
+	toast.position.y = 687 if revised else 135
+	card_style.bg_color = Color("594329f2") if revised else Color("fff8e5f5")
+	card_style.border_color = Color("ba985c") if revised else Color("b7bfa2")
+	card_style.set_border_width_all(2 if revised else 1)
+	card_style.set_corner_radius_all(10 if revised else 18)
+	hud_title.add_theme_color_override("font_color",Color("e2c47c") if revised else Color("667657"))
+	hud_objective.add_theme_color_override("font_color",Color("fff3d1") if revised else Color("294b3b"))
+	hud_bees.add_theme_color_override("font_color",Color("e2c47c") if revised else Color("526b51"))
 
 func weather_text() -> String:
 	if model.shelter_index_at(model.p) >= 0:
@@ -615,28 +639,33 @@ func weather_text() -> String:
 
 func _draw() -> void:
 	if mode != "play": return
-	draw_style_box(card_style,Rect2(28,20,820,100))
-	draw_style_box(card_style,Rect2(968,20,284,100))
+	var revised: bool = model.stage == 4
+	var card_height := 80 if revised else 100
+	draw_style_box(card_style,Rect2(28,16 if revised else 20,820,card_height))
+	draw_style_box(card_style,Rect2(968,16 if revised else 20,284,card_height))
 	var hint_width := minf(1200.0,font.get_string_size(hud_hint.text,HORIZONTAL_ALIGNMENT_LEFT,-1,16).x+44.0)
-	draw_style_box(card(Color("314b2de8"),15),Rect2((1280-hint_width)/2,739,hint_width,38))
+	if hud_hint.visible:
+		draw_style_box(card(Color("314b2de8"),15),Rect2((1280-hint_width)/2,739,hint_width,38))
 	if model.storm_active:
 		draw_style_box(card_style,Rect2(28,135,212,62))
-	var energy_rect := Rect2(988,61,244,12)
+	var energy_y := 51 if revised else 61
+	var energy_rect := Rect2(988,energy_y,244,12)
 	draw_rect(energy_rect,Color("d6dcc3"))
 	draw_rect(Rect2(energy_rect.position,Vector2(244*energy_trail/Model.MAX_STAMINA,12)),Color("e9a88a"))
-	var energy_color := Color("b47752") if not model.can_burst() else Color("7c9b57")
+	var energy_color := Color("b47752") if not model.can_burst() else Color("eac65b") if revised else Color("7c9b57")
 	draw_rect(Rect2(energy_rect.position,Vector2(244*model.stamina/Model.MAX_STAMINA,12)),energy_color)
 	for i in range(1,5):
-		draw_line(Vector2(988+i*48.8,61),Vector2(988+i*48.8,73),Color("fff8e5"),2)
+		draw_line(Vector2(988+i*48.8,energy_y),Vector2(988+i*48.8,energy_y+12),Color("594329") if revised else Color("fff8e5"),2)
 	if model.charging and model.can_burst():
 		var cost_start: float = 988+244*(model.stamina-Model.BURST_COST)/Model.MAX_STAMINA
-		draw_rect(Rect2(cost_start,61,48.8,12),Color(1,0.87,0.65,0.4+sin(model.time*8)*0.15))
+		draw_rect(Rect2(cost_start,energy_y,48.8,12),Color(1,0.87,0.65,0.4+sin(model.time*8)*0.15))
+	var progress_y := 87 if revised else 106
 	for i in Model.STAGE_COUNT:
 		var color := Color("829853") if i <= model.stage else Color("d3d9bf")
-		draw_line(Vector2(48+i*11,106),Vector2(55+i*11,106),color,2.0,true)
+		draw_line(Vector2(48+i*11,progress_y),Vector2(55+i*11,progress_y),Color("d6b767") if revised and i <= model.stage else color,2.0,true)
 	var section_fill: float = float(model.completed_sections()) / model.section_count()
-	draw_line(Vector2(256,106),Vector2(824,106),Color("d3d9bf"),2)
-	draw_line(Vector2(256,106),Vector2(256+568*section_fill,106),Color("829853"),3)
+	draw_line(Vector2(256,progress_y),Vector2(824,progress_y),Color("90794c") if revised else Color("d3d9bf"),2)
+	draw_line(Vector2(256,progress_y),Vector2(256+568*section_fill,progress_y),Color("d6b767") if revised else Color("829853"),3)
 	var target: Vector2 = model.target_position()-Vector2(model.camera_x,0)
 	var on_screen := target.x > 85 and target.x < 1195
 	var marker := Vector2(clampf(target.x,58,1222),clampf(target.y-75,180,680))
