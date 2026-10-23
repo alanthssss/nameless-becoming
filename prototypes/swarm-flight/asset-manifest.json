@@ -548,8 +548,7 @@
         5,
         6,
         7,
-        8,
-        15
+        8
       ],
       "asset_family": "revision-atlas",
       "state_mapping": "Solid unchanged rectangles covered by opaque leaf cores. Whole overlapping clusters retain a 35px soft visual fringe outside the collider."
@@ -991,5 +990,14 @@
     "receipt": "outputs/swarm-flight/2026-10-23-art-rollout/build-receipt.json",
     "status": "macOS exported and bootstrapped; same exported PCK passed both full native input routes",
     "quick_entry_save": "before_the_rain_art_quick_20261023.json"
+  },
+  "seasonal_material_correction": {
+    "version": "0.9.2",
+    "decision": "SF-R30",
+    "level": 15,
+    "replacement": "15-1 uses the existing garden-terrain greenhouse platform instead of the summer flowering hedge",
+    "unchanged": "Source PNGs, terrain rectangle, jet geometry/timing, routes and checkpoint",
+    "audit": "13–16 contain no other flowering hedge terrain; shared wind flowers and shelter leaves retain gameplay identity",
+    "new_generation_calls": 0
   }
 }
