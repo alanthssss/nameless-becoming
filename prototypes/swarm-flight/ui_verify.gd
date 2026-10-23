@@ -530,6 +530,62 @@ func airflow_input_contract() -> void:
 	expect(game.model.airflow_at(game.model.p).is_zero_approx() and not game.cue_label.text.contains("推动中"),"leaving the real wind field removes the pushing HUD state")
 	await shot("airflow-ordinary-exited")
 
+func sample_visual_contract() -> void:
+	for stage in [0,4]:
+		for alternate in [false,true]:
+			if stage == 0 and alternate: continue
+			release_all()
+			game.model.reset_journey()
+			game.begin_stage(stage)
+			var driver = Driver.new(game.model,alternate)
+			var flight_shot := false
+			var charge_shot := false
+			var leaf_shot := false
+			var suffix := "%02d-%s" % [stage+1,"lower" if alternate else "upper"]
+			for frame in 15000:
+				if game.mode in ["transition","arrival"]: break
+				if game.mode == "pause":
+					release_all()
+					tap(KEY_ESCAPE)
+				var action: Dictionary = driver.next_input()
+				if not str(action.get("error","")).is_empty():
+					expect(false,"sample input route: "+str(action.error))
+					break
+				apply_action(action)
+				ticks(1)
+				if not charge_shot and game.model.charging and game.model.charge >= 0.3:
+					charge_shot = true
+					if stage == 4 and game.model.encounter_index() == 0:
+						var landing: Vector2 = game.model.shelters[0].pos-Vector2(game.model.camera_x,0)
+						expect(landing.x > 70 and landing.x < 1230,"shared landing is on screen before the first sample launch")
+						var bee: Vector2 = game.model.p-Vector2(game.model.camera_x,0)
+						expect(not Rect2(game.cue_panel.position,game.cue_panel.size).grow(12).has_point(bee),"high-flight charge prompt leaves the bee visible")
+					await shot("sample-"+suffix+"-charge")
+				if not flight_shot and game.model.p.x > 850:
+					flight_shot = true
+					await shot("sample-"+suffix+"-flight")
+				if not leaf_shot and game.model.checkpoint_index == 0 and game.model.shelter_index_at(game.model.p) == 0:
+					leaf_shot = true
+					if stage == 4:
+						var side := "bottom" if alternate else "top"
+						expect(game.model.sample_approach == side,"real scene input takes "+side+" branch")
+						expect(game.cue_label.text.contains("下面" if alternate else "上面"),"Xiaoman responds to actual "+side+" approach at first shared leaf")
+					await shot("sample-"+suffix+"-shared-leaf")
+					if stage == 4 and alternate and DisplayServer.get_name() != "headless":
+						var old_size := root.size
+						root.size = Vector2i(960,600)
+						await process_frame
+						await shot("sample-05-lower-small-window")
+						root.size = old_size
+						await process_frame
+			expect(flight_shot and leaf_shot and game.mode == "transition","sample level reaches its shared leaves and goal through ordinary input")
+			await shot("sample-"+suffix+"-arrival")
+	# UI text measured at the shipped logical resolution, including every cue.
+	for definition in game.Data.definitions():
+		for encounter in definition.encounters:
+			expect(game.font.get_string_size(str(encounter.cue),HORIZONTAL_ALIGNMENT_LEFT,-1,20).x <= game.hud_objective.size.x,"objective fits: "+str(encounter.name))
+	release_all()
+
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
@@ -537,6 +593,14 @@ func run() -> void:
 	game.set_process(false)
 	game.world.set_process(false)
 	game.sound.set_muted(true)
+	if "--sample-visuals-only" in OS.get_cmdline_user_args():
+		await sample_visual_contract()
+		for failure in failures: push_error(failure)
+		print("SAMPLE VISUAL CHECKS: %d, failures %d" % [checks,failures.size()])
+		game.queue_free()
+		await process_frame
+		quit(0 if failures.is_empty() else 1)
+		return
 	if "--season-elements-only" in OS.get_cmdline_user_args():
 		await season_ui_contract()
 		await airflow_input_contract()
@@ -571,6 +635,7 @@ func run() -> void:
 	await shield_ui_contract()
 	await season_ui_contract()
 	await airflow_input_contract()
+	await sample_visual_contract()
 	if failures.is_empty(): print("SWARM FLIGHT UI VERIFIED: %d checks, complete sixteen-level input routes" % checks)
 	else:
 		for failure in failures: push_error(failure)

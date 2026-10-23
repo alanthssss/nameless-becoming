@@ -1,10 +1,12 @@
-# 雨来之前 · 四季旅程 Alpha 0.7.1
+# 雨来之前 · 四季旅程 Alpha 0.8.0
 
 四区16关现已连接为从标题到结尾的完整开发版。保留春天四关的飞行、救援、蓄力冲刺、连续借风、追雨与三首音乐；夏、秋、冬十二关已按真实地形、喷泉择时和局部气流重排，共60个手工遭遇。它是全篇Alpha，商业美术、真人首通时长和发行验收尚未完成。
 
+01「晨光菜圃」与05「花篱另一边」加入原生绘制的画面样板，保留已选植物卡通方向。05开头现在能看见共同叶亭；末段收成短抵达，减少同关重复分叉。小满按实际走过的上下路回应，旧档无来向证据时使用中性对白。全篇16关、60遭遇仍可从标题玩到结尾；其余14关世界美术仍为Alpha。这次是实机样板，尚未通过成品审美验收。
+
 ## 打开这一版
 
-macOS 包：`outputs/swarm-flight/2026-10-22-interaction-coherence/雨来之前·四季旅程.app`。双击同目录「开始试玩.command」，标题应为「雨来之前 · 四季旅程 Alpha 0.7.1」。Enter从春天开始；标题页Tab循环选择春／夏／秋／冬，随后Enter出发。选择后续章节会开始一趟新旅程；要保留当前旅程，选择继续存档。
+macOS 包：`outputs/swarm-flight/2026-10-23-visual-sample/雨来之前·四季旅程.app`。双击同目录「开始试玩.command」，标题应为「雨来之前 · 四季旅程 Alpha 0.8.0」。Enter从春天开始；标题页Tab循环选择春／夏／秋／冬，随后Enter出发。选择后续章节会开始一趟新旅程；要保留当前旅程，选择继续存档。
 
 Godot 4.6.2可直接打开本目录`project.godot`，或运行`play.command`。这是独立飞行工程，不启动旧年度工程。旧0.6.0、0.5.2及更早包保留。
 
@@ -35,9 +37,9 @@ Godot 4.6.2可直接打开本目录`project.godot`，或运行`play.command`。�
 
 ## 进度
 
-0.7.1继续使用0.7.0的文件`before_the_rain_journey_v2.json`（version 6 / content_revision 8）。不读取、迁移或覆盖0.6.0的`before_the_rain_journey_v1.json`与旧四关`before_the_rain_chapter_v4.json`；旧包仍能继续各自进度。54份0.7.0关卡起点／叶亭样本与当前真实存档副本通过新版只读恢复检查。春天救援仍为4／2／1／1，后续角色只是邻居，伙伴总数仍8只。
+0.8.0继续使用0.7.0／0.7.1的文件`before_the_rain_journey_v2.json`（version 6 / content_revision 8）。不读取、迁移或覆盖0.6.0的`before_the_rain_journey_v1.json`与旧四关`before_the_rain_chapter_v4.json`；旧包仍能继续各自进度。历史0.7.0验证为54份样本；本次从实际0.7.1打包PCK生成05起点／叶亭／抵达的10份档案，逐份恢复到新布局并继续到下一叶或终点，原个人存档未改。春天救援仍为4／2／1／1，后续角色只是邻居，伙伴总数仍8只。
 
-关中继续回到已存宽叶亭；已穿过终点则进入下一关；16关完成后可重看结尾。收集不锁出口。标题选章会重开当前Alpha旅程，不改旧版本进度；结束页统计只反映这趟旅程。
+关中继续回到已存宽叶亭；已穿过终点则进入下一关；16关完成后可重看结尾。收集不锁出口。标题选章会重开当前Alpha旅程（与0.7.0／0.7.1共用v2进度）；旧v1和四关存档保留；结束页统计只反映这趟旅程。
 
 ## 开发验证
 
@@ -52,7 +54,7 @@ godot --headless --path prototypes/swarm-flight --script res://audio_verify.gd
 
 `route_driver.gd`知道所有答案，仅提供普通按键，不修改模型、地图、资源或位置；它不代表玩家乐趣或真人首通时长。原生截图用`SWARM_FLOW_CAPTURE_DIR`；`--swarm-qa`隔离真实进度，存档验证只写独立临时路径。每次交付事实见主设计文档SF-R21和输出目录`build-receipt.json`。
 
-美术由`world_view.gd`程序绘制，音乐由`sound.gd`原创合成，来源与哈希见`asset-manifest.json`。1280×800逻辑画面保比例缩放；macOS universal包排除测试脚本。四季背景与角色仍是Alpha美术，未通过商业成品审美验收。Windows／手柄／Steam／独立玩家验证待后续完成；首通2～3小时仍是未验证的商业制作目标。
+美术由`world_view.gd`及两关的`sample_landscape.gd`程序绘制，音乐由`sound.gd`原创合成，来源与哈希见`asset-manifest.json`。1280×800逻辑画面保比例缩放；macOS universal包排除测试脚本。四季背景与角色仍是Alpha美术，未通过商业成品审美验收。Windows／手柄／Steam／独立玩家验证待后续完成；首通2～3小时仍是未验证的商业制作目标。
 
 0.7.1修复绕过风花普通入风后松键不受风的问题；13／14两处上升风边界移出台面，13-2风花冲刺穿逆风保留。验证包含1533项模型检查、449项原生完整UI检查、24条后续关卡路线及真实按键入风复现。记录见主设计文档SF-R22；截图中的明确UI状态样本与连续输入路线分别标注。
 
@@ -67,4 +69,6 @@ python3 tools/check_delivery.py --contract prototypes/swarm-flight/delivery-cont
   --revision FULL_FROZEN_COMMIT --expect candidate
 ```
 
-前两项测试工具；第三项在临时隔离副本恢复两个已知风区缺陷，必须被指定行为断言抓住，不修改实际工程／进度。最后一项检查SF-R23整包证据，缺少内容、美术、制作实耗时必须失败；维护通过不等于候选或用户验收。receipt字段及边界见已安装的`godot-production-workflow/references/quality-gates.md`，代码为该自有技能的同步副本。CI会运行工具回归，不自动把当前游戏记为候选。根因与机制见SF-R24；当前游戏仍为0.7.1，本轮无新试玩包。
+前两项测试工具；第三项在临时隔离副本恢复两个已知风区缺陷，必须被指定行为断言抓住，不修改实际工程／进度。最后一项检查SF-R23整包证据，缺少内容、美术、制作实耗时必须失败；维护通过不等于候选或用户验收。receipt字段及边界见已安装的`godot-production-workflow/references/quality-gates.md`，代码为该自有技能的同步副本。CI会运行工具回归，不自动把当前游戏记为候选。根因与机制见SF-R24；SF-R24维护时没有新包；0.8.0样板与全篇复核另见主设计文档SF-R26。
+
+样板定向检查：`godot --path prototypes/swarm-flight --script res://ui_verify.gd -- --swarm-qa --sample-visuals-only`；实际模型来向检查：`godot --headless --path prototypes/swarm-flight --script res://verify.gd -- --sample-approach-only`。原生截图来自真实按键驱动，另有960×600窗口采样；已知答案路线不代表真人首通、偏好或商品时长。
