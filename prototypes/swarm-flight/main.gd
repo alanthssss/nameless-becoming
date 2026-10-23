@@ -1,5 +1,7 @@
 extends Node2D
 const Model = preload("res://game_model.gd")
+const LongModel = preload("res://long_journey_model.gd")
+const LongContent = preload("res://long_journey_content.gd")
 const Save = preload("res://save_data.gd")
 const World = preload("res://world_view.gd")
 const Sound = preload("res://sound.gd")
@@ -7,6 +9,8 @@ const HANDOFF_SECONDS := 2.4
 const Data = preload("res://chapter_data.gd")
 var titles: Array[String] = []
 var model = Model.new()
+var long_journey := false
+var resume_charge_guard := false
 var world
 var sound
 var mode := "title"
@@ -58,13 +62,24 @@ var start_region := 0
 var hud_layout_stage := -1
 
 func _ready() -> void:
-	for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
 	font.font_names = PackedStringArray(["PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei","sans-serif"])
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--swarm-qa": test_mode = true
 		if arg.begins_with("--progress-file="): progress_file = arg.trim_prefix("--progress-file=")
 		if arg.begins_with("--capture="): capture_path = arg.trim_prefix("--capture=")
 		if arg.begins_with("--capture-after="): capture_seconds = float(arg.trim_prefix("--capture-after="))
+	long_journey = ProjectSettings.get_setting("journey/long_sample",false) and not test_mode
+	if "--classic-journey" in OS.get_cmdline_user_args(): long_journey = false
+	if "--long-journey" in OS.get_cmdline_user_args(): long_journey = true
+	if long_journey:
+		model = LongModel.new()
+		for i in 2: titles.append("%02d  %s" % [i+7,LongContent.definitions()[i].title])
+		if progress_file.is_empty() and OS.has_feature("template"):
+			var folder := OS.get_executable_path().get_base_dir().path_join("../../..").simplify_path().path_join("存档")
+			DirAccess.make_dir_recursive_absolute(folder)
+			progress_file = folder.path_join("summer_long_07_08_r1.json")
+	else:
+		for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
 	world = World.new()
 	world.model = model
 	world.feedback_font = font
@@ -73,9 +88,9 @@ func _ready() -> void:
 	sound = Sound.new()
 	add_child(sound)
 	build_ui()
-	saved_payload = {} if test_mode else Save.read_payload(Save.PATH if progress_file.is_empty() else progress_file)
+	saved_payload = {} if test_mode else Save.read_payload(save_path(),LongModel.new() if long_journey else null)
 	if not saved_payload.is_empty():
-		var probe = Model.new()
+		var probe = LongModel.new() if long_journey else Model.new()
 		if not probe.restore_payload(saved_payload): saved_payload = {}
 	saved_stage = int(saved_payload.get("stage",-1))
 	get_tree().auto_accept_quit = false
@@ -85,8 +100,11 @@ func _ready() -> void:
 	# Explicit opt-in for deterministic captures, never changes normal launch behavior.
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--chapter="):
-			begin_stage(clampi(int(arg.trim_prefix("--chapter=")),0,Model.STAGE_COUNT-1))
+			begin_stage(clampi(int(arg.trim_prefix("--chapter=")),0,model.last_stage_index()))
 	queue_redraw()
+
+func save_path() -> String:
+	return progress_file if not progress_file.is_empty() else LongModel.SAVE_PATH if long_journey else Save.PATH
 
 func label_at(pos: Vector2, size: Vector2, text_size: int, color: Color) -> Label:
 	var l := Label.new()
@@ -199,7 +217,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     Garden Journey 0.9.3"
+	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.10.0" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -257,10 +275,16 @@ func show_title() -> void:
 		secondary_button.text = "继续第 %d 关 · 上一关已抵达" % (saved_stage+2)
 	third_button.show()
 	third_button.text = "退出"
+	if long_journey:
+		heading.text = "花篱外的长旅程"
+		description.text = "第07关 花篱另一边 → 第08关 喷嚏前后\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n触到叶亭记住恢复点；失败按 R 返回。"
+		main_button.text = "从第07关出发"
+		secondary_button.text = "重看试玩结尾" if saved_payload.get("completed",false) else "继续第%02d关 · 保存的位置" % (saved_stage+7)
 	reset_menu()
 	refresh_hud()
 
 func begin_stage(index: int) -> void:
+	resume_charge_guard = false
 	held.clear()
 	handoff_panel.hide()
 	toast_priority = 0
@@ -300,7 +324,7 @@ func on_secondary() -> void:
 		world.presentation_active = true
 		var saved_seconds = saved_payload.get("played_seconds",0.0)
 		played_seconds = float(saved_seconds) if (saved_seconds is float or saved_seconds is int) and is_finite(float(saved_seconds)) and float(saved_seconds) >= 0 else 0.0
-		if model.phase == "transition":
+		if model.phase == "transition" and not long_journey:
 			begin_stage(model.stage+1)
 			return
 		held.clear()
@@ -311,6 +335,11 @@ func on_secondary() -> void:
 		mode = "play"
 		if saved_payload.get("completed",false):
 			show_ending()
+		elif long_journey:
+			if model.phase in ["transition","ending"]: show_transition()
+			pause_game()
+			heading.text = "已回到保存的位置"
+			description.text = titles[model.stage]+" · "+model.encounter_name()+"\n位置、体力和场景都停在离开时。\n按 Enter 或 Esc 继续飞行。\nR 只在需要重试时返回最近的叶亭。"
 		else:
 			message("回到已保存的落脚点 · 重新按方向键出发",3.5)
 		refresh_hud()
@@ -320,28 +349,41 @@ func on_secondary() -> void:
 
 func on_third() -> void:
 	if mode == "pause":
-		persist_progress()
+		if not persist_progress():
+			show_save_failure()
+			return
 		held.clear()
-		model.clear_input()
+		if not long_journey: model.clear_input()
 		show_title()
 	else:
 		quit_game()
 
-func persist_progress() -> void:
-	if test_mode: return
+func persist_progress() -> bool:
+	if test_mode: return true
 	var payload: Dictionary = model.save_payload()
 	payload["played_seconds"] = played_seconds
 	if model.phase == "ending": payload["completed"] = true
-	has_saved = Save.write_payload(payload,Save.PATH if progress_file.is_empty() else progress_file)
+	has_saved = Save.write_payload(payload,save_path(),LongModel.new() if long_journey else null)
 	if has_saved:
 		saved_payload = payload.duplicate(true)
 		saved_stage = model.stage
+		save_warning = false
 	elif not save_warning:
 		save_warning = true
 		message("存档暂时失败 · 可以继续玩，请暂时不要退出。",5.0,Color("ffd3b6"),5)
 
+	return has_saved
+
+func show_save_failure() -> void:
+	if mode in ["play","transition","arrival"]: pause_game()
+	heading.text = "存档还没有写入"
+	description.text = "游戏仍然停在这里。\n请检查试玩包里的“存档”文件夹是否可写。\n可以继续游玩；再次关闭窗口或回到标题时会重试保存。"
+	panel.show()
+
 func quit_game() -> void:
-	if mode != "title": persist_progress()
+	if mode != "title" and not persist_progress():
+		show_save_failure()
+		return
 	get_tree().quit()
 
 func pause_game() -> void:
@@ -352,10 +394,12 @@ func pause_game() -> void:
 	world.presentation_active = false
 	handoff_panel.hide()
 	held.clear()
-	model.clear_input()
+	if not long_journey: model.clear_input()
 	panel.show()
 	heading.text = "歇一口气"
 	description.text = model.chapter_title()+" · "+model.encounter_name()+"\n方向键飞行 · 空格蓄力后松开冲刺\n宽叶下自动保存、恢复体力；可以接着飞\n"+model.section_progress_text()+"\nR 返回落脚点 · M 声音 · Esc 继续"
+	if long_journey:
+		description.text = titles[model.stage]+" · "+model.encounter_name()+"\n"+("当前位置已保存。退出后从这里继续。" if has_saved or test_mode else "本次保存失败，请暂时不要退出。")+"\n"+model.section_progress_text()+"\nR 返回恢复点 · Esc 继续 · M 声音"
 	main_button.text = "继续飞行"
 	secondary_button.text = "回到就近休息点"
 	secondary_button.visible = paused_from == "play"
@@ -368,6 +412,7 @@ func pause_game() -> void:
 
 func resume_game() -> void:
 	held.clear()
+	resume_charge_guard = long_journey and model.charging
 	mode = paused_from
 	world.presentation_active = true
 	panel.hide()
@@ -399,7 +444,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if mode in ["transition","arrival"]:
 		if key in [KEY_ENTER,KEY_KP_ENTER]: on_primary()
 		return
-	if mode == "title" and key == KEY_TAB:
+	if mode == "title" and key == KEY_TAB and not long_journey:
 		start_region = (start_region+1)%Data.REGIONS.size()
 		main_button.text = "从%s出发 · %02d关" % [Data.REGIONS[start_region],start_region*4+1]
 		reset_menu()
@@ -413,17 +458,19 @@ func _unhandled_input(event: InputEvent) -> void:
 			buttons[menu_index].pressed.emit()
 		return
 	if key == KEY_R:
+		resume_charge_guard = false
 		model.restore_checkpoint()
 		held.clear()
 		return
 	if key in [KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,KEY_W,KEY_A,KEY_S,KEY_D,KEY_SPACE]:
 		held[key] = true
+		if key == KEY_SPACE: resume_charge_guard = false
 
 func input_direction() -> Vector2:
 	return Vector2(float(held.has(KEY_RIGHT) or held.has(KEY_D))-float(held.has(KEY_LEFT) or held.has(KEY_A)),float(held.has(KEY_DOWN) or held.has(KEY_S))-float(held.has(KEY_UP) or held.has(KEY_W))).normalized()
 
 func tick(delta: float) -> void:
-	if mode == "play":
+	if mode == "play" and not resume_charge_guard:
 		var was_ready: bool = model.charge >= Model.CHARGE_READY and model.can_burst()
 		var before_time: float = model.time
 		model.step(input_direction(),held.has(KEY_SPACE),delta)
@@ -433,7 +480,7 @@ func tick(delta: float) -> void:
 		for event in model.events:
 			if event.kind in ["recover_rain","recover_exhaustion","recover_timeout"]: held.clear()
 			world.emit_event(event.kind,event.pos,event)
-			sound.play_event("arrival_bell" if event.kind == "finish" and model.stage < Model.STAGE_COUNT-1 else event.kind)
+			sound.play_event("arrival_bell" if event.kind == "finish" and model.stage < model.last_stage_index() else event.kind)
 			match event.kind:
 				"rescue":
 					event_message(event.kind,"救出 %d 只 · 它们先回家了！ · 体力 +%d" % [int(event.get("count",1)),int(round(event.get("reward",0)))],2.8)
@@ -527,10 +574,13 @@ func show_transition() -> void:
 	panel.hide()
 	transition_left = HANDOFF_SECONDS
 	handoff_heading.text = "到家了，大家都在。" if mode == "arrival" else "%s · 已抵达" % titles[model.stage]
-	if (model.stage+1)%4 == 0 and model.stage < Model.STAGE_COUNT-1: transition_left = 4.5
+	if (model.stage+1)%4 == 0 and model.stage < model.last_stage_index(): transition_left = 4.5
 	handoff_detail.text = "终于可以收起翅膀，歇一口气。\nEnter 看结尾 · Esc 歇一会儿" if mode == "arrival" else "接下来  %s\n自动出发 · Enter 提前 · Esc 歇一会儿" % titles[model.stage+1]
 	if not model.chapter.arrival.is_empty() and mode != "arrival":
 		handoff_detail.text = model.chapter.arrival+"\nEnter 继续 · Esc 暂停"
+	if long_journey and mode == "arrival":
+		handoff_heading.text = "两座庭院，都走到了。"
+		handoff_detail.text = "画眉记住了这条新路。\nEnter 看试玩结尾 · Esc 暂停"
 	handoff_panel.show()
 	cue_panel.hide()
 	toast.hide()
@@ -547,6 +597,10 @@ func show_ending() -> void:
 	secondary_button.hide()
 	third_button.show()
 	third_button.text = "留在这一刻，退出"
+	if long_journey:
+		heading.text = "两座庭院，走完了。"
+		description.text = "第07—08关试玩结束。\n花篱的另一面，喷嚏后的安静，还有自己选过的路。\n旅程 "+clock_text(played_seconds)+" · 返回恢复点 "+str(model.recoveries)+" 次\n晨露 "+str(model.garden_total())+" 颗。谢谢你飞到这里。"
+		main_button.text = "再走一次第07—08关"
 	end_time = 0
 	persist_progress()
 	reset_menu()
@@ -565,8 +619,8 @@ func refresh_hud() -> void:
 	var title: String = "%s · %d/%d %s" % [titles[model.stage],model.encounter_index()+1,model.chapter.encounters.size(),model.encounter_name()]
 	if model.stage_dew_total() > 0: title += "   ·   晨露 %d/%d" % [model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
-	var hint: String = model.hint()
-	if model.charging or model.shelter_index_at(model.p) >= 0:
+	var hint: String = "蓄力已保留 · 按住空格接住，松开后冲刺" if resume_charge_guard else model.hint()
+	if not resume_charge_guard and (model.charging or model.shelter_index_at(model.p) >= 0):
 		# The nearby cue already conveys this state; keep the garden visible.
 		hint = ""
 	if hint.begins_with("飞行缓慢耗体力"):
@@ -588,6 +642,7 @@ func refresh_hud() -> void:
 		hud_objective.text = objective
 		hud_hint.text = hint
 		hud_bees.text = bees_text if model.stage < 4 else "%s · %d/4" % [["春","夏","秋","冬"][model.chapter.region],model.stage%4+1]
+		if long_journey: hud_bees.text = "夏 · 第%02d关" % (model.stage+7)
 		hud_energy.text = energy_text
 		hud_clock.text = clock
 	var cue: Dictionary = model.context_cue()
@@ -658,7 +713,7 @@ func _draw() -> void:
 		var cost_start: float = 988+244*(model.stamina-Model.BURST_COST)/Model.MAX_STAMINA
 		draw_rect(Rect2(cost_start,energy_y,48.8,12),Color(1,0.87,0.65,0.4+sin(model.time*8)*0.15))
 	var progress_y := 87
-	for i in Model.STAGE_COUNT:
+	for i in model.last_stage_index()+1:
 		var color := Color("829853") if i <= model.stage else Color("d3d9bf")
 		draw_line(Vector2(48+i*11,progress_y),Vector2(55+i*11,progress_y),Color("d6b767") if i <= model.stage else color,2.0,true)
 	var section_fill: float = float(model.completed_sections()) / model.section_count()
