@@ -548,8 +548,7 @@
         5,
         6,
         7,
-        8,
-        15
+        8
       ],
       "asset_family": "revision-atlas",
       "state_mapping": "Solid unchanged rectangles covered by opaque leaf cores. Whole overlapping clusters retain a 35px soft visual fringe outside the collider."
