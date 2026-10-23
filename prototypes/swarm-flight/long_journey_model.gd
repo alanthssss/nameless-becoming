@@ -129,7 +129,7 @@ func valid_checkpoint(saved: Dictionary) -> bool:
 func valid_position(point: Vector2) -> bool:
 	return point.x >= 0 and point.x <= world_width+100 and point.y >= 60 and point.y <= 750
 
-func valid_state(state: Dictionary) -> bool:
+func valid_state(state: Dictionary,previous := false) -> bool:
 	if state.size() != FIELDS.size(): return false
 	for key in FIELDS:
 		if not state.has(key): return false
@@ -151,7 +151,10 @@ func valid_state(state: Dictionary) -> bool:
 		if item.collected: collected += 1
 	if state.garden_awards[stage] != collected: return false
 	for i in state.garden_awards.size():
-		if state.garden_awards[i] < 0 or state.garden_awards[i] > (Content.build(i).dew.size() if i < 2 else 0): return false
+		var maximum := 0
+		if i < 2:
+			maximum = Content.previous_dew(i).size() if previous or i < stage else Content.build(i).dew.size()
+		if state.garden_awards[i] < 0 or state.garden_awards[i] > maximum: return false
 	for i in state.shelters.size():
 		if state.shelters[i].reached != (i <= state.checkpoint_index): return false
 	if state.phase != "playing" and state.checkpoint_index != shelters.size()-1: return false
@@ -166,7 +169,8 @@ func valid_state(state: Dictionary) -> bool:
 
 func restore_payload(data: Dictionary) -> bool:
 	if not data.get("journey_id") is String or not number(data.get("version")): return false
-	if data.journey_id != Content.JOURNEY_ID or data.version != 1: return false
+	var previous: bool = data.journey_id == Content.PREVIOUS_ID
+	if (data.journey_id != Content.JOURNEY_ID and not previous) or data.version != 1: return false
 	if not number(data.get("stage")) or (float(data.stage) != floor(float(data.stage)) or int(data.stage) not in [0,1]): return false
 	if not data.get("rng_state") is String or not data.rng_state.is_valid_int() or str(int(data.rng_state)) != data.rng_state: return false
 	var state = unpack(data.get("state"))
@@ -175,6 +179,16 @@ func restore_payload(data: Dictionary) -> bool:
 	var probe = get_script().new()
 	probe.load_stage(int(data.stage))
 	if not data.get("completed") is bool: return false
+	if previous:
+		# Validate the complete old snapshot before moving any pickup. Never accept
+		# arbitrary coordinates merely because a file carries the previous ID.
+		probe.dew.assign(Content.previous_dew(int(data.stage)))
+		probe.checkpoint.dew = probe.dew.duplicate(true)
+		if not probe.valid_state(state,true) or data.completed != state.completed: return false
+		state.dew = migrate_dew(state.dew,int(data.stage))
+		state.checkpoint.dew = migrate_dew(state.checkpoint.dew,int(data.stage))
+		state.garden_awards[int(data.stage)] = state.dew.filter(func(d): return d.collected).size()
+		probe.load_stage(int(data.stage))
 	if not probe.valid_state(state) or data.completed != state.completed: return false
 	load_stage(int(data.stage))
 	for key in FIELDS:
@@ -186,3 +200,11 @@ func restore_payload(data: Dictionary) -> bool:
 	rng.state = int(data.rng_state)
 	events.clear()
 	return true
+
+static func migrate_dew(previous: Array,index: int) -> Array:
+	var revised: Array = Content.build(index).dew
+	for item in revised:
+		# The two old branch rewards become one shared reward; consuming either
+		# leaves it consumed, in both live state and the separate failure snapshot.
+		item.collected = previous.any(func(old): return old.encounter == item.encounter and old.collected)
+	return revised
