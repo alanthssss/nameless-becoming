@@ -1,5 +1,6 @@
 extends RefCounted
 ## Presentation-only atlas adapters. World anchors and all rules stay in the model.
+const Winter = preload("res://winter_art.gd")
 const ATLAS: Texture2D = preload("res://art/revision-atlas.png")
 # Regions exclude the atlas's near-transparent outer specks, without changing it.
 const BEE := Rect2(67,158,510,456)
@@ -26,11 +27,15 @@ static func bee_body(v: Node2D, alpha: float, eyes_closed: bool, charge: float, 
 		v.draw_line(p+Vector2(-4,2 if trapped else -1),p+Vector2(4,-1 if trapped else charge*1.5),Color(0.22,0.12,0.035,alpha),1.1,true)
 
 static func flower(v: Node2D, p: Vector2, direction: Vector2, close: float, recoil: float, used: bool) -> void:
-	var scale := 154.0/FLOWER.size.x
+	var winter := Winter.active(v)
+	var atlas: Texture2D = Winter.ATLAS if winter else ATLAS
+	var source: Rect2 = Winter.FLOWER if winter else FLOWER
+	var pivot: Vector2 = Winter.FLOWER_PIVOT if winter else FLOWER_PIVOT
+	var scale := 154.0/source.size.x
 	var fold := Vector2(1.0-close*0.62,1.0-close*0.30)
 	var origin := p+direction*recoil+Vector2(0,close*10)
-	var tint := Color.WHITE.lerp(Color(0.64,0.80,0.68),close)
-	v.draw_texture_rect_region(ATLAS,Rect2(origin+(FLOWER.position-FLOWER_PIVOT)*scale*fold,FLOWER.size*scale*fold),FLOWER,tint)
+	var tint := Color.WHITE.lerp(Color("9daebf") if winter else Color(0.64,0.80,0.68),close)
+	v.draw_texture_rect_region(atlas,Rect2(origin+(source.position-pivot)*scale*fold,source.size*scale*fold),source,tint)
 	if used: return
 	# The mark is independent of the painted petals and follows the real launch.
 	var side := direction.orthogonal()
@@ -46,7 +51,7 @@ static func canopy(v: Node2D, p: Vector2, half: float) -> void:
 	var size := Vector2(width,95.0)
 	# Every visible leaf pixel is above the model's safe pocket (p.y - 64).
 	var rect := Rect2(Vector2(p.x-width/2,p.y-66-size.y),size)
-	v.draw_texture_rect_region(ATLAS,rect,LEAF)
+	v.draw_texture_rect_region(Winter.ATLAS if Winter.active(v) else ATLAS,rect,Winter.LEAF if Winter.active(v) else LEAF)
 
 static func hedge(v: Node2D, r: Rect2) -> void:
 	# Each collider partition sits inside the opaque leafy core. A soft fringe
@@ -63,5 +68,5 @@ static func hedge(v: Node2D, r: Rect2) -> void:
 static func small_leaf(v: Node2D, root: Vector2, tip: Vector2, height: float) -> void:
 	var length := root.distance_to(tip)
 	v.draw_set_transform(v._world_offset+root,root.angle_to_point(tip)-PI)
-	v.draw_texture_rect_region(ATLAS,Rect2(-length,-height, length,height),LEAF)
+	v.draw_texture_rect_region(Winter.ATLAS if Winter.active(v) else ATLAS,Rect2(-length,-height, length,height),Winter.LEAF if Winter.active(v) else LEAF)
 	v.draw_set_transform(v._world_offset)

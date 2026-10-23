@@ -1,0 +1,64 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-10-23",
+  "purpose": "Seasonal variants of approved assets for winter13–16; no gameplay changes",
+  "prompts": [
+    {
+      "key": "plants",
+      "refs": [
+        "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/prototypes/swarm-flight/art/revision-atlas.png",
+        "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/prototypes/swarm-flight/art/garden-landmarks.png",
+        "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/prototypes/swarm-flight/art/garden-terrain.png"
+      ],
+      "prompt": "Use case: stylized-concept. Production transparent WINTER sprite atlas for the established original 2D bee-garden game. The three inputs are STYLE AND OBJECT IDENTITY REFERENCES: image1 leaf canopy and wind flower, image2 open vine arch, image3 solid stem. Preserve their appealing rounded hand-painted casual-game language, tapered dark outlines, upper-left ivory light, controlled sculpted shading and side-view camera. Make winter seasonal versions, not a different game style.\nTECHNICAL OUTPUT: square RGBA PNG, true transparent background, FOUR completely separate isolated objects in a spacious2x2 grid. Each inside its own quadrant with at least8%canvas empty gutters, no overlapping objects or border. No labels/text/numbers/characters/scenery. All visible pixels must remain inside each slot. Keep a generous empty margin.\nTOP LEFT: one straight vertical solid WOODY STALK, roughly1:4 width:height, rounded cylinder with continuous brown-gray bark, visible subtle pale growth rings on its oval cut top, cold ivory frost along left edge. NO green juicy stem, no leaves, no branching, no side holes, no taper through middle: must provide an opaque straight rectangular bark core for collision-aligned strip use. Flat bottom. Snow rim is thin and stays within shaft width.\nTOP RIGHT: one complete winter WIND ROSETTE, same6-lobed silhouette and large circular center as the reference turquoise wind-flower head. A dormant papery seed rosette, cool pale blue-gray and ivory lobes with softly frosted rims, woody gray-tan ribs, a warm cream circular center edged in antique gold. The large center remains clear for a code-drawn directional arrow. Not a fresh tropical flower, no pink flowers, no green foliage. No stem attached.\nBOTTOM LEFT: one wide curled winter LEAF CANOPY with the exact graceful side-view long crescent silhouette of image1 bottom-left leaf. Width:height about2.5:1. Muted slate-blue evergreen underside with desaturated brown vein; broad soft cream snow rests along the whole upper surface, with small blue snow shadows, simple readable snow lip. No vivid lime green or new buds. A complete isolated single canopy, no stalk, no ground. Its underside stays free of icicles or dangling pieces so the safe passage under it remains visually clear.\nBOTTOM RIGHT: one complete open winter VINE ARCH, same asymmetrical curl open to left and supported on right as image2 upper-right. Brown dormant woody twigs, small muted blue-gray evergreen leaf remnants and several cream snow caps on upper-facing branches. Opening is clear transparent; no floor, gate, doorway panel, hanging snow, text or bell. Do not make a closed oval. Keep the reference arch identity and flight opening.\nThese4 objects form ONE consistent winter plant family. Warm accents come only from cream lighting and wood; clear cold-season material changes, not a green object with blue tint. Strong simple silhouettes readable at small scale."
+    },
+    {
+      "key": "home",
+      "refs": [
+        "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/prototypes/swarm-flight/art/garden-home.png",
+        "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/prototypes/swarm-flight/art/garden-winter.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Edit target image1: existing hand-painted tree-stump house sprite. Image2 is supporting winter environment/palette reference. Produce a WINTER seasonal version of the SAME tree house on genuine transparent background. Preserve EXACT target canvas aspect ratio, object position, scale, trunk/roots silhouette, bark detail and warm honey-lit interior. Preserve the hollow opening boundary and center point pixel-for-pixel as closely as possible: it is a flight exit aligned to gameplay geometry. Do not reshape, narrow, fill or move this doorway, its arch, its empty dark interior or its threshold.\nChange only seasonal vegetation/weathering: replace every bright lime-green leaf cluster on the side branches with dormant brown twig forks and a few restrained desaturated blue-gray evergreen remnants; add soft sculpted ivory snow resting on the cut trunk top and upper-facing branches and roots. Replace vivid green moss with muted cold brown-gray bark/lichen and small snow patches. Keep most warm wood clearly visible. Snow should have cool muted blue shadows and the same confident hand-painted broad shading as the original. Do not pile snow across the doorway or threshold, do not add icicles hanging into the entrance. Warm golden rim around the interior makes home welcoming against winter.\nNo scene/background, ground plane, text, characters, extra objects, lights, doors or windows. Never crop the roots or stretch the tree. Preserve alpha outside and between branches; hollow interior remains opaque dark painted wood. One complete winter tree-house asset, same side-view three-quarter framing and original style."
+    }
+  ],
+  "generation_calls": 2,
+  "new_purchase_actions": 0,
+  "storage": "Selected native tool outputs moved immediately into the user-confirmed Synology Drive workspace; no project dependency on tool default location.",
+  "postprocessing": "Original generated PNGs used unchanged. Source rectangles, pivots, uniform home scaling and collision-aligned stem strips are handled in Godot. Bell reuses original brass-body crop with code-drawn brown hanging loop.",
+  "assets": [
+    {
+      "runtime_path": "art/winter-plants.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "ce7ab7b6b733376ba76fbd5350da39adefdc443bba16afa63426a5593c5f8838",
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "runtime_path": "art/winter-home.png",
+      "size_px": [
+        1159,
+        1358
+      ],
+      "mode": "RGBA",
+      "sha256": "fdfb4cbc39e6ece8a7afcaca0bc8387997e4cfa9e119d2c8a8ad3739c0d2c739",
+      "alpha_range": [
+        0,
+        255
+      ]
+    }
+  ],
+  "gameplay_locks": [
+    "Region3 selects variants, including level15 weather theme2",
+    "Stem collider and safe-leaf pocket unchanged",
+    "Directional arrow and used-flower fold remain state-driven",
+    "Home source anchor(628,587) and scale0.556 preserved",
+    "No changes to models, layouts, save schema, music or reward counts"
+  ],
+  "art_review_status": "In-engine developer and independent AI review; user seasonal feedback addressed, no product acceptance inferred"
+}

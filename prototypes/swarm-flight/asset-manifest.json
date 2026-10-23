@@ -1,6 +1,6 @@
 {
   "project": "Before the Rain / 雨来之前",
-  "revision": "0.9.0",
+  "revision": "0.9.3",
   "created": "2026-10-20",
   "direction": "Alan accepted the stage-05 visual direction and explicitly authorized completing remaining elements and applying the coherent art family to all sixteen levels (SF-R28). Original generated painted sprites combine with model-driven presentation. This is direction approval and rollout authorization, not whole-game experience, commercial quality or PVZ-parity acceptance.",
   "runtime_bitmap_assets": [
@@ -280,6 +280,53 @@
       "source_bytes": 1587975,
       "metadata_status": "Frozen original source; dimensions and hashes verified",
       "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering, fixed alpha border"
+    },
+    {
+      "runtime_path": "art/winter-plants.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "ce7ab7b6b733376ba76fbd5350da39adefdc443bba16afa63426a5593c5f8838",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "role": "Winter plant atlas",
+      "family": "winter",
+      "classification": "regional",
+      "levels": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "source": "Built-in image_gen; complete prompts and references in art/winter-provenance.json",
+      "metadata_status": "Original PNG; verified alpha and dimensions",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering; fixed alpha border"
+    },
+    {
+      "runtime_path": "art/winter-home.png",
+      "size_px": [
+        1159,
+        1358
+      ],
+      "mode": "RGBA",
+      "sha256": "fdfb4cbc39e6ece8a7afcaca0bc8387997e4cfa9e119d2c8a8ad3739c0d2c739",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "role": "Winter tree house",
+      "family": "winter",
+      "classification": "regional",
+      "levels": [
+        16
+      ],
+      "source": "Built-in image_gen; complete prompts and references in art/winter-provenance.json",
+      "metadata_status": "Original PNG; verified alpha and dimensions",
+      "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering; fixed alpha border"
     }
   ],
   "code_native_art": {
@@ -287,7 +334,8 @@
       "world_view.gd",
       "art_sprites.gd",
       "art_props.gd",
-      "sample_landscape.gd"
+      "sample_landscape.gd",
+      "winter_art.gd"
     ],
     "source": "All sixteen levels use the approved painted family. Native drawing remains for state-driven wings/legs/faces, arrows, warning fields, readable text, timer arcs and transient particles; former whole-object vector render paths are removed.",
     "palette": {
@@ -323,25 +371,10 @@
     "retention": "Original unchanged images, full image-generation prompts/provenance, native captures and interim app retained only in local outputs/swarm-flight/2026-10-20-finished-chapter/rejected-painted-pass; not required at runtime."
   },
   "validation": {
-    "status": "passed_developer_checks",
-    "revision": "0.9.0",
-    "receipt": "outputs/swarm-flight/2026-10-23-art-rollout/build-receipt.json",
-    "required_evidence": [
-      "Final atlas bounds/alpha and frozen source hashes",
-      "Four-region native captures and smaller-window checks",
-      "All authored object states, effects, collision readability and unobscured cues",
-      "Complete sixteen-level ordinary-input routes",
-      "Isolated full-entry save, continuation and export-package launch",
-      "Required model/audio/regression checks and CI"
-    ],
-    "claim_limit": "Developer checks and code/image review only. Alan approved the 05 art direction and all-level rollout; no whole-game player acceptance, PVZ parity or commercial completion claim.",
-    "model_checks": 1577,
-    "source_native_ui_checks": 538,
-    "exported_pack_native_ui_checks": 538,
-    "state_fixture_checks": 24,
-    "airflow_regression_baseline": 140,
-    "known_bug_classes_rejected": 2,
-    "warning": "Exported-pack QA exits with ObjectDB instances leaked warning after all checks pass; standalone release bootstrap has no such warning."
+    "status": "current_results_in_receipt",
+    "revision": "0.9.3",
+    "receipt": "outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json",
+    "claim_limit": "Developer tests and explicit in-engine fixtures; not player or product acceptance. Earlier results retained in historical_validation."
   },
   "style_references": [
     {
@@ -378,15 +411,16 @@
     "verification_output": "SWARM_AUDIO_DIR or OS cache directory/before-the-rain-audio-qa; three WAVs and signal-report.json. PCM checks are technical evidence, not human listening acceptance."
   },
   "source_sha256": {
-    "world_view.gd": "d857433fa6d9d38ed9119b64b0df575733d1f337b0dcc1c42fd1e73b27c176fd",
-    "art_sprites.gd": "67804425fcfdbf844f930b0b69a9d2bebfb2d2ebb1ca99829fd0320c3dd8256c",
-    "art_props.gd": "b6ac7850d6ec9e316e823ad089a6a3046edb528a9ebb348f95760b7b99bd22d3",
-    "sample_landscape.gd": "1207edb566f1f4a920caa66112aa6cd9a6b091c6a1428f953e2fa85f90f4310a",
-    "main.gd": "ac196e540a73141f7bce9d5a12af705928ed01663eb474d26f6808af919789fd",
-    "game_model.gd": "0446d0ed356e27bb1271f595deaf584e13bb5540f9bbd1fcb7d40883e115336f",
+    "world_view.gd": "8ba5e5f10c545920e9ff2f0e73ef60c4658754a8a1bebd934090d39be770b11a",
+    "art_sprites.gd": "eff639db564c06127fdfd14bc93258e76f946a148c50b2c33fc88e74a1ca9495",
+    "art_props.gd": "1cf9cde9be8befbf014c74f2d01255a3f3a27e210f5c7fe9012c619f58a6fcc9",
+    "sample_landscape.gd": "dec9376d79572f8ff1614a0f3cee0a8a6d50d5c57ef49786ed7ed7b2a67d0fba",
+    "main.gd": "ebaeb3e11abce9a4fdf9643f60347053319535cf55f089318401161f597334db",
+    "game_model.gd": "5ec3b8eef9232e130347fecbf8721993ca0c5a0ad6d17e31be0b986673dc1e62",
     "chapter_data.gd": "cc2927379a8202068020b0e6f0adf454ed3648df5d5701450650620fa70339fb",
     "save_data.gd": "cb331e05bf20e1f57f74eff4ccb42fd74fb78b2fe1f09ff60214dc1e93036874",
-    "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4"
+    "sound.gd": "ceee5e0d31cff9d9808dfc50d54cfa37134734720139d3148e336c636065d9e4",
+    "winter_art.gd": "20d59a4a1854175b30b3f6366a105dd3a9d2f54ee95ad4a601cb93b9c7fe4fc2"
   },
   "updated": "2026-10-23",
   "approval": {
@@ -498,7 +532,12 @@
         16
       ],
       "asset_family": "revision-atlas",
-      "state_mapping": "Unused direction uses model.ring_direction; consumed petals recoil and close over 0.55s, then no arrow. Restore keeps consumed state without replay."
+      "state_mapping": "Unused direction uses model.ring_direction; consumed petals recoil and close over 0.55s, then no arrow. Restore keeps consumed state without replay.",
+      "winter_variant": {
+        "selector": "chapter.region==3",
+        "asset": "winter-plants",
+        "locks": "same model anchors, dimensions, collider, state and input behavior"
+      }
     },
     {
       "object": "shelter",
@@ -522,7 +561,12 @@
         16
       ],
       "asset_family": "revision-atlas + weather/landmarks",
-      "state_mapping": "Unreached/reached lamp and check; idle rest animation. Canopy width follows model half_width; underside stays above the safe pocket."
+      "state_mapping": "Unreached/reached lamp and check; idle rest animation. Canopy width follows model half_width; underside stays above the safe pocket.",
+      "winter_variant": {
+        "selector": "chapter.region==3",
+        "asset": "winter-plants",
+        "locks": "same model anchors, dimensions, collider, state and input behavior"
+      }
     },
     {
       "object": "stem",
@@ -539,7 +583,12 @@
         16
       ],
       "asset_family": "terrain",
-      "state_mapping": "Solid 48px-wide authored rectangles, upper/lower orientation; caps cannot narrow the actual gap. Any roots extend away from the opening."
+      "state_mapping": "Solid 48px-wide authored rectangles, upper/lower orientation; caps cannot narrow the actual gap. Any roots extend away from the opening.",
+      "winter_variant": {
+        "selector": "chapter.region==3",
+        "asset": "winter-plants",
+        "locks": "same model anchors, dimensions, collider, state and input behavior"
+      }
     },
     {
       "object": "hedge",
@@ -678,7 +727,12 @@
         15
       ],
       "asset_family": "weather",
-      "state_mapping": "Uncollected leaf pickup; collected hidden. Native five-second shell/arc, blocked-weather flash and final-second warning use the model timer."
+      "state_mapping": "Uncollected leaf pickup; collected hidden. Native five-second shell/arc, blocked-weather flash and final-second warning use the model timer.",
+      "winter_variant": {
+        "selector": "chapter.region==3",
+        "asset": "winter-plants",
+        "locks": "same model anchors, dimensions, collider, state and input behavior"
+      }
     },
     {
       "object": "rain_cloud",
@@ -713,7 +767,12 @@
         15
       ],
       "asset_family": "landmarks",
-      "state_mapping": "Open center; not-ready/ready/arrival presentation. Threshold remains x>=exit.x and y within plus/minus96."
+      "state_mapping": "Open center; not-ready/ready/arrival presentation. Threshold remains x>=exit.x and y within plus/minus96.",
+      "winter_variant": {
+        "selector": "chapter.region==3",
+        "asset": "winter-plants",
+        "locks": "same model anchors, dimensions, collider, state and input behavior"
+      }
     },
     {
       "object": "home",
@@ -723,7 +782,12 @@
         16
       ],
       "asset_family": "home",
-      "state_mapping": "Real hollow centered on the existing goal; waiting friends and solo arrival retained. Stage04 distant preview fades at the authored breathing beat; stage04 continues into summer, stage16 ends."
+      "state_mapping": "Real hollow centered on the existing goal; waiting friends and solo arrival retained. Stage04 distant preview fades at the authored breathing beat; stage04 continues into summer, stage16 ends.",
+      "winter_variant": {
+        "selector": "chapter.region==3",
+        "asset": "winter-home",
+        "locks": "same model anchors, dimensions, collider, state and input behavior"
+      }
     },
     {
       "object": "bell_and_sign",
@@ -747,7 +811,12 @@
         16
       ],
       "asset_family": "landmarks",
-      "state_mapping": "Bell readiness and arrival swing; sign artwork has no baked text, native leaf number stays readable."
+      "state_mapping": "Bell readiness and arrival swing; sign artwork has no baked text, native leaf number stays readable.",
+      "winter_variant": {
+        "selector": "chapter.region==3",
+        "asset": "original brass body with brown hook",
+        "locks": "same model anchors, dimensions, collider, state and input behavior"
+      }
     },
     {
       "object": "lantern",
@@ -791,6 +860,78 @@
       ],
       "asset_family": "native text + shared bee",
       "state_mapping": "Top/bottom reply from real recorded approach; absent evidence yields neutral greeting. Other stages keep their own authored dialogue."
+    },
+    {
+      "object": "small_leaves",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "winter_variant": "winter-plants selected by region; reward/character identity preserved"
+    },
+    {
+      "object": "foreground_foliage",
+      "classification": "shared",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "winter_variant": "winter-plants selected by region; reward/character identity preserved"
+    },
+    {
+      "object": "character_flower_accessory",
+      "classification": "shared",
+      "levels": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        16
+      ],
+      "winter_variant": "winter-plants selected by region; reward/character identity preserved"
+    },
+    {
+      "object": "ending_reward_garden",
+      "classification": "level_specific",
+      "levels": [
+        16
+      ],
+      "winter_variant": "winter-plants selected by region; reward/character identity preserved"
     }
   ],
   "historical_art_notes": {
@@ -968,7 +1109,28 @@
     "interaction_coherence_revision": "Continuous local wind for idle/charge; dash resistance retained following explicit user clarification. All six authored airflow regions exercise state combinations, actual-key UI reproduction avoids wind flowers. Two updraft bounds clear solid terrain; existing progress layout and sound.gd unchanged.",
     "sample_revision": "0.8.0: 1577 model checks, 530 native complete UI/capture checks (two complete sixteen-level input routes), 140-rule airflow baseline and two old defects rejected by 12/6 behavior assertions. 12 targeted 05/actual-0.7.1-save continuation routes, all without collision/damage/recovery. Native 1280x800 plus 960x600 sample capture. Developer evidence only; no new player acceptance.",
     "art_revision": "0.8.1: 1577 rules, 538 native full UI checks and 89 focused sample checks; ordinary-input upper/lower routes plus 1280x800 and 960x600 captures. Final-leaf exit text regression checked. Developer evidence only, no player validation or PVZ-parity claim.",
-    "scope": "Historical developer checks through0.8.1; not current-rollout passes. Counts retain their original version labels; historical captures are not0.9.0 evidence."
+    "scope": "Historical developer checks through0.8.1; not current-rollout passes. Counts retain their original version labels; historical captures are not0.9.0 evidence.",
+    "inherited_0_9_0_validation": {
+      "status": "passed_developer_checks",
+      "revision": "0.9.0",
+      "receipt": "outputs/swarm-flight/2026-10-23-art-rollout/build-receipt.json",
+      "required_evidence": [
+        "Final atlas bounds/alpha and frozen source hashes",
+        "Four-region native captures and smaller-window checks",
+        "All authored object states, effects, collision readability and unobscured cues",
+        "Complete sixteen-level ordinary-input routes",
+        "Isolated full-entry save, continuation and export-package launch",
+        "Required model/audio/regression checks and CI"
+      ],
+      "claim_limit": "Developer checks and code/image review only. Alan approved the 05 art direction and all-level rollout; no whole-game player acceptance, PVZ parity or commercial completion claim.",
+      "model_checks": 1577,
+      "source_native_ui_checks": 538,
+      "exported_pack_native_ui_checks": 538,
+      "state_fixture_checks": 24,
+      "airflow_regression_baseline": 140,
+      "known_bug_classes_rejected": 2,
+      "warning": "Exported-pack QA exits with ObjectDB instances leaked warning after all checks pass; standalone release bootstrap has no such warning."
+    }
   },
   "historical_source_sha256": {
     "revision": "0.8.1",
@@ -981,15 +1143,13 @@
   },
   "hash_status": "Frozen original PNG and implementation hashes recorded; build revision and PCK hash in external receipt.",
   "delivery": {
-    "version": "0.9.0",
-    "directory": "outputs/swarm-flight/2026-10-23-art-rollout",
-    "app": "雨来之前·统一美术.app",
-    "full_entry": "开始完整试玩.command",
-    "full_entry_save": "before_the_rain_art_full_20261023.json",
-    "quick_entry": "开始05试玩.command",
-    "receipt": "outputs/swarm-flight/2026-10-23-art-rollout/build-receipt.json",
-    "status": "macOS exported and bootstrapped; same exported PCK passed both full native input routes",
-    "quick_entry_save": "before_the_rain_art_quick_20261023.json"
+    "version": "0.9.3",
+    "directory": "outputs/swarm-flight/2026-10-23-winter-plants",
+    "app": "雨来之前·冬季修正.app",
+    "full_entry": "继续完整旅程.command",
+    "quick_entry": "单独查看16关.command",
+    "receipt": "outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json",
+    "status": "Final technical and integration status is in receipt"
   },
   "seasonal_material_correction": {
     "version": "0.9.2",
@@ -999,5 +1159,30 @@
     "unchanged": "Source PNGs, terrain rectangle, jet geometry/timing, routes and checkpoint",
     "audit": "13–16 contain no other flowering hedge terrain; shared wind flowers and shelter leaves retain gameplay identity",
     "new_generation_calls": 0
+  },
+  "winter_family": {
+    "selector": "winter_art.gd: chapter.region==3, never weather theme",
+    "levels": [
+      13,
+      14,
+      15,
+      16
+    ],
+    "provenance": "art/winter-provenance.json",
+    "scope": [
+      "solid stalks",
+      "curved support stems",
+      "wind flower heads and side leaves",
+      "shelter crowns and seat leaves",
+      "goal arches and resting leaves",
+      "home foliage and moss",
+      "foreground",
+      "protection pickup and expiring leaf tips",
+      "character flower accessory",
+      "ending reward flowers",
+      "bell handle"
+    ],
+    "review": "Native16 opening and shelter,13 flower before/after,14 overview,15 storm-theme and shield,13–15 goals,16 home/reward garden,05 summer control; fixture images, not player evidence",
+    "receipt": "outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json"
   }
 }
