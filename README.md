@@ -1,8 +1,8 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-10-23 当前：飞行版《雨来之前》0.9.0全关卡统一美术包已构建并通过开发检查。** Alan已认可05关的风格方向，并明确要求补齐尚未统一的元素后应用到每一个关卡。此次将同族角色、植物、地形、天气、出口和四区背景接入全部16关；模型、关卡坐标与音乐保留。方向认可不等于整作达到PVZ完成度或商业品质已验收，新的整包体验仍待Alan实玩。技术检查、导出与交付状态以`outputs/swarm-flight/2026-10-23-art-rollout/build-receipt.json`为准。[试玩说明](prototypes/swarm-flight/README.md) · [本轮授权 SF-R28](docs/design/swarm-flight-game-20261020.md#art-rollout-20261023) · [唯一执行状态 Now](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。
+**2026-10-23 当前：飞行版《雨来之前》0.9.3为现有四季16关可玩包，正在按成品预期规划更充实的关内内容与整作节奏。** Alan认可核心基本成型，指出每关过短、体量不足，最终明确不固定十倍。设计工作蓝图为四季20关／有效主线约6～8小时，关内形成连续冒险并允许可靠中断；数值待长关与连续试玩校准，不是已实现或对外商品承诺。[内容与节奏 SF-R32](docs/design/swarm-flight-game-20261020.md#finished-journey-content-20261023) · [现有试玩说明](prototypes/swarm-flight/README.md) · [唯一执行状态 Now](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。
 
-**制作收口：** 按Alan反馈，后续普通缺陷在内部集中处理；下一主交付统一推进全篇内容与成品视觉标准，不以局部补丁替代产品进展。10月29日整包／产能检查点，11月19日Beta和11月26日RC暂为待校准内部目标。[当前交付边界 SF-R23](docs/design/swarm-flight-game-20261020.md#production-finish-boundary)。
+**范围与制作责任：** 0.9.3保留补给纠正、冬季材质与统一美术，证据见outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json。本轮只交设计与生产交接。扩容不重置200＋40小时控制、历史投入和旧问题；原Beta／RC／有条件发售日期须按新范围重估，10月29日仍作为样板／范围／产能检查点。[商业范围更新](docs/design/commercial-product-requirements.md#finished-journey-scope)。
 
 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
@@ -207,7 +207,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 按用途读取，避免把历史方案误当当前决定：
 
 - [合成与消除一局对照小样](docs/design/merge-match-samples-20261020.md)：简单规则、完整终局、测试证据与试玩判据。
-- [《雨来之前》完整飞行短篇](docs/design/swarm-flight-game-20261020.md)：本轮自主选型、完整流程、验证边界与试玩判据。
+- [《雨来之前》玩法、内容规模与节奏策划](docs/design/swarm-flight-game-20261020.md)：本轮自主选型、完整流程、验证边界与试玩判据。
 - [《花间一着》游戏方案与完整短章](docs/design/flower-step-game-20261019.md)：本轮玩法选择、实际规则、完整短章和正式游戏候选结构。
 
 - [`docs/design/original-requirements-recovery-20261019.md`](docs/design/original-requirements-recovery-20261019.md)：**本轮需求证据底稿与重做依据**，记录 5–7 月创作原对话、后续开发反馈、历史归档与未决项；不另设执行队列，当前行动仍只见制作规格 §0.11 Now。
