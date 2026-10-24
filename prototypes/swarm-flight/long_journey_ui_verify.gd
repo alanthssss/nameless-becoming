@@ -136,7 +136,7 @@ func run() -> void:
 		tick()
 		var encounter: int = game.model.encounter_index()
 		var id := "%d-%d" % [game.model.stage,encounter]
-		if encounter in [0,6,12,18,24] and not captured.has(id) and game.model.p.x > game.model.chapter.encounters[encounter].start_x+600:
+		if not captured.has(id) and game.model.p.x > game.model.chapter.encounters[encounter].start_x+900:
 			captured[id] = true
 			await shot("play-"+id)
 		if frame%6000 == 0: print("UI_PROGRESS: stage=%d x=%.0f" % [game.model.stage+7,game.model.p.x])

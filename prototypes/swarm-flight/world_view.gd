@@ -329,7 +329,7 @@ func neighbor_words() -> String:
 			if model.stage == 0 and index == 0:
 				if model.sample_approach == "top": return "小满：你从花篱上面飞来的呀！"
 				if model.sample_approach == "bottom": return "小满：你走了下面那条路呀！"
-			if model.stage == 1:
+			if model.stage == 1 and index == 0:
 				for flower in model.sprayers:
 					if flower.rewarded: return "画眉：花朵安静下来，我也能歇一会儿了。"
 			return stop.line

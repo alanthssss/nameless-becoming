@@ -1,124 +1,161 @@
 extends "res://event_data.gd"
-## Two bounded long-form chapters. Cell variants author different spatial decisions;
-## all routes remain optional ordinary inputs, never progression scripts.
+## Hand-authored connected gardens. Width, recovery and action order follow the
+## experience, not a repeating cell catalogue. Routes are developer inputs only.
 const Builder = preload("res://chapter_data.gd")
-const JOURNEY_ID := "summer-long-07-08-r2"
-const PREVIOUS_ID := "summer-long-07-08-r1"
+const JOURNEY_ID := "summer-long-07-08-r3"
+const ACTS := [["看见两面","风的落点","换一面看","顺畅离开"],["先听一听","穿过呼吸","风与喷嚏","一起离开"]]
 
-static func build(index: int) -> Dictionary:
-	return Builder.build_source(definitions()[clampi(index,0,1)])
+static func v(pair: Array) -> Vector2:
+	return Vector2(pair[0],pair[1])
 
-static func route(spec: Dictionary,primary: Array,alternate: Array = []) -> Dictionary:
-	spec.direct_route = primary
-	spec.alternate_route = primary.duplicate(true) if alternate.is_empty() else alternate
+static func relay(points: Array,landing: Array) -> Dictionary:
+	var vectors: Array = []
+	for point in points: vectors.append(v(point))
+	return chain(vectors,[],v(landing))
+
+static func path(points: Array) -> Array:
+	var out: Array = []
+	for point in points:
+		if point is Array: out.append(v(point))
+		elif point is String: out.append({"kind":"burst","direction":Vector2.RIGHT})
+		else: out.append(point)
+	return out
+
+static func scene(name: String,act: int,width: float,beats: Array,primary: Array,alternate: Array,rest: float,cue: String) -> Dictionary:
+	var spec := encounter(name,width,beats,rest,cue)
+	spec["act"] = act
+	spec["direct_route"] = path(primary)
+	spec["alternate_route"] = path(alternate) if not alternate.is_empty() else spec.direct_route.duplicate(true)
 	return spec
 
-static func launch() -> Dictionary:
-	return {"kind":"burst","direction":Vector2.RIGHT}
+static func build(index: int) -> Dictionary:
+	index = clampi(index,0,1)
+	var source: Dictionary = definitions()[index]
+	var result := Builder.build_source(source)
+	for i in result.encounters.size():
+		result.encounters[i]["act"] = source.encounters[i].act
+		result.encounters[i]["act_name"] = ACTS[index][source.encounters[i].act]
+	# A quiet coda belongs to the completed final movement, not an unreachable
+	# extra checkpoint. The last authored scene deliberately has no shelter.
+	if result.sections.size() > result.shelters.size():
+		result.sections.pop_back()
+		result.sections.back().end_x = result.world_width
+		for key in ["encounters","rings","dew","shields"]:
+			for item in result[key]:
+				if item.has("section"): item.section = mini(item.section,result.sections.size()-1)
+	return result
 
-static func window(x: float) -> Dictionary:
-	return {"kind":"jet_window","jet_x":x,"travel_seconds":1.8}
-
-static func courtyard(name: String,variant: int,rest: bool,cue: String) -> Dictionary:
-	var beats: Array = []
-	var primary: Array = []
-	var alternate: Array = []
-	var finish := 420.0
-	match variant:
-		0: # A thick hedge separates a wind route and an ordinary low route.
-			beats = [terrain(540,350,1040,150),chain([Vector2(460,250),Vector2(880,250),Vector2(1300,250)],[],Vector2(1760,250)),dew(1900,420,"借风或绕篱后，在共同出口补给")]
-			primary = [Vector2(290,250),launch(),Vector2(1790,250),Vector2(1900,420),Vector2(2060,420)]
-			alternate = [Vector2(380,600),Vector2(1720,600),Vector2(1900,420),Vector2(2060,420)]
-		1: # S-shaped flight, visible openings rather than blind jumps.
-			beats = [gap(480,280,310),dew(850,400,"两个窗洞之间的补给"),gap(1190,540,310),gap(1770,350,330)]
-			primary = [Vector2(340,280),Vector2(660,280),Vector2(850,400),Vector2(1050,540),Vector2(1370,540),Vector2(1630,350),Vector2(1950,350)]
-			finish = 350
-		2: # Jet route and dry bypass share supply after the obstacle.
-			beats = [terrain(650,450,740,100),jet(790,110,230,340,6.8,2.1),dew(1690,420,"穿过喷口或绕篱后，在共同出口补给")]
-			primary = [Vector2(670,420),window(790),Vector2(1170,420),Vector2(1690,420),Vector2(1960,420)]
-			alternate = [Vector2(470,640),Vector2(1510,640),Vector2(1690,420),Vector2(1960,420)]
-		3: # The upper wind ends before an overhang: brake, descend, then exit.
-			beats = [chain([Vector2(470,280),Vector2(890,280)],[],Vector2(1350,280)),terrain(1510,80,250,350),dew(1820,560,"转到遮檐下再补给")]
-			primary = [Vector2(300,280),launch(),Vector2(1350,280),Vector2(1360,560),Vector2(1820,560),Vector2(2040,420)]
-			alternate = [Vector2(350,570),Vector2(1100,570),Vector2(1820,560),Vector2(2040,420)]
-		4: # Reverse height relationship: wind below, ordinary flight above.
-			beats = [terrain(560,300,1010,140),chain([Vector2(470,550),Vector2(890,550),Vector2(1310,550)],[],Vector2(1770,550)),dew(1900,420,"借下方风或从上沿绕行后共同补给")]
-			primary = [Vector2(300,550),launch(),Vector2(1800,550),Vector2(1900,420),Vector2(2060,420)]
-			alternate = [Vector2(390,190),Vector2(1730,190),Vector2(1900,420),Vector2(2060,420)]
-		5: # Calm the flower or take an actual, separated lower path.
-			beats = [terrain(550,410,680,160),flower(760,300),dew(1420,420,"安抚后或绕行后汇合的补给")]
-			primary = [Vector2(590,300),launch(),Vector2(1340,300),Vector2(1420,420),Vector2(2000,420)]
-			alternate = [Vector2(380,650),Vector2(1360,650),Vector2(1420,420),Vector2(2000,420)]
-		6: # A safe, low-pressure garden with a low-high-low route.
-			beats = [terrain(620,80,320,330),terrain(1380,500,360,230),dew(1070,490,"无追赶庭院里的补给")]
-			primary = [Vector2(460,540),Vector2(1070,490),Vector2(1210,350),Vector2(1880,350),Vector2(2040,420)]
-		7: # Jet is now below the hedge. The higher path avoids its timing.
-			beats = [terrain(610,290,780,95),jet(810,385,220,325,7.0,2.0,1.4),dew(1810,420,"下方穿喷口或上方绕行后共同补给")]
-			primary = [Vector2(670,540),window(810),Vector2(1190,540),Vector2(1530,540),Vector2(1810,420),Vector2(2040,420)]
-			alternate = [Vector2(440,185),Vector2(1550,185),Vector2(1810,420),Vector2(2040,420)]
-		8: # A release in pressure: a broad window and an optional relay.
-			beats = [gap(440,420,430),dew(780,420,"宽窗后的补给"),chain([Vector2(1120,420),Vector2(1540,420)],[],Vector2(2000,420))]
-			primary = [Vector2(300,420),Vector2(780,420),Vector2(950,420),launch(),Vector2(2020,420)]
-			alternate = [Vector2(300,420),Vector2(780,420),Vector2(1060,600),Vector2(1800,600),Vector2(2020,420)]
-		9: # The player chooses a landing, then turns down through a wide window.
-			beats = [chain([Vector2(480,250),Vector2(900,250)],[],Vector2(1360,250)),gap(1760,540,350),dew(1440,470,"结束借风后，转向下窗前补给")]
-			primary = [Vector2(310,250),launch(),Vector2(1360,250),Vector2(1440,470),Vector2(1620,540),Vector2(1950,540)]
-			alternate = [Vector2(370,580),Vector2(1250,580),Vector2(1440,470),Vector2(1620,540),Vector2(1950,540)]
-			finish = 540
-		10: # Both obstacles are quiet geometry, not another timed hazard.
-			beats = [terrain(550,480,370,250),terrain(1370,80,350,300),dew(1100,420,"从花台转向遮檐前补给")]
-			primary = [Vector2(380,340),Vector2(1080,340),Vector2(1100,420),Vector2(1220,540),Vector2(1870,540),Vector2(2050,420)]
-		11: # A flower followed by a low, safe landing rather than another attack.
-			beats = [flower(610,290),terrain(1020,80,370,310),dew(1580,550,"安抚后到低处落脚补给"),gap(1900,500,400)]
-			primary = [Vector2(440,290),launch(),Vector2(850,290),Vector2(870,550),Vector2(1580,550),Vector2(1760,500),Vector2(2080,500)]
-			alternate = [Vector2(390,580),Vector2(1580,550),Vector2(1760,500),Vector2(2080,500)]
-			finish = 500
-	var spec := encounter(name,2380,beats,finish if rest else -1.0,cue)
-	spec["variant"] = variant
-	return route(spec,primary,alternate)
-
-static func chapter(title: String,entry: String,arrival: String,npc: String,line: String,groups: Array) -> Dictionary:
-	var encounters: Array = []
-	var stops := [{"index":0,"line":line}]
-	for group in groups:
-		for j in group[1].size():
-			var cell: Array = group[1][j]
-			encounters.append(courtyard(group[0]+" · "+cell[0],cell[1],j%2==1,cell[2]))
-		stops.append({"index":encounters.size()/2-1,"line": "画眉：这条路，我也记住了。" if npc == "bird" else "小满：换一面看，同一座庭院也不一样。"})
-	return {"neighbor_stops":stops,"title":title,"region":1,"theme":1,"music":1,"base_bees":9,"storm":false,"exit_kind":"arch","entry":entry,"arrival":arrival,"npc":npc,"npc_line":line,"encounters":encounters}
+static func chapter(title: String,entry: String,arrival: String,npc: String,stops: Array,encounters: Array) -> Dictionary:
+	return {"title":title,"region":1,"theme":1,"music":1,"base_bees":9,"storm":false,"exit_kind":"arch","entry":entry,"arrival":arrival,"npc":npc,"npc_line":"","neighbor_stops":stops,"encounters":encounters}
 
 static func definitions() -> Array:
-	return [
-		chapter("花篱另一边","从篱口看清两面。每两段都有叶亭；Esc 随时保存当前位置。","花篱已经在身后。画眉停在另一边的花园，等你一起过去。","bee","小满：路可以自己选，我在叶下等你。",[
-			["一·篱口",[["看见上方的风",0,"上方借风，篱下绕行；补给在花篱后的共同出口"],["第一扇宽窗",8,"宽窗后是第一片叶下，触到就记住，不必停满"],["看清两扇窗",1,"先抬高，再转向低窗；这里没有追赶"],["遮檐后的庭院",6,"从遮檐下出来，再绕过花台"],["下方也有风",4,"这次风在篱下；借风或走上沿，都在出口补给"],["窗后落脚",10,"绕过花台与遮檐，前方同一片叶下"]]],
-			["二·自己选路",[["长篱两侧",0,"花篱把路线分开，前方会合"],["风停了再转身",9,"接力结束先停稳，出口在下方宽窗"],["喷口前看一眼",2,"上路观察停喷空档，篱下可以直接绕行"],["回到宽窗",8,"穿过宽窗，借风或平飞到叶下"],["高处没有喷口",7,"喷口换到了下面，上沿仍能直接通行"],["选好风的落点",3,"风后是遮檐，停稳转到下面再向前"]]],
-			["三·窗后庭院",[["从另一面看花台",10,"花台、窗洞和遮檐换了次序，按自己的节奏转向"],["安静的小径",6,"没有追赶，从遮檐下出来，再绕过花台"],["低处看见高窗",1,"从低窗转到高窗，露珠在转向之间"],["花篱背面的路",4,"沿篱下借风，也可以看上沿的景色"],["庭院里的一声喷嚏",5,"安抚花朵或从篱下绕过，两路在露珠旁汇合"],["回应后的歇脚处",8,"花朵安静了；前方宽叶可以停，也可以继续"]]],
-			["四·重新选落点",[["先观察再出发",2,"先看喷口，再决定从上面穿过还是绕篱下"],["风后还有一扇窗",9,"借风后转到低窗，别一直向前冲"],["喷口换了高度",7,"上方路线绕过喷口；下方留意小泡预告"],["遮檐挡住直线",3,"高风结束后下降，遮檐下才是出口"],["花台之间换方向",10,"上绕花台，再从遮檐下穿过去"],["重见两面的花篱",0,"最后再选一次：篱顶连续借风，篱下普通飞行"]]],
-			["五·顺畅离开",[["宽窗后的微风",8,"熟悉的宽窗和风花，顺着自己的节奏离开"],["花篱下的长风",4,"这段没有喷口，接住风或从上沿走"],["最后一次换高度",1,"两次宽转弯，先看落点再飞"],["背风的小院",6,"把喷口留在身后，前方可以从容停稳"],["窗前再借一阵",8,"宽窗后再借一次风，叶下就在前面"],["小满等候的叶下",10,"沿花台与遮檐之间的空隙，飞进通往下一座庭院的门"]]]
-		]),
-		chapter("喷嚏前后","先在安静的庭院里转个弯，再去看花朵。","两座庭院走完了。画眉记住了你的新路线。","bird","画眉：安抚它，或者绕过去，都能到。",[
-			["一·放慢一点",[["先到背风处",6,"上一关已经很长，这里没有喷口，先慢慢转向"],["窗里看花园",8,"宽窗后可以借风，也可以平飞"],["花台两侧",10,"沿花台上方，转到遮檐下面"],["篱外的安静路",0,"在两条宽路里选一条，前方叶下会合"]]],
-			["二·喷嚏前后",[["花朵先吸一口气",5,"花朵鼓起来会喷嚏；冲刺安抚，或者绕下方"],["安静之后往低处",11,"安抚后立刻选低处的落点；下方也能直接绕行"],["花篱之间的喘息",6,"这里没有花朵喷射，慢慢补好体力"],["这次由你决定",5,"再决定一次安抚或绕行，别把两条路都当必做"],["安抚后的新出口",11,"花朵后有遮檐，从它下面继续"],["转过宽窗",8,"离开喷嚏区，前方一段安静的路"]]],
-			["三·只有空间",[["从花台上面",10,"先上绕花台，再下穿遮檐"],["两扇窗之间",1,"这一段只需要观察窗洞的高度"],["篱下的风",4,"风在下面，上面仍有普通飞行的通路"],["先停稳，再下降",3,"接力的尽头不是出口，停稳后下降"],["安静的小庭院",6,"这里没有计时压力，转好方向再出发"],["下窗回到叶亭",9,"借风后穿下方宽窗，叶亭就在窗后"]]],
-			["四·水园空档",[["第一处喷口",2,"观察小泡与停喷；篱下也有补给"],["不急着接下一段",10,"喷口后先从安静的花台间转向"],["水在下面",7,"喷口换到下面，上方通路没有喷水"],["水声后的宽窗",8,"穿过宽窗补给，不必停着等下一阵喷口"],["最后一次选空档",2,"穿停喷的上路，或绕到篱下"],["选定落点离开",9,"借风结束后转到低窗，水园已经在身后"]]],
-			["五·一起离开",[["安静的小径旁",6,"没有新的危险了，沿遮檐与花台之间经过"],["花篱下再借风",4,"想借风就再借一次，上沿也可以慢慢飞"],["宽窗与远处的门",8,"前方宽窗后就是最后一片叶下"],["画眉记住的新路",10,"穿过花台与遮檐，亲手飞进庭院出口"]]]
-		])
-	]
+	return [garden_seven(),garden_eight()]
 
-## Frozen v1 pickup layout for validating and migrating existing suspend saves.
-## Only pickup placement changed; obstacle and checkpoint identities are stable.
-static func previous_dew(index: int) -> Array:
-	var source: Dictionary = definitions()[index].duplicate(true)
-	for spec in source.encounters:
-		if spec.variant not in [0,2,4,7]: continue
-		spec.beats = spec.beats.filter(func(b): return b.kind != "dew")
-		match spec.variant:
-			0: spec.beats.append(dew(980,600,"篱下路线自己的补给","branch"))
-			2:
-				spec.beats.append(dew(1510,420,"观察喷口后补给"))
-				spec.beats.append(dew(1020,640,"篱下绕行补给","branch"))
-			4: spec.beats.append(dew(1080,190,"上沿路线自己的补给","branch"))
-			7:
-				spec.beats.append(dew(1530,540,"穿过下方喷口后补给"))
-				spec.beats.append(dew(1040,185,"上方绕行补给","branch"))
-	return Builder.build_source(source).dew
+static func garden_seven() -> Dictionary:
+	return chapter("花篱另一边","小满在花篱另一边。先看风把你带到哪里。","小满：这回，你自己找到了路。\n前面的花园传来一声小小的喷嚏。","bee",[
+		{"index":0,"line":"小满：刚才那阵风，把你送到这里了。"},
+		{"index":2,"line":"小满：现在你会挑落点啦。"},
+		{"index":4,"line":"小满：先看看那扇窗，出口就在它后面。"},
+		{"index":5,"line":"小满：最后一段，我在花铃下面等你。"},
+		{"index":6,"line":"小满：到了！你飞得越来越从容了。"}
+	],[
+		# Introduce two viable approaches; merge BEFORE the next decision.
+		scene("花篱两面",0,2600,[terrain(540,350,1000,150),relay([[460,250],[880,250],[1300,250]],[1770,250]),dew(1900,420,"借风或绕篱后，在共同出口补给"),gap(2260,420,370)],
+			[[290,250],"burst",[1790,250],[1900,420],[2140,420],[2450,420]],
+			[[380,600],[1720,600],[1900,420],[2140,420],[2450,420]],-1,"越过花篱，两条路在窗前相会"),
+		# A rising relay opens the upper window, then the overhang turns us low.
+		scene("风把路抬起来",0,4000,[relay([[420,500],[800,370],[1180,240]],[1650,240]),gap(1430,240,290),terrain(1940,80,380,350),dew(1810,530,"收势后在遮檐下补给"),terrain(2730,500,500,230),dew(2600,330,"升到花台前的通路"),gap(3400,330,350)],
+			[[250,500],"burst",[1660,240],[1810,530],[2450,530],[2600,330],[3300,330],[3580,330]],
+			[[280,500],[650,430],[1040,310],[1300,240],[1640,240],[1810,530],[2450,530],[2600,330],[3300,330],[3580,330]],420,"从高窗出来，落到遮檐下面"),
+		# Develop: fast entry, room to brake, low window, then launch again.
+		scene("一阵风，两次转向",1,5100,[relay([[420,270],[840,270],[1260,270]],[1730,270]),terrain(1970,80,420,370),dew(1820,550,"转到下窗前补给"),gap(2570,550,300),terrain(2920,330,1040,110),relay([[2810,560],[3230,560],[3650,560]],[4120,560]),dew(4270,420,"两阵风之后的共同出口"),gap(4660,420,340)],
+			[[250,270],"burst",[1740,270],[1820,550],[2640,560],"burst",[4140,560],[4270,420],[4520,420],[4860,420]],
+			[[320,570],[1820,550],[2700,550],[2800,560],[4140,560],[4270,420],[4520,420],[4860,420]],-1,"风停后向下转，再接住篱下的风"),
+		# Do not reset at the scene boundary: the low exit becomes the next takeoff.
+		scene("落点就是起点",1,4600,[terrain(530,80,600,340),dew(370,550,"出发前顺路补给"),relay([[1280,550],[1670,400],[2060,250]],[2530,250]),gap(2320,250,300),terrain(2870,80,380,370),dew(2710,540,"高窗后转入低处"),gap(3540,540,310),terrain(3920,540,280,190)],
+			[[370,550],[1110,550],"burst",[2540,250],[2710,540],[3370,540],[3740,540],[3780,390],[4320,390]],
+			[[370,550],[1160,550],[1500,440],[1960,260],[2190,250],[2540,250],[2710,540],[3370,540],[3740,540],[3780,390],[4320,390]],-1,"低处出发，高窗落下；下一步从这里接上"),
+		# Breather has a small spatial purpose, no new threat or mandatory wait.
+		scene("叶影里的小径",1,2700,[terrain(510,80,560,300),terrain(1630,520,510,210),dew(1350,450,"穿过叶影后继续向前")],
+			[[340,510],[1190,510],[1350,450],[1500,370],[2320,370],[2520,420]],[],420,"从叶影下穿过，看看前面的花台"),
+		# Choice of landing: two wind branches, both retain their own next angle.
+		scene("选一边落下",1,5600,[terrain(660,340,1510,140),fork([Vector2(520,230),Vector2(920,230),Vector2(1320,230)],Vector2(1790,230),[Vector2(520,580),Vector2(920,580),Vector2(1320,580)],Vector2(1790,580),Vector2(2440,420)),dew(2440,420,"两种落点后的共同补给"),gap(2790,420,320),terrain(3190,80,540,350),dew(3030,550,"转入低廊前补给"),relay([[3900,550],[4300,400],[4700,250]],[5170,250])],
+			[[350,230],"burst",[1800,230],[2330,230],[2440,420],[2640,420],[2960,420],[3030,550],[3730,550],"burst",[5180,250]],
+			[[350,580],"burst",[1800,580],[2330,580],[2440,420],[2640,420],[2960,420],[3030,550],[3730,550],"burst",[5180,250]],300,"上风、下风都通；落点不同，转向也不同"),
+		# Twist: a low launch crosses an opening before climbing on the far side.
+		scene("篱下的另一面",2,4700,[terrain(560,300,1010,140),relay([[470,550],[890,550],[1310,550]],[1780,550]),dew(1900,420,"借下方风或从上沿绕行后共同补给"),gap(2250,420,330),terrain(2660,480,680,250),dew(2530,270,"从花篱背面抬头"),gap(3560,270,300),terrain(3970,80,310,350)],
+			[[300,550],"burst",[1800,550],[1900,420],[2100,420],[2420,420],[2530,270],[3430,270],[3760,270],[3800,550],[4460,550]],
+			[[380,190],[1730,190],[1900,420],[2100,420],[2420,420],[2530,270],[3430,270],[3760,270],[3800,550],[4460,550]],-1,"这回从篱下出来，再看高处的窗口"),
+		# Long connected descent and climb, not three independent vertical gates.
+		scene("顺着叶脉下去",2,5700,[relay([[440,520],[840,390],[1240,260]],[1710,260]),terrain(1950,80,470,350),dew(1810,540,"沿遮檐落向低廊"),terrain(2540,80,1040,310),gap(2950,570,300),relay([[2640,570],[3060,570],[3480,570]],[3950,570]),dew(4120,420,"低廊后的共同补给"),terrain(4500,490,620,240),gap(5330,310,320)],
+			[[270,520],"burst",[1720,260],[1810,540],[2470,570],"burst",[3970,570],[4120,420],[4350,310],[5180,310],[5500,310]],
+			[[280,520],[1060,300],[1720,260],[1810,540],[2470,570],[3970,570],[4120,420],[4350,310],[5180,310],[5500,310]],380,"上升、收势、穿低廊，再回到阳光里"),
+		# A breakable curtain changes the chosen route; bypass rejoins naturally.
+		scene("推开叶间的门",2,4800,[terrain(580,80,220,220),terrain(580,540,220,60),{"kind":"curtain","x":620.0,"y":435.0,"height":270.0},dew(1160,420,"推开叶帘或从花台下绕过后补给"),terrain(1560,330,990,140),relay([[1430,230],[1850,230],[2270,230]],[2740,230]),dew(2940,420,"绕过花台后共同落点"),terrain(3340,80,380,360),gap(4150,550,330)],
+			[[450,420],"burst",[1160,420],[1260,230],"burst",[2760,230],[2940,420],[3150,550],[3980,550],[4380,550]],
+			[[400,650],[960,650],[1160,420],[1380,590],[2740,590],[2940,420],[3150,550],[3980,550],[4380,550]],550,"冲开叶帘走中间，也可以从下方绕过"),
+		# Same learned control, changed entrance: descend first, climb second.
+		scene("从下面看窗",2,5400,[terrain(420,80,840,320),dew(1460,540,"低处来向的补给"),relay([[1640,540],[2040,400],[2440,260]],[2910,260]),gap(2690,260,310),terrain(3260,80,470,350),dew(3090,550,"高窗后选择低落点"),gap(3990,550,320),terrain(4400,510,430,220)],
+			[[260,540],[1340,540],[1460,540],[1470,540],"burst",[2920,260],[3090,550],[3820,550],[4190,550],[4240,340],[4990,340]],
+			[[260,540],[1340,540],[1460,540],[1890,430],[2320,280],[2540,260],[2920,260],[3090,550],[3820,550],[4190,550],[4240,340],[4990,340]],-1,"先从下面靠近，再选高窗后的落点"),
+		# Preparation and a vista before the single final compound challenge.
+		scene("看见最后的窗",2,2400,[terrain(590,510,570,220),terrain(1490,80,300,290),dew(1330,440,"转过观景花台")],
+			[[430,350],[1250,350],[1330,440],[1370,520],[1960,520]],[],420,"小满在叶下等你；下一段用上刚才的飞法"),
+		# Climax part 1: alternating relays connected by deliberate braking bays.
+		scene("把风连成一条路",3,7200,[relay([[430,500],[830,360],[1230,220]],[1700,220]),gap(1470,220,270),terrain(1960,80,420,360),dew(1810,550,"高风收势后的补给"),relay([[2590,550],[3010,550],[3430,550]],[3900,550]),terrain(2670,300,1000,130),dew(4090,420,"低风之后准备抬升"),gap(4460,420,300),relay([[4740,420],[5140,290],[5540,290]],[6010,290]),terrain(6290,80,310,330),dew(6140,540,"末次借风后进入低出口"),gap(6840,540,310)],
+			[[260,500],"burst",[1710,220],[1810,550],[2420,550],"burst",[3920,550],[4090,420],[4300,420],[4570,420],"burst",[6020,290],[6140,540],[6690,540],[7040,540]],
+			[[260,500],[1040,260],[1330,220],[1710,220],[1810,550],[2420,550],[3920,550],[4090,420],[4300,420],[4630,420],[5020,320],[6020,290],[6140,540],[6690,540],[7040,540]],-1,"接风、收势、换高度；沿途的落点连成一条路"),
+		# Climax resolves in an open landing; no new hazard after this section.
+		scene("自己选最后的落点",3,5100,[terrain(580,330,1530,150),fork([Vector2(430,220),Vector2(830,220),Vector2(1230,220)],Vector2(1700,220),[Vector2(430,580),Vector2(830,580),Vector2(1230,580)],Vector2(1700,580),Vector2(2370,420)),dew(2370,420,"最后一次选路后相会"),gap(2720,420,320),relay([[3060,420],[3460,300],[3860,300]],[4330,300]),dew(4540,420,"到达花铃前的共同补给")],
+			[[260,220],"burst",[1710,220],[2250,220],[2370,420],[2560,420],[2890,420],"burst",[4350,300],[4540,420]],
+			[[260,580],"burst",[1710,580],[2250,580],[2370,420],[2560,420],[2890,420],"burst",[4350,300],[4540,420]],420,"选定一边，穿过最后的窗；前面就是抵达"),
+		# Release: one optional farewell wind, no further examination.
+		scene("花铃在前面",3,1900,[relay([[420,420],[830,420]],[1300,420])],
+			[[250,420],"burst",[1320,420],[1700,420]],[[250,580],[1300,580],[1700,420]],-1,"小满：走吧，去听听下一座花园的声音")
+	])
+
+static func garden_eight() -> Dictionary:
+	return chapter("喷嚏前后","画眉：先听一听，花朵吸气时会鼓起来。","画眉：花朵安静了，我们也到啦。","bird",[
+		{"index":0,"line":"画眉：花朵先吸气，才会打喷嚏。"},
+		{"index":2,"line":"画眉：你给它留了空档，也给自己留了路。"},
+		{"index":3,"line":"画眉：不用急，先看看前面那一朵。"},
+		{"index":5,"line":"画眉：听，终于安静下来了。"}
+	],[
+		# Directly after 07, a short sheltered approach frames the first flower.
+		scene("先听一口气",0,3100,[terrain(470,80,620,300),flower(1570,420),terrain(1440,550,520,180),dew(2200,420,"第一朵花之后的共同补给")],
+			[[310,520],[1210,520],[1400,420],"burst",[2200,420]],
+			[[310,520],[1210,520],[1290,240],[1990,240],[2200,420]],420,"看花朵鼓起，再选择安抚或绕过"),
+		# Different approach height. Shelter on the route absorbs outgoing puffs.
+		scene("叶影挡住喷嚏",0,4500,[terrain(450,340,350,190),flower(1130,290),dew(1730,420,"花朵之后落回共同出口"),terrain(2100,80,450,340),flower(2940,550),dew(3540,420,"低花之后抬头补给"),gap(3910,420,350)],
+			[[290,250],[960,290],"burst",[1730,420],[1930,550],[2770,550],"burst",[3540,420],[3750,420],[4130,420]],
+			[[290,610],[1500,610],[1730,420],[1930,550],[2650,550],[2650,230],[3290,230],[3540,420],[3750,420],[4130,420]],-1,"借叶影靠近；离开遮挡后再决定怎么过去"),
+		# Transfer the player's 07 skill: calm, then brake into a low opening.
+		scene("安静后的转弯",1,4900,[flower(540,280),terrain(1050,80,420,350),dew(900,550,"安抚或绕行后先落到低处"),gap(1710,550,320),relay([[2080,550],[2480,410],[2880,270]],[3350,270]),flower(3290,270),dew(3950,420,"借风安抚后落回共同通路"),gap(4370,420,330)],
+			[[370,280],"burst",[900,550],[1550,550],[1900,550],[1910,550],"burst",[3370,270],[3950,420],[4210,420],[4580,420]],
+			[[300,600],[900,550],[1550,550],[1900,550],[2600,430],[3150,480],[3710,480],[3950,420],[4210,420],[4580,420]],420,"安抚之后别直冲，下一扇窗在下面"),
+		# Two independent breaths with a safe turn between, never a blind volley.
+		scene("两次呼吸之间",1,5700,[terrain(460,490,440,240),flower(1190,320),dew(1770,420,"第一声喷嚏之后补给"),terrain(2130,80,460,340),flower(2970,550),dew(3550,420,"第二声喷嚏后回到同一路"),terrain(3910,500,570,230),gap(4780,300,330),dew(5120,420,"转出花台后的补给")],
+			[[300,330],[1020,320],"burst",[1770,420],[1960,550],[2800,550],"burst",[3550,420],[3740,300],[4600,300],[4970,300],[5120,420]],
+			[[300,330],[930,330],[930,170],[1570,170],[1770,420],[1960,550],[2670,550],[2670,230],[3320,230],[3550,420],[3740,300],[4600,300],[4970,300],[5120,420]],-1,"转弯把两朵花隔开，先处理眼前这一朵"),
+		scene("水声旁歇一口气",1,2800,[terrain(500,80,520,300),terrain(1620,520,490,210),dew(1320,440,"在叶影与花台之间经过")],
+			[[330,520],[1170,520],[1320,440],[1460,340],[2290,340]],[],420,"这里没有喷嚏，沿着叶影从容飞过去"),
+		# Develop timing separately before combining it with flowers.
+		scene("看见停喷的空档",2,4700,[terrain(650,450,780,110),jet(820,100,220,350,6.8,2.1),dew(1740,420,"穿过空档或绕行后的共同补给"),gap(2130,420,340),flower(2720,420),terrain(2600,550,500,180),dew(3350,420,"喷口之后再安抚花朵"),terrain(3740,80,360,330)],
+			[[670,420],{"kind":"jet_window","jet_x":820.0,"travel_seconds":1.8},[1220,420],[1740,420],[1960,420],[2350,420],[2550,420],"burst",[3350,420],[3540,540],[4320,540]],
+			[[460,650],[1570,650],[1740,420],[1960,420],[2350,420],[2420,250],[3130,250],[3350,420],[3540,540],[4320,540]],-1,"先看水的空档，转过窗后再听花朵"),
+		# A wind-assisted calm, then a deliberate low approach to the next flower.
+		scene("借风送去安静",2,5700,[relay([[430,540],[830,400],[1230,260]],[1700,260]),flower(1540,260),terrain(2040,80,370,360),dew(1860,550,"借风安抚后在低处补给"),gap(2720,550,330),flower(3240,550),dew(3840,420,"第二朵花后共同补给"),terrain(4230,490,660,240),gap(5150,310,330)],
+			[[260,540],"burst",[1720,260],[1860,550],[2550,550],[2930,550],[3070,550],"burst",[3840,420],[4050,310],[4980,310],[5370,310]],
+			[[260,540],[1450,570],[1860,550],[2550,550],[2930,550],[2930,280],[3580,280],[3840,420],[4050,310],[4980,310],[5370,310]],420,"借到的风也能安抚花朵；下一朵由你出发"),
+		# Breather directly before the chapter's peak; no repeated mini-exams.
+		scene("听清最后一段",2,2500,[terrain(600,80,500,310),terrain(1610,530,400,200),dew(1340,450,"穿过叶影，看向最后一片花园")],
+			[[400,530],[1230,530],[1340,450],[1470,340],[2220,340]],[],420,"画眉：最后几朵花了，先看清，再出发"),
+		# Climax: timed water, wind-calm, brake and last voluntary calm/bypass.
+		scene("把呼吸接成一路",3,7300,[terrain(620,450,720,100),jet(800,100,220,350,6.8,2.1),dew(1630,420,"水园之后顺路补给"),relay([[1910,420],[2310,290],[2710,290]],[3180,290]),flower(3000,290),terrain(3520,80,410,360),dew(3340,550,"借风安抚后落向低廊"),gap(4240,550,310),flower(4800,550),dew(5420,420,"最后的花之后回到共同出口"),terrain(5820,500,610,230),gap(6740,320,350)],
+			[[640,420],{"kind":"jet_window","jet_x":800.0,"travel_seconds":1.8},[1180,420],[1630,420],[1740,420],"burst",[3200,290],[3340,550],[4070,550],[4450,550],[4630,550],"burst",[5420,420],[5640,320],[6550,320],[6960,320]],
+			[[440,650],[1470,650],[1630,420],[1860,560],[3140,560],[3340,550],[4070,550],[4450,550],[4490,280],[5150,280],[5420,420],[5640,320],[6550,320],[6960,320]],420,"水的空档、风的落点、花的呼吸，都看得见"),
+		# Payoff and coda are quiet: no last flower or repeat examination.
+		scene("画眉等候的叶下",3,1800,[terrain(510,600,620,130)],
+			[[1450,420]],[],420,"听不见喷嚏了，画眉就在前面的叶下"),
+		scene("一起穿过花铃",3,900,[],[[620,420]],[],-1,"画眉：这条路，我也记住啦")
+	])
