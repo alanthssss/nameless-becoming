@@ -1,7 +1,7 @@
 extends "res://game_model.gd"
 ## Suspend is a frozen live state; checkpoint recovery remains a separate action.
 const Content = preload("res://long_journey_content.gd")
-const SAVE_PATH := "user://summer_long_07_08_r1.json"
+const SAVE_PATH := "user://summer_long_07_08_r3.json"
 const FIELDS := ["phase","p","velocity","face","charge","charging","burst_left","burst_braking","bees","stamina","energy_spent","energy_gained","rain_remaining","invulnerable","shield_left","shield_feedback_left","hazard_clock","time","camera_x","storm_x","storm_active","completed","exit_ready","bursts","recoveries","rings_hit","wind_chain","sample_approach","rain_timer","checkpoint_index","started","blocked_cooldown","garden_awards","checkpoint","pods","walls","rings","shelters","dew","sprayers","shields","rain_fields","drops","puffs"]
 const DYNAMIC := {"pods":["open"],"walls":["broken"],"rings":["active"],"shelters":["reached"],"dew":["collected"],"sprayers":["timer","stun_left","flash","rewarded"],"shields":["collected"],"rain_fields":["timer"]}
 
@@ -18,6 +18,20 @@ func record_sample_approach(before: Vector2) -> void:
 		var crossing_y := lerpf(before.y,p.y,(r.end.x-before.x)/(p.x-before.x))
 		if crossing_y < r.position.y: sample_approach = "top"
 		elif crossing_y > r.end.y: sample_approach = "bottom"
+
+func advance_shelters() -> void:
+	# Resting is optional. Crossing the leaf's station records a safe recovery
+	# point even when the chosen flight line passes above or below its canopy.
+	# Ordinary leaf contact still restores stamina through the base rules.
+	super.advance_shelters()
+	var next := checkpoint_index+1
+	if next >= shelters.size() or p.x < shelters[next].pos.x: return
+	if not section_cleared(next): return
+	shelters[next].reached = true
+	checkpoint_index = next
+	rain_remaining = sections[mini(next+1,sections.size()-1)].budget
+	save_checkpoint(shelters[next].pos)
+	emit("checkpoint",shelters[next].pos)
 
 func journey_dew_total() -> int:
 	return Content.build(0).dew.size()+Content.build(1).dew.size()
@@ -129,7 +143,7 @@ func valid_checkpoint(saved: Dictionary) -> bool:
 func valid_position(point: Vector2) -> bool:
 	return point.x >= 0 and point.x <= world_width+100 and point.y >= 60 and point.y <= 750
 
-func valid_state(state: Dictionary,previous := false) -> bool:
+func valid_state(state: Dictionary) -> bool:
 	if state.size() != FIELDS.size(): return false
 	for key in FIELDS:
 		if not state.has(key): return false
@@ -153,7 +167,7 @@ func valid_state(state: Dictionary,previous := false) -> bool:
 	for i in state.garden_awards.size():
 		var maximum := 0
 		if i < 2:
-			maximum = Content.previous_dew(i).size() if previous or i < stage else Content.build(i).dew.size()
+			maximum = Content.build(i).dew.size()
 		if state.garden_awards[i] < 0 or state.garden_awards[i] > maximum: return false
 	for i in state.shelters.size():
 		if state.shelters[i].reached != (i <= state.checkpoint_index): return false
@@ -169,8 +183,8 @@ func valid_state(state: Dictionary,previous := false) -> bool:
 
 func restore_payload(data: Dictionary) -> bool:
 	if not data.get("journey_id") is String or not number(data.get("version")): return false
-	var previous: bool = data.journey_id == Content.PREVIOUS_ID
-	if (data.journey_id != Content.JOURNEY_ID and not previous) or data.version != 1: return false
+	# Geometry is reauthored. Old r1/r2 files remain with their original build.
+	if data.journey_id != Content.JOURNEY_ID or data.version != 1: return false
 	if not number(data.get("stage")) or (float(data.stage) != floor(float(data.stage)) or int(data.stage) not in [0,1]): return false
 	if not data.get("rng_state") is String or not data.rng_state.is_valid_int() or str(int(data.rng_state)) != data.rng_state: return false
 	var state = unpack(data.get("state"))
@@ -179,16 +193,6 @@ func restore_payload(data: Dictionary) -> bool:
 	var probe = get_script().new()
 	probe.load_stage(int(data.stage))
 	if not data.get("completed") is bool: return false
-	if previous:
-		# Validate the complete old snapshot before moving any pickup. Never accept
-		# arbitrary coordinates merely because a file carries the previous ID.
-		probe.dew.assign(Content.previous_dew(int(data.stage)))
-		probe.checkpoint.dew = probe.dew.duplicate(true)
-		if not probe.valid_state(state,true) or data.completed != state.completed: return false
-		state.dew = migrate_dew(state.dew,int(data.stage))
-		state.checkpoint.dew = migrate_dew(state.checkpoint.dew,int(data.stage))
-		state.garden_awards[int(data.stage)] = state.dew.filter(func(d): return d.collected).size()
-		probe.load_stage(int(data.stage))
 	if not probe.valid_state(state) or data.completed != state.completed: return false
 	load_stage(int(data.stage))
 	for key in FIELDS:
@@ -200,11 +204,3 @@ func restore_payload(data: Dictionary) -> bool:
 	rng.state = int(data.rng_state)
 	events.clear()
 	return true
-
-static func migrate_dew(previous: Array,index: int) -> Array:
-	var revised: Array = Content.build(index).dew
-	for item in revised:
-		# The two old branch rewards become one shared reward; consuming either
-		# leaves it consumed, in both live state and the separate failure snapshot.
-		item.collected = previous.any(func(old): return old.encounter == item.encounter and old.collected)
-	return revised

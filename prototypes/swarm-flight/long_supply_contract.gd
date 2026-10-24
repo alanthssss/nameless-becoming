@@ -15,7 +15,7 @@ static func run(check: Callable) -> void:
 				check.call(point in encounter.direct_route and point in encounter.alternate_route,"Both long-journey routes pass their supply")
 	# Reproduce the reported lower relay and its mirrored upper relay. These
 	# observation inputs do not use the content's authored reference route.
-	for encounter_index in [0,4]:
+	for encounter_index in [0,6]:
 		for bypass in [false,true]:
 			for condition in ["passing","low-fixture"]:
 				var model := Model.new()
@@ -65,27 +65,14 @@ static func run(check: Callable) -> void:
 				check.call(model.rings_hit-rings_before == (0 if bypass else 3),"Long supply preserves the three-flower relay: "+label)
 				print("LONG_SUPPLY: "+JSON.stringify({"case":label,"refund":refund,"retreat":retreat,"recoveries":model.recoveries}))
 
-	migration(check)
+	old_geometry_isolated(check)
 
-static func migration(check: Callable) -> void:
-	for stage in 2:
-		var model := Model.new()
-		model.load_stage(stage)
-		var saved: Dictionary = model.save_payload()
-		saved.journey_id = Content.PREVIOUS_ID
-		var previous: Array = Content.previous_dew(stage)
-		# Explicit old-save fixture: flags consumed on a branch stay consumed at
-		# its new shared exit. Live and failure snapshots intentionally differ.
-		previous[0].collected = true
-		saved.state.dew = Model.pack(previous)
-		saved.state.checkpoint.dew = Model.pack(Content.previous_dew(stage))
-		saved.state.garden_awards[stage] = 1
-		check.call(model.restore_payload(saved),"Previous content save migrates stage "+str(stage))
-		check.call(model.dew[0].collected and not model.checkpoint.dew[0].collected,"Migration keeps live and failure pickup flags separate")
-		check.call(model.stamina == 100 and model.p == Vector2(180,420) and model.time == 0,"Migration does not refill, move or advance clocks")
-		var revised := model.save_payload()
-		check.call(model.restore_payload(revised),"Migrated snapshot validates again")
-		var malformed := saved.duplicate(true)
-		malformed.state.dew[0].pos.v[0] += 30
-		check.call(not model.restore_payload(malformed),"Old revision cannot bypass static pickup validation")
-		check.call(model.save_payload() == revised,"Rejected migration leaves current state untouched")
+static func old_geometry_isolated(check: Callable) -> void:
+	var model := Model.new()
+	var current: Dictionary = model.save_payload()
+	for old_id in ["summer-long-07-08-r1","summer-long-07-08-r2"]:
+		var previous: Dictionary = current.duplicate(true)
+		previous.journey_id = old_id
+		check.call(not model.restore_payload(previous),"Old geometry cannot be loaded into reauthored map")
+		check.call(model.save_payload() == current,"Rejected old geometry leaves current progress untouched")
+	check.call(Model.SAVE_PATH.ends_with("summer_long_07_08_r3.json"),"Reauthored map uses separate save path")

@@ -77,7 +77,7 @@ func _ready() -> void:
 		if progress_file.is_empty() and OS.has_feature("template"):
 			var folder := OS.get_executable_path().get_base_dir().path_join("../../..").simplify_path().path_join("存档")
 			DirAccess.make_dir_recursive_absolute(folder)
-			progress_file = folder.path_join("summer_long_07_08_r1.json")
+			progress_file = folder.path_join("summer_long_07_08_r3.json")
 	else:
 		for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
 	world = World.new()
@@ -217,7 +217,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.10.1" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
+	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.11.0" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -277,7 +277,7 @@ func show_title() -> void:
 	third_button.text = "退出"
 	if long_journey:
 		heading.text = "花篱外的长旅程"
-		description.text = "第07关 花篱另一边 → 第08关 喷嚏前后\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n触到叶亭记住恢复点；失败按 R 返回。"
+		description.text = "第07关 花篱另一边 → 第08关 喷嚏前后\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n经过叶亭就记住恢复点；靠近叶下恢复体力。"
 		main_button.text = "从第07关出发"
 		secondary_button.text = "重看试玩结尾" if saved_payload.get("completed",false) else "继续第%02d关 · 保存的位置" % (saved_stage+7)
 	reset_menu()
@@ -489,7 +489,7 @@ func tick(delta: float) -> void:
 				"blocked":
 					event_message(event.kind,"先完成本段 · 跟随方向标救援或抵达上一处叶下" if event.get("material") == "waiting" else "干叶帘可以冲开 · 按住空格，亮起后松开" if event.get("material") == "curtain" else "实心%s冲不开 · 从开口绕过去" % {"stem":"茎干","hedge":"花篱","crate":"果箱","glass":"台面"}.get(event.get("material"),"障碍"),2.5)
 				"checkpoint":
-					event_message(event.kind,"安全了 · 雨幕停在身后，体力恢复 · 已保存" if model.storm_active else "已记住这个叶亭 · 体力正在恢复",3.0)
+					event_message(event.kind,"安全了 · 雨幕停在身后，体力恢复 · 已保存" if model.storm_active else ("恢复点已记住 · 可以继续飞行" if long_journey and model.shelter_index_at(model.p) < 0 else "已记住这个叶亭 · 体力正在恢复"),3.0)
 				"recover_manual":
 					event_message(event.kind,"已回到本段最近的恢复点 · 救援成果保留",3.0)
 				"recover_rain":
@@ -522,7 +522,8 @@ func tick(delta: float) -> void:
 		model.events.clear()
 		if model.encounter_index() != last_section:
 			last_section = model.encounter_index()
-			message(model.encounter_name(),2.2,Color("ffe7a3"),1)
+			if not long_journey or model.chapter.encounters[last_section].act != model.chapter.encounters[maxi(0,last_section-1)].act:
+				message(model.chapter.encounters[last_section].act_name if long_journey else model.encounter_name(),2.2,Color("ffe7a3"),1)
 		if model.phase in ["transition","ending"]: show_transition()
 	elif mode in ["transition","arrival"]:
 		transition_left = maxf(0,transition_left-minf(delta,0.1))
@@ -617,6 +618,9 @@ func refresh_hud() -> void:
 	cue_panel.visible = false
 	if not active: return
 	var title: String = "%s · %d/%d %s" % [titles[model.stage],model.encounter_index()+1,model.chapter.encounters.size(),model.encounter_name()]
+	if long_journey:
+		var beat: Dictionary = model.chapter.encounters[model.encounter_index()]
+		title = "%s · %s · %s" % [titles[model.stage],beat.act_name,beat.name]
 	if model.stage_dew_total() > 0: title += "   ·   晨露 %d/%d" % [model.garden_awards[model.stage],model.stage_dew_total()]
 	var objective: String = model.objective()
 	var hint: String = "蓄力已保留 · 按住空格接住，松开后冲刺" if resume_charge_guard else model.hint()
@@ -716,7 +720,7 @@ func _draw() -> void:
 	for i in model.last_stage_index()+1:
 		var color := Color("829853") if i <= model.stage else Color("d3d9bf")
 		draw_line(Vector2(48+i*11,progress_y),Vector2(55+i*11,progress_y),Color("d6b767") if i <= model.stage else color,2.0,true)
-	var section_fill: float = float(model.completed_sections()) / model.section_count()
+	var section_fill: float = clampf(model.p.x/model.exit_pos.x,0.0,1.0) if long_journey else float(model.completed_sections()) / model.section_count()
 	draw_line(Vector2(256,progress_y),Vector2(824,progress_y),Color("90794c"),2)
 	draw_line(Vector2(256,progress_y),Vector2(256+568*section_fill,progress_y),Color("d6b767"),3)
 	var target: Vector2 = model.target_position()-Vector2(model.camera_x,0)
