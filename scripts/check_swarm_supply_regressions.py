@@ -31,7 +31,7 @@ def run(project):
 
 def check_long_layouts(project):
     for name in ("long_journey_model.gd", "long_journey_content.gd",
-                 "long_journey_verify.gd", "long_supply_contract.gd", "eight_rhythm_contract.gd", "seven_flow_contract.gd"):
+                 "long_journey_verify.gd", "long_supply_contract.gd", "eight_rhythm_contract.gd", "seven_flow_contract.gd", "nine_choice_contract.gd"):
         shutil.copy2(SOURCE / name, project / name)
     def run_long():
         result = subprocess.run(

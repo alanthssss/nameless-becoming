@@ -59,6 +59,7 @@ var card_style: StyleBoxFlat
 var capture_path := ""
 var capture_seconds := -1.0
 var start_region := 0
+var entry_chapter := 0
 var hud_layout_stage := -1
 
 func _ready() -> void:
@@ -66,6 +67,7 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--swarm-qa": test_mode = true
 		if arg.begins_with("--progress-file="): progress_file = arg.trim_prefix("--progress-file=")
+		if arg.begins_with("--entry-chapter="): entry_chapter = int(arg.trim_prefix("--entry-chapter="))
 		if arg.begins_with("--capture="): capture_path = arg.trim_prefix("--capture=")
 		if arg.begins_with("--capture-after="): capture_seconds = float(arg.trim_prefix("--capture-after="))
 	long_journey = ProjectSettings.get_setting("journey/long_sample",false) and not test_mode
@@ -73,11 +75,12 @@ func _ready() -> void:
 	if "--long-journey" in OS.get_cmdline_user_args(): long_journey = true
 	if long_journey:
 		model = LongModel.new()
-		for i in 2: titles.append("%02d  %s" % [i+7,LongContent.definitions()[i].title])
+		entry_chapter = clampi(entry_chapter,0,LongContent.STAGE_COUNT-1)
+		for i in LongContent.STAGE_COUNT: titles.append("%02d  %s" % [i+7,LongContent.definitions()[i].title])
 		if progress_file.is_empty() and OS.has_feature("template"):
 			var folder := OS.get_executable_path().get_base_dir().path_join("../../..").simplify_path().path_join("存档")
 			DirAccess.make_dir_recursive_absolute(folder)
-			progress_file = folder.path_join("summer_long_07_08_r7.json")
+			progress_file = folder.path_join(LongModel.SAVE_PATH.get_file())
 	else:
 		for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
 	world = World.new()
@@ -217,7 +220,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.14.1" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
+	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.15.0" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -277,8 +280,10 @@ func show_title() -> void:
 	third_button.text = "退出"
 	if long_journey:
 		heading.text = "花篱外的长旅程"
-		description.text = "第07关 花篱另一边 → 第08关 喷嚏前后\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n经过叶亭就记住恢复点；靠近叶下恢复体力。"
-		main_button.text = "从第07关出发"
+		description.text = "第07关 花篱另一边 → 第08关 喷嚏前后 → 第09关 选风片段\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n经过叶亭就记住恢复点；靠近叶下恢复体力。"
+		main_button.text = "从第%02d关出发" % (entry_chapter+7)
+		if entry_chapter > 0:
+			description.text = "从"+titles[entry_chapter]+"开始。\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n这是独立试玩进度，不影响连续旅程。"
 		secondary_button.text = "重看试玩结尾" if saved_payload.get("completed",false) else "继续第%02d关 · 保存的位置" % (saved_stage+7)
 	reset_menu()
 	refresh_hud()
@@ -297,7 +302,7 @@ func begin_stage(index: int) -> void:
 	panel.hide()
 	sound.set_stage(model.music_index())
 	last_section = model.encounter_index()
-	message(Data.REGIONS[model.chapter.region]+" · "+model.chapter.entry,4.5)
+	message(model.chapter.entry if long_journey else Data.REGIONS[model.chapter.region]+" · "+model.chapter.entry,4.5)
 	persist_progress()
 	refresh_hud()
 
@@ -306,14 +311,14 @@ func on_primary() -> void:
 		"title":
 			played_seconds = 0
 			model.reset_journey()
-			begin_stage(start_region*4)
+			begin_stage(entry_chapter if long_journey else start_region*4)
 		"pause": resume_game()
 		"transition": begin_stage(model.stage+1)
 		"arrival": show_ending()
 		"ending":
 			played_seconds = 0
 			model.reset_journey()
-			begin_stage(0)
+			begin_stage(entry_chapter if long_journey else 0)
 
 func on_secondary() -> void:
 	if mode == "title" and not saved_payload.is_empty():
@@ -580,8 +585,8 @@ func show_transition() -> void:
 	if not model.chapter.arrival.is_empty() and mode != "arrival":
 		handoff_detail.text = model.chapter.arrival+"\nEnter 继续 · Esc 暂停"
 	if long_journey and mode == "arrival":
-		handoff_heading.text = "两座庭院，都走到了。"
-		handoff_detail.text = "画眉记住了这条新路。\nEnter 看试玩结尾 · Esc 暂停"
+		handoff_heading.text = "新的风路，也走到了。"
+		handoff_detail.text = "小满在花铃下面等你。\nEnter 看试玩结尾 · Esc 暂停"
 	handoff_panel.show()
 	cue_panel.hide()
 	toast.hide()
@@ -599,9 +604,9 @@ func show_ending() -> void:
 	third_button.show()
 	third_button.text = "留在这一刻，退出"
 	if long_journey:
-		heading.text = "两座庭院，走完了。"
-		description.text = "第07—08关试玩结束。\n花篱的另一面，喷嚏后的安静，还有自己选过的路。\n旅程 "+clock_text(played_seconds)+" · 返回恢复点 "+str(model.recoveries)+" 次\n晨露 "+str(model.garden_total())+" 颗。谢谢你飞到这里。"
-		main_button.text = "再走一次第07—08关"
+		heading.text = "这段旅程，走完了。"
+		description.text = "第07—09关试玩结束。第09关为风路代表片段。\n花篱的另一面，喷嚏后的安静，还有自己选过的路。\n旅程 "+clock_text(played_seconds)+" · 返回恢复点 "+str(model.recoveries)+" 次\n晨露 "+str(model.garden_total())+" 颗。谢谢你飞到这里。"
+		main_button.text = "再从第%02d关出发" % (entry_chapter+7)
 	end_time = 0
 	persist_progress()
 	reset_menu()
@@ -646,7 +651,7 @@ func refresh_hud() -> void:
 		hud_objective.text = objective
 		hud_hint.text = hint
 		hud_bees.text = bees_text if model.stage < 4 else "%s · %d/4" % [["春","夏","秋","冬"][model.chapter.region],model.stage%4+1]
-		if long_journey: hud_bees.text = "夏 · 第%02d关" % (model.stage+7)
+		if long_journey: hud_bees.text = "第%02d关" % (model.stage+7)
 		hud_energy.text = energy_text
 		hud_clock.text = clock
 	var cue: Dictionary = model.context_cue()

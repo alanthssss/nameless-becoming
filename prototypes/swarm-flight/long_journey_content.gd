@@ -2,8 +2,9 @@ extends "res://event_data.gd"
 ## Hand-authored connected gardens. Width, recovery and action order follow the
 ## experience, not a repeating cell catalogue. Routes are developer inputs only.
 const Builder = preload("res://chapter_data.gd")
-const JOURNEY_ID := "summer-long-07-08-r7"
-const ACTS := [["看见两面","风的落点","换一面看","顺畅离开"],["先听一听","穿过呼吸","风与喷嚏","一起离开"]]
+const STAGE_COUNT := 3
+const JOURNEY_ID := "summer-long-07-09-r8"
+const ACTS := [["看见两面","风的落点","换一面看","顺畅离开"],["先听一听","穿过呼吸","风与喷嚏","一起离开"],["选好落点","收住，再出发","顺着自己的路"]]
 
 static func v(pair: Array) -> Vector2:
 	return Vector2(pair[0],pair[1])
@@ -29,7 +30,7 @@ static func scene(name: String,act: int,width: float,beats: Array,primary: Array
 	return spec
 
 static func build(index: int) -> Dictionary:
-	index = clampi(index,0,1)
+	index = clampi(index,0,STAGE_COUNT-1)
 	var source: Dictionary = definitions()[index]
 	var result := Builder.build_source(source)
 	if index == 0:
@@ -62,7 +63,7 @@ static func chapter(title: String,entry: String,arrival: String,npc: String,stop
 	return {"title":title,"region":1,"theme":1,"music":1,"base_bees":9,"storm":false,"exit_kind":"arch","entry":entry,"arrival":arrival,"npc":npc,"npc_line":"","neighbor_stops":stops,"encounters":encounters}
 
 static func definitions() -> Array:
-	return [garden_seven(),garden_eight()]
+	return [garden_seven(),garden_eight(),garden_nine()]
 
 static func garden_seven() -> Dictionary:
 	return chapter("花篱另一边","小满在花篱另一边。先看风把你带到哪里。","小满：这回，你自己找到了路。\n前面的花园传来一声小小的喷嚏。","bee",[
@@ -178,4 +179,24 @@ static func garden_eight() -> Dictionary:
 		scene("花铃前的小径",3,350,[terrain(80,600,200,130)],
 			[[200,420]],[],-1,"画眉：刚才那一串，接得真漂亮"),
 		scene("一起穿过花铃",3,250,[],[[150,420]],[],-1,"画眉：走吧，花铃就在前面")
+	])
+
+
+static func garden_nine() -> Dictionary:
+	return chapter("不借这一阵风","小满：先看看落在哪里，再决定借不借这阵风。","小满：你选的路，把我们带到了这里。","bee",[
+		{"index":0,"line":"小满：高处往下转，低处往上走，都能到花窗。"},
+		{"index":1,"line":"小满：风停了，下一次出发由你来。"}
+	],[
+		# A high wind landing asks for a descent; ordinary lower flight asks for
+		# a climb. Shared supply follows BOTH decisions, never rewards a detour.
+		scene("高处落下，低处抬头",0,3600,[terrain(580,350,700,150),relay([[380,340],[580,280],[780,230]],[1250,230]),terrain(2000,80,240,260),terrain(2000,560,240,170),dew(2530,440,"两种落点都在穿过花窗后补给"),terrain(2900,550,280,180)],
+			[[210,340],"burst",[1270,230],[1510,230],[1910,440],[2530,440],[2760,440],[3300,420]],
+			[[350,600],[1500,600],[1910,440],[2530,440],[2760,440],[3300,420]],420,"先看风的高落点；从下方绕过，也能抬头穿窗"),
+		# Opposed half-arcs are separated by a generous manual transfer. The
+		# first relay cannot reach the second; the next launch stays a choice.
+		scene("收住，再接下一阵",1,6000,[relay([[500,540],[900,400],[1300,260]],[1770,260]),terrain(630,590,700,140),dew(2200,430,"第一阵风后自己收势，准备下一次出发"),terrain(2630,510,500,220),relay([[3330,250],[3730,390],[4130,530]],[4600,530]),terrain(3480,80,700,140),dew(5030,420,"第二阵风或普通飞行后的共同补给"),terrain(5430,540,260,190)],
+			[[330,540],"burst",[1790,260],[2200,430],[2420,430],[2470,250],[3160,250],"burst",[4620,530],[5030,420],[5290,350],[5790,420]],
+			[[350,540],[1460,540],[2200,430],[2420,430],[2470,350],[3200,350],[3260,600],[4620,600],[5030,420],[5290,350],[5790,420]],420,"接完上升的风，自己换层；再决定怎样接住下降的风"),
+		# A short release, with no new examination or mandatory farewell burst.
+		scene("自己的路",2,700,[],[[250,420],[540,420]],[],-1,"小满：前面就是花铃，按你自己的节奏飞吧")
 	])

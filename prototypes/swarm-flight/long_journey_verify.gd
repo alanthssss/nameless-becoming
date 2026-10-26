@@ -40,6 +40,11 @@ func run() -> void:
 		print("EIGHT RHYTHM VERIFIED: %d checks, %d failures" % [checks,failures])
 		quit(0 if failures == 0 else 1)
 		return
+	if "--nine-choice-only" in OS.get_cmdline_user_args():
+		preload("res://nine_choice_contract.gd").run(check)
+		print("NINE CHOICE VERIFIED: %d checks, %d failures" % [checks,failures])
+		quit(0 if failures == 0 else 1)
+		return
 	Supply.run(check)
 	if "--long-supply-only" in OS.get_cmdline_user_args():
 		print("LONG SUPPLY CHECKS: %d, failures %d" % [checks,failures])
@@ -47,6 +52,7 @@ func run() -> void:
 		return
 	preload("res://eight_rhythm_contract.gd").run(check)
 	preload("res://seven_flow_contract.gd").run(check)
+	preload("res://nine_choice_contract.gd").run(check)
 	checkpoint_flow()
 	ordinary_flight()
 	for alternate in [false,true]:
@@ -59,13 +65,13 @@ func run() -> void:
 		var last_beat := -1
 		for frame in 180000:
 			if model.phase == "transition":
-				print("PACING_METRICS: "+JSON.stringify({"stage":7,"alternate":alternate,"metrics":metrics,"beats":summaries}))
-				check(model.recoveries == 0,"07 has no forced recovery")
-				check(metrics.blocked == 0,"07 authored paths clear visible geometry")
-				check(metrics.hit == 0,"07 authored paths avoid damage")
-				print("LONG_ROUTE: 07 alternate=%s seconds=%.2f recoveries=%d checkpoints=%d" % [alternate,model.time,model.recoveries,model.completed_sections()])
-				roundtrip(model,"07 arrival")
-				model.load_stage(1)
+				print("PACING_METRICS: "+JSON.stringify({"stage":model.stage+7,"alternate":alternate,"metrics":metrics,"beats":summaries}))
+				check(model.recoveries == 0,"Chapter %d has no forced recovery" % (model.stage+7))
+				check(metrics.blocked == 0,"Chapter %d authored paths clear visible geometry" % (model.stage+7))
+				check(metrics.hit == 0,"Chapter %d authored paths avoid damage" % (model.stage+7))
+				print("LONG_ROUTE: %02d alternate=%s seconds=%.2f recoveries=%d checkpoints=%d" % [model.stage+7,alternate,model.time,model.recoveries,model.completed_sections()])
+				roundtrip(model,"%02d arrival" % (model.stage+7))
+				model.load_stage(model.stage+1)
 				metrics = {"blocked":0,"hit":0,"min_stamina":100.0,"retreat":0.0,"furthest":180.0}
 				summaries.clear()
 				last_beat = -1
@@ -91,13 +97,13 @@ func run() -> void:
 				sampled[label] = true
 				roundtrip(model,label)
 			if frame%6000 == 0: print("ROUTE_PROGRESS: %s stage=%d x=%.0f command=%d" % [alternate,model.stage+7,model.p.x,driver.cursor])
-		check(model.phase == "ending","both long chapters finish via ordinary inputs, alternate=%s" % alternate)
-		print("PACING_METRICS: "+JSON.stringify({"stage":8,"alternate":alternate,"metrics":metrics,"beats":summaries}))
-		check(model.recoveries == 0,"08 has no forced recovery")
-		check(metrics.blocked == 0,"08 authored paths clear visible geometry")
-		check(metrics.hit == 0,"08 authored paths avoid damage")
-		print("LONG_ROUTE: 08 alternate=%s seconds=%.2f recoveries=%d checkpoints=%d" % [alternate,model.time,model.recoveries,model.completed_sections()])
-		roundtrip(model,"08 ending")
+		check(model.phase == "ending","all sample chapters finish via ordinary inputs, alternate=%s" % alternate)
+		print("PACING_METRICS: "+JSON.stringify({"stage":model.stage+7,"alternate":alternate,"metrics":metrics,"beats":summaries}))
+		check(model.recoveries == 0,"Final sample chapter has no forced recovery")
+		check(metrics.blocked == 0,"Final sample chapter paths clear visible geometry")
+		check(metrics.hit == 0,"Final sample chapter paths avoid damage")
+		print("LONG_ROUTE: %02d alternate=%s seconds=%.2f recoveries=%d checkpoints=%d" % [model.stage+7,alternate,model.time,model.recoveries,model.completed_sections()])
+		roundtrip(model,"09 ending")
 	var probe := Model.new()
 	for i in 30: probe.step(Vector2.RIGHT,true,1.0/60.0)
 	roundtrip(probe,"held charge")
@@ -120,7 +126,7 @@ func run() -> void:
 	quit(0 if failures == 0 else 1)
 
 func checkpoint_flow() -> void:
-	for stage in 2:
+	for stage in Model.new().last_stage_index()+1:
 		var model := Model.new()
 		model.load_stage(stage)
 		var safe: Vector2 = model.shelters[0].pos
@@ -139,10 +145,10 @@ func checkpoint_flow() -> void:
 		for leaf in model.shelters:
 			check(not model.walls.any(func(obstacle): return obstacle.rect.grow(16).has_point(leaf.pos)),"Every recovery point is clear of solid geometry")
 		check(model.sections.size() == model.shelters.size(),"Quiet ending does not create an unreachable recovery section")
-		check(model.chapter.sprayers.is_empty() if stage == 0 else not model.chapter.sprayers.is_empty(),"07 spatial flight and 08 breathing hazards have distinct roles")
+		check(not model.chapter.sprayers.is_empty() if stage == 1 else model.chapter.sprayers.is_empty(),"Spatial flight and 08 breathing hazards have distinct roles")
 
 func ordinary_flight() -> void:
-	for stage in 2:
+	for stage in Model.new().last_stage_index()+1:
 		var model := Model.new()
 		model.load_stage(stage)
 		var driver := Driver.new(model,true)
