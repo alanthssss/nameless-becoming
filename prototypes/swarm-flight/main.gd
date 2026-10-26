@@ -77,7 +77,7 @@ func _ready() -> void:
 		if progress_file.is_empty() and OS.has_feature("template"):
 			var folder := OS.get_executable_path().get_base_dir().path_join("../../..").simplify_path().path_join("存档")
 			DirAccess.make_dir_recursive_absolute(folder)
-			progress_file = folder.path_join("summer_long_07_08_r5.json")
+			progress_file = folder.path_join("summer_long_07_08_r6.json")
 	else:
 		for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
 	world = World.new()
@@ -217,7 +217,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.12.1" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
+	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.13.0" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

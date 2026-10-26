@@ -31,7 +31,7 @@ def run(project):
 
 def check_long_layouts(project):
     for name in ("long_journey_model.gd", "long_journey_content.gd",
-                 "long_journey_verify.gd", "long_supply_contract.gd", "eight_rhythm_contract.gd"):
+                 "long_journey_verify.gd", "long_supply_contract.gd", "eight_rhythm_contract.gd", "seven_flow_contract.gd"):
         shutil.copy2(SOURCE / name, project / name)
     def run_long():
         result = subprocess.run(
@@ -53,10 +53,10 @@ def check_long_layouts(project):
         raise GateError("Long supply baseline failed")
     mutants = {
         "long_upper_relay_lower_dew": (
-            'dew(1900,420,"借风或绕篱后，在共同出口补给")',
+            'dew(2220,420,"借风或绕篱后，在共同出口补给")',
             'dew(980,600,"篱下路线自己的补给","branch")'),
         "long_lower_relay_upper_dew": (
-            'dew(1900,420,"借下方风或从上沿绕行后共同补给")',
+            'dew(2220,420,"借下方风或从上沿绕行后共同补给")',
             'dew(1080,190,"上沿路线自己的补给","branch")'),
     }
     for name, (old, new) in mutants.items():
@@ -118,6 +118,41 @@ def check_eight_rhythm(project):
     content.write_text(original)
 
 
+def check_seven_flow(project):
+    def run_seven():
+        result = subprocess.run(
+            [os.environ.get("GODOT_BIN", "godot"), "--headless", "--path", str(project),
+             "--script", "res://long_journey_verify.gd", "--", "--seven-flow-only"],
+            capture_output=True, text=True, timeout=30)
+        output = result.stdout + result.stderr
+        summary = re.findall(r"^SEVEN FLOW VERIFIED: (\d+) checks, (\d+) failures$", output, re.M)
+        errors = re.findall(r"^FAIL: (.+)$", output, re.M)
+        if re.search(r"SCRIPT ERROR|Parse Error|Compile Error|^ERROR:", output, re.M) or len(summary) != 1:
+            raise GateError("07 flow checks did not finish normally: " + output[-3000:])
+        checks, failures = map(int, summary[0])
+        if checks < 180 or failures != len(errors) or result.returncode != bool(failures):
+            raise GateError("Incomplete 07 flow checks")
+        return errors
+    content = project / "long_journey_content.gd"
+    original = content.read_text()
+    if run_seven(): raise GateError("07 flow baseline failed")
+    mutants = {
+        "wall_before_turn_finishes": ('terrain(2280,80,380,350)', 'terrain(1940,80,380,350)',
+            "07 dash runout and subsequent turn stay clear:"),
+        "excess_wind_supply": ('result["ring_reward"] = 4.0', 'result["ring_reward"] = 8.0',
+            "07 opening spends stamina before a useful refill and first leaf"),
+        "empty_breather_tail": ('scene("看见最后的窗",2,1250,', 'scene("看见最后的窗",2,2400,',
+            "07 breather reconnects to purpose within six seconds:"),
+    }
+    for name, (old, new, expected) in mutants.items():
+        content.write_text(replace_once(original, old, new))
+        errors = run_seven()
+        if not any(e.startswith(expected) for e in errors):
+            raise GateError(name + " not rejected by expected 07 behavior: " + str(errors))
+        print(f"SEVEN FLOW REGRESSION CAUGHT: {name}, {len(errors)} assertions", flush=True)
+    content.write_text(original)
+
+
 def main():
     with tempfile.TemporaryDirectory(prefix="swarm-supply-canary-") as temp:
         project = Path(temp)
@@ -161,8 +196,10 @@ def main():
         content.write_text(original)
         check_long_layouts(project)
         check_eight_rhythm(project)
+        check_seven_flow(project)
     print("SWARM SUPPLY REGRESSIONS VERIFIED: 5/5 layouts rejected")
     print("EIGHT RHYTHM REGRESSIONS VERIFIED: 6/6 behavior defects rejected")
+    print("SEVEN FLOW REGRESSIONS VERIFIED: 3/3 behavior defects rejected")
 
 
 if __name__ == "__main__":

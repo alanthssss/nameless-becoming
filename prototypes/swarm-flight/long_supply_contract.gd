@@ -34,7 +34,7 @@ static func run(check: Callable) -> void:
 				var route_y := (250.0 if encounter_index == 0 else 550.0)
 				var bypass_y := (600.0 if encounter_index == 0 else 190.0)
 				var points: Array = [Vector2(380,bypass_y),Vector2(1790,bypass_y)] if bypass else [Vector2(290,route_y),"burst",Vector2(1800,route_y)]
-				points.append_array([Vector2(1900,420),Vector2(2060,420)])
+				points.append_array([Vector2(2220,420),Vector2(2380,420)])
 				var driver := Driver.new(model)
 				driver.stage = 0
 				driver.wait_for_full = false
@@ -56,7 +56,7 @@ static func run(check: Callable) -> void:
 					for event in model.events:
 						if event.kind in ["blocked","hit"]: blocked = true
 						if event.kind == "dew":
-							picked = event.pos == Vector2(origin+1900,420)
+							picked = event.pos == Vector2(origin+2220,420)
 							refund += float(event.get("reward",0))
 				var label := "%d bypass=%s %s" % [encounter_index,bypass,condition]
 				check.call(picked and refund > 1.0,"Long shared supply restores real stamina after chosen action: "+label)
@@ -70,12 +70,12 @@ static func run(check: Callable) -> void:
 static func old_geometry_isolated(check: Callable) -> void:
 	var model := Model.new()
 	var current: Dictionary = model.save_payload()
-	for old_id in ["summer-long-07-08-r1","summer-long-07-08-r2","summer-long-07-08-r3","summer-long-07-08-r4"]:
+	for old_id in ["summer-long-07-08-r1","summer-long-07-08-r2","summer-long-07-08-r3","summer-long-07-08-r4","summer-long-07-08-r5"]:
 		var previous: Dictionary = current.duplicate(true)
 		previous.journey_id = old_id
 		check.call(not model.restore_payload(previous),"Old geometry cannot be loaded into reauthored map")
 		check.call(model.save_payload() == current,"Rejected old geometry leaves current progress untouched")
-	check.call(Model.SAVE_PATH.ends_with("summer_long_07_08_r5.json"),"Reauthored map uses separate save path")
+	check.call(Model.SAVE_PATH.ends_with("summer_long_07_08_r6.json"),"Reauthored map uses separate save path")
 
 static func route_passes(route: Array,point: Vector2) -> bool:
 	var previous := Vector2.INF

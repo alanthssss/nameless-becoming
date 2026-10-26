@@ -343,7 +343,7 @@ func advance(direction: Vector2, dt: float) -> void:
 			rings_hit += 1
 			wind_chain += 1
 			var before_ring_gain := stamina
-			gain_energy(8.0)
+			gain_energy(float(chapter.get("ring_reward",8.0)))
 			burst_left = 0.60
 			# Preview and launch use the same fixed direction from the flower center.
 			face = ring_direction(i)
