@@ -31,7 +31,7 @@ def run(project):
 
 def check_long_layouts(project):
     for name in ("long_journey_model.gd", "long_journey_content.gd",
-                 "long_journey_verify.gd", "long_supply_contract.gd"):
+                 "long_journey_verify.gd", "long_supply_contract.gd", "eight_rhythm_contract.gd"):
         shutil.copy2(SOURCE / name, project / name)
     def run_long():
         result = subprocess.run(
@@ -65,12 +65,50 @@ def check_long_layouts(project):
         if not any(e.startswith("Long shared supply restores real stamina after chosen action:") for e in errors):
             raise GateError(name + " was not rejected by actual input pickup ordering")
         allowed = ("Long journey supply never rewards abandoning flight",
-                   "Both long-journey routes pass their supply",
+                   "Both declared long-journey routes pass their supply",
                    "Long shared supply restores real stamina after chosen action:",
                    "Shared supply restores its full amount when needed:")
         if not all(e.startswith(allowed) for e in errors):
             raise GateError(name + " failed unrelated assertions: " + str(errors))
         print(f"LONG SUPPLY REGRESSION CAUGHT: {name}, {len(errors)} assertions", flush=True)
+    content.write_text(original)
+
+
+def check_eight_rhythm(project):
+    def run_eight():
+        result = subprocess.run(
+            [os.environ.get("GODOT_BIN", "godot"), "--headless", "--path", str(project),
+             "--script", "res://long_journey_verify.gd", "--", "--eight-rhythm-only"],
+            capture_output=True, text=True, timeout=30)
+        output = result.stdout + result.stderr
+        summary = re.findall(r"^EIGHT RHYTHM VERIFIED: (\d+) checks, (\d+) failures$", output, re.M)
+        errors = re.findall(r"^FAIL: (.+)$", output, re.M)
+        if re.search(r"SCRIPT ERROR|Parse Error|Compile Error|^ERROR:", output, re.M) or len(summary) != 1:
+            raise GateError("08 rhythm checks did not finish normally: " + output[-3000:])
+        checks, failures = map(int, summary[0])
+        if checks < 100 or failures != len(errors) or result.returncode != bool(failures):
+            raise GateError("Incomplete 08 rhythm checks")
+        return errors
+    content = project / "long_journey_content.gd"
+    original = content.read_text()
+    if run_eight(): raise GateError("08 rhythm baseline failed")
+    mutants = {
+        "attack_after_pass": ('1.0 if flower_index == 0 else 0.8', '2.4',
+            "08 flower attacks during ordinary approach"),
+        "dew_off_dash_lane": ('ribbon(2360,340)', 'ribbon(2360,550)',
+            "Dash collects the whole forward ribbon without turning back:"),
+        "wall_at_dash_exit": ('gap(3000,340,340)', 'gap(3000,340,340),terrain(2370,200,180,260)',
+            "A committed dash has a clear exit:"),
+        "opening_full_refill": ('-1,"花朵鼓起时准备；冲过喷嚏，顺势接住露珠"',
+            '340,"花朵鼓起时准备；冲过喷嚏，顺势接住露珠"',
+            "The first leaf follows meaningful action and spending"),
+    }
+    for name, (old, new, expected) in mutants.items():
+        content.write_text(replace_once(original, old, new))
+        errors = run_eight()
+        if not any(e.startswith(expected) for e in errors):
+            raise GateError(name + " not rejected by the expected ordinary-input behavior: " + str(errors))
+        print(f"EIGHT RHYTHM REGRESSION CAUGHT: {name}, {len(errors)} assertions", flush=True)
     content.write_text(original)
 
 
@@ -116,7 +154,9 @@ def main():
             print(f"SUPPLY REGRESSION CAUGHT: {name}, {len(errors)} assertions", flush=True)
         content.write_text(original)
         check_long_layouts(project)
+        check_eight_rhythm(project)
     print("SWARM SUPPLY REGRESSIONS VERIFIED: 5/5 layouts rejected")
+    print("EIGHT RHYTHM REGRESSIONS VERIFIED: 4/4 behavior defects rejected")
 
 
 if __name__ == "__main__":

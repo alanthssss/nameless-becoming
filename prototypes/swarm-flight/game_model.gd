@@ -518,11 +518,11 @@ func advance_rain(dt: float) -> void:
 
 func advance_garden(dt: float) -> void:
 	for drop in dew:
-		if not drop.collected and p.distance_to(drop.pos) < 30:
+		if not drop.collected and p.distance_to(drop.pos) < float(chapter.get("dew_radius",30.0)):
 			drop.collected = true
 			garden_awards[stage] += 1
 			var before_gain := stamina
-			gain_energy(12.0)
+			gain_energy(float(chapter.get("dew_reward",12.0)))
 			emit("dew",drop.pos)
 			events.back()["reward"] = stamina-before_gain
 	for i in sprayers.size():
@@ -531,7 +531,8 @@ func advance_garden(dt: float) -> void:
 		flower.stun_left = maxf(0,flower.stun_left-dt)
 		if burst_left > 0 and flower.stun_left <= 0 and p.distance_to(flower.pos) < 58:
 			flower.stun_left = 6.0
-			flower.timer = 4.5
+			burst_left = maxf(burst_left,float(chapter.get("calm_dash_extension",0.0)))
+			flower.timer = float(chapter.get("sprayer_period",4.5))
 			flower.flash = 0.0
 			var before_gain := stamina
 			if not flower.rewarded:
@@ -544,10 +545,10 @@ func advance_garden(dt: float) -> void:
 		if not started or flower.stun_left > 0 or absf(p.x-flower.pos.x) > 650: continue
 		flower.timer -= dt
 		if flower.timer <= 0:
-			flower.timer = 4.5
+			flower.timer = float(chapter.get("sprayer_period",4.5))
 			flower.flash = 0.25
 			for angle in [-0.2,0.0,0.2]:
-				puffs.append({"pos":flower.pos-Vector2(38,0),"vel":Vector2.LEFT.rotated(angle)*200,"life":4.0,"source":i})
+				puffs.append({"pos":flower.pos-Vector2(38,0),"vel":Vector2.LEFT.rotated(angle)*float(chapter.get("puff_speed",200.0)),"life":4.0,"source":i})
 			emit("spray",flower.pos)
 	for i in range(puffs.size()-1,-1,-1):
 		var puff := puffs[i]
@@ -793,7 +794,7 @@ func context_cue() -> Dictionary:
 			return {"pos":flower.pos,"text":words,"kind":"sprayer"}
 	for drop in dew:
 		if not drop.collected and p.distance_to(drop.pos) < 170:
-			return {"pos":drop.pos,"text":"晨露 · 轻触收集" + ("，体力已满" if stamina >= MAX_STAMINA else "，最多恢复 12 体力"),"kind":"dew"}
+			return {"pos":drop.pos,"text":"晨露 · 轻触收集" + ("，体力已满" if stamina >= MAX_STAMINA else "，最多恢复 %d 体力" % int(chapter.get("dew_reward",12.0))),"kind":"dew"}
 	for flower in rings:
 		if p.distance_to(flower.pos) < (115 if flower.active else 270):
 			return {"pos":flower.pos,"text":"花瓣已收拢 · 继续向前" if flower.active else "冲进风花 · 沿箭头借力一次","kind":"spent" if flower.active else "ring"}

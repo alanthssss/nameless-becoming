@@ -30,11 +30,17 @@ func roundtrip(model,label: String) -> void:
 	model.restore_payload(raw)
 
 func run() -> void:
+	if "--eight-rhythm-only" in OS.get_cmdline_user_args():
+		preload("res://eight_rhythm_contract.gd").run(check)
+		print("EIGHT RHYTHM VERIFIED: %d checks, %d failures" % [checks,failures])
+		quit(0 if failures == 0 else 1)
+		return
 	Supply.run(check)
 	if "--long-supply-only" in OS.get_cmdline_user_args():
 		print("LONG SUPPLY CHECKS: %d, failures %d" % [checks,failures])
 		quit(0 if failures == 0 else 1)
 		return
+	preload("res://eight_rhythm_contract.gd").run(check)
 	checkpoint_flow()
 	ordinary_flight()
 	for alternate in [false,true]:

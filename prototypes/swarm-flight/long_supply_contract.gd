@@ -12,7 +12,7 @@ static func run(check: Callable) -> void:
 				if beat.kind != "dew": continue
 				check.call(beat.route_mode != "branch","Long journey supply never rewards abandoning flight")
 				var point := Vector2(beat.x,beat.y)
-				check.call(point in encounter.direct_route and point in encounter.alternate_route,"Both long-journey routes pass their supply")
+				check.call(route_passes(encounter.direct_route,point) and route_passes(encounter.alternate_route,point),"Both declared long-journey routes pass their supply")
 	# Reproduce the reported lower relay and its mirrored upper relay. These
 	# observation inputs do not use the content's authored reference route.
 	for encounter_index in [0,6]:
@@ -70,9 +70,18 @@ static func run(check: Callable) -> void:
 static func old_geometry_isolated(check: Callable) -> void:
 	var model := Model.new()
 	var current: Dictionary = model.save_payload()
-	for old_id in ["summer-long-07-08-r1","summer-long-07-08-r2"]:
+	for old_id in ["summer-long-07-08-r1","summer-long-07-08-r2","summer-long-07-08-r3"]:
 		var previous: Dictionary = current.duplicate(true)
 		previous.journey_id = old_id
 		check.call(not model.restore_payload(previous),"Old geometry cannot be loaded into reauthored map")
 		check.call(model.save_payload() == current,"Rejected old geometry leaves current progress untouched")
-	check.call(Model.SAVE_PATH.ends_with("summer_long_07_08_r3.json"),"Reauthored map uses separate save path")
+	check.call(Model.SAVE_PATH.ends_with("summer_long_07_08_r4.json"),"Reauthored map uses separate save path")
+
+static func route_passes(route: Array,point: Vector2) -> bool:
+	var previous := Vector2.INF
+	for command in route:
+		if not command is Vector2: continue
+		if command == point: return true
+		if previous != Vector2.INF and Geometry2D.get_closest_point_to_segment(point,previous,command).distance_to(point) < 1.0: return true
+		previous = command
+	return false
