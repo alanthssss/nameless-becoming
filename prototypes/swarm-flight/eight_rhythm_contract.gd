@@ -119,7 +119,7 @@ static func resource_routes(check: Callable) -> void:
 					first_leaf_stamina = model.stamina
 				if event.kind == "dew": waste += 4.0-float(event.reward)
 				if event.kind in ["blocked","hit","tired"]: contacts += 1
-		check.call(model.phase == "ending" and contacts == 0 and model.recoveries == 0 and driver.error.is_empty(),"08 action and bypass routes complete without enforced damage, exhaustion or full-rest waiting")
+		check.call(model.phase == "transition" and model.stage == 1 and contacts == 0 and model.recoveries == 0 and driver.error.is_empty(),"08 action and bypass routes complete without enforced damage, exhaustion or full-rest waiting")
 		check.call(first_leaf > 20 and first_leaf_stamina < 75,"The first leaf follows meaningful action and spending, not the opening")
 		# The bypass spends no dash energy. Removing empty flight must not be
 		# compensated by forced travel merely to match its old 35-point minimum.

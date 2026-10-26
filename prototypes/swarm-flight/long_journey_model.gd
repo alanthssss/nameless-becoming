@@ -1,7 +1,7 @@
 extends "res://game_model.gd"
 ## Suspend is a frozen live state; checkpoint recovery remains a separate action.
 const Content = preload("res://long_journey_content.gd")
-const SAVE_PATH := "user://summer_long_07_08_r7.json"
+const SAVE_PATH := "user://summer_long_07_09_r8.json"
 const FIELDS := ["phase","p","velocity","face","charge","charging","burst_left","burst_braking","bees","stamina","energy_spent","energy_gained","rain_remaining","invulnerable","shield_left","shield_feedback_left","hazard_clock","time","camera_x","storm_x","storm_active","completed","exit_ready","bursts","recoveries","rings_hit","wind_chain","sample_approach","rain_timer","checkpoint_index","started","blocked_cooldown","garden_awards","checkpoint","pods","walls","rings","shelters","dew","sprayers","shields","rain_fields","drops","puffs"]
 const DYNAMIC := {"pods":["open"],"walls":["broken"],"rings":["active"],"shelters":["reached"],"dew":["collected"],"sprayers":["timer","stun_left","flash","rewarded"],"shields":["collected"],"rain_fields":["timer"]}
 
@@ -9,7 +9,7 @@ func build_stage(index: int) -> Dictionary:
 	return Content.build(index)
 
 func last_stage_index() -> int:
-	return 1
+	return Content.STAGE_COUNT-1
 
 func record_sample_approach(before: Vector2) -> void:
 	if stage != 0 or checkpoint_index >= 0 or p.x <= before.x: return
@@ -34,7 +34,9 @@ func advance_shelters() -> void:
 	emit("checkpoint",shelters[next].pos)
 
 func journey_dew_total() -> int:
-	return Content.build(0).dew.size()+Content.build(1).dew.size()
+	var total := 0
+	for index in Content.STAGE_COUNT: total += Content.build(index).dew.size()
+	return total
 
 func save_payload() -> Dictionary:
 	var state := {}
@@ -156,7 +158,7 @@ func valid_state(state: Dictionary) -> bool:
 	if state.burst_left < 0 or state.burst_left > 1 or state.shield_left < 0 or state.shield_left > SHIELD_SECONDS: return false
 	if state.checkpoint_index != state.checkpoint.checkpoint_index or state.bees != chapter.base_bees: return false
 	if state.phase not in ["playing","transition","ending"]: return false
-	if state.completed != (state.phase == "ending") or (state.phase == "ending" and stage != 1) or (state.phase == "transition" and stage != 0): return false
+	if state.completed != (state.phase == "ending") or (state.phase == "ending" and stage != last_stage_index()) or (state.phase == "transition" and stage >= last_stage_index()): return false
 	if state.storm_active or state.sample_approach not in ["","top","bottom"]: return false
 	for key in ["time","hazard_clock","energy_spent","energy_gained","rain_remaining","invulnerable","shield_feedback_left","bursts","recoveries","rings_hit","wind_chain","rain_timer","blocked_cooldown"]:
 		if state[key] < 0: return false
@@ -166,7 +168,7 @@ func valid_state(state: Dictionary) -> bool:
 	if state.garden_awards[stage] != collected: return false
 	for i in state.garden_awards.size():
 		var maximum := 0
-		if i < 2:
+		if i < Content.STAGE_COUNT:
 			maximum = Content.build(i).dew.size()
 		if state.garden_awards[i] < 0 or state.garden_awards[i] > maximum: return false
 	for i in state.shelters.size():
@@ -183,9 +185,9 @@ func valid_state(state: Dictionary) -> bool:
 
 func restore_payload(data: Dictionary) -> bool:
 	if not data.get("journey_id") is String or not number(data.get("version")): return false
-	# Geometry is reauthored. Old r1/r2/r3 files remain with their original build.
+	# Catalogue changed: old r7 ending/geometry stays with its original build.
 	if data.journey_id != Content.JOURNEY_ID or data.version != 1: return false
-	if not number(data.get("stage")) or (float(data.stage) != floor(float(data.stage)) or int(data.stage) not in [0,1]): return false
+	if not number(data.get("stage")) or (float(data.stage) != floor(float(data.stage)) or int(data.stage) < 0 or int(data.stage) >= Content.STAGE_COUNT): return false
 	if not data.get("rng_state") is String or not data.rng_state.is_valid_int() or str(int(data.rng_state)) != data.rng_state: return false
 	var state = unpack(data.get("state"))
 	if not state is Dictionary: return false

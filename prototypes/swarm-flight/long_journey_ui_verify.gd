@@ -125,7 +125,7 @@ func run() -> void:
 			tap(KEY_ESCAPE)
 		if game.mode in ["transition","arrival"]:
 			release_all()
-			await shot("07-to-08" if game.mode == "transition" else "08-arrival")
+			await shot("%02d-to-%02d" % [game.model.stage+7,game.model.stage+8] if game.mode == "transition" else "09-arrival")
 			tap(KEY_ENTER)
 			continue
 		var command: Dictionary = driver.next_input()
@@ -140,13 +140,40 @@ func run() -> void:
 			captured[id] = true
 			await shot("play-"+id)
 		if frame%6000 == 0: print("UI_PROGRESS: stage=%d x=%.0f" % [game.model.stage+7,game.model.p.x])
-	check(game.mode == "ending" and game.model.stage == 1,"ordinary viewport inputs finish both chapters")
-	check(game.heading.text == "两座庭院，走完了。","sample ending is distinct from full-game ending")
-	check(game.model.recoveries == 0,"both routes do not require failure recovery")
+	check(game.mode == "ending" and game.model.stage == game.model.last_stage_index(),"ordinary viewport inputs finish all sample chapters")
+	check(game.heading.text == "这段旅程，走完了。","sample ending is distinct from full-game ending")
+	check(game.model.recoveries == 0,"continuous sample route does not require failure recovery")
 	check(game.has_saved,"ending saved to isolated sample file")
 	await shot("09-ending")
 	var payload := Save.read_payload(game.progress_file,Model.new())
 	check(payload.get("completed",false),"completed save can be reloaded")
+	game.entry_chapter = 2
+	game.on_primary()
+	check(game.model.stage == 2 and game.mode == "play","Standalone replay respects the selected chapter")
+	# Restore the verified completed payload to exercise ending cold start.
+	check(Save.write_payload(payload,game.progress_file,Model.new()),"Restore isolated completed fixture")
+	# Completed 09 cold starts at its ending, never reopens 08 or a live level.
+	game.queue_free()
+	await process_frame
+	await new_scene()
+	game.on_secondary()
+	check(game.mode == "ending" and game.model.stage == 2,"Completed 09 cold load shows the sample ending")
+	# A new catalogue's third chapter also resumes from a real disk save.
+	game.begin_stage(2)
+	check(game.toast.text == game.model.chapter.entry and game.hud_bees.text == "第09关","09 entry and HUD do not label the season")
+	key(KEY_RIGHT,true)
+	tick(90)
+	release_all()
+	var nine_state: Dictionary = game.model.save_payload()
+	tap(KEY_ESCAPE)
+	game.queue_free()
+	await process_frame
+	await new_scene()
+	game.on_secondary()
+	check(game.mode == "pause" and game.model.stage == 2,"09 cold load resumes the new chapter")
+	check(game.model.save_payload() == nine_state,"09 cold load preserves exact live state")
+	await shot("09-cold-resume")
+
 	release_all()
 	game.queue_free()
 	await process_frame
