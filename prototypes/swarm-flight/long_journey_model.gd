@@ -1,7 +1,7 @@
 extends "res://game_model.gd"
 ## Suspend is a frozen live state; checkpoint recovery remains a separate action.
 const Content = preload("res://long_journey_content.gd")
-const SAVE_PATH := "user://summer_long_07_08_r5.json"
+const SAVE_PATH := "user://summer_long_07_08_r6.json"
 const FIELDS := ["phase","p","velocity","face","charge","charging","burst_left","burst_braking","bees","stamina","energy_spent","energy_gained","rain_remaining","invulnerable","shield_left","shield_feedback_left","hazard_clock","time","camera_x","storm_x","storm_active","completed","exit_ready","bursts","recoveries","rings_hit","wind_chain","sample_approach","rain_timer","checkpoint_index","started","blocked_cooldown","garden_awards","checkpoint","pods","walls","rings","shelters","dew","sprayers","shields","rain_fields","drops","puffs"]
 const DYNAMIC := {"pods":["open"],"walls":["broken"],"rings":["active"],"shelters":["reached"],"dew":["collected"],"sprayers":["timer","stun_left","flash","rewarded"],"shields":["collected"],"rain_fields":["timer"]}
 

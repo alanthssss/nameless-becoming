@@ -207,7 +207,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 按用途读取，避免把历史方案误当当前决定：
 
 - [合成与消除一局对照小样](docs/design/merge-match-samples-20261020.md)：简单规则、完整终局、测试证据与试玩判据。
-- [《雨来之前》玩法、内容规模与节奏策划](docs/design/swarm-flight-game-20261020.md)：本轮自主选型、完整流程、验证边界与试玩判据。
+- [《雨来之前》玩法、内容规模与节奏策划](docs/design/swarm-flight-game-20261020.md)：玩法与试玩判据；[所有新建／修改关卡执行的LV01–10范式与检查项](docs/design/swarm-flight-game-20261020.md#level-flow-checklist)。
 - [《花间一着》游戏方案与完整短章](docs/design/flower-step-game-20261019.md)：本轮玩法选择、实际规则、完整短章和正式游戏候选结构。
 
 - [`docs/design/original-requirements-recovery-20261019.md`](docs/design/original-requirements-recovery-20261019.md)：**本轮需求证据底稿与重做依据**，记录 5–7 月创作原对话、后续开发反馈、历史归档与未决项；不另设执行队列，当前行动仍只见制作规格 §0.11 Now。

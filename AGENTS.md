@@ -48,6 +48,7 @@
 
 ## Swarm Flight completion and regression checks
 
+- For every authored or revised level, apply [SF-R35's level-flow checklist LV01–10](docs/design/swarm-flight-game-20261020.md#level-flow-checklist). Record pass / fix / not-applicable with reasons and evidence in the existing batch decision or build receipt. Preserve each chapter's theme; the checklist is not a fixed encounter template. Separate technical verification from player experience and resolve known basic defects before delivery; no per-item user approval is required.
 - Preserve the active parent goal in the existing Now view. Internal repairs do not complete product milestones or reset their checkpoints. Batch ordinary defects within the authorized delivery; do not ask Alan to verify each basic rule.
 - For changed mechanics, derive expected observable behavior from the player rule before inspecting implementation; test relevant ordinary-input states, explicit exemptions and environmental combinations. Reproduce the user's actual path before asserting a cause. Existing tests may encode the same mistaken assumption as the code.
 - Swarm Flight CI runs `scripts/check_swarm_regressions.py`: baseline must pass and isolated copies with known wind defects must fail the specific behavior assertions. Crashes and parser errors cannot count as caught regressions. Review changed mutation anchors and expected assertions independently.
