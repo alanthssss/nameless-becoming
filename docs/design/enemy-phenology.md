@@ -1,5 +1,7 @@
 # 敌物候学：小怪生态化重设计 / Enemy Phenology: Ecological Minion Redesign
 
+> **2026-10-26转译边界：** 本文保留历史五类行为与角色来源，不作为当前科学物候表或飞行版数值。下文固定温度／节气出现窗、迁徙与冬眠等泛化尚不可直接沿用。现行常态遭遇和四位大型角色设计见[世界元素规格](swarm-flight-world-elements.md#creatures)与[GDD v1.1](swarm-flight-gdd.md)；旧夺蜜、幻花和统一调律不直接移植。
+
 > 版本 / Version: 草案 v0.1（2026-08-18）
 > 状态 / Status: 待审阅 / Pending review
 > 关联 / Related: `docs/DESIGN_CONSENSUS.md`、`godot/data/seasons.json`、`godot/data/bosses.json`
