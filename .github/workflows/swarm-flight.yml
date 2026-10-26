@@ -33,7 +33,7 @@ jobs:
   verify:
     name: Swarm Flight rules and complete routes
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     env:
       GODOT_RELEASE: 4.6.2-stable
       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip

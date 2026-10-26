@@ -968,12 +968,8 @@ func _sprayer(flower: Dictionary, index: int) -> void:
 	var blink := phase == "idle" and fposmod(clock+index*0.7,3.7)<0.12
 	ArtProps.sprayer(self,head,phase == "calm",warning,sneeze,blink)
 	if phase == "warning":
-		# Clear the petals; a dark silhouette keeps the warning legible on sky and foliage.
-		var mark := head+Vector2(0,-113)
-		draw_line(mark+Vector2(0,-14),mark+Vector2(0,10),INK,14,true)
-		draw_circle(mark+Vector2(0,22),8,INK)
-		draw_line(mark+Vector2(0,-14),mark+Vector2(0,10),GOLD,8,true)
-		draw_circle(mark+Vector2(0,22),4.5,GOLD)
+		# Use the same painted material language as the flower, clear of its petals.
+		draw_texture_rect(ArtProps.FLOWER_WARNING,Rect2(head+Vector2(-22,-146),Vector2(44,66)),false)
 	elif phase == "sneeze":
 		for i in 3:
 			var y := -13+i*13.0

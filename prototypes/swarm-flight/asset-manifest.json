@@ -327,6 +327,22 @@
       "source": "Built-in image_gen; complete prompts and references in art/winter-provenance.json",
       "metadata_status": "Original PNG; verified alpha and dimensions",
       "import_settings": "Lossless, mipmaps enabled, linear-with-mipmaps rendering; fixed alpha border"
+    },
+    {
+      "path": "art/flower-warning.png",
+      "role": "Pre-attack hand-painted exclamation; warning phase only",
+      "family": "painted_garden",
+      "classification": "shared",
+      "source": "Built-in image_gen; art/flower-warning-provenance.json",
+      "size_px": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "source_bytes": 1474622,
+      "sha256": "a7a7487af08a96475d1b426d0437e2562583c2eb5978169cbcd906f20ad335f4",
+      "metadata_status": "Original generated PNG unchanged; alpha verified",
+      "import_settings": "Lossless RGBA; mipmaps"
     }
   ],
   "code_native_art": {
