@@ -99,6 +99,12 @@ def check_eight_rhythm(project):
             "Dash collects the whole forward ribbon without turning back:"),
         "wall_at_dash_exit": ('gap(3000,340,340)', 'gap(3000,340,340),terrain(2370,200,180,260)',
             "A committed dash has a clear exit:"),
+        "redundant_same_line_flower": ('flower(1200,540),gap(2470,340,330)',
+            'flower(1200,540),flower(1510,540),gap(2470,340,330)',
+            "One meaningful flower precedes the next distinct approach:"),
+        "empty_preparation_travel": ('scene("看见最后的连线",2,400,',
+            'scene("看见最后的连线",2,2100,',
+            "A short breather reconnects to the next action within 4.5 seconds:"),
         "opening_full_refill": ('-1,"花朵鼓起时准备；冲过喷嚏，顺势接住露珠"',
             '340,"花朵鼓起时准备；冲过喷嚏，顺势接住露珠"',
             "The first leaf follows meaningful action and spending"),
@@ -156,7 +162,7 @@ def main():
         check_long_layouts(project)
         check_eight_rhythm(project)
     print("SWARM SUPPLY REGRESSIONS VERIFIED: 5/5 layouts rejected")
-    print("EIGHT RHYTHM REGRESSIONS VERIFIED: 4/4 behavior defects rejected")
+    print("EIGHT RHYTHM REGRESSIONS VERIFIED: 6/6 behavior defects rejected")
 
 
 if __name__ == "__main__":
