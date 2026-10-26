@@ -1,7 +1,7 @@
 extends "res://game_model.gd"
 ## Suspend is a frozen live state; checkpoint recovery remains a separate action.
 const Content = preload("res://long_journey_content.gd")
-const SAVE_PATH := "user://summer_long_07_08_r3.json"
+const SAVE_PATH := "user://summer_long_07_08_r4.json"
 const FIELDS := ["phase","p","velocity","face","charge","charging","burst_left","burst_braking","bees","stamina","energy_spent","energy_gained","rain_remaining","invulnerable","shield_left","shield_feedback_left","hazard_clock","time","camera_x","storm_x","storm_active","completed","exit_ready","bursts","recoveries","rings_hit","wind_chain","sample_approach","rain_timer","checkpoint_index","started","blocked_cooldown","garden_awards","checkpoint","pods","walls","rings","shelters","dew","sprayers","shields","rain_fields","drops","puffs"]
 const DYNAMIC := {"pods":["open"],"walls":["broken"],"rings":["active"],"shelters":["reached"],"dew":["collected"],"sprayers":["timer","stun_left","flash","rewarded"],"shields":["collected"],"rain_fields":["timer"]}
 
@@ -183,7 +183,7 @@ func valid_state(state: Dictionary) -> bool:
 
 func restore_payload(data: Dictionary) -> bool:
 	if not data.get("journey_id") is String or not number(data.get("version")): return false
-	# Geometry is reauthored. Old r1/r2 files remain with their original build.
+	# Geometry is reauthored. Old r1/r2/r3 files remain with their original build.
 	if data.journey_id != Content.JOURNEY_ID or data.version != 1: return false
 	if not number(data.get("stage")) or (float(data.stage) != floor(float(data.stage)) or int(data.stage) not in [0,1]): return false
 	if not data.get("rng_state") is String or not data.rng_state.is_valid_int() or str(int(data.rng_state)) != data.rng_state: return false
