@@ -70,12 +70,12 @@ static func run(check: Callable) -> void:
 static func old_geometry_isolated(check: Callable) -> void:
 	var model := Model.new()
 	var current: Dictionary = model.save_payload()
-	for old_id in ["summer-long-07-08-r1","summer-long-07-08-r2","summer-long-07-08-r3","summer-long-07-08-r4","summer-long-07-08-r5"]:
+	for old_id in ["summer-long-07-08-r1","summer-long-07-08-r2","summer-long-07-08-r3","summer-long-07-08-r4","summer-long-07-08-r5","summer-long-07-08-r6"]:
 		var previous: Dictionary = current.duplicate(true)
 		previous.journey_id = old_id
 		check.call(not model.restore_payload(previous),"Old geometry cannot be loaded into reauthored map")
 		check.call(model.save_payload() == current,"Rejected old geometry leaves current progress untouched")
-	check.call(Model.SAVE_PATH.ends_with("summer_long_07_08_r6.json"),"Reauthored map uses separate save path")
+	check.call(Model.SAVE_PATH.ends_with("summer_long_07_08_r7.json"),"Reauthored map uses separate save path")
 
 static func route_passes(route: Array,point: Vector2) -> bool:
 	var previous := Vector2.INF
