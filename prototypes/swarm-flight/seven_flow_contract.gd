@@ -9,6 +9,7 @@ static func run(check: Callable) -> void:
 	runouts(check)
 	resources(check)
 	wind_links(check)
+	wind_opens_doors(check)
 
 static func runouts(check: Callable) -> void:
 	for fixture in EXITS:
@@ -105,3 +106,43 @@ static func wind_links(check: Callable) -> void:
 		for frame in 240:
 			m.step(Vector2.ZERO if frame in range(1,28) else Vector2.RIGHT,frame in range(1,28),1.0/60)
 		check.call(m.rings_hit == (1 if missing else 3),"Intermediate wind flower makes a measurable continuation difference: missing=%s" % missing)
+
+# The newly developed action is one launch -> wind relay -> persistent open door.
+# Independent inputs include early/late release; routes do not inject a broken flag.
+static func wind_opens_doors(check: Callable) -> void:
+	for fixture in [[9,1470,540,2690,2440],[11,2790,550,4160,3800]]:
+		for offset in [-45,0,45]:
+			for remove_last_wind in [false,true]:
+				var m := Model.new()
+				var origin: float = m.chapter.encounters[fixture[0]].start_x
+				m.p = Vector2(origin+fixture[1]+offset,fixture[2])
+				m.stamina = 40.0
+				var door_index := -1
+				for i in m.walls.size():
+					if m.walls[i].kind == "curtain" and is_equal_approx(m.walls[i].rect.position.x,origin+fixture[3]): door_index = i
+				check.call(door_index >= 0,"Wind development has a real door: scene=%d" % fixture[0])
+				if door_index < 0: continue
+				if remove_last_wind:
+					for i in range(m.rings.size()-1,-1,-1):
+						if is_equal_approx(m.rings[i].pos.x,origin+fixture[4]): m.rings.remove_at(i)
+				var opened := false
+				var contacts := 0
+				for frame in 360:
+					var held := frame in range(1,28)
+					m.events.clear()
+					m.step(Vector2.ZERO if held else Vector2.RIGHT,held,1.0/60)
+					for event in m.events:
+						if event.kind in ["hit","blocked"]: contacts += 1
+					if m.walls[door_index].broken:
+						opened = true
+						break
+				check.call(opened == not remove_last_wind,"Wind momentum causes the door opening, not proximity: scene=%d offset=%d missing=%s" % [fixture[0],offset,remove_last_wind])
+				if remove_last_wind: continue
+				check.call(m.bursts == 1 and contacts == 0 and m.recoveries == 0,"A single tolerant launch opens the door without an extra action or damage")
+				var saved: Dictionary = m.save_payload()
+				var restored := Model.new()
+				check.call(restored.restore_payload(saved) and restored.walls[door_index].broken,"Suspend preserves the door opened by wind")
+				for frame in 24:
+					m.step(Vector2.RIGHT,false,1.0/60)
+					restored.step(Vector2.RIGHT,false,1.0/60)
+				check.call(m.p == restored.p and m.burst_left == restored.burst_left,"Resume continues the same wind-to-door flight")

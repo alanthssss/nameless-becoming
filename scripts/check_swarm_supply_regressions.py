@@ -141,6 +141,11 @@ def check_seven_flow(project):
             "07 dash runout and subsequent turn stay clear:"),
         "excess_wind_supply": ('result["ring_reward"] = 4.0', 'result["ring_reward"] = 8.0',
             "07 opening spends stamina before a useful refill and first leaf"),
+        "missing_development_door": ('{"kind":"curtain","x":2690.0,"y":260.0,"height":270.0}',
+            'gap(2690,260,310)', "Wind development has a real door:"),
+        "door_beyond_wind_momentum": ('"x":4160.0,"y":550.0,"height":220.0',
+            '"x":4160.0,"y":150.0,"height":220.0',
+            "Wind momentum causes the door opening, not proximity:"),
         "empty_breather_tail": ('scene("看见最后的窗",2,1250,', 'scene("看见最后的窗",2,2400,',
             "07 breather reconnects to purpose within six seconds:"),
     }
@@ -199,7 +204,7 @@ def main():
         check_seven_flow(project)
     print("SWARM SUPPLY REGRESSIONS VERIFIED: 5/5 layouts rejected")
     print("EIGHT RHYTHM REGRESSIONS VERIFIED: 6/6 behavior defects rejected")
-    print("SEVEN FLOW REGRESSIONS VERIFIED: 3/3 behavior defects rejected")
+    print("SEVEN FLOW REGRESSIONS VERIFIED: 5/5 behavior defects rejected")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
+**2026-10-26 最新可玩：07→08样板0.14.0。** 两个07中后段改为借风开叶门及低廊中的再运用，保持路线长度和08顺畅节奏；旧16关仍保留。完整包位于`outputs/swarm-flight/2026-10-26-seven-action-development/试玩包/`，双击`开始试玩.command`。[本批决定与待验证项 SF-R40](docs/design/swarm-flight-game-20261020.md#seven-action-development-20261026) · [当前试玩说明](prototypes/swarm-flight/README.md)。以下旧版记录保留历史语境。
+
 **2026-10-23 当前：飞行版《雨来之前》0.9.3为现有四季16关可玩包，正在按成品预期规划更充实的关内内容与整作节奏。** Alan认可核心基本成型，指出每关过短、体量不足，最终明确不固定十倍。设计工作蓝图为四季20关／有效主线约6～8小时，关内形成连续冒险并允许可靠中断；数值待长关与连续试玩校准，不是已实现或对外商品承诺。[内容与节奏 SF-R32](docs/design/swarm-flight-game-20261020.md#finished-journey-content-20261023) · [现有试玩说明](prototypes/swarm-flight/README.md) · [唯一执行状态 Now](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。
 
 **范围与制作责任：** 0.9.3保留补给纠正、冬季材质与统一美术，证据见outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json。本轮只交设计与生产交接。扩容不重置200＋40小时控制、历史投入和旧问题；原Beta／RC／有条件发售日期须按新范围重估，10月29日仍作为样板／范围／产能检查点。[商业范围更新](docs/design/commercial-product-requirements.md#finished-journey-scope)。
