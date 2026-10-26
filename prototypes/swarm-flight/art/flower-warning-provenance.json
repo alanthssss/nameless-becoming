@@ -1,0 +1,15 @@
+{
+  "asset": "flower-warning.png",
+  "tool": "built-in image_gen",
+  "source": "/Users/alanthssss/.codex/generated_images/01a176ca-ad3b-7ed0-8da0-33a53963ae38/exec-c592c8d8-2d71-4dfe-a9b6-ac3bfb530764.png",
+  "reference": "Alan 0.14.0 gameplay screenshot with purple sneeze flower; style reference only",
+  "intent": "One hand-painted amber-gold exclamation with petal-like tapered stroke and pollen dot; warm organic edges, soft brush highlights, thin shaded outline, transparent background; no geometry icon, no extra symbols",
+  "size_px": [
+    1024,
+    1536
+  ],
+  "sha256": "a7a7487af08a96475d1b426d0437e2562583c2eb5978169cbcd906f20ad335f4",
+  "processing": "Original RGBA copied unchanged; displayed at44x66 in engine",
+  "review": "Replaces user-rejected code-drawn hard-edged icon; no new timing or gameplay",
+  "billing": "built-in image generation usage not itemized; no external purchase"
+}

@@ -1,4 +1,9 @@
-# 雨来之前 · 连续07→08样板 0.14.0
+# 雨来之前 · 连续07→08样板 0.14.1
+
+0.14.1将攻击前感叹号改为更大的手绘金黄提示、移至花瓣上方，攻击节奏不变。最新版：`outputs/swarm-flight/2026-10-26-flower-warning/试玩包/开始试玩.command`。首次启动在新包没有进度时复制0.14.0对应r7进度，保留原文件；也可从标题重玩。连续07→08、独立08和原16关均保留。详细记录见[SF-R41](../../docs/design/swarm-flight-game-20261020.md#flower-warning-20261026)。
+
+## 0.14.0记录
+
 
 最新版目录：`outputs/swarm-flight/2026-10-26-seven-action-development/试玩包/`，双击`开始试玩.command`从07进入08与结尾；`单独试玩第8关.command`和`原版16关.command`各自保存。Apple Silicon／Intel Mac，无需Godot。
 

@@ -3,6 +3,7 @@ extends RefCounted
 const Winter = preload("res://winter_art.gd")
 const Sprites = preload("res://art_sprites.gd")
 const TERRAIN: Texture2D = preload("res://art/garden-terrain.png")
+const FLOWER_WARNING: Texture2D = preload("res://art/flower-warning.png")
 const FLORA: Texture2D = preload("res://art/garden-flora.png")
 const LANDMARKS: Texture2D = preload("res://art/garden-landmarks.png")
 const HOME: Texture2D = preload("res://art/garden-home.png")
