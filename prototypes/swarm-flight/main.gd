@@ -70,20 +70,18 @@ func _ready() -> void:
 		if arg.begins_with("--entry-chapter="): entry_chapter = int(arg.trim_prefix("--entry-chapter="))
 		if arg.begins_with("--capture="): capture_path = arg.trim_prefix("--capture=")
 		if arg.begins_with("--capture-after="): capture_seconds = float(arg.trim_prefix("--capture-after="))
-	long_journey = ProjectSettings.get_setting("journey/long_sample",false) and not test_mode
-	if "--classic-journey" in OS.get_cmdline_user_args(): long_journey = false
-	if "--long-journey" in OS.get_cmdline_user_args(): long_journey = true
+	long_journey = use_long_journey()
 	if long_journey:
-		model = LongModel.new()
-		entry_chapter = clampi(entry_chapter,0,LongContent.STAGE_COUNT-1)
-		for i in LongContent.STAGE_COUNT: titles.append("%02d  %s" % [i+7,LongContent.definitions()[i].title])
+		model = create_journey_model()
+		entry_chapter = clampi(entry_chapter,0,model.last_stage_index())
+		titles = journey_titles()
 		if progress_file.is_empty() and OS.has_feature("template"):
 			var folder := OS.get_executable_path().get_base_dir().path_join("../../..").simplify_path().path_join("存档")
 			DirAccess.make_dir_recursive_absolute(folder)
-			progress_file = folder.path_join(LongModel.SAVE_PATH.get_file())
+			progress_file = folder.path_join(journey_save_path().get_file())
 	else:
 		for i in Model.STAGE_COUNT: titles.append("%02d  %s" % [i+1,Data.definitions()[i].title])
-	world = World.new()
+	world = create_world()
 	world.model = model
 	world.feedback_font = font
 	world.show_behind_parent = true
@@ -91,9 +89,9 @@ func _ready() -> void:
 	sound = Sound.new()
 	add_child(sound)
 	build_ui()
-	saved_payload = {} if test_mode else Save.read_payload(save_path(),LongModel.new() if long_journey else null)
+	saved_payload = {} if test_mode else Save.read_payload(save_path(),create_journey_model() if long_journey else null)
 	if not saved_payload.is_empty():
-		var probe = LongModel.new() if long_journey else Model.new()
+		var probe = create_journey_model() if long_journey else Model.new()
 		if not probe.restore_payload(saved_payload): saved_payload = {}
 	saved_stage = int(saved_payload.get("stage",-1))
 	get_tree().auto_accept_quit = false
@@ -106,8 +104,30 @@ func _ready() -> void:
 			begin_stage(clampi(int(arg.trim_prefix("--chapter=")),0,model.last_stage_index()))
 	queue_redraw()
 
+# Small scene factories keep independent representative samples out of the
+# existing journey catalogue and save namespace.
+func use_long_journey() -> bool:
+	var enabled: bool = ProjectSettings.get_setting("journey/long_sample",false) and not test_mode
+	if "--classic-journey" in OS.get_cmdline_user_args(): enabled = false
+	if "--long-journey" in OS.get_cmdline_user_args(): enabled = true
+	return enabled
+
+func create_journey_model():
+	return LongModel.new()
+
+func create_world():
+	return World.new()
+
+func journey_save_path() -> String:
+	return LongModel.SAVE_PATH
+
+func journey_titles() -> Array[String]:
+	var result: Array[String] = []
+	for i in LongContent.STAGE_COUNT: result.append("%02d  %s" % [i+7,LongContent.definitions()[i].title])
+	return result
+
 func save_path() -> String:
-	return progress_file if not progress_file.is_empty() else LongModel.SAVE_PATH if long_journey else Save.PATH
+	return progress_file if not progress_file.is_empty() else journey_save_path() if long_journey else Save.PATH
 
 func label_at(pos: Vector2, size: Vector2, text_size: int, color: Color) -> Label:
 	var l := Label.new()
@@ -220,7 +240,7 @@ func build_ui() -> void:
 	panel.add_theme_stylebox_override("panel",card(Color("314b2dfa"),22))
 	ui_root.add_child(panel)
 	menu_kicker = label_at(Vector2(42,24),Vector2(436,28),14,Color("d3e4a1"))
-	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.15.0" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
+	menu_kicker.text = "BEFORE THE RAIN     /     Long Journey 0.15.1" if long_journey else "BEFORE THE RAIN     /     Garden Journey 0.9.3"
 	heading = label_at(Vector2(39,63),Vector2(448,68),44,Color("ffd75e"))
 	description = label_at(Vector2(42,151),Vector2(436,160),19,Color("fff8d8"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -368,7 +388,7 @@ func persist_progress() -> bool:
 	var payload: Dictionary = model.save_payload()
 	payload["played_seconds"] = played_seconds
 	if model.phase == "ending": payload["completed"] = true
-	has_saved = Save.write_payload(payload,save_path(),LongModel.new() if long_journey else null)
+	has_saved = Save.write_payload(payload,save_path(),create_journey_model() if long_journey else null)
 	if has_saved:
 		saved_payload = payload.duplicate(true)
 		saved_stage = model.stage

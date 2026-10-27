@@ -1,8 +1,8 @@
 config_version=5
 [application]
-config/name="雨来之前 · 第07—09关风路样板 0.15.0"
+config/name="雨来之前 · 第07—09关风路样板 0.15.1"
 config/icon="res://icon.svg"
-run/main_scene="res://main.tscn"
+run/main_scene="res://boot.tscn"
 config/features=PackedStringArray("4.6")
 config/use_custom_user_dir=true
 config/custom_user_dir_name="BeforeTheRain"

@@ -106,6 +106,20 @@ jobs:
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/long-model.log" "$RUNNER_TEMP/long-ui.log"; then exit 1; fi
           grep -q '^LONG JOURNEY VERIFIED:.*0 failures' "$RUNNER_TEMP/long-model.log"
           grep -q '^LONG JOURNEY UI VERIFIED:.*0 failures' "$RUNNER_TEMP/long-ui.log"
+      - name: Verify independent weather and color-window sample
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+          SWARM_WEATHER_QA_DIR: ${{ runner.temp }}/weather-window-qa
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$SWARM_WEATHER_QA_DIR"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://weather_window_verify.gd 2>&1 | tee "$RUNNER_TEMP/weather-model.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://weather_window_ui_verify.gd -- --progress-file="$SWARM_WEATHER_QA_DIR/save.json" 2>&1 | tee "$RUNNER_TEMP/weather-ui.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --quit-after 3 -- --weather-window --swarm-qa --classic-journey 2>&1 | tee "$RUNNER_TEMP/weather-entry.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/weather-model.log" "$RUNNER_TEMP/weather-ui.log" "$RUNNER_TEMP/weather-entry.log"; then exit 1; fi
+          grep -q '^WEATHER WINDOW VERIFIED:.*0 failures' "$RUNNER_TEMP/weather-model.log"
+          grep -q '^WEATHER UI VERIFIED:.*0 failures' "$RUNNER_TEMP/weather-ui.log"
       - name: Verify garden music and new sound effects
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
