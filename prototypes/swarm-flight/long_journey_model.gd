@@ -8,8 +8,14 @@ const DYNAMIC := {"pods":["open"],"walls":["broken"],"rings":["active"],"shelter
 func build_stage(index: int) -> Dictionary:
 	return Content.build(index)
 
+func journey_id() -> String:
+	return Content.JOURNEY_ID
+
+func journey_stage_count() -> int:
+	return Content.STAGE_COUNT
+
 func last_stage_index() -> int:
-	return Content.STAGE_COUNT-1
+	return journey_stage_count()-1
 
 func record_sample_approach(before: Vector2) -> void:
 	if stage != 0 or checkpoint_index >= 0 or p.x <= before.x: return
@@ -35,13 +41,13 @@ func advance_shelters() -> void:
 
 func journey_dew_total() -> int:
 	var total := 0
-	for index in Content.STAGE_COUNT: total += Content.build(index).dew.size()
+	for index in journey_stage_count(): total += build_stage(index).dew.size()
 	return total
 
 func save_payload() -> Dictionary:
 	var state := {}
 	for key in FIELDS: state[key] = pack(get(key))
-	return {"version":1,"journey_id":Content.JOURNEY_ID,"stage":stage,"completed":completed,"state":state,"rng_state":str(rng.state)}
+	return {"version":1,"journey_id":journey_id(),"stage":stage,"completed":completed,"state":state,"rng_state":str(rng.state)}
 
 static func pack(value):
 	if value is float:
@@ -168,8 +174,8 @@ func valid_state(state: Dictionary) -> bool:
 	if state.garden_awards[stage] != collected: return false
 	for i in state.garden_awards.size():
 		var maximum := 0
-		if i < Content.STAGE_COUNT:
-			maximum = Content.build(i).dew.size()
+		if i < journey_stage_count():
+			maximum = build_stage(i).dew.size()
 		if state.garden_awards[i] < 0 or state.garden_awards[i] > maximum: return false
 	for i in state.shelters.size():
 		if state.shelters[i].reached != (i <= state.checkpoint_index): return false
@@ -186,8 +192,8 @@ func valid_state(state: Dictionary) -> bool:
 func restore_payload(data: Dictionary) -> bool:
 	if not data.get("journey_id") is String or not number(data.get("version")): return false
 	# Catalogue changed: old r7 ending/geometry stays with its original build.
-	if data.journey_id != Content.JOURNEY_ID or data.version != 1: return false
-	if not number(data.get("stage")) or (float(data.stage) != floor(float(data.stage)) or int(data.stage) < 0 or int(data.stage) >= Content.STAGE_COUNT): return false
+	if data.journey_id != journey_id() or data.version != 1: return false
+	if not number(data.get("stage")) or (float(data.stage) != floor(float(data.stage)) or int(data.stage) < 0 or int(data.stage) >= journey_stage_count()): return false
 	if not data.get("rng_state") is String or not data.rng_state.is_valid_int() or str(int(data.rng_state)) != data.rng_state: return false
 	var state = unpack(data.get("state"))
 	if not state is Dictionary: return false
