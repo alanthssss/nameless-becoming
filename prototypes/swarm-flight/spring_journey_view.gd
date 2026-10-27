@@ -9,7 +9,6 @@ func _landmarks(_act: int) -> void:
 	if model.stage in [0,2]:
 		_source_cluster(model.SOURCE)
 		_pond_landmarks()
-		_wax_window_landmark()
 		if model.stage == 0: _small_flower()
 		if model.stage == 2:
 			_wax_comb(model.COMB)
@@ -17,17 +16,6 @@ func _landmarks(_act: int) -> void:
 				_sign_support(Vector2(model.KNOT.x+84,660))
 			if model.passage_open:
 				_sign_support(model.RESULT_HOME+Vector2(-70,35))
-	elif model.stage == 1:
-		var window_center: Vector2=model.shelters[0].pos+Vector2(105,82)
-		_curve(model.shelters[0].pos+Vector2(108,-90),window_center+Vector2(20,-75),window_center+Vector2(4,-55),window_center+Vector2(0,-45),INK,1.7)
-		ColorMemory.draw_window(self,window_center,float(model.color_step),0.44,3)
-		# The weather changes the route; only a small reflected trace takes color.
-		var tint := ColorMemory.color_at(3+model.color_step)
-		tint.a = 0.25
-		for shelter in model.shelters:
-			var x: float = shelter.pos.x
-			for i in 3:
-				_curve(Vector2(x-38,768+i*5),Vector2(x-12,762+i*5),Vector2(x+20,775+i*5),Vector2(x+50,769+i*5),tint,1.8)
 
 func _pond_landmarks() -> void:
 	# These coordinates and silhouettes are identical on the first and return visit.
@@ -43,7 +31,12 @@ func _pond_landmarks() -> void:
 	ArtProps.stalk(self,perch+Vector2(-47,22),perch+Vector2(30,16),Vector2(perch.x+57,622),Vector2(perch.x+27,833),7.0)
 	ArtProps.stalk(self,perch+Vector2(-47,22),perch+Vector2(-23,5),perch+Vector2(10,12),perch+Vector2(43,25),6.0)
 	ArtSprites.small_leaf(self,perch+Vector2(27,20),perch+Vector2(84,3),16)
-	if model.stage == 0: _bird(perch)
+	if model.stage == 0:
+		var nod: float=sin(model.bird_elapsed*8.0)*0.07*maxf(0.0,1.0-model.bird_elapsed/3.0) if model.bird_greeted else 0.0
+		var look: float=-1.0 if model.bird_greeted and model.bird_elapsed>=1.5 else (1.0 if model.p.x<perch.x else -1.0)
+		draw_set_transform(_world_offset+perch,nod,Vector2(look,1))
+		ArtProps.bird(self,Vector2.ZERO,clock)
+		draw_set_transform(_world_offset)
 	if model.stage == 2:
 		for i in 3: _ellipse(perch+Vector2(-27+i*24,20),Vector2(3,1.4),Color("d2e5ce"))
 
@@ -52,17 +45,30 @@ func _small_flower() -> void:
 	var flower := home+Vector2(-14,62)
 	ArtProps.stalk(self,flower,flower+Vector2(15,110),Vector2(home.x-39,720),Vector2(home.x+10,835),9.0)
 	ArtSprites.small_leaf(self,home+Vector2(3,145),home+Vector2(-112,121),29)
-	draw_set_transform(_world_offset+flower,0.0,Vector2(1.8,1.8))
-	ArtProps.decor(self,Vector2.ZERO,"flower")
-	draw_set_transform(_world_offset)
+	# Closed buds never reuse the open nectar flower silhouette.
+	ArtSprites.small_leaf(self,flower+Vector2(0,14),flower+Vector2(-13,-26),13)
+	ArtSprites.small_leaf(self,flower+Vector2(0,14),flower+Vector2(12,-31),13)
+	ArtSprites.small_leaf(self,flower+Vector2(1,13),flower+Vector2(0,-24),10)
 	_ellipse(Vector2(home.x+20,791),Vector2(70,9),Color("5d979b7a"))
 
-func _wax_window_landmark() -> void:
-	# Kept beside the landing leaf, with a real branch attachment and local light.
-	var center: Vector2 = model.COMB+Vector2(110,-157)
-	ArtProps.stalk(self,center+Vector2(4,-70),center+Vector2(80,-105),center+Vector2(78,52),Vector2(center.x+82,833),7.0)
-	_curve(center+Vector2(4,-70),center+Vector2(2,-57),center+Vector2(1,-51),center+Vector2(0,-45),INK,1.8)
-	ColorMemory.draw_window(self,center,float(model.color_step),0.44,3)
+func _shelter(shelter: Dictionary) -> void:
+	if shelter!=model.shelters[-1]:
+		super._shelter(shelter)
+		return
+	var point: Vector2=shelter.pos
+	var half: float=shelter.half_width
+	ArtProps.stalk(self,point+Vector2(half+4,-80),point+Vector2(half+17,8),point+Vector2(half-23,130),Vector2(point.x+half-34,828),12.0)
+	ArtSprites.canopy(self,point,half)
+	ArtSprites.small_leaf(self,point+Vector2(60,57),point+Vector2(-60,57),29)
+	var center:=point+Vector2(68,-12)
+	# The old free-standing mystery object is now the shelter's colored lamp.
+	_curve(point+Vector2(68,-82),point+Vector2(66,-62),center+Vector2(0,-38),center+Vector2(0,-31),INK,1.8)
+	ColorMemory.draw_window(self,center,float(model.color_step),0.28,3)
+	var tint:=ColorMemory.color_at(3+model.color_step).lightened(0.25)
+	tint.a=0.46
+	_ellipse(point+Vector2(0,46),Vector2(40,5),tint)
+	_curve(center+Vector2(-8,29),point+Vector2(31,33),point+Vector2(2,45),point+Vector2(-24,45),Color(tint,0.12),12)
+	_ellipse(center,Vector2(3.5,8),Color("ffe9a17a"))
 
 func _neighbors() -> void:
 	if model.stage == 0:
@@ -122,6 +128,11 @@ func _sign_rope(rect: Rect2,knot: Vector2,opened: bool,back: bool) -> void:
 func _terrain(item: Dictionary) -> void:
 	var rect: Rect2 = item.rect
 	if item.get("material", "hedge") == "stem":
+		if model.stage in [0,1] and rect.end.y>=830:
+			var x: float=rect.get_center().x
+			ArtProps.stem(self,rect,false)
+			ArtSprites.small_leaf(self,Vector2(x+rect.size.x*0.6,rect.position.y+18),Vector2(x-rect.size.x*0.9,rect.position.y-8),rect.size.x*0.48)
+			return
 		ArtProps.stem(self,rect,rect.position.y<100)
 		if rect.end.y>700:
 			ArtProps.stalk(self,Vector2(rect.get_center().x,rect.end.y),Vector2(rect.get_center().x+4,780),Vector2(rect.get_center().x-5,810),Vector2(rect.get_center().x+10,834),rect.size.x*0.7)

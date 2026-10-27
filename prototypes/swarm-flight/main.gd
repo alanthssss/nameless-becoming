@@ -300,7 +300,7 @@ func show_title() -> void:
 	third_button.text = "退出"
 	if long_journey:
 		heading.text = "花篱外的长旅程"
-		description.text = "第07关 花篱另一边 → 第08关 喷嚏前后 → 第09关 选风片段\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n经过叶亭就记住恢复点；靠近叶下恢复体力。"
+		description.text = "07/08：保留原节奏的对照；09：定向风接力小样\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n经过叶亭就记住恢复点；靠近叶下恢复体力。"
 		main_button.text = "从第%02d关出发" % (entry_chapter+7)
 		if entry_chapter > 0:
 			description.text = "从"+titles[entry_chapter]+"开始。\n方向键 / WASD 飞行，空格蓄力后松开冲刺。\nEsc 暂停并保存当前位置，退出后可以原地续玩。\n这是独立试玩进度，不影响连续旅程。"
@@ -364,7 +364,7 @@ func on_secondary() -> void:
 			if model.phase in ["transition","ending"]: show_transition()
 			pause_game()
 			heading.text = "已回到保存的位置"
-			description.text = titles[model.stage]+" · "+model.encounter_name()+"\n位置、体力和场景都停在离开时。\n按 Enter 或 Esc 继续飞行。\nR 只在需要重试时返回最近的叶亭。"
+			description.text = titles[model.stage]+" · "+model.encounter_name()+"\n位置、体力和场景都停在离开时。\n按 Enter 或 Esc 恢复当前画面。\nR 只在需要重试时返回最近的叶亭。"
 		else:
 			message("回到已保存的落脚点 · 重新按方向键出发",3.5)
 		refresh_hud()
@@ -422,14 +422,14 @@ func pause_game() -> void:
 	if not long_journey: model.clear_input()
 	panel.show()
 	heading.text = "歇一口气"
-	description.text = model.chapter_title()+" · "+model.encounter_name()+"\n方向键飞行 · 空格蓄力后松开冲刺\n宽叶下自动保存、恢复体力；可以接着飞\n"+model.section_progress_text()+"\nR 返回落脚点 · M 声音 · Esc 继续"
+	description.text = model.chapter_title()+" · "+model.encounter_name()+"\n方向键飞行 · 空格蓄力后松开冲刺\n宽叶下自动保存、恢复体力；可以接着飞\n"+model.section_progress_text()+"\nR 返回落脚点 · M 声音 · Esc 取消暂停"
 	if long_journey:
-		description.text = titles[model.stage]+" · "+model.encounter_name()+"\n"+("当前位置已保存。退出后从这里继续。" if has_saved or test_mode else "本次保存失败，请暂时不要退出。")+"\n"+model.section_progress_text()+"\nR 返回恢复点 · Esc 继续 · M 声音"
+		description.text = titles[model.stage]+" · "+model.encounter_name()+"\n"+("当前位置已保存。退出后从这里继续。" if has_saved or test_mode else "本次保存失败，请暂时不要退出。")+"\n"+model.section_progress_text()+"\nR 返回恢复点 · Esc 取消暂停 · M 声音"
 	main_button.text = "继续飞行"
 	secondary_button.text = "回到就近休息点"
 	secondary_button.visible = paused_from == "play"
 	if paused_from in ["transition","arrival"]:
-		description.text = "已经抵达，进度已保存。\n抵达演出已暂停，Esc 或 Enter 继续。" if has_saved else "已经抵达，但保存失败；退出游戏可能丢失这次抵达。\nEsc 或 Enter 继续；可稍后再次尝试保存。"
+		description.text = "已经抵达，进度已保存。\n抵达画面已暂停。Esc 取消暂停；再按 Enter 前往下一段。" if has_saved else "已经抵达，但保存失败；退出游戏可能丢失这次抵达。\nEsc 取消暂停；可稍后再次尝试保存。"
 	third_button.text = "回到标题"
 	third_button.show()
 	reset_menu()

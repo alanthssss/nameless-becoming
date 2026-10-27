@@ -3,14 +3,14 @@ const SpringModel=preload("res://spring_journey_model.gd")
 const SpringView=preload("res://spring_journey_view.gd")
 func _ready() -> void:
 	super._ready()
-	get_window().title="雨来之前 · 池岸归途 03—05 0.16.0"
+	get_window().title="雨来之前 · 池岸归途 03—05 0.16.1"
 func create_journey_model(): return SpringModel.new()
 func create_world(): return SpringView.new()
 func journey_save_path() -> String: return SpringModel.SPRING_SAVE_PATH
 func journey_titles() -> Array[String]: return ["03 池边小径","04 雨中停走","05 归巢之路"]
 func build_ui() -> void:
 	super.build_ui()
-	menu_kicker.text="BEFORE THE RAIN     /     0.16.0"
+	menu_kicker.text="BEFORE THE RAIN     /     0.16.1"
 func show_title() -> void:
 	super.show_title()
 	heading.text="池岸归途"
@@ -26,7 +26,7 @@ func refresh_hud() -> void:
 func show_transition() -> void:
 	super.show_transition()
 	handoff_heading.text=["沿池岸绕到叶棚那一侧。","那簇蓝花，又出现在归路旁。","灯就在前面，这回可以歇一歇了。"][model.stage]
-	handoff_detail.text="Enter 继续 · Esc 歇一会儿"
+	handoff_detail.text="Enter 看结尾 · Esc 暂停" if model.phase=="ending" else "即将自动出发 · Enter 提前进入下一关 · Esc 暂停"
 func show_ending() -> void:
 	super.show_ending()
 	heading.text="路留出来了，花也还开着。"
@@ -37,6 +37,8 @@ func show_ending() -> void:
 旅程 "+clock_text(played_seconds)+" · 返回落脚点 "+str(model.recoveries)+" 次"
 	main_button.text="再走一次"
 func tick(delta: float) -> void:
+	var observed_before: bool=model.observation_valid()
+	var greeted_before: bool=model.bird_greeted
 	# The last optional report remains a live information chain after arrival.
 	# On an explicit pause it freezes with the rest of the exact snapshot.
 	if model.stage==2 and model.phase=="ending" and mode in ["arrival","ending"]:
@@ -45,7 +47,11 @@ func tick(delta: float) -> void:
 		model.advance_tidy(minf(delta,0.1))
 		if before!=model.story_state() and model.keeper.state=="settled" and model.listeners.all(func(bee): return bee.state in ["waiting","foraging"]): persist_progress()
 	super.tick(delta)
+	if model.observation_valid() and not observed_before: event_message("source_observed","",2.6)
+	elif model.bird_greeted and not greeted_before: event_message("bird_greeting","",2.2)
 func event_message(kind: String,text: String,seconds: float,tint := Color("ffe7a3")) -> void:
+	if kind=="bird_greeting": text="画眉抬头回应了你，转身望向叶棚"
+	if kind=="source_observed": text="尝到花蜜，记住了这簇蓝花的位置 · 回巢时可以告诉同伴"
 	if kind=="hit":
 		for event in model.events:
 			if event.kind=="hit" and event.get("reason")=="mosquito": text="撞了一下 · 体力 −8；换层或冲刺甩开它"
