@@ -1,4 +1,12 @@
-# 雨来之前 · 蜂舞代表片段 0.15.2
+# 雨来之前 · 角色代表片段 0.15.3
+
+`outputs/swarm-flight/2026-10-27-sign-keeper/试玩包/牌挤到路中间了.command`：普通蚊短追后返回花位；庄主停下盘点时牌绳松开，用已有冲刺打开叶结，牌架会真正让路。开通即记住，R重试不会重播整理。Esc原地保存，退出后继续。
+
+同包包含蜂舞、晴雨色窗、连续07→08→09及独立09，共五入口分档，旧包保留。D是单通口首段代表，不是完整05或整作。新增蚊素材沿用已登记的内部候选，未宣称商业美术通过。A–D收口及下一产品取舍只看[唯一Now](../../docs/design/solar-term-campaign-production-spec.md#autonomous-gdd-workflow)和本批`build-receipt.json`。
+
+源码入口`-- --sign-keeper`；定向规则`sign_keeper_verify.gd`，实际UI／磁盘验证`sign_keeper_ui_verify.gd`（`SWARM_KEEPER_QA_DIR`和独立`--progress-file`）。
+
+## 蜂舞代表片段 0.15.2
 
 独立入口：`outputs/swarm-flight/2026-10-27-bee-dance/试玩包/把花路告诉你.command`。先停在蓝花心尝蜜，再停在叶上蜡脾，新的空格按住／松开开始分享；方向键随时离开。第一段完整摇摆后，两听者真正飞到刚才的蓝花。也可直接飞向出口，不要求完成分享。
 

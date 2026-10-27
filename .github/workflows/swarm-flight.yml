@@ -134,6 +134,20 @@ jobs:
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/dance-model.log" "$RUNNER_TEMP/dance-ui.log" "$RUNNER_TEMP/dance-entry.log"; then exit 1; fi
           grep -q '^BEE DANCE VERIFIED:.*0 failures' "$RUNNER_TEMP/dance-model.log"
           grep -q '^BEE DANCE UI VERIFIED:.*0 failures' "$RUNNER_TEMP/dance-ui.log"
+      - name: Verify sign-keeper encounter and persistent passage
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+          SWARM_KEEPER_QA_DIR: ${{ runner.temp }}/sign-keeper-qa
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$SWARM_KEEPER_QA_DIR"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://sign_keeper_verify.gd 2>&1 | tee "$RUNNER_TEMP/keeper-model.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://sign_keeper_ui_verify.gd -- --progress-file="$SWARM_KEEPER_QA_DIR/save.json" 2>&1 | tee "$RUNNER_TEMP/keeper-ui.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --quit-after 3 -- --sign-keeper --swarm-qa --classic-journey 2>&1 | tee "$RUNNER_TEMP/keeper-entry.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/keeper-model.log" "$RUNNER_TEMP/keeper-ui.log" "$RUNNER_TEMP/keeper-entry.log"; then exit 1; fi
+          grep -q '^SIGN KEEPER VERIFIED:.*0 failures' "$RUNNER_TEMP/keeper-model.log"
+          grep -q '^SIGN KEEPER UI VERIFIED:.*0 failures' "$RUNNER_TEMP/keeper-ui.log"
       - name: Verify garden music and new sound effects
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64

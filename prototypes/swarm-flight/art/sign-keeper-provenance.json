@@ -1,0 +1,14 @@
+{
+  "asset": "art/sign-keeper.png",
+  "source": "godot/assets/art/commercial/mosquito_keeper_states_v1.png",
+  "sha256": "42f23656d8b907cca1aaf83294720a8059df4586da4f9a2cfa1e7d670a3b9d48",
+  "size_px": [
+    768,
+    192
+  ],
+  "use": "D internal representative sample: small no-sign frame1; keeper frame0/2; runtime transforms only, bitmap copied unchanged",
+  "source_register": "docs/design/art-source-register.md: IG-CAND / PP-UNK / AUTH-PENDING / INT-DEV / ALAN-PENDING / PLAYER-PENDING / MKT-NO",
+  "no_new_generation": true,
+  "no_new_purchase": true,
+  "limit": "internal prototype reuse, not final market clearance or approved art integration"
+}
