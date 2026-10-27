@@ -5,4 +5,5 @@ func _ready() -> void:
 	var scene := "res://weather_window.tscn" if "--weather-window" in OS.get_cmdline_user_args() else "res://main.tscn"
 	if "--bee-dance" in OS.get_cmdline_user_args(): scene = "res://bee_dance.tscn"
 	if "--sign-keeper" in OS.get_cmdline_user_args(): scene = "res://sign_keeper.tscn"
+	if "--spring-journey" in OS.get_cmdline_user_args(): scene = "res://spring_journey.tscn"
 	get_tree().change_scene_to_file.call_deferred(scene)

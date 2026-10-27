@@ -16,13 +16,14 @@ static var _rim := PackedVector2Array()
 static func color_at(index: int) -> Color:
 	return Color(COLORS[((index % COLORS.size()) + COLORS.size()) % COLORS.size()])
 
-static func draw_window(canvas: Node2D, center: Vector2, progress: float, scale: float = 1.0) -> void:
+static func draw_window(canvas: Node2D, center: Vector2, progress: float, scale: float = 1.0, start_index: int = 9) -> void:
 	if scale <= 0.0 or not is_finite(scale): return
 	_prepare()
 	var step := clampf(progress, 0.0, 2.0) if is_finite(progress) else 0.0
-	var focus := 9.0 + step
+	var first := clampi(start_index,0,COLORS.size()-3)
+	var focus := float(first) + step
 	var left := int(floor(focus))
-	var light_at := _centers[left].lerp(_centers[mini(left + 1, 11)], focus - left)
+	var light_at := _centers[left].lerp(_centers[mini(left + 1, first+2)], focus - left)
 	# A narrow, uneven twig frame belongs to the garden, rather than to the HUD.
 	_fill(canvas, _rim, center + Vector2(4, 7) * scale, scale, Color("243c2948"))
 	_fill(canvas, _rim, center, scale, Color("f3d89bb4"))
