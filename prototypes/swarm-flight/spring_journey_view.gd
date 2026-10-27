@@ -216,4 +216,3 @@ func _rain_field(field: Dictionary) -> void:
 		for i in 6:
 			var x: float = rect.position.x+70.0+float(i)*(rect.size.x-100.0)/6.0
 			_ellipse(Vector2(x,rect.position.y-3),Vector2(4.5,1.8),Color("d4edf0"))
-
