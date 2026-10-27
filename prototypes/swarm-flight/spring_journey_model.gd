@@ -1,7 +1,7 @@
 extends "res://long_journey_model.gd"
 ## Three chapters revisit one source; local behavior never changes07–09.
 const SpringContent=preload("res://spring_journey_content.gd")
-const SPRING_SAVE_PATH="user://spring_03_05_v1.json"
+const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
 const SITE_ID="pond-and-home"
 const SMALL_HOME=Vector2(2390,360)
 const KEEPER_HOME=Vector2(2100,410)
@@ -23,6 +23,9 @@ var weather_phase="dry"
 var warning_elapsed=0.0
 var color_step=0
 var checkpoint_story: Dictionary={}
+var bird_greeted=false
+var bird_elapsed=0.0
+const BIRD_PERCH=Vector2(3395,299)
 const SOURCE := Vector2(3200,420)
 const COMB := Vector2(3850,500)
 const SOURCE_ID := "pond-blue-cluster"
@@ -237,7 +240,7 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 		feeding_elapsed = 0.0
 
 
-func journey_id() -> String: return "spring-03-05-v1"
+func journey_id() -> String: return "spring-03-05-v2"
 func journey_stage_count() -> int: return 3
 func build_stage(index: int) -> Dictionary: return SpringContent.build(index)
 func record_sample_approach(_before: Vector2) -> void: pass
@@ -269,6 +272,8 @@ func load_stage(index: int) -> void:
 	weather_phase="dry" if index!=2 else "after"
 	warning_elapsed=0.0
 	color_step=index
+	bird_greeted=false
+	bird_elapsed=0.0
 	super.load_stage(index)
 func can_share() -> bool: return stage==2 and passage_open and observation_valid() and message_revision!=source_revision
 func wall_at(x: float) -> Dictionary:
@@ -282,9 +287,16 @@ func gate_ready(obstacle: Dictionary) -> bool:
 	return super.gate_ready(obstacle)
 func advance(direction: Vector2,dt: float) -> void:
 	var retries:=recoveries
+	var before:=p
 	if stage==0: update_actor(small,SMALL_HOME,false,dt)
 	if stage==2 and not front_open: update_actor(keeper,KEEPER_HOME,true,dt)
 	if retries!=recoveries: return
+	if stage==0:
+		if not bird_greeted and velocity.length()<60 and (p.distance_to(SOURCE)<80 or p.distance_to(BIRD_PERCH)<145):
+			bird_greeted=true
+			bird_elapsed=0.0
+			emit("bird_greeting",BIRD_PERCH)
+		if bird_greeted: bird_elapsed=minf(8.0,bird_elapsed+dt)
 	if stage==1 and started:
 		if weather_phase=="dry" and p.x>=650:
 			weather_phase="warning"
@@ -298,6 +310,7 @@ func advance(direction: Vector2,dt: float) -> void:
 	if perched or (stage!=1 and source_open and p.distance_to(SOURCE)<34 and direction.is_zero_approx()): gain_energy(REST_RECOVERY*dt)
 	super.advance(direction,dt)
 	if retries!=recoveries: return
+	resolve_leaf_roofs(before)
 	if stage!=2: return
 	advance_listeners(dt)
 	if p.x>=1560: keeper_seen=true
@@ -341,10 +354,10 @@ func rain_floor_at(x: float) -> float:
 
 
 func story_state() -> Dictionary:
-	return {"site_id":SITE_ID,"dance":dance_state(),"small":small.duplicate(true),"keeper":keeper.duplicate(true),"front_open":front_open,"passage_open":passage_open,"result_elapsed":result_elapsed,"keeper_seen":keeper_seen,"weather_phase":weather_phase,"warning_elapsed":warning_elapsed,"color_step":color_step}
+	return {"site_id":SITE_ID,"dance":dance_state(),"small":small.duplicate(true),"keeper":keeper.duplicate(true),"front_open":front_open,"passage_open":passage_open,"result_elapsed":result_elapsed,"keeper_seen":keeper_seen,"weather_phase":weather_phase,"warning_elapsed":warning_elapsed,"color_step":color_step,"bird_greeted":bird_greeted,"bird_elapsed":bird_elapsed}
 func apply_story(state: Dictionary) -> void:
 	apply_dance(state.dance)
-	for key in ["small","keeper","front_open","passage_open","result_elapsed","keeper_seen","weather_phase","warning_elapsed","color_step"]: set(key,state[key])
+	for key in ["small","keeper","front_open","passage_open","result_elapsed","keeper_seen","weather_phase","warning_elapsed","color_step","bird_greeted","bird_elapsed"]: set(key,state[key])
 func save_checkpoint(position := Vector2(180,420)) -> void:
 	super.save_checkpoint(position)
 	checkpoint_story=story_state()
@@ -371,13 +384,16 @@ func save_payload() -> Dictionary:
 	payload["checkpoint_story"]=pack(checkpoint_story)
 	return payload
 func normalize_story(value,index: int) -> Dictionary:
-	if not value is Dictionary or value.size()!=11 or value.get("site_id")!=SITE_ID: return {}
+	if not value is Dictionary or value.size()!=13 or value.get("site_id")!=SITE_ID: return {}
 	var dance:=normalized_dance(value.get("dance"))
 	if dance.is_empty(): return {}
 	var template: Dictionary=story_state()
 	template.dance=dance
 	if not same_shape(value,template): return {}
 	value=typed_copy(value,template)
+	if value.bird_elapsed<0 or value.bird_elapsed>8.0: return {}
+	if index!=0 and (value.bird_greeted or value.bird_elapsed!=0): return {}
+	if not value.bird_greeted and value.bird_elapsed!=0: return {}
 	if value.color_step!=index or value.weather_phase not in ["dry","warning","rain","after"]: return {}
 	if value.warning_elapsed<0 or value.warning_elapsed>WARNING_SECONDS: return {}
 	if value.weather_phase=="rain" and value.warning_elapsed!=WARNING_SECONDS: return {}
@@ -420,7 +436,7 @@ func restore_payload(payload: Dictionary) -> bool:
 	return true
 func objective() -> String:
 	if stage==0: return "花路已经记住了 · 沿池岸绕向叶棚" if observation_valid() else "高低两路看见不同去向；蓝花心可以停一停"
-	if stage==1: return "从叶下看雨，再选棚下通路或护雨上层" if weather_phase!="after" else "雨停了，沿熟悉的池岸回去"
+	if stage==1: return "抬升穿棚下通口，再选低棚绕行或护雨上层" if weather_phase!="after" else "雨停了，沿熟悉的池岸回去"
 	if not front_open: return "看它停下盘点，趁牌绳松开冲开叶结"
 	if not passage_open: return "借风抬升后穿过背面通口，也可以普通飞行换层再冲"
 	if message_revision>0: return "它们沿你告诉的花路出发了；前面就是家"
@@ -428,6 +444,16 @@ func objective() -> String:
 func hint() -> String:
 	return "方向键随时离开 · Esc 暂停并保存" if perched else "方向键 / WASD 飞行 · 空格蓄力后松开冲刺 · Esc 暂停"
 func context_cue() -> Dictionary:
+	if stage==0 and bird_greeted and bird_elapsed<6.0:
+		return {"pos":BIRD_PERCH,"text":"画眉：你也来尝这簇花？雨要来了，前面的叶棚能歇脚。","kind":"bird"}
+	if stage==0 and p.distance_to(SMALL_HOME+Vector2(-14,62))<100:
+		return {"pos":SMALL_HOME+Vector2(-14,62),"text":"花苞还没开","kind":"flower"}
+	if stage==1 and p.x>1200 and p.x<1550:
+		return {"pos":Vector2(1442,400),"text":"茎顶与叶棚之间，可以抬高穿过去","kind":"route"}
+	if stage==1 and p.x>2040 and p.x<2500:
+		return {"pos":Vector2(2310,450),"text":"护雨从上层穿过；低棚下也有路，叶尖再抬升","kind":"route"}
+	if p.distance_to(shelters[-1].pos)<125:
+		return {"pos":shelters[-1].pos,"text":"花蜡灯 · 彩光落在歇脚的叶上","kind":"lamp"}
 	if stage!=1 and not source_open and p.distance_to(SOURCE)<180: return {"pos":SOURCE,"text":"花已经合拢 · 这条花路暂时歇了","kind":"flower"}
 	if stage==2 and not front_open and p.distance_to(KNOT)<430:
 		return {"pos":KNOT,"text":"绳松了 · 冲开干叶结" if keeper.state=="counting" else "绳还绷着 · 留意它何时盘点","kind":"keeper"}
@@ -438,3 +464,29 @@ func context_cue() -> Dictionary:
 	if stage!=1 and p.distance_to(SOURCE)<180 and not observation_valid(): return {"pos":SOURCE,"text":"在花心停稳，尝一口花蜜","kind":"flower"}
 	if stage==2 and p.distance_to(COMB)<210: return {"pos":COMB,"text":"停在蜡脾上 · 可以分享花路","kind":"dance"}
 	return super.context_cue()
+
+# The canopy is a solid leaf above the resting pocket, with open sides.
+# Four short capsules follow the painted opaque core, leaving its curled tip
+# forgiving. Run only in this revised journey so comparison route physics stays frozen.
+func leaf_roof_spine(leaf: Dictionary) -> Array[Vector2]:
+	var h: float=leaf.half_width
+	var q: Vector2=leaf.pos
+	return [q+Vector2(-h*0.64,-126),q+Vector2(-h*0.10,-137),q+Vector2(h*0.53,-116),q+Vector2(h*0.90,-85)]
+func resolve_leaf_roofs(before: Vector2) -> void:
+	if phase!="playing": return
+	var radius:=18.0 if charging else 23.0
+	for leaf in shelters:
+		if absf(p.x-leaf.pos.x)>leaf.half_width+40 or absf(p.y-(leaf.pos.y-115))>75: continue
+		var spine:=leaf_roof_spine(leaf)
+		for i in spine.size()-1:
+			var a: Vector2=spine[i]
+			var b: Vector2=spine[i+1]
+			var nearest:=Geometry2D.get_closest_point_to_segment(p,a,b)
+			if p.distance_to(nearest)>=radius: continue
+			var old_nearest:=Geometry2D.get_closest_point_to_segment(before,a,b)
+			var normal: Vector2=(before-old_nearest).normalized()
+			if normal.is_zero_approx(): normal=Vector2.UP
+			p=nearest+normal*(radius+0.05)
+			if velocity.dot(normal)<0: velocity-=normal*velocity.dot(normal)
+			burst_left=0.0
+			wind_chain=0

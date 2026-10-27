@@ -505,7 +505,6 @@ func _shelter(shelter: Dictionary) -> void:
 	ArtSprites.canopy(self,p,half)
 	draw_line(p+Vector2(-7,-91),p+Vector2(-7,-55),INK,2,true)
 	ArtProps.decor(self,p+Vector2(-7,-40),"shelter_lamp_lit" if reached else "shelter_lamp")
-	_curve(p+Vector2(-half,72),p+Vector2(-half*0.35,76),p+Vector2(half*0.35,76),p+Vector2(half,72),Color(0.80,0.89,0.94,0.65) if Winter.active(self) else Color(0.83,0.92,0.60,0.65),2)
 	ArtSprites.small_leaf(self,p+Vector2(60,57),p+Vector2(-60,57),29)
 	if reached:
 		draw_polyline(PackedVector2Array([p+Vector2(-7,44),p+Vector2(-1,50),p+Vector2(10,37)]),CREAM,3,true)
