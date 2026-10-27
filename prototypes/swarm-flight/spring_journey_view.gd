@@ -41,8 +41,8 @@ func _pond_landmarks() -> void:
 		ArtSprites.small_leaf(self,root+Vector2(-2,-28),root+Vector2(33,-66),8)
 	var perch := s+Vector2(195,-121)
 	ArtProps.stalk(self,perch+Vector2(-47,22),perch+Vector2(30,16),Vector2(perch.x+57,622),Vector2(perch.x+27,833),7.0)
-	ArtProps.stalk(self,perch+Vector2(-5,29),perch+Vector2(8,22),perch+Vector2(18,21),perch+Vector2(43,25),4.5)
-	ArtSprites.small_leaf(self,perch+Vector2(25,24),perch+Vector2(84,3),16)
+	ArtProps.stalk(self,perch+Vector2(-47,22),perch+Vector2(-23,5),perch+Vector2(10,12),perch+Vector2(43,25),6.0)
+	ArtSprites.small_leaf(self,perch+Vector2(27,20),perch+Vector2(84,3),16)
 	if model.stage == 0: _bird(perch)
 	if model.stage == 2:
 		for i in 3: _ellipse(perch+Vector2(-27+i*24,20),Vector2(3,1.4),Color("d2e5ce"))
