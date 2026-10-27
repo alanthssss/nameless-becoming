@@ -106,6 +106,6 @@ python3 tools/check_delivery.py --contract prototypes/swarm-flight/delivery-cont
 
 ### 0.15.1独立晴雨／花蜡窗样板
 
-`Godot --path prototypes/swarm-flight res://weather_window.tscn`进入《叶下的光》。与07→08→09目录、r8保存相互隔离；Mac包的“叶下的光.command”为此入口。先认棚上／棚下，再经过有预告的局部雨；真实棚顶挡雨，雨后退出危险。两处窗景与一处倒影使用原24色值，透光位置随两个地标提交，无季节文字、全屏染色或收集门槛。
+`Godot --path prototypes/swarm-flight -- --weather-window`进入《叶下的光》。与07→08→09目录、r8保存相互隔离；Mac包的“叶下的光.command”为此入口。先认棚上／棚下，再经过有预告的局部雨；真实棚顶挡雨，雨后退出危险。两处窗景与一处倒影使用原24色值，透光位置随两个地标提交，无季节文字、全屏染色或收集门槛。
 
 `Godot --headless --path prototypes/swarm-flight --script res://weather_window_verify.gd`验证规则；原生／无头UI入口为`weather_window_ui_verify.gd`，需设置隔离`SWARM_WEATHER_QA_DIR`并传`--progress-file=/absolute/qa/save.json`。开发夹具与自然体验分开记录，详见SF-R48及本批回执。旧三关玩法不变，新增样板不是正式10关完整篇幅。
