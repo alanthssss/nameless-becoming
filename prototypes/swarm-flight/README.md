@@ -139,3 +139,17 @@ python3 tools/check_delivery.py --contract prototypes/swarm-flight/delivery-cont
 `Godot --path prototypes/swarm-flight -- --weather-window`进入《叶下的光》。与07→08→09目录、r8保存相互隔离；Mac包的“叶下的光.command”为此入口。先认棚上／棚下，再经过有预告的局部雨；真实棚顶挡雨，雨后退出危险。两处窗景与一处倒影使用原24色值，透光位置随两个地标提交，无季节文字、全屏染色或收集门槛。
 
 `Godot --headless --path prototypes/swarm-flight --script res://weather_window_verify.gd`验证规则；原生／无头UI入口为`weather_window_ui_verify.gd`，需设置隔离`SWARM_WEATHER_QA_DIR`并传`--progress-file=/absolute/qa/save.json`。开发夹具与自然体验分开记录，详见SF-R48及本批回执。旧三关玩法不变，新增样板不是正式10关完整篇幅。
+
+## 03→05整段评审候选的组包
+
+实际制作范围与当前状态见[GDD§13.5](../../docs/design/swarm-flight-gdd.md#production-recovery-20261028)及唯一Now。内部导出不等于交付；旧`/tmp/package-spring-*.py`不再用于用户候选。先核读实际内容复核和原始画面，再运行：
+
+```sh
+python3 tools/package_spring_review.py --export /absolute/internal-export.zip \
+  --export-record /absolute/export-launch.json --receipt /absolute/candidate-receipt.json \
+  --evidence-root /absolute/evidence --revision FULL_FROZEN_SHA --output /absolute/new-candidate.zip
+```
+
+命令从仓库根运行。receipt沿用`tools/check_delivery.py`格式，goal为`spring-03-05-review`、claim为`candidate`，映射本目录`spring-review-contract.json`；experience证据格式见`tools/spring_review_gate.py`文档。export-launch包含同一revision、实际导出zip的sha256、`entries: {"spring-03-05": "passed", "comparison-07-09": "passed"}`与`isolated_saves: true`，只能在真实启动两入口后记录。真实的主动累计/剩余仍未知时明确报告，不编造可扩产结论。
+
+候选仍未获用户接受；校验仅核对声明及媒体完整性，负责人必须检查复核是否来自真实连续操作，不能用合成测试报告签字。包外说明固定来自`review-readme.txt`，不携带路线解法；旧包与旧存档保留。若后续几何更改需要新存档命名，应同时更新程序、此组包入口并验证旧存档不被写入。

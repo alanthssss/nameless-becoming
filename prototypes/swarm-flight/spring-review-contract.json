@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "goal": "spring-03-05-review",
+  "parent_goal": "SF-R23; GDD v1.1 full20chapter design remains incomplete",
+  "source": "docs/design/swarm-flight-gdd.md#production-recovery-20261028",
+  "criteria": [
+    {
+      "id": "continuous_run",
+      "kind": "technical",
+      "requirement": "Same frozen03→05 run and07→09 comparison; actual native input, skip/optional routes, failure, pause/cold restore, ending and isolated saves"
+    },
+    {
+      "id": "experience",
+      "kind": "content_review",
+      "requirement": "Independent controls-only continuous exploration03/04/05 with predictions, actual consequential04 choices and raw media; no unresolved basic readability, rule or route blockers; known-answer routes do not satisfy this criterion"
+    },
+    {
+      "id": "presentation",
+      "kind": "in_engine_visual",
+      "requirement": "In-engine continuous purpose/action/consequence presentation:03 source/keeper groundwork,04 visible shelter/exit/choice,05 distinct second action and visible character/listener consequence; coherent hand-painted assets/audio; notes from whole run"
+    },
+    {
+      "id": "production_limits",
+      "kind": "production_record",
+      "requirement": "Read actual efforts, rework, historical gaps, remaining unknowns and200+40h/Oct29 control; bounded representative delivery only, no bulk production or implied full-game approval"
+    }
+  ]
+}

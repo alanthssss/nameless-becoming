@@ -8,6 +8,10 @@ on:
       - 'scripts/check_swarm_supply_regressions.py'
       - 'tests/test_swarm_regressions.py'
       - 'tools/check_delivery.py'
+      - 'tools/spring_review_gate.py'
+      - 'tools/package_spring_review.py'
+      - 'tests/test_spring_review_gate.py'
+      - 'tests/test_spring_package.py'
       - 'tests/test_delivery_gate.py'
       - '.github/workflows/swarm-flight.yml'
   push:
@@ -18,6 +22,10 @@ on:
       - 'scripts/check_swarm_supply_regressions.py'
       - 'tests/test_swarm_regressions.py'
       - 'tools/check_delivery.py'
+      - 'tools/spring_review_gate.py'
+      - 'tools/package_spring_review.py'
+      - 'tests/test_spring_review_gate.py'
+      - 'tests/test_spring_package.py'
       - 'tests/test_delivery_gate.py'
       - '.github/workflows/swarm-flight.yml'
   workflow_dispatch:
@@ -79,6 +87,8 @@ jobs:
           set -euo pipefail
           python3 -B -m unittest discover -s tests -p test_swarm_regressions.py
           python3 -B -m unittest discover -s tests -p test_delivery_gate.py
+          python3 -B -m unittest discover -s tests -p test_spring_review_gate.py
+          python3 -B -m unittest discover -s tests -p test_spring_package.py
           python3 -B scripts/check_swarm_regressions.py
           python3 -B scripts/check_swarm_supply_regressions.py
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://save_supply_verify.gd
