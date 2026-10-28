@@ -208,8 +208,10 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 
 按用途读取，避免把历史方案误当当前决定：
 
+- [《雨来之前》开发范式：稳定元素，再组合完整体验](docs/design/swarm-flight-production-paradigm.md)：**后续制作执行入口**；P0–P5阶段、G0–G5门禁、元素规范、十分钟工作段与交接，实际进度只见原Now。
+
 - [合成与消除一局对照小样](docs/design/merge-match-samples-20261020.md)：简单规则、完整终局、测试证据与试玩判据。
-- [《雨来之前》完整游戏GDD v1.1](docs/design/swarm-flight-gdd.md)：当前飞行版完整设计入口，覆盖核心规则、四季20关、剧情、音画、UI、保存、制作与验证；作者整合稿，区分实现与待验证设计。
+- [《雨来之前》完整游戏GDD v1.1](docs/design/swarm-flight-gdd.md)：当前飞行版完整设计入口，覆盖核心规则、剧情、音画、UI、保存、制作与验证；正文旧20关表待按24关目标重排，最新生产原则见开发范式。
 - [《雨来之前》世界元素参考与玩法转译](docs/design/swarm-flight-world-elements.md)：原色卡与24个物候点、常态生物与四位Boss、蜂舞PDF来源和信息链、8种风花形式；配套GDD的具体规格。
 - [《雨来之前》玩法、内容规模与节奏策划](docs/design/swarm-flight-game-20261020.md)：玩法与试玩判据；[所有新建／修改关卡执行的LV01–10范式与检查项](docs/design/swarm-flight-game-20261020.md#level-flow-checklist)。
 - [《雨来之前》五本设计书的具体设计与实施候选](docs/design/swarm-flight-design-opportunities-20261026.md)：21项按需选用的关卡、动作、反馈、美术与剧本方案，含来源、适用条件、实施和验证；两份展开规格，均未实施。

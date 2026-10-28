@@ -46,6 +46,12 @@
 - Keep active worktrees only for ongoing work. Relocate historical checkouts with useful ignored artifacts into a clearly named archive rather than silently deleting those artifacts. Do not switch or remove a worktree being used by another active task.
 - Apply this hygiene during each task and after delivery; do not claim continuous background monitoring unless an automation has actually been configured.
 
+## Production stages and bounded execution
+
+- Read [the production paradigm](docs/design/swarm-flight-production-paradigm.md) and the latest Now before continuing Swarm Flight work. Stabilize a representative element before extending levels; follow P0–P5 and evidence gates G0–G5. Keep one execution state in Now and version-specific evidence in the existing batch receipt. A document, commit, passing CI or finished turn does not advance a gate.
+- Keep every complete task turn under ten minutes, including reading, waits, subagents and handoff. Plan one result within eight minutes, save at minute eight and finish before nine minutes thirty seconds. Split risky work beforehand; use actual complete-turn timing, not partial tool observation. Unverified prompt-only automation is not a hard time limit; the paused continuation must not resume without later authorization and verified execution/cutoff handling.
+- For element changes, preserve editable sources, stable identity/version, tested variation limits and affected usage sites. Fix and verify the source before updating instances. Keep current gameplay stable and player-facing seasons/solar-term names absent; the product target is 24 levels, while legacy numbering and evidence remain intact until a deliberate mapping/migration is implemented.
+
 ## Visual coherence and physical plausibility
 
 - Apply [GDD §8.1 visual production rules](docs/design/swarm-flight-gdd.md#visual-production-rules) to every new or revised scene, asset, effect and animation. Preserve the approved hand-painted garden style; historical prototype material standards do not override the current GDD.
