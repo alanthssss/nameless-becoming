@@ -2,7 +2,7 @@
 
 版本：1.0，2026-10-28。依据：Alan要求形成阶段、目标、流程、规范和门禁，供后续继续工作。Codex负责实施、内部检查和交接；Alan负责整体审美、产品方向及真正的范围／成本取舍。
 
-本文是当前项目的生产规则，不是第二份任务队列。**实际阶段、进行中的对象和唯一下一动作只维护在[制作规格§0.11 Now](solar-term-campaign-production-spec.md#production-now)**；具体版本和证据留在原批次回执。历史实现不因本规范建立而自动通过任何门禁。
+本文是当前项目的生产规则。按Alan于2026-10-28要求，GitHub milestone／issue管理目标、依赖和结果；**当前阶段、选中的issue和唯一下一动作只维护在[制作规格§0.11 Now](solar-term-campaign-production-spec.md#production-now)**，具体版本与门禁证据留在原批次回执。本文只索引路线，不复制一套动态待办。历史实现不因本规范建立而自动通过任何门禁。
 
 ## 1. 不随工作段变化的约束
 
@@ -30,7 +30,7 @@ P0—P5是产物成熟度，可以跨多个工作段。每个阶段的门禁只�
 
 ## 3. 门禁怎样记录、由谁判断
 
-每个G0—G5记录以下五项即可，不新建看板或验收系统：
+每个G0—G5记录以下五项即可，沿用回执保存；GitHub issue链接结论，不另造验收系统：
 
 1. **输入基线：** 批次、元素／关卡ID、源提交及相关素材／配置版本。
 2. **目标产物：** 本次解决的具体问题、适用范围和不动项。
@@ -119,3 +119,23 @@ G门禁结论、检查者、理由与适用范围：
 - 本规范自身的完成条件：阶段有产物与可判断门禁，失败有回退点，责任与限时交接明确，AGENTS／README／GDD有入口，Now标出实际起点。**文档完成只表示规则可用；G0—G5是否通过必须由实际制作证据决定。**
 
 本次不生成素材、不修改游戏数值或存档、不新增采购。下一实施段及实际门禁状态只看Now。
+
+<a id="github-roadmap"></a>
+## 8. GitHub里程碑与issue安排（首版粗拆）
+
+本表是2026-10-28按用户要求建立的目标索引；issue详情、依赖和开闭以GitHub为准，不在本表维护完成百分比。后续阶段先列结果，实际开始前再按证据拆细执行段，不预先把24关逐一铺成制作任务。
+
+| 里程碑 | 对应阶段与目标 | 具体issue | 放行边界 |
+| --- | --- | --- | --- |
+| [M1 标准元素稳定](https://github.com/alanthssss/nameless-becoming/milestone/1) | P0–P2；一个真实可复用叶棚 | [#200实机基线](https://github.com/alanthssss/nameless-becoming/issues/200)、[#201标准样件](https://github.com/alanthssss/nameless-becoming/issues/201)、[#202受控变体](https://github.com/alanthssss/nameless-becoming/issues/202) | 依次取得G0–G2证据，不能凭图或CI放行 |
+| [M2 小场景组合可用](https://github.com/alanthssss/nameless-becoming/milestone/2) | P3；叶棚、雨、玩家及必需邻接对象相容 | [#203轻量兼容](https://github.com/alanthssss/nameless-becoming/issues/203)、[#204其他必需元素缺陷](https://github.com/alanthssss/nameless-becoming/issues/204) | #204仅限真实阻断问题，对修改元素逐一走P0–P3；没有批量造库授权 |
+| [M3 池岸完整体验候选](https://github.com/alanthssss/nameless-becoming/milestone/3) | P4；目的、选择、发展与归来贯通 | [#205旧03](https://github.com/alanthssss/nameless-becoming/issues/205)、[#206旧04](https://github.com/alanthssss/nameless-becoming/issues/206)、[#207旧05](https://github.com/alanthssss/nameless-becoming/issues/207)、[#208恢复与独立复核](https://github.com/alanthssss/nameless-becoming/issues/208)、[#209最终包](https://github.com/alanthssss/nameless-becoming/issues/209) | G4／J01–08有同版本实际证据；候选不等于Alan接受；旧关号不冒充24关新编号 |
+| [M4 范围与产能复核](https://github.com/alanthssss/nameless-becoming/milestone/4) | P5入口准备及固定检查点 | [#210内容ID与合同覆盖](https://github.com/alanthssss/nameless-becoming/issues/210)、[#211十月29日取舍](https://github.com/alanthssss/nameless-becoming/issues/211) | #210可在M1后做策划；#211按北京时间10月29日执行，不等待M3完成。复核不是扩产放行或整作完工日期 |
+
+**依赖与调度。** #200→#201→#202；之后#203和#204可分别检查，但同一运行场景只允许一个写者；两者必要证据齐备再#205→#206→#207→#208→#209。#210依赖#202的稳定样件依据；#211独立按日期触发，以届时已有证据给继续／调整／停止判断，候选未完成和成本未知也是必须报告的结果。未满足依赖不能因排在列表前面就派发。
+
+**状态与关闭。** `status:ready`表示依赖满足、可被Now选中，不表示已开工或已通过；`status:waiting`表示等待依赖／排期／日期。当前执行者、真实起止和下一动作见Now／回执，单个issue可以跨多个小于十分钟的完整回合，不为每个回合制造新issue。更新顺序为保存证据→记门禁结论→更新issue与标签→更新Now指针。不要让PR的自动关闭语句代替验收：技术修改合入后仍需核对该issue产物是否完成。
+
+问题诊断或取舍issue可以因交付明确结论而完成，同时G门禁仍未通过、下游继续等待；实现／候选issue只有完成所列结果才关闭。milestone关闭须检查其目标及所有必要证据，不用issue关闭比例表示游戏完成度。PR #198继续保存24关细排讨论，本安排不代签其中所有设计选择。
+
+**责任与时间。** Codex维护任务、分段、执行、复核和接续，Alan只作必要产品取舍。M1–M3不设置未经证据支持的完工日期；M4日期表示既有10月29日复核，不能解释为承诺届时做完24关。GitHub目标不等于已启动执行，也不恢复当前暂停的自动接续；检查点由后续明确执行／接续完成，当前不宣称会自动唤醒。

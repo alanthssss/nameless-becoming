@@ -343,7 +343,9 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 <a id="production-now"></a>
 当前 `Now`（2026-10-28：稳定元素后再推进完整体验）：
 
-**唯一当前行动。** 按[开发范式P0–P5／G0–G5](swarm-flight-production-paradigm.md)接续。当前处于**P0待建立实机失败基线，G0未通过**；本次范式文档完成不代表已经制作／验收叶棚。Codex负责，下一检查点是下一次小于十分钟的工作段：读取实际工作树`/private/tmp/nameless-spring-whole-journey`（分支`codex/spring-whole-journey`、现有本地提交`c5e893b`）与其`outputs/swarm-flight/2026-10-28-whole-journey/build-receipt.json`，核对最新源版本和原始媒体，在实际尺度下记录叶棚、支撑和遮雨边界的具体问题及重现条件；若旧媒体不足就只取证，不能凭代码形态直接认定根因。产物是一个明确样件范围和真实失败／基线记录，不是整关改造。
+**唯一当前行动。** 下一执行issue为[#200：叶棚实机基线与失败样本](https://github.com/alanthssss/nameless-becoming/issues/200)，本轮仅完成规划，尚未开始取证。按[开发范式P0–P5／G0–G5](swarm-flight-production-paradigm.md)接续。当前处于**P0待建立实机失败基线，G0未通过**；本次范式文档完成不代表已经制作／验收叶棚。Codex负责，下一检查点是下一次小于十分钟的工作段：读取实际工作树`/private/tmp/nameless-spring-whole-journey`（分支`codex/spring-whole-journey`、现有本地提交`c5e893b`）与其`outputs/swarm-flight/2026-10-28-whole-journey/build-receipt.json`，核对最新源版本和原始媒体，在实际尺度下记录叶棚、支撑和遮雨边界的具体问题及重现条件；若旧媒体不足就只取证，不能凭代码形态直接认定根因。产物是一个明确样件范围和真实失败／基线记录，不是整关改造。
+
+**GitHub接续。** 已建立[4个milestone／12个结果issue索引](swarm-flight-production-paradigm.md#github-roadmap)；GitHub保存目标、依赖与结果，Now只保留当前阶段／选中issue／下一动作，回执保存版本和实际证据。仅#200标就绪，其余等待依赖或日期；[#211](https://github.com/alanthssss/nameless-becoming/issues/211)为北京时间10月29日独立检查点，不依赖完整候选完成，创建任务不等于已经安排自动唤醒。每个实际执行回合仍小于十分钟，不按issue数量推算工时。
 
 **本段之后。** G0成立才进入P1标准叶棚；再验证有限变体和轻量兼容，之后回到原池岸归途的完整体验。装饰不加无关机制，不先生成全套元素。记录只进同一Now与原回执。实际实施工作树仍可能包含旧AGENTS，接续前必须读取主线最新范式并受控整合文档更新，保留本地实现和所有未跟踪／忽略证据，不能重置或凭旧记录扩关。
 
