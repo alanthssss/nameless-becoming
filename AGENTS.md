@@ -46,6 +46,12 @@
 - Keep active worktrees only for ongoing work. Relocate historical checkouts with useful ignored artifacts into a clearly named archive rather than silently deleting those artifacts. Do not switch or remove a worktree being used by another active task.
 - Apply this hygiene during each task and after delivery; do not claim continuous background monitoring unless an automation has actually been configured.
 
+## Visual coherence and physical plausibility
+
+- Apply [GDD §8.1 visual production rules](docs/design/swarm-flight-gdd.md#visual-production-rules) to every new or revised scene, asset, effect and animation. Preserve the approved hand-painted garden style; historical prototype material standards do not override the current GDD.
+- Check objects together in the running game: consistent linework, palette, light, scale and detail; credible plant attachments, support, hanging points, gravity, wind response and occlusion; visible affordances must agree with collision and weather rules. Stylization may simplify natural structure, but cannot conceal an unexplained broken connection or contradict the same object's behavior.
+- Review affected states at actual play scale and in continuous movement, including before/after interactions and relevant adjacent scenes. Floating props, disconnected stems, unsupported loads, mismatched visual/collision shelter, or abrupt style changes are defects to resolve internally before candidate delivery. Record native evidence and remaining gaps; automated checks or a single attractive still do not establish visual acceptance.
+
 ## Swarm Flight completion and regression checks
 
 - For every authored or revised level, apply [SF-R35's level-flow checklist LV01–10](docs/design/swarm-flight-game-20261020.md#level-flow-checklist). Record pass / fix / not-applicable with reasons and evidence in the existing batch decision or build receipt. Preserve each chapter's theme; the checklist is not a fixed encounter template. Separate technical verification from player experience and resolve known basic defects before delivery; no per-item user approval is required.
