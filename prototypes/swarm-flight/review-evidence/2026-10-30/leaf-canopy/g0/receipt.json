@@ -1,0 +1,131 @@
+{
+  "issue": 200,
+  "milestone": 1,
+  "gdd": [
+    "4.1",
+    "8.1",
+    "11.2"
+  ],
+  "kind": "internal_element_baseline",
+  "baseline_revision": "d99db73ae1fb58eebb1ea081e4250509132c6a8d",
+  "engine": "4.6.2.stable.official.71f334935",
+  "scope": [
+    "E13 leaf-canopy",
+    "E13 leaf-canopy-support",
+    "03-05 spring journey static green canopy"
+  ],
+  "gate": {
+    "G0": "passed_for_declared_static_spring_canopy_baseline",
+    "G1": "not_checked",
+    "G2": "not_checked",
+    "G3": "not_checked"
+  },
+  "findings": [
+    {
+      "id": "LC01",
+      "status": "reproduced",
+      "finding": "10/10 source-alpha probes: rain cutoff 27.39..65.24px below opaque roof; injected stationary drops 2px inside roof survive dt=0 diagnostic (not natural falling trajectory)",
+      "expected": "visible roof intercepts drops at surface"
+    },
+    {
+      "id": "LC02",
+      "status": "reproduced",
+      "finding": "native keyboard approach from above and below embeds bee body in painted roof; four-segment spine omits leaf thickness",
+      "expected": "body remains outside solid canopy, sides stay open"
+    }
+  ],
+  "native_evidence": "production spring_journey scene; 6 keyboard segments, explicit setup positions; 266 frames at 30fps; scripted developer self-test, not player evidence",
+  "next_minimal_change": "single deterministic roof contour for revised spring journey visible canopy, rain interception and thickness-aware player collision; retain old comparison route physics",
+  "limits": [
+    "static current spring canopy only; dynamic unfolding canopy belongs to #223",
+    "118 width measured as historical fallback; G1 default180 and G2 allowed widths to be validated",
+    "full asset families and M1/M2 not passed",
+    "no new player feedback"
+  ],
+  "checks": [
+    "Godot import passed",
+    "probe completed with 10 measurements and 6 native keyboard segments",
+    "independent rule/code/native still and bounded trace review passed; G0 only"
+  ],
+  "cost": {
+    "host_observed_start": "2026-10-30T07:21:56Z",
+    "host_evidence_end": "2026-10-30T07:28:56.528344+00:00",
+    "coverage": "main workflow wall clock includes reading, capture, failures and tool waiting; active time unknown; not GitHub server clock",
+    "agent_observation": "07:21:54–07:23:11 UTC, 77s including tool waiting; not additive team active time",
+    "historical_total_hours": null,
+    "remaining_budget_hours": null,
+    "control_limit_hours": 240,
+    "new_purchases": 0,
+    "billed_cost": null
+  },
+  "failures_and_incidents": [
+    "first capture used default development save path before isolation; prior file existence was not snapshotted, possible prior development progress overwrite cannot be excluded; generated payload preserved in outputs; user informed",
+    "second capture waited indefinitely on frame_post_draw; terminated after ~50s; not counted as successful evidence",
+    "bounded isolated recapture uses process_frame and dedicated progress_file; completed in 10s",
+    "system ffmpeg missing x265 library; avconvert unable to read Godot AVI; used temporary imageio-ffmpeg installation for H264 encoding"
+  ],
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "sha256": "681f9c9250d29bb71eb0fe8f3003d40201c70249625df8993359ebdd43c4866c"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "662c8c03245688936238f44d0ee252d1fa9f67a256840aa87b7711be1d7b0c27"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "e165673794cb20fa8329432ac40e6394eff3a6d1c6a3d857149418f74c3daf48"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_props.gd",
+      "sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_sprites.gd",
+      "sha256": "eff639db564c06127fdfd14bc93258e76f946a148c50b2c33fc88e74a1ca9495"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_probe.gd",
+      "sha256": "ffda4fe8f502b5e7d905a198eb5cd091c0aba89c9e39ccc489abab9d5dd652d2"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png",
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "decb804f4275573b6b8d4182666f8dfacc75b562af3c5385a1862894c984609c"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "from_above.png",
+      "sha256": "027654549138b2364575e5c17e3d2d469b5356baf30706dc380bfc99c5f54df4"
+    },
+    {
+      "path": "from_below.png",
+      "sha256": "f1a24a8bb9363014f9bc3246b05230db540716c31d456d206c991ee688b93606"
+    },
+    {
+      "path": "left_entry.png",
+      "sha256": "83cd26b2510c5149c52c81d9078dd8bd1526c3591b59aa12de8326deae2854e7"
+    },
+    {
+      "path": "native-input.mp4",
+      "sha256": "fee43c7abd102bd8a33b9fcb23d70df092431def2eb84d9d05eabcae18cccd6d"
+    },
+    {
+      "path": "native.log",
+      "sha256": "407db62304d60d8b52f2987c6341494d3a652a19ab655eed0def634636bff36d"
+    },
+    {
+      "path": "probe.json",
+      "sha256": "6173a9dcec7c32b2a2f85142d4d51a64b67f1bcf21c623566489d07c69c00553"
+    },
+    {
+      "path": "right_entry.png",
+      "sha256": "6c5a87205318481daf5c76b57c632e9b5c36eb01a34076bd82eb93492322949d"
+    }
+  ]
+}
