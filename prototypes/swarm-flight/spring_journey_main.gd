@@ -60,3 +60,9 @@ func event_message(kind: String,text: String,seconds: float,tint := Color("ffe7a
 	if kind=="recover_manual": text="回到落脚点"+(" · 已打开的通口保留" if model.passage_open else " · 可以重新观察它的动作")
 	if kind in ["recover_rain","recover_exhaustion"]: text="体力耗尽，回到落脚点"+(" · 已打开的通口保留" if model.passage_open else " · 重新出发")
 	super.event_message(kind,text,seconds,tint)
+
+func on_secondary() -> void:
+	super.on_secondary()
+	if mode=="pause" and model.events.any(func(e): return e.kind=="recover_geometry"):
+		heading.text="已回到安全的落脚点"
+		description.text=titles[model.stage]+" · 叶棚的边缘已更新。\n已记住的旅程保留，从最近的落脚点继续。\n按 Enter 或 Esc 出发。"

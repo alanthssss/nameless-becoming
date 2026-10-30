@@ -24,7 +24,7 @@ static func build(index: int) -> Dictionary:
 		beats=[
 			beat("归路换了模样",1440,[terrain(870,270,80,300,"stem"),dew(1100,580,"接近牌架前补给")],500,"同一条池岸，前面却挂起了花牌",[Vector2(620,620),Vector2(1000,620),Vector2(1260,500)]),
 			beat("等它停下盘点",1100,[terrain(910,80,42,315,"stem"),terrain(910,535,42,225,"stem"),{"kind":"curtain","x":910.0,"y":465.0,"height":140.0}],465,"牌绳绷着时先观察，盘点时冲开干叶结",[Vector2(410,590),Vector2(750,465)]),
-			beat("从牌架背面穿过",900,[chain([Vector2(100,465),Vector2(320,300)],[],Vector2(690,300)),terrain(460,80,42,130,"stem"),terrain(460,390,42,370,"stem"),{"kind":"curtain","x":460.0,"y":300.0,"height":180.0},dew(700,420,"开通后与源花同路的补给")],500,"借花抬升后接住背面的通口，也可以自行换层",[Vector2(100,465),Vector2(320,300),Vector2(690,300)]),
+			beat("从牌架背面穿过",900,[chain([Vector2(200,465),Vector2(320,300)],[],Vector2(690,300)),terrain(460,80,42,130,"stem"),terrain(460,390,42,370,"stem"),{"kind":"curtain","x":460.0,"y":300.0,"height":180.0},dew(700,420,"开通后与源花同路的补给")],500,"借花抬升后接住背面的通口，也可以自行换层",[Vector2(200,465),Vector2(320,300),Vector2(920,300),Vector2(920,620),Vector2(720,620)]),
 			beat("把花路带回家",910,[],500,"巢门就在前面，蜡脾边有人等着出发",[Vector2(410,500),Vector2(730,500)])]
 	var source={"title":TITLES[index],"region":0,"theme":0 if index!=1 else 2,"music":0 if index==0 else 2,"base_bees":1,"storm":false,"exit_kind":"home" if index==2 else "arch","entry":["池岸分成两层，蓝花还在前面开着。","雨要经过这段回廊，先从叶下看一看。","绕回熟悉的池岸，庄主把花牌挂到了路中间。!"][index].trim_suffix("!"),"arrival":["沿池岸的枝架，绕到有叶棚的那一侧。","雨停了，回家的路就在那簇蓝花旁边。",""][index],"npc":"","neighbor_stops":[],"encounters":beats}
 	var result: Dictionary=Builder.build_source(source)

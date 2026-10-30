@@ -1,6 +1,7 @@
 extends "res://long_journey_model.gd"
 ## Three chapters revisit one source; local behavior never changes07–09.
 const SpringContent=preload("res://spring_journey_content.gd")
+const Canopy = preload("res://leaf_canopy_geometry.gd")
 const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
 const SITE_ID="pond-and-home"
 const SMALL_HOME=Vector2(2390,360)
@@ -348,9 +349,11 @@ func rain_floor_at(x: float) -> float:
 		if obstacle.kind == "terrain" and x >= rect.position.x and x <= rect.end.x:
 			floor_y = minf(floor_y,rect.position.y)
 	for leaf in shelters:
-		if absf(x-leaf.pos.x) < float(leaf.half_width)+7.0:
-			floor_y = minf(floor_y,leaf.pos.y-95.0)
+		floor_y = minf(floor_y,Canopy.top_at(x,leaf))
 	return floor_y
+
+func rain_hits_shelter(before: Vector2, after: Vector2, shelter: Dictionary) -> bool:
+	return Canopy.intercepts(before,after,shelter)
 
 
 func story_state() -> Dictionary:
@@ -430,9 +433,27 @@ func restore_payload(payload: Dictionary) -> bool:
 					found+=1
 					if wall.broken!=pair[0].get("front_open" if wall.rect.position.x==2350 else "passage_open"): return false
 			if found!=2: return false
+	# Only the known pre-canopy v2 wind layout is migrated. Every other
+	# static field still passes the strict parent validator, atomically.
+	if index==2:
+		for snapshot in [base,base.checkpoint]:
+			if not snapshot.get("rings") is Array: return false
+			if snapshot.rings.size()!=probe.rings.size(): return false
+			var ring=snapshot.rings[0]
+			if ring is Dictionary and ring.get("pos") is Vector2 and ring.get("direction") is Vector2 and ring.pos==Vector2(2640,465) and ring.direction==Vector2(220,-165).normalized():
+				ring.pos=probe.rings[0].pos
+				ring.direction=probe.rings[0].direction
+		payload=payload.duplicate(true)
+		payload.state=pack(base)
 	if not super.restore_payload(payload): return false
 	apply_story(state)
 	checkpoint_story=saved
+	# v2 snapshots from the old thin roof may now overlap the painted leaf.
+	# Use the existing committed checkpoint contract, never silently push through.
+	for leaf in shelters:
+		if not Canopy.contact(p,9.0 if charging else 14.0,leaf).is_empty():
+			restore_checkpoint("geometry")
+			break
 	return true
 func objective() -> String:
 	if stage==0: return "花路已经记住了 · 沿池岸绕向叶棚" if observation_valid() else "高低两路看见不同去向；蓝花心可以停一停"
@@ -465,28 +486,16 @@ func context_cue() -> Dictionary:
 	if stage==2 and p.distance_to(COMB)<210: return {"pos":COMB,"text":"停在蜡脾上 · 可以分享花路","kind":"dance"}
 	return super.context_cue()
 
-# The canopy is a solid leaf above the resting pocket, with open sides.
-# Four short capsules follow the painted opaque core, leaving its curled tip
-# forgiving. Run only in this revised journey so comparison route physics stays frozen.
-func leaf_roof_spine(leaf: Dictionary) -> Array[Vector2]:
-	var h: float=leaf.half_width
-	var q: Vector2=leaf.pos
-	return [q+Vector2(-h*0.64,-126),q+Vector2(-h*0.10,-137),q+Vector2(h*0.53,-116),q+Vector2(h*0.90,-85)]
-func resolve_leaf_roofs(before: Vector2) -> void:
+# The original painted contour has real thickness; both faces block the bee.
+# Only this revised journey opts in; comparison-route physics stays frozen.
+func resolve_leaf_roofs(_before: Vector2) -> void:
 	if phase!="playing": return
-	var radius:=18.0 if charging else 23.0
+	var radius:=9.0 if charging else 14.0
 	for leaf in shelters:
-		if absf(p.x-leaf.pos.x)>leaf.half_width+40 or absf(p.y-(leaf.pos.y-115))>75: continue
-		var spine:=leaf_roof_spine(leaf)
-		for i in spine.size()-1:
-			var a: Vector2=spine[i]
-			var b: Vector2=spine[i+1]
-			var nearest:=Geometry2D.get_closest_point_to_segment(p,a,b)
-			if p.distance_to(nearest)>=radius: continue
-			var old_nearest:=Geometry2D.get_closest_point_to_segment(before,a,b)
-			var normal: Vector2=(before-old_nearest).normalized()
-			if normal.is_zero_approx(): normal=Vector2.UP
-			p=nearest+normal*(radius+0.05)
-			if velocity.dot(normal)<0: velocity-=normal*velocity.dot(normal)
-			burst_left=0.0
-			wind_chain=0
+		var hit := Canopy.contact(p,radius,leaf)
+		if hit.is_empty(): continue
+		p=hit.position
+		var normal: Vector2=hit.normal
+		if velocity.dot(normal)<0: velocity-=normal*velocity.dot(normal)
+		burst_left=0.0
+		wind_chain=0
