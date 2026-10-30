@@ -1,0 +1,108 @@
+{
+  "batch": "2026-10-30-plant-attachments",
+  "kind": "internal_element_maintenance",
+  "baseline_revision": "39f04e72b4e2fc75d87c1a0eda531f4602ec0a54",
+  "result": "targeted_attachment_checks_passed; full_element_gates_unchecked",
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/art_props.gd",
+      "sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8"
+    },
+    {
+      "path": "prototypes/swarm-flight/bee_dance_view.gd",
+      "sha256": "535d91e40605f55fd24fac721ff0c919b99dd78bdbea1f4515021e1ab9f1a19f"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "e165673794cb20fa8329432ac40e6394eff3a6d1c6a3d857149418f74c3daf48"
+    },
+    {
+      "path": "prototypes/swarm-flight/weather_window_view.gd",
+      "sha256": "0c84fa677713e43e1c82a0a1bd364f67c2d0b13a1de56a7b93b52428a6857fa3"
+    },
+    {
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250"
+    },
+    {
+      "path": "prototypes/swarm-flight/element_batch_capture.gd",
+      "sha256": "bdbe9ad427b055232c5823dafe454d65b1d335fec3aa563aeddeb8ae868fcd1d"
+    }
+  ],
+  "scope": [
+    "leaf-canopy-support",
+    "plant-stem",
+    "open-source-flower",
+    "fixed-wind-flower"
+  ],
+  "checks": {
+    "model_checks": 1655,
+    "legacy_model_level_count": 16,
+    "spring_model_checks": 200,
+    "native_ui_checks": 65,
+    "native_visual_combinations": 8,
+    "sampled_motion_frames": 12,
+    "failures": 0
+  },
+  "visual_findings": [
+    "formerly floating shelter perch now has petiole joined to actual parent curve",
+    "side blossoms and source leaves join rooted parent stem",
+    "wind leaf samples its moving stem; head follows existing closure/recoil",
+    "approved shared painted texture retained"
+  ],
+  "limitations": [
+    "not full G1/G2/G3 acceptance or playtest",
+    "not24level validation",
+    "winter flower species reuse does not meet new requirement",
+    "candidate narcissus not integrated; outdoor applicability and alpha/shape unverified",
+    "all layouts and roof/rain borders need further checks"
+  ],
+  "failed_attempts": [
+    "60-frame capture exceeded45s; 12 sampled frames completed bounded60s run",
+    "local ffmpeg lacks libx265; no video claimed"
+  ],
+  "cost": {
+    "observed_start": "2026-10-30T02:23:09Z",
+    "coverage": "partial clock observations; not full app-turn active time; interruptions/user exchanges included in wall time",
+    "delivery_target": "adjusted from10min to complete implementation, checks and user floral clarifications",
+    "historical_total_hours": null,
+    "remaining_budget_hours": null,
+    "control_limit_hours": 240,
+    "new_purchases": 0,
+    "imagegen_calls": 2,
+    "billed_cost": null,
+    "checkpoint": "Oct29 not evidenced as executed; Oct30 review: continue bounded existing-source repair and inventory, defer broad floral production until outdoor selection coherent"
+  },
+  "raw_evidence_location": "outputs/swarm-flight/2026-10-30-elements",
+  "review": "independent code and three native stills reviewed; no blocking defect in attachment scope",
+  "evidence": [
+    {
+      "path": "after.png",
+      "sha256": "d2af8c54eb370983be6f4c0f7f117c209dd4bd73cefa502c770b23ed6efa21e5"
+    },
+    {
+      "path": "before.png",
+      "sha256": "a6418ceea8d3fd7110d70a32bf31428df0b1171d793ccdd227065533c5cff75f"
+    },
+    {
+      "path": "capture-final.log",
+      "sha256": "448a0445c8a6b563b3a07c06710e4cf318ed61d4775195f63c273db1a4efce2f"
+    },
+    {
+      "path": "in-game.png",
+      "sha256": "1404f16b2c422149dd2fb0a45196bedd0c9d9b83039300046f5d9ccf0d260330"
+    },
+    {
+      "path": "native.log",
+      "sha256": "2ef42a59d46af5218ecdd803fe6aa3c011967973a921a582620d78ea38c55bf1"
+    },
+    {
+      "path": "rules.log",
+      "sha256": "e7c62419216edc76a30aa672b8cc768d32349b8f836b1a368e41c60ca52db17f"
+    },
+    {
+      "path": "spring-rules.log",
+      "sha256": "8ce77c0e0b92c91e46106a338fd0ed75e103a4047416da4548abadc0a6306535"
+    }
+  ]
+}

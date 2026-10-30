@@ -36,9 +36,7 @@ func _shelter(shelter: Dictionary) -> void:
 	var p: Vector2 = shelter.pos
 	var half: float = shelter.half_width
 	if p.x+half < model.camera_x-180 or p.x-half > model.camera_x+1460: return
-	ArtProps.stalk(self,p+Vector2(half+4,-80),p+Vector2(half+17,8),p+Vector2(half-23,130),Vector2(p.x+half-34,828),12.0)
-	ArtSprites.canopy(self,p,half)
-	ArtSprites.small_leaf(self,p+Vector2(60,57),p+Vector2(-60,57),29)
+	ArtProps.shelter_plant(self,p,half)
 	if int(shelter.section) in [0,2]:
 		var center := p+Vector2(105,82)
 		_curve(p+Vector2(108,-90),p+Vector2(106,-28),center+Vector2(38,-80),center+Vector2(32,-65),Color("8c7441"),2.3)

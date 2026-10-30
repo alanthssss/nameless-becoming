@@ -67,6 +67,22 @@ static func stalk(v: Node2D, a: Vector2, b: Vector2, c: Vector2, d: Vector2, wid
 	v._curve(a,b,c,d,Winter.INK if winter else INK,width+2.0)
 	v.draw_polygon(left,PackedColorArray([Color.WHITE]),uv_left,atlas)
 
+static func branch(v: Node2D, stem: PackedVector2Array, t: float, tip: Vector2, width: float) -> void:
+	# The junction is sampled from the same centreline used to paint its parent.
+	# This is presentation geometry only; it creates no platform or collision.
+	var root := stem[0].bezier_interpolate(stem[1],stem[2],stem[3],t)
+	var span := tip-root
+	stalk(v,root,root+span*0.35+Vector2(0,6),tip-span*0.25+Vector2(0,4),tip,width)
+
+static func shelter_plant(v: Node2D, p: Vector2, half: float) -> void:
+	var stem := PackedVector2Array([p+Vector2(half+4,-80),p+Vector2(half+17,8),p+Vector2(half-23,130),Vector2(p.x+half-34,828)])
+	stalk(v,stem[0],stem[1],stem[2],stem[3],12.0)
+	# The resting leaf used to float independently inside the canopy. Its
+	# petiole now grows out of the actual stem, at both supported widths.
+	branch(v,stem,0.48,p+Vector2(58,54),4.5)
+	Sprites.canopy(v,p,half)
+	Sprites.small_leaf(v,p+Vector2(60,57),p+Vector2(-60,57),29)
+
 static func curtain(v: Node2D, r: Rect2, broken: bool, flex: float) -> void:
 	if broken:
 		var tip := Rect2(r.position+Vector2(flex*2,0),Vector2(r.size.x,23))

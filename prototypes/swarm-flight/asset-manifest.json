@@ -1215,5 +1215,15 @@
     ],
     "review": "Native16 opening and shelter,13 flower before/after,14 overview,15 storm-theme and shield,13–15 goals,16 home/reward garden,05 summer control; fixture images, not player evidence",
     "receipt": "outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json"
-  }
+  },
+  "gdd_element_register": "gdd-element-manifest.json",
+  "construction_reviews": [
+    {
+      "date": "2026-10-30",
+      "scope": "shelter petiole, source-cluster pedicels and wind-flower stem attachments",
+      "receipt": "review-evidence/2026-10-30/receipt.json",
+      "bitmap_changes": false,
+      "full_asset_acceptance": false
+    }
+  ]
 }
