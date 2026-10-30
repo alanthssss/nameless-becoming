@@ -208,6 +208,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 
 按用途读取，避免把历史方案误当当前决定：
 
+- [完整GDD元素总目录](docs/design/swarm-flight-element-catalog.md)：全作需求来源、元素族、必要状态与GitHub覆盖；族级起点不等于资产完成。
 - [《雨来之前》开发范式：稳定元素，再组合完整体验](docs/design/swarm-flight-production-paradigm.md)：**后续制作执行入口**；P0–P5阶段、G0–G5门禁、元素规范、十分钟工作段与交接，实际进度只见原Now。
 
 - [合成与消除一局对照小样](docs/design/merge-match-samples-20261020.md)：简单规则、完整终局、测试证据与试玩判据。
