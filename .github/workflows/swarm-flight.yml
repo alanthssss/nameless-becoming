@@ -166,7 +166,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$SWARM_SPRING_QA_DIR"
-          timeout 60s "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://leaf_canopy_verify.gd 2>&1 | tee "$RUNNER_TEMP/leaf-canopy.log"
+          timeout 60s "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://leaf_canopy_verify.gd -- --variants 2>&1 | tee "$RUNNER_TEMP/leaf-canopy.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/leaf-canopy.log"; then exit 1; fi
           grep -q '^CANOPY VERIFIED:.*0 failures' "$RUNNER_TEMP/leaf-canopy.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://spring_journey_verify.gd 2>&1 | tee "$RUNNER_TEMP/spring-model.log"

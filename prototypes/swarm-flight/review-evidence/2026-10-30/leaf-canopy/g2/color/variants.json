@@ -1,0 +1,4154 @@
+{
+	"baseline_revision": "0518a9c",
+	"cases": [
+		{
+			"anchor": [
+				620.0,
+				465.0
+			],
+			"half_width": 118.0,
+			"reached": false,
+			"rendered_lamp_join_checked": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w118-y465-dry-entry.png",
+					"trace": [
+						{
+							"p": [
+								453.246612548828,
+								465.091583251953
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								456.487487792969,
+								465.334899902344
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								461.721862792969,
+								465.739074707031
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								468.948516845703,
+								466.318756103516
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								477.616119384766,
+								467.050048828125
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								486.349395751953,
+								467.807312011719
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								495.082672119141,
+								468.580200195312
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								503.815948486328,
+								469.365203857422
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 99.4666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								512.192749023438,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								520.526000976562,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								528.859252929688,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								537.192504882812,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								545.525756835938,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								553.859008789062,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								562.192260742188,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								570.525512695312,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								578.858764648438,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								587.192016601562,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								595.525268554688,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								603.858520507812,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								612.191772460938,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.525024414062,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								628.858276367188,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								637.191528320312,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								645.524780273438,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								653.858032226562,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								662.191284179688,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								670.524536132812,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								678.857788085938,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								687.191040039062,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								695.524291992188,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								703.857543945312,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								712.190795898438,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								720.524047851562,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								728.857299804688,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								737.190551757812,
+								469.450927734375
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								745.823913574219,
+								469.344207763672
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.95,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								754.557312011719,
+								469.155731201172
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8833333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								763.290710449219,
+								468.915283203125
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								772.024108886719,
+								468.623962402344
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.75,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w118-y465-dry-above.png",
+					"trace": [
+						{
+							"p": [
+								620.060668945312,
+								256.24853515625
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.218872070312,
+								259.494689941406
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.475341796875,
+								264.738403320312
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.831665039062,
+								271.979644775391
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								621.231567382812,
+								280.052520751953
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								621.631469726562,
+								288.087371826172
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								622.162719726562,
+								290.692321777344
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								622.7568359375,
+								290.706756591797
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								623.361755371094,
+								290.727905273438
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								624.040222167969,
+								290.781524658203
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.3333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								624.864196777344,
+								290.891479492188
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								625.905029296875,
+								291.102508544922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								627.234680175781,
+								291.495269775391
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.1333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								628.682800292969,
+								291.689270019531
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								630.090576171875,
+								291.849975585938
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								631.464233398438,
+								292.006774902344
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.9333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								632.811096191406,
+								292.160552978516
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								634.136901855469,
+								292.311889648438
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								635.49267578125,
+								292.534545898438
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.7333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								637.013610839844,
+								292.951965332031
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								638.811462402344,
+								293.697998046875
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								640.844482421875,
+								294.377319335938
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.5333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								642.973327636719,
+								294.970184326172
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.4666666666668,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								645.151428222656,
+								295.576751708984
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.4000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								647.365783691406,
+								296.193420410156
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.3333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								649.60693359375,
+								296.817535400391
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.2666666666668,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								651.867614746094,
+								297.447113037109
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.2000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								654.059753417969,
+								297.918914794922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.1333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								656.000427246094,
+								298.160705566406
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.0666666666668,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								657.884582519531,
+								298.546142578125
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.0000000000001,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w118-y465-dry-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								443.75
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								440.5
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								435.25
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								428.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								419.666625976562
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								411.333251953125
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								402.999877929688
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.259643554688,
+								394.191741943359
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.95,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								617.706665039062,
+								388.658843994141
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8833333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								613.255126953125,
+								385.736694335938
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								608.941345214844,
+								382.904937744141
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.75,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								604.7353515625,
+								380.143981933594
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								600.574340820312,
+								377.942138671875
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								596.652709960938,
+								375.808471679688
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.55,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								592.838073730469,
+								373.733032226562
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								589.108642578125,
+								371.703918457031
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								585.513305664062,
+								370.246643066406
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.35,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								582.195922851562,
+								369.037994384766
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								579.055847167969,
+								367.892852783203
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								576.115600585938,
+								367.118835449219
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.15,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								573.56640625,
+								366.698944091797
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								571.333251953125,
+								366.32666015625
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								569.352661132812,
+								365.996459960938
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.9500000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								567.594604492188,
+								365.739227294922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								566.234558105469,
+								365.739227294922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								565.242126464844,
+								365.739227294922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.7500000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								564.543334960938,
+								365.739227294922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								564.078063964844,
+								365.739227294922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								563.797790527344,
+								365.739227294922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.5500000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								563.663940429688,
+								365.739227294922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.4833333333334,
+							"weather": "dry"
+						}
+					]
+				}
+			],
+			"stage": 0,
+			"support_joint": [
+				742.0,
+				385.0
+			],
+			"weather": "dry"
+		},
+		{
+			"anchor": [
+				620.0,
+				600.0
+			],
+			"half_width": 118.0,
+			"reached": true,
+			"rendered_lamp_join_checked": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w118-y600-after-entry.png",
+					"trace": [
+						{
+							"p": [
+								453.247131347656,
+								600.08447265625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								456.489349365234,
+								600.308959960938
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								461.726104736328,
+								600.681335449219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "after"
+						},
+						{
+							"p": [
+								468.956451416016,
+								601.21337890625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								478.052032470703,
+								601.917419433594
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								487.518707275391,
+								602.675109863281
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "after"
+						},
+						{
+							"p": [
+								496.985382080078,
+								603.448608398438
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								506.349395751953,
+								604.162414550781
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 99.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								514.760681152344,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								523.093933105469,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								531.427185058594,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								539.760437011719,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								548.093688964844,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								556.426940917969,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								564.760192871094,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								573.093444824219,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								581.426696777344,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								589.759948730469,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								598.093200683594,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								606.426452636719,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								614.759704589844,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								623.092956542969,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								631.426208496094,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								639.759460449219,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								648.092712402344,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								656.425964355469,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								664.759216308594,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								673.092468261719,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								681.425720214844,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								689.758972167969,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								698.092224121094,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								706.425476074219,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								714.758728027344,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								723.091979980469,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								731.425231933594,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								739.758483886719,
+								604.216552734375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								749.031066894531,
+								604.097778320312
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								758.497619628906,
+								603.903869628906
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								767.964172363281,
+								603.657043457031
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "after"
+						},
+						{
+							"p": [
+								777.430725097656,
+								603.358337402344
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w118-y600-after-above.png",
+					"trace": [
+						{
+							"p": [
+								620.170471191406,
+								391.238342285156
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.614868164062,
+								394.457824707031
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								621.335510253906,
+								399.658111572266
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "after"
+						},
+						{
+							"p": [
+								622.336608886719,
+								406.838653564453
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								623.469909667969,
+								414.908874511719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								624.603210449219,
+								422.939971923828
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "after"
+						},
+						{
+							"p": [
+								626.685913085938,
+								426.315826416016
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								629.329650878906,
+								426.763092041016
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								631.834533691406,
+								427.049072265625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4,
+							"weather": "after"
+						},
+						{
+							"p": [
+								634.223449707031,
+								427.322052001953
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.3333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								636.588745117188,
+								427.816741943359
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								639.113647460938,
+								428.853332519531
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2,
+							"weather": "after"
+						},
+						{
+							"p": [
+								641.900512695312,
+								429.671417236328
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.1333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								644.763061523438,
+								430.468597412109
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								647.672546386719,
+								431.278839111328
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								650.615234375,
+								432.098358154297
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								653.55029296875,
+								432.900482177734
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								656.254760742188,
+								433.212280273438
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								658.8857421875,
+								433.751220703125
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								661.504760742188,
+								434.287719726562
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								664.114013671875,
+								434.822204589844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								666.715148925781,
+								435.355041503906
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								669.309448242188,
+								435.886444091797
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								671.898254394531,
+								436.416748046875
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								674.482482910156,
+								436.946136474609
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.3333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								677.065002441406,
+								437.490020751953
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								679.704406738281,
+								438.446533203125
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								682.54736328125,
+								439.617950439453
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.1333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								685.546020507812,
+								440.5927734375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.0666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								688.608520507812,
+								441.58837890625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.0000000000001,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w118-y600-after-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								578.75
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								575.5
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								570.25
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								563.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								554.666748046875
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								546.33349609375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								538.000244140625
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.59814453125,
+								529.281188964844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.95,
+							"weather": "after"
+						},
+						{
+							"p": [
+								618.588073730469,
+								524.237426757812
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8833333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								614.797912597656,
+								521.749450683594
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								611.106506347656,
+								519.326293945312
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.75,
+							"weather": "after"
+						},
+						{
+							"p": [
+								607.493774414062,
+								516.954711914062
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								603.944274902344,
+								514.624694824219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								600.361572265625,
+								512.826354980469
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.55,
+							"weather": "after"
+						},
+						{
+							"p": [
+								597.005859375,
+								511.000610351562
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								593.755798339844,
+								509.232330322266
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								590.590759277344,
+								507.510314941406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.35,
+							"weather": "after"
+						},
+						{
+							"p": [
+								587.494812011719,
+								505.825866699219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								584.514953613281,
+								504.883728027344
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								581.814086914062,
+								503.898742675781
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.15,
+							"weather": "after"
+						},
+						{
+							"p": [
+								579.297302246094,
+								502.980895996094
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								576.954711914062,
+								502.210113525391
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								575.008483886719,
+								501.939361572266
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								573.407897949219,
+								501.672515869141
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								572.077697753906,
+								501.450744628906
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								570.964294433594,
+								501.26513671875
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								570.024291992188,
+								501.108428955078
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								569.223266601562,
+								500.974884033203
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								568.533508300781,
+								500.859893798828
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								567.933044433594,
+								500.759796142578
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4833333333334,
+							"weather": "after"
+						}
+					]
+				}
+			],
+			"stage": 2,
+			"support_joint": [
+				742.0,
+				520.0
+			],
+			"weather": "after"
+		},
+		{
+			"anchor": [
+				620.0,
+				465.0
+			],
+			"half_width": 180.0,
+			"reached": false,
+			"rendered_lamp_join_checked": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w180-y465-dry-entry.png",
+					"trace": [
+						{
+							"p": [
+								391.247253417969,
+								465.08251953125
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								394.489776611328,
+								465.303070068359
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								399.726715087891,
+								465.672515869141
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								406.956665039062,
+								466.208740234375
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								415.625122070312,
+								466.896392822266
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								424.3583984375,
+								467.616027832031
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								433.091674804688,
+								468.357574462891
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								441.824951171875,
+								469.117614746094
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 99.4666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								450.200469970703,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								458.533843994141,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								466.867218017578,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								475.200592041016,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								483.533966064453,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								491.867340087891,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								500.200714111328,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								508.534088134766,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								516.867370605469,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								525.200622558594,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								533.533874511719,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								541.867126464844,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								550.200378417969,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								558.533630371094,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								566.866882324219,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								575.200134277344,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								583.533386230469,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								591.866638183594,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								600.199890136719,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								608.533142089844,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								616.866394042969,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								625.199645996094,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								633.532897949219,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								641.866149902344,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								650.199401855469,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								658.532653808594,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								666.865905761719,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								675.199157714844,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								683.532409667969,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								691.865661621094,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								700.198913574219,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								708.532165527344,
+								469.198364257812
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w180-y465-dry-above.png",
+					"trace": [
+						{
+							"p": [
+								620.060668945312,
+								256.24853515625
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.218872070312,
+								259.494689941406
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.475341796875,
+								264.738403320312
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.831665039062,
+								271.979644775391
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								621.231567382812,
+								280.052520751953
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								621.631469726562,
+								288.087371826172
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								622.120178222656,
+								290.676696777344
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								622.651123046875,
+								290.685394287109
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								623.181823730469,
+								290.694091796875
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								623.712219238281,
+								290.702789306641
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.3333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								624.244140625,
+								290.712463378906
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								624.816040039062,
+								290.740112304688
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								625.493469238281,
+								290.803253173828
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.1333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								626.3408203125,
+								290.929290771484
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								627.425109863281,
+								291.169067382812
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								628.740539550781,
+								291.419982910156
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.9333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								630.005859375,
+								291.517303466797
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								631.204284667969,
+								291.609466552734
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								632.351135253906,
+								291.697662353516
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.7333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								633.458251953125,
+								291.782836914062
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6666666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								634.534729003906,
+								291.865600585938
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								635.587524414062,
+								291.946594238281
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.5333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								636.622131347656,
+								292.026153564453
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.4666666666668,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								637.642578125,
+								292.104644775391
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.4000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								638.652160644531,
+								292.182281494141
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.3333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								639.653198242188,
+								292.25927734375
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.2666666666668,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								640.683837890625,
+								292.374084472656
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.2000000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								641.853454589844,
+								292.599243164062
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.1333333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								643.264892578125,
+								293.0126953125
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.0666666666668,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								644.953247070312,
+								293.543426513672
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.0000000000001,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w180-y465-dry-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								443.75
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								440.5
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								435.25
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								428.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								419.666625976562
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								411.333251953125
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								402.999877929688
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.259643554688,
+								394.191741943359
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.95,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								619.227600097656,
+								388.378540039062
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8833333333333,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								616.216125488281,
+								387.046783447266
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.8166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								613.206604003906,
+								385.715850830078
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.75,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								610.200073242188,
+								384.386291503906
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								607.197509765625,
+								383.058471679688
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.6166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								604.19970703125,
+								381.732757568359
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.55,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								601.20751953125,
+								380.409515380859
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								598.251586914062,
+								379.389343261719
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.4166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								595.515930175781,
+								378.506042480469
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.35,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								592.85888671875,
+								377.532135009766
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								590.235107421875,
+								376.570434570312
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.2166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								587.639526367188,
+								375.619049072266
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.15,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								585.067993164062,
+								374.676513671875
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								582.517639160156,
+								373.74169921875
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 99.0166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								579.985900878906,
+								372.813751220703
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.9500000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								577.471069335938,
+								371.891967773438
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								575.006774902344,
+								371.020446777344
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.8166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								572.864501953125,
+								370.746978759766
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.7500000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								570.908508300781,
+								370.276336669922
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6833333333334,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								569.030883789062,
+								369.815032958984
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.6166666666667,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								567.214599609375,
+								369.368804931641
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.5500000000001,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								565.448425292969,
+								368.934906005859
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 98.4833333333334,
+							"weather": "dry"
+						}
+					]
+				}
+			],
+			"stage": 0,
+			"support_joint": [
+				804.0,
+				385.0
+			],
+			"weather": "dry"
+		},
+		{
+			"anchor": [
+				620.0,
+				600.0
+			],
+			"half_width": 180.0,
+			"reached": true,
+			"rendered_lamp_join_checked": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w180-y600-after-entry.png",
+					"trace": [
+						{
+							"p": [
+								391.247680664062,
+								600.076110839844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								394.491271972656,
+								600.279479980469
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								399.730194091797,
+								600.619689941406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "after"
+						},
+						{
+							"p": [
+								406.963409423828,
+								601.110961914062
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								416.060546875,
+								601.771850585938
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								425.527221679688,
+								602.491943359375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "after"
+						},
+						{
+							"p": [
+								434.993896484375,
+								603.234375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								444.356903076172,
+								603.924682617188
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 99.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.766235351562,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								461.099609375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								469.432983398438,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								477.766357421875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								486.099731445312,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								494.43310546875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								502.766479492188,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								511.099853515625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								519.43310546875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								527.766357421875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								536.099609375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								544.432861328125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								552.76611328125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								561.099365234375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								569.4326171875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								577.765869140625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								586.09912109375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								594.432373046875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								602.765625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								611.098876953125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								619.43212890625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								627.765380859375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								636.0986328125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								644.431884765625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								652.76513671875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								661.098388671875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								669.431640625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								677.764892578125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								686.09814453125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								694.431396484375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								702.7646484375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								711.097900390625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w180-y600-after-above.png",
+					"trace": [
+						{
+							"p": [
+								620.170471191406,
+								391.238342285156
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.614868164062,
+								394.457824707031
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								621.335510253906,
+								399.658111572266
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "after"
+						},
+						{
+							"p": [
+								622.336608886719,
+								406.838653564453
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								623.469909667969,
+								414.908874511719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								624.603210449219,
+								422.939971923828
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "after"
+						},
+						{
+							"p": [
+								626.269165039062,
+								425.916564941406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								628.333679199219,
+								426.388702392578
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								630.384765625,
+								426.546447753906
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4,
+							"weather": "after"
+						},
+						{
+							"p": [
+								632.361022949219,
+								426.698425292969
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.3333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								634.279052734375,
+								426.845947265625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								636.151672363281,
+								426.989959716797
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2,
+							"weather": "after"
+						},
+						{
+							"p": [
+								637.988830566406,
+								427.131256103516
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.1333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								639.799194335938,
+								427.270904541016
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								641.657775878906,
+								427.554382324219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								643.733032226562,
+								428.186309814453
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								646.078491210938,
+								428.754577636719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								648.473022460938,
+								429.203796386719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								650.888244628906,
+								429.656921386719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								653.318115234375,
+								430.112823486328
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								655.758239746094,
+								430.570587158203
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								658.205444335938,
+								431.029724121094
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								660.657287597656,
+								431.489715576172
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								663.112121582031,
+								431.950256347656
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								665.568908691406,
+								432.411224365234
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.3333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								668.026794433594,
+								432.872314453125
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								670.288757324219,
+								432.924743652344
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								672.427917480469,
+								433.179382324219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.1333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								674.561584472656,
+								433.473815917969
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.0666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								676.695129394531,
+								433.768249511719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.0000000000001,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w180-y600-after-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								578.75
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								575.5
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								570.25
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								563.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								554.666748046875
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								546.33349609375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								538.000244140625
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.59814453125,
+								529.281188964844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.95,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.157348632812,
+								523.789733886719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8833333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								617.759521484375,
+								522.729370117188
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								615.363525390625,
+								521.669738769531
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.75,
+							"weather": "after"
+						},
+						{
+							"p": [
+								612.970581054688,
+								520.611511230469
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								610.581665039062,
+								519.555053710938
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								608.197631835938,
+								518.500732421875
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.55,
+							"weather": "after"
+						},
+						{
+							"p": [
+								605.819213867188,
+								517.448913574219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								603.447265625,
+								516.399963378906
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								601.082275390625,
+								515.354125976562
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.35,
+							"weather": "after"
+						},
+						{
+							"p": [
+								598.789794921875,
+								514.50146484375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								596.756530761719,
+								513.958923339844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								594.832092285156,
+								513.25537109375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.15,
+							"weather": "after"
+						},
+						{
+							"p": [
+								592.927001953125,
+								512.55712890625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								591.0390625,
+								511.865112304688
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								589.166748046875,
+								511.178833007812
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								587.30908203125,
+								510.497924804688
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								585.46533203125,
+								509.822143554688
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								583.634887695312,
+								509.151214599609
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								581.8173828125,
+								508.485046386719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								580.012573242188,
+								507.823516845703
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								578.220275878906,
+								507.166564941406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								576.4404296875,
+								506.514190673828
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4833333333334,
+							"weather": "after"
+						}
+					]
+				}
+			],
+			"stage": 2,
+			"support_joint": [
+				804.0,
+				520.0
+			],
+			"weather": "after"
+		}
+	],
+	"color_lamps": true,
+	"conditions": "width,height and terrain-free surroundings are explicit fixtures; each weather phase uses its actual chapter; requested phase reset before each tick and actual state is logged; no authored data changes",
+	"exact_source": "see receipt source hashes",
+	"input": "root.push_input,30Hz,production main/model/view with QA-only pause suppression; saves disabled before ready",
+	"kind": "controlled_native_asset_variants",
+	"widths": [
+		118,
+		180
+	]
+}

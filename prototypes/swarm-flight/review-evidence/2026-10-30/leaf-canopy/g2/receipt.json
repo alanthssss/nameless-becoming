@@ -1,0 +1,408 @@
+{
+  "issue": 202,
+  "milestone": 1,
+  "gdd": [
+    "4.1",
+    "8.1",
+    "11.2"
+  ],
+  "kind": "controlled_element_variants",
+  "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+  "source_version": "1.1-spring-lamp-under-contour",
+  "contract": "prototypes/swarm-flight/leaf_canopy_contract.json",
+  "approved_widths": [
+    118,
+    180
+  ],
+  "numerical_pressure_only": [
+    149
+  ],
+  "anchor_y": [
+    465,
+    500,
+    520,
+    600
+  ],
+  "gates": {
+    "G0": "prior_baseline",
+    "G1": "rechecked_default_in234checks_and_native_after_lamp_fix",
+    "G2": "passed_scoped_internal",
+    "G3": "not_checked"
+  },
+  "changes": [
+    "ordinary lamp rope root now follows leaf underside inside1px; source bitmap unchanged",
+    "actual Spring renderer now consumes helper directly; old BeeDance override bypassed WorldView so initial consumer fix was ineffective and rejected",
+    "only Spring consumer changed; legacy07–09/winter physics and renderers retained",
+    "two manifest rows receive scoped evidence; full-scope gates and all combinations unchanged"
+  ],
+  "checks": [
+    "234 independent source-pixel/body/rain/old-save/early-late wind/width-height checks,0failures",
+    "8 standard native rows,24 actual moving keyboard segments,818frames30fps; each entry reaches pocket and actual weather matches declared state",
+    "8/8 rendered lamp joins checked against original alpha edge and actual screenshot pixels",
+    "4 colored-lamp native rows,12movingsegments,410frames30fps; real weather matches declared states",
+    "restoring old actual Spring consumer while keeping new helper causes precise native pixel assertion failure exit1, noSCRIPTERROR",
+    "all original image and import hashes/declared parameters verified"
+  ],
+  "evidence_boundary": "controlled native developer fixtures with actual production model/view/keyboard; QA pause suppression and save/load disabled,chapter-appropriate weather,stage0 local wall removed. No human playtest,no actual authored layout changes,no G3. Final video retained,visual review samples native states; not every video frame visually inspected.",
+  "failed_attempts": [
+    "fixed(-7,-91)lamp root leaves3.7–5.2px gap; before image retained",
+    "first fix in WorldView was bypassed by BeeDance override in Spring; rejected,WorldView reverted; actual Spring consumer repaired",
+    "focus-out paused many segments to zero motion; failed-focus JSON/video/log retained,notpass",
+    "QA colored fixture initially assigned untyped Array to typed shelters; correctedclear/append",
+    "QA stage2 wall removal broke wall_at dependencies; retained05walls andremovedonly03localblockingwall",
+    "initial QA title setup could remain paused; explicitsetup+QApause override,segment assertions now failclosed"
+  ],
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+      "sha256": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_sprites.gd",
+      "sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_props.gd",
+      "sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8"
+    },
+    {
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "3f195c3b861eba00810c4e3b1cfeeea9de1892ed8a816f4a10a5e18b4862b227"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0"
+    },
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761"
+    },
+    {
+      "path": "prototypes/swarm-flight/project.godot",
+      "sha256": "26d1dde665352225877f1b5600a841f1fb17e0678b985b8f6b0ea9bfe170016c"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png",
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+      "sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-terrain.png",
+      "sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-terrain.png.import",
+      "sha256": "234d65ce51371757cbfd8976f88f9c52ec5df6fc993ae2e8c10d1362476cc376"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-weather.png",
+      "sha256": "0a701aa4ed07312d057e79075efb199d63d758cc294c205c58508306abfbbe1a"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-weather.png.import",
+      "sha256": "231c4d7b57e4c43c15ffd19894566f6b0e22653037b5e21030a10407023ab51e"
+    },
+    {
+      "path": "prototypes/swarm-flight/color_memory.gd",
+      "sha256": "a47a39d2efee0880667dde26a1bd061c457e20ae93415116a2fe5ca623c02a55"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_variants_probe.gd",
+      "sha256": "f22c7bdcf5f4ed4c21c37021000f274bae1a43a17af9dc4997e1963813c58a98"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+      "sha256": "e8e7bc6f6220616af2fc55bdb29a2fc9211150721accd4e3e69b6c9b0dfc4834"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_contract.json",
+      "sha256": "9c443acce419502522b37c232a5895e9d8393f9ba24747c2e27e8d40d5951940"
+    }
+  ],
+  "limits": [
+    "any width outside118/180,including149 numerical-only pressure sample",
+    "continuous or arbitrary scaling",
+    "vertical scaling or changing95pxheight",
+    "mirror/rotation",
+    "root ground other than828 or differentanchorheights withoutsupportcheck",
+    "winterregion3atlas",
+    "moving,bending or dynamicunfoldingE14",
+    "claimingold07–09legacyphysicsusesnewSpringpolygon",
+    "whole family/fullscene/G3/playeracceptance",
+    "existing player/shelter overlay readability remains for#219/#203; no combination promotion",
+    "G2 green asset support does not accept color-memory behavior or allE13states"
+  ],
+  "cost": {
+    "host_observed_start": "2026-10-30T08:00:18Z",
+    "host_evidence_end": "2026-10-30T08:18:32.695245+00:00",
+    "coverage": "main wallclock includes reads,fixtures,failedcaptures,sourcefixes,subagent/engine waits; PR CI/merge interval to be recorded in issue202; activework unknown",
+    "estimate_minutes": 10,
+    "variance_reason": "lamp source+actualconsumer defect,invalidfocus-pausedcaptures and QAsetup errors requiredcorrection andrecapture; no earlyfalsecompletion",
+    "historical_total_hours": null,
+    "remaining_budget_hours": null,
+    "control_limit_hours": 240,
+    "new_purchases": 0,
+    "imagegen_calls": 0,
+    "billed_cost": null
+  },
+  "review": {
+    "agent": "canopy_review",
+    "final_interval_utc": "08:17:27–08:18:12",
+    "result": "no remaining implementation blocker for scoped118/180SpringgreenG2; sources,36movingsegments,8pixeljoins,sampledimagesandold-consumernegative verified",
+    "minimum_native_endpoint_distance_px": 44.839,
+    "earlier_rejected_reviews": "missing actual consumer and focus-paused recordings correctly rejected beforefinalgate"
+  },
+  "evidence": [
+    {
+      "path": "color/native.log",
+      "sha256": "f2bbf891539c1ee0ed190d9a779b6a0ea694075feadc11ea41fa08457dd03b6e"
+    },
+    {
+      "path": "color/variants.json",
+      "sha256": "12edc96666313985ff4f00c6800e4d4e95e857b9fc42e80106fab0df550655ff"
+    },
+    {
+      "path": "color/variants.mp4",
+      "sha256": "e05aaf3f6a0f345f83eb8e297efda0598f3b9840bafc8b8e38bddf6bc2ea0b7e"
+    },
+    {
+      "path": "color/w118-y465-dry-above.png",
+      "sha256": "1fdef5f22595924ecf65d72f460cf5d18f33087a56353f457291e43ebebcb481"
+    },
+    {
+      "path": "color/w118-y465-dry-before.png",
+      "sha256": "e72ca5da9374a18c4d92aa8d1947daec70f0cb130a324510d1b16f660d7cfdfa"
+    },
+    {
+      "path": "color/w118-y465-dry-below.png",
+      "sha256": "8364dcdc7fbf15bd2b58dbb77635e9fce5c8c50cf24e3f2ea456467c198e0bb5"
+    },
+    {
+      "path": "color/w118-y465-dry-entry.png",
+      "sha256": "0fd0b356e5c564e1ce029b28b5a36f2ba29e933c2e3e5ac53c4cc682a8e60eb8"
+    },
+    {
+      "path": "color/w118-y600-after-above.png",
+      "sha256": "f1f2bb67925451c67c451f4e9b995be6b8bb697a1bc43166bcdbfe4334d6b5b3"
+    },
+    {
+      "path": "color/w118-y600-after-before.png",
+      "sha256": "5522101437a56a9b8b98d5681c1c9d8dee3606b6a2e7adaafb3df12f140153b4"
+    },
+    {
+      "path": "color/w118-y600-after-below.png",
+      "sha256": "04b2a01378c8b8f158d8ebf850230987cb2d3e0c9857fa8912482d0b894bd0c9"
+    },
+    {
+      "path": "color/w118-y600-after-entry.png",
+      "sha256": "140636d3350325114c9bd562dc2f01b30537e865b9e0d84e982d5c2d98d627db"
+    },
+    {
+      "path": "color/w180-y465-dry-above.png",
+      "sha256": "c49d1149a690b8fad4bf96675cfa73972947f1e95af473697435c637111a56f1"
+    },
+    {
+      "path": "color/w180-y465-dry-before.png",
+      "sha256": "d8667d86de0ae457d6f43375c63747027164f9ecae705f05005a711db28c71a6"
+    },
+    {
+      "path": "color/w180-y465-dry-below.png",
+      "sha256": "7dd72285740f87a8420fa2b2d87ff8522be6b3d1971b556192e2b42f4a941f74"
+    },
+    {
+      "path": "color/w180-y465-dry-entry.png",
+      "sha256": "1380c07d771283491b902a88485a96f0f995b29a5e0eb081a58493c00d8ad039"
+    },
+    {
+      "path": "color/w180-y600-after-above.png",
+      "sha256": "d18a4b0dad5c016d5c03e1f2dc6ed85297c315ab6c1195f352d9c89e1d6ab6ba"
+    },
+    {
+      "path": "color/w180-y600-after-before.png",
+      "sha256": "6c8892c73e72f54ec308d075bba9555cc0ed11812d05799f7557f18477d08940"
+    },
+    {
+      "path": "color/w180-y600-after-below.png",
+      "sha256": "940158632a5707b8ad7b5dac2e0894e5a7efc9f8eacdfd892d0140bd23eb09b7"
+    },
+    {
+      "path": "color/w180-y600-after-entry.png",
+      "sha256": "14a987729e539b8d752c04a1b14d6bb076b55d7b3290849a7976cc954ae77e86"
+    },
+    {
+      "path": "failed-focus.json",
+      "sha256": "c7058d060b5ac2b9d4db2c7b06d72f8d2275102234ab18b3e484fc4f29710ec3"
+    },
+    {
+      "path": "failed-focus.log",
+      "sha256": "96ff43ef233bc71f52e729848f17bd3c1fdc0c8ea75e83d72b9eba105ef5cefc"
+    },
+    {
+      "path": "failed-focus.mp4",
+      "sha256": "20804ce0ef8c0faa78f8f7e21dc0c10935db24bfc44ed6b61f3e0b900b0d1fc9"
+    },
+    {
+      "path": "lamp-gap-before.png",
+      "sha256": "85db02664f9747cb55c6f9d87be73d3f0fecc2c2f906e296a4ea3d32576a6dbb"
+    },
+    {
+      "path": "old-consumer-mutation.log",
+      "sha256": "1807a5c8736957ca880abc204936f0cfc83c774f7610106d60bba1069fd9f8aa"
+    },
+    {
+      "path": "standard/native.log",
+      "sha256": "e0feb9c85592a0fdbef7d0f8464212d4dd9a9c05344ea528d1b0b91634417b1e"
+    },
+    {
+      "path": "standard/variants.json",
+      "sha256": "732d94d53f25a3695634569f2c9cf3516dc8269ef83af3368ff483f810ac7e4d"
+    },
+    {
+      "path": "standard/variants.mp4",
+      "sha256": "e4fd413536950ede61d54900be4329a708c48673b7d6f42df7d9a3d33aeeed96"
+    },
+    {
+      "path": "standard/w118-y465-dry-above.png",
+      "sha256": "422f1cb2b390718cef3772b1b5ad79c7d76f04951beb885ea49f547d98e35bc2"
+    },
+    {
+      "path": "standard/w118-y465-dry-before.png",
+      "sha256": "abf9dfa65c811bfdd0407cebaf0067ba218dbf7eeb574c0df415af768e467b0f"
+    },
+    {
+      "path": "standard/w118-y465-dry-below.png",
+      "sha256": "6e041ca225e1020b0ae0330028a937fa613a2568a0965063a99f73b0b2249c36"
+    },
+    {
+      "path": "standard/w118-y465-dry-entry.png",
+      "sha256": "fecb45daf26395e8c3a832ed562a5cd3d9439b00adca8ff34c33b905fd4ae284"
+    },
+    {
+      "path": "standard/w118-y500-warning-above.png",
+      "sha256": "9bc9680435c13736252911959f1956e9ba4a88fbb6f787b1809ed40c0868eb8b"
+    },
+    {
+      "path": "standard/w118-y500-warning-before.png",
+      "sha256": "6752ca21f005b97fa2aa751b22c5457c332eab10e36e23e712b72366151aeab7"
+    },
+    {
+      "path": "standard/w118-y500-warning-below.png",
+      "sha256": "8630d8a28a0781f255b4b38b6fe24cd5ad57171f03ccde3d821e0c2983adc860"
+    },
+    {
+      "path": "standard/w118-y500-warning-entry.png",
+      "sha256": "a86bd926716f3a31fa01855bff12a28c63ba1148479861c9cd2fa1560fff8586"
+    },
+    {
+      "path": "standard/w118-y520-rain-above.png",
+      "sha256": "f4802eed6f6bd71cdd4380439fa75d4470f9a668577ad612c7505b921a6760ea"
+    },
+    {
+      "path": "standard/w118-y520-rain-before.png",
+      "sha256": "dd373f30a9b58b68cc178f65ec1758571b071e54e1e74706e13831cf226ccfaf"
+    },
+    {
+      "path": "standard/w118-y520-rain-below.png",
+      "sha256": "d7d1f0cf9a95ea356767491d6b95d6070cf7ff1eac58a20a4290545df20e8130"
+    },
+    {
+      "path": "standard/w118-y520-rain-entry.png",
+      "sha256": "7f4f17c1adb22fb512ce0ebd2e59a4129195843f171580301969dd99f63db9e0"
+    },
+    {
+      "path": "standard/w118-y600-after-above.png",
+      "sha256": "73ef9d7a7351d30d589196520d512eaccd9519626f439905303a6fa1792f8079"
+    },
+    {
+      "path": "standard/w118-y600-after-before.png",
+      "sha256": "e4125c6a5a209b9fc0cccdacab516a1015dcb38945fe5d5b6fea8b0f0b642aa3"
+    },
+    {
+      "path": "standard/w118-y600-after-below.png",
+      "sha256": "ffa837c2e9dee48145bddc45b43db825debc1027d5d2d473ce5311d40d36a4a0"
+    },
+    {
+      "path": "standard/w118-y600-after-entry.png",
+      "sha256": "beef66e6acecf3b771fcc9bf8b8b808ee09df45540e04a38f0b6cb9212e30f72"
+    },
+    {
+      "path": "standard/w180-y465-dry-above.png",
+      "sha256": "0e0c65280977bd0bce3c6902a40fa56ed5a7bd4f42f9b6428ee67c72d29e1b31"
+    },
+    {
+      "path": "standard/w180-y465-dry-before.png",
+      "sha256": "828bf890f42c4fd12735a6c5e967dfae902763fc3f93b7477f46e36b78f46404"
+    },
+    {
+      "path": "standard/w180-y465-dry-below.png",
+      "sha256": "ac267792b2bbf65a52a2f3bd5f41897bb532bf4cb2a35ef3bc0a37c6ee018a54"
+    },
+    {
+      "path": "standard/w180-y465-dry-entry.png",
+      "sha256": "e53194672e32a9376afcdfdb6718e81fa5a6a54062eeaeef7b29463821d75381"
+    },
+    {
+      "path": "standard/w180-y500-warning-above.png",
+      "sha256": "4d5ada4c0d9c580a782b6ed6bda8248e2eed7fa76c1c534a7df7da32759cc680"
+    },
+    {
+      "path": "standard/w180-y500-warning-before.png",
+      "sha256": "138a1f3ac1456f31306c7c683002c1f471ba2dcb2691212c3ac9b592100b488c"
+    },
+    {
+      "path": "standard/w180-y500-warning-below.png",
+      "sha256": "4e2222809bdb8e83563a32158ba95c21afb68f8d066a7a19482c188b7c0242ba"
+    },
+    {
+      "path": "standard/w180-y500-warning-entry.png",
+      "sha256": "d5909f14acc62f6ab5b8bb447dd264b91e49195162bec5e23395dc834788e329"
+    },
+    {
+      "path": "standard/w180-y520-rain-above.png",
+      "sha256": "b2d2149038377e7b3af8fcb1a5beebe564ec1be3b36fb5c0ad43d6cbb58f0ec8"
+    },
+    {
+      "path": "standard/w180-y520-rain-before.png",
+      "sha256": "a1c261327be294ba1e5409d0b2ba198499116e0ae935cead4de3e8a6c0d85dd2"
+    },
+    {
+      "path": "standard/w180-y520-rain-below.png",
+      "sha256": "c8a4033390f192f285ccaec6b3e2022a22cefb27fbc301dea7462889f0cd1d02"
+    },
+    {
+      "path": "standard/w180-y520-rain-entry.png",
+      "sha256": "39698161d0e788a6dad13c478e1e7610f8e01db7ecc10037809f10d38460a2d2"
+    },
+    {
+      "path": "standard/w180-y600-after-above.png",
+      "sha256": "08f9b1111460b7d3470ca8f1b4b2f8bf6be2932b03a8f76b9ddfb86ac97867f5"
+    },
+    {
+      "path": "standard/w180-y600-after-before.png",
+      "sha256": "42ca049ad9c5b2def62438e74f241502603fe5b751b62f87e0936e11c80aa1f3"
+    },
+    {
+      "path": "standard/w180-y600-after-below.png",
+      "sha256": "73d893b59499f81b067f3161dd2b8310f979077963974e03d0d81338ece3689b"
+    },
+    {
+      "path": "standard/w180-y600-after-entry.png",
+      "sha256": "1a51ceb472e89b7c7ea3539c76b2562fe4c12982524f06975ceaed7a15a7c0fa"
+    },
+    {
+      "path": "variants-model.log",
+      "sha256": "2889219a23b0062f94809bda73b14e1358ebcaed5a19dd9af901a07e32d93836"
+    }
+  ]
+}

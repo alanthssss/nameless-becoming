@@ -129,6 +129,21 @@ static func top_at(x: float, leaf: Dictionary) -> float:
 			top=minf(top,lerpf(a.y,b.y,(x-a.x)/(b.x-a.x)))
 	return top
 
+static func bottom_at(x: float, leaf: Dictionary) -> float:
+	var points := polygon(leaf)
+	var bottom := -INF
+	for i in points.size():
+		var a: Vector2 = points[i]
+		var b: Vector2 = points[(i+1)%points.size()]
+		if x < minf(a.x,b.x) or x > maxf(a.x,b.x): continue
+		if absf(a.x-b.x)<0.0001: bottom=maxf(bottom,maxf(a.y,b.y))
+		else: bottom=maxf(bottom,lerpf(a.y,b.y,(x-a.x)/(b.x-a.x)))
+	return bottom
+
+static func lamp_anchor(leaf: Dictionary) -> Vector2:
+	var x: float=leaf.pos.x-7
+	return Vector2(x,bottom_at(x,leaf)-1.0) # 1px overlap into the painted underside.
+
 static func intercepts(before: Vector2, after: Vector2, leaf: Dictionary) -> bool:
 	var points := polygon(leaf)
 	if Geometry2D.is_point_in_polygon(after,points): return true

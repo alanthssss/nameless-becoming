@@ -1,0 +1,12 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+Movie Maker mode enabled, recording movie in 1280×800 @ 30 FPS...
+CANOPY VARIANTS: 8 native matrix rows; three keyboard segments per row; saves disabled
+--------------------------------------------------------------------------------
+Done recording movie at path: /private/tmp/nameless-leaf-shelter-g2/outputs/leaf-shelter-g2/variants.avi
+810 frames at 30 FPS (movie length: 00:00:27:00), recorded in 00:00:26 (103% of real-time speed).
+CPU render time: 2.50 seconds (average: 3.08 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 5.66 seconds (average: 6.99 ms/frame)
+--------------------------------------------------------------------------------

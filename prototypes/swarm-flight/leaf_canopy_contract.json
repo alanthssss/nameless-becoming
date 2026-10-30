@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "id": "E13-static-green-canopy",
+  "source_version": "1.1-spring-lamp-under-contour",
+  "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+  "issues": {
+    "G0": 200,
+    "G1": 201,
+    "G2": 202,
+    "G3": 203
+  },
+  "authority": "gdd-element-manifest.json leaf-canopy/leaf-canopy-support scoped evidence; issue/Now remains execution authority",
+  "approved_scope": {
+    "kind": "static_green_spring_asset_geometry_only",
+    "half_width_values": [
+      118,
+      180
+    ],
+    "default_half_width": 180,
+    "pressure_sample_not_released": [
+      149
+    ],
+    "authored_anchor_y_values": [
+      465,
+      500,
+      520,
+      600
+    ],
+    "native_standard_matrix": "2widths ×4authored heights =8 controlled rows; actual phases dry/warning/rain/after in corresponding chapters; initial reached false/true",
+    "native_color_lamp_matrix": "2widths ×y465/600 =4; connection inspection only, not color-memory system acceptance",
+    "horizonal_translation": "supported where scene ground and neighbors meet same placement contract; test anchor x620",
+    "pixel_size": "width=2half+20 →256 or380px; height95px; no transform scale",
+    "rotation_radians": 0,
+    "mirror": false,
+    "green_only": true,
+    "weather": "actual stage0 dry /stage1 warning and rain /stage2 after; requested state initialized per frame and actual trace must match; no weather-system acceptance"
+  },
+  "anchors": {
+    "origin": "shelter.pos, recovery pocket anchor",
+    "roof_top_y_offset": -161,
+    "stem_control_points": [
+      "pos+(half+4,-80)",
+      "pos+(half+17,8)",
+      "pos+(half-23,130)",
+      "(pos.x+half-34,828)"
+    ],
+    "petiole": "branch from actual stem Bezier t0.48 to pos+(58,54); leaf root pos+(60,57), tip pos+(-60,57)",
+    "ordinary_lamp": "x=pos.x-7; string starts1px inside actual leaf bottom contour; fixed lower string endpoint pos+(-7,-55)",
+    "colored_lamp": "existing spring_view curve starts pos+(68,-82); body center pos+(68,-12)",
+    "physics": "GDD14px ordinary,9px folded; decorative antennae/wings excluded",
+    "canopy_contour": "originalLEAF alpha>=0.6,epsilon2sourcepx; sharedrect;99vertices"
+  },
+  "forbidden_without_new_validation": [
+    "any width outside118/180,including149 numerical-only pressure sample",
+    "continuous or arbitrary scaling",
+    "vertical scaling or changing95pxheight",
+    "mirror/rotation",
+    "root ground other than828 or differentanchorheights withoutsupportcheck",
+    "winterregion3atlas",
+    "moving,bending or dynamicunfoldingE14",
+    "claimingold07–09legacyphysicsusesnewSpringpolygon",
+    "whole family/fullscene/G3/playeracceptance"
+  ],
+  "import_and_runtime": {
+    "godot": "4.6.2.stable.official.71f334935",
+    "renderer": "gl_compatibility",
+    "native_platform": "macOS AppleM1Pro,OpenGL4.1Metal",
+    "viewport": [
+      1280,
+      800
+    ],
+    "stretch": "canvas_items/keep",
+    "filter": "LINEAR_WITH_MIPMAPS",
+    "texture_params": {
+      "compress/mode": 0,
+      "mipmaps/generate": true,
+      "process/fix_alpha_border": true,
+      "process/premult_alpha": false,
+      "process/size_limit": 0
+    },
+    "save_policy": "QA subclass suppresses pause during capture only; production pause unchanged. Save/load disabled before ready plus isolated path. Each segment verifies play,real motion,entry,weather. Only stage0 local blocking wall is removed for the asset fixture. Actual native lamp pixels must join raw source-alpha underside."
+  },
+  "rollback": "revert this source version; do not selectively revert contour while retaining new affected save/layout changes from#201",
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+      "sha256": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_sprites.gd",
+      "sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_props.gd",
+      "sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8"
+    },
+    {
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "3f195c3b861eba00810c4e3b1cfeeea9de1892ed8a816f4a10a5e18b4862b227"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0"
+    },
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761"
+    },
+    {
+      "path": "prototypes/swarm-flight/project.godot",
+      "sha256": "26d1dde665352225877f1b5600a841f1fb17e0678b985b8f6b0ea9bfe170016c"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png",
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+      "sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-terrain.png",
+      "sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-terrain.png.import",
+      "sha256": "234d65ce51371757cbfd8976f88f9c52ec5df6fc993ae2e8c10d1362476cc376"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-weather.png",
+      "sha256": "0a701aa4ed07312d057e79075efb199d63d758cc294c205c58508306abfbbe1a"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-weather.png.import",
+      "sha256": "231c4d7b57e4c43c15ffd19894566f6b0e22653037b5e21030a10407023ab51e"
+    },
+    {
+      "path": "prototypes/swarm-flight/color_memory.gd",
+      "sha256": "a47a39d2efee0880667dde26a1bd061c457e20ae93415116a2fe5ca623c02a55"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_variants_probe.gd",
+      "sha256": "f22c7bdcf5f4ed4c21c37021000f274bae1a43a17af9dc4997e1963813c58a98"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+      "sha256": "e8e7bc6f6220616af2fc55bdb29a2fc9211150721accd4e3e69b6c9b0dfc4834"
+    }
+  ],
+  "evidence_receipt": "review-evidence/2026-10-30/leaf-canopy/g2/receipt.json"
+}
