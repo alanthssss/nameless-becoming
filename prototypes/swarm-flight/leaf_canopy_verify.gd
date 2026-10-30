@@ -48,6 +48,13 @@ func run() -> void:
 		var base=fresh(half)
 		var leaf: Dictionary=base.shelters[0]
 		var q: Vector2=leaf.pos
+		for anchor_y in [465.0,500.0,520.0,600.0]:
+			var translated: Dictionary=leaf.duplicate()
+			translated.pos.y=anchor_y
+			var lamp:=Canopy.lamp_anchor(translated)
+			check(alpha_at(lamp,translated)>=0.6,"lamp rope starts inside original painted underside "+str([half,anchor_y]))
+			var joint: Vector2=translated.pos+Vector2(half+4,-80)
+			check(alpha_at(joint,translated)>=0.6,"main stem joins painted leaf "+str([half,anchor_y]))
 		for fraction in [-0.85,-0.5,0.0,0.5,0.85]:
 			var x: float=q.x+fraction*half
 			var top:=painted_top(x,leaf)

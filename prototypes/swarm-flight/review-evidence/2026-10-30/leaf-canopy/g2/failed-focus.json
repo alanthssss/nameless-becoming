@@ -1,0 +1,8278 @@
+{
+	"cases": [
+		{
+			"anchor": [
+				620.0,
+				465.0
+			],
+			"half_width": 118.0,
+			"reached": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w118-y465-dry-entry.png",
+					"trace": [
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								452.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w118-y465-dry-above.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w118-y465-dry-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				742.0,
+				385.0
+			],
+			"weather": "dry"
+		},
+		{
+			"anchor": [
+				620.0,
+				500.0
+			],
+			"half_width": 118.0,
+			"reached": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w118-y500-warning-entry.png",
+					"trace": [
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								452.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w118-y500-warning-above.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w118-y500-warning-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				742.0,
+				420.0
+			],
+			"weather": "warning"
+		},
+		{
+			"anchor": [
+				620.0,
+				520.0
+			],
+			"half_width": 118.0,
+			"reached": true,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w118-y520-rain-entry.png",
+					"trace": [
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								452.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w118-y520-rain-above.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w118-y520-rain-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								500.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				742.0,
+				440.0
+			],
+			"weather": "rain"
+		},
+		{
+			"anchor": [
+				620.0,
+				600.0
+			],
+			"half_width": 118.0,
+			"reached": true,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w118-y600-after-entry.png",
+					"trace": [
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.0,
+								600.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w118-y600-after-above.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								390.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w118-y600-after-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								580.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				742.0,
+				520.0
+			],
+			"weather": "after"
+		},
+		{
+			"anchor": [
+				620.0,
+				465.0
+			],
+			"half_width": 180.0,
+			"reached": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w180-y465-dry-entry.png",
+					"trace": [
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								390.0,
+								465.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w180-y465-dry-above.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								255.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "dry"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w180-y465-dry-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						},
+						{
+							"p": [
+								620.0,
+								445.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "dry"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				804.0,
+				385.0
+			],
+			"weather": "dry"
+		},
+		{
+			"anchor": [
+				620.0,
+				500.0
+			],
+			"half_width": 180.0,
+			"reached": false,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w180-y500-warning-entry.png",
+					"trace": [
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								390.0,
+								500.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w180-y500-warning-above.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								290.0
+							],
+							"reached": false,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "warning"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w180-y500-warning-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						},
+						{
+							"p": [
+								620.0,
+								480.0
+							],
+							"reached": false,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "warning"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				804.0,
+				420.0
+			],
+			"weather": "warning"
+		},
+		{
+			"anchor": [
+				620.0,
+				520.0
+			],
+			"half_width": 180.0,
+			"reached": true,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w180-y520-rain-entry.png",
+					"trace": [
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								390.0,
+								520.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w180-y520-rain-above.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4666666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.3333333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2666666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.1333333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0666666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0000000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9333333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8666666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8000000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7333333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6666666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6000000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5333333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4666666666668,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4000000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.3333333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2666666666668,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2000000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								310.0
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.1333333333334,
+							"weather": "rain"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w180-y520-rain-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								498.75
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								495.5
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								490.25
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								483.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								474.666625976562
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								466.333251953125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.0,
+								457.999877929688
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.656982421875,
+								449.717987060547
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.95,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								620.654663085938,
+								444.009643554688
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8833333333333,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								618.536743164062,
+								443.073028564453
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8166666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								616.414489746094,
+								442.134490966797
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.75,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								614.285888671875,
+								441.193145751953
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6833333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								612.149291992188,
+								440.248291015625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6166666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								610.003540039062,
+								439.299377441406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.55,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								607.847839355469,
+								438.346069335938
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4833333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								605.681457519531,
+								437.388031005859
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4166666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								603.50390625,
+								436.425018310547
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.35,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								601.314819335938,
+								435.456939697266
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2833333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								599.133422851562,
+								434.561614990234
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2166666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								597.157104492188,
+								434.091979980469
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.15,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								595.312866210938,
+								433.431610107422
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0833333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								593.477661132812,
+								432.758941650391
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0166666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								591.643371582031,
+								432.086608886719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9500000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								589.807800292969,
+								431.413818359375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8833333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								587.969116210938,
+								430.739868164062
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8166666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								586.1259765625,
+								430.064270019531
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7500000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								584.277526855469,
+								429.386749267578
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6833333333334,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								582.422973632812,
+								428.707000732422
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6166666666667,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								580.561950683594,
+								428.024871826172
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5500000000001,
+							"weather": "rain"
+						},
+						{
+							"p": [
+								578.694152832031,
+								427.340270996094
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4833333333334,
+							"weather": "rain"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				804.0,
+				440.0
+			],
+			"weather": "rain"
+		},
+		{
+			"anchor": [
+				620.0,
+				600.0
+			],
+			"half_width": 180.0,
+			"reached": true,
+			"segments": [
+				{
+					"name": "entry",
+					"screenshot": "w180-y600-after-entry.png",
+					"trace": [
+						{
+							"p": [
+								391.247680664062,
+								600.076110839844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								394.491271972656,
+								600.279479980469
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								399.730194091797,
+								600.619689941406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "after"
+						},
+						{
+							"p": [
+								406.963409423828,
+								601.110961914062
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								416.060546875,
+								601.771850585938
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								425.527221679688,
+								602.491943359375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "after"
+						},
+						{
+							"p": [
+								434.993896484375,
+								603.234375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								444.356903076172,
+								603.924682617188
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 99.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								452.766235351562,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								461.099609375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								469.432983398438,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								477.766357421875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								486.099731445312,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								494.43310546875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								502.766479492188,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								511.099853515625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								519.43310546875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								527.766357421875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								536.099609375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								544.432861328125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								552.76611328125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								561.099365234375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								569.4326171875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								577.765869140625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								586.09912109375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								594.432373046875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								602.765625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								611.098876953125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								619.43212890625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								627.765380859375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								636.0986328125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								644.431884765625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								652.76513671875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								661.098388671875,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								669.431640625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								677.764892578125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								686.09814453125,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								694.431396484375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								702.7646484375,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								711.097900390625,
+								603.975830078125
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "above",
+					"screenshot": "w180-y600-after-above.png",
+					"trace": [
+						{
+							"p": [
+								620.170471191406,
+								391.238342285156
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.9333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.614868164062,
+								394.457824707031
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								621.335510253906,
+								399.658111572266
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8,
+							"weather": "after"
+						},
+						{
+							"p": [
+								622.336608886719,
+								406.838653564453
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.7333333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								623.469909667969,
+								414.908874511719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								624.603210449219,
+								422.939971923828
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6,
+							"weather": "after"
+						},
+						{
+							"p": [
+								626.269165039062,
+								425.916564941406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								628.333679199219,
+								426.388702392578
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								630.384765625,
+								426.546447753906
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4,
+							"weather": "after"
+						},
+						{
+							"p": [
+								632.361022949219,
+								426.698425292969
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.3333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								634.279052734375,
+								426.845947265625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								636.151672363281,
+								426.989959716797
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2,
+							"weather": "after"
+						},
+						{
+							"p": [
+								637.988830566406,
+								427.131256103516
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.1333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								639.799194335938,
+								427.270904541016
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								641.657775878906,
+								427.554382324219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								643.733032226562,
+								428.186309814453
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								646.078491210938,
+								428.754577636719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								648.473022460938,
+								429.203796386719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								650.888244628906,
+								429.656921386719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								653.318115234375,
+								430.112823486328
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6666666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								655.758239746094,
+								430.570587158203
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								658.205444335938,
+								431.029724121094
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								660.657287597656,
+								431.489715576172
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								663.112121582031,
+								431.950256347656
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								665.568908691406,
+								432.411224365234
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.3333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								668.026794433594,
+								432.872314453125
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								670.288757324219,
+								432.924743652344
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.2000000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								672.427917480469,
+								433.179382324219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.1333333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								674.561584472656,
+								433.473815917969
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.0666666666668,
+							"weather": "after"
+						},
+						{
+							"p": [
+								676.695129394531,
+								433.768249511719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.0000000000001,
+							"weather": "after"
+						}
+					]
+				},
+				{
+					"name": "below",
+					"screenshot": "w180-y600-after-below.png",
+					"trace": [
+						{
+							"p": [
+								620.0,
+								578.75
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								575.5
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								570.25
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								563.0
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								554.666748046875
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								546.33349609375
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.0,
+								538.000244140625
+							],
+							"reached": true,
+							"sheltered": true,
+							"stamina": 100.0,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.59814453125,
+								529.281188964844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.95,
+							"weather": "after"
+						},
+						{
+							"p": [
+								620.157348632812,
+								523.789733886719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8833333333333,
+							"weather": "after"
+						},
+						{
+							"p": [
+								617.759521484375,
+								522.729370117188
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.8166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								615.363525390625,
+								521.669738769531
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.75,
+							"weather": "after"
+						},
+						{
+							"p": [
+								612.970581054688,
+								520.611511230469
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								610.581665039062,
+								519.555053710938
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.6166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								608.197631835938,
+								518.500732421875
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.55,
+							"weather": "after"
+						},
+						{
+							"p": [
+								605.819213867188,
+								517.448913574219
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								603.447265625,
+								516.399963378906
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.4166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								601.082275390625,
+								515.354125976562
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.35,
+							"weather": "after"
+						},
+						{
+							"p": [
+								598.789794921875,
+								514.50146484375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								596.756530761719,
+								513.958923339844
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.2166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								594.832092285156,
+								513.25537109375
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.15,
+							"weather": "after"
+						},
+						{
+							"p": [
+								592.927001953125,
+								512.55712890625
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								591.0390625,
+								511.865112304688
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 99.0166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								589.166748046875,
+								511.178833007812
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.9500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								587.30908203125,
+								510.497924804688
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								585.46533203125,
+								509.822143554688
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.8166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								583.634887695312,
+								509.151214599609
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.7500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								581.8173828125,
+								508.485046386719
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6833333333334,
+							"weather": "after"
+						},
+						{
+							"p": [
+								580.012573242188,
+								507.823516845703
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.6166666666667,
+							"weather": "after"
+						},
+						{
+							"p": [
+								578.220275878906,
+								507.166564941406
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.5500000000001,
+							"weather": "after"
+						},
+						{
+							"p": [
+								576.4404296875,
+								506.514190673828
+							],
+							"reached": true,
+							"sheltered": false,
+							"stamina": 98.4833333333334,
+							"weather": "after"
+						}
+					]
+				}
+			],
+			"support_joint": [
+				804.0,
+				520.0
+			],
+			"weather": "after"
+		}
+	],
+	"color_lamps": false,
+	"conditions": "width,height,state are explicit fixtures; weather held for each matrix row; no change to authored scene data",
+	"input": "root.push_input,30Hz,production scene/model/view; QA saves disabled before ready",
+	"kind": "controlled_native_asset_variants",
+	"source": "0518a9c",
+	"stage": 1,
+	"widths": [
+		118,
+		180
+	]
+}

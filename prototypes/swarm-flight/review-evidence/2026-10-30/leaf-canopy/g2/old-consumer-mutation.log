@@ -1,0 +1,12 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+WARNING: Loaded resource as image file, this will not work on export: 'res://art/revision-atlas.png'. Instead, import the image file as an Image resource and load it normally as a resource.
+     at: load_from_file (core/io/image.cpp:2766)
+     GDScript backtrace (most recent call first):
+         [0] lamp_join_visible (res://leaf_canopy_variants_probe.gd:12)
+         [1] run (res://leaf_canopy_variants_probe.gd:77)
+ERROR: Actual rendered lamp string is disconnected: [118.0, 465.0]
+   at: push_error (core/variant/variant_utility.cpp:1024)
+   GDScript backtrace (most recent call first):
+       [0] run (res://leaf_canopy_variants_probe.gd:78)

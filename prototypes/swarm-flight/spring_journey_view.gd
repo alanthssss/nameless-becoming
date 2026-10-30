@@ -52,12 +52,13 @@ func _small_flower() -> void:
 	_ellipse(Vector2(home.x+20,791),Vector2(70,9),Color("5d979b7a"))
 
 func _shelter(shelter: Dictionary) -> void:
-	if shelter!=model.shelters[-1]:
-		super._shelter(shelter)
-		return
 	var point: Vector2=shelter.pos
 	var half: float=shelter.half_width
 	ArtProps.shelter_plant(self,point,half)
+	if shelter!=model.shelters[-1]:
+		draw_line(ArtSprites.Canopy.lamp_anchor(shelter),point+Vector2(-7,-55),INK,2,true)
+		ArtProps.decor(self,point+Vector2(-7,-40),"shelter_lamp_lit" if shelter.reached else "shelter_lamp")
+		return
 	var center:=point+Vector2(68,-12)
 	# The old free-standing mystery object is now the shelter's colored lamp.
 	_curve(point+Vector2(68,-82),point+Vector2(66,-62),center+Vector2(0,-38),center+Vector2(0,-31),INK,1.8)

@@ -4526,19 +4526,31 @@
         "默认；其它声明使用条件须逐项验收"
       ],
       "source_files": [
-        "prototypes/swarm-flight/game_model.gd",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+        "prototypes/swarm-flight/art_sprites.gd",
+        "prototypes/swarm-flight/art_props.gd",
         "prototypes/swarm-flight/world_view.gd",
-        "prototypes/swarm-flight/art_sprites.gd"
+        "prototypes/swarm-flight/spring_journey_view.gd",
+        "prototypes/swarm-flight/spring_journey_model.gd",
+        "prototypes/swarm-flight/game_model.gd",
+        "prototypes/swarm-flight/spring_journey_content.gd"
       ],
       "source_symbols": [
-        "prototypes/swarm-flight/game_model.gd::shelter_contains@647",
-        "prototypes/swarm-flight/game_model.gd::shelter_index_at@651",
-        "prototypes/swarm-flight/game_model.gd::advance_shelters@404",
-        "prototypes/swarm-flight/world_view.gd::_shelter@497",
-        "prototypes/swarm-flight/art_sprites.gd::canopy@49"
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::rect@109",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::polygon@113",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::top_at@119",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::bottom_at@132",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::lamp_anchor@143",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::contact@160",
+        "prototypes/swarm-flight/art_props.gd::shelter_plant@77",
+        "prototypes/swarm-flight/art_sprites.gd::canopy@50",
+        "prototypes/swarm-flight/world_view.gd::_shelter@499",
+        "prototypes/swarm-flight/spring_journey_view.gd::_shelter@54",
+        "prototypes/swarm-flight/spring_journey_model.gd::resolve_leaf_roofs@491",
+        "prototypes/swarm-flight/spring_journey_model.gd::rain_floor_at@345"
       ],
       "implementation_status": "existing_partial",
-      "implementation_note": "已核到相关局部实现；未验证本对象全部设计状态或质量",
+      "implementation_note": "已完成静态绿色叶棚限定范围；完整元素族状态仍需逐项。普通灯绳在#202从固定坐标改为跟随下轮廓；默认G1重新检查。",
       "bounds_and_anchors_to_verify": [
         "实际游戏尺度、进入/离开边界、状态转换、遮挡与同屏可读性；不存在隐形作用区",
         "根/茎/叶/棚面接点与支撑锚点",
@@ -4571,11 +4583,46 @@
         }
       },
       "gaps": [
-        "缺全部声明状态/变体的原生证据及组合复核"
+        "完整元素族门禁不由这个限定静态绿色范围代签；mirror/winter/dynamic/未声明尺寸与高度未通过",
+        "组合C01/C04/C09及#203仍等待相关元素G2；已知棚顶提示可能遮玩家，属组合可读性未验收项"
       ],
       "asset_dependencies": [
-        "prototypes/swarm-flight/art/revision-atlas.png"
-      ]
+        "prototypes/swarm-flight/art/revision-atlas.png",
+        "prototypes/swarm-flight/art/garden-terrain.png",
+        "prototypes/swarm-flight/art/garden-weather.png"
+      ],
+      "variant_contract": "prototypes/swarm-flight/leaf_canopy_contract.json",
+      "scoped_gate_evidence": {
+        "scope": "E13-static-green-canopy@1.1;half_width118/180;anchor_y465/500/520/600;contract exclusions apply",
+        "G0": {
+          "status": "passed",
+          "issue": 200,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g0/receipt.json"
+          ]
+        },
+        "G1": {
+          "status": "passed_with_g2_source_recheck",
+          "issue": 201,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g1/receipt.json",
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g2/receipt.json"
+          ]
+        },
+        "G2": {
+          "status": "passed_scoped_internal",
+          "issue": 202,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g2/receipt.json"
+          ]
+        },
+        "G3": {
+          "status": "unchecked",
+          "issue": 203,
+          "evidence": []
+        }
+      },
+      "source_registry_scope": "leaf-canopy-g2"
     },
     {
       "id": "leaf-canopy-support",
@@ -4597,17 +4644,31 @@
         "默认；其它声明使用条件须逐项验收"
       ],
       "source_files": [
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+        "prototypes/swarm-flight/art_sprites.gd",
+        "prototypes/swarm-flight/art_props.gd",
+        "prototypes/swarm-flight/world_view.gd",
+        "prototypes/swarm-flight/spring_journey_view.gd",
         "prototypes/swarm-flight/spring_journey_model.gd",
-        "prototypes/swarm-flight/spring_journey_view.gd"
+        "prototypes/swarm-flight/game_model.gd",
+        "prototypes/swarm-flight/spring_journey_content.gd"
       ],
       "source_symbols": [
-        "prototypes/swarm-flight/spring_journey_model.gd::leaf_roof_spine@471",
-        "prototypes/swarm-flight/spring_journey_model.gd::resolve_leaf_roofs@475",
-        "prototypes/swarm-flight/spring_journey_model.gd::rain_floor_at@344",
-        "prototypes/swarm-flight/spring_journey_view.gd::_shelter@54"
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::rect@109",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::polygon@113",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::top_at@119",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::bottom_at@132",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::lamp_anchor@143",
+        "prototypes/swarm-flight/leaf_canopy_geometry.gd::contact@160",
+        "prototypes/swarm-flight/art_props.gd::shelter_plant@77",
+        "prototypes/swarm-flight/art_sprites.gd::canopy@50",
+        "prototypes/swarm-flight/world_view.gd::_shelter@499",
+        "prototypes/swarm-flight/spring_journey_view.gd::_shelter@54",
+        "prototypes/swarm-flight/spring_journey_model.gd::resolve_leaf_roofs@491",
+        "prototypes/swarm-flight/spring_journey_model.gd::rain_floor_at@345"
       ],
       "implementation_status": "existing_partial",
-      "implementation_note": "已核到相关局部实现；未验证本对象全部设计状态或质量",
+      "implementation_note": "已完成静态绿色叶棚限定范围；完整元素族状态仍需逐项。普通灯绳在#202从固定坐标改为跟随下轮廓；默认G1重新检查。",
       "bounds_and_anchors_to_verify": [
         "实际游戏尺度、进入/离开边界、状态转换、遮挡与同屏可读性；不存在隐形作用区",
         "根/茎/叶/棚面接点与支撑锚点",
@@ -4640,11 +4701,46 @@
         }
       },
       "gaps": [
-        "缺全部声明状态/变体的原生证据及组合复核"
+        "完整元素族门禁不由这个限定静态绿色范围代签；mirror/winter/dynamic/未声明尺寸与高度未通过",
+        "组合C01/C04/C09及#203仍等待相关元素G2；已知棚顶提示可能遮玩家，属组合可读性未验收项"
       ],
       "asset_dependencies": [
-        "prototypes/swarm-flight/art/sign-keeper.png"
-      ]
+        "prototypes/swarm-flight/art/revision-atlas.png",
+        "prototypes/swarm-flight/art/garden-terrain.png",
+        "prototypes/swarm-flight/art/garden-weather.png"
+      ],
+      "variant_contract": "prototypes/swarm-flight/leaf_canopy_contract.json",
+      "scoped_gate_evidence": {
+        "scope": "E13-static-green-canopy@1.1;half_width118/180;anchor_y465/500/520/600;contract exclusions apply",
+        "G0": {
+          "status": "passed",
+          "issue": 200,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g0/receipt.json"
+          ]
+        },
+        "G1": {
+          "status": "passed_with_g2_source_recheck",
+          "issue": 201,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g1/receipt.json",
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g2/receipt.json"
+          ]
+        },
+        "G2": {
+          "status": "passed_scoped_internal",
+          "issue": 202,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g2/receipt.json"
+          ]
+        },
+        "G3": {
+          "status": "unchecked",
+          "issue": 203,
+          "evidence": []
+        }
+      },
+      "source_registry_scope": "leaf-canopy-g2"
     },
     {
       "id": "shelter-area",
@@ -19104,7 +19200,8 @@
     },
     "combinations": 24,
     "all_gates": "unchecked",
-    "state_count_meaning": "每对象状态条目之和；不是已实现状态数或测试数量。"
+    "state_count_meaning": "每对象状态条目之和；不是已实现状态数或测试数量。",
+    "scoped_gate_note": "2行含静态绿色叶棚G0–G2限定证据；all_gates指全范围原门禁，仍unchecked；对象/状态总数不变。"
   },
   "source_read_method": "工作树存在性检查 + git show 固定 main_baseline 内容/符号/哈希；排除主任务同时进行的未提交代码修改。",
   "design_constraints": [
@@ -19313,6 +19410,150 @@
       "revision": "39f04e72b4e2fc75d87c1a0eda531f4602ec0a54",
       "sha256": "4006eec4ff4dcafc98299b9b63a593d33ba975e1ca4ba65dbc7d12c632845b64",
       "scope": "main_baseline"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+      "sha256": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_sprites.gd",
+      "sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_props.gd",
+      "sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "3f195c3b861eba00810c4e3b1cfeeea9de1892ed8a816f4a10a5e18b4862b227",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/project.godot",
+      "sha256": "26d1dde665352225877f1b5600a841f1fb17e0678b985b8f6b0ea9bfe170016c",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png",
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+      "sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-terrain.png",
+      "sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-terrain.png.import",
+      "sha256": "234d65ce51371757cbfd8976f88f9c52ec5df6fc993ae2e8c10d1362476cc376",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-weather.png",
+      "sha256": "0a701aa4ed07312d057e79075efb199d63d758cc294c205c58508306abfbbe1a",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/garden-weather.png.import",
+      "sha256": "231c4d7b57e4c43c15ffd19894566f6b0e22653037b5e21030a10407023ab51e",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/color_memory.gd",
+      "sha256": "a47a39d2efee0880667dde26a1bd061c457e20ae93415116a2fe5ca623c02a55",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_variants_probe.gd",
+      "sha256": "f22c7bdcf5f4ed4c21c37021000f274bae1a43a17af9dc4997e1963813c58a98",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+      "sha256": "e8e7bc6f6220616af2fc55bdb29a2fc9211150721accd4e3e69b6c9b0dfc4834",
+      "revision": null,
+      "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "scope": "leaf-canopy-g2",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
     }
   ],
   "source_reference_format": "source_files/asset_dependencies 为仓库相对路径；固定版本/hash统一见source_registry。source_symbols为path::function@one_based_line；仅实现锚点，不是验收证据。shared atlas引用只表示依赖，实际裁切/状态映射仍需逐对象验证。",
@@ -19485,6 +19726,11 @@
       "batch": "2026-10-30-plant-attachments",
       "path": "prototypes/swarm-flight/review-evidence/2026-10-30/receipt.json",
       "scope": "attachment correction only; no whole-element or family gate promotion; winter floral identity explicitly unaccepted"
+    },
+    {
+      "batch": "2026-10-30-static-green-canopy-g2",
+      "path": "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g2/receipt.json",
+      "scope": "2elementrows scoped green static 118/180 only;full gates and combinations unpromoted"
     }
   ]
 }
