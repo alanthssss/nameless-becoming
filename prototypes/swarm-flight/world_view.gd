@@ -490,8 +490,10 @@ func _ring(ring: Dictionary, index: int) -> void:
 	if used and age >= 0.0: close = 1.0-pow(1.0-clampf(age/0.55,0.0,1.0),3.0)
 	var recoil := 0.0 if age < 0.0 else sin(age*13.0)*exp(-age*3.8)*12.0
 	var sway := sin(clock*1.1+index*1.7)*3.0
-	ArtProps.stalk(self,p+Vector2(0,42),p+Vector2(-28+sway+recoil,165),p+Vector2(38,228),Vector2(p.x-26,831),10.0)
-	ArtSprites.small_leaf(self,p+Vector2(0,105),p+Vector2(-72+sway*1.5+recoil,61),30)
+	var stem := PackedVector2Array([p+direction*recoil+Vector2(0,42+close*10),p+Vector2(-28+sway+recoil,165),p+Vector2(38,228),Vector2(p.x-26,831)])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],10.0)
+	var leaf_root := stem[0].bezier_interpolate(stem[1],stem[2],stem[3],0.18)
+	ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2(-72+sway*1.5, -44),30)
 	ArtSprites.flower(self,p,direction,close,recoil,used)
 
 func _shelter(shelter: Dictionary) -> void:
@@ -499,13 +501,9 @@ func _shelter(shelter: Dictionary) -> void:
 	var half := float(shelter.get("half_width",118.0))
 	if p.x+half < model.camera_x-80 or p.x-half > model.camera_x+1360: return
 	var reached: bool = shelter.reached
-	var stem_x := half+4.0
-	ArtProps.stalk(self,p+Vector2(stem_x,-80),p+Vector2(stem_x+17,8),p+Vector2(stem_x-23,130),Vector2(p.x+stem_x-34,828),12.0)
-	# Crown bottom remains above the real safe pocket's y=-64 boundary.
-	ArtSprites.canopy(self,p,half)
+	ArtProps.shelter_plant(self,p,half)
 	draw_line(p+Vector2(-7,-91),p+Vector2(-7,-55),INK,2,true)
 	ArtProps.decor(self,p+Vector2(-7,-40),"shelter_lamp_lit" if reached else "shelter_lamp")
-	ArtSprites.small_leaf(self,p+Vector2(60,57),p+Vector2(-60,57),29)
 	if reached:
 		draw_polyline(PackedVector2Array([p+Vector2(-7,44),p+Vector2(-1,50),p+Vector2(10,37)]),CREAM,3,true)
 

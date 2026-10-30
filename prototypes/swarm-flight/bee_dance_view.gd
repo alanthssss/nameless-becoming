@@ -12,7 +12,13 @@ func _landmarks(_act: int) -> void:
 
 func _source_cluster(source: Vector2) -> void:
 	var center := source + Vector2(18, 20)
-	ArtProps.stalk(self, center+Vector2(0,12), center+Vector2(16,100), Vector2(source.x-40,690), Vector2(source.x+10,830), 10.0)
+	var stem := PackedVector2Array([center+Vector2(0,12),center+Vector2(16,100),Vector2(source.x-40,690),Vector2(source.x+10,830)])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],10.0)
+	# Side blossoms belong to this rooted plant, including when closed.
+	ArtProps.branch(self,stem,0.17,source+Vector2(-41,58),3.8)
+	ArtProps.branch(self,stem,0.13,source+Vector2(68,53),3.8)
+	ArtProps.branch(self,stem,0.42,Vector2(source.x+4,599),3.2)
+	ArtProps.branch(self,stem,0.57,Vector2(source.x-1,646),3.2)
 	ArtSprites.small_leaf(self, Vector2(source.x+4,601), Vector2(source.x-110,558), 27)
 	ArtSprites.small_leaf(self, Vector2(source.x-1,648), Vector2(source.x+119,611), 33)
 	_painted_blossom(source+Vector2(-41,47),1.25,model.source_open)
@@ -115,8 +121,6 @@ func neighbor_words() -> String:
 func _shelter(shelter: Dictionary) -> void:
 	var point: Vector2 = shelter.pos
 	var half: float = shelter.half_width
-	ArtProps.stalk(self,point+Vector2(half+4,-80),point+Vector2(half+17,8),point+Vector2(half-23,130),Vector2(point.x+half-34,828),12.0)
-	ArtSprites.canopy(self,point,half)
-	ArtSprites.small_leaf(self,point+Vector2(60,57),point+Vector2(-60,57),29)
+	ArtProps.shelter_plant(self,point,half)
 	draw_line(point+Vector2(-7,-91),point+Vector2(-7,-55),INK,2,true)
 	ArtProps.decor(self,point+Vector2(-7,-40),"shelter_lamp_lit" if shelter.reached else "shelter_lamp")

@@ -57,9 +57,7 @@ func _shelter(shelter: Dictionary) -> void:
 		return
 	var point: Vector2=shelter.pos
 	var half: float=shelter.half_width
-	ArtProps.stalk(self,point+Vector2(half+4,-80),point+Vector2(half+17,8),point+Vector2(half-23,130),Vector2(point.x+half-34,828),12.0)
-	ArtSprites.canopy(self,point,half)
-	ArtSprites.small_leaf(self,point+Vector2(60,57),point+Vector2(-60,57),29)
+	ArtProps.shelter_plant(self,point,half)
 	var center:=point+Vector2(68,-12)
 	# The old free-standing mystery object is now the shelter's colored lamp.
 	_curve(point+Vector2(68,-82),point+Vector2(66,-62),center+Vector2(0,-38),center+Vector2(0,-31),INK,1.8)
