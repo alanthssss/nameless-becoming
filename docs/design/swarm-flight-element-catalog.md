@@ -67,4 +67,4 @@ PR #229已审查合并。第一批实际修改了叶亭停栖叶的支撑、花�
 
 [修前](../../prototypes/swarm-flight/review-evidence/2026-10-30/before.png) · [修后](../../prototypes/swarm-flight/review-evidence/2026-10-30/after.png) · [实际场景](../../prototypes/swarm-flight/review-evidence/2026-10-30/in-game.png) · [回执](../../prototypes/swarm-flight/review-evidence/2026-10-30/receipt.json)。原生捕获脚本`element_batch_capture.gd`可复现，不接入正式启动。
 
-24种花的独立身份已列入清单；地域/花种暂缓，不能混用各地花期拼成已批准自然日历。中国水仙作为大寒冬末候选，[国家林草局资料](https://www.forestry.gov.cn/c/www/dzw/658669.jhtml)支持中国水仙与洋水仙花期不同，但不证明当前未锁定地域的室外适用性。生成候选尚未通过透明度/形态/场景适用验收，不接入运行资产。室内不是当前设定。
+24种花的独立身份已列入清单；地域/花种暂缓，不能混用各地花期拼成已批准自然日历。中国水仙作为大寒冬末候选，[国家林草局资料](https://www.forestry.gov.cn/c/www/dzw/658669.jhtml)支持中国水仙与洋水仙花期不同，但不证明当前未锁定地域的室外适用性。生成候选尚未通过透明度/形态/场景适用验收，不接入运行资产。室内允许后续设计，须综合解决室内外切换；当前尚未实现，不作花卉适用证据。
