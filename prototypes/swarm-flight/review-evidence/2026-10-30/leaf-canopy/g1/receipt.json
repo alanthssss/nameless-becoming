@@ -1,0 +1,211 @@
+{
+  "issue": 201,
+  "milestone": 1,
+  "gdd": [
+    "4.1",
+    "8.1",
+    "11.2"
+  ],
+  "kind": "internal_element_geometry_repair",
+  "baseline_revision": "f3bb47a51030c73b4d3812e605f1535f81d225ba",
+  "engine": "4.6.2.stable.official.71f334935",
+  "scope": "03–05 static green canopy default half_width180; existing texture and support retained; necessary05 wind route and known v2 save compatibility repair",
+  "gate": {
+    "G0": "previous_receipt",
+    "G1": "passed_scoped_internal",
+    "G2": "not_checked",
+    "G3": "not_checked"
+  },
+  "construction": {
+    "editable_source": "leaf_canopy_geometry.gd",
+    "trace": "99 alpha>=0.6 contour vertices, original atlas region(19,822,592,251), epsilon2sourcepx",
+    "drawn_rect": "width=2half+20, height95, top=anchor.y-161",
+    "physics": "GDD14px ordinary /9px folded; full painted polygon; concave fallback candidates validated against every edge",
+    "rain": "segment crossing polygon; visual rain uses upper contour",
+    "image_modified": false
+  },
+  "checks": [
+    "82 independent pixel/rule/rain/body/old-save/early-late wind checks,0failures",
+    "202 whole03–05 routes+exact suspend,0failures",
+    "68 native UI checks incl real disk cold-load,0failures",
+    "1655 legacy base model checks passed",
+    "baseline physics counterexample:70checks,40specific assertion failures,no parse/runtime error",
+    "native isolated6keyboardsegments266frames; ray/pixel error -0.12..0.68px across10probes",
+    "independent review cleared radius,concavity,migration and native evidence"
+  ],
+  "save_compatibility": "Three fixture JSONs generated from f3bb47a actual model+content. Known05 first ring position+direction migrated in active/checkpoint copies before strict validation; unknown layouts rejected atomically. Old overlapping position restores committed safe checkpoint before first frame with visible explanation. Valid snapshots retain exact round-trip.",
+  "failures": [
+    "initial route regression20failures: wind triggered inside leaf tip; direct scripted descent crossed roof. Moved first wind flower2640→2740 and route descends beyond right tip; fixed202/0",
+    "initial review caught radius23/18 double-counting old spine thickness,concave push failure,old save issues; all fixed before promotion",
+    "extended mutation harness initially failed on absent old-layout migration and invalid array access; excluded compatibility fixtures from physics counterexample; runtime failure not counted as caught regression",
+    "native UI exit reports ObjectDB instance leak warning; no script error or failed behavior assertion"
+  ],
+  "review": {
+    "agent": "canopy_review",
+    "observations_utc": [
+      "07:40:58–07:42:12",
+      "07:46:46–07:49:33",
+      "07:50:33–07:51:19"
+    ],
+    "conclusion": "no remaining blocker in scoped G1; not G2/G3 or player acceptance"
+  },
+  "LV01_10": {
+    "LV01": "not_applicable:no new repeated mechanism",
+    "LV02": "pass_scoped:leaf rests and next wind flower visible in native09",
+    "LV03": "not_applicable:no changed attack",
+    "LV04": "pass_scoped:early/nominal/late wind release continues past landing without forced recovery",
+    "LV05": "pass_scoped:existing two routes and pickups remain reachable",
+    "LV06": "pass_scoped:recovery repeated; alternate route starts40; no extra involuntary recoveries",
+    "LV07": "not_applicable:no new progression; existing chain retained",
+    "LV08": "pass_scoped:unchanged atlas/support; physical disk and rain contour align; decorative wings/antennae excluded from collider. Existing leaf label can obscure player above roof; scene-level overlay review remainsG3",
+    "LV09": "pass_scoped:old3chapterfixtures,newexactroundtrip,nativecoldresume",
+    "LV10": "pass_evidence_boundary:scripteddeveloperchecks; no humanplaytest orwholegamegate"
+  },
+  "limits": [
+    "only default180 green static leaf G1",
+    "full scene overlay/readability,other widths,winter,mirroring,dynamic unfolding not accepted",
+    "full video and frame traces preserved; visual inspection sampled native endpoints and journey screenshots, not every recorded frame",
+    "M1 remainsopen; no userreviewpackage"
+  ],
+  "cost": {
+    "host_observed_start": "2026-10-30T07:38:45Z",
+    "host_evidence_end": "2026-10-30T07:53:10.846636+00:00",
+    "coverage": "main elapsed includes reads,implementation,failed attempts,subagent wait,local engine; remote CI and merge interval recorded in issue after completion; active labor unknown",
+    "estimate_minutes": 10,
+    "variance_reason": "independent review and fullroute regression required concavity,legacy save and wind-route fixes",
+    "historical_total_hours": null,
+    "remaining_budget_hours": null,
+    "control_limit_hours": 240,
+    "new_purchases": 0,
+    "imagegen_calls": 0,
+    "billed_cost": null
+  },
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+      "sha256": "c14603959a81a322e7c1b26754c0e56ce48a1d90acfef193fd8beb08ab7fe45f"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+      "sha256": "d8e21216245c3d97f87f871aa12b1a03683b660376abfc425c52ace88a51b852"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_main.gd",
+      "sha256": "15742e1656fbeb4e2230b9f564013ccb93137ca492a16fb37760baea763b2b87"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_verify.gd",
+      "sha256": "484d686341d957e5161d7949c1e083787ddbd2edb682a9492046846d45c93a74"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_ui_verify.gd",
+      "sha256": "cf28d86d8c286e7faf2279763df4e97ce809846b511fde9498b69a525b4da5e0"
+    },
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_sprites.gd",
+      "sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png",
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+      "sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "05-weather-forecast.png",
+      "sha256": "3a0f6f405a119debb746e885b0361dbb7c840d29b3605e7df4145796878f91e2"
+    },
+    {
+      "path": "09-wind-to-back-side.png",
+      "sha256": "60b53aa43318be7b2e3f3e8245d77d7fdc3b56f9e8f4b56c43fc96de0e6c0030"
+    },
+    {
+      "path": "10-back-passage.png",
+      "sha256": "a403ea95b746dce8d6ddbd48f41556fe71a02fbb551d1d85b7f63d91571a294c"
+    },
+    {
+      "path": "16-legacy-safe-resume.png",
+      "sha256": "97e2818133003d7e62a2535b8eab0cf20470656519bb5935db1b092ce89d684e"
+    },
+    {
+      "path": "base-model.log",
+      "sha256": "e7c62419216edc76a30aa672b8cc768d32349b8f836b1a368e41c60ca52db17f"
+    },
+    {
+      "path": "baseline-mutation.log",
+      "sha256": "f1413c83bb4b9c76c6508980c12a7b855362b3a310e9c23b813a55003ee9f062"
+    },
+    {
+      "path": "focused.log",
+      "sha256": "3231fc5ec178603663e4f1b63eeeabfedfe785074169720412af29ba57f42398"
+    },
+    {
+      "path": "from_above.png",
+      "sha256": "e2fa58df0f6592b173f6b8da6e52518152124d354004a6c7db67c7d02f1e7174"
+    },
+    {
+      "path": "from_below.png",
+      "sha256": "3810cf4db64e0aeba3e387117bcb80c840d515a249b41f23f01828ba979882e9"
+    },
+    {
+      "path": "left_entry.png",
+      "sha256": "399b7d56b1a6bd47ba376893ea68dea2591fe2690d96c0d0b53ecad04daa2d6e"
+    },
+    {
+      "path": "legacy-stage-0.json",
+      "sha256": "f3b29b0ab768055ab66c1da28acf15b541f4fc906f0e8993bb93087b032d0589"
+    },
+    {
+      "path": "legacy-stage-1.json",
+      "sha256": "a43bcc98f677a7928b9a3fd4ccf00eff34f09a405e0b73351011d7b3e1dece90"
+    },
+    {
+      "path": "legacy-stage-2.json",
+      "sha256": "9c8db89d5743fffaae1f6dd3406b74b54772f84367c049f79c6d44bd9e7f672b"
+    },
+    {
+      "path": "native-input.mp4",
+      "sha256": "1d7505285c5acf1cfc89f22f32662005c407950f085f661505aaf3ce767c48e7"
+    },
+    {
+      "path": "native.log",
+      "sha256": "f6cb8e525b4f0a05f02ba274073aa4843d9e902bd52d21a7a0b956173e6eccbe"
+    },
+    {
+      "path": "probe.json",
+      "sha256": "491ddeba28a79b923120ca0c9e89b9b87260db7f91715be127b4a5c6f232b712"
+    },
+    {
+      "path": "right_entry.png",
+      "sha256": "ac56cf2930ed700e494f8b7cc9d952665f8c7a084d5d394de8fe135899d0c246"
+    },
+    {
+      "path": "spring-before-route-fix.log",
+      "sha256": "dc7d169ae6a6fc43ef979147470f187f35e9d5f4b8e22a50e8d123cc636747d1"
+    },
+    {
+      "path": "spring-model.log",
+      "sha256": "413dc988961124df0e6c016be7b8403af9d970bc9c7af890700931e3da89b9da"
+    },
+    {
+      "path": "spring-ui.log",
+      "sha256": "85e855b8dc1768f581d417a692529eef0300d812227f17a497ecbb9f2fc7e9f9"
+    }
+  ]
+}

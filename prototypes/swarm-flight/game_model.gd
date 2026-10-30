@@ -495,10 +495,11 @@ func advance_rain(dt: float) -> void:
 		drops.append({"pos":Vector2(p.x + rng.randf_range(80,400),70),"vel":Vector2(-45,320 if storm_active else 245)})
 	for i in range(drops.size()-1,-1,-1):
 		var drop := drops[i]
+		var before_drop: Vector2 = drop.pos
 		drop.pos += drop.vel * dt
 		var sheltered := false
 		for shelter in shelters:
-			if absf(drop.pos.x-shelter.pos.x) < float(shelter.get("half_width",118.0))+7 and drop.pos.y > shelter.pos.y-95:
+			if rain_hits_shelter(before_drop,drop.pos,shelter):
 				sheltered = true
 		for obstacle in walls:
 			if obstacle.kind == "terrain" and obstacle.rect.has_point(drop.pos): sheltered = true
@@ -515,6 +516,10 @@ func advance_rain(dt: float) -> void:
 			# A lethal hit may restore the checkpoint and clear the array.
 			if i < drops.size():
 				drops.remove_at(i)
+
+func rain_hits_shelter(_before: Vector2, after: Vector2, shelter: Dictionary) -> bool:
+	# Preserve legacy comparison-route rules; revised journeys can supply their geometry.
+	return absf(after.x-shelter.pos.x) < float(shelter.get("half_width",118.0))+7 and after.y > shelter.pos.y-95
 
 func advance_garden(dt: float) -> void:
 	for drop in dew:

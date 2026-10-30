@@ -139,7 +139,9 @@ func chapter05(m,share: bool,wind: bool) -> void:
 	check(m.observation_valid()==share,"03 observation crosses both chapter loads")
 	open_front(m)
 	open_back(m,wind)
-	fly(m,Vector2(3100,620))
+	# The full painted canopy is solid: descend beyond its right tip.
+	fly(m,Vector2(3460,300))
+	fly(m,Vector2(3460,620))
 	fly(m,Vector2(3260,620))
 	fly(m,Model.COMB)
 	frames(m,60)

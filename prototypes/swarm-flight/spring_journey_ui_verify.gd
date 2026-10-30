@@ -54,6 +54,7 @@ func shot(name: String) -> void:
 
 func new_scene() -> void:
 	game = Scene.instantiate()
+	game.progress_file=folder.path_join("save.json")
 	root.add_child(game)
 	await process_frame
 	game.set_process(false)
@@ -180,7 +181,8 @@ func run() -> void:
 	check(game.model.passage_open and game.model.rings_hit>=2,"keyboard wind changes height into back knot")
 	await shot("10-back-passage")
 	await cold_resume("tidying")
-	fly(Vector2(3100,620))
+	fly(Vector2(3460,300))
+	fly(Vector2(3460,620))
 	fly(Vector2(3260,620))
 	for i in 600:
 		if game.model.keeper.state=="settled": break
@@ -232,6 +234,20 @@ func run() -> void:
 	game.model.result_elapsed=Model.RESULT_SECONDS
 	tick(180)
 	check(game.model.keeper.state=="settled" and game.model.keeper.pos==Model.RESULT_HOME,"ending advances earned keeper result without blocking player")
+	game.queue_free()
+	await process_frame
+	# Actual disk/cold-scene path for the old geometry's embedded v2 position.
+	var legacy:=Model.new()
+	legacy.load_stage(1)
+	legacy.p=legacy.shelters[0].pos
+	legacy.save_checkpoint(legacy.p)
+	legacy.p=Vector2(619.65,409.71)
+	FileAccess.open(folder.path_join("save.json"),FileAccess.WRITE).store_string(JSON.stringify(legacy.save_payload()))
+	await new_scene()
+	game.on_secondary()
+	check(game.mode=="pause" and game.model.p==legacy.checkpoint.p,"legacy disk load uses safe checkpoint before drawing")
+	check(game.heading.text=="已回到安全的落脚点" and game.description.text.contains("旅程保留"),"geometry recovery is explained on resume page")
+	await shot("16-legacy-safe-resume")
 	game.queue_free()
 	await process_frame
 	print("SPRING JOURNEY UI VERIFIED: %d checks, %d failures" % [checks,failures])

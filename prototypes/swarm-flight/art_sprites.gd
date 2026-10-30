@@ -1,11 +1,12 @@
 extends RefCounted
 ## Presentation-only atlas adapters. World anchors and all rules stay in the model.
 const Winter = preload("res://winter_art.gd")
+const Canopy = preload("res://leaf_canopy_geometry.gd")
 const ATLAS: Texture2D = preload("res://art/revision-atlas.png")
 # Regions exclude the atlas's near-transparent outer specks, without changing it.
 const BEE := Rect2(67,158,510,456)
 const FLOWER := Rect2(638,100,571,596)
-const LEAF := Rect2(19,822,592,251)
+const LEAF := Canopy.SOURCE_RECT
 const HEDGE := Rect2(634,790,605,322)
 const BEE_PIVOT := Vector2(316,468)
 const FLOWER_PIVOT := Vector2(918,420)
@@ -47,10 +48,8 @@ static func flower(v: Node2D, p: Vector2, direction: Vector2, close: float, reco
 		v.draw_line(p+direction*along,p+direction*(along+10),Color(0.25,0.62,0.62,0.42-i*0.09),3,true)
 
 static func canopy(v: Node2D, p: Vector2, half: float) -> void:
-	var width := half*2+20.0
-	var size := Vector2(width,95.0)
 	# Every visible leaf pixel is above the model's safe pocket (p.y - 64).
-	var rect := Rect2(Vector2(p.x-width/2,p.y-66-size.y),size)
+	var rect := Canopy.rect({"pos":p,"half_width":half})
 	v.draw_texture_rect_region(Winter.ATLAS if Winter.active(v) else ATLAS,rect,Winter.LEAF if Winter.active(v) else LEAF)
 
 static func hedge(v: Node2D, r: Rect2) -> void:
