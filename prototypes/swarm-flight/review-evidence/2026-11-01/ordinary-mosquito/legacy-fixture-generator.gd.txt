@@ -1,0 +1,22 @@
+extends SceneTree
+const M=preload("res://spring_journey_model.gd")
+func _initialize():
+	var folder=OS.get_environment("SWARM_MOSQUITO_FIXTURES")
+	DirAccess.make_dir_recursive_absolute(folder)
+	var m=M.new()
+	m.load_stage(0)
+	m.started=true
+	m.p=Vector2(2320,300)
+	var seen={}
+	for i in 380:
+		var state: String=m.small.state
+		if not seen.has(state):
+			seen[state]=true
+			m.save_checkpoint(m.p)
+			FileAccess.open(folder.path_join("old-"+state+".json"),FileAccess.WRITE).store_string(JSON.stringify(m.save_payload(),"\t",true,true))
+		m.step(Vector2.ZERO,false,1.0/60)
+	for index in [1,2]:
+		m.load_stage(index)
+		FileAccess.open(folder.path_join("old-stage-"+str(index)+".json"),FileAccess.WRITE).store_string(JSON.stringify(m.save_payload(),"\t",true,true))
+	print("GENUINE LEGACY FIXTURES ",seen.keys()," plus dormant1/2; controlled checkpoint API captures real actor states")
+	quit()

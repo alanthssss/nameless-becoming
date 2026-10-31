@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "kind": "ordinary_mosquito_source_geometry_and_legacy_save_compatibility",
+  "scope": "池岸归途固定尺度普通蚊源；非全作生物族或P4体验验收",
+  "authority": {
+    "gdd": [
+      "§8.1",
+      "§13.6"
+    ],
+    "issues": [
+      214,
+      225,
+      204
+    ],
+    "milestone": "M1 source prerequisites",
+    "execution_pointer": "docs/design/solar-term-campaign-production-spec.md#production-now"
+  },
+  "baseline_revision": "02c366fa598f730b40b26d105ddc3ecc871bc5b9",
+  "implementation": [
+    "普通蚊home从2390,360移到2390,285；闭苞独立锚点仍为2390,360，原图形/支撑/提示位置不变",
+    "52px圆包络覆盖79×59.25镜像/转角及最大1.015翅振缩放；视线检查叶面中心线，移动按圆扫掠检查墙/真实叶多边形，并保持home直达",
+    "只改变普通蚊；庄主默认18px视线及既有行动逻辑不变；追逐240/返回210、瞄准0.8s/追逐1s、伤害8及保护规则不变",
+    "small_actor_revision1：当前合法状态精确恢复；完整验证过的旧档仅不安全NPC归位，safe旧actor保留；stage1/2旧闲置模板归一；双快照/玩家已得事实不变；旧字节备份失败则禁止写入"
+  ],
+  "verification": {
+    "native": "53 checks/0 failures;382 movie frames;378 samples;8 PNG",
+    "headless_native_probe": "45 checks/0 failures",
+    "model": "392 checks/0 failures",
+    "ui": "50 checks/0 failures;isolated real disk pause/cold",
+    "older_back_sign_save": "12 checks/0 failures",
+    "departure": "17 checks/0 failures",
+    "independent": "77 checks/0 failures:independent2px disk sampling,real cycles/contact,full sprite envelope,capsule counterexamples,current exact/reject atomicity,7genuine legacy andsafe pose preservation",
+    "ordinary_legacy_disk": "107 checks/0 failures with direct equality to original non-NPC core state and both stories;7 genuine old state fixtures,actual title/continue/cold,byte-exact backup and conflicts,unknown/corrupt/unsafe/bad legacy"
+  },
+  "failure_history": [
+    {
+      "kind": "environment",
+      "attempt": "B-1",
+      "failure": "Fresh worktree lacked imported textures;Godot failed before gameplay",
+      "resolution": "Official Godot headless editor import,thenB28/0;no production workaround"
+    },
+    {
+      "kind": "saved_actor_boundary",
+      "attempt": "model-1",
+      "failure": "392 checks/2 failures: return could stop within0.1px of home then exact idle/rest validator rejected valid current save",
+      "resolution": "Ordinary actor snaps to exact home at existing return threshold;legacy tolerates actual old<0.1px;targeted source28/0 then392/0"
+    },
+    {
+      "kind": "independent_test_setup",
+      "finding": "Initial verifier retained events instead of consuming them,60Hz double substeps skipped very brief idle observation,and capsule test endpoint touched an existing stem;old-return should be preserved when independently safe;JSON comparison required both sides full-precision normalization",
+      "resolution": "Corrected only verifier,not production;final77/0.Third failure log archived;first two outputs are in tool sessions86920/29987,not represented as local raw log files."
+    }
+  ],
+  "baseline_evidence": "../finite-source-states/mosquito-leaf-boundary.gd.txt and pond-mosquito-leaf-boundary.log:old legal player2320,300 yields133/180 center-inside frames,independently confirmed native1/2 images",
+  "legacy_fixture_provenance": {
+    "revision": "02c366fa598f730b40b26d105ddc3ecc871bc5b9",
+    "generator": "legacy-fixture-generator.gd.txt",
+    "source": "Natural old actor idle/aim/chase/return/rest states with controlled save_checkpoint API;stage1/2 dormant default;generated before production edit",
+    "human_player_data": false
+  },
+  "limits": {
+    "human_acceptance_claim": false,
+    "independent_exploration_claim": false,
+    "whole_family_gates": "unchanged",
+    "M3_allowed": false,
+    "audio_subjective_listening": "pending",
+    "remaining_source_evidence": [
+      "04 current solid-roof physical rain inner/outer boundary",
+      "04 last shelter lamp at color_step1"
+    ],
+    "later_P4": [
+      "meaningful high/low information difference",
+      "rain-route consequence",
+      "controls-only full exploration",
+      "specified package"
+    ]
+  },
+  "LV01_10": {
+    "LV01": "purpose unchanged;not signedP4",
+    "LV02": "route choices remain pending",
+    "LV03": "inputs/timings unchanged",
+    "LV04": "actual chase/contact/obstruction/return checked",
+    "LV05": "52px actual body/solid contour compatibility checked",
+    "LV06": "current exact+old migration+disk checks",
+    "LV07": "native bee/caption UI retains visibility;subjectiveaudio pending",
+    "LV08": "8energy andprotected repeat unchanged",
+    "LV09": "no pacing/fun claim",
+    "LV10": "source repair;notcandidate"
+  },
+  "cost": {
+    "observed_start_utc": "2026-10-31T20:52:00Z",
+    "estimate_minutes": [
+      30,
+      45
+    ],
+    "checkpoint_utc": "2026-10-31T20:56:05.282874+00:00",
+    "coverage": "Observed interval includes production/source tests,independent verifier implementation corrections and JSON comparison diagnosis,raw archive and laterCI/upload/cleanup;not active/billed hours",
+    "cash_purchases": 0,
+    "image_calls": 0,
+    "active_hours": null,
+    "cumulative_hours": null,
+    "remaining_hours": null,
+    "budget": "200+40h unchanged;unverifiable remaining;automationPAUSED",
+    "decision": "Finish source repair,then one small04evidence batch;noquality waiver"
+  },
+  "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/ordinary-mosquito in actual main checkout:rawAVI and failure/debug logs retained",
+  "rollback": "Revert focused PR only with version-matched save handling:preserve all newer progress files and original backups before rollback;forward compatibility with oldNPCcode is not claimed.",
+  "source_hashes": {
+    "spring_journey_model.gd": "4629ed0a8089c3650f4bb4dad273d9176841d4cf4287e18aa3432fd3ffbdf8bd",
+    "spring_journey_main.gd": "ee48311198a967efd19bfd6c99d9fb2a97335b48b110ee49ad855afebfadac29",
+    "spring_journey_view.gd": "be349fc1223bfd1dd0ba4cb1e97e67b033ece49c02c10e0b3114c5ca900715e1",
+    "ordinary_mosquito_probe.gd": "a0560f98d25960cde215b13ae8d208c0ba1bd4b70715edf4d81e5733a87e9170",
+    "spring_journey_verify.gd": "417a038e3aaaf303ae8d600cd15814e6101cb26ae6aad8942f4f0fecfb18ab82",
+    "ordinary_mosquito_save_verify.gd": "8054d732c12693599047cf49dcb2e7ebe43f6ea60fee5c097be1799670eff44c",
+    "ordinary_mosquito_verify.gd": "186b04c41637ef8af7bb3a9a81c7abe4530be45a4f5f7254427df683b623040f"
+  },
+  "review": {
+    "reviewer": "/root/feedback_review",
+    "result": "no blocker found for this bounded production patch",
+    "evidence": "Independent77/0,byte equality of7legacy originals,source review,read-only review of107disk verifier;native07/09/12/13 and53/0 trace with378clear samples",
+    "visual": "Whole actor above leaf,−8 readable,near-leaf aim legal,chase returns at full-body boundary;49.64px maximum half-diagonal fits52px circle",
+    "limits": "Only current fixed Spring ordinary actor;not whole-family acceptance,subjectiveaudio or independent full journey"
+  },
+  "artifact_hashes": {
+    "B-2.log": "a8502df1621e79835d45483b80883c9b8280a14565dc6a4c986ab5b6ae5b9f30",
+    "backsave-final.log": "aa2339163f24b836ed3ec3106ccf616d4b59dc64d443ca88e4105bd6941e5498",
+    "departure-final.log": "92d3f2ff6475ac4b2e5bdec55b591d7ec86070a630666e8d6758289cffecb956",
+    "disk.log": "24b99f5cce44308a26e568472f2ecf82ff3ba131e3805da49774832a21599f9c",
+    "independent-typed-comparison-failure.log": "899839747fec51c7826f081af81bbf10c586dff5b4df7ce394d62f724939e7f4",
+    "independent.log": "aebda03897ece26870677c4b55effa8d1aa54e352f0f1348096fc3802f2ac3d5",
+    "legacy-fixture-generator.gd.txt": "fa515ddd28415fb58e0d28df2f96cace335ecedd45786a04b96f828df7817fae",
+    "legacy-fixtures/old-aim.json": "cd56afeeae863a5284137c70ab7e20ffa58758d837dca4fd04b4ebcf97f6d557",
+    "legacy-fixtures/old-chase.json": "5e6290aee0e5430e99d5f31c2c5aa3bc5dffd759fda438b0bf2053ef5a573973",
+    "legacy-fixtures/old-idle.json": "117a3d6036c30dcfe3b8d11399609a789df23ba679bf0b3c457a378b87a1b5b2",
+    "legacy-fixtures/old-rest.json": "43b2025b83d30df283a83963562831306cf65fbd7f71b1205392e99933d6f70c",
+    "legacy-fixtures/old-return.json": "274bcd2bc104b57c44fa2fda2fc5c6564e76910baa2a1a628d54b0162e9310f4",
+    "legacy-fixtures/old-stage-1.json": "abb48a5478425fda288c9fac2ad78946ad9efa01a17f9fef85fabdd2adbc7028",
+    "legacy-fixtures/old-stage-2.json": "c5715ebe08e9de173403337ef0c85db5b0567702554af6d1dd5eb41e29f554e6",
+    "model-1.log": "ecccebbdb3647ddffbec4f14d599aa7336f452930b9bbb547a1ac1d25184bc5a",
+    "model-final.log": "e307b9c6d87165c54a23f1a7ef5f95540ae98e5b925ffe9fe4a6dd6ac2756d44",
+    "native/07-mosquito-aim.png": "0f5501cb5ac2d4594fadabd3da2bf5aa68bb1c7419989051a3ddc4e4c8d6ed06",
+    "native/08-mosquito-missed.png": "c7c8227bcc5bf5309fa74166b6ead532b366dd87b41684e9f7be1f1e4d799d9a",
+    "native/09-mosquito-hit.png": "f5722d9574bdbfe35b1d58ae6ee538368d19e69d9b78979bc6407ce4409b93c5",
+    "native/10-safe-recovery.png": "1e6e9d52934eb508f82cecccf1bbb7ee281b6eed3fb9cb79bd70e086c675ba88",
+    "native/11-old-leaf-counterexample.png": "fb2d1f5dcbb71ac347814b6090e278d8e875b5ae6aaccf7ed57f45dd9684d33b",
+    "native/12-near-leaf-aim.png": "01c2b1f6eb098b57f6185ac837aae0a79a76943d150afeaaf0a98eb068ea5e78",
+    "native/13-chase-stopped-at-leaf.png": "65858615116021dd25f9b9920e5f19cc9913bae906ad425b3eeb4a5c12dd0e8b",
+    "native/14-clear-home.png": "1f55d36a493d329ca2781c52970ff126d7685c2d965126eb9b7ffab493f3b368",
+    "native/native.log": "694382397344257d1f8b1f705f5969fbdbedc23579b874bbe6eb65c0220116a0",
+    "native/native.mp4": "e285a895c3819dc7f99da366a0492a6566eee6d4f03ec0802f268f2b2993c4ea",
+    "native/save.json": "118365dd6e5995a7ee476abd9274973001b708ac25ea835f52514ab90c86f59d",
+    "native/trace.json": "df50e7ddf3cf5ade9de795cbcba2cf49b876eada09667b9353671e78bd5f7356",
+    "old-fixtures.log": "ac0b8335bf488e71a4d586c28e70a33587d657d3bd90013a5a441214417b3667",
+    "probe-1.log": "5082bb8e8a44ab88e3480298b18ac4a70552922e1d3cca17568facafc992d120",
+    "source-slice-1.log": "a2439b7565070e60cc601900fd4f7726e32604131e40347049bb17325861a0ef",
+    "ui-final.log": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711"
+  }
+}

@@ -4,7 +4,10 @@ const SpringContent=preload("res://spring_journey_content.gd")
 const Canopy = preload("res://leaf_canopy_geometry.gd")
 const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
 const SITE_ID="pond-and-home"
-const SMALL_HOME=Vector2(2390,360)
+const SMALL_FLOWER_HOME=Vector2(2390,360)
+const SMALL_HOME=Vector2(2390,285)
+const SMALL_BODY_RADIUS=52.0
+const SMALL_ACTOR_REVISION=1
 const KEEPER_HOME=Vector2(2100,410)
 const DEPARTURE_FRIEND=Vector2(300,492)
 const PREPARATION_SECONDS=6.0
@@ -97,20 +100,46 @@ static func actor(home: Vector2) -> Dictionary:
 func change_state(who: Dictionary,state: String) -> void:
 	who.state = state
 	who.elapsed = 0.0
-func sight_clear(a: Vector2,b: Vector2) -> bool:
+func sight_clear(a: Vector2,b: Vector2,radius:=18.0) -> bool:
 	for obstacle in walls:
 		if obstacle.broken: continue
-		var r: Rect2 = obstacle.rect.grow(18.0)
+		var r: Rect2 = obstacle.rect.grow(radius)
 		if r.has_point(a) or r.has_point(b): return false
 		for edge in [[r.position,Vector2(r.end.x,r.position.y)],[Vector2(r.end.x,r.position.y),r.end],[r.end,Vector2(r.position.x,r.end.y)],[Vector2(r.position.x,r.end.y),r.position]]:
 			if Geometry2D.segment_intersects_segment(a,b,edge[0],edge[1]) != null: return false
 	return true
+func small_path_clear(a: Vector2,b: Vector2) -> bool:
+	if not sight_clear(a,b,SMALL_BODY_RADIUS): return false
+	# A swept body, not just its centreline or two endpoints. The disk contains
+	# the whole rotated/flapping79x59.25 sprite at this fixed use scale.
+	var bounds:=Rect2(a,Vector2.ZERO).expand(b).grow(SMALL_BODY_RADIUS)
+	for leaf in shelters:
+		if not bounds.intersects(Canopy.rect(leaf),true): continue
+		if Canopy.intercepts(a,b,leaf): return false
+		var points:=Canopy.polygon(leaf)
+		for i in points.size():
+			var c:=points[i]
+			var d:=points[(i+1)%points.size()]
+			if a.distance_to(Geometry2D.get_closest_point_to_segment(a,c,d))<SMALL_BODY_RADIUS or b.distance_to(Geometry2D.get_closest_point_to_segment(b,c,d))<SMALL_BODY_RADIUS or c.distance_to(Geometry2D.get_closest_point_to_segment(c,a,b))<SMALL_BODY_RADIUS or d.distance_to(Geometry2D.get_closest_point_to_segment(d,a,b))<SMALL_BODY_RADIUS: return false
+	return true
+func valid_small_actor(who: Dictionary,index: int) -> bool:
+	if index!=0: return who==actor(SMALL_HOME)
+	if who.pos.distance_to(SMALL_HOME)>235.01 or not small_path_clear(SMALL_HOME,who.pos): return false
+	if who.state in ["idle","rest"] and who.pos!=SMALL_HOME: return false
+	# aim.target is the observed player position, which need not fit this body.
+	if who.state in ["chase","return","rest"] and who.target.distance_to(SMALL_HOME)>235.01: return false
+	return true
+func known_legacy_small(who: Dictionary,index: int) -> bool:
+	if index!=0: return who==actor(SMALL_FLOWER_HOME)
+	if who.pos.distance_to(SMALL_FLOWER_HOME)>235.01: return false
+	if who.state in ["idle","rest"] and who.pos.distance_to(SMALL_FLOWER_HOME)>=0.1001: return false
+	return who.state not in ["chase","return","rest"] or who.target.distance_to(SMALL_FLOWER_HOME)<=235.01
 func update_actor(who: Dictionary,home: Vector2,is_keeper: bool,dt: float) -> void:
 	who.elapsed += dt
 	var distance: float = who.pos.distance_to(p)
 	match who.state:
 		"idle":
-			if started and distance < (460.0 if is_keeper else 330.0) and shelter_index_at(p)<0 and sight_clear(who.pos,p):
+			if started and distance < (460.0 if is_keeper else 330.0) and shelter_index_at(p)<0 and sight_clear(who.pos,p) and (is_keeper or shelters.all(func(leaf): return not Canopy.intercepts(who.pos,p,leaf))):
 				who.target = p
 				change_state(who,"aim")
 		"aim":
@@ -122,7 +151,7 @@ func update_actor(who: Dictionary,home: Vector2,is_keeper: bool,dt: float) -> vo
 		"chase":
 			var proposed: Vector2 = who.pos.move_toward(who.target,(290.0 if is_keeper else 240.0)*dt)
 			who.face = who.pos.direction_to(who.target)
-			if sight_clear(who.pos,proposed): who.pos = proposed
+			if sight_clear(who.pos,proposed) and (is_keeper or (small_path_clear(who.pos,proposed) and small_path_clear(home,proposed))): who.pos = proposed
 			else: who.elapsed = CHASE_SECONDS
 			if who.elapsed >= CHASE_SECONDS or who.pos.distance_to(who.target)<3:
 				change_state(who,"counting" if is_keeper else "return")
@@ -132,8 +161,11 @@ func update_actor(who: Dictionary,home: Vector2,is_keeper: bool,dt: float) -> vo
 			if who.elapsed >= COUNT_SECONDS: change_state(who,"return")
 		"return":
 			who.face = who.pos.direction_to(home)
-			who.pos = who.pos.move_toward(home,210.0*dt)
-			if who.pos.distance_to(home)<0.1: change_state(who,"rest")
+			var proposed: Vector2=who.pos.move_toward(home,210.0*dt)
+			if is_keeper or small_path_clear(who.pos,proposed): who.pos = proposed
+			if who.pos.distance_to(home)<0.1:
+				if not is_keeper: who.pos=home
+				change_state(who,"rest")
 		"rest":
 			if who.elapsed >= 1.0: change_state(who,"idle")
 	# Contact is a small, visible bump. Dashing avoids it; no honey inventory.
@@ -462,6 +494,7 @@ func save_payload() -> Dictionary:
 	var payload:=super.save_payload()
 	payload["keeper_presentation_revision"]=2
 	payload["preparation_revision"]=PREPARATION_REVISION
+	payload["small_actor_revision"]=SMALL_ACTOR_REVISION
 	payload["route_geometry_revision"]=ROUTE_GEOMETRY_REVISION
 	payload["story"]=pack(story_state())
 	payload["checkpoint_story"]=pack(checkpoint_story)
@@ -523,6 +556,7 @@ func upgrade_legacy_geometry(snapshot: Dictionary) -> bool:
 	return true
 
 func restore_payload(payload: Dictionary) -> bool:
+	if payload.has("small_actor_revision") and payload.small_actor_revision!=SMALL_ACTOR_REVISION: return false
 	if payload.has("preparation_revision") and payload.preparation_revision!=PREPARATION_REVISION: return false
 	if payload.has("route_geometry_revision") and payload.route_geometry_revision!=ROUTE_GEOMETRY_REVISION: return false
 	if payload.has("keeper_presentation_revision") and payload.keeper_presentation_revision!=2: return false
@@ -534,6 +568,10 @@ func restore_payload(payload: Dictionary) -> bool:
 	var saved: Dictionary=probe.normalize_story(unpack(payload.get("checkpoint_story")),index)
 	var base=unpack(payload.get("state"))
 	if state.is_empty() or saved.is_empty() or not base is Dictionary: return false
+	for item in [state,saved]:
+		if payload.has("small_actor_revision"):
+			if not probe.valid_small_actor(item.small,index): return false
+		elif not probe.known_legacy_small(item.small,index): return false
 	if index==0:
 		for item in [state,saved]:
 			if payload.has("preparation_revision"):
@@ -559,6 +597,11 @@ func restore_payload(payload: Dictionary) -> bool:
 		payload=payload.duplicate(true)
 		payload.state=pack(base)
 	if not super.restore_payload(payload): return false
+	if not payload.has("small_actor_revision"):
+		# Only a completely validated legacy payload may normalize this NPC.
+		# Keep safe live observations/poses; earned player/story facts are unchanged.
+		for item in [state,saved]:
+			if not probe.valid_small_actor(item.small,index): item.small=actor(SMALL_HOME)
 	# Old v2 saves already displayed the completed sign while its owner was
 	# still travelling. Preserve that committed result without replaying the
 	# obsolete route through the canopy. New saves suspend every phase exactly.
@@ -611,8 +654,8 @@ func context_cue() -> Dictionary:
 		return {"pos":DEPARTURE_FRIEND,"text":"这边的花还没开……池岸那头还有花香。","kind":"friend"}
 	if stage==0 and bird_greeted and bird_elapsed<6.0:
 		return {"pos":BIRD_PERCH,"text":"画眉：你也来尝这簇花？雨要来了，前面的叶棚能歇脚。","kind":"bird"}
-	if stage==0 and p.distance_to(SMALL_HOME+Vector2(-14,62))<100:
-		return {"pos":SMALL_HOME+Vector2(-14,62),"text":"花苞还没开","kind":"flower"}
+	if stage==0 and p.distance_to(SMALL_FLOWER_HOME+Vector2(-14,62))<100:
+		return {"pos":SMALL_FLOWER_HOME+Vector2(-14,62),"text":"花苞还没开","kind":"flower"}
 	if stage==1 and p.x>1200 and p.x<1550:
 		return {"pos":Vector2(1442,400),"text":"茎顶与叶棚之间，可以抬高穿过去","kind":"route"}
 	if stage==1 and p.x>2040 and p.x<2500:

@@ -110,7 +110,7 @@ func preserve_legacy_save() -> bool:
 	var raw:=FileAccess.get_file_as_bytes(path)
 	var parser:=JSON.new()
 	var original=parser.data if parser.parse(raw.get_string_from_utf8())==OK else null
-	if original is Dictionary and original.get("route_geometry_revision")==SpringModel.ROUTE_GEOMETRY_REVISION and original.get("preparation_revision")==SpringModel.PREPARATION_REVISION and create_journey_model().restore_payload(original): return true
+	if original is Dictionary and original.get("route_geometry_revision")==SpringModel.ROUTE_GEOMETRY_REVISION and original.get("preparation_revision")==SpringModel.PREPARATION_REVISION and original.get("small_actor_revision")==SpringModel.SMALL_ACTOR_REVISION and create_journey_model().restore_payload(original): return true
 	var backup:=path+".before-route-2-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
 	if DirAccess.dir_exists_absolute(backup): return false
 	if FileAccess.file_exists(backup): return FileAccess.get_file_as_bytes(backup)==raw

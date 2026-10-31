@@ -45,7 +45,7 @@ func _pond_landmarks() -> void:
 		for i in 3: _ellipse(perch+Vector2(-27+i*24,20),Vector2(3,1.4),Color("d2e5ce"))
 
 func _small_flower() -> void:
-	var home: Vector2 = model.SMALL_HOME
+	var home: Vector2 = model.SMALL_FLOWER_HOME
 	var flower := home+Vector2(-14,62)
 	var stem:=PackedVector2Array([flower,flower+Vector2(15,110),Vector2(home.x-39,720),Vector2(home.x+10,835)])
 	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],9.0)
