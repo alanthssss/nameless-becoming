@@ -513,7 +513,7 @@ func tick(delta: float) -> void:
 		for event in model.events:
 			if event.kind in ["recover_rain","recover_exhaustion","recover_timeout"]: held.clear()
 			world.emit_event(event.kind,event.pos,event)
-			sound.play_event("arrival_bell" if event.kind == "finish" and model.stage < model.last_stage_index() else event.kind)
+			sound.play_event("arrival_bell" if event.kind == "finish" and model.stage < model.last_stage_index() else event.kind,event.pos.distance_to(model.p))
 			match event.kind:
 				"rescue":
 					event_message(event.kind,"救出 %d 只 · 它们先回家了！ · 体力 +%d" % [int(event.get("count",1)),int(round(event.get("reward",0)))],2.8)

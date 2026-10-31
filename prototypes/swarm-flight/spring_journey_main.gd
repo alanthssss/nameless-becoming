@@ -34,6 +34,10 @@ func refresh_hud() -> void:
 				if not candidate.intersects(player_bounds):
 					cue_panel.position=candidate.position
 					break
+	if is_instance_valid(sound):
+		var rain_here: bool=model.stage==1 and model.weather_phase=="rain" and model.rain_fields.any(func(field): return model.p.x>=field.rect.position.x and model.p.x<=field.rect.end.x)
+		var covered: bool=model.shelter_index_at(model.p)>=0 or model.rain_floor_at(model.p.x)<model.p.y
+		sound.set_pond_context(rain_here,covered,model.share_state=="dancing",mode=="pause",mode in ["play","arrival","ending"])
 func show_transition() -> void:
 	super.show_transition()
 	handoff_heading.text=["沿池岸绕到叶棚那一侧。","那簇蓝花，又出现在归路旁。","灯就在前面，这回可以歇一歇了。"][model.stage]
@@ -56,6 +60,11 @@ func tick(delta: float) -> void:
 		var before: Dictionary=model.story_state()
 		model.advance_listeners(minf(delta,0.1))
 		model.advance_tidy(minf(delta,0.1))
+		# End-state actors still act; consume their new events once in this branch.
+		for event in model.events:
+			world.emit_event(event.kind,event.pos,event)
+			sound.play_event(event.kind,event.pos.distance_to(model.p))
+		model.events.clear()
 		if before!=model.story_state() and model.keeper.state=="settled" and model.listeners.all(func(bee): return bee.state in ["waiting","foraging"]): persist_progress()
 	super.tick(delta)
 	if model.observation_valid() and not observed_before: event_message("source_observed","",2.6)

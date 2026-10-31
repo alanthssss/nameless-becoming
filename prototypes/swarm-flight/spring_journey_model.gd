@@ -39,7 +39,9 @@ func advance_preparation(dt: float) -> void:
 	if keeper.pos!=keeper.target:
 		keeper.pos=keeper.pos.move_toward(keeper.target,120.0*dt)
 		return
+	var before_count:=preparation_count()
 	keeper.elapsed=minf(PREPARATION_SECONDS,keeper.elapsed+dt)
+	if preparation_count()>before_count: emit("keeper_hang",preparation_anchor(before_count))
 	if keeper.elapsed>=PREPARATION_SECONDS: keeper.state="watch"
 const KNOT=Vector2(2371,465)
 const BACK_WALL_X=3110.0
@@ -124,6 +126,7 @@ func update_actor(who: Dictionary,home: Vector2,is_keeper: bool,dt: float) -> vo
 			else: who.elapsed = CHASE_SECONDS
 			if who.elapsed >= CHASE_SECONDS or who.pos.distance_to(who.target)<3:
 				change_state(who,"counting" if is_keeper else "return")
+				if is_keeper: emit("keeper_count",who.pos)
 		"counting":
 			who.face = Vector2.RIGHT
 			if who.elapsed >= COUNT_SECONDS: change_state(who,"return")
@@ -179,6 +182,7 @@ static func forage_target(i: int) -> Vector2:
 	return SOURCE+(Vector2(-5,45) if i==0 else Vector2(68,42))
 
 func advance_listeners(dt: float) -> void:
+	if dt<=0: return
 	for i in listeners.size():
 		var bee: Dictionary = listeners[i]
 		if bee.state == "listening":
@@ -187,7 +191,9 @@ func advance_listeners(dt: float) -> void:
 			bee.delay = maxf(0.0,bee.delay-dt)
 			var target: Vector2 = forage_target(i) if bee.state == "departing" else waiting_listener(i).pos
 			bee.face = bee.pos.direction_to(target)
-			if bee.delay <= 0: bee.pos = bee.pos.move_toward(target,155.0*dt)
+			if bee.delay <= 0:
+				if bee.state=="departing" and bee.pos==waiting_listener(i).pos: emit("listener_depart",bee.pos)
+				bee.pos = bee.pos.move_toward(target,155.0*dt)
 			if bee.pos.distance_to(target) < 0.1:
 				bee.state = "foraging" if bee.state == "departing" else "waiting"
 		elif bee.state == "waiting": bee.face = bee.pos.direction_to(COMB)
@@ -387,6 +393,7 @@ func advance(direction: Vector2,dt: float) -> void:
 		emit("checkpoint_update",p)
 	advance_tidy(dt)
 func advance_tidy(dt: float) -> void:
+	if dt<=0: return
 	if not passage_open or keeper.state=="settled": return
 	keeper.elapsed+=dt
 	if keeper.pos!=keeper.target:
@@ -397,7 +404,9 @@ func advance_tidy(dt: float) -> void:
 		if keeper.target==PICKUP_POSITION:
 			keeper.face=Vector2.LEFT
 			result_elapsed=minf(INSPECT_SECONDS,result_elapsed+dt)
-			if result_elapsed>=INSPECT_SECONDS: keeper.target=TIDY_CARRY[0]
+			if result_elapsed>=INSPECT_SECONDS:
+				keeper.target=TIDY_CARRY[0]
+				emit("keeper_lift",keeper.pos)
 		else:
 			keeper.target=TIDY_APPROACH[mini(TIDY_APPROACH.find(keeper.target)+1,TIDY_APPROACH.size()-1)]
 	elif keeper.pos!=RESULT_HOME:
@@ -405,7 +414,9 @@ func advance_tidy(dt: float) -> void:
 	else:
 		keeper.face=Vector2.LEFT
 		result_elapsed=minf(RESULT_SECONDS,result_elapsed+dt)
-		if result_elapsed>=RESULT_SECONDS: keeper.state="settled"
+		if result_elapsed>=RESULT_SECONDS:
+			keeper.state="settled"
+			emit("keeper_place",keeper.pos)
 func advance_rain(dt: float) -> void:
 	if stage==1 and weather_phase=="rain": super.advance_rain(dt)
 func rain_floor_at(x: float) -> float:

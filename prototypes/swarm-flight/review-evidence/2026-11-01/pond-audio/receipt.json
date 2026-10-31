@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "kind": "bounded_source_implementation_and_technical_native_verification",
+  "scope": "池岸归途实际声音事件与局部雨/舞循环；非音频听感验收、非整段体验、非候选交付",
+  "authority": {
+    "issues": [
+      219,
+      226
+    ],
+    "milestone": "M1",
+    "gdd": [
+      "§9",
+      "§13.6"
+    ],
+    "execution_pointer": "docs/design/solar-term-campaign-production-spec.md#production-now"
+  },
+  "baseline_revision": "d7fad9bf1c44458c06f6a1c8cabe464c2840b41c",
+  "implementation": [
+    "9个原生PCM事件：花源确认、画眉、天气预告、舞蹈提交、3种挂/抬/放牌动作、盘点、听者离开",
+    "真实状态边界发声，距离衰减；暂停冻结声音，冷恢复不补播已提交动作；结尾继续消费角色事件",
+    "局部降雨声按真实雨区与遮蔽切换，舞蹈中有轻翼声；使用既有Music/SFX/Ambience与静音入口",
+    "既有0.40秒/20点动作、关卡空间、存档协议不变；dt<=0不推进整理/听者"
+  ],
+  "verification": {
+    "baseline": "untouched d7fad9b: all4 sampled existing story events unmapped and allocate no voice",
+    "native": "20 checks,0 failures;859 frames at30fps;10 PNGs; bounded seeded scene segments then actual controls/state progression, NOT independent exploration",
+    "independent": "129 checks,0 failures; real production routing, no premature/repeated commits, actual disk cold restore, ending event consumption, pause/mute, PCM endpoints/headroom",
+    "existing_model": "392 checks,0 failures",
+    "existing_ui": "50 checks,0 failures",
+    "existing_audio": "3 tracks/7 effects;duck and mute retained",
+    "native_mix": {
+      "peak_dbfs": -11.880207,
+      "rms_dbfs": -28.542405,
+      "sample_rate": 48000,
+      "channels": 2,
+      "samples": 1374400
+    },
+    "capture_delta": "Native capture preceded only dt<=0 guards and recover_geometry sound alias. Final independent129 checks cover these; positive-time visual/event path unchanged."
+  },
+  "evidence_limits": {
+    "listening": "UNVERIFIED. Agent audio-input tool explicitly returned audio content omitted because you do not support audio input. Waveforms/PCM/native recording do not establish pleasantness, recognizability or speaker/headphone mix. User asked to listen to concrete28s clip; no response at receipt creation.",
+    "G0_G3": "Technical implementation only; audioG2,fullfamily,G3,#204 and M3 not passed by this receipt.",
+    "human_acceptance_claim": false
+  },
+  "development_failures": [
+    {
+      "attempt": "native1",
+      "finding": "Fixture helper seed collided with built-in int seed; no frames",
+      "resolution": "Renamed fixture_position; failure preserved"
+    },
+    {
+      "attempt": "native2",
+      "finding": "OS focus change auto-paused fixture;2 assertions fail. Also rain random loop endpoint delta0.5659",
+      "resolution": "Native fixture ignores only OS focus-out; actual Esc/cold remains.10ms edge ramp makes final rain seam0. Native3 20/0. Failed/raw recordings preserved."
+    },
+    {
+      "attempt": "independent1",
+      "finding": "5 ending assertions failed because fixture placed player inside leaf roof and production correctly performed geometry recovery.",
+      "resolution": "Corrected safe seed position and completed checkpoint;production validation unchanged. Final129/0;failed log retained."
+    }
+  ],
+  "LV01_10": {
+    "LV01": "no goal/navigation change",
+    "LV02": "no choice design change;high/low/rain choice pending",
+    "LV03": "no input lock or timing penalty",
+    "LV04": "actual event edges and negative/cancel paths verified",
+    "LV05": "local rain uses same actual geometry",
+    "LV06": "pause/cold no replay verified",
+    "LV07": "signal headroom verified;subjective mix/listening pending",
+    "LV08": "no rewards altered",
+    "LV09": "subjective pacing/experience not signed",
+    "LV10": "not candidate;J01–08 remaining"
+  },
+  "cost": {
+    "observed_start_utc": "2026-10-31T20:00:00Z",
+    "checkpoint_utc": "2026-10-31T20:11:15.044105+00:00",
+    "estimated_delivery_minutes": [
+      30,
+      45
+    ],
+    "coverage": "Observed wall clock includes implementation, tests, review and waiting, not active/billed labor;integration/cleanup final interval in issues",
+    "cash_purchases": 0,
+    "image_calls": 0,
+    "active_hours": null,
+    "cumulative_hours": null,
+    "remaining_hours": null,
+    "budget": "200+40h unchanged;history insufficient,remaining unverifiable;automation PAUSED",
+    "decision": "Continue authorized MVP finite source verification;do not sign listening or full product"
+  },
+  "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/pond-audio/attempt-1,attempt-2,attempt-3 (actual main checkout);native AVI,WAVs,isolated saves,failed attempts preserved",
+  "rollback": "Revert focused audio PR;save format unchanged",
+  "source_hashes": {
+    "sound.gd": "f4f8913a6d96434144c623809053697488558b5509432f8f5cbe5aeadafb73a1",
+    "main.gd": "94f7a1dc083e8c38af9d4d12068c05c6eb830f08654a2bef91668988b31012ad",
+    "spring_journey_model.gd": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+    "spring_journey_main.gd": "8d3f8111445ad6d3fb671339802c9a163899023f5d6b1983f11fbedb0fa0f848",
+    "pond_audio_probe.gd": "057bc0615110b61c02a2f03bc445df90fee7d05f46c51b43722ff3a926410f28",
+    "pond_audio_verify.gd": "356ebadd828119b57c6c203e6a4345669b069178fac7da37c3a39eedd9b8e9f9"
+  },
+  "artifact_hashes": {
+    "ui.log": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711",
+    "pond-audio-baseline.log": "be2ac0c86ca5d647fc5e89773ded900bdb27626e478210defbf894b01134b349",
+    "independent-first-failure.log": "e6228570811f28cebd9dbd6af324e26864d269c9d09009bdde439464e308b3a3",
+    "existing-audio-signal.json": "306be9b34eba52f1807e8a6e97131c2a94f35b6264117e48bd39e6cc7e6557c9",
+    "baseline-on-d7fad9b.gd.txt": "bf4a1cae8bdce064565a78317a18cf265b9acd71198d4e4eb8d4f704974b52b6",
+    "pond-audio-signal.log": "3e57d71a80a1c1864bbcf821d157c8d56e314044cb864a4f0d81738f737e00ba",
+    "pond-audio-model.log": "e307b9c6d87165c54a23f1a7ef5f95540ae98e5b925ffe9fe4a6dd6ac2756d44",
+    "independent.log": "f407ed05e6db63d057733b6fe19bd9d447938cbe635e6ea6e4dcb43778b78ad5",
+    "audio-routing-report.json": "6ab9085365e7425108621d09850c0927d013dd4685f78aab879b92d58f3a4b34",
+    "native/trace.json": "bf8b65a9b030ed47e61a5c15682feb91c3b19a5fd02eb60a67bc59253ab88d2c",
+    "native/04-exposed-rain.png": "ec9b41983027edf94233ca23a9cfaf989eb40a9194d72e42aebdb31ef0aa5a15",
+    "native/07-counting.png": "c0527349d00f6c10d6bb7d1a8021ce51ea48cf7bde1e114568b24d64108cc853",
+    "native/09-listeners-leave.png": "bc04e2bbd6cf37f440412648a7d7a1cd15a75bcc58535df7efcac921d7409bda",
+    "native/03-weather-warning.png": "36af1b7100d7ce1bc724482bfc1aa1b48ec5b3b0b5ff8a82926f960efc9e5ae6",
+    "native/05-sheltered-rain.png": "38e9c8a5e74047b14c53eb034350484a82e74f651a0fe1122710eae77e8562bc",
+    "native/08-dance-wings.png": "c217b312a48442c5fb582f4d84809f18b6c6028195fc0f0fc564945d399687cc",
+    "native/native.mp4": "e8831dba5448cfbdcab5ac17a57d42a7808360065e01e1d72bff82142b66dbfe",
+    "native/06-after-rain.png": "51e83854a6cea27154c6de30d0aafd3bf162e9af4a836992fbb00aad3eb39b51",
+    "native/02-three-hangers.png": "737f0984b218d48a4df2a0c36c043d5e541a7fa2a9300e587eaf9ab5f8c5be01",
+    "native/native.log": "b5dac67520f5c30503aee69c89f1cdfc2a9074913fae2897ff2e195007a0de1e",
+    "native/mix-analysis.log": "27a792277a8937ad999fbc09c31a4f31851af1ed0f9197d0ff65d596caa77c21",
+    "native/01-source-bird.png": "4840fa5de2c344d359392f72294db8dd7a3a64ff468fa1dbfdf10eb43751b6e4",
+    "native/10-ending-place.png": "b8fb2db2149806c3cbe5eb2e3656a84de8e9563e14dfda34355ce9b5f0de7269",
+    "native/pcm-report.json": "5f8023a7ee755910f478113d62fb142f0288fd98b40345e1c32befec78e4d893"
+  },
+  "review": {
+    "reviewer": "feedback_review;independent code/test author",
+    "verdict": "No blocking production finding;129 technical assertions pass. No native window or subjective listening by reviewer.",
+    "scope": "Production changes and disjoint verification script;noG2/fullproductclaim"
+  }
+}

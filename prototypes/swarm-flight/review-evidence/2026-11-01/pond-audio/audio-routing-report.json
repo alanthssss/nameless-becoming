@@ -1,0 +1,1708 @@
+{
+	"checks": 129,
+	"failures": 0,
+	"kind": "controlled production state/routing/suspend tests; muted; no native listening or player evidence",
+	"loop_pcm": [
+		{
+			"kind": "rain",
+			"peak": 0.616790771484375,
+			"rms": 0.18561135371064,
+			"seam_delta": 0.0
+		},
+		{
+			"kind": "dance",
+			"peak": 0.125,
+			"rms": 0.0606244559378371,
+			"seam_delta": 0.005218505859375
+		}
+	],
+	"results": [
+		{
+			"label": "pond event signal/context API exists (baseline missing API must fail)",
+			"passed": true,
+			"section": "setup"
+		},
+		{
+			"label": "mapped event allocates once while muted: source_observed",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: source_observed",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: bird_greeting",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: bird_greeting",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: weather_warning",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: weather_warning",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: dance_commit",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: dance_commit",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: keeper_hang",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: keeper_hang",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: keeper_count",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: keeper_count",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: keeper_lift",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: keeper_lift",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: keeper_place",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: keeper_place",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "mapped event allocates once while muted: listener_depart",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "pool owns an actual stream: listener_depart",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "unknown event allocates no voice",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "event/duck/fade preserve mute: Music",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "event/duck/fade preserve mute: SFX",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "event/duck/fade preserve mute: Ambience",
+			"passed": true,
+			"section": "sound pool and mute"
+		},
+		{
+			"label": "real rain raises rain target above dry",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "cover attenuates exposed rain",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "active dance has a separate audible target",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "pause suspends both gameplay backgrounds",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "paused sound cannot allocate a new one-shot",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "inactive title cannot retain rain or dance",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new loops use existing mute-controlled buses",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new loop is nonzero and has headroom: rain",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new loop endpoint discontinuity below0.02: rain",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new background actually loops: rain",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new loop is nonzero and has headroom: dance",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new loop endpoint discontinuity below0.02: dance",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new background actually loops: dance",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: source_observed",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: bird_greeting",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: weather_warning",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: dance_commit",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: keeper_hang",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: keeper_count",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: keeper_lift",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: keeper_place",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new one-shot PCM is nonzero with headroom: listener_depart",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "distance argument does not attenuate legacy burst",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "new distant keeper action is attenuated",
+			"passed": true,
+			"section": "background context contract"
+		},
+		{
+			"label": "held sign does not sound attached early",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "disk pause: first sign held",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "pause freezes model: first sign held",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "pause creates no one-shots: first sign held",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "exact cold restore: first sign held",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "restore does not replay historical events: first sign held",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "first sign actually attaches",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "first attachment routes once",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "next hanger requires travel",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "travel neither works nor plays another attachment",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "disk pause: travelling between hangers",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "pause freezes model: travelling between hangers",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "pause creates no one-shots: travelling between hangers",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "exact cold restore: travelling between hangers",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "restore does not replay historical events: travelling between hangers",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "keeper reaches all three hangers",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "three placements produce exactly three sounds",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "stage0 counting pose is not the return encounter window",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "finished rack does not repeat",
+			"passed": true,
+			"section": "three real sign attachments"
+		},
+		{
+			"label": "real approach/chase reaches counting",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "window entry routes one count/rope sound",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "holding a window does not loop its entry sound",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "disk pause: inside counting window",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "pause freezes model: inside counting window",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "pause creates no one-shots: inside counting window",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "exact cold restore: inside counting window",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "restore does not replay historical events: inside counting window",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "window can finish",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "another real cycle reaches counting",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "next actual window is audible once again",
+			"passed": true,
+			"section": "keeper window transition"
+		},
+		{
+			"label": "crossing650 actually enters audible warning",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "disk pause: weather warning",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "pause freezes model: weather warning",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "pause creates no one-shots: weather warning",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "exact cold restore: weather warning",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "restore does not replay historical events: weather warning",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "warning advances to actual rain",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "warning is not replayed each frame or cold restore",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "actual far-side crossing clears rain",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "rain-after removes the local rain bed target",
+			"passed": true,
+			"section": "weather transitions and suspend"
+		},
+		{
+			"label": "short feeding does not sound committed",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "real full feeding routes observation once",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "actual bird response routes once",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "disk pause: observed source",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "pause freezes model: observed source",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "pause creates no one-shots: observed source",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "exact cold restore: observed source",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "restore does not replay historical events: observed source",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "remaining by restored flower replays neither fact",
+			"passed": true,
+			"section": "observed source and bird"
+		},
+		{
+			"label": "dance begins without premature success sound",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "live dance enables wing background",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "real directional cancellation has no commit",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "cancelled dance removes its background target",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "disk pause: uncommitted dancing",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "pause freezes model: uncommitted dancing",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "pause creates no one-shots: uncommitted dancing",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "exact cold restore: uncommitted dancing",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "restore does not replay historical events: uncommitted dancing",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "full dance commits actual source",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "commit routes once",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "two delayed listeners actually start flying",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "listener departures are separate physical starts",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "first departure is not merely assigning a delayed state",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "disk pause: listeners already flying",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "pause freezes model: listeners already flying",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "pause creates no one-shots: listeners already flying",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "exact cold restore: listeners already flying",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "restore does not replay historical events: listeners already flying",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "restoring/repeated input does not duplicate committed report or flights",
+			"passed": true,
+			"section": "dance cancellation and commit"
+		},
+		{
+			"label": "zero timestep changes neither actors nor event queue",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "arrival does not lift before inspection finishes",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "disk pause: ending inspection",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "pause freezes model: ending inspection",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "pause creates no one-shots: ending inspection",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "exact cold restore: ending inspection",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "restore does not replay historical events: ending inspection",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "ending inspection really reaches pickup",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "ending consumes lift once outside play mode",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "ending carry reaches final support",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "ending consumes placement once outside play mode",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "ending leaves no unconsumed audio event queue",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		},
+		{
+			"label": "settled ending cannot repeat lift or placement",
+			"passed": true,
+			"section": "earned result continues after arrival"
+		}
+	],
+	"routed_events": [
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "source_observed",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "bird_greeting",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "weather_warning",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "dance_commit",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "keeper_hang",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "keeper_count",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "keeper_lift",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "keeper_place",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "listener_depart",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "finish",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "sound pool and mute",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "burst",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "background context contract",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "keeper_hang",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "background context contract",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "keeper_hang",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "title",
+			"result_elapsed": 0.0,
+			"section": "background context contract",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0166666666666667,
+			"kind": "bird_greeting",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "three real sign attachments",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0166666666666667,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "three real sign attachments",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0166666666666667,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "three real sign attachments",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3540.99169921875,
+				299.138275146484
+			],
+			"keeper_state": "counting",
+			"keeper_work": 2.00833333333333,
+			"kind": "keeper_hang",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "three real sign attachments",
+			"share_state": "idle",
+			"time": 2.01666666666666,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3645.99951171875,
+				302.027496337891
+			],
+			"keeper_state": "counting",
+			"keeper_work": 4.00833333333332,
+			"kind": "keeper_hang",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "three real sign attachments",
+			"share_state": "idle",
+			"time": 4.90000000000003,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3750.0078125,
+				304.889221191406
+			],
+			"keeper_state": "watch",
+			"keeper_work": 6.0,
+			"kind": "keeper_hang",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "three real sign attachments",
+			"share_state": "idle",
+			"time": 7.76666666666684,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				2100.0,
+				410.0
+			],
+			"keeper_state": "aim",
+			"keeper_work": 0.00833333333333333,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "keeper window transition",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				2157.736328125,
+				445.284271240234
+			],
+			"keeper_state": "chase",
+			"keeper_work": 0.233333333333333,
+			"kind": "hit",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "keeper window transition",
+			"share_state": "idle",
+			"time": 1.05,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				2188.66796875,
+				464.186004638672
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.00833333333333333,
+			"kind": "keeper_count",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "keeper window transition",
+			"share_state": "idle",
+			"time": 1.18333333333333,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				2155.67431640625,
+				444.024139404297
+			],
+			"keeper_state": "chase",
+			"keeper_work": 0.225,
+			"kind": "hit",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "keeper window transition",
+			"share_state": "idle",
+			"time": 6.93333333333347,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				2188.66796875,
+				464.186004638672
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0,
+			"kind": "keeper_count",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "keeper window transition",
+			"share_state": "idle",
+			"time": 7.06666666666681,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				2100.0,
+				410.0
+			],
+			"keeper_state": "idle",
+			"keeper_work": 0.0,
+			"kind": "weather_warning",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "weather transitions and suspend",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "warning"
+		},
+		{
+			"keeper_pos": [
+				2100.0,
+				410.0
+			],
+			"keeper_state": "idle",
+			"keeper_work": 0.0,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "weather transitions and suspend",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "warning"
+		},
+		{
+			"keeper_pos": [
+				2100.0,
+				410.0
+			],
+			"keeper_state": "idle",
+			"keeper_work": 0.0,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "weather transitions and suspend",
+			"share_state": "idle",
+			"time": 2.43333333333333,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				2100.0,
+				410.0
+			],
+			"keeper_state": "idle",
+			"keeper_work": 0.0,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "weather transitions and suspend",
+			"share_state": "idle",
+			"time": 2.43333333333333,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0166666666666667,
+			"kind": "bird_greeting",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "observed source and bird",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0166666666666667,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "observed source and bird",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.0166666666666667,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "observed source and bird",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3539.9921875,
+				299.110778808594
+			],
+			"keeper_state": "counting",
+			"keeper_work": 0.7,
+			"kind": "source_observed",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 0.0,
+			"section": "observed source and bird",
+			"share_state": "idle",
+			"time": 0.7,
+			"weather": "dry"
+		},
+		{
+			"keeper_pos": [
+				3270.0,
+				630.0
+			],
+			"keeper_state": "settled",
+			"keeper_work": 2.4,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 2.4,
+			"section": "dance cancellation and commit",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3270.0,
+				630.0
+			],
+			"keeper_state": "settled",
+			"keeper_work": 2.4,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 2.4,
+			"section": "dance cancellation and commit",
+			"share_state": "idle",
+			"time": 0.0166666666666667,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3270.0,
+				630.0
+			],
+			"keeper_state": "settled",
+			"keeper_work": 2.4,
+			"kind": "checkpoint",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "play",
+			"result_elapsed": 2.4,
+			"section": "dance cancellation and commit",
+			"share_state": "idle",
+			"time": 0.0333333333333333,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3270.0,
+				630.0
+			],
+			"keeper_state": "settled",
+			"keeper_work": 2.4,
+			"kind": "dance_commit",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 1,
+			"mode": "play",
+			"result_elapsed": 2.4,
+			"section": "dance cancellation and commit",
+			"share_state": "dancing",
+			"time": 1.65,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3270.0,
+				630.0
+			],
+			"keeper_state": "settled",
+			"keeper_work": 2.4,
+			"kind": "listener_depart",
+			"listeners": [
+				[
+					3902.42236328125,
+					511.829345703125
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 1,
+			"mode": "play",
+			"result_elapsed": 2.4,
+			"section": "dance cancellation and commit",
+			"share_state": "dancing",
+			"time": 1.85,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3270.0,
+				630.0
+			],
+			"keeper_state": "settled",
+			"keeper_work": 2.4,
+			"kind": "listener_depart",
+			"listeners": [
+				[
+					3827.6708984375,
+					506.88037109375
+				],
+				[
+					3951.7158203125,
+					535.861267089844
+				]
+			],
+			"message_revision": 1,
+			"mode": "play",
+			"result_elapsed": 2.4,
+			"section": "dance cancellation and commit",
+			"share_state": "dancing",
+			"time": 2.33333333333333,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3245.0,
+				230.0
+			],
+			"keeper_state": "tidy",
+			"keeper_work": 0.6,
+			"kind": "keeper_lift",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "ending",
+			"result_elapsed": 0.6,
+			"section": "earned result continues after arrival",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "after"
+		},
+		{
+			"keeper_pos": [
+				3270.0,
+				630.0
+			],
+			"keeper_state": "settled",
+			"keeper_work": 6.69999999999998,
+			"kind": "keeper_place",
+			"listeners": [
+				[
+					3905.0,
+					512.0
+				],
+				[
+					3953.0,
+					536.0
+				]
+			],
+			"message_revision": 0,
+			"mode": "ending",
+			"result_elapsed": 2.4,
+			"section": "earned result continues after arrival",
+			"share_state": "idle",
+			"time": 0.0,
+			"weather": "after"
+		}
+	]
+}

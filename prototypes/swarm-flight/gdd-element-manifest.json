@@ -16456,10 +16456,15 @@
       "variants": [
         "默认；其它声明使用条件须逐项验收"
       ],
-      "source_files": [],
+      "source_files": [
+        "prototypes/swarm-flight/sound.gd",
+        "prototypes/swarm-flight/main.gd",
+        "prototypes/swarm-flight/spring_journey_model.gd",
+        "prototypes/swarm-flight/spring_journey_main.gd"
+      ],
       "source_symbols": [],
-      "implementation_status": "missing",
-      "implementation_note": "未在本次核查的当前飞行版实现中确认专用实现；旧工程不作为主线实现",
+      "implementation_status": "existing_partial",
+      "implementation_note": "2026-11-01池岸归途实际声音已接入；技术/有声录制见限定回执，主观试听未验，其它用途/全范围门禁不升级。",
       "bounds_and_anchors_to_verify": [
         "所列输入/状态转换、失败与返回路径",
         "真实目标设备、存储命名空间/内容版本或音频事件来源依本对象职责核对",
@@ -16491,9 +16496,16 @@
         }
       },
       "gaps": [
-        "缺专用实现与原生状态/组合证据"
+        "主观原生连续试听未验；其余全作使用条件/状态和G3仍待原Issue"
       ],
-      "asset_dependencies": []
+      "asset_dependencies": [],
+      "scoped_implementation": {
+        "scope": "pond journey actual events/loops only",
+        "evidence": [
+          "prototypes/swarm-flight/review-evidence/2026-11-01/pond-audio/receipt.json"
+        ],
+        "listening": "unverified; no audio-input capability in current agent"
+      }
     },
     {
       "id": "sound-npc",
@@ -16515,10 +16527,15 @@
       "variants": [
         "默认；其它声明使用条件须逐项验收"
       ],
-      "source_files": [],
+      "source_files": [
+        "prototypes/swarm-flight/sound.gd",
+        "prototypes/swarm-flight/main.gd",
+        "prototypes/swarm-flight/spring_journey_model.gd",
+        "prototypes/swarm-flight/spring_journey_main.gd"
+      ],
       "source_symbols": [],
-      "implementation_status": "missing",
-      "implementation_note": "未在本次核查的当前飞行版实现中确认专用实现；旧工程不作为主线实现",
+      "implementation_status": "existing_partial",
+      "implementation_note": "2026-11-01池岸归途实际声音已接入；技术/有声录制见限定回执，主观试听未验，其它用途/全范围门禁不升级。",
       "bounds_and_anchors_to_verify": [
         "所列输入/状态转换、失败与返回路径",
         "真实目标设备、存储命名空间/内容版本或音频事件来源依本对象职责核对",
@@ -16550,9 +16567,16 @@
         }
       },
       "gaps": [
-        "缺专用实现与原生状态/组合证据"
+        "主观原生连续试听未验；其余全作使用条件/状态和G3仍待原Issue"
       ],
-      "asset_dependencies": []
+      "asset_dependencies": [],
+      "scoped_implementation": {
+        "scope": "pond journey actual events/loops only",
+        "evidence": [
+          "prototypes/swarm-flight/review-evidence/2026-11-01/pond-audio/receipt.json"
+        ],
+        "listening": "unverified; no audio-input capability in current agent"
+      }
     },
     {
       "id": "sound-b01",
@@ -16574,10 +16598,15 @@
       "variants": [
         "默认；其它声明使用条件须逐项验收"
       ],
-      "source_files": [],
+      "source_files": [
+        "prototypes/swarm-flight/sound.gd",
+        "prototypes/swarm-flight/main.gd",
+        "prototypes/swarm-flight/spring_journey_model.gd",
+        "prototypes/swarm-flight/spring_journey_main.gd"
+      ],
       "source_symbols": [],
-      "implementation_status": "missing",
-      "implementation_note": "未在本次核查的当前飞行版实现中确认专用实现；旧工程不作为主线实现",
+      "implementation_status": "existing_partial",
+      "implementation_note": "2026-11-01池岸归途实际声音已接入；技术/有声录制见限定回执，主观试听未验，其它用途/全范围门禁不升级。",
       "bounds_and_anchors_to_verify": [
         "所列输入/状态转换、失败与返回路径",
         "真实目标设备、存储命名空间/内容版本或音频事件来源依本对象职责核对",
@@ -16609,9 +16638,16 @@
         }
       },
       "gaps": [
-        "缺专用实现与原生状态/组合证据"
+        "主观原生连续试听未验；其余全作使用条件/状态和G3仍待原Issue"
       ],
-      "asset_dependencies": []
+      "asset_dependencies": [],
+      "scoped_implementation": {
+        "scope": "pond journey actual events/loops only",
+        "evidence": [
+          "prototypes/swarm-flight/review-evidence/2026-11-01/pond-audio/receipt.json"
+        ],
+        "listening": "unverified; no audio-input capability in current agent"
+      }
     },
     {
       "id": "sound-b02",
@@ -16813,10 +16849,15 @@
       "variants": [
         "默认；其它声明使用条件须逐项验收"
       ],
-      "source_files": [],
+      "source_files": [
+        "prototypes/swarm-flight/sound.gd",
+        "prototypes/swarm-flight/main.gd",
+        "prototypes/swarm-flight/spring_journey_model.gd",
+        "prototypes/swarm-flight/spring_journey_main.gd"
+      ],
       "source_symbols": [],
-      "implementation_status": "missing",
-      "implementation_note": "未在本次核查的当前飞行版实现中确认专用实现；旧工程不作为主线实现",
+      "implementation_status": "existing_partial",
+      "implementation_note": "2026-11-01池岸归途实际声音已接入；技术/有声录制见限定回执，主观试听未验，其它用途/全范围门禁不升级。",
       "bounds_and_anchors_to_verify": [
         "所列输入/状态转换、失败与返回路径",
         "真实目标设备、存储命名空间/内容版本或音频事件来源依本对象职责核对",
@@ -16848,9 +16889,16 @@
         }
       },
       "gaps": [
-        "缺专用实现与原生状态/组合证据"
+        "主观原生连续试听未验；其余全作使用条件/状态和G3仍待原Issue"
       ],
-      "asset_dependencies": []
+      "asset_dependencies": [],
+      "scoped_implementation": {
+        "scope": "pond journey actual events/loops only",
+        "evidence": [
+          "prototypes/swarm-flight/review-evidence/2026-11-01/pond-audio/receipt.json"
+        ],
+        "listening": "unverified; no audio-input capability in current agent"
+      }
     },
     {
       "id": "pond-departure-purpose",
@@ -18417,6 +18465,86 @@
         "source_url": "https://www.forestry.gov.cn/c/www/dzw/658669.jhtml",
         "status": "candidate_for_late_winter_outdoor_context_pending"
       }
+    },
+    {
+      "id": "sound-source-observation",
+      "family": "E25",
+      "name": "亲自采食后的花源确认声",
+      "requirement_status": "required",
+      "design_sources": [
+        {
+          "path": "docs/design/swarm-flight-gdd.md",
+          "section": "7.8"
+        },
+        {
+          "path": "docs/design/swarm-flight-gdd.md",
+          "section": "9"
+        },
+        {
+          "path": "docs/design/swarm-flight-gdd.md",
+          "section": "13.6"
+        }
+      ],
+      "purpose_and_content_identity": "区分记住真实花源与露珠补给；短停、重复和恢复不补播",
+      "states": [
+        "首次采食确认",
+        "短停/重复静默",
+        "恢复不补播"
+      ],
+      "variants": [
+        "池岸归途单一蓝花；其它源未支持"
+      ],
+      "source_files": [
+        "prototypes/swarm-flight/sound.gd",
+        "prototypes/swarm-flight/main.gd",
+        "prototypes/swarm-flight/spring_journey_model.gd",
+        "prototypes/swarm-flight/spring_journey_main.gd"
+      ],
+      "source_symbols": [],
+      "implementation_status": "existing_partial",
+      "implementation_note": "2026-11-01池岸归途实际声音已接入；技术/有声录制见限定回执，主观试听未验，其它用途/全范围门禁不升级。",
+      "bounds_and_anchors_to_verify": [
+        "所列输入/状态转换、失败与返回路径",
+        "真实目标设备、存储命名空间/内容版本或音频事件来源依本对象职责核对",
+        "界面布局/音画时序/输入焦点或保存事务边界一致；不以单次函数调用代替完整流程"
+      ],
+      "combination_ids": [
+        "C06",
+        "C18"
+      ],
+      "depends_on_element_ids": [
+        "resource-observation"
+      ],
+      "issue": 219,
+      "gates": {
+        "G0": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G1": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G2": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G3": {
+          "status": "unchecked",
+          "evidence": []
+        }
+      },
+      "gaps": [
+        "主观原生连续试听未验；其余全作使用条件/状态和G3仍待原Issue"
+      ],
+      "asset_dependencies": [],
+      "scoped_implementation": {
+        "scope": "pond journey actual events/loops only",
+        "evidence": [
+          "prototypes/swarm-flight/review-evidence/2026-11-01/pond-audio/receipt.json"
+        ],
+        "listening": "unverified; no audio-input capability in current agent"
+      }
     }
   ],
   "combinations": [
@@ -18604,6 +18732,7 @@
         "plant-stem",
         "player-dance",
         "resource-observation",
+        "sound-source-observation",
         "source-directed-bee-flow",
         "updated-source-dance"
       ],
@@ -19014,6 +19143,7 @@
         "sound-rescue",
         "sound-shield",
         "sound-sneeze",
+        "sound-source-observation",
         "sound-weather",
         "stamina-hud",
         "success-feedback"
@@ -19251,23 +19381,23 @@
     "24关内容映射尚未完成，环境参考点不是24个成品关卡。"
   ],
   "statistics": {
-    "objects": 266,
-    "states": 1133,
+    "objects": 267,
+    "states": 1136,
     "families": 30,
     "requirement_status": {
-      "required": 249,
+      "required": 250,
       "decision_pending": 10,
       "optional": 7
     },
     "implementation_status": {
-      "existing_partial": 144,
-      "missing": 88,
+      "existing_partial": 149,
+      "missing": 84,
       "decision_pending": 34
     },
     "combinations": 24,
     "all_gates": "unchecked",
     "state_count_meaning": "每对象状态条目之和；不是已实现状态数或测试数量。",
-    "scoped_gate_note": "2行含静态绿色叶棚G0–G2限定证据；all_gates指全范围原门禁，仍unchecked；对象/状态总数不变。"
+    "scoped_gate_note": "原全范围门禁仍unchecked；绿色静态叶棚有两行限定G0–G2证据，池岸音频仅技术实现及原生录制，主观试听未验。2026-11-01补实际花源确认声ID，267对象/1136状态。"
   },
   "source_read_method": "工作树存在性检查 + git show 固定 main_baseline 内容/符号/哈希；排除主任务同时进行的未提交代码修改。",
   "design_constraints": [
@@ -19914,6 +20044,11 @@
       "batch": "2026-11-01-player-g0",
       "path": "prototypes/swarm-flight/review-evidence/2026-11-01/player-g0/receipt.json",
       "scope": "3player rows limited G0 evidence; all full-row gates/combinations unchanged; stale cancel feedback remains issue219"
+    },
+    {
+      "batch": "2026-11-01-pond-audio",
+      "path": "prototypes/swarm-flight/review-evidence/2026-11-01/pond-audio/receipt.json",
+      "scope": "actual sound source/route technical implementation and native mixed output; subjective listening and full gates not signed; add explicit source observation sound dependency"
     }
   ]
 }
