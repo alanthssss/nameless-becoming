@@ -14,6 +14,10 @@
 - Preserve unrelated working-tree changes.
 - Run the checks appropriate to the change. At minimum, run `git diff --check` for documentation-only work; report any check that cannot run locally and rely on CI only when clearly stated.
 
+## Player-facing project language
+
+- Alan clarified on 2026-11-01 that internal chapter ranges are not understandable progress concepts. Call the current playable journey “池岸归途”: leave the pond, choose a route through rain, help the neighbor, and return to the hive. Describe what the player can do, what remains unfinished, and what separates it from the full24-level release. Keep chapter numbers only as implementation references or dated history, not as the user-facing deliverable name.
+
 ## Decision records
 
 - Substantial conclusions about game design, market positioning, production scope, release readiness, monetization, playtesting, or schedule must be written into the repository during the same task, not left only in chat.
