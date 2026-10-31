@@ -1,23 +1,11 @@
 name: Flower Step prototype
 
 on:
-  pull_request:
-    paths:
-      - 'prototypes/flower-step/**'
-      - '.github/workflows/flower-step.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'prototypes/flower-step/**'
-      - '.github/workflows/flower-step.yml'
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: flower-step-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   verify:

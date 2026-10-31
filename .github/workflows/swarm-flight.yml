@@ -1,41 +1,11 @@
 name: Swarm Flight prototype
 
 on:
-  pull_request:
-    paths:
-      - 'prototypes/swarm-flight/**'
-      - 'scripts/check_swarm_regressions.py'
-      - 'scripts/check_swarm_supply_regressions.py'
-      - 'tests/test_swarm_regressions.py'
-      - 'tools/check_delivery.py'
-      - 'tools/spring_review_gate.py'
-      - 'tools/package_spring_review.py'
-      - 'tests/test_spring_review_gate.py'
-      - 'tests/test_spring_package.py'
-      - 'tests/test_delivery_gate.py'
-      - '.github/workflows/swarm-flight.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'prototypes/swarm-flight/**'
-      - 'scripts/check_swarm_regressions.py'
-      - 'scripts/check_swarm_supply_regressions.py'
-      - 'tests/test_swarm_regressions.py'
-      - 'tools/check_delivery.py'
-      - 'tools/spring_review_gate.py'
-      - 'tools/package_spring_review.py'
-      - 'tests/test_spring_review_gate.py'
-      - 'tests/test_spring_package.py'
-      - 'tests/test_delivery_gate.py'
-      - '.github/workflows/swarm-flight.yml'
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: swarm-flight-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   checks:

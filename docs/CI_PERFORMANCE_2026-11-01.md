@@ -44,3 +44,57 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 本地验证覆盖 YAML/Actions 语法、原步骤内容等价与每项恰好执行一次、汇总门禁拒绝非成功状态、既有 CI 分类和差异格式；独立只读复核及 PR/main 的完整执行链接与实际时长回写 [#239](https://github.com/alanthssss/nameless-becoming/issues/239)。完整引擎测试以真实 CI 为准，不以静态检查替代。
 
 调查 Issue 于 2026-11-01 01:25:38 开工，实施 Issue 于 01:26:06 开工（北京时间），此前定位阶段的主动时长覆盖不完整；收口时间与外部 CI 等待按 GitHub 事件记录。此维护只缩短工程反馈，不改变玩法、玩家证据或产品 G 门禁；新采购 0，Actions 实际费用、历史累计和可靠剩余工时未知，200＋40 小时控制不变。自动接续保持暂停。
+
+
+<a id="trigger-contract"></a>
+## 第二轮：触发条件、实际依赖与放行合同
+
+用户随后要求仔细分析和优化触发条件，仍沿用 #238 / #239；首轮并行数据保持历史有效。本节为当前触发规则，替代首轮各原型单独用 `paths` 过滤的入口。Codex负责有限工程决定及验证，不改产品Now、玩法或发布范围。
+
+### 已证实问题与预防措施
+
+| 原问题 | 证据/后果 | 修正 |
+| --- | --- | --- |
+| CI自己改了却只跑轻量检查 | `quality.yml`原被分类为全部false；修改引擎下载/测试/导出步骤时，对应job根本不执行 | 入口、分类器、总门禁及其测试改动强制全选；每次scope校验全部workflow语法 |
+| Swarm独立输入误选旧游戏/Web | 供给回归脚本、两个spring工具、两个spring测试未列入豁免，实际同时触发两套系统 | 单一分类器统一Swarm依赖，无第二份workflow路径清单 |
+| main复跑与README不一致 | Quality只接PR/手动；原scope只在PR分支读取diff，直接增加push仍会全部重跑 | 增加main push并解析完整 `before..sha`；PR按merge-base三点diff；异常历史保守全选 |
+| Node实际输入漏选 | 音频哈希/字节、游戏文案/素材合同读取Godot资源和脚本，但原分类只跑引擎 | 共享资产/脚本/字体/世界/数据同时选Web与完整Godot，不因此自动导出 |
+| Markdown被一概忽略 | 文案测试读取README、marketing和Steam文档；材料测试读取设计/素材登记 | 明确content输入，单独运行现有两组Node合同，无需npm安装或构建；已选Web时由Web内相同测试覆盖，避免重复 |
+| 存在永不执行的测试 | `prepare-web-export.test.mjs`未在任何npm或workflow测试入口 | 接入现有 `npm test`；仅新增执行既有2个WASM备份/失败保留测试 |
+| 恢复main差异路由时需避免跨提交取消（预防设计） | 若新入口仍沿用main ref并发，后续文档push可能取消前一代码验证；旧Quality没有push，不能列作旧版已复现故障 | 主线并发按提交SHA隔离，不取消不同提交；仅PR按编号取消被替代的版本 |
+| 路径过滤与汇总缺乏统一合同 | 独立workflow的paths与分类器容易漂移；被整条跳过的workflow不产生可用required结果 | Quality作为唯一自动入口，原型使用同一revision的本地reusable调用；总门禁始终检查scope及所有选择结果 |
+
+这些结论来自实际单路径分类复现、源码依赖读取和独立复核。required-check的Pending风险为条件性问题：远端分支保护接口403，未声称本仓库已经被它阻塞。[GitHub说明](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)区分workflow未触发、条件跳过和上游失败；因此不能把skipped一概当作测试通过。
+
+### 事件与分支规则
+
+| 事件 | 检查范围 | 取消/发布行为 |
+| --- | --- | --- |
+| PR opened / synchronize / reopened | 完整PR差异，按merge-base分类，包含删除与重命名两端 | 同PR新运行可取消旧运行；草稿PR也验证，不隐藏失败 |
+| PR edited | 重新计算完整PR差异，覆盖改目标分支 | 标题/正文编辑也保守复跑；不以跳过同名门禁来掩盖该SHA先前失败 |
+| main push | 完整before→after变化；多提交push不只看最后一项 | 各SHA独立完成，后续文档push不取消代码检查 |
+| Quality workflow_dispatch | 所有现有自动检查 | 独立于自动运行；不产生桌面包、不发布 |
+| merge_group checks_requested | 全量检查合并组 | 已准备事件支持；未启用或声称已验证远端merge queue设置 |
+| 单个原型workflow_dispatch | 该原型完整测试 | 保留诊断入口；不能代替PR所需检查的真实pull_request运行 |
+| Desktop client builds手动 | 原有版本校验、双平台构建及其现有门禁 | 未改：publish默认false，仅显式选择且main才能发布；自动CI不会调用它 |
+
+同名手动原型工作流不再另接PR/push，避免Quality调用之外再跑一遍。三个原型的原测试jobs逐字段保留，Swarm继续三组并行。reusable内部检查在UI中带调用方前缀，Quality顶层另保留旧 `Swarm Flight rules and complete routes` 名称；综合检查为 `CI required checks`。若将来启用保护，应选择总门禁并核对实际远端配置，不能用分支名或本地文档代替启用。
+
+### 路径与失败边界
+
+- 普通 `docs/*.md` 等说明：scope和两个结果门禁；README、marketing、现有材料allowlist为content例外。
+- `prototypes/swarm-flight/**`及其风/供给/交付/spring工具与测试：只选Swarm；Flower/Garden各选对应原型。**不整目录排除review-evidence**：叶棚测试确实读取其中旧存档JSON。
+- Godot路线输入：路线套件；共享源码/素材/字体/世界/数据：Web＋完整Godot；正式工程/导出/打包依赖：再加clean Web candidate。`package.json`也控制Godot命令和构建，因此走旧工程完整路径。
+- 混合改动取检查并集，不采用首个匹配文件的结果。未知目录/脚本/工作流、无差异、无效SHA、缺失历史和无法比较的PR：全部选中。
+- 变更路径用Git完整本地差异、NUL分隔和`--no-renames`，不依赖截断文件清单；换行、空格和跨目录重命名不会伪造或漏掉路径。空白错误让scope失败。
+- 总门禁先要求scope成功，所有布尔输出严格为`true`/`false`、suite合法；已选检查必须success，未选检查必须skipped。缺结果、取消、失败、意外跳过/意外执行、导出前置不满足一律拒绝。content已被Web覆盖时才明确允许跳过。
+
+本轮没有进一步按函数或素材名拆Swarm三组：源码/保存/绘制互相依赖，当前证据不足以安全减少组数。保留main安全复跑；使用cache、缩短模拟时间、跳过mutation baseline均不是本轮提速手段。
+
+### 验证与取舍
+
+定向测试使用真实临时Git仓库覆盖PR分叉、多提交push、删除、跨项目重命名、350个文档加运行文件、空格/换行文件名、无共同祖先、无效/零SHA、空diff和空白错误；结果合同覆盖选择/跳过/失败/取消/缺输出/非法值/导出前置。Actionlint固定v1.7.12及官方Linux归档SHA-256；原型测试jobs与前版逐字段相等。已有content/导出测试本地16项通过。
+
+新增轻量scope测试/语法检查和总门禁有调度成本；CI自身改动会有意运行完整旧工程和三个原型，不能将这一全量耗时当作普通Swarm改动的耗时回退。普通Swarm改动不再带起无关旧Web/导出；普通文档不会为了触发而启动引擎。完整PR/main运行、实际结果与收口时间在#239回写，未运行的路径不得写成远端通过。
+
+本轮只是CI维护；所有测试是开发者自动检查，无新增游戏体验证据。无采购；执行区间、CI等待、累计/剩余工时及账单保持分别记录，历史不可核算项不填零。200＋40小时不变，自动接续仍暂停。出现新输入依赖、工作流/测试新增或路径改名时，同时更新此合同及分类测试；回退本轮聚焦PR可恢复上一版入口。

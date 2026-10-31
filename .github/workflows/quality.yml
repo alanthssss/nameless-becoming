@@ -2,11 +2,20 @@ name: Quality gates
 
 on:
   pull_request:
+    # Include retargeting. Other PR edits conservatively rerun the same scope;
+    # a skipped same-SHA check must not overwrite an earlier failed gate.
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 concurrency:
-  group: quality-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  # New PR commits supersede old PR checks. Main commits are independent:
+  # a docs-only push must not cancel tests required by the previous push.
+  group: quality-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -14,12 +23,17 @@ permissions:
 jobs:
   scope:
     name: Change scope and lightweight CI checks
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
       web: ${{ steps.changes.outputs.web }}
       godot: ${{ steps.changes.outputs.godot }}
       export_game: ${{ steps.changes.outputs.export_game }}
       godot_suite: ${{ steps.changes.outputs.godot_suite }}
+      swarm: ${{ steps.changes.outputs.swarm }}
+      flower: ${{ steps.changes.outputs.flower }}
+      garden: ${{ steps.changes.outputs.garden }}
+      content: ${{ steps.changes.outputs.content }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,33 +50,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          bash -n scripts/classify_ci_changes.sh
+          bash -n scripts/classify_ci_changes.sh scripts/ci_scope.sh scripts/lint_workflows.sh
           bash tests/ci-scope.test.sh
-
-          zero_sha=0000000000000000000000000000000000000000
-          if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            base_sha="$PR_BASE_SHA"
-            head_sha="$PR_HEAD_SHA"
-            diff_spec="$base_sha...$head_sha"
-          else
-            base_sha="$PUSH_BEFORE_SHA"
-            head_sha="$CURRENT_SHA"
-            diff_spec="$base_sha..$head_sha"
-          fi
-
-          classified=$(bash scripts/classify_ci_changes.sh </dev/null)
-          if [[ "$EVENT_NAME" == "pull_request" ]] && git cat-file -e "$base_sha^{commit}" && git cat-file -e "$head_sha^{commit}"; then
-            classified=$(git diff --name-only -z --no-renames "$diff_spec" | bash scripts/classify_ci_changes.sh)
-            git diff --check "$diff_spec"
-          else
-            # Manual integration runs cover all jobs; unknown history stays broad.
-            git show --check --format= "$head_sha"
-          fi
+          python3 -B -m unittest discover -s tests -p test_ci_routing.py
+          bash scripts/lint_workflows.sh
+          classified=$(bash scripts/ci_scope.sh)
           printf '%s\n' "$classified" >> "$GITHUB_OUTPUT"
           printf 'Selected checks:\n```\n%s\n```\n' "$classified" >> "$GITHUB_STEP_SUMMARY"
 
   web:
     name: Web build, tests and lint
+    timeout-minutes: 15
     needs: scope
     if: ${{ needs.scope.outputs.web == 'true' }}
     runs-on: ubuntu-latest
@@ -162,3 +160,61 @@ jobs:
           test -s dist/server/index.js
       # Daily CI validates the export without retaining a candidate download.
       # Create shareable packages only through an explicitly requested build.
+
+  content:
+    name: Document and material contracts
+    needs: scope
+    if: ${{ needs.scope.outputs.content == 'true' && needs.scope.outputs.web != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+      - run: node --test tests/commercial-outward-copy.test.mjs tests/art-review.test.mjs
+
+  swarm:
+    name: Swarm Flight
+    needs: scope
+    if: ${{ needs.scope.outputs.swarm == 'true' }}
+    uses: ./.github/workflows/swarm-flight.yml
+
+  flower:
+    name: Flower Step
+    needs: scope
+    if: ${{ needs.scope.outputs.flower == 'true' }}
+    uses: ./.github/workflows/flower-step.yml
+
+  garden:
+    name: Garden Puzzles
+    needs: scope
+    if: ${{ needs.scope.outputs.garden == 'true' }}
+    uses: ./.github/workflows/garden-puzzles.yml
+
+  required:
+    name: CI required checks
+    needs: [scope, web, godot, web-candidate, content, swarm, flower, garden]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require success for every selected check
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: python3 -B scripts/check_ci_results.py
+
+  swarm-gate:
+    # Keep the original top-level check name for existing check consumers.
+    name: Swarm Flight rules and complete routes
+    needs: [scope, swarm]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require the selected Swarm Flight suite
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: python3 -B scripts/check_ci_results.py --only swarm
