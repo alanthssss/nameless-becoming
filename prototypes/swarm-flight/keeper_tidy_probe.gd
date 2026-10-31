@@ -35,7 +35,7 @@ func run() -> void:
 	m.front_open=true
 	m.passage_open=true
 	m.wall_at(2350).broken=true
-	m.wall_at(3000).broken=true
+	m.wall_at(Model.BACK_WALL_X).broken=true
 	m.keeper=Model.actor(Model.KEEPER_HOME)
 	m.keeper.state="tidy"
 	m.keeper.target=Model.TIDY_APPROACH[0]

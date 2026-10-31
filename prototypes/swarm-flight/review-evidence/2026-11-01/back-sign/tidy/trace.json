@@ -1,0 +1,5433 @@
+{
+	"captures": [
+		"01-approach",
+		"02-inspect-hook",
+		"03-carry",
+		"04-carry-near-exit-camera",
+		"05-place",
+		"06-settled"
+	],
+	"frames": [
+		{
+			"camera_x": 1627.4462890625,
+			"elapsed": 0.0,
+			"frame": 0,
+			"keeper": [
+				2107.4462890625,
+				412.925170898438
+			],
+			"sign": [
+				3133.0234375,
+				298.799713134766
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1634.892578125,
+			"elapsed": 0.0,
+			"frame": 1,
+			"keeper": [
+				2114.892578125,
+				415.850372314453
+			],
+			"sign": [
+				3138.44580078125,
+				295.582977294922
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1642.3388671875,
+			"elapsed": 0.0,
+			"frame": 2,
+			"keeper": [
+				2122.3388671875,
+				418.775665283203
+			],
+			"sign": [
+				3146.29638671875,
+				290.925933837891
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1649.78515625,
+			"elapsed": 0.0,
+			"frame": 3,
+			"keeper": [
+				2129.78515625,
+				421.700958251953
+			],
+			"sign": [
+				3155.603515625,
+				285.404663085938
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1657.2314453125,
+			"elapsed": 0.0,
+			"frame": 4,
+			"keeper": [
+				2137.2314453125,
+				424.626251220703
+			],
+			"sign": [
+				3165.396484375,
+				279.595336914062
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1664.677734375,
+			"elapsed": 0.0,
+			"frame": 5,
+			"keeper": [
+				2144.677734375,
+				427.551544189453
+			],
+			"sign": [
+				3174.70361328125,
+				274.074066162109
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1672.1240234375,
+			"elapsed": 0.0,
+			"frame": 6,
+			"keeper": [
+				2152.1240234375,
+				430.476837158203
+			],
+			"sign": [
+				3182.55419921875,
+				269.417022705078
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1679.5703125,
+			"elapsed": 0.0,
+			"frame": 7,
+			"keeper": [
+				2159.5703125,
+				433.402130126953
+			],
+			"sign": [
+				3187.9765625,
+				266.200286865234
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1687.0166015625,
+			"elapsed": 0.0,
+			"frame": 8,
+			"keeper": [
+				2167.0166015625,
+				436.327423095703
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1694.462890625,
+			"elapsed": 0.0,
+			"frame": 9,
+			"keeper": [
+				2174.462890625,
+				439.252716064453
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1701.9091796875,
+			"elapsed": 0.0,
+			"frame": 10,
+			"keeper": [
+				2181.9091796875,
+				442.178009033203
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1709.35546875,
+			"elapsed": 0.0,
+			"frame": 11,
+			"keeper": [
+				2189.35546875,
+				445.103302001953
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1716.8017578125,
+			"elapsed": 0.0,
+			"frame": 12,
+			"keeper": [
+				2196.8017578125,
+				448.028594970703
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1724.248046875,
+			"elapsed": 0.0,
+			"frame": 13,
+			"keeper": [
+				2204.248046875,
+				450.953887939453
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1731.6943359375,
+			"elapsed": 0.0,
+			"frame": 14,
+			"keeper": [
+				2211.6943359375,
+				453.879272460938
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1739.140625,
+			"elapsed": 0.0,
+			"frame": 15,
+			"keeper": [
+				2219.140625,
+				456.8046875
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1746.5869140625,
+			"elapsed": 0.0,
+			"frame": 16,
+			"keeper": [
+				2226.5869140625,
+				459.730102539062
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1754.033203125,
+			"elapsed": 0.0,
+			"frame": 17,
+			"keeper": [
+				2234.033203125,
+				462.655578613281
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1760.0,
+			"elapsed": 0.0,
+			"frame": 18,
+			"keeper": [
+				2240.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1766.0,
+			"elapsed": 0.0,
+			"frame": 19,
+			"keeper": [
+				2246.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1774.0,
+			"elapsed": 0.0,
+			"frame": 20,
+			"keeper": [
+				2254.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1782.0,
+			"elapsed": 0.0,
+			"frame": 21,
+			"keeper": [
+				2262.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1790.0,
+			"elapsed": 0.0,
+			"frame": 22,
+			"keeper": [
+				2270.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1798.0,
+			"elapsed": 0.0,
+			"frame": 23,
+			"keeper": [
+				2278.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1806.0,
+			"elapsed": 0.0,
+			"frame": 24,
+			"keeper": [
+				2286.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1814.0,
+			"elapsed": 0.0,
+			"frame": 25,
+			"keeper": [
+				2294.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1822.0,
+			"elapsed": 0.0,
+			"frame": 26,
+			"keeper": [
+				2302.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1830.0,
+			"elapsed": 0.0,
+			"frame": 27,
+			"keeper": [
+				2310.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1838.0,
+			"elapsed": 0.0,
+			"frame": 28,
+			"keeper": [
+				2318.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1846.0,
+			"elapsed": 0.0,
+			"frame": 29,
+			"keeper": [
+				2326.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1854.0,
+			"elapsed": 0.0,
+			"frame": 30,
+			"keeper": [
+				2334.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1862.0,
+			"elapsed": 0.0,
+			"frame": 31,
+			"keeper": [
+				2342.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1870.0,
+			"elapsed": 0.0,
+			"frame": 32,
+			"keeper": [
+				2350.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1878.0,
+			"elapsed": 0.0,
+			"frame": 33,
+			"keeper": [
+				2358.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1886.0,
+			"elapsed": 0.0,
+			"frame": 34,
+			"keeper": [
+				2366.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1894.0,
+			"elapsed": 0.0,
+			"frame": 35,
+			"keeper": [
+				2374.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1902.0,
+			"elapsed": 0.0,
+			"frame": 36,
+			"keeper": [
+				2382.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1910.0,
+			"elapsed": 0.0,
+			"frame": 37,
+			"keeper": [
+				2390.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1918.0,
+			"elapsed": 0.0,
+			"frame": 38,
+			"keeper": [
+				2398.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1926.0,
+			"elapsed": 0.0,
+			"frame": 39,
+			"keeper": [
+				2406.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1934.0,
+			"elapsed": 0.0,
+			"frame": 40,
+			"keeper": [
+				2414.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1942.0,
+			"elapsed": 0.0,
+			"frame": 41,
+			"keeper": [
+				2422.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1950.0,
+			"elapsed": 0.0,
+			"frame": 42,
+			"keeper": [
+				2430.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1958.0,
+			"elapsed": 0.0,
+			"frame": 43,
+			"keeper": [
+				2438.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1966.0,
+			"elapsed": 0.0,
+			"frame": 44,
+			"keeper": [
+				2446.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1974.0,
+			"elapsed": 0.0,
+			"frame": 45,
+			"keeper": [
+				2454.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1982.0,
+			"elapsed": 0.0,
+			"frame": 46,
+			"keeper": [
+				2462.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1990.0,
+			"elapsed": 0.0,
+			"frame": 47,
+			"keeper": [
+				2470.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 1998.0,
+			"elapsed": 0.0,
+			"frame": 48,
+			"keeper": [
+				2478.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2006.0,
+			"elapsed": 0.0,
+			"frame": 49,
+			"keeper": [
+				2486.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2014.0,
+			"elapsed": 0.0,
+			"frame": 50,
+			"keeper": [
+				2494.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2022.0,
+			"elapsed": 0.0,
+			"frame": 51,
+			"keeper": [
+				2502.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2030.0,
+			"elapsed": 0.0,
+			"frame": 52,
+			"keeper": [
+				2510.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2038.0,
+			"elapsed": 0.0,
+			"frame": 53,
+			"keeper": [
+				2518.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2046.0,
+			"elapsed": 0.0,
+			"frame": 54,
+			"keeper": [
+				2526.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2054.0,
+			"elapsed": 0.0,
+			"frame": 55,
+			"keeper": [
+				2534.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2062.0,
+			"elapsed": 0.0,
+			"frame": 56,
+			"keeper": [
+				2542.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2070.0,
+			"elapsed": 0.0,
+			"frame": 57,
+			"keeper": [
+				2550.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2078.0,
+			"elapsed": 0.0,
+			"frame": 58,
+			"keeper": [
+				2558.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2086.0,
+			"elapsed": 0.0,
+			"frame": 59,
+			"keeper": [
+				2566.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2094.0,
+			"elapsed": 0.0,
+			"frame": 60,
+			"keeper": [
+				2574.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2102.0,
+			"elapsed": 0.0,
+			"frame": 61,
+			"keeper": [
+				2582.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2110.0,
+			"elapsed": 0.0,
+			"frame": 62,
+			"keeper": [
+				2590.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2118.0,
+			"elapsed": 0.0,
+			"frame": 63,
+			"keeper": [
+				2598.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2126.0,
+			"elapsed": 0.0,
+			"frame": 64,
+			"keeper": [
+				2606.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2134.0,
+			"elapsed": 0.0,
+			"frame": 65,
+			"keeper": [
+				2614.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2142.0,
+			"elapsed": 0.0,
+			"frame": 66,
+			"keeper": [
+				2622.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2150.0,
+			"elapsed": 0.0,
+			"frame": 67,
+			"keeper": [
+				2630.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2158.0,
+			"elapsed": 0.0,
+			"frame": 68,
+			"keeper": [
+				2638.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2166.0,
+			"elapsed": 0.0,
+			"frame": 69,
+			"keeper": [
+				2646.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2174.0,
+			"elapsed": 0.0,
+			"frame": 70,
+			"keeper": [
+				2654.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2182.0,
+			"elapsed": 0.0,
+			"frame": 71,
+			"keeper": [
+				2662.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2190.0,
+			"elapsed": 0.0,
+			"frame": 72,
+			"keeper": [
+				2670.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2198.0,
+			"elapsed": 0.0,
+			"frame": 73,
+			"keeper": [
+				2678.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2206.0,
+			"elapsed": 0.0,
+			"frame": 74,
+			"keeper": [
+				2686.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2214.0,
+			"elapsed": 0.0,
+			"frame": 75,
+			"keeper": [
+				2694.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2222.0,
+			"elapsed": 0.0,
+			"frame": 76,
+			"keeper": [
+				2702.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2230.0,
+			"elapsed": 0.0,
+			"frame": 77,
+			"keeper": [
+				2710.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2238.0,
+			"elapsed": 0.0,
+			"frame": 78,
+			"keeper": [
+				2718.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2246.0,
+			"elapsed": 0.0,
+			"frame": 79,
+			"keeper": [
+				2726.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2254.0,
+			"elapsed": 0.0,
+			"frame": 80,
+			"keeper": [
+				2734.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 81,
+			"keeper": [
+				2740.0,
+				465.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 82,
+			"keeper": [
+				2740.0,
+				457.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 83,
+			"keeper": [
+				2740.0,
+				449.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 84,
+			"keeper": [
+				2740.0,
+				441.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 85,
+			"keeper": [
+				2740.0,
+				433.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 86,
+			"keeper": [
+				2740.0,
+				425.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 87,
+			"keeper": [
+				2740.0,
+				417.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 88,
+			"keeper": [
+				2740.0,
+				409.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 89,
+			"keeper": [
+				2740.0,
+				401.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 90,
+			"keeper": [
+				2740.0,
+				393.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 91,
+			"keeper": [
+				2740.0,
+				385.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 92,
+			"keeper": [
+				2740.0,
+				377.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 93,
+			"keeper": [
+				2740.0,
+				369.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 94,
+			"keeper": [
+				2740.0,
+				361.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 95,
+			"keeper": [
+				2740.0,
+				353.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 96,
+			"keeper": [
+				2740.0,
+				345.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 97,
+			"keeper": [
+				2740.0,
+				337.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 98,
+			"keeper": [
+				2740.0,
+				329.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 99,
+			"keeper": [
+				2740.0,
+				321.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 100,
+			"keeper": [
+				2740.0,
+				313.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 101,
+			"keeper": [
+				2740.0,
+				305.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 102,
+			"keeper": [
+				2740.0,
+				297.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 103,
+			"keeper": [
+				2740.0,
+				289.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 104,
+			"keeper": [
+				2740.0,
+				281.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 105,
+			"keeper": [
+				2740.0,
+				273.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 106,
+			"keeper": [
+				2740.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 107,
+			"keeper": [
+				2740.0,
+				257.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 108,
+			"keeper": [
+				2740.0,
+				249.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 109,
+			"keeper": [
+				2740.0,
+				241.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 110,
+			"keeper": [
+				2740.0,
+				233.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 111,
+			"keeper": [
+				2740.0,
+				225.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2260.0,
+			"elapsed": 0.0,
+			"frame": 112,
+			"keeper": [
+				2740.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2268.0,
+			"elapsed": 0.0,
+			"frame": 113,
+			"keeper": [
+				2748.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2276.0,
+			"elapsed": 0.0,
+			"frame": 114,
+			"keeper": [
+				2756.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2284.0,
+			"elapsed": 0.0,
+			"frame": 115,
+			"keeper": [
+				2764.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2292.0,
+			"elapsed": 0.0,
+			"frame": 116,
+			"keeper": [
+				2772.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2300.0,
+			"elapsed": 0.0,
+			"frame": 117,
+			"keeper": [
+				2780.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2308.0,
+			"elapsed": 0.0,
+			"frame": 118,
+			"keeper": [
+				2788.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2316.0,
+			"elapsed": 0.0,
+			"frame": 119,
+			"keeper": [
+				2796.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2324.0,
+			"elapsed": 0.0,
+			"frame": 120,
+			"keeper": [
+				2804.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2332.0,
+			"elapsed": 0.0,
+			"frame": 121,
+			"keeper": [
+				2812.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2340.0,
+			"elapsed": 0.0,
+			"frame": 122,
+			"keeper": [
+				2820.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2348.0,
+			"elapsed": 0.0,
+			"frame": 123,
+			"keeper": [
+				2828.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2356.0,
+			"elapsed": 0.0,
+			"frame": 124,
+			"keeper": [
+				2836.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2364.0,
+			"elapsed": 0.0,
+			"frame": 125,
+			"keeper": [
+				2844.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2372.0,
+			"elapsed": 0.0,
+			"frame": 126,
+			"keeper": [
+				2852.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2380.0,
+			"elapsed": 0.0,
+			"frame": 127,
+			"keeper": [
+				2860.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2388.0,
+			"elapsed": 0.0,
+			"frame": 128,
+			"keeper": [
+				2868.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2396.0,
+			"elapsed": 0.0,
+			"frame": 129,
+			"keeper": [
+				2876.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2404.0,
+			"elapsed": 0.0,
+			"frame": 130,
+			"keeper": [
+				2884.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2412.0,
+			"elapsed": 0.0,
+			"frame": 131,
+			"keeper": [
+				2892.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2420.0,
+			"elapsed": 0.0,
+			"frame": 132,
+			"keeper": [
+				2900.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2428.0,
+			"elapsed": 0.0,
+			"frame": 133,
+			"keeper": [
+				2908.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2436.0,
+			"elapsed": 0.0,
+			"frame": 134,
+			"keeper": [
+				2916.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2444.0,
+			"elapsed": 0.0,
+			"frame": 135,
+			"keeper": [
+				2924.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2452.0,
+			"elapsed": 0.0,
+			"frame": 136,
+			"keeper": [
+				2932.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2460.0,
+			"elapsed": 0.0,
+			"frame": 137,
+			"keeper": [
+				2940.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2468.0,
+			"elapsed": 0.0,
+			"frame": 138,
+			"keeper": [
+				2948.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2476.0,
+			"elapsed": 0.0,
+			"frame": 139,
+			"keeper": [
+				2956.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2484.0,
+			"elapsed": 0.0,
+			"frame": 140,
+			"keeper": [
+				2964.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2492.0,
+			"elapsed": 0.0,
+			"frame": 141,
+			"keeper": [
+				2972.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2500.0,
+			"elapsed": 0.0,
+			"frame": 142,
+			"keeper": [
+				2980.0,
+				220.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2500.0,
+			"elapsed": 0.0,
+			"frame": 143,
+			"keeper": [
+				2980.0,
+				226.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2500.0,
+			"elapsed": 0.0,
+			"frame": 144,
+			"keeper": [
+				2980.0,
+				234.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2500.0,
+			"elapsed": 0.0,
+			"frame": 145,
+			"keeper": [
+				2980.0,
+				242.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2500.0,
+			"elapsed": 0.0,
+			"frame": 146,
+			"keeper": [
+				2980.0,
+				250.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2500.0,
+			"elapsed": 0.0,
+			"frame": 147,
+			"keeper": [
+				2980.0,
+				258.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2500.0,
+			"elapsed": 0.0,
+			"frame": 148,
+			"keeper": [
+				2980.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2506.0,
+			"elapsed": 0.0,
+			"frame": 149,
+			"keeper": [
+				2986.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2514.0,
+			"elapsed": 0.0,
+			"frame": 150,
+			"keeper": [
+				2994.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2522.0,
+			"elapsed": 0.0,
+			"frame": 151,
+			"keeper": [
+				3002.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2530.0,
+			"elapsed": 0.0,
+			"frame": 152,
+			"keeper": [
+				3010.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2538.0,
+			"elapsed": 0.0,
+			"frame": 153,
+			"keeper": [
+				3018.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2546.0,
+			"elapsed": 0.0,
+			"frame": 154,
+			"keeper": [
+				3026.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2554.0,
+			"elapsed": 0.0,
+			"frame": 155,
+			"keeper": [
+				3034.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2562.0,
+			"elapsed": 0.0,
+			"frame": 156,
+			"keeper": [
+				3042.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2570.0,
+			"elapsed": 0.0,
+			"frame": 157,
+			"keeper": [
+				3050.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2578.0,
+			"elapsed": 0.0,
+			"frame": 158,
+			"keeper": [
+				3058.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2586.0,
+			"elapsed": 0.0,
+			"frame": 159,
+			"keeper": [
+				3066.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2594.0,
+			"elapsed": 0.0,
+			"frame": 160,
+			"keeper": [
+				3074.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2602.0,
+			"elapsed": 0.0,
+			"frame": 161,
+			"keeper": [
+				3082.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2610.0,
+			"elapsed": 0.0,
+			"frame": 162,
+			"keeper": [
+				3090.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2618.0,
+			"elapsed": 0.0,
+			"frame": 163,
+			"keeper": [
+				3098.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2626.0,
+			"elapsed": 0.0,
+			"frame": 164,
+			"keeper": [
+				3106.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2634.0,
+			"elapsed": 0.0,
+			"frame": 165,
+			"keeper": [
+				3114.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2642.0,
+			"elapsed": 0.0,
+			"frame": 166,
+			"keeper": [
+				3122.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2650.0,
+			"elapsed": 0.0,
+			"frame": 167,
+			"keeper": [
+				3130.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2658.0,
+			"elapsed": 0.0,
+			"frame": 168,
+			"keeper": [
+				3138.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2666.0,
+			"elapsed": 0.0,
+			"frame": 169,
+			"keeper": [
+				3146.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2674.0,
+			"elapsed": 0.0,
+			"frame": 170,
+			"keeper": [
+				3154.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2682.0,
+			"elapsed": 0.0,
+			"frame": 171,
+			"keeper": [
+				3162.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2690.0,
+			"elapsed": 0.0,
+			"frame": 172,
+			"keeper": [
+				3170.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2698.0,
+			"elapsed": 0.0,
+			"frame": 173,
+			"keeper": [
+				3178.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2706.0,
+			"elapsed": 0.0,
+			"frame": 174,
+			"keeper": [
+				3186.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2714.0,
+			"elapsed": 0.0,
+			"frame": 175,
+			"keeper": [
+				3194.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2722.0,
+			"elapsed": 0.0,
+			"frame": 176,
+			"keeper": [
+				3202.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2730.0,
+			"elapsed": 0.0,
+			"frame": 177,
+			"keeper": [
+				3210.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2738.0,
+			"elapsed": 0.0,
+			"frame": 178,
+			"keeper": [
+				3218.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2746.0,
+			"elapsed": 0.0,
+			"frame": 179,
+			"keeper": [
+				3226.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2754.0,
+			"elapsed": 0.0,
+			"frame": 180,
+			"keeper": [
+				3234.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2762.0,
+			"elapsed": 0.0,
+			"frame": 181,
+			"keeper": [
+				3242.0,
+				265.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.0,
+			"frame": 182,
+			"keeper": [
+				3245.0,
+				263.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.0,
+			"frame": 183,
+			"keeper": [
+				3245.0,
+				255.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.0,
+			"frame": 184,
+			"keeper": [
+				3245.0,
+				247.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.0,
+			"frame": 185,
+			"keeper": [
+				3245.0,
+				239.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.0,
+			"frame": 186,
+			"keeper": [
+				3245.0,
+				231.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.025,
+			"frame": 187,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.0583333333333333,
+			"frame": 188,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.0916666666666667,
+			"frame": 189,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.125,
+			"frame": 190,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.158333333333333,
+			"frame": 191,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.191666666666667,
+			"frame": 192,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.225,
+			"frame": 193,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.258333333333333,
+			"frame": 194,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.291666666666667,
+			"frame": 195,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.325,
+			"frame": 196,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.358333333333334,
+			"frame": 197,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.391666666666667,
+			"frame": 198,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.425,
+			"frame": 199,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.458333333333334,
+			"frame": 200,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.491666666666667,
+			"frame": 201,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.525000000000001,
+			"frame": 202,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.558333333333334,
+			"frame": 203,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2765.0,
+			"elapsed": 0.591666666666667,
+			"frame": 204,
+			"keeper": [
+				3245.0,
+				230.0
+			],
+			"sign": [
+				3190.0,
+				265.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2770.9677734375,
+			"elapsed": 0.6,
+			"frame": 205,
+			"keeper": [
+				3250.9677734375,
+				230.623474121094
+			],
+			"sign": [
+				3195.9677734375,
+				265.623474121094
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2778.9248046875,
+			"elapsed": 0.6,
+			"frame": 206,
+			"keeper": [
+				3258.9248046875,
+				231.454772949219
+			],
+			"sign": [
+				3203.9248046875,
+				266.454772949219
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2786.8818359375,
+			"elapsed": 0.6,
+			"frame": 207,
+			"keeper": [
+				3266.8818359375,
+				232.286071777344
+			],
+			"sign": [
+				3211.8818359375,
+				267.286071777344
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2794.8388671875,
+			"elapsed": 0.6,
+			"frame": 208,
+			"keeper": [
+				3274.8388671875,
+				233.117370605469
+			],
+			"sign": [
+				3219.8388671875,
+				268.117370605469
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2802.7958984375,
+			"elapsed": 0.6,
+			"frame": 209,
+			"keeper": [
+				3282.7958984375,
+				233.948669433594
+			],
+			"sign": [
+				3227.7958984375,
+				268.948669433594
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2810.7529296875,
+			"elapsed": 0.6,
+			"frame": 210,
+			"keeper": [
+				3290.7529296875,
+				234.779968261719
+			],
+			"sign": [
+				3235.7529296875,
+				269.779968261719
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2818.7099609375,
+			"elapsed": 0.6,
+			"frame": 211,
+			"keeper": [
+				3298.7099609375,
+				235.611267089844
+			],
+			"sign": [
+				3243.7099609375,
+				270.611267089844
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2826.6669921875,
+			"elapsed": 0.6,
+			"frame": 212,
+			"keeper": [
+				3306.6669921875,
+				236.442565917969
+			],
+			"sign": [
+				3251.6669921875,
+				271.442565917969
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2834.6240234375,
+			"elapsed": 0.6,
+			"frame": 213,
+			"keeper": [
+				3314.6240234375,
+				237.273864746094
+			],
+			"sign": [
+				3259.6240234375,
+				272.273864746094
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2842.5810546875,
+			"elapsed": 0.6,
+			"frame": 214,
+			"keeper": [
+				3322.5810546875,
+				238.105163574219
+			],
+			"sign": [
+				3267.5810546875,
+				273.105163574219
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2850.5380859375,
+			"elapsed": 0.6,
+			"frame": 215,
+			"keeper": [
+				3330.5380859375,
+				238.936462402344
+			],
+			"sign": [
+				3275.5380859375,
+				273.936462402344
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2858.4951171875,
+			"elapsed": 0.6,
+			"frame": 216,
+			"keeper": [
+				3338.4951171875,
+				239.767761230469
+			],
+			"sign": [
+				3283.4951171875,
+				274.767761230469
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2866.4521484375,
+			"elapsed": 0.6,
+			"frame": 217,
+			"keeper": [
+				3346.4521484375,
+				240.599060058594
+			],
+			"sign": [
+				3291.4521484375,
+				275.599060058594
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2874.4091796875,
+			"elapsed": 0.6,
+			"frame": 218,
+			"keeper": [
+				3354.4091796875,
+				241.430358886719
+			],
+			"sign": [
+				3299.4091796875,
+				276.430358886719
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2882.3662109375,
+			"elapsed": 0.6,
+			"frame": 219,
+			"keeper": [
+				3362.3662109375,
+				242.261657714844
+			],
+			"sign": [
+				3307.3662109375,
+				277.261657714844
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2890.3232421875,
+			"elapsed": 0.6,
+			"frame": 220,
+			"keeper": [
+				3370.3232421875,
+				243.092956542969
+			],
+			"sign": [
+				3315.3232421875,
+				278.092956542969
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2898.2802734375,
+			"elapsed": 0.6,
+			"frame": 221,
+			"keeper": [
+				3378.2802734375,
+				243.924255371094
+			],
+			"sign": [
+				3323.2802734375,
+				278.924255371094
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2906.2373046875,
+			"elapsed": 0.6,
+			"frame": 222,
+			"keeper": [
+				3386.2373046875,
+				244.755554199219
+			],
+			"sign": [
+				3331.2373046875,
+				279.755554199219
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2914.1943359375,
+			"elapsed": 0.6,
+			"frame": 223,
+			"keeper": [
+				3394.1943359375,
+				245.586853027344
+			],
+			"sign": [
+				3339.1943359375,
+				280.586853027344
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2922.1513671875,
+			"elapsed": 0.6,
+			"frame": 224,
+			"keeper": [
+				3402.1513671875,
+				246.418151855469
+			],
+			"sign": [
+				3347.1513671875,
+				281.418151855469
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2930.1083984375,
+			"elapsed": 0.6,
+			"frame": 225,
+			"keeper": [
+				3410.1083984375,
+				247.249450683594
+			],
+			"sign": [
+				3355.1083984375,
+				282.249450683594
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2938.0654296875,
+			"elapsed": 0.6,
+			"frame": 226,
+			"keeper": [
+				3418.0654296875,
+				248.080764770508
+			],
+			"sign": [
+				3363.0654296875,
+				283.080749511719
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2946.0224609375,
+			"elapsed": 0.6,
+			"frame": 227,
+			"keeper": [
+				3426.0224609375,
+				248.912124633789
+			],
+			"sign": [
+				3371.0224609375,
+				283.912109375
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2953.9794921875,
+			"elapsed": 0.6,
+			"frame": 228,
+			"keeper": [
+				3433.9794921875,
+				249.74348449707
+			],
+			"sign": [
+				3378.9794921875,
+				284.743469238281
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2961.9365234375,
+			"elapsed": 0.6,
+			"frame": 229,
+			"keeper": [
+				3441.9365234375,
+				250.574844360352
+			],
+			"sign": [
+				3386.9365234375,
+				285.574829101562
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2969.8935546875,
+			"elapsed": 0.6,
+			"frame": 230,
+			"keeper": [
+				3449.8935546875,
+				251.406204223633
+			],
+			"sign": [
+				3394.8935546875,
+				286.406188964844
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2977.8505859375,
+			"elapsed": 0.6,
+			"frame": 231,
+			"keeper": [
+				3457.8505859375,
+				252.237564086914
+			],
+			"sign": [
+				3402.8505859375,
+				287.237548828125
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2985.8076171875,
+			"elapsed": 0.6,
+			"frame": 232,
+			"keeper": [
+				3465.8076171875,
+				253.068923950195
+			],
+			"sign": [
+				3410.8076171875,
+				288.068908691406
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2993.7646484375,
+			"elapsed": 0.6,
+			"frame": 233,
+			"keeper": [
+				3473.7646484375,
+				253.900283813477
+			],
+			"sign": [
+				3418.7646484375,
+				288.900268554688
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3001.7216796875,
+			"elapsed": 0.6,
+			"frame": 234,
+			"keeper": [
+				3481.7216796875,
+				254.731643676758
+			],
+			"sign": [
+				3426.7216796875,
+				289.731628417969
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3009.6787109375,
+			"elapsed": 0.6,
+			"frame": 235,
+			"keeper": [
+				3489.6787109375,
+				255.563003540039
+			],
+			"sign": [
+				3434.6787109375,
+				290.56298828125
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3017.6357421875,
+			"elapsed": 0.6,
+			"frame": 236,
+			"keeper": [
+				3497.6357421875,
+				256.394348144531
+			],
+			"sign": [
+				3442.6357421875,
+				291.394348144531
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3025.5927734375,
+			"elapsed": 0.6,
+			"frame": 237,
+			"keeper": [
+				3505.5927734375,
+				257.225646972656
+			],
+			"sign": [
+				3450.5927734375,
+				292.225646972656
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3033.5498046875,
+			"elapsed": 0.6,
+			"frame": 238,
+			"keeper": [
+				3513.5498046875,
+				258.056945800781
+			],
+			"sign": [
+				3458.5498046875,
+				293.056945800781
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3041.5068359375,
+			"elapsed": 0.6,
+			"frame": 239,
+			"keeper": [
+				3521.5068359375,
+				258.888305664062
+			],
+			"sign": [
+				3466.5068359375,
+				293.888305664062
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3049.4638671875,
+			"elapsed": 0.6,
+			"frame": 240,
+			"keeper": [
+				3529.4638671875,
+				259.719696044922
+			],
+			"sign": [
+				3474.4638671875,
+				294.719696044922
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3057.4208984375,
+			"elapsed": 0.6,
+			"frame": 241,
+			"keeper": [
+				3537.4208984375,
+				260.551086425781
+			],
+			"sign": [
+				3482.4208984375,
+				295.551086425781
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3065.3779296875,
+			"elapsed": 0.6,
+			"frame": 242,
+			"keeper": [
+				3545.3779296875,
+				261.382476806641
+			],
+			"sign": [
+				3490.3779296875,
+				296.382476806641
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 243,
+			"keeper": [
+				3553.3349609375,
+				262.2138671875
+			],
+			"sign": [
+				3498.3349609375,
+				297.2138671875
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 244,
+			"keeper": [
+				3561.2919921875,
+				263.045257568359
+			],
+			"sign": [
+				3506.2919921875,
+				298.045257568359
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 245,
+			"keeper": [
+				3569.2490234375,
+				263.876678466797
+			],
+			"sign": [
+				3514.2490234375,
+				298.876678466797
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 246,
+			"keeper": [
+				3577.2060546875,
+				264.708068847656
+			],
+			"sign": [
+				3522.2060546875,
+				299.708068847656
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 247,
+			"keeper": [
+				3580.0,
+				267.0
+			],
+			"sign": [
+				3525.0,
+				302.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 248,
+			"keeper": [
+				3580.0,
+				275.0
+			],
+			"sign": [
+				3525.0,
+				310.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 249,
+			"keeper": [
+				3580.0,
+				283.0
+			],
+			"sign": [
+				3525.0,
+				318.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 250,
+			"keeper": [
+				3580.0,
+				291.0
+			],
+			"sign": [
+				3525.0,
+				326.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 251,
+			"keeper": [
+				3580.0,
+				299.0
+			],
+			"sign": [
+				3525.0,
+				334.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3300.0,
+			"elapsed": 0.6,
+			"frame": 252,
+			"keeper": [
+				3580.0,
+				307.0
+			],
+			"sign": [
+				3525.0,
+				342.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 253,
+			"keeper": [
+				3580.0,
+				315.0
+			],
+			"sign": [
+				3525.0,
+				350.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 254,
+			"keeper": [
+				3580.0,
+				323.0
+			],
+			"sign": [
+				3525.0,
+				358.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 255,
+			"keeper": [
+				3580.0,
+				331.0
+			],
+			"sign": [
+				3525.0,
+				366.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 256,
+			"keeper": [
+				3580.0,
+				339.0
+			],
+			"sign": [
+				3525.0,
+				374.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 257,
+			"keeper": [
+				3580.0,
+				347.0
+			],
+			"sign": [
+				3525.0,
+				382.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 258,
+			"keeper": [
+				3580.0,
+				355.0
+			],
+			"sign": [
+				3525.0,
+				390.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 259,
+			"keeper": [
+				3580.0,
+				363.0
+			],
+			"sign": [
+				3525.0,
+				398.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 260,
+			"keeper": [
+				3580.0,
+				371.0
+			],
+			"sign": [
+				3525.0,
+				406.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 261,
+			"keeper": [
+				3580.0,
+				379.0
+			],
+			"sign": [
+				3525.0,
+				414.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 262,
+			"keeper": [
+				3580.0,
+				387.0
+			],
+			"sign": [
+				3525.0,
+				422.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 263,
+			"keeper": [
+				3580.0,
+				395.0
+			],
+			"sign": [
+				3525.0,
+				430.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 264,
+			"keeper": [
+				3580.0,
+				403.0
+			],
+			"sign": [
+				3525.0,
+				438.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 265,
+			"keeper": [
+				3580.0,
+				411.0
+			],
+			"sign": [
+				3525.0,
+				446.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 266,
+			"keeper": [
+				3580.0,
+				419.0
+			],
+			"sign": [
+				3525.0,
+				454.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 267,
+			"keeper": [
+				3580.0,
+				427.0
+			],
+			"sign": [
+				3525.0,
+				462.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 268,
+			"keeper": [
+				3580.0,
+				435.0
+			],
+			"sign": [
+				3525.0,
+				470.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 269,
+			"keeper": [
+				3580.0,
+				443.0
+			],
+			"sign": [
+				3525.0,
+				478.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 270,
+			"keeper": [
+				3580.0,
+				451.0
+			],
+			"sign": [
+				3525.0,
+				486.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 271,
+			"keeper": [
+				3580.0,
+				459.0
+			],
+			"sign": [
+				3525.0,
+				494.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 272,
+			"keeper": [
+				3580.0,
+				467.0
+			],
+			"sign": [
+				3525.0,
+				502.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 273,
+			"keeper": [
+				3580.0,
+				475.0
+			],
+			"sign": [
+				3525.0,
+				510.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 274,
+			"keeper": [
+				3580.0,
+				483.0
+			],
+			"sign": [
+				3525.0,
+				518.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 275,
+			"keeper": [
+				3580.0,
+				491.0
+			],
+			"sign": [
+				3525.0,
+				526.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 276,
+			"keeper": [
+				3580.0,
+				499.0
+			],
+			"sign": [
+				3525.0,
+				534.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 277,
+			"keeper": [
+				3580.0,
+				507.0
+			],
+			"sign": [
+				3525.0,
+				542.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 278,
+			"keeper": [
+				3580.0,
+				515.0
+			],
+			"sign": [
+				3525.0,
+				550.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 279,
+			"keeper": [
+				3580.0,
+				523.0
+			],
+			"sign": [
+				3525.0,
+				558.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 280,
+			"keeper": [
+				3580.0,
+				531.0
+			],
+			"sign": [
+				3525.0,
+				566.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 281,
+			"keeper": [
+				3580.0,
+				539.0
+			],
+			"sign": [
+				3525.0,
+				574.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 282,
+			"keeper": [
+				3580.0,
+				547.0
+			],
+			"sign": [
+				3525.0,
+				582.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 283,
+			"keeper": [
+				3580.0,
+				555.0
+			],
+			"sign": [
+				3525.0,
+				590.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 284,
+			"keeper": [
+				3580.0,
+				563.0
+			],
+			"sign": [
+				3525.0,
+				598.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 285,
+			"keeper": [
+				3580.0,
+				571.0
+			],
+			"sign": [
+				3525.0,
+				606.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 286,
+			"keeper": [
+				3580.0,
+				579.0
+			],
+			"sign": [
+				3525.0,
+				614.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 287,
+			"keeper": [
+				3580.0,
+				587.0
+			],
+			"sign": [
+				3525.0,
+				622.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 288,
+			"keeper": [
+				3580.0,
+				595.0
+			],
+			"sign": [
+				3525.0,
+				630.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 289,
+			"keeper": [
+				3580.0,
+				603.0
+			],
+			"sign": [
+				3525.0,
+				638.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 290,
+			"keeper": [
+				3580.0,
+				611.0
+			],
+			"sign": [
+				3525.0,
+				646.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 291,
+			"keeper": [
+				3580.0,
+				619.0
+			],
+			"sign": [
+				3525.0,
+				654.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3100.0,
+			"elapsed": 0.6,
+			"frame": 292,
+			"keeper": [
+				3580.0,
+				627.0
+			],
+			"sign": [
+				3525.0,
+				662.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3098.0,
+			"elapsed": 0.6,
+			"frame": 293,
+			"keeper": [
+				3578.0,
+				630.0
+			],
+			"sign": [
+				3523.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3090.0,
+			"elapsed": 0.6,
+			"frame": 294,
+			"keeper": [
+				3570.0,
+				630.0
+			],
+			"sign": [
+				3515.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3082.0,
+			"elapsed": 0.6,
+			"frame": 295,
+			"keeper": [
+				3562.0,
+				630.0
+			],
+			"sign": [
+				3507.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3074.0,
+			"elapsed": 0.6,
+			"frame": 296,
+			"keeper": [
+				3554.0,
+				630.0
+			],
+			"sign": [
+				3499.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3066.0,
+			"elapsed": 0.6,
+			"frame": 297,
+			"keeper": [
+				3546.0,
+				630.0
+			],
+			"sign": [
+				3491.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3058.0,
+			"elapsed": 0.6,
+			"frame": 298,
+			"keeper": [
+				3538.0,
+				630.0
+			],
+			"sign": [
+				3483.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3050.0,
+			"elapsed": 0.6,
+			"frame": 299,
+			"keeper": [
+				3530.0,
+				630.0
+			],
+			"sign": [
+				3475.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3042.0,
+			"elapsed": 0.6,
+			"frame": 300,
+			"keeper": [
+				3522.0,
+				630.0
+			],
+			"sign": [
+				3467.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3034.0,
+			"elapsed": 0.6,
+			"frame": 301,
+			"keeper": [
+				3514.0,
+				630.0
+			],
+			"sign": [
+				3459.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3026.0,
+			"elapsed": 0.6,
+			"frame": 302,
+			"keeper": [
+				3506.0,
+				630.0
+			],
+			"sign": [
+				3451.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3018.0,
+			"elapsed": 0.6,
+			"frame": 303,
+			"keeper": [
+				3498.0,
+				630.0
+			],
+			"sign": [
+				3443.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3010.0,
+			"elapsed": 0.6,
+			"frame": 304,
+			"keeper": [
+				3490.0,
+				630.0
+			],
+			"sign": [
+				3435.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 3002.0,
+			"elapsed": 0.6,
+			"frame": 305,
+			"keeper": [
+				3482.0,
+				630.0
+			],
+			"sign": [
+				3427.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2994.0,
+			"elapsed": 0.6,
+			"frame": 306,
+			"keeper": [
+				3474.0,
+				630.0
+			],
+			"sign": [
+				3419.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2986.0,
+			"elapsed": 0.6,
+			"frame": 307,
+			"keeper": [
+				3466.0,
+				630.0
+			],
+			"sign": [
+				3411.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2978.0,
+			"elapsed": 0.6,
+			"frame": 308,
+			"keeper": [
+				3458.0,
+				630.0
+			],
+			"sign": [
+				3403.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2970.0,
+			"elapsed": 0.6,
+			"frame": 309,
+			"keeper": [
+				3450.0,
+				630.0
+			],
+			"sign": [
+				3395.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2962.0,
+			"elapsed": 0.6,
+			"frame": 310,
+			"keeper": [
+				3442.0,
+				630.0
+			],
+			"sign": [
+				3387.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2954.0,
+			"elapsed": 0.6,
+			"frame": 311,
+			"keeper": [
+				3434.0,
+				630.0
+			],
+			"sign": [
+				3379.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2946.0,
+			"elapsed": 0.6,
+			"frame": 312,
+			"keeper": [
+				3426.0,
+				630.0
+			],
+			"sign": [
+				3371.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2938.0,
+			"elapsed": 0.6,
+			"frame": 313,
+			"keeper": [
+				3418.0,
+				630.0
+			],
+			"sign": [
+				3363.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2930.0,
+			"elapsed": 0.6,
+			"frame": 314,
+			"keeper": [
+				3410.0,
+				630.0
+			],
+			"sign": [
+				3355.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2922.0,
+			"elapsed": 0.6,
+			"frame": 315,
+			"keeper": [
+				3402.0,
+				630.0
+			],
+			"sign": [
+				3347.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2914.0,
+			"elapsed": 0.6,
+			"frame": 316,
+			"keeper": [
+				3394.0,
+				630.0
+			],
+			"sign": [
+				3339.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2906.0,
+			"elapsed": 0.6,
+			"frame": 317,
+			"keeper": [
+				3386.0,
+				630.0
+			],
+			"sign": [
+				3331.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2898.0,
+			"elapsed": 0.6,
+			"frame": 318,
+			"keeper": [
+				3378.0,
+				630.0
+			],
+			"sign": [
+				3323.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2890.0,
+			"elapsed": 0.6,
+			"frame": 319,
+			"keeper": [
+				3370.0,
+				630.0
+			],
+			"sign": [
+				3315.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2882.0,
+			"elapsed": 0.6,
+			"frame": 320,
+			"keeper": [
+				3362.0,
+				630.0
+			],
+			"sign": [
+				3307.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2874.0,
+			"elapsed": 0.6,
+			"frame": 321,
+			"keeper": [
+				3354.0,
+				630.0
+			],
+			"sign": [
+				3299.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2866.0,
+			"elapsed": 0.6,
+			"frame": 322,
+			"keeper": [
+				3346.0,
+				630.0
+			],
+			"sign": [
+				3291.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2858.0,
+			"elapsed": 0.6,
+			"frame": 323,
+			"keeper": [
+				3338.0,
+				630.0
+			],
+			"sign": [
+				3283.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2850.0,
+			"elapsed": 0.6,
+			"frame": 324,
+			"keeper": [
+				3330.0,
+				630.0
+			],
+			"sign": [
+				3275.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2842.0,
+			"elapsed": 0.6,
+			"frame": 325,
+			"keeper": [
+				3322.0,
+				630.0
+			],
+			"sign": [
+				3267.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2834.0,
+			"elapsed": 0.6,
+			"frame": 326,
+			"keeper": [
+				3314.0,
+				630.0
+			],
+			"sign": [
+				3259.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2826.0,
+			"elapsed": 0.6,
+			"frame": 327,
+			"keeper": [
+				3306.0,
+				630.0
+			],
+			"sign": [
+				3251.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2818.0,
+			"elapsed": 0.6,
+			"frame": 328,
+			"keeper": [
+				3298.0,
+				630.0
+			],
+			"sign": [
+				3243.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2810.0,
+			"elapsed": 0.6,
+			"frame": 329,
+			"keeper": [
+				3290.0,
+				630.0
+			],
+			"sign": [
+				3235.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2802.0,
+			"elapsed": 0.6,
+			"frame": 330,
+			"keeper": [
+				3282.0,
+				630.0
+			],
+			"sign": [
+				3227.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2794.0,
+			"elapsed": 0.6,
+			"frame": 331,
+			"keeper": [
+				3274.0,
+				630.0
+			],
+			"sign": [
+				3219.0,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.616666666666667,
+			"frame": 332,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3214.86108398438,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.65,
+			"frame": 333,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3214.58325195312,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.683333333333333,
+			"frame": 334,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3214.3056640625,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.716666666666666,
+			"frame": 335,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3214.02783203125,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.749999999999999,
+			"frame": 336,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3213.75,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.783333333333333,
+			"frame": 337,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3213.47216796875,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.816666666666666,
+			"frame": 338,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3213.1943359375,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.849999999999999,
+			"frame": 339,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3212.91674804688,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.883333333333332,
+			"frame": 340,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3212.63891601562,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.916666666666666,
+			"frame": 341,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3212.36108398438,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.949999999999999,
+			"frame": 342,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3212.08325195312,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 0.983333333333332,
+			"frame": 343,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3211.8056640625,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.01666666666667,
+			"frame": 344,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3211.52783203125,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.05,
+			"frame": 345,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3211.25,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.08333333333333,
+			"frame": 346,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3210.97216796875,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.11666666666666,
+			"frame": 347,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3210.6943359375,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.15,
+			"frame": 348,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3210.41674804688,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.18333333333333,
+			"frame": 349,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3210.13891601562,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.21666666666666,
+			"frame": 350,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3209.86108398438,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.25,
+			"frame": 351,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3209.58325195312,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.28333333333333,
+			"frame": 352,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3209.3056640625,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.31666666666666,
+			"frame": 353,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3209.02783203125,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.35,
+			"frame": 354,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3208.75,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.38333333333333,
+			"frame": 355,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3208.47216796875,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.41666666666666,
+			"frame": 356,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3208.1943359375,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.45,
+			"frame": 357,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3207.91674804688,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.48333333333333,
+			"frame": 358,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3207.63891601562,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.51666666666666,
+			"frame": 359,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3207.36108398438,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.55,
+			"frame": 360,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3207.08325195312,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.58333333333333,
+			"frame": 361,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3206.8056640625,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.61666666666666,
+			"frame": 362,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3206.52783203125,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.65,
+			"frame": 363,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3206.25,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.68333333333333,
+			"frame": 364,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3205.97216796875,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.71666666666666,
+			"frame": 365,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3205.6943359375,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.75,
+			"frame": 366,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3205.41674804688,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.78333333333333,
+			"frame": 367,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3205.13891601562,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.81666666666666,
+			"frame": 368,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3204.86108398438,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.85,
+			"frame": 369,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3204.58325195312,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.88333333333333,
+			"frame": 370,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3204.3056640625,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.91666666666666,
+			"frame": 371,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3204.02783203125,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.95,
+			"frame": 372,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3203.75,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 1.98333333333333,
+			"frame": 373,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3203.47216796875,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.01666666666666,
+			"frame": 374,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3203.1943359375,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.04999999999999,
+			"frame": 375,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3202.91674804688,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.08333333333333,
+			"frame": 376,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3202.63891601562,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.11666666666666,
+			"frame": 377,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3202.36108398438,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.14999999999999,
+			"frame": 378,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3202.08325195312,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.18333333333333,
+			"frame": 379,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3201.8056640625,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.21666666666666,
+			"frame": 380,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3201.52783203125,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.24999999999999,
+			"frame": 381,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3201.25,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.28333333333333,
+			"frame": 382,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3200.97216796875,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.31666666666666,
+			"frame": 383,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3200.6943359375,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.34999999999999,
+			"frame": 384,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3200.41674804688,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.38333333333333,
+			"frame": 385,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3200.13891601562,
+				665.0
+			],
+			"state": "tidy"
+		},
+		{
+			"camera_x": 2790.0,
+			"elapsed": 2.4,
+			"frame": 386,
+			"keeper": [
+				3270.0,
+				630.0
+			],
+			"sign": [
+				3200.0,
+				665.0
+			],
+			"state": "settled"
+		}
+	],
+	"issue": 218,
+	"kind": "native source-component fixture; gates seeded open, actor-follow fixture camera, muted; not player validation",
+	"passed": true
+}

@@ -1,0 +1,338 @@
+{
+  "issue": 218,
+  "related_issues": [
+    204,
+    214,
+    215,
+    216,
+    219,
+    221,
+    207
+  ],
+  "milestone": 1,
+  "gdd": [
+    "8.1",
+    "11.2",
+    "13.6/J03",
+    "13.6/J06"
+  ],
+  "baseline_revision": "0b108f40b4db465320b68b88d54756a0ce227841",
+  "kind": "limited sign/gate source sample and affected use-site repair; not complete family, G3 blanket approval or MVP candidate",
+  "scope": "Solid front board, overhead live support and flexible suspension; upper/lower ordinary access to exposed back knot, three fixed wind flowers, rightward knot-height opening independent of counting. Moving post, hook, keeper and left forager use coherent positions. Base controls and source identity unchanged.",
+  "allowed_variant": {
+    "board": [
+      2830,
+      290,
+      60,
+      160
+    ],
+    "beam": [
+      2855,
+      125,
+      276,
+      14
+    ],
+    "back_wall_x": 3110,
+    "knot": [
+      3131,
+      300
+    ],
+    "knot_height_tolerance": 40,
+    "rings": [
+      [
+        2760,
+        465
+      ],
+      [
+        2880,
+        180
+      ],
+      [
+        3000,
+        275
+      ]
+    ],
+    "waiting_sign": [
+      3190,
+      265
+    ],
+    "keeper_result": [
+      3270,
+      630
+    ],
+    "left_forager": [
+      3195,
+      465
+    ],
+    "unsupported": "Other scales, mirrored sign, different flower geometries and full GDD are not approved."
+  },
+  "checks": {
+    "model": "344 checks, 0 failures; two complete known routes, upper/lower direct access, 15 launch offsets, actor54px clearance, both snapshots of strict legacy geometry, earned facts and atomic rejection",
+    "disk": "12 checks,0 failures: actual continue/save and byte-identical backup, directory-collision backup failure, unknown version and corrupt data preservation",
+    "component_native": "19 checks,0 failures;539 frames@30fps; seeded front-open fixture with ordinary keyboard input, muted; upper/lower/wind",
+    "keeper_native": "6 captures;389 frames@30fps; seeded opened gates, actor-follow fixture camera, muted",
+    "continuous_native": "68 checks,0 failures;3651 frames@30fps (2:01.7); actual keyboard/disk/cold scenes, known-answer developer route, not player exploration. Final legacy-checkpoint predicate-only fix followed capture and is covered by genuine old-source fixtures; normal captured paths unchanged."
+  },
+  "review": {
+    "reviewer": "feedback_review independent read-only agent",
+    "verdict": "Limited source component may integrate; no remaining blocker found. Not #204/G4 approval.",
+    "resolved": [
+      "Initial third flower hid knot and shared WAITING_SIGN; spacing reworked",
+      "Wind path fragile/clipped board;15 launch offsets added",
+      "Malformed checkpoint p guarded before typed access",
+      "All unsupported existing files backed up before write, including corrupt/unknown",
+      "Legacy settled keeper and left forager migrated with related moved posts",
+      "Moved posts included in overlap recovery; checkpoint uses its own earned broken flags",
+      "Ending test fixture now uses real final carry segment"
+    ]
+  },
+  "legacy_fixtures": {
+    "source": "Generated and self-validated on unchanged baseline 0b108f4; source generator retained as text",
+    "states": [
+      "stage0 plain",
+      "stage1 plain",
+      "closed",
+      "front",
+      "actual second-gate checkpoint3100,300",
+      "tidy",
+      "settled",
+      "foraging",
+      "ending"
+    ],
+    "not_user_data": true
+  },
+  "save_policy": "Only known complete old static layouts migrate in copies; parent validator remains strict. Unknown route marker rejected. Original bytes are retained in SHA-prefixed .bak before the v2 path is replaced with new geometry. Backup failure prevents replacement. Already earned outcomes survive. No user save accessed.",
+  "failed_evidence": {
+    "archive": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/back-sign",
+    "details": [
+      "Attempt1:17 native checks/1 failure from fixture ring counter carried across scenarios; visible flower/sign overlap independently failed.",
+      "Attempt2/3: wind missed a flower or clipped thick board; retained, not accepted",
+      "A headless UI invocation wrongly used --swarm-qa, disabling its required disk writes; stopped and rerun without it, not a product failure",
+      "First seeded ending fixture omitted completed checkpoint index; rejected by old validator, corrected generator and self-validated before use"
+    ]
+  },
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "3786895e46eb69df7fa5b0a7a4b6bd4570292428e85965e6dc1f584e834eac43"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "fb6b72e8dceec637dfdeab29c3675ac968644db65bdd44ccce721819715ba154"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_main.gd",
+      "sha256": "b23866f6aa78c435dac15bbfd6cd1c2d611c59600d3642cb07f330a60768d92a"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_verify.gd",
+      "sha256": "e3ee066cfcc12857f20e2597ba403acaaf6e51c2db19d16325d0290b52db7bff"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_ui_verify.gd",
+      "sha256": "84e508b299b24d792c2cefd9c8aeaebd120d56deddb35ef9b1f20fcb96c0d44d"
+    },
+    {
+      "path": "prototypes/swarm-flight/back_sign_probe.gd",
+      "sha256": "f0a3cd608fc10c6c41e79da9c92e4d189fbd241b55ef7469e7d74340b7b63139"
+    },
+    {
+      "path": "prototypes/swarm-flight/back_sign_save_verify.gd",
+      "sha256": "7668003b16e69ce9d122ee54c91349e2bbdab8015f2372b980bca21887d73334"
+    },
+    {
+      "path": "prototypes/swarm-flight/keeper_tidy_probe.gd",
+      "sha256": "7708bd0f8000b098e2cfce831ab08e94ca8ea081eb499ca0b4313597df195439"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "component/lower-01-front.png",
+      "sha256": "9ac3fbce53ab85288af0365cdf81582381904c6103f3db0f2be444bd87d84d71"
+    },
+    {
+      "path": "component/lower-02-blocked.png",
+      "sha256": "79874c0dd4c21e9b790251d4d1713ff9011183d2a3805abcbe5eb1969f086d1e"
+    },
+    {
+      "path": "component/lower-03-back.png",
+      "sha256": "3e04e8c6df07cb52f8890b63cf399ffe4935ed0d702af15d293f1acf79cd7a99"
+    },
+    {
+      "path": "component/lower-04-open.png",
+      "sha256": "6e2138ec1463b43c4b57d9f8d6180277e9877716a7dc8ac35869719061461949"
+    },
+    {
+      "path": "component/native.log",
+      "sha256": "f367e409d28543b5d499da1e122684efae679771102c8344decc9657141be8ef"
+    },
+    {
+      "path": "component/native.mp4",
+      "sha256": "807bde5818dbd51377b1208cec5f1715eba3cc8203afbf9b8248f0a40947a230"
+    },
+    {
+      "path": "component/trace.json",
+      "sha256": "e0bf37b98dad06f3ec8c132a09d40b9a971493177aed5e88b7b5af13958931a4"
+    },
+    {
+      "path": "component/upper-01-front.png",
+      "sha256": "668c07202f0921f88b07133606302f17dc6d34aa75d6e21fea6b36ac68f8a48c"
+    },
+    {
+      "path": "component/upper-02-blocked.png",
+      "sha256": "c4d948a76d125b66afc3788cb6af0d4aa38b575b5cee1990bb2f0056165197a1"
+    },
+    {
+      "path": "component/upper-03-back.png",
+      "sha256": "583b5ad42eb6b976a98bb185b20de84bb3a10dde257a3be4ddeddb36de3f6532"
+    },
+    {
+      "path": "component/upper-04-open.png",
+      "sha256": "b185f5110d61bbebc86f09d6fa03ecf81915abdae7cf1f157e2fb701e285c0e3"
+    },
+    {
+      "path": "component/wind-01-front.png",
+      "sha256": "8049956f79db31e2cb8401b659f65891d778979dd09c7cd45a7607a3f4fc4849"
+    },
+    {
+      "path": "component/wind-04-open.png",
+      "sha256": "e14f45f8d5b090d7c96a0640fcac7dced6f52e35fd36d927404828756204d747"
+    },
+    {
+      "path": "continuous/08-keeper-counting.png",
+      "sha256": "3c1df556df5a43e863b4fcdcebf80ceda06bc4bd8c9f8562d3438b3e81921f8d"
+    },
+    {
+      "path": "continuous/10-back-passage.png",
+      "sha256": "7659bf1b6f16b457cf8bc68faa98c379a6bfd8f94186044a1c0c6e004ea26214"
+    },
+    {
+      "path": "continuous/13-listeners-reached-source.png",
+      "sha256": "a105b22815eb6499510d1680cb774ba28253b7f15c88175901a9bfb8c04ff2e6"
+    },
+    {
+      "path": "continuous/15-ending.png",
+      "sha256": "050d865e9b18457cc7aae4f731144778c850c3525e0a3f483c6b882993f52b9e"
+    },
+    {
+      "path": "continuous/native.log",
+      "sha256": "fc47428ca3c77263bb11b2442fae1b149a909e4da8d5765513fccbd77f5e3cc9"
+    },
+    {
+      "path": "legacy-fixtures/generate-on-baseline.gd.txt",
+      "sha256": "a72bfd8f2aea2eb18e5772e4060398dfbda503ac5cd5e7dfeda15883226e362f"
+    },
+    {
+      "path": "legacy-fixtures/stage0-plain.json",
+      "sha256": "0a75cc02e4c065c4d784a298f8f7596a6d44c173208a8650770dc997d98f797c"
+    },
+    {
+      "path": "legacy-fixtures/stage1-plain.json",
+      "sha256": "d520055f50d05fe8970d8d37fc8a4a3b8df1dc58a0ccb3a0965ea7f19d80e724"
+    },
+    {
+      "path": "legacy-fixtures/stage2-closed.json",
+      "sha256": "3c9fc07041e5a97ff5508edc93fc9a7e736530582c48894749ab637324763c40"
+    },
+    {
+      "path": "legacy-fixtures/stage2-ending.json",
+      "sha256": "655138f6b6796194f76261a4ed72b7898794861eaeebbc3f74665d8b100acbfd"
+    },
+    {
+      "path": "legacy-fixtures/stage2-foraging.json",
+      "sha256": "4ff4ce56309c05850cc307260a132777809edc3c46b0d69cb269279a59329441"
+    },
+    {
+      "path": "legacy-fixtures/stage2-front.json",
+      "sha256": "fa56d3b9d4fc0a2ac3101ed8a8edf1ba178a5c46184804da6ec0850778f6fd35"
+    },
+    {
+      "path": "legacy-fixtures/stage2-second_gate.json",
+      "sha256": "c4f0e93d9fa5de9199e62bdd8fb08b07d18a6c63ac097c5ac71353bd7379dab9"
+    },
+    {
+      "path": "legacy-fixtures/stage2-settled.json",
+      "sha256": "6e0ba6cd1e633797944a55afb1d0b379884cb2ad548b6638040b598130a94890"
+    },
+    {
+      "path": "legacy-fixtures/stage2-tidy.json",
+      "sha256": "d4b5326ff6f23013fc3b5e3bbeab3750af651e349e8ed4d07bb93d41d2f4894e"
+    },
+    {
+      "path": "model.log",
+      "sha256": "f229a1745cf12340dcf67c4c2d3af061fdaba5c486b5b104e6503db6ed20f822"
+    },
+    {
+      "path": "save.log",
+      "sha256": "aa2339163f24b836ed3ec3106ccf616d4b59dc64d443ca88e4105bd6941e5498"
+    },
+    {
+      "path": "tidy/01-approach.png",
+      "sha256": "7de36476382e63805df6e5f91fe375c2b4f6d70599fd2aca3850bc058637fedd"
+    },
+    {
+      "path": "tidy/02-inspect-hook.png",
+      "sha256": "79787938533a673ed76b883bf297cb5a11257796ac6d13f820c986efd6d0a618"
+    },
+    {
+      "path": "tidy/03-carry.png",
+      "sha256": "3fbec79981c947b5cb73e1aee360ff3c53df92d96038bbdb7e627f2e31429371"
+    },
+    {
+      "path": "tidy/04-carry-near-exit-camera.png",
+      "sha256": "d98b2e3f99bb68849d29a5ea7c3a1e3857ee212239781aa1355648b9eff419e2"
+    },
+    {
+      "path": "tidy/05-place.png",
+      "sha256": "d37cc658550b37c00f5bc6d74ba996792034b00bb78e8a8083ab83c878b4bd3b"
+    },
+    {
+      "path": "tidy/06-settled.png",
+      "sha256": "403b624f03da5f36d968a549d05994b05825133e51d1f1088fd1d25b56b0862e"
+    },
+    {
+      "path": "tidy/native.log",
+      "sha256": "5f9854a348f1b4351aee2544c84a3347ce2dcb0ee1d15573c0e5863216fcf133"
+    },
+    {
+      "path": "tidy/native.mp4",
+      "sha256": "03530f060ec9ffd35c6c94eae83e2e39f74503b302a6293b1e8ca7ef96bd8820"
+    },
+    {
+      "path": "tidy/trace.json",
+      "sha256": "31d669666db7ed7e8bb3d4fd0e98ca086da920beff816bdac69b59bdf8d92c9c"
+    }
+  ],
+  "durable_raw_archive": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/back-sign",
+  "continuous_video_sha256": "c560ffee585ac593bee2e584297c2f1bfbe4e2cd964c39ac5dceb8eab3de5f52",
+  "remaining": "Departure/preparation sources, player/plant/weather/feedback limited coverage and all required G3/204 review remain. This does not mark full story choices complete or release a player package.",
+  "rollback": "Revert focused PR and restore a matching original .bak with its old build; old builds cannot read the new wall/ring arrays. Keep original files/builds, no destructive reset.",
+  "cost": {
+    "observed_start_utc": "2026-10-31 19:22:44 UTC",
+    "local_validation_utc": "2026-10-31T19:39:02.442292+00:00",
+    "integration_end": "Issue/PR timestamp, not yet included",
+    "coverage": "Observed elapsed only, includes test/review wait; active/billed effort unavailable",
+    "new_purchases": 0,
+    "image_generation_calls": 0,
+    "historical_cumulative_hours": null,
+    "remaining_hours": null,
+    "control_limit": "200+40h unchanged",
+    "decision": "Continue authorized bounded MVP work; no new spending or budget extension"
+  },
+  "level_flow_review": {
+    "LV01": "通过（限定样件）：首门等盘点，背门绕实体到裸露叶结，不再重复等待；三风花是一组接力而非三种玩法。完整首次理解待M3。",
+    "LV02": "通过（限定样件）：首门后叶下可恢复并看见挡牌/风花；打开后回到源花、蜡脾与已收牌结果。整关空路复核不在本项完成。",
+    "LV03": "不适用：本项未新增攻击或改变普通蚊/庄主追击时序；其本版完整状态另列M1依赖。",
+    "LV04": "通过（通行与边界）：15起飞偏差均接力、开口并自然向前；普通上下绕行均开口；原生过程中无恢复。",
+    "LV05": "不适用本源修改：露珠与源花坐标/可选性不变；完整收集路线判断仍在M3，不由本项代签。",
+    "LV06": "通过（有限规则）：低40起步完整普通路线仅有预定R操作，未加伤害/等待/速度惩罚；新风花不补发旧奖励。",
+    "LV07": "通过（组件因果）：前门开放让玩家进入侧后接近，后门开放驱动实际到场、携牌、落位；整段目的/发展仍待M3。",
+    "LV08": "通过（本源原生复核）：厚木牌、柔性吊绳、实体枝架、叶结、挂点和角色位置可辨；修复风花遮挡与左蜂穿柱，保留失败材料。",
+    "LV09": "通过（有限版本/规则）：几何revision2，已知旧布局严格迁移，原字节备份；活动/完成角色与采蜜、移动实体、已开门检查点、暂停冷恢复均有实际反例/原生验证。",
+    "LV10": "通过（证据分层）：模型/已知输入/原生观察与独立代码画面复核分列，未声称真人、首次探索、趣味、真实时长或全GDD放行。"
+  }
+}
