@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-10-30 当前制作状态：** 最新目标为24关，已完成全作元素需求盘点和首批植物连接修复；整元素/组合及完整旅程候选仍未通过。唯一下一制作动作是#200的叶棚可见边界与遮雨/碰撞核查；成本累计与剩余不可核验。[最新项目评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md) · [唯一执行状态Now](docs/design/solar-term-campaign-production-spec.md#production-now) · [GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)。下方“最新/当前”仅指各自历史日期；既有试玩包入口见[原型说明](prototypes/swarm-flight/README.md)，可玩不等于当前候选验收通过。
+**2026-11-01 制作状态快照：** 目标为24关；叶棚取得限定G0–G2、玩家基础动作取得限定G0，完整旅程及全作发布尚未验收。当前组织与条件式排期见[最新项目评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)；动态下一动作只在[唯一执行状态Now](docs/design/solar-term-campaign-production-spec.md#production-now)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。累计成本/可靠剩余与完整内容产能仍未知；任务关闭数不代表产品完成率。下方“最新/当前”仅指各自历史日期；既有试玩包入口见[原型说明](prototypes/swarm-flight/README.md)，可玩不等于当前候选验收通过。
 
 **2026-10-26 最新可玩：07→08样板0.14.0。** 两个07中后段改为借风开叶门及低廊中的再运用，保持路线长度和08顺畅节奏；旧16关仍保留。完整包位于`outputs/swarm-flight/2026-10-26-seven-action-development/试玩包/`，双击`开始试玩.command`。[本批决定与待验证项 SF-R40](docs/design/swarm-flight-game-20261020.md#seven-action-development-20261026) · [当前试玩说明](prototypes/swarm-flight/README.md)。以下旧版记录保留历史语境。
 
@@ -242,7 +242,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 17. [`docs/COLLABORATION_PROTOCOL.md`](docs/COLLABORATION_PROTOCOL.md)：Alan 与 Codex 的职责边界、Collaboration 协作要求、决策与行动收口、单一执行视图及风险分级验证；
 18. [`docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md`](docs/PROCESS_EFFICIENCY_REVIEW_2026-08-28.md)：当前需求拆分、优先级、PR、文档与 CI 的效率审计快照；
 19. [`docs/STEAM_NEXT_FEST_2026_PLAN.md`](docs/STEAM_NEXT_FEST_2026_PLAN.md)：Steam 新品节报名与运营事项；
-20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前项目成熟度与生产评估（2026-10-30）**，核对24关目标、元素盘点、局部修复、GitHub四个里程碑、完整体验与成本缺口；此前日历劳动/Campaign判断保留为历史，唯一执行动作仍见Now；
+20. [`docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md`](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)：**当前项目成熟度与生产评估（2026-11-01）**，核对组织效率、24关发布依赖、完整内容产能与条件式时间情景；此前日历劳动/Campaign判断保留为历史，唯一执行动作仍见Now；
 21. [`docs/design/ART_IMPLEMENTATION_STANDARD.md`](docs/design/ART_IMPLEMENTATION_STANDARD.md)：美术生产规范；其中已被否决的旧风格方向不得覆盖商业成品清单；
 22. [`docs/design/LAUNCH_ART_PRODUCTION_PLAN.md`](docs/design/LAUNCH_ART_PRODUCTION_PLAN.md)：历史上线美术证据与生产门禁；
 23. [`docs/design/world-traversal-foundation.md`](docs/design/world-traversal-foundation.md)：春季大地图、巢门／花田切换、小蜂房边界、产品展示名和首条往返路线的实现记录。
