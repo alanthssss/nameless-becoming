@@ -35,7 +35,7 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 
 每个 runner 独立 checkout、SHA-512 校验引擎、导入，以隔离 Godot 的 user/cache 目录、存档和变异文件。每组内部仍按原顺序执行。`fail-fast: false` 保留其它组的诊断；不使用 `continue-on-error`。原 `Swarm Flight rules and complete routes` 检查名改为汇总 job，始终评估 matrix 结果，仅 `success` 放行，失败/取消/跳过/空结果均不能放行（整次取消时汇总也可能被取消）。8 分钟超时、触发路径、主线 push 复跑及并发取消策略保持原样。
 
-矩阵与依赖结果语义按 [GitHub matrix 文档](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations)和 [needs 上下文文档](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#needs-context)核对。分支保护 API 返回 403，不能声称远端强制保护已配置；保留旧检查名用于兼容现有检查消费者。
+矩阵与依赖结果语义按 [GitHub matrix 文档](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations)和 [needs 上下文文档](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#needs-context)核对。首轮实施时分支保护 API 返回 403，当时未配置远端强制保护；保留旧检查名用于兼容现有检查消费者。后续公开仓库并启用保护的实证见[服务器保护](#server-protection)。
 
 预估工作流约 3 分钟，须由本次远端完整 CI 实测确认。多两份初始化及汇总 job 会增加 runner 总秒数；这是反馈速度与执行资源的取舍，不声称降低账单。若排队抵消并行收益、耗时失衡或费用明显增加，按实际数据重新调整分组。回退本次 workflow 提交即可恢复串行。
 
@@ -64,7 +64,7 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 | 恢复main差异路由时需避免跨提交取消（预防设计） | 若新入口仍沿用main ref并发，后续文档push可能取消前一代码验证；旧Quality没有push，不能列作旧版已复现故障 | 主线并发按提交SHA隔离，不取消不同提交；仅PR按编号取消被替代的版本 |
 | 路径过滤与汇总缺乏统一合同 | 独立workflow的paths与分类器容易漂移；被整条跳过的workflow不产生可用required结果 | Quality作为唯一自动入口，原型使用同一revision的本地reusable调用；总门禁始终检查scope及所有选择结果 |
 
-这些结论来自实际单路径分类复现、源码依赖读取和独立复核。required-check的Pending风险为条件性问题：远端分支保护接口403，未声称本仓库已经被它阻塞。[GitHub说明](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)区分workflow未触发、条件跳过和上游失败；因此不能把skipped一概当作测试通过。
+这些结论来自实际单路径分类复现、源码依赖读取和独立复核。required-check的Pending风险在本轮调查时为条件性问题：当时远端分支保护接口403，未声称本仓库已经被它阻塞；当前保护状态见[服务器保护](#server-protection)。[GitHub说明](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)区分workflow未触发、条件跳过和上游失败；因此不能把skipped一概当作测试通过。
 
 ### 事件与分支规则
 
@@ -78,7 +78,7 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 | 单个原型workflow_dispatch | 该原型完整测试 | 保留诊断入口；不能代替PR所需检查的真实pull_request运行 |
 | Desktop client builds手动 | 原有版本校验、双平台构建及其现有门禁 | 未改：publish默认false，仅显式选择且main才能发布；自动CI不会调用它 |
 
-同名手动原型工作流不再另接PR/push，避免Quality调用之外再跑一遍。三个原型的原测试jobs逐字段保留，Swarm继续三组并行。reusable内部检查在UI中带调用方前缀，Quality顶层另保留旧 `Swarm Flight rules and complete routes` 名称；综合检查为 `CI required checks`。若将来启用保护，应选择总门禁并核对实际远端配置，不能用分支名或本地文档代替启用。
+同名手动原型工作流不再另接PR/push，避免Quality调用之外再跑一遍。三个原型的原测试jobs逐字段保留，Swarm继续三组并行。reusable内部检查在UI中带调用方前缀，Quality顶层另保留旧 `Swarm Flight rules and complete routes` 名称；综合检查为 `CI required checks`，现已设为main的必需检查并绑定GitHub Actions来源，见[服务器保护](#server-protection)。以后修改检查名或来源时必须同步远端设置并读回，不能用分支名或本地文档代替启用。
 
 ### 路径与失败边界
 
@@ -98,3 +98,24 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 新增轻量scope测试/语法检查和总门禁有调度成本；CI自身改动会有意运行完整旧工程和三个原型，不能将这一全量耗时当作普通Swarm改动的耗时回退。普通Swarm改动不再带起无关旧Web/导出；普通文档不会为了触发而启动引擎。完整PR/main运行、实际结果与收口时间在#239回写，未运行的路径不得写成远端通过。
 
 本轮只是CI维护；所有测试是开发者自动检查，无新增游戏体验证据。无采购；执行区间、CI等待、累计/剩余工时及账单保持分别记录，历史不可核算项不填零。200＋40小时不变，自动接续仍暂停。出现新输入依赖、工作流/测试新增或路径改名时，同时更新此合同及分类测试；回退本轮聚焦PR可恢复上一版入口。
+
+<a id="server-protection"></a>
+## 第三轮：公开仓库与服务器保护
+
+2026-11-01，Alan明确授权将仓库改为public，以解除私有仓库分支保护的套餐限制；Codex实施，沿用#239 / M1 / GDD§12–13。GitHub于北京时间02:19将仓库可见性更新为public；已用匿名API读回HTTP 200、`private=false`，无需升级套餐。可见性变更后首次读取main保护返回`404 Branch not protected`，确认此前确实没有保护规则，随后配置并重新GET核验：
+
+| 设置 | 实际读回 |
+| --- | --- |
+| 仓库 / 主分支 | `visibility=public` / `main.protected=true` |
+| 合并入口 | 必须通过PR；审批人数0，适配单人维护；不要求代码所有者或另一账号审批 |
+| 必需检查 | `CI required checks`，绑定`github-actions` App ID `15368`（从真实成功检查读取） |
+| 集成基线 | `strict=true`，合并前分支必须包含最新main |
+| 管理员 | `enforce_admins.enabled=true`；未配置PR绕过名单 |
+| 强推 / 删除main | 均禁止 |
+| 评审讨论 | 合并前必须解决讨论 |
+
+这使CI结果由GitHub服务器用于拦截不合规合并；管理员仍有修改或删除保护设置的管理能力，不能宣称设置永远不可更改。未用违规推送破坏性试验验证拒绝路径。该记录的文档PR将按正常检查与合并流程验证可用路径，运行及合并证据回写#239。公开仓库仍需保留PR审查：任何有写权限的人修改workflow也可能改变检查含义，单独的检查名称不构成对源码内容的审查。
+
+公开前只读复核覆盖远端2分支、6标签、283提交中的2318个文本blob版本（约58.8MB），以及243条Issue/PR正文和15条Issue评论；有限凭据正则未发现明显私钥、常见Token或带密码连接URL。作者邮箱和部分本机路径属于已存在的历史信息。二进制、历史Actions日志、构建artifact及Release附件未逐一内容审计，不能据此声称全面安全认证。公开范围包括源码、Git历史、Issue/PR、Actions历史及已有预发布附件；本次未新增游戏包或发布运行，未修改代码/素材许可。
+
+设置依据：[GitHub仓库可见性说明](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility)、[分支保护API](https://docs.github.com/en/rest/branches/branch-protection#update-branch-protection)。将来若恢复private，必须先重新核验当时套餐是否支持保护；回退本页文档不会回退GitHub设置。无新增采购，产品G门禁、200＋40小时控制、累计/剩余未知项及自动化暂停状态保持。
