@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-11-01 制作状态快照：** 目标为24关；叶棚取得限定G0–G2、玩家基础动作取得限定G0，完整旅程及全作发布尚未验收。当前组织与条件式排期见[最新项目评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)；动态下一动作只在[唯一执行状态Now](docs/design/solar-term-campaign-production-spec.md#production-now)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。累计成本/可靠剩余与完整内容产能仍未知；任务关闭数不代表产品完成率。下方“最新/当前”仅指各自历史日期；既有试玩包入口见[原型说明](prototypes/swarm-flight/README.md)，可玩不等于当前候选验收通过。
+**2026-11-01 制作状态快照：** 目标为24关；叶棚取得限定G0–G2、玩家基础动作取得限定G0，当前希望交付的“池岸归途”，是从池边出发、选路穿雨、帮助邻居到回巢的一段连续游戏；它与完整24关正式版都尚未验收。当前组织与条件式排期见[最新项目评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)；动态下一动作只在[唯一执行状态Now](docs/design/solar-term-campaign-production-spec.md#production-now)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。累计成本/可靠剩余与完整内容产能仍未知；任务关闭数不代表产品完成率。下方“最新/当前”仅指各自历史日期；既有试玩包入口见[原型说明](prototypes/swarm-flight/README.md)，可玩不等于当前候选验收通过。
 
 **2026-10-26 最新可玩：07→08样板0.14.0。** 两个07中后段改为借风开叶门及低廊中的再运用，保持路线长度和08顺畅节奏；旧16关仍保留。完整包位于`outputs/swarm-flight/2026-10-26-seven-action-development/试玩包/`，双击`开始试玩.command`。[本批决定与待验证项 SF-R40](docs/design/swarm-flight-game-20261020.md#seven-action-development-20261026) · [当前试玩说明](prototypes/swarm-flight/README.md)。以下旧版记录保留历史语境。
 
