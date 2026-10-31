@@ -162,6 +162,9 @@ jobs:
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/spring-model.log" "$RUNNER_TEMP/spring-ui.log" "$RUNNER_TEMP/spring-entry.log"; then exit 1; fi
           grep -q '^SPRING JOURNEY VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-model.log"
           grep -q '^SPRING JOURNEY UI VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-ui.log"
+          SWARM_POND_STATES_DIR="$RUNNER_TEMP/pond-states" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_source_states_probe.gd 2>&1 | tee "$RUNNER_TEMP/pond-states.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/pond-states.log"; then exit 1; fi
+          grep -q '^POND SOURCE STATES VERIFIED:.*0 failures' "$RUNNER_TEMP/pond-states.log"
           SWARM_POND_AUDIO_QA_DIR="$RUNNER_TEMP/pond-audio" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_audio_verify.gd 2>&1 | tee "$RUNNER_TEMP/pond-audio.log"
           if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/pond-audio.log"; then exit 1; fi
           grep -q '^POND AUDIO VERIFIED:' "$RUNNER_TEMP/pond-audio.log"

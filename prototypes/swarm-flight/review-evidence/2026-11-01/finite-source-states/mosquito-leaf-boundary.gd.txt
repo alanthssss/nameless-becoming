@@ -1,0 +1,27 @@
+extends SceneTree
+const M=preload("res://spring_journey_model.gd")
+func _initialize():
+ var m=M.new()
+ m.load_stage(0)
+ for x in range(2320,2721,10):
+  for y in range(300,436,5):
+   var p=Vector2(x,y)
+   if m.shelter_index_at(p)>=0 or p.distance_to(M.SMALL_HOME)>300: continue
+   if m.walls.any(func(w): return w.rect.grow(14).has_point(p)): continue
+   if m.shelters.any(func(l): return not M.Canopy.clear_disk(p,14,M.Canopy.polygon(l))): continue
+   if not m.sight_clear(M.SMALL_HOME,p): continue
+   if m.shelters.any(func(l): return M.Canopy.intercepts(M.SMALL_HOME,p,l)):
+    print("VISIBLE_THROUGH_SOLID_LEAF ",p)
+    m.p=p
+    m.started=true
+    var states=[]
+    var inside=0
+    for i in 180:
+     m.step(Vector2.ZERO,false,1.0/60)
+     if m.small.state not in states:states.append(m.small.state)
+     if m.shelters.any(func(l): return Geometry2D.is_point_in_polygon(m.small.pos,M.Canopy.polygon(l))):inside+=1
+    print("STATES ",states," ACTOR_CENTER_INSIDE_LEAF_FRAMES ",inside)
+    quit(0)
+    return
+ print("NO_REACHABLE_BLOCKED_SIGHTLINE")
+ quit(0)

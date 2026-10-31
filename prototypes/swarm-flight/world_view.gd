@@ -760,18 +760,32 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 		_curve(Vector2(6,10),Vector2(14,18),Vector2(24,17),Vector2(23,9+wave),ink,2)
 	draw_set_transform(_world_offset)
 
+func feedback_caption_rect(feedback: Dictionary) -> Rect2:
+	var text_width := feedback_font.get_string_size(feedback.text,HORIZONTAL_ALIGNMENT_LEFT,-1,19).x
+	var pos: Vector2=feedback.pos
+	pos.y=clampf(pos.y-45-(0.9-feedback.life)*24,160,670)
+	pos.x=clampf(pos.x,model.camera_x+text_width*0.5+24,model.camera_x+1256-text_width*0.5)
+	return Rect2(pos-Vector2(text_width*0.5+9,23),Vector2(text_width+18,31))
+
+func active_caption_rects() -> Array[Rect2]:
+	var boxes: Array[Rect2]=[]
+	if feedback_font==null: return boxes
+	for feedback in _feedback:
+		if feedback.kind=="caption": boxes.append(feedback_caption_rect(feedback))
+	return boxes
+
 func _effects() -> void:
 	for feedback in _feedback:
 		var alpha: float = minf(1.0, feedback.life * 2.5)
 		var pos: Vector2 = feedback.pos
 		if feedback.kind == "caption" and feedback_font != null:
 			var words: String = feedback.text
-			var text_width := feedback_font.get_string_size(words,HORIZONTAL_ALIGNMENT_LEFT,-1,19).x
-			pos.y = clampf(pos.y-45-(0.9-feedback.life)*24,160,670)
-			pos.x = clampf(pos.x,model.camera_x+text_width*0.5+24,model.camera_x+1256-text_width*0.5)
+			var box:=feedback_caption_rect(feedback)
+			var text_width:=box.size.x-18.0
+			pos=box.position+Vector2(box.size.x/2.0,23)
 			var ink := Color(INK,alpha)
 			var tint := Color("ffd3b6") if feedback.bad else CREAM; tint.a = alpha
-			draw_style_box(_box_style(ink,Color.TRANSPARENT,0,9),Rect2(pos-Vector2(text_width*0.5+9,23),Vector2(text_width+18,31)))
+			draw_style_box(_box_style(ink,Color.TRANSPARENT,0,9),box)
 			draw_string(feedback_font,pos-Vector2(text_width*0.5,0),words,HORIZONTAL_ALIGNMENT_LEFT,-1,19,tint)
 		elif feedback.kind == "blocked":
 			for side in [-1.0, 0.0, 1.0]:

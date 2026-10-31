@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "kind": "finite_source_states_and_context_feedback_occlusion_fix",
+  "scope": "池岸归途实际A–D受控源状态与提示遮挡修复，非整段独立探索或#204放行",
+  "authority": {
+    "gdd": [
+      "§8.1",
+      "§8.4",
+      "§13.6"
+    ],
+    "issues": [
+      214,
+      217,
+      219,
+      204
+    ],
+    "milestone": "M1 source prerequisites;M2 evidence only",
+    "execution_pointer": "docs/design/solar-term-campaign-production-spec.md#production-now"
+  },
+  "baseline_revision": "df4ff10208ba9d3aee2deac80c63b604675198cd",
+  "implementation": [
+    "Spring场内提示避开真实蜜蜂绘制位置、护雨/就绪环及活跃伤害/动作浮字；舞蹈含实际偏移，保留首屏同伴既有避让规则",
+    "WorldView把原浮字盒计算抽为共同绘制/查询函数，位置/字号/样式不变；当没有空位时短时让局部提示让位，关键反馈仍显示",
+    "仅增加定向验证/证据，不改变物理、伤害、护雨时限、动作参数或存档协议"
+  ],
+  "verification": {
+    "native": "146 checks,0 failures;731 movie frames/722 sampled fixed30Hz steps;23 screenshots plus one exact raw-video frame at14.10s",
+    "headless": "121 checks,0 failures",
+    "ui": "50 checks,0 failures;isolated real disk pause/cold restore",
+    "departure": "17 checks,0 failures;existing friend cue and preparation retained",
+    "all_frames": "722/722 bee/shield boxes and722/722 independently reconstructed actual caption boxes clear of context cue",
+    "before": "Original df4ff10 C26 assertions/4 occlusion failures;first body-only fix B27 assertions/1 caption failure;final C26 andB27 pass",
+    "development_setup": "Each source segment starts in a documented controlled fixture;actual keyboard/model ticking and physical rain particles follow. OS focus-out ignored in native harness;explicit Esc/cold remain production."
+  },
+  "scoped_findings": {
+    "A": "Verified actual stem and leaf underside9→14 body expansion,sliding/leaving,turning during charge,below20 rejection without dash cost. ExistingG0 cancels/ready/dash retained.",
+    "B": "Verified ordinary aim/chase/miss(return/rest/idle),real8energy contact,multiple protected contact frames andR reset. NOT full mosquitoG1/G2:separate leaf penetration finding remains blocked.",
+    "C": "Verified real shield pickup,five-second decay,controlled physical drop block,0.35s feedback suppression,natural expiry and30energy rain hit/recovery. Injected particles do not claim natural cloud emission;natural weather evidence remains prior scoped audio capture.",
+    "D": "Verified short feed/no source rejection,return visit observation,held-space cancel guard,uncommitted dance cancel,fresh re-arm,one commit,repeat/cold no duplicate. Source invalidation via explicit supported API is extra regression,not a naturally occurring gameplay event."
+  },
+  "unresolved": [
+    {
+      "issue": 214,
+      "finding": "Ordinary mosquito anchor/path can enter actual leaf polygon. Read-only boundary probe found clear-player point(2320,300),natural actor transitions and133/180 actor-center-inside samples. Needs separate focused source fix and native review;not waived by this sequence passing."
+    },
+    {
+      "issues": [
+        219,
+        226,
+        204
+      ],
+      "finding": "Audio subjective continuous listening remains unverified;existing28s actual clip is pending user response. No numerical substitute."
+    },
+    {
+      "issues": [
+        205,
+        206,
+        208,
+        209
+      ],
+      "finding": "High/low information difference,rain route consequence,controls-only independent full exploration and specified final package remain pending."
+    }
+  ],
+  "evidence_boundary": {
+    "whole_family_gates": "unchanged",
+    "M3_allowed": false,
+    "human_acceptance_claim": false,
+    "first_time_exploration_claim": false,
+    "source_coverage": "source-coverage.json maps82 actual IDs and scoped prior evidence;pending/blocked rows are not signed by artifact existence"
+  },
+  "development_failures": [
+    {
+      "attempt": "headless1",
+      "finding": "B miss fixture began inside canopy;downward input was physically blocked",
+      "resolution": "Use valid above-canopy initial position and actual upward evasion;add initial-solid/leaf checks"
+    },
+    {
+      "attempt": "headless3/4",
+      "finding": "C left approach seeds touched curled leaf edge;exposure/drop assertions correctly failed",
+      "resolution": "Isolate C,inspect actual leaf extent,approach pickup from safe right-side position then fly right/up;C20/0"
+    },
+    {
+      "attempt": "native1",
+      "finding": "105 behavioral/capture assertions passed but visible rain cue covered bee/shield",
+      "resolution": "Add independent cue bounds test,exactC baseline4fails,fixgeneralSpringavoidance"
+    },
+    {
+      "attempt": "native2",
+      "finding": "126 assertions passed but independent image review foundcue coveringdamagecaption",
+      "resolution": "ExactB baseline1fail;reserve actual drawn caption boxes;native3 includes full-framecaptionassertions andvisual recheck"
+    }
+  ],
+  "LV01_10": {
+    "LV01": "existing goal wording unchanged;P4 readability not signed",
+    "LV02": "high/low and meaningful rain choice pending",
+    "LV03": "no control lock or timing change",
+    "LV04": "tested physical rejection/contact/cancel/recovery paths with explicit fixtures",
+    "LV05": "bee9/14 clearance and shield feedback checked;ordinary mosquito/leaf remains blocked",
+    "LV06": "R/pause/committed and invalidated cold restore checked",
+    "LV07": "bee/shield andfeedback caption visibility verified;audio subjective pending",
+    "LV08": "costs/one-time commit and repeat boundaries verified",
+    "LV09": "no subjective pacing/fun claim",
+    "LV10": "not candidate;specified finalpackage remains required"
+  },
+  "cost": {
+    "observed_start_utc": "2026-10-31T20:21:00Z",
+    "checkpoint_utc": "2026-10-31T20:33:48.093789+00:00",
+    "estimate_minutes": [
+      30,
+      45
+    ],
+    "coverage": "Observed interval includes source verification,failed fixture correction,UI fixes,independent review and waiting;final CI/cleanup interval in issues. Not active/billed hours.",
+    "cash_purchases": 0,
+    "image_calls": 0,
+    "active_hours": null,
+    "cumulative_hours": null,
+    "remaining_hours": null,
+    "budget": "200+40h unchanged;remaining unverifiable;automation PAUSED",
+    "decision": "Finish focused UI/source evidence loop;then separately fix proven mosquito source defect. No gate waiver or full-game scope cut."
+  },
+  "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/finite-source-states in actual main checkout: all failed fixture logs/traces andnative1/2/3 AVI/screens/saves retained. Extra15b extracted from unmodifiednative3AVI at14.10s to show bee during visible invulnerability phase.",
+  "rollback": "Revert focused PR;no save/model schema change",
+  "source_hashes": {
+    "spring_journey_main.gd": "16a05dcdef133d27362958fa794c24b2ad92306b7d3443731cd8cd143f43be57",
+    "world_view.gd": "1cae5f78a190ebadaed49a716cb66114093a9d30b5799f1e56b13cdae3820d9d",
+    "pond_source_states_probe.gd": "948003da0021d0331c74c3083607c69d44b4f000c2b91df2cf8bf33ca80a827e",
+    "spring_journey_model.gd": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+    "spring_journey_content.gd": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880"
+  },
+  "review": {
+    "reviewer": "/root/feedback_review",
+    "result": "scoped_UI_patch_no_blockers; mosquito source remains blocked",
+    "method": "independent source and final native3 image/trace inspection",
+    "observations": [
+      "09/15 actual damage captions remain complete;13/13b shield/bee complete",
+      "722 samples:0 bee/shield or caption overlap;80 samples have actual captions",
+      "Common caption helper preserves original drawn coordinates and font/width;cue may temporarily yield if no legal placement",
+      "Bird leaf attachment verified:root-to-Bezier-center0.732px and1587alpha>=0.6 pixels within3px stem core;ordinary mosquito leaf penetration separately confirmed"
+    ]
+  },
+  "artifact_hashes": {
+    "baseline/09-mosquito-hit-caption-covered.png": "e3b782dccf5a99865627302ff5225eed7f6eacad238ca1fb5f49b8cc76f1fa2c",
+    "baseline/12-shield-block.png": "32a0ef8b4682985546393e7db2fecafa7a9256da9de0c2fed764ff8862b3b4b6",
+    "baseline/13-shield-near-end.png": "b327bb38ab4de07a19473db57cb06953bd559189cda32fde443b4e5921507190",
+    "baseline/14-shield-ended.png": "b269692029713579269d06e6af5a3ed4a5ebd21425f2dff1567a77b04acf2256",
+    "baseline/15-rain-hit.png": "1b39b5c9bfc29efb03bdb9be68847427f6c5e9dbf4ed774a1f2bfb5e6982f137",
+    "departure.log": "92d3f2ff6475ac4b2e5bdec55b591d7ec86070a630666e8d6758289cffecb956",
+    "mosquito-leaf-boundary.gd.txt": "404dd4d2e48c2fc3bc650ac1199e34577477e2575fdfdf926f7852e17cc59cdc",
+    "native/01-stem-compact.png": "ad124af4be41c294c6ff11ab0f0ad511fd07816a1730c23991dbb6f1fbbc48e0",
+    "native/02-stem-expanded.png": "7ea36654d999e2460bbc97cf42bbd3f3918807294efafbe9b66e6b3c9d0b4817",
+    "native/03-stem-leave.png": "7e32e5bdb2db1a19183e7a2e1d9a516508b4d21fbe5741e4813ce6093082434f",
+    "native/04-leaf-compact.png": "1e006567106bbcd0e49e5985494f17b54cede0810c8a2b73bddc35651334f487",
+    "native/05-leaf-expanded.png": "5873cfcc502030370b8470f9aaa7d53c0071918b4e9ad3439ad1f7edbce1c831",
+    "native/06-too-tired.png": "08a65fab07cbc1227cb9b0aa5d1832ccbf013c55d7532a3317025d47d7e06b07",
+    "native/07-mosquito-aim.png": "69137c9a14444209d7919f5da66d11a37f48bd62df2b8098eecad5bce2be32b4",
+    "native/08-mosquito-missed.png": "6614cb1cfd7e469168c91770d67474543e3e2deabc4a178a8859faafbb771ac7",
+    "native/09-mosquito-hit.png": "554008416bd829cc4e59baa705c06d35a8bd7230e39d11e641343c89569d0cd2",
+    "native/10-safe-recovery.png": "a184eacdfb20c52e2d8d4c505c0ba825ef0dce5be3dc8337207946527a18f86b",
+    "native/11-shield-picked.png": "bd04ab5e7f5ea2ded6e7f3156a74456f80c44b6f2a1d52f7cf0e8c03568c4079",
+    "native/12-shield-block.png": "3c6404269db3de3b5d47a9b87f2d20be4425afeed427e96af27a173009dc1638",
+    "native/13-shield-near-end.png": "dd0f3c2abeec199e0edbb353125731713ba7fa695a93ec6aadab7693a361661a",
+    "native/13b-shield-small-window.png": "74e8c8c178e36d004dd29520c356beb3ee3221b814740ba61830dc94699df16e",
+    "native/14-shield-ended.png": "55f787a8bf22fd2cc1e9a6e6e3aee9b6c8f321c9dd598873d6c26abb32363e2e",
+    "native/15-rain-hit.png": "4a103f8d46398e84b4fd781dba9fd7686bf2d639fb685fb37952bb4d7d5c2c5a",
+    "native/15b-rain-hit-visible-video-14.10s.png": "44d1857436df55f128098f684ff7074ba80517f3f729cad490b9b6d068758d28",
+    "native/16-rain-recovered.png": "58e6274456fb924c0d6dddfbfd7530e952c70483430292a92bbab5bd050f7596",
+    "native/17-no-observation.png": "e96c3eaea4c3490b9430112943750b9aa7b363c92f160bcc9803c0e726aecfa4",
+    "native/18-return-feed.png": "d89f96eaccecaba46e3de0d13f501cb1f16b680a2e2c22180985d8050e57074a",
+    "native/19-held-cancel.png": "6e0b98b55831fdf2763a567d71a953abc1306584a98d4265b772e1e3d1b62474",
+    "native/20-dance-cancel.png": "248b28465e3cbe231a516f9170696ecbf802719dd47056f20fc19fbfe30372b0",
+    "native/21-shared-once.png": "fe7423bd9d8ff917ac66dedaa45726c96e8b7f91f11e4207a59f8003fc7761d9",
+    "native/22-source-invalidated.png": "5e614322e3e994ef23a008d581aba2cd76bca089ef4df0d502f3c6b80196ba6e",
+    "native/native.log": "03dd52044e4738febad5da6b680cb166f46470a309c08aa78b690aaa6e430980",
+    "native/native.mp4": "6d09ff94dd4b0e42a2ae039b3f102def3a1d7ae0c851e3597a2defe1f1b110be",
+    "native/save.json": "21251d0d0d6a645bb0556b61fdc4746d4e41f89ce752cd31239deb1fe0810920",
+    "native/trace.json": "6913cb4ef442a3daddd01f4c2d851e9cff7e936ed747df5b6a5c99f2842e47d1",
+    "pond-mosquito-leaf-boundary.log": "60f970681ece4fc54e6eb151df74ed80a62d363794da9d448d2c6d5483c05785",
+    "pond-states-b-caption-baseline.log": "74a5c6eea9f5b0caf1ae28d46e0ec2f03642ffc6def3d6cf3545f6ef02a15aa1",
+    "pond-states-b-caption-fixed.log": "49ad3729b0b8be9d4e8dfaf19164b7ea4da52ee75bd1cad1568968f2eee6af34",
+    "pond-states-c-occlusion-baseline.log": "9dc839a112536e4287dd74eea0218965c3ada2e8a93a0695a9dfa872fcf7ff27",
+    "pond-states-c-occlusion-fixed.log": "37a455a45fa7edfe7a59fd203f5dfb32e482effcea6fac9f4d637f5a62bee1b9",
+    "states.log": "e142d53817bae1bd7b4bf698cebc63d60732c7e043aec60c48d16627c83557f2",
+    "ui.log": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711",
+    "source-coverage.json": "9823e2267e4970ee592b30cfdd2606850423638d5d52b10f922ec238c8d5fa92"
+  }
+}
