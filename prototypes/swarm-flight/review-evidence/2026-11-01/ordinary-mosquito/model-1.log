@@ -1,0 +1,7 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+FAIL: JSON accepts 03 source observed
+FAIL: exact state 03 source observed
+SPRING_ROUTE: {"completed":true,"recoveries":3,"rings":3,"shared":true}
+SPRING_ROUTE: {"completed":true,"recoveries":2,"rings":0,"shared":false}
+SPRING JOURNEY VERIFIED: 392 checks, 2 failures

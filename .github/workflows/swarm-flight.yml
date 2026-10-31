@@ -165,6 +165,12 @@ jobs:
           SWARM_POND_STATES_DIR="$RUNNER_TEMP/pond-states" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_source_states_probe.gd 2>&1 | tee "$RUNNER_TEMP/pond-states.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/pond-states.log"; then exit 1; fi
           grep -q '^POND SOURCE STATES VERIFIED:.*0 failures' "$RUNNER_TEMP/pond-states.log"
+          SWARM_MOSQUITO_QA_DIR="$RUNNER_TEMP/ordinary-mosquito" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://ordinary_mosquito_verify.gd 2>&1 | tee "$RUNNER_TEMP/ordinary-mosquito.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/ordinary-mosquito.log"; then exit 1; fi
+          grep -q '^ORDINARY MOSQUITO VERIFIED:.*0 failures' "$RUNNER_TEMP/ordinary-mosquito.log"
+          SWARM_MOSQUITO_QA_DIR="$RUNNER_TEMP/ordinary-mosquito-disk" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://ordinary_mosquito_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/ordinary-mosquito-disk.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/ordinary-mosquito-disk.log"; then exit 1; fi
+          grep -q '^ORDINARY MOSQUITO SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/ordinary-mosquito-disk.log"
           SWARM_POND_AUDIO_QA_DIR="$RUNNER_TEMP/pond-audio" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_audio_verify.gd 2>&1 | tee "$RUNNER_TEMP/pond-audio.log"
           if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/pond-audio.log"; then exit 1; fi
           grep -q '^POND AUDIO VERIFIED:' "$RUNNER_TEMP/pond-audio.log"

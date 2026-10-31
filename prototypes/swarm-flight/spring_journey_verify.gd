@@ -407,7 +407,7 @@ func run() -> void:
 	check(bird.bird_greeted and bird.observation_valid() and bird.stamina>70,"stationary source gives bird response, fact and real restoration")
 	roundtrip(bird,"bird response")
 	var bud=fresh()
-	bud.p=Model.SMALL_HOME+Vector2(-14,62)
+	bud.p=Model.SMALL_FLOWER_HOME+Vector2(-14,62)
 	bud.stamina=60
 	frames(bud,60)
 	check(not bud.observation_valid() and bud.stamina<=60,"closed flower is not a second nectar source")
