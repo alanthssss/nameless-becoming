@@ -34,6 +34,7 @@ var toast: Label
 var toast_left := 0.0
 var toast_priority := 0
 var toast_guard_left := 0.0
+var toast_kind := ""
 var transition_left := 0.0
 var handoff_panel: Panel
 var handoff_heading: Label
@@ -499,6 +500,13 @@ func tick(delta: float) -> void:
 		var was_ready: bool = model.charge >= Model.CHARGE_READY and model.can_burst()
 		var before_time: float = model.time
 		model.step(input_direction(),held.has(KEY_SPACE),delta)
+		# A cancellation describes the previous attempt, not the new charge.
+		# Keep unrelated hit/recovery messages and their priority protection.
+		if toast_kind == "charge_cancel" and (model.charging or model.burst_left > 0):
+			toast_left = 0.0
+			toast_guard_left = 0.0
+			toast_priority = 0
+			toast_kind = ""
 		if model.started: played_seconds += model.time-before_time
 		energy_trail = maxf(model.stamina,move_toward(energy_trail,model.stamina,delta*24.0))
 		if not was_ready and model.charge >= Model.CHARGE_READY and model.can_burst(): sound.play_event("ready")
@@ -569,10 +577,11 @@ func event_message(kind: String, text: String, seconds: float, tint := Color("ff
 	elif kind.begins_with("recover_"): priority = 5
 	# Routine launch cost is already shown at the bee and in the stamina bar.
 	if kind == "burst": return
-	message(text,seconds,tint,priority)
+	message(text,seconds,tint,priority,kind)
 
-func message(text: String, seconds: float, tint := Color("ffe7a3"), priority := 1) -> void:
+func message(text: String, seconds: float, tint := Color("ffe7a3"), priority := 1, kind := "") -> void:
 	if toast_guard_left > 0 and priority < toast_priority: return
+	toast_kind = kind
 	toast_priority = priority
 	toast_guard_left = minf(seconds,1.2) if priority >= 3 else 0.0
 	toast.text = text

@@ -1,0 +1,84 @@
+{
+  "issue": 219,
+  "milestone": 1,
+  "gdd": [
+    "3.2",
+    "10.2",
+    "13.6"
+  ],
+  "kind": "scoped_feedback_fix_not_MVP_candidate",
+  "baseline_revision": "98c6dc39a9eedf85ffd2303c74af3fb836320fad",
+  "scope": "Cancel feedback becomes invalid on a new charge or burst; preserve other priority-protected messages. Model/handling values unchanged.",
+  "regression_evidence": {
+    "before": "Same keyboard/UI test on original main.gd: 11 checks, 3 failures (new charge, ready, successful burst retain cancellation). Tool-captured output; no saved baseline file.",
+    "after": "Native keyboard/UI regression: 22 checks, 0 failures, 4 PNGs; trace.json",
+    "base_ui": "427 checks, full sixteen-level input routes",
+    "spring_ui": "50 checks, 0 failures; pause/cold restore/route regression",
+    "warnings": "Existing headless UI suites report ObjectDB instances leaked at exit; native feedback run has no warnings. No parser/script errors."
+  },
+  "review": {
+    "reviewer": "feedback_review agent; read-only, no nested delegation",
+    "finding": "Implementation timing/identity protection correct. Added real rejected charge_cancel under recover_manual then retry, as suggested.",
+    "visual": "Root inspected native ready.png and burst.png: current ready arrow/cost cue and burst cost visible; stale cancellation absent. These are developer fixtures, not independent player evidence."
+  },
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/main.gd",
+      "sha256": "7d8ffb2546c71be57072ac7747561cb1e3056a269c9043298b8a6c8bb9569386"
+    },
+    {
+      "path": "prototypes/swarm-flight/charge_feedback_verify.gd",
+      "sha256": "d04c792b912fe23a3803e4cbfec83b52c617e109d6b665a76275c0d979785b8c"
+    },
+    {
+      "path": ".github/workflows/swarm-flight.yml",
+      "sha256": "8501f12ac0bd855535500d201dc974285d9b587962a0b384c0fd28e14913afc4"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "base-ui.log",
+      "sha256": "06f40149a061cfcd5d137fcede6022e05548a72c03536f8d8bb5a76f7f3ca96d"
+    },
+    {
+      "path": "burst.png",
+      "sha256": "651b07fbe7b0fafa961dcb49f84386e26f0cea09e66bebebee39482ab1eb9831"
+    },
+    {
+      "path": "cancel.png",
+      "sha256": "9154493572d38044e09e39749880c10156c1f8c1d90f420f5f8d44975e33a8e5"
+    },
+    {
+      "path": "native.log",
+      "sha256": "9fb5ba9e23b0798a5bdc2712e87f5e9536c389aed4f6a94e5654ae1463d7390a"
+    },
+    {
+      "path": "ready.png",
+      "sha256": "faa64d37a59c6562e0083c8ebf663fbd3b7684604c2589fef19909881fe06290"
+    },
+    {
+      "path": "retry.png",
+      "sha256": "66cf4d3864ce78cd0782e7d1626cd65818e8efa8ada833dbb72978aeaadcb11b"
+    },
+    {
+      "path": "spring-ui.log",
+      "sha256": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711"
+    },
+    {
+      "path": "trace.json",
+      "sha256": "d7f4fed576dd5e251696780cce5e028c48612bb8d1815780c6a24bd6cceba679"
+    }
+  ],
+  "gates": "Only the reported feedback defect is resolved; remaining #219 family, #204 dependencies and J01–08 remain open. No new G1/G2 family or product acceptance claim.",
+  "rollback": "Revert this focused commit; no save schema/data migration.",
+  "cost": {
+    "observation_start_utc": "2026-10-31 19:02:10 UTC",
+    "measurement": "Issue-start clock through integration completion; initial context recovery excluded; wall clock not active labor or billed usage. Subagent effort not independently timed.",
+    "cash_purchase": 0,
+    "image_generation_calls": 0,
+    "historical_cumulative_hours": null,
+    "remaining_budget_hours": null,
+    "control_limit_hours": "200+40 unchanged",
+    "decision": "Continue already-authorized bounded MVP implementation; no bulk production or new spending."
+  }
+}
