@@ -1,0 +1,15 @@
+{
+  "kind": "technical_pcm_analysis_only_not_subjective_listening",
+  "input": "native-audio.wav extracted from original native.avi without normalization",
+  "wav_sha256": "f221a8b5e7454218e01ff1836e30644244ff3356ef5808489e29981f8402ab98",
+  "sample_rate": 48000,
+  "channels": 2,
+  "sample_width_bytes": 2,
+  "frames": 5670400,
+  "duration_seconds": 118.13333333333334,
+  "peak_dbfs": -9.417419601662104,
+  "rms_dbfs": -28.24998006292706,
+  "saturated_samples": 0,
+  "total_interleaved_samples": 11340800,
+  "listening": "pending;current model cannot hear audio"
+}
