@@ -10,6 +10,12 @@ const KNOT=Vector2(2371,465)
 const BACK_KNOT=Vector2(3021,300)
 const RESULT_HOME=Vector2(3160,630)
 const RESULT_SECONDS=2.4
+const INSPECT_SECONDS=0.6
+const WAITING_SIGN=Vector2(3090,300)
+const SIGN_HAND=Vector2(-55,35)
+const PICKUP_POSITION=WAITING_SIGN-SIGN_HAND
+const TIDY_APPROACH=[Vector2(2240,465),Vector2(2740,465),Vector2(2740,265),PICKUP_POSITION]
+const TIDY_CARRY=[Vector2(3580,265),Vector2(3580,630),RESULT_HOME]
 const AIM_SECONDS=0.8
 const CHASE_SECONDS=1.0
 const COUNT_SECONDS=3.2
@@ -94,6 +100,15 @@ func update_actor(who: Dictionary,home: Vector2,is_keeper: bool,dt: float) -> vo
 		hurt("mosquito",8.0)
 
 func result_progress() -> float: return clampf(result_elapsed/RESULT_SECONDS,0.0,1.0)
+func keeper_sign_position() -> Vector2:
+	var placed:=RESULT_HOME+Vector2(-70,35)
+	if keeper.state=="settled": return placed
+	if result_elapsed<INSPECT_SECONDS:
+		# The released pair swings onto the side hook while the keeper approaches.
+		return BACK_KNOT.lerp(WAITING_SIGN,smoothstep(0.0,0.3,float(keeper.elapsed)))
+	var hand: Vector2=keeper.pos+SIGN_HAND
+	if keeper.pos!=RESULT_HOME: return hand
+	return hand.lerp(placed,clampf((result_elapsed-INSPECT_SECONDS)/(RESULT_SECONDS-INSPECT_SECONDS),0,1))
 static func waiting_listener(i: int) -> Dictionary:
 	return {"pos":COMB+Vector2(55+i*48,12+i*24),"face":Vector2.LEFT,"state":"waiting","delay":0.0}
 
@@ -325,21 +340,30 @@ func advance(direction: Vector2,dt: float) -> void:
 		passage_open=true
 		result_elapsed=0.0
 		change_state(keeper,"tidy")
-		keeper.target=Vector2(2240,465)
+		keeper.target=TIDY_APPROACH[0]
 		save_checkpoint(Vector2(3100,300))
 		emit("checkpoint_update",p)
 	advance_tidy(dt)
 func advance_tidy(dt: float) -> void:
-	if passage_open:
-		result_elapsed=minf(RESULT_SECONDS,result_elapsed+dt)
+	if not passage_open or keeper.state=="settled": return
+	keeper.elapsed+=dt
+	if keeper.pos!=keeper.target:
+		keeper.face=keeper.pos.direction_to(keeper.target)
 		keeper.pos=keeper.pos.move_toward(keeper.target,240.0*dt)
-		var route=[Vector2(2240,465),Vector2(2470,465),Vector2(2780,300),Vector2(3090,300),RESULT_HOME]
-		if keeper.pos.distance_to(keeper.target)<0.1:
-			var next:=route.find(keeper.target)+1
-			if next<route.size(): keeper.target=route[next]
-		keeper.face=Vector2.RIGHT
-		keeper.elapsed=result_elapsed
-		if result_elapsed>=RESULT_SECONDS and keeper.pos==RESULT_HOME: keeper.state="settled"
+		return
+	if result_elapsed<INSPECT_SECONDS:
+		if keeper.target==PICKUP_POSITION:
+			keeper.face=Vector2.LEFT
+			result_elapsed=minf(INSPECT_SECONDS,result_elapsed+dt)
+			if result_elapsed>=INSPECT_SECONDS: keeper.target=TIDY_CARRY[0]
+		else:
+			keeper.target=TIDY_APPROACH[mini(TIDY_APPROACH.find(keeper.target)+1,TIDY_APPROACH.size()-1)]
+	elif keeper.pos!=RESULT_HOME:
+		keeper.target=TIDY_CARRY[mini(TIDY_CARRY.find(keeper.target)+1,TIDY_CARRY.size()-1)]
+	else:
+		keeper.face=Vector2.LEFT
+		result_elapsed=minf(RESULT_SECONDS,result_elapsed+dt)
+		if result_elapsed>=RESULT_SECONDS: keeper.state="settled"
 func advance_rain(dt: float) -> void:
 	if stage==1 and weather_phase=="rain": super.advance_rain(dt)
 func rain_floor_at(x: float) -> float:
@@ -383,6 +407,7 @@ func restore_checkpoint(reason := "manual") -> void:
 	if stage==0: small=actor(SMALL_HOME)
 func save_payload() -> Dictionary:
 	var payload:=super.save_payload()
+	payload["keeper_presentation_revision"]=2
 	payload["story"]=pack(story_state())
 	payload["checkpoint_story"]=pack(checkpoint_story)
 	return payload
@@ -414,6 +439,7 @@ func normalize_story(value,index: int) -> Dictionary:
 		if key=="small" and who.state in ["counting","watch","tidy","settled"]: return {}
 	return value
 func restore_payload(payload: Dictionary) -> bool:
+	if payload.has("keeper_presentation_revision") and payload.keeper_presentation_revision!=2: return false
 	var index=int(payload.get("stage",-1))
 	if index<0 or index>=3: return false
 	var probe=get_script().new()
@@ -446,6 +472,16 @@ func restore_payload(payload: Dictionary) -> bool:
 		payload=payload.duplicate(true)
 		payload.state=pack(base)
 	if not super.restore_payload(payload): return false
+	# Old v2 saves already displayed the completed sign while its owner was
+	# still travelling. Preserve that committed result without replaying the
+	# obsolete route through the canopy. New saves suspend every phase exactly.
+	if not payload.has("keeper_presentation_revision"):
+		for item in [state,saved]:
+			if item.passage_open and item.keeper.state=="tidy":
+				item.keeper=actor(RESULT_HOME)
+				item.keeper.state="settled"
+				item.keeper.elapsed=RESULT_SECONDS
+				item.result_elapsed=RESULT_SECONDS
 	apply_story(state)
 	checkpoint_story=saved
 	# v2 snapshots from the old thin roof may now overlap the painted leaf.
