@@ -1,0 +1,174 @@
+{
+	"checks": [
+		{
+			"frame": 0,
+			"label": "native PNG 00-title",
+			"pass": true,
+			"section": "title"
+		},
+		{
+			"frame": 3,
+			"label": "context cue clears full bee/shield: 01-departure",
+			"pass": true,
+			"section": "title"
+		},
+		{
+			"frame": 3,
+			"label": "context cue clears actual feedback caption: 01-departure",
+			"pass": true,
+			"section": "title"
+		},
+		{
+			"frame": 3,
+			"label": "native PNG 01-departure",
+			"pass": true,
+			"section": "title"
+		},
+		{
+			"frame": 4,
+			"label": "native PNG 02-pause",
+			"pass": true,
+			"section": "title"
+		},
+		{
+			"frame": 4,
+			"label": "fixture starts outside actual solid walls",
+			"pass": true,
+			"section": "transition-0"
+		},
+		{
+			"frame": 4,
+			"label": "fixture starts outside actual leaf bodies",
+			"pass": true,
+			"section": "transition-0"
+		},
+		{
+			"frame": 40,
+			"label": "native PNG 03-transition-0",
+			"pass": true,
+			"section": "transition-0"
+		},
+		{
+			"frame": 40,
+			"label": "fixture starts outside actual solid walls",
+			"pass": true,
+			"section": "transition-1"
+		},
+		{
+			"frame": 40,
+			"label": "fixture starts outside actual leaf bodies",
+			"pass": true,
+			"section": "transition-1"
+		},
+		{
+			"frame": 68,
+			"label": "native PNG 03-transition-1",
+			"pass": true,
+			"section": "transition-1"
+		},
+		{
+			"frame": 68,
+			"label": "fixture starts outside actual solid walls",
+			"pass": true,
+			"section": "rain-hud"
+		},
+		{
+			"frame": 68,
+			"label": "fixture starts outside actual leaf bodies",
+			"pass": true,
+			"section": "rain-hud"
+		},
+		{
+			"frame": 69,
+			"label": "context cue clears full bee/shield: 04-rain-hud",
+			"pass": true,
+			"section": "rain-hud"
+		},
+		{
+			"frame": 69,
+			"label": "context cue clears actual feedback caption: 04-rain-hud",
+			"pass": true,
+			"section": "rain-hud"
+		},
+		{
+			"frame": 69,
+			"label": "native PNG 04-rain-hud",
+			"pass": true,
+			"section": "rain-hud"
+		},
+		{
+			"frame": 69,
+			"label": "fixture starts outside actual solid walls",
+			"pass": true,
+			"section": "return-hud"
+		},
+		{
+			"frame": 69,
+			"label": "fixture starts outside actual leaf bodies",
+			"pass": true,
+			"section": "return-hud"
+		},
+		{
+			"frame": 70,
+			"label": "native PNG 05-return-hud",
+			"pass": true,
+			"section": "return-hud"
+		},
+		{
+			"frame": 104,
+			"label": "native PNG 06-ending",
+			"pass": true,
+			"section": "ending"
+		}
+	],
+	"failures": 0,
+	"final_mode": "ending",
+	"kind": "UI text/layout capture with disclosed starts and previously earned gate fixture;not full natural journey",
+	"seeds": [
+		{
+			"frame": 4,
+			"note": "Controlled initial position,zero velocity,full default energy and no initial invulnerability;production scene geometry unchanged",
+			"p": [
+				4400.0,
+				500.0
+			],
+			"section": "transition-0",
+			"stage": 0
+		},
+		{
+			"frame": 40,
+			"note": "Controlled initial position,zero velocity,full default energy and no initial invulnerability;production scene geometry unchanged",
+			"p": [
+				4400.0,
+				500.0
+			],
+			"section": "transition-1",
+			"stage": 1
+		},
+		{
+			"frame": 68,
+			"note": "Controlled initial position,zero velocity,full default energy and no initial invulnerability;production scene geometry unchanged",
+			"p": [
+				620.0,
+				520.0
+			],
+			"section": "rain-hud",
+			"stage": 1
+		},
+		{
+			"frame": 69,
+			"note": "Controlled initial position,zero velocity,full default energy and no initial invulnerability;production scene geometry unchanged",
+			"p": [
+				180.0,
+				420.0
+			],
+			"section": "return-hud",
+			"stage": 2
+		},
+		{
+			"frame": 70,
+			"note": "Previously earned open gates and settled keeper seeded to isolate share source,not counted as observed gate events",
+			"section": "ending"
+		}
+	]
+}

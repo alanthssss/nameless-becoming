@@ -3,25 +3,25 @@ const SpringModel=preload("res://spring_journey_model.gd")
 const SpringView=preload("res://spring_journey_view.gd")
 func _ready() -> void:
 	super._ready()
-	get_window().title="雨来之前 · 池岸归途 03—05 0.16.1"
+	get_window().title="雨来之前 · 池岸归途"
 func create_journey_model(): return SpringModel.new()
 func create_world(): return SpringView.new()
 func journey_save_path() -> String: return SpringModel.SPRING_SAVE_PATH
-func journey_titles() -> Array[String]: return ["03 池边小径","04 雨中停走","05 归巢之路"]
+func journey_titles() -> Array[String]: return ["池边小径","雨中停走","归巢之路"]
 func build_ui() -> void:
 	super.build_ui()
-	menu_kicker.text="BEFORE THE RAIN     /     0.16.1"
+	menu_kicker.text="BEFORE THE RAIN"
 func show_title() -> void:
 	super.show_title()
 	heading.text="池岸归途"
-	description.text="从池边蓝花出发，绕过雨廊，再回到熟悉的归路。
+	description.text="从池边出发，沿着小路穿过雨区，回到蜂巢。
 方向键 / WASD 飞行，空格蓄力后松开冲刺。
 花心可以停一停，叶下可以歇一歇。
 Esc 保存并暂停；R 回最近落脚点。"
 	main_button.text="沿池岸出发"
 func refresh_hud() -> void:
 	super.refresh_hud()
-	hud_bees.text="第%02d关" % (model.stage+3)
+	hud_bees.text="池岸归途"
 	hud_title.text="%s · %s   ·   晨露 %d/%d" % [titles[model.stage],model.encounter_name(),model.garden_awards[model.stage],model.stage_dew_total()]
 	var cue: Dictionary=model.context_cue()
 	if cue_panel.visible:
@@ -56,14 +56,14 @@ func refresh_hud() -> void:
 func show_transition() -> void:
 	super.show_transition()
 	handoff_heading.text=["沿池岸绕到叶棚那一侧。","那簇蓝花，又出现在归路旁。","灯就在前面，这回可以歇一歇了。"][model.stage]
-	handoff_detail.text="Enter 看结尾 · Esc 暂停" if model.phase=="ending" else "即将自动出发 · Enter 提前进入下一关 · Esc 暂停"
+	handoff_detail.text="Enter 看结尾 · Esc 暂停" if model.phase=="ending" else "即将自动出发 · Enter 提前继续旅程 · Esc 暂停"
 func show_ending() -> void:
 	super.show_ending()
-	heading.text="路留出来了，花也还开着。"
+	heading.text="路通了，花还开着。"
 	var shared: bool=model.message_revision>0
 	description.text="你替庄主留下了通路，他终于可以收拾那些花牌。
 "+("你告诉了它们那簇蓝花的方向。" if shared else "蜡脾边仍有人等着下一条花路；你可以按自己的方式回家。")+"
-03—05这段归途已走完。
+这段池岸归途已走完。
 旅程 "+clock_text(played_seconds)+" · 返回落脚点 "+str(model.recoveries)+" 次"
 	main_button.text="再走一次"
 func tick(delta: float) -> void:

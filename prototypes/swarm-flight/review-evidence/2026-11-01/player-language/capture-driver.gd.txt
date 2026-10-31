@@ -1,0 +1,48 @@
+extends "res://pond_source_states_probe.gd"
+func run():
+	if folder.is_empty():
+		quit(1)
+		return
+	native=DisplayServer.get_name()!="headless"
+	DirAccess.make_dir_recursive_absolute(folder)
+	await new_scene()
+	section="title"
+	await shot("00-title")
+	tap(KEY_ENTER)
+	await tick(3)
+	await shot("01-departure")
+	tap(KEY_ESCAPE)
+	await tick()
+	await shot("02-pause")
+	tap(KEY_ESCAPE)
+	for stage in [0,1]:
+		section="transition-"+str(stage)
+		fixture(stage,Vector2(4400,500))
+		key(KEY_RIGHT,true)
+		await until(func(): return game.mode=="transition",180)
+		release_keys()
+		await shot("03-transition-"+str(stage))
+	section="rain-hud"
+	fixture(1,Vector2(620,520))
+	await tick()
+	await shot("04-rain-hud")
+	section="return-hud"
+	fixture(2,Vector2(180,420))
+	await tick()
+	await shot("05-return-hud")
+	section="ending"
+	open_gates_fixture()
+	game.model.p=Vector2(4400,500)
+	key(KEY_RIGHT,true)
+	await until(func(): return game.mode=="arrival",180)
+	release_keys()
+	tap(KEY_ENTER)
+	await tick()
+	await shot("06-ending")
+	var f=FileAccess.open(folder.path_join("capture.json"),FileAccess.WRITE)
+	f.store_string(JSON.stringify({"kind":"UI text/layout capture with disclosed starts and previously earned gate fixture;not full natural journey","checks":assertions,"failures":failures,"seeds":seeds,"final_mode":game.mode},"\t"))
+	f.close()
+	game.queue_free()
+	await process_frame
+	print("PLAYER LANGUAGE CAPTURE: %d failures" % failures)
+	quit(1 if failures else 0)

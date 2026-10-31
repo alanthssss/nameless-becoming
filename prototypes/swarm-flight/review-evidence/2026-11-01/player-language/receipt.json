@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "kind": "player_facing_journey_language_and_heading_fit",
+  "authority": {
+    "gdd": [
+      "§10.2",
+      "§13.6"
+    ],
+    "issue": 226,
+    "milestone": "M1",
+    "execution_pointer": "docs/design/solar-term-campaign-production-spec.md#production-now"
+  },
+  "baseline_revision": "c2a48f4227082babd57a472a481628bee73d6282",
+  "changes": [
+    "Window/menu/HUD/end use池岸归途 or place names;removeinternal03–05andold0.16.1",
+    "Title premise beginsatpondandreturns to hive,notblueflower start",
+    "Transition continues journey;internalstage IDs/save identity/format/rulesunchanged",
+    "Original ending heading overflow found in native1;shortenedto路通了，花还开着。andnative2fits"
+  ],
+  "verification": {
+    "ui": "Final source50 checks/0failures,real disk pause/cold/resume;earlier50/0 also retained",
+    "native": "Final106movieframes@30fps,8PNG,capture0failures;root inspected all8before/titlecorrection and finalending",
+    "capture_method": "Controlled scene starts and earnedgates to render menus/transitions;realexittrigger;not full journey/independent exploration"
+  },
+  "limits": {
+    "human_acceptance_claim": false,
+    "M3_allowed": false,
+    "audio_listening": "pending",
+    "high_low_information_and_rain_choice": "pending#205/#206;existingHUDintentnotacceptedbythistextpatch"
+  },
+  "cost": {
+    "observed_start_utc": "2026-10-31T21:36:00Z",
+    "estimate_minutes": [
+      15,
+      25
+    ],
+    "checkpoint_utc": "2026-10-31T21:40:51.177854+00:00",
+    "active_hours": null,
+    "cumulative_hours": null,
+    "remaining_hours": null,
+    "cash_purchases": 0,
+    "image_calls": 0,
+    "budget": "200+40h unchanged;remaining unverifiable;automationPAUSED"
+  },
+  "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/player-language in actualmaincheckout;both rawAVI retained",
+  "source_hashes": {
+    "spring_journey_main.gd": "0cc8bc4d5903f828bf9f640b3d48fe9bf2674f0fa3040e593cdceb79ba6eb715",
+    "spring_journey_model.gd": "4629ed0a8089c3650f4bb4dad273d9176841d4cf4287e18aa3432fd3ffbdf8bd",
+    "spring_journey_ui_verify.gd": "84e508b299b24d792c2cefd9c8aeaebd120d56deddb35ef9b1f20fcb96c0d44d",
+    "main.gd": "94f7a1dc083e8c38af9d4d12068c05c6eb830f08654a2bef91668988b31012ad",
+    "bee_dance_main.gd": "17ec7c4d5455adf109342df384b671f16956ec39ea87edc183735c8585aba05f"
+  },
+  "artifact_hashes": {
+    "before-ending-overflow.png": "8b7d0c4b380b1df42c9bf6ffd1193eccba3aaab2ee4f4773c1e0a8da7fc78d6b",
+    "capture-driver.gd.txt": "5a7dbd7a38cb37cc503c33ac9bdcdeb4b737233f8df7eb8d0e5be313a4a243a3",
+    "native/00-title.png": "c8d0094d7effe5b240cbfd2face2acc3bcf79108a08d2ae1947bf0ac58c918c8",
+    "native/01-departure.png": "5cc2302a8f2e525fb3822e1064071a99d2f70a70b308d82d4f2bd1dd40842513",
+    "native/02-pause.png": "058bbcfee99aeb7c11c3f9258b1d8b44c351bc5b0ddfdf2f26f8064c237ca2a3",
+    "native/03-transition-0.png": "20362cb133ad1857ac41e579c3c2f075f3435a80cf22312a6797eff9d75d3b3c",
+    "native/03-transition-1.png": "cf75aff52dd55454959e7e2d7059e9d17f7f9eaa02d1e5fc5508235ec2e4d35e",
+    "native/04-rain-hud.png": "7d4c277685c5e6f4d3e8e7cbc7a30ba3b3c36b3d3dab90779792b56485ffb1b8",
+    "native/05-return-hud.png": "312d1fc7c95e0dcf895090adbb16c11f1252ad34746a7fa18655d2251ac7099d",
+    "native/06-ending.png": "96d02803748569853057b66d31027b10f231cca2b5552116694ad329e9c414cf",
+    "native/capture.json": "ee3294fd689194cd0a384692814997b0fa0125e1c32afab8e38cbb48963c3880",
+    "native/native.log": "9d9eb9edc9e745da4b056b2537b79b7c6d929ce8a29d1b6661368ff269ece141",
+    "native/native.mp4": "bd449cb76565d3e527487435eff09fc93bc610bcdc4232aed25f0056db508a36",
+    "native/save.json": "847a8224e7cbc35a437b7f0d606a1d4abf9f2e0720997c30e7fc85d5e41fbe3a",
+    "ui-before-final-heading.log": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711",
+    "ui-final.log": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711"
+  },
+  "review": {
+    "reviewer": "/root/feedback_review",
+    "result": "no blocker for text/layout change",
+    "evidence": "diff,inheritance chain and all8 native2 images;no internal stage numbers/oldversion in title,pause,HUD,transition,ending;inherited continue button overriddenbybee_dance_main;pondstart/hiveendpointaccurate;newendingheadinginsidepanelwithclearbody/buttons",
+    "source_sha256": "0cc8bc4d5903f828bf9f640b3d48fe9bf2674f0fa3040e593cdceb79ba6eb715",
+    "limits": "read-only,noGodotrun;controlledstart/open-gatesfixture notfulljourneyorhigh-lowexperience"
+  }
+}
