@@ -119,8 +119,10 @@ func open_back(m,wind: bool) -> void:
 		check(m.rings_hit>=2,"wind changes height before back knot")
 	else:
 		fly(m,Vector2(2740,465))
-		fly(m,Vector2(2740,300))
-		fly(m,Vector2(2910,300))
+		fly(m,Vector2(2740,500))
+		fly(m,Vector2(3040,500))
+		fly(m,Vector2(3040,300))
+		fly(m,Vector2(3070,300))
 		frames(m,30,Vector2.RIGHT,true)
 		frames(m,1,Vector2.RIGHT,false)
 		for i in 90:
@@ -131,8 +133,8 @@ func open_back(m,wind: bool) -> void:
 	roundtrip(m,"second passage tidy")
 	m.restore_checkpoint()
 	check(m.passage_open and m.keeper.state=="settled","retry keeps both gates and completed tidying")
-	fly(m,Vector2(2910,300))
-	fly(m,Vector2(3100,300))
+	fly(m,Vector2(3070,300))
+	fly(m,Vector2(3180,300))
 func chapter05(m,share: bool,wind: bool) -> void:
 	m.load_stage(2)
 	if not share: m.stamina=40.0
@@ -161,6 +163,7 @@ func chapter05(m,share: bool,wind: bool) -> void:
 		roundtrip(m,"listeners depart")
 		frames(m,360)
 		check(m.listeners.all(func(bee): return bee.state=="foraging" and bee.pos.distance_to(Model.SOURCE)<90),"both listeners reach original source coordinate")
+		check(m.listeners.all(func(bee): return m.walls.all(func(w): return w.broken or not w.rect.grow(24).has_point(bee.pos))),"foraging bodies clear the moved sign supports")
 		var count: int=m.garden_total()
 		frames(m,1,Vector2.ZERO,true)
 		frames(m,180)
@@ -180,7 +183,7 @@ func verify_keeper_tidy() -> void:
 	m.front_open=true
 	m.passage_open=true
 	m.wall_at(2350).broken=true
-	m.wall_at(3000).broken=true
+	m.wall_at(Model.BACK_WALL_X).broken=true
 	m.keeper=Model.actor(Model.KEEPER_HOME)
 	m.keeper.state="tidy"
 	m.keeper.target=Model.TIDY_APPROACH[0]
@@ -230,7 +233,97 @@ func verify_keeper_tidy() -> void:
 	legacy.keeper_presentation_revision=3
 	check(not restored.restore_payload(legacy) and restored.save_payload()==before_reject,"unknown presentation revision rejects atomically")
 
+func verify_back_sign() -> void:
+	# Expected player rules: a thick sign cannot be dashed through; height changes
+	# reach a visible back knot, which opens without a second timing window.
+	for route in ["upper","lower"]:
+		var m=fresh(2)
+		m.front_open=true
+		m.wall_at(2350).broken=true
+		m.keeper.state="watch"
+		m.p=Vector2(2740,330)
+		frames(m,30,Vector2.RIGHT,true)
+		frames(m,45,Vector2.RIGHT)
+		check(m.p.x<2817 and not m.passage_open,"solid board blocks a direct burst "+route)
+		fly(m,Vector2(2740,240 if route=="upper" else 500))
+		fly(m,Vector2(3040,240 if route=="upper" else 500))
+		fly(m,Vector2(3040,300))
+		fly(m,Vector2(3070,300))
+		frames(m,30,Vector2.RIGHT,true)
+		frames(m,1,Vector2.RIGHT)
+		for i in 60:
+			if m.passage_open: break
+			frames(m,1,Vector2.RIGHT)
+		check(m.passage_open and m.rings_hit==0,"ordinary "+route+" approach opens knot before any wind relay")
+		roundtrip(m,"back-sign "+route)
+	# Slightly different launch positions are ordinary play, not a pixel-perfect solution.
+	for x in [2465,2475,2485,2495,2505]:
+		for y in [457,465,473]:
+			var wind=fresh(2)
+			wind.front_open=true
+			wind.wall_at(2350).broken=true
+			wind.keeper.state="watch"
+			wind.p=Vector2(x,y)
+			frames(wind,30,Vector2.RIGHT,true)
+			frames(wind,150,Vector2.RIGHT)
+			check(wind.passage_open and wind.rings_hit==3 and wind.recoveries==0,"wind entry envelope "+str(Vector2(x,y)))
+	var wrong=fresh(2)
+	wrong.front_open=true
+	wrong.p=Vector2(3100,355)
+	wrong.face=Vector2.RIGHT
+	check(not wrong.gate_ready(wrong.wall_at(Model.BACK_WALL_X)),"hitting the boards away from the leaf knot does not open it")
+	wrong.p=Vector2(3160,300)
+	wrong.face=Vector2.LEFT
+	check(not wrong.gate_ready(wrong.wall_at(Model.BACK_WALL_X)),"reverse contact is not the exposed fastening")
+	var folder="res://review-evidence/2026-11-01/back-sign/legacy-fixtures/"
+	for name in ["stage0-plain","stage1-plain","stage2-closed","stage2-front","stage2-second_gate","stage2-tidy","stage2-settled","stage2-foraging","stage2-ending"]:
+		var original: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder+name+".json"))
+		var data: Dictionary=original.duplicate(true)
+		var m=fresh()
+		check(m.restore_payload(data),"real old-source fixture migrates "+name)
+		check(data==original,"migration leaves original payload intact "+name)
+		var base: Dictionary=Model.unpack(original.state)
+		check(m.p==base.p and m.stamina==base.stamina and m.rings_hit==base.rings_hit and m.garden_awards==base.garden_awards.map(func(v): return int(v)),"legacy player and earned state preserved "+name)
+		if m.stage==2:
+			check(m.rings.size()==3 and not m.rings[2].active and m.rings[0].active==base.rings[0].active,"new wind flower earns nothing retroactively "+name)
+			if m.passage_open:
+				check(m.keeper.state=="settled" and m.keeper.pos==Model.RESULT_HOME and m.keeper.target==Model.RESULT_HOME and m.keeper_sign_position()==Model.RESULT_HOME+Vector2(-70,35),"old active/completed keeper is coherent with the new support "+name)
+		if name=="stage2-second_gate": check(m.checkpoint.p==Vector2(3100,300) and m.passage_open,"old committed checkpoint remains inside the opened new gate")
+		if name=="stage2-foraging": check(m.listeners[0].pos==Model.forage_target(0) and m.message_revision==1,"old committed forager clears moved post without losing message")
+		roundtrip(m,"migrated "+name)
+	var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder+"stage2-front.json"))
+	var old: Dictionary=Model.unpack(legacy.state)
+	for state in [old,old.checkpoint]:
+		state.rings[0].pos=Vector2(2640,465)
+		state.rings[0].direction=Vector2(220,-165).normalized()
+	legacy.state=Model.pack(old)
+	var m=fresh()
+	check(m.restore_payload(legacy),"known pre-canopy geometry also migrates")
+	var stable: Dictionary=m.save_payload()
+	for defect in ["wall","direction","count","revision","checkpoint","checkpoint_type","checkpoint_missing"]:
+		var bad: Dictionary=legacy.duplicate(true)
+		var state: Dictionary=Model.unpack(bad.state)
+		match defect:
+			"wall": state.walls[0].rect.size.x+=1
+			"direction": state.rings[0].direction=Vector2.RIGHT
+			"count": state.rings.pop_back()
+			"revision": bad.route_geometry_revision=99
+			"checkpoint": state.checkpoint.p=Model.FRONT_SIGN.get_center()
+			"checkpoint_type": state.checkpoint.p="invalid"
+			"checkpoint_missing": state.checkpoint.erase("p")
+		bad.state=Model.pack(state)
+		check(not m.restore_payload(bad) and m.save_payload()==stable,"invalid legacy "+defect+" rejects atomically")
+	old.p=Model.FRONT_SIGN.get_center()
+	legacy.state=Model.pack(old)
+	check(m.restore_payload(legacy) and m.p==old.checkpoint.p and m.front_open and not m.passage_open,"new solid overlap restores safe earned checkpoint")
+	legacy=JSON.parse_string(FileAccess.get_file_as_string(folder+"stage2-settled.json"))
+	old=Model.unpack(legacy.state)
+	old.p=Vector2(3125,190)
+	legacy.state=Model.pack(old)
+	check(m.restore_payload(legacy) and m.p==old.checkpoint.p and m.passage_open,"moved upper post also restores safe earned checkpoint")
+
 func run() -> void:
+	verify_back_sign()
 	verify_keeper_tidy()
 	for share in [true,false]:
 		var m=fresh()

@@ -229,10 +229,10 @@ func run() -> void:
 	check(game.mode=="ending" and game.model.save_payload()==ending,"completed cold launch")
 	# Controlled boundary fixture: an earned result still animates after arrival.
 	game.model.keeper.state="tidy"
-	game.model.keeper.pos=Vector2(3090,300)
+	game.model.keeper.pos=Vector2(3580,630)
 	game.model.keeper.target=Model.RESULT_HOME
-	game.model.result_elapsed=Model.RESULT_SECONDS
-	tick(180)
+	game.model.result_elapsed=Model.INSPECT_SECONDS
+	tick(210)
 	check(game.model.keeper.state=="settled" and game.model.keeper.pos==Model.RESULT_HOME,"ending advances earned keeper result without blocking player")
 	game.queue_free()
 	await process_frame

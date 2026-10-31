@@ -162,6 +162,9 @@ jobs:
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/spring-model.log" "$RUNNER_TEMP/spring-ui.log" "$RUNNER_TEMP/spring-entry.log"; then exit 1; fi
           grep -q '^SPRING JOURNEY VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-model.log"
           grep -q '^SPRING JOURNEY UI VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-ui.log"
+          SWARM_BACK_SIGN_QA_DIR="$RUNNER_TEMP/back-sign-save" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://back_sign_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/back-sign-save.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/back-sign-save.log"; then exit 1; fi
+          grep -q '^BACK SIGN SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/back-sign-save.log"
       - name: Verify garden music and new sound effects
         if: matrix.suite == 'core'
         env:

@@ -150,7 +150,7 @@ func run() -> void:
 		check(migrated.restore_payload(fixture),"actual baseline-generated v2 fixture accepted stage "+str(index))
 		check(migrated.p==Vector2(180,420),"safe legacy position remains exact stage "+str(index))
 		if index==2:
-			check(migrated.rings[0].pos==Vector2(2740,465) and migrated.checkpoint.rings[0].pos==Vector2(2740,465),"known old wind positions migrated in active and checkpoint state")
+			check(migrated.rings[0].pos==Vector2(2760,465) and migrated.checkpoint.rings[0].pos==Vector2(2760,465),"known old wind positions migrated in active and checkpoint state")
 			check(migrated.rings[0].active and migrated.checkpoint.rings[0].active,"legacy earned ring flags retained")
 			var bad: Dictionary=fixture.duplicate(true)
 			bad.state.rings[0].pos=Model.pack(Vector2(2641,465))

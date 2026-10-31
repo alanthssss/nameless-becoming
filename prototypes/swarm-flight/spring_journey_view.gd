@@ -81,7 +81,7 @@ func _wall(wall: Dictionary) -> void:
 	var r: Rect2 = wall.rect
 	if model.stage == 2 and wall.kind == "curtain" and absf(r.position.x-2350.0)<0.1:
 		_sign_rope(r,model.KNOT,model.front_open,false)
-	elif model.stage == 2 and wall.kind == "curtain" and absf(r.position.x-3000.0)<0.1:
+	elif model.stage == 2 and wall.kind == "curtain" and absf(r.position.x-model.BACK_WALL_X)<0.1:
 		_sign_rope(r,model.BACK_KNOT,model.passage_open,true)
 	else:
 		super._wall(wall)
@@ -133,6 +133,25 @@ func _sign_rope(rect: Rect2,knot: Vector2,opened: bool,back: bool) -> void:
 
 func _terrain(item: Dictionary) -> void:
 	var rect: Rect2 = item.rect
+	if item.get("material")=="sign_board":
+		var point:=rect.get_center()
+		# A loose suspension cord carries weight but is not the taut gate rope.
+		_curve(Vector2(point.x,139),Vector2(point.x+3,199),Vector2(point.x-3,255),Vector2(point.x,rect.position.y),Color("816338"),2.4)
+		draw_set_transform(_world_offset+point,PI/2)
+		ArtProps.sprite(self,ArtProps.LANDMARKS,ArtProps.SIGN,Rect2(-rect.size.y/2,-rect.size.x/2,rect.size.y,rect.size.x))
+		draw_set_transform(_world_offset)
+		if model.p.x>rect.end.x:
+			for y in [-45,45]:
+				draw_line(point+Vector2(-29,y),point+Vector2(29,y),Color("80613b"),7,true)
+				for x in [-24,24]: _ellipse(point+Vector2(x,y),Vector2(2,2),Color("493d28"))
+		else:
+			for y in [-38,38]: ArtProps.decor(self,point+Vector2(0,y),"flower")
+		return
+	if item.get("material")=="sign_beam":
+		var a:=Vector2(rect.position.x,rect.get_center().y)
+		var b:=Vector2(rect.end.x,rect.get_center().y)
+		ArtProps.stalk(self,a,a.lerp(b,0.33),a.lerp(b,0.66),b,rect.size.y)
+		return
 	if item.get("material", "hedge") == "stem":
 		if model.stage in [0,1] and rect.end.y>=830:
 			var x: float=rect.get_center().x

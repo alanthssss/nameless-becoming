@@ -1,0 +1,54 @@
+extends SceneTree
+const M=preload("res://spring_journey_model.gd")
+func _initialize():
+ var folder=OS.get_environment("POND_LEGACY_FIXTURES")
+ DirAccess.make_dir_recursive_absolute(folder)
+ for stage in 3:
+  for phase in (["closed","front","second_gate","tidy","settled","foraging","ending"] if stage==2 else ["plain"]):
+   var m=M.new()
+   m.load_stage(stage)
+   if phase in ["front","second_gate","tidy","settled","foraging","ending"]:
+    m.front_open=true
+    m.wall_at(2350).broken=true
+    m.keeper.state="watch"
+    m.p=Vector2(2740,300)
+    m.rings[0].active=true
+    m.rings_hit=1
+   if phase in ["tidy","settled","foraging","ending"]:
+    m.passage_open=true
+    m.wall_at(3000).broken=true
+    m.keeper.state="tidy"
+    m.keeper.pos=Vector2(2740,265)
+    m.keeper.target=M.PICKUP_POSITION
+    m.p=Vector2(3260,620)
+   if phase in ["settled","foraging","ending"]:
+    m.keeper=M.actor(M.RESULT_HOME)
+    m.keeper.state="settled"
+    m.keeper.elapsed=M.RESULT_SECONDS
+    m.result_elapsed=M.RESULT_SECONDS
+   if phase=="ending":
+    m.phase="ending"
+    m.completed=true
+    m.checkpoint_index=m.shelters.size()-1
+    for leaf in m.shelters: leaf.reached=true
+   if phase=="foraging":
+    m.observation=M.source_fact(1)
+    m.message_revision=1
+    for i in 2:
+     m.listeners[i].state="foraging"
+     m.listeners[i].pos=M.SOURCE+(Vector2(-45,45) if i==0 else Vector2(68,42))
+     m.listeners[i].face=Vector2.LEFT
+   if phase=="second_gate":
+    m.wall_at(3000).broken=true
+    m.p=Vector2(3100,300)
+    m.advance(Vector2.ZERO,1.0/60)
+   m.save_checkpoint(m.p)
+   var clone=M.new()
+   if not clone.restore_payload(m.save_payload()):
+    push_error("Invalid seeded legacy fixture "+phase)
+    quit(1)
+    return
+   var f=FileAccess.open(folder.path_join("stage%d-%s.json" % [stage,phase]),FileAccess.WRITE)
+   f.store_string(JSON.stringify(m.save_payload(),"",true,true))
+ print("LEGACY FIXTURES SAVED from current unmodified source")
+ quit()

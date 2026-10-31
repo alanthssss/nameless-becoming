@@ -7,14 +7,17 @@ const SITE_ID="pond-and-home"
 const SMALL_HOME=Vector2(2390,360)
 const KEEPER_HOME=Vector2(2100,410)
 const KNOT=Vector2(2371,465)
-const BACK_KNOT=Vector2(3021,300)
-const RESULT_HOME=Vector2(3160,630)
+const BACK_WALL_X=3110.0
+const BACK_KNOT=Vector2(3131,300)
+const RESULT_HOME=Vector2(3270,630)
 const RESULT_SECONDS=2.4
 const INSPECT_SECONDS=0.6
-const WAITING_SIGN=Vector2(3090,300)
+const WAITING_SIGN=Vector2(3190,265)
 const SIGN_HAND=Vector2(-55,35)
 const PICKUP_POSITION=WAITING_SIGN-SIGN_HAND
-const TIDY_APPROACH=[Vector2(2240,465),Vector2(2740,465),Vector2(2740,265),PICKUP_POSITION]
+const TIDY_APPROACH=[Vector2(2240,465),Vector2(2740,465),Vector2(2740,220),Vector2(2980,220),Vector2(2980,265),Vector2(3245,265),PICKUP_POSITION]
+const ROUTE_GEOMETRY_REVISION=2
+const FRONT_SIGN=Rect2(2830,290,60,160)
 const TIDY_CARRY=[Vector2(3580,265),Vector2(3580,630),RESULT_HOME]
 const AIM_SECONDS=0.8
 const CHASE_SECONDS=1.0
@@ -137,6 +140,9 @@ func invalidate_source() -> void:
 			bee.state = "returning"
 			bee.delay = 0.0
 
+static func forage_target(i: int) -> Vector2:
+	return SOURCE+(Vector2(-5,45) if i==0 else Vector2(68,42))
+
 func advance_listeners(dt: float) -> void:
 	for i in listeners.size():
 		var bee: Dictionary = listeners[i]
@@ -144,7 +150,7 @@ func advance_listeners(dt: float) -> void:
 			bee.face = COMB.direction_to(SOURCE)
 		elif bee.state in ["departing","returning"]:
 			bee.delay = maxf(0.0,bee.delay-dt)
-			var target: Vector2 = SOURCE+(Vector2(-45,45) if i == 0 else Vector2(68,42)) if bee.state == "departing" else waiting_listener(i).pos
+			var target: Vector2 = forage_target(i) if bee.state == "departing" else waiting_listener(i).pos
 			bee.face = bee.pos.direction_to(target)
 			if bee.delay <= 0: bee.pos = bee.pos.move_toward(target,155.0*dt)
 			if bee.pos.distance_to(target) < 0.1:
@@ -299,7 +305,7 @@ func wall_at(x: float) -> Dictionary:
 func gate_ready(obstacle: Dictionary) -> bool:
 	if stage==2 and obstacle.kind=="curtain":
 		if obstacle.rect.position.x==2350: return keeper.state=="counting" or front_open
-		if obstacle.rect.position.x==3000: return front_open
+		if obstacle.rect.position.x==BACK_WALL_X: return front_open and p.x<BACK_KNOT.x and absf(p.y-BACK_KNOT.y)<=40 and face.x>0.5
 	return super.gate_ready(obstacle)
 func advance(direction: Vector2,dt: float) -> void:
 	var retries:=recoveries
@@ -336,12 +342,12 @@ func advance(direction: Vector2,dt: float) -> void:
 		keeper.face=Vector2.RIGHT
 		save_checkpoint(Vector2(2460,465))
 		emit("checkpoint_update",p)
-	if wall_at(3000).broken and not passage_open:
+	if wall_at(BACK_WALL_X).broken and not passage_open:
 		passage_open=true
 		result_elapsed=0.0
 		change_state(keeper,"tidy")
 		keeper.target=TIDY_APPROACH[0]
-		save_checkpoint(Vector2(3100,300))
+		save_checkpoint(Vector2(3180,300))
 		emit("checkpoint_update",p)
 	advance_tidy(dt)
 func advance_tidy(dt: float) -> void:
@@ -408,6 +414,7 @@ func restore_checkpoint(reason := "manual") -> void:
 func save_payload() -> Dictionary:
 	var payload:=super.save_payload()
 	payload["keeper_presentation_revision"]=2
+	payload["route_geometry_revision"]=ROUTE_GEOMETRY_REVISION
 	payload["story"]=pack(story_state())
 	payload["checkpoint_story"]=pack(checkpoint_story)
 	return payload
@@ -438,7 +445,37 @@ func normalize_story(value,index: int) -> Dictionary:
 		if not valid_position(who.pos) or not valid_position(who.target) or who.face.length()>1.01 or who.elapsed<0 or who.elapsed>1000000: return {}
 		if key=="small" and who.state in ["counting","watch","tidy","settled"]: return {}
 	return value
+func upgrade_legacy_geometry(snapshot: Dictionary) -> bool:
+	# The complete old static layout must match before any fields are converted.
+	# This runs on an unpacked copy; parent validation still checks every other field.
+	var old_walls: Array=walls.filter(func(w): return w.get("material") not in ["sign_board","sign_beam"]).duplicate(true)
+	for wall in old_walls:
+		if wall.rect.position.x==BACK_WALL_X: wall.rect.position.x=3000.0
+	var old_rings: Array=rings.slice(0,2).duplicate(true)
+	old_rings[0].pos=Vector2(2740,465)
+	old_rings[0].direction=Vector2(120,-165).normalized()
+	old_rings[1].pos=Vector2(2860,300)
+	old_rings[1].direction=Vector2.RIGHT
+	if not snapshot.get("walls") is Array or not snapshot.get("rings") is Array or snapshot.rings.size()!=2: return false
+	var first=snapshot.rings[0]
+	if first is Dictionary and first.get("pos")==Vector2(2640,465):
+		old_rings[0].pos=Vector2(2640,465)
+		old_rings[0].direction=Vector2(220,-165).normalized()
+	if not valid_objects({"walls":snapshot.walls,"rings":snapshot.rings},{"walls":old_walls,"rings":old_rings}): return false
+	var replacement: Array=walls.duplicate(true)
+	for wall in replacement:
+		for old in snapshot.walls:
+			var expected: Rect2=wall.rect
+			if expected.position.x==BACK_WALL_X: expected.position.x=3000.0
+			if expected==old.rect and wall.kind==old.kind: wall.broken=old.broken
+	snapshot.walls=replacement
+	var replacement_rings: Array=rings.duplicate(true)
+	for i in 2: replacement_rings[i].active=snapshot.rings[i].active
+	snapshot.rings=replacement_rings
+	return true
+
 func restore_payload(payload: Dictionary) -> bool:
+	if payload.has("route_geometry_revision") and payload.route_geometry_revision!=ROUTE_GEOMETRY_REVISION: return false
 	if payload.has("keeper_presentation_revision") and payload.keeper_presentation_revision!=2: return false
 	var index=int(payload.get("stage",-1))
 	if index<0 or index>=3: return false
@@ -450,42 +487,46 @@ func restore_payload(payload: Dictionary) -> bool:
 	if state.is_empty() or saved.is_empty() or not base is Dictionary: return false
 	if state.dance.perched and (base.get("p")!=COMB or base.get("charging")!=false or base.get("burst_left")!=0): return false
 	if not base.get("walls") is Array or not base.get("checkpoint") is Dictionary or not base.checkpoint.get("walls") is Array: return false
+	if not base.checkpoint.get("p") is Vector2: return false
 	if index==2:
 		for pair in [[state,base.walls],[saved,base.checkpoint.walls]]:
 			var found:=0
 			for wall in pair[1]:
 				if not wall is Dictionary or not wall.get("rect") is Rect2: return false
-				if wall.kind=="curtain" and wall.rect.position.x in [2350.0,3000.0]:
+				if wall.get("kind")=="curtain" and wall.rect.position.x in [2350.0,BACK_WALL_X if payload.has("route_geometry_revision") else 3000.0]:
 					found+=1
-					if wall.broken!=pair[0].get("front_open" if wall.rect.position.x==2350 else "passage_open"): return false
+					if wall.get("broken")!=pair[0].get("front_open" if wall.rect.position.x==2350 else "passage_open"): return false
 			if found!=2: return false
-	# Only the known pre-canopy v2 wind layout is migrated. Every other
-	# static field still passes the strict parent validator, atomically.
-	if index==2:
+	var legacy_geometry: bool=not payload.has("route_geometry_revision")
+	if legacy_geometry and index==2:
 		for snapshot in [base,base.checkpoint]:
-			if not snapshot.get("rings") is Array: return false
-			if snapshot.rings.size()!=probe.rings.size(): return false
-			var ring=snapshot.rings[0]
-			if ring is Dictionary and ring.get("pos") is Vector2 and ring.get("direction") is Vector2 and ring.pos==Vector2(2640,465) and ring.direction==Vector2(220,-165).normalized():
-				ring.pos=probe.rings[0].pos
-				ring.direction=probe.rings[0].direction
+			if not probe.upgrade_legacy_geometry(snapshot): return false
+		if base.checkpoint.walls.any(func(w): return not w.broken and w.rect.grow(14).has_point(base.checkpoint.p)): return false
 		payload=payload.duplicate(true)
 		payload.state=pack(base)
 	if not super.restore_payload(payload): return false
 	# Old v2 saves already displayed the completed sign while its owner was
 	# still travelling. Preserve that committed result without replaying the
 	# obsolete route through the canopy. New saves suspend every phase exactly.
-	if not payload.has("keeper_presentation_revision"):
+	if not payload.has("keeper_presentation_revision") or legacy_geometry:
 		for item in [state,saved]:
-			if item.passage_open and item.keeper.state=="tidy":
+			if item.passage_open and (legacy_geometry or item.keeper.state=="tidy"):
 				item.keeper=actor(RESULT_HOME)
 				item.keeper.state="settled"
 				item.keeper.elapsed=RESULT_SECONDS
 				item.result_elapsed=RESULT_SECONDS
+	if legacy_geometry and index==2:
+		for item in [state,saved]:
+			var bee: Dictionary=item.dance.listeners[0]
+			if bee.state=="foraging" or (bee.state in ["departing","returning"] and bee.pos.x<3182):
+				bee.pos=forage_target(0)
+				if bee.state=="departing": bee.state="foraging"
 	apply_story(state)
 	checkpoint_story=saved
 	# v2 snapshots from the old thin roof may now overlap the painted leaf.
 	# Use the existing committed checkpoint contract, never silently push through.
+	if legacy_geometry and stage==2 and walls.any(func(w): return not w.broken and w.rect.grow(14).has_point(p)):
+		restore_checkpoint("geometry")
 	for leaf in shelters:
 		if not Canopy.contact(p,9.0 if charging else 14.0,leaf).is_empty():
 			restore_checkpoint("geometry")
@@ -515,7 +556,7 @@ func context_cue() -> Dictionary:
 	if stage==2 and not front_open and p.distance_to(KNOT)<430:
 		return {"pos":KNOT,"text":"绳松了 · 冲开干叶结" if keeper.state=="counting" else "绳还绷着 · 留意它何时盘点","kind":"keeper"}
 	if stage==2 and front_open and not passage_open and p.distance_to(BACK_KNOT)<450:
-		return {"pos":BACK_KNOT,"text":"背面露出干叶结 · 借风或换层后冲开","kind":"keeper"}
+		return {"pos":BACK_KNOT,"text":"背面叶结露出来了 · 对准它冲开" if p.x>FRONT_SIGN.end.x else "牌面挡住直路 · 上下都能绕到背面","kind":"keeper"}
 	if stage==2 and perched:
 		return {"pos":COMB,"text":"松开空格开始 · 方向键取消" if share_state=="armed" else "方向键随时离开" if share_state=="dancing" else "空格按住再松开 · 分享花路" if can_share() else "旧花路已歇，等下一条消息" if not source_open else "它们已经听到了" if message_revision>0 else "还没有亲自看过的花路","kind":"dance"}
 	if stage!=1 and p.distance_to(SOURCE)<180 and not observation_valid(): return {"pos":SOURCE,"text":"在花心停稳，尝一口花蜜","kind":"flower"}
