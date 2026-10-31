@@ -1,0 +1,59 @@
+{
+  "kind": "bounded_developer_technical_composition_review",
+  "frozen_revision": "281da0047cf120a53d532229571827c67894c438",
+  "root_review": {
+    "reviewer": "/root",
+    "scope": "All17 original PNG,12 selected exact AVI frames,driver code,110/93 assertions,3525 native samples,PCM technical metrics and82 row source conclusions",
+    "not_claimed": [
+      "entire video independently watched in real time",
+      "subjective audio listening",
+      "first-time exploration",
+      "human acceptance",
+      "formal full G3 or M3 approval"
+    ]
+  },
+  "independent_review": {
+    "reviewer": "/root/feedback_review",
+    "source_table_sha256": "e3630537f236aeb3957a93605570a2d309dd40461cc1e72f0c66473eca63fba4",
+    "confirmed": "82 rows finalized:67 bounded non-audio sources and15 listening_pending;32/36 compared functions identical with4 explicit delta explanations. Confirmed native110/0 and3525 cue/caption samples,stage1 dry76/warning72/rain465/after210;two hits do not prove rain damage. C05 no additional3500 waiting capture needed. No known non-audio production repair or additional native capture blocker found in inspected scope.",
+    "review_boundary": "Only actual reported inspection is credited. Further formal seven-combination adjudication remains pending prerequisites;no blanket approval."
+  },
+  "combinations": [
+    {
+      "id": "C01",
+      "technical_result": "Actual direction input,dew4 allocations,resource use,physical mosquito8hit,canopy rest,R and retained first-gate fact. Stem/leaf9→14,low20refusal and physicalrain30 boundaries use cited source-state/ordinary-mosquito/rain-sources receipts.",
+      "outside": "Independent route choice and all arbitrary geometry combinations."
+    },
+    {
+      "id": "C02",
+      "technical_result": "Birth closed buds/companion,connected flower/perch and one real source observation persist through actual cold/stage transitions; keeper hanging3 occurs on same route.",
+      "outside": "Current high/low HUD text does not establish #205 information difference;extra plant/bird states not instantiated."
+    },
+    {
+      "id": "C03",
+      "technical_result": "Actual fixed wind path hits3 nodes and opens back knot after first gate; native wind1/2 show player at differing heights and remaining ordinary flight. Compatible back-sign receipts cover both ordinary bypasses.",
+      "outside": "No W01–08/new curved relay/landing platform or first-time back-knot understanding."
+    },
+    {
+      "id": "C04",
+      "technical_result": "Natural dry→warning→rain→after with canopy entry/exit; actual shield pickup,2block events and natural expiration on continuous route. Controlled source receipts separately prove physical rain30/roof edge;two current route hits are mosquitoes.",
+      "outside": "No acceptance of two meaningful rain approaches or no-shield flat-flight exclusion;#206 pending."
+    },
+    {
+      "id": "C05",
+      "technical_result": "Count→first opening→R retained fact→back opening→real inspect/lift/carry/place; current lift/carry-visible/placement frames andcontinuouspositions plus same-geometry back-sign/tidy middle connection evidence suffice for this bounded technical relationship.",
+      "outside": "Carry-descent atx3580 exits current camera;not universally visible. Old keeper-tidy coordinates are not reused. No independent understanding or fullJ03/P4 claim."
+    },
+    {
+      "id": "C06",
+      "technical_result": "Actual same-source observation,physical comb,fresh-space arm,real cold guard then exactlyonecommit,two listeners depart and both forage atSOURCE; full ending and completedcold restore pass. Negative cancellation/repeat/no-observation comes from finite-source-stateD.",
+      "outside": "Known-answer path;no unobserved player inference. Explicit invalidation API is not naturally occurring source closure."
+    },
+    {
+      "id": "C18",
+      "technical_result": "Current names and fitted ending;1280x800 and960x600 images;all sampledcue/body/caption assertions. Actual22voicekinds and recordedmix have no saturation.",
+      "outside": "Raw camera/rects absent fromtrace,so every sample cannot be independently recomputed. Audio listening pending blocks full C18 and source approval."
+    }
+  ],
+  "result": "Suitable to archive technical evidence;no new non-audio blocker identified within inspected fixed scope. FullG3/#204/M3 remain pending audio and final bounded combination adjudication."
+}

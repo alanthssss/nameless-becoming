@@ -1,0 +1,18 @@
+{
+  "method": "unmodified MJPEG frame extraction;engine_frame index with explicit +2/+5 to show feedback onset;not original lossless screenshot",
+  "frames": {
+    "warning": 1197,
+    "wind-1": 2335,
+    "wind-2": 2346,
+    "wind-3": 2351,
+    "keeper_lift": 2640,
+    "keeper_place": 2821,
+    "dance_commit": 3049,
+    "listener_depart": 3055,
+    "hit-0": 461,
+    "hit-1": 2195,
+    "carry-descent": 2705,
+    "carry-visible": 2646
+  },
+  "notes": "carry-descent is deliberately retained as offscreen evidence;carry-visible selects actual intermediate pose before right edge;do not claim entire carry stays in view"
+}
