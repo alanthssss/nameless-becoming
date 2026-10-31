@@ -38,10 +38,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: Swarm Flight rules and complete routes
+  checks:
+    name: Swarm Flight checks (${{ matrix.suite }})
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    strategy:
+      # Separate runners isolate Godot saves, imports and mutation fixtures.
+      # Keep collecting all suites when another suite fails.
+      fail-fast: false
+      matrix:
+        suite: [core, regressions, samples]
     env:
       GODOT_RELEASE: 4.6.2-stable
       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
@@ -69,6 +75,7 @@ jobs:
             exit 1
           fi
       - name: Verify rules and replay complete chapter routes
+        if: matrix.suite == 'core'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         shell: bash
@@ -80,6 +87,7 @@ jobs:
           fi
           grep -q '^SWARM FLIGHT VERIFIED:' "$RUNNER_TEMP/swarm-flight-verify.log"
       - name: Prove known airflow regressions cannot pass the tests
+        if: matrix.suite == 'regressions'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         shell: bash
@@ -93,6 +101,7 @@ jobs:
           python3 -B scripts/check_swarm_supply_regressions.py
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://save_supply_verify.gd
       - name: Play the complete scene flow and recovery controls
+        if: matrix.suite == 'core'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         shell: bash
@@ -104,6 +113,7 @@ jobs:
           fi
           grep -q '^SWARM FLIGHT UI VERIFIED:' "$RUNNER_TEMP/swarm-flight-ui.log"
       - name: Verify long chapters and exact suspend resume
+        if: matrix.suite == 'regressions'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
           SWARM_LONG_QA_DIR: ${{ runner.temp }}/long-journey-qa
@@ -117,6 +127,7 @@ jobs:
           grep -q '^LONG JOURNEY VERIFIED:.*0 failures' "$RUNNER_TEMP/long-model.log"
           grep -q '^LONG JOURNEY UI VERIFIED:.*0 failures' "$RUNNER_TEMP/long-ui.log"
       - name: Verify independent weather and color-window sample
+        if: matrix.suite == 'samples'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
           SWARM_WEATHER_QA_DIR: ${{ runner.temp }}/weather-window-qa
@@ -131,6 +142,7 @@ jobs:
           grep -q '^WEATHER WINDOW VERIFIED:.*0 failures' "$RUNNER_TEMP/weather-model.log"
           grep -q '^WEATHER UI VERIFIED:.*0 failures' "$RUNNER_TEMP/weather-ui.log"
       - name: Verify bee-dance information and exact suspend
+        if: matrix.suite == 'samples'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
           SWARM_DANCE_QA_DIR: ${{ runner.temp }}/bee-dance-qa
@@ -145,6 +157,7 @@ jobs:
           grep -q '^BEE DANCE VERIFIED:.*0 failures' "$RUNNER_TEMP/dance-model.log"
           grep -q '^BEE DANCE UI VERIFIED:.*0 failures' "$RUNNER_TEMP/dance-ui.log"
       - name: Verify sign-keeper encounter and persistent passage
+        if: matrix.suite == 'samples'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
           SWARM_KEEPER_QA_DIR: ${{ runner.temp }}/sign-keeper-qa
@@ -159,6 +172,7 @@ jobs:
           grep -q '^SIGN KEEPER VERIFIED:.*0 failures' "$RUNNER_TEMP/keeper-model.log"
           grep -q '^SIGN KEEPER UI VERIFIED:.*0 failures' "$RUNNER_TEMP/keeper-ui.log"
       - name: Verify integrated03 to05 story, routes and recovery
+        if: matrix.suite == 'samples'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
           SWARM_SPRING_QA_DIR: ${{ runner.temp }}/spring-journey-qa
@@ -176,6 +190,7 @@ jobs:
           grep -q '^SPRING JOURNEY VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-model.log"
           grep -q '^SPRING JOURNEY UI VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-ui.log"
       - name: Verify garden music and new sound effects
+        if: matrix.suite == 'core'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
           SWARM_AUDIO_DIR: ${{ runner.temp }}/garden-audio
@@ -188,6 +203,7 @@ jobs:
           fi
           grep -q '^GARDEN_AUDIO:' "$RUNNER_TEMP/swarm-flight-audio.log"
       - name: Start the main scene
+        if: matrix.suite == 'core'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         shell: bash
@@ -197,3 +213,20 @@ jobs:
           if grep -E 'SCRIPT ERROR|ERROR:' "$RUNNER_TEMP/swarm-flight-main.log"; then
             exit 1
           fi
+
+  verify:
+    # Preserve the existing check name for consumers of the complete gate.
+    name: Swarm Flight rules and complete routes
+    needs: checks
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Require every suite to succeed
+        env:
+          CHECKS_RESULT: ${{ needs.checks.result }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'Swarm Flight suites: %s\n' "$CHECKS_RESULT" >> "$GITHUB_STEP_SUMMARY"
+          test "$CHECKS_RESULT" = success

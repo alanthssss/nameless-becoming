@@ -210,6 +210,7 @@ PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变�
 
 按用途读取，避免把历史方案误当当前决定：
 
+- [Swarm Flight CI 耗时分析与并行验证](docs/CI_PERFORMANCE_2026-11-01.md)：真实步骤耗时、保留全部回归的三组并行方案与远端验证入口。
 - [完整GDD元素总目录](docs/design/swarm-flight-element-catalog.md)：全作需求来源、元素族、必要状态与GitHub覆盖；族级起点不等于资产完成。
 - [《雨来之前》开发范式：稳定元素，再组合完整体验](docs/design/swarm-flight-production-paradigm.md)：**后续制作执行入口**；P0–P5阶段、G0–G5门禁、元素规范、十分钟工作段与交接，实际进度只见原Now。
 
