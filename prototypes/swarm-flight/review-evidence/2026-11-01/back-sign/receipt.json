@@ -71,7 +71,9 @@
     "disk": "12 checks,0 failures: actual continue/save and byte-identical backup, directory-collision backup failure, unknown version and corrupt data preservation",
     "component_native": "19 checks,0 failures;539 frames@30fps; seeded front-open fixture with ordinary keyboard input, muted; upper/lower/wind",
     "keeper_native": "6 captures;389 frames@30fps; seeded opened gates, actor-follow fixture camera, muted",
-    "continuous_native": "68 checks,0 failures;3651 frames@30fps (2:01.7); actual keyboard/disk/cold scenes, known-answer developer route, not player exploration. Final legacy-checkpoint predicate-only fix followed capture and is covered by genuine old-source fixtures; normal captured paths unchanged."
+    "continuous_native": "68 checks,0 failures;3651 frames@30fps (2:01.7); actual keyboard/disk/cold scenes, known-answer developer route, not player exploration. Final legacy-checkpoint predicate-only fix followed capture and is covered by genuine old-source fixtures; normal captured paths unchanged.",
+    "canopy": "234 checks,0 failures, complete limited variants; explicit migration destination2760,465, original old fixture/earned flags/unknown layout rejection retained",
+    "charge_feedback": "16 headless checks,0 failures; native22 earlier evidence remains scoped"
   },
   "review": {
     "reviewer": "feedback_review independent read-only agent",
@@ -108,7 +110,8 @@
       "Attempt1:17 native checks/1 failure from fixture ring counter carried across scenarios; visible flower/sign overlap independently failed.",
       "Attempt2/3: wind missed a flower or clipped thick board; retained, not accepted",
       "A headless UI invocation wrongly used --swarm-qa, disabling its required disk writes; stopped and rerun without it, not a product failure",
-      "First seeded ending fixture omitted completed checkpoint index; rejected by old validator, corrected generator and self-validated before use"
+      "First seeded ending fixture omitted completed checkpoint index; rejected by old validator, corrected generator and self-validated before use",
+      "CI samples on467b12e: only canopy legacy destination assertion still expected2740. Updated both explicit live/checkpoint values to2760, independently reviewed; no game behavior or original old fixture changed. Failure: https://github.com/alanthssss/nameless-becoming/actions/runs/41235445351/job/124638187656"
     ]
   },
   "source_files": [
@@ -147,9 +150,17 @@
     {
       "path": "prototypes/swarm-flight/keeper_tidy_probe.gd",
       "sha256": "7708bd0f8000b098e2cfce831ab08e94ca8ea081eb499ca0b4313597df195439"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+      "sha256": "95f9c5f742c865a5184fd45380eea971861cc067fcb3f884f23ad7326e0765f5"
     }
   ],
   "evidence": [
+    {
+      "path": "canopy.log",
+      "sha256": "2889219a23b0062f94809bda73b14e1358ebcaed5a19dd9af901a07e32d93836"
+    },
     {
       "path": "component/lower-01-front.png",
       "sha256": "9ac3fbce53ab85288af0365cdf81582381904c6103f3db0f2be444bd87d84d71"
@@ -221,6 +232,10 @@
     {
       "path": "continuous/native.log",
       "sha256": "fc47428ca3c77263bb11b2442fae1b149a909e4da8d5765513fccbd77f5e3cc9"
+    },
+    {
+      "path": "feedback.log",
+      "sha256": "fa712b89c757f7142f40d7a6ab7af463fa91ef9f66943d1e8d133157ea62801c"
     },
     {
       "path": "legacy-fixtures/generate-on-baseline.gd.txt",
