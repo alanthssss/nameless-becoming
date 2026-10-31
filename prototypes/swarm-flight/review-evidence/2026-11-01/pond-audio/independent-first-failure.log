@@ -1,0 +1,10 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+FAIL: earned result continues after arrival: exact cold restore: ending inspection
+FAIL: earned result continues after arrival: ending consumes lift once outside play mode
+FAIL: earned result continues after arrival: ending consumes placement once outside play mode
+FAIL: earned result continues after arrival: ending leaves no unconsumed audio event queue
+FAIL: earned result continues after arrival: settled ending cannot repeat lift or placement
+POND AUDIO VERIFIED: 129 checks, 5 failures
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2641)

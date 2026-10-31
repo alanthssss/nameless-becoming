@@ -1,0 +1,12068 @@
+{
+	"checks": 20,
+	"counts": {
+		"bird_greeting": 1,
+		"checkpoint": 8,
+		"dance_commit": 1,
+		"hit": 2,
+		"keeper_count": 1,
+		"keeper_hang": 3,
+		"keeper_lift": 1,
+		"keeper_place": 1,
+		"listener_depart": 2,
+		"source_observed": 1,
+		"weather_warning": 1
+	},
+	"events": [
+		{
+			"frame": 0,
+			"kind": "bird_greeting",
+			"mode": "play",
+			"stage": 0
+		},
+		{
+			"frame": 0,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 0
+		},
+		{
+			"frame": 0,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 0
+		},
+		{
+			"frame": 20,
+			"kind": "source_observed",
+			"mode": "play",
+			"stage": 0
+		},
+		{
+			"frame": 72,
+			"kind": "keeper_hang",
+			"mode": "play",
+			"stage": 0
+		},
+		{
+			"frame": 158,
+			"kind": "keeper_hang",
+			"mode": "play",
+			"stage": 0
+		},
+		{
+			"frame": 244,
+			"kind": "keeper_hang",
+			"mode": "play",
+			"stage": 0
+		},
+		{
+			"frame": 313,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 1
+		},
+		{
+			"frame": 316,
+			"kind": "weather_warning",
+			"mode": "play",
+			"stage": 1
+		},
+		{
+			"frame": 428,
+			"kind": "hit",
+			"mode": "play",
+			"stage": 1
+		},
+		{
+			"frame": 452,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 1
+		},
+		{
+			"frame": 500,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 1
+		},
+		{
+			"frame": 535,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 565,
+			"kind": "hit",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 569,
+			"kind": "keeper_count",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 605,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 625,
+			"kind": "keeper_lift",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 645,
+			"kind": "checkpoint",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 721,
+			"kind": "dance_commit",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 727,
+			"kind": "listener_depart",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 741,
+			"kind": "listener_depart",
+			"mode": "play",
+			"stage": 2
+		},
+		{
+			"frame": 830,
+			"kind": "keeper_place",
+			"mode": "ending",
+			"stage": 2
+		}
+	],
+	"failures": 0,
+	"frames": [
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 0,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.0333333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 1,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.0666666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 2,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.1
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 3,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.133333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 4,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.166666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 5,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.2
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 6,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.233333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 7,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.266666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 8,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.3
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 9,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.333333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 10,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.366666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 11,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.4
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 12,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.433333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 13,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.466666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 14,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.500000000000001
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 15,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.533333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 16,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.566666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 17,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.6
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 18,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.633333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 19,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.666666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 20,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.7
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 21,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.733333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 22,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.766666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 23,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.8
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 24,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.833333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 25,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.866666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 26,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.899999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 27,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.933333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 28,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.966666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 29,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.999999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 30,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.03333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 31,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.06666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 32,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.1
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 33,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.13333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 34,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.16666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 35,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.2
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 36,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.23333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 37,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.26666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 38,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.3
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 39,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 40,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 41,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 42,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 43,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 44,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 45,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 46,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 47,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 48,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 49,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 50,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 51,
+			"keeper": "counting",
+			"mode": "pause",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 52,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.36666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 53,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.4
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 54,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.43333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 55,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.46666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 56,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.5
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 57,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.53333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 58,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.56666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 59,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.6
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 60,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.63333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 61,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.66666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 62,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.7
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 63,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.73333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 64,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.76666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 65,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.8
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 66,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.83333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 67,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.86666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 68,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.9
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 69,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.93333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 70,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 1.96666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 71,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 72,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 73,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 74,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 75,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 76,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 77,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 78,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 79,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 80,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 81,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 82,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 83,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 84,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 85,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 86,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 87,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 88,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 89,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 90,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 91,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 92,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 93,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 94,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 95,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 96,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 97,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.00833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 98,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.01666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 99,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.05
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 100,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.08333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 101,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.11666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 102,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.15
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 103,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.18333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 104,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.21666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 105,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.24999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 106,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.28333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 107,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.31666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 108,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.34999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 109,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.38333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 110,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.41666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 111,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.44999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 112,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.48333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 113,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.51666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 114,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.54999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 115,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.58333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 116,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.61666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 117,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.64999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 118,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.68333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 119,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.71666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 120,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.74999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 121,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.78333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 122,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.81666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 123,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.84999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 124,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.88333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 125,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.91666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 126,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.94999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 127,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 2.98333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 128,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.01666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 129,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.04999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 130,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.08333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 131,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.11666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 132,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.14999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 133,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.18333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 134,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.21666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 135,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.24999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 136,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.28333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 137,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.31666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 138,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.34999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 139,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.38333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 140,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.41666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 141,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.44999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 142,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.48333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 143,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.51666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 144,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.54999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 145,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.58333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 146,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.61666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 147,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.64999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 148,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.68333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 149,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.71666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 150,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.74999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 151,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.78333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 152,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.81666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 153,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.84999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 154,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.88333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 155,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.91666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 156,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.94999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 157,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 3.98333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 158,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 159,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 160,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 161,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 162,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 163,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 164,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 165,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 166,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 167,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 168,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 169,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 170,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 171,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 172,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 173,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 174,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 175,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 176,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 177,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 178,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 179,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 180,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 181,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 182,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 183,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 184,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.00833333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 185,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.03333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 186,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.06666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 187,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.09999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 188,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.13333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 189,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.16666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 190,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.2
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 191,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.23333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 192,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.26666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 193,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.3
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 194,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.33333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 195,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.36666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 196,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.40000000000001
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 197,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.43333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 198,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.46666666666668
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 199,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.50000000000001
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 200,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.53333333333335
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 201,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.56666666666668
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 202,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.60000000000002
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 203,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.63333333333335
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 204,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.66666666666669
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 205,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.70000000000002
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 206,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.73333333333336
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 207,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.76666666666669
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 208,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.80000000000003
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 209,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.83333333333336
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 210,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.8666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 211,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.90000000000003
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 212,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.93333333333337
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 213,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 4.9666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 214,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.00000000000004
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 215,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.03333333333337
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 216,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.06666666666671
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 217,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.10000000000004
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 218,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.13333333333338
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 219,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.16666666666671
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 220,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.20000000000005
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 221,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.23333333333338
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 222,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.26666666666672
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 223,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.30000000000005
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 224,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.33333333333339
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 225,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.36666666666672
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 226,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.40000000000006
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 227,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.43333333333339
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 228,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.46666666666673
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 229,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.50000000000006
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 230,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.5333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 231,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.56666666666673
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 232,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.60000000000007
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 233,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.6333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 234,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.66666666666674
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 235,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.70000000000007
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 236,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.73333333333341
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 237,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.76666666666674
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 238,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.80000000000008
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 239,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.83333333333341
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 240,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.86666666666675
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 241,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.90000000000008
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 242,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.93333333333342
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 243,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 5.96666666666675
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 244,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 245,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 246,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 247,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 248,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 249,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 250,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 251,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 252,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 253,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 254,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 255,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 256,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 257,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 258,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 259,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 260,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 261,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 262,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 263,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 264,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 265,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 266,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 267,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 268,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 269,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 270,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 271,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 272,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 273,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 274,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 275,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 276,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 277,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 278,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 279,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 280,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 281,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 282,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 283,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 284,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 285,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 286,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 287,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 288,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 289,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 290,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 291,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 292,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 293,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 294,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 295,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 296,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 297,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 298,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 299,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 300,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 301,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 302,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 303,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 304,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 305,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 306,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 307,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 308,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 309,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 310,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 311,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 312,
+			"keeper": "watch",
+			"mode": "play",
+			"p": [
+				3370.0,
+				400.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 6.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 313,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				641.25,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 314,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				644.5,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 315,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				649.75,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "dry",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 316,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				657.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 317,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				665.333251953125,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 318,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				673.66650390625,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 319,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				681.999755859375,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 320,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				690.3330078125,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 321,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				698.666259765625,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 322,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				706.99951171875,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 323,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				715.332763671875,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 324,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				723.666015625,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 325,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				729.221557617188,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 326,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 327,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 328,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 329,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 330,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 331,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 332,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 333,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 334,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 335,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 336,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 337,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 338,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 339,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 340,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 341,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 342,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 343,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 344,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 345,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 346,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 347,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 348,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 349,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 350,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 351,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 352,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 353,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 354,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 355,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 356,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 357,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 358,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 359,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 360,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 361,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 362,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 363,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 364,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 365,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 366,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 367,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 368,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 369,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 370,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 371,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 372,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 373,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 374,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 375,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 376,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 377,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 378,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 379,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 380,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 381,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 382,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 383,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 384,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 385,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 386,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 387,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "warning",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 388,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 389,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 390,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 391,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 392,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 393,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 394,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 395,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 396,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 397,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 398,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 399,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 400,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 401,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 402,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 403,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 404,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 405,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 406,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 407,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 408,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 409,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 410,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 411,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 412,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 413,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 414,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 415,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 416,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				730.471618652344,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 417,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -57.3333320617676,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 418,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -54.6666641235352,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 419,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -51.9999961853027,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 420,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -49.3333282470703,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 421,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -46.6666603088379,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 422,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -43.9999923706055,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 423,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -41.333324432373,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 424,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -38.6666564941406,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 425,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -35.9999885559082,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 426,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -33.3333206176758,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 427,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -30.666654586792,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 428,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -27.9999885559082,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 429,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -25.3333225250244,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 430,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -22.6666564941406,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 431,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -19.9999904632568,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 432,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -17.333324432373,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 433,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -14.6666574478149,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 434,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -11.9999904632568,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 435,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -9.33332347869873,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 436,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -6.66665697097778,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 437,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -3.99999022483826,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 438,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": -1.33332359790802,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 439,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 440,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 441,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 442,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 443,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 444,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 445,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 446,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 447,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 448,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 449,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 450,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 451,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				1780.0,
+				400.0
+			],
+			"rain_db": 0.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 452,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -2.66666674613953,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 453,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -5.33333349227905,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 454,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -8.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 455,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -10.6666669845581,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 456,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 457,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 458,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 459,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 460,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 461,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 462,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 463,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 464,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 465,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 466,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 467,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 468,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 469,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 470,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 471,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 472,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 473,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 474,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 475,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 476,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 477,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 478,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 479,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 480,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 481,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 482,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 483,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 484,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 485,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 486,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 487,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 488,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 489,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 490,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 491,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 492,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 493,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 494,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 495,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 496,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 497,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 498,
+			"keeper": "idle",
+			"mode": "pause",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -13.0,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 499,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				2120.0,
+				520.0
+			],
+			"rain_db": -57.3333320617676,
+			"weather": "rain",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 500,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 501,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 502,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 503,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 504,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 505,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 506,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 507,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 508,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 509,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 510,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 511,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 512,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 513,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 514,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 515,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 516,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 517,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 518,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 519,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 520,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 521,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 522,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 523,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 524,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 525,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 526,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 527,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 528,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 529,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 530,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 531,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 532,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 533,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 534,
+			"keeper": "idle",
+			"mode": "play",
+			"p": [
+				3700.0,
+				520.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 535,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.025
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 536,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0583333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 537,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0916666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 538,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.125
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 539,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.158333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 540,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.191666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 541,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.225
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 542,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.258333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 543,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.291666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 544,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.325
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 545,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.358333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 546,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.391666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 547,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.425
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 548,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.458333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 549,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.491666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 550,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.525000000000001
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 551,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.558333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 552,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.591666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 553,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.625
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 554,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.658333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 555,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.691666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 556,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.725
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 557,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.758333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 558,
+			"keeper": "aim",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.791666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 559,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0166666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 560,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.05
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 561,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0833333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 562,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.116666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 563,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.15
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 564,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.183333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 565,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.216666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 566,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.25
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 567,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.283333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 568,
+			"keeper": "chase",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.316666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 569,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.025
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 570,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0583333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 571,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0916666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 572,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.125
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 573,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.158333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 574,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.191666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 575,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.225
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 576,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.258333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 577,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.291666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 578,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.325
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 579,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.358333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 580,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.391666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 581,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.425
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 582,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.458333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 583,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.491666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 584,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.525000000000001
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 585,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.558333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 586,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.591666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 587,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.625
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 588,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.658333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 589,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.691666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 590,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.725
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 591,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.758333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 592,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.791666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 593,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.825
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 594,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.858333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 595,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.891666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 596,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.924999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 597,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.958333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 598,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.991666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 599,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.025
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 600,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.05833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 601,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.09166666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 602,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.125
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 603,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.15833333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 604,
+			"keeper": "counting",
+			"mode": "play",
+			"p": [
+				2190.0,
+				440.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.19166666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 605,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0333333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 606,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0666666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 607,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.1
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 608,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.133333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 609,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.166666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 610,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.2
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 611,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.233333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 612,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.266666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 613,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.3
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 614,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.333333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 615,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.366666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 616,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.4
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 617,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.433333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 618,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.466666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 619,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.500000000000001
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 620,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.533333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 621,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.566666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 622,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.6
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 623,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.633333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 624,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.666666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 625,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.7
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 626,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.733333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 627,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.766666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 628,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.8
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 629,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.833333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 630,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.866666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 631,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.899999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 632,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.933333333333332
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 633,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.966666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 634,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.999999999999999
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 635,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.03333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 636,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.06666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 637,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.1
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 638,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.13333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 639,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.16666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 640,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.2
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 641,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.23333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 642,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.26666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 643,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.3
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 644,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3200.0,
+				420.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 645,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.36666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 646,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.4
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 647,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.43333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 648,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.46666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 649,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.5
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 650,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.53333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 651,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.56666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 652,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.6
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 653,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.63333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 654,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.66666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 655,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.7
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 656,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.73333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 657,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.76666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 658,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.8
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 659,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.83333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 660,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.86666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 661,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.9
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 662,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.93333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 663,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.96666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 664,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 665,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.03333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 666,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.06666666666666
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 667,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.1
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 668,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.13333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 669,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.16666666666666
+		},
+		{
+			"dance": "armed",
+			"dance_db": -60.0,
+			"frame": 670,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.19999999999999
+		},
+		{
+			"dance": "armed",
+			"dance_db": -60.0,
+			"frame": 671,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.23333333333333
+		},
+		{
+			"dance": "armed",
+			"dance_db": -60.0,
+			"frame": 672,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.26666666666666
+		},
+		{
+			"dance": "armed",
+			"dance_db": -60.0,
+			"frame": 673,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.29999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -57.3333320617676,
+			"frame": 674,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.33333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -54.6666641235352,
+			"frame": 675,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.36666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -51.9999961853027,
+			"frame": 676,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.39999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -49.3333282470703,
+			"frame": 677,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.43333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -46.6666603088379,
+			"frame": 678,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.46666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -43.9999923706055,
+			"frame": 679,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.49999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -41.333324432373,
+			"frame": 680,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.53333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -38.6666564941406,
+			"frame": 681,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.56666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -35.9999885559082,
+			"frame": 682,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.59999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -33.3333206176758,
+			"frame": 683,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.63333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -30.666654586792,
+			"frame": 684,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.66666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 685,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 686,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 687,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 688,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 689,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 690,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 691,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 692,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 693,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 694,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 695,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 696,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 697,
+			"keeper": "tidy",
+			"mode": "pause",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -57.3333320617676,
+			"frame": 698,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.73333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -54.6666641235352,
+			"frame": 699,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.76666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -51.9999961853027,
+			"frame": 700,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.79999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -49.3333282470703,
+			"frame": 701,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.83333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -46.6666603088379,
+			"frame": 702,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.86666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -43.9999923706055,
+			"frame": 703,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.89999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -41.333324432373,
+			"frame": 704,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.93333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -38.6666564941406,
+			"frame": 705,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.96666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -35.9999885559082,
+			"frame": 706,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.99999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -33.3333206176758,
+			"frame": 707,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.03333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -30.666654586792,
+			"frame": 708,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.06666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -27.9999885559082,
+			"frame": 709,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.09999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -25.3333225250244,
+			"frame": 710,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.13333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -22.6666564941406,
+			"frame": 711,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.16666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -19.9999904632568,
+			"frame": 712,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.19999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -17.333324432373,
+			"frame": 713,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.23333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -14.6666574478149,
+			"frame": 714,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.26666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 715,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.29999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 716,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.33333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 717,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.36666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 718,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.39999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 719,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.43333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 720,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.46666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 721,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.49999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 722,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.53333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 723,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.56666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 724,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.59999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 725,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.63333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 726,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.66666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 727,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.69999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 728,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.73333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 729,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.76666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 730,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.79999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 731,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.83333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 732,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.86666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 733,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.89999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 734,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.93333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 735,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.96666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 736,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 3.99999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 737,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.03333333333332
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 738,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.06666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 739,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.09999999999999
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 740,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.13333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 741,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.16666666666666
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 742,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.2
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 743,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.23333333333333
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 744,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.26666666666667
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 745,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.3
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 746,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.33333333333334
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 747,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.36666666666667
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 748,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.40000000000001
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 749,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.43333333333334
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 750,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.46666666666668
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 751,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.50000000000001
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 752,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.53333333333335
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 753,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.56666666666668
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 754,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.60000000000002
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 755,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.63333333333335
+		},
+		{
+			"dance": "dancing",
+			"dance_db": -13.0,
+			"frame": 756,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.66666666666669
+		},
+		{
+			"dance": "idle",
+			"dance_db": -15.6666669845581,
+			"frame": 757,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.70000000000002
+		},
+		{
+			"dance": "idle",
+			"dance_db": -18.3333339691162,
+			"frame": 758,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.73333333333336
+		},
+		{
+			"dance": "idle",
+			"dance_db": -21.0,
+			"frame": 759,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.76666666666669
+		},
+		{
+			"dance": "idle",
+			"dance_db": -23.6666660308838,
+			"frame": 760,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.80000000000003
+		},
+		{
+			"dance": "idle",
+			"dance_db": -26.3333320617676,
+			"frame": 761,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.83333333333336
+		},
+		{
+			"dance": "idle",
+			"dance_db": -28.9999980926514,
+			"frame": 762,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.8666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -31.6666641235352,
+			"frame": 763,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.90000000000003
+		},
+		{
+			"dance": "idle",
+			"dance_db": -34.3333320617676,
+			"frame": 764,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.93333333333337
+		},
+		{
+			"dance": "idle",
+			"dance_db": -37.0,
+			"frame": 765,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 4.9666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -39.6666679382324,
+			"frame": 766,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 5.00000000000004
+		},
+		{
+			"dance": "idle",
+			"dance_db": -42.3333358764648,
+			"frame": 767,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 5.03333333333337
+		},
+		{
+			"dance": "idle",
+			"dance_db": -45.0000038146973,
+			"frame": 768,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 5.06666666666671
+		},
+		{
+			"dance": "idle",
+			"dance_db": -47.6666717529297,
+			"frame": 769,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 5.10000000000004
+		},
+		{
+			"dance": "idle",
+			"dance_db": -50.3333396911621,
+			"frame": 770,
+			"keeper": "tidy",
+			"mode": "play",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 5.13333333333338
+		},
+		{
+			"dance": "idle",
+			"dance_db": -53.0000076293945,
+			"frame": 771,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0333333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -55.666675567627,
+			"frame": 772,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.0666666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -58.3333435058594,
+			"frame": 773,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.1
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 774,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.133333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 775,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.166666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 776,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.2
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 777,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.233333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 778,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.266666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 779,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.3
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 780,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.333333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 781,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.366666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 782,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.4
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 783,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.433333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 784,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.466666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 785,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.5
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 786,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.533333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 787,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.566666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 788,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.6
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 789,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.633333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 790,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.666666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 791,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.7
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 792,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.733333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 793,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.766666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 794,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.8
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 795,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.833333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 796,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.866666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 797,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.9
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 798,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.933333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 799,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 0.966666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 800,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 801,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.03333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 802,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.06666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 803,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.1
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 804,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.13333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 805,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.16666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 806,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.2
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 807,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.23333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 808,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.26666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 809,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.3
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 810,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.33333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 811,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.36666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 812,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.4
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 813,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.43333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 814,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.46666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 815,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.5
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 816,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.53333333333333
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 817,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.56666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 818,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.6
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 819,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.63333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 820,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.66666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 821,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.7
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 822,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.73333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 823,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.76666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 824,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.8
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 825,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.83333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 826,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.86666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 827,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.9
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 828,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.93333333333334
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 829,
+			"keeper": "tidy",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 1.96666666666667
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 830,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 831,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 832,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 833,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 834,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 835,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 836,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 837,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 838,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 839,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 840,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 841,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 842,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 843,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 844,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 845,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 846,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 847,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 848,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 849,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		},
+		{
+			"dance": "idle",
+			"dance_db": -60.0,
+			"frame": 850,
+			"keeper": "settled",
+			"mode": "ending",
+			"p": [
+				3850.0,
+				500.0
+			],
+			"rain_db": -60.0,
+			"weather": "after",
+			"work": 2.0
+		}
+	],
+	"kind": "seeded source-state audit; real input/disk/events; native mix enabled; not player exploration"
+}

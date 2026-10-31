@@ -1,0 +1,16 @@
+extends SceneTree
+const Sound=preload("res://sound.gd")
+func _initialize(): call_deferred("run")
+func run():
+ var sound=Sound.new()
+ root.add_child(sound)
+ sound.set_muted(true)
+ var report={}
+ for kind in ["source_observed","bird_greeting","weather_warning","dance_commit"]:
+  var before=sound._voice
+  sound.play_event(kind)
+  report[kind]={"mapped":sound._samples.has(kind),"voice_allocated":sound._voice!=before}
+ print("POND AUDIO BASELINE d7fad9b: ",JSON.stringify(report))
+ sound.queue_free()
+ await process_frame
+ quit()

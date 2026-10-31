@@ -1,6 +1,8 @@
 extends Node
 ## Original composed PCM: no external samples, recordings or transcriptions.
 ## Three authored arrangements crossfade; one-shots use a fixed voice pool.
+signal event_played(kind: String)
+const POND_EVENTS=["source_observed","bird_greeting","weather_warning","dance_commit","keeper_hang","keeper_count","keeper_lift","keeper_place","listener_depart"]
 const RATE := 22050
 const MUSIC_DB := -9.0
 const AMBIENCE_DB := -24.0
@@ -18,6 +20,11 @@ var _voice := 0
 var _crossfade: Tween
 var _duck := 0.0
 var _rng := RandomNumberGenerator.new()
+var _pond_rain: AudioStreamPlayer
+var _pond_dance: AudioStreamPlayer
+var _pond_rain_target := -60.0
+var _pond_dance_target := -60.0
+var _pond_paused := false
 
 func _ready() -> void:
 	_rng.seed = 8753
@@ -51,8 +58,10 @@ func _ready() -> void:
 	_samples["shield_end"] = _make_effect("shield_end",0.28)
 	_samples["rain_break"] = _samples["gate"]
 	_samples["tired"] = _samples["charge_cancel"]
-	for kind in ["checkpoint","recover_manual","recover_rain","recover_exhaustion","recover_timeout"]:
+	for kind in ["checkpoint","recover_manual","recover_rain","recover_exhaustion","recover_timeout","recover_geometry"]:
 		_samples[kind] = _samples["recover"]
+	for kind in POND_EVENTS:
+		_samples[kind]=_make_effect(kind,{"source_observed":0.32,"bird_greeting":0.58,"weather_warning":0.85,"dance_commit":0.24,"keeper_hang":0.23,"keeper_count":0.72,"keeper_lift":0.32,"keeper_place":0.32,"listener_depart":0.28}[kind])
 	set_stage(0)
 	set_muted(_muted)
 
@@ -62,15 +71,69 @@ func _exit_tree() -> void:
 	for player in _music + _ambience + _voices:
 		player.stop()
 		player.stream = null
+	for player in [_pond_rain,_pond_dance]:
+		if is_instance_valid(player):
+			player.stop()
+			player.stream=null
 	_tracks.clear()
 	_air.clear()
 	_samples.clear()
 
 func _process(delta: float) -> void:
+	if _pond_paused: return
+	for pair in [[_pond_rain,_pond_rain_target],[_pond_dance,_pond_dance_target]]:
+		var player: AudioStreamPlayer=pair[0]
+		if not is_instance_valid(player): continue
+		player.volume_db=move_toward(player.volume_db,float(pair[1]),delta*80.0)
+		if player.volume_db<=-59.9 and float(pair[1])<=-60.0: player.stop()
 	_duck = maxf(0.0, _duck - delta)
 	var bus := AudioServer.get_bus_index("Music")
 	if bus >= 0:
 		AudioServer.set_bus_volume_db(bus, MUSIC_DB - 4.0 * minf(1.0, _duck / 0.15))
+
+func set_pond_context(rain: bool,covered: bool,dancing: bool,paused: bool,active:=true) -> void:
+	# Opt-in adapter: the legacy comparison retains its existing arrangements.
+	if not is_instance_valid(_pond_rain):
+		_pond_rain=_player("Ambience")
+		_pond_rain.stream=_make_pond_loop(false)
+		_pond_rain.volume_db=-60
+		_pond_dance=_player("SFX")
+		_pond_dance.stream=_make_pond_loop(true)
+		_pond_dance.volume_db=-60
+	_pond_paused=paused
+	_pond_rain.stream_paused=paused
+	_pond_dance.stream_paused=paused
+	for voice in _voices: voice.stream_paused=paused
+	if paused: return
+	_pond_rain_target=(-13.0 if covered else 0.0) if active and rain else -60.0
+	_pond_dance_target=-13.0 if active and dancing else -60.0
+	for pair in [[_pond_rain,_pond_rain_target],[_pond_dance,_pond_dance_target]]:
+		if float(pair[1])>-60.0 and not pair[0].playing: pair[0].play()
+	if not active:
+		for voice in _voices: voice.stop()
+
+func _make_pond_loop(dance: bool) -> AudioStreamWAV:
+	var buffer:=PackedFloat32Array()
+	buffer.resize(RATE*4)
+	var noise:=RandomNumberGenerator.new()
+	noise.seed=5146 if dance else 8241
+	var low:=0.0
+	for i in buffer.size():
+		var t:=float(i)/RATE
+		var white:=noise.randf_range(-1,1)
+		low=low*0.72+white*0.28
+		if dance:
+			# Quiet wing harmonics, not a success chord. Integer periods loop cleanly.
+			buffer[i]=(sin(TAU*145*t)+0.3*sin(TAU*290*t))*0.11*(0.72+0.28*sin(TAU*4*t))
+		else:
+			buffer[i]=(low*0.65+white*0.12)*(0.9+0.1*sin(TAU*t/4))
+	if not dance:
+		# A short edge ramp removes the random-noise wrap discontinuity.
+		for i in 220:
+			var gain:=float(i)/220.0
+			buffer[i]*=gain
+			buffer[buffer.size()-1-i]*=gain
+	return _wav(buffer,true)
 
 func set_stage(index: int) -> void:
 	index = clampi(index, 0, 2)
@@ -101,7 +164,8 @@ func _stop_inactive(index: int) -> void:
 		_music[index].stop()
 		_ambience[index].stop()
 
-func play_event(kind: String) -> void:
+func play_event(kind: String,distance:=0.0) -> void:
+	if _pond_paused: return
 	if not _samples.has(kind) or _voices.is_empty():
 		return
 	var player := _voices[_voice]
@@ -113,8 +177,12 @@ func play_event(kind: String) -> void:
 	if kind == "shield": player.volume_db = -2.0
 	elif kind == "shield_block": player.volume_db = -7.0
 	elif kind == "shield_end": player.volume_db = -5.0
+	if kind in POND_EVENTS:
+		player.volume_db=-minf(48.0,maxf(0.0,distance-160.0)/55.0)
+		if kind in ["keeper_hang","keeper_lift","keeper_place","listener_depart"]: player.volume_db-=3.0
 	player.play()
-	if kind in ["rescue", "hit", "finish", "flower_calm"]:
+	event_played.emit(kind)
+	if kind in ["rescue", "hit", "finish", "flower_calm","weather_warning","bird_greeting","keeper_count"]:
 		_duck = 0.5
 	if kind == "finish":
 		# The storm settles beneath the final chord, without overriding mute.
@@ -259,6 +327,21 @@ func _make_effect(kind: String, duration: float) -> AudioStreamWAV:
 		low = low * 0.86 + white * 0.14
 		var value := 0.0
 		match kind:
+			"source_observed":
+				value=(sin(TAU*392*t)+0.3*sin(TAU*784*t))*exp(-t*9)*0.17
+			"bird_greeting":
+				var chirp:=fmod(t,0.26)
+				var breath:=sin(PI*clampf(chirp/0.19,0,1)) if chirp<0.19 else 0.0
+				value=sin(TAU*(1750*chirp+2300*chirp*chirp))*breath*0.23
+			"weather_warning":
+				value=low*0.55*sin(PI*u)+sin(TAU*(180*t-24*t*t))*0.035
+			"dance_commit","listener_depart":
+				value=(sin(TAU*145*t)+sin(TAU*290*t)*0.35)*0.16*(0.65+0.35*sin(TAU*13*t))+low*0.06
+			"keeper_hang","keeper_count","keeper_lift","keeper_place":
+				var tap:=fmod(t,0.21) if kind=="keeper_count" else t
+				var scrape:=low*0.2*exp(-tap*10)
+				value=(sin(TAU*610*tap)*0.3+sin(TAU*920*tap)*0.12)*exp(-tap*40)+scrape
+				if kind=="keeper_lift": value=low*0.35+sin(TAU*(340*t+110*t*t))*0.07
 			"dew":
 				value = (sin(TAU*1174.66*t)+sin(TAU*1760*t)*0.35)*exp(-t*8)*0.23
 			"spray":

@@ -1,0 +1,74 @@
+[
+  {
+    "file": "keeper_lift.wav",
+    "peak": 0.1536865234375,
+    "rms": 0.02486990005275462,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "weather_warning.wav",
+    "peak": 0.099822998046875,
+    "rms": 0.020115101936853952,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "keeper_hang.wav",
+    "peak": 0.209075927734375,
+    "rms": 0.030167333214270783,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "source_observed.wav",
+    "peak": 0.1304931640625,
+    "rms": 0.02835047065644447,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "dance-loop.wav",
+    "peak": 0.125,
+    "rms": 0.06062445593783711,
+    "seam_delta": 0.005218505859375
+  },
+  {
+    "file": "rain-loop.wav",
+    "peak": 0.616790771484375,
+    "rms": 0.1856113537106401,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "dance_commit.wav",
+    "peak": 0.129150390625,
+    "rms": 0.03145948788127755,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "native-mix.wav",
+    "peak": 0.254669189453125,
+    "rms": 0.037399561402806196,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "keeper_place.wav",
+    "peak": 0.24481201171875,
+    "rms": 0.026259046140954992,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "bird_greeting.wav",
+    "peak": 0.129974365234375,
+    "rms": 0.03820086804528243,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "listener_depart.wav",
+    "peak": 0.133758544921875,
+    "rms": 0.03166539977477389,
+    "seam_delta": 0.0
+  },
+  {
+    "file": "keeper_count.wav",
+    "peak": 0.247894287109375,
+    "rms": 0.023280300872307952,
+    "seam_delta": 0.0
+  }
+]
