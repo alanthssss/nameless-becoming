@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "kind": "bounded_rain_roof_and_middle_lamp_source_evidence",
+  "authority": {
+    "gdd": [
+      "§8.1",
+      "§13.6"
+    ],
+    "issues": [
+      217,
+      225,
+      204
+    ],
+    "milestone": "M1 prerequisites → M2 finite coverage",
+    "execution_pointer": "docs/design/solar-term-campaign-production-spec.md#production-now"
+  },
+  "baseline_revision": "85e950075dc438ef39ab7d9d660172aa4611470f",
+  "production_changed": false,
+  "scope": [
+    "Stage1 actual roof Rect(1900,330,350,95),inside1920/outside1880 at y480;natural dry-warning-rain,one injected physical particle y295/350px/s with other emitters delayed",
+    "Stage1 last shelter color_step1,natural after weather,ordinary keyboard3900→4120→4340 at y500"
+  ],
+  "verification": {
+    "headless": "39 checks/0 failures",
+    "native": "46 checks/0 failures;239 movie frames@30fps;7 PNG",
+    "sample_count": 237,
+    "observations": [
+      "inside floor330,particle intercepted,no hit;outside floor750,one physical hit30;both ordinary flight drain1.2 over0.6s",
+      "middle lamp actual shelter index outside→last→outside;cord joins leaf underside;colored projection and player remain readable"
+    ]
+  },
+  "limits": {
+    "human_acceptance_claim": false,
+    "independent_exploration_claim": false,
+    "M3_allowed": false,
+    "audio_subjective_listening": "pending",
+    "coverage": "Only current fixed source instances;not all roofs/lamps or complete rain-route decision"
+  },
+  "cost": {
+    "observed_start_utc": "2026-10-31T21:22:00Z",
+    "estimate_minutes": [
+      15,
+      25
+    ],
+    "checkpoint_utc": "2026-10-31T21:30:25.833368+00:00",
+    "cash_purchases": 0,
+    "image_calls": 0,
+    "active_hours": null,
+    "cumulative_hours": null,
+    "remaining_hours": null,
+    "budget": "200+40h unchanged;remaining unverifiable;automationPAUSED"
+  },
+  "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/rain-sources in actual main checkout",
+  "source_hashes": {
+    "spring_journey_model.gd": "4629ed0a8089c3650f4bb4dad273d9176841d4cf4287e18aa3432fd3ffbdf8bd",
+    "spring_journey_view.gd": "be349fc1223bfd1dd0ba4cb1e97e67b033ece49c02c10e0b3114c5ca900715e1",
+    "game_model.gd": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+    "color_memory.gd": "a47a39d2efee0880667dde26a1bd061c457e20ae93415116a2fe5ca623c02a55",
+    "rain_sources_probe.gd": "2ca8bc7a927aabc42c9468513ae7fca64d9e3cffcefb8b54bf665e04a25aa2ef",
+    "pond_source_states_probe.gd": "948003da0021d0331c74c3083607c69d44b4f000c2b91df2cf8bf33ca80a827e"
+  },
+  "artifact_hashes": {
+    "headless.log": "f200c016e3ed86467da5b566edfc471bd09ed236123d150551fa15ed1fd418e9",
+    "native/01-inside-before.png": "5b2324a340a9ea4b2d46480458015666b079cab768aa608b5198b3729a407022",
+    "native/02-inside-after.png": "9c6fa1bfd4834a972f6915d6df41f4d7a56627c579345c74f329914e5d6ae1a2",
+    "native/03-outside-before.png": "8c3364e3299f2dca5130599268b9c9c056209b7e1d871ebb5b9cfc7ad1109d9a",
+    "native/04-outside-after.png": "b0083378ca142f6af5c14c35a8d6c72439197cfdf46b8ed2d6c6b94f7f4ef0b9",
+    "native/05-lamp-approach.png": "a1f1069c2b24087d539fa29462a5fa5935e3c5eb300a2a199e152f64bdae8a15",
+    "native/06-lamp-middle-color.png": "bbdec1d7c47fe5de3b75fb9fb7a86f9888245095f7295dccf9336ffa067b1b69",
+    "native/07-lamp-exit.png": "31fe4d3d8b0102d9c600cd70d4d6b802a955d7eb6d915d2a2fd66e3a8f5cec24",
+    "native/native.log": "7a2be13487cdabc7d0b76f1d8e86e385634c6088145d8f23ec8626925c497fc8",
+    "native/native.mp4": "2e78f2165a9cd17a414529a564088327f7f56a18fb0856972959dc9baadbb193",
+    "native/save.json": "37a5827c912349f770e66505f8c282d52937623d7ace39da1d58a9b1e72a4822",
+    "native/trace.json": "67edd2923c478669bc44812a0313470df3510e9d6b997e5da49f6e0c4c6df774"
+  },
+  "review": {
+    "reviewer": "/root/feedback_review",
+    "result": "no blocker for these two bounded sources",
+    "evidence": "All7PNG,driver and237trace samples inspected;inside330 interception,outside unique frame177 actual rain hit30;flight drains separately1.2;no shield/invulnerability/leaf shelter;step1 cord attached and cyan projection on supporting leaf;ordinary right-keyoutside→inside→outside",
+    "limits": "Controlled rain injection,not natural emitter hit;controlled3900 start triggers production after threshold,not full weather journey;reviewer did not independently replay entire movie or runGodot;noM3/P4/family acceptance"
+  }
+}
