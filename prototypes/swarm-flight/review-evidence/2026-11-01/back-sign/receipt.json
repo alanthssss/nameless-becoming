@@ -73,7 +73,7 @@
     "keeper_native": "6 captures;389 frames@30fps; seeded opened gates, actor-follow fixture camera, muted",
     "continuous_native": "68 checks,0 failures;3651 frames@30fps (2:01.7); actual keyboard/disk/cold scenes, known-answer developer route, not player exploration. Final legacy-checkpoint predicate-only fix followed capture and is covered by genuine old-source fixtures; normal captured paths unchanged.",
     "canopy": "234 checks,0 failures, complete limited variants; explicit migration destination2760,465, original old fixture/earned flags/unknown layout rejection retained",
-    "charge_feedback": "16 headless checks,0 failures; native22 earlier evidence remains scoped"
+    "charge_feedback": "18 headless checks,0 failures; native22 earlier evidence remains scoped"
   },
   "review": {
     "reviewer": "feedback_review independent read-only agent",
