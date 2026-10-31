@@ -24,16 +24,31 @@ func refresh_hud() -> void:
 	hud_bees.text="第%02d关" % (model.stage+3)
 	hud_title.text="%s · %s   ·   晨露 %d/%d" % [titles[model.stage],model.encounter_name(),model.garden_awards[model.stage],model.stage_dew_total()]
 	var cue: Dictionary=model.context_cue()
-	if model.stage==0 and cue.get("kind","")=="friend" and cue_panel.visible:
-		var player_screen: Vector2=model.p-Vector2(model.camera_x,0)
+	if cue_panel.visible:
+		# Keep the actual bee and its shield/readiness ring readable at every cue.
+		# A perched dancer is drawn away from its fixed simulation position.
+		var player_screen: Vector2=model.p+(model.dance_pose() if model.perched else Vector2.ZERO)-Vector2(model.camera_x,0)
 		var player_bounds:=Rect2(player_screen-Vector2(62,52),Vector2(124,104))
-		if cue_panel.get_rect().intersects(player_bounds):
-			var friend_screen: Vector2=model.DEPARTURE_FRIEND-Vector2(model.camera_x,0)
-			for y in [friend_screen.y+72.0,friend_screen.y-205.0,190.0]:
+		var reserved: Array[Rect2]=[player_bounds]
+		for box in world.active_caption_rects():
+			reserved.append(Rect2(box.position-Vector2(model.camera_x,0),box.size).grow(8))
+		if reserved.any(func(rect): return cue_panel.get_rect().intersects(rect)):
+			var alternatives: Array=[]
+			if model.stage==0 and cue.get("kind","")=="friend":
+				var friend_screen: Vector2=model.DEPARTURE_FRIEND-Vector2(model.camera_x,0)
+				alternatives=[friend_screen.y+72.0,friend_screen.y-205.0,190.0]
+			alternatives.append_array([player_bounds.position.y-cue_panel.size.y-12.0,player_bounds.end.y+12.0])
+			for rect in reserved:
+				alternatives.append_array([rect.position.y-cue_panel.size.y-8.0,rect.end.y+8.0])
+			var placed:=false
+			for y in alternatives:
 				var candidate:=Rect2(Vector2(cue_panel.position.x,clampf(y,190,652)),cue_panel.size)
-				if not candidate.intersects(player_bounds):
+				if reserved.all(func(rect): return not candidate.intersects(rect)):
 					cue_panel.position=candidate.position
+					placed=true
 					break
+			# Brief local guidance can yield to an active action/damage result.
+			cue_panel.visible=placed
 	if is_instance_valid(sound):
 		var rain_here: bool=model.stage==1 and model.weather_phase=="rain" and model.rain_fields.any(func(field): return model.p.x>=field.rect.position.x and model.p.x<=field.rect.end.x)
 		var covered: bool=model.shelter_index_at(model.p)>=0 or model.rain_floor_at(model.p.x)<model.p.y

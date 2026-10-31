@@ -1,0 +1,4600 @@
+{
+  "schema_version": 1,
+  "kind": "finite_current_spring_source_state_evidence_mapping",
+  "prepared_at_utc": "2026-10-31T20:27:27.750590+00:00",
+  "authority": {
+    "gdd": "docs/design/swarm-flight-gdd.md#13.6",
+    "milestone": "M1 source prerequisites → M2 (#204); no M3/P4 acceptance",
+    "active_issues": [
+      214,
+      217,
+      219,
+      204
+    ],
+    "related_source_issues": [
+      215,
+      218,
+      226,
+      227,
+      228
+    ],
+    "tracker_owner": "root; no tracker mutation by this file"
+  },
+  "source_snapshot": {
+    "revision": "df4ff10208ba9d3aee2deac80c63b604675198cd",
+    "branch": "codex/pond-mvp-source-checks",
+    "production_files_at_base": false,
+    "files": [
+      {
+        "path": ".github/workflows/swarm-flight.yml",
+        "sha256": "2d76f77b87c1f660551f4f020e2865bcd7baad475bc7f0f36fd299d524682209"
+      },
+      {
+        "path": "prototypes/swarm-flight/art/garden-terrain.png",
+        "sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536"
+      },
+      {
+        "path": "prototypes/swarm-flight/art/garden-terrain.png.import",
+        "sha256": "234d65ce51371757cbfd8976f88f9c52ec5df6fc993ae2e8c10d1362476cc376"
+      },
+      {
+        "path": "prototypes/swarm-flight/art/garden-weather.png",
+        "sha256": "0a701aa4ed07312d057e79075efb199d63d758cc294c205c58508306abfbbe1a"
+      },
+      {
+        "path": "prototypes/swarm-flight/art/garden-weather.png.import",
+        "sha256": "231c4d7b57e4c43c15ffd19894566f6b0e22653037b5e21030a10407023ab51e"
+      },
+      {
+        "path": "prototypes/swarm-flight/art/revision-atlas.png",
+        "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8"
+      },
+      {
+        "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+        "sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978"
+      },
+      {
+        "path": "prototypes/swarm-flight/art_props.gd",
+        "sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8"
+      },
+      {
+        "path": "prototypes/swarm-flight/art_sprites.gd",
+        "sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793"
+      },
+      {
+        "path": "prototypes/swarm-flight/back_sign_probe.gd",
+        "sha256": "f0a3cd608fc10c6c41e79da9c92e4d189fbd241b55ef7469e7d74340b7b63139"
+      },
+      {
+        "path": "prototypes/swarm-flight/back_sign_save_verify.gd",
+        "sha256": "7668003b16e69ce9d122ee54c91349e2bbdab8015f2372b980bca21887d73334"
+      },
+      {
+        "path": "prototypes/swarm-flight/bee_dance_main.gd",
+        "sha256": "17ec7c4d5455adf109342df384b671f16956ec39ea87edc183735c8585aba05f"
+      },
+      {
+        "path": "prototypes/swarm-flight/bee_dance_view.gd",
+        "sha256": "535d91e40605f55fd24fac721ff0c919b99dd78bdbea1f4515021e1ab9f1a19f"
+      },
+      {
+        "path": "prototypes/swarm-flight/chapter_data.gd",
+        "sha256": "ba1ba4625fc7758e6e4ebc4e1f55d2ee102b415ab4863f58eb0638acb2445ca7"
+      },
+      {
+        "path": "prototypes/swarm-flight/charge_feedback_verify.gd",
+        "sha256": "d04c792b912fe23a3803e4cbfec83b52c617e109d6b665a76275c0d979785b8c"
+      },
+      {
+        "path": "prototypes/swarm-flight/color_memory.gd",
+        "sha256": "a47a39d2efee0880667dde26a1bd061c457e20ae93415116a2fe5ca623c02a55"
+      },
+      {
+        "path": "prototypes/swarm-flight/departure_probe.gd",
+        "sha256": "9d25bd3acb8d895d0dc8dd6befa4a893b3f698733dad9fb5491b79cc1fb7052b"
+      },
+      {
+        "path": "prototypes/swarm-flight/game_model.gd",
+        "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8"
+      },
+      {
+        "path": "prototypes/swarm-flight/gdd-element-manifest.json",
+        "sha256": "fe6a29f822e276178598e2cc7a5736a589cf9db67aa6e16955b23a1dfbeadc35"
+      },
+      {
+        "path": "prototypes/swarm-flight/keeper_tidy_probe.gd",
+        "sha256": "7708bd0f8000b098e2cfce831ab08e94ca8ea081eb499ca0b4313597df195439"
+      },
+      {
+        "path": "prototypes/swarm-flight/leaf_canopy_contract.json",
+        "sha256": "9c443acce419502522b37c232a5895e9d8393f9ba24747c2e27e8d40d5951940"
+      },
+      {
+        "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+        "sha256": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf"
+      },
+      {
+        "path": "prototypes/swarm-flight/leaf_canopy_variants_probe.gd",
+        "sha256": "f22c7bdcf5f4ed4c21c37021000f274bae1a43a17af9dc4997e1963813c58a98"
+      },
+      {
+        "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+        "sha256": "95f9c5f742c865a5184fd45380eea971861cc067fcb3f884f23ad7326e0765f5"
+      },
+      {
+        "path": "prototypes/swarm-flight/long_journey_model.gd",
+        "sha256": "7bf923077f3c30b0942a5ab499687a128bf8c98a6ff9127340221a67d9278206"
+      },
+      {
+        "path": "prototypes/swarm-flight/main.gd",
+        "sha256": "94f7a1dc083e8c38af9d4d12068c05c6eb830f08654a2bef91668988b31012ad"
+      },
+      {
+        "path": "prototypes/swarm-flight/player_baseline_probe.gd",
+        "sha256": "6447a42525325ca90da8f341b5941fcd20fa3a432e0996512bf7c7234cab23d8"
+      },
+      {
+        "path": "prototypes/swarm-flight/pond_audio_probe.gd",
+        "sha256": "057bc0615110b61c02a2f03bc445df90fee7d05f46c51b43722ff3a926410f28"
+      },
+      {
+        "path": "prototypes/swarm-flight/pond_audio_verify.gd",
+        "sha256": "356ebadd828119b57c6c203e6a4345669b069178fac7da37c3a39eedd9b8e9f9"
+      },
+      {
+        "path": "prototypes/swarm-flight/project.godot",
+        "sha256": "26d1dde665352225877f1b5600a841f1fb17e0678b985b8f6b0ea9bfe170016c"
+      },
+      {
+        "path": "prototypes/swarm-flight/sample_landscape.gd",
+        "sha256": "dec9376d79572f8ff1614a0f3cee0a8a6d50d5c57ef49786ed7ed7b2a67d0fba"
+      },
+      {
+        "path": "prototypes/swarm-flight/save_data.gd",
+        "sha256": "0cfec3720f61b68e5fcd808a204fdba1adc4175055f48e773eb5e9bd05008946"
+      },
+      {
+        "path": "prototypes/swarm-flight/sound.gd",
+        "sha256": "f4f8913a6d96434144c623809053697488558b5509432f8f5cbe5aeadafb73a1"
+      },
+      {
+        "path": "prototypes/swarm-flight/spring_journey_content.gd",
+        "sha256": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880"
+      },
+      {
+        "path": "prototypes/swarm-flight/spring_journey_main.gd",
+        "sha256": "16a05dcdef133d27362958fa794c24b2ad92306b7d3443731cd8cd143f43be57"
+      },
+      {
+        "path": "prototypes/swarm-flight/spring_journey_model.gd",
+        "sha256": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1"
+      },
+      {
+        "path": "prototypes/swarm-flight/spring_journey_ui_verify.gd",
+        "sha256": "84e508b299b24d792c2cefd9c8aeaebd120d56deddb35ef9b1f20fcb96c0d44d"
+      },
+      {
+        "path": "prototypes/swarm-flight/spring_journey_verify.gd",
+        "sha256": "1f67e5f1c01e035cfc12bce0745632a3d54ab7e190743d7d6b22295875070c47"
+      },
+      {
+        "path": "prototypes/swarm-flight/spring_journey_view.gd",
+        "sha256": "6199eec86350d94e935902ea399c2f3007a6b389a04f68cf496578833c66d415"
+      },
+      {
+        "path": "prototypes/swarm-flight/world_view.gd",
+        "sha256": "1cae5f78a190ebadaed49a716cb66114093a9d30b5799f1e56b13cdae3820d9d"
+      },
+      {
+        "path": "prototypes/swarm-flight/event_data.gd",
+        "sha256": "9ee57ff64e80cc6fcc436cb02ce1c869eef74ade6fad1a91e518ce4e6df755c3"
+      }
+    ],
+    "uncommitted_production_delta": [
+      "prototypes/swarm-flight/spring_journey_main.gd",
+      "prototypes/swarm-flight/world_view.gd"
+    ],
+    "delta_scope": "General Spring cue avoidance around rendered bee/shield and active captions; shared caption rect extraction retains prior drawing mathematics."
+  },
+  "decision_boundary": {
+    "gate_changes": [],
+    "global_G0_G1_G2_G3": "unchanged",
+    "G1": "A source call or model assertion alone is not native presentation approval. Existing receipts apply only to their bounded use cases.",
+    "G2": "Leaf and departure limited variants remain scoped; no new family/variant gate granted here.",
+    "G3": "No compatible scene/composition gate granted by assembling old receipts.",
+    "P4_and_MVP": "not approved",
+    "listening": "unverified; actual PCM,route and waveform measurements do not establish subjective audibility/recognition/pleasantness",
+    "player_evidence": "Controlled known scripts are developer evidence,not independent exploration or human playtest."
+  },
+  "evidence_registry": {
+    "player_g0": {
+      "receipt": "prototypes/swarm-flight/review-evidence/2026-11-01/player-g0/receipt.json",
+      "receipt_sha256": "d0f4c3faf5a5c2f9cb537633297373e97a054eae91e6b59cc2347811e183ee77",
+      "receipt_baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "availability": "existing_scoped_receipt_and_artifacts",
+      "recorded_scope": "34 assertions /178 native frames; scoped G0 default safe-air only",
+      "reuse_limit": "Base model/view/assets can reuse only matching hashes; current main/Spring adapters differ.",
+      "file_comparison": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "receipt_sha256": "ee60754ce50d8dafcdad235acdb501a5e263c01a019384008385277a62fa6e55",
+          "current_sha256": "94f7a1dc083e8c38af9d4d12068c05c6eb830f08654a2bef91668988b31012ad",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_main.gd",
+          "receipt_sha256": "17ec7c4d5455adf109342df384b671f16956ec39ea87edc183735c8585aba05f",
+          "current_sha256": "17ec7c4d5455adf109342df384b671f16956ec39ea87edc183735c8585aba05f",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "receipt_sha256": "15742e1656fbeb4e2230b9f564013ccb93137ca492a16fb37760baea763b2b87",
+          "current_sha256": "16a05dcdef133d27362958fa794c24b2ad92306b7d3443731cd8cd143f43be57",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "receipt_sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+          "current_sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/long_journey_model.gd",
+          "receipt_sha256": "7bf923077f3c30b0942a5ab499687a128bf8c98a6ff9127340221a67d9278206",
+          "current_sha256": "7bf923077f3c30b0942a5ab499687a128bf8c98a6ff9127340221a67d9278206",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "receipt_sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0",
+          "current_sha256": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "receipt_sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761",
+          "current_sha256": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "receipt_sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250",
+          "current_sha256": "1cae5f78a190ebadaed49a716cb66114093a9d30b5799f1e56b13cdae3820d9d",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "receipt_sha256": "535d91e40605f55fd24fac721ff0c919b99dd78bdbea1f4515021e1ab9f1a19f",
+          "current_sha256": "535d91e40605f55fd24fac721ff0c919b99dd78bdbea1f4515021e1ab9f1a19f",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "receipt_sha256": "3f195c3b861eba00810c4e3b1cfeeea9de1892ed8a816f4a10a5e18b4862b227",
+          "current_sha256": "6199eec86350d94e935902ea399c2f3007a6b389a04f68cf496578833c66d415",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/art_sprites.gd",
+          "receipt_sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793",
+          "current_sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/revision-atlas.png",
+          "receipt_sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+          "current_sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+          "receipt_sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978",
+          "current_sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/player_baseline_probe.gd",
+          "receipt_sha256": "6447a42525325ca90da8f341b5941fcd20fa3a432e0996512bf7c7234cab23d8",
+          "current_sha256": "6447a42525325ca90da8f341b5941fcd20fa3a432e0996512bf7c7234cab23d8",
+          "exact_file_match": true
+        }
+      ]
+    },
+    "leaf_g2": {
+      "receipt": "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g2/receipt.json",
+      "receipt_sha256": "f4a1b5f09f0b0127f53257e8c2748d35139f466808f468bd7de56c8b7399c495",
+      "receipt_baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
+      "availability": "existing_scoped_receipt_and_artifacts",
+      "recorded_scope": "234 checks;8 ordinary +4 colored variants,36 moving segments",
+      "reuse_limit": "Only green half-width118/180,anchors465/500/520/600,fixed95height,no rotation/mirror/vertical scale; current uses180. G3 unchecked.",
+      "file_comparison": [
+        {
+          "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+          "receipt_sha256": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf",
+          "current_sha256": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art_sprites.gd",
+          "receipt_sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793",
+          "current_sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art_props.gd",
+          "receipt_sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8",
+          "current_sha256": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "receipt_sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250",
+          "current_sha256": "1cae5f78a190ebadaed49a716cb66114093a9d30b5799f1e56b13cdae3820d9d",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "receipt_sha256": "3f195c3b861eba00810c4e3b1cfeeea9de1892ed8a816f4a10a5e18b4862b227",
+          "current_sha256": "6199eec86350d94e935902ea399c2f3007a6b389a04f68cf496578833c66d415",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "receipt_sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0",
+          "current_sha256": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "receipt_sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+          "current_sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "receipt_sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761",
+          "current_sha256": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/project.godot",
+          "receipt_sha256": "26d1dde665352225877f1b5600a841f1fb17e0678b985b8f6b0ea9bfe170016c",
+          "current_sha256": "26d1dde665352225877f1b5600a841f1fb17e0678b985b8f6b0ea9bfe170016c",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/revision-atlas.png",
+          "receipt_sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+          "current_sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+          "receipt_sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978",
+          "current_sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/garden-terrain.png",
+          "receipt_sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536",
+          "current_sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/garden-terrain.png.import",
+          "receipt_sha256": "234d65ce51371757cbfd8976f88f9c52ec5df6fc993ae2e8c10d1362476cc376",
+          "current_sha256": "234d65ce51371757cbfd8976f88f9c52ec5df6fc993ae2e8c10d1362476cc376",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/garden-weather.png",
+          "receipt_sha256": "0a701aa4ed07312d057e79075efb199d63d758cc294c205c58508306abfbbe1a",
+          "current_sha256": "0a701aa4ed07312d057e79075efb199d63d758cc294c205c58508306abfbbe1a",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/art/garden-weather.png.import",
+          "receipt_sha256": "231c4d7b57e4c43c15ffd19894566f6b0e22653037b5e21030a10407023ab51e",
+          "current_sha256": "231c4d7b57e4c43c15ffd19894566f6b0e22653037b5e21030a10407023ab51e",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/color_memory.gd",
+          "receipt_sha256": "a47a39d2efee0880667dde26a1bd061c457e20ae93415116a2fe5ca623c02a55",
+          "current_sha256": "a47a39d2efee0880667dde26a1bd061c457e20ae93415116a2fe5ca623c02a55",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/leaf_canopy_variants_probe.gd",
+          "receipt_sha256": "f22c7bdcf5f4ed4c21c37021000f274bae1a43a17af9dc4997e1963813c58a98",
+          "current_sha256": "f22c7bdcf5f4ed4c21c37021000f274bae1a43a17af9dc4997e1963813c58a98",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+          "receipt_sha256": "e8e7bc6f6220616af2fc55bdb29a2fc9211150721accd4e3e69b6c9b0dfc4834",
+          "current_sha256": "95f9c5f742c865a5184fd45380eea971861cc067fcb3f884f23ad7326e0765f5",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/leaf_canopy_contract.json",
+          "receipt_sha256": "9c443acce419502522b37c232a5895e9d8393f9ba24747c2e27e8d40d5951940",
+          "current_sha256": "9c443acce419502522b37c232a5895e9d8393f9ba24747c2e27e8d40d5951940",
+          "exact_file_match": true
+        }
+      ]
+    },
+    "charge_feedback": {
+      "receipt": "prototypes/swarm-flight/review-evidence/2026-11-01/charge-feedback/receipt.json",
+      "receipt_sha256": "477aa82ae4ea23a21c1da35f3a72b820d55da00a1df117958e83087420271a05",
+      "receipt_baseline_revision": "98c6dc39a9eedf85ffd2303c74af3fb836320fad",
+      "availability": "existing_scoped_receipt_and_artifacts",
+      "recorded_scope": "22 native checks;18 current headless assertions; original11 had3 baseline failures",
+      "reuse_limit": "Only stale-cancel identity/priority/expiry. Injected critical toast cases are UI evidence, not damage physics.",
+      "file_comparison": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "receipt_sha256": "7d8ffb2546c71be57072ac7747561cb1e3056a269c9043298b8a6c8bb9569386",
+          "current_sha256": "94f7a1dc083e8c38af9d4d12068c05c6eb830f08654a2bef91668988b31012ad",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/charge_feedback_verify.gd",
+          "receipt_sha256": "d04c792b912fe23a3803e4cbfec83b52c617e109d6b665a76275c0d979785b8c",
+          "current_sha256": "d04c792b912fe23a3803e4cbfec83b52c617e109d6b665a76275c0d979785b8c",
+          "exact_file_match": true
+        },
+        {
+          "path": ".github/workflows/swarm-flight.yml",
+          "receipt_sha256": "8501f12ac0bd855535500d201dc974285d9b587962a0b384c0fd28e14913afc4",
+          "current_sha256": "2d76f77b87c1f660551f4f020e2865bcd7baad475bc7f0f36fd299d524682209",
+          "exact_file_match": false
+        }
+      ]
+    },
+    "back_sign": {
+      "receipt": "prototypes/swarm-flight/review-evidence/2026-11-01/back-sign/receipt.json",
+      "receipt_sha256": "787552cf3f6090290eabfac785f36eca9be40bff5e7ebd020d1908c6e544943c",
+      "receipt_baseline_revision": "0b108f40b4db465320b68b88d54756a0ce227841",
+      "availability": "existing_scoped_receipt_and_artifacts",
+      "recorded_scope": "344 model/12 disk/19 component native;68 continuous known-route checks",
+      "reuse_limit": "Current fixed board/wind/knot positions; continuous recording is known-answer developer route. Old keeper-tidy coordinates superseded.",
+      "file_comparison": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "receipt_sha256": "3786895e46eb69df7fa5b0a7a4b6bd4570292428e85965e6dc1f584e834eac43",
+          "current_sha256": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "receipt_sha256": "fb6b72e8dceec637dfdeab29c3675ac968644db65bdd44ccce721819715ba154",
+          "current_sha256": "6199eec86350d94e935902ea399c2f3007a6b389a04f68cf496578833c66d415",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "receipt_sha256": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880",
+          "current_sha256": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "receipt_sha256": "b23866f6aa78c435dac15bbfd6cd1c2d611c59600d3642cb07f330a60768d92a",
+          "current_sha256": "16a05dcdef133d27362958fa794c24b2ad92306b7d3443731cd8cd143f43be57",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_verify.gd",
+          "receipt_sha256": "e3ee066cfcc12857f20e2597ba403acaaf6e51c2db19d16325d0290b52db7bff",
+          "current_sha256": "1f67e5f1c01e035cfc12bce0745632a3d54ab7e190743d7d6b22295875070c47",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_ui_verify.gd",
+          "receipt_sha256": "84e508b299b24d792c2cefd9c8aeaebd120d56deddb35ef9b1f20fcb96c0d44d",
+          "current_sha256": "84e508b299b24d792c2cefd9c8aeaebd120d56deddb35ef9b1f20fcb96c0d44d",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/back_sign_probe.gd",
+          "receipt_sha256": "f0a3cd608fc10c6c41e79da9c92e4d189fbd241b55ef7469e7d74340b7b63139",
+          "current_sha256": "f0a3cd608fc10c6c41e79da9c92e4d189fbd241b55ef7469e7d74340b7b63139",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/back_sign_save_verify.gd",
+          "receipt_sha256": "7668003b16e69ce9d122ee54c91349e2bbdab8015f2372b980bca21887d73334",
+          "current_sha256": "7668003b16e69ce9d122ee54c91349e2bbdab8015f2372b980bca21887d73334",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/keeper_tidy_probe.gd",
+          "receipt_sha256": "7708bd0f8000b098e2cfce831ab08e94ca8ea081eb499ca0b4313597df195439",
+          "current_sha256": "7708bd0f8000b098e2cfce831ab08e94ca8ea081eb499ca0b4313597df195439",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/leaf_canopy_verify.gd",
+          "receipt_sha256": "95f9c5f742c865a5184fd45380eea971861cc067fcb3f884f23ad7326e0765f5",
+          "current_sha256": "95f9c5f742c865a5184fd45380eea971861cc067fcb3f884f23ad7326e0765f5",
+          "exact_file_match": true
+        }
+      ]
+    },
+    "departure": {
+      "receipt": "prototypes/swarm-flight/review-evidence/2026-11-01/departure/receipt.json",
+      "receipt_sha256": "9d9390d301da89a71566bbd30c35ae3657bfbb19fb68fafe2c4924dbb5d107c5",
+      "receipt_baseline_revision": "0a91b34fd531e13033c797bf1f98281b56fe3154",
+      "availability": "existing_scoped_receipt_and_artifacts",
+      "recorded_scope": "392 model/27 native/17 headless probe/50 UI/12 disk checks",
+      "reuse_limit": "Only fixed buds/feet/rack/support/dialogue and declared restore templates; not P4 or full family.",
+      "file_comparison": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "receipt_sha256": "d044ef584145d7fb364d68ca23def8630a72b8d6b83182779bf7300634933a5f",
+          "current_sha256": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "receipt_sha256": "6199eec86350d94e935902ea399c2f3007a6b389a04f68cf496578833c66d415",
+          "current_sha256": "6199eec86350d94e935902ea399c2f3007a6b389a04f68cf496578833c66d415",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "receipt_sha256": "9a7f1a0183c754a27025f696f1e4d0bab7a8a9ef6658bb00ee80208f28b6bff6",
+          "current_sha256": "16a05dcdef133d27362958fa794c24b2ad92306b7d3443731cd8cd143f43be57",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_verify.gd",
+          "receipt_sha256": "1f67e5f1c01e035cfc12bce0745632a3d54ab7e190743d7d6b22295875070c47",
+          "current_sha256": "1f67e5f1c01e035cfc12bce0745632a3d54ab7e190743d7d6b22295875070c47",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/departure_probe.gd",
+          "receipt_sha256": "9d25bd3acb8d895d0dc8dd6befa4a893b3f698733dad9fb5491b79cc1fb7052b",
+          "current_sha256": "9d25bd3acb8d895d0dc8dd6befa4a893b3f698733dad9fb5491b79cc1fb7052b",
+          "exact_file_match": true
+        }
+      ]
+    },
+    "audio": {
+      "receipt": "prototypes/swarm-flight/review-evidence/2026-11-01/pond-audio/receipt.json",
+      "receipt_sha256": "aa61f2c46b96d62e14f142e18da47b728943811fb8cfbf347839ffaaa1364ae0",
+      "receipt_baseline_revision": "d7fad9bf1c44458c06f6a1c8cabe464c2840b41c",
+      "availability": "existing_scoped_receipt_and_artifacts",
+      "recorded_scope": "129 independent technical assertions;20 native checks,859 frames,real48kHz stereo mix",
+      "reuse_limit": "State seeds disclosed; only OS focus-out pause ignored. Final dt<=0 guards/recover_geometry alias covered by technical tests. SUBJECTIVE LISTENING UNVERIFIED.",
+      "file_comparison": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "receipt_sha256": "f4f8913a6d96434144c623809053697488558b5509432f8f5cbe5aeadafb73a1",
+          "current_sha256": "f4f8913a6d96434144c623809053697488558b5509432f8f5cbe5aeadafb73a1",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "receipt_sha256": "94f7a1dc083e8c38af9d4d12068c05c6eb830f08654a2bef91668988b31012ad",
+          "current_sha256": "94f7a1dc083e8c38af9d4d12068c05c6eb830f08654a2bef91668988b31012ad",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "receipt_sha256": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+          "current_sha256": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "receipt_sha256": "8d3f8111445ad6d3fb671339802c9a163899023f5d6b1983f11fbedb0fa0f848",
+          "current_sha256": "16a05dcdef133d27362958fa794c24b2ad92306b7d3443731cd8cd143f43be57",
+          "exact_file_match": false
+        },
+        {
+          "path": "prototypes/swarm-flight/pond_audio_probe.gd",
+          "receipt_sha256": "057bc0615110b61c02a2f03bc445df90fee7d05f46c51b43722ff3a926410f28",
+          "current_sha256": "057bc0615110b61c02a2f03bc445df90fee7d05f46c51b43722ff3a926410f28",
+          "exact_file_match": true
+        },
+        {
+          "path": "prototypes/swarm-flight/pond_audio_verify.gd",
+          "receipt_sha256": "356ebadd828119b57c6c203e6a4345669b069178fac7da37c3a39eedd9b8e9f9",
+          "current_sha256": "356ebadd828119b57c6c203e6a4345669b069178fac7da37c3a39eedd9b8e9f9",
+          "exact_file_match": true
+        }
+      ]
+    }
+  },
+  "function_equivalence_checks": [
+    {
+      "evidence": "leaf_g2",
+      "comparison_revision": "8018236",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_shelter",
+      "prior_body_sha256": "371c2f33698d378422a6cef1d47ffb123f76d91018a0d1b25997d0722044cb95",
+      "current_body_sha256": "371c2f33698d378422a6cef1d47ffb123f76d91018a0d1b25997d0722044cb95",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "leaf_g2",
+      "comparison_revision": "8018236",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "resolve_leaf_roofs",
+      "prior_body_sha256": "81dcc519299ce4abef2250861222e9578de36d249d6731bc4842c78e10b691ae",
+      "current_body_sha256": "81dcc519299ce4abef2250861222e9578de36d249d6731bc4842c78e10b691ae",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "leaf_g2",
+      "comparison_revision": "8018236",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "rain_hits_shelter",
+      "prior_body_sha256": "47e88c5ae13ea478008f7c974a55ee96d8569cef8c1cd1e199f51f235b47f309",
+      "current_body_sha256": "47e88c5ae13ea478008f7c974a55ee96d8569cef8c1cd1e199f51f235b47f309",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "leaf_g2",
+      "comparison_revision": "8018236",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "advance_rain",
+      "prior_body_sha256": "e28ae19da91b8ab3423fd6d74f4737e3302614dcdf518b9d901309998fad8281",
+      "current_body_sha256": "e28ae19da91b8ab3423fd6d74f4737e3302614dcdf518b9d901309998fad8281",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "charge_feedback",
+      "comparison_revision": "35b2135",
+      "path": "prototypes/swarm-flight/main.gd",
+      "function": "event_message",
+      "prior_body_sha256": "e5b609aba9e4c0b78dc2fe959123e6a5c5c217fd11a69c2e547a7bcf36c15c9b",
+      "current_body_sha256": "e5b609aba9e4c0b78dc2fe959123e6a5c5c217fd11a69c2e547a7bcf36c15c9b",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "charge_feedback",
+      "comparison_revision": "35b2135",
+      "path": "prototypes/swarm-flight/main.gd",
+      "function": "message",
+      "prior_body_sha256": "fae2b4119bf08f47a7c1a44e82f86ead96b21012f7bb878ac3f683d8ff2e2a33",
+      "current_body_sha256": "fae2b4119bf08f47a7c1a44e82f86ead96b21012f7bb878ac3f683d8ff2e2a33",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "charge_feedback",
+      "comparison_revision": "35b2135",
+      "path": "prototypes/swarm-flight/main.gd",
+      "function": "_unhandled_input",
+      "prior_body_sha256": "d6b92b99232d4d8fa50b68d50cc5a2ad9cd1d4fccf0a06b3df717c462f900eba",
+      "current_body_sha256": "d6b92b99232d4d8fa50b68d50cc5a2ad9cd1d4fccf0a06b3df717c462f900eba",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "gate_ready",
+      "prior_body_sha256": "7684349b6296ebf166624f31e901d3c01986de61e0652327996fc59281c16728",
+      "current_body_sha256": "7684349b6296ebf166624f31e901d3c01986de61e0652327996fc59281c16728",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "keeper_sign_position",
+      "prior_body_sha256": "95b73b06dc2f2b90bc086fc131b4119bac34b0353b88160dfb8b8e2a50f3d752",
+      "current_body_sha256": "95b73b06dc2f2b90bc086fc131b4119bac34b0353b88160dfb8b8e2a50f3d752",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "rain_floor_at",
+      "prior_body_sha256": "28b3ea7f636d261da9ae364dc50dd04597c399c276ca950bc56c213f523ec595",
+      "current_body_sha256": "28b3ea7f636d261da9ae364dc50dd04597c399c276ca950bc56c213f523ec595",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "advance_tidy",
+      "prior_body_sha256": "15e8007cdab8e90ea1735bf1cb2aedccdc3d74e433752b3dfe43a142bd15a3a1",
+      "current_body_sha256": "33e9644b2e5e3132e7bca3591824fb2c1d0cf8afdca5857cb5deb6e434ce14ee",
+      "exact_body_match": false,
+      "interpretation": "Changed body; do not reuse by hash. Audio receipt supplements event emission/dt guards; other changed behavior requires explicit review."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "advance_listeners",
+      "prior_body_sha256": "ed158fb4257df000f6ac91d85ec557f82cd723a6e9d066abc0e9f4386e0b23ca",
+      "current_body_sha256": "e6fa8dc3e11d0ad64c6f0c810287b1f33c31aaff578483b9f78d416215d4f32a",
+      "exact_body_match": false,
+      "interpretation": "Changed body; do not reuse by hash. Audio receipt supplements event emission/dt guards; other changed behavior requires explicit review."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_wall",
+      "prior_body_sha256": "c87c5395b2ba043412b6e36c9b22e6edd3acd9acde8b72dab01e71a6a6ddd9f9",
+      "current_body_sha256": "c87c5395b2ba043412b6e36c9b22e6edd3acd9acde8b72dab01e71a6a6ddd9f9",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_sign_support",
+      "prior_body_sha256": "74f8fa74de151e785f5eb64ace86ffcd8d9316b8ec833bbc64bc933d2b884c02",
+      "current_body_sha256": "74f8fa74de151e785f5eb64ace86ffcd8d9316b8ec833bbc64bc933d2b884c02",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_sign_rope",
+      "prior_body_sha256": "535dbff542e411cd9e12983a9e5663b75943f49d72d8d4e282414b9dcd11e17d",
+      "current_body_sha256": "535dbff542e411cd9e12983a9e5663b75943f49d72d8d4e282414b9dcd11e17d",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_terrain",
+      "prior_body_sha256": "6bf0cb16bff653759071b959cf75d8de7c28fcb5d3646e1acd1c39d61d944770",
+      "current_body_sha256": "6bf0cb16bff653759071b959cf75d8de7c28fcb5d3646e1acd1c39d61d944770",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_mosquito",
+      "prior_body_sha256": "37696887968432e415b3137abdfebd553a137ac86147d641c10759031a5e0630",
+      "current_body_sha256": "37696887968432e415b3137abdfebd553a137ac86147d641c10759031a5e0630",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_flower_sign",
+      "prior_body_sha256": "a65917f7d857f72b0143f56d48d4628e7074bdacd8ed0d7f34a0b22703f00f9c",
+      "current_body_sha256": "a65917f7d857f72b0143f56d48d4628e7074bdacd8ed0d7f34a0b22703f00f9c",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "467b12e",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_dry_leaf_knot",
+      "prior_body_sha256": "6a9ebaf0be4c90ca1824317a1a4164b523fc85f9ec632302aa14ad6bb701b3e1",
+      "current_body_sha256": "6a9ebaf0be4c90ca1824317a1a4164b523fc85f9ec632302aa14ad6bb701b3e1",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "preparation_anchor",
+      "prior_body_sha256": "f905ee6c5ae3f84178470108566928066475c1a3ec8564c937074ddd02fbebd2",
+      "current_body_sha256": "f905ee6c5ae3f84178470108566928066475c1a3ec8564c937074ddd02fbebd2",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "preparation_position",
+      "prior_body_sha256": "3096ccec65cafc62189403a41a20721512c633aca2b13dfb20b64d6452281f70",
+      "current_body_sha256": "3096ccec65cafc62189403a41a20721512c633aca2b13dfb20b64d6452281f70",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "preparation_actor",
+      "prior_body_sha256": "4f537e677fcabac50394a2f1a537be4a356ffcf4d0d495cfe53fc2df80c2e761",
+      "current_body_sha256": "4f537e677fcabac50394a2f1a537be4a356ffcf4d0d495cfe53fc2df80c2e761",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "valid_preparation",
+      "prior_body_sha256": "e30443843bbd175b79366f459f278e1f4a651f912c5389c1489a6e975069b01a",
+      "current_body_sha256": "e30443843bbd175b79366f459f278e1f4a651f912c5389c1489a6e975069b01a",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "known_legacy_preparation",
+      "prior_body_sha256": "2c80d4cac3c26f355e62de88ef5b36983a7c6de9f1061bd70e5e075d7ea3b835",
+      "current_body_sha256": "2c80d4cac3c26f355e62de88ef5b36983a7c6de9f1061bd70e5e075d7ea3b835",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "preparation_count",
+      "prior_body_sha256": "f1abdd1309e5d32906b2bcdc3ca6fe6d7754234e606e31e6ee89e4817a82ec10",
+      "current_body_sha256": "f1abdd1309e5d32906b2bcdc3ca6fe6d7754234e606e31e6ee89e4817a82ec10",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "function": "advance_preparation",
+      "prior_body_sha256": "95d3ff6ac4fa66f9169e4cf178b4a12e72c2d78671ed3fad7aad235ed4203df8",
+      "current_body_sha256": "3685ba0c3720e0e2af3d47e8e3e1d881c9126cee0842341e0b55a6d9a3ff591d",
+      "exact_body_match": false,
+      "interpretation": "Changed body; do not reuse by hash. Audio receipt supplements event emission/dt guards; other changed behavior requires explicit review."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_departure_buds",
+      "prior_body_sha256": "64be57df26d72fe761742ae41d977fb210b382ce416c2a1aa4f1af05df45535c",
+      "current_body_sha256": "64be57df26d72fe761742ae41d977fb210b382ce416c2a1aa4f1af05df45535c",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_small_flower",
+      "prior_body_sha256": "a8570b184f9d7ad8d7ba446d9d2cfa4442ac04f4bb3e24d947ea89a6129fbe80",
+      "current_body_sha256": "a8570b184f9d7ad8d7ba446d9d2cfa4442ac04f4bb3e24d947ea89a6129fbe80",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_keeper_preparation",
+      "prior_body_sha256": "dc16b2645400ba0a974421726ae7100f63c85c6b82ded997cc4f987baaa22699",
+      "current_body_sha256": "dc16b2645400ba0a974421726ae7100f63c85c6b82ded997cc4f987baaa22699",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "departure",
+      "comparison_revision": "d7fad9b",
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "function": "_neighbors",
+      "prior_body_sha256": "b5bc55e0b0feeb5f4883b6d867719fd7ff2cd4a54a3c791781fed45a19d1b8a0",
+      "current_body_sha256": "b5bc55e0b0feeb5f4883b6d867719fd7ff2cd4a54a3c791781fed45a19d1b8a0",
+      "exact_body_match": true,
+      "interpretation": "Same body; reusable only at the same declared use conditions and dependencies."
+    },
+    {
+      "evidence": "player_g0",
+      "comparison_revision": "df4ff10",
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "function": "_leader",
+      "prior_body_sha256": "baaca914f96bf45e38174f3b24c24a832e33cbc1da9039e67b2c39358ea4b8ae",
+      "current_body_sha256": "baaca914f96bf45e38174f3b24c24a832e33cbc1da9039e67b2c39358ea4b8ae",
+      "exact_body_match": true,
+      "interpretation": "Unchanged by current caption extraction; earlier receipt limitations still apply."
+    },
+    {
+      "evidence": "player_g0",
+      "comparison_revision": "df4ff10",
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "function": "_bee",
+      "prior_body_sha256": "f7231010000dd9c6777b92066173473173b93fb027c80b2efdec29bc6038d9f8",
+      "current_body_sha256": "f7231010000dd9c6777b92066173473173b93fb027c80b2efdec29bc6038d9f8",
+      "exact_body_match": true,
+      "interpretation": "Unchanged by current caption extraction; earlier receipt limitations still apply."
+    },
+    {
+      "evidence": "leaf_g2",
+      "comparison_revision": "df4ff10",
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "function": "_shelter",
+      "prior_body_sha256": "c3cdbd33123b15e1807a896f21e91a4f86a5cef8c9fb51664b49652fa1eca047",
+      "current_body_sha256": "c3cdbd33123b15e1807a896f21e91a4f86a5cef8c9fb51664b49652fa1eca047",
+      "exact_body_match": true,
+      "interpretation": "Unchanged by current caption extraction; earlier receipt limitations still apply."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "df4ff10",
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "function": "_terrain",
+      "prior_body_sha256": "240d3fcfbdac647c7cea08c5adb807a64f59337450271f3f2d0b0115c1de5143",
+      "current_body_sha256": "240d3fcfbdac647c7cea08c5adb807a64f59337450271f3f2d0b0115c1de5143",
+      "exact_body_match": true,
+      "interpretation": "Unchanged by current caption extraction; earlier receipt limitations still apply."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "df4ff10",
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "function": "_ring",
+      "prior_body_sha256": "14b04782bbb91e603574520c479af0fc88b71d154b477d712e9819a7673b2049",
+      "current_body_sha256": "14b04782bbb91e603574520c479af0fc88b71d154b477d712e9819a7673b2049",
+      "exact_body_match": true,
+      "interpretation": "Unchanged by current caption extraction; earlier receipt limitations still apply."
+    },
+    {
+      "evidence": "back_sign",
+      "comparison_revision": "df4ff10",
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "function": "_wind_paths",
+      "prior_body_sha256": "357dbc85ad4877e845bc534da6d1153b7c23b56af19e5c7a3ab43fdebfcc924b",
+      "current_body_sha256": "357dbc85ad4877e845bc534da6d1153b7c23b56af19e5c7a3ab43fdebfcc924b",
+      "exact_body_match": true,
+      "interpretation": "Unchanged by current caption extraction; earlier receipt limitations still apply."
+    }
+  ],
+  "pending_evidence": {
+    "finite_native": {
+      "producer_script": "prototypes/swarm-flight/pond_source_states_probe.gd",
+      "producer_sha256_at_mapping": "948003da0021d0331c74c3083607c69d44b4f000c2b91df2cf8bf33ca80a827e",
+      "expected_trace_basename": "trace.json",
+      "archive_path": null,
+      "availability": "final native3 completed and independently reviewed for bounded behavior/UI; ordinary mosquito geometry remains blocked",
+      "result": {
+        "checks": 146,
+        "failures": 0,
+        "sampled_frames": 722,
+        "movie_frames": 731,
+        "movie_fps": 30,
+        "cue_body_overlaps": 0,
+        "cue_caption_overlaps": 0,
+        "frames_with_active_captions": 80,
+        "gate_changes": []
+      },
+      "segments": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "focus_boundary": "NativeFixture ignores OS focus-out only; explicit Esc and disk cold restore remain active.",
+      "reported_attempts": [
+        {
+          "attempt": "native1",
+          "source": "root report; trace/screens not independently reviewed here",
+          "behavior_checks": 105,
+          "behavior_failures": 0,
+          "movie_frames": 728,
+          "visual_status": "rejected",
+          "finding": "13-shield-near-end: cue banner covers bee head and shield timer",
+          "interpretation": "Passing assertions did not catch the presentation defect. Retain as visual failure baseline,not G1/G2 evidence."
+        },
+        {
+          "attempt": "native2",
+          "checks": 126,
+          "failures": 0,
+          "movie_frames": 731,
+          "visual_status": "rejected_for_damage_caption_overlap",
+          "finding": "09-mosquito-hit:cue covers upper part of −8体力;124×104 body assertion alone misses caption."
+        }
+      ],
+      "local_review_path": "/private/tmp/pond-states-native-3",
+      "archive_status": "Durable archive/commit owned by root; this local review binds final3 byte hashes,not a guessed archive location.",
+      "source_binding": {
+        "spring_journey_main.gd": "16a05dcdef133d27362958fa794c24b2ad92306b7d3443731cd8cd143f43be57",
+        "world_view.gd": "1cae5f78a190ebadaed49a716cb66114093a9d30b5799f1e56b13cdae3820d9d",
+        "spring_journey_model.gd": "7b1a67c3671434b83c2767522511e5452d07f5cefdfe08db48c376a9ce661aa1",
+        "pond_source_states_probe.gd": "948003da0021d0331c74c3083607c69d44b4f000c2b91df2cf8bf33ca80a827e"
+      },
+      "artifacts": [
+        {
+          "path": "/private/tmp/pond-states-native-3/trace.json",
+          "sha256": "6913cb4ef442a3daddd01f4c2d851e9cff7e936ed747df5b6a5c99f2842e47d1"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/native.log",
+          "sha256": "03dd52044e4738febad5da6b680cb166f46470a309c08aa78b690aaa6e430980"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/native.avi",
+          "sha256": "3b01afa2a60e25ddbe4fe4bc68db52fe0aac72c3fe325182ec48af0cce145e4c"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/01-stem-compact.png",
+          "sha256": "ad124af4be41c294c6ff11ab0f0ad511fd07816a1730c23991dbb6f1fbbc48e0"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/05-leaf-expanded.png",
+          "sha256": "5873cfcc502030370b8470f9aaa7d53c0071918b4e9ad3439ad1f7edbce1c831"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/07-mosquito-aim.png",
+          "sha256": "69137c9a14444209d7919f5da66d11a37f48bd62df2b8098eecad5bce2be32b4"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/08-mosquito-missed.png",
+          "sha256": "6614cb1cfd7e469168c91770d67474543e3e2deabc4a178a8859faafbb771ac7"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/09-mosquito-hit.png",
+          "sha256": "554008416bd829cc4e59baa705c06d35a8bd7230e39d11e641343c89569d0cd2"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/13-shield-near-end.png",
+          "sha256": "dd0f3c2abeec199e0edbb353125731713ba7fa695a93ec6aadab7693a361661a"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/13b-shield-small-window.png",
+          "sha256": "74e8c8c178e36d004dd29520c356beb3ee3221b814740ba61830dc94699df16e"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/15-rain-hit.png",
+          "sha256": "4a103f8d46398e84b4fd781dba9fd7686bf2d639fb685fb37952bb4d7d5c2c5a"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/17-no-observation.png",
+          "sha256": "e96c3eaea4c3490b9430112943750b9aa7b363c92f160bcc9803c0e726aecfa4"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/18-return-feed.png",
+          "sha256": "d89f96eaccecaba46e3de0d13f501cb1f16b680a2e2c22180985d8050e57074a"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/19-held-cancel.png",
+          "sha256": "6e0b98b55831fdf2763a567d71a953abc1306584a98d4265b772e1e3d1b62474"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/20-dance-cancel.png",
+          "sha256": "248b28465e3cbe231a516f9170696ecbf802719dd47056f20fc19fbfe30372b0"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/21-shared-once.png",
+          "sha256": "fe7423bd9d8ff917ac66dedaa45726c96e8b7f91f11e4207a59f8003fc7761d9"
+        },
+        {
+          "path": "/private/tmp/pond-states-native-3/22-source-invalidated.png",
+          "sha256": "5e614322e3e994ef23a008d581aba2cd76bca089ef4df0d502f3c6b80196ba6e"
+        }
+      ],
+      "independent_visual_review": {
+        "final3_viewed": [
+          "09-mosquito-hit.png",
+          "15-rain-hit.png",
+          "13-shield-near-end.png",
+          "13b-shield-small-window.png"
+        ],
+        "earlier_native2_viewed": [
+          "01-stem-compact.png",
+          "07-mosquito-aim.png",
+          "08-mosquito-missed.png",
+          "09-mosquito-hit.png",
+          "13-shield-near-end.png",
+          "13b-shield-small-window.png",
+          "15-rain-hit.png",
+          "16-rain-recovered.png",
+          "17-no-observation.png",
+          "18-return-feed.png",
+          "19-held-cancel.png",
+          "20-dance-cancel.png",
+          "21-shared-once.png",
+          "22-source-invalidated.png"
+        ],
+        "final3_vs_viewed_native2_image_identity": {
+          "17-no-observation.png": true,
+          "18-return-feed.png": true,
+          "19-held-cancel.png": true,
+          "20-dance-cancel.png": true,
+          "21-shared-once.png": true,
+          "22-source-invalidated.png": true
+        },
+        "movie_playback": "Not independently replayed in this review. Native log,trace and named PNGs inspected;15 is a normal invisible blink frame,so no claim of visible bee in that PNG.",
+        "scope": "Native3 clears sampled bee/shield/caption overlap; no all-source G1/G2 or #204 approval."
+      }
+    }
+  },
+  "native_segment_expectations": {
+    "A": {
+      "trace_sections": [
+        "A-stem",
+        "A-leaf",
+        "A-low-energy"
+      ],
+      "expected": [
+        "Actual stem movement reaches9px boundary,early release unfolds14px and slides/leaves",
+        "Actual leaf underside clear_disk9→14 and ordinary departure",
+        "Moving/turning charge reaches threshold;19 energy release emits tired once,zero burst,only2/s flight drain"
+      ],
+      "controlled_setup": "Legitimate initial positions and19-energy boundary; no geometry replacement. Leaf underside relocated to actual bottom_at+17.",
+      "evidence_key": "finite_native",
+      "status": "bounded_behavior_and_ui_reviewed",
+      "result": {
+        "trace_sha256": "6913cb4ef442a3daddd01f4c2d851e9cff7e936ed747df5b6a5c99f2842e47d1",
+        "frame_range_inclusive": [
+          0,
+          77
+        ],
+        "failed_assertions": 0,
+        "gate_decision": "none"
+      }
+    },
+    "B": {
+      "trace_sections": [
+        "B-miss-cycle",
+        "B-contact-recovery"
+      ],
+      "expected": [
+        "Observed idle→aim→chase→return→rest→idle; miss means zero hit and return toSMALL_HOME",
+        "Actual collision emits mosquito8 once and1.8s protection;multiple<30px contact frames do not repeat",
+        "R restores checkpoint100,clears inputs/charge/burst/velocity,2.5s protection;old held keys do not move bee"
+      ],
+      "controlled_setup": "Seed stage0 positions2520,280 and2480,280; real actor progression and keyboard dodge.",
+      "evidence_key": "finite_native",
+      "status": "bounded_behavior_and_ui_reviewed_geometry_blocker_remains",
+      "result": {
+        "trace_sha256": "6913cb4ef442a3daddd01f4c2d851e9cff7e936ed747df5b6a5c99f2842e47d1",
+        "frame_range_inclusive": [
+          78,
+          243
+        ],
+        "failed_assertions": 0,
+        "gate_decision": "none"
+      }
+    },
+    "C": {
+      "trace_sections": [
+        "C-shield-cycle"
+      ],
+      "expected": [
+        "Actual movement collects shield once for5s",
+        "Injected physical drops advance through production rain collision;shield blocks,no hit,normal flight drain only;0.35s feedback throttle",
+        "Near-end positive timer then natural zero with one shield_end",
+        "Unshielded particle causes rain30;after invulnerability expires,20energy fixture particle causes checkpoint recovery and clearsdrops/shield/input"
+      ],
+      "controlled_setup": "Legitimate pickup approach2425,450;artificial real particles start70pxabove at350px/s. This is NOT natural cloud emission evidence.",
+      "evidence_key": "finite_native",
+      "status": "bounded_behavior_and_ui_reviewed",
+      "result": {
+        "trace_sha256": "6913cb4ef442a3daddd01f4c2d851e9cff7e936ed747df5b6a5c99f2842e47d1",
+        "frame_range_inclusive": [
+          244,
+          461
+        ],
+        "failed_assertions": 0,
+        "gate_decision": "none"
+      }
+    },
+    "D": {
+      "trace_sections": [
+        "D-no-observation",
+        "D-late-observation",
+        "D-held-cancel",
+        "D-dancing-cancel"
+      ],
+      "expected": [
+        "Short feed<0.7s then depart clearsfeeding;unobserved comb cannot submit",
+        "Stage2 return to sameSOURCE can earn observation",
+        "Held-space direction cancel beforecommit:no report/listener departure/no accidentalcharge/burst;oldrelease does nothing",
+        "Fresh input startsdance;direction cancels beforecommit;fresh retry commits exactlyonce;repeatedpress/coldrestore no recommit"
+      ],
+      "controlled_setup": "Stage changes,previously earnedgates and comb relocations are explicitly seeded; actual sourcefeeding/keyboardtransitions/persistence observed. Not a continuous03→05 route.",
+      "evidence_key": "finite_native",
+      "status": "bounded_behavior_and_ui_reviewed",
+      "result": {
+        "trace_sha256": "6913cb4ef442a3daddd01f4c2d851e9cff7e936ed747df5b6a5c99f2842e47d1",
+        "frame_range_inclusive": [
+          462,
+          705
+        ],
+        "failed_assertions": 0,
+        "gate_decision": "none"
+      }
+    }
+  },
+  "additional_api_regression": {
+    "trace_section": "D-invalidated-source",
+    "status": "explicit API regression observed in final3;not actual route content",
+    "production_api": "spring_journey_model.gd::invalidate_source",
+    "actual_route_uses_this_transition": false,
+    "scope": "Explicit supported content invalidation/coldrestore regression only; do not add a naturally closing flower or time-based expiry to this MVP.",
+    "frame_range_inclusive": [
+      706,
+      721
+    ]
+  },
+  "elements": [
+    {
+      "id": "player-bee",
+      "family": "E01",
+      "authority_issue": 214,
+      "use_states": [
+        "飞行/转向",
+        "移动蓄力/就绪/起冲/收势",
+        "实际受击/保护闪烁/恢复",
+        "棚下休息",
+        "源花采食",
+        "舞蹈/取消",
+        "抵达"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "player_g0",
+        "charge_feedback",
+        "leaf_g2",
+        "back_sign",
+        "departure",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "旧 G0 仅默认安全空域飞行/蓄力/起冲/收势；其余状态分散在受控片段，不据此宣布整族通过。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ],
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ],
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "player-collision-envelope",
+      "family": "E01",
+      "authority_issue": 214,
+      "use_states": [
+        "蓄力半径 9",
+        "松开半径 14",
+        "真实茎边滑离",
+        "真实叶体下沿展开"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": [
+            "advance"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "resolve_leaf_roofs"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "player_g0",
+        "leaf_g2"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "9/14 为碰撞盘；翼尖与装饰像素不等于刚体边界。原 G0 数值穿透例不替代本轮原生接触。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "player-charge-contract",
+      "family": "E01",
+      "authority_issue": 214,
+      "use_states": [
+        "移动转向蓄力",
+        "0.4 秒就绪",
+        "早松取消",
+        "低于 20 拒绝起冲",
+        "新按/松开的输入边界"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "player_g0",
+        "charge_feedback"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "正常飞行耗能 2/s 与起冲成本 20 分开；D 的旧空格不能变成飞行冲刺。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A",
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ],
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "keyboard-flight",
+      "family": "E27",
+      "authority_issue": 226,
+      "use_states": [
+        "真实方向键/空格",
+        "R 清旧输入",
+        "Esc 暂停/冷恢复"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "departure",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "仅当前键盘路径；控制器和重映射不在此范围。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A",
+          "B",
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ],
+          "B": [
+            78,
+            243
+          ],
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "stamina",
+      "family": "E11",
+      "authority_issue": 219,
+      "use_states": [
+        "飞行消耗",
+        "8 点蚊伤",
+        "30 点雨伤",
+        "低于 20 拒冲",
+        "恢复到 100"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "player_g0",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A",
+          "B",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ],
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "stamina-hud",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "当前值",
+        "拒冲",
+        "伤害后/恢复后值"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": [
+            "refresh_hud"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "player_g0",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A",
+          "B",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ],
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "charge-ready-feedback",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "早松提示",
+        "再蓄力清陈旧提示",
+        "就绪/起冲",
+        "保护重要原因"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": [
+            "event_message",
+            "message",
+            "_unhandled_input"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "charge_feedback",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "charge_feedback 中注入 hit/recover 消息只证明 UI 优先级，不证明物理受击。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "damage-feedback",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "蚊碰撞原因/8 点",
+        "雨碰撞原因/30 点",
+        "无敌期不重复",
+        "R 与雨耗尽恢复"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "charge_feedback",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "B",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      },
+      "resolved_findings": [
+        "CUE-CAPTION-002"
+      ]
+    },
+    {
+      "id": "success-feedback",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "取露珠/护雨",
+        "开结",
+        "观察成功",
+        "分享提交",
+        "抵达"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "仅已调用反馈；不是全部成功状态美术验收。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C",
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ],
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "reward-feedback-throttle",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "普通消息给重要原因让位",
+        "护雨挡击 0.35 秒节流"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": [
+            "event_message",
+            "message"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "charge_feedback"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "未实现或未验的同群露珠合并不由消息优先级代签。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "local-objective",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "03/04/05 当前目标",
+        "开口前后",
+        "已观察/可分享/已提交"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "objective",
+            "hint",
+            "context_cue"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "departure",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "文案存在不等于玩家能自行理解路线。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "character-near-dialogue",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "首屏同伴附近",
+        "全身避让",
+        "小窗"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "context_cue"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": [
+            "refresh_hud"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "仅已录 4 个邻近位置加出生点、1280×800/960×600；其它构图未验。"
+    },
+    {
+      "id": "camera-follow",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "当前角色跟随",
+        "背牌/提牌/落位剔除",
+        "有限截图视野"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "不是新的前瞻镜头，也不是整段探索可读性验收。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ],
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ],
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "window-display",
+      "family": "E27",
+      "authority_issue": 226,
+      "use_states": [
+        "1280×800",
+        "960×600 首屏提示避让"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "只复用已录尺寸，不扩到任意比例/缩放。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "images": [
+          "13-shield-near-end.png",
+          "13b-shield-small-window.png"
+        ],
+        "scope": "Same shield moment at1280×800/960×600;not all ratios/locations.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "pause-page",
+      "family": "E26",
+      "authority_issue": 226,
+      "use_states": [
+        "Esc 精确暂停",
+        "真实磁盘冷恢复",
+        "声音暂停去重"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "departure",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "dew-pickup",
+      "family": "E11",
+      "authority_issue": 219,
+      "use_states": [
+        "实际固定露珠",
+        "拾取/体力收益/已取保留"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "已有连续已知路线采集证据；本轮四段不新增露珠变体。"
+    },
+    {
+      "id": "open-source-flower",
+      "family": "E08",
+      "authority_issue": 215,
+      "use_states": [
+        "03/05 同一蓝花簇",
+        "花心短停",
+        "完整采食观察",
+        "归来补观察"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": [
+            "_source_cluster"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "advance",
+            "source_fact",
+            "observation_valid"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "正常本版源一直开放；D 的 invalidate_source API 反例单列，不作为自然关闭剧情。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "closed-flower-bud",
+      "family": "E08",
+      "authority_issue": 215,
+      "use_states": [
+        "首屏两颗闭苞",
+        "普通蚊旁小闭苞",
+        "不显示开放蜜源轮廓"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_departure_buds",
+            "_small_flower"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "只限三个固定闭苞使用点；不把 API 关闭源当成本株闭苞动作。"
+    },
+    {
+      "id": "plant-root",
+      "family": "E08",
+      "authority_issue": 215,
+      "use_states": [
+        "固定株茎落地",
+        "源花/闭苞/棚/支架接地"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/art_props.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/art_sprites.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2",
+        "departure",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "同函数且同坐标的已查接点；未覆盖其它植物族或缩放。"
+    },
+    {
+      "id": "plant-stem",
+      "family": "E08",
+      "authority_issue": 215,
+      "use_states": [
+        "闭苞主梗/分支",
+        "源花主茎",
+        "叶棚支撑",
+        "牌架曲枝"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/art_props.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2",
+        "departure",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "装饰茎与 solid-stem 的碰撞身份分开。"
+    },
+    {
+      "id": "plant-leaf",
+      "family": "E08",
+      "authority_issue": 215,
+      "use_states": [
+        "同伴脚下叶面",
+        "小闭苞侧叶同曲线生根",
+        "棚叶"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_departure_buds",
+            "_small_flower",
+            "_shelter"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/art_sprites.gd",
+          "functions": [
+            "small_leaf"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2",
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "同伴 scale 0.77，纯水平 LEFT/RIGHT；其它俯仰/比例不复用。"
+    },
+    {
+      "id": "bird-perch",
+      "family": "E08",
+      "authority_issue": 215,
+      "use_states": [
+        "蓝花右侧固定枝架承重",
+        "03 画眉落枝",
+        "05 空枝重访"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_pond_landmarks"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "短鸣/响应有音频技术证据；枝脚接触只限现有固定构图。",
+      "current_attachment_check": {
+        "root_to_authored_branch_centerline_px": 0.7317998941,
+        "branch_core_half_width_px": 3.0,
+        "near_root_opaque_pixels_inside_core": 1587,
+        "minimum_opaque_root_pixel_to_centerline_px": 0.00598997795,
+        "atlas_alpha_threshold": 0.6,
+        "method": "Read actual atlas alpha pixels and apply small_leaf mapping;no image mutation.",
+        "finding": "Attachment is continuous at current fixed coordinates;large foreground canopy occludes lower branch. No confirmed floating leaf defect."
+      }
+    },
+    {
+      "id": "departing-companions",
+      "family": "E02",
+      "authority_issue": 214,
+      "use_states": [
+        "首屏叶面同伴待机/向玩家转头",
+        "附近提示"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_neighbors",
+            "_departure_buds"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": [
+            "_grounded_bee"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "context_cue"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "仅普通同伴静态用途；依次出发/归来/让位未由此证明，舞蹈听者另列。"
+    },
+    {
+      "id": "ordinary-mosquito",
+      "family": "E03",
+      "authority_issue": 225,
+      "use_states": [
+        "idle→aim→chase→return→rest→idle",
+        "追空",
+        "实际接触",
+        "保护期间接触"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "update_actor",
+            "sight_clear"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_mosquito"
+          ]
+        }
+      ],
+      "prior_evidence": [],
+      "pending_native_segments": [],
+      "evidence_status": "blocked_for_source_geometry_acceptance",
+      "limits": "miss 是追空结果，不是状态名；仅 stage 0 SMALL_HOME 固定个体。旧连续截图仅证明出现。 State cycle/contact/recovery behavior observed,including4 protected contact frames208–211;visible leaf overlap and sightline omission block G1/G2 acceptance.",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "B"
+        ],
+        "frame_ranges_inclusive": {
+          "B": [
+            78,
+            243
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      },
+      "blocking_findings": [
+        "MOSQUITO-LEAF-001"
+      ]
+    },
+    {
+      "id": "ordinary-thrush",
+      "family": "E03",
+      "authority_issue": 225,
+      "use_states": [
+        "03 抬头回应/短鸣/转向叶棚",
+        "05 空枝重访"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_pond_landmarks"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "advance"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "audio",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "普通鸟，不扩为 B03 Boss；换枝等未用状态不通过。"
+    },
+    {
+      "id": "pond-departure-purpose",
+      "family": "E23",
+      "authority_issue": 227,
+      "use_states": [
+        "闭苞/同伴/对话共同提示出去找花路",
+        "庄主逐牌挂起铺垫"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "源组件固定点有证据；未证明新玩家自主理解或 P4 编排。"
+    },
+    {
+      "id": "pond-bank",
+      "family": "E20",
+      "authority_issue": 225,
+      "use_states": [
+        "03/05 同坐标水面/花簇/鸟枝重访"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_pond_landmarks"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "高低路线信息差与独立探索仍待；地标出现不等于选择成立。"
+    },
+    {
+      "id": "environment-light",
+      "family": "E20",
+      "authority_issue": 225,
+      "use_states": [
+        "当前 Spring 背景/雨廊主题",
+        "棚灯局部色光"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sample_landscape.gd",
+          "functions": [
+            "background"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_shelter"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "当前静态主题与局部灯；不覆盖季节全集、昼夜变化。"
+    },
+    {
+      "id": "wax-color-window",
+      "family": "E21",
+      "authority_issue": 225,
+      "use_states": [
+        "末棚小灯中 draw_window",
+        "color_step 当前局部回应"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_shelter"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/color_memory.gd",
+          "functions": [
+            "draw_window"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "这版是固定叶棚彩灯局部调用；不证明完整 24 弧片全旅程回望。"
+    },
+    {
+      "id": "solid-stem",
+      "family": "E12",
+      "authority_issue": 216,
+      "use_states": [
+        "真实实体竖茎接触/滑行",
+        "前后开口两侧立柱"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_terrain",
+            "_wall"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "solid-roof",
+      "family": "E12",
+      "authority_issue": 216,
+      "use_states": [
+        "实体水平顶盖",
+        "可见雨挡止",
+        "边缘绕行"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "rain_floor_at"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_terrain",
+            "_rain_field"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "roof-drips 未实例化；人工物理雨滴测试不替代顶盖边缘滴水。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "dry-leaf-curtain",
+      "family": "E12",
+      "authority_issue": 216,
+      "use_states": [
+        "第一口盘点可破",
+        "第二口背面空间可破",
+        "打开后移除"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "gate_ready"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_wall",
+            "_dry_leaf_knot"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "第二口不重复等盘点；此记录不代替完整 B01 全状态。"
+    },
+    {
+      "id": "passage-opening",
+      "family": "E12",
+      "authority_issue": 216,
+      "use_states": [
+        "第一道开口",
+        "侧后方第二道开口",
+        "普通上下绕行"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "gate_ready"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "限定同版坐标：牌 2830..2890，第二墙 x3110，结 (3131,300)。"
+    },
+    {
+      "id": "fixed-wind-flower",
+      "family": "E09",
+      "authority_issue": 215,
+      "use_states": [
+        "三固定花节点",
+        "接力后可离开",
+        "普通飞行可绕过"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": [
+            "_ring"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "仅 (2760,465)/(2880,180)/(3000,275)；不实例化 W01–08 或 true-curve-relay。"
+    },
+    {
+      "id": "wind-direction-preview",
+      "family": "E09",
+      "authority_issue": 215,
+      "use_states": [
+        "三节点方向标",
+        "节点间视觉提示"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": [
+            "_ring",
+            "_wind_paths"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "_wind_paths 是固定节点间提示，不是新弧形碰撞/自动路线。"
+    },
+    {
+      "id": "wind-chain-exit",
+      "family": "E09",
+      "authority_issue": 215,
+      "use_states": [
+        "末节点收势",
+        "可转向",
+        "上下普通绕行"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "落点为既有空间/叶棚，不新增 landing-platform。"
+    },
+    {
+      "id": "level-exit",
+      "family": "E12",
+      "authority_issue": 216,
+      "use_states": [
+        "03/04 枝架出口",
+        "05 树洞抵达",
+        "实际最后路段"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": [
+            "_exit"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "已有已知路线控制输入，不是独立玩家探索。"
+    },
+    {
+      "id": "home-tree-hollow",
+      "family": "E12",
+      "authority_issue": 216,
+      "use_states": [
+        "05 巢门",
+        "蜡脾邻近",
+        "抵达/结尾"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": [
+            "_exit"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": [
+            "show_ending"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "固定巢门样式；不延伸到其它季节家园。"
+    },
+    {
+      "id": "cloud-source",
+      "family": "E19",
+      "authority_issue": 217,
+      "use_states": [
+        "04 warning/rain 云层显示",
+        "after 退去"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_rain_field"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "音频原生有真实天气阶段 trace；本轮 C 人工加滴不新增云源出滴证据。"
+    },
+    {
+      "id": "falling-rain",
+      "family": "E19",
+      "authority_issue": 217,
+      "use_states": [
+        "露天自然天气粒子",
+        "受控物理雨滴碰撞",
+        "棚/顶截断"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": [
+            "advance_rain"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "advance_rain",
+            "rain_floor_at",
+            "rain_hits_shelter"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_rain_field"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "C 插入真实 drop 字典并由生产物理推进，未直接 hurt；只可称受控物理雨滴。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "weather-phase-controller",
+      "family": "E19",
+      "authority_issue": 217,
+      "use_states": [
+        "dry→warning→rain→after",
+        "雨中局部遮护",
+        "重试"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "advance",
+            "restore_checkpoint"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "audio 已录阶段；C 拾取/挡雨不证明自然天气全循环，不把旧按文件名截图当相位证据。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "leaf-canopy",
+      "family": "E13",
+      "authority_issue": 201,
+      "use_states": [
+        "当前半宽 180 固定绿叶",
+        "真实下沿接触",
+        "遮雨/休息"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_shelter"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "resolve_leaf_roofs",
+            "rain_hits_shelter"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "旧 G2 仅 118/180、y465/500/520/600、固定高95、无旋转/镜像/纵向缩放；本版实际使用180。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "leaf-canopy-support",
+      "family": "E13",
+      "authority_issue": 201,
+      "use_states": [
+        "同叶主茎/侧叶接合",
+        "灯悬点",
+        "接地"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/art_props.gd",
+          "functions": [
+            "shelter_plant"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_shelter"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "仅合同允许宽度与同曲线支撑；既有 G2 不因其它组件共屏自动成为 G3。"
+    },
+    {
+      "id": "shelter-area",
+      "family": "E13",
+      "authority_issue": 201,
+      "use_states": [
+        "可见叶下休息范围",
+        "遮雨边界",
+        "离叶后露天"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "checkpoint-anchor",
+      "family": "E13",
+      "authority_issue": 201,
+      "use_states": [
+        "真实棚下登记",
+        "R 回安全点",
+        "受雨耗尽恢复"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": [
+            "save_checkpoint",
+            "restore_checkpoint"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "save_checkpoint",
+            "restore_checkpoint"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "leaf_g2",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "B",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "rain-shield-pickup",
+      "family": "E19",
+      "authority_issue": 217,
+      "use_states": [
+        "通过键盘实际靠近拾取一次",
+        "已取状态"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "受控合法出生点 (2425,450) 不等于从关卡起点自然找到该物。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "rain-shield-shell",
+      "family": "E19",
+      "authority_issue": 217,
+      "use_states": [
+        "拾后 5 秒",
+        "物理挡滴",
+        "临近结束",
+        "自然消失"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "已有 audio 仅声音路由；壳体外观与实际挡滴由本轮待复核。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "shield-timer-hud",
+      "family": "E24",
+      "authority_issue": 219,
+      "use_states": [
+        "5 秒倒计时",
+        "小于0.5仍保护",
+        "到0消失"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": [
+            "refresh_hud"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "boss-b01-keeper",
+      "family": "E04",
+      "authority_issue": 218,
+      "use_states": [
+        "到悬点逐牌工作",
+        "盘点",
+        "追逐/回位",
+        "到挂点查看/提牌/携带/安置"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "departure",
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。"
+    },
+    {
+      "id": "keeper-sign-frame",
+      "family": "E04",
+      "authority_issue": 218,
+      "use_states": [
+        "首屏曲梁承重",
+        "背牌实体梁",
+        "挂点与落位支架"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_keeper_preparation",
+            "_sign_support",
+            "_terrain"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "departure",
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。"
+    },
+    {
+      "id": "keeper-rope",
+      "family": "E04",
+      "authority_issue": 218,
+      "use_states": [
+        "三牌各自悬绳",
+        "背牌柔性绳",
+        "携带双牌之间绳",
+        "落位绳"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_keeper_preparation",
+            "_sign_rope",
+            "_mosquito"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "departure",
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。"
+    },
+    {
+      "id": "keeper-leaf-knot",
+      "family": "E04",
+      "authority_issue": 218,
+      "use_states": [
+        "第一口松紧",
+        "第二口背面露出",
+        "解开后消失"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_dry_leaf_knot",
+            "_wall"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "gate_ready"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "departure",
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。"
+    },
+    {
+      "id": "keeper-flower-sign",
+      "family": "E04",
+      "authority_issue": 218,
+      "use_states": [
+        "三牌分别挂牢",
+        "背牌阻挡",
+        "挂钩查看",
+        "携带/安置与镜头剔除"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_keeper_preparation",
+            "_flower_sign",
+            "_mosquito"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "keeper_sign_position"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "departure",
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。"
+    },
+    {
+      "id": "fact-mosquito-signs-open",
+      "family": "E23",
+      "authority_issue": 227,
+      "use_states": [
+        "第一口/第二口真实已开事实",
+        "重试/冷恢复保留"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "D open_gates_fixture 仅隔离前置条件，不是本轮真实开门证据。"
+    },
+    {
+      "id": "resource-observation",
+      "family": "E22",
+      "authority_issue": 219,
+      "use_states": [
+        "短停未记住",
+        "离开清零",
+        "03 可跳过",
+        "05 真源补观察",
+        "保存事实"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "source_fact",
+            "observation_valid",
+            "advance",
+            "save_payload",
+            "restore_payload"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "audio",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "stage 切换与到蜡脾位置由 fixture 控制；这是规则边界，不是连续旅程证明。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "dance-comb",
+      "family": "E22",
+      "authority_issue": 219,
+      "use_states": [
+        "无观察停栖",
+        "有观察武装",
+        "有效新输入",
+        "方向离开"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": [
+            "_wax_comb"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "can_share",
+            "step"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "player-dance",
+      "family": "E22",
+      "authority_issue": 219,
+      "use_states": [
+        "armed 持键取消",
+        "dancing 提交前取消",
+        "释放旧键不冲刺",
+        "新按提交",
+        "重复无提交"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "step",
+            "cancel_dance",
+            "dance_pose"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": [
+            "_leader"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "dance-listener",
+      "family": "E22",
+      "authority_issue": 219,
+      "use_states": [
+        "等待",
+        "提交后各自真正起飞一次",
+        "到源花采食",
+        "冷恢复不重复起飞"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "advance_listeners",
+            "forage_target"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": [
+            "_neighbors"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "本轮 D 负例检 listeners 等待；起飞次数去重主要复用 audio129。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "source-directed-bee-flow",
+      "family": "E22",
+      "authority_issue": 219,
+      "use_states": [
+        "提交的信息指向同一 SOURCE",
+        "左蜂 (3195,465) 安全采食",
+        "返回"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "advance_listeners",
+            "forage_target"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_view.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "正常路线不自动关闭源；返回只作为显式 API 回归，不新增自然剧情。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "fact-forage-report-committed",
+      "family": "E23",
+      "authority_issue": 227,
+      "use_states": [
+        "无事实禁止分享",
+        "成功只提交一次",
+        "冷恢复不重提"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio",
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "exact-suspend",
+      "family": "E28",
+      "authority_issue": 228,
+      "use_states": [
+        "暂停冻结",
+        "真实磁盘重建精确恢复",
+        "不重放事件"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "save_payload",
+            "restore_payload"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "departure",
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "checkpoint-transaction",
+      "family": "E28",
+      "authority_issue": 228,
+      "use_states": [
+        "已开通口保留",
+        "临时输入/危险清理",
+        "安全点恢复"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": [
+            "save_checkpoint",
+            "restore_checkpoint"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/game_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "B",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "save-write-transaction",
+      "family": "E29",
+      "authority_issue": 228,
+      "use_states": [
+        "先验证",
+        "临时文件原子替换",
+        "失败不覆盖"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/save_data.gd",
+          "functions": [
+            "write_payload"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "departure",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "save-corruption-feedback",
+      "family": "E29",
+      "authority_issue": 228,
+      "use_states": [
+        "未知/损坏拒绝",
+        "磁盘反例保留原字节"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/save_data.gd",
+          "functions": [
+            "read_payload"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "本轮不重新运行磁盘破坏反例；沿用已记录源与严格迁移边界。"
+    },
+    {
+      "id": "save-backup",
+      "family": "E29",
+      "authority_issue": 228,
+      "use_states": [
+        "升级 route_geometry_revision 前原字节备份",
+        "备份失败拒绝覆盖"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/bee_dance_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "departure"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "仅当前迁移/保留未知文件机制；不证明通用轮转备份或自动从坏备份恢复。"
+    },
+    {
+      "id": "fact-home-arrival",
+      "family": "E23",
+      "authority_issue": 227,
+      "use_states": [
+        "真实最终路段抵达",
+        "结尾保存/重开"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": [
+            "show_ending",
+            "tick"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "back_sign",
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "本轮 D 不走最终出口，结尾事件消费复用 audio 原生及独立测试。"
+    },
+    {
+      "id": "sound-charge-ready",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "就绪/早松/体力拒绝"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "事件映射 ready,charge_cancel,tired；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "A"
+        ],
+        "frame_ranges_inclusive": {
+          "A": [
+            0,
+            77
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "sound-burst",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "起冲"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 burst；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-relay",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "固定风花接力"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 ring；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-dew",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "露珠拾取"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 dew；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-curtain",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "解开两道叶结"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 gate；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-hit",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "实际蚊/雨伤"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "事件映射 hit；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "B",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "sound-recovery",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "登记/R/受雨恢复/旧档安全回退"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "事件映射 checkpoint,recover_manual,recover_rain,recover_exhaustion,recover_geometry；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "B",
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "B": [
+            78,
+            243
+          ],
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "sound-shield",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "拾取/挡击节流/自然结束"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "事件映射 shield,shield_block,shield_end；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "C"
+        ],
+        "frame_ranges_inclusive": {
+          "C": [
+            244,
+            461
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "sound-arrival",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "抵达/结尾"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 finish,arrival_bell；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-weather",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "预警/露天雨/叶下雨/after 静止"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 weather_warning,_pond_rain；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-npc",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "普通画眉一次回应"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 bird_greeting；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-b01",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "挂牢三次/每次盘点/提牌/安置"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "事件映射 keeper_hang,keeper_count,keeper_lift,keeper_place；技术路由/有声录制/PCM 不等于主观试听，听感待验。"
+    },
+    {
+      "id": "sound-dance",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "蜂舞循环/提交/各自真正起飞"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "事件映射 _pond_dance,dance_commit,listener_depart；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "sound-source-observation",
+      "family": "E25",
+      "authority_issue": 219,
+      "use_states": [
+        "完成观察一次"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_main.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_model.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_native_behavior_and_ui_evidence_available_no_gate_decision",
+      "limits": "事件映射 source_observed；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "segments": [
+          "D"
+        ],
+        "frame_ranges_inclusive": {
+          "D": [
+            462,
+            705
+          ]
+        },
+        "scope": "Only the listed segment assertions/input boundaries;not every use_state or family variant.",
+        "gate_decision": "none"
+      }
+    },
+    {
+      "id": "music-spring",
+      "family": "E25",
+      "authority_issue": 226,
+      "use_states": [
+        "03 当前 arrangement 0",
+        "04/05 当前 arrangement 2",
+        "暂停/静音既有行为"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/sound.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_content.gd",
+          "functions": []
+        },
+        {
+          "path": "prototypes/swarm-flight/main.gd",
+          "functions": []
+        }
+      ],
+      "prior_evidence": [
+        "audio"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "bounded_mapping_only_no_gate_decision",
+      "limits": "本版实际使用两支既有编曲；不凭编号2宣称秋季音乐通过；主观试听待验。"
+    },
+    {
+      "id": "hedge",
+      "family": "E08",
+      "authority_issue": 215,
+      "use_states": [
+        "03/04 默认 terrain 花篱实体正面",
+        "04 棚边花篱顶盖与固定支撑"
+      ],
+      "actual_source_calls": [
+        {
+          "path": "prototypes/swarm-flight/event_data.gd",
+          "functions": [
+            "terrain"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/spring_journey_view.gd",
+          "functions": [
+            "_terrain"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/world_view.gd",
+          "functions": [
+            "_terrain"
+          ]
+        },
+        {
+          "path": "prototypes/swarm-flight/art_sprites.gd",
+          "functions": [
+            "hedge"
+          ]
+        }
+      ],
+      "prior_evidence": [
+        "back_sign"
+      ],
+      "pending_native_segments": [],
+      "evidence_status": "actual_call_confirmed_presentation_partial_no_gate_decision",
+      "current_native_evidence": {
+        "evidence_key": "finite_native",
+        "images": [
+          "13-shield-near-end.png",
+          "13b-shield-small-window.png"
+        ],
+        "scope": "Fixed existing hedge bodies visible;no separate hedge source/variant gate.",
+        "gate_decision": "none"
+      },
+      "limits": "terrain default material=hedge → Spring super._terrain → ArtSprites.hedge is actually called. Does not instantiate W01–08,landing-platform,or prove all front/back/opening variants."
+    }
+  ],
+  "excluded_or_deferred": {
+    "not_instantiated": [
+      "landing-platform",
+      "w01-arc-layout",
+      "w02-s-layout",
+      "w03-lookback-hook",
+      "w04-split-petal",
+      "w05-breathing-flower",
+      "w06-swaying-flower",
+      "w07-weather-flower",
+      "w08-canopy-transport",
+      "true-curve-relay",
+      "roof-drips"
+    ],
+    "not_counted_as_current_calls": [
+      "opening-npc-dance",
+      "multiple-dance-sources",
+      "updated-source-dance",
+      "sound-rescue",
+      "sound-sneeze",
+      "realtime-music-layers"
+    ],
+    "required_but_not_resolved_by_this_mapping": [
+      "pond-high-view",
+      "pond-low-approach"
+    ],
+    "explanation": "Only actual Spring fixed use sites above. The exclusion of unused components does not waive GDD requirements. High/low route information difference,independent exploration,subjective listening and full MVP composition remain separate outstanding work."
+  },
+  "known_prior_evidence_limits": [
+    "player-g0 safe-air34 assertions do not cover moving charge/hit/feed/dance.",
+    "Old baseline02-03 mosquito image has no complete cycle assertions.",
+    "Old05-weather-forecast image was before warning threshold and is not phase proof.",
+    "Old07-shelter-and-shield merely asserted positive shield time,not block/expiry.",
+    "Older keeper-tidy hook/result coordinates are superseded by back-sign.",
+    "Any changed full-file hash is explicitly not a same-source pass; use exact function check plus same input/dependencies,or newer scoped receipt.",
+    "native1 has a confirmed cue/player/shield timer overlap despite105 automated checks; it is a failed visual baseline and grants no gate.",
+    "Reviewer did not run Godot. Read production/probe/finaltrace and named nativePNG artifacts;raw movie not independently replayed. Native2 sharing images only transfer to final3 if recorded hash-equality is true."
+  ],
+  "statistics": {
+    "finite_element_count": 82,
+    "manifest_total_elements_reference_only": 267,
+    "new_gate_approvals": 0,
+    "pending_native_segments": 0,
+    "reviewed_bounded_native_segments": 4,
+    "open_source_geometry_blockers": 1
+  },
+  "review_findings": [
+    {
+      "id": "CUE-BODY-001",
+      "status": "fixed_and_bounded_native_verified",
+      "baseline": "native1/13-shield-near-end",
+      "final": "native3/13 and13b;722sampledframes",
+      "scope": "Spring cue avoids actual dancer position and124×104 body/shield envelope."
+    },
+    {
+      "id": "CUE-CAPTION-002",
+      "status": "fixed_and_bounded_native_verified",
+      "baseline": "native2/09-mosquito-hit",
+      "final": "native3/09 and15;80captionframes,zero cue_caption_clear failures",
+      "scope": "Shared caption rect preserves original draw math;Spring reserves8px padding and yields local guidance only when no clear position. Final code review found no blocker to this UI fix."
+    },
+    {
+      "id": "MOSQUITO-LEAF-001",
+      "status": "open_blocks_ordinary_mosquito_G1_G2",
+      "source_refs": [
+        "prototypes/swarm-flight/spring_journey_model.gd::sight_clear",
+        "prototypes/swarm-flight/spring_journey_model.gd::update_actor",
+        "prototypes/swarm-flight/spring_journey_view.gd::_mosquito"
+      ],
+      "evidence": [
+        "native2/01-stem-compact.png",
+        "native2/07-mosquito-aim.png",
+        "/private/tmp/pond-mosquito-leaf-boundary.gd",
+        "/private/tmp/pond-mosquito-leaf-boundary.log"
+      ],
+      "observed": "Ordinary actor center is drawn in visible solid leaf; sight_clear checks only walls and return moves directly. Root executed independent180tick counterexample at legal player(2320,300),actorcenter inside leaf133frames;reviewer read script/log and native images but did not runGodot.",
+      "boundary": "Behavior B assertions remain useful. Do not approve ordinary mosquito source geometry;separate next issue-sized fix,not silently included in frozen UI change."
+    },
+    {
+      "id": "BIRD-LEAF-REVIEW",
+      "status": "no_confirmed_defect_at_current_fixed_use",
+      "scope": "Native22 shows canopy occlusion. Centreline and actual opaque-root overlap confirm attachment;no speculative geometry edit requested."
+    }
+  ],
+  "independent_review": {
+    "reviewer": "feedback_review",
+    "updated_at_utc": "2026-10-31T20:37:45.170544+00:00",
+    "production_change_verdict": "No remaining blocker found for the bounded cue/body/shield/caption UI correction.",
+    "source_acceptance_verdict": "ordinary-mosquito blocked;other rows retain limited evidence only;no global gates",
+    "#204": "not approved",
+    "no_Godot_run_by_reviewer": true,
+    "subjective_audio_listening": "unverified"
+  }
+}
