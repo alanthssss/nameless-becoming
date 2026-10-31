@@ -322,7 +322,58 @@ func verify_back_sign() -> void:
 	legacy.state=Model.pack(old)
 	check(m.restore_payload(legacy) and m.p==old.checkpoint.p and m.passage_open,"moved upper post also restores safe earned checkpoint")
 
+func verify_departure_preparation() -> void:
+	var m=fresh()
+	check(m.context_cue().kind=="friend","departure purpose belongs to visible companion")
+	check(m.keeper==Model.preparation_actor(),"keeper begins at first actual hanger")
+	frames(m,120,Vector2.RIGHT)
+	check(m.p.x>180 and m.keeper.elapsed==0,"departure stays playable; distant preparation does not finish unseen")
+	m.p=Vector2(3000,420)
+	m.velocity=Vector2.ZERO
+	m.clear_input()
+	m.started=true
+	frames(m,90)
+	check(m.preparation_count()==0 and m.keeper.elapsed>1,"first sign is still held before attachment")
+	roundtrip(m,"first sign held")
+	m.save_checkpoint(m.p)
+	var saved: Dictionary=m.story_state()
+	frames(m,40)
+	check(m.preparation_count()==1 and m.keeper.pos!=Model.preparation_position(1),"first placed; keeper travels to next hanger")
+	var work: float=m.keeper.elapsed
+	frames(m,10)
+	check(m.keeper.elapsed==work,"walking cannot hang another sign remotely")
+	roundtrip(m,"between hangers")
+	m.restore_checkpoint()
+	check(m.keeper==saved.keeper,"manual retry restores preparation consistently")
+	frames(m,1,Vector2.RIGHT)
+	frames(m,600)
+	check(m.keeper.state=="watch" and m.preparation_count()==3 and m.keeper.pos==Model.preparation_position(2),"three separated signs finish only after keeper reaches each hanger")
+	roundtrip(m,"all signs attached")
+	m.load_stage(2)
+	check(m.keeper==Model.actor(Model.KEEPER_HOME) and not m.front_open,"return encounter starts independently")
+	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://review-evidence/2026-11-01/back-sign/legacy-fixtures/stage0-plain.json"))
+	var restored=fresh()
+	check(restored.restore_payload(old),"genuine pre-preparation stage0 save remains loadable")
+	check(restored.keeper==Model.preparation_actor() and restored.checkpoint_story.keeper==Model.preparation_actor(),"both old snapshots normalize before first rendered frame")
+	for phase in ["initial","working","hung","watch","inherited_idle"]:
+		var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://review-evidence/2026-11-01/departure/legacy-fixtures/"+phase+".json"))
+		check(restored.restore_payload(legacy),"genuine c5 preparation save "+phase)
+		var complete: bool=phase in ["hung","watch"]
+		check((restored.keeper.state=="watch")==complete and (restored.checkpoint_story.keeper.state=="watch")==complete,"legacy attached signs remain earned "+phase)
+		roundtrip(restored,"migrated preparation "+phase)
+	var frozen: Dictionary=restored.save_payload()
+	var bad: Dictionary=frozen.duplicate(true)
+	bad.preparation_revision=91
+	check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"unknown preparation version rejects atomically")
+	bad=old.duplicate(true)
+	bad.story.keeper.elapsed=1
+	check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"unrecognized old preparation actor is not normalized silently")
+	bad=frozen.duplicate(true)
+	bad.story.keeper.elapsed=7
+	check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"invalid new work progress rejects atomically")
+
 func run() -> void:
+	verify_departure_preparation()
 	verify_back_sign()
 	verify_keeper_tidy()
 	for share in [true,false]:

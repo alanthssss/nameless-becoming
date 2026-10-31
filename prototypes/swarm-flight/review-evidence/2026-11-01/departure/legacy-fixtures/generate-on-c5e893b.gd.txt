@@ -1,0 +1,24 @@
+extends SceneTree
+const Model=preload("res://spring_journey_model.gd")
+func _initialize():
+ var folder="/private/tmp/pond-preparation-legacy"
+ DirAccess.make_dir_recursive_absolute(folder)
+ for phase in ["initial","working","hung","watch","inherited_idle"]:
+  var m=Model.new()
+  m.load_stage(0)
+  m.p=Vector2(3370,400)
+  m.started=true
+  if phase=="inherited_idle": m.keeper.state="idle"
+  var count={"initial":0,"working":90,"hung":285,"watch":370,"inherited_idle":120}[phase]
+  for i in count: m.step(Vector2.ZERO,false,1.0/60)
+  m.save_checkpoint(m.p)
+  var payload=m.save_payload()
+  var other=Model.new()
+  if not other.restore_payload(payload):
+   print("FAIL old source self-restore ",phase)
+   quit(1)
+   return
+  var f=FileAccess.open(folder.path_join(phase+".json"),FileAccess.WRITE)
+  f.store_string(JSON.stringify(payload))
+ print("C5 PREPARATION FIXTURES: 5 self-validating states")
+ quit()

@@ -9,7 +9,10 @@ func _landmarks(_act: int) -> void:
 	if model.stage in [0,2]:
 		_source_cluster(model.SOURCE)
 		_pond_landmarks()
-		if model.stage == 0: _small_flower()
+		if model.stage == 0:
+			_small_flower()
+			_departure_buds()
+			_keeper_preparation()
 		if model.stage == 2:
 			_wax_comb(model.COMB)
 			_sign_support(model.WAITING_SIGN+Vector2(0,-15))
@@ -44,8 +47,10 @@ func _pond_landmarks() -> void:
 func _small_flower() -> void:
 	var home: Vector2 = model.SMALL_HOME
 	var flower := home+Vector2(-14,62)
-	ArtProps.stalk(self,flower,flower+Vector2(15,110),Vector2(home.x-39,720),Vector2(home.x+10,835),9.0)
-	ArtSprites.small_leaf(self,home+Vector2(3,145),home+Vector2(-112,121),29)
+	var stem:=PackedVector2Array([flower,flower+Vector2(15,110),Vector2(home.x-39,720),Vector2(home.x+10,835)])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],9.0)
+	var leaf_root:=stem[0].bezier_interpolate(stem[1],stem[2],stem[3],0.22)
+	ArtSprites.small_leaf(self,leaf_root,home+Vector2(-112,121),29)
 	# Closed buds never reuse the open nectar flower silhouette.
 	ArtSprites.small_leaf(self,flower+Vector2(0,14),flower+Vector2(-13,-26),13)
 	ArtSprites.small_leaf(self,flower+Vector2(0,14),flower+Vector2(12,-31),13)
@@ -73,9 +78,47 @@ func _shelter(shelter: Dictionary) -> void:
 func _neighbors() -> void:
 	if model.stage == 0:
 		_mosquito(model.small,false)
+		_grounded_bee(model.DEPARTURE_FRIEND,Vector2.LEFT if model.p.x<240 else Vector2.RIGHT,0.77,0.0)
 	elif model.stage == 2:
 		_mosquito(model.keeper,true)
 		super._neighbors()
+
+func _departure_buds() -> void:
+	var stem:=PackedVector2Array([Vector2(266,502),Vector2(283,609),Vector2(240,718),Vector2(272,833)])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],8)
+	ArtProps.branch(self,stem,0.13,Vector2(228,528),4.5)
+	# The leaf's petiole and its resting surface come from the same stem.
+	var leaf_root:=stem[0].bezier_interpolate(stem[1],stem[2],stem[3],0.02)
+	ArtSprites.small_leaf(self,leaf_root,Vector2(375,495),18)
+	for foot in [Vector2(228,528),Vector2(266,502)]:
+		ArtSprites.small_leaf(self,foot,foot+Vector2(-11,-34),11)
+		ArtSprites.small_leaf(self,foot,foot+Vector2(13,-40),11)
+
+func _keeper_preparation() -> void:
+	if model.PREPARATION_BAR[3].x<model.camera_x-230 or model.PREPARATION_BAR[0].x>model.camera_x+1510: return
+	var bar: Array=model.PREPARATION_BAR
+	var support: Vector2=bar[0].bezier_interpolate(bar[1],bar[2],bar[3],0.9)
+	_sign_support(support+Vector2(0,43))
+	ArtProps.stalk(self,bar[0],bar[1],bar[2],bar[3],6)
+	var count: int=model.preparation_count()
+	for i in count:
+		var top: Vector2=model.preparation_anchor(i)
+		var point:=top+Vector2(0,52)
+		_curve(top,top+Vector2(-2,16),point+Vector2(0,-25),point+Vector2(0,-12),INK,1.6)
+		_flower_sign(point,float(i-1)*0.035,i%2)
+	var preview: Dictionary=model.keeper.duplicate()
+	preview.state="idle"
+	preview.face=Vector2.RIGHT
+	_mosquito(preview,true)
+	if count<3:
+		var top: Vector2=model.preparation_anchor(count)
+		var hand: Vector2=model.keeper.pos+Vector2(32,30)
+		var reach:=fposmod(float(model.keeper.elapsed),2.0)/2.0
+		var held:=hand.lerp(top+Vector2(0,52),smoothstep(0.0,1.0,reach))
+		_curve(model.keeper.pos+Vector2(24,14),model.keeper.pos+Vector2(40,20),held-Vector2(7,8),held,INK,2)
+		_flower_sign(held,0.04,count%2)
+		if reach>0.75:
+			_curve(top,top+Vector2(-2,16),held+Vector2(0,-25),held+Vector2(0,-12),INK,1.6)
 
 func _wall(wall: Dictionary) -> void:
 	var r: Rect2 = wall.rect

@@ -1,0 +1,124 @@
+{
+  "issues": [
+    215,
+    218
+  ],
+  "related_issues": [
+    204,
+    205,
+    214,
+    219
+  ],
+  "milestone": 1,
+  "gdd": [
+    "8.1",
+    "13.6/J01",
+    "13.6/J06"
+  ],
+  "kind": "limited departure plant, companion and keeper preparation source acceptance; no whole-family, G3, P4 or player claim",
+  "baseline_revision": "0a91b34fd531e13033c797bf1f98281b56fe3154",
+  "reused_patch": "c5e893b8578417bbec22fed1952095e438362568",
+  "scope": "First-screen need/closed buds/grounded companion; shared stem attachment for nearby small bud; three separately suspended signs with real beam support. Keeper moves to each hanger before work advances; control is never locked. Full-body dialogue avoidance; preparation snapshots and known old templates.",
+  "gates": {
+    "G0": "Archived c5 native images expose floating buds/leaf/feet, unsupported beam and overlapping signs. Source geometry confirms companion foot gap16–19px and small flower leaf root13.56px from stem. No invented baseline gameplay failure.",
+    "G1": "Current native01–10 and model/disk checks support these concrete source functions and fixed use sites.",
+    "G2": "Two companion horizontal facings, four nearby dialogue positions plus spawn,1280x800 and960x600, all three hanging states and pauses, five known c5 old states plus genuine earlier stage0 fixture. Other scales, plant shapes, rack arrangements and actors unsupported."
+  },
+  "checks": {
+    "model": "392 checks,0 failures, includes finite source states, actual work/travel boundary, retry, strict version/legacy rejection, full known routes",
+    "native": "27 checks,0 failures; final338 movie frames@30fps;329 sampled ticks;10 captures. Seeded scene positions, ordinary input and real disk/cold scenes; muted; not exploration.",
+    "native_fixture_headless": "17 checks,0 failures",
+    "full_scene_headless": "50 checks,0 failures",
+    "save_disk": "12 checks,0 failures; byte-identical backup, unsupported/corrupt versions, backup collision refusal"
+  },
+  "compatibility": {
+    "current": "preparation_revision1 preserves exact live and checkpoint state including travel; route revision2, envelope1 and original journey/save identity unchanged.",
+    "old": "Only original unadvanced KEEPER_HOME or exact c5 fixed pose are accepted. Both snapshots checked before parent mutation. Earlier c5 work resets to first hanger; already visibly hung three signs at elapsed>=4.5 normalize to completed new third hanger. Player earned facts preserved.",
+    "backup": "Existing bytes without all current markers must be backed up before save; uses existing .before-route-2-<sha12>.bak naming. No real user save touched.",
+    "fixtures": "Five files generated/self-validated on untouched c5 source, generator retained as text. Original pre-preparation stage0 fixture reused from back-sign baseline."
+  },
+  "review": {
+    "reviewer": "feedback_review independent read-only agent",
+    "verdict": "Passed limited source scope; no remaining blocker. Reviewer read code and native evidence; did not run Godot. No P4/whole-family/player claim.",
+    "findings": [
+      "Old default/c5 templates validated before parent restore, live/checkpoint both checked; completed >=4.5 seconds follows actual old view logic.",
+      "Native stems/feet/side leaf/signs/rope/beam continuous.",
+      "First small-window shot hit normal blink; final driver waits for blink to finish, player visibly clear. Original recording preserved."
+    ]
+  },
+  "LV01_10": {
+    "LV01": "pass limited first-screen purpose and free immediate control; broader route purpose pending P4",
+    "LV02": "not signed: high/low information choice remains #205",
+    "LV03": "pass scoped: no new lock or waiting requirement",
+    "LV04": "not applicable to presentation-only source; existing normal routes rerun",
+    "LV05": "pass scoped: actual hanger support/stems/feet; source does not create new collision or shelter",
+    "LV06": "pass scoped: working/travel/completed pause/cold/retry and strict old templates",
+    "LV07": "pass scoped: first-screen dialogue avoids full bee; small window captured",
+    "LV08": "not changed: rewards/source identity unchanged; known route checks passed",
+    "LV09": "not signed: subjective pacing and discovery require independent whole-route review",
+    "LV10": "not candidate: full J01–08 and final packaging still pending"
+  },
+  "development_failures": [
+    {
+      "finding": "First new model test compared all story after R although existing small mosquito intentionally resets; subsequent stationary test did not resume started state.",
+      "resolution": "Assert keeper snapshot only; resume via actual directional step. Original production behavior preserved."
+    },
+    {
+      "finding": "Initial disk invocation used wrong environment variable and exited without test.",
+      "resolution": "Correct SWARM_BACK_SIGN_QA_DIR;12 checks passed."
+    }
+  ],
+  "cost": {
+    "observed_start_utc": "2026-10-31T19:50:00Z",
+    "checkpoint_utc": "2026-10-31T19:53:33Z",
+    "estimated_delivery_minutes": [
+      30,
+      45
+    ],
+    "coverage": "Observed interval includes source work, tests, review and waiting; final CI/cleanup recorded in authoritative issues. Not active/billed labor.",
+    "cash_purchases": 0,
+    "image_calls": 0,
+    "active_hours": null,
+    "cumulative_hours": null,
+    "remaining_hours": null,
+    "budget": "200+40h unchanged; unverifiable historical accumulation; automation PAUSED",
+    "decision": "Continue authorized bounded MVP; no extra spending or full-game scope reduction"
+  },
+  "rollback": "Revert this focused PR; originals and c5 worktree remain; preserve .bak before loading an older app. No shared player/control changes.",
+  "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/departure/native (real main checkout; full AVI,log,trace,screens,isolated save); generated c5 fixtures and driver preserved.",
+  "source_hashes": {
+    "spring_journey_model.gd": "d044ef584145d7fb364d68ca23def8630a72b8d6b83182779bf7300634933a5f",
+    "spring_journey_view.gd": "6199eec86350d94e935902ea399c2f3007a6b389a04f68cf496578833c66d415",
+    "spring_journey_main.gd": "9a7f1a0183c754a27025f696f1e4d0bab7a8a9ef6658bb00ee80208f28b6bff6",
+    "spring_journey_verify.gd": "1f67e5f1c01e035cfc12bce0745632a3d54ab7e190743d7d6b22295875070c47",
+    "departure_probe.gd": "9d25bd3acb8d895d0dc8dd6befa4a893b3f698733dad9fb5491b79cc1fb7052b"
+  },
+  "artifact_hashes": {
+    "fixture-headless.log": "92d3f2ff6475ac4b2e5bdec55b591d7ec86070a630666e8d6758289cffecb956",
+    "ui.log": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711",
+    "disk.log": "aa2339163f24b836ed3ec3106ccf616d4b59dc64d443ca88e4105bd6941e5498",
+    "model.log": "e307b9c6d87165c54a23f1a7ef5f95540ae98e5b925ffe9fe4a6dd6ac2756d44",
+    "native/trace.json": "07970335e15fe2441a89d5499758b26bc0d8d8e3c2c3b81005cf87359e5c8e23",
+    "native/05-small-closed-flower.png": "a4241cdffd9ed678231e8c5f0577145776a61ff35503308f607e9d7eca85dbc4",
+    "native/04-small-window.png": "04f0063f1669e74f7e1469faff87f26cf9139f6664845116a1f7f986ca403488",
+    "native/07-between-hangers.png": "ee0f55f911768daa003839649fe6d2cb8de49d90181ad5a711353975f8ac2c7a",
+    "native/save.json": "ffdb2dba86b72389576720c085388cf84abbc5fdd9a7e73e9b6bf2cf911cd6d8",
+    "native/01-departure.png": "981230bf6398e79a3291866a39ffdb1cc24d5fbf667290d5e15a1d718f4c5466",
+    "native/native.mp4": "8aa9dddd7d625c8c5a05f91bc07786af70f6d27ba05fbbb100137ada77456f05",
+    "native/09-third-held.png": "469e4d466caa18ad323abf84c6543e9a494a1628af673ada7234a3f46b6a7e65",
+    "native/03-leaf-contact-left.png": "e5e7d4929de4ef5c564ef5122eb0f5619c38a319ef975a1ad8c64c77da2045f2",
+    "native/native.log": "9256cb77a9fb8b555b16acebc7da76cb7c8e7e75ee59bdeab309fd55c9ea6ee9",
+    "native/10-all-hung.png": "adcefdd343c7253f90ddfce23656bb78f852d045f82fb5122c923644d0259543",
+    "native/08-second-held.png": "161e2a89305001f02c7ed6cba8c5d9b673926150716493c4bfd977240087be02",
+    "native/02-leaf-contact-right.png": "9345f27c20ace20544259c2440364e0f67e027b739ebc1d24dcfca3a095457e0",
+    "native/06-first-held.png": "5a5bacd6dd74f2e1df9a4e53b56cb47ca006939a7cf3071ebdbca18185797bda",
+    "baseline/00b-departure-purpose.png": "63b6bd695c223976283454f1e34293df35a4d6df94b6bd2656d51351f9a2d14f",
+    "baseline/03b-keeper-preparation.png": "9d892995e9b5f8e05c3c94f688b45108d330314081c316b3c329b603be370f8e",
+    "legacy-fixtures/inherited_idle.json": "9d34037741c0b0137b3d08e81ae24d3111fb42368741c25b8270445ee3ad51bc",
+    "legacy-fixtures/hung.json": "a5bbdc1df1441be3f748f615a8bb592e4074db44cf5f0fde32ff3f47db1d6c02",
+    "legacy-fixtures/watch.json": "802a51c827f22dab1a2a53099062accc4373d8164f55863239a58d45e9ae2a27",
+    "legacy-fixtures/initial.json": "460ae81030a37e8ba32ef1ec944fa4398c6b5cd74829844af83a696ef2fd45cf",
+    "legacy-fixtures/working.json": "b5c5b25975606ab877e9d4b1862555d5a63bc5da0f0b4d00b3a66a8abde76391",
+    "legacy-fixtures/generate-on-c5e893b.gd.txt": "e95ead936eaf7af80b2e54beeb5e9c133a6cba8e849dc04af05100ca1377eb17"
+  }
+}

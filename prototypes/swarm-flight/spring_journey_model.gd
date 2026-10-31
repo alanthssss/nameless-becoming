@@ -6,6 +6,41 @@ const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
 const SITE_ID="pond-and-home"
 const SMALL_HOME=Vector2(2390,360)
 const KEEPER_HOME=Vector2(2100,410)
+const DEPARTURE_FRIEND=Vector2(300,492)
+const PREPARATION_SECONDS=6.0
+const PREPARATION_REVISION=1
+const PREPARATION_BAR=[Vector2(3570,302),Vector2(3650,290),Vector2(3760,314),Vector2(3840,302)]
+static func preparation_anchor(i: int) -> Vector2:
+	return PREPARATION_BAR[0].bezier_interpolate(PREPARATION_BAR[1],PREPARATION_BAR[2],PREPARATION_BAR[3],0.12+0.38*i)
+static func preparation_position(i: int) -> Vector2:
+	return preparation_anchor(i)+Vector2(-60,0)
+static func preparation_actor() -> Dictionary:
+	var who:=actor(preparation_position(0))
+	who.state="counting"
+	who.face=Vector2.RIGHT
+	return who
+static func valid_preparation(who: Dictionary) -> bool:
+	if who.elapsed<0 or who.elapsed>PREPARATION_SECONDS: return false
+	var count:=mini(3,int(who.elapsed/2.0))
+	if who.state!=("watch" if count==3 else "counting") or who.face!=Vector2.RIGHT: return false
+	var current:=preparation_position(mini(2,count))
+	var previous:=preparation_position(maxi(0,mini(2,count-1)))
+	if who.target not in [current,previous]: return false
+	return who.pos.distance_to(Geometry2D.get_closest_point_to_segment(who.pos,previous,current))<0.01
+static func known_legacy_preparation(who: Dictionary) -> bool:
+	if who==actor(KEEPER_HOME): return true
+	# The preserved c5e893b development version also used this fixed pose.
+	return who.pos==Vector2(3550,300) and who.target==who.pos and who.face==Vector2.LEFT and who.elapsed>=0 and who.elapsed<=6 and (who.state=="watch" if who.elapsed==6 else who.state in ["counting","idle"])
+func preparation_count() -> int: return mini(3,int(keeper.elapsed/2.0))
+func advance_preparation(dt: float) -> void:
+	if not started or p.x<=2850 or keeper.state=="watch": return
+	keeper.target=preparation_position(mini(2,preparation_count()))
+	keeper.face=Vector2.RIGHT
+	if keeper.pos!=keeper.target:
+		keeper.pos=keeper.pos.move_toward(keeper.target,120.0*dt)
+		return
+	keeper.elapsed=minf(PREPARATION_SECONDS,keeper.elapsed+dt)
+	if keeper.elapsed>=PREPARATION_SECONDS: keeper.state="watch"
 const KNOT=Vector2(2371,465)
 const BACK_WALL_X=3110.0
 const BACK_KNOT=Vector2(3131,300)
@@ -286,7 +321,7 @@ func load_stage(index: int) -> void:
 	suppress_space=false
 	listeners=[waiting_listener(0),waiting_listener(1)]
 	small=actor(SMALL_HOME)
-	keeper=actor(KEEPER_HOME)
+	keeper=preparation_actor() if index==0 else actor(KEEPER_HOME)
 	front_open=false
 	passage_open=false
 	result_elapsed=0.0
@@ -314,6 +349,7 @@ func advance(direction: Vector2,dt: float) -> void:
 	if stage==2 and not front_open: update_actor(keeper,KEEPER_HOME,true,dt)
 	if retries!=recoveries: return
 	if stage==0:
+		advance_preparation(dt)
 		if not bird_greeted and velocity.length()<60 and (p.distance_to(SOURCE)<80 or p.distance_to(BIRD_PERCH)<145):
 			bird_greeted=true
 			bird_elapsed=0.0
@@ -414,6 +450,7 @@ func restore_checkpoint(reason := "manual") -> void:
 func save_payload() -> Dictionary:
 	var payload:=super.save_payload()
 	payload["keeper_presentation_revision"]=2
+	payload["preparation_revision"]=PREPARATION_REVISION
 	payload["route_geometry_revision"]=ROUTE_GEOMETRY_REVISION
 	payload["story"]=pack(story_state())
 	payload["checkpoint_story"]=pack(checkpoint_story)
@@ -475,6 +512,7 @@ func upgrade_legacy_geometry(snapshot: Dictionary) -> bool:
 	return true
 
 func restore_payload(payload: Dictionary) -> bool:
+	if payload.has("preparation_revision") and payload.preparation_revision!=PREPARATION_REVISION: return false
 	if payload.has("route_geometry_revision") and payload.route_geometry_revision!=ROUTE_GEOMETRY_REVISION: return false
 	if payload.has("keeper_presentation_revision") and payload.keeper_presentation_revision!=2: return false
 	var index=int(payload.get("stage",-1))
@@ -485,6 +523,11 @@ func restore_payload(payload: Dictionary) -> bool:
 	var saved: Dictionary=probe.normalize_story(unpack(payload.get("checkpoint_story")),index)
 	var base=unpack(payload.get("state"))
 	if state.is_empty() or saved.is_empty() or not base is Dictionary: return false
+	if index==0:
+		for item in [state,saved]:
+			if payload.has("preparation_revision"):
+				if not valid_preparation(item.keeper): return false
+			elif not known_legacy_preparation(item.keeper): return false
 	if state.dance.perched and (base.get("p")!=COMB or base.get("charging")!=false or base.get("burst_left")!=0): return false
 	if not base.get("walls") is Array or not base.get("checkpoint") is Dictionary or not base.checkpoint.get("walls") is Array: return false
 	if not base.checkpoint.get("p") is Vector2: return false
@@ -521,6 +564,17 @@ func restore_payload(payload: Dictionary) -> bool:
 			if bee.state=="foraging" or (bee.state in ["departing","returning"] and bee.pos.x<3182):
 				bee.pos=forage_target(0)
 				if bee.state=="departing": bee.state="foraging"
+	if index==0 and not payload.has("preparation_revision"):
+		# Previously stage0 never advanced this actor; normalize both snapshots
+		# before displaying them, including a save made near the departure.
+		for item in [state,saved]:
+			var completed_preparation: bool=item.keeper.pos==Vector2(3550,300) and item.keeper.elapsed>=4.5
+			item.keeper=preparation_actor()
+			if completed_preparation:
+				item.keeper.pos=preparation_position(2)
+				item.keeper.target=item.keeper.pos
+				item.keeper.elapsed=PREPARATION_SECONDS
+				item.keeper.state="watch"
 	apply_story(state)
 	checkpoint_story=saved
 	# v2 snapshots from the old thin roof may now overlap the painted leaf.
@@ -542,6 +596,8 @@ func objective() -> String:
 func hint() -> String:
 	return "方向键随时离开 · Esc 暂停并保存" if perched else "方向键 / WASD 飞行 · 空格蓄力后松开冲刺 · Esc 暂停"
 func context_cue() -> Dictionary:
+	if stage==0 and p.x<510:
+		return {"pos":DEPARTURE_FRIEND,"text":"这边的花还没开……池岸那头还有花香。","kind":"friend"}
 	if stage==0 and bird_greeted and bird_elapsed<6.0:
 		return {"pos":BIRD_PERCH,"text":"画眉：你也来尝这簇花？雨要来了，前面的叶棚能歇脚。","kind":"bird"}
 	if stage==0 and p.distance_to(SMALL_HOME+Vector2(-14,62))<100:
