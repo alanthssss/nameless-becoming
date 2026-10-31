@@ -1,23 +1,11 @@
 name: Garden Puzzles prototype
 
 on:
-  pull_request:
-    paths:
-      - 'prototypes/garden-puzzles/**'
-      - '.github/workflows/garden-puzzles.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'prototypes/garden-puzzles/**'
-      - '.github/workflows/garden-puzzles.yml'
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: garden-puzzles-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   verify:

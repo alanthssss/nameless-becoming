@@ -184,7 +184,7 @@ npm run build
 npm run test
 ```
 
-PR 与 `main` push 会先运行轻量的变更范围／空白检查。全部变更都是 Markdown（`.md`／`.mdx`／`.markdown`）或仅涉及这项轻量门禁自身（`.github/workflows/quality.yml`、`scripts/classify_ci_changes.sh`）时，Web、Godot 与 clean Web candidate 三项游戏重型任务会按 job 条件跳过；任何产品代码、数据、资源、构建输入或无法可靠分类的变更都会保守地运行完整质量门禁。
+自动 CI 统一由 **Quality gates** 接收 PR 与 `main` push，并根据 `scripts/classify_ci_changes.sh` 选择 Web、旧 Godot、导出或三个独立原型；普通说明文档只做轻量检查，被测试读取的 README／美术材料运行快速 Node 合同检查。CI 入口／分类器／总门禁改动、未知路径、缺失历史、手动完整运行和 merge queue 请求会扩大验证；不会把 CI 自身改动直接跳过。总门禁只接受已选任务成功和明确未选任务跳过。PR 新版本可取消旧检查，主线不同提交各自完成，防止后续文档提交取消尚未完成的代码验证。详细事件、输入映射、编辑 PR 的重跑取舍及证据见[CI 触发合同](docs/CI_PERFORMANCE_2026-11-01.md#trigger-contract)。
 
 桌面候选包可在 GitHub 的 **Actions → Desktop client builds → Run workflow** 手动生成。`release_tag` 必须与 `package.json` 版本一致；流水线校验 Godot 编辑器与模板、运行测试、导出 macOS／Windows 并附带 SHA-256。默认只生成保留期有限的 artifacts，只有明确选择 `publish_prerelease` 才创建预发布版本。
 
