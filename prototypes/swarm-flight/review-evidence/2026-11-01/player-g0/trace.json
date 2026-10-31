@@ -1,0 +1,6148 @@
+{
+	"base_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+	"checks": [
+		{
+			"assertion": "Wall envelope 14px: outside unchanged point",
+			"pass": true
+		},
+		{
+			"assertion": "Wall envelope 14px: inside expelled point",
+			"pass": true
+		},
+		{
+			"assertion": "Wall envelope 9px: outside unchanged point",
+			"pass": true
+		},
+		{
+			"assertion": "Wall envelope 9px: inside expelled point",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: default",
+			"pass": true
+		},
+		{
+			"assertion": "Default keyframe is outside the initial blinking interval",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: flight-right",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: turn-left",
+			"pass": true
+		},
+		{
+			"assertion": "Left keyboard input reverses face and actual motion",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: turn-right",
+			"pass": true
+		},
+		{
+			"assertion": "Right keyboard input restores face and actual motion",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: flight-stop",
+			"pass": true
+		},
+		{
+			"assertion": "Ordinary release stops in safe air",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: early-charge",
+			"pass": true
+		},
+		{
+			"assertion": "0.20 seconds held is charging but not ready",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: cancel",
+			"pass": true
+		},
+		{
+			"assertion": "Early release cancels without launch",
+			"pass": true
+		},
+		{
+			"assertion": "Early release pays only ordinary flight drain, no burst cost",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: charge-before-ready",
+			"pass": true
+		},
+		{
+			"assertion": "At 11/30 seconds charge is not ready",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: ready",
+			"pass": true
+		},
+		{
+			"assertion": "At 12/30 seconds charge is ready",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: burst",
+			"pass": true
+		},
+		{
+			"assertion": "Ready release launches exactly once",
+			"pass": true
+		},
+		{
+			"assertion": "Ready release costs 20 plus one frame of flight drain",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: burst-direction-locked",
+			"pass": true
+		},
+		{
+			"assertion": "Opposite input does not steer an active burst",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: settle",
+			"pass": true
+		},
+		{
+			"assertion": "Burst ends and production view enters settle",
+			"pass": true
+		},
+		{
+			"assertion": "Saved native PNG: free-again",
+			"pass": true
+		},
+		{
+			"assertion": "Settled bee returns to stationary free flight",
+			"pass": true
+		},
+		{
+			"assertion": "Every frame stays playing without recovery",
+			"pass": true
+		},
+		{
+			"assertion": "Safe-air cost assertions never enter a recovery shelter",
+			"pass": true
+		},
+		{
+			"assertion": "Fixture writes no progress file",
+			"pass": true
+		}
+	],
+	"dimensions": {
+		"alpha_bounds_base_px": [
+			-29.1764705882353,
+			-36.3529411764706,
+			30.5882352941176,
+			17.0588235294118
+		],
+		"alpha_bounds_source": [
+			68,
+			159,
+			576,
+			613
+		],
+		"base_bitmap_width_px": 60,
+		"contact_boundary": "isolated numerical wall fixture using production model; not native terrain/edge-expansion acceptance",
+		"contacts": [
+			{
+				"charging": false,
+				"final_gap": 14.0999755859375,
+				"initial_gap": 14.1,
+				"wall_x": 1000
+			},
+			{
+				"charging": false,
+				"final_gap": 14.010009765625,
+				"initial_gap": 13.9,
+				"wall_x": 1000
+			},
+			{
+				"charging": true,
+				"final_gap": 9.0999755859375,
+				"initial_gap": 9.1,
+				"wall_x": 1000
+			},
+			{
+				"charging": true,
+				"final_gap": 9.010009765625,
+				"initial_gap": 8.9,
+				"wall_x": 1000
+			}
+		],
+		"method": "original source alpha>=0.6; full artwork includes noncolliding decorative anatomy, not a body mask",
+		"pivot": [
+			316,
+			468
+		],
+		"source_rect": [
+			67,
+			158,
+			510,
+			456
+		],
+		"view_scale_burst_without_wind": [
+			1.25,
+			0.81
+		],
+		"view_scale_charge_ready": [
+			0.83,
+			1.15
+		]
+	},
+	"failures": 0,
+	"fixture": "production Spring main/model/view, stage0 safe-air initial placement; keyboard root.push_input; fixed ticks; OS pause suppressed; saves disabled before ready; sound muted",
+	"fps": 30,
+	"frame_numbering": "model sample indices; movie also includes initial setup and unticked render waits",
+	"frames": [
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 0,
+			"invulnerable": 0.966666666666667,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 1,
+			"invulnerable": 0.933333333333334,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 2,
+			"invulnerable": 0.9,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 3,
+			"invulnerable": 0.866666666666667,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 4,
+			"invulnerable": 0.833333333333334,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 5,
+			"invulnerable": 0.800000000000001,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 6,
+			"invulnerable": 0.766666666666667,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 7,
+			"invulnerable": 0.733333333333334,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 8,
+			"invulnerable": 0.700000000000001,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 9,
+			"invulnerable": 0.666666666666668,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 10,
+			"invulnerable": 0.633333333333335,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 11,
+			"invulnerable": 0.600000000000001,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 12,
+			"invulnerable": 0.566666666666668,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 13,
+			"invulnerable": 0.533333333333335,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 14,
+			"invulnerable": 0.500000000000002,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 15,
+			"invulnerable": 0.466666666666668,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 16,
+			"invulnerable": 0.433333333333335,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 17,
+			"invulnerable": 0.400000000000001,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 18,
+			"invulnerable": 0.366666666666668,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 19,
+			"invulnerable": 0.333333333333335,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 20,
+			"invulnerable": 0.300000000000001,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 21,
+			"invulnerable": 0.266666666666668,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 22,
+			"invulnerable": 0.233333333333334,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 23,
+			"invulnerable": 0.200000000000001,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 24,
+			"invulnerable": 0.166666666666668,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 25,
+			"invulnerable": 0.133333333333334,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 26,
+			"invulnerable": 0.100000000000001,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 27,
+			"invulnerable": 0.0666666666666677,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 28,
+			"invulnerable": 0.0333333333333344,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 29,
+			"invulnerable": 0.00000000000000105124242644195,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 30,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 31,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 32,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 33,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 34,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 370.0,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 35,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				850.0,
+				230.0
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "default",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 100.0,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 371.249267578125,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 36,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				851.249267578125,
+				229.957015991211
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.9333333333333,
+			"velocity": [
+				59.9631729125977,
+				-2.10020899772644
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 374.497009277344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 37,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				854.497009277344,
+				229.836929321289
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.8666666666667,
+			"velocity": [
+				119.912727355957,
+				-4.55717945098877
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 379.74267578125,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 38,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				859.74267578125,
+				229.624389648438
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.8,
+			"velocity": [
+				179.837615966797,
+				-7.55234336853027
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 386.984619140625,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 39,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				866.984619140625,
+				229.292846679688
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.7333333333333,
+			"velocity": [
+				239.700775146484,
+				-11.5782175064087
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 395.656616210938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 40,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				875.656616210938,
+				228.827255249023
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.6666666666667,
+			"velocity": [
+				262.0,
+				-14.6265563964844
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 404.390014648438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 41,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				884.390014648438,
+				228.313507080078
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.6,
+			"velocity": [
+				262.0,
+				-15.8760633468628
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 413.123413085938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 42,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				893.123413085938,
+				227.759582519531
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.5333333333334,
+			"velocity": [
+				262.0,
+				-17.0533332824707
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 421.856811523438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 43,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				901.856811523438,
+				227.168014526367
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.4666666666667,
+			"velocity": [
+				262.0,
+				-18.1530113220215
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 430.590209960938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 44,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				910.590209960938,
+				226.541519165039
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.4,
+			"velocity": [
+				262.0,
+				-19.1700916290283
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 439.323608398438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 45,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				919.323608398438,
+				225.882919311523
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.3333333333334,
+			"velocity": [
+				262.0,
+				-20.099946975708
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 448.057006835938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 46,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				928.057006835938,
+				225.195220947266
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.2666666666667,
+			"velocity": [
+				262.0,
+				-20.938346862793
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 456.790405273438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 47,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				936.790405273438,
+				224.481536865234
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.2,
+			"velocity": [
+				262.0,
+				-21.6814746856689
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 465.523803710938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 48,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				945.523803710938,
+				223.745132446289
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.1333333333334,
+			"velocity": [
+				262.0,
+				-22.3259525299072
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 474.257202148438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 49,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				954.257202148438,
+				222.989364624023
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.0666666666667,
+			"velocity": [
+				262.0,
+				-22.8688468933105
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 482.990600585938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 50,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				962.990600585938,
+				222.217651367188
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 99.0000000000001,
+			"velocity": [
+				262.0,
+				-23.3076858520508
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 491.723999023438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 51,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				971.723999023438,
+				221.433517456055
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.9333333333334,
+			"velocity": [
+				262.0,
+				-23.640474319458
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 500.457397460938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 52,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				980.457397460938,
+				220.640518188477
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.8666666666667,
+			"velocity": [
+				262.0,
+				-23.8656978607178
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 509.190795898438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 53,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				989.190795898438,
+				219.84228515625
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.8000000000001,
+			"velocity": [
+				262.0,
+				-23.9823322296143
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 516.674194335938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 54,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				996.674194335938,
+				219.042846679688
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.7333333333334,
+			"velocity": [
+				202.0,
+				-23.983943939209
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 522.157592773438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 55,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1002.15759277344,
+				218.243469238281
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.6666666666667,
+			"velocity": [
+				142.0,
+				-23.9780826568604
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 525.640991210938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 56,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1005.64099121094,
+				217.444702148438
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.6000000000001,
+			"velocity": [
+				82.0,
+				-23.9502334594727
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 527.124389648438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 57,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1007.12438964844,
+				216.64762878418
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.5333333333334,
+			"velocity": [
+				22.0000419616699,
+				-23.8836898803711
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 526.607788085938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 58,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1006.60778808594,
+				215.853942871094
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.4666666666668,
+			"velocity": [
+				-37.9998245239258,
+				-23.7577228546143
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 524.091186523438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 59,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1004.09118652344,
+				215.066192626953
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.4000000000001,
+			"velocity": [
+				-97.9994354248047,
+				-23.5434246063232
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 519.574584960938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 60,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				999.574584960938,
+				214.288284301758
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.3333333333334,
+			"velocity": [
+				-157.998382568359,
+				-23.1916809082031
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 513.057983398438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 61,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				993.057983398438,
+				213.527053833008
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.2666666666668,
+			"velocity": [
+				-217.995086669922,
+				-22.5737266540527
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 505.166381835938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 62,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				985.166381835938,
+				212.789245605469
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.2000000000001,
+			"velocity": [
+				-238.0,
+				-21.992582321167
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 497.233032226562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 63,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				977.233032226562,
+				212.063171386719
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.1333333333334,
+			"velocity": [
+				-238.0,
+				-21.6518611907959
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 489.299682617188,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 64,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				969.299682617188,
+				211.348999023438
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.0666666666668,
+			"velocity": [
+				-238.0,
+				-21.2859153747559
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 481.366333007812,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 65,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				961.366333007812,
+				210.647537231445
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 98.0000000000001,
+			"velocity": [
+				-238.0,
+				-20.8951721191406
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 473.432983398438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 66,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				953.432983398438,
+				209.959609985352
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.9333333333335,
+			"velocity": [
+				-238.0,
+				-20.4800872802734
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 465.499633789062,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 67,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				945.499633789062,
+				209.286026000977
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.8666666666668,
+			"velocity": [
+				-238.0,
+				-20.0411434173584
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 457.566284179688,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 68,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				937.566284179688,
+				208.627563476562
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.8000000000001,
+			"velocity": [
+				-238.0,
+				-19.5788516998291
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 449.632934570312,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 69,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				929.632934570312,
+				207.984970092773
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.7333333333335,
+			"velocity": [
+				-238.0,
+				-19.0937519073486
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 441.699584960938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 70,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				921.699584960938,
+				207.359008789062
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.6666666666668,
+			"velocity": [
+				-238.0,
+				-18.5864086151123
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 433.766235351562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				-1.0,
+				0.0
+			],
+			"frame": 71,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				913.766235351562,
+				206.750411987305
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-left",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.6000000000001,
+			"velocity": [
+				-238.0,
+				-18.0574131011963
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 427.082885742188,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 72,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				907.082885742188,
+				206.149200439453
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.5333333333335,
+			"velocity": [
+				-178.000015258789,
+				-18.0137252807617
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 422.399536132812,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 73,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				902.399536132812,
+				205.551193237305
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.4666666666668,
+			"velocity": [
+				-118.00016784668,
+				-17.8835124969482
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 419.716186523438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 74,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				899.716186523438,
+				204.959838867188
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.4000000000001,
+			"velocity": [
+				-58.0006790161133,
+				-17.6378784179688
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 419.032836914062,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 75,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				899.032836914062,
+				204.379821777344
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.3333333333335,
+			"velocity": [
+				1.99794769287109,
+				-17.2355842590332
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 420.349365234375,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 76,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				900.349365234375,
+				203.817565917969
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.2666666666668,
+			"velocity": [
+				61.9946899414062,
+				-16.6143131256104
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 423.665710449219,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 77,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				903.665710449219,
+				203.28239440918
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.2000000000002,
+			"velocity": [
+				121.987167358398,
+				-15.6709966659546
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 428.981628417969,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 78,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				908.981628417969,
+				202.788787841797
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.1333333333335,
+			"velocity": [
+				181.968963623047,
+				-14.205376625061
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 436.296264648438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 79,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				916.296264648438,
+				202.364135742188
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.0666666666668,
+			"velocity": [
+				241.912185668945,
+				-11.6424407958984
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 444.986938476562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 80,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				924.986938476562,
+				202.040100097656
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 97.0000000000002,
+			"velocity": [
+				262.0,
+				-9.07073497772217
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 453.720336914062,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 81,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				933.720336914062,
+				201.769287109375
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.9333333333335,
+			"velocity": [
+				262.0,
+				-7.55213356018066
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 462.453735351562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 82,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				942.453735351562,
+				201.549819946289
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.8666666666668,
+			"velocity": [
+				262.0,
+				-5.99916982650757
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 471.187133789062,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 83,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				951.187133789062,
+				201.382720947266
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.8000000000002,
+			"velocity": [
+				262.0,
+				-4.41890954971313
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 479.920532226562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 84,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				959.920532226562,
+				201.26872253418
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.7333333333335,
+			"velocity": [
+				262.0,
+				-2.81854319572449
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 488.653930664062,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 85,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				968.653930664062,
+				201.208358764648
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.6666666666669,
+			"velocity": [
+				262.0,
+				-1.20535218715668
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 497.387329101562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 86,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				977.387329101562,
+				201.201919555664
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.6000000000002,
+			"velocity": [
+				262.0,
+				0.413323223590851
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 506.120727539062,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 87,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				986.120727539062,
+				201.249404907227
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.5333333333335,
+			"velocity": [
+				262.0,
+				2.03011798858643
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 514.854125976562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 88,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				994.854125976562,
+				201.350616455078
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.4666666666669,
+			"velocity": [
+				262.0,
+				3.63767552375793
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 523.587524414062,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 89,
+			"invulnerable": 0.0,
+			"keys": [
+				4194321
+			],
+			"mode": "play",
+			"p": [
+				1003.58752441406,
+				201.505065917969
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "turn-right",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.4000000000002,
+			"velocity": [
+				262.0,
+				5.22868156433105
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 529.543640136719,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 90,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1009.54364013672,
+				201.623931884766
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 96.3333333333335,
+			"velocity": [
+				128.693237304688,
+				2.56830477714539
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 91,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.36,
+			"sheltered": false,
+			"stamina": 96.2666666666669,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 92,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.326666666666667,
+			"sheltered": false,
+			"stamina": 96.2000000000002,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 93,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.293333333333333,
+			"sheltered": false,
+			"stamina": 96.1333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 94,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.26,
+			"sheltered": false,
+			"stamina": 96.0666666666669,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 95,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.226666666666667,
+			"sheltered": false,
+			"stamina": 96.0000000000002,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 96,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.193333333333333,
+			"sheltered": false,
+			"stamina": 95.9333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 97,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.16,
+			"sheltered": false,
+			"stamina": 95.8666666666669,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 98,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.126666666666667,
+			"sheltered": false,
+			"stamina": 95.8000000000002,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 99,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0933333333333334,
+			"sheltered": false,
+			"stamina": 95.7333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 100,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.06,
+			"sheltered": false,
+			"stamina": 95.6666666666669,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 101,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0266666666666667,
+			"sheltered": false,
+			"stamina": 95.6000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 102,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.5333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 103,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.4666666666669,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 104,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.4000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 105,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.3333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 106,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.2666666666669,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 107,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "flight-stop",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.2000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0666666666666667,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 108,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "early-charge",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.1333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.133333333333333,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 109,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "early-charge",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.0666666666669,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.2,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 110,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "early-charge",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 95.0000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.266666666666667,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 111,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "early-charge",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.9333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.333333333333333,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 112,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "early-charge",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.866666666667,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.4,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 113,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "early-charge",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.8000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 114,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "cancel",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.7333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.0666666666666667,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 115,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.666666666667,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.133333333333333,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 116,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.6000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.2,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 117,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.5333333333336,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.266666666666667,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 118,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.466666666667,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.333333333333333,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 119,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.4000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.4,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 120,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.3333333333337,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.466666666666667,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 121,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.266666666667,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.533333333333333,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 122,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.2000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.6,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 123,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.1333333333337,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.666666666666667,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 124,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.066666666667,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.733333333333333,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 125,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "charge-before-ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 94.0000000000003,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 0,
+			"camera_x": 531.094665527344,
+			"charge": 0.8,
+			"charging": true,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 126,
+			"invulnerable": 0.0,
+			"keys": [
+				32
+			],
+			"mode": "play",
+			"p": [
+				1011.09466552734,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": true,
+			"recoveries": 0,
+			"segment": "ready",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 93.9333333333337,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.506666666666667,
+			"bursts": 1,
+			"camera_x": 560.428100585938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 127,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1040.42810058594,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.866666666667,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.473333333333333,
+			"bursts": 1,
+			"camera_x": 589.761596679688,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 128,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1069.76159667969,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.8000000000004,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.44,
+			"bursts": 1,
+			"camera_x": 619.095092773438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 129,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1099.09509277344,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.7333333333337,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.406666666666667,
+			"bursts": 1,
+			"camera_x": 648.428588867188,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 130,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1128.42858886719,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.666666666667,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.373333333333333,
+			"bursts": 1,
+			"camera_x": 677.762084960938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 131,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1157.76208496094,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.6000000000004,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.34,
+			"bursts": 1,
+			"camera_x": 707.095581054688,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 132,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1187.09558105469,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.5333333333337,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.306666666666666,
+			"bursts": 1,
+			"camera_x": 736.429077148438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 133,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1216.42907714844,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.466666666667,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.273333333333333,
+			"bursts": 1,
+			"camera_x": 765.762573242188,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 134,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1245.76257324219,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.4000000000004,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.239999999999999,
+			"bursts": 1,
+			"camera_x": 795.096069335938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 135,
+			"invulnerable": 0.0,
+			"keys": [
+				4194319
+			],
+			"mode": "play",
+			"p": [
+				1275.09606933594,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "burst-direction-locked",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.3333333333337,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.206666666666666,
+			"bursts": 1,
+			"camera_x": 824.429565429688,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 136,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1304.42956542969,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.266666666667,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.173333333333333,
+			"bursts": 1,
+			"camera_x": 853.763061523438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 137,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1333.76306152344,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.2000000000004,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.139999999999999,
+			"bursts": 1,
+			"camera_x": 883.096557617188,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 138,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1363.09655761719,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.1333333333337,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.106666666666666,
+			"bursts": 1,
+			"camera_x": 912.430053710938,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 139,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1392.43005371094,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.0666666666671,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0733333333333328,
+			"bursts": 1,
+			"camera_x": 941.763549804688,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 140,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1421.76354980469,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 73.0000000000004,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0399999999999994,
+			"bursts": 1,
+			"camera_x": 971.097045898438,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 141,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1451.09704589844,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 72.9333333333337,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0066666666666661,
+			"bursts": 1,
+			"camera_x": 1000.43054199219,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 142,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1480.43054199219,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 72.8666666666671,
+			"velocity": [
+				880.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 143,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.36,
+			"sheltered": false,
+			"stamina": 72.8000000000004,
+			"velocity": [
+				130.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 144,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "settle",
+			"settle": 0.36,
+			"sheltered": false,
+			"stamina": 72.7333333333337,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 145,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.326666666666667,
+			"sheltered": false,
+			"stamina": 72.6666666666671,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 146,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.293333333333333,
+			"sheltered": false,
+			"stamina": 72.6000000000004,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 147,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.26,
+			"sheltered": false,
+			"stamina": 72.5333333333338,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 148,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.226666666666667,
+			"sheltered": false,
+			"stamina": 72.4666666666671,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 149,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.193333333333333,
+			"sheltered": false,
+			"stamina": 72.4000000000004,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 150,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.16,
+			"sheltered": false,
+			"stamina": 72.3333333333338,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 151,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.126666666666667,
+			"sheltered": false,
+			"stamina": 72.2666666666671,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 152,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0933333333333334,
+			"sheltered": false,
+			"stamina": 72.2000000000004,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 153,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.06,
+			"sheltered": false,
+			"stamina": 72.1333333333338,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 154,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0266666666666667,
+			"sheltered": false,
+			"stamina": 72.0666666666671,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 155,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 72.0000000000005,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 156,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 71.9333333333338,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 157,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 71.8666666666671,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 158,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 71.8000000000005,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 159,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 71.7333333333338,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 160,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 71.6666666666671,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 161,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 71.6000000000005,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		},
+		{
+			"burst_left": 0.0,
+			"bursts": 1,
+			"camera_x": 1017.26391601562,
+			"charge": 0.0,
+			"charging": false,
+			"face": [
+				1.0,
+				0.0
+			],
+			"frame": 162,
+			"invulnerable": 0.0,
+			"keys": [],
+			"mode": "play",
+			"p": [
+				1497.26391601562,
+				201.654876708984
+			],
+			"phase": "playing",
+			"ready": false,
+			"recoveries": 0,
+			"segment": "free-again",
+			"settle": 0.0,
+			"sheltered": false,
+			"stamina": 71.5333333333338,
+			"velocity": [
+				0.0,
+				0.0
+			]
+		}
+	],
+	"issue": 236,
+	"kind": "native_developer_fixture",
+	"segments": [
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 370.0,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 36,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					850.0,
+					230.0
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "default",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 100.0,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 370.0,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 0,
+				"invulnerable": 1.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					850.0,
+					230.0
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "default",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 100.0,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 0,
+			"frames": 36,
+			"name": "default",
+			"screenshot": "default.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 509.190795898438,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 54,
+				"invulnerable": 0.0,
+				"keys": [
+					4194321
+				],
+				"mode": "play",
+				"p": [
+					989.190795898438,
+					219.84228515625
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "flight-right",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 98.8000000000001,
+				"velocity": [
+					262.0,
+					-23.9823322296143
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 370.0,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 36,
+				"invulnerable": 0.0,
+				"keys": [
+					4194321
+				],
+				"mode": "play",
+				"p": [
+					850.0,
+					230.0
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "flight-right",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 100.0,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 36,
+			"frames": 18,
+			"name": "flight-right",
+			"screenshot": "flight-right.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 433.766235351562,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					-1.0,
+					0.0
+				],
+				"frame": 72,
+				"invulnerable": 0.0,
+				"keys": [
+					4194319
+				],
+				"mode": "play",
+				"p": [
+					913.766235351562,
+					206.750411987305
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "turn-left",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 97.6000000000001,
+				"velocity": [
+					-238.0,
+					-18.0574131011963
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 509.190795898438,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 54,
+				"invulnerable": 0.0,
+				"keys": [
+					4194319
+				],
+				"mode": "play",
+				"p": [
+					989.190795898438,
+					219.84228515625
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "turn-left",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 98.8000000000001,
+				"velocity": [
+					262.0,
+					-23.9823322296143
+				]
+			},
+			"first_frame": 54,
+			"frames": 18,
+			"name": "turn-left",
+			"screenshot": "turn-left.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 523.587524414062,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 90,
+				"invulnerable": 0.0,
+				"keys": [
+					4194321
+				],
+				"mode": "play",
+				"p": [
+					1003.58752441406,
+					201.505065917969
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "turn-right",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 96.4000000000002,
+				"velocity": [
+					262.0,
+					5.22868156433105
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 433.766235351562,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					-1.0,
+					0.0
+				],
+				"frame": 72,
+				"invulnerable": 0.0,
+				"keys": [
+					4194321
+				],
+				"mode": "play",
+				"p": [
+					913.766235351562,
+					206.750411987305
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "turn-right",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 97.6000000000001,
+				"velocity": [
+					-238.0,
+					-18.0574131011963
+				]
+			},
+			"first_frame": 72,
+			"frames": 18,
+			"name": "turn-right",
+			"screenshot": "turn-right.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 108,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "flight-stop",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 95.2000000000003,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 523.587524414062,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 90,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1003.58752441406,
+					201.505065917969
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "flight-stop",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 96.4000000000002,
+				"velocity": [
+					262.0,
+					5.22868156433105
+				]
+			},
+			"first_frame": 90,
+			"frames": 18,
+			"name": "flight-stop",
+			"screenshot": "flight-stop.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.4,
+				"charging": true,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 114,
+				"invulnerable": 0.0,
+				"keys": [
+					32
+				],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "early-charge",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 94.8000000000003,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 108,
+				"invulnerable": 0.0,
+				"keys": [
+					32
+				],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "early-charge",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 95.2000000000003,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 108,
+			"frames": 6,
+			"name": "early-charge",
+			"screenshot": "early-charge.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 115,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "cancel",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 94.7333333333336,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.4,
+				"charging": true,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 114,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "cancel",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 94.8000000000003,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 114,
+			"frames": 1,
+			"name": "cancel",
+			"screenshot": "cancel.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.733333333333333,
+				"charging": true,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 126,
+				"invulnerable": 0.0,
+				"keys": [
+					32
+				],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "charge-before-ready",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 94.0000000000003,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 115,
+				"invulnerable": 0.0,
+				"keys": [
+					32
+				],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "charge-before-ready",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 94.7333333333336,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 115,
+			"frames": 11,
+			"name": "charge-before-ready",
+			"screenshot": "charge-before-ready.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.8,
+				"charging": true,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 127,
+				"invulnerable": 0.0,
+				"keys": [
+					32
+				],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": true,
+				"recoveries": 0,
+				"segment": "ready",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 93.9333333333337,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.733333333333333,
+				"charging": true,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 126,
+				"invulnerable": 0.0,
+				"keys": [
+					32
+				],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "ready",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 94.0000000000003,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 126,
+			"frames": 1,
+			"name": "ready",
+			"screenshot": "ready.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.506666666666667,
+				"bursts": 1,
+				"camera_x": 560.428100585938,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 128,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1040.42810058594,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "burst",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 73.866666666667,
+				"velocity": [
+					880.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 0,
+				"camera_x": 531.094665527344,
+				"charge": 0.8,
+				"charging": true,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 127,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1011.09466552734,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": true,
+				"recoveries": 0,
+				"segment": "burst",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 93.9333333333337,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 127,
+			"frames": 1,
+			"name": "burst",
+			"screenshot": "burst.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.239999999999999,
+				"bursts": 1,
+				"camera_x": 795.096069335938,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 136,
+				"invulnerable": 0.0,
+				"keys": [
+					4194319
+				],
+				"mode": "play",
+				"p": [
+					1275.09606933594,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "burst-direction-locked",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 73.3333333333337,
+				"velocity": [
+					880.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.506666666666667,
+				"bursts": 1,
+				"camera_x": 560.428100585938,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 128,
+				"invulnerable": 0.0,
+				"keys": [
+					4194319
+				],
+				"mode": "play",
+				"p": [
+					1040.42810058594,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "burst-direction-locked",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 73.866666666667,
+				"velocity": [
+					880.0,
+					0.0
+				]
+			},
+			"first_frame": 128,
+			"frames": 8,
+			"name": "burst-direction-locked",
+			"screenshot": "burst-direction-locked.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 1,
+				"camera_x": 1017.26391601562,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 145,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1497.26391601562,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "settle",
+				"settle": 0.36,
+				"sheltered": false,
+				"stamina": 72.7333333333337,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.239999999999999,
+				"bursts": 1,
+				"camera_x": 795.096069335938,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 136,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1275.09606933594,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "settle",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 73.3333333333337,
+				"velocity": [
+					880.0,
+					0.0
+				]
+			},
+			"first_frame": 136,
+			"frames": 9,
+			"name": "settle",
+			"screenshot": "settle.png"
+		},
+		{
+			"after": {
+				"burst_left": 0.0,
+				"bursts": 1,
+				"camera_x": 1017.26391601562,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 163,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1497.26391601562,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "free-again",
+				"settle": 0.0,
+				"sheltered": false,
+				"stamina": 71.5333333333338,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"before": {
+				"burst_left": 0.0,
+				"bursts": 1,
+				"camera_x": 1017.26391601562,
+				"charge": 0.0,
+				"charging": false,
+				"face": [
+					1.0,
+					0.0
+				],
+				"frame": 145,
+				"invulnerable": 0.0,
+				"keys": [],
+				"mode": "play",
+				"p": [
+					1497.26391601562,
+					201.654876708984
+				],
+				"phase": "playing",
+				"ready": false,
+				"recoveries": 0,
+				"segment": "free-again",
+				"settle": 0.36,
+				"sheltered": false,
+				"stamina": 72.7333333333337,
+				"velocity": [
+					0.0,
+					0.0
+				]
+			},
+			"first_frame": 145,
+			"frames": 18,
+			"name": "free-again",
+			"screenshot": "free-again.png"
+		}
+	]
+}

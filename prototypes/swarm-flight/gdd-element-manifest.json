@@ -180,7 +180,29 @@
       ],
       "asset_dependencies": [
         "prototypes/swarm-flight/art/revision-atlas.png"
-      ]
+      ],
+      "scoped_gate_evidence": {
+        "scope": "default/left-right flight/charge/launch/settle in safe-air native fixture only",
+        "G0": {
+          "status": "passed_scoped_baseline",
+          "issue": 236,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-11-01/player-g0/receipt.json"
+          ]
+        },
+        "G1": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G2": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G3": {
+          "status": "unchecked",
+          "evidence": []
+        }
+      }
     },
     {
       "id": "player-collision-envelope",
@@ -258,7 +280,29 @@
       ],
       "asset_dependencies": [
         "prototypes/swarm-flight/art/revision-atlas.png"
-      ]
+      ],
+      "scoped_gate_evidence": {
+        "scope": "14/9px numerical wall boundary and original artwork footprint only; native contacts/unfolding unchecked",
+        "G0": {
+          "status": "passed_scoped_baseline",
+          "issue": 236,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-11-01/player-g0/receipt.json"
+          ]
+        },
+        "G1": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G2": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G3": {
+          "status": "unchecked",
+          "evidence": []
+        }
+      }
     },
     {
       "id": "player-charge-contract",
@@ -339,7 +383,29 @@
       ],
       "asset_dependencies": [
         "prototypes/swarm-flight/art/revision-atlas.png"
-      ]
+      ],
+      "scoped_gate_evidence": {
+        "scope": "early cancellation,0.40s ready and release20cost only; low energy/rehold/recovery unchecked",
+        "G0": {
+          "status": "passed_scoped_baseline",
+          "issue": 236,
+          "evidence": [
+            "prototypes/swarm-flight/review-evidence/2026-11-01/player-g0/receipt.json"
+          ]
+        },
+        "G1": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G2": {
+          "status": "unchecked",
+          "evidence": []
+        },
+        "G3": {
+          "status": "unchecked",
+          "evidence": []
+        }
+      }
     },
     {
       "id": "xiaoman",
@@ -19554,6 +19620,118 @@
       "baseline_revision": "0518a9c2b1f67170088d2c415eea3f7fa3134d52",
       "scope": "leaf-canopy-g2",
       "version_identity": "exact source sha256; PR/merge revision recorded in issue202"
+    },
+    {
+      "path": "prototypes/swarm-flight/main.gd",
+      "sha256": "ee60754ce50d8dafcdad235acdb501a5e263c01a019384008385277a62fa6e55",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/bee_dance_main.gd",
+      "sha256": "17ec7c4d5455adf109342df384b671f16956ec39ea87edc183735c8585aba05f",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_main.gd",
+      "sha256": "15742e1656fbeb4e2230b9f564013ccb93137ca492a16fb37760baea763b2b87",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/long_journey_model.gd",
+      "sha256": "7bf923077f3c30b0942a5ab499687a128bf8c98a6ff9127340221a67d9278206",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/bee_dance_view.gd",
+      "sha256": "535d91e40605f55fd24fac721ff0c919b99dd78bdbea1f4515021e1ab9f1a19f",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "3f195c3b861eba00810c4e3b1cfeeea9de1892ed8a816f4a10a5e18b4862b227",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_sprites.gd",
+      "sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png",
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+      "sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
+    },
+    {
+      "path": "prototypes/swarm-flight/player_baseline_probe.gd",
+      "sha256": "6447a42525325ca90da8f341b5941fcd20fa3a432e0996512bf7c7234cab23d8",
+      "revision": null,
+      "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+      "scope": "player-g0",
+      "version_identity": "exact source sha256; PR/merge revision recorded in issue236"
     }
   ],
   "source_reference_format": "source_files/asset_dependencies 为仓库相对路径；固定版本/hash统一见source_registry。source_symbols为path::function@one_based_line；仅实现锚点，不是验收证据。shared atlas引用只表示依赖，实际裁切/状态映射仍需逐对象验证。",
@@ -19731,6 +19909,11 @@
       "batch": "2026-10-30-static-green-canopy-g2",
       "path": "prototypes/swarm-flight/review-evidence/2026-10-30/leaf-canopy/g2/receipt.json",
       "scope": "2elementrows scoped green static 118/180 only;full gates and combinations unpromoted"
+    },
+    {
+      "batch": "2026-11-01-player-g0",
+      "path": "prototypes/swarm-flight/review-evidence/2026-11-01/player-g0/receipt.json",
+      "scope": "3player rows limited G0 evidence; all full-row gates/combinations unchanged; stale cancel feedback remains issue219"
     }
   ]
 }

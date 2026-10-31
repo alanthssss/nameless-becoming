@@ -1,0 +1,310 @@
+{
+  "issue": 236,
+  "parent_issue": 214,
+  "milestone": 1,
+  "gdd": [
+    "3.1",
+    "3.2",
+    "3.3",
+    "8.1",
+    "8.3"
+  ],
+  "kind": "scoped_player_G0_developer_baseline",
+  "baseline_revision": "801823675f5dfc0de653d3d3737a428c9991e6f1",
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/main.gd",
+      "sha256": "ee60754ce50d8dafcdad235acdb501a5e263c01a019384008385277a62fa6e55"
+    },
+    {
+      "path": "prototypes/swarm-flight/bee_dance_main.gd",
+      "sha256": "17ec7c4d5455adf109342df384b671f16956ec39ea87edc183735c8585aba05f"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_main.gd",
+      "sha256": "15742e1656fbeb4e2230b9f564013ccb93137ca492a16fb37760baea763b2b87"
+    },
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8"
+    },
+    {
+      "path": "prototypes/swarm-flight/long_journey_model.gd",
+      "sha256": "7bf923077f3c30b0942a5ab499687a128bf8c98a6ff9127340221a67d9278206"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "2c9ff4c844bf12f826fa9b94d8a7f72febb851f67e9d7acf3fac17e513aef0a0"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "e46884dea08687882035cf95b88ca88258ab484829c90efb5d365da53b7c1761"
+    },
+    {
+      "path": "prototypes/swarm-flight/world_view.gd",
+      "sha256": "d2bf6379bcbb0af74653cd776c29e68946c3eced7da7907d4284c2893eb99250"
+    },
+    {
+      "path": "prototypes/swarm-flight/bee_dance_view.gd",
+      "sha256": "535d91e40605f55fd24fac721ff0c919b99dd78bdbea1f4515021e1ab9f1a19f"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "3f195c3b861eba00810c4e3b1cfeeea9de1892ed8a816f4a10a5e18b4862b227"
+    },
+    {
+      "path": "prototypes/swarm-flight/art_sprites.gd",
+      "sha256": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png",
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8"
+    },
+    {
+      "path": "prototypes/swarm-flight/art/revision-atlas.png.import",
+      "sha256": "0bd8b0c259e887b854f5d9cd60195c18ef8b6601d9e4fb680d90ebf849281978"
+    },
+    {
+      "path": "prototypes/swarm-flight/player_baseline_probe.gd",
+      "sha256": "6447a42525325ca90da8f341b5941fcd20fa3a432e0996512bf7c7234cab23d8"
+    }
+  ],
+  "scope": "Spring stage0 safe-air default, right/left flight and turn, stopped early charge cancellation, 0.4s ready/release, locked burst direction, settle and stationary free flight",
+  "gates": {
+    "G0": "passed_scoped_baseline_with_feedback_defect_recorded",
+    "G1": "unchecked",
+    "G2": "unchecked",
+    "G3": "unchecked"
+  },
+  "unchanged": "Production code, original artwork, handling values and authored stage remain unchanged. Only the developer probe and evidence/requirements changed.",
+  "checks": {
+    "total": 34,
+    "action_and_capture_state_assertions": 17,
+    "wall_boundary_probes": 4,
+    "png_save_assertions": 13,
+    "failures": 0,
+    "model_samples": 163,
+    "native_movie_frames": 178,
+    "fps": 30,
+    "native_size": [
+      1280,
+      800
+    ],
+    "readback": "trace parsed after write; 13 PNG signatures/dimensions verified; mp4 encoded from native AVI"
+  },
+  "measurements": {
+    "alpha_bounds_base_px": [
+      -29.1764705882353,
+      -36.3529411764706,
+      30.5882352941176,
+      17.0588235294118
+    ],
+    "alpha_bounds_source": [
+      68,
+      159,
+      576,
+      613
+    ],
+    "base_bitmap_width_px": 60,
+    "contact_boundary": "isolated numerical wall fixture using production model; not native terrain/edge-expansion acceptance",
+    "contacts": [
+      {
+        "charging": false,
+        "final_gap": 14.0999755859375,
+        "initial_gap": 14.1,
+        "wall_x": 1000
+      },
+      {
+        "charging": false,
+        "final_gap": 14.010009765625,
+        "initial_gap": 13.9,
+        "wall_x": 1000
+      },
+      {
+        "charging": true,
+        "final_gap": 9.0999755859375,
+        "initial_gap": 9.1,
+        "wall_x": 1000
+      },
+      {
+        "charging": true,
+        "final_gap": 9.010009765625,
+        "initial_gap": 8.9,
+        "wall_x": 1000
+      }
+    ],
+    "method": "original source alpha>=0.6; full artwork includes noncolliding decorative anatomy, not a body mask",
+    "pivot": [
+      316,
+      468
+    ],
+    "source_rect": [
+      67,
+      158,
+      510,
+      456
+    ],
+    "view_scale_burst_without_wind": [
+      1.25,
+      0.81
+    ],
+    "view_scale_charge_ready": [
+      0.83,
+      1.15
+    ]
+  },
+  "known_findings": [
+    {
+      "issue": 219,
+      "state": "unfixed",
+      "finding": "Early-cancel toast remains visible after a new charge is ready and after effective launch, contradicting current state",
+      "reproduction": "Space0.20s; release1tick; Space0.40s; release,30Hz",
+      "evidence": [
+        "ready.png",
+        "burst.png",
+        "trace.json"
+      ],
+      "acceptance_for_followup": "A newer charge/ready/burst state invalidates or replaces the obsolete cancellation instruction without changing timing or costs."
+    }
+  ],
+  "evidence_boundary": "Actual native production Spring main/model/view and keyboard handling, fixed30Hz model ticks; one safe-air initial position, QA pause suppression, sound muted, save read/write disabled before ready. Numerical wall probes are separate and are not native wall/edge expansion or G3 evidence. Model sample indices differ from video frames due to setup/render waits. No player study; reviewers sampled keyframes, did not inspect every video frame.",
+  "untested": [
+    "hit/rest/feed/dance/arrival",
+    "low stamina/repeated held input/recovery key edges",
+    "moving charge and diagonal/up/down variants",
+    "native wall/roof contact and unfold-at-edge",
+    "other characters, seasons, weather, occlusion combinations",
+    "G1 style/body-to-collider acceptance and G2 reuse limits"
+  ],
+  "visual_interpretation": "Original alpha footprint includes wings, antennae and other decorative anatomy; 60px bitmap vs28/18px collision diameter alone does not prove a defect. Body contact/forgiving outline requires later G1/native adjacency evidence.",
+  "failed_attempts": [
+    {
+      "path": "attempt-1",
+      "reason": "Default screenshot at0.4s hit initial invulnerability hidden phase; baseline image rejected, natural1.2s wait added."
+    },
+    {
+      "path": "attempt-2",
+      "reason": "Incorrect QA assumption: moving collision stops exactly at radius. Bounded-step rejection stops slightly outside (14.0308/9.1389px). Replaced with independent +/-0.1px static boundary probes; no production change."
+    }
+  ],
+  "raw_archive": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/2026-11-01-player-g0",
+  "raw_archive_boundary": "All AVI, initial attempts and full source-capture materials retained in main checkout outputs; committed PNG/MP4/trace/log copies are portable.",
+  "independent_review": {
+    "reviewer": "game_state_review",
+    "result": "no blocker for scoped G0",
+    "observed_local_interval": "2026-11-01 01:19:35–01:20:02 Asia/Shanghai",
+    "method": "read-only code/trace/log and default,ready,burst,settle,free-again images; no engine execution or full video viewing"
+  },
+  "reproduce": {
+    "engine": "Godot4.6.2.stable.official.71f334935; Compatibility OpenGL4.1 on Apple M1 Pro",
+    "command": "SWARM_PLAYER_QA_DIR=<fresh absolute output directory> python3 scripts/run_with_timeout.py 60 <Godot> --path prototypes/swarm-flight --script res://player_baseline_probe.gd --write-movie <absolute output directory>/native.avi --fixed-fps 30 --disable-vsync",
+    "source_import_warning": "Image.load_from_file intentionally measures source PNG in editor/native developer run; not an exported-game probe."
+  },
+  "cost": {
+    "client_date": "2026-11-01",
+    "first_observed_discovery_utc": "2026-10-31T17:10:25Z",
+    "issue_started_utc": "2026-10-31T17:15:06Z",
+    "pre_integration_receipt_utc": "2026-10-31T17:21:21.751373+00:00",
+    "coverage": "Observed discovery through evidence and review; earlier turn start not instrumented. CI, merge and cleanup interval finalized in remote issue and raw completion-receipt after integration. Wall clock is not active work or billed time.",
+    "target_minutes": 10,
+    "target_adjustment": "Extend through native recapture, independent review, required CI and cleanup; do not claim on-time completion.",
+    "active_work_hours": null,
+    "historical_cumulative_hours": null,
+    "remaining_budget_hours": null,
+    "budget_limit_hours": [
+      200,
+      40
+    ],
+    "new_purchase": 0,
+    "billed_usage_cost": null,
+    "automation": "PAUSED",
+    "decision": "Complete only this authorized G0 task; next concrete requirement is stale feedback repair, not full production expansion."
+  },
+  "artifacts": [
+    {
+      "path": "burst-direction-locked.png",
+      "sha256": "8c8861b0d6b9d5ab2dfb5e7cca260d131625a87710b7b66db02c80b32b37934e",
+      "bytes": 1138952
+    },
+    {
+      "path": "burst.png",
+      "sha256": "52ff49d454a6e02d6e73125ec0b77e5166d581a9281a95adc95af9cbe9c48259",
+      "bytes": 1193959
+    },
+    {
+      "path": "cancel.png",
+      "sha256": "5818e21768dddad292b6b587155afb46c89234bd2fb653fe0bb7254032338ad0",
+      "bytes": 1202046
+    },
+    {
+      "path": "charge-before-ready.png",
+      "sha256": "94beb039726d94789f5b3f3a5926f7f186212186f47c43867cf0305342f65802",
+      "bytes": 1216540
+    },
+    {
+      "path": "default.png",
+      "sha256": "f84c6689864f13ae0f19f5c41b7df4b1601a55c1c3139a3f77551c11b4f20473",
+      "bytes": 1203678
+    },
+    {
+      "path": "early-charge.png",
+      "sha256": "9e7ee6002e430688edacfc1b39781b0e61587e4d9343825b11d7045ea059c59f",
+      "bytes": 1214178
+    },
+    {
+      "path": "flight-right.png",
+      "sha256": "1550baf9b16d4ffb554dcc1bc85db432b80afd0462e8a35dd462b2f1ff5ed99c",
+      "bytes": 1200813
+    },
+    {
+      "path": "flight-stop.png",
+      "sha256": "5ff7f6d312e5f21d23db464844fd94e096c866b3d5ee6d339b7f79ccbd88a03f",
+      "bytes": 1199910
+    },
+    {
+      "path": "free-again.png",
+      "sha256": "7bf985c0f4616560b2eb1eda6e59fb0c8b0cd101016d6d7191a802a47f9a6ac3",
+      "bytes": 1082646
+    },
+    {
+      "path": "import.log",
+      "sha256": "cf85cecbe1f2bc1fd0768e1db8d7aabbbcdef16e15cd299d6e953a49ff693565",
+      "bytes": 8278
+    },
+    {
+      "path": "native.log",
+      "sha256": "36b5632359d78c027ce9ada953463627fc93c12414452e990918449dad04ebf4",
+      "bytes": 1274
+    },
+    {
+      "path": "native.mp4",
+      "sha256": "9303df35504fa2abd542930484522319e91bea288a08d8149eab46b529b1484b",
+      "bytes": 872125
+    },
+    {
+      "path": "ready.png",
+      "sha256": "9d1043bba2f82d227b345457bd6333f74fded7b649a4563c22611b8692524624",
+      "bytes": 1219006
+    },
+    {
+      "path": "settle.png",
+      "sha256": "7ea7252c810575408eeec7b1886ae1a655bfaf6f3f8b94b5c7054d448cf205df",
+      "bytes": 1084496
+    },
+    {
+      "path": "trace.json",
+      "sha256": "afd558c8c7a4c3d336f4853d72443c5da16c9c31626aa2e0cd69693630149684",
+      "bytes": 101752
+    },
+    {
+      "path": "turn-left.png",
+      "sha256": "0945fa1ad6aa75552a8dbcaabb8800ea985f8b4cd63fad4bdb5b97b0685d52e5",
+      "bytes": 1202015
+    },
+    {
+      "path": "turn-right.png",
+      "sha256": "9963107bc3c7b0a64a3ab2878bcd23674eff7447c3f2f348a9e2a170a74edf34",
+      "bytes": 1200240
+    }
+  ]
+}
