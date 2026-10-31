@@ -12,6 +12,7 @@ func _landmarks(_act: int) -> void:
 		if model.stage == 0: _small_flower()
 		if model.stage == 2:
 			_wax_comb(model.COMB)
+			_sign_support(model.WAITING_SIGN+Vector2(0,-15))
 			if model.front_open:
 				_sign_support(Vector2(model.KNOT.x+84,660))
 			if model.passage_open:
@@ -86,11 +87,14 @@ func _wall(wall: Dictionary) -> void:
 		super._wall(wall)
 
 func _sign_support(point: Vector2) -> void:
-	ArtProps.stalk(self,point+Vector2(0,-43),point+Vector2(-4,4),point+Vector2(7,99),Vector2(point.x-3,833),8.0)
-	ArtSprites.small_leaf(self,point+Vector2(10,68),point+Vector2(-73,61),19)
+	var stem:=PackedVector2Array([point+Vector2(0,-43),point+Vector2(-4,4),point+Vector2(7,99),Vector2(point.x-3,833)])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],8.0)
+	var leaf_root: Vector2=stem[0].bezier_interpolate(stem[1],stem[2],stem[3],0.43)
+	ArtSprites.small_leaf(self,leaf_root,point+Vector2(-73,61),19)
 
 func _sign_rope(rect: Rect2,knot: Vector2,opened: bool,back: bool) -> void:
-	if knot.x < model.camera_x-250 or knot.x > model.camera_x+1530: return
+	var sign_x: float=model.keeper_sign_position().x if opened and back else knot.x
+	if maxf(knot.x,sign_x) < model.camera_x-250 or minf(knot.x,sign_x) > model.camera_x+1530: return
 	var top := Vector2(knot.x,rect.position.y)
 	var bottom := Vector2(knot.x,rect.end.y)
 	var slack: bool = model.front_open if back else model.keeper.state == "counting"
@@ -111,16 +115,19 @@ func _sign_rope(rect: Rect2,knot: Vector2,opened: bool,back: bool) -> void:
 		var point: Vector2
 		var sway := 0.0
 		if back:
-			var progress: float = model.result_progress()
-			var eased := 1.0-pow(1.0-progress,3.0)
-			var side: Vector2 = model.RESULT_HOME+Vector2(-70,35)
-			var corner := Vector2(side.x,knot.y)
-			point = knot.lerp(corner,minf(1.0,eased*2.0)) if eased<0.5 else corner.lerp(side,(eased-0.5)*2.0)
-			sway = sin(progress*PI)*0.16
+			point = model.keeper_sign_position()
+			if model.result_elapsed<model.INSPECT_SECONDS:
+				# The side hook supports the pair until the keeper reaches it.
+				_curve(model.WAITING_SIGN+Vector2(0,-58),model.WAITING_SIGN+Vector2(3,-53),point+Vector2(-4,-48),point+Vector2(0,-45),rope,2.2)
+			elif model.keeper.state!="settled":
+				_curve(model.keeper.pos+Vector2(-24,18),model.keeper.pos+Vector2(-38,23),point+Vector2(0,-38),point+Vector2(0,-31),INK,2.2)
+			sway = sin(model.keeper.elapsed*6.0)*0.04 if model.keeper.state!="settled" else 0.0
 		else:
 			# No final-result timer belongs to this earlier, independently committed gate.
 			# Its short signs stay on the first post instead of flying through the second wall.
 			point = Vector2(knot.x+84,660)
+		# Both boards travel as one hanging pair, including between the two faces.
+		draw_line(point+Vector2(0,-20),point,rope,2.2,true)
 		_flower_sign(point+Vector2(0,-33),-0.04+sway,0)
 		_flower_sign(point+Vector2(0,13),0.05-sway,1)
 
@@ -154,10 +161,10 @@ func _mosquito(actor: Dictionary, keeper: bool) -> void:
 	var size := Vector2(144,108) if keeper else Vector2(79,59.25)
 	if keeper and actor.state in ["tidy","settled"]:
 		var progress: float = model.result_progress()
-		frame = 2 if progress > 0.46 or actor.state == "settled" else 0
+		frame = 2 if model.result_elapsed>=model.INSPECT_SECONDS or actor.state == "settled" else 0
 		# It checks and straightens its own back sign; the body has a single
 		# brief lean, rather than a celebration or a mandatory cutscene.
-		pose = sin(progress*PI)*0.11 if actor.state == "tidy" else 0.0
+		pose = sin(progress*PI)*0.11 if actor.state == "tidy" and actor.pos==actor.target else 0.0
 	elif actor.state in ["counting","watch"]:
 		pose = sin(actor.elapsed*5.0)*0.055
 	elif actor.state == "aim":

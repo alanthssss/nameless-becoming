@@ -175,7 +175,63 @@ func chapter05(m,share: bool,wind: bool) -> void:
 	fly(m,m.exit_pos+Vector2(45,0))
 	check(m.phase=="ending","05 complete ending with optional share "+str(share))
 	roundtrip(m,"journey ending")
+func verify_keeper_tidy() -> void:
+	var m=fresh(2)
+	m.front_open=true
+	m.passage_open=true
+	m.wall_at(2350).broken=true
+	m.wall_at(3000).broken=true
+	m.keeper=Model.actor(Model.KEEPER_HOME)
+	m.keeper.state="tidy"
+	m.keeper.target=Model.TIDY_APPROACH[0]
+	for i in 180: m.advance_tidy(1.0/60)
+	check(m.result_elapsed==0 and m.keeper.pos!=Model.PICKUP_POSITION,"sign cannot be collected while keeper is still approaching")
+	check(m.keeper_sign_position()==Model.WAITING_SIGN,"released signs remain on the side hook until pickup")
+	roundtrip(m,"keeper approaching sign")
+	var continuous:=true
+	var clear_path:=true
+	var carried:=false
+	var attached:=true
+	var phases: Dictionary={}
+	for i in 1500:
+		var before: Vector2=m.keeper.pos
+		var sign_before: Vector2=m.keeper_sign_position()
+		m.advance_tidy(1.0/60)
+		continuous=continuous and before.distance_to(m.keeper.pos)<=4.01 and sign_before.distance_to(m.keeper_sign_position())<8.0
+		for leaf in m.shelters:
+			clear_path=clear_path and Model.Canopy.contact(m.keeper.pos,54.0,leaf).is_empty()
+		for wall in m.walls:
+			if not wall.broken: clear_path=clear_path and not wall.rect.grow(54).has_point(m.keeper.pos)
+		var phase: String="inspect" if m.result_elapsed>0 and m.result_elapsed<Model.INSPECT_SECONDS else "carry" if m.result_elapsed>=Model.INSPECT_SECONDS and m.keeper.pos!=Model.RESULT_HOME else "place" if m.keeper.pos==Model.RESULT_HOME else "approach"
+		if phase not in phases:
+			phases[phase]=true
+			roundtrip(m,"keeper "+phase)
+		if phase=="carry":
+			carried=true
+			attached=attached and m.keeper_sign_position()==m.keeper.pos+Model.SIGN_HAND
+		if m.keeper.state=="settled": break
+	check(continuous,"keeper and signs move continuously without autonomous sign teleport")
+	check(clear_path,"keeper body envelope clears existing walls and both leaf roofs")
+	check(carried and attached,"signs travel with the keeper after actual pickup")
+	check(phases.has_all(["inspect","carry","place"]),"arrival inspection, carrying and final placement are distinct phases")
+	check(m.keeper.state=="settled" and m.keeper_sign_position()==Model.RESULT_HOME+Vector2(-70,35),"signs end at the supported result position")
+	var frozen: Dictionary=m.story_state()
+	m.advance_tidy(1.0)
+	check(m.story_state()==frozen,"settled result stops changing")
+	# Legacy v2 had already displayed finished signs before the actor arrived.
+	m.keeper.state="tidy"
+	m.keeper.pos=Vector2(2800,300)
+	var legacy: Dictionary=m.save_payload()
+	legacy.erase("keeper_presentation_revision")
+	var restored=fresh()
+	check(restored.restore_payload(legacy),"legacy v2 in-progress presentation remains loadable")
+	check(restored.p==m.p and restored.passage_open and restored.keeper.state=="settled","legacy presentation upgrade preserves player and earned passage")
+	var before_reject: Dictionary=restored.save_payload()
+	legacy.keeper_presentation_revision=3
+	check(not restored.restore_payload(legacy) and restored.save_payload()==before_reject,"unknown presentation revision rejects atomically")
+
 func run() -> void:
+	verify_keeper_tidy()
 	for share in [true,false]:
 		var m=fresh()
 		if not share: m.stamina=40.0

@@ -1,0 +1,113 @@
+{
+  "issue": 218,
+  "related_issues": [
+    204,
+    214,
+    207
+  ],
+  "milestone": 1,
+  "gdd": [
+    "8.1",
+    "11.2",
+    "13.6/J03",
+    "13.6/J06"
+  ],
+  "baseline_revision": "35b21354df1f46cd30f5747390c18f61bdc3ecfd",
+  "kind": "source-component repair; not whole-family or candidate acceptance",
+  "scope": "Keeper reaches the side-hook, inspects for0.6s, carries both linked signs around leaf roofs, then places them on the result support. Player may continue. No layout or handling change.",
+  "before": "Baseline timing probe after3s: result_elapsed2.4 while actor=(2766.604,307.1299), far from pickup. Same probe after repair: elapsed0, actor=(2740,405).",
+  "checks": {
+    "model": "228 checks,0failures, includes two whole known routes, continuous body-envelope path, inspection/carry/place exact JSON roundtrips, atomic unknown revision rejection",
+    "ui": "50 checks,0failures, actual keyboard/disk/cold scenes; existing ObjectDB exit warning",
+    "native": "386 frames@30fps;6captures; production renderer component fixture with seeded-open gates and actor-follow camera, muted; deliberate camera_x3300 tests carried-sign culling"
+  },
+  "review": {
+    "reviewer": "feedback_review agent; independent read-only",
+    "resolved_findings": [
+      "Culling keyed only to old knot removed carried signs near exit camera; now considers both positions",
+      "Temporary support top was below upper board; raised to y242 with descending rope to255",
+      "Root visual check added visible connection between the two carried boards"
+    ],
+    "final_visual_inspected": [
+      "02-inspect-hook.png",
+      "04-carry-near-exit-camera.png",
+      "06-settled.png"
+    ],
+    "verdict": "No blocker in this limited source fix. Not independent player exploration."
+  },
+  "save_compatibility": "New optional keeper_presentation_revision=2 retains exact phases. Missing marker identifies legacy v2 which already rendered completed signs: only earned tidy story becomes settled, preserving player/gates. Unknown marker rejected before mutation. No user save accessed.",
+  "source_files": [
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "sha256": "abc29e02707f4d0a5c24d66415f986f900c7ffa42ce96c134d22a7b66bfaa9b9"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "8d13d84cc83c6021fdafd9f24ad8ba982abd75c8f8d910787ab280f70581a5e9"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_verify.gd",
+      "sha256": "b3d5985da57e81c44a51a7154c02555b20328b9569b777f13aef06aca2e31949"
+    },
+    {
+      "path": "prototypes/swarm-flight/keeper_tidy_probe.gd",
+      "sha256": "745fc1d575363d84994d51fe4dcca920ca132d43b6078b9915aa003185cf4f3e"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "01-approach.png",
+      "sha256": "5ac7f4f7ca42cf316c5a088b7a994441fa290ede069894c8e5523e6fa6643465"
+    },
+    {
+      "path": "02-inspect-hook.png",
+      "sha256": "ec78654251731b250082eae1a4c72f4b319225bd3169dea7c346eb9ebe52e87d"
+    },
+    {
+      "path": "03-carry.png",
+      "sha256": "7a6e2c5cf7330983e3769d220f4417df7b2d5236582af47c603d7319ae38d8fe"
+    },
+    {
+      "path": "04-carry-near-exit-camera.png",
+      "sha256": "4e95c65fdf64045bd49f0df90878e61c4edf464fe01fa74cd7873d207628fb2e"
+    },
+    {
+      "path": "05-place.png",
+      "sha256": "fe52653ad62575e7949d9504e8298001205bb683585ed0aa59f33d7f72262216"
+    },
+    {
+      "path": "06-settled.png",
+      "sha256": "a1eb7ca270b8928cfc88cb66b4c9ecaf37f9e859ffc83391d4a324c66834fe2b"
+    },
+    {
+      "path": "native.log",
+      "sha256": "10c9814c28c958674059c22977ab229264ec69137d5c21e5112ba621894df0e0"
+    },
+    {
+      "path": "native.mp4",
+      "sha256": "d880a2aa33f57061dd451f011fbeaf55213addd32b0336b6f455320ab7331d6e"
+    },
+    {
+      "path": "spring-ui.log",
+      "sha256": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711"
+    },
+    {
+      "path": "trace.json",
+      "sha256": "5b1212e4cc36b6c671a715cbe72f667834f2fc095daaf033a14cdd7effff2a1b"
+    }
+  ],
+  "remaining": "Second-knot spatial judgment, preparation/closed state family evidence and all #204 prerequisites stay open. New Spring view hash differs from old canopy consumer; shelter drawing/geometry unchanged, final scoped combination still needs current evidence.",
+  "rollback": "Revert focused PR; new marker is ignored by previous parent save reader, but old animation semantics return. Preserve old build/isolated saves.",
+  "cost": {
+    "observed_start_utc": "2026-10-31 19:11:19 UTC",
+    "local_validation_clock_utc": "2026-10-31 19:16:26 UTC",
+    "integration_end": "See issue/PR timestamps; not included above",
+    "coverage": "Wall-clock observation only; subagent active time and billing not independently measured",
+    "new_purchases": 0,
+    "image_generation_calls": 0,
+    "historical_cumulative_hours": null,
+    "remaining_hours": null,
+    "control_limit": "200+40h unchanged",
+    "decision": "Continue bounded authorized MVP source/content work; no bulk production or added budget"
+  }
+}
