@@ -1,0 +1,12 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+Movie Maker mode enabled, recording movie in 1280×800 @ 30 FPS...
+DEPARTURE VERIFIED: 27 checks, 0 failures
+--------------------------------------------------------------------------------
+Done recording movie at path: /private/tmp/pond-preparation-native-2/native.avi
+338 frames at 30 FPS (movie length: 00:00:11:08), recorded in 00:00:18 (61% of real-time speed).
+CPU render time: 1.03 seconds (average: 3.05 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 2.32 seconds (average: 6.87 ms/frame)
+--------------------------------------------------------------------------------
