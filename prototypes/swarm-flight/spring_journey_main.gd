@@ -23,6 +23,17 @@ func refresh_hud() -> void:
 	super.refresh_hud()
 	hud_bees.text="第%02d关" % (model.stage+3)
 	hud_title.text="%s · %s   ·   晨露 %d/%d" % [titles[model.stage],model.encounter_name(),model.garden_awards[model.stage],model.stage_dew_total()]
+	var cue: Dictionary=model.context_cue()
+	if model.stage==0 and cue.get("kind","")=="friend" and cue_panel.visible:
+		var player_screen: Vector2=model.p-Vector2(model.camera_x,0)
+		var player_bounds:=Rect2(player_screen-Vector2(62,52),Vector2(124,104))
+		if cue_panel.get_rect().intersects(player_bounds):
+			var friend_screen: Vector2=model.DEPARTURE_FRIEND-Vector2(model.camera_x,0)
+			for y in [friend_screen.y+72.0,friend_screen.y-205.0,190.0]:
+				var candidate:=Rect2(Vector2(cue_panel.position.x,clampf(y,190,652)),cue_panel.size)
+				if not candidate.intersects(player_bounds):
+					cue_panel.position=candidate.position
+					break
 func show_transition() -> void:
 	super.show_transition()
 	handoff_heading.text=["沿池岸绕到叶棚那一侧。","那簇蓝花，又出现在归路旁。","灯就在前面，这回可以歇一歇了。"][model.stage]
@@ -75,7 +86,7 @@ func preserve_legacy_save() -> bool:
 	var raw:=FileAccess.get_file_as_bytes(path)
 	var parser:=JSON.new()
 	var original=parser.data if parser.parse(raw.get_string_from_utf8())==OK else null
-	if original is Dictionary and original.get("route_geometry_revision")==SpringModel.ROUTE_GEOMETRY_REVISION and create_journey_model().restore_payload(original): return true
+	if original is Dictionary and original.get("route_geometry_revision")==SpringModel.ROUTE_GEOMETRY_REVISION and original.get("preparation_revision")==SpringModel.PREPARATION_REVISION and create_journey_model().restore_payload(original): return true
 	var backup:=path+".before-route-2-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
 	if DirAccess.dir_exists_absolute(backup): return false
 	if FileAccess.file_exists(backup): return FileAccess.get_file_as_bytes(backup)==raw
