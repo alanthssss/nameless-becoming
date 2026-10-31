@@ -118,14 +118,19 @@
     "native/06-after-rain.png": "51e83854a6cea27154c6de30d0aafd3bf162e9af4a836992fbb00aad3eb39b51",
     "native/02-three-hangers.png": "737f0984b218d48a4df2a0c36c043d5e541a7fa2a9300e587eaf9ab5f8c5be01",
     "native/native.log": "b5dac67520f5c30503aee69c89f1cdfc2a9074913fae2897ff2e195007a0de1e",
-    "native/mix-analysis.log": "27a792277a8937ad999fbc09c31a4f31851af1ed0f9197d0ff65d596caa77c21",
     "native/01-source-bird.png": "4840fa5de2c344d359392f72294db8dd7a3a64ff468fa1dbfdf10eb43751b6e4",
     "native/10-ending-place.png": "b8fb2db2149806c3cbe5eb2e3656a84de8e9563e14dfda34355ce9b5f0de7269",
-    "native/pcm-report.json": "5f8023a7ee755910f478113d62fb142f0288fd98b40345e1c32befec78e4d893"
+    "native/pcm-report.json": "5f8023a7ee755910f478113d62fb142f0288fd98b40345e1c32befec78e4d893",
+    "native/mix-analysis.log.gz": "dffb27904d4b5def0e501bac0049c48c06065add1ba10e7f86750d45e69df6ae"
   },
   "review": {
     "reviewer": "feedback_review;independent code/test author",
     "verdict": "No blocking production finding;129 technical assertions pass. No native window or subjective listening by reviewer.",
     "scope": "Production changes and disjoint verification script;noG2/fullproductclaim"
+  },
+  "archive_note": {
+    "file": "native/mix-analysis.log.gz",
+    "uncompressed_sha256": "27a792277a8937ad999fbc09c31a4f31851af1ed0f9197d0ff65d596caa77c21",
+    "reason": "Exact original ffmpeg output contains trailing spaces; lossless gzip preserves raw bytes and passes repository whitespace rule. Two CI attempts stopped before game checks; no production/workflow change needed."
   }
 }
