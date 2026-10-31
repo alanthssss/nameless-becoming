@@ -1,0 +1,42 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":34.233333333332,"stage":0}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":28.2166666666657,"stage":1}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":32.7999999999988,"stage":2}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":23.1083333333327,"stage":3}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":23.9249999999993,"stage":4}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":22.466666666666,"stage":5}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":23.6499999999993,"stage":6}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":28.0583333333324,"stage":7}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":19.2249999999996,"stage":8}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":25.8666666666658,"stage":9}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":19.3916666666662,"stage":10}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":22.366666666666,"stage":11}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":20.9166666666661,"stage":12}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":18.1499999999996,"stage":13}
+CHAPTER_UI_STAGE: {"optional":false,"recoveries":0,"seconds":29.649999999999,"stage":14}
+CHAPTER_UI_END: {"dew":13,"optional":false,"recoveries":0,"seconds":381.574999999831}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":34.8499999999987,"stage":0}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":31.3999999999989,"stage":1}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":32.7499999999988,"stage":2}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":23.1333333333327,"stage":3}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":25.1499999999992,"stage":4}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":21.8749999999994,"stage":5}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":21.4583333333328,"stage":6}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":25.9833333333325,"stage":7}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":19.4083333333329,"stage":8}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":27.0999999999991,"stage":9}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":21.8249999999994,"stage":10}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":24.0583333333326,"stage":11}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":21.9416666666661,"stage":12}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":22.2833333333327,"stage":13}
+CHAPTER_UI_STAGE: {"optional":true,"recoveries":0,"seconds":31.1833333333322,"stage":14}
+CHAPTER_UI_END: {"dew":14,"optional":true,"recoveries":0,"seconds":397.033333333156}
+AIRFLOW_UI_INPUT: {"bursts":0,"charge_half_second":"(-79.99512, 0.0)","idle_one_second":"(-159.9902, 0.0)","recoveries":0,"stage":12}
+SUPPLY_UI_INPUT: {"collected_before_next_action":true,"level":10,"lower":false,"recoveries":0,"remaining":74.7166666666677}
+SUPPLY_UI_INPUT: {"collected_before_next_action":true,"level":10,"lower":true,"recoveries":0,"remaining":90.0500000000012}
+SUPPLY_UI_INPUT: {"collected_before_next_action":true,"level":13,"lower":false,"recoveries":0,"remaining":86.566666666668}
+SUPPLY_UI_INPUT: {"collected_before_next_action":true,"level":13,"lower":true,"recoveries":0,"remaining":95.3833333333341}
+SWARM FLIGHT UI VERIFIED: 427 checks, complete sixteen-level input routes
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2641)

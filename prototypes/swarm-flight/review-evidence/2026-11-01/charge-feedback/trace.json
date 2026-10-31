@@ -1,0 +1,44 @@
+{
+	"checks": 22,
+	"failures": 0,
+	"issue": 219,
+	"kind": "developer keyboard/UI regression",
+	"samples": [
+		{
+			"bursts": 0,
+			"charge": 0.0,
+			"charging": false,
+			"label": "cancel",
+			"stamina": 99.5333333333334,
+			"toast": "还没蓄好力 · 按住空格，等光环亮起再松开",
+			"visible": true
+		},
+		{
+			"bursts": 0,
+			"charge": 0.0666666666666667,
+			"charging": true,
+			"label": "retry",
+			"stamina": 99.4666666666667,
+			"toast": "还没蓄好力 · 按住空格，等光环亮起再松开",
+			"visible": false
+		},
+		{
+			"bursts": 0,
+			"charge": 0.8,
+			"charging": true,
+			"label": "ready",
+			"stamina": 98.7333333333334,
+			"toast": "还没蓄好力 · 按住空格，等光环亮起再松开",
+			"visible": false
+		},
+		{
+			"bursts": 1,
+			"charge": 0.0,
+			"charging": false,
+			"label": "burst",
+			"stamina": 78.6666666666667,
+			"toast": "还没蓄好力 · 按住空格，等光环亮起再松开",
+			"visible": false
+		}
+	]
+}

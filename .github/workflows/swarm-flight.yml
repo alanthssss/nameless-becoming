@@ -153,6 +153,9 @@ jobs:
           timeout 60s "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://leaf_canopy_verify.gd -- --variants 2>&1 | tee "$RUNNER_TEMP/leaf-canopy.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/leaf-canopy.log"; then exit 1; fi
           grep -q '^CANOPY VERIFIED:.*0 failures' "$RUNNER_TEMP/leaf-canopy.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://charge_feedback_verify.gd 2>&1 | tee "$RUNNER_TEMP/charge-feedback.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/charge-feedback.log"; then exit 1; fi
+          grep -q '^CHARGE FEEDBACK VERIFIED:.*0 failures' "$RUNNER_TEMP/charge-feedback.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://spring_journey_verify.gd 2>&1 | tee "$RUNNER_TEMP/spring-model.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://spring_journey_ui_verify.gd -- --progress-file="$SWARM_SPRING_QA_DIR/save.json" 2>&1 | tee "$RUNNER_TEMP/spring-ui.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --quit-after 3 -- --spring-journey --classic-journey --swarm-qa 2>&1 | tee "$RUNNER_TEMP/spring-entry.log"
