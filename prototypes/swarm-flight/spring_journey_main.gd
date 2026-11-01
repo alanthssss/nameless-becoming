@@ -102,7 +102,7 @@ func on_secondary() -> void:
 	super.on_secondary()
 	if mode=="pause" and model.events.any(func(e): return e.kind=="recover_geometry"):
 		heading.text="已回到安全的落脚点"
-		description.text=titles[model.stage]+" · 叶棚的边缘已更新。\n已记住的旅程保留，从最近的落脚点继续。\n按 Enter 或 Esc 出发。"
+		description.text=titles[model.stage]+" · 池岸的通路已更新。\n已记住的旅程保留，从最近的落脚点继续。\n按 Enter 或 Esc 出发。"
 
 func preserve_legacy_save() -> bool:
 	var path:=save_path()
@@ -110,7 +110,7 @@ func preserve_legacy_save() -> bool:
 	var raw:=FileAccess.get_file_as_bytes(path)
 	var parser:=JSON.new()
 	var original=parser.data if parser.parse(raw.get_string_from_utf8())==OK else null
-	if original is Dictionary and original.get("route_geometry_revision")==SpringModel.ROUTE_GEOMETRY_REVISION and original.get("preparation_revision")==SpringModel.PREPARATION_REVISION and original.get("small_actor_revision")==SpringModel.SMALL_ACTOR_REVISION and create_journey_model().restore_payload(original): return true
+	if original is Dictionary and SpringModel.number(original.get("pond_layout_revision")) and original.get("pond_layout_revision")==SpringModel.POND_LAYOUT_REVISION and original.get("route_geometry_revision")==SpringModel.ROUTE_GEOMETRY_REVISION and original.get("preparation_revision")==SpringModel.PREPARATION_REVISION and original.get("small_actor_revision")==SpringModel.SMALL_ACTOR_REVISION and create_journey_model().restore_payload(original): return true
 	var backup:=path+".before-route-2-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
 	if DirAccess.dir_exists_absolute(backup): return false
 	if FileAccess.file_exists(backup): return FileAccess.get_file_as_bytes(backup)==raw
