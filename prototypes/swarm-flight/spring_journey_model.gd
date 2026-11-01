@@ -3,6 +3,7 @@ extends "res://long_journey_model.gd"
 const SpringContent=preload("res://spring_journey_content.gd")
 const POND_LAYOUT_REVISION=1
 const POND_FORK=SpringContent.POND_FORK
+const RAIN_LAYOUT_REVISION=1
 const Canopy = preload("res://leaf_canopy_geometry.gd")
 const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
 const SITE_ID="pond-and-home"
@@ -506,6 +507,7 @@ func save_payload() -> Dictionary:
 	payload["small_actor_revision"]=SMALL_ACTOR_REVISION
 	payload["route_geometry_revision"]=ROUTE_GEOMETRY_REVISION
 	payload["pond_layout_revision"]=POND_LAYOUT_REVISION
+	payload["rain_layout_revision"]=RAIN_LAYOUT_REVISION
 	payload["story"]=pack(story_state())
 	payload["checkpoint_story"]=pack(checkpoint_story)
 	return payload
@@ -578,12 +580,55 @@ func upgrade_legacy_pond_geometry(snapshot: Dictionary) -> bool:
 	snapshot.walls=replacement
 	return true
 
+func configure_legacy_rain_layout() -> void:
+	# Frozen complete pre-rain-layout shape (main5d6866b). Never infer an old
+	# layout by discarding unknown objects from an incoming save.
+	walls.clear()
+	for pair in [[Rect2(820,250,800,80),"hedge"],[Rect2(1410,470,65,365),"stem"],[Rect2(1900,330,350,95),"hedge"],[Rect2(2420,500,710,85),"hedge"],[Rect2(3280,480,65,355),"stem"]]:
+		walls.append({"rect":pair[0],"kind":"terrain","material":pair[1],"broken":false})
+	shelters.clear()
+	var positions=[Vector2(620,520),Vector2(2170,520),Vector2(3670,520),Vector2(4120,500)]
+	var names=["从叶下看雨","从棚下抬高一步","从两层接住下一片叶","看见熟悉的池岸"]
+	for i in positions.size(): shelters.append({"pos":positions[i],"reached":false,"section":i,"name":names[i],"half_width":180.0})
+	dew.assign([{"pos":Vector2(1760,520),"collected":false,"section":1,"encounter":1,"purpose":"穿过露天后共有的补给"},{"pos":Vector2(3560,420),"collected":false,"section":2,"encounter":2,"purpose":"两路重新合流时补给"}])
+	shields.assign([{"pos":Vector2(2370,450),"collected":false,"section":2}])
+	rain_fields.assign([{"rect":Rect2(800,80,1550,650),"timer":0.2},{"rect":Rect2(2350,80,1250,650),"timer":0.2}])
+	pods.clear()
+	rings.clear()
+	sprayers.clear()
+	checkpoint_index=-1
+	save_checkpoint(Vector2(180,420))
+
+func upgrade_legacy_rain_geometry(snapshot: Dictionary, is_checkpoint: bool) -> void:
+	# The caller validates the complete old state before either snapshot changes.
+	var old_index: int=int(snapshot.checkpoint_index)
+	var replacement: Array=walls.duplicate(true)
+	for wall in replacement:
+		var old_rect: Rect2=Rect2(2420,500,710,85) if wall.rect==SpringContent.RAIN_OVERHEAD else wall.rect
+		for old in snapshot.walls:
+			if old.rect==old_rect and old.kind==wall.kind: wall.broken=old.broken
+	snapshot.walls=replacement
+	var replacement_shelters: Array=shelters.duplicate(true)
+	for i in replacement_shelters.size():
+		if i==2: replacement_shelters[i].reached=old_index>=2
+		else: replacement_shelters[i].reached=snapshot.shelters[i if i<2 else i-1].reached
+	snapshot.shelters=replacement_shelters
+	snapshot.checkpoint_index=old_index if old_index<2 else old_index+1
+	var replacement_dew: Array=dew.duplicate(true)
+	for i in replacement_dew.size(): replacement_dew[i].collected=snapshot.dew[i].collected
+	snapshot.dew=replacement_dew
+	if is_checkpoint and old_index==2 and snapshot.p==Vector2(3670,520): snapshot.p=SpringContent.RAIN_HIGH_REST
+
+func snapshot_geometry_clear(snapshot: Dictionary, radius: float) -> bool:
+	for wall in snapshot.walls:
+		if not wall.broken and wall.rect.grow(radius).has_point(snapshot.p): return false
+	for leaf in snapshot.shelters:
+		if not Canopy.contact(snapshot.p,radius,leaf).is_empty(): return false
+	return true
+
 func restore_payload(payload: Dictionary) -> bool:
-	if payload.has("pond_layout_revision") and (not number(payload.pond_layout_revision) or payload.pond_layout_revision!=POND_LAYOUT_REVISION): return false
-	if payload.has("small_actor_revision") and payload.small_actor_revision!=SMALL_ACTOR_REVISION: return false
-	if payload.has("preparation_revision") and payload.preparation_revision!=PREPARATION_REVISION: return false
-	if payload.has("route_geometry_revision") and payload.route_geometry_revision!=ROUTE_GEOMETRY_REVISION: return false
-	if payload.has("keeper_presentation_revision") and payload.keeper_presentation_revision!=2: return false
+	for marker in [["rain_layout_revision",RAIN_LAYOUT_REVISION],["pond_layout_revision",POND_LAYOUT_REVISION],["small_actor_revision",SMALL_ACTOR_REVISION],["preparation_revision",PREPARATION_REVISION],["route_geometry_revision",ROUTE_GEOMETRY_REVISION],["keeper_presentation_revision",2]]:
+		if payload.has(marker[0]) and (not number(payload[marker[0]]) or payload[marker[0]]!=marker[1]): return false
 	var index=int(payload.get("stage",-1))
 	if index<0 or index>=3: return false
 	var probe=get_script().new()
@@ -615,6 +660,19 @@ func restore_payload(payload: Dictionary) -> bool:
 			if found!=2: return false
 	var legacy_geometry: bool=not payload.has("route_geometry_revision")
 	var legacy_pond: bool=not payload.has("pond_layout_revision")
+	var legacy_rain: bool=not payload.has("rain_layout_revision")
+	if legacy_rain and index==1:
+		var old_probe=get_script().new()
+		old_probe.load_stage(1)
+		old_probe.configure_legacy_rain_layout()
+		# This includes old static arrays, numeric state, reached prefixes and
+		# both checkpoint indices, before construction of any replacement array.
+		if not old_probe.valid_state(base): return false
+		probe.upgrade_legacy_rain_geometry(base,false)
+		probe.upgrade_legacy_rain_geometry(base.checkpoint,true)
+		if not probe.snapshot_geometry_clear(base.checkpoint,14.0): return false
+		payload=payload.duplicate(true)
+		payload.state=pack(base)
 	if legacy_pond and index==0:
 		for snapshot in [base,base.checkpoint]:
 			if not probe.upgrade_legacy_pond_geometry(snapshot): return false
@@ -669,6 +727,8 @@ func restore_payload(payload: Dictionary) -> bool:
 	if legacy_geometry and stage==2 and walls.any(func(w): return not w.broken and w.rect.grow(14).has_point(p)):
 		restore_checkpoint("geometry")
 	if legacy_pond and stage==0 and POND_FORK.grow(9.0 if charging else 14.0).has_point(p):
+		restore_checkpoint("geometry")
+	if legacy_rain and stage==1 and not snapshot_geometry_clear({"p":p,"walls":walls,"shelters":shelters},9.0 if charging else 14.0):
 		restore_checkpoint("geometry")
 	for leaf in shelters:
 		if not Canopy.contact(p,9.0 if charging else 14.0,leaf).is_empty():

@@ -196,6 +196,14 @@ func _terrain(item: Dictionary) -> void:
 		ArtProps.stalk(self,a,a.lerp(b,0.33),a.lerp(b,0.66),b,rect.size.y)
 		return
 	if item.get("material", "hedge") == "stem":
+		if model.stage==1 and rect==model.SpringContent.RAIN_UPPER_STEM:
+			# This shoot grows out of the connected hedge; a hanging cut cap
+			# would imply an unsupported object. Its buried base stays inside
+			# the hedge collider, so painted blocking space remains truthful.
+			ArtProps.stem(self,Rect2(rect.position,rect.size+Vector2(0,30)),false)
+			var root:=Vector2(rect.get_center().x,rect.end.y+20)
+			ArtSprites.small_leaf(self,root,root+Vector2(-62,-18),25)
+			return
 		if model.stage in [0,1] and rect.end.y>=830:
 			var x: float=rect.get_center().x
 			ArtProps.stem(self,rect,false)
