@@ -47,9 +47,22 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(tool.digest(self.output), result['sha256'])
         with zipfile.ZipFile(self.output) as archive:
             names = archive.namelist()
-            self.assertTrue(all(n.startswith('雨来之前-0.0.0-03至05-aaaaaaaa/') for n in names))
+            self.assertTrue(all(n.startswith('雨来之前-0.0.0-池岸归途-aaaaaaaa/') for n in names))
             commands = [n for n in names if n.endswith('.command')]
             self.assertEqual(len(commands), 2)
+            expected = {
+                '开始池岸归途.command': ('--spring-journey', 'spring_03_05_v2.json'),
+                '风路对照.command': ('--long-journey', 'summer_long_07_09_r8.json'),
+            }
+            self.assertEqual({Path(n).name for n in commands}, set(expected))
+            for name in commands:
+                body = archive.read(name).decode()
+                flag, save = expected[Path(name).name]
+                self.assertIn(flag, body)
+                self.assertIn(save, body)
+                self.assertIn('--entry-chapter=0', body)
+                self.assertIn('extra+=(--chapter=0)', body)
+                self.assertTrue(archive.getinfo(name).external_attr >> 16 & 0o111)
             notes = archive.read(next(n for n in names if n.endswith('先读我.txt'))).decode()
             self.assertEqual(notes, tool.README.read_text().replace('{version}', '0.0.0'))
             self.assertFalse(any('/存档/' in n or '/日志/' in n or '/raw/' in n for n in names))

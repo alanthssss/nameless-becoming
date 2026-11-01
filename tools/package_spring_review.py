@@ -64,7 +64,7 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
         raise ValueError('Refusing to overwrite an existing package')
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='spring-review-', dir=output.parent) as tmp:
-        stage = Path(tmp) / '雨来之前-03至05'; stage.mkdir()
+        stage = Path(tmp) / '雨来之前-池岸归途'; stage.mkdir()
         with zipfile.ZipFile(export_zip) as archive:
             for info in archive.infolist():
                 name = Path(info.filename)
@@ -80,7 +80,7 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
         if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version) or not re.fullmatch(r'[A-Za-z0-9_.-]+', executable):
             raise ValueError('Unexpected export version or executable name')
         old_name = app.name
-        versioned = stage.parent / f'雨来之前-{version}-03至05-{revision[:8]}'
+        versioned = stage.parent / f'雨来之前-{version}-池岸归途-{revision[:8]}'
         stage.rename(versioned); stage = versioned; app = stage / old_name
         target = stage / f'PondJourney-{version}.app'
         if app != target:
@@ -90,8 +90,8 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
             raise ValueError('Export has no executable')
         binary.chmod(0o755)
         for title, flag, save in [
-            ('开始03至05', '--spring-journey', 'spring_03_05_v2.json'),
-            ('对照07至09', '--long-journey', 'summer_long_07_09_r8.json')]:
+            ('开始池岸归途', '--spring-journey', 'spring_03_05_v2.json'),
+            ('风路对照', '--long-journey', 'summer_long_07_09_r8.json')]:
             command = stage / (title + '.command')
             command.write_text('#!/bin/zsh\nset -e\ncd -- "$(dirname -- "$0")"\n'
                 'mkdir -p -- 存档 日志\nextra=()\n'
@@ -102,7 +102,7 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
             command.chmod(0o755)
         (stage / '先读我.txt').write_text(README.read_text(encoding='utf-8').replace('{version}', version), encoding='utf-8')
         (stage / '版本信息.json').write_text(json.dumps({
-            'version': version, 'revision': revision, 'scope': '03→05整段评审候选；07→09对照',
+            'version': version, 'revision': revision, 'scope': '池岸归途整段评审候选；保留风路对照',
             'human_accepted': False, 'full_game_completed': False,
             'export_sha256': digest(export_zip)}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         temporary_zip = Path(tmp) / 'candidate.zip'
