@@ -1,0 +1,55 @@
+{
+  "kind": "bounded_hedge_support_source_and_composition_fix",
+  "GDD": "§8.1/§13.6",
+  "milestone": 1,
+  "issue": 216,
+  "frozen_production_revision": "5e0856aae4d5a66e16bc1dd2240482f6b4025d33",
+  "failure": {
+    "path": "../../composition/native/01-03-two-levels.png",
+    "sha256": "45e54ce6feff732596982565d91751782f9f2932aa75fa628bdf77b84a08c8b3",
+    "finding": "Stage0 hedge rect560,330,450,150 had no rooted supporting stems; previous source-table hedge support statement was applicable only to stage1. This row and affected G3 were withdrawn before merge and fixed here."
+  },
+  "change": "One stage guard: stage0 now shares stage1 existing slim background stems at rect.x+25 and rect.end.x-25, running from the foliage underside to y828. Same hand-painted renderer; stems are background plant attachments, as for existing flower/perch supports; no solid-wall affordance or collision added.",
+  "source_delta": {
+    "path": "prototypes/swarm-flight/spring_journey_view.gd",
+    "old_sha256": "be349fc1223bfd1dd0ba4cb1e97e67b033ece49c02c10e0b3114c5ca900715e1",
+    "new_sha256": "6e07faaf10f92dd9d90dbec0b47fc4df3713e233a5dbfe939ba10e661404969f",
+    "changed_function": "_terrain",
+    "unchanged": "Stage1/2 rendering branches, geometry, input, audio, save state and assets unchanged."
+  },
+  "verification": {
+    "native_checks": 12,
+    "failures": 0,
+    "movie_frames": 398,
+    "fps": 30,
+    "screenshots": 5,
+    "root_visual_review": "All5 PNG: foliage-to-stem overlap, stems continuing into the ground foreground (the y828 endpoints are below the visible frame), consistent scale/style and no foreground player/cue obstruction in upper/lower traversal. Native trace records six reached targets and zero recoveries.",
+    "capture_boundary": "One legal seeded initial position, then actual direction keys; muted controlled source fixture, not exploration.",
+    "engine_exit_warning": "ObjectDB instances leaked at exit; retained in raw log. No SCRIPT ERROR or ERROR; capture and all assertions completed.",
+    "independent_review": {
+      "reviewer": "/root/support_review",
+      "scope": "Two new PNG(01-lower-entry,04-upper-entry),original01-03-two-levels PNG,one-line diff and local context,receipt and source/media hashes;no engine run/full-video playback or assertion re-execution.",
+      "finding": "No blocker for this one-line repair: stems overlap foliage and continue into ground foreground;scale/color coherent;no new player/cue obstruction. Root endpoints below the frame are established by source y828,not directly seen.",
+      "product_acceptance": false
+    }
+  },
+  "decision": {
+    "hedge_G0_G1_G2": "pass_current_stage0_and_previously_supported_stage1_uses",
+    "affected_C01_C02_C18_G3": "pass_same_geometry_with_repaired_background_connection",
+    "outside": "No arbitrary hedge sizes, future near-source layout, whole element family, J01 exploration or product acceptance."
+  },
+  "raw_archive": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/gate-support",
+  "raw_avi_sha256": "f97651f95ed04580610a2b1557c439ea470167e89d9bb7819154984984ec1629",
+  "artifact_hashes": {
+    "01-lower-entry.png": "6ee4ef5b0a04ab9ff328ad78cb8bfa9d8e332117db855ffb997513d288748b1e",
+    "02-between-background-stems.png": "8b1f7c32670ca55811508b13a3e126d06c320c816dab9831ccaecc709deb6e84",
+    "03-lower-exit.png": "94f6a4cf7056d2926e1293c65ecc335eddac0fe20332d737620fbee9bf3cac70",
+    "04-upper-entry.png": "5f25ffe12f07ac8645f05b4c5623cbc07ec2dc9fecdc8c8d7be9a9e7ca06508f",
+    "05-upper-exit.png": "5d131604bbdf0b721fecb1cc7b77f273283584a1cae17d9483f8e0763f97484b",
+    "driver.gd.txt": "5713dfc65274bc2e9d451fe045a0ca253b4b4ca6ebb6dd58d2f0310d8dc0ca3b",
+    "encode.log.gz": "1e1eed1468fc6bfdfd0507caef17d1ce6ccabcb1493cfe72e5d8ec528398d158",
+    "native.log": "51fc85b37af56a00cbf1ef2c8371eed84e32c596587dcc7b44cff7219010c3e2",
+    "native.mp4": "0e8893a5058e0d9277ff8f7cae2fcdaee013435522b3c8ee103bfa5f1a98210c",
+    "trace.json": "0e0d569528ec17b0301dbdc67dd27bf2416ce0485e2e1bc8c29c0a9edbe06f0d"
+  }
+}

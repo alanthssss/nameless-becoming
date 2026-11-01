@@ -1,0 +1,82 @@
+extends SceneTree
+class NativeFixture extends "res://spring_journey_main.gd":
+	func _notification(what: int):
+		if what!=NOTIFICATION_APPLICATION_FOCUS_OUT: super._notification(what)
+var game
+var folder=OS.get_environment("SWARM_SUPPORT_DIR")
+var samples=[]
+var checks=0
+var failures=0
+var pressed={}
+func _initialize(): call_deferred("run")
+func check(ok: bool,label: String):
+	checks+=1
+	if not ok:
+		failures+=1
+		print("FAIL: "+label)
+func key(code: Key,down: bool):
+	var e=InputEventKey.new()
+	e.physical_keycode=code
+	e.keycode=code
+	e.pressed=down
+	root.push_input(e)
+	if down: pressed[code]=true
+	else: pressed.erase(code)
+func release():
+	for code in pressed.keys(): key(code,false)
+func tick():
+	for i in 2:
+		game.tick(1.0/60)
+		game.world._process(1.0/60)
+	var m=game.model
+	samples.append({"frame":Engine.get_process_frames(),"p":[m.p.x,m.p.y],"camera":m.camera_x,"stamina":m.stamina,"recoveries":m.recoveries})
+	await process_frame
+func shot(name: String):
+	game.queue_redraw()
+	game.world.queue_redraw()
+	await RenderingServer.frame_post_draw
+	check(root.get_texture().get_image().save_png(folder.path_join(name+".png"))==OK,"native capture "+name)
+func fly(target: Vector2):
+	for i in 450:
+		var d: Vector2=target-game.model.p
+		if d.length()<10: break
+		var desired=[d.x< -6,d.x>6,d.y< -6,d.y>6]
+		var codes=[KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN]
+		for j in 4:
+			if desired[j]!=pressed.has(codes[j]): key(codes[j],desired[j])
+		await tick()
+	release()
+	for i in 8: await tick()
+	check(game.model.p.distance_to(target)<20,"ordinary input reaches "+str(target))
+func run():
+	DirAccess.make_dir_recursive_absolute(folder)
+	game=NativeFixture.new()
+	game.progress_file=folder.path_join("save.json")
+	root.add_child(game)
+	await process_frame
+	game.set_process(false)
+	game.world.set_process(false)
+	game.sound.set_muted(true)
+	key(KEY_ENTER,true)
+	key(KEY_ENTER,false)
+	game.model.p=Vector2(400,600)
+	game.model.velocity=Vector2.ZERO
+	game.model.invulnerable=0
+	for i in 2: await tick()
+	await shot("01-lower-entry")
+	await fly(Vector2(760,600))
+	await shot("02-between-background-stems")
+	await fly(Vector2(1100,600))
+	await shot("03-lower-exit")
+	await fly(Vector2(1270,600))
+	await fly(Vector2(1270,230))
+	await fly(Vector2(400,230))
+	await shot("04-upper-entry")
+	await fly(Vector2(1100,230))
+	await shot("05-upper-exit")
+	check(game.model.recoveries==0,"both ordinary paths remain clear")
+	var f=FileAccess.open(folder.path_join("trace.json"),FileAccess.WRITE)
+	f.store_string(JSON.stringify({"kind":"controlled native source review;one seeded legal initial position then ordinary keyboard;muted;not exploration","checks":checks,"failures":failures,"samples":samples},"\t"))
+	f.close()
+	print("POND SUPPORT VERIFIED: %d checks, %d failures"%[checks,failures])
+	quit(1 if failures else 0)
