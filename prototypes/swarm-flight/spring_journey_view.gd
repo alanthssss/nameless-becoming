@@ -208,7 +208,7 @@ func _terrain(item: Dictionary) -> void:
 			ArtProps.stalk(self,Vector2(rect.get_center().x,rect.end.y),Vector2(rect.get_center().x+15,660),Vector2(rect.get_center().x-12,770),Vector2(rect.get_center().x+10,834),rect.size.x*0.4)
 	else:
 		super._terrain(item)
-		if model.stage == 1:
+		if model.stage in [0,1]:
 			for x in [rect.position.x+25.0,rect.end.x-25.0]:
 				ArtProps.stalk(self,Vector2(x,rect.end.y),Vector2(x+12,530),Vector2(x-7,680),Vector2(x+18,828),9.0)
 
