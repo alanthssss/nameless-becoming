@@ -23,9 +23,15 @@
     "movie_frames": 398,
     "fps": 30,
     "screenshots": 5,
-    "root_visual_review": "All5 PNG: foliage-to-stem overlap, rooted ends, consistent scale/style and no foreground player/cue obstruction in upper/lower traversal. Native trace records six reached targets and zero recoveries.",
+    "root_visual_review": "All5 PNG: foliage-to-stem overlap, stems continuing into the ground foreground (the y828 endpoints are below the visible frame), consistent scale/style and no foreground player/cue obstruction in upper/lower traversal. Native trace records six reached targets and zero recoveries.",
     "capture_boundary": "One legal seeded initial position, then actual direction keys; muted controlled source fixture, not exploration.",
-    "engine_exit_warning": "ObjectDB instances leaked at exit; retained in raw log. No SCRIPT ERROR or ERROR; capture and all assertions completed."
+    "engine_exit_warning": "ObjectDB instances leaked at exit; retained in raw log. No SCRIPT ERROR or ERROR; capture and all assertions completed.",
+    "independent_review": {
+      "reviewer": "/root/support_review",
+      "scope": "Two new PNG(01-lower-entry,04-upper-entry),original01-03-two-levels PNG,one-line diff and local context,receipt and source/media hashes;no engine run/full-video playback or assertion re-execution.",
+      "finding": "No blocker for this one-line repair: stems overlap foliage and continue into ground foreground;scale/color coherent;no new player/cue obstruction. Root endpoints below the frame are established by source y828,not directly seen.",
+      "product_acceptance": false
+    }
   },
   "decision": {
     "hedge_G0_G1_G2": "pass_current_stage0_and_previously_supported_stage1_uses",
