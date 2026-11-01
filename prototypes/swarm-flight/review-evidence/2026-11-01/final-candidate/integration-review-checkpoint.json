@@ -1,0 +1,68 @@
+{
+  "production_revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "scope": "Root final integration check; relies on completed independently authored reviews listed below, not a new blind or full-code audit.",
+  "source_drift_after_freeze": "none: tracked post-freeze diff only Now, added final evidence; actual final ZIP PCK matches raw export byte hash",
+  "completed_checks": [
+    "candidate declarations/media hashes passed original content gate",
+    "four original delivery criteria passed with final report hashes",
+    "both actual assembled command entry process restarts and save isolation passed",
+    "all staged whitespace passed, raw logs compressed without modifying bytes",
+    "all current evidence JSON parses except explicitly retained empty terminated dry-c-02 trace",
+    "post-review immutable seals, assembly-input snapshots and compressed raw-log hashes verified",
+    "latest origin/main remains a143cb9, protected worktree tips unchanged"
+  ],
+  "additional_final_audit_attempt": {
+    "agent": "support_review",
+    "status": "interrupted_without_result",
+    "reason": "Additional read-only final audit requested with approximately5-minute bound, no interim finding/artifact returned despite scope-reduction messages; interrupted rather than treating no response as approval. Earlier completed independent audits retain their stated scopes.",
+    "approved_by_this_attempt": false
+  },
+  "known_limits": [
+    "Optional first-wind trigger comprehension not established by independent explorer",
+    "Raw process persisted JSON equality is not every live-memory field inspection",
+    "Candidate is not human accepted or full24-level game",
+    "PR/CI/merge/cleanup and final wallclock still pending at this checkpoint"
+  ],
+  "completed_review_files": [
+    {
+      "path": "delivery-code-review.json",
+      "sha256": "ac5a543036b2a3a6604905211ef1dd75c1c8214d73b2ec870e093d65e79323a1"
+    },
+    {
+      "path": "particle-precision/independent-review.json",
+      "sha256": "09f6a0c1e712ea617a6ee1965510b352ed0b36e81e2e4dd0a2562b2f2471afa6"
+    },
+    {
+      "path": "wind-choice/implementation-review.json",
+      "sha256": "4e4a09b8607ef8ad34ce6deb22438deaa5ea8767db0a482ffd2bd434d1977339"
+    },
+    {
+      "path": "frozen-evidence-audit.json",
+      "sha256": "1f9ce1db426bb083e47677cb608d6ef662527dd9990af37c5fe36e048da0c3d1"
+    },
+    {
+      "path": "first-look/continuation/review.json",
+      "sha256": "6c747a7d95b6ed96f52bef63f90807c4ae10ab6180d6e5e6f699b913163b40c2"
+    },
+    {
+      "path": "first-look/post-review/calibration.json",
+      "sha256": "9304d9a751a7a7422c2505199797945368f0072cac3b226eed77bea7b5be65d9"
+    },
+    {
+      "path": "first-look/post-review/next-content-handoff.json",
+      "sha256": "d8fa43d8a5ca597c532daadf9fae8a3e35afdf0437dcd0ea2692e4aa31fcfbcf"
+    },
+    {
+      "path": "first-look/post-review/supplement-audit.json",
+      "sha256": "5907da6581078c28b2337971f1248229297ea57260746dd5c4aec318818c033e"
+    },
+    {
+      "path": "final-package-proof/process-launch-receipt.json",
+      "sha256": "1fe5057ec31ebe5b676b2d8d249669f0e0f4fc9919b2019941b5d6ed317ea24f"
+    },
+    {
+      "path": "final-package-proof/pck-binding.json",
+      "sha256": "88938784bf7c432129198f8bac22a35782e787d7e9578fbba5ff9e099f2405c2"
+    }
+  ]
+}

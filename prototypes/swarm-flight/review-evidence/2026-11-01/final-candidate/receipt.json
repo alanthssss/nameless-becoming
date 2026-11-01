@@ -51,9 +51,6 @@
       "sha256": "d3d4a7017c371b8945440e00e0cf453bebc809608546b5b8d3a342a892a8286c"
     }
   ],
-  "pending_before_delivery": [
-    "PR/CI/merge/cleanup and actual full closeout timestamp in authoritative #209 and permanent output integration-closeout.json"
-  ],
   "artifact": {
     "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/雨来之前-0.17.0-池岸归途-Mac-9611660f.zip",
     "sha256": "b4510e466940b4850408ff2c8721b26e42a48b83eab7fbf39f2c2551bf9b13cf",
@@ -149,5 +146,13 @@
   "runtime_byte_binding": {
     "path": "final-package-proof/pck-binding.json",
     "sha256": "88938784bf7c432129198f8bac22a35782e787d7e9578fbba5ff9e099f2405c2"
+  },
+  "pending_at_this_preintegration_checkpoint": [
+    "PR/CI/merge/cleanup and actual full closeout timestamp in authoritative #209 and permanent output integration-closeout.json"
+  ],
+  "integration_closeout": {
+    "authority_issue": "https://github.com/alanthssss/nameless-becoming/issues/209",
+    "permanent_local_record": "outputs/swarm-flight/2026-11-01-pond-mvp/integration-closeout.json",
+    "note": "Produced after CI/merge/cleanup; this sealed versioned report records the pre-integration checkpoint and does not pre-claim success."
   }
 }
