@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "kind": "bounded_gate_clearance_receipt",
+  "authority": {
+    "GDD": "§8.1/§9/§13.6",
+    "milestone": 2,
+    "issues": [
+      203,
+      220,
+      221,
+      204
+    ]
+  },
+  "production_changes": false,
+  "verification": {
+    "production_source_hashes": 40,
+    "inherited_artifact_hashes": 41,
+    "source_row_actual_call_hashes": 220
+  },
+  "M3_allowed": true,
+  "MVP_complete": false,
+  "human_acceptance_claim": false,
+  "cost": {
+    "observed_window_start_utc": "2026-11-01T03:30:35Z",
+    "window_end": "Record in authoritative #204 after integration/cleanup; no billed/active-hours inference.",
+    "estimate_minutes_including_CI_cleanup": [
+      15,
+      20
+    ],
+    "new_purchases": 0,
+    "image_generation_calls": 0,
+    "control_hours": "200+40 unchanged",
+    "cumulative_active_effort": "unknown",
+    "reliable_remaining": "unknown",
+    "automation": "PAUSED",
+    "decision": "Continue already-authorized bounded MVP; no new spending or full-game expansion."
+  },
+  "artifact_hashes": {
+    "adjudication.json": "2a8681a2aa312cc21012daa434b56fbc2c006428b4ad49075582e2715653961a",
+    "listening-feedback.json": "02446f329d216053aebe9c09b3e83ea1b798ddb561c5eaafdd4e84e43a1d4847",
+    "prior-independent-review.json": "3a2cb1740c2ed0a19809812360c268de4c4ccfb28e7030df3e91f35161fffd4c"
+  }
+}

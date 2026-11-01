@@ -1,0 +1,1972 @@
+{
+  "schema_version": 1,
+  "kind": "bounded_source_and_composition_gate_adjudication",
+  "authority": {
+    "GDD": "§8.1/§9/§13.6",
+    "milestone": 2,
+    "issues": [
+      203,
+      220,
+      221,
+      204
+    ]
+  },
+  "baseline_revision": "13baf9d9dd5860dd489cb9dbff2e2bdbf98685d2",
+  "frozen_production_revision": "281da0047cf120a53d532229571827c67894c438",
+  "inherited_source_table": {
+    "path": "../composition/source-adjudication.json",
+    "sha256": "e3630537f236aeb3957a93605570a2d309dd40461cc1e72f0c66473eca63fba4",
+    "meaning": "Per-row source/version/state/allowed variation/raw evidence remains authoritative; this overlay resolves its historical pending gate decisions only."
+  },
+  "rows": [
+    {
+      "id": "player-bee",
+      "family": "E01",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/0",
+      "actual_use_states": [
+        "飞行/转向",
+        "移动蓄力/就绪/起冲/收势",
+        "实际受击/保护闪烁/恢复",
+        "棚下休息",
+        "源花采食",
+        "舞蹈/取消",
+        "抵达"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Default flight/turn, moving charge/release/settle, visible protected damage/recovery, resting, feeding, dance/cancel and arrival have respective native samples; player disk and visual sprite intentionally have different extents.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "旧 G0 仅默认安全空域飞行/蓄力/起冲/收势；其余状态分散在受控片段，不据此宣布整族通过。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "player-collision-envelope",
+      "family": "E01",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/1",
+      "actual_use_states": [
+        "蓄力半径 9",
+        "松开半径 14",
+        "真实茎边滑离",
+        "真实叶体下沿展开"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Independent radius9-to14 expansion on actual stem and leaf boundary, with compact/expanded/leave images and physical state assertions; no sprite-wing-as-rigidbody inference.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "9/14 为碰撞盘；翼尖与装饰像素不等于刚体边界。原 G0 数值穿透例不替代本轮原生接触。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "player-charge-contract",
+      "family": "E01",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/2",
+      "actual_use_states": [
+        "移动转向蓄力",
+        "0.4 秒就绪",
+        "早松取消",
+        "低于 20 拒绝起冲",
+        "新按/松开的输入边界"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "0.4s readiness, early cancel/new action,20cost rejection and held-space/new-press boundaries verified by real input; flight2/s is separately accounted.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "正常飞行耗能 2/s 与起冲成本 20 分开；D 的旧空格不能变成飞行冲刺。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "keyboard-flight",
+      "family": "E27",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/3",
+      "actual_use_states": [
+        "真实方向键/空格",
+        "R 清旧输入",
+        "Esc 暂停/冷恢复"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Physical direction/space/R/Esc paths and current exact resume guards observed; existing back-sign cold menu call is transaction evidence, not menu-navigation evidence.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "仅当前键盘路径；控制器和重映射不在此范围。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "stamina",
+      "family": "E11",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/4",
+      "actual_use_states": [
+        "飞行消耗",
+        "8 点蚊伤",
+        "30 点雨伤",
+        "低于 20 拒冲",
+        "恢复到 100"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual ordinary mosquito8,rain30,flight2/s,below20 refusal and recovery100 have physical predicates and visible values; no voice event substitutes for cost.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "stamina-hud",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/5",
+      "actual_use_states": [
+        "当前值",
+        "拒冲",
+        "伤害后/恢复后值"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current numeric bar/refusal/damage/recovery images agree with model values; new journey label is checked in all three HUDs.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "charge-ready-feedback",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/6",
+      "actual_use_states": [
+        "早松提示",
+        "再蓄力清陈旧提示",
+        "就绪/起冲",
+        "保护重要原因"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Original stale-cancel failure reproduced; cancellation clears for new charge/ready/burst while protected hit/recovery retains priority; current shared functions unchanged.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "charge_feedback 中注入 hit/recover 消息只证明 UI 优先级，不证明物理受击。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "damage-feedback",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/7",
+      "actual_use_states": [
+        "蚊碰撞原因/8 点",
+        "雨碰撞原因/30 点",
+        "无敌期不重复",
+        "R 与雨耗尽恢复"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Physical8/30 causes and safe recovery are visible; final source-state UI avoids active caption boxes and player, including adjacent non-blink rain-hit frame.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "success-feedback",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/8",
+      "actual_use_states": [
+        "取露珠/护雨",
+        "开结",
+        "观察成功",
+        "分享提交",
+        "抵达"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Shield,gate,source observation,share and arrival results have corresponding state/event evidence and native displays; applies only these reward paths.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "仅已调用反馈；不是全部成功状态美术验收。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "reward-feedback-throttle",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/9",
+      "actual_use_states": [
+        "普通消息给重要原因让位",
+        "护雨挡击 0.35 秒节流"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Priority guards and0.35s shield-block feedback throttle tested against repeated contacts; does not prove unimplemented same-group dew aggregation.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "未实现或未验的同群露珠合并不由消息优先级代签。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "local-objective",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/10",
+      "actual_use_states": [
+        "03/04/05 当前目标",
+        "开口前后",
+        "已观察/可分享/已提交"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current three chapter titles, gate-before/after and observation/share instructions have native displays; wording presence is separate from independent route comprehension.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "文案存在不等于玩家能自行理解路线。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "character-near-dialogue",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/11",
+      "actual_use_states": [
+        "首屏同伴附近",
+        "全身避让",
+        "小窗"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Friend cue at birth and four nearby positions keeps full horizontal-facing companion/player visible;960x600 explicitly captured.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "仅已录 4 个邻近位置加出生点、1280×800/960×600；其它构图未验。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "camera-follow",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/12",
+      "actual_use_states": [
+        "当前角色跟随",
+        "背牌/提牌/落位剔除",
+        "有限截图视野"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Player following and board/keeper carrying culling examined at current camera positions; no predictive/lookahead camera is claimed.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "不是新的前瞻镜头，也不是整段探索可读性验收。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "window-display",
+      "family": "E27",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/13",
+      "actual_use_states": [
+        "1280×800",
+        "960×600 首屏提示避让"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "1280x800 and960x600 source dialog/shield composition inspected; no arbitrary aspect ratio or system scaling contract.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "只复用已录尺寸，不扩到任意比例/缩放。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "pause-page",
+      "family": "E26",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/14",
+      "actual_use_states": [
+        "Esc 精确暂停",
+        "真实磁盘冷恢复",
+        "声音暂停去重"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual Esc pause and real disk cold rebuild at preparation/share states freeze state and avoid fabricated release; latest pause text has no internal numbering.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "dew-pickup",
+      "family": "E11",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/15",
+      "actual_use_states": [
+        "实际固定露珠",
+        "拾取/体力收益/已取保留"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Known-input route physically collects fixed dew and retained facts are checked by existing model/save regressions; only current fixed pickup behavior.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "已有连续已知路线采集证据；本轮四段不新增露珠变体。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "open-source-flower",
+      "family": "E08",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/16",
+      "actual_use_states": [
+        "03/05 同一蓝花簇",
+        "花心短停",
+        "完整采食观察",
+        "归来补观察"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Same03/05blue source has short stop,full feeding and return-time observation; normal source remains open; explicit invalidate API is not natural flowering evidence.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "正常本版源一直开放；D 的 invalidate_source API 反例单列，不作为自然关闭剧情。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "closed-flower-bud",
+      "family": "E08",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/17",
+      "actual_use_states": [
+        "首屏两颗闭苞",
+        "普通蚊旁小闭苞",
+        "不显示开放蜜源轮廓"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Two birth buds and small mosquito bud have connected stems/leaves and closed silhouette; small bud retained at2390,360 after moving NPC anchor.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "只限三个固定闭苞使用点；不把 API 关闭源当成本株闭苞动作。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "plant-root",
+      "family": "E08",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/18",
+      "actual_use_states": [
+        "固定株茎落地",
+        "源花/闭苞/棚/支架接地"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current source/bud/canopy/frame roots join their shown ground/support anchors; scope is authored fixed coordinates and permitted canopy widths.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "同函数且同坐标的已查接点；未覆盖其它植物族或缩放。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "plant-stem",
+      "family": "E08",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/19",
+      "actual_use_states": [
+        "闭苞主梗/分支",
+        "源花主茎",
+        "叶棚支撑",
+        "牌架曲枝"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Bud main stems and side branches,source stem,canopy support and sign beams inspected for continuous junctions; decorative stems are distinct from solid-stem collisions.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "装饰茎与 solid-stem 的碰撞身份分开。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "plant-leaf",
+      "family": "E08",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/20",
+      "actual_use_states": [
+        "同伴脚下叶面",
+        "小闭苞侧叶同曲线生根",
+        "棚叶"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Companion at300,492 scale0.77 with pure horizontal facing contacts its actual leaf; small-bud side leaf uses same-curve root; green canopy uses its contour contract.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "同伴 scale 0.77，纯水平 LEFT/RIGHT；其它俯仰/比例不复用。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "bird-perch",
+      "family": "E08",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/21",
+      "actual_use_states": [
+        "蓝花右侧固定枝架承重",
+        "03 画眉落枝",
+        "05 空枝重访"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Fixed perch/leaf root continuity independently measured0.732px from3px branch core; foreground canopy occludes lower branch;03 bird/05 empty branch observed.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "短鸣/响应有音频技术证据；枝脚接触只限现有固定构图。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "departing-companions",
+      "family": "E02",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/22",
+      "actual_use_states": [
+        "首屏叶面同伴待机/向玩家转头",
+        "附近提示"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Only current leaf-standing idle/look-at-player and nearby cue: two horizontal facings and scale0.77 foot contact; not a departure flight animation.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "仅普通同伴静态用途；依次出发/归来/让位未由此证明，舞蹈听者另列。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "ordinary-mosquito",
+      "family": "E03",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/23",
+      "actual_use_states": [
+        "idle→aim→chase→return→rest→idle",
+        "追空",
+        "实际接触",
+        "保护期间接触"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Independent swept52px-body oracle,real idle/aim/chase/miss/return/rest,physical8hit/protection,near-leaf obstruction and current/7genuine-old recovery pass; former leaf penetration is superseded.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "Only stage0 fixed ordinary actor with52px body;not other mosquito family variants or keeper behavior.",
+        "Former133/180 leaf-centre penetration baseline is superseded by the cited ordinary-mosquito repair;not accepted evidence."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "ordinary-thrush",
+      "family": "E03",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/24",
+      "actual_use_states": [
+        "03 抬头回应/短鸣/转向叶棚",
+        "05 空枝重访"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current single source-bound greeting/turn and05empty perch have native response evidence; no alternate perches,boss behavior or extra bird animation states.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "普通鸟，不扩为 B03 Boss；换枝等未用状态不通过。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "pond-departure-purpose",
+      "family": "E23",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/25",
+      "actual_use_states": [
+        "闭苞/同伴/对话共同提示出去找花路",
+        "庄主逐牌挂起铺垫"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Closed buds,nearby companion text and three visible hanging-work stages are present and connected; this accepts the presented source arrangement,not player interpretation or high/low-route design.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "源组件固定点有证据；未证明新玩家自主理解或 P4 编排。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "pond-bank",
+      "family": "E20",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/26",
+      "actual_use_states": [
+        "03/05 同坐标水面/花簇/鸟枝重访"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current fixed water/blueflower/perch landmarks recur at same authored positions in03/05; high/low information difference remains outside this source-object conclusion.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "高低路线信息差与独立探索仍待；地标出现不等于选择成立。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "environment-light",
+      "family": "E20",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/27",
+      "actual_use_states": [
+        "当前 Spring 背景/雨廊主题",
+        "棚灯局部色光"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current Spring background and dry/warning/rain/after themes plus fixed lamps inspected; decorative ending rain is not interactive stage1 rain.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "当前静态主题与局部灯；不覆盖季节全集、昼夜变化。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "wax-color-window",
+      "family": "E21",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/28",
+      "actual_use_states": [
+        "末棚小灯中 draw_window",
+        "color_step 当前局部回应"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Fixed small canopy lamp at color0/2 is covered by leaf matrix;actual stage1 color1 now has outer/inside/outer frames,attached cord and cyan projection on side leaf.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "这版是固定叶棚彩灯局部调用；不证明完整 24 弧片全旅程回望。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "solid-stem",
+      "family": "E12",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/29",
+      "actual_use_states": [
+        "真实实体竖茎接触/滑行",
+        "前后开口两侧立柱"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Real compact/expanded body contact and slide on stem,plus fixed gate pillars/ordinary绕行 boundaries checked; render-only stems excluded.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "solid-roof",
+      "family": "E12",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/30",
+      "actual_use_states": [
+        "实体水平顶盖",
+        "可见雨挡止",
+        "边缘绕行"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual roof1900,330,350,95 physically removes inside drop at330;outside1880 gives one30hit without shield/invulnerability/canopy; fixed route绕行 observed.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "roof-drips 未实例化；人工物理雨滴测试不替代顶盖边缘滴水。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "dry-leaf-curtain",
+      "family": "E12",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/31",
+      "actual_use_states": [
+        "第一口盘点可破",
+        "第二口背面空间可破",
+        "打开后移除"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "First physical knot requires slack/counting;second back knot uses spatial approach;opening removes corresponding obstruction and earned fact survives retry.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "第二口不重复等盘点；此记录不代替完整 B01 全状态。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "passage-opening",
+      "family": "E12",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/32",
+      "actual_use_states": [
+        "第一道开口",
+        "侧后方第二道开口",
+        "普通上下绕行"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "First opening and second wall3110/knot3131,300 checked;board2830..2890 physically blocks front and both ordinary upper/lower detours reach back.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "限定同版坐标：牌 2830..2890，第二墙 x3110，结 (3131,300)。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "fixed-wind-flower",
+      "family": "E09",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/33",
+      "actual_use_states": [
+        "三固定花节点",
+        "接力后可离开",
+        "普通飞行可绕过"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Three fixed nodes2760,465/2880,180/3000,275 provide actual relay to back opening;15launch-offset tests plus ordinary bypasses support finite geometry.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "仅 (2760,465)/(2880,180)/(3000,275)；不实例化 W01–08 或 true-curve-relay。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "wind-direction-preview",
+      "family": "E09",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/34",
+      "actual_use_states": [
+        "三节点方向标",
+        "节点间视觉提示"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current fixed node arrows/path hints observed with successful relay; arrows are presentation of fixed nodes,not a true curved-path collision route.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "_wind_paths 是固定节点间提示，不是新弧形碰撞/自动路线。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "wind-chain-exit",
+      "family": "E09",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/35",
+      "actual_use_states": [
+        "末节点收势",
+        "可转向",
+        "上下普通绕行"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Relay final exit clears board/column geometry and allows subsequent flight; ordinary routes also pass; no separate landing-platform object.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "落点为既有空间/叶棚，不新增 landing-platform。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "level-exit",
+      "family": "E12",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/36",
+      "actual_use_states": [
+        "03/04 枝架出口",
+        "05 树洞抵达",
+        "实际最后路段"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Physical03/04 exits and05home arrival,automatic/Enter transitions and current labels checked; known route is not independent exploration.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "已有已知路线控制输入，不是独立玩家探索。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "home-tree-hollow",
+      "family": "E12",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/37",
+      "actual_use_states": [
+        "05 巢门",
+        "蜡脾邻近",
+        "抵达/结尾"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Fixed home/nearby comb and actual final arrival/ending presentation inspected; new ending title fits panel.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "固定巢门样式；不延伸到其它季节家园。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "cloud-source",
+      "family": "E19",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/38",
+      "actual_use_states": [
+        "04 warning/rain 云层显示",
+        "after 退去"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual stage1 warning/rain cloud presentation and after withdrawal observed with real phase progression; injected individual drops do not prove natural-emitter placement.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "音频原生有真实天气阶段 trace；本轮 C 人工加滴不新增云源出滴证据。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "falling-rain",
+      "family": "E19",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/39",
+      "actual_use_states": [
+        "露天自然天气粒子",
+        "受控物理雨滴碰撞",
+        "棚/顶截断"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Natural rain presentation plus controlled production-particle collision prove canopy/roof interception,shield block and exposed30hit; injected fixtures are explicitly separate from natural emitter hits.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "C 插入真实 drop 字典并由生产物理推进，未直接 hurt；只可称受控物理雨滴。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "weather-phase-controller",
+      "family": "E19",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/40",
+      "actual_use_states": [
+        "dry→warning→rain→after",
+        "雨中局部遮护",
+        "重试"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Real threshold650 and2.4s warning-to-rain advance observed;after threshold and rain pause/cold recovery are checked;seeded3700/3900after entry is not full-travel proof.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "audio 已录阶段；C 拾取/挡雨不证明自然天气全循环，不把旧按文件名截图当相位证据。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "leaf-canopy",
+      "family": "E13",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/41",
+      "actual_use_states": [
+        "当前半宽 180 固定绿叶",
+        "真实下沿接触",
+        "遮雨/休息"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Previously approved fixed green halfwidth118/180 contract; current halfwidth180 contact/interception/rest matches unchanged contour implementation; no arbitrary rotation/scaling.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "旧 G2 仅 118/180、y465/500/520/600、固定高95、无旋转/镜像/纵向缩放；本版实际使用180。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "leaf-canopy-support",
+      "family": "E13",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/42",
+      "actual_use_states": [
+        "同叶主茎/侧叶接合",
+        "灯悬点",
+        "接地"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Same-curve main stalk/side-leaf/ground anchors and ordinary/colored lamp underside attachment; fixed widths/heights only.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "仅合同允许宽度与同曲线支撑；既有 G2 不因其它组件共屏自动成为 G3。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "shelter-area",
+      "family": "E13",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/43",
+      "actual_use_states": [
+        "可见叶下休息范围",
+        "遮雨边界",
+        "离叶后露天"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Visible leaf underside and declared rest region enter/exit tested; real canopy rain interception distinct from independent solid-roof interception.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "checkpoint-anchor",
+      "family": "E13",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/44",
+      "actual_use_states": [
+        "真实棚下登记",
+        "R 回安全点",
+        "受雨耗尽恢复"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual canopy registration,manualR and rain-exhaustion recovery return to safe geometry and preserve earned gate facts.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "rain-shield-pickup",
+      "family": "E19",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/45",
+      "actual_use_states": [
+        "通过键盘实际靠近拾取一次",
+        "已取状态"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual keyboard approach from legal2425,450 picks item once;acquired fact/shield5s asserted;fixture is not from-birth discovery proof.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "受控合法出生点 (2425,450) 不等于从关卡起点自然找到该物。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "rain-shield-shell",
+      "family": "E19",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/46",
+      "actual_use_states": [
+        "拾后 5 秒",
+        "物理挡滴",
+        "临近结束",
+        "自然消失"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Physical blocked drops,feedback throttle,near-expiry protection and natural disappearance observed;final3 cue avoids shell/player at both window sizes.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "Only5s current shield/pickup states in controlled native source segment;normal from-birth discovery and other shield variants untested."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "shield-timer-hud",
+      "family": "E24",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/47",
+      "actual_use_states": [
+        "5 秒倒计时",
+        "小于0.5仍保护",
+        "到0消失"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "5s decreases to<0.5 while still protective,then zero/removal;two size screenshots show cue does not obscure timer or body.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "boss-b01-keeper",
+      "family": "E04",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/48",
+      "actual_use_states": [
+        "到悬点逐牌工作",
+        "盘点",
+        "追逐/回位",
+        "到挂点查看/提牌/携带/安置"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual preparation movement/hanging,counting/chase/return,inspect/lift/carry/place states examined at current fixed geometry;normal actor contact is not universal solid-NPC collision.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "keeper-sign-frame",
+      "family": "E04",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/49",
+      "actual_use_states": [
+        "首屏曲梁承重",
+        "背牌实体梁",
+        "挂点与落位支架"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Three-hanger beam,backboard beam and hook/result supports remain continuous at current coordinates;fixed geometry only.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "keeper-rope",
+      "family": "E04",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/50",
+      "actual_use_states": [
+        "三牌各自悬绳",
+        "背牌柔性绳",
+        "携带双牌之间绳",
+        "落位绳"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Individual hanger ropes,backboard flexible cord and connection between carried two boards inspected including destination suspension.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "keeper-leaf-knot",
+      "family": "E04",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/51",
+      "actual_use_states": [
+        "第一口松紧",
+        "第二口背面露出",
+        "解开后消失"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "First loose/tight cue and spatial back-knot visibility,actual break and removal tested without repeating the first timer requirement.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "keeper-flower-sign",
+      "family": "E04",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/52",
+      "actual_use_states": [
+        "三牌分别挂牢",
+        "背牌阻挡",
+        "挂钩查看",
+        "携带/安置与镜头剔除"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Three separately hung signs,solid backboard,inspect/carry/place and camera3300culling tested;old keeper-tidy coordinates not reused.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "首屏挂架与第二口坐标均为限定用法；旧 keeper-tidy 坐标已被 back-sign 取代。未实现的风扭牌架/其它 B01 变体不代签。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "fact-mosquito-signs-open",
+      "family": "E23",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/53",
+      "actual_use_states": [
+        "第一口/第二口真实已开事实",
+        "重试/冷恢复保留"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual first/second physical openings plusR/cold preservation;strict later migration tests retain all non-NPC live/checkpoint facts.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "D open_gates_fixture 仅隔离前置条件，不是本轮真实开门证据。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "resource-observation",
+      "family": "E22",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/54",
+      "actual_use_states": [
+        "短停未记住",
+        "离开清零",
+        "03 可跳过",
+        "05 真源补观察",
+        "保存事实"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Short stop clears on leave;unobserved sharing refused;return to same05source can observe;valid observation persists through actual disk cold restore.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "stage 切换与到蜡脾位置由 fixture 控制；这是规则边界，不是连续旅程证明。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "dance-comb",
+      "family": "E22",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/55",
+      "actual_use_states": [
+        "无观察停栖",
+        "有观察武装",
+        "有效新输入",
+        "方向离开"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Physical perch,unobserved rejection,armed selection,fresh-space input and directional departure examined;no multiple-source menu.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "player-dance",
+      "family": "E22",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/56",
+      "actual_use_states": [
+        "armed 持键取消",
+        "dancing 提交前取消",
+        "释放旧键不冲刺",
+        "新按提交",
+        "重复无提交"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Armed/ongoing directional cancellation,held-key release not converted to burst,new press commit and repeat refusal tested;actual dance pose used for cue bounds.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "dance-listener",
+      "family": "E22",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/57",
+      "actual_use_states": [
+        "等待",
+        "提交后各自真正起飞一次",
+        "到源花采食",
+        "冷恢复不重复起飞"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Waiting then each listener genuinely starts flight once,reaches source and forages;pause/cold/zero-dt technical tests reject repeat departures.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "本轮 D 负例检 listeners 等待；起飞次数去重主要复用 audio129。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "source-directed-bee-flow",
+      "family": "E22",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/58",
+      "actual_use_states": [
+        "提交的信息指向同一 SOURCE",
+        "左蜂 (3195,465) 安全采食"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Submitted information points to same SOURCE;left forager3195,465 clears pillar and reaches source;return is only explicit invalidation API regression,not normal current narrative.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "正常路线不自动关闭源；返回只作为显式 API 回归，不新增自然剧情。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row.",
+        "Returning after explicit source invalidation is an API regression only; current normal source remains open."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "fact-forage-report-committed",
+      "family": "E23",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/59",
+      "actual_use_states": [
+        "无事实禁止分享",
+        "成功只提交一次",
+        "冷恢复不重提"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Missing observation refuses share;one valid commit increments revision once;repeat and cold resume do not recommit.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "exact-suspend",
+      "family": "E28",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/60",
+      "actual_use_states": [
+        "暂停冻结",
+        "真实磁盘重建精确恢复",
+        "不重放事件"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Preparation/gates/share/listener/current-aim real disk pause/cold retains exact legal pose and facts;input must be reasserted after resume.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "checkpoint-transaction",
+      "family": "E28",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/61",
+      "actual_use_states": [
+        "已开通口保留",
+        "临时输入/危险清理",
+        "安全点恢复"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Retry clears temporary inputs/hazards and preserves committed gates;both live/checkpoint validated under geometry/actor migrations.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "save-write-transaction",
+      "family": "E29",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/62",
+      "actual_use_states": [
+        "先验证",
+        "临时文件原子替换",
+        "失败不覆盖"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Real disk writes plus failure/conflict cases prove validation-before-mutation,atomic replacement and no overwrite on backup failure;only present storage namespace/version.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "save-corruption-feedback",
+      "family": "E29",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/63",
+      "actual_use_states": [
+        "未知/损坏拒绝",
+        "磁盘反例保留原字节"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Unknown marker,corrupt file,unsafe current and bad legacy rejected;actualUI continuation/backup-conflict paths preserve original bytes and explain fallback/failure.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "本轮不重新运行磁盘破坏反例；沿用已记录源与严格迁移边界。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "save-backup",
+      "family": "E29",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/64",
+      "actual_use_states": [
+        "升级 route_geometry_revision 前原字节备份",
+        "备份失败拒绝覆盖"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "7genuine old files preserved byte-for-byte before local actor upgrade;existing conflicting backup prevents overwrite;no generic rotation/recovery system claimed.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "仅当前迁移/保留未知文件机制；不证明通用轮转备份或自动从坏备份恢复。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "fact-home-arrival",
+      "family": "E23",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/65",
+      "actual_use_states": [
+        "真实最终路段抵达",
+        "结尾保存/重开"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual final route reaches home;completed cold continuation restores ending;ending listener/keeper event consumption has independent audio tests.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "本轮 D 不走最终出口，结尾事件消费复用 audio 原生及独立测试。",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-charge-ready",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/66",
+      "actual_use_states": [
+        "就绪/早松/体力拒绝"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual keyboard early-release and low-stamina refusal (excerpt1), readiness before both bursts (excerpt5). tired shares charge_cancel PCM; no separate unrecorded timbre is inferred. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 ready,charge_cancel,tired；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-burst",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/67",
+      "actual_use_states": [
+        "起冲"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Two actual charge/release bursts in excerpt5. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 burst；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-relay",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/68",
+      "actual_use_states": [
+        "固定风花接力"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Three actual fixed wind flower relays in excerpt5. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 ring；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-dew",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/69",
+      "actual_use_states": [
+        "露珠拾取"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual dew pickup in excerpt2; shield excerpt also includes dew. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 dew；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-curtain",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/70",
+      "actual_use_states": [
+        "解开两道叶结"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual front and back gate opening events in excerpt5. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 gate；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-hit",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/71",
+      "actual_use_states": [
+        "实际蚊/雨伤"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual hit events in stage1 andstage2;declared actual native source fixtures. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s"
+      ],
+      "unsupported_scope": [
+        "事件映射 hit；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-recovery",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/72",
+      "actual_use_states": [
+        "登记/R/受雨恢复/旧档安全回退"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "checkpoint heard;checkpoint/recover_manual/recover_rain/recover_exhaustion/recover_timeout/recover_geometry share the exact recover PCM;trigger semantics remain supported by technical receipts. Manual R is also actually present in supplement excerpt5. Other recovery triggers use the same recover PCM/gain0dB/pitch0.97–1.03; prior technical trigger/restore checks support that bounded reuse. Those unplayed contexts are not claimed heard. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s",
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 checkpoint,recover_manual,recover_rain,recover_exhaustion,recover_geometry；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-shield",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/73",
+      "actual_use_states": [
+        "拾取/挡击节流/自然结束"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual pickup, two blocked hits and natural expiration in excerpt4. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 shield,shield_block,shield_end；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-arrival",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/74",
+      "actual_use_states": [
+        "抵达/结尾"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Arrival bell in excerpt3 and completed ending in excerpt6. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/supplement_29s"
+      ],
+      "unsupported_scope": [
+        "事件映射 finish,arrival_bell；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-weather",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/75",
+      "actual_use_states": [
+        "预警/露天雨/叶下雨/after 静止"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual warning,exposed rain,sheltered rain andafter fade in28s trace. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s"
+      ],
+      "unsupported_scope": [
+        "事件映射 weather_warning,_pond_rain；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-npc",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/76",
+      "actual_use_states": [
+        "普通画眉一次回应"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "bird_greeting once. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s"
+      ],
+      "unsupported_scope": [
+        "事件映射 bird_greeting；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-b01",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/77",
+      "actual_use_states": [
+        "挂牢三次/每次盘点/提牌/安置"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "keeper_hang3,count1,lift1,place1. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s"
+      ],
+      "unsupported_scope": [
+        "事件映射 keeper_hang,keeper_count,keeper_lift,keeper_place；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-dance",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/78",
+      "actual_use_states": [
+        "蜂舞循环/提交/各自真正起飞"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Actual dance loop,commit1,listener_depart2. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s"
+      ],
+      "unsupported_scope": [
+        "事件映射 _pond_dance,dance_commit,listener_depart；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "sound-source-observation",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/79",
+      "actual_use_states": [
+        "完成观察一次"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "source_observed once. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s"
+      ],
+      "unsupported_scope": [
+        "事件映射 source_observed；技术路由/有声录制/PCM 不等于主观试听，听感待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "music-spring",
+      "family": "E25",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/80",
+      "actual_use_states": [
+        "03 当前 arrangement 0",
+        "04/05 当前 arrangement 2",
+        "暂停/静音既有行为"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Native current arrangements0/2 and actual pause/cold contexts in28s source audit;no approval of other arrangements or full game. Together with the inherited source-state/routing/PCM evidence, the actual feedback resolves the only listed missing evidence for this fixed use.",
+      "additional_evidence": [
+        "listening-feedback.json#/original_28s"
+      ],
+      "unsupported_scope": [
+        "本版实际使用两支既有编曲；不凭编号2宣称秋季音乐通过；主观试听待验。",
+        "No C18/audio G2/M3 approval;not uninstantiated rescue/sneeze/other boss sounds or realtime layered music."
+      ],
+      "remaining_blocker_for_declared_use": null
+    },
+    {
+      "id": "hedge",
+      "family": "E08",
+      "inherited_source_row": "../composition/source-adjudication.json#/rows/81",
+      "actual_use_states": [
+        "03/04 默认 terrain 花篱实体正面",
+        "04 棚边花篱顶盖与固定支撑"
+      ],
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "G0": "pass_declared_use",
+      "G1": "pass_declared_use",
+      "G2": "pass_declared_use",
+      "decision_reason": "Current terrain default calls actual hedge renderer;fixed front face/supports visible and1900roof real rain boundary proven;not every hedge cutout/season/scale.",
+      "additional_evidence": [],
+      "unsupported_scope": [
+        "terrain default material=hedge → Spring super._terrain → ArtSprites.hedge is actually called. Does not instantiate W01–08,landing-platform,or prove all front/back/opening variants.",
+        "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
+      ],
+      "remaining_blocker_for_declared_use": null
+    }
+  ],
+  "combinations": [
+    {
+      "id": "C01",
+      "technical_result": "Actual direction input,dew4 allocations,resource use,physical mosquito8hit,canopy rest,R and retained first-gate fact. Stem/leaf9→14,low20refusal and physicalrain30 boundaries use cited source-state/ordinary-mosquito/rain-sources receipts.",
+      "outside": "Independent route choice and all arbitrary geometry combinations.",
+      "actual_element_ids": [
+        "checkpoint-anchor",
+        "checkpoint-transaction",
+        "dew-pickup",
+        "dry-leaf-curtain",
+        "home-tree-hollow",
+        "keyboard-flight",
+        "leaf-canopy",
+        "leaf-canopy-support",
+        "level-exit",
+        "ordinary-mosquito",
+        "passage-opening",
+        "player-bee",
+        "player-charge-contract",
+        "player-collision-envelope",
+        "save-write-transaction",
+        "shelter-area",
+        "solid-roof",
+        "solid-stem",
+        "stamina"
+      ],
+      "G3": "pass_declared_current_composition",
+      "decision_by": "/root (integrator)",
+      "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
+      "decision_reason": "Actual direction input,dew4 allocations,resource use,physical mosquito8hit,canopy rest,R and retained first-gate fact. Stem/leaf9→14,low20refusal and physicalrain30 boundaries use cited source-state/ordinary-mosquito/rain-sources receipts. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+    },
+    {
+      "id": "C02",
+      "technical_result": "Birth closed buds/companion,connected flower/perch and one real source observation persist through actual cold/stage transitions; keeper hanging3 occurs on same route.",
+      "outside": "Current high/low HUD text does not establish #205 information difference;extra plant/bird states not instantiated.",
+      "actual_element_ids": [
+        "bird-perch",
+        "closed-flower-bud",
+        "departing-companions",
+        "dew-pickup",
+        "environment-light",
+        "hedge",
+        "open-source-flower",
+        "ordinary-thrush",
+        "plant-leaf",
+        "plant-root",
+        "plant-stem",
+        "player-bee",
+        "player-charge-contract",
+        "player-collision-envelope",
+        "pond-bank",
+        "pond-departure-purpose",
+        "stamina",
+        "wax-color-window"
+      ],
+      "G3": "pass_declared_current_composition",
+      "decision_by": "/root (integrator)",
+      "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
+      "decision_reason": "Birth closed buds/companion,connected flower/perch and one real source observation persist through actual cold/stage transitions; keeper hanging3 occurs on same route. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+    },
+    {
+      "id": "C03",
+      "technical_result": "Actual fixed wind path hits3 nodes and opens back knot after first gate; native wind1/2 show player at differing heights and remaining ordinary flight. Compatible back-sign receipts cover both ordinary bypasses.",
+      "outside": "No W01–08/new curved relay/landing platform or first-time back-knot understanding.",
+      "actual_element_ids": [
+        "dry-leaf-curtain",
+        "fixed-wind-flower",
+        "home-tree-hollow",
+        "level-exit",
+        "passage-opening",
+        "player-bee",
+        "player-charge-contract",
+        "player-collision-envelope",
+        "solid-roof",
+        "solid-stem",
+        "wind-chain-exit",
+        "wind-direction-preview"
+      ],
+      "G3": "pass_declared_current_composition",
+      "decision_by": "/root (integrator)",
+      "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
+      "decision_reason": "Actual fixed wind path hits3 nodes and opens back knot after first gate; native wind1/2 show player at differing heights and remaining ordinary flight. Compatible back-sign receipts cover both ordinary bypasses. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+    },
+    {
+      "id": "C04",
+      "technical_result": "Natural dry→warning→rain→after with canopy entry/exit; actual shield pickup,2block events and natural expiration on continuous route. Controlled source receipts separately prove physical rain30/roof edge;two current route hits are mosquitoes.",
+      "outside": "No acceptance of two meaningful rain approaches or no-shield flat-flight exclusion;#206 pending.",
+      "actual_element_ids": [
+        "checkpoint-anchor",
+        "cloud-source",
+        "falling-rain",
+        "leaf-canopy",
+        "leaf-canopy-support",
+        "player-bee",
+        "player-charge-contract",
+        "player-collision-envelope",
+        "rain-shield-pickup",
+        "rain-shield-shell",
+        "shelter-area",
+        "shield-timer-hud",
+        "weather-phase-controller"
+      ],
+      "G3": "pass_declared_current_composition",
+      "decision_by": "/root (integrator)",
+      "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
+      "decision_reason": "Natural dry→warning→rain→after with canopy entry/exit; actual shield pickup,2block events and natural expiration on continuous route. Controlled source receipts separately prove physical rain30/roof edge;two current route hits are mosquitoes. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+    },
+    {
+      "id": "C05",
+      "technical_result": "Count→first opening→R retained fact→back opening→real inspect/lift/carry/place; current lift/carry-visible/placement frames andcontinuouspositions plus same-geometry back-sign/tidy middle connection evidence suffice for this bounded technical relationship.",
+      "outside": "Carry-descent atx3580 exits current camera;not universally visible. Old keeper-tidy coordinates are not reused. No independent understanding or fullJ03/P4 claim.",
+      "actual_element_ids": [
+        "boss-b01-keeper",
+        "dry-leaf-curtain",
+        "fact-mosquito-signs-open",
+        "home-tree-hollow",
+        "keeper-flower-sign",
+        "keeper-leaf-knot",
+        "keeper-rope",
+        "keeper-sign-frame",
+        "level-exit",
+        "passage-opening",
+        "solid-roof",
+        "solid-stem"
+      ],
+      "G3": "pass_declared_current_composition",
+      "decision_by": "/root (integrator)",
+      "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
+      "decision_reason": "Count→first opening→R retained fact→back opening→real inspect/lift/carry/place; current lift/carry-visible/placement frames andcontinuouspositions plus same-geometry back-sign/tidy middle connection evidence suffice for this bounded technical relationship. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+    },
+    {
+      "id": "C06",
+      "technical_result": "Actual same-source observation,physical comb,fresh-space arm,real cold guard then exactlyonecommit,two listeners depart and both forage atSOURCE; full ending and completedcold restore pass. Negative cancellation/repeat/no-observation comes from finite-source-stateD.",
+      "outside": "Known-answer path;no unobserved player inference. Explicit invalidation API is not naturally occurring source closure.",
+      "actual_element_ids": [
+        "bird-perch",
+        "closed-flower-bud",
+        "dance-comb",
+        "dance-listener",
+        "fact-forage-report-committed",
+        "fact-home-arrival",
+        "hedge",
+        "open-source-flower",
+        "plant-leaf",
+        "plant-root",
+        "plant-stem",
+        "player-dance",
+        "resource-observation",
+        "sound-source-observation",
+        "source-directed-bee-flow"
+      ],
+      "G3": "pass_declared_current_composition",
+      "decision_by": "/root (integrator)",
+      "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
+      "decision_reason": "Actual same-source observation,physical comb,fresh-space arm,real cold guard then exactlyonecommit,two listeners depart and both forage atSOURCE; full ending and completedcold restore pass. Negative cancellation/repeat/no-observation comes from finite-source-stateD. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+    },
+    {
+      "id": "C18",
+      "technical_result": "Current names and fitted ending;1280x800 and960x600 images;all sampledcue/body/caption assertions. Actual22voicekinds and recordedmix have no saturation.",
+      "outside": "Raw camera/rectangles absent from trace, so every sample cannot be independently recomputed. Driver code and inspected native frames support the bounded layout. The two supplied clips were heard; full118s subjective listening is not claimed.",
+      "actual_element_ids": [
+        "camera-follow",
+        "character-near-dialogue",
+        "charge-ready-feedback",
+        "checkpoint-transaction",
+        "damage-feedback",
+        "exact-suspend",
+        "fact-home-arrival",
+        "keyboard-flight",
+        "local-objective",
+        "music-spring",
+        "pause-page",
+        "player-bee",
+        "player-charge-contract",
+        "player-collision-envelope",
+        "reward-feedback-throttle",
+        "save-backup",
+        "save-corruption-feedback",
+        "save-write-transaction",
+        "shield-timer-hud",
+        "sound-arrival",
+        "sound-b01",
+        "sound-burst",
+        "sound-charge-ready",
+        "sound-curtain",
+        "sound-dance",
+        "sound-dew",
+        "sound-hit",
+        "sound-npc",
+        "sound-recovery",
+        "sound-relay",
+        "sound-shield",
+        "sound-source-observation",
+        "sound-weather",
+        "stamina-hud",
+        "success-feedback",
+        "window-display"
+      ],
+      "G3": "pass_declared_current_composition",
+      "decision_by": "/root (integrator)",
+      "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
+      "decision_reason": "Current names and fitted ending;1280x800 and960x600 images;all sampledcue/body/caption assertions. Actual22voicekinds and recordedmix have no saturation. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+    }
+  ],
+  "counts": {
+    "source_ids": 82,
+    "non_audio": 67,
+    "audio": 15,
+    "combinations": 7,
+    "declared_use_blockers": 0
+  },
+  "decision": {
+    "bounded_G0_G3_pass": true,
+    "M3_allowed": true,
+    "allowed_scope": "Only the listed82 actual source uses and C01–C06/C18 of the frozen pond journey. #205 may begin P4. Changed/new use, geometry, states, source code or camera composition must reverify affected rows/combinations before delivery.",
+    "whole_families_pass": false,
+    "whole_M1_M2_complete": false,
+    "G4_pass": false,
+    "MVP_complete": false,
+    "human_product_acceptance": false
+  },
+  "review_scopes": {
+    "root": "Prior review of17 original and12 selected images, driver/trace/source rows/PCM; integrator makes this final bounded adjudication after both actual audio replies.",
+    "independent": "Prior reviewer inspected4 original+7 selected images and relevant driver/trace/source rows. Its historical no-new-blocker finding supports this adjudication; it did not sign formal G3 at that time and is not credited with full-video playback."
+  },
+  "rollback": "If a declared use fails, reopen its source/combination and #204 only to the affected dependency; preserve this frozen historical decision. Do not extend this pass to #205/#206 geometry or unknown variants.",
+  "remaining_product_work": [
+    "#205 true high/low information difference",
+    "#206 two meaningful rain approaches",
+    "#207 whole gate/keeper experience",
+    "#208 controls-only independent review and J01–08",
+    "#209 specified packaging and extracted dual-entry verification"
+  ]
+}

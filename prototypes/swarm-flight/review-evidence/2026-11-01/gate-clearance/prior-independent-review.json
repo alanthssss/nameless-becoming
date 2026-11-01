@@ -1,0 +1,19 @@
+{
+  "reviewer": "/root/feedback_review",
+  "reported_at_utc": "2026-11-01T02:37:58.382158+00:00",
+  "frozen_production_revision": "281da0047cf120a53d532229571827c67894c438",
+  "scope": "Read-only followup on already-frozen composition;4originalPNG+7selectedframes independently viewed;not complete video replay or every root-reviewed image.",
+  "audio": "Confirms8/7limited classification. Original recovery onlycheckpointcontext;sharedPCMdoesnotmeanothercontextslistened. Supplementanswerpending.",
+  "combination_results": {
+    "C01": "Trace/assertions support movement,dew,hit,recovery,arrival;ordinarymosquito−8image viewed.",
+    "C02": "Firstsourcefeeding/birdresponse andreturnedlistenersfeeding viewed;samesourcerelation,not high-low informationdifference.",
+    "C03": "Windmiddleframes+three-relay/two-gatetrace+priorbypass evidencenoadditionalblocker.",
+    "C04": "Fouractualweatherphasetrace,warning/shieldimages;two currenthitsnotusedasrainproof.",
+    "C05": "Lift,visiblecarry,offscreenmiddle,placement viewed;compatiblepriortidy evidence sufficient,no recapture;notallcarryonscreen.",
+    "C06": "Oncecommit,coldrestore,twoactualarrivals supported;finalforagingsamescreen viewed.",
+    "C18_non_audio": "Driverindependentrectanglecalculation and3525clear samples checked;viewedkeyframes noadditionalocclusion."
+  },
+  "finding": "No identifiedproductionrepair or additionalnon-audionativecapture blocker ininspectedscope.",
+  "formal_G3_M3_approved": false,
+  "source_table_changed": false
+}
