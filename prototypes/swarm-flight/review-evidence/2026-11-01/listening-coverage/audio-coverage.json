@@ -1,0 +1,153 @@
+{
+  "kind": "audio_listening_coverage_overlay",
+  "baseline_revision": "18679302c72299d9631684e0436fa4e53d2223d2",
+  "production_source_revision": "281da0047cf120a53d532229571827c67894c438",
+  "source_table": "../composition/source-adjudication.json",
+  "source_table_sha256": "e3630537f236aeb3957a93605570a2d309dd40461cc1e72f0c66473eca63fba4",
+  "rows": [
+    {
+      "id": "sound-charge-ready",
+      "actual_use_states": [
+        "就绪/早松/体力拒绝"
+      ],
+      "status": "supplement_listening_pending",
+      "evidence": "29.2-second supplement with declared excerpts;actual user reply pending",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-burst",
+      "actual_use_states": [
+        "起冲"
+      ],
+      "status": "supplement_listening_pending",
+      "evidence": "29.2-second supplement with declared excerpts;actual user reply pending",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-relay",
+      "actual_use_states": [
+        "固定风花接力"
+      ],
+      "status": "supplement_listening_pending",
+      "evidence": "29.2-second supplement with declared excerpts;actual user reply pending",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-dew",
+      "actual_use_states": [
+        "露珠拾取"
+      ],
+      "status": "supplement_listening_pending",
+      "evidence": "29.2-second supplement with declared excerpts;actual user reply pending",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-curtain",
+      "actual_use_states": [
+        "解开两道叶结"
+      ],
+      "status": "supplement_listening_pending",
+      "evidence": "29.2-second supplement with declared excerpts;actual user reply pending",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-hit",
+      "actual_use_states": [
+        "实际蚊/雨伤"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "Actual hit events in stage1 andstage2;declared actual native source fixtures.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-recovery",
+      "actual_use_states": [
+        "登记/R/受雨恢复/旧档安全回退"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "checkpoint heard;checkpoint/recover_manual/recover_rain/recover_exhaustion/recover_timeout/recover_geometry share the exact recover PCM;trigger semantics remain supported by technical receipts.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-shield",
+      "actual_use_states": [
+        "拾取/挡击节流/自然结束"
+      ],
+      "status": "supplement_listening_pending",
+      "evidence": "29.2-second supplement with declared excerpts;actual user reply pending",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-arrival",
+      "actual_use_states": [
+        "抵达/结尾"
+      ],
+      "status": "supplement_listening_pending",
+      "evidence": "29.2-second supplement with declared excerpts;actual user reply pending",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-weather",
+      "actual_use_states": [
+        "预警/露天雨/叶下雨/after 静止"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "Actual warning,exposed rain,sheltered rain andafter fade in28s trace.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-npc",
+      "actual_use_states": [
+        "普通画眉一次回应"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "bird_greeting once.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-b01",
+      "actual_use_states": [
+        "挂牢三次/每次盘点/提牌/安置"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "keeper_hang3,count1,lift1,place1.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-dance",
+      "actual_use_states": [
+        "蜂舞循环/提交/各自真正起飞"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "Actual dance loop,commit1,listener_depart2.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "sound-source-observation",
+      "actual_use_states": [
+        "完成观察一次"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "source_observed once.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    },
+    {
+      "id": "music-spring",
+      "actual_use_states": [
+        "03 当前 arrangement 0",
+        "04/05 当前 arrangement 2",
+        "暂停/静音既有行为"
+      ],
+      "status": "heard_no_obvious_issue_in_bounded_use",
+      "evidence": "Native current arrangements0/2 and actual pause/cold contexts in28s source audit;no approval of other arrangements or full game.",
+      "limits": "Actual subjective feedback only for material named in answered question;technical routing and version applicability use prior source adjudication. Not whole game/product/human exploration acceptance."
+    }
+  ],
+  "counts": {
+    "audio_ids": 15,
+    "bounded_heard": 8,
+    "supplement_pending": 7
+  },
+  "no_obvious_issue_does_not_mean": "Independent player acceptance,perfect mixing orwholeMVPcompletion",
+  "formal_G3_M3_allowed": false
+}

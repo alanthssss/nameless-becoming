@@ -1,0 +1,60 @@
+{
+  "kind": "listening_coverage_correction_and_feedback",
+  "schema_version": 1,
+  "authority": {
+    "gdd": [
+      "§9",
+      "§13.6"
+    ],
+    "milestone": "M2",
+    "issue": 204
+  },
+  "baseline_revision": "18679302c72299d9631684e0436fa4e53d2223d2",
+  "production_changes": false,
+  "purpose": "Record actual28second feedback;correct original sampling omission by supplying only missing foundational sound states.",
+  "verification": {
+    "negative_native": "3 assertions/0failures,152movieframes@30;controlled legal position1700,210 and19energy;realkeyboardearly release and too-tired release;actual event pool allocations;no directplay_event.",
+    "composition": "Positive clips from exact earlier281da00 native AVI PCM;production source remains unchanged. Traces locate actual voiced event frames with surrounding context.",
+    "audio_edits": "0.6s silent excerpt separators,10ms edge fades only;no gain change/normalization within excerpts. Do not infer natural game transitions from montage boundaries.",
+    "root_visual": "Reviewed negative-too-tired native image and trace/log;base composition29 frames already reviewed.",
+    "reproducibility": "Rebuilt supplement with saved assemble-supplement.py.txt;SHA256 exactly equalsfe2e96d9f15de132d71cc710c200d376e5098bc61e9b69e619d60397e6fa6cbc."
+  },
+  "human_acceptance_claim": false,
+  "MVP_complete": false,
+  "M3_allowed": false,
+  "listening_status": "28seconds received;29second missing-state supplement pending",
+  "cost": {
+    "observed_start_utc": "2026-11-01T02:30:37Z",
+    "estimate_minutes": [
+      20,
+      30
+    ],
+    "checkpoint_utc": "2026-11-01T02:33:14.694266+00:00",
+    "active_hours": null,
+    "cumulative_hours": null,
+    "remaining_hours": null,
+    "cash_purchases": 0,
+    "image_calls": 0,
+    "budget": "200+40h unchanged;remaining unknown;automationPAUSED"
+  },
+  "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/listening-coverage in actualmain",
+  "artifact_hashes": {
+    "assemble-supplement.py.txt": "88c28f7a61c31545ec21682c0696ee9cbc75ec4459393b7360acf6a617f5bb31",
+    "audio-coverage.json": "138aa6650772d2f5c26c51048815cf0422f61aa9db159f8c63f0a375eba8b054",
+    "negative-driver.gd.txt": "57bc934d2295a4bc961f6aeaad15cd03eaec4d04569ff5edb353ab9409027f5a",
+    "negative-extract.log.gz": "6b083fec219ed495fa4c0ba730c0c4bc9b0a032e90547650078bb253ad483818",
+    "negative-native.log": "f753c076264b43b572fb3f460661f8264c55dfcb5e8e739875eddcb988d3c506",
+    "negative-native.wav": "4bf62ba1315e1a02b534e713a266fbc833550153d54df636b24f1410e94308c6",
+    "negative-too-tired.png": "b6f552fc65aa395b40c8d3e5e806807794dbf6288afe4bd98d9f964bb47b4218",
+    "negative-trace.json": "c548256637a68cf86eece210a0c67bccde0c785eb249e700a44d37acdd3dac3e",
+    "supplement-recipe.json": "0fefa02685a81292430369ed5ea005ae30452c09cc6c0fee80c58a7ac99db460",
+    "supplement.wav": "fe2e96d9f15de132d71cc710c200d376e5098bc61e9b69e619d60397e6fa6cbc",
+    "user-feedback.json": "3ac49d736fe7dec39600dd7625b75dfac7b233783947de3b8ee82231bab6cb7d"
+  },
+  "review": {
+    "root": "Native negative trace/log/image,source aliases,exact episode timestamps,unchanged production sources and all artifact hashes checked.",
+    "independent_reviewer": "/root/feedback_review",
+    "independent_result": "Original28.63s has7IDs directly plus recovery checkpoint8 instances:sharedrecoverPCM subjective support only,not heard R/rain-exhaustion contexts. Seven missing IDs match supplement plan. No118s/full15 approval inferred.",
+    "scope": "Audio coverage classification;remaining non-audio combination review recorded separately when available."
+  }
+}

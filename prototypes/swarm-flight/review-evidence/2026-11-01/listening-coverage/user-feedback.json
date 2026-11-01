@@ -1,0 +1,24 @@
+{
+  "kind": "human_creator_listening_feedback",
+  "person": "Alan",
+  "response": "已试听，没有明显问题",
+  "scope": "Only the28.633-second native-review.mp4 explicitly named in the asynchronous question;not the118.133-second complete recording orwholeMVPacceptance.",
+  "question_item_id": "[\"request_user_input_async\",\"call_b2b2ae26bffd4dce817009a712e4e127\",0]",
+  "reported_at_turn_observation_utc": "2026-11-01T02:30:37Z",
+  "played_file_sha256": "e8831dba5448cfbdcab5ac17a57d42a7808360065e01e1d72bff82142b66dbfe",
+  "underlying_native_pcm_sha256": "3ddd4896f4645c3b6109440a1e1f352689bb56d233d1a045b4e05fbb2ec6e892",
+  "actual_voice_counts": {
+    "bird_greeting": 1,
+    "checkpoint": 8,
+    "dance_commit": 1,
+    "hit": 2,
+    "keeper_count": 1,
+    "keeper_hang": 3,
+    "keeper_lift": 1,
+    "keeper_place": 1,
+    "listener_depart": 2,
+    "source_observed": 1,
+    "weather_warning": 1
+  },
+  "supplement": "29.199979s supplied separately;user answer pending"
+}
