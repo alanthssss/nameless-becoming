@@ -1,0 +1,307 @@
+[
+  {
+    "path": "01-initial.png",
+    "sha256": "f2924f2c354c4c66698563d69e42238e13efa7e50799e7d7fc7911ab0f23325b",
+    "raw": true
+  },
+  {
+    "path": "02-stage03-entry.png",
+    "sha256": "6f230aed345e4d7ab483639cd008f8ca3a75d42bd5c5087e073a83a2a72a96d7",
+    "raw": true
+  },
+  {
+    "path": "03-stage03-direct.png",
+    "sha256": "0d1ea42807d46098c43cbd1743f20095a90ac7d1c6a13fa9b4cb74bc6b3839bd",
+    "raw": true
+  },
+  {
+    "path": "04-stage03-dew-attempt.png",
+    "sha256": "299e988ade31b8d361bf33e9a6e9234e612c94c6f3d824f5374237f3007f5ad7",
+    "raw": true
+  },
+  {
+    "path": "05-stage03-flower-near.png",
+    "sha256": "9fdc3c6e03007a51694eb99e681b14a8b111583e7525cb66c6afa1e9939fab43",
+    "raw": true
+  },
+  {
+    "path": "06-stage03-windflower.png",
+    "sha256": "8ee2e02cc3d2f657b0e8bfcff7ee4a1f330d8951f34d17b1dfc35e3ac8e9e62c",
+    "raw": true
+  },
+  {
+    "path": "07-stage03-lower-route.png",
+    "sha256": "8c3d596bb5288760cc4afcd9e0604063310b8fa4346e49a752017146e476eb22",
+    "raw": true
+  },
+  {
+    "path": "08-stage03-leaf.png",
+    "sha256": "fa90c87ad3dd794d14fba8f05ad1ebd070e1bb6af2752117643818e49f3279b7",
+    "raw": true
+  },
+  {
+    "path": "09-stage03-nextflower.png",
+    "sha256": "e09157cab318c5a0bd3f03f6ec3f7d8959dfec709d45795028766bdece223f03",
+    "raw": true
+  },
+  {
+    "path": "10-stage03-destination.png",
+    "sha256": "bd00abb7a75be9af0a1f7215480161fd5b0cdba7f5bb168478e16a79af897e46",
+    "raw": true
+  },
+  {
+    "path": "11-stage03-overstalk.png",
+    "sha256": "ea8c5f5de81b089105c978bd6f827209515ebeb6fc1936655c0263578c43616d",
+    "raw": true
+  },
+  {
+    "path": "12-stage03-openflower.png",
+    "sha256": "11461a866812ed99bce204a1d5c16b5c0243d5a57a4427d29ef7a3463eafe61e",
+    "raw": true
+  },
+  {
+    "path": "13-stage03-flower-rest.png",
+    "sha256": "23f33a200c00c173b96d7f2900828d8cde3ae5ee764361e50f3e190cb29c56c8",
+    "raw": true
+  },
+  {
+    "path": "14-stage03-exit.png",
+    "sha256": "80d84acea8456355f0206496f7dd9c60febb4b103469531d0561247c3c0f0590",
+    "raw": true
+  },
+  {
+    "path": "15-stage04-entry.png",
+    "sha256": "322107cb04ce7028991c7006907d339b6077b061f8848b10f36467d05979bddb",
+    "raw": true
+  },
+  {
+    "path": "16-stage04-threshold.png",
+    "sha256": "cbdd2ffa0d39103fdce34a592ffb4c4702cea28e86aee38a7f504907db812593",
+    "raw": true
+  },
+  {
+    "path": "17-stage03-complete.png",
+    "sha256": "f3e1396a7705f3b6d1c18209e81bf6cdfc7e4cce30a4eb04733ce7cb44ab434e",
+    "raw": true
+  },
+  {
+    "path": "18-stage04-paused-entry.png",
+    "sha256": "43238aea388f34ffa66f9e06facf6219da04df7d726736a08d7dfecc8152b612",
+    "raw": true
+  },
+  {
+    "path": "19-stage04-visible-start.png",
+    "sha256": "b1fa5465378b0b8421c13603cdbf78af1f9e3412dd8bb1560cb90e0964c2a312",
+    "raw": true
+  },
+  {
+    "path": "20-stage04-first-shelter.png",
+    "sha256": "4be6582771321d859e8d1ac16f3989ec08f89861229bba738dceed7e65a834ca",
+    "raw": true
+  },
+  {
+    "path": "21-stage04-exposed-crossing.png",
+    "sha256": "c40ed9b45a10e32130bb98147668ef2fd0c1908aec1a6ca570d504c68f69fe58",
+    "raw": true
+  },
+  {
+    "path": "22-stage04-rain-exposure.png",
+    "sha256": "200b16a2a384fe835de472598dbd49249f60349043bcdb9dc51d3d80bd364304",
+    "raw": true
+  },
+  {
+    "path": "23-stage04-shelter-recovery.png",
+    "sha256": "ce4e138f7d57e86e03a5389957f18eaa2df8088e789c4266cd40725e80d2be9b",
+    "raw": true
+  },
+  {
+    "path": "24-stage04-protection-attempt.png",
+    "sha256": "6cef8255b784c63ce27dabb07e9ba424571c7724e46546240148a7bc5f09cc3d",
+    "raw": true
+  },
+  {
+    "path": "25-stage04-protection-contact.png",
+    "sha256": "891ac653b13b108fee0489d052b3d082ba88b451c72382e86b9b90c692c46229",
+    "raw": true
+  },
+  {
+    "path": "26-stage04-third-shelter.png",
+    "sha256": "6152eed7a5f752aa720e9168a518bb845374652394c60febcc4ea45362c6dee9",
+    "raw": true
+  },
+  {
+    "path": "27-stage04-fourth-shelter.png",
+    "sha256": "6aeba85d126ac1d6d66a99327d68533c8f1e26d936ccf8df963d5bdc46c412c5",
+    "raw": true
+  },
+  {
+    "path": "28-stage04-tight-gap.png",
+    "sha256": "d14398647cb9b278f19d6ad3e4b2ca029843067a1232a2904753b78352be3a01",
+    "raw": true
+  },
+  {
+    "path": "29-stage04-final-shelter.png",
+    "sha256": "3b3a5b2631c6796b3348ee6754e8c6bcc29a355ef359088db26e06c4d3f98237",
+    "raw": true
+  },
+  {
+    "path": "30-stage04-exit.png",
+    "sha256": "9239b828951cef354d0328036baebc4e23cb2d7be3ebf7ec4a0b8934d98fc784",
+    "raw": true
+  },
+  {
+    "path": "31-stage05-entry.png",
+    "sha256": "26e592e308c5807c925d6b20fd84e2c3acd923d5be32bbee5ef6cbc11851d079",
+    "raw": true
+  },
+  {
+    "path": "32-stage05-gap.png",
+    "sha256": "f61e4aa8f68e2a86396975153bc766fadc15c1b9ebf07fb1f1f599997d675c7a",
+    "raw": true
+  },
+  {
+    "path": "33-stage05-windflower.png",
+    "sha256": "53667e1b20810c3b074a71b0a775c02853dd1616ed9a832609ab0e9b4c1e0a19",
+    "raw": true
+  },
+  {
+    "path": "34-stage05-windchain.png",
+    "sha256": "d23acd4d812a72235eb70f119dbd53d66ff2d65f7e3467a65d75a7df0e52c1ae",
+    "raw": true
+  },
+  {
+    "path": "35-stage05-windchain-retry.png",
+    "sha256": "1d30a9326f3a384ee40ddfa736e03d876eaa7f236b372c1bf031aa0987a825b0",
+    "raw": true
+  },
+  {
+    "path": "36-stage05-upper-dew.png",
+    "sha256": "ef7600428d9d4aa51b0a218b3f0f63dbd7debe4bb7cfe80703bd35ca2bdafccb",
+    "raw": true
+  },
+  {
+    "path": "37-stage05-shelter.png",
+    "sha256": "078f1ef42bfa50b071d21ae7f0dd19d01e28cb205b66293be3821b8a53d4a660",
+    "raw": true
+  },
+  {
+    "path": "38-stage05-second-chain.png",
+    "sha256": "ed4add44874d080d86d5c1bed713619fdc72ec273d49927dfef72be170ef0a61",
+    "raw": true
+  },
+  {
+    "path": "39-stage05-mid-shelter.png",
+    "sha256": "79a2076149a8a839e30697a8443810e1d1f07f892903dcadf55689dd7a16a803",
+    "raw": true
+  },
+  {
+    "path": "40-stage05-signs.png",
+    "sha256": "958194c13beecc885e3c6eff2af118c7cf2b0890bdb46360b61f8f80dbc8dffb",
+    "raw": true
+  },
+  {
+    "path": "41-stage05-gate-prompt.png",
+    "sha256": "10735bf30e438537c21af4d833bffe244af19266fd260dce590778f39f86c9d5",
+    "raw": true
+  },
+  {
+    "path": "42-stage05-knot-burst.png",
+    "sha256": "260a28bcf3534be174883822a965020c59d639a64a4fb32775ac7a5037a9e56b",
+    "raw": true
+  },
+  {
+    "path": "43-stage05-knot-retry.png",
+    "sha256": "45f6670e240fe5d417affc10d13f2630aab65325c8f4c2fc8fb2b232b8f88cfa",
+    "raw": true
+  },
+  {
+    "path": "44-stage05-knot-aligned.png",
+    "sha256": "051208b2a565c82db494aded816a824057eb21bc0a8a2237b59b136cfb574474",
+    "raw": true
+  },
+  {
+    "path": "45-stage05-timing-batch.png",
+    "sha256": "a1b749aada12d0b472c8a22d62596201974a82763dc31630f5dff07c9bf2954b",
+    "raw": true
+  },
+  {
+    "path": "46-stage05-bait-outside.png",
+    "sha256": "e3baf1f7752b2b2166e6f8413c724b0f225448da56ef9b719865cfc9a03445e2",
+    "raw": true
+  },
+  {
+    "path": "47-stage05-bait-burst.png",
+    "sha256": "f35bb49e51e35818665fa09d3aa13ca4c659bb06111175e6d5054a0d15c59e89",
+    "raw": true
+  },
+  {
+    "path": "48-stage05-close-loose-burst.png",
+    "sha256": "8c481ecaaf8ad3cb80bae28bad0138719e0f51f6db98077259880c348b8ebb07",
+    "raw": true
+  },
+  {
+    "path": "49-stage05-longcharge.png",
+    "sha256": "737b92f690c2c9fb0bf8a0a91c774112e20129cc79f335f79d045386f09e7999",
+    "raw": true
+  },
+  {
+    "path": "50-stage05-second-knot.png",
+    "sha256": "3d1c5635e4dda2346818829e522f5e1f4f52f1096cb199a7c8c7ade89bb3a1b8",
+    "raw": true
+  },
+  {
+    "path": "51-stage05-upper-approach.png",
+    "sha256": "eb575302053bdf7611ceb5e309a3c9180e704f772875b9604bd794659bf8be23",
+    "raw": true
+  },
+  {
+    "path": "52-stage05-second-burst.png",
+    "sha256": "8beed7f37b00c0a67571e2c2eb596f365e8ce643e58acadacaa1a56ecc9b6fad",
+    "raw": true
+  },
+  {
+    "path": "53-stage05-checkpoint-retry.png",
+    "sha256": "f29484ec8bcbf9aadb487fc73815954f0c2309409638d9062b6a0d6a7d54d643",
+    "raw": true
+  },
+  {
+    "path": "54-stage05-lower-bypass.png",
+    "sha256": "2eb9e576031ebb23030d905910765bdb00d0418a7978da9a2368f7cc5a497706",
+    "raw": true
+  },
+  {
+    "path": "55-stage05-second-knot-open.png",
+    "sha256": "1b5390e68096e3be6f8985e82c81af6e11f9453b850e05fd6c976cb5b9e47ccd",
+    "raw": true
+  },
+  {
+    "path": "56-stage05-hive.png",
+    "sha256": "99089474042ab2a7540dbf84df1401fcea0523771e501f34856d53d38ff850e4",
+    "raw": true
+  },
+  {
+    "path": "57-stage05-sharing.png",
+    "sha256": "6034defb094bd49ba0034d34ce016a433ba85c67ad6f2f186fef3f77d6ee3ece",
+    "raw": true
+  },
+  {
+    "path": "58-stage05-shared-route.png",
+    "sha256": "477b0fa3faf156b70e22b6d5d412e2601546fbc531e4c3be3ac23887f57b918e",
+    "raw": true
+  },
+  {
+    "path": "59-stage05-home-approach.png",
+    "sha256": "8ce1aeffc914f30874e1c72c1d107e2398a880a804f6d739db3d4a817f4f3ffb",
+    "raw": true
+  },
+  {
+    "path": "60-stage05-home.png",
+    "sha256": "2c664bc19e986ec68a1bd1ed70ef1cae886e3ca69c4b4a01a9c2bfd1f2968d28",
+    "raw": true
+  },
+  {
+    "path": "notes.txt",
+    "sha256": "18ace2d1ab2615c340e177a233a0722c26cd4816179a0c86af5222a22f7a82de",
+    "raw": true
+  }
+]

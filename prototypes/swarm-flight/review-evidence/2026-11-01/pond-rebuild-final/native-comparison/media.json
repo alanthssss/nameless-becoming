@@ -1,0 +1,10 @@
+{
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "raw_avi_sha256": "9286eae9de808492ce1ed7125678b690a62b5885d7ab772cca2d1ef53fc5c306",
+  "movie": {
+    "path": "outputs/swarm-flight/2026-11-01-pond-rebuild/final/native-comparison/run.mp4",
+    "derived_from_raw_avi": true,
+    "sha256": "1fce30deadc40cdd63e297cb3585e15a2f4fecaadff7c4c70ff5bdc002599993"
+  },
+  "not_human_duration": true
+}

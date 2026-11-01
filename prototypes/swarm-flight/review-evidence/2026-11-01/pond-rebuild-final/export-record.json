@@ -1,0 +1,11 @@
+{
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "entries": {
+    "spring-03-05": "passed",
+    "comparison-07-09": "passed"
+  },
+  "isolated_saves": true,
+  "method": "Actual original exported app, native CUA input; both entries start/move/Esc save/normal Quit/process absent/new PID/reload saved position/continue movement/Quit; own isolated progress files; spring bytes unchanged by comparison. Native full-state restores are separate evidence.",
+  "evidence": "export-entry-smoke/",
+  "sha256": "d67650bd14dee6b53514861473bcc3a28b3330e73888c14a884b2d3eaed16d16"
+}
