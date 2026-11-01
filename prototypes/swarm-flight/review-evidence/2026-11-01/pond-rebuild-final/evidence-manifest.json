@@ -2,6 +2,10 @@
   "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
   "files": [
     {
+      "path": ".gitattributes",
+      "sha256": "865d76b047b837a02b1f92e1b0cfa810dd2d2793ba5d721819dabbda5a1e560b"
+    },
+    {
       "path": "ci-summary.json",
       "sha256": "7e0beb617608094cc8a0cfe70c89a5e365bce4e27a27fdf51c9b5a2e21a6da07"
     },
