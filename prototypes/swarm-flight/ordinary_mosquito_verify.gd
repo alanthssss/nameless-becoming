@@ -1,6 +1,7 @@
 extends SceneTree
 ## Independent bounded geometry/model checks; no player or listening acceptance.
 const Model=preload("res://spring_journey_model.gd")
+const O=Model.POND_APPROACH_EXTENSION
 const RainExpected=preload("res://rain_layout_expectations.gd")
 const FIXTURES="res://review-evidence/2026-11-01/ordinary-mosquito/legacy-fixtures/"
 var checks=0
@@ -11,7 +12,7 @@ func check(ok: bool,label: String):
 	if not ok:
 		failures+=1
 		print("FAIL: "+label)
-func fresh(point:=Vector2(2320,300)):
+func fresh(point:=Vector2(2320+O,300)):
 	var m=Model.new()
 	m.load_stage(0)
 	m.p=point
@@ -46,10 +47,10 @@ func exact(m,label: String):
 	check(copy.restore_payload(payload) and copy.save_payload()==payload,label)
 func run():
 	var m=fresh()
-	check(Model.SMALL_HOME==Vector2(2390,285) and Model.SMALL_FLOWER_HOME==Vector2(2390,360),"actor moves while closed flower stays fixed")
+	check(Model.SMALL_HOME==Vector2(2390+O,285) and Model.SMALL_FLOWER_HOME==Vector2(2390+O,360),"actor moves while closed flower stays fixed")
 	check(body_clear(m,Model.SMALL_HOME),"full52px home body clears actual geometry")
 	check(Vector2(79/2.0,59.25*1.015/2.0).length()<52,"52px encloses rotated sprite including maximum flutter")
-	for target in [Vector2(2320,300),Vector2(2520,320),Vector2(2520,240)]:
+	for target in [Vector2(2320+O,300),Vector2(2520+O,320),Vector2(2520+O,240)]:
 		m=fresh(target)
 		var states=["idle"]
 		var clear=true
@@ -71,7 +72,7 @@ func run():
 		check(clear,"whole path and home return clear "+str(target))
 		check(returned and m.small.pos==Model.SMALL_HOME,"cycle returns exactly home "+str(target))
 		check(["aim","chase","return","rest","idle"].all(func(s): return s in states),"real complete actor cycle "+str(target))
-		if target==Vector2(2520,240): check(hits==1,"clear reachable target receives one actual contact")
+		if target==Vector2(2520+O,240): check(hits==1,"clear reachable target receives one actual contact")
 	geometry_counterexamples()
 	restore_cases()
 	print("ORDINARY MOSQUITO VERIFIED: %d checks, %d failures" % [checks,failures])
@@ -90,12 +91,12 @@ func geometry_counterexamples():
 	var above=Vector2(leaf.pos.x,Model.Canopy.top_at(leaf.pos.x,leaf)-60)
 	check(body_clear(m,above) and m.small_path_clear(above,above),"body actually above leaf remains allowed")
 func reject_unchanged(payload: Dictionary,label: String):
-	var live=fresh(Vector2(1700,210))
+	var live=fresh(Vector2(1700+O,210))
 	var before=live.save_payload()
 	var incoming=payload.duplicate(true)
 	check(not live.restore_payload(payload) and live.save_payload()==before and payload==incoming,label)
 func restore_cases():
-	var m=fresh(Vector2(2520,320))
+	var m=fresh(Vector2(2260+O,320))
 	for i in 10:
 		m.step(Vector2.ZERO,false,1.0/60)
 		if m.small.state=="aim": break
@@ -104,10 +105,10 @@ func restore_cases():
 	exact(m,"marked aim and checkpoint restore exactly despite narrow target")
 	var current=m.save_payload()
 	var bad=current.duplicate(true)
-	bad.story.small.pos=Model.pack(Vector2(2390,360))
+	bad.story.small.pos=Model.pack(Model.SMALL_HOME+Vector2(-180,80))
 	reject_unchanged(bad,"marked unsafe live body rejects atomically")
 	bad=current.duplicate(true)
-	bad.checkpoint_story.small.pos=Model.pack(Vector2(2390,360))
+	bad.checkpoint_story.small.pos=Model.pack(Model.SMALL_HOME+Vector2(-180,80))
 	reject_unchanged(bad,"marked unsafe checkpoint body rejects atomically")
 	bad=current.duplicate(true)
 	bad.small_actor_revision=99
@@ -115,45 +116,14 @@ func restore_cases():
 	var files=["old-idle","old-aim","old-chase","old-return","old-rest","old-stage-1","old-stage-2"]
 	for name in files:
 		var raw=JSON.parse_string(FileAccess.get_file_as_string(FIXTURES+name+".json"))
-		check(raw is Dictionary and not raw.has("small_actor_revision"),"genuine fixture exists without new marker "+name)
-		var original=raw.duplicate(true)
-		var copy=Model.new()
-		var accepted=copy.restore_payload(raw)
-		check(accepted,"genuine old model accepts "+name)
-		if not accepted: continue
-		check(raw==original,"restore never mutates supplied old payload "+name)
-		var upgraded=copy.save_payload()
-		var expected=original.duplicate(true)
-		expected.small_actor_revision=1
-		expected.pond_layout_revision=1
-		# The later pond-layout migration may add only its declared wall to both snapshots.
-		if original.stage==0:
-			var fork=Model.pack({"kind":"terrain","material":"hedge","rect":Rect2(2860,330,200,120),"broken":false})
-			expected.state.walls.append(fork.duplicate(true))
-			expected.state.checkpoint.walls.append(fork.duplicate(true))
-		expected.story.small=upgraded.story.small.duplicate(true)
-		expected.checkpoint_story.small=upgraded.checkpoint_story.small.duplicate(true)
-		expected=RainExpected.upgraded(expected)
-		check(JSON.parse_string(JSON.stringify(upgraded,"",true,true))==JSON.parse_string(JSON.stringify(expected,"",true,true)),"old upgrade changes only two small actors, declared pond wall and markers "+name)
-		var old_actor=Model.unpack(original.story.small)
-		var preserve=original.stage==0 and sampled_clear(copy,Model.SMALL_HOME,old_actor.pos) and old_actor.pos.distance_to(Model.SMALL_HOME)<=235.01 and old_actor.state not in ["idle","rest"]
-		var wanted=old_actor if preserve else Model.actor(Model.SMALL_HOME)
-		check(copy.small==wanted and copy.checkpoint_story.small==wanted,"independent safety decides preserve versus reset "+name)
-		exact(copy,"upgraded exact second restore "+name)
-		bad=original.duplicate(true)
-		bad.state.stamina=Model.pack(-1.0)
-		reject_unchanged(bad,"invalid unrelated player field rejects before legacy normalization "+name)
-	# Controlled variants of genuine old shape; a safe legacy flying pose must not teleport.
-	var safe=JSON.parse_string(FileAccess.get_file_as_string(FIXTURES+"old-chase.json"))
-	var safe_pos=Vector2(2390,260)
+		reject_unchanged(raw,"v2 actor snapshot remains in its old journey "+name)
+	# Valid current flying actors resume exactly; corruption must fail after identity validation.
 	m=fresh()
-	check(body_clear(m,safe_pos) and sampled_clear(m,Model.SMALL_HOME,safe_pos),"safe legacy preservation fixture independently clear")
-	for key in ["story","checkpoint_story"]:
-		safe[key].small.pos=Model.pack(safe_pos)
-		safe[key].small.target=Model.pack(Vector2(2320,300))
-	var saved_small=safe.story.small.duplicate(true)
-	check(m.restore_payload(safe),"safe old flying pose accepts")
-	check(Model.pack(m.small)==saved_small and Model.pack(m.checkpoint_story.small)==saved_small,"safe old live and checkpoint actor preserve exact pose")
-	bad=safe.duplicate(true)
-	bad.checkpoint_story.small.pos=Model.pack(Vector2(3000,100))
-	reject_unchanged(bad,"unknown old checkpoint actor cannot be laundered through migration")
+	m.small.pos=Model.SMALL_HOME+Vector2(0,-25)
+	m.small.target=Model.SMALL_HOME+Vector2(-70,15)
+	m.small.state="chase"
+	m.save_checkpoint(m.p)
+	exact(m,"safe current flying actor exact continuation")
+	bad=m.save_payload()
+	bad.checkpoint_story.small.pos=Model.pack(Model.SMALL_HOME+Vector2(610,-185))
+	reject_unchanged(bad,"out-of-range current checkpoint actor rejects atomically")

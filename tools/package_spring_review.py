@@ -90,7 +90,7 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
             raise ValueError('Export has no executable')
         binary.chmod(0o755)
         for title, flag, save in [
-            ('开始池岸归途', '--spring-journey', 'spring_03_05_v2.json'),
+            ('开始池岸归途', '--spring-journey', 'pond_journey_rebuild_v3.json'),
             ('风路对照', '--long-journey', 'summer_long_07_09_r8.json')]:
             command = stage / (title + '.command')
             command.write_text('#!/bin/zsh\nset -e\ncd -- "$(dirname -- "$0")"\n'

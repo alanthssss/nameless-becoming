@@ -1,22 +1,23 @@
 extends "res://long_journey_model.gd"
 ## Three chapters revisit one source; local behavior never changes07–09.
 const SpringContent=preload("res://spring_journey_content.gd")
+const POND_APPROACH_EXTENSION=SpringContent.POND_APPROACH_EXTENSION
 const POND_LAYOUT_REVISION=1
 const POND_FORK=SpringContent.POND_FORK
 const RAIN_LAYOUT_REVISION=1
 const WIND_LAYOUT_REVISION=1
 const Canopy = preload("res://leaf_canopy_geometry.gd")
-const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
+const SPRING_SAVE_PATH="user://pond_journey_rebuild_v3.json"
 const SITE_ID="pond-and-home"
-const SMALL_FLOWER_HOME=Vector2(2390,360)
-const SMALL_HOME=Vector2(2390,285)
+const SMALL_FLOWER_HOME=Vector2(2390+POND_APPROACH_EXTENSION,360)
+const SMALL_HOME=Vector2(2390+POND_APPROACH_EXTENSION,285)
 const SMALL_BODY_RADIUS=52.0
 const SMALL_ACTOR_REVISION=1
-const KEEPER_HOME=Vector2(2100,410)
+const KEEPER_HOME=Vector2(2100+POND_APPROACH_EXTENSION,410)
 const DEPARTURE_FRIEND=Vector2(300,492)
 const PREPARATION_SECONDS=6.0
 const PREPARATION_REVISION=1
-const PREPARATION_BAR=[Vector2(3570,302),Vector2(3650,290),Vector2(3760,314),Vector2(3840,302)]
+const PREPARATION_BAR=[Vector2(3570+POND_APPROACH_EXTENSION,302),Vector2(3650+POND_APPROACH_EXTENSION,290),Vector2(3760+POND_APPROACH_EXTENSION,314),Vector2(3840+POND_APPROACH_EXTENSION,302)]
 static func preparation_anchor(i: int) -> Vector2:
 	return PREPARATION_BAR[0].bezier_interpolate(PREPARATION_BAR[1],PREPARATION_BAR[2],PREPARATION_BAR[3],0.12+0.38*i)
 static func preparation_position(i: int) -> Vector2:
@@ -34,13 +35,9 @@ static func valid_preparation(who: Dictionary) -> bool:
 	var previous:=preparation_position(maxi(0,mini(2,count-1)))
 	if who.target not in [current,previous]: return false
 	return who.pos.distance_to(Geometry2D.get_closest_point_to_segment(who.pos,previous,current))<0.01
-static func known_legacy_preparation(who: Dictionary) -> bool:
-	if who==actor(KEEPER_HOME): return true
-	# The preserved c5e893b development version also used this fixed pose.
-	return who.pos==Vector2(3550,300) and who.target==who.pos and who.face==Vector2.LEFT and who.elapsed>=0 and who.elapsed<=6 and (who.state=="watch" if who.elapsed==6 else who.state in ["counting","idle"])
 func preparation_count() -> int: return mini(3,int(keeper.elapsed/2.0))
 func advance_preparation(dt: float) -> void:
-	if not started or p.x<=2850 or keeper.state=="watch": return
+	if not started or p.x<=2850+POND_APPROACH_EXTENSION or keeper.state=="watch": return
 	keeper.target=preparation_position(mini(2,preparation_count()))
 	keeper.face=Vector2.RIGHT
 	if keeper.pos!=keeper.target:
@@ -50,19 +47,20 @@ func advance_preparation(dt: float) -> void:
 	keeper.elapsed=minf(PREPARATION_SECONDS,keeper.elapsed+dt)
 	if preparation_count()>before_count: emit("keeper_hang",preparation_anchor(before_count))
 	if keeper.elapsed>=PREPARATION_SECONDS: keeper.state="watch"
-const KNOT=Vector2(2371,465)
-const BACK_WALL_X=3110.0
-const BACK_KNOT=Vector2(3131,300)
-const RESULT_HOME=Vector2(3270,630)
+const KNOT=Vector2(2371+POND_APPROACH_EXTENSION,465)
+const FRONT_WALL_X=2350.0+POND_APPROACH_EXTENSION
+const BACK_WALL_X=3110.0+POND_APPROACH_EXTENSION
+const BACK_KNOT=Vector2(3131+POND_APPROACH_EXTENSION,300)
+const RESULT_HOME=Vector2(3270+POND_APPROACH_EXTENSION,630)
 const RESULT_SECONDS=2.4
 const INSPECT_SECONDS=0.6
-const WAITING_SIGN=Vector2(3190,265)
+const WAITING_SIGN=Vector2(3190+POND_APPROACH_EXTENSION,265)
 const SIGN_HAND=Vector2(-55,35)
 const PICKUP_POSITION=WAITING_SIGN-SIGN_HAND
-const TIDY_APPROACH=[Vector2(2240,465),Vector2(2740,465),Vector2(2740,220),Vector2(2980,220),Vector2(2980,265),Vector2(3245,265),PICKUP_POSITION]
+const TIDY_APPROACH=[Vector2(2240+POND_APPROACH_EXTENSION,465),Vector2(2740+POND_APPROACH_EXTENSION,465),Vector2(2740+POND_APPROACH_EXTENSION,220),Vector2(2980+POND_APPROACH_EXTENSION,220),Vector2(2980+POND_APPROACH_EXTENSION,265),Vector2(3245+POND_APPROACH_EXTENSION,265),PICKUP_POSITION]
 const ROUTE_GEOMETRY_REVISION=2
-const FRONT_SIGN=Rect2(2830,290,60,160)
-const TIDY_CARRY=[Vector2(3580,265),Vector2(3580,630),RESULT_HOME]
+const FRONT_SIGN=Rect2(2830+POND_APPROACH_EXTENSION,290,60,160)
+const TIDY_CARRY=[Vector2(3580+POND_APPROACH_EXTENSION,265),Vector2(3580+POND_APPROACH_EXTENSION,630),RESULT_HOME]
 const AIM_SECONDS=0.8
 const CHASE_SECONDS=1.0
 const COUNT_SECONDS=3.2
@@ -79,9 +77,9 @@ var color_step=0
 var checkpoint_story: Dictionary={}
 var bird_greeted=false
 var bird_elapsed=0.0
-const BIRD_PERCH=Vector2(3395,299)
-const SOURCE := Vector2(3200,420)
-const COMB := Vector2(3850,500)
+const BIRD_PERCH=Vector2(3395+POND_APPROACH_EXTENSION,299)
+const SOURCE := Vector2(3200+POND_APPROACH_EXTENSION,420)
+const COMB := Vector2(3850+POND_APPROACH_EXTENSION,500)
 const SOURCE_ID := "pond-blue-cluster"
 const FEED_SECONDS := 0.7
 const COMMIT_SECONDS := 1.2
@@ -133,11 +131,6 @@ func valid_small_actor(who: Dictionary,index: int) -> bool:
 	# aim.target is the observed player position, which need not fit this body.
 	if who.state in ["chase","return","rest"] and who.target.distance_to(SMALL_HOME)>235.01: return false
 	return true
-func known_legacy_small(who: Dictionary,index: int) -> bool:
-	if index!=0: return who==actor(SMALL_FLOWER_HOME)
-	if who.pos.distance_to(SMALL_FLOWER_HOME)>235.01: return false
-	if who.state in ["idle","rest"] and who.pos.distance_to(SMALL_FLOWER_HOME)>=0.1001: return false
-	return who.state not in ["chase","return","rest"] or who.target.distance_to(SMALL_FLOWER_HOME)<=235.01
 func update_actor(who: Dictionary,home: Vector2,is_keeper: bool,dt: float) -> void:
 	who.elapsed += dt
 	var distance: float = who.pos.distance_to(p)
@@ -273,7 +266,7 @@ static func normalized_dance(value) -> Dictionary:
 	for bee in value.listeners:
 		if not same_shape(bee,waiting_listener(0)): return {}
 		if bee.state not in ["waiting","listening","departing","foraging","returning"]: return {}
-		if bee.pos.x < 3100 or bee.pos.x > 4050 or bee.pos.y < 350 or bee.pos.y > 600 or bee.face.length() > 1.01 or bee.delay < 0 or bee.delay > 0.7: return {}
+		if bee.pos.x < SOURCE.x-100 or bee.pos.x > COMB.x+200 or bee.pos.y < 350 or bee.pos.y > 600 or bee.face.length() > 1.01 or bee.delay < 0 or bee.delay > 0.7: return {}
 		if bee.state in ["departing","foraging"] and (value.message_revision == 0 or not value.source_open): return {}
 		if bee.state == "returning" and (value.message_revision == 0 or value.source_open): return {}
 		if bee.state == "listening" and (value.share_state != "dancing" or value.message_revision != 0): return {}
@@ -329,11 +322,11 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 	# Position-based easing is continuous on approach/return and resumes exactly;
 	# it does not reveal a duplicate target or alter the vertical play scale.
 	if stage==0:
-		var near_flower:=smoothstep(2600.0,2740.0,p.x)*(1.0-smoothstep(3300.0,3500.0,p.x))
+		var near_flower:=smoothstep(SOURCE.x-600.0,SOURCE.x-460.0,p.x)*(1.0-smoothstep(SOURCE.x+100.0,SOURCE.x+300.0,p.x))
 		var above_foliage:=1.0-smoothstep(270.0,450.0,p.y)
 		camera_x=clampf(p.x-480.0+300.0*near_flower*above_foliage,0.0,world_width-1280.0)
 	# Keep source, dancer and listeners in one view during communication.
-	if stage==2 and p.x>3100: camera_x = clampf(p.x-1100.0,0.0,world_width-1280.0)
+	if stage==2: camera_x = homeward_camera_left(p.x)
 	if phase != "playing": return
 	if stage!=1 and source_open and p.distance_to(SOURCE) < 34 and velocity.length() < 32 and not moving and not held and burst_left <= 0:
 		feeding_elapsed = minf(FEED_SECONDS,feeding_elapsed+dt)
@@ -346,7 +339,14 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 		feeding_elapsed = 0.0
 
 
-func journey_id() -> String: return "spring-03-05-v2"
+func homeward_camera_left(x: float) -> float:
+	# Broaden toward the shared source/comb view without jumping backwards.
+	# 1300px gives room to shift620px: even the steepest easing stays slower
+	# than forward flight. Position-based framing also resumes/reverses exactly.
+	var gathering: float=smoothstep(SOURCE.x-700.0,SOURCE.x+600.0,x)
+	return clampf(x-lerpf(480.0,1100.0,gathering),0.0,world_width-1280.0)
+
+func journey_id() -> String: return "pond-journey-rebuild-v3"
 func journey_stage_count() -> int: return 3
 func build_stage(index: int) -> Dictionary: return SpringContent.build(index)
 func record_sample_approach(_before: Vector2) -> void: pass
@@ -388,7 +388,7 @@ func wall_at(x: float) -> Dictionary:
 	return {}
 func gate_ready(obstacle: Dictionary) -> bool:
 	if stage==2 and obstacle.kind=="curtain":
-		if obstacle.rect.position.x==2350: return keeper.state=="counting" or front_open
+		if obstacle.rect.position.x==FRONT_WALL_X: return keeper.state=="counting" or front_open
 		if obstacle.rect.position.x==BACK_WALL_X: return front_open and p.x<BACK_KNOT.x and absf(p.y-BACK_KNOT.y)<=40 and face.x>0.5
 	return super.gate_ready(obstacle)
 func advance(direction: Vector2,dt: float) -> void:
@@ -420,19 +420,19 @@ func advance(direction: Vector2,dt: float) -> void:
 	resolve_leaf_roofs(before)
 	if stage!=2: return
 	advance_listeners(dt)
-	if p.x>=1560: keeper_seen=true
-	if wall_at(2350).broken and not front_open:
+	if p.x>=KEEPER_HOME.x-540: keeper_seen=true
+	if wall_at(FRONT_WALL_X).broken and not front_open:
 		front_open=true
 		change_state(keeper,"watch")
 		keeper.face=Vector2.RIGHT
-		save_checkpoint(Vector2(2460,465))
+		save_checkpoint(Vector2(2460+POND_APPROACH_EXTENSION,465))
 		emit("checkpoint_update",p)
 	if wall_at(BACK_WALL_X).broken and not passage_open:
 		passage_open=true
 		result_elapsed=0.0
 		change_state(keeper,"tidy")
 		keeper.target=TIDY_APPROACH[0]
-		save_checkpoint(Vector2(3180,300))
+		save_checkpoint(Vector2(3180+POND_APPROACH_EXTENSION,300))
 		emit("checkpoint_update",p)
 	advance_tidy(dt)
 func advance_tidy(dt: float) -> void:
@@ -537,100 +537,18 @@ func normalize_story(value,index: int) -> Dictionary:
 	for key in ["small","keeper"]:
 		var who: Dictionary=value[key]
 		if who.state not in ["idle","aim","chase","counting","return","rest","watch","tidy","settled"]: return {}
-		if not valid_position(who.pos) or not valid_position(who.target) or who.face.length()>1.01 or who.elapsed<0 or who.elapsed>1000000: return {}
+		var inactive: bool = (key=="small" and index!=0) or (key=="keeper" and index==1)
+		if inactive:
+			if who!=actor(SMALL_HOME if key=="small" else KEEPER_HOME): return {}
+		elif not valid_position(who.pos) or not valid_position(who.target): return {}
+		if who.face.length()>1.01 or who.elapsed<0 or who.elapsed>1000000: return {}
 		if key=="small" and who.state in ["counting","watch","tidy","settled"]: return {}
 	return value
-func upgrade_legacy_geometry(snapshot: Dictionary) -> bool:
-	# The complete old static layout must match before any fields are converted.
-	# This runs on an unpacked copy; parent validation still checks every other field.
-	var old_walls: Array=walls.filter(func(w): return w.get("material") not in ["sign_board","sign_beam"]).duplicate(true)
-	for wall in old_walls:
-		if wall.rect.position.x==BACK_WALL_X: wall.rect.position.x=3000.0
-	var old_rings: Array=rings.slice(0,2).duplicate(true)
-	old_rings[0].pos=Vector2(2740,465)
-	old_rings[0].direction=Vector2(120,-165).normalized()
-	old_rings[1].pos=Vector2(2860,300)
-	old_rings[1].direction=Vector2.RIGHT
-	if not snapshot.get("walls") is Array or not snapshot.get("rings") is Array or snapshot.rings.size()!=2: return false
-	var first=snapshot.rings[0]
-	if first is Dictionary and first.get("pos")==Vector2(2640,465):
-		old_rings[0].pos=Vector2(2640,465)
-		old_rings[0].direction=Vector2(220,-165).normalized()
-	if not valid_objects({"walls":snapshot.walls,"rings":snapshot.rings},{"walls":old_walls,"rings":old_rings}): return false
-	var replacement: Array=walls.duplicate(true)
-	for wall in replacement:
-		for old in snapshot.walls:
-			var expected: Rect2=wall.rect
-			if expected.position.x==BACK_WALL_X: expected.position.x=3000.0
-			if expected==old.rect and wall.kind==old.kind: wall.broken=old.broken
-	snapshot.walls=replacement
-	var replacement_rings: Array=rings.duplicate(true)
-	for i in 2: replacement_rings[i].active=snapshot.rings[i].active
-	snapshot.rings=replacement_rings
-	return true
-
-func upgrade_legacy_pond_geometry(snapshot: Dictionary) -> bool:
-	# Accept only the complete known old wall set, for both live and checkpoint.
-	# Dynamic flags on the existing walls survive; the new fork earns no facts.
-	var old_walls: Array=walls.filter(func(w): return w.rect!=POND_FORK).duplicate(true)
-	if not snapshot.get("walls") is Array: return false
-	if not valid_objects({"walls":snapshot.walls},{"walls":old_walls}): return false
-	var replacement: Array=walls.duplicate(true)
-	for wall in replacement:
-		for old in snapshot.walls:
-			if wall.rect==old.rect and wall.kind==old.kind: wall.broken=old.broken
-	snapshot.walls=replacement
-	return true
-
-func configure_legacy_rain_layout() -> void:
-	# Frozen complete pre-rain-layout shape (main5d6866b). Never infer an old
-	# layout by discarding unknown objects from an incoming save.
-	walls.clear()
-	for pair in [[Rect2(820,250,800,80),"hedge"],[Rect2(1410,470,65,365),"stem"],[Rect2(1900,330,350,95),"hedge"],[Rect2(2420,500,710,85),"hedge"],[Rect2(3280,480,65,355),"stem"]]:
-		walls.append({"rect":pair[0],"kind":"terrain","material":pair[1],"broken":false})
-	shelters.clear()
-	var positions=[Vector2(620,520),Vector2(2170,520),Vector2(3670,520),Vector2(4120,500)]
-	var names=["从叶下看雨","从棚下抬高一步","从两层接住下一片叶","看见熟悉的池岸"]
-	for i in positions.size(): shelters.append({"pos":positions[i],"reached":false,"section":i,"name":names[i],"half_width":180.0})
-	dew.assign([{"pos":Vector2(1760,520),"collected":false,"section":1,"encounter":1,"purpose":"穿过露天后共有的补给"},{"pos":Vector2(3560,420),"collected":false,"section":2,"encounter":2,"purpose":"两路重新合流时补给"}])
-	shields.assign([{"pos":Vector2(2370,450),"collected":false,"section":2}])
-	rain_fields.assign([{"rect":Rect2(800,80,1550,650),"timer":0.2},{"rect":Rect2(2350,80,1250,650),"timer":0.2}])
-	pods.clear()
-	rings.clear()
-	sprayers.clear()
-	checkpoint_index=-1
-	save_checkpoint(Vector2(180,420))
-
-func upgrade_legacy_rain_geometry(snapshot: Dictionary, is_checkpoint: bool) -> void:
-	# The caller validates the complete old state before either snapshot changes.
-	var old_index: int=int(snapshot.checkpoint_index)
-	var replacement: Array=walls.duplicate(true)
-	for wall in replacement:
-		var old_rect: Rect2=Rect2(2420,500,710,85) if wall.rect==SpringContent.RAIN_OVERHEAD else wall.rect
-		for old in snapshot.walls:
-			if old.rect==old_rect and old.kind==wall.kind: wall.broken=old.broken
-	snapshot.walls=replacement
-	var replacement_shelters: Array=shelters.duplicate(true)
-	for i in replacement_shelters.size():
-		if i==2: replacement_shelters[i].reached=old_index>=2
-		else: replacement_shelters[i].reached=snapshot.shelters[i if i<2 else i-1].reached
-	snapshot.shelters=replacement_shelters
-	snapshot.checkpoint_index=old_index if old_index<2 else old_index+1
-	var replacement_dew: Array=dew.duplicate(true)
-	for i in replacement_dew.size(): replacement_dew[i].collected=snapshot.dew[i].collected
-	snapshot.dew=replacement_dew
-	if is_checkpoint and old_index==2 and snapshot.p==Vector2(3670,520): snapshot.p=SpringContent.RAIN_HIGH_REST
-
-func snapshot_geometry_clear(snapshot: Dictionary, radius: float) -> bool:
-	for wall in snapshot.walls:
-		if not wall.broken and wall.rect.grow(radius).has_point(snapshot.p): return false
-	for leaf in snapshot.shelters:
-		if not Canopy.contact(snapshot.p,radius,leaf).is_empty(): return false
-	return true
-
 func restore_payload(payload: Dictionary) -> bool:
+	# A rebuilt map has a separate identity and save file. Never reinterpret v2 coordinates.
+	if payload.get("journey_id")!=journey_id(): return false
 	for marker in [["wind_layout_revision",WIND_LAYOUT_REVISION],["rain_layout_revision",RAIN_LAYOUT_REVISION],["pond_layout_revision",POND_LAYOUT_REVISION],["small_actor_revision",SMALL_ACTOR_REVISION],["preparation_revision",PREPARATION_REVISION],["route_geometry_revision",ROUTE_GEOMETRY_REVISION],["keeper_presentation_revision",2]]:
-		if payload.has(marker[0]) and (not number(payload[marker[0]]) or payload[marker[0]]!=marker[1]): return false
+		if not payload.has(marker[0]) or not number(payload[marker[0]]) or payload[marker[0]]!=marker[1]: return false
 	var index=int(payload.get("stage",-1))
 	if index<0 or index>=3: return false
 	var probe=get_script().new()
@@ -640,14 +558,8 @@ func restore_payload(payload: Dictionary) -> bool:
 	var base=unpack(payload.get("state"))
 	if state.is_empty() or saved.is_empty() or not base is Dictionary: return false
 	for item in [state,saved]:
-		if payload.has("small_actor_revision"):
-			if not probe.valid_small_actor(item.small,index): return false
-		elif not probe.known_legacy_small(item.small,index): return false
-	if index==0:
-		for item in [state,saved]:
-			if payload.has("preparation_revision"):
-				if not valid_preparation(item.keeper): return false
-			elif not known_legacy_preparation(item.keeper): return false
+		if not probe.valid_small_actor(item.small,index): return false
+		if index==0 and not valid_preparation(item.keeper): return false
 	if state.dance.perched and (base.get("p")!=COMB or base.get("charging")!=false or base.get("burst_left")!=0): return false
 	if not base.get("walls") is Array or not base.get("checkpoint") is Dictionary or not base.checkpoint.get("walls") is Array: return false
 	if not base.checkpoint.get("p") is Vector2: return false
@@ -656,107 +568,23 @@ func restore_payload(payload: Dictionary) -> bool:
 			var found:=0
 			for wall in pair[1]:
 				if not wall is Dictionary or not wall.get("rect") is Rect2: return false
-				if wall.get("kind")=="curtain" and wall.rect.position.x in [2350.0,BACK_WALL_X if payload.has("route_geometry_revision") else 3000.0]:
+				if wall.get("kind")=="curtain" and wall.rect.position.x in [FRONT_WALL_X,BACK_WALL_X]:
 					found+=1
-					if wall.get("broken")!=pair[0].get("front_open" if wall.rect.position.x==2350 else "passage_open"): return false
+					if wall.get("broken")!=pair[0].get("front_open" if wall.rect.position.x==FRONT_WALL_X else "passage_open"): return false
 			if found!=2: return false
-	var legacy_geometry: bool=not payload.has("route_geometry_revision")
-	var legacy_pond: bool=not payload.has("pond_layout_revision")
-	var legacy_rain: bool=not payload.has("rain_layout_revision")
-	var legacy_wind: bool=not payload.has("wind_layout_revision")
-	if legacy_wind and index==2 and not legacy_geometry:
-		var old_probe=get_script().new()
-		old_probe.load_stage(2)
-		old_probe.rings[0].pos=Vector2(2760,465)
-		old_probe.rings[0].direction=Vector2(120,-285).normalized()
-		old_probe.save_checkpoint(Vector2(180,420))
-		# Validate the entire known old state, including both static snapshots,
-		# reached prefixes and numeric fields, before changing the first flower.
-		if not old_probe.valid_state(base): return false
-		for snapshot in [base,base.checkpoint]:
-			snapshot.rings[0].pos=probe.rings[0].pos
-			snapshot.rings[0].direction=probe.rings[0].direction
-		payload=payload.duplicate(true)
-		payload.state=pack(base)
-	if legacy_rain and index==1:
-		var old_probe=get_script().new()
-		old_probe.load_stage(1)
-		old_probe.configure_legacy_rain_layout()
-		# This includes old static arrays, numeric state, reached prefixes and
-		# both checkpoint indices, before construction of any replacement array.
-		if not old_probe.valid_state(base): return false
-		probe.upgrade_legacy_rain_geometry(base,false)
-		probe.upgrade_legacy_rain_geometry(base.checkpoint,true)
-		if not probe.snapshot_geometry_clear(base.checkpoint,14.0): return false
-		payload=payload.duplicate(true)
-		payload.state=pack(base)
-	if legacy_pond and index==0:
-		for snapshot in [base,base.checkpoint]:
-			if not probe.upgrade_legacy_pond_geometry(snapshot): return false
-		# A genuine saved flower/shelter checkpoint stays outside the new foliage.
-		# Unknown checkpoint geometry must not be silently relocated or accepted.
-		if POND_FORK.grow(14).has_point(base.checkpoint.p): return false
-		payload=payload.duplicate(true)
-		payload.state=pack(base)
-	if legacy_geometry and index==2:
-		for snapshot in [base,base.checkpoint]:
-			if not probe.upgrade_legacy_geometry(snapshot): return false
-		if base.checkpoint.walls.any(func(w): return not w.broken and w.rect.grow(14).has_point(base.checkpoint.p)): return false
-		payload=payload.duplicate(true)
-		payload.state=pack(base)
 	if not super.restore_payload(payload): return false
-	if not payload.has("small_actor_revision"):
-		# Only a completely validated legacy payload may normalize this NPC.
-		# Keep safe live observations/poses; earned player/story facts are unchanged.
-		for item in [state,saved]:
-			if not probe.valid_small_actor(item.small,index): item.small=actor(SMALL_HOME)
-	# Old v2 saves already displayed the completed sign while its owner was
-	# still travelling. Preserve that committed result without replaying the
-	# obsolete route through the canopy. New saves suspend every phase exactly.
-	if not payload.has("keeper_presentation_revision") or legacy_geometry:
-		for item in [state,saved]:
-			if item.passage_open and (legacy_geometry or item.keeper.state=="tidy"):
-				item.keeper=actor(RESULT_HOME)
-				item.keeper.state="settled"
-				item.keeper.elapsed=RESULT_SECONDS
-				item.result_elapsed=RESULT_SECONDS
-	if legacy_geometry and index==2:
-		for item in [state,saved]:
-			var bee: Dictionary=item.dance.listeners[0]
-			if bee.state=="foraging" or (bee.state in ["departing","returning"] and bee.pos.x<3182):
-				bee.pos=forage_target(0)
-				if bee.state=="departing": bee.state="foraging"
-	if index==0 and not payload.has("preparation_revision"):
-		# Previously stage0 never advanced this actor; normalize both snapshots
-		# before displaying them, including a save made near the departure.
-		for item in [state,saved]:
-			var completed_preparation: bool=item.keeper.pos==Vector2(3550,300) and item.keeper.elapsed>=4.5
-			item.keeper=preparation_actor()
-			if completed_preparation:
-				item.keeper.pos=preparation_position(2)
-				item.keeper.target=item.keeper.pos
-				item.keeper.elapsed=PREPARATION_SECONDS
-				item.keeper.state="watch"
 	apply_story(state)
 	checkpoint_story=saved
-	# v2 snapshots from the old thin roof may now overlap the painted leaf.
-	# Use the existing committed checkpoint contract, never silently push through.
-	if legacy_geometry and stage==2 and walls.any(func(w): return not w.broken and w.rect.grow(14).has_point(p)):
-		restore_checkpoint("geometry")
-	if legacy_pond and stage==0 and POND_FORK.grow(9.0 if charging else 14.0).has_point(p):
-		restore_checkpoint("geometry")
-	if legacy_rain and stage==1 and not snapshot_geometry_clear({"p":p,"walls":walls,"shelters":shelters},9.0 if charging else 14.0):
-		restore_checkpoint("geometry")
 	for leaf in shelters:
 		if not Canopy.contact(p,9.0 if charging else 14.0,leaf).is_empty():
 			restore_checkpoint("geometry")
 			break
 	return true
 func objective() -> String:
-	if stage==0: return "花路已经记住了 · 沿池岸绕向叶棚" if observation_valid() else "蓝花还开着 · 沿池岸找回家的路"
-	if stage==1: return "抬升穿棚下通口，再选低棚绕行或护雨上层" if weather_phase!="after" else "雨停了，沿熟悉的池岸回去"
-	if not front_open: return "看它停下盘点，趁牌绳松开冲开叶结"
-	if not passage_open: return "借风抬升后穿过背面通口，也可以普通飞行换层再冲"
+	if stage==0: return "记住花香，趁雨前回去" if observation_valid() else "沿池岸，找一处还开着的花"
+	if stage==1: return "雨来了，叶棚通向归路" if weather_phase!="after" else "雨停了，沿熟悉的池岸回去"
+	if not front_open: return "回家的路上，花牌挡住了去向"
+	if not passage_open: return "牌架另一面，还有一道叶结"
 	if message_revision>0: return "它们沿你告诉的花路出发了；前面就是家"
 	return "归路已经打开，蜡脾上可以把见过的花路告诉同伴"
 func hint() -> String:
@@ -768,10 +596,6 @@ func context_cue() -> Dictionary:
 		return {"pos":BIRD_PERCH,"text":"画眉：你也来尝这簇花？雨要来了，前面的叶棚能歇脚。","kind":"bird"}
 	if stage==0 and p.distance_to(SMALL_FLOWER_HOME+Vector2(-14,62))<100:
 		return {"pos":SMALL_FLOWER_HOME+Vector2(-14,62),"text":"花苞还没开","kind":"flower"}
-	if stage==1 and p.x>1200 and p.x<1550:
-		return {"pos":Vector2(1442,400),"text":"茎顶与叶棚之间，可以抬高穿过去","kind":"route"}
-	if stage==1 and p.x>2040 and p.x<2500:
-		return {"pos":Vector2(2310,450),"text":"护雨从上层穿过；低棚下也有路，叶尖再抬升","kind":"route"}
 	if p.distance_to(shelters[-1].pos)<125:
 		return {"pos":shelters[-1].pos,"text":"花蜡灯 · 彩光落在歇脚的叶上","kind":"lamp"}
 	if stage!=1 and not source_open and p.distance_to(SOURCE)<180: return {"pos":SOURCE,"text":"花已经合拢 · 这条花路暂时歇了","kind":"flower"}

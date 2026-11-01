@@ -122,7 +122,7 @@ func _keeper_preparation() -> void:
 
 func _wall(wall: Dictionary) -> void:
 	var r: Rect2 = wall.rect
-	if model.stage == 2 and wall.kind == "curtain" and absf(r.position.x-2350.0)<0.1:
+	if model.stage == 2 and wall.kind == "curtain" and absf(r.position.x-model.FRONT_WALL_X)<0.1:
 		_sign_rope(r,model.KNOT,model.front_open,false)
 	elif model.stage == 2 and wall.kind == "curtain" and absf(r.position.x-model.BACK_WALL_X)<0.1:
 		_sign_rope(r,model.BACK_KNOT,model.passage_open,true)
