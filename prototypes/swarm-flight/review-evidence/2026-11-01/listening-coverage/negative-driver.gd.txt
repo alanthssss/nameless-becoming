@@ -1,0 +1,66 @@
+extends SceneTree
+class NativeFixture extends "res://spring_journey_main.gd":
+ func _notification(what: int):
+  if what!=NOTIFICATION_APPLICATION_FOCUS_OUT: super._notification(what)
+var game
+var ticks=0
+var events=[]
+var folder=OS.get_environment("SWARM_LISTENING_DIR")
+func _initialize(): call_deferred("run")
+func key(code: Key,down: bool):
+ var e=InputEventKey.new()
+ e.physical_keycode=code
+ e.keycode=code
+ e.pressed=down
+ root.push_input(e)
+func tick(n: int):
+ for i in n:
+  game.tick(1.0/30)
+  game.world._process(1.0/30)
+  game.sound._process(1.0/30)
+  ticks+=1
+  await process_frame
+func record(kind: String): events.append({"tick":ticks,"engine_frame":Engine.get_process_frames(),"kind":kind})
+func run():
+ DirAccess.make_dir_recursive_absolute(folder)
+ game=NativeFixture.new()
+ game.progress_file=folder.path_join("save.json")
+ root.add_child(game)
+ await process_frame
+ game.set_process(false)
+ game.world.set_process(false)
+ game.sound.set_process(false)
+ game.muted=false
+ game.sound.set_muted(false)
+ game.sound.event_played.connect(record)
+ key(KEY_ENTER,true)
+ key(KEY_ENTER,false)
+ game.model.p=Vector2(1700,210)
+ game.model.velocity=Vector2.ZERO
+ game.model.clear_input()
+ game.model.started=true
+ game.model.events.clear()
+ await tick(30)
+ key(KEY_SPACE,true)
+ await tick(6)
+ key(KEY_SPACE,false)
+ await tick(36)
+ var early_ok=not game.model.charging and game.model.bursts==0
+ game.model.stamina=19
+ key(KEY_SPACE,true)
+ await tick(18)
+ key(KEY_SPACE,false)
+ await tick(60)
+ var tired_ok=game.model.bursts==0 and events.any(func(e):return e.kind=="tired")
+ var cancel_ok=events.any(func(e):return e.kind=="charge_cancel")
+ var f=FileAccess.open(folder.path_join("trace.json"),FileAccess.WRITE)
+ f.store_string(JSON.stringify({"kind":"controlled legal position and19energy;real keyboard early release and too-tired release;no directplay_event","ticks":ticks,"checks":3,"failures":int(not early_ok)+int(not tired_ok)+int(not cancel_ok),"events":events},"\t"))
+ f.close()
+ game.queue_redraw()
+ game.world.queue_redraw()
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png(folder.path_join("too-tired.png"))
+ game.queue_free()
+ await process_frame
+ print("LISTENING NEGATIVE: ",early_ok," ",tired_ok," ",cancel_ok)
+ quit(0 if early_ok and tired_ok and cancel_ok else 1)

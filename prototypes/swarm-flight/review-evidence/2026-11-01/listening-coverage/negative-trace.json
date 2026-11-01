@@ -1,0 +1,23 @@
+{
+	"checks": 3,
+	"events": [
+		{
+			"engine_frame": 0,
+			"kind": "checkpoint",
+			"tick": 0
+		},
+		{
+			"engine_frame": 36,
+			"kind": "charge_cancel",
+			"tick": 36
+		},
+		{
+			"engine_frame": 90,
+			"kind": "tired",
+			"tick": 90
+		}
+	],
+	"failures": 0,
+	"kind": "controlled legal position and19energy;real keyboard early release and too-tired release;no directplay_event",
+	"ticks": 150
+}

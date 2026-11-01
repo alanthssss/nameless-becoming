@@ -1,0 +1,86 @@
+{
+  "kind": "bounded_native_audio_excerpts_for_missing_listening_only",
+  "duration_seconds": 29.199979166666665,
+  "segments": [
+    {
+      "source": "negative",
+      "source_seconds": [
+        0.3,
+        4.4
+      ],
+      "label": "early_cancel_and_tired",
+      "output_seconds": [
+        0.0,
+        4.1
+      ]
+    },
+    {
+      "source": "continuous",
+      "source_seconds": [
+        6.8,
+        8.7
+      ],
+      "label": "dew",
+      "output_seconds": [
+        4.7,
+        6.5999791666666665
+      ]
+    },
+    {
+      "source": "continuous",
+      "source_seconds": [
+        32.7,
+        35.0
+      ],
+      "label": "arrival_bell",
+      "output_seconds": [
+        7.199979166666667,
+        9.499979166666666
+      ]
+    },
+    {
+      "source": "continuous",
+      "source_seconds": [
+        49.2,
+        56.6
+      ],
+      "label": "shield_pickup_blocks_end",
+      "output_seconds": [
+        10.099979166666667,
+        17.499979166666666
+      ]
+    },
+    {
+      "source": "continuous",
+      "source_seconds": [
+        74.2,
+        80.9
+      ],
+      "label": "ready_burst_two_gates_R_and_three_wind_relays",
+      "output_seconds": [
+        18.099979166666667,
+        24.799979166666667
+      ]
+    },
+    {
+      "source": "continuous",
+      "source_seconds": [
+        114.0,
+        117.8
+      ],
+      "label": "hive_finish",
+      "output_seconds": [
+        25.399979166666668,
+        29.199979166666665
+      ]
+    }
+  ],
+  "edit": "No normalization or gain change inside segments. Only10ms edge fades at excerpt cuts and0.6s silent separators. Do not assess natural game transition continuity at edit boundaries. Both source recordings retained unchanged.",
+  "source_sha256": {
+    "continuous": "f221a8b5e7454218e01ff1836e30644244ff3356ef5808489e29981f8402ab98",
+    "negative": "4bf62ba1315e1a02b534e713a266fbc833550153d54df636b24f1410e94308c6"
+  },
+  "output_sha256": "fe2e96d9f15de132d71cc710c200d376e5098bc61e9b69e619d60397e6fa6cbc",
+  "peak_dbfs": -9.417419601662104,
+  "saturated_samples": 0
+}
