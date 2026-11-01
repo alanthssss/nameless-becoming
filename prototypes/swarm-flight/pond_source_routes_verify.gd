@@ -1,6 +1,7 @@
 extends SceneTree
 ## Known-route developer verification, not independent exploration or visual acceptance.
 const M=preload("res://spring_journey_model.gd")
+const RainExpected=preload("res://rain_layout_expectations.gd")
 const FIXTURES="res://review-evidence/2026-11-01/source-routes/legacy-fixtures/"
 const FORK=Rect2(2860,330,200,120)
 var checks=0
@@ -44,7 +45,7 @@ func expected_upgrade(old: Dictionary) -> Dictionary:
 		var wall=M.pack({"kind":"terrain","material":"hedge","rect":FORK,"broken":false})
 		expected.state.walls.append(wall.duplicate(true))
 		expected.state.checkpoint.walls.append(wall.duplicate(true))
-	return expected
+	return RainExpected.upgraded(expected)
 func exact(m,label: String):
 	var data=m.save_payload()
 	var copy=M.new()

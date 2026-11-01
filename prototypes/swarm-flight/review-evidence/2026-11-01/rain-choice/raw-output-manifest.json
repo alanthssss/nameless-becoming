@@ -1,0 +1,26 @@
+[
+  {
+    "source": "/private/tmp/pond-rain-choice-final/native.avi",
+    "output": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/rain-choice/native/native.avi",
+    "bytes": 205002084,
+    "sha256": "5b4d2f0e732ff410aec295367a89e309cd9daad6f876f4c679b400608ff7c855"
+  },
+  {
+    "source": "/private/tmp/pond-rain-baseline-native/native.avi",
+    "output": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/rain-choice/baseline/native/native.avi",
+    "bytes": 110208086,
+    "sha256": "65874aa3b976e811b2083ec4312d59220adafc551ff0efb43afad537d1933e8e"
+  },
+  {
+    "source": "/private/tmp/pond-rain-layout-native/native.avi",
+    "output": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/rain-choice/history/disconnected-preview/native.avi",
+    "bytes": 80935814,
+    "sha256": "f3bcb51daef1b268f09dc57f2ffb5dfde64cdd57266dcc26366064bd070cd57f"
+  },
+  {
+    "source": "/private/tmp/pond-rain-choice-native/native.avi",
+    "output": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/rain-choice/history/843cf1d-square-cut/native.avi",
+    "bytes": 204838574,
+    "sha256": "ed68ffb6896a55f7fe57dbb10366ba23fb5c406ee9b4cb8bbcf4e63a8bbdadcf"
+  }
+]

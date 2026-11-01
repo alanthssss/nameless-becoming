@@ -1,0 +1,21 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+stage-0 | untouched previous-model stage | 12c120b7cfd3b35ea045bcd73bacfddcf28b310158dc49933d322b68ff24ff66
+stage-2 | untouched previous-model stage | 13ee6ede0b1bfc5005568f1b06d129941e95c69b47f35d52374724247cf483e3
+checkpoint--1 | old safe committed checkpoint with consistent reached prefix | 3dccc7a105de4a5a089feda43a0f93c2db9c003fd8337c414ae972db0bdc80bb
+checkpoint-0 | old safe committed checkpoint with consistent reached prefix | 48d7a0622a4b0a990cf868e2ca9c1aeb38486982d56d1c40329d8b7cc124660e
+checkpoint-1 | old safe committed checkpoint with consistent reached prefix | 7093c72198db9827e3c97977e4d71b10d77ca90d7d8fbf0c1456973a4b3ef298
+checkpoint-2 | old safe committed checkpoint with consistent reached prefix | 3a2f0c5597b05ad30d1faf5c77f50250e6a2e56d92a6714e6f5898cf64a049c3
+checkpoint-3 | old safe committed checkpoint with consistent reached prefix | ede22c158cef8e668492e550f7c9aef236ee102065d36e21f770b411935590d4
+new-overhead-live | old collision-clear seeded live pose; safe2170,520 checkpoint | c45beeb02fadd5fad8ee07ed3ac73b592cca7d697426bf253d63b6dfe4043639
+new-overhead-checkpoint | old collision-clear seeded checkpoint will be unsafe under new geometry | 0cfca90f204ab191844d2eb5bf655217dae57f5ebdf6c8ee97553ca85c3cfe52
+new-upper-stem-live | old collision-clear seeded live pose; safe2170,520 checkpoint | edc5293b7a084686ee5d28f4514ed2a1c2e92cb3b2739d24e77ef0accdb4517c
+new-upper-stem-checkpoint | old collision-clear seeded checkpoint will be unsafe under new geometry | f7daa79ecdf269507f425c7cb64eb84cffc809e089bc3aff4a5188017575fe4d
+new-low-leaf-live | old collision-clear seeded live pose; safe2170,520 checkpoint | 74ae58c0b5344461e1e95374151a456136a8bcfeb912d622a8d7699abea97cab
+new-low-leaf-checkpoint | old collision-clear seeded checkpoint will be unsafe under new geometry | 221d6dddc57a5475f5c2da7ea768a5fdabfb66116ff81bd429f2ca42c848d2eb
+new-high-leaf-live | old collision-clear seeded live pose; safe2170,520 checkpoint | 6717bd614e89a4941bedb82e48be6a5b2e57bb73705f0e676f10524918c29be4
+new-high-leaf-checkpoint | old collision-clear seeded checkpoint will be unsafe under new geometry | dc05565658707abc8f82dee65df1e40bb008ecfa0dfc8a5d8d256f26be530d31
+rain-shield-live | seeded natural-valid rain phase; ordinary idle step contacts old real shield | 8ad5becdf464dbbc69f5e689709c1878dc7de83082ea6c4d0e472533598b8c68
+rain-shield-committed | same shield state with committed collected flag and rain story | 9ffe16c69380cb0c0b2be970e95ab5c9a6ff77e2d9a902824094a31ffd9adcb4
+after-third | old committed third shelter plus safe later live pose | f06d3d77aaf4d5729a0cf9ed9ea44b576226d6c511d54b06dddd22e075e1d087
+RAIN LEGACY GENERATION failures=0

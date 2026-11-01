@@ -1,0 +1,3 @@
+dyld[59264]: Library not loaded: /opt/homebrew/opt/x265/lib/libx265.215.dylib
+  Referenced from: <B6CF29BA-29C9-3CB3-88B2-E5A42A614243> /opt/homebrew/Cellar/ffmpeg/8.1/bin/ffmpeg
+  Reason: tried: '/opt/homebrew/opt/x265/lib/libx265.215.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/x265/lib/libx265.215.dylib' (no such file), '/opt/homebrew/opt/x265/lib/libx265.215.dylib' (no such file), '/opt/homebrew/Cellar/x265/4.3/lib/libx265.215.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/Cellar/x265/4.3/lib/libx265.215.dylib' (no such file), '/opt/homebrew/Cellar/x265/4.3/lib/libx265.215.dylib' (no such file)

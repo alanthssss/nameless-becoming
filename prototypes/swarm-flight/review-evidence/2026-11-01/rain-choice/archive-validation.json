@@ -1,0 +1,66 @@
+{
+  "native_sets": [
+    {
+      "path": "native",
+      "png_count": 11,
+      "png_bytes_exact": true,
+      "trace_bytes_exact_after_gzip": true,
+      "log_bytes_exact": true,
+      "mp4_decode_exit_status": 0
+    },
+    {
+      "path": "baseline/native",
+      "png_count": 3,
+      "png_bytes_exact": true,
+      "trace_bytes_exact_after_gzip": true,
+      "log_bytes_exact": true,
+      "mp4_decode_exit_status": 0
+    },
+    {
+      "path": "history/disconnected-preview",
+      "png_count": 3,
+      "png_bytes_exact": true,
+      "trace_bytes_exact_after_gzip": true,
+      "log_bytes_exact": true,
+      "mp4_decode_exit_status": 0
+    },
+    {
+      "path": "history/843cf1d-square-cut",
+      "png_count": 11,
+      "png_bytes_exact": true,
+      "trace_bytes_exact_after_gzip": true,
+      "log_bytes_exact": true,
+      "mp4_decode_exit_status": 0
+    }
+  ],
+  "legacy_provenance_hashes_matched": 20,
+  "raw_avi_hashes_matched": 4,
+  "AVI_in_git_evidence": 0,
+  "boundary": "Archive byte/hash/decode verification only; no Godot or gameplay rerun, no subjective video/audio review.",
+  "encode_log_compression": [
+    {
+      "original": "native/encode.log",
+      "stored": "native/encode.log.gz",
+      "original_sha256": "8cbd4883fea7318885e5ba138b7c94628ecc3f6d334e393cb93999d2fde071e0",
+      "exact_after_gzip": true
+    },
+    {
+      "original": "history/disconnected-preview/encode.log",
+      "stored": "history/disconnected-preview/encode.log.gz",
+      "original_sha256": "c8a11c4de300980cf8ab428dd3415de4d6e6e56c212fd1ef20a1d1166b4b2729",
+      "exact_after_gzip": true
+    },
+    {
+      "original": "history/843cf1d-square-cut/encode.log",
+      "stored": "history/843cf1d-square-cut/encode.log.gz",
+      "original_sha256": "b095cd06cd7882fea76c18e1890bbb5a33d7e1a12345cd91221f46a9391abdde",
+      "exact_after_gzip": true
+    },
+    {
+      "original": "baseline/native/encode.log",
+      "stored": "baseline/native/encode.log.gz",
+      "original_sha256": "dd7f70e8478c17bb737c3aa95cc1895c4f356dac1f6a381d20b7f1cb63e8543a",
+      "exact_after_gzip": true
+    }
+  ]
+}

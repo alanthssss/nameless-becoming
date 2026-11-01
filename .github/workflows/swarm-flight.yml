@@ -82,6 +82,25 @@ jobs:
             exit 1
           fi
           grep -q '^SWARM FLIGHT UI VERIFIED:' "$RUNNER_TEMP/swarm-flight-ui.log"
+      - name: Verify pond layouts and real save migration
+        if: matrix.suite == 'core'
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_source_routes_verify.gd 2>&1 | tee "$RUNNER_TEMP/pond-source-routes.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/pond-source-routes.log"; then exit 1; fi
+          grep -q '^POND SOURCE ROUTES VERIFIED:.*0 failures' "$RUNNER_TEMP/pond-source-routes.log"
+          SWARM_POND_ROUTES_QA_DIR="$RUNNER_TEMP/pond-source-routes-disk" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_source_routes_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/pond-source-routes-disk.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/pond-source-routes-disk.log"; then exit 1; fi
+          grep -q '^POND SOURCE ROUTES SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/pond-source-routes-disk.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://rain_choice_verify.gd 2>&1 | tee "$RUNNER_TEMP/rain-choice-model.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/rain-choice-model.log"; then exit 1; fi
+          grep -q '^RAIN CHOICE VERIFIED:.*0 failures' "$RUNNER_TEMP/rain-choice-model.log"
+          SWARM_RAIN_CHOICE_QA_DIR="$RUNNER_TEMP/rain-choice-disk" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://rain_choice_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/rain-choice-disk.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/rain-choice-disk.log"; then exit 1; fi
+          grep -q '^RAIN CHOICE SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/rain-choice-disk.log"
       - name: Verify long chapters and exact suspend resume
         if: matrix.suite == 'regressions'
         env:
@@ -162,12 +181,6 @@ jobs:
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/spring-model.log" "$RUNNER_TEMP/spring-ui.log" "$RUNNER_TEMP/spring-entry.log"; then exit 1; fi
           grep -q '^SPRING JOURNEY VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-model.log"
           grep -q '^SPRING JOURNEY UI VERIFIED:.*0 failures' "$RUNNER_TEMP/spring-ui.log"
-          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_source_routes_verify.gd 2>&1 | tee "$RUNNER_TEMP/pond-source-routes.log"
-          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/pond-source-routes.log"; then exit 1; fi
-          grep -q '^POND SOURCE ROUTES VERIFIED:.*0 failures' "$RUNNER_TEMP/pond-source-routes.log"
-          SWARM_POND_ROUTES_QA_DIR="$RUNNER_TEMP/pond-source-routes-disk" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_source_routes_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/pond-source-routes-disk.log"
-          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/pond-source-routes-disk.log"; then exit 1; fi
-          grep -q '^POND SOURCE ROUTES SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/pond-source-routes-disk.log"
           SWARM_POND_STATES_DIR="$RUNNER_TEMP/pond-states" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://pond_source_states_probe.gd 2>&1 | tee "$RUNNER_TEMP/pond-states.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/pond-states.log"; then exit 1; fi
           grep -q '^POND SOURCE STATES VERIFIED:.*0 failures' "$RUNNER_TEMP/pond-states.log"

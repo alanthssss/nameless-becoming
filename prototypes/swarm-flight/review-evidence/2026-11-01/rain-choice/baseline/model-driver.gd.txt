@@ -1,0 +1,26 @@
+extends SceneTree
+const M=preload("res://spring_journey_model.gd")
+var model=M.new()
+var samples=[]
+var hits=[]
+func _initialize():call_deferred("run")
+func tick(direction: Vector2):
+	model.step(direction,false,1.0/60)
+	for e in model.events:
+		if e.kind=="hit":hits.append({"reason":e.get("reason"),"p":[model.p.x,model.p.y],"time":model.time})
+	model.events.clear()
+	if samples.size()%30==0:samples.append({"p":[model.p.x,model.p.y],"stamina":model.stamina,"weather":model.weather_phase,"shield":model.shield_left,"time":model.time})
+	else:samples.append({})
+func run():
+	model.load_stage(1)
+	for i in 160:tick(Vector2.UP)
+	var start=model.p
+	for i in 1000:
+		if model.p.x>=4000:break
+		tick(Vector2.RIGHT)
+	var result={"kind":"known_input_component_baseline","revision":"5d6866baabd91766f4c5d4aa45f05bab0fc060bb","initialization":"load_stage1 only, then ordinary up/right; no position seed, no shield, no burst","start":[start.x,start.y],"end":[model.p.x,model.p.y],"recoveries":model.recoveries,"hits":hits,"stamina":model.stamina,"time":model.time,"weather":model.weather_phase,"shield_collected":model.shields[0].collected,"samples":samples.filter(func(s):return not s.is_empty())}
+	var f=FileAccess.open("/private/tmp/pond-rain-baseline.json",FileAccess.WRITE)
+	f.store_string(JSON.stringify(result,"\t",true,true))
+	f.close()
+	print("RAIN OLD HIGH BYPASS: "+JSON.stringify({"x":model.p.x,"y":model.p.y,"hits":hits.size(),"recoveries":model.recoveries,"shield":model.shields[0].collected,"stamina":model.stamina}))
+	quit()

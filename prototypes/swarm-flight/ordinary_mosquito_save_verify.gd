@@ -1,6 +1,7 @@
 extends SceneTree
 const Scene=preload("res://spring_journey.tscn")
 const M=preload("res://spring_journey_model.gd")
+const RainExpected=preload("res://rain_layout_expectations.gd")
 const Save=preload("res://save_data.gd")
 var checks=0
 var failures=0
@@ -33,7 +34,7 @@ func without_small(value: Dictionary) -> Dictionary:
 	copy.erase("small")
 	return copy
 func expected_pond_state(old: Dictionary) -> Dictionary:
-	var state=old.state.duplicate(true)
+	var state=RainExpected.upgraded(old).state
 	if old.stage==0:
 		var fork=M.pack({"kind":"terrain","material":"hedge","rect":Rect2(2860,330,200,120),"broken":false})
 		state.walls.append(fork.duplicate(true))
@@ -71,7 +72,7 @@ func run():
 				var expected=M.new()
 				check(expected.restore_payload(old),"independent model accepts old snapshot "+label)
 				check(game.model.small==expected.small and game.model.checkpoint_story.small==expected.checkpoint_story.small,"disk path migrates both NPC snapshots "+label)
-				check(disk.state==expected_pond_state(old) and disk.get("pond_layout_revision")==1 and disk.stage==old.stage and without_small(disk.story)==without_small(old.story) and without_small(disk.checkpoint_story)==without_small(old.checkpoint_story),"all original non-NPC state and facts retained except declared pond wall "+label)
+				check(RainExpected.normalized(disk.state)==RainExpected.normalized(expected_pond_state(old)) and disk.get("pond_layout_revision")==1 and disk.get("rain_layout_revision")==1 and disk.stage==old.stage and without_small(disk.story)==without_small(old.story) and without_small(disk.checkpoint_story)==without_small(old.checkpoint_story),"all original non-NPC state and facts retained except declared pond/rain layout "+label)
 				var saved: Dictionary=game.model.save_payload()
 				await release(game)
 				game=await scene(path)

@@ -1,0 +1,102 @@
+{
+  "issue": "https://github.com/alanthssss/nameless-becoming/issues/206",
+  "gdd": "13.6 / J02",
+  "milestone": "M3",
+  "reviewed_at_utc": "2026-11-01T04:28:54.696653+00:00",
+  "candidate_status": "production3ab1356",
+  "production_commit": "3ab1356b9aba645dcd0dcf918cf9a67144dd596a",
+  "previous_production_commit": "843cf1d38cac97152679c67ab81746824e8a079b",
+  "verdict": "no_actionable_blockers_in_scoped_review",
+  "reviewer_role": "Migration/model/main and independent migration-test author; this final read-only review targets the parent author's content/view/route-test/CI changes. Not independent first-time exploration.",
+  "actions_performed": [
+    "Read code diffs against 5d6866b and final view-only diff 843cf1d..3ab1356",
+    "Read relevant builder route/shelter behavior, test flight helpers, CI matrix and aggregate gate",
+    "Visually inspected exactly five final native PNGs listed below",
+    "Read final native log and selected trace metadata/marks/assertions; did not watch video"
+  ],
+  "reviewed_files": [
+    {
+      "path": "/private/tmp/nameless-pond-rain-choice/prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "4dea9e7a14ca3ee7748e5a89ad9c7d32897639810f435b9ce0c40d1e108434d0",
+      "matches_production_commit": true
+    },
+    {
+      "path": "/private/tmp/nameless-pond-rain-choice/prototypes/swarm-flight/spring_journey_view.gd",
+      "sha256": "626fa1df943876ebde3c4f069a9a56375251e43c52953d991620dd3b9bcc6042",
+      "matches_production_commit": true
+    },
+    {
+      "path": "/private/tmp/nameless-pond-rain-choice/prototypes/swarm-flight/spring_journey_verify.gd",
+      "sha256": "6e17d3679de3272cc0f178a4237ecc4f760ebce1e53a1494240cbc0962f71dcf",
+      "matches_production_commit": false
+    },
+    {
+      "path": "/private/tmp/nameless-pond-rain-choice/prototypes/swarm-flight/spring_journey_ui_verify.gd",
+      "sha256": "3b5f0f321a1d36be0dd9f643953955d0ad45b0acc78301d71f4416a0f47e34cd",
+      "matches_production_commit": false
+    },
+    {
+      "path": "/private/tmp/nameless-pond-rain-choice/.github/workflows/swarm-flight.yml",
+      "sha256": "f3242093bc25c0905a0ef3359816bcea2a70b2e7dabb0d9d5548bf7dbf69f9b3",
+      "matches_production_commit": false
+    }
+  ],
+  "visual_evidence": [
+    {
+      "path": "/private/tmp/pond-rain-choice-final/01-safe-choice.png",
+      "sha256": "c7a0d910f04ccb9f1256084f24cc10fcc39cb86d770133620b9bf18a1f5deaae"
+    },
+    {
+      "path": "/private/tmp/pond-rain-choice-final/02-choice-small-window.png",
+      "sha256": "c6d7c7642932203346cc5a5c77464ba4c706b90ab2f64c7f45b6d32dfca3eac0"
+    },
+    {
+      "path": "/private/tmp/pond-rain-choice-final/03-low-rest.png",
+      "sha256": "a3b60bbdbc6de18fbce46e0e3a54fb616413c15d0e9c9c206e1336568a2c14ef"
+    },
+    {
+      "path": "/private/tmp/pond-rain-choice-final/05-connected-shoot-and-common-roof.png",
+      "sha256": "db8264e8a52ae5fc82f2d7fa3c0f5a5969acc007b7db882ce336dcb74fe76834"
+    },
+    {
+      "path": "/private/tmp/pond-rain-choice-final/09-upper-landing.png",
+      "sha256": "f0c63e54d10964aeef9312904b6718326ba580b5fc09f80f3c12d074839ac62f"
+    }
+  ],
+  "supporting_artifacts": [
+    {
+      "path": "/private/tmp/pond-rain-choice-final/native.log",
+      "sha256": "bdff17935cab177aa686949799b948446a9619aa71958e2a6360f1c26a66bd56"
+    },
+    {
+      "path": "/private/tmp/pond-rain-choice-final/trace.json",
+      "sha256": "bb94818c798689b648a7ac80343a1d56b689463efed7ad617b22448656c8d260"
+    }
+  ],
+  "findings": [],
+  "scoped_observations": [
+    "Third beat splits 1500 into 460+1040 without extending world length: low rest (2630,600), half 118; upper rest (3010,520), half 118; common roof (3150,310,710,85), upper stem (3150,80,65,231). Shield/rain/dew keep declared positions and unchanged gameplay rules.",
+    "Reference routes and existing model/UI ordinary-input paths now visit the relevant low/upper landing and shared roof opening. Existing diff removes no assertions or exact-resume checks.",
+    "Final view change paints the upper stem with the supporting hedge before its foliage; the separate stem pass skips it. In the inspected final images, its buried lower rectangular edge is hidden and its attachment to the hedge is continuous; hedge support stalks extend toward the ground.",
+    "Safe-choice images show low and upper landing centers/lanterns, rainfall and shield choice in the same view. The upper leaf is close to the right viewport edge; this observation does not establish readability for arbitrary aspect ratios.",
+    "Low-rest and upper-landing stills show distinct elevations, intact supports and readable player positions. No new basic scale/occlusion defect identified in the inspected five images.",
+    "CI retains core/regressions/samples, fail-fast false, each suite timeout 8 minutes, existing 1-minute aggregate gate and requirement for every suite to succeed. Pond model/save invocations move from regressions to core unchanged; rain model/save invocations are added with error rejection and 0-failure completion markers. No former res:// script invocation is removed."
+  ],
+  "supplied_native_result": {
+    "checks": 81,
+    "failures": 0,
+    "frames": 1479,
+    "fps": 30,
+    "duration_seconds": 49.3,
+    "source": "Parent-produced native.log/trace.json, not rerun by this reviewer",
+    "warning": "ObjectDB instances leaked at exit is retained in native.log"
+  },
+  "resolved_prior_visual_counterexample": "Parent withdrew the earlier 843cf1d visual pass after noticing the upper stem base cut. This review uses final 3ab1356 five stills; it does not reuse the withdrawn visual verdict.",
+  "scope_limits": [
+    "No Godot process, new test, native window or repository edit performed during this review.",
+    "Exactly five final native images inspected; the full video, other six images and audio were not independently reviewed.",
+    "Migration implementation/tests were authored by this reviewer and are not claimed as an independent code review here.",
+    "CI and existing route-test edits were still worktree changes at review time; hashes bind the exact reviewed contents. Remote CI execution is outside this review.",
+    "Known-solution developer evidence does not establish first-time player understanding, enjoyment, whole MVP completion, G4 acceptance or arbitrary-resolution support."
+  ]
+}
