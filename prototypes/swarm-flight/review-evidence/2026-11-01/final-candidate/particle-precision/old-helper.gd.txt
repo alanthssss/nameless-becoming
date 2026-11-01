@@ -1,0 +1,10 @@
+func _ellipse(center: Vector2, radius: Vector2, tint: Color, angle := 0.0) -> void:
+	var points := PackedVector2Array()
+	for i in 40:
+		var theta := i * TAU / 40.0
+		points.append(center + Vector2(cos(theta) * radius.x, sin(theta) * radius.y).rotated(angle))
+	draw_colored_polygon(points, tint)
+	if model != null:
+		var outline := points.duplicate()
+		outline.append(outline[0])
+		draw_polyline(outline,tint,1.0,true)

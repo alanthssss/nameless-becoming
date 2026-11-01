@@ -1,0 +1,142 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "kind": "in_engine_visual",
+  "status": "passed-bounded-final-candidate",
+  "reviewer": "Codex root; support_review technical evidence audit separately scoped",
+  "source": "Native Godot runtime, full A/B movies, original viewport PNGs and derived motion frames; not concept art",
+  "review_method": "Root viewed all16 original A PNGs, five extracted sequence frames, and six selected B PNGs. Support reviewed23 images with explicit overlap and read all6253 trace samples/236 assertions. Neither claims frame-by-frame viewing of the full videos or subjective listening.",
+  "root_original_A": [
+    "00-title.png",
+    "01-departure-and-mosquito.png",
+    "02-flower-lower-preview.png",
+    "03-source-observed.png",
+    "05-rain-forecast-and-roof.png",
+    "06-safe-rain-choice.png",
+    "07-shield-collected.png",
+    "08-protected-upper-exposure.png",
+    "09-upper-rain-landing.png",
+    "10-first-counting-window.png",
+    "11-wind-approach-to-back.png",
+    "12-second-opening.png",
+    "13-keeper-placed-signs.png",
+    "14-optional-sharing.png",
+    "15-listeners-at-source.png",
+    "16-ending.png"
+  ],
+  "root_original_B": [
+    "03-upper-source-preview.png",
+    "04-source-skipped.png",
+    "07-unshielded-low-rest.png",
+    "08-low-route-rejoins-high-leaf.png",
+    "11-ordinary-back-knot-approach.png",
+    "16-ending.png"
+  ],
+  "motion_review": {
+    "files": [
+      "native-a/motion-1.png",
+      "native-a/motion-2.png",
+      "native-a/motion-3.png",
+      "native-a/motion-4.png",
+      "native-a/motion-5.png"
+    ],
+    "observed": "Actor travels through opened front gap, moves above board to back sign, reaches pickup, signs move with the carrying phase and settle at supported stand. At motion4 the actor/cargo is outside right frame; not claimed always visible. Player remains controllable.",
+    "trace_binding": "native-a/motion-selections.json; exact extracted video frame indices recorded, engine-to-video offset limited and disclosed"
+  },
+  "checks": [
+    {
+      "id": "LV01",
+      "status": "pass-internal",
+      "basis": "Preserved old one-stroke double-open counterexample; new identical input only opens first. Native A then turns upward through wind, B flies around and dashes separately. Fresh AI explorer independently used timing for first opening and changed height/side for second; optional first wind trigger understanding unproven."
+    },
+    {
+      "id": "LV02",
+      "status": "pass-internal",
+      "basis": "Leaf stops expose next shelter/branch and restore energy; after opening, keeper and optional same-source companions provide visible consequence. Script observation waits disclosed, not padded gameplay duration."
+    },
+    {
+      "id": "LV03",
+      "status": "pass-bounded",
+      "basis": "Ordinary mosquito source/state inherited verified bounded uses, model77/disk107; departure original frame shows actor/hazard geometry. No attack-flower combat theme added."
+    },
+    {
+      "id": "LV04",
+      "status": "pass-bounded",
+      "basis": "15 controlled upward entry starts plus native A wind entry; first-dash onward counterexample repaired. Wider right5 failures retained outside tested envelope, not promoted."
+    },
+    {
+      "id": "LV05",
+      "status": "pass-internal",
+      "basis": "A actual source feeding and route pickups, B skips source/sharing and still finishes; shared rain exit dew reachable in both native routes."
+    },
+    {
+      "id": "LV06",
+      "status": "pass-internal",
+      "basis": "A upper landing retains protection; B low leaf restores stamina and later rejoins. Both paths finish; minimum values and intentional observation pauses in technical trace, no forced zero recovery B."
+    },
+    {
+      "id": "LV07",
+      "status": "pass-internal",
+      "basis": "Departure/feed-or-skip, rain choice, timed opening then back-side approach, actor tidying, optional sharing and hive ending captured continuously by InputEvents."
+    },
+    {
+      "id": "LV08",
+      "status": "pass-bounded",
+      "basis": "Root checked canopy/stem attachment, high first wind rooted stem, hanging board/beam/knot and supported final signs at play scale. All A/B sampled cue-player and cue-caption overlaps zero. No global claim for untested variants."
+    },
+    {
+      "id": "LV09",
+      "status": "pass-bounded-scene-disk-and-both-export-and-final-package-processes",
+      "basis": "A/B scene/disk restore plus78/0 charge/burst/handoff supplement and strict legacy migration. Actual raw export and final assembled .command entries each ran first/cold processes, showed saved-position confirmation, continued movement and isolated saves. Persisted JSON equality is not full in-memory process-state inspection."
+    },
+    {
+      "id": "LV10",
+      "status": "pass-evidence-boundary",
+      "basis": "Known inputs/native images, fresh AI exploration and human feedback kept separate. No natural-duration, full24-level, full-family or human-acceptance claim; budget unknowns retained."
+    }
+  ],
+  "audio": {
+    "changes_in_final_freeze": "none; local-coordinate tiny-particle rendering and first wind layout only",
+    "user_feedback": [
+      "28.633-second clip: 已试听，没有明显问题",
+      "29.199979-second supplemental clip: 已试听，没有明显问题"
+    ],
+    "scope": "Those two clips only; assistant cannot hear audio; not full-movie/full-MVP audio acceptance",
+    "feedback_question_ids": [
+      "[\"request_user_input_async\",\"call_b2b2ae26bffd4dce817009a712e4e127\",0]",
+      "[\"request_user_input_async\",\"call_e9a764da8d8a486aa60a4402500d4785\",0]"
+    ]
+  },
+  "known_limits": [
+    "AI technical and visual review is not a real outside-player preference test",
+    "Short carry phase may leave camera; physical path/facts preserved and result visible",
+    "Continuous movies encode known routes and deliberate pauses, not natural first-time experience length",
+    "CurrentMVP-specific source/usage validation does not validate all266 objects/1133states/24combinations or full24-level game",
+    "Fresh AI explorer did not determine first wind activation; manually positioned at back and burst, with final flower appearance change. NativeA/B separately establish wind and zero-wind alternatives; no first-look mastery claim."
+  ],
+  "comparison_review": {
+    "method": "root six selected raw native C screenshots plus complete trace/assertions/log checks",
+    "screenshots": [
+      "native-c/play-7-12.png",
+      "native-c/07-handoff.png",
+      "native-c/play-8-3.png",
+      "native-c/08-handoff.png",
+      "native-c/play-9-1.png",
+      "native-c/09-comparison-ending.png"
+    ],
+    "result": "59/0, 11052frames/368.4s, no forced recovery or renderer error; large-world particle effects draw normally in inspected frames",
+    "limits": "No claim every video frame viewed or audio heard. Unchanged comparison retains legacy internal chapter/version labels."
+  },
+  "independent_exploration": {
+    "path": "first-look/continuation/review.json",
+    "status": "ready",
+    "raw_media_count": 143,
+    "root_extra_original_images_viewed": 18,
+    "root_scope": "first-look/root-observations.json",
+    "limitations": "Native sampling waits and optional first-wind comprehension remain explicitly bounded; no human acceptance."
+  },
+  "final_package_review": {
+    "path": "final-package-proof/process-launch-receipt.json",
+    "screenshots": 9,
+    "scope": "Root observed title, first pause, cold confirmation and continued position for both actual scripts; comparison retains legacy internal version labels."
+  }
+}

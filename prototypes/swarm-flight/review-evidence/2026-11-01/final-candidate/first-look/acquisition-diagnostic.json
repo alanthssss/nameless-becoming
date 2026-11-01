@@ -1,0 +1,23 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "kind": "root diagnostic of sealed exploratory acquisition failure; not a product pass",
+  "review_report_sha256": "c5a9cc09f3311d7f6b56d49ef229c9322a16f7bdafe887d9b9af9b21aefba794",
+  "source": "attempt-1/notes.jsonl",
+  "inspected_raw_screenshots": [
+    "attempt-1/038-04-after-stem-gap.png",
+    "attempt-1/043-04-dash-preparation.png",
+    "attempt-1/045-04-single-key-dash-result.png"
+  ],
+  "observed_facts": [
+    "First screenshot shows stamina7, dew1/2 and explicit rain damage30 feedback",
+    "Second route final screenshot shows dew0/2, stamina80, player left of first raised stem; reset instant is not captured",
+    "Right+space native combination rejected before action; not a game-control outcome",
+    "Second sequence has planned3.25s key holds spread over16.255s to final screenshot; per-key AX calls and screenshot waits run while game is live"
+  ],
+  "causal_limit": "Input observation overhead visibly increases exposure, but logs alone do not prove it is the sole cause. No conclusion that rain layout is defective or acceptable from this attempt.",
+  "protocol_change": "Batch only already-planned finite inputs, immediately pause, then inspect AX/screenshot and decide. No route, coordinates, timings, source or authored solution disclosed. Same participant continues same exploration with old errors preserved.",
+  "new_first_time_claim": false,
+  "production_changed": false,
+  "gate_status": "acquisition continuation now progressing; whole review pending",
+  "followup": "Same participant reports successful first rain gap and second shelter2/5, active screenshot stamina68 then recovering after corrected finite batch sampling; no production or route disclosure. Whole exploratory gate still pending."
+}

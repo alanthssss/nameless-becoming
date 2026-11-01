@@ -1,0 +1,9 @@
+{
+  "frozen_revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "final_zip_sha256": "b4510e466940b4850408ff2c8721b26e42a48b83eab7fbf39f2c2551bf9b13cf",
+  "final_zip_pck_path": "雨来之前-0.17.0-池岸归途-9611660f/PondJourney-0.17.0.app/Contents/Resources/雨来之前 · 池岸归途 0.17.0.pck",
+  "final_zip_pck_sha256": "5c0ca78329e43ab29c2c7fc5631ea550842a7b8b02dc1f7dc9040290749bdd05",
+  "matches_verified_internal_export_pck": true,
+  "production_post_freeze_changes": false,
+  "scope": "Byte equality binds final packaged runtime to the raw export used for independent/native verification; metadata/evidence added afterward do not alter runtime."
+}

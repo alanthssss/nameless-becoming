@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "goal": "spring-03-05-review",
-  "parent_goal": "SF-R23; GDD v1.1 full20chapter design remains incomplete",
+  "parent_goal": "SF-R23; GDD current full24-level scope remains incomplete",
   "source": "docs/design/swarm-flight-gdd.md#production-recovery-20261028",
   "criteria": [
     {

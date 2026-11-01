@@ -1,0 +1,166 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "kind": "actual native exported-binary process launch/cold restart via CUA ordinary UI",
+  "spring": {
+    "processes": [
+      63575,
+      63626
+    ],
+    "journey_id": "spring-03-05-v2",
+    "first_p": {
+      "v": [
+        303.1424560546875,
+        412.3550720214844
+      ]
+    },
+    "continued_p": {
+      "v": [
+        437.9599609375,
+        400.84490966796875
+      ]
+    },
+    "full_payload_exact_cold": true
+  },
+  "comparison": {
+    "processes": [
+      63671,
+      63713
+    ],
+    "journey_id": "summer-long-07-09-r8",
+    "first_p": {
+      "v": [
+        300.4871520996094,
+        415.2131652832031
+      ]
+    },
+    "continued_p": {
+      "v": [
+        430.0855407714844,
+        403.9152526855469
+      ]
+    },
+    "full_payload_exact_cold": true
+  },
+  "separate_save_paths": true,
+  "spring_bytes_unchanged_across_comparison": true,
+  "old_user_saves_accessed": false,
+  "scope": "Both actual exported entries and continuation; final assembled command launchers remain separate required check",
+  "files": [
+    {
+      "path": "00-default-title.png",
+      "sha256": "9887bc1dcfd963aa0428b06e7e56a8e6dd036ac8428005653bdcaf0979dbc5bc"
+    },
+    {
+      "path": "01-spring-first-pause.png",
+      "sha256": "fb4e914786bc41aaa7184a38fe591be530bf8dd1d73b68b2911639365180d358"
+    },
+    {
+      "path": "02-spring-cold-title.png",
+      "sha256": "e2ad62ffc7579235d75718954f4ceb21b2c216b6d0ea6e0ba912fac9f01bd70f"
+    },
+    {
+      "path": "03-spring-cold-restored.png",
+      "sha256": "6c2ffe6acf166882fadde1fa3531fb9cff979d0998235f8c258508b2f8caae5a"
+    },
+    {
+      "path": "04-spring-continued.png",
+      "sha256": "45130706faebaa7eeb88527e851a6b5c824d324116563068ae64eb805773811d"
+    },
+    {
+      "path": "05-comparison-first-pause.png",
+      "sha256": "2f5a2afb8483d55b7b7bc6d05cd594db92b43666235dbe55eeff94a80eff6256"
+    },
+    {
+      "path": "06-comparison-cold-title.png",
+      "sha256": "76c68a9ed314a692ed7ff064057eec5ec2193bbd4b01ee542b447be782db1629"
+    },
+    {
+      "path": "07-comparison-cold-restored.png",
+      "sha256": "7a3bc7996fbfcfeaa7ce65de8eebdad299ad6e4c4497332a48ff2c1054805837"
+    },
+    {
+      "path": "08-comparison-continued.png",
+      "sha256": "d4c6539f3049b368d4cf7349a4464e62c115a0ca825d765440049be7356ac187"
+    },
+    {
+      "path": "comparison-after-cold.json",
+      "sha256": "cb66638b9f886c21dd5b438620e75199335e9a9659dba576afaa4914b28982c5"
+    },
+    {
+      "path": "comparison-after-continued.json",
+      "sha256": "b0a2d9e84160364e71d5d492a35c69fe5d45b5a32653c9e93834c2fcdfba4591"
+    },
+    {
+      "path": "comparison-before-cold.json",
+      "sha256": "cb66638b9f886c21dd5b438620e75199335e9a9659dba576afaa4914b28982c5"
+    },
+    {
+      "path": "comparison-cold-process.txt",
+      "sha256": "48758cf0bf332a3a65e5e508ef0c602f6123620688a6e7968fd153de9a620b25"
+    },
+    {
+      "path": "comparison-cold.log",
+      "sha256": "7c646eb6b276afc82442221dbc646dcdba105b2b17c51b7487cef5ff6e0b1dc6"
+    },
+    {
+      "path": "comparison-cold.stdout.log",
+      "sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70"
+    },
+    {
+      "path": "comparison-first-process.txt",
+      "sha256": "c3e448b2785ade54c54623ce217430e154c41ab318e87df84638ca9d33c37ab4"
+    },
+    {
+      "path": "comparison-first.log",
+      "sha256": "7c646eb6b276afc82442221dbc646dcdba105b2b17c51b7487cef5ff6e0b1dc6"
+    },
+    {
+      "path": "comparison-first.stdout.log",
+      "sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70"
+    },
+    {
+      "path": "comparison.json",
+      "sha256": "b0a2d9e84160364e71d5d492a35c69fe5d45b5a32653c9e93834c2fcdfba4591"
+    },
+    {
+      "path": "spring-after-cold.json",
+      "sha256": "784b6b33ed14fdf414f55fe2282290b0161750b89b87d9bff054d936975c36aa"
+    },
+    {
+      "path": "spring-after-continued.json",
+      "sha256": "a0bb933229a637d5d1f0f56332aa2902dbd8904208a65fa56c2d3898cda8507e"
+    },
+    {
+      "path": "spring-before-cold.json",
+      "sha256": "784b6b33ed14fdf414f55fe2282290b0161750b89b87d9bff054d936975c36aa"
+    },
+    {
+      "path": "spring-cold-process.txt",
+      "sha256": "7e7ecec10dc59a00762a4b6a9736ac5113b37df2bf1e90f4a7a5860d88dafac1"
+    },
+    {
+      "path": "spring-cold.log",
+      "sha256": "7c646eb6b276afc82442221dbc646dcdba105b2b17c51b7487cef5ff6e0b1dc6"
+    },
+    {
+      "path": "spring-cold.stdout.log",
+      "sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70"
+    },
+    {
+      "path": "spring-first-process.txt",
+      "sha256": "e509db8fd936850048dd6569efcc17ec4c288df23399899431dbdf1af5d8e39a"
+    },
+    {
+      "path": "spring-first.log",
+      "sha256": "7c646eb6b276afc82442221dbc646dcdba105b2b17c51b7487cef5ff6e0b1dc6"
+    },
+    {
+      "path": "spring-first.stdout.log",
+      "sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70"
+    },
+    {
+      "path": "spring.json",
+      "sha256": "a0bb933229a637d5d1f0f56332aa2902dbd8904208a65fa56c2d3898cda8507e"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ const SpringContent=preload("res://spring_journey_content.gd")
 const POND_LAYOUT_REVISION=1
 const POND_FORK=SpringContent.POND_FORK
 const RAIN_LAYOUT_REVISION=1
+const WIND_LAYOUT_REVISION=1
 const Canopy = preload("res://leaf_canopy_geometry.gd")
 const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
 const SITE_ID="pond-and-home"
@@ -508,6 +509,7 @@ func save_payload() -> Dictionary:
 	payload["route_geometry_revision"]=ROUTE_GEOMETRY_REVISION
 	payload["pond_layout_revision"]=POND_LAYOUT_REVISION
 	payload["rain_layout_revision"]=RAIN_LAYOUT_REVISION
+	payload["wind_layout_revision"]=WIND_LAYOUT_REVISION
 	payload["story"]=pack(story_state())
 	payload["checkpoint_story"]=pack(checkpoint_story)
 	return payload
@@ -627,7 +629,7 @@ func snapshot_geometry_clear(snapshot: Dictionary, radius: float) -> bool:
 	return true
 
 func restore_payload(payload: Dictionary) -> bool:
-	for marker in [["rain_layout_revision",RAIN_LAYOUT_REVISION],["pond_layout_revision",POND_LAYOUT_REVISION],["small_actor_revision",SMALL_ACTOR_REVISION],["preparation_revision",PREPARATION_REVISION],["route_geometry_revision",ROUTE_GEOMETRY_REVISION],["keeper_presentation_revision",2]]:
+	for marker in [["wind_layout_revision",WIND_LAYOUT_REVISION],["rain_layout_revision",RAIN_LAYOUT_REVISION],["pond_layout_revision",POND_LAYOUT_REVISION],["small_actor_revision",SMALL_ACTOR_REVISION],["preparation_revision",PREPARATION_REVISION],["route_geometry_revision",ROUTE_GEOMETRY_REVISION],["keeper_presentation_revision",2]]:
 		if payload.has(marker[0]) and (not number(payload[marker[0]]) or payload[marker[0]]!=marker[1]): return false
 	var index=int(payload.get("stage",-1))
 	if index<0 or index>=3: return false
@@ -661,6 +663,21 @@ func restore_payload(payload: Dictionary) -> bool:
 	var legacy_geometry: bool=not payload.has("route_geometry_revision")
 	var legacy_pond: bool=not payload.has("pond_layout_revision")
 	var legacy_rain: bool=not payload.has("rain_layout_revision")
+	var legacy_wind: bool=not payload.has("wind_layout_revision")
+	if legacy_wind and index==2 and not legacy_geometry:
+		var old_probe=get_script().new()
+		old_probe.load_stage(2)
+		old_probe.rings[0].pos=Vector2(2760,465)
+		old_probe.rings[0].direction=Vector2(120,-285).normalized()
+		old_probe.save_checkpoint(Vector2(180,420))
+		# Validate the entire known old state, including both static snapshots,
+		# reached prefixes and numeric fields, before changing the first flower.
+		if not old_probe.valid_state(base): return false
+		for snapshot in [base,base.checkpoint]:
+			snapshot.rings[0].pos=probe.rings[0].pos
+			snapshot.rings[0].direction=probe.rings[0].direction
+		payload=payload.duplicate(true)
+		payload.state=pack(base)
 	if legacy_rain and index==1:
 		var old_probe=get_script().new()
 		old_probe.load_stage(1)

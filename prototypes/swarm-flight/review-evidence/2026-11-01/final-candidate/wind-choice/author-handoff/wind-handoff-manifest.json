@@ -1,0 +1,231 @@
+{
+  "artifacts": [
+    {
+      "path": "delivery-code-review.json",
+      "bytes": 2183,
+      "sha256": "ac5a543036b2a3a6604905211ef1dd75c1c8214d73b2ec870e093d65e79323a1"
+    },
+    {
+      "path": "driver-handoff.md",
+      "bytes": 2492,
+      "sha256": "ec27eff781797e64ac71f5a28bea3f87caf4450d1ab096c1663c6e1c940009f7"
+    },
+    {
+      "path": "dry-a-wind-final.log",
+      "bytes": 266,
+      "sha256": "4c6b48df5867102db7ddc52ac94e696144df68f4799b217adec7409932c98353"
+    },
+    {
+      "path": "dry-a-wind-final/run-mode.json",
+      "bytes": 533,
+      "sha256": "c965f7a27788d8f2522fc7a4364ad048380f2aae941c3440759dabf5e2f0bb9a"
+    },
+    {
+      "path": "dry-a-wind-final/trace.json",
+      "bytes": 3190418,
+      "sha256": "ec331fabe4c6c6fe5d9c5f04ec5596ed0bd1ec1b0a0e1160ffb82b78b61a6a0c"
+    },
+    {
+      "path": "dry-b-wind-final.log",
+      "bytes": 265,
+      "sha256": "0f47a59408159b16145ac3118e672e8e1789e72f8afe68392ef13f07a261c395"
+    },
+    {
+      "path": "dry-b-wind-final/trace.json",
+      "bytes": 2907902,
+      "sha256": "4bb6112c48f247f9aecbdefe5af117c3c7e8ee740eef027ee57fd8b3787505cf"
+    },
+    {
+      "path": "ordinary_mosquito_save_verify-wind-final.log",
+      "bytes": 253,
+      "sha256": "24b99f5cce44308a26e568472f2ecf82ff3ba131e3805da49774832a21599f9c"
+    },
+    {
+      "path": "ordinary_mosquito_verify-wind-final.log",
+      "bytes": 123,
+      "sha256": "aebda03897ece26870677c4b55effa8d1aa54e352f0f1348096fc3802f2ac3d5"
+    },
+    {
+      "path": "particle-precision-independent-review.json",
+      "bytes": 999,
+      "sha256": "09f6a0c1e712ea617a6ee1965510b352ed0b36e81e2e4dd0a2562b2f2471afa6"
+    },
+    {
+      "path": "pond_source_routes_save_verify-wind-final.log",
+      "bytes": 253,
+      "sha256": "f915a37564d91d51bf04251bad1afde297ccfd40506611a5559b5ab99f8835bb"
+    },
+    {
+      "path": "pond_source_routes_verify-wind-final.log",
+      "bytes": 361,
+      "sha256": "f68855a97136979d92d1624a7b92e7b92230a1f837fce5e4e1decd8b968c2a43"
+    },
+    {
+      "path": "rain_choice_save_verify-wind-final.log",
+      "bytes": 247,
+      "sha256": "6639112c6c860b0be2bfc29686bc6fc0e8e65beb82477c90fdfa21ef5954f218"
+    },
+    {
+      "path": "rain_choice_verify-wind-final.log",
+      "bytes": 118,
+      "sha256": "5824d553be9b081f1d7d8643a3194344a0d7712a6c34525d00af70025a411ff4"
+    },
+    {
+      "path": "route_a.gd",
+      "bytes": 14554,
+      "sha256": "0a7970fcfac097398426b65558d88c31565a10cddabd9639387a44410b1463ee"
+    },
+    {
+      "path": "route_b.gd",
+      "bytes": 13630,
+      "sha256": "2862504de4656e9a7a1fb5baa1053f5bb8d370f6732980ee25eeebb3a296fab1"
+    },
+    {
+      "path": "spring-ui-wind-final.log",
+      "bytes": 247,
+      "sha256": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711"
+    },
+    {
+      "path": "spring-wind-final-01.log",
+      "bytes": 484,
+      "sha256": "c58b4ca944abb75e141be7e82953ef97cb6f386afed11f2d77782ee034779416"
+    },
+    {
+      "path": "spring-wind-final-02.log",
+      "bytes": 266,
+      "sha256": "84ba1b2c0a858aea0629afa7bffa1412472f28dc785498feb37e59c993f65b9b"
+    },
+    {
+      "path": "wind-change-results.json",
+      "bytes": 5624,
+      "sha256": "9270f31bb018bfee11b0633903e6ccf60c3feb34150c96b901baeeb70680b4f1"
+    },
+    {
+      "path": "wind-entry-model-01/entry-probe.json",
+      "bytes": 3069,
+      "sha256": "956e8ed83ac6ddfdd9820171e13e4fece67eb5052f2cededd3ecf7fc58d95a3d"
+    },
+    {
+      "path": "wind-entry-model-01/run.log",
+      "bytes": 313,
+      "sha256": "8a7df107cb5338f14e80f912b5b1f26b3f94be9360e50b99aa986689f904eb28"
+    },
+    {
+      "path": "wind-entry-model-02.log",
+      "bytes": 113,
+      "sha256": "1164e81757a647bc7ddbec7fb25f0d69058235a20dd3b65a3a764023dab82ff9"
+    },
+    {
+      "path": "wind-entry-model-02/entry-probe.json",
+      "bytes": 2579,
+      "sha256": "247c4db500686461b7b0423aa5963ef299d71fe339ab897aea1a3c49ff317e33"
+    },
+    {
+      "path": "wind-legacy-1b40/generation.log",
+      "bytes": 353,
+      "sha256": "fd3d4d9009899aa36c565f15a78956cb6e68180b04908fae5bf3fa0250179802"
+    },
+    {
+      "path": "wind-legacy-1b40/old-before-first-charge.json",
+      "bytes": 13032,
+      "sha256": "d5da7ba4b029c2721522a11fa5c6fe893eccd66ece12802f44c678b92f5687d7"
+    },
+    {
+      "path": "wind-legacy-1b40/old-both-open.json",
+      "bytes": 13087,
+      "sha256": "89868e6730728970b11e101d0c91e724f35e77dd45aebb608ff167329f40bf5d"
+    },
+    {
+      "path": "wind-legacy-1b40/old-first-wind-active.json",
+      "bytes": 13099,
+      "sha256": "57074f25482b4c38c22c13a0800345b62b95efeda42103b59df938fef637e211"
+    },
+    {
+      "path": "wind-legacy-1b40/old-front-open-live-burst.json",
+      "bytes": 13067,
+      "sha256": "94ce140c200a1b9ffea8da172af0e1e7699dedf05bb3199b838582734c650e99"
+    },
+    {
+      "path": "wind-legacy-1b40/old-settled-after-double-open.json",
+      "bytes": 12977,
+      "sha256": "ff6bd142b0e944e4346ef16f0dff64cee8aed9ea2b3138d239eedf630567fc57"
+    },
+    {
+      "path": "wind-legacy-1b40/old-stage0.json",
+      "bytes": 8821,
+      "sha256": "df5e0308f801d6a7c58ab6013e6eea1413ba6774a6c43895b06d6aad7f40af80"
+    },
+    {
+      "path": "wind-legacy-1b40/old-stage1.json",
+      "bytes": 11173,
+      "sha256": "0f6ccfe11b438b2e0f0d8c88d3a398b1bc65774ab21216a270a8e14a27c4d732"
+    },
+    {
+      "path": "wind-legacy-1b40/old-stage2-unopened.json",
+      "bytes": 12845,
+      "sha256": "ba4428cc6c30f4a55db274b4ab01c76445b0d13c680d6b844da2d0eb20a2a657"
+    },
+    {
+      "path": "wind-legacy-1b40/probe.json",
+      "bytes": 151111,
+      "sha256": "7e0e21e504dfc9974359f640de1294b7ca0c7c101a55bd1209b31007efa040bd"
+    },
+    {
+      "path": "wind-legacy-1b40/provenance.json",
+      "bytes": 1836,
+      "sha256": "f53f555b71d7d06314e20422bbbe55adc196867ea761b7bcde8de4bf229998cd"
+    },
+    {
+      "path": "wind-legacy-1b40/runtime-save.json",
+      "bytes": 7943,
+      "sha256": "026985980eec808233fda5bed91a08610e66dad1aeaa83c19d99aa4428d279e7"
+    },
+    {
+      "path": "wind-migration-slice-01.log",
+      "bytes": 117,
+      "sha256": "00b4e1065a77ffa4585a5b3945afb30d76119954674b5999cd8633c1cbcf8ddb"
+    },
+    {
+      "path": "wind-new-counter-01/probe.json",
+      "bytes": 76458,
+      "sha256": "e7ffbcb101f6d8c0ab42f26ed4c74e66c8502b83f4e68753342a37db4d7f447a"
+    },
+    {
+      "path": "wind-new-counter-01/run.log",
+      "bytes": 266,
+      "sha256": "d75151e1b5d2e4fec2da9a191cb4ce796346038156ec8883d6bb68ca42109f6e"
+    },
+    {
+      "path": "wind-new-counter-01/runtime-save.json",
+      "bytes": 7947,
+      "sha256": "59e7ade16578a39dc9d099e938ddde0a7dad1b44cc383e1f6e2e138f76773b63"
+    },
+    {
+      "path": "wind-route-disk-01.log",
+      "bytes": 245,
+      "sha256": "6cc2d65c3c3076b8108d0c2d20409772776603ced5187f3489ff34ff363d12a6"
+    },
+    {
+      "path": "wind-route-model-01.log",
+      "bytes": 116,
+      "sha256": "defa5a783d43c0fc2f105d5dc337722a32fd101b0601223f301b0420274f49b9"
+    },
+    {
+      "path": "wind-source-binding.json",
+      "bytes": 1123,
+      "sha256": "68de052dcf1dd5b506e1ac53ec5bc729028541e8ac660aefee9aef5bbbca0d66"
+    },
+    {
+      "path": "wind_entry_model_probe.gd",
+      "bytes": 1319,
+      "sha256": "b821af63b967ff537cb42ee4c0bd726662ed8c23bf2eb714c44c21b46eeedb3a"
+    },
+    {
+      "path": "wind_single_stroke_probe.gd",
+      "bytes": 4041,
+      "sha256": "77ef7bdcd9e9204a5acb59ab89736a23841580ff0392f5c3f1518241e9aaa759"
+    }
+  ],
+  "count": 45,
+  "manifest_excludes_itself": true
+}

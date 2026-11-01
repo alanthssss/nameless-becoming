@@ -1,0 +1,1 @@
+63713 /private/tmp/pond-mvp-export-9611660/unpacked/雨来之前 · 池岸归途 0.17.0.app/Contents/MacOS/雨来之前 · 池岸归途 0.17.0 --log-file /private/tmp/pond-mvp-export-9611660/entry-smoke/comparison-cold.log -- --long-journey --progress-file=/private/tmp/pond-mvp-export-9611660/entry-smoke/comparison.json --entry-chapter=0

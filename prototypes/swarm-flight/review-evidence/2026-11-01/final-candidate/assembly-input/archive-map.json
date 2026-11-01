@@ -1,0 +1,25 @@
+{
+  "scope": "Exact bytes actually supplied to original packager before post-assembly validation. Relative paths in original receipt referred to final-candidate root at packaging time. This archive preserves the four payloads; linked media remain under final-candidate. Final receipt is augmented after package validation; ZIP remains unchanged.",
+  "files": [
+    {
+      "path": "assembly-input-receipt.json",
+      "sha256": "e80a159ba2ce6d80a656cec62b71d6c744b79410ee1b37f7bd42f1f0a669de46"
+    },
+    {
+      "path": "experience.json",
+      "sha256": "b208cb72d6941a9b8907db8fcedd6ca79d986ae449290c21a2afe206bf58ac45"
+    },
+    {
+      "path": "presentation.json",
+      "sha256": "150343ce2111d172ef5b2dcb2a0f3307d8376d170a5e2e44870f27fb205584cb"
+    },
+    {
+      "path": "production-forecast.json",
+      "sha256": "28b1e2ee9a52887ecdacbbbce3d781ac809d75e502b3b2b58557c9f0186cdf8c"
+    },
+    {
+      "path": "technical.json",
+      "sha256": "c870b342d24505e06e87974f6e978831a1fb6bb5328453183ba801b3255663b3"
+    }
+  ]
+}

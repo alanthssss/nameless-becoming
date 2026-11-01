@@ -1,0 +1,24 @@
+{
+  "revision": "17f84019ad64302e4c972d5b339c7c637b36d820",
+  "kind": "independent targeted source review",
+  "reviewer_scope": "migration/driver author reviewing root world_view helper and CI; not first-time exploration",
+  "files": [
+    "world_view.gd",
+    "ellipse_precision_probe.gd",
+    ".github/workflows/swarm-flight.yml"
+  ],
+  "callsites_reviewed": [
+    "ending trail",
+    "exit ready halo",
+    "burst leader halo",
+    "effect particles",
+    "shield pickup bead",
+    "puff highlight"
+  ],
+  "finding": "No actionable blocker found. Local polygon preserves prior translation, rotation and shape; helper restores world transform after each draw; all existing callsites use that world transform. CI requires 129 production helper draws and rejects renderer errors.",
+  "limits": [
+    "Did not rerun the renderer probe.",
+    "Did not independently view the native image; visual observation belongs to root.",
+    "No claim of full visual acceptance or whole-journey coverage."
+  ]
+}

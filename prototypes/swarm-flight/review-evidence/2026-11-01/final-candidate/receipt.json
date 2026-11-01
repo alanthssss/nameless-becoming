@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "goal": "spring-03-05-review",
+  "claim": "candidate",
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "stage": "candidate packaged and actual final launchers verified; PR/CI/merge/cleanup recorded separately on completion",
+  "authority": {
+    "gdd": "13.5 J01–08 / 13.6",
+    "milestone": 3,
+    "issues": [
+      205,
+      206,
+      207,
+      208,
+      209
+    ]
+  },
+  "human_accepted": false,
+  "full_game_completed": false,
+  "evidence": [
+    {
+      "criterion": "continuous_run",
+      "status": "passed",
+      "kind": "technical",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "technical.json",
+      "sha256": "9092fba14309902d1b6f6d6da5e4d5f2b2c2b97d12bd6a87ec5bc8dd46f49136"
+    },
+    {
+      "criterion": "experience",
+      "status": "passed",
+      "kind": "content_review",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "experience.json",
+      "sha256": "b208cb72d6941a9b8907db8fcedd6ca79d986ae449290c21a2afe206bf58ac45"
+    },
+    {
+      "criterion": "presentation",
+      "status": "passed",
+      "kind": "in_engine_visual",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "presentation.json",
+      "sha256": "e2f79280963f1051bdc276224211494cf200fc0a47985a55b66a973608387e32"
+    },
+    {
+      "criterion": "production_limits",
+      "status": "passed",
+      "kind": "production_record",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "production-forecast.json",
+      "sha256": "d3d4a7017c371b8945440e00e0cf453bebc809608546b5b8d3a342a892a8286c"
+    }
+  ],
+  "artifact": {
+    "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/雨来之前-0.17.0-池岸归途-Mac-9611660f.zip",
+    "sha256": "b4510e466940b4850408ff2c8721b26e42a48b83eab7fbf39f2c2551bf9b13cf",
+    "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89"
+  },
+  "package_input_snapshot": "assembly-input/",
+  "post_assembly_proof": {
+    "path": "final-package-proof/process-launch-receipt.json",
+    "sha256": "1fe5057ec31ebe5b676b2d8d249669f0e0f4fc9919b2019941b5d6ed317ea24f"
+  },
+  "criteria_scope": "Internal candidate, AI exploration and engineering validation; no Alan acceptance/full24-level release claim.",
+  "J01_J08": [
+    {
+      "id": "J01",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "experience.json",
+        "first-look/root-observations.json",
+        "native-a/trace.json"
+      ],
+      "limits": "Actual pre-action predictions and exploration; initial mistaken dew/bird hypotheses retained; not human preference."
+    },
+    {
+      "id": "J02",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "experience.json",
+        "first-look/continuation/review.json",
+        "native-a/trace.json",
+        "native-b/trace.json"
+      ],
+      "limits": "Observed rain damage/rest vs shield consumption/upper landing; timing distorted by sampling, no speed comparison."
+    },
+    {
+      "id": "J03",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "experience.json",
+        "presentation.json",
+        "wind-choice/author-handoff/wind-change-results.json"
+      ],
+      "limits": "Independent timing then back-side approach; native wind and no-wind paths. First wind trigger comprehension unproven; carry briefly outside camera."
+    },
+    {
+      "id": "J04",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "technical.json",
+        "source-expiry-supplement/trace.json",
+        "first-look/post-review/supplement-audit.json"
+      ],
+      "limits": "Source invalidation is controlled content event, not natural expiry; 140 includes preparation."
+    },
+    {
+      "id": "J05",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "technical.json",
+        "resume-supplement/trace.json",
+        "final-package-proof/process-launch-receipt.json"
+      ],
+      "limits": "Full-field model/scene checks distinct from process UI+persisted file+continued-position checks."
+    },
+    {
+      "id": "J06",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "presentation.json",
+        "experience.json"
+      ],
+      "limits": "Actual native selected keyframes/motion and 143 fresh exploration originals; not every movie frame reviewed, only two audio clips heard by user."
+    },
+    {
+      "id": "J07",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "export-internal/entry-smoke/process-launch-receipt.json",
+        "final-package-proof/process-launch-receipt.json",
+        "package-record.json"
+      ],
+      "limits": "Mac internal candidate only, unsigned/unnotarized; no Windows/gamepad claim."
+    },
+    {
+      "id": "J08",
+      "status": "passed-bounded-internal-candidate",
+      "evidence": [
+        "production-forecast.json",
+        "first-look/post-review/next-content-handoff.json"
+      ],
+      "limits": "Owner read actual reports; active/billed/cumulative/reliable remaining unknown, 200+40h not reset. Final integration closeout still pending."
+    }
+  ],
+  "runtime_byte_binding": {
+    "path": "final-package-proof/pck-binding.json",
+    "sha256": "88938784bf7c432129198f8bac22a35782e787d7e9578fbba5ff9e099f2405c2"
+  },
+  "pending_at_this_preintegration_checkpoint": [
+    "PR/CI/merge/cleanup and actual full closeout timestamp in authoritative #209 and permanent output integration-closeout.json"
+  ],
+  "integration_closeout": {
+    "authority_issue": "https://github.com/alanthssss/nameless-becoming/issues/209",
+    "permanent_local_record": "outputs/swarm-flight/2026-11-01-pond-mvp/integration-closeout.json",
+    "note": "Produced after CI/merge/cleanup; this sealed versioned report records the pre-integration checkpoint and does not pre-claim success."
+  }
+}

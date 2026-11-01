@@ -1,0 +1,29 @@
+{
+  "kind": "limited_readonly_delivery_code_review",
+  "revision": "1b40be18289031bbe0baf067c82d7859c453f3ca",
+  "scope": "a143cb9..1b40be1 seven delivery files, including localized executable follow-up",
+  "blockers": [],
+  "criteria_unchanged": true,
+  "gate_modules_unchanged": true,
+  "excluded_preload_targets_from_remaining_root_gd": [],
+  "findings": [
+    "Internal entry flags/save identities/first-launch condition unchanged; .command and app binary retain executable permissions.",
+    "Tests add explicit flags/save/entry/permission assertions and localized executable positive plus unsafe-name negative cases.",
+    "Unicode filename regex keeps complete quoted path and excludes shell expansion/path separator characters; preflight and candidate checks untouched.",
+    "QA patterns cover the named verify/probe/contract files, rain expectations, route driver, element capture and evidence tree. Static top-level GDScript preload scan found no production dependency on excluded resources. Actual exported PCK remains root-owned verification."
+  ],
+  "limits": [
+    "No tests, export, app launch or native viewing run as part of this code review.",
+    "Does not establish experience gate, product acceptance or exported PCK content.",
+    "Preload scan is bounded static evidence, not exhaustive dynamic resource resolution."
+  ],
+  "source_sha256": {
+    "docs/design/solar-term-campaign-production-spec.md": "a008b0c2df65bcadfe3a79222732ab0b4fc7816becad25a4678794ff207250d7",
+    "prototypes/swarm-flight/export_presets.cfg": "9d49709d0aa2c33c858e6e5e13f61cd8ba9406e8feee5570259d00e64f8e8986",
+    "prototypes/swarm-flight/project.godot": "1b16d0cca2b19846f8a12ee000f47e7dc38fb0439e32217b83e780d2bd9b46a0",
+    "prototypes/swarm-flight/review-readme.txt": "9144cbbb20eba9ae789d98ccbc2031951ccd41eeb6891f2e5814ee0acaab44c9",
+    "prototypes/swarm-flight/spring-review-contract.json": "f74099aa3fedce43a1d1a3db570ccd76a048182244bdf6c38ab15ec92d3028a6",
+    "tests/test_spring_package.py": "8134f18db2bbb18135c43d8ee79356164366c716ce3854e071ab78f2e4285fb3",
+    "tools/package_spring_review.py": "5daceeea2949156ebe8f8c257ff81cce0a93c3d7abc61870aefc7ba962f5754a"
+  }
+}

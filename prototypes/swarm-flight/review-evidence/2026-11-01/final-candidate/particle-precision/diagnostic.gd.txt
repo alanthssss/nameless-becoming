@@ -1,0 +1,15 @@
+extends SceneTree
+func _initialize():
+ var count=0
+ for x in [32000.0,40000.0,64000.0,96000.0]:
+  var found=false
+  for j in 360:
+   var angle=j*TAU/360
+   var points:=PackedVector2Array()
+   for i in 40: points.append(Vector2(x,450)+Vector2(cos(i*TAU/40)*2.1,sin(i*TAU/40)*0.84).rotated(angle))
+   if Geometry2D.triangulate_polygon(points).is_empty():
+    print("FAIL_CASE world_x=",x," angle=",angle," radius=(2.1,0.84)")
+    found=true;count+=1;break
+  if not found: print("NO_FAILURE_AT_X ",x)
+ print("FAILING_POSITIONS ",count)
+ quit()

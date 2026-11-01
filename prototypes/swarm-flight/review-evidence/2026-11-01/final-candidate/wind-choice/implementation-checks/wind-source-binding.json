@@ -1,0 +1,15 @@
+{
+  "candidate_status": "uncommitted after 17f84019ad64302e4c972d5b339c7c637b36d820",
+  "files_sha256": {
+    "spring_journey_content.gd": "237cd0c6634696df0d57ae45bff21505e04ce067c6eb8dee4bb5da4db0c698c9",
+    "spring_journey_model.gd": "c790c586c65d9891c06b0bca685f1ca35478b33b655947796315987b2314c023",
+    "spring_journey_main.gd": "d4156a2b8177f9b615cc62cc31ef711e4cab5a4471b4716ba7546b3fe7d1b126",
+    "spring_journey_verify.gd": "13322b547436f2c0850035b7b2669ee026c7a6f80ecebd56f68c922c753566cd",
+    "spring_journey_ui_verify.gd": "b65c834d5a9baaf51ff380d41052f1703c5ceb95e36cb990f288256479bdb7a2",
+    "rain_layout_expectations.gd": "698d9c427c4c1f50b69d71588f77fcba86ae3057fb13a1668136e69c21af2031",
+    "wind_layout_expectations.gd": "6304473fdc70ce0ea14e04ccdf1d85f84bebf5acef3ac59197e29839e1a92768",
+    "wind_route_verify.gd": "e62a99fbd58ef6f867f417635b99862900c4ecd1846390003860cad9cca900ed",
+    "wind_route_save_verify.gd": "0dba2947eb7e73ff8e73433704d5e2aa2dfa4662b9525dc4d7fdb8abaf93d78c",
+    "ordinary_mosquito_save_verify.gd": "61a71327044b5312c324240185d8ab65a8bb351cb3e4e79d8d10b534468887b1"
+  }
+}

@@ -1,11 +1,12 @@
 extends RefCounted
 ## Independent declared migration delta used only by verification scripts.
+const WindE=preload("res://wind_layout_expectations.gd")
 const M=preload("res://spring_journey_model.gd")
 static func normalized(value): return JSON.parse_string(JSON.stringify(value,"",true,true))
 static func upgraded(old: Dictionary) -> Dictionary:
 	var expected=old.duplicate(true)
 	expected.rain_layout_revision=1
-	if int(old.stage)!=1: return expected
+	if int(old.stage)!=1: return WindE.upgraded(expected)
 	for entry in [[expected.state,false],[expected.state.checkpoint,true]]:
 		var state: Dictionary=entry[0]
 		var old_index=int(state.checkpoint_index)
@@ -20,4 +21,4 @@ static func upgraded(old: Dictionary) -> Dictionary:
 		state.dew[1].encounter=3
 		state.checkpoint_index=old_index if old_index<2 else old_index+1
 		if entry[1] and old_index==2 and M.unpack(state.p)==Vector2(3670,520): state.p=M.pack(Vector2(3010,520))
-	return expected
+	return WindE.upgraded(expected)

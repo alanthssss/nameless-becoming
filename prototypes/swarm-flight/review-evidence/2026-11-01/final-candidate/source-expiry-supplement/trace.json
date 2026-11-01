@@ -1,0 +1,568 @@
+{
+	"assertions": [
+		{
+			"label": "ordinary flight reaches (400.0, 610.0) actual (399.4812, 612.2539)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1080.0, 610.0) actual (1080.534, 614.8636)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1060.0, 500.0) actual (1055.815, 497.701)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1270.0, 500.0) actual (1270.6, 494.7692)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1450.0, 630.0) actual (1449.458, 630.1804)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1820.0, 630.0) actual (1820.714, 625.1584)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2050.0, 190.0) actual (2055.065, 189.5781)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2280.0, 190.0) actual (2280.885, 185.2364)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2280.0, 530.0) actual (2285.067, 533.913)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2520.0, 500.0) actual (2522.544, 496.0644)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2770.0, 500.0) actual (2770.67, 502.1494)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3100.0, 500.0) actual (3103.234, 493.9504)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3200.0, 420.0) actual (3199.825, 414.6167)",
+			"pass": true
+		},
+		{
+			"label": "03 feeding observes real flower",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts 03 source observed",
+			"pass": true
+		},
+		{
+			"label": "exact state 03 source observed",
+			"pass": true
+		},
+		{
+			"label": "next input 03 source observed",
+			"pass": true
+		},
+		{
+			"label": "observed flower committed on retry",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3470.0, 600.0) actual (3469.865, 598.9769)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3710.0, 600.0) actual (3712.243, 596.6285)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3970.0, 600.0) actual (3972.778, 594.5936)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (4170.0, 500.0) actual (4168.71, 496.212)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (4410.0, 500.0) actual (4412.365, 499.4854)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (4735.0, 420.0) actual (4690.138, 414.9378)",
+			"pass": true
+		},
+		{
+			"label": "03 ends at real exit",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts 03 transition",
+			"pass": true
+		},
+		{
+			"label": "exact state 03 transition",
+			"pass": true
+		},
+		{
+			"label": "next input 03 transition",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (620.0, 520.0) actual (620.1691, 524.9508)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1250.0, 520.0) actual (1252.739, 524.6391)",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts 04 rain below solid canopy",
+			"pass": true
+		},
+		{
+			"label": "exact state 04 rain below solid canopy",
+			"pass": true
+		},
+		{
+			"label": "next input 04 rain below solid canopy",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1350.0, 400.0) actual (1356.094, 397.6423)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1540.0, 400.0) actual (1542.596, 398.8499)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1760.0, 520.0) actual (1765.893, 524.4223)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2170.0, 520.0) actual (2170.137, 515.7019)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2330.0, 520.0) actual (2331.437, 515.7019)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2330.0, 630.0) actual (2335.744, 628.3604)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2630.0, 600.0) actual (2631.86, 595.3616)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2780.0, 600.0) actual (2781.24, 596.8472)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2860.0, 520.0) actual (2865.904, 519.3621)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3010.0, 520.0) actual (3011.779, 516.8123)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3158.0, 520.0) actual (3161.155, 519.3151)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3158.0, 435.0) actual (3162.518, 436.446)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3200.0, 435.0) actual (3202.295, 435.4225)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3400.0, 435.0) actual (3403.888, 429.5716)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3560.0, 420.0) actual (3562.899, 423.8105)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (4120.0, 500.0) actual (4120.072, 495.4185)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (4360.0, 500.0) actual (4364.807, 498.6282)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (4685.0, 420.0) actual (4641.758, 415.7155)",
+			"pass": true
+		},
+		{
+			"label": "04 route keeps observed flower identity",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts 04 transition",
+			"pass": true
+		},
+		{
+			"label": "exact state 04 transition",
+			"pass": true
+		},
+		{
+			"label": "next input 04 transition",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (620.0, 620.0) actual (623.4204, 619.2147)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1000.0, 620.0) actual (1001.113, 623.2991)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1260.0, 500.0) actual (1260.547, 495.0821)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (1850.0, 590.0) actual (1851.764, 594.5807)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2190.0, 465.0) actual (2191.49, 464.5255)",
+			"pass": true
+		},
+		{
+			"label": "ordinary approach exposes counting window",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts counting",
+			"pass": true
+		},
+		{
+			"label": "exact state counting",
+			"pass": true
+		},
+		{
+			"label": "next input counting",
+			"pass": true
+		},
+		{
+			"label": "first rope opens but back remains",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts first passage",
+			"pass": true
+		},
+		{
+			"label": "exact state first passage",
+			"pass": true
+		},
+		{
+			"label": "next input first passage",
+			"pass": true
+		},
+		{
+			"label": "retry retains only earned first passage",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2740.0, 465.0) actual (2743.361, 459.182)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (2740.0, 500.0) actual (2744.241, 498.0113)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3040.0, 500.0) actual (3042.607, 503.5486)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3040.0, 300.0) actual (3045.723, 298.5539)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3070.0, 300.0) actual (3068.865, 296.6328)",
+			"pass": true
+		},
+		{
+			"label": "ordinary inputs open back passage",
+			"pass": true
+		},
+		{
+			"label": "ordinary back route needs no wind flower",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts second passage tidy",
+			"pass": true
+		},
+		{
+			"label": "exact state second passage tidy",
+			"pass": true
+		},
+		{
+			"label": "next input second passage tidy",
+			"pass": true
+		},
+		{
+			"label": "retry keeps both gates and completed tidying",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3070.0, 300.0) actual (3069.277, 305.5653)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3180.0, 300.0) actual (3185.135, 305.2383)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3460.0, 300.0) actual (3461.24, 294.9045)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3460.0, 620.0) actual (3463.251, 619.9617)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3260.0, 620.0) actual (3259.719, 624.6898)",
+			"pass": true
+		},
+		{
+			"label": "ordinary flight reaches (3850.0, 500.0) actual (3850.0, 500.0)",
+			"pass": true
+		},
+		{
+			"label": "ordinary full journey prepared valid source sharing",
+			"pass": true
+		},
+		{
+			"label": "load ordinary prepared state armed",
+			"pass": true
+		},
+		{
+			"label": "actual precondition armed",
+			"pass": true
+		},
+		{
+			"label": "actual foraging precondition armed",
+			"pass": true
+		},
+		{
+			"label": "source close cancels armed or dancing action armed",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source armed",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source armed",
+			"pass": true
+		},
+		{
+			"label": "next input closed source armed",
+			"pass": true
+		},
+		{
+			"label": "source close leaves no continuing foragers armed",
+			"pass": true
+		},
+		{
+			"label": "closed source cannot create a new report armed",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source settled armed",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source settled armed",
+			"pass": true
+		},
+		{
+			"label": "next input closed source settled armed",
+			"pass": true
+		},
+		{
+			"label": "load ordinary prepared state before_commit",
+			"pass": true
+		},
+		{
+			"label": "actual precondition before_commit",
+			"pass": true
+		},
+		{
+			"label": "actual foraging precondition before_commit",
+			"pass": true
+		},
+		{
+			"label": "source close cancels armed or dancing action before_commit",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source before_commit",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source before_commit",
+			"pass": true
+		},
+		{
+			"label": "next input closed source before_commit",
+			"pass": true
+		},
+		{
+			"label": "source close leaves no continuing foragers before_commit",
+			"pass": true
+		},
+		{
+			"label": "closed source cannot create a new report before_commit",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source settled before_commit",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source settled before_commit",
+			"pass": true
+		},
+		{
+			"label": "next input closed source settled before_commit",
+			"pass": true
+		},
+		{
+			"label": "load ordinary prepared state after_commit",
+			"pass": true
+		},
+		{
+			"label": "actual precondition after_commit",
+			"pass": true
+		},
+		{
+			"label": "actual foraging precondition after_commit",
+			"pass": true
+		},
+		{
+			"label": "source close cancels armed or dancing action after_commit",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source after_commit",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source after_commit",
+			"pass": true
+		},
+		{
+			"label": "next input closed source after_commit",
+			"pass": true
+		},
+		{
+			"label": "source close leaves no continuing foragers after_commit",
+			"pass": true
+		},
+		{
+			"label": "closed source cannot create a new report after_commit",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source settled after_commit",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source settled after_commit",
+			"pass": true
+		},
+		{
+			"label": "next input closed source settled after_commit",
+			"pass": true
+		},
+		{
+			"label": "load ordinary prepared state foraging",
+			"pass": true
+		},
+		{
+			"label": "actual precondition foraging",
+			"pass": true
+		},
+		{
+			"label": "actual foraging precondition foraging",
+			"pass": true
+		},
+		{
+			"label": "source close cancels armed or dancing action foraging",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source foraging",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source foraging",
+			"pass": true
+		},
+		{
+			"label": "next input closed source foraging",
+			"pass": true
+		},
+		{
+			"label": "source close leaves no continuing foragers foraging",
+			"pass": true
+		},
+		{
+			"label": "closed source cannot create a new report foraging",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts closed source settled foraging",
+			"pass": true
+		},
+		{
+			"label": "exact state closed source settled foraging",
+			"pass": true
+		},
+		{
+			"label": "next input closed source settled foraging",
+			"pass": true
+		},
+		{
+			"label": "restore before leaving sharing",
+			"pass": true
+		},
+		{
+			"label": "ordinary movement before commit cancels without listeners",
+			"pass": true
+		},
+		{
+			"label": "JSON accepts early departure",
+			"pass": true
+		},
+		{
+			"label": "exact state early departure",
+			"pass": true
+		},
+		{
+			"label": "next input early departure",
+			"pass": true
+		}
+	],
+	"checks": 140,
+	"failures": 0,
+	"kind": "headless model supplement; full ordinary model steering prepares source/route, then controlled source-close content event; not blind play or natural expiry",
+	"revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89"
+}

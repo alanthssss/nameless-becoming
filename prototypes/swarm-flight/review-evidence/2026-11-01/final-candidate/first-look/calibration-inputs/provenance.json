@@ -1,0 +1,31 @@
+{
+  "source_trace": "/private/tmp/pond-rain-baseline-native/trace.json",
+  "source_trace_sha256": "5c256b0e153d537c3afc0df70e7db667fb4b57b193154c1bbe64b606fee21c10",
+  "files": [
+    {
+      "source": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/rain-choice/baseline/native/01-high-above-rain.png",
+      "path": "frame-1.png",
+      "sha256": "bfc375da788b571d2ff5e2eddff428bbfc7f8961a788fb407d98c483b1cd9e36",
+      "byte_identical": true
+    },
+    {
+      "source": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/rain-choice/baseline/native/02-high-bypass-end.png",
+      "path": "frame-2.png",
+      "sha256": "a1e0b7b50383c1b3b66ca1d10422769b31826765e545500a0093914a8f4d613d",
+      "byte_identical": true
+    },
+    {
+      "source": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/rain-choice/baseline/native/03-old-safe-lookout.png",
+      "path": "frame-3.png",
+      "sha256": "ff0fcec737ba37c72d2697b462d537dde752313c8d606e72d89adbebb265b436",
+      "byte_identical": true
+    },
+    {
+      "source": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/rain-choice/baseline/native/native.mp4",
+      "path": "continuous.mp4",
+      "sha256": "2d60fa6b7de5509ea28e5fe3c5852b6bbc09e1a79ad18ccbc519f43b08474f18",
+      "byte_identical": true
+    }
+  ],
+  "review_exposure": "Only after current frozen independent exploration report sealed; no candidate gate claim by these artifacts"
+}

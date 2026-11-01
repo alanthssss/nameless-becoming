@@ -1,0 +1,9 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "source_path": "/private/tmp/pond-mvp-export-9611660/PondJourney-0.17.0-internal.zip",
+  "archive_path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/final-candidate-9611660/internal-export/PondJourney-0.17.0-internal.zip",
+  "bytes": 81835129,
+  "sha256": "9d6e9f315ef6a1d39867c8b50bdf223b049a35a43efcbb666250c0c7a08c196b",
+  "byte_identical": true,
+  "scope": "internal export only; public candidate must use original gated package entry"
+}

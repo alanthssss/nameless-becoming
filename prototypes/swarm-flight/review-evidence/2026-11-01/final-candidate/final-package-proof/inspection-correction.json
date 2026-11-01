@@ -1,0 +1,8 @@
+{
+  "kind": "read-only proof helper correction, not application failure",
+  "attempts": [
+    "Assumed top-level journey; actual field observed journey_id",
+    "Assumed position array; actual observed tagged Vector2 state.p.v"
+  ],
+  "resolution": "Read actual serialized schema and verified journey_id/state.p.v; no save or production mutation."
+}

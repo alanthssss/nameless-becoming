@@ -1,0 +1,48 @@
+{
+  "issue": 208,
+  "milestone": 3,
+  "GDD": "§8.1/J06",
+  "status": "local renderer repair, final whole comparison pending",
+  "old_revision": "1b40be18289031bbe0baf067c82d7859c453f3ca",
+  "source_sha256": "01723a634f3ca30ea64ea9c48a96f71d9726566e781bcb95f0353b9dbdcf1e0b",
+  "probe_sha256": "db5ef588f49376750510df38af9b1477e5644fa5ffdea21882167b973ad0fd0a",
+  "actual_failure": "Long comparison run emitted Invalid polygon data from _effects→_ellipse at large world coordinates; retained dry-c-01 log by driver author",
+  "reproduction": {
+    "production_draw_calls": 129,
+    "old_renderer_errors": 2,
+    "new_headless_renderer_errors": 0,
+    "new_native_renderer_errors": 0,
+    "harness_failures": 0,
+    "world_x_samples": [
+      0,
+      32000,
+      40000,
+      64000
+    ],
+    "actual_min_particle_size": 1.4,
+    "exact_case": {
+      "center": [
+        40000,
+        450
+      ],
+      "radius": [
+        2.1,
+        0.84
+      ],
+      "degrees": 16
+    }
+  },
+  "fix": "Draw ellipse vertices around zero with translation/rotation in the draw transform, then restore the existing world transform. No gameplay, particle positions, lifetimes, colors or sizes changed.",
+  "visual_review": "Root inspected the final native PNG: four rows remain aligned with consistent shape/rotation/scale; isolated helper matrix, not whole-game presentation acceptance.",
+  "source_scope": "All _ellipse callers reviewed in world_view and four subclass views; calls are in world-coordinate context after any temporary actor transform is reset. Full final native routes and comparison still required.",
+  "artifacts": {
+    "after-headless.log": "4533b3238d40ee7776e74a9beb60df813ac9e2288a27b0fb5b2bb874ace8ce51",
+    "after-native.png": "1775c92685424f428c55db2b8700b4df886cb71c93eb06ec55d92fd98c9654ec",
+    "old-helper.gd.txt": "05a1844975e28a0af8203291103f0dbbe73902b068d81a2df4b6956a12d1fe63",
+    "after-native.log": "1d85becec62424d3c2f6c34c469a6212aa72fe6ffc64f3fa7f9ffdd6817b4f14",
+    "diagnostic.gd.txt": "0649e3697055f71f1864301d7476ae39e0774aa5b9bdd38c9bce8dc322cc0f0a",
+    "before.log": "066eabe617d58d15db5b9d6715932f5dc66c12e4ede0a5fd811df4e38fbaadcb",
+    "diagnostic.log": "82ad76fc4fbcdcb8205d6a620a15aa2756839dc9192ba53be70abc5dd0dbef02",
+    "initial-before.log": "f062647c6f03f9dac4152a5743846671def14886c10ee287dbf96e45ddc16648"
+  }
+}

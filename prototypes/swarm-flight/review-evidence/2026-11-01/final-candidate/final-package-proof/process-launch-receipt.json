@@ -1,0 +1,219 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "completed_checkpoint_utc": "2026-11-01 06:04:38 UTC",
+  "kind": "actual final ZIP launchers, process cold restart and CUA ordinary input",
+  "artifact": {
+    "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/雨来之前-0.17.0-池岸归途-Mac-9611660f.zip",
+    "sha256": "b4510e466940b4850408ff2c8721b26e42a48b83eab7fbf39f2c2551bf9b13cf",
+    "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89"
+  },
+  "unpacked_directory": "/private/tmp/pond-mvp-final-package-smoke/雨来之前-0.17.0-池岸归途-9611660f",
+  "original_zip_unmodified": true,
+  "launcher_modes_in_zip": {
+    "雨来之前-0.17.0-池岸归途-9611660f/开始池岸归途.command": "0o755",
+    "雨来之前-0.17.0-池岸归途-9611660f/风路对照.command": "0o755"
+  },
+  "new_save_directory_initially_absent": true,
+  "all_four_processes_exit_code": 0,
+  "all_four_pids_absent_after_quit": true,
+  "actual_script_execution": true,
+  "old_user_saves_accessed": false,
+  "separate_save_paths": true,
+  "spring_bytes_unchanged_across_comparison": true,
+  "engine_error_files": [],
+  "retained_exit_warnings": [
+    {
+      "path": "comparison-first-stdout.log",
+      "warning": "ObjectDB instances leaked at exit"
+    },
+    {
+      "path": "开始池岸归途-final-engine.log",
+      "warning": "ObjectDB instances leaked at exit"
+    },
+    {
+      "path": "spring-cold-stdout.log",
+      "warning": "ObjectDB instances leaked at exit"
+    }
+  ],
+  "coverage_limit": "JSON comparison measures persisted file equality while cold-confirmation menu is visible; actual resumed movement demonstrates restored position. Does not inspect every in-memory field at process restart. In-memory exact state restoration is covered separately by model/scene drivers. This is startup/resume smoke, not complete replay through final ZIP. Full native journeys bind identical frozen production/PCK.",
+  "inspection_notes": [
+    "Initial reader incorrectly assumed journey key and untagged p; corrected against observed journey_id and state.p.v. No production/save mutations.",
+    "Initial comparison process query raced startup and returned empty; next observation found actual PID; no duplicate launch."
+  ],
+  "entries": {
+    "spring": {
+      "processes": [
+        65927,
+        65989
+      ],
+      "journey_id": "spring-03-05-v2",
+      "persisted_payload_exact_at_cold_menu": true,
+      "first_p": {
+        "v": [
+          295.5935974121094,
+          424.93359375
+        ]
+      },
+      "continued_p": {
+        "v": [
+          426.4530334472656,
+          419.5196838378906
+        ]
+      },
+      "actual_ui_continue_then_movement": true
+    },
+    "comparison": {
+      "processes": [
+        66038,
+        66090
+      ],
+      "journey_id": "summer-long-07-09-r8",
+      "persisted_payload_exact_at_cold_menu": true,
+      "first_p": {
+        "v": [
+          307.1368713378906,
+          431.0915832519531
+        ]
+      },
+      "continued_p": {
+        "v": [
+          440.7084655761719,
+          435.3608093261719
+        ]
+      },
+      "actual_ui_continue_then_movement": true
+    }
+  },
+  "files": [
+    {
+      "path": "00-default-title.png",
+      "sha256": "9887bc1dcfd963aa0428b06e7e56a8e6dd036ac8428005653bdcaf0979dbc5bc",
+      "bytes": 239014
+    },
+    {
+      "path": "01-spring-first-paused.png",
+      "sha256": "1c18a4842acdf7206dbee6c012fcab918b2f4fe4dc9d634e2f6516e6138b5717",
+      "bytes": 237935
+    },
+    {
+      "path": "02-spring-cold-title.png",
+      "sha256": "e2ad62ffc7579235d75718954f4ceb21b2c216b6d0ea6e0ba912fac9f01bd70f",
+      "bytes": 243716
+    },
+    {
+      "path": "03-spring-cold-paused.png",
+      "sha256": "7025aa34b621be67433c1bfc58d6f4ef123ee6b2d3fc7f6fe0db1f2d591438c3",
+      "bytes": 245113
+    },
+    {
+      "path": "04-spring-after-continue.png",
+      "sha256": "f4d104f40901bc591986cd2f12e9b96b7465d1911121b58b99cafec575a6fd48",
+      "bytes": 237930
+    },
+    {
+      "path": "05-comparison-first-paused.png",
+      "sha256": "545b552d1bceb24cce1860742024b60bb8ea9331146b9c5529274dfb2817cceb",
+      "bytes": 268021
+    },
+    {
+      "path": "06-comparison-cold-title.png",
+      "sha256": "76c68a9ed314a692ed7ff064057eec5ec2193bbd4b01ee542b447be782db1629",
+      "bytes": 283557
+    },
+    {
+      "path": "07-comparison-cold-paused.png",
+      "sha256": "78f9a4bcbec2bdb2f1f915b9ddf7799f35cabafce62526e3c671a321e33bd0e5",
+      "bytes": 274940
+    },
+    {
+      "path": "08-comparison-after-continue.png",
+      "sha256": "a5fa3914b4f63e8233e0be4d9012afa04801cb0e5b536b06fcc94b9c7fb82a47",
+      "bytes": 267889
+    },
+    {
+      "path": "comparison-after-cold-paused.json",
+      "sha256": "b0d3c5798afadbfea824d6d77087f007020d9132a457ee4e0b3ff8d73c1db7d5",
+      "bytes": 36404
+    },
+    {
+      "path": "comparison-after-continue.json",
+      "sha256": "2a01e5fa8983305060856e7cf9fe440677ed08b90ce7d64706644eb2c961643e",
+      "bytes": 36405
+    },
+    {
+      "path": "comparison-before-cold.json",
+      "sha256": "b0d3c5798afadbfea824d6d77087f007020d9132a457ee4e0b3ff8d73c1db7d5",
+      "bytes": 36404
+    },
+    {
+      "path": "comparison-cold-argv.txt",
+      "sha256": "265ffc01e53053db0fc6756813557610712cf3e0e9abeb0768d6909ecc0b3f3b",
+      "bytes": 452
+    },
+    {
+      "path": "comparison-cold-stdout.log",
+      "sha256": "970ef35e46143b6ada86c438ee5a4da794b572c7417fee495ce4522c5d0d764b",
+      "bytes": 154
+    },
+    {
+      "path": "comparison-first-argv.txt",
+      "sha256": "ba0332b7b4f48685f6060f077cd163ae84657edcdb6e77cc79f07459909e89f9",
+      "bytes": 464
+    },
+    {
+      "path": "comparison-first-stdout.log",
+      "sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "bytes": 278
+    },
+    {
+      "path": "inspection-correction.json",
+      "sha256": "bd5e2512fdcc2f88b0c5b9572d2a93399d41b2c82e4eb4b2f366f8521ecceed9",
+      "bytes": 350
+    },
+    {
+      "path": "spring-after-cold-paused.json",
+      "sha256": "392bbd998d7165babe282e46f308f933ea20a32c06a870bb1bd0cecb355ac8be",
+      "bytes": 5634
+    },
+    {
+      "path": "spring-after-continue.json",
+      "sha256": "3cd0db1e11d99ed63892f1cae7e04af2b3760fb6c53e0ca550fecc242a106039",
+      "bytes": 5643
+    },
+    {
+      "path": "spring-before-cold.json",
+      "sha256": "392bbd998d7165babe282e46f308f933ea20a32c06a870bb1bd0cecb355ac8be",
+      "bytes": 5634
+    },
+    {
+      "path": "spring-cold-argv.txt",
+      "sha256": "e1752522437575a84090ddc06dc15414b01d2d9f72a612ec1f7f78f2b27b23ad",
+      "bytes": 455
+    },
+    {
+      "path": "spring-cold-stdout.log",
+      "sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "bytes": 278
+    },
+    {
+      "path": "spring-first-argv.txt",
+      "sha256": "500b6ea47a8768918b3c99c9c74531643a8619e430b2beea7c19513a63031a06",
+      "bytes": 467
+    },
+    {
+      "path": "spring-first-stdout.log",
+      "sha256": "970ef35e46143b6ada86c438ee5a4da794b572c7417fee495ce4522c5d0d764b",
+      "bytes": 154
+    },
+    {
+      "path": "开始池岸归途-final-engine.log",
+      "sha256": "7c646eb6b276afc82442221dbc646dcdba105b2b17c51b7487cef5ff6e0b1dc6",
+      "bytes": 276
+    },
+    {
+      "path": "风路对照-final-engine.log",
+      "sha256": "970ef35e46143b6ada86c438ee5a4da794b572c7417fee495ce4522c5d0d764b",
+      "bytes": 154
+    }
+  ]
+}

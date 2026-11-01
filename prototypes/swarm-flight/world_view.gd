@@ -816,15 +816,19 @@ func _flower(p: Vector2, radius: float, _tint: Color, seed_value: float) -> void
 	draw_set_transform(_world_offset)
 
 func _ellipse(center: Vector2, radius: Vector2, tint: Color, angle := 0.0) -> void:
+	# Keep tiny polygons near zero; large chapter coordinates lose triangulation precision.
+	draw_set_transform(_world_offset+center,angle)
 	var points := PackedVector2Array()
 	for i in 40:
 		var theta := i * TAU / 40.0
-		points.append(center + Vector2(cos(theta) * radius.x, sin(theta) * radius.y).rotated(angle))
+		points.append(Vector2(cos(theta) * radius.x, sin(theta) * radius.y))
 	draw_colored_polygon(points, tint)
 	if model != null:
 		var outline := points.duplicate()
 		outline.append(outline[0])
 		draw_polyline(outline,tint,1.0,true)
+
+	draw_set_transform(_world_offset)
 
 func _leaf(a: Vector2, b: Vector2, width: float, tint: Color) -> void:
 	var axis := (b-a).normalized()

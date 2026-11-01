@@ -1,0 +1,748 @@
+{
+  "created_utc": "2026-11-01T05:53:34.427Z",
+  "evidence_root": "/private/tmp/pond-first-look-9611660/",
+  "report": {
+    "path": "continuation/review.json",
+    "sha256": "6c747a7d95b6ed96f52bef63f90807c4ae10ab6180d6e5e6f699b913163b40c2"
+  },
+  "notes": {
+    "path": "continuation/notes.jsonl",
+    "sha256": "78d14799592d86bc9e3ce7e73df4857d269ecf06c48c06d7b5cc9d21b02df0f8"
+  },
+  "prior_report": {
+    "path": "review/review.json",
+    "status": "blocked",
+    "sha256": "c5a9cc09f3311d7f6b56d49ef229c9322a16f7bdafe887d9b9af9b21aefba794",
+    "preserved": true,
+    "reason_for_continuation": "root仅诊断工具取样等待放大实时暴露，并调整取样协议；没有提供游戏路线或设计答案。此前失败全部保留，不能将后续称为全新首次探索。"
+  },
+  "media": [
+    {
+      "path": "review/001-launch.png",
+      "sha256": "9887bc1dcfd963aa0428b06e7e56a8e6dd036ac8428005653bdcaf0979dbc5bc",
+      "raw": true
+    },
+    {
+      "path": "review/002-scene-one-entry.png",
+      "sha256": "dce173140ba15173e891e1bf481db4fd1df8422303d2b7a0a693366edc4d0592",
+      "raw": true
+    },
+    {
+      "path": "review/003-scene-one-paused.png",
+      "sha256": "7f2bc6caf6c34668a239e6ad42cef05938b6ebe644157d6eb24f4c1c5f9e0985",
+      "raw": true
+    },
+    {
+      "path": "review/004-03-before-lower-approach.png",
+      "sha256": "7f2bc6caf6c34668a239e6ad42cef05938b6ebe644157d6eb24f4c1c5f9e0985",
+      "raw": true
+    },
+    {
+      "path": "review/005-03-lower-flight-first.png",
+      "sha256": "e4b054c28fd710ba4091e4d2fd1bce07d52b7b74daa2860eb3d31833a10ce980",
+      "raw": true
+    },
+    {
+      "path": "review/006-03-before-droplet.png",
+      "sha256": "1f5f49718e4480336f36332654da14cbce4a62aa969102ba6f0f466f8c7140ae",
+      "raw": true
+    },
+    {
+      "path": "review/007-03-droplet-approach.png",
+      "sha256": "89880e2d485dee1c3c271e522a4709232ba1d0094ca720f0fece2dd6d5a76165",
+      "raw": true
+    },
+    {
+      "path": "review/008-03-before-take-droplet.png",
+      "sha256": "db04b25d3bcb904ce5d36b0e81457491c38c23d1143209aef8fcaf595671ab7f",
+      "raw": true
+    },
+    {
+      "path": "review/009-03-droplet-result.png",
+      "sha256": "e45d1e073ad23d8bf354544975e49f896e317ae24c8d93e32f75fe55d1ae0bdf",
+      "raw": true
+    },
+    {
+      "path": "review/010-03-next-view.png",
+      "sha256": "9e19efe72040f17fb414b0aa9ffe15338fc39e0c7c3ca29a0d1c1c5dbd1d0dee",
+      "raw": true
+    },
+    {
+      "path": "review/011-03-before-tall-stem.png",
+      "sha256": "da85325c6e54af4ff3524470ccc0142394689fd4e24fcf6ccd549c27c6bfd260",
+      "raw": true
+    },
+    {
+      "path": "review/012-03-above-stem-result.png",
+      "sha256": "1311dd39075bec351b7d11c9c9fdfe5dbe1cab15e5b1ab38740295c8cd439292",
+      "raw": true
+    },
+    {
+      "path": "review/013-03-before-clearance-adjustment.png",
+      "sha256": "2c3911377d7c1b95652c79cff0e5a8a94ed3d4ac063fddcbeb110eb267babff0",
+      "raw": true
+    },
+    {
+      "path": "review/014-03-crossed-stem.png",
+      "sha256": "dabb8a3420458e7cb9fe7a942a57f12ce5901194c0d26ecf0403ceb565af532a",
+      "raw": true
+    },
+    {
+      "path": "review/015-03-next-leaf.png",
+      "sha256": "2c3d9e56afe13621ad8e8af381b49ba9d1f2252d69b8c751ddcf488ff958a499",
+      "raw": true
+    },
+    {
+      "path": "review/016-03-before-shelter-entry.png",
+      "sha256": "fc4e64833f59a5bd924091c86cc8e836d705ec39b9d4e98f4c9796d992ef0572",
+      "raw": true
+    },
+    {
+      "path": "review/017-03-shelter-entry-result.png",
+      "sha256": "2a2b7f2146a220da6b6b02ba7749bed5bde5ac5b264de6675d80202361a1b708",
+      "raw": true
+    },
+    {
+      "path": "review/018-03-before-blue-flower.png",
+      "sha256": "e33f82f231f62af508154653cc54dd095f75d39a0ab986807be0b1880f8802df",
+      "raw": true
+    },
+    {
+      "path": "review/019-03-leaf-recovered.png",
+      "sha256": "20d9ca4f36165113767c49f1ff12c471dfcb7b24cf43f8dd59d33ea525ab0c13",
+      "raw": true
+    },
+    {
+      "path": "review/020-03-blue-flower-approach.png",
+      "sha256": "8b423e0514a42c0e8414ec88175783756ae5a6a4d45c97bf3622bd10f1a349ab",
+      "raw": true
+    },
+    {
+      "path": "review/021-03-before-blue-center.png",
+      "sha256": "b805891a1e841abd844685e2bf1ac87bec6c8b48dbcf6bdf780b68f45d9d6350",
+      "raw": true
+    },
+    {
+      "path": "review/022-03-blue-center-result.png",
+      "sha256": "4992f8b8c8293ed6c88b5e4b41b45d93f2c802be9fe875f55205252b401eebca",
+      "raw": true
+    },
+    {
+      "path": "review/023-03-before-leaf-shed.png",
+      "sha256": "64e6f8964de081fcdf3e48d84d447c381809fdebdbd8c4f6145dd2305a86c1a8",
+      "raw": true
+    },
+    {
+      "path": "review/024-03-leaf-shed.png",
+      "sha256": "bd3749ebec3dfd305f6cbce68342b161ef64352f6075980d0991da712d0923da",
+      "raw": true
+    },
+    {
+      "path": "review/025-03-before-lantern.png",
+      "sha256": "d6633783b5845d6e4595a84a4470254879f62290401c77ab2240599520a46dbd",
+      "raw": true
+    },
+    {
+      "path": "review/026-03-lantern-result.png",
+      "sha256": "8b4253106217a6df725db1be2be5cd13d1857d99170fbb611547f0e4c23f984d",
+      "raw": true
+    },
+    {
+      "path": "review/027-03-before-exit.png",
+      "sha256": "62e7bd669b9e03e833da0a5f30574e465e269a80cce7da9ffe72e072136facfb",
+      "raw": true
+    },
+    {
+      "path": "review/028-04-entry.png",
+      "sha256": "5d280f7c0b9de7ac886aae45dab0ec7091cd0df4220a9b8640415931db15bf3e",
+      "raw": true
+    },
+    {
+      "path": "review/029-04-entry-paused.png",
+      "sha256": "732d9dec1a530a373ead7624ee2791839ffd365e7f1ce1fa4259e06d8dda8213",
+      "raw": true
+    },
+    {
+      "path": "review/030-03-before-arch-center.png",
+      "sha256": "732d9dec1a530a373ead7624ee2791839ffd365e7f1ce1fa4259e06d8dda8213",
+      "raw": true
+    },
+    {
+      "path": "review/031-03-completion-or-transition.png",
+      "sha256": "5b08636f604142d40df5fbb0c1dc010d319ea5670e9e01c4ee3a36242b0c56ea",
+      "raw": true
+    },
+    {
+      "path": "review/032-04-actual-entry-paused.png",
+      "sha256": "f38b800f8ac94887f378123484727f1467c3b7a94fc5a86d41f5929928678817",
+      "raw": true
+    },
+    {
+      "path": "review/033-04-before-first-shelter.png",
+      "sha256": "f38b800f8ac94887f378123484727f1467c3b7a94fc5a86d41f5929928678817",
+      "raw": true
+    },
+    {
+      "path": "review/034-04-first-shelter.png",
+      "sha256": "957b93d3eb5e3a4726e06c0eb9d13c6fcdbb0f923b728574b3bb6f96c291f36f",
+      "raw": true
+    },
+    {
+      "path": "review/035-04-before-canopy-passage.png",
+      "sha256": "8f4ea09398de17245ea047eb16449229f629eec4a82162639f228f590ed6853b",
+      "raw": true
+    },
+    {
+      "path": "review/036-04-passage-observation.png",
+      "sha256": "6e99c4ca848b349c6b2a43cf345c8fb9392ad840d6d0a90245dedd8a1b413007",
+      "raw": true
+    },
+    {
+      "path": "review/037-04-before-stem-gap.png",
+      "sha256": "4fcc789963467b4c985b54aa59b49789da0e629c5cf53a0fc90c4253b71a7c0c",
+      "raw": true
+    },
+    {
+      "path": "review/038-04-after-stem-gap.png",
+      "sha256": "280ffcbb2e53f9e1c0fd3b16a4e42fb6e4771990d64e1da4b988fc9ee2370400",
+      "raw": true
+    },
+    {
+      "path": "review/039-04-before-rain-emergency.png",
+      "sha256": "652ba8241ffbb30e554e323731d2f2f5c546c7aa54c1865d8298763053931486",
+      "raw": true
+    },
+    {
+      "path": "review/040-04-after-input-api-limitation.png",
+      "sha256": "2a83c4a4a879f714ccc0a2bbdb0deb0ef185959cc850f9199ad301e1b8fbbc74",
+      "raw": true
+    },
+    {
+      "path": "review/041-04-reset-paused-confirmation.png",
+      "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+      "raw": true
+    },
+    {
+      "path": "review/042-04-before-dash-retry.png",
+      "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+      "raw": true
+    },
+    {
+      "path": "review/043-04-dash-preparation.png",
+      "sha256": "0b6df64616ad8036456941c3d44b6c246b733420dd279e153fd8a2978296aac4",
+      "raw": true
+    },
+    {
+      "path": "review/044-04-before-cross-then-dash.png",
+      "sha256": "8272ecca51f2ca77b6bc2a4d63466f088b489dae95b6a2f232cbc3026dd29335",
+      "raw": true
+    },
+    {
+      "path": "review/045-04-single-key-dash-result.png",
+      "sha256": "d39139940c7cfcf8c9c847fddceedf5719aca60237db8bbd380f725bb4ba2e0c",
+      "raw": true
+    },
+    {
+      "path": "review/046-04-blocked-final-paused.png",
+      "sha256": "1edeee49fa9c8f7f2034506e31442faf78ca47494c2ff439220db7bc56b951ed",
+      "raw": true
+    },
+    {
+      "path": "continuation/047-cold-relaunch-menu.png",
+      "sha256": "883a20eb2d1aa2d0cee358416b7cd700f5bc97c4b67756e9836217709a5a051b",
+      "raw": true
+    },
+    {
+      "path": "continuation/001-cold-resume-active.png",
+      "sha256": "9408fab5c6f3a2c0f07e8c7384f1619dcd96f67b0218a3dad23fda804adba84e",
+      "raw": true
+    },
+    {
+      "path": "continuation/002-cold-resume-paused.png",
+      "sha256": "06833335bfa5d42d27ad10de37ea16062cf47d6d7a2c07158cfec2fe5736f445",
+      "raw": true
+    },
+    {
+      "path": "continuation/048-cold-resume-actual-paused.png",
+      "sha256": "ca03c9f28a64f7623c932fc2724f022bf65c76eb6ae20bcfebe49fb7a18d1f22",
+      "raw": true
+    },
+    {
+      "path": "continuation/049-04-before-continuous-crossing.png",
+      "sha256": "ca03c9f28a64f7623c932fc2724f022bf65c76eb6ae20bcfebe49fb7a18d1f22",
+      "raw": true
+    },
+    {
+      "path": "continuation/003-04-continuous-low-crossing-active.png",
+      "sha256": "08596452138134b8cf4a6b214c4f8d46d8fafcae6d1fc30db875f4719b9a28aa",
+      "raw": true
+    },
+    {
+      "path": "continuation/004-04-continuous-low-crossing-paused.png",
+      "sha256": "e93753bedf0557033ee73244bc39b26c95fac8f059efc2fb06bff73665fbda0b",
+      "raw": true
+    },
+    {
+      "path": "continuation/050-04-before-branch-rest.png",
+      "sha256": "e93753bedf0557033ee73244bc39b26c95fac8f059efc2fb06bff73665fbda0b",
+      "raw": true
+    },
+    {
+      "path": "continuation/005-04-branch-rest-active.png",
+      "sha256": "32b449346d8ecb816edfd46540867160d6dd5a3887e063a587b9dc0d1a9d9ece",
+      "raw": true
+    },
+    {
+      "path": "continuation/006-04-branch-rest-paused.png",
+      "sha256": "4ab6d3487349aa98397be75342a6e8de6b29d576b4827ccb84ff84ce1f11b648",
+      "raw": true
+    },
+    {
+      "path": "continuation/101-04-before-low-choice.png",
+      "sha256": "4ab6d3487349aa98397be75342a6e8de6b29d576b4827ccb84ff84ce1f11b648",
+      "raw": true
+    },
+    {
+      "path": "continuation/102-04-low-open-segment-active.png",
+      "sha256": "18c2b5434d244228ac6e4e6b1e1b32884f270184851b720c900341bc5d0f1a04",
+      "raw": true
+    },
+    {
+      "path": "continuation/103-04-low-open-segment-paused.png",
+      "sha256": "19c58ec435a5e4cb8cda8f1552c68153d04ad321b6c4c54484d286d189d1625f",
+      "raw": true
+    },
+    {
+      "path": "continuation/104-04-before-low-landing.png",
+      "sha256": "19c58ec435a5e4cb8cda8f1552c68153d04ad321b6c4c54484d286d189d1625f",
+      "raw": true
+    },
+    {
+      "path": "continuation/105-04-low-landing-active.png",
+      "sha256": "e6b8acb596c62c83ac93f17cf90e1b32ad7ae458be86fd482b76e9a7b0511aa1",
+      "raw": true
+    },
+    {
+      "path": "continuation/106-04-low-landing-paused.png",
+      "sha256": "2dafe72b6c576dcfc3b615d3eefecae427c4b100a683fdb1869ca86f8c781f81",
+      "raw": true
+    },
+    {
+      "path": "continuation/107-04-before-low-leaf-tip-rise.png",
+      "sha256": "2dafe72b6c576dcfc3b615d3eefecae427c4b100a683fdb1869ca86f8c781f81",
+      "raw": true
+    },
+    {
+      "path": "continuation/108-04-low-common-end-active.png",
+      "sha256": "7e25c754012445c7de1db6e9f5047b666dd883874f16e764145624e2ce2f2017",
+      "raw": true
+    },
+    {
+      "path": "continuation/109-04-low-common-end-paused.png",
+      "sha256": "f0adad757a438ee208acdf1159dcf98328b9ff946e1250b8817904b31353fa46",
+      "raw": true
+    },
+    {
+      "path": "continuation/110-04-upper-relaunch-menu.png",
+      "sha256": "883a20eb2d1aa2d0cee358416b7cd700f5bc97c4b67756e9836217709a5a051b",
+      "raw": true
+    },
+    {
+      "path": "continuation/111-04-upper-restored-gate.png",
+      "sha256": "16cfed3e2dfb8b44011b63fe3f5e4402a6b9668d146c265a52d3eeed6b6fc64d",
+      "raw": true
+    },
+    {
+      "path": "continuation/112-04-upper-protection-pickup-active.png",
+      "sha256": "7e16631b95249a87ddacd3790d348bd480b0018b224fcfb7f6dfe8f89f9c7db7",
+      "raw": true
+    },
+    {
+      "path": "continuation/113-04-upper-protection-pickup-paused.png",
+      "sha256": "b303be26362f3c202539a1027402330e52e5ccc2f27e80c482aa33bdc993c8d1",
+      "raw": true
+    },
+    {
+      "path": "continuation/114-04-before-upper-crossing.png",
+      "sha256": "b303be26362f3c202539a1027402330e52e5ccc2f27e80c482aa33bdc993c8d1",
+      "raw": true
+    },
+    {
+      "path": "continuation/115-04-upper-common-end-active.png",
+      "sha256": "b35f43a6d4e62b0231ee1494759bf8c3a78b67e49a83ffb0ad7d9bcbdb98037e",
+      "raw": true
+    },
+    {
+      "path": "continuation/116-04-upper-common-end-paused.png",
+      "sha256": "2e258a6e0f5ef09e695d942b2a48f702390e643cf6136d5f7a7349d5b3f6f6e7",
+      "raw": true
+    },
+    {
+      "path": "continuation/117-04-upper-mid-restored-gate.png",
+      "sha256": "16cfed3e2dfb8b44011b63fe3f5e4402a6b9668d146c265a52d3eeed6b6fc64d",
+      "raw": true
+    },
+    {
+      "path": "continuation/118-04-upper-mid-exposure-active.png",
+      "sha256": "43937f5b5fcd75e2235e02a6be2d0567e5a1924350d2460eb7eb6e9474f08b58",
+      "raw": true
+    },
+    {
+      "path": "continuation/119-04-upper-mid-exposure-paused.png",
+      "sha256": "0f8f73ce513ea33e9bf90ca1bcf35ab0603a227b1055686f6ba4811a280d0123",
+      "raw": true
+    },
+    {
+      "path": "continuation/120-04-before-upper-return.png",
+      "sha256": "0f8f73ce513ea33e9bf90ca1bcf35ab0603a227b1055686f6ba4811a280d0123",
+      "raw": true
+    },
+    {
+      "path": "continuation/121-04-upper-verified-common-end-active.png",
+      "sha256": "f798707039fd82beff06d3db67838b0a9b33f37c936908043b8cfdb38e1df866",
+      "raw": true
+    },
+    {
+      "path": "continuation/122-04-upper-verified-common-end-paused.png",
+      "sha256": "ab8d9647607fc490b3d14172f074b6e5b215fcfbaaeb2af04359e5391dacb5f8",
+      "raw": true
+    },
+    {
+      "path": "continuation/123-04-before-tight-gap.png",
+      "sha256": "ab8d9647607fc490b3d14172f074b6e5b215fcfbaaeb2af04359e5391dacb5f8",
+      "raw": true
+    },
+    {
+      "path": "continuation/124-04-tight-gap-attempt-active.png",
+      "sha256": "0e1c51dbb9307b9024125a4c627ced7e907d20293fe71d631b3107ed1cd3d84f",
+      "raw": true
+    },
+    {
+      "path": "continuation/125-04-tight-gap-attempt-paused.png",
+      "sha256": "d8242d4510dfe575e999c1512d1112d2c708bf7adbe7f4350730020ca10e86a3",
+      "raw": true
+    },
+    {
+      "path": "continuation/126-04-before-rain-lantern.png",
+      "sha256": "d8242d4510dfe575e999c1512d1112d2c708bf7adbe7f4350730020ca10e86a3",
+      "raw": true
+    },
+    {
+      "path": "continuation/127-04-rain-lantern-active.png",
+      "sha256": "8ba4e81a4fc0622b8153dac859cc63acd1311b8d272eb593baa3388b2059d60f",
+      "raw": true
+    },
+    {
+      "path": "continuation/128-04-rain-lantern-paused.png",
+      "sha256": "fdb946f2d396ef31c4a362079cf30a8004f74f5e4bbca95e2e8b095634365a51",
+      "raw": true
+    },
+    {
+      "path": "continuation/129-04-before-exit-arch.png",
+      "sha256": "fdb946f2d396ef31c4a362079cf30a8004f74f5e4bbca95e2e8b095634365a51",
+      "raw": true
+    },
+    {
+      "path": "continuation/130-05-first-entry-active.png",
+      "sha256": "bc9133100b7ed0e205fc0ff69fae1a9fab9bbe1cf9a307603d0af01a1e02098a",
+      "raw": true
+    },
+    {
+      "path": "continuation/131-05-first-entry-paused.png",
+      "sha256": "ae93c1c510a021d48bd6c3a909e998c972650960955fd5b5429c76ce86257900",
+      "raw": true
+    },
+    {
+      "path": "continuation/132-05-actual-entry-active.png",
+      "sha256": "631b3202231e63c998645b2ea8c9e5a7a47991bc94b7a66308f566008e11fd9a",
+      "raw": true
+    },
+    {
+      "path": "continuation/133-05-actual-entry-paused.png",
+      "sha256": "79c207ecd32b8bd85586039c6d6e9975fea8a70f54e11481aa6163d67b90a032",
+      "raw": true
+    },
+    {
+      "path": "continuation/134-05-before-first-obstacle.png",
+      "sha256": "79c207ecd32b8bd85586039c6d6e9975fea8a70f54e11481aa6163d67b90a032",
+      "raw": true
+    },
+    {
+      "path": "continuation/135-05-low-first-obstacle-active.png",
+      "sha256": "1d36c936fda2a75a0724da99d231ef609acce344be039b5c8f535c91f8548452",
+      "raw": true
+    },
+    {
+      "path": "continuation/136-05-low-first-obstacle-paused.png",
+      "sha256": "2c3c39a9c905c4e2aa6ae331ff56afd72ff4b898f28e42d02528870bfb8226ba",
+      "raw": true
+    },
+    {
+      "path": "continuation/137-05-before-dew-and-forward.png",
+      "sha256": "2c3c39a9c905c4e2aa6ae331ff56afd72ff4b898f28e42d02528870bfb8226ba",
+      "raw": true
+    },
+    {
+      "path": "continuation/138-05-dew-and-forward-active.png",
+      "sha256": "11c406fffa149aa6d88238d6518fe33bbf8b0a1a79211cdced8e965d6b0a9768",
+      "raw": true
+    },
+    {
+      "path": "continuation/139-05-dew-and-forward-paused.png",
+      "sha256": "24821f0551b0c380b23d900b2f3bcbbe91fb063a94aa66b6111462cba2485f7f",
+      "raw": true
+    },
+    {
+      "path": "continuation/140-05-before-gate-approach.png",
+      "sha256": "24821f0551b0c380b23d900b2f3bcbbe91fb063a94aa66b6111462cba2485f7f",
+      "raw": true
+    },
+    {
+      "path": "continuation/141-05-gate-approach-active.png",
+      "sha256": "5429b43d5cd44a90c6a3bf1e34af0c41ba75e5323cbc17bbef8fbf916dedc553",
+      "raw": true
+    },
+    {
+      "path": "continuation/142-05-gate-approach-paused.png",
+      "sha256": "080c97a00690a1d988573267ceb909a0304b602bd9826a2397352268a9a4b80d",
+      "raw": true
+    },
+    {
+      "path": "continuation/143-05-before-align.png",
+      "sha256": "080c97a00690a1d988573267ceb909a0304b602bd9826a2397352268a9a4b80d",
+      "raw": true
+    },
+    {
+      "path": "continuation/144-05-align-active.png",
+      "sha256": "82c326c8da0d900463b74ab692dbb5a02bd2ccdee26167e633120735929b3cae",
+      "raw": true
+    },
+    {
+      "path": "continuation/145-05-align-paused.png",
+      "sha256": "43df79ec5f396691e0ff18968563cc427202cf14298efbe0381d946604a0f03b",
+      "raw": true
+    },
+    {
+      "path": "continuation/146-05-before-slack-dash.png",
+      "sha256": "43df79ec5f396691e0ff18968563cc427202cf14298efbe0381d946604a0f03b",
+      "raw": true
+    },
+    {
+      "path": "continuation/147-05-slack-dash-active.png",
+      "sha256": "53a7af4da04d1323d521979af37c5b4a78c83b58c40cd164ed102e21d4c9bf93",
+      "raw": true
+    },
+    {
+      "path": "continuation/148-05-slack-dash-paused.png",
+      "sha256": "c181a8b89b85a607d4e43b866627c0415849efcc53187a97aa45fab9d4d107c9",
+      "raw": true
+    },
+    {
+      "path": "continuation/149-05-before-recover.png",
+      "sha256": "c181a8b89b85a607d4e43b866627c0415849efcc53187a97aa45fab9d4d107c9",
+      "raw": true
+    },
+    {
+      "path": "continuation/150-05-leaf-recovery-active.png",
+      "sha256": "bfe4b02f5107099a330794a67a8b78e96619fb77d4cebb0ffcb4fe9cf41ceecf",
+      "raw": true
+    },
+    {
+      "path": "continuation/151-05-leaf-recovery-paused.png",
+      "sha256": "65e3822973fa16737f35f81f56e9e00ab7091fc7ad3dfeef41f85cd03ab8db0b",
+      "raw": true
+    },
+    {
+      "path": "continuation/152-05-before-wind-flower.png",
+      "sha256": "65e3822973fa16737f35f81f56e9e00ab7091fc7ad3dfeef41f85cd03ab8db0b",
+      "raw": true
+    },
+    {
+      "path": "continuation/153-05-first-wind-flower-active.png",
+      "sha256": "348b6c9b222fe19a1a31e2c0c9a5ad07709ea2f61ce501dd10db499b9e6960fa",
+      "raw": true
+    },
+    {
+      "path": "continuation/154-05-first-wind-flower-paused.png",
+      "sha256": "bdc50166b909bba3e6940d5b3269d1d69baf464066159a1404c9be585f971a6a",
+      "raw": true
+    },
+    {
+      "path": "continuation/155-05-before-wind-center.png",
+      "sha256": "bdc50166b909bba3e6940d5b3269d1d69baf464066159a1404c9be585f971a6a",
+      "raw": true
+    },
+    {
+      "path": "continuation/156-05-wind-center-active.png",
+      "sha256": "9000d1902a46c6fcc493adb511f441f97ffa94a6610c012e1f6aa7c03f5f8266",
+      "raw": true
+    },
+    {
+      "path": "continuation/157-05-wind-center-paused.png",
+      "sha256": "4ce1c20ba6976e6a0f1ac7120fbadab5c041afab3ab78539c272f3ba665a0755",
+      "raw": true
+    },
+    {
+      "path": "continuation/158-05-before-manual-sign-route.png",
+      "sha256": "4ce1c20ba6976e6a0f1ac7120fbadab5c041afab3ab78539c272f3ba665a0755",
+      "raw": true
+    },
+    {
+      "path": "continuation/159-05-manual-sign-route-active.png",
+      "sha256": "deb50815e503032ba64d56ee4f4df2a048932739808999351a64a869021c231a",
+      "raw": true
+    },
+    {
+      "path": "continuation/160-05-manual-sign-route-paused.png",
+      "sha256": "a4e017fd31b5d8c8d4a256d9f22e276a75a22cfe1408642276843f9f72534307",
+      "raw": true
+    },
+    {
+      "path": "continuation/161-05-before-back-knot-dash.png",
+      "sha256": "a4e017fd31b5d8c8d4a256d9f22e276a75a22cfe1408642276843f9f72534307",
+      "raw": true
+    },
+    {
+      "path": "continuation/162-05-back-knot-dash-active.png",
+      "sha256": "d277f702d2d43af9e10bd25f4c645cc067170cfba903694ad2c3be48468b2f0e",
+      "raw": true
+    },
+    {
+      "path": "continuation/163-05-back-knot-dash-paused.png",
+      "sha256": "b88502e29333307211d55ee794029b50fbd6de7eb6bc7c7455403d70fefc4dca",
+      "raw": true
+    },
+    {
+      "path": "continuation/164-05-before-blue-leaf-entry.png",
+      "sha256": "b88502e29333307211d55ee794029b50fbd6de7eb6bc7c7455403d70fefc4dca",
+      "raw": true
+    },
+    {
+      "path": "continuation/165-05-blue-leaf-entry-active.png",
+      "sha256": "6e99326332f308657bd62019f8a1fb60e369f8cd711b465ae877e2f225835d3d",
+      "raw": true
+    },
+    {
+      "path": "continuation/166-05-blue-leaf-entry-paused.png",
+      "sha256": "edf65bdaf44fde8f8ef6297499f24f28bf7501366baa7ac18f8793acde9af1da",
+      "raw": true
+    },
+    {
+      "path": "continuation/167-05-before-revisit-blue.png",
+      "sha256": "edf65bdaf44fde8f8ef6297499f24f28bf7501366baa7ac18f8793acde9af1da",
+      "raw": true
+    },
+    {
+      "path": "continuation/168-05-revisit-blue-active.png",
+      "sha256": "bbc908f96c6f2338c56b888b3df00a5e3d0c15cbeae8f2f97be065326ef3ed15",
+      "raw": true
+    },
+    {
+      "path": "continuation/169-05-revisit-blue-paused.png",
+      "sha256": "5461ac5931657384732fcd4ca219c2d6151377771503f1bfd638e316d8dd7f58",
+      "raw": true
+    },
+    {
+      "path": "continuation/170-05-before-final-dew.png",
+      "sha256": "5461ac5931657384732fcd4ca219c2d6151377771503f1bfd638e316d8dd7f58",
+      "raw": true
+    },
+    {
+      "path": "continuation/171-05-hive-approach-active.png",
+      "sha256": "4b55b37aeba4c6e379c5f2a20e7aa256d558bae0c291bd877bb195a656066272",
+      "raw": true
+    },
+    {
+      "path": "continuation/172-05-hive-approach-paused.png",
+      "sha256": "e3c48f7fbfcf50983a9132ce83ee1bd02d99fa93939ea119857da1c22d1d8199",
+      "raw": true
+    },
+    {
+      "path": "continuation/173-05-before-comb-stop.png",
+      "sha256": "e3c48f7fbfcf50983a9132ce83ee1bd02d99fa93939ea119857da1c22d1d8199",
+      "raw": true
+    },
+    {
+      "path": "continuation/174-05-comb-stop-active.png",
+      "sha256": "dd1fca30232e21a81b25b2077d98b26832bb988343177b720427516e378688c4",
+      "raw": true
+    },
+    {
+      "path": "continuation/175-05-comb-stop-paused.png",
+      "sha256": "c6409a59a8f4458df7b592e9b855cbf04de3e2da35a1d2896beab1ae3bc6c7c1",
+      "raw": true
+    },
+    {
+      "path": "continuation/176-05-before-share.png",
+      "sha256": "c6409a59a8f4458df7b592e9b855cbf04de3e2da35a1d2896beab1ae3bc6c7c1",
+      "raw": true
+    },
+    {
+      "path": "continuation/177-05-share-active.png",
+      "sha256": "9f640ec1f10b23bfa20fb35954d264b6984fd0cdc3c963cd5fd478b5a9aba6c6",
+      "raw": true
+    },
+    {
+      "path": "continuation/178-05-share-paused.png",
+      "sha256": "cbfa20bed7ffe8893fb9b0e364ab44a1de78adfc22c8a995624f793aa95020cc",
+      "raw": true
+    },
+    {
+      "path": "continuation/179-05-before-home-flight.png",
+      "sha256": "cbfa20bed7ffe8893fb9b0e364ab44a1de78adfc22c8a995624f793aa95020cc",
+      "raw": true
+    },
+    {
+      "path": "continuation/180-05-home-approach-active.png",
+      "sha256": "439c43f81dce4909edb220c967109ff6c4030a77f83dbaf364116549d479cb67",
+      "raw": true
+    },
+    {
+      "path": "continuation/181-05-home-approach-paused.png",
+      "sha256": "34f66dcae12dbf5e4097925268f744a59fd4cea5b2ae74ee21b38b13deed71de",
+      "raw": true
+    },
+    {
+      "path": "continuation/182-05-before-tree-home.png",
+      "sha256": "34f66dcae12dbf5e4097925268f744a59fd4cea5b2ae74ee21b38b13deed71de",
+      "raw": true
+    },
+    {
+      "path": "continuation/183-05-tree-home-active.png",
+      "sha256": "46fc205cee499d59ffa06eb8a0bf3c3f05082d9a87b7df7ceeaf28a427003ab6",
+      "raw": true
+    },
+    {
+      "path": "continuation/184-05-tree-home-paused.png",
+      "sha256": "7ecb599ccc5f1531e5631576c9503336b74a0042860e28379cd3bb90fa9ee6f0",
+      "raw": true
+    },
+    {
+      "path": "continuation/185-05-before-enter-home.png",
+      "sha256": "7ecb599ccc5f1531e5631576c9503336b74a0042860e28379cd3bb90fa9ee6f0",
+      "raw": true
+    },
+    {
+      "path": "continuation/186-05-ending-active.png",
+      "sha256": "eb3b0cee3a41ed520c76d6994c0bd004772bcf8e6ed42c9345a5e7015d9151b0",
+      "raw": true
+    },
+    {
+      "path": "continuation/187-05-ending-paused.png",
+      "sha256": "787a1548b5522335ad020ab075f8f9f75bc9c424be5afd8cb5c22e5260fb54ae",
+      "raw": true
+    }
+  ],
+  "raw_save_backups": [
+    {
+      "path": "continuation/branch-start-save.bin",
+      "sha256": "3e0b258879e324e6fddc00cbba50b195a79a49467b7315d4d84bb0abe8378440",
+      "parsed": false
+    },
+    {
+      "path": "continuation/low-route-end-save.bin",
+      "sha256": "2ff1336059345993524c83a5f3281c1f050f2483ae5dfe053fd36503db0e508f",
+      "parsed": false
+    }
+  ]
+}

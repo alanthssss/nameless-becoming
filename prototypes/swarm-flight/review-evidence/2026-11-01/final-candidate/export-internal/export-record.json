@@ -1,0 +1,16 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "sha256": "9d6e9f315ef6a1d39867c8b50bdf223b049a35a43efcbb666250c0c7a08c196b",
+  "version": "0.17.0",
+  "executable": "雨来之前 · 池岸归途 0.17.0",
+  "pck_sha256": "5c0ca78329e43ab29c2c7fc5631ea550842a7b8b02dc1f7dc9040290749bdd05",
+  "entries": {
+    "spring-03-05": "passed",
+    "comparison-07-09": "passed"
+  },
+  "isolated_saves": true,
+  "signed": false,
+  "notarized": false,
+  "kind": "internal export; not a review candidate until original gate passes",
+  "launch_evidence": "entry-smoke/process-launch-receipt.json"
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "real old wind layout payloads generated before source edits",
+  "revision": "1b40be18289031bbe0baf067c82d7859c453f3ca",
+  "generator": "../wind_single_stroke_probe.gd",
+  "counterexample_expected_failure": true,
+  "boundary": "Stage2 actual-menu ordinary input component, no position/gate seed and no cold resume. Stage0/1 initial snapshots are controlled model fixtures. Not full-journey exploration.",
+  "source_sha256": {
+    "spring_journey_content.gd": "4dea9e7a14ca3ee7748e5a89ad9c7d32897639810f435b9ce0c40d1e108434d0",
+    "spring_journey_model.gd": "ff118e485c8e8700a68bf8af6385ddef614f3ba7bc514d60c2b639ae7b84268d",
+    "spring_journey_main.gd": "efc08f5006ee8a213a522c9ffd33bfe9434106d1aa86806ba632bae855750212"
+  },
+  "artifacts_sha256": {
+    "old-both-open.json": "89868e6730728970b11e101d0c91e724f35e77dd45aebb608ff167329f40bf5d",
+    "old-settled-after-double-open.json": "ff6bd142b0e944e4346ef16f0dff64cee8aed9ea2b3138d239eedf630567fc57",
+    "old-stage2-unopened.json": "ba4428cc6c30f4a55db274b4ab01c76445b0d13c680d6b844da2d0eb20a2a657",
+    "runtime-save.json": "026985980eec808233fda5bed91a08610e66dad1aeaa83c19d99aa4428d279e7",
+    "old-stage1.json": "0f6ccfe11b438b2e0f0d8c88d3a398b1bc65774ab21216a270a8e14a27c4d732",
+    "old-before-first-charge.json": "d5da7ba4b029c2721522a11fa5c6fe893eccd66ece12802f44c678b92f5687d7",
+    "old-first-wind-active.json": "57074f25482b4c38c22c13a0800345b62b95efeda42103b59df938fef637e211",
+    "probe.json": "7e0e21e504dfc9974359f640de1294b7ca0c7c101a55bd1209b31007efa040bd",
+    "generation.log": "fd3d4d9009899aa36c565f15a78956cb6e68180b04908fae5bf3fa0250179802",
+    "old-stage0.json": "df5e0308f801d6a7c58ab6013e6eea1413ba6774a6c43895b06d6aad7f40af80",
+    "old-front-open-live-burst.json": "94ce140c200a1b9ffea8da172af0e1e7699dedf05bb3199b838582734c650e99"
+  }
+}

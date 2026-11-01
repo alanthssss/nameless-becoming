@@ -1,0 +1,96 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "reviewer": "Codex root, source-informed semantic/media audit; not first-time explorer",
+  "inspected_raw_media": [
+    {
+      "path": "attempt-1/026-03-lantern-result.png",
+      "sha256": "8b4253106217a6df725db1be2be5cd13d1857d99170fbb611547f0e4c23f984d"
+    },
+    {
+      "path": "attempt-1/038-04-after-stem-gap.png",
+      "sha256": "280ffcbb2e53f9e1c0fd3b16a4e42fb6e4771990d64e1da4b988fc9ee2370400"
+    },
+    {
+      "path": "attempt-1/043-04-dash-preparation.png",
+      "sha256": "0b6df64616ad8036456941c3d44b6c246b733420dd279e153fd8a2978296aac4"
+    },
+    {
+      "path": "attempt-1/045-04-single-key-dash-result.png",
+      "sha256": "d39139940c7cfcf8c9c847fddceedf5719aca60237db8bbd380f725bb4ba2e0c"
+    },
+    {
+      "path": "continuation/102-04-low-open-segment-active.png",
+      "sha256": "18c2b5434d244228ac6e4e6b1e1b32884f270184851b720c900341bc5d0f1a04"
+    },
+    {
+      "path": "continuation/105-04-low-landing-active.png",
+      "sha256": "e6b8acb596c62c83ac93f17cf90e1b32ad7ae458be86fd482b76e9a7b0511aa1"
+    },
+    {
+      "path": "continuation/108-04-low-common-end-active.png",
+      "sha256": "7e25c754012445c7de1db6e9f5047b666dd883874f16e764145624e2ce2f2017"
+    },
+    {
+      "path": "continuation/118-04-upper-mid-exposure-active.png",
+      "sha256": "43937f5b5fcd75e2235e02a6be2d0567e5a1924350d2460eb7eb6e9474f08b58"
+    },
+    {
+      "path": "continuation/121-04-upper-verified-common-end-active.png",
+      "sha256": "f798707039fd82beff06d3db67838b0a9b33f37c936908043b8cfdb38e1df866"
+    },
+    {
+      "path": "continuation/144-05-align-active.png",
+      "sha256": "82c326c8da0d900463b74ab692dbb5a02bd2ccdee26167e633120735929b3cae"
+    },
+    {
+      "path": "continuation/147-05-slack-dash-active.png",
+      "sha256": "53a7af4da04d1323d521979af37c5b4a78c83b58c40cd164ed102e21d4c9bf93"
+    },
+    {
+      "path": "continuation/159-05-manual-sign-route-active.png",
+      "sha256": "deb50815e503032ba64d56ee4f4df2a048932739808999351a64a869021c231a"
+    },
+    {
+      "path": "continuation/162-05-back-knot-dash-active.png",
+      "sha256": "d277f702d2d43af9e10bd25f4c645cc067170cfba903694ad2c3be48468b2f0e"
+    },
+    {
+      "path": "continuation/177-05-share-active.png",
+      "sha256": "9f640ec1f10b23bfa20fb35954d264b6984fd0cdc3c963cd5fd478b5a9aba6c6"
+    },
+    {
+      "path": "continuation/186-05-ending-active.png",
+      "sha256": "eb3b0cee3a41ed520c76d6994c0bd004772bcf8e6ed42c9345a5e7015d9151b0"
+    },
+    {
+      "path": "continuation/187-05-ending-paused.png",
+      "sha256": "787a1548b5522335ad020ab075f8f9f75bc9c424be5afd8cb5c22e5260fb54ae"
+    },
+    {
+      "path": "attempt-1/002-scene-one-entry.png",
+      "sha256": "dce173140ba15173e891e1bf481db4fd1df8422303d2b7a0a693366edc4d0592"
+    },
+    {
+      "path": "attempt-1/022-03-blue-center-result.png",
+      "sha256": "4992f8b8c8293ed6c88b5e4b41b45d93f2c802be9fe875f55205252b401eebca"
+    }
+  ],
+  "observations": [
+    "Low rain route raw frame shows -30 and67 stamina, middle leaf89, shared end100. Upper mid-route frame shows player above middle canopy with shield circle and95, shared end100 without circle. Distinct resource/landing decisions are supported; no assertion every hidden frame was damage-free.",
+    "First front opening has visible slack cue/counting pose, later open geometry; second requires flying around the solid hanging board before the newly exposed back knot and a later burst.",
+    "Sharing scene shows two companions by comb and keeper/placed signs together at the supported stand; ending page explicitly confirms whole journey.",
+    "Initial failed acquisition is retained; active acquisition delays are not a human playability result."
+  ],
+  "limits": [
+    "Explorer did not establish how to activate first wind flower. Do not claim first-look comprehension of the optional complete wind chain.",
+    "Visual inference: third arrow flower is open in159 and closed in162 after final burst, so first-look manual positioning must not be labeled zero wind usage. The separately measured nativeB route, not this exploration, establishes a completely wind-free alternative.",
+    "Not every continuous frame viewed; no hearing, unfamiliar-human or enjoyment claim."
+  ],
+  "status": "sealed explorer review ready and semantic/raw-media audit supports bounded conclusions; calibration pending",
+  "source_review": {
+    "path": "continuation/review.json",
+    "sha256": "6c747a7d95b6ed96f52bef63f90807c4ae10ab6180d6e5e6f699b913163b40c2",
+    "all143_raw_hashes_verified": true,
+    "three_before_records_verified_against_original_lines": true
+  }
+}
