@@ -1,0 +1,14 @@
+{
+  "revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "pid": 77289,
+  "app": "/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/first-look-app/PondRebuildReview.app",
+  "save": "/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/first-look/save.json",
+  "wrapper_changes": [
+    "CFBundleIdentifier",
+    "CFBundleName"
+  ],
+  "pck": {
+    "Contents/Resources/雨来之前 · 池岸归途 0.18.0.pck": "8b8375fcf4fa6a48609a2826b367798c9536e8565ba8ac3515c47c39eb1d36cc"
+  },
+  "export_sha256": "4f52edb501e4e6c99e3a9560228d95098a176057f548aa6bf8891aefc64f7259"
+}

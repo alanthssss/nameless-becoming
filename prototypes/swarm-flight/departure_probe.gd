@@ -86,11 +86,11 @@ func run():
  check(body_clear(),"small window retains dialogue clearance")
  await shot("04-small-window")
  root.size=Vector2i(1280,800)
- game.model.p=Vector2(2320,500)
+ game.model.p=Vector2(2320+Model.POND_APPROACH_EXTENSION,500)
  game.model.velocity=Vector2.ZERO
  await tick(2)
  await shot("05-small-closed-flower")
- game.model.p=Vector2(3370,400)
+ game.model.p=Vector2(3370+Model.POND_APPROACH_EXTENSION,400)
  game.model.velocity=Vector2.ZERO
  game.model.clear_input()
  game.model.started=true

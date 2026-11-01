@@ -93,6 +93,7 @@ func new_scene():
 	game.sound.set_muted(not native)
 	game.sound.event_played.connect(on_sound)
 func fixture(index: int,point: Vector2):
+	if index!=1 and point.x<4800: point.x+=Model.POND_APPROACH_EXTENSION
 	release_keys()
 	game.begin_stage(index)
 	game.model.p=point
@@ -110,7 +111,7 @@ func open_gates_fixture():
 	var m=game.model
 	m.front_open=true
 	m.passage_open=true
-	m.wall_at(2350).broken=true
+	m.wall_at(Model.FRONT_WALL_X).broken=true
 	m.wall_at(Model.BACK_WALL_X).broken=true
 	m.keeper=Model.actor(Model.RESULT_HOME)
 	m.keeper.state="settled"
@@ -137,21 +138,21 @@ func movement_edges():
 	key(KEY_SPACE,true)
 	key(KEY_RIGHT,true)
 	await tick(8)
-	check(game.model.p.x>2156 and game.model.p.x<=2161.01,"compact bee reaches real stem9px boundary")
+	check(game.model.p.x>2156+Model.POND_APPROACH_EXTENSION and game.model.p.x<=2161.01+Model.POND_APPROACH_EXTENSION,"compact bee reaches real stem9px boundary")
 	check(game.model.charging and game.model.charge<game.model.CHARGE_READY,"moving charge remains early")
 	await shot("01-stem-compact")
 	key(KEY_SPACE,false)
 	await tick()
-	check(game.model.p.x<=2156 and not game.model.charging and game.model.bursts==0,"early release unfolds to14px outside stem without burst")
+	check(game.model.p.x<=2156+Model.POND_APPROACH_EXTENSION and not game.model.charging and game.model.bursts==0,"early release unfolds to14px outside stem without burst")
 	await shot("02-stem-expanded")
 	var y: float=game.model.p.y
 	key(KEY_UP,true)
 	await tick(18)
-	check(game.model.p.y<y-45 and game.model.p.x<=2156,"ordinary input slides along real stem")
+	check(game.model.p.y<y-45 and game.model.p.x<=2156+Model.POND_APPROACH_EXTENSION,"ordinary input slides along real stem")
 	release_keys()
 	key(KEY_LEFT,true)
 	await tick(14)
-	check(game.model.p.x<2100,"expanded bee can leave stem")
+	check(game.model.p.x<2100+Model.POND_APPROACH_EXTENSION,"expanded bee can leave stem")
 	await shot("03-stem-leave")
 	section="A-leaf"
 	fixture(1,Vector2(620,520))

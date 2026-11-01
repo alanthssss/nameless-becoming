@@ -1,0 +1,38 @@
+[
+  {
+    "name": "core",
+    "exit": 0,
+    "summary": [
+      "SWARM FLIGHT VERIFIED: 1655 checks, sixteen authored levels"
+    ],
+    "errors": []
+  },
+  {
+    "name": "long",
+    "exit": 0,
+    "summary": [
+      "LONG JOURNEY VERIFIED: 813 checks, 0 failures"
+    ],
+    "errors": []
+  },
+  {
+    "name": "wind-canary",
+    "exit": 0,
+    "summary": [
+      "SWARM REGRESSION BASELINE: 140 checks passed",
+      "SWARM REGRESSIONS VERIFIED: 2/2 known bug classes rejected"
+    ],
+    "errors": []
+  },
+  {
+    "name": "supply-canary",
+    "exit": 0,
+    "summary": [
+      "SUPPLY REGRESSION BASELINE: passed",
+      "SWARM SUPPLY REGRESSIONS VERIFIED: 5/5 layouts rejected",
+      "EIGHT RHYTHM REGRESSIONS VERIFIED: 6/6 behavior defects rejected",
+      "SEVEN FLOW REGRESSIONS VERIFIED: 5/5 behavior defects rejected"
+    ],
+    "errors": []
+  }
+]

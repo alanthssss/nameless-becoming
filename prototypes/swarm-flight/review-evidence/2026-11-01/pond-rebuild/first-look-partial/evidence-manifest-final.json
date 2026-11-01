@@ -1,0 +1,470 @@
+[
+  {
+    "path": "001-opening.png",
+    "sha256": "67aa74f790c00c730bc414018cf1129265f27c8ee6c0ba058a4b2f002a1655a2",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:33:23.083828+00:00"
+  },
+  {
+    "path": "002-first-scene.png",
+    "sha256": "6ab196162119fc94365e977f227fa34d11ff058c4a2b9a03a6551d28422da1e5",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:33:38.444543+00:00"
+  },
+  {
+    "path": "003-paused-confirmation.png",
+    "sha256": "ff48dd2ecac7e3540a6c94a64091fd137ae1a58213e19cc2d2446ea534817daf",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:33:39.921098+00:00"
+  },
+  {
+    "path": "004-approach-obstacle.png",
+    "sha256": "ee24131934bf8a9bbdc98bca2c17bbc807337641988184ae0cd9a23dd26cc26c",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:34:02.269635+00:00"
+  },
+  {
+    "path": "005-charge-opening.png",
+    "sha256": "3b81529a1d743f789400863fdc46907c89dc32590d3577416349689811d49168",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:34:16.657745+00:00"
+  },
+  {
+    "path": "006-dew-attempt.png",
+    "sha256": "fca772eefb152d484db68738ead913cc16e26cb58b398374c26a8287049a2520",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:34:32.275645+00:00"
+  },
+  {
+    "path": "007-blue-flower-approach.png",
+    "sha256": "2329a652d201604f1c2a77d5e4e09678e9674aacd8954961e0f04ecd6fd0c9c9",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:34:47.437569+00:00"
+  },
+  {
+    "path": "008-wind-flower-use.png",
+    "sha256": "1c77fec17199c647eb048984b4d41289510360cdff02d0d25e577e2744586ada",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:35:02.930548+00:00"
+  },
+  {
+    "path": "009-downstream-dew.png",
+    "sha256": "204cda13de827f32d81faa097dca9865d58b7fa5ce24a1991ce8c299c50a2c5a",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:35:18.525717+00:00"
+  },
+  {
+    "path": "010-leaf-shelter-approach.png",
+    "sha256": "bc18b8d900edbcbea18075f988cb7c8a2f0b6060fa317ce51000b145ac94e8ea",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:35:30.930429+00:00"
+  },
+  {
+    "path": "011-next-wind-flower.png",
+    "sha256": "6bbb237bf14fca6ee762320e87cdb4062b98890a73c5e7c3a72de60e359bbc88",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:35:49.570449+00:00"
+  },
+  {
+    "path": "012-second-wind-chain.png",
+    "sha256": "4797683cb127a7a7c6d2a4f083aac1aa51323709526e1a69c487397e98498f46",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:36:03.025173+00:00"
+  },
+  {
+    "path": "013-past-solid-hedge.png",
+    "sha256": "987a968c2ccd9c08e6b2b587c45607978a3f3dea9ba6579bd843bc55dbe65828",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:36:18.428303+00:00"
+  },
+  {
+    "path": "014-approach-open-flower.png",
+    "sha256": "a246041e8df67ceaaa535905f9924e56ad1252aab2888e8982747b6076bc68ae",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:36:33.679020+00:00"
+  },
+  {
+    "path": "015-over-tall-stem.png",
+    "sha256": "33fd4493eba6b0b7c283d9b8bfdd0d973ee9a8c6dbc1f18f39df4c041b188748",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:36:50.036770+00:00"
+  },
+  {
+    "path": "016-past-grey-insect.png",
+    "sha256": "10f657a8f3713fdbe812fd6f6aab6579611ecc89e5cb03e0ce33f99b2dbcd6c9",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:37:06.634900+00:00"
+  },
+  {
+    "path": "017-open-flower-visit.png",
+    "sha256": "4b49a84c7369ef1c09cea91b004b897a45a95304e307095120473c1eb25740ba",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:37:30.997466+00:00"
+  },
+  {
+    "path": "018-leaf-shed-arrival.png",
+    "sha256": "867e14f867d613e3d4a57ba276755e4fda54c9904e053f6016e0fe1c06274232",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:37:56.752747+00:00"
+  },
+  {
+    "path": "019-rest-leaf.png",
+    "sha256": "303a1cf5631a1052737fbb6fefedddc80d4ac7d9006bf616f2ecbed963fa2bdf",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:38:15.577623+00:00"
+  },
+  {
+    "path": "020-pond-edge-exit.png",
+    "sha256": "71b2cf218bd40be4054435677df8517530e56d7902779a8c7f9c0d8c73bf1cf5",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:38:30.973184+00:00"
+  },
+  {
+    "path": "021-first-chapter-complete.png",
+    "sha256": "fb9dab8d0a1e1d6202fdeb91df0993c7c6b38dd99912190855928ec59730db8d",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:38:44.615263+00:00"
+  },
+  {
+    "path": "022-second-chapter-opening.png",
+    "sha256": "74d4fdbe1d1be8ec7a2fa6a0856fdbd6a4b8e6e0e60f8f3242c0695cb4a899a2",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:38:55.248085+00:00"
+  },
+  {
+    "path": "023-second-chapter-paused.png",
+    "sha256": "773d7d61b09e88d87e09c391766a912b3ca3914b6df11d5f0a788a78b9513ec4",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:38:56.834618+00:00"
+  },
+  {
+    "path": "024-reopen-midpoint.png",
+    "sha256": "ac8a9bb41ee843c3382e2eee049e655d0d2c2fcbe3d7773e890c43680b961aa8",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:40:01.544724+00:00"
+  },
+  {
+    "path": "025-midpoint-restored.png",
+    "sha256": "5f1ceb18c091a6e57fdbb8dbcfd0d99f96c1887aefc6e2a5c5f3d805e65059ea",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:42:47.790984+00:00"
+  },
+  {
+    "path": "026-midpoint-continued.png",
+    "sha256": "000d4a424a40fa22ed10d16a9a6a046687e3b4beedf2438f5eef4ebd367cf36a",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:43:01.248755+00:00"
+  },
+  {
+    "path": "027-plan-a-first-shelter.png",
+    "sha256": "7c616795a6cc84b8b61a2f21c70472bc3d813dbb9294f206d4900c2198c6f205",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:43:15.437084+00:00"
+  },
+  {
+    "path": "028-plan-a-pause-confirm.png",
+    "sha256": "72a8f1c600ee3d3f997faa1f4a6d6e168bb80a0956680a514524694b12592514",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:43:16.938408+00:00"
+  },
+  {
+    "path": "029-plan-a-first-gap.png",
+    "sha256": "e9ccca15e26e88b645b73f616956d366992773853f27c9e8fba75e03ddb603d9",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:43:37.582621+00:00"
+  },
+  {
+    "path": "030-plan-a-rain-edge.png",
+    "sha256": "94a91744c4b7e56ca39c44d859d9d230782d9abfa0da8dd22d969be1db9da35e",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:43:51.996644+00:00"
+  },
+  {
+    "path": "031-plan-a-second-shelter.png",
+    "sha256": "7c48d597f2b107f9023a35547542eb416e05105bbf4a3309ddf3a21f876b6de7",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:44:15.120988+00:00"
+  },
+  {
+    "path": "032-plan-a-second-shelter-paused.png",
+    "sha256": "ba9209f10b6617272ab4425c21cb58ce5434602d31210a0fd428f70c33a36327",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:44:16.630789+00:00"
+  },
+  {
+    "path": "033-choice-a-restored.png",
+    "sha256": "66410b3ded04a2d586194d61a3f8e68734db42b74bc4b224f2da57c2095980ea",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:46:31.566916+00:00"
+  },
+  {
+    "path": "034-choice-a-leaf-collected.png",
+    "sha256": "b339a4c7b98fb30b9119fd56c30e44a44a83d35eacd7dfe8a2939e54f3b4f86a",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:46:56.995779+00:00"
+  },
+  {
+    "path": "035-choice-a-protected.png",
+    "sha256": "c8c4452afe15c7a498aabf32036adda07612cd099a377de2005b1e939e28085e",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:47:14.417255+00:00"
+  },
+  {
+    "path": "036-choice-a-third-shelter.png",
+    "sha256": "e60ffca8fab7b755b96e71446e45c90d3a1cdd918b960e103c06e118dfb55dba",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:47:31.875642+00:00"
+  },
+  {
+    "path": "037-choice-a-third-paused.png",
+    "sha256": "707d34f945f686224da92cb980b2a4933c601032190a9218234b251f8f8758c4",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:47:33.457286+00:00"
+  },
+  {
+    "path": "038-choice-b-restored.png",
+    "sha256": "66410b3ded04a2d586194d61a3f8e68734db42b74bc4b224f2da57c2095980ea",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:50:50.711652+00:00"
+  },
+  {
+    "path": "039-choice-b-unprotected-gap.png",
+    "sha256": "3540d1e35ad51682c89c3ad9b671b51f4a4e605a593d8e53512cd2332b2f7c96",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:51:06.974976+00:00"
+  },
+  {
+    "path": "040-choice-b-third-shelter.png",
+    "sha256": "d17f985ef1923532f05a5877638c4d2655a3a931ed99f30e80ab539a07070292",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:51:31.048843+00:00"
+  },
+  {
+    "path": "041-choice-b-third-paused.png",
+    "sha256": "6efc1770c2c0dca58776695328dc32ec73aea1370e9dc0e079e8e1f0145bed0d",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:51:32.654281+00:00"
+  },
+  {
+    "path": "042-fourth-shelter.png",
+    "sha256": "1ea095e7f44a22178869a873305a7dd8a1ffd2e6d200f9cf222cb1dfdd268816",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:52:13.143001+00:00"
+  },
+  {
+    "path": "043-middle-narrow-gap.png",
+    "sha256": "67cabab7409b99be07ac36236544777e678f62480999aea83eed853bd3e625eb",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:52:38.799936+00:00"
+  },
+  {
+    "path": "044-middle-narrow-gap-retry.png",
+    "sha256": "ba80775e91decb096e0a9335b6928a20ce6cd9fb9cf8fd3ad211b11b271c9b00",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:53:01.826456+00:00"
+  },
+  {
+    "path": "045-fifth-leaf-shelter.png",
+    "sha256": "d7cef4dd31bc0b3d593ed5cfd3e2f0ab5f76b71209f78d421b23db26c67ef26e",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:53:40.814220+00:00"
+  },
+  {
+    "path": "046-fifth-shelter-paused.png",
+    "sha256": "abf3a09ae8b67e2d97e5ac1915f31b4bfcbaa37a7ecd2505a7848391358de57e",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:53:42.408662+00:00"
+  },
+  {
+    "path": "047-middle-exit.png",
+    "sha256": "ff3c640d00822cb6af6e7c2e89637667b4936c6a3b833bc7984cebcdbe96f354",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:54:05.948639+00:00"
+  },
+  {
+    "path": "048-middle-exit-paused.png",
+    "sha256": "7b683991800eaca5c3c1e20de652d282d4531ce8a7dac097f1cf4040b9907c6c",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:54:07.525378+00:00"
+  },
+  {
+    "path": "049-final-chapter-opening.png",
+    "sha256": "8c192e41a7ff320827d24c3e2c9552f424edadb84f91951c97380a4f3ebf6c59",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:54:32.480656+00:00"
+  },
+  {
+    "path": "050-final-chapter-paused.png",
+    "sha256": "b165c2d68c01529c8b8fca79c40202c9d8ba70a7001362d294963ec1aef0ccf1",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:54:34.253162+00:00"
+  },
+  {
+    "path": "051-return-through-open-gap.png",
+    "sha256": "860ed31371071ed14bba5b1bc3e470ab5f83be15a9e5139b1642fb18e343abaa",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:55:02.792769+00:00"
+  },
+  {
+    "path": "052-return-wind-approach.png",
+    "sha256": "84978980a49f496bfc28c02e77b0f4519af548aeb0ff7f64d4ce653b3961184e",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:55:28.683828+00:00"
+  },
+  {
+    "path": "053-return-wind-chain.png",
+    "sha256": "572f7cffa6d85386a3e9b625587b984da5a1701acf8a284f38209deba3841e76",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:55:47.588724+00:00"
+  },
+  {
+    "path": "054-return-over-low-hedge.png",
+    "sha256": "f957e64aa093457ea2c618e86834fe577269a0c649d36a48614cccb12ce3f817",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:56:08.681743+00:00"
+  },
+  {
+    "path": "055-return-shelter.png",
+    "sha256": "5f151813f80e59165e2f768a03501386acd7d12e40f32d4365f4a0de0d1a6180",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:56:32.319885+00:00"
+  },
+  {
+    "path": "056-return-shelter-under-leaf.png",
+    "sha256": "7f8765f37a82eb134e6b24fe85f2f0b96e99f7b6e659133eb9db450e926bc83c",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:56:53.102730+00:00"
+  },
+  {
+    "path": "057-return-recovery-r.png",
+    "sha256": "9282b802b5752814ab2e31c7e3cf214cc0fd7338583b7f23ab4e3673ff666f01",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:57:17.194979+00:00"
+  },
+  {
+    "path": "058-return-second-wind-chain.png",
+    "sha256": "086c5f107615643a8c3b081d441a6dbd79ced25f4b52e9f49e32bcb0ab6ef91b",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:57:39.043514+00:00"
+  },
+  {
+    "path": "059-return-second-shelter.png",
+    "sha256": "0737ad9ddcfe8dd2af1c44a5fced0d411af241be091cc21947283448aae1ab47",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:57:58.746172+00:00"
+  },
+  {
+    "path": "060-return-owner-approach.png",
+    "sha256": "c0cb276b75d8c50be08cc8f43b6040fbf00325247ee658d18df94db51791a5f7",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:58:22.271642+00:00"
+  },
+  {
+    "path": "061-return-knot-approach.png",
+    "sha256": "9403f382001aad73ceb6ec3a9fbdd58255076be42719777221a543ec97a35cf5",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:58:56.605663+00:00"
+  },
+  {
+    "path": "062-return-knot-timing.png",
+    "sha256": "b7466ff99af23f8aac313da179b31db1cdcb94a809a1367f42e5109f90a288d8",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:59:24.518542+00:00"
+  },
+  {
+    "path": "063-return-knot-burst.png",
+    "sha256": "19bf3829b015e28e4c20634306d100b26caf40834517846f3c4fc73c81a98095",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T11:59:51.552062+00:00"
+  },
+  {
+    "path": "064-knot-timed-retry-1.png",
+    "sha256": "550ef0fad2a461e48ba99ace87445bc74de28f3c5857b5e6dad2c5fb4e8d0fa6",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:00:37.962626+00:00"
+  },
+  {
+    "path": "065-knot-timed-retry-2.png",
+    "sha256": "3a917ec72cdcc16052494492aeb0d00ca725bb63c429ef72324ac9bc93008b21",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:00:41.773070+00:00"
+  },
+  {
+    "path": "066-knot-timed-retry-3.png",
+    "sha256": "23ef098a29c995d7fd1ee6e67da8cee64c60144486295b967a073c91599d22fc",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:00:45.567000+00:00"
+  },
+  {
+    "path": "067-knot-reengage-owner.png",
+    "sha256": "ceedee36b8dba10266e6f77c2ecedf420b05ebf056069503de9de7fe65a5f710",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:02:19.727090+00:00"
+  },
+  {
+    "path": "068-knot-short-charge.png",
+    "sha256": "764cb9bc325175a55f1adfe0170c31449f7c99a3de31ff27f99cc35913fcf5e5",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:02:48.953973+00:00"
+  },
+  {
+    "path": "069-knot-precharge.png",
+    "sha256": "e234cab902998eef480521298f8870068e591979f013a125f201fa2f40d4202e",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:03:51.195333+00:00"
+  },
+  {
+    "path": "070-sign-upper-route.png",
+    "sha256": "9c1b85c8a24f3d0de8c6ecfde74e23dce025c627b1faafc8794ae25f7bebf356",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:04:56.197104+00:00"
+  },
+  {
+    "path": "071-final-leaf-rest.png",
+    "sha256": "16ff54e4e5580d537f83df92f93b3d17b6f0b80b12a47254125b28bd6b67bec0",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T12:06:14.700762+00:00"
+  },
+  {
+    "path": "072-resumed-state.png",
+    "sha256": "0ab60f4ca439f5bb357fed6c25f26b67a36218b027be827c0e22a6ce2f996d94",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T14:17:50.254821+00:00"
+  },
+  {
+    "path": "073-wax-comb-arrival.png",
+    "sha256": "ee16889e8691ba54da5c3219dd76740eebd763c202522f739416ffd9fe538441",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T14:24:10.019468+00:00"
+  },
+  {
+    "path": "074-comb-share-prompt.png",
+    "sha256": "c995eb1f9b6eb4e19adc0b8f1af79ebc9483490dfeb05c41005900ed6cdedb82",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T14:27:02.702304+00:00"
+  },
+  {
+    "path": "075-comb-paused.png",
+    "sha256": "8501e701671b1f072072607aa283e79cf1ef3ad23e743f978618ef2774981205",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T14:27:04.061951+00:00"
+  },
+  {
+    "path": "076-flower-revisit.png",
+    "sha256": "f98b4d4baf20b870577e39f5e2ee0acaccc22a58916b2639511fb0c186d67d17",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T14:34:56.409078+00:00"
+  },
+  {
+    "path": "077-blue-flower-observed.png",
+    "sha256": "8629fd2b2d449bacc91b63c8c78cfbade03b6f50e58cad7af223a75c91a66417",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T14:38:13.997103+00:00"
+  },
+  {
+    "path": "078-past-comb-toward-exit.png",
+    "sha256": "814c8bf5aef6a5c5910a2b414b06146b7dcd7f447dae343c7d03ec1aae3e70d1",
+    "raw": true,
+    "file_mtime_utc": "2026-11-01T14:48:20.458998+00:00"
+  }
+]

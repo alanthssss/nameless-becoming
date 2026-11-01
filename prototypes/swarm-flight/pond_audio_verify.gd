@@ -59,6 +59,7 @@ func tap(code: Key) -> void:
 	key(code,false)
 
 func seed_stage(index: int, point: Vector2) -> void:
+	if index!=1 and point.x<4800: point.x+=Model.POND_APPROACH_EXTENSION
 	game.begin_stage(index)
 	game.model.p = point
 	game.model.velocity = Vector2.ZERO
@@ -73,7 +74,7 @@ func open_gate_fixture() -> void:
 	var m = game.model
 	m.front_open = true
 	m.passage_open = true
-	m.wall_at(2350).broken = true
+	m.wall_at(Model.FRONT_WALL_X).broken = true
 	m.wall_at(Model.BACK_WALL_X).broken = true
 	m.keeper = Model.actor(Model.RESULT_HOME)
 	m.keeper.state = "settled"
@@ -298,7 +299,7 @@ func verify_ending_consumption() -> void:
 	m.result_elapsed = 0.0
 	m.checkpoint_index = m.shelters.size()-1
 	for leaf in m.shelters: leaf.reached = true
-	m.save_checkpoint(Vector2(4410,500))
+	m.save_checkpoint(Vector2(4410+Model.POND_APPROACH_EXTENSION,500))
 	m.phase = "ending"
 	m.completed = true
 	game.mode = "arrival"

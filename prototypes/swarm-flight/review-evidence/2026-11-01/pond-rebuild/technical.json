@@ -1,0 +1,61 @@
+{
+  "revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "status": "pending-final-native-comparison",
+  "author": "Codex root",
+  "scope": "GDD13.5/J01–08 +13.6; M3#208/#209, M4#211; internal candidate only",
+  "production_binding": "production-snapshot.json:59 unchanged production files; later c40a67d changes QA only",
+  "runs": {
+    "native_a": {
+      "checks": 70,
+      "failures": 0,
+      "path": "native-final-a/",
+      "route": "Actual viewport keys through full wind/source/shield/return/share/ending journey; one deliberate R preserves first opening. Pause and real-disk new-scene resume at source/rain/gate/armed share/listeners/ending. Post-ending earned-keeper and embedded-pose fixtures disclosed in runner.",
+      "not_claimed": [
+        "blind exploration",
+        "human duration",
+        "process-memory restoration from external observations"
+      ]
+    },
+    "native_b": {
+      "checks": 39,
+      "failures": 0,
+      "path": "native-final-b/",
+      "route": "Actual viewport keys, all three chapters, no wind/no sharing, zero forced recovery; real-disk new-scene charge, active burst and second chapter boundary resume.",
+      "not_claimed": [
+        "blind exploration",
+        "human duration"
+      ]
+    },
+    "native_comparison": {
+      "status": "pending-retake",
+      "retained_failure": "native-comparison/attempt-1-focus-interference/",
+      "reason": "All long chapters completed; three initial charge/pause checks failed while other native windows launched. Same diagnostic passes headless; focus attribution awaits exclusive-window retake."
+    }
+  },
+  "related_checks": {
+    "spring_model": 320,
+    "save_suites": 941,
+    "core": 1655,
+    "long_model": 813,
+    "source_routes": 61,
+    "rain_choices": 98,
+    "mosquito": 34,
+    "source_states": 107,
+    "audio": 129,
+    "departure": 17,
+    "canopy_variations": 232,
+    "charge_feedback": 18,
+    "package_and_review_unittests": 35,
+    "failures": 0,
+    "ci_head": "c40a67dc04d480117640c2b325218cbc6d18c820",
+    "ci_run": 41303538854,
+    "ci_evidence": "ci-c40-summary.json",
+    "note": "Counts from distinct suites may overlap conceptually; not a score of enjoyment."
+  },
+  "save_policy": "v3 independent save; old v2 is rejected atomically and original bytes preserved. No inferred relocation of old coordinates.",
+  "limits": [
+    "AI developer validation and AI independent exploration do not establish Alan acceptance.",
+    "07/08 long content and common flight/collision production files unchanged.",
+    "Known-answer route recordings do not replace exploratory content review."
+  ]
+}

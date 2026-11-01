@@ -51,7 +51,7 @@ class PackageTests(unittest.TestCase):
             commands = [n for n in names if n.endswith('.command')]
             self.assertEqual(len(commands), 2)
             expected = {
-                '开始池岸归途.command': ('--spring-journey', 'spring_03_05_v2.json'),
+                '开始池岸归途.command': ('--spring-journey', 'pond_journey_rebuild_v3.json'),
                 '风路对照.command': ('--long-journey', 'summer_long_07_09_r8.json'),
             }
             self.assertEqual({Path(n).name for n in commands}, set(expected))
