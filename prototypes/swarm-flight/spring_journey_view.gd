@@ -196,6 +196,9 @@ func _terrain(item: Dictionary) -> void:
 		ArtProps.stalk(self,a,a.lerp(b,0.33),a.lerp(b,0.66),b,rect.size.y)
 		return
 	if item.get("material", "hedge") == "stem":
+		if model.stage==1 and rect==model.SpringContent.RAIN_UPPER_STEM:
+			# Painted with its supporting hedge below, behind the foliage.
+			return
 		if model.stage in [0,1] and rect.end.y>=830:
 			var x: float=rect.get_center().x
 			ArtProps.stem(self,rect,false)
@@ -207,6 +210,13 @@ func _terrain(item: Dictionary) -> void:
 		elif rect.position.y>100:
 			ArtProps.stalk(self,Vector2(rect.get_center().x,rect.end.y),Vector2(rect.get_center().x+15,660),Vector2(rect.get_center().x-12,770),Vector2(rect.get_center().x+10,834),rect.size.x*0.4)
 	else:
+		if model.stage==1 and rect==model.SpringContent.RAIN_OVERHEAD:
+			# The upright shoot emerges from this rooted hedge. Foliage hides
+			# its buried base instead of exposing a hanging or square cut end.
+			var shoot: Rect2=model.SpringContent.RAIN_UPPER_STEM
+			ArtProps.stem(self,Rect2(shoot.position,shoot.size+Vector2(0,30)),false)
+			var root:=Vector2(shoot.get_center().x,shoot.end.y+20)
+			ArtSprites.small_leaf(self,root,root+Vector2(-62,-18),25)
 		super._terrain(item)
 		if model.stage in [0,1]:
 			for x in [rect.position.x+25.0,rect.end.x-25.0]:

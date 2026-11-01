@@ -2,6 +2,10 @@ extends "res://event_data.gd"
 const Builder = preload("res://chapter_data.gd")
 const TITLES := ["池边小径","雨中停走","归巢之路"]
 const POND_FORK := Rect2(2860,330,200,120)
+const RAIN_LOW_REST := Vector2(2630,600)
+const RAIN_HIGH_REST := Vector2(3010,520)
+const RAIN_OVERHEAD := Rect2(3150,310,710,85)
+const RAIN_UPPER_STEM := Rect2(3150,80,65,231)
 static func beat(name: String,width: float,objects: Array,rest: float,cue: String,route: Array,alternate: Array=[]) -> Dictionary:
 	var b:=encounter(name,width,objects,rest,cue)
 	b.direct_route=route
@@ -19,8 +23,9 @@ static func build(index: int) -> Dictionary:
 		beats=[
 			beat("从叶下看雨",800,[],520,"云经过叶尖，前面留着棚下通路",[Vector2(620,520)]),
 			beat("从棚下抬高一步",1550,[terrain(20,250,800,80),terrain(610,470,65,365,"stem"),terrain(1100,330,350,95),weather(0,1550),dew(960,520,"穿过露天后共有的补给")],520,"先抬升穿过叶下通口，再接住下一片叶棚",[Vector2(450,520),Vector2(550,400),Vector2(740,400),Vector2(960,520),Vector2(1320,520)]),
-			beat("从两层接住下一片叶",1500,[terrain(70,500,710,85),terrain(930,480,65,355,"stem"),weather(0,1250),shield(20,450),dew(1210,420,"两路重新合流时补给")],520,"取护雨从上层穿过，或沉到低棚下再从叶尖抬升",[Vector2(-40,630),Vector2(830,630),Vector2(850,420),Vector2(1210,420)],[Vector2(20,520),Vector2(20,450),Vector2(1210,420)]),
-			beat("看见熟悉的池岸",450,[],500,"雨停了，那簇蓝花还在池岸边",[Vector2(230,500)])]
+			beat("低叶下的一处歇脚",460,[weather(0,1250),shield(20,450)],600,"低叶留着歇脚处，护雨叶在露天前轻晃",[Vector2(-20,630),Vector2(280,600)],[Vector2(40,520),Vector2(20,450),Vector2(110,380),Vector2(450,380)]),
+			beat("从两层接住下一片叶",1040,[terrain(RAIN_OVERHEAD.position.x-2810,RAIN_OVERHEAD.position.y,RAIN_OVERHEAD.size.x,RAIN_OVERHEAD.size.y),terrain(RAIN_UPPER_STEM.position.x-2810,RAIN_UPPER_STEM.position.y,RAIN_UPPER_STEM.size.x,RAIN_UPPER_STEM.size.y,"stem"),terrain(470,480,65,355,"stem"),dew(750,420,"两路重新合流时补给")],520,"绕过叶尖再抬升，雨顶下的通口接回共同小路",[Vector2(-30,600),Vector2(50,520),Vector2(200,520)],[Vector2(50,380),Vector2(50,520),Vector2(200,520)]),
+			beat("看见熟悉的池岸",450,[],500,"雨停了，那簇蓝花还在池岸边",[Vector2(-692,520),Vector2(-692,435),Vector2(-650,435),Vector2(-450,435),Vector2(-290,420),Vector2(230,500)])]
 	else:
 		beats=[
 			beat("归路换了模样",1440,[terrain(870,270,80,300,"stem"),dew(1100,580,"接近牌架前补给")],500,"同一条池岸，前面却挂起了花牌",[Vector2(620,620),Vector2(1000,620),Vector2(1260,500)]),
@@ -35,6 +40,16 @@ static func build(index: int) -> Dictionary:
 		for route_name in ["route","optional_route"]:
 			for command in result[route_name]:
 				if command.kind=="move" and command.target==Vector2(3520,500): command.target=Vector2(3710,600)
+	if index==1:
+		result.shelters[2].half_width=118.0
+		result.shelters[3].pos=RAIN_HIGH_REST
+		result.shelters[3].half_width=118.0
+		result.sections[3].rest=RAIN_HIGH_REST
+		# Reference input only: the upper choice passes the low leaf without resting.
+		result.optional_route=result.optional_route.filter(func(command): return not (command.kind=="move" and command.target==RAIN_LOW_REST) and not (command.kind=="rest" and command.get("section")==2))
+		for route_name in ["route","optional_route"]:
+			for command in result[route_name]:
+				if command.kind=="move" and command.target==Vector2(3670,520): command.target=RAIN_HIGH_REST
 	if index==2:
 		result.shelters[1].pos=Vector2(2490,465)
 		result.sections[1].rest=Vector2(2490,465)

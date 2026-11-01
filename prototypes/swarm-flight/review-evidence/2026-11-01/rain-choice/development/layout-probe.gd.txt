@@ -1,0 +1,52 @@
+extends SceneTree
+const M=preload("res://spring_journey_model.gd")
+var m
+var events=[]
+var marks=[]
+var failures=[]
+var exposure=0.0
+var protected_exposure=0.0
+func _initialize():call_deferred("run")
+func tick(d: Vector2):
+	m.step(d,false,1.0/60)
+	if m.weather_phase=="rain" and m.p.y<m.rain_floor_at(m.p.x) and m.shelter_index_at(m.p)<0:
+		exposure+=1.0/60
+		if m.shield_left>0:protected_exposure+=1.0/60
+	for e in m.events:
+		if e.kind in ["hit","shield","shield_end","checkpoint","recover_geometry","recover_rain"]:events.append({"kind":e.kind,"reason":e.get("reason"),"time":m.time,"p":[m.p.x,m.p.y]})
+	m.events.clear()
+func fly(p: Vector2):
+	for i in 900:
+		var d=p-m.p
+		if d.length()<8 or m.phase!="playing":break
+		tick(Vector2(signf(d.x) if absf(d.x)>4 else 0,signf(d.y) if absf(d.y)>4 else 0).normalized())
+	if m.p.distance_to(p)>30 and m.phase=="playing":failures.append({"target":[p.x,p.y],"actual":[m.p.x,m.p.y]})
+	for i in 12:tick(Vector2.ZERO)
+func mark(name):marks.append({"name":name,"p":[m.p.x,m.p.y],"time":m.time,"energy":m.stamina,"shield":m.shield_left,"rest":m.shelter_index_at(m.p),"exposure":exposure,"protected_exposure":protected_exposure,"recoveries":m.recoveries})
+func run():
+	var report={"routes":[],"flat":[]}
+	for upper in [false,true]:
+		m=M.new();m.load_stage(1);events=[];marks=[];failures=[];exposure=0;protected_exposure=0
+		for p in [Vector2(620,520),Vector2(1250,520),Vector2(1350,400),Vector2(1540,400),Vector2(1760,520),Vector2(2170,520),Vector2(2330,520)]:fly(p)
+		mark("choice")
+		if upper:
+			for p in [Vector2(2390,520),Vector2(2370,450),Vector2(2460,380),Vector2(2860,380),Vector2(2860,520),Vector2(3010,520)]:fly(p)
+		else:
+			for p in [Vector2(2330,630),Vector2(2630,600)]:fly(p)
+			mark("low_arrive")
+			for i in 60:tick(Vector2.ZERO)
+			mark("low_recovered")
+			for p in [Vector2(2780,600),Vector2(2860,520),Vector2(3010,520)]:fly(p)
+		mark("upper_landing_or_merge")
+		for p in [Vector2(3158,520),Vector2(3158,435),Vector2(3200,435),Vector2(3400,435),Vector2(3560,420),Vector2(4080,500),Vector2(4120,500),Vector2(4360,500),Vector2(4450,420)]:fly(p)
+		mark("exit")
+		report.routes.append({"upper":upper,"marks":marks,"events":events,"failures":failures,"phase":m.phase})
+	for height in [100,160,230,300,400,450,520,630,700]:
+		m=M.new();m.load_stage(1);fly(Vector2(180,height))
+		for i in 1400:
+			if m.p.x>=4000:break
+			tick(Vector2.RIGHT)
+		report.flat.append({"start_y":height,"p":[m.p.x,m.p.y],"recovery":m.recoveries,"shield":m.shields[0].collected})
+	var f=FileAccess.open("/private/tmp/pond-rain-layout-probe.json",FileAccess.WRITE);f.store_string(JSON.stringify(report,"\t",true,true));f.close()
+	print(JSON.stringify(report))
+	quit()

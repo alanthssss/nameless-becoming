@@ -1,6 +1,7 @@
 extends SceneTree
 ## Independent bounded geometry/model checks; no player or listening acceptance.
 const Model=preload("res://spring_journey_model.gd")
+const RainExpected=preload("res://rain_layout_expectations.gd")
 const FIXTURES="res://review-evidence/2026-11-01/ordinary-mosquito/legacy-fixtures/"
 var checks=0
 var failures=0
@@ -132,6 +133,7 @@ func restore_cases():
 			expected.state.checkpoint.walls.append(fork.duplicate(true))
 		expected.story.small=upgraded.story.small.duplicate(true)
 		expected.checkpoint_story.small=upgraded.checkpoint_story.small.duplicate(true)
+		expected=RainExpected.upgraded(expected)
 		check(JSON.parse_string(JSON.stringify(upgraded,"",true,true))==JSON.parse_string(JSON.stringify(expected,"",true,true)),"old upgrade changes only two small actors, declared pond wall and markers "+name)
 		var old_actor=Model.unpack(original.story.small)
 		var preserve=original.stage==0 and sampled_clear(copy,Model.SMALL_HOME,old_actor.pos) and old_actor.pos.distance_to(Model.SMALL_HOME)<=235.01 and old_actor.state not in ["idle","rest"]

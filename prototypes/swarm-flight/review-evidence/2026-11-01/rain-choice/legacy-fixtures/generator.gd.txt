@@ -1,0 +1,64 @@
+extends SceneTree
+## Genuine pre-rain-layout snapshots produced by primary main@5d6866b.
+const M=preload("res://spring_journey_model.gd")
+var out=OS.get_environment("RAIN_LEGACY_OUTPUT")
+var failures=0
+func fresh(index:=1):
+	var m=M.new()
+	m.load_stage(index)
+	return m
+func at_checkpoint(index: int):
+	var m=fresh()
+	for i in m.shelters.size(): m.shelters[i].reached=i<=index
+	m.checkpoint_index=index
+	m.p=m.shelters[index].pos if index>=0 else Vector2(180,420)
+	m.save_checkpoint(m.p)
+	return m
+func old_clear(m,p: Vector2) -> bool:
+	for wall in m.walls:
+		if not wall.broken and wall.rect.grow(14).has_point(p): return false
+	for leaf in m.shelters:
+		if not M.Canopy.contact(p,14,leaf).is_empty(): return false
+	return true
+func write_case(name: String,m,description: String):
+	var payload=m.save_payload()
+	var copy=M.new()
+	if not copy.restore_payload(payload) or payload.has("rain_layout_revision") or not old_clear(m,m.p) or not old_clear(m,m.checkpoint.p):
+		failures+=1
+		print("FAIL old fixture "+name)
+		return
+	var path=out.path_join("old-"+name+".json")
+	var file=FileAccess.open(path,FileAccess.WRITE)
+	file.store_string(JSON.stringify(payload,"",true,true)+"\n")
+	file.close()
+	print(name+" | "+description+" | "+FileAccess.get_sha256(path))
+func _initialize():
+	if out.is_empty(): quit(1); return
+	DirAccess.make_dir_recursive_absolute(out)
+	for stage in [0,2]: write_case("stage-"+str(stage),fresh(stage),"untouched previous-model stage")
+	for index in [-1,0,1,2,3]: write_case("checkpoint-"+str(index),at_checkpoint(index),"old safe committed checkpoint with consistent reached prefix")
+	for entry in [["new-overhead",Vector2(3400,350)],["new-upper-stem",Vector2(3180,180)],["new-low-leaf",Vector2(2630,480)],["new-high-leaf",Vector2(3010,400)]]:
+		var m=at_checkpoint(1)
+		m.p=entry[1]
+		m.started=true
+		write_case(entry[0]+"-live",m,"old collision-clear seeded live pose; safe2170,520 checkpoint")
+		m.save_checkpoint(m.p)
+		write_case(entry[0]+"-checkpoint",m,"old collision-clear seeded checkpoint will be unsafe under new geometry")
+	var m=at_checkpoint(1)
+	m.p=Vector2(2385,450)
+	m.started=true
+	m.weather_phase="rain"
+	m.warning_elapsed=M.WARNING_SECONDS
+	m.step(Vector2.ZERO,false,1.0/60)
+	if m.shield_left<=0: failures+=1
+	write_case("rain-shield-live",m,"seeded natural-valid rain phase; ordinary idle step contacts old real shield")
+	m.save_checkpoint(Vector2(2170,520))
+	write_case("rain-shield-committed",m,"same shield state with committed collected flag and rain story")
+	m=at_checkpoint(2)
+	m.weather_phase="after"
+	m.warning_elapsed=M.WARNING_SECONDS
+	m.p=Vector2(3800,600)
+	m.save_checkpoint(Vector2(3670,520))
+	write_case("after-third",m,"old committed third shelter plus safe later live pose")
+	print("RAIN LEGACY GENERATION failures="+str(failures))
+	quit(1 if failures else 0)

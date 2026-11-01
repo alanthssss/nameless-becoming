@@ -1,0 +1,713 @@
+{
+  "schema_version": 1,
+  "kind": "pond_rain_choice_implementation_receipt",
+  "status": "scoped_implementation_review_passed_ci_pending",
+  "authority": {
+    "GDD": "§8.1 / §13.6 J02; J05/J06 for recovery compatibility",
+    "milestone": 3,
+    "issue": 206,
+    "issue_url": "https://github.com/alanthssss/nameless-becoming/issues/206",
+    "execution_pointer": "docs/design/solar-term-campaign-production-spec.md#production-now",
+    "owner": "root; authoritative Issue/Now/integration updated by root, not this archivist"
+  },
+  "baseline_revision": "5d6866baabd91766f4c5d4aa45f05bab0fc060bb",
+  "frozen_production_revision": "3ab1356b9aba645dcd0dcf918cf9a67144dd596a",
+  "superseded_production_revision": "843cf1d38cac97152679c67ab81746824e8a079b",
+  "evidence_revision": null,
+  "scope": {
+    "stage": 1,
+    "beat_split": [
+      460,
+      1040
+    ],
+    "original_combined_width": 1500,
+    "low_rest": {
+      "pos": [
+        2630,
+        600
+      ],
+      "half_width": 118,
+      "index": 2
+    },
+    "high_rest": {
+      "pos": [
+        3010,
+        520
+      ],
+      "half_width": 118,
+      "index": 3
+    },
+    "common_roof": [
+      3150,
+      310,
+      710,
+      85
+    ],
+    "upper_stem": [
+      3150,
+      80,
+      65,
+      231
+    ],
+    "lower_stem": [
+      3280,
+      480,
+      65,
+      355
+    ],
+    "shield_pos": [
+      2370,
+      450
+    ],
+    "second_rain_x": [
+      2350,
+      3600
+    ],
+    "common_dew": [
+      3560,
+      420
+    ],
+    "last_rest": [
+      4120,
+      500
+    ],
+    "unchanged": [
+      "weather and damage rules",
+      "5-second shield",
+      "movement/stamina rules",
+      "camera logic",
+      "source identity and earned source facts",
+      "stage0/stage2 geometry",
+      "total stage width",
+      "sound design"
+    ],
+    "view_fix": "Draw added upper stem as part of supporting roof before hedge foliage; buried base is occluded without changing collision."
+  },
+  "source_sha256": {
+    "spring_journey_content.gd": "4dea9e7a14ca3ee7748e5a89ad9c7d32897639810f435b9ce0c40d1e108434d0",
+    "spring_journey_model.gd": "ff118e485c8e8700a68bf8af6385ddef614f3ba7bc514d60c2b639ae7b84268d",
+    "spring_journey_main.gd": "efc08f5006ee8a213a522c9ffd33bfe9434106d1aa86806ba632bae855750212",
+    "spring_journey_view.gd": "626fa1df943876ebde3c4f069a9a56375251e43c52953d991620dd3b9bcc6042",
+    "chapter_data.gd": "ba1ba4625fc7758e6e4ebc4e1f55d2ee102b415ab4863f58eb0638acb2445ca7",
+    "long_journey_model.gd": "7bf923077f3c30b0942a5ab499687a128bf8c98a6ff9127340221a67d9278206",
+    "game_model.gd": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+    "world_view.gd": "1cae5f78a190ebadaed49a716cb66114093a9d30b5799f1e56b13cdae3820d9d",
+    "art_props.gd": "2e8efbe787f13d4e586e1f70e5b2c5b7e9c3e79a12a9a6de2d2d781b145ee0f8",
+    "art_sprites.gd": "8744fb9925134c06f583a14b17b806e4532d50652802a9bf80ae6272ece20793",
+    "leaf_canopy_geometry.gd": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf"
+  },
+  "migration": {
+    "marker": "rain_layout_revision=1",
+    "old_model_revision": "5d6866baabd91766f4c5d4aa45f05bab0fc060bb",
+    "genuine_old_payload_count": 18,
+    "provenance": "legacy-fixtures/provenance.json",
+    "generator": "legacy-fixtures/generator.gd.txt",
+    "generation_log": "legacy-fixtures/generation.log",
+    "boundary": "Old-model seeded developer fixtures, not new payloads with marker removed and not player exploration. Old wall/leaf clearance and old restore acceptance checked before archival.",
+    "contract": [
+      "Validate complete old static collections, numeric/dynamic fields, reached prefixes and both snapshot indices before conversion.",
+      "Map stage1 old indices2→3 and3→4; inserted low reached iff old index>=2.",
+      "Map standard old checkpoint(3670,520)→(3010,520); preserve unrelated fields and earned facts.",
+      "Legitimate old live colliding with new wall/canopy uses existing checkpoint recovery; unsafe checkpoint is rejected atomically.",
+      "Earlier missing-marker migration chain remains accepted only through its own complete validation. Unknown/string/damaged marker or collections cannot partially mutate state.",
+      "Main typed-marker guard and stable .before-route-2-<original_sha12>.bak retain exact original bytes."
+    ]
+  },
+  "baseline_counterexample": {
+    "kind": "known-input developer component baseline",
+    "source": "baseline/model-result.json",
+    "native": "baseline/native/",
+    "native_checks": 12,
+    "native_failures": 0,
+    "ordinary_input": "old model stage1 entry then UP/RIGHT; no position seed/no burst/no shield",
+    "end": [
+      4003.320068359375,
+      101.12842559814453
+    ],
+    "hits": 0,
+    "recoveries": 0,
+    "shield_collected": false,
+    "stamina": 68.20000000000181,
+    "conclusion": "Old high same-height unprotected route bypassed the central choice; not a first-time play observation.",
+    "root_reviewed_png": [
+      "01-high-above-rain.png",
+      "02-high-bypass-end.png",
+      "03-old-safe-lookout.png"
+    ],
+    "review_scope": "Root explicitly reports all3 baseline stills viewed; archiving subagent did not newly inspect them."
+  },
+  "native": {
+    "path": "native/",
+    "kind": "known-solution ordinary-input component run with real menu/cold resume, not first-time exploration",
+    "production_revision": "3ab1356b9aba645dcd0dcf918cf9a67144dd596a",
+    "checks": 81,
+    "failures": 0,
+    "frames": 1479,
+    "movie_fps": 30,
+    "movie_seconds": 49.3,
+    "simulation_step_seconds": 0.016666666666666666,
+    "sample_interval_ticks": 2,
+    "samples": 1469,
+    "timing_boundary": "Simulation ticks are60Hz; do not divide ticks by movie30FPS. Movie frames and trace samples differ during capture/control bookkeeping.",
+    "logical_viewport": [
+      1280,
+      800
+    ],
+    "physical_window_sizes": [
+      [
+        1280,
+        800
+      ],
+      [
+        960,
+        600
+      ]
+    ],
+    "root_reviewed_png": [
+      "01-safe-choice.png",
+      "02-choice-small-window.png",
+      "03-low-rest.png",
+      "04-low-rejoins-high-leaf.png",
+      "05-connected-shoot-and-common-roof.png",
+      "06-low-exit.png",
+      "07-shield-collected.png",
+      "08-protected-exposed-crossing.png",
+      "09-upper-landing.png",
+      "10-current-checkpoint-retry.png",
+      "11-upper-exit.png"
+    ],
+    "root_review_basis": "Root explicitly reports inspection of all11 final PNGs and continuous state trace. No claim that root watched the entire MP4 or did subjective listening.",
+    "peer_reviewed_png": [
+      "01-safe-choice.png",
+      "02-choice-small-window.png",
+      "03-low-rest.png",
+      "05-connected-shoot-and-common-roof.png",
+      "09-upper-landing.png"
+    ],
+    "peer_review": "independent-review.json",
+    "peer_role": "Migration/test author reviewing root content/view/routes/CI; not independent player or independent review of own migration.",
+    "marks": {
+      "01-safe-choice": {
+        "tick": 576,
+        "p": [
+          2328.67846679688,
+          525.09716796875
+        ],
+        "stamina": 100.0,
+        "recoveries": 0,
+        "shield": 0.0,
+        "shelter": 1,
+        "exposed": false,
+        "dew": 1
+      },
+      "02-choice-small-window": {
+        "tick": 580,
+        "p": [
+          2328.67846679688,
+          525.09716796875
+        ],
+        "stamina": 100.0,
+        "recoveries": 0,
+        "shield": 0.0,
+        "shelter": 1,
+        "exposed": false,
+        "dew": 1
+      },
+      "03-low-rest": {
+        "tick": 781,
+        "p": [
+          2629.9873046875,
+          605.893432617188
+        ],
+        "stamina": 81.0833333333336,
+        "recoveries": 0,
+        "shield": 0.0,
+        "shelter": 2,
+        "exposed": false,
+        "dew": 1
+      },
+      "04-low-rejoins-high-leaf": {
+        "tick": 1057,
+        "p": [
+          3009.15869140625,
+          522.910522460938
+        ],
+        "stamina": 100.0,
+        "recoveries": 0,
+        "shield": 0.0,
+        "shelter": 3,
+        "exposed": false,
+        "dew": 1
+      },
+      "05-connected-shoot-and-common-roof": {
+        "tick": 1128,
+        "p": [
+          3165.15771484375,
+          434.02685546875
+        ],
+        "stamina": 98.7166666666667,
+        "recoveries": 0,
+        "shield": 0.0,
+        "shelter": -1,
+        "exposed": false,
+        "dew": 1
+      },
+      "06-low-exit": {
+        "tick": 1529,
+        "p": [
+          4640.22509765625,
+          414.406768798828
+        ],
+        "stamina": 97.0333333333335,
+        "recoveries": 0,
+        "shield": 0.0,
+        "shelter": -1,
+        "exposed": false,
+        "dew": 2
+      },
+      "07-shield-collected": {
+        "tick": 2157,
+        "p": [
+          2374.65649414062,
+          453.283813476562
+        ],
+        "stamina": 98.5833333333334,
+        "recoveries": 0,
+        "shield": 4.77499999999999,
+        "shelter": -1,
+        "exposed": true,
+        "dew": 1
+      },
+      "08-protected-exposed-crossing": {
+        "tick": 2286,
+        "p": [
+          2864.54150390625,
+          373.818206787109
+        ],
+        "stamina": 94.2833333333337,
+        "recoveries": 0,
+        "shield": 2.62499999999996,
+        "shelter": -1,
+        "exposed": true,
+        "dew": 1
+      },
+      "09-upper-landing": {
+        "tick": 2374,
+        "p": [
+          3010.9248046875,
+          519.992736816406
+        ],
+        "stamina": 100.0,
+        "recoveries": 0,
+        "shield": 1.15833333333329,
+        "shelter": 3,
+        "exposed": false,
+        "dew": 1
+      },
+      "10-current-checkpoint-retry": {
+        "tick": 2466,
+        "p": [
+          3010.0,
+          520.0
+        ],
+        "stamina": 100.0,
+        "recoveries": 1,
+        "shield": 0.0,
+        "shelter": 3,
+        "exposed": false,
+        "dew": 1
+      },
+      "11-upper-exit": {
+        "tick": 2939,
+        "p": [
+          4641.06982421875,
+          414.544586181641
+        ],
+        "stamina": 97.0500000000002,
+        "recoveries": 1,
+        "shield": 0.0,
+        "shelter": -1,
+        "exposed": false,
+        "dew": 2
+      }
+    },
+    "recovery_interpretation": "Lower route reaches exit with0 recoveries. Upper reaches different high landing with0 recoveries and remaining shield; actualR at tick2466 intentionally adds1 recovery, resets shield and preserves spent pickup. Upper exit recovery count1 is that intentionalR, not failed route recovery.",
+    "cold_resume_cases": [
+      "safe decision",
+      "low actual rest",
+      "upper landing with remaining shield"
+    ],
+    "objectdb_exit_warning_retained": true
+  },
+  "verification": {
+    "executed": [
+      {
+        "script": "rain_choice_verify.gd",
+        "source_sha256": "03520e8740a7a3f60cc1c91728aade3b66b62abbadb859c39a801e18f4c151c7",
+        "log": "logs/rain-choice-model.log",
+        "summary": "RAIN CHOICE VERIFIED: 198 checks, 0 failures",
+        "checks": 198,
+        "failures": 0,
+        "objectdb_exit_warning": false,
+        "execution_kind": "previously executed headless developer verification; not rerun by archival task"
+      },
+      {
+        "script": "rain_choice_save_verify.gd",
+        "source_sha256": "0131ad245b719cddffd6b3be619ed2320a02366523bcd99a49d68bc28bf759ee",
+        "log": "logs/rain-choice-save.log",
+        "summary": "RAIN CHOICE SAVE VERIFIED: 140 checks, 0 failures",
+        "checks": 140,
+        "failures": 0,
+        "objectdb_exit_warning": true,
+        "execution_kind": "previously executed headless developer verification; not rerun by archival task"
+      },
+      {
+        "script": "pond_source_routes_verify.gd",
+        "source_sha256": "53a2d2f76dd42277edc7946d40f81d93d2b23291664465c5db7d7c68eb3b5a82",
+        "log": "logs/pond-source-routes-model.log",
+        "summary": "POND SOURCE ROUTES VERIFIED: 80 checks, 0 failures",
+        "checks": 80,
+        "failures": 0,
+        "objectdb_exit_warning": false,
+        "execution_kind": "previously executed headless developer verification; not rerun by archival task"
+      },
+      {
+        "script": "ordinary_mosquito_verify.gd",
+        "source_sha256": "a2a757458f9cac7890e6eb1bb61feab8b23ed307f53b45234d76b044819f5955",
+        "log": "logs/ordinary-mosquito-model.log",
+        "summary": "ORDINARY MOSQUITO VERIFIED: 77 checks, 0 failures",
+        "checks": 77,
+        "failures": 0,
+        "objectdb_exit_warning": false,
+        "execution_kind": "previously executed headless developer verification; not rerun by archival task"
+      },
+      {
+        "script": "ordinary_mosquito_save_verify.gd",
+        "source_sha256": "07e45d86e1757c64b64bf680727f83ccb851f761593e6b32b3a00c0db77d507e",
+        "log": "logs/ordinary-mosquito-save.log",
+        "summary": "ORDINARY MOSQUITO SAVE VERIFIED: 107 checks, 0 failures",
+        "checks": 107,
+        "failures": 0,
+        "objectdb_exit_warning": true,
+        "execution_kind": "previously executed headless developer verification; not rerun by archival task"
+      },
+      {
+        "script": "spring_journey_verify.gd",
+        "source_sha256": "6e17d3679de3272cc0f178a4237ecc4f760ebce1e53a1494240cbc0962f71dcf",
+        "log": "logs/spring-journey-model.log",
+        "summary": "SPRING JOURNEY VERIFIED: 407 checks, 0 failures",
+        "checks": 407,
+        "failures": 0,
+        "objectdb_exit_warning": false,
+        "execution_kind": "previously executed headless developer verification; not rerun by archival task"
+      },
+      {
+        "script": "spring_journey_ui_verify.gd",
+        "source_sha256": "3b5f0f321a1d36be0dd9f643953955d0ad45b0acc78301d71f4416a0f47e34cd",
+        "log": "logs/spring-journey-ui.log",
+        "summary": "SPRING JOURNEY UI VERIFIED: 50 checks, 0 failures",
+        "checks": 50,
+        "failures": 0,
+        "objectdb_exit_warning": true,
+        "execution_kind": "previously executed headless developer verification; not rerun by archival task"
+      },
+      {
+        "script": "pond_source_routes_save_verify.gd",
+        "source_sha256": "5acbdb6cac45d54f8968d3292516587ebffc24902921094ba07d7c40953f8463",
+        "log": "logs/pond-source-routes-save.log",
+        "summary": "POND SOURCE ROUTES SAVE VERIFIED: 69 checks, 0 failures",
+        "checks": 69,
+        "failures": 0,
+        "objectdb_exit_warning": true,
+        "execution_kind": "Root final headless cross-compatibility rerun in isolated /private/tmp/pond-rain-pond-save-final; process exit confirmed by root, log independently read by archivist."
+      }
+    ],
+    "not_executed_locally_this_batch": [],
+    "native_summary_source": "native/native.log",
+    "root_reported_static_checks": {
+      "actionlint": "passed, root-reported; no log supplied to archivist",
+      "git_diff_check": "passed, root-reported; no rerun during this archive task"
+    },
+    "archive_task_started_no_godot": true
+  },
+  "ci": {
+    "workflow": ".github/workflows/swarm-flight.yml",
+    "reviewed_sha256": "f3242093bc25c0905a0ef3359816bcea2a70b2e7dabb0d9d5548bf7dbf69f9b3",
+    "matrix": [
+      "core",
+      "regressions",
+      "samples"
+    ],
+    "per_suite_timeout_minutes": 8,
+    "aggregate_timeout_minutes": 1,
+    "all_suites_required": true,
+    "fail_fast": false,
+    "change": "pond_source_routes_verify/save move from regressions to core; rain_choice_verify/save added to core. Existing script invocations and aggregate checks preserved.",
+    "wording_correction": "An earlier parent summary said samples; actual baseline5d6866b workflow places pond checks under regressions. samples suite is unchanged.",
+    "remote_status": "pending; no CI success claimed by this receipt"
+  },
+  "history": [
+    {
+      "path": "history/disconnected-preview/",
+      "checks": 17,
+      "failures": 0,
+      "disposition": "Mechanical developer preview only; hanging upper-stem appearance identified and not visually accepted."
+    },
+    {
+      "path": "history/843cf1d-square-cut/",
+      "revision": "843cf1d38cac97152679c67ab81746824e8a079b",
+      "checks": 81,
+      "failures": 0,
+      "disposition": "Root withdrew visual pass due exposed square-cut base; superseded by final3ab1356 draw-order repair and fresh81/0 run."
+    },
+    {
+      "path": "history/native-parser-failure.log",
+      "disposition": "External native capture driver get_window() parse errors; not a valid test pass or production geometry defect; fixed driver used by final recording."
+    },
+    {
+      "path": "history/rain-choice-model-first.log",
+      "checks": 167,
+      "failures": 2,
+      "disposition": "Earlier failed verifier assertions retained; superseded by final198/0, not counted as successful coverage."
+    },
+    {
+      "path": "history/rain-model-compile-and-pond.log",
+      "checks": 80,
+      "failures": 5,
+      "disposition": "Pre-update precise old-layout expectations failed; retained, superseded by declared-delta expectation update and final80/0."
+    },
+    {
+      "path": "history/ffmpeg-homebrew-loader-failure.log",
+      "disposition": "Homebrew ffmpeg missing libx265.215.dylib; no system modification; reused existing staticffmpeg7.1 and retained successful encode logs."
+    }
+  ],
+  "development_probe": {
+    "path": "development/layout-probe.json",
+    "kind": "author route-tuning probe, not final native or first exploration",
+    "scope": "Nine starting heights tested; high100/160 blocked at upper stem,230 caused recovery. Early probe route endpointsx4453 were not actual exit; final native replaces them for completion evidence.",
+    "do_not_claim": "No exact score/check total is synthesized for this exploratory JSON."
+  },
+  "LV01_10": [
+    {
+      "id": "LV01",
+      "judgment": "pass_scoped",
+      "evidence_and_boundary": "Low route gains a real intermediate recovery leaf; upper route consumes the existing shield across exposed space before a different first landing. Same total authored width; does not establish whole-level repetition quality."
+    },
+    {
+      "id": "LV02",
+      "judgment": "pass_scoped",
+      "evidence_and_boundary": "From observed safe position(2328.68,525.10) on the leaf centered(2170,520), final01/02 show both next landing centers and shield before leaving safety. This does not assert the same preview from the leaf center. Low2630 leaf actually recovers; no new forced wait."
+    },
+    {
+      "id": "LV03",
+      "judgment": "not_applicable_new_attack",
+      "evidence_and_boundary": "No attack enemy or attack cadence changed. Existing visible cloud/rain and protection are exercised; no new reaction-time or unfamiliar-player timing study."
+    },
+    {
+      "id": "LV04",
+      "judgment": "limited_ordinary_flight_evidence",
+      "evidence_and_boundary": "No required precision burst introduced; ordinary upper/lower routes traverse common opening. Early/normal/late dash release matrix was not rerun for this local geometry and is not claimed."
+    },
+    {
+      "id": "LV05",
+      "judgment": "pass_scoped",
+      "evidence_and_boundary": "Upper route contacts real optional shield; both paths reach common dew and actual exit through ordinary inputs. Low path remains valid when shield is missed."
+    },
+    {
+      "id": "LV06",
+      "judgment": "pass_scoped",
+      "evidence_and_boundary": "Final low leaf81.0833 stamina recovers to100 by merge, without recovery reset. Upper landing100 with1.15833s shield. No added damage/flight cost/length; low route had an actual avoidable rain hit in this known route, not a forced-damage rule."
+    },
+    {
+      "id": "LV07",
+      "judgment": "pass_scoped",
+      "evidence_and_boundary": "Safe observation leads to low rest or protected exposure, different first landings, then shared roof opening and exit. Broad progression and enjoyment remain unverified."
+    },
+    {
+      "id": "LV08",
+      "judgment": "pass_scoped_final_native",
+      "evidence_and_boundary": "Root reports inspection of all11 final stills and trace; reviewer viewed5 specified stills. 3ab1356 hides buried shoot base behind attached foliage. Failed hanging/square-cut visuals preserved. Only1280x800 logical and960x600 physical-window case observed, no full-video or audio listening claim."
+    },
+    {
+      "id": "LV09",
+      "judgment": "pass_scoped",
+      "evidence_and_boundary": "18 genuine old fixtures, earlier marker chains, atomic rejection and original-byte backups; current exact cold resume and intentionalR at moved high checkpoint. Existing pond-save verifier additionally rerun in fresh isolation:69 checks,0 failures. Remote CI pending."
+    },
+    {
+      "id": "LV10",
+      "judgment": "pass_evidence_boundary_only",
+      "evidence_and_boundary": "Frozen production/source hashes; developer tests, author visual review and targeted peer review are distinguished. No J02 unfamiliar-player test, whole MVP completion, G4 acceptance or broad expansion approval."
+    }
+  ],
+  "affected_source_coverage": [
+    {
+      "ids": [
+        "leaf-canopy",
+        "leaf-canopy-support",
+        "shelter-area",
+        "checkpoint-anchor"
+      ],
+      "change": "Stage1 static green canopies at (2630,600)/(3010,520), half_width118; declared old180→118 geometry migration.",
+      "verdict": "scoped_instance_technical_and_native_pass",
+      "evidence": [
+        "native/03-low-rest.png",
+        "native/09-upper-landing.png",
+        "logs/rain-choice-model.log",
+        "logs/rain-choice-save.log"
+      ],
+      "limits": "No new dynamic/color/seasonal variants accepted; no whole source G1/G2 promotion."
+    },
+    {
+      "ids": [
+        "solid-roof",
+        "solid-stem",
+        "plant-root",
+        "plant-stem",
+        "plant-leaf"
+      ],
+      "change": "Common roof moved; upper solid shoot added and painted rooted behind the hedge foliage.",
+      "verdict": "scoped_instance_technical_and_native_pass",
+      "evidence": [
+        "native/05-connected-shoot-and-common-roof.png",
+        "independent-review.json"
+      ],
+      "limits": "Only declared stage1 instances and contacts reviewed. Other stages, scales, stem variants and global plant source quality are not accepted."
+    },
+    {
+      "ids": [
+        "cloud-source",
+        "falling-rain",
+        "roof-drips",
+        "weather-phase-controller",
+        "rain-shield-pickup",
+        "rain-shield-shell"
+      ],
+      "change": "Existing rules reused unchanged in rearranged two-route geometry.",
+      "verdict": "scoped_combination_developer_evidence",
+      "evidence": [
+        "native/trace.json.gz",
+        "native/07-shield-collected.png",
+        "native/08-protected-exposed-crossing.png",
+        "native/09-upper-landing.png"
+      ],
+      "limits": "No global weather source, audio, full state/variant or C13/C23 acceptance."
+    },
+    {
+      "ids": [
+        "player-collision-envelope",
+        "dew-pickup",
+        "stamina",
+        "camera-follow"
+      ],
+      "change": "Rules and camera unchanged; ordinary input, real recovery and visible landing positions checked in new layout.",
+      "verdict": "scoped_combination_developer_evidence",
+      "evidence": [
+        "native/trace.json.gz",
+        "logs/rain-choice-model.log"
+      ],
+      "limits": "Not every burst timing, body variant, aspect ratio or first-time comprehension tested."
+    },
+    {
+      "ids": [
+        "exact-suspend",
+        "checkpoint-transaction",
+        "stable-content-id"
+      ],
+      "change": "rain_layout_revision=1 and strict old-layout conversion/backup gate; stage1 index/checkpoint mapping only.",
+      "verdict": "scoped_migration_technical_pass",
+      "evidence": [
+        "legacy-fixtures/provenance.json",
+        "logs/rain-choice-save.log",
+        "native/10-current-checkpoint-retry.png"
+      ],
+      "limits": "Does not complete global24-level identity mapping or C24."
+    }
+  ],
+  "affected_combinations": [
+    {
+      "id": "C01",
+      "name": "玩家动作—实体—资源与恢复",
+      "judgment": "scoped local instance evidence only; whole combination gates not promoted",
+      "scope": "Ordinary player/collider/leaf/roof/resources and recovery within rain branch"
+    },
+    {
+      "id": "C02",
+      "name": "玩家—植物连接—花源—停栖",
+      "judgment": "scoped local instance evidence only; whole combination gates not promoted",
+      "scope": "New local plant supports and borrowed leaf geometry only; flower source unchanged"
+    },
+    {
+      "id": "C04",
+      "name": "雨—护雨—真实遮蔽—天气恢复",
+      "judgment": "scoped local instance evidence only; whole combination gates not promoted",
+      "scope": "Existing rain/shield/real shelter at declared two routes"
+    },
+    {
+      "id": "C18",
+      "name": "动作—HUD—镜头—声音优先级",
+      "judgment": "scoped local instance evidence only; whole combination gates not promoted",
+      "scope": "Player/cue/HUD and same-aspect small window; no full audio/state matrix"
+    },
+    {
+      "id": "C20",
+      "name": "挂起/恢复点/跨关—动态对象—隔离重玩",
+      "judgment": "scoped local instance evidence only; whole combination gates not promoted",
+      "scope": "Strict old snapshots/current exact suspend/checkpoint migration"
+    },
+    {
+      "id": "C24",
+      "name": "全作稳定内容ID—24关映射—原合同范围",
+      "judgment": "scoped local instance evidence only; whole combination gates not promoted",
+      "scope": "Only local rain layout marker compatibility;24-level identity mapping remains outside scope"
+    }
+  ],
+  "gate_boundary": {
+    "local_implementation_and_developer_evidence": "Root checked actual baseline/final evidence and scoped peer review: no scoped blocker. CI and integration pending; J02 first-time exploration still pending #208.",
+    "J02_unfamiliar_player_test": false,
+    "whole_MVP_complete": false,
+    "G4_pass": false,
+    "full_source_or_combination_gate_promotion": false,
+    "known_current_blockers_in_scoped_peer_review": [],
+    "remaining_unknowns": [
+      "First-time readability and route preference",
+      "Whole journey experience, pacing and enjoyment",
+      "Arbitrary aspect ratios and exhaustive dash variants",
+      "Remote CI outcome and integration state"
+    ]
+  },
+  "cost": {
+    "started_at_utc": "2026-11-01T04:16:11+00:00",
+    "archive_checkpoint_at_utc": "2026-11-01T04:35:53+00:00",
+    "observable_elapsed_seconds_to_checkpoint": 1182,
+    "kind": "Observable wall-clock interval; includes parallel agents and waits, not summed active labor or billable usage.",
+    "cumulative_effort_hours": null,
+    "remaining_budget_hours": null,
+    "budget_status": "Unknown/unverifiable comparable cumulative usage;200+40hour control limit not reset.",
+    "new_procurement_cash": 0,
+    "api_or_compute_billed_cost": null,
+    "continue_decision": "Finish this authorized #206 review/CI/integration; do not infer whole MVP acceptance or authorize expansion.",
+    "archive_checkpoint_boundary": "Real clock after archive byte/hash/decode validation and final69/0 pond-save log read; includes wait for that root-run test. Root owns subsequent integration cost/status checkpoint."
+  },
+  "artifacts": {
+    "hash_manifest": "artifact-manifest.json",
+    "raw_output_manifest": "raw-output-manifest.json",
+    "encoding_provenance": "encoding-provenance.json",
+    "raw_AVI_policy": "RawAVI copied only to primary-checkout outputs directory; git evidence contains compressedMP4 plus exactPNG/log/trace. Original temporary files retained.",
+    "raw_output_root": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/rain-choice",
+    "legacy_fixture_policy": "Existing18 genuine old fixtures and provenance preserved byte-for-byte.",
+    "artifact_count": 106,
+    "manifest_sha256": "c5bde75ab2c0aff3ee971b0babaa180872027c823f66007c5b042a8a606cc26a",
+    "manifest_exclusions": [
+      "artifact-manifest.json (self)",
+      "receipt.json (mutable integration metadata, root owns final cost/status)"
+    ]
+  },
+  "archive_validation": "archive-validation.json",
+  "integration": {
+    "branch": "codex/pond-rain-choice",
+    "PR": "pending first push",
+    "CI": "pending",
+    "issue_remains_open_for_J02": true,
+    "rollback": "Revert this focused PR; preserve original byte backups before migration."
+  }
+}
