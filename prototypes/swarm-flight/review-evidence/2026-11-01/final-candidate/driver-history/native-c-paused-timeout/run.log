@@ -1,0 +1,19 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+Movie Maker mode enabled, recording movie in 1280×800 @ 30 FPS...
+COMPARISON_PROGRESS: stage=7 x=439 ticks=318
+COMPARISON_PROGRESS: stage=7 x=30187 ticks=6318
+COMPARISON_PROGRESS: stage=7 x=61614 ticks=12318
+COMPARISON_PROGRESS: stage=8 x=22111 ticks=18407
+FAIL: stage 1 command 52 (move), pos (22111.36, 415.8331)
+FAIL: continuous ordinary comparison07-09 reaches ending
+FAIL: completed comparison ending cold-loads exactly
+POND MVP ROUTE C VERIFIED: 44 checks, 3 failures; 18893 ticks at60Hz
+--------------------------------------------------------------------------------
+Done recording movie at path: /private/tmp/pond-mvp-final-native-c/continuous.avi
+9288 frames at 30 FPS (movie length: 00:05:09:18), recorded in 00:03:48 (135% of real-time speed).
+CPU render time: 6.72 seconds (average: 0.72 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 65.52 seconds (average: 7.05 ms/frame)
+--------------------------------------------------------------------------------

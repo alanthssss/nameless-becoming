@@ -1,0 +1,1 @@
+65927 /private/tmp/pond-mvp-final-package-smoke/雨来之前-0.17.0-池岸归途-9611660f/PondJourney-0.17.0.app/Contents/MacOS/雨来之前 · 池岸归途 0.17.0 --log-file /private/tmp/pond-mvp-final-package-smoke/雨来之前-0.17.0-池岸归途-9611660f/日志/开始池岸归途.log -- --spring-journey --progress-file=/private/tmp/pond-mvp-final-package-smoke/雨来之前-0.17.0-池岸归途-9611660f/存档/spring_03_05_v2.json --entry-chapter=0 --chapter=0

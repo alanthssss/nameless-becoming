@@ -1,0 +1,29 @@
+{
+  "inputs": [
+    {
+      "original": "/private/tmp/pond-review-calibration-a/frame-1.png",
+      "archived": "first-look/calibration-inputs/frame-1.png",
+      "sha256": "bfc375da788b571d2ff5e2eddff428bbfc7f8961a788fb407d98c483b1cd9e36"
+    },
+    {
+      "original": "/private/tmp/pond-review-calibration-a/frame-2.png",
+      "archived": "first-look/calibration-inputs/frame-2.png",
+      "sha256": "a1e0b7b50383c1b3b66ca1d10422769b31826765e545500a0093914a8f4d613d"
+    },
+    {
+      "original": "/private/tmp/pond-review-calibration-a/frame-3.png",
+      "archived": "first-look/calibration-inputs/frame-3.png",
+      "sha256": "ff0fcec737ba37c72d2697b462d537dde752313c8d606e72d89adbebb265b436"
+    },
+    {
+      "original": "/private/tmp/pond-review-calibration-a/continuous.mp4",
+      "archived": "first-look/calibration-inputs/continuous.mp4",
+      "sha256": "2d60fa6b7de5509ea28e5fe3c5852b6bbc09e1a79ad18ccbc519f43b08474f18"
+    },
+    {
+      "original": "/private/tmp/pond-review-calibration-a/sample-facts.json",
+      "archived": "first-look/calibration-inputs/sample-facts.json",
+      "sha256": "0bbeafc6bba3e811ca0b3345aa5b114d9c223ab1a2d30066a61cb2377c35e770"
+    }
+  ]
+}

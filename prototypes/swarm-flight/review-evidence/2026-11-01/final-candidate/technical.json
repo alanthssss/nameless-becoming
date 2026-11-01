@@ -1,0 +1,537 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "kind": "technical",
+  "status": "passed-bounded-final-frozen-native-and-packaged-entry-validation",
+  "author": "Codex root with support_review implementation/driver contribution",
+  "scope": "known-answer developer InputEvents; not blind exploration or human acceptance",
+  "routes": [
+    {
+      "route": "a",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "checks": 123,
+      "failures": 0,
+      "simulation_ticks": 6554,
+      "simulation_seconds": 109.233333333333,
+      "render_mode": "native Godot4.6.2 OpenGL/Metal, 30fps movie, 1/60 model step",
+      "headless_fast_dry_run": false,
+      "raw_screenshots": 16,
+      "sample_count": 3277,
+      "cue_player_overlap_samples": 0,
+      "cue_caption_overlap_samples": 0,
+      "stage_minimum_stamina": [
+        85.1833333333342,
+        91.6333333333338,
+        63.9000000000005
+      ],
+      "cold_scene_assertions": [
+        {
+          "label": "pause freezes transaction and listeners source observed",
+          "pass": true,
+          "tick": 1271
+        },
+        {
+          "label": "cold launch reads save source observed",
+          "pass": true,
+          "tick": 1271
+        },
+        {
+          "label": "exact cold resume source observed",
+          "pass": true,
+          "tick": 1271
+        },
+        {
+          "label": "cold chapter boundary is paused at same chapter fact",
+          "pass": true,
+          "tick": 1711
+        },
+        {
+          "label": "explicit resume restores pending handoff",
+          "pass": true,
+          "tick": 1711
+        },
+        {
+          "label": "pause freezes transaction and listeners rain before branch",
+          "pass": true,
+          "tick": 2217
+        },
+        {
+          "label": "cold launch reads save rain before branch",
+          "pass": true,
+          "tick": 2217
+        },
+        {
+          "label": "exact cold resume rain before branch",
+          "pass": true,
+          "tick": 2217
+        },
+        {
+          "label": "pause freezes transaction and listeners upper rain landing with shield",
+          "pass": true,
+          "tick": 2885
+        },
+        {
+          "label": "cold launch reads save upper rain landing with shield",
+          "pass": true,
+          "tick": 2885
+        },
+        {
+          "label": "exact cold resume upper rain landing with shield",
+          "pass": true,
+          "tick": 2885
+        },
+        {
+          "label": "pause freezes transaction and listeners first opening",
+          "pass": true,
+          "tick": 4157
+        },
+        {
+          "label": "cold launch reads save first opening",
+          "pass": true,
+          "tick": 4157
+        },
+        {
+          "label": "exact cold resume first opening",
+          "pass": true,
+          "tick": 4157
+        },
+        {
+          "label": "pause freezes transaction and listeners keeper tidying after second opening",
+          "pass": true,
+          "tick": 4384
+        },
+        {
+          "label": "cold launch reads save keeper tidying after second opening",
+          "pass": true,
+          "tick": 4384
+        },
+        {
+          "label": "exact cold resume keeper tidying after second opening",
+          "pass": true,
+          "tick": 4384
+        },
+        {
+          "label": "pause freezes transaction and listeners armed share",
+          "pass": true,
+          "tick": 5518
+        },
+        {
+          "label": "cold launch reads save armed share",
+          "pass": true,
+          "tick": 5518
+        },
+        {
+          "label": "exact cold resume armed share",
+          "pass": true,
+          "tick": 5518
+        },
+        {
+          "label": "cold resume waits for actual held key",
+          "pass": true,
+          "tick": 5518
+        },
+        {
+          "label": "pause freezes transaction and listeners listeners departing",
+          "pass": true,
+          "tick": 5764
+        },
+        {
+          "label": "cold launch reads save listeners departing",
+          "pass": true,
+          "tick": 5764
+        },
+        {
+          "label": "exact cold resume listeners departing",
+          "pass": true,
+          "tick": 5764
+        },
+        {
+          "label": "completed ending exact cold launch",
+          "pass": true,
+          "tick": 6554
+        }
+      ],
+      "ending": {
+        "camera_x": 3590.0,
+        "color": 2,
+        "cue_caption_clear": true,
+        "cue_clear": true,
+        "dew": 4,
+        "engine_frame": 3292,
+        "exposed": false,
+        "front": true,
+        "keeper_pos": [
+          3270.0,
+          630.0
+        ],
+        "keeper_state": "settled",
+        "keeper_target": [
+          3270.0,
+          630.0
+        ],
+        "listeners": [
+          {
+            "p": [
+              3195.0,
+              465.0
+            ],
+            "state": "foraging"
+          },
+          {
+            "p": [
+              3268.0,
+              462.0
+            ],
+            "state": "foraging"
+          }
+        ],
+        "message_revision": 1,
+        "mode": "ending",
+        "observed": true,
+        "p": [
+          4692.01953125,
+          425.765075683594
+        ],
+        "passage": true,
+        "phase": "ending",
+        "recoveries": 1,
+        "result": 2.4,
+        "rings": 3,
+        "share": "idle",
+        "shelter": -1,
+        "shield": 0.0,
+        "small_pos": [
+          2390.0,
+          285.0
+        ],
+        "small_state": "idle",
+        "stage": 2,
+        "stamina": 97.0666666666668,
+        "tick": 6554,
+        "warning": 0.0,
+        "weather": "after"
+      }
+    },
+    {
+      "route": "b",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "checks": 113,
+      "failures": 0,
+      "simulation_ticks": 5952,
+      "simulation_seconds": 99.2,
+      "render_mode": "native Godot4.6.2 OpenGL/Metal, 30fps movie, 1/60 model step",
+      "headless_fast_dry_run": false,
+      "raw_screenshots": 15,
+      "sample_count": 2976,
+      "cue_player_overlap_samples": 0,
+      "cue_caption_overlap_samples": 0,
+      "stage_minimum_stamina": [
+        85.1833333333342,
+        91.6000000000005,
+        13.5000000000026
+      ],
+      "cold_scene_assertions": [
+        {
+          "label": "pause freezes transaction and listeners source skipped",
+          "pass": true,
+          "tick": 1345
+        },
+        {
+          "label": "cold launch reads save source skipped",
+          "pass": true,
+          "tick": 1345
+        },
+        {
+          "label": "exact cold resume source skipped",
+          "pass": true,
+          "tick": 1345
+        },
+        {
+          "label": "cold chapter boundary is paused at same chapter fact",
+          "pass": true,
+          "tick": 1786
+        },
+        {
+          "label": "explicit resume restores pending handoff",
+          "pass": true,
+          "tick": 1786
+        },
+        {
+          "label": "pause freezes transaction and listeners rain before branch",
+          "pass": true,
+          "tick": 2292
+        },
+        {
+          "label": "cold launch reads save rain before branch",
+          "pass": true,
+          "tick": 2292
+        },
+        {
+          "label": "exact cold resume rain before branch",
+          "pass": true,
+          "tick": 2292
+        },
+        {
+          "label": "pause freezes transaction and listeners unshielded low leaf",
+          "pass": true,
+          "tick": 2863
+        },
+        {
+          "label": "cold launch reads save unshielded low leaf",
+          "pass": true,
+          "tick": 2863
+        },
+        {
+          "label": "exact cold resume unshielded low leaf",
+          "pass": true,
+          "tick": 2863
+        },
+        {
+          "label": "pause freezes transaction and listeners first opening",
+          "pass": true,
+          "tick": 4256
+        },
+        {
+          "label": "cold launch reads save first opening",
+          "pass": true,
+          "tick": 4256
+        },
+        {
+          "label": "exact cold resume first opening",
+          "pass": true,
+          "tick": 4256
+        },
+        {
+          "label": "pause freezes transaction and listeners keeper tidying after second opening",
+          "pass": true,
+          "tick": 4569
+        },
+        {
+          "label": "cold launch reads save keeper tidying after second opening",
+          "pass": true,
+          "tick": 4569
+        },
+        {
+          "label": "exact cold resume keeper tidying after second opening",
+          "pass": true,
+          "tick": 4569
+        },
+        {
+          "label": "completed ending exact cold launch",
+          "pass": true,
+          "tick": 5952
+        }
+      ],
+      "ending": {
+        "camera_x": 3590.0,
+        "color": 2,
+        "cue_caption_clear": true,
+        "cue_clear": true,
+        "dew": 4,
+        "engine_frame": 2988,
+        "exposed": false,
+        "front": true,
+        "keeper_pos": [
+          3270.0,
+          630.0
+        ],
+        "keeper_state": "settled",
+        "keeper_target": [
+          3270.0,
+          630.0
+        ],
+        "listeners": [
+          {
+            "p": [
+              3905.0,
+              512.0
+            ],
+            "state": "waiting"
+          },
+          {
+            "p": [
+              3953.0,
+              536.0
+            ],
+            "state": "waiting"
+          }
+        ],
+        "message_revision": 0,
+        "mode": "ending",
+        "observed": false,
+        "p": [
+          4690.2587890625,
+          426.115020751953
+        ],
+        "passage": true,
+        "phase": "ending",
+        "recoveries": 0,
+        "result": 2.4,
+        "rings": 0,
+        "share": "idle",
+        "shelter": -1,
+        "shield": 0.0,
+        "small_pos": [
+          2390.0,
+          285.0
+        ],
+        "small_state": "idle",
+        "stage": 2,
+        "stamina": 49.5666666666697,
+        "tick": 5952,
+        "warning": 0.0,
+        "weather": "after"
+      }
+    }
+  ],
+  "migration_source": "wind-choice/author-handoff/wind-change-results.json",
+  "comparison": {
+    "path": "native-c/trace.json",
+    "checks": 59,
+    "failures": 0,
+    "simulation_ticks": 22076,
+    "native_frames": 11052,
+    "fps": 30,
+    "movie_seconds": 368.4,
+    "ordinary_pause_resume_events": [],
+    "renderer_errors": 0,
+    "ending_stage": 2,
+    "recoveries": 0
+  },
+  "mechanical_contract": "charge0.4s/20energy, base flight/rain damage/5s shield unchanged",
+  "coverage_limits": [
+    "Two-tick samples do not prove every sub-frame overlap",
+    "Disk/scene cold reload in route drivers is not process restart; exported and final launcher process checks remain separate",
+    "Known routes include explicit pause/observation waits;109.9s/99.7667s movie lengths are not natural first-time duration",
+    "A one recovery comes from an intentional R; B has none",
+    "ObjectDB exit warnings from some headless scripts retained; nativeA/B no SCRIPT ERROR, renderer ERROR or FAIL",
+    "JSON comparison measures persisted file equality while cold-confirmation menu is visible; actual resumed movement demonstrates restored position. Does not inspect every in-memory field at process restart. In-memory exact state restoration is covered separately by model/scene drivers. This is startup/resume smoke, not complete replay through final ZIP. Full native journeys bind identical frozen production/PCK."
+  ],
+  "stage": "post-assembly candidate evidence; integration CI/merge separately pending",
+  "resume_supplement": {
+    "path": "resume-supplement/trace.json",
+    "checks": 78,
+    "failures": 0,
+    "scope": "actual menus/InputEvents, disk+scene cold unreleased charge/burst and both handoffs; fast headless, no native-image or process-restart claim"
+  },
+  "export_process_checks": {
+    "status": "passed",
+    "path": "export-internal/entry-smoke/process-launch-receipt.json",
+    "wording_clarification": "Raw receipt full_payload_exact_cold means persisted save payload remained identical at observed cold-confirmation menu; does not measure every live memory field. Actual continued position is separately measured."
+  },
+  "model_and_save_regressions": [
+    {
+      "test": "wind migration smallest slice",
+      "checks": 24,
+      "failures": 0,
+      "log": "wind-migration-slice-01.log",
+      "path": "wind-choice/author-handoff/wind-migration-slice-01.log",
+      "sha256": "00b4e1065a77ffa4585a5b3945afb30d76119954674b5999cd8633c1cbcf8ddb"
+    },
+    {
+      "test": "wind route model",
+      "checks": 79,
+      "failures": 0,
+      "log": "wind-route-model-01.log",
+      "path": "wind-choice/author-handoff/wind-route-model-01.log",
+      "sha256": "defa5a783d43c0fc2f105d5dc337722a32fd101b0601223f301b0420274f49b9"
+    },
+    {
+      "test": "wind disk",
+      "checks": 96,
+      "failures": 0,
+      "log": "wind-route-disk-01.log",
+      "path": "wind-choice/author-handoff/wind-route-disk-01.log",
+      "sha256": "6cc2d65c3c3076b8108d0c2d20409772776603ced5187f3489ff34ff363d12a6"
+    },
+    {
+      "test": "spring model",
+      "checks": 413,
+      "failures": 0,
+      "log": "spring-wind-final-02.log",
+      "path": "wind-choice/author-handoff/spring-wind-final-02.log",
+      "sha256": "84ba1b2c0a858aea0629afa7bffa1412472f28dc785498feb37e59c993f65b9b"
+    },
+    {
+      "test": "spring UI headless",
+      "checks": 50,
+      "failures": 0,
+      "log": "spring-ui-wind-final.log",
+      "path": "wind-choice/author-handoff/spring-ui-wind-final.log",
+      "sha256": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711"
+    },
+    {
+      "test": "rain model",
+      "checks": 198,
+      "failures": 0,
+      "log": "rain_choice_verify-wind-final.log",
+      "path": "wind-choice/author-handoff/rain_choice_verify-wind-final.log",
+      "sha256": "5824d553be9b081f1d7d8643a3194344a0d7712a6c34525d00af70025a411ff4"
+    },
+    {
+      "test": "pond model",
+      "checks": 80,
+      "failures": 0,
+      "log": "pond_source_routes_verify-wind-final.log",
+      "path": "wind-choice/author-handoff/pond_source_routes_verify-wind-final.log",
+      "sha256": "f68855a97136979d92d1624a7b92e7b92230a1f837fce5e4e1decd8b968c2a43"
+    },
+    {
+      "test": "mosquito model",
+      "checks": 77,
+      "failures": 0,
+      "log": "ordinary_mosquito_verify-wind-final.log",
+      "path": "wind-choice/author-handoff/ordinary_mosquito_verify-wind-final.log",
+      "sha256": "aebda03897ece26870677c4b55effa8d1aa54e352f0f1348096fc3802f2ac3d5"
+    },
+    {
+      "test": "rain disk",
+      "checks": 140,
+      "failures": 0,
+      "log": "rain_choice_save_verify-wind-final.log",
+      "path": "wind-choice/author-handoff/rain_choice_save_verify-wind-final.log",
+      "sha256": "6639112c6c860b0be2bfc29686bc6fc0e8e65beb82477c90fdfa21ef5954f218"
+    },
+    {
+      "test": "mosquito disk",
+      "checks": 107,
+      "failures": 0,
+      "log": "ordinary_mosquito_save_verify-wind-final.log",
+      "path": "wind-choice/author-handoff/ordinary_mosquito_save_verify-wind-final.log",
+      "sha256": "24b99f5cce44308a26e568472f2ecf82ff3ba131e3805da49774832a21599f9c"
+    },
+    {
+      "test": "pond disk",
+      "checks": 69,
+      "failures": 0,
+      "log": "pond_source_routes_save_verify-wind-final.log",
+      "path": "wind-choice/author-handoff/pond_source_routes_save_verify-wind-final.log",
+      "sha256": "f915a37564d91d51bf04251bad1afde297ccfd40506611a5559b5ab99f8835bb"
+    }
+  ],
+  "source_binding": {
+    "path": "wind-choice/author-handoff/wind-source-binding.json",
+    "sha256": "68de052dcf1dd5b506e1ac53ec5bc729028541e8ac660aefee9aef5bbbca0d66",
+    "note": "Author preparation occurred before commit; parent freeze is same production hashes, parent_commit_observed in preserved author report is final9611660."
+  },
+  "optional_information_checks": {
+    "path": "wind-choice/implementation-checks/spring-wind-final-02.log",
+    "checks": 413,
+    "scope": "Spring model413 covers valid source, cancellation, duplicate/no-source report, listeners and restore; content-event invalidation and movement before commit are explicitly covered by current-model supplement140."
+  },
+  "source_invalidation_supplement": {
+    "path": "source-expiry-supplement/trace.json",
+    "checks": 140,
+    "failures": 0,
+    "scope": "Current frozen Spring model, ordinary complete steering prepares baseline. Controlled flower-close content event at armed/before commit/after commit/foraging; exact JSON restore and listeners return; ordinary UP leaves before commit. Headless technical check, not natural timeout or native/first-look evidence.",
+    "independent_audit": {
+      "path": "first-look/post-review/supplement-audit.json",
+      "sha256": "5907da6581078c28b2337971f1248229297ea57260746dd5c4aec318818c033e",
+      "scope": "140 total assertions=87 preparation+48 closure+5 early-departure; controlled close event, JSON new-model restore, no natural timeout/disk/process assertion."
+    }
+  },
+  "final_package_process_checks": {
+    "status": "passed",
+    "path": "final-package-proof/process-launch-receipt.json",
+    "sha256": "1fe5057ec31ebe5b676b2d8d249669f0e0f4fc9919b2019941b5d6ed317ea24f"
+  }
+}

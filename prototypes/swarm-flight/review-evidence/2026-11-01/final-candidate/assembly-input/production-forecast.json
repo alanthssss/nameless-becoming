@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "kind": "production_record",
+  "scope": "池岸归途MVP候选整段复核和交付；未批准全24关扩产",
+  "authority": {
+    "gdd": "13.5 J08 / 13.6",
+    "milestone": 3,
+    "issues": [
+      207,
+      208,
+      209
+    ]
+  },
+  "observed_interval": {
+    "start_utc": "2026-11-01 04:47:53 UTC",
+    "end_utc": null,
+    "status": "ongoing",
+    "coverage": "04:47:53起同一主任务窗口，已记录阅读/实现/回归/返工/导出/等待/探索；最终组包/集成/CI/清理尚未结束，最终截止在#209与输出目录integration-closeout.json回写。子任务区间重叠不相加成主动工时。",
+    "last_recorded_checkpoint_utc": "2026-11-01 05:55:09 UTC"
+  },
+  "estimate": {
+    "initial_minutes": [
+      90,
+      120
+    ],
+    "wind_defect_increment_minutes": [
+      20,
+      35
+    ],
+    "note": "同一连续成果窗口，未因新Issue/修复重新计时；实际结束另记"
+  },
+  "active_work_hours": null,
+  "billed_usage_cost": null,
+  "historical_cumulative_hours": null,
+  "reliable_remaining_hours": null,
+  "control_limit_hours": {
+    "base": 200,
+    "revision_reserve": 40,
+    "reset": false
+  },
+  "concentrated_revision_history": "沿用SF-R23既有集中修订次数；本轮是已授权同一池岸归途收口，不创建新预算或无限返工额度。",
+  "historical_gaps": [
+    "2026-10-27首次阅读前未完整计时；47.5分钟为含等待观察墙钟",
+    "2026-10-28 03:08:05–06:22:30有未观测中断，不能称连续工时",
+    "更早历史主动投入、服务费用分摊、累计和可靠剩余缺账"
+  ],
+  "historical_reports_actually_read": [
+    "outputs/swarm-flight/2026-10-27-spring-03-05/review/production-forecast.md",
+    "outputs/swarm-flight/2026-10-28-production-recovery/production-forecast.md"
+  ],
+  "cash": {
+    "new_purchases": 0,
+    "new_image_generation_calls": 0,
+    "service_fee_allocation": "unknown"
+  },
+  "rework": [
+    "真实首冲自动开两结：首风移离余势线，严格旧档静态迁移及字节备份",
+    "长场景微小椭圆世界坐标精度：局部绘制，保留旧错误/新反证",
+    "原打包器ASCII限制拒绝真实中文导出：安全Unicode白名单与反例测试",
+    "开发驱动误把已完成冷续要求暂停、跳过实际休息：修正测试语义，原失败保留，未改玩法迎合",
+    "探索取样逐键AX等待延长雨中无输入暴露；保留blocked原报告，未改游戏，改短组输入后截图/暂停继续同一未获攻略探索。旧logger误追加原notes已保留，并有原始封存副本和修正后的逐行日志。"
+  ],
+  "reusable_capabilities": [
+    "同源花观察与可选分享、两听者真实赴源",
+    "连续旅程、事务事实、磁盘暂停/继续和精确活动状态恢复",
+    "来源/叶棚/天气/风花/门绳与牌架标准件、可选普通绕行",
+    "实际角色到位驱动整理、明确归家结尾",
+    "限定版本导出、证据门禁和两个独立存档入口"
+  ],
+  "scene_specific_work": [
+    "源花附近真实分路与相机前望",
+    "低棚恢复和限时护雨上层的几何取舍",
+    "两次不同开路空间及庄主路径/承重/落位",
+    "原生完整视觉与输入边界复核"
+  ],
+  "remaining_uncertainty": [
+    "同版首次AI探索已完整走到结尾并封存ready报告，校准/交接与最终组包仍在当前批次；尚无整段Alan接受。",
+    "真实陌生玩家理解/自然时长/趣味未验证",
+    "24关完整内容映射、其余大型角色、平台与手柄、整作容量/成本/日期均未由本段证明",
+    "可选首风花的触发未被本次AI首次探索者理解；其完成依靠自行换层到背面后再冲。技术A/B已覆盖完整借风和完全不借风，不能据此声称陌生玩家已理解风链。"
+  ],
+  "forecast_method": "不把已知路线模拟秒数当首次自然时长，不乘以24估算成本；没有可比累计，预算不可核算。",
+  "recommendation": "继续完成已授权池岸归途同版内部核验和一份Mac候选；交整体产品判断后按原质量/范围/产能检查点复议，不自动扩产、采购或恢复暂停的自动化。",
+  "owner_read_checkpoint_utc": "2026-11-01 05:55:09 UTC",
+  "recorded_subtask_intervals": [
+    {
+      "actor": "first_look AI",
+      "start_utc": "2026-11-01T05:24:22.798Z",
+      "play_completed_utc": "2026-11-01T05:51:57.496Z",
+      "report_sealed_utc": "2026-11-01T05:53:34.425Z",
+      "includes": "UI waiting, paused reasoning, own-save replay, reporting; overlaps root, not billed or summed active time"
+    },
+    {
+      "actor": "support_review evidence audit",
+      "start_utc": "2026-11-01 05:11:14 UTC",
+      "end_utc": "2026-11-01 05:13:56 UTC",
+      "source": "frozen-evidence-audit.json",
+      "other_implementation_intervals": "not reconstructed from this audit interval"
+    }
+  ]
+}

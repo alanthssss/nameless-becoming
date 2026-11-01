@@ -1,0 +1,188 @@
+{
+  "created_at_utc": "2026-11-01T05:59:16.192681+00:00",
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "author": "first_look AI explorer, post-seal independent content handoff author; not root implementation author",
+  "scope": "只读差异交接；未制作06，未扩产，未改工程/封存探索材料，未操作游戏窗口。此报告接触设计后撰写，不能充当无攻略首次探索。",
+  "first_source_design_access_started_at_utc": "2026-11-01T05:57:22.554745+00:00",
+  "calibration_sealed_first": {
+    "path": "calibration.json",
+    "sha256": "9304d9a751a7a7422c2505199797945368f0072cac3b226eed77bea7b5be65d9"
+  },
+  "gdd_06_original": {
+    "line": 241,
+    "title": "06 午后长廊：我打开的空间会怎样被使用？",
+    "content": "低压棚内外互见，小满顶棚，玩家可开叶结或绕过；同伴实际通过新口。远处油葫芦留下蜡补丁后跳走，蚁队沿真实叶柄搬枝",
+    "result": "建立帮助改变空间，也为10角色铺垫；没有运输背包或必须等NPC走完",
+    "numbering_boundary": "06为现有GDD历史内容标签；24关内容/ID映射仍未完成，不能当作新24关的已落实第6关。"
+  },
+  "main_player_judgment_delta": [
+    {
+      "from_observed_pond": "出发段判断飞到哪里认识前路，停花形成可分享来源；雨段判断离开遮蔽时的路线与保护；归程先抓盘点窗口，后换层从背侧开口。",
+      "to_06": "在低压、棚内外可互见的空间，判断要不要停下来帮开叶结，以及所开空间能否被他人使用。",
+      "consequence_required": "帮助后改变的是实际通行空间与同伴行动；绕过仍能正常前行，不惩罚、不要求返回补做。"
+    },
+    {
+      "from_observed_pond": "我破结后路能走，邻居随后整理牌；分享后同伴去蓝花。",
+      "to_06": "同伴经过由玩家刚打开的新口成为直接因果证据。角色顶棚—释放支撑—让位与通口状态需要在玩家可看见的同一局部空间关联。",
+      "consequence_required": "不是对白说感谢、状态旗标变化或同伴沿原路飞走；也不把已有听者直飞源花路径改名当作通过新口。"
+    },
+    {
+      "from_observed_pond": "雨中存在资源/暴露压力，庄主松绳提供时机窗口。",
+      "to_06": "保留舒展和自主停留，主要信息来自支撑、连接与通行关系，不复刻雨压或再来两扇同题门。",
+      "consequence_required": "不用多加等待、伤害、运输背包或强制护送来证明新内容。"
+    }
+  ],
+  "reusable_capabilities": [
+    {
+      "capability": "方向飞行、蓄力释放、冲刺破叶结、墙体接触与滑动",
+      "source": "prototypes/swarm-flight/game_model.gd:196,241,293",
+      "reuse": "保持当前输入与基本动作；以现有 curtain/broken 和 gate_ready 承接一次开结。",
+      "boundary": "06的叶结与展开棚必须有自身可见支撑逻辑，不能直接复制05的盘点锁条件。新尺寸/方位仍需碰撞复验。"
+    },
+    {
+      "capability": "源内容编排与稳定场景构造",
+      "source": "prototypes/swarm-flight/chapter_data.gd:57; spring_journey_content.gd:9,14",
+      "reuse": "用现有 encounter/build_source 描述低压路线、叶棚与合流；复用自然飞行出口和可绕选择。",
+      "boundary": "当前Spring仅3段，含池岸坐标/同源花/牌架专用数据，不是现成06模板；参考路线数组是已知解法验证辅助，不是独立体验证据。"
+    },
+    {
+      "capability": "实体叶棚轮廓、拦雨与身体接触共用几何",
+      "source": "prototypes/swarm-flight/leaf_canopy_geometry.gd:109,119,132,147,160; spring_journey_view.gd:60; art_props.gd:77",
+      "reuse": "静态叶棚的源形、支撑画法、可见边界与接触查询可作为新棚的起点。",
+      "boundary": "当前静态棚证据不覆盖动态展开、转轴/支点变化或小满托棚姿态。若06不下雨也要核实身体通路与可见空间一致，不强加天气任务。"
+    },
+    {
+      "capability": "动作到位驱动场景结果",
+      "source": "prototypes/swarm-flight/spring_journey_model.gd:438–462",
+      "reuse": "庄主先到位再查看/提牌/安置的因果组织可指导小满支撑/放手/让位状态。",
+      "boundary": "现有 TIDY_APPROACH/TIDY_CARRY 与牌的位置均属05，不能把路径或结果计时直接套用；小满与同伴必须重新走真实06空间。"
+    },
+    {
+      "capability": "可选行为与事实/检查点/精确挂起分离",
+      "source": "prototypes/swarm-flight/long_journey_model.gd:1–69; spring_journey_model.gd:479–515,631; spring_journey_model.gd:283–348",
+      "reuse": "区分已提交帮助事实、活动角色状态、玩家离开/回落脚点和暂停精确恢复；沿用校验思路。",
+      "boundary": "本段的front_open/passage_open及source身份不可改名后默认等价；summer_canopy_help与未来18回响尚未接成24关映射。"
+    },
+    {
+      "capability": "既有蜂体与可选同伴回应表现",
+      "source": "prototypes/swarm-flight/art_sprites.gd:14; world_view.gd:330–345",
+      "reuse": "蜂体风格与依据真实来向回应的现有表达可供小满基础形象参考。",
+      "boundary": "只查到既有蜂体/来向回应，未验证顶棚、放手、让位、跟随通过新口动作。"
+    }
+  ],
+  "scene_exclusive_work": [
+    {
+      "work": "低压棚内外可互见的几何与视线",
+      "deliverable": "行动前可看见小满支撑、卷叶结、绕行通路与新口将通向的地方；普通飞行和帮助后路径都有效。",
+      "risk": "复制静态雨棚布局可能只留下坐标分叉，展开动作也可能遮挡玩家。"
+    },
+    {
+      "work": "小满顶棚与可选开结导致空间变化",
+      "deliverable": "叶结、叶柄/支点、展开姿态、碰撞、支撑解除同时吻合；小满由支撑到放手/让位，玩家持续可动。",
+      "risk": "动态几何和已有静态棚验证边界不同；优先验证角色动作版因果，不预先扩成自由物理系统。"
+    },
+    {
+      "work": "同伴使用刚打开的口",
+      "deliverable": "帮助分支里同伴在口开放之后实际飞过；绕过分支里正常主路和后续会合仍成立。",
+      "risk": "现有两听者赴花是直线move_toward，不能证明可避障、穿新口或群体路由。"
+    },
+    {
+      "work": "油葫芦蜡补丁与跳走、蚁队沿叶柄搬枝",
+      "deliverable": "在远处可辨认的蜡补丁/真落点/角色离开与蚁队接触路径；不用等待它们表演完。",
+      "risk": "本段原生实玩没有这些新行为；外观、动作、连接与后续10角色铺垫均未由池岸证据证明。"
+    },
+    {
+      "work": "帮助事实、未帮助分支与后续18回响",
+      "deliverable": "summer_canopy_help有实际来源和恢复规则；未帮仍有完整主路。跨关ID/迁移在正式映射后设计。",
+      "risk": "24关映射缺失，不能现在许诺现成跨关复用。"
+    }
+  ],
+  "acceptance_counterexamples": [
+    "开叶结只换贴图/对白，空间碰撞不变，或者同伴仍飞原路径：中心判断未成立。",
+    "同伴在开口前穿过闭合棚，或完成旗标置位却没有实际通过：因果与几何不符。",
+    "同伴只在屏外瞬移到终点；玩家看不到开口与使用的关系：不能以状态标签验收。",
+    "绕行后主路封锁、角色责备或要求返回帮忙，或必须站住等NPC走完整段：违背可选与低压约定。",
+    "棚展开时茎叶断接、支点悬空、外观已经开而碰撞仍闭，或暂停恢复把角色夹进棚：基本缺陷。",
+    "把05盘点等待/背侧开门复制两次，换角色名字却没有他人使用空间的后果：差异交接失败。",
+    "蚁队悬空搬枝、油葫芦跳跃没有真实落点或蜡补丁凭空出现：独占角色/生态表现未成立。",
+    "帮助提交后R或冷续把口关回去，未提交状态却获得帮助回响，或重复触发多次角色结果：保存事实错误。"
+  ],
+  "suggested_bounded_validation_checkpoint": {
+    "owner": "root维护原权威GDD/Milestone/Issue；未来06内容作者执行，需原生产决策授权",
+    "acceptance": "先以一个真实小场景验证“可绕或开结→棚改变→同伴通过”；同时记录未帮助分支及活动展开/提交后恢复。通过后再补远处角色与环境组合，不能以文档批准扩产。",
+    "new_task_queue_created": false
+  },
+  "unproven": [
+    "06未实现/未运行；所有新增角色/展开棚/同伴通口的可读性、趣味和节奏均待实际证据",
+    "本文不审核全工程是否已有某个零散旧原型；只把已核读当前接口视为复用候选，不把搜索未命中视为不存在",
+    "07–09、四位大型角色、持续风、平台/手柄、全作保存迁移不由池岸复核代验",
+    "真人接受、陌生玩家时长与偏好仍未知",
+    "24关内容/ID映射仍未完成；P5/G5与整作交付条件未因此满足"
+  ],
+  "cost_and_scope": {
+    "measured_scope": "独立AI实际池岸探索+本次只读文档/源码核对；没有06制作计时样本",
+    "real_06_cost": "unknown",
+    "cumulative_cost": "unknown",
+    "reliable_remaining_cost": "unknown",
+    "budget_control": "保留200＋40小时及历史集中修订/原检查点；不推断尚有可用预算。",
+    "forecast_method": "不把一段墙钟时间乘24；新角色动作、动态几何、真实NPC路线、恢复和返工分别需后续实际取样。",
+    "cash": "未采购；本任务未产生新的已知外部现金费用",
+    "production_authorization": "仅交接，不批准06制作、24关扩产或整体完成。"
+  },
+  "source_evidence": [
+    {
+      "path": "docs/design/swarm-flight-gdd.md",
+      "lines": "241;681–830",
+      "sha256": "ba3411bf149f86675bda00005687291f4e748b7a60c437878fd4ffb998616345",
+      "scope": "06原行与13.5/13.6"
+    },
+    {
+      "path": "prototypes/swarm-flight/game_model.gd",
+      "lines": "196–307;404;481;595–656",
+      "sha256": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+      "scope": "基础飞行/破帘/遮蔽/恢复"
+    },
+    {
+      "path": "prototypes/swarm-flight/long_journey_model.gd",
+      "lines": "1–69",
+      "sha256": "7bf923077f3c30b0942a5ab499687a128bf8c98a6ff9127340221a67d9278206",
+      "scope": "精确挂起与检查点骨架"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_content.gd",
+      "lines": "1–70",
+      "sha256": "237cd0c6634696df0d57ae45bff21505e04ce067c6eb8dee4bb5da4db0c698c9",
+      "scope": "当前三段空间与内容编排"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "lines": "195–348;384–515",
+      "sha256": "c790c586c65d9891c06b0bca685f1ca35478b33b655947796315987b2314c023",
+      "scope": "分享、两次开口、邻居整理与事实恢复"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_view.gd",
+      "lines": "60–78;123–177;270",
+      "sha256": "626fa1df943876ebde3c4f069a9a56375251e43c52953d991620dd3b9bcc6042",
+      "scope": "棚/支撑/叶结显示入口"
+    },
+    {
+      "path": "prototypes/swarm-flight/leaf_canopy_geometry.gd",
+      "lines": "109–160",
+      "sha256": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf",
+      "scope": "叶棚轮廓/接触/拦雨接口"
+    },
+    {
+      "path": "prototypes/swarm-flight/chapter_data.gd",
+      "lines": "57",
+      "sha256": "ba1ba4625fc7758e6e4ebc4e1f55d2ee102b415ab4863f58eb0638acb2445ca7",
+      "scope": "build_source内容构造接口"
+    }
+  ],
+  "blind_observation_reference": {
+    "path": "../continuation/review.json",
+    "sha256": "6c747a7d95b6ed96f52bef63f90807c4ae10ab6180d6e5e6f699b913163b40c2",
+    "unchanged": true,
+    "note": "先前实际观察只用于指出已体验能力；未用源码回填原始预测。"
+  }
+}

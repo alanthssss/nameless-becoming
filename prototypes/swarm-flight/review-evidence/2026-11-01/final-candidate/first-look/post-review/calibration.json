@@ -1,0 +1,160 @@
+{
+  "created_at_utc": "2026-11-01T05:57:14.578809+00:00",
+  "reviewer": "first_look AI explorer, independent post-review calibration",
+  "source_design_exposure_before_judgment": false,
+  "scope": "Only supplied 3 raw stills, sparse video frames and derived sample facts. No game window operated. Sealed first-look evidence unchanged.",
+  "verdict": "insufficient_to_prove_consequential_rain_route_choice",
+  "can_prove_requested_claim": false,
+  "conclusion": "片段证明了上方飞越与棚下穿行均出现，也证明棚下恢复和露珠带来资源差异；但不足以证明一次在可比较雨中暴露下、具有实际取舍的低棚/护雨路线选择。上方轨迹一直在云雨带上方，无护雨消耗、无雨击损失；低路线只走到中途，且两段没有相同终点对照。不能把这份不足扩展为游戏绝不存在有效选择。",
+  "observations": [
+    {
+      "basis": "frame-1.png, frame-2.png; video 2–14s; facts samples 0–476",
+      "finding": "蜂在云带上方飞行。weather虽进入rain，雨段y约100.00–123.21；shield始终0，shelter=-1，recoveries=0。体力逐样本只下降0.0666667（30个样本/秒，约2/秒），与干燥段一致，没有额外雨击跳降。到after后体力约68.2。"
+    },
+    {
+      "basis": "frame-3.png; video 18–26s; facts samples 477–792",
+      "finding": "第二段由起点重新开始，走棚下，两个shelter区出现，体力在棚下回100；画面有露珠收集1/2，facts最大正跃升约10.0667。该段结束仍在rain、x2168.75，未展示和上方段x4003.32/after相同终点。"
+    },
+    {
+      "basis": "facts tick954→956 and video14→16s",
+      "finding": "位置由约[4003,101]跳回[181,421]，体力68.2回99.93，weather after回dry；这是两段测试轨迹的边界，不能当作同一自然连续飞行。"
+    },
+    {
+      "basis": "all793 facts samples",
+      "finding": "shield全为0；无recoveries；体力不存在超过正常每样本0.0667的下降。这段没有展示护雨开关或雨中受击与免受击的差异。"
+    }
+  ],
+  "supported_narrow_claims": [
+    "存在不同高度的实际行进轨迹",
+    "棚下可恢复体力，露珠可增加资源",
+    "上方轨迹在这份材料中绕过了可见云雨带"
+  ],
+  "insufficient_or_unknown": [
+    "未展示相同分岔点到共同终点的两路对照",
+    "没有护雨路线激活/到期及与雨暴露相互作用的证据",
+    "没有雨击造成的损失、失败或等待压力",
+    "不能仅以weather=rain标签认定角色真正受到雨威胁",
+    "不能凭两段不等长度体力差推导路线的净成本或速度优势",
+    "没有证据可推断真人偏好、整体产品接受或所有可能路线"
+  ],
+  "reviewed_media_scope": {
+    "raw_stills": [
+      "frame-1.png",
+      "frame-2.png",
+      "frame-3.png"
+    ],
+    "video_duration_seconds": 26.57,
+    "video_review": "14 extracted frames at 0,2,4,...,26 seconds, examined as contact sheet; original three full-size stills separately viewed. Not full-speed playback; unsampled moments not claimed as visually observed.",
+    "facts": "All793 records programmatically aggregated; targeted transitions examined.",
+    "audio": "Not listened to; no audio claims.",
+    "tools": "System ffprobe failed missing libx265; AVFoundation extraction compilation interrupted; existing standalone ffmpeg supplied by root used. No environment repair."
+  },
+  "inputs": [
+    {
+      "path": "/private/tmp/pond-review-calibration-a/frame-1.png",
+      "sha256": "bfc375da788b571d2ff5e2eddff428bbfc7f8961a788fb407d98c483b1cd9e36"
+    },
+    {
+      "path": "/private/tmp/pond-review-calibration-a/frame-2.png",
+      "sha256": "a1e0b7b50383c1b3b66ca1d10422769b31826765e545500a0093914a8f4d613d"
+    },
+    {
+      "path": "/private/tmp/pond-review-calibration-a/frame-3.png",
+      "sha256": "ff0fcec737ba37c72d2697b462d537dde752313c8d606e72d89adbebb265b436"
+    },
+    {
+      "path": "/private/tmp/pond-review-calibration-a/continuous.mp4",
+      "sha256": "2d60fa6b7de5509ea28e5fe3c5852b6bbc09e1a79ad18ccbc519f43b08474f18"
+    },
+    {
+      "path": "/private/tmp/pond-review-calibration-a/sample-facts.json",
+      "sha256": "0bbeafc6bba3e811ca0b3345aa5b114d9c223ab1a2d30066a61cb2377c35e770"
+    }
+  ],
+  "derived_frames": [
+    {
+      "path": "calibration-frames/exact-001.png",
+      "sha256": "5a4f96ef2ac2b97fbe1fb03278fed1badd7c86c790550b834eef73a8262e8c34",
+      "raw": false,
+      "extracted_video_time_seconds": 0
+    },
+    {
+      "path": "calibration-frames/exact-002.png",
+      "sha256": "7abe4b13053f61baf6300f373e9cccf3da3dbf8d07df93e679245d30e878ef98",
+      "raw": false,
+      "extracted_video_time_seconds": 2
+    },
+    {
+      "path": "calibration-frames/exact-003.png",
+      "sha256": "bd34d64e0de7ab6bc9c8b1696afeeff45b5222fdc5db8b82f7f75608dada0281",
+      "raw": false,
+      "extracted_video_time_seconds": 4
+    },
+    {
+      "path": "calibration-frames/exact-004.png",
+      "sha256": "442e9408cb5f0f604535d3a1bcb1fb674b733100590b0fa07c4c0a28a08e0e35",
+      "raw": false,
+      "extracted_video_time_seconds": 6
+    },
+    {
+      "path": "calibration-frames/exact-005.png",
+      "sha256": "7d58c35a4e50e6c638530bf027f377bc55903789812e4dba3870c94e342414ed",
+      "raw": false,
+      "extracted_video_time_seconds": 8
+    },
+    {
+      "path": "calibration-frames/exact-006.png",
+      "sha256": "0f68a23c100d06bafdf181228783fb712c4de5d9bb8b55bd25d15d1afa251142",
+      "raw": false,
+      "extracted_video_time_seconds": 10
+    },
+    {
+      "path": "calibration-frames/exact-007.png",
+      "sha256": "b575290998542ec208de9f11ec5297251ca70403d6642fa96bbbc5b58585c80c",
+      "raw": false,
+      "extracted_video_time_seconds": 12
+    },
+    {
+      "path": "calibration-frames/exact-008.png",
+      "sha256": "b0c11ea3ae6388a16982ddd984607da873c0e2fd127ca4d2a5f23897f62c27b7",
+      "raw": false,
+      "extracted_video_time_seconds": 14
+    },
+    {
+      "path": "calibration-frames/exact-009.png",
+      "sha256": "2c11ca371d8cc80653ac3d91f06f3675617b7b6347215a92b5f4f6ce6f1445d7",
+      "raw": false,
+      "extracted_video_time_seconds": 16
+    },
+    {
+      "path": "calibration-frames/exact-010.png",
+      "sha256": "088d15558932d03b46ef0c97932f86bd189000996ab964cbedb8fa2a4a70747c",
+      "raw": false,
+      "extracted_video_time_seconds": 18
+    },
+    {
+      "path": "calibration-frames/exact-011.png",
+      "sha256": "39282b3ccc2fbf9a9f2903bbdb19d0aa8e006fab0dc801f9773b4544452dd24b",
+      "raw": false,
+      "extracted_video_time_seconds": 20
+    },
+    {
+      "path": "calibration-frames/exact-012.png",
+      "sha256": "0ada14fc9723687451d905c97f5172d6e75a458ebbad714ac63237884fccd016",
+      "raw": false,
+      "extracted_video_time_seconds": 22
+    },
+    {
+      "path": "calibration-frames/exact-013.png",
+      "sha256": "8c2bac1ee0afa18c7a74460babd0b9072effb3a8579fe3f8086b86b7b69295e1",
+      "raw": false,
+      "extracted_video_time_seconds": 24
+    },
+    {
+      "path": "calibration-frames/exact-014.png",
+      "sha256": "3f125b8cbb0c8d7f2f337e1685d85f1695052ca391f8832d5b34a260c8109d34",
+      "raw": false,
+      "extracted_video_time_seconds": 26
+    }
+  ]
+}

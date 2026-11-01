@@ -1,0 +1,7 @@
+{
+  "classification": "native route driver remained paused while advancing its command timer",
+  "facts": "At tick17144 stage8 mode became pause at x22111.36; state/velocity/stamina then remained exact until command timeout. No recovery, SCRIPT ERROR or renderer ERROR. Other checks passed before timeout.",
+  "cause": "External native pause/focus event suspected; uninstrumented trigger cannot be asserted. Existing long_journey_ui_verify handles pause with Escape; new C wrapper omitted that branch.",
+  "correction": "Match existing driver behavior: record unexpected pause and resume with ordinary Escape, plus print focus-out notifications. Production stays9611660.",
+  "rerun": "Fresh full native C; failed recording and trace preserved."
+}

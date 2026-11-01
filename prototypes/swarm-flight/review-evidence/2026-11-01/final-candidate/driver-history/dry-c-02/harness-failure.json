@@ -1,0 +1,6 @@
+{
+  "classification": "developer harness expectation error; production unchanged",
+  "cause": "The final completed arrival correctly cold-loads directly into ending. Harness incorrectly required pause and then pressed Enter, restarting the journey. Bound had delayed quit so subsequent iterations repeated.",
+  "evidence": "main.gd on_secondary completed branch and pre-existing long_journey_ui_verify final cold expectation",
+  "resolution": "route_c now checks exact ending for completed payload and ends its traversal loop; failed run preserved, PID62269 terminated after bound."
+}

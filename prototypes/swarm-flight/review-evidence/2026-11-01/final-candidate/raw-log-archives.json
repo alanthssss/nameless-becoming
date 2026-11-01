@@ -1,0 +1,80 @@
+{
+  "reason": "Preserve raw engine/ffmpeg stdout bytes including trailing whitespace and blank lines while retaining normal repository whitespace checks. Original report/manifest hashes refer to decompressed bytes, not edited logs. No source/runtime change.",
+  "files": [
+    {
+      "original_path": "export-internal/entry-smoke/comparison-cold.stdout.log",
+      "original_sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "original_bytes": 278,
+      "archive_path": "export-internal/entry-smoke/comparison-cold.stdout.log.gz",
+      "archive_sha256": "b28885d2df5c87c90770d821dcff5ab29056656e5a05d1b0d3cf1239c0783883"
+    },
+    {
+      "original_path": "export-internal/entry-smoke/comparison-first.stdout.log",
+      "original_sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "original_bytes": 278,
+      "archive_path": "export-internal/entry-smoke/comparison-first.stdout.log.gz",
+      "archive_sha256": "b28885d2df5c87c90770d821dcff5ab29056656e5a05d1b0d3cf1239c0783883"
+    },
+    {
+      "original_path": "export-internal/entry-smoke/spring-cold.stdout.log",
+      "original_sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "original_bytes": 278,
+      "archive_path": "export-internal/entry-smoke/spring-cold.stdout.log.gz",
+      "archive_sha256": "b28885d2df5c87c90770d821dcff5ab29056656e5a05d1b0d3cf1239c0783883"
+    },
+    {
+      "original_path": "export-internal/entry-smoke/spring-first.stdout.log",
+      "original_sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "original_bytes": 278,
+      "archive_path": "export-internal/entry-smoke/spring-first.stdout.log.gz",
+      "archive_sha256": "b28885d2df5c87c90770d821dcff5ab29056656e5a05d1b0d3cf1239c0783883"
+    },
+    {
+      "original_path": "final-package-proof/comparison-cold-stdout.log",
+      "original_sha256": "970ef35e46143b6ada86c438ee5a4da794b572c7417fee495ce4522c5d0d764b",
+      "original_bytes": 154,
+      "archive_path": "final-package-proof/comparison-cold-stdout.log.gz",
+      "archive_sha256": "8c562073995fe0ceeb720ccfaf2baf7561b217af3147cb5983c4e8181d75cd36"
+    },
+    {
+      "original_path": "final-package-proof/comparison-first-stdout.log",
+      "original_sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "original_bytes": 278,
+      "archive_path": "final-package-proof/comparison-first-stdout.log.gz",
+      "archive_sha256": "b28885d2df5c87c90770d821dcff5ab29056656e5a05d1b0d3cf1239c0783883"
+    },
+    {
+      "original_path": "final-package-proof/spring-cold-stdout.log",
+      "original_sha256": "b145ac8adf97004a278bf58581edd61e58615da42caf64c579ec19eeb9e2ea70",
+      "original_bytes": 278,
+      "archive_path": "final-package-proof/spring-cold-stdout.log.gz",
+      "archive_sha256": "b28885d2df5c87c90770d821dcff5ab29056656e5a05d1b0d3cf1239c0783883"
+    },
+    {
+      "original_path": "final-package-proof/spring-first-stdout.log",
+      "original_sha256": "970ef35e46143b6ada86c438ee5a4da794b572c7417fee495ce4522c5d0d764b",
+      "original_bytes": 154,
+      "archive_path": "final-package-proof/spring-first-stdout.log.gz",
+      "archive_sha256": "8c562073995fe0ceeb720ccfaf2baf7561b217af3147cb5983c4e8181d75cd36"
+    },
+    {
+      "original_path": "final-package-proof/风路对照-final-engine.log",
+      "original_sha256": "970ef35e46143b6ada86c438ee5a4da794b572c7417fee495ce4522c5d0d764b",
+      "original_bytes": 154,
+      "archive_path": "final-package-proof/风路对照-final-engine.log.gz",
+      "archive_sha256": "8c562073995fe0ceeb720ccfaf2baf7561b217af3147cb5983c4e8181d75cd36"
+    },
+    {
+      "original_path": "first-look/post-review/calibration-frames/extraction.log",
+      "original_sha256": "765a09c94b8aeb32744ec3ac16e17440a0dadbfa648e5b4c7594e8a0e9dd4f9b",
+      "original_bytes": 10170,
+      "archive_path": "first-look/post-review/calibration-frames/extraction.log.gz",
+      "archive_sha256": "760a61d0cd66faa3482eb6eab1cacc81c20cf2a61f7bcf1d68189c406bb24d9c"
+    }
+  ],
+  "preserved_empty_failure_file": {
+    "path": "driver-history/dry-c-02/trace.json",
+    "bytes": 0,
+    "scope": "Original terminated/failed driver attempt emitted no completed trace; intentionally kept, not a passing evidence JSON."
+  }
+}

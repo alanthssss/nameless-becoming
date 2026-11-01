@@ -1,0 +1,103 @@
+{
+  "created_at_utc": "2026-11-01T05:59:16.194217+00:00",
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "reviewer": "first_look AI explorer after blind report seal",
+  "mode": "read_only_source_trace_audit",
+  "rerun_performed": false,
+  "verdict": "supports_declared_narrow_model_scope_with_limits",
+  "declared_claim": "headless model supplement; full ordinary model steering prepares source/route, then controlled source-close content event; not blind play or natural expiry",
+  "counts": {
+    "declared_checks": 140,
+    "declared_failures": 0,
+    "actual_assertions": 140,
+    "actual_false_assertions": 0,
+    "preparation_checks": 87,
+    "closure_cases": 4,
+    "closure_checks_per_case": 12,
+    "early_departure_checks": 5,
+    "interpretation": "140是包含完整已知路线准备/JSON检查在内的断言数，不是140个关闭场景或140次玩家测试。"
+  },
+  "what_driver_actually_does": [
+    "继承spring_journey_verify.gd；通过fly/frames调用model.step准备03采食、04低路、05两次开口与落脾，关间通过load_stage切换。属于模型普通方向/空格意图的已知路线，不是OS输入、原生无提示连续试玩。",
+    "将有效来源/开路/落脾基线save_payload后，为armed、before_commit、after_commit、foraging分别在fresh模型里restore_payload。",
+    "先按/松空格并推进不同帧数，检查message_revision提交前为0、提交后为1；foraging一例另检查全部听者确实foraging。",
+    "直接调用m.invalidate_source()作为受控内容事件，立即检查观察无效与share_state idle；600模型帧后检查全部听者waiting；再按/松空格180帧，检查仍idle且message_revision未新提交。",
+    "每例关闭后和回到waiting后均做JSON序列化/恢复、payload相等以及下一输入比较。另单独从开放来源基线在提交前移动离脾，断言无提交、分享取消、听者waiting。"
+  ],
+  "coverage": [
+    {
+      "case": "armed",
+      "driver_lines": "20–38",
+      "supported": "准备按住但未松开的分享，在内容关闭事件后取消，无法形成新报告，JSON往返可接受。"
+    },
+    {
+      "case": "before_commit",
+      "driver_lines": "23–38",
+      "supported": "松开后推进25帧，message_revision仍0；受控关闭取消分享，不产生新报告。"
+    },
+    {
+      "case": "after_commit",
+      "driver_lines": "24–38",
+      "supported": "推进90帧后已有一次提交；关闭取消正在进行的分享，已有消息版本保留，不会再提交，听者最终回waiting。"
+    },
+    {
+      "case": "foraging",
+      "driver_lines": "25–38",
+      "supported": "推进390帧，实际foraging前置断言成立；关闭后听者最终回waiting，失效来源不能新分享。"
+    },
+    {
+      "case": "early_departure",
+      "driver_lines": "39–47",
+      "supported": "来源仍开放时，提交前UP移动取消，无消息提交、无继续听者；JSON往返。"
+    }
+  ],
+  "restore_semantics": {
+    "evidence": "spring_journey_verify.gd:27–36",
+    "supported": "同一进程中新模型经JSON字符串重建，精确payload相等；再比JSON恢复模型与直接payload恢复克隆的下一次RIGHT输入。",
+    "limit": "下一输入对照双方都是恢复模型，未直接与未恢复的原活模型比较；没有磁盘文件写读、进程重启、实际暂停菜单、导出包或OS输入。不能称冷启动恢复140/0。"
+  },
+  "source_implementation_alignment": {
+    "path": "prototypes/swarm-flight/spring_journey_model.gd",
+    "lines": "195–235;249–282;283–348",
+    "findings": [
+      "invalidate_source显式注释是内容事件、不是墙钟过期；source_open false，revision加1，清feeding计时并cancel_dance；departing/foraging听者改returning。",
+      "advance_listeners将returning移回waiting落点；normalized_dance拒绝关闭来源仍departing/foraging等不一致状态。",
+      "step的分享依赖can_share和observation_valid；移动可cancel_dance。上述与driver预期一致。"
+    ]
+  },
+  "not_supported": [
+    "没有自然花期/时间到期导致关闭的运行证据；这里直接调用内容事件",
+    "没有最终Mac包磁盘/冷启动/菜单暂停证明；需另用独立证据",
+    "没有关闭后重新开放源花、重新观察或再次招募的测试",
+    "没有全部关闭相位穷举：离花途中任意帧、重复关闭幂等、关闭时R回检查点等不在本补充覆盖",
+    "没有针对坏实现的突变或反例捕获证明；只读审计没有重跑trace",
+    "trace仅记录断言标签和布尔结果，缺每个关闭点原始状态快照/原生媒体；不证明玩家读图、角色表现或理解"
+  ],
+  "conclusion": "140/0计数与140条true记录一致，driver确实覆盖四个指定分享/采食阶段的受控源花关闭、取消、最终撤回和JSON模型恢复，以及提交前普通移动离开。若所述范围严格维持trace自述，支持成立；若扩大为自然源花到期、全部恢复场景或玩家体验，则不成立。",
+  "inputs": [
+    {
+      "path": "prototypes/swarm-flight/review-evidence/2026-11-01/final-candidate/source-expiry-supplement/driver.gd.txt",
+      "lines": "1–52",
+      "sha256": "641bf487d1752d6cac27ee4a36b7b30e2dd43dc67ad6961d6cc10b8bda8b1cd6",
+      "scope": "完整driver"
+    },
+    {
+      "path": "prototypes/swarm-flight/review-evidence/2026-11-01/final-candidate/source-expiry-supplement/trace.json",
+      "lines": "all",
+      "sha256": "d581654556353cd1e34e54d8cf61ad6d8b97ae6602b263d0f51e7132a95ed4ac",
+      "scope": "140条断言与元数据"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_verify.gd",
+      "lines": "1–130",
+      "sha256": "13322b547436f2c0850035b7b2669ee026c7a6f80ecebd56f68c922c753566cd",
+      "scope": "继承的准备与roundtrip函数"
+    },
+    {
+      "path": "prototypes/swarm-flight/spring_journey_model.gd",
+      "lines": "195–348",
+      "sha256": "c790c586c65d9891c06b0bca685f1ca35478b33b655947796315987b2314c023",
+      "scope": "关闭、听者、提交及校验实现"
+    }
+  ]
+}

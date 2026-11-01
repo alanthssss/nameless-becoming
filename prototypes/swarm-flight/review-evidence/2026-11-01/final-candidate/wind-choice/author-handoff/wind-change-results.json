@@ -1,0 +1,170 @@
+{
+  "kind": "Known-answer developer verification; implementation and migration author report",
+  "production_status": "Uncommitted wind change after 17f84019; production hashes in wind-source-binding.json, parent owns freeze/commit",
+  "change": {
+    "first_flower_before": [
+      2760,
+      465
+    ],
+    "first_flower_after": [
+      2760,
+      280
+    ],
+    "new_direction_target": [
+      2880,
+      180
+    ],
+    "solids_unchanged": true,
+    "rule_parameters_unchanged": true,
+    "save_marker": "wind_layout_revision=1",
+    "migration": "Complete genuine old live/checkpoint validation before replacing only first ring pos/direction; active state, velocity and earned facts preserved; no wind-specific recovery."
+  },
+  "known_counterexamples_preserved": [
+    {
+      "path": "wind-legacy-1b40/generation.log",
+      "result": "14 checks / 1 intended failure",
+      "meaning": "Old actual-menu no-cold-resume RIGHT first burst continued unchanged takes three wind flowers and opens second gate."
+    },
+    {
+      "path": "wind-new-counter-01/run.log",
+      "result": "8 checks / 0 failures",
+      "meaning": "Same input in candidate opens only first gate, takes no wind."
+    },
+    {
+      "path": "wind-entry-model-01/run.log",
+      "result": "18 checks / 5 failures",
+      "meaning": "More-right wind entry x2750/2760 not included in accepted tested envelope."
+    },
+    {
+      "path": "spring-wind-final-01.log",
+      "result": "413 checks / 4 failures",
+      "meaning": "Old isolated-board fixture at2740,330 sits50px from relocated flower and triggers wind; moved to2740,400 inside same board height and outside flower trigger, retaining same board and ordinary route assertions."
+    }
+  ],
+  "wind_entry_tested_envelope": {
+    "x": [
+      2710,
+      2717.5,
+      2725,
+      2732.5,
+      2740
+    ],
+    "y": [
+      457,
+      465,
+      473
+    ],
+    "input": "UP charge30 ticks, then UP released charge for180ticks",
+    "result": "15/0, all3rings/backgate/no recovery",
+    "scope": "Explicit front-open controlled model fixtures, not full ordinary exploration"
+  },
+  "passed": [
+    {
+      "test": "wind migration smallest slice",
+      "checks": 24,
+      "failures": 0,
+      "log": "wind-migration-slice-01.log"
+    },
+    {
+      "test": "wind route model",
+      "checks": 79,
+      "failures": 0,
+      "log": "wind-route-model-01.log"
+    },
+    {
+      "test": "wind disk",
+      "checks": 96,
+      "failures": 0,
+      "log": "wind-route-disk-01.log"
+    },
+    {
+      "test": "spring model",
+      "checks": 413,
+      "failures": 0,
+      "log": "spring-wind-final-02.log"
+    },
+    {
+      "test": "spring UI headless",
+      "checks": 50,
+      "failures": 0,
+      "log": "spring-ui-wind-final.log"
+    },
+    {
+      "test": "rain model",
+      "checks": 198,
+      "failures": 0,
+      "log": "rain_choice_verify-wind-final.log"
+    },
+    {
+      "test": "pond model",
+      "checks": 80,
+      "failures": 0,
+      "log": "pond_source_routes_verify-wind-final.log"
+    },
+    {
+      "test": "mosquito model",
+      "checks": 77,
+      "failures": 0,
+      "log": "ordinary_mosquito_verify-wind-final.log"
+    },
+    {
+      "test": "A complete fast headless",
+      "checks": 107,
+      "failures": 0,
+      "ticks": 6554,
+      "simulation_seconds": 109.23333333333333,
+      "log": "dry-a-wind-final.log",
+      "trace": "dry-a-wind-final/trace.json",
+      "mode_note": "dry-a-wind-final/run-mode.json",
+      "recoveries": "Only one intentional R after first opening; zero automatic recovery"
+    },
+    {
+      "test": "B complete fast headless",
+      "checks": 98,
+      "failures": 0,
+      "ticks": 5952,
+      "simulation_seconds": 99.2,
+      "log": "dry-b-wind-final.log",
+      "trace": "dry-b-wind-final/trace.json",
+      "recoveries": 0
+    },
+    {
+      "test": "rain disk",
+      "checks": 140,
+      "failures": 0,
+      "log": "rain_choice_save_verify-wind-final.log"
+    },
+    {
+      "test": "mosquito disk",
+      "checks": 107,
+      "failures": 0,
+      "log": "ordinary_mosquito_save_verify-wind-final.log"
+    },
+    {
+      "test": "pond disk",
+      "checks": 69,
+      "failures": 0,
+      "log": "pond_source_routes_save_verify-wind-final.log"
+    }
+  ],
+  "pending": [],
+  "limits": [
+    "No native GUI launched by this agent; root owns actual A/B capture and visual judgment.",
+    "A/B dry runs preserve1/60 simulation,2tick sampling, ordinary InputEvents, real menu and disk/scene cold resume; rendering-only per-sample frame waits skipped explicitly.",
+    "Cold resume recreates scene and loads actual disk; this is not process restart or packaged launcher validation.",
+    "C execution owned by root; previous C partial timeout/error evidence kept.",
+    "No independent first-time player, subjective audio, whole-MVP or acceptance claim.",
+    "Fast headless sampling cannot certify per-frame UI layout/renderer behavior; root native A/B remain required."
+  ],
+  "other_review": "particle-precision-independent-review.json",
+  "warning": "ObjectDB exit warning retained; passed logs contain no SCRIPT ERROR/renderer ERROR/FAIL.",
+  "committed_by_agent": false,
+  "parent_commit_observed": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "final_status": "No known blocking issue in this authored migration/test scope; root native/packaging/CI remain separate",
+  "not_run_by_this_agent": [
+    "Native A/B/C",
+    "Packaged two-entry executable/process restart",
+    "Full CI suite",
+    "Additional back_sign_save verifier (earlier geometry model fixtures and disk migration are covered by listed suites)"
+  ]
+}

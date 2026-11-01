@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "goal": "spring-03-05-review",
+  "claim": "candidate",
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "stage": "gated-assembly-input; not final delivery until post-assembly J07 passes",
+  "authority": {
+    "gdd": "13.5 J01–08 / 13.6",
+    "milestone": 3,
+    "issues": [
+      205,
+      206,
+      207,
+      208,
+      209
+    ]
+  },
+  "human_accepted": false,
+  "full_game_completed": false,
+  "evidence": [
+    {
+      "criterion": "continuous_run",
+      "status": "passed",
+      "kind": "technical",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "technical.json",
+      "sha256": "c870b342d24505e06e87974f6e978831a1fb6bb5328453183ba801b3255663b3"
+    },
+    {
+      "criterion": "experience",
+      "status": "passed",
+      "kind": "content_review",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "experience.json",
+      "sha256": "b208cb72d6941a9b8907db8fcedd6ca79d986ae449290c21a2afe206bf58ac45"
+    },
+    {
+      "criterion": "presentation",
+      "status": "passed",
+      "kind": "in_engine_visual",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "presentation.json",
+      "sha256": "150343ce2111d172ef5b2dcb2a0f3307d8376d170a5e2e44870f27fb205584cb"
+    },
+    {
+      "criterion": "production_limits",
+      "status": "passed",
+      "kind": "production_record",
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "path": "production-forecast.json",
+      "sha256": "28b1e2ee9a52887ecdacbbbce3d781ac809d75e502b3b2b58557c9f0186cdf8c"
+    }
+  ],
+  "pending_before_delivery": [
+    "Final assembled .command actual launches, process cold restore and save isolation",
+    "Other content-author next06 differential handoff and source-event supplement audit",
+    "PR/CI/merge/cleanup and final cost interval"
+  ]
+}

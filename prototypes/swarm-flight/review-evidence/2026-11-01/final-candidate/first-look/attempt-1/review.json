@@ -1,0 +1,627 @@
+{
+  "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "status": "blocked",
+  "author": "Codex root + support_review implementation team",
+  "reviewer": "first_look AI explorer (unexposed to design/source)",
+  "human_acceptance_claim": false,
+  "started_utc": "2026-11-01T05:24:22.798Z",
+  "ended_utc": "2026-11-01T05:34:13.424Z",
+  "application": "/private/tmp/pond-first-look-9611660/池岸归途.app",
+  "method_notes": [
+    "只通过指定独立导出App的原生CUA操作；没有读源码、GDD、Issue、内部状态、旧评审或他人录像。",
+    "本报告是AI内部探索，不是新人真人试玩、喜好判断或产品整体验收。",
+    "所有预测保留原始追加日志；后续修正未倒写。",
+    "未使用存档备份/恢复；失败后的回退来自实际画面观察，未解析存档。",
+    "画面文件028与029的文件名曾预期进入04，实际仍是03，已在日志中纠正；031才实际呈现04。",
+    "无法声明听过音频。"
+  ],
+  "blockers": [
+    {
+      "chapter": "04",
+      "id": "rain-first-crossing-no-sustained-progress",
+      "description": "普通飞行/下降拾取与重新抬高后单键蓄力冲刺两次尝试，最终均未到下一叶下。按任务中连续两种方法无进展的停止约定封存现场。"
+    },
+    {
+      "chapter": "04",
+      "id": "required-choice-comparison-not-completed",
+      "description": "尚未走到可验证的护雨上层/低棚选择处，未实测这两种初始预测方案的实际后果，不能宣称完成比较。"
+    },
+    {
+      "chapter": "05",
+      "id": "chapter-not-reached",
+      "description": "第三场景未到达，因此无真实before预测、after结果与场景截图。"
+    },
+    {
+      "chapter": "04",
+      "id": "native-input-limit",
+      "description": "CUA原生pressKey拒绝Right+space两个非修饰键同时按。单键space实际尝试未报错，但没有中间画面确认击散雨滴。工具操作与观察延迟可能影响实时表现，归因未知。"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "03",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "沿池岸寻找已开的花与回家方向；晨露0/1可能要求拿到右侧蓝色水滴。",
+        "options": [
+          {
+            "approach": "03-upper-flower",
+            "action": "向右上飞向高处花丛，尝试从花旁或上方穿过。",
+            "expected_consequence": "可能找到可停的花心或跨过花丛继续向右，但可能消耗较多体力。",
+            "visual_basis": "左上文字蓝花还开着；画面中央上方有花丛，菜单说花心可以停。"
+          },
+          {
+            "approach": "03-lower-leaf",
+            "action": "沿较低空向右飞，从花丛下方接近右侧叶下蓝色水滴。",
+            "expected_consequence": "可能拾取晨露并在叶下休息，再沿右边继续找路；也可能下方被植物阻挡。",
+            "visual_basis": "晨露0/1，右侧叶下有蓝色发光水滴，下方可见大段开放空间，菜单说叶下可以歇。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "03-lower-leaf",
+          "consequence": "低空从花丛下到达叶下，体力88恢复100，后拾得晨露1/1。按画面线索继续绕茎、低空到蓝花，花心停稳后得到花蜜与记住花路反馈，最终抬升穿过花铃叶拱自动进入雨中停走。途中一次高度不足被实心茎挡住，修正高度后越过；接近灰飞虫时出现扣8提示，后来叶下恢复。"
+        }
+      ],
+      "unattempted_approaches": [
+        "03-upper-flower"
+      ],
+      "verdict": "pass",
+      "conclusion": "实际完成池边小径并进入第二场景。初始认为晨露可能为目标，后来从游戏反馈明确需在蓝花花心停稳记录花路；鸟被我一度猜测为风险，画面台词随后证实它提供指引。完成依赖看懂游戏内提示，并非无提示解谜。",
+      "evidence": [
+        {
+          "path": "001-launch.png",
+          "sha256": "9887bc1dcfd963aa0428b06e7e56a8e6dd036ac8428005653bdcaf0979dbc5bc",
+          "raw": true
+        },
+        {
+          "path": "002-scene-one-entry.png",
+          "sha256": "dce173140ba15173e891e1bf481db4fd1df8422303d2b7a0a693366edc4d0592",
+          "raw": true
+        },
+        {
+          "path": "003-scene-one-paused.png",
+          "sha256": "7f2bc6caf6c34668a239e6ad42cef05938b6ebe644157d6eb24f4c1c5f9e0985",
+          "raw": true
+        },
+        {
+          "path": "004-03-before-lower-approach.png",
+          "sha256": "7f2bc6caf6c34668a239e6ad42cef05938b6ebe644157d6eb24f4c1c5f9e0985",
+          "raw": true
+        },
+        {
+          "path": "005-03-lower-flight-first.png",
+          "sha256": "e4b054c28fd710ba4091e4d2fd1bce07d52b7b74daa2860eb3d31833a10ce980",
+          "raw": true
+        },
+        {
+          "path": "006-03-before-droplet.png",
+          "sha256": "1f5f49718e4480336f36332654da14cbce4a62aa969102ba6f0f466f8c7140ae",
+          "raw": true
+        },
+        {
+          "path": "007-03-droplet-approach.png",
+          "sha256": "89880e2d485dee1c3c271e522a4709232ba1d0094ca720f0fece2dd6d5a76165",
+          "raw": true
+        },
+        {
+          "path": "008-03-before-take-droplet.png",
+          "sha256": "db04b25d3bcb904ce5d36b0e81457491c38c23d1143209aef8fcaf595671ab7f",
+          "raw": true
+        },
+        {
+          "path": "009-03-droplet-result.png",
+          "sha256": "e45d1e073ad23d8bf354544975e49f896e317ae24c8d93e32f75fe55d1ae0bdf",
+          "raw": true
+        },
+        {
+          "path": "010-03-next-view.png",
+          "sha256": "9e19efe72040f17fb414b0aa9ffe15338fc39e0c7c3ca29a0d1c1c5dbd1d0dee",
+          "raw": true
+        },
+        {
+          "path": "011-03-before-tall-stem.png",
+          "sha256": "da85325c6e54af4ff3524470ccc0142394689fd4e24fcf6ccd549c27c6bfd260",
+          "raw": true
+        },
+        {
+          "path": "012-03-above-stem-result.png",
+          "sha256": "1311dd39075bec351b7d11c9c9fdfe5dbe1cab15e5b1ab38740295c8cd439292",
+          "raw": true
+        },
+        {
+          "path": "013-03-before-clearance-adjustment.png",
+          "sha256": "2c3911377d7c1b95652c79cff0e5a8a94ed3d4ac063fddcbeb110eb267babff0",
+          "raw": true
+        },
+        {
+          "path": "014-03-crossed-stem.png",
+          "sha256": "dabb8a3420458e7cb9fe7a942a57f12ce5901194c0d26ecf0403ceb565af532a",
+          "raw": true
+        },
+        {
+          "path": "015-03-next-leaf.png",
+          "sha256": "2c3d9e56afe13621ad8e8af381b49ba9d1f2252d69b8c751ddcf488ff958a499",
+          "raw": true
+        },
+        {
+          "path": "016-03-before-shelter-entry.png",
+          "sha256": "fc4e64833f59a5bd924091c86cc8e836d705ec39b9d4e98f4c9796d992ef0572",
+          "raw": true
+        },
+        {
+          "path": "017-03-shelter-entry-result.png",
+          "sha256": "2a2b7f2146a220da6b6b02ba7749bed5bde5ac5b264de6675d80202361a1b708",
+          "raw": true
+        },
+        {
+          "path": "018-03-before-blue-flower.png",
+          "sha256": "e33f82f231f62af508154653cc54dd095f75d39a0ab986807be0b1880f8802df",
+          "raw": true
+        },
+        {
+          "path": "019-03-leaf-recovered.png",
+          "sha256": "20d9ca4f36165113767c49f1ff12c471dfcb7b24cf43f8dd59d33ea525ab0c13",
+          "raw": true
+        },
+        {
+          "path": "020-03-blue-flower-approach.png",
+          "sha256": "8b423e0514a42c0e8414ec88175783756ae5a6a4d45c97bf3622bd10f1a349ab",
+          "raw": true
+        },
+        {
+          "path": "021-03-before-blue-center.png",
+          "sha256": "b805891a1e841abd844685e2bf1ac87bec6c8b48dbcf6bdf780b68f45d9d6350",
+          "raw": true
+        },
+        {
+          "path": "022-03-blue-center-result.png",
+          "sha256": "4992f8b8c8293ed6c88b5e4b41b45d93f2c802be9fe875f55205252b401eebca",
+          "raw": true
+        },
+        {
+          "path": "023-03-before-leaf-shed.png",
+          "sha256": "64e6f8964de081fcdf3e48d84d447c381809fdebdbd8c4f6145dd2305a86c1a8",
+          "raw": true
+        },
+        {
+          "path": "024-03-leaf-shed.png",
+          "sha256": "bd3749ebec3dfd305f6cbce68342b161ef64352f6075980d0991da712d0923da",
+          "raw": true
+        },
+        {
+          "path": "025-03-before-lantern.png",
+          "sha256": "d6633783b5845d6e4595a84a4470254879f62290401c77ab2240599520a46dbd",
+          "raw": true
+        },
+        {
+          "path": "026-03-lantern-result.png",
+          "sha256": "8b4253106217a6df725db1be2be5cd13d1857d99170fbb611547f0e4c23f984d",
+          "raw": true
+        },
+        {
+          "path": "027-03-before-exit.png",
+          "sha256": "62e7bd669b9e03e833da0a5f30574e465e269a80cce7da9ffe72e072136facfb",
+          "raw": true
+        },
+        {
+          "path": "028-04-entry.png",
+          "sha256": "5d280f7c0b9de7ac886aae45dab0ec7091cd0df4220a9b8640415931db15bf3e",
+          "raw": true
+        },
+        {
+          "path": "029-04-entry-paused.png",
+          "sha256": "732d9dec1a530a373ead7624ee2791839ffd365e7f1ce1fa4259e06d8dda8213",
+          "raw": true
+        },
+        {
+          "path": "030-03-before-arch-center.png",
+          "sha256": "732d9dec1a530a373ead7624ee2791839ffd365e7f1ce1fa4259e06d8dda8213",
+          "raw": true
+        },
+        {
+          "path": "031-03-completion-or-transition.png",
+          "sha256": "5b08636f604142d40df5fbb0c1dc010d319ea5670e9e01c4ee3a36242b0c56ea",
+          "raw": true
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "穿过雨区并继续回巢；先从叶下观察，随后选择低棚绕行或护雨上层。",
+        "options": [
+          {
+            "approach": "04-low-shelters",
+            "action": "优先沿低处叶棚移动，在叶下停稳恢复，再寻找下一处遮挡。",
+            "expected_consequence": "雨中暴露较少、体力有恢复机会，但可能需要等雨或绕障。",
+            "visual_basis": "场景标题雨中停走，提示先从叶下看一看；此前叶下已实际恢复体力，前方有连片树冠。"
+          },
+          {
+            "approach": "04-upper-protection",
+            "action": "寻找可进入的上层路径或护雨物，再在高处快速向右通过。",
+            "expected_consequence": "也许能更直接跨过低层障碍，但如果护雨不足会暴露在雨里，需要回叶下恢复。",
+            "visual_basis": "目标文字明确提到护雨上层，上方存在开放天空，但尚未看到护雨物或雨的具体节律。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "04-low-shelters",
+          "consequence": "到首个叶下体力100。普通飞行穿过棚下茎顶通口并下移取晨露后，晨露1/2、体力91降至7，显示雨滴扣30及冲刺击散提示；随后回到首叶亭、晨露0/2。第二次重新抬高，尝试先朝右再单键space蓄力，最终观察仍在第一根茎左方，晨露0/2、体力80，未到第二叶下。"
+        }
+      ],
+      "unattempted_approaches": [
+        "04-upper-protection"
+      ],
+      "verdict": "blocked",
+      "conclusion": "只完成雨区入口与首段两次探索尝试。实际画面证明首段雨滴损失会使此AI操作流程回退；不足以证明游戏设计不可通过，也不能把单键输入无报错等同于冲刺成功。未完成低棚/护雨上层选择比较。",
+      "choice_comparison": {
+        "dimensions": [],
+        "description": "未完成要求的两方案实际比较。仅观察到第一种低处尝试的雨中体力损失与回退，以及修改成单键蓄力的重试仍未产生持续进展。护雨上层没有实际尝试，不能给出其暴露、时机或资源结论。",
+        "route_or_state_only": true,
+        "completed": false
+      },
+      "evidence": [
+        {
+          "path": "031-03-completion-or-transition.png",
+          "sha256": "5b08636f604142d40df5fbb0c1dc010d319ea5670e9e01c4ee3a36242b0c56ea",
+          "raw": true
+        },
+        {
+          "path": "032-04-actual-entry-paused.png",
+          "sha256": "f38b800f8ac94887f378123484727f1467c3b7a94fc5a86d41f5929928678817",
+          "raw": true
+        },
+        {
+          "path": "033-04-before-first-shelter.png",
+          "sha256": "f38b800f8ac94887f378123484727f1467c3b7a94fc5a86d41f5929928678817",
+          "raw": true
+        },
+        {
+          "path": "034-04-first-shelter.png",
+          "sha256": "957b93d3eb5e3a4726e06c0eb9d13c6fcdbb0f923b728574b3bb6f96c291f36f",
+          "raw": true
+        },
+        {
+          "path": "035-04-before-canopy-passage.png",
+          "sha256": "8f4ea09398de17245ea047eb16449229f629eec4a82162639f228f590ed6853b",
+          "raw": true
+        },
+        {
+          "path": "036-04-passage-observation.png",
+          "sha256": "6e99c4ca848b349c6b2a43cf345c8fb9392ad840d6d0a90245dedd8a1b413007",
+          "raw": true
+        },
+        {
+          "path": "037-04-before-stem-gap.png",
+          "sha256": "4fcc789963467b4c985b54aa59b49789da0e629c5cf53a0fc90c4253b71a7c0c",
+          "raw": true
+        },
+        {
+          "path": "038-04-after-stem-gap.png",
+          "sha256": "280ffcbb2e53f9e1c0fd3b16a4e42fb6e4771990d64e1da4b988fc9ee2370400",
+          "raw": true
+        },
+        {
+          "path": "039-04-before-rain-emergency.png",
+          "sha256": "652ba8241ffbb30e554e323731d2f2f5c546c7aa54c1865d8298763053931486",
+          "raw": true
+        },
+        {
+          "path": "040-04-after-input-api-limitation.png",
+          "sha256": "2a83c4a4a879f714ccc0a2bbdb0deb0ef185959cc850f9199ad301e1b8fbbc74",
+          "raw": true
+        },
+        {
+          "path": "041-04-reset-paused-confirmation.png",
+          "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+          "raw": true
+        },
+        {
+          "path": "042-04-before-dash-retry.png",
+          "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+          "raw": true
+        },
+        {
+          "path": "043-04-dash-preparation.png",
+          "sha256": "0b6df64616ad8036456941c3d44b6c246b733420dd279e153fd8a2978296aac4",
+          "raw": true
+        },
+        {
+          "path": "044-04-before-cross-then-dash.png",
+          "sha256": "8272ecca51f2ca77b6bc2a4d63466f088b489dae95b6a2f232cbc3026dd29335",
+          "raw": true
+        },
+        {
+          "path": "045-04-single-key-dash-result.png",
+          "sha256": "d39139940c7cfcf8c9c847fddceedf5719aca60237db8bbd380f725bb4ba2e0c",
+          "raw": true
+        },
+        {
+          "path": "046-04-blocked-final-paused.png",
+          "sha256": "1edeee49fa9c8f7f2034506e31442faf78ca47494c2ff439220db7bc56b951ed",
+          "raw": true
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "not_reached": true,
+      "before": {
+        "goal": null,
+        "options": []
+      },
+      "after": [],
+      "verdict": "blocked",
+      "conclusion": "第三场景未到达。未编造目标、两种预测做法或完成证据。",
+      "evidence": []
+    }
+  ],
+  "schema_exceptions": [
+    {
+      "chapter": "05",
+      "field": "before.options",
+      "reason": "原要求至少两种预测，但本场景未到达；为空以避免事后伪造。"
+    },
+    {
+      "chapter": "05",
+      "field": "before.goal",
+      "reason": "未观察该场景，目标未知。"
+    }
+  ],
+  "raw_media": [
+    {
+      "path": "001-launch.png",
+      "sha256": "9887bc1dcfd963aa0428b06e7e56a8e6dd036ac8428005653bdcaf0979dbc5bc",
+      "raw": true
+    },
+    {
+      "path": "002-scene-one-entry.png",
+      "sha256": "dce173140ba15173e891e1bf481db4fd1df8422303d2b7a0a693366edc4d0592",
+      "raw": true
+    },
+    {
+      "path": "003-scene-one-paused.png",
+      "sha256": "7f2bc6caf6c34668a239e6ad42cef05938b6ebe644157d6eb24f4c1c5f9e0985",
+      "raw": true
+    },
+    {
+      "path": "004-03-before-lower-approach.png",
+      "sha256": "7f2bc6caf6c34668a239e6ad42cef05938b6ebe644157d6eb24f4c1c5f9e0985",
+      "raw": true
+    },
+    {
+      "path": "005-03-lower-flight-first.png",
+      "sha256": "e4b054c28fd710ba4091e4d2fd1bce07d52b7b74daa2860eb3d31833a10ce980",
+      "raw": true
+    },
+    {
+      "path": "006-03-before-droplet.png",
+      "sha256": "1f5f49718e4480336f36332654da14cbce4a62aa969102ba6f0f466f8c7140ae",
+      "raw": true
+    },
+    {
+      "path": "007-03-droplet-approach.png",
+      "sha256": "89880e2d485dee1c3c271e522a4709232ba1d0094ca720f0fece2dd6d5a76165",
+      "raw": true
+    },
+    {
+      "path": "008-03-before-take-droplet.png",
+      "sha256": "db04b25d3bcb904ce5d36b0e81457491c38c23d1143209aef8fcaf595671ab7f",
+      "raw": true
+    },
+    {
+      "path": "009-03-droplet-result.png",
+      "sha256": "e45d1e073ad23d8bf354544975e49f896e317ae24c8d93e32f75fe55d1ae0bdf",
+      "raw": true
+    },
+    {
+      "path": "010-03-next-view.png",
+      "sha256": "9e19efe72040f17fb414b0aa9ffe15338fc39e0c7c3ca29a0d1c1c5dbd1d0dee",
+      "raw": true
+    },
+    {
+      "path": "011-03-before-tall-stem.png",
+      "sha256": "da85325c6e54af4ff3524470ccc0142394689fd4e24fcf6ccd549c27c6bfd260",
+      "raw": true
+    },
+    {
+      "path": "012-03-above-stem-result.png",
+      "sha256": "1311dd39075bec351b7d11c9c9fdfe5dbe1cab15e5b1ab38740295c8cd439292",
+      "raw": true
+    },
+    {
+      "path": "013-03-before-clearance-adjustment.png",
+      "sha256": "2c3911377d7c1b95652c79cff0e5a8a94ed3d4ac063fddcbeb110eb267babff0",
+      "raw": true
+    },
+    {
+      "path": "014-03-crossed-stem.png",
+      "sha256": "dabb8a3420458e7cb9fe7a942a57f12ce5901194c0d26ecf0403ceb565af532a",
+      "raw": true
+    },
+    {
+      "path": "015-03-next-leaf.png",
+      "sha256": "2c3d9e56afe13621ad8e8af381b49ba9d1f2252d69b8c751ddcf488ff958a499",
+      "raw": true
+    },
+    {
+      "path": "016-03-before-shelter-entry.png",
+      "sha256": "fc4e64833f59a5bd924091c86cc8e836d705ec39b9d4e98f4c9796d992ef0572",
+      "raw": true
+    },
+    {
+      "path": "017-03-shelter-entry-result.png",
+      "sha256": "2a2b7f2146a220da6b6b02ba7749bed5bde5ac5b264de6675d80202361a1b708",
+      "raw": true
+    },
+    {
+      "path": "018-03-before-blue-flower.png",
+      "sha256": "e33f82f231f62af508154653cc54dd095f75d39a0ab986807be0b1880f8802df",
+      "raw": true
+    },
+    {
+      "path": "019-03-leaf-recovered.png",
+      "sha256": "20d9ca4f36165113767c49f1ff12c471dfcb7b24cf43f8dd59d33ea525ab0c13",
+      "raw": true
+    },
+    {
+      "path": "020-03-blue-flower-approach.png",
+      "sha256": "8b423e0514a42c0e8414ec88175783756ae5a6a4d45c97bf3622bd10f1a349ab",
+      "raw": true
+    },
+    {
+      "path": "021-03-before-blue-center.png",
+      "sha256": "b805891a1e841abd844685e2bf1ac87bec6c8b48dbcf6bdf780b68f45d9d6350",
+      "raw": true
+    },
+    {
+      "path": "022-03-blue-center-result.png",
+      "sha256": "4992f8b8c8293ed6c88b5e4b41b45d93f2c802be9fe875f55205252b401eebca",
+      "raw": true
+    },
+    {
+      "path": "023-03-before-leaf-shed.png",
+      "sha256": "64e6f8964de081fcdf3e48d84d447c381809fdebdbd8c4f6145dd2305a86c1a8",
+      "raw": true
+    },
+    {
+      "path": "024-03-leaf-shed.png",
+      "sha256": "bd3749ebec3dfd305f6cbce68342b161ef64352f6075980d0991da712d0923da",
+      "raw": true
+    },
+    {
+      "path": "025-03-before-lantern.png",
+      "sha256": "d6633783b5845d6e4595a84a4470254879f62290401c77ab2240599520a46dbd",
+      "raw": true
+    },
+    {
+      "path": "026-03-lantern-result.png",
+      "sha256": "8b4253106217a6df725db1be2be5cd13d1857d99170fbb611547f0e4c23f984d",
+      "raw": true
+    },
+    {
+      "path": "027-03-before-exit.png",
+      "sha256": "62e7bd669b9e03e833da0a5f30574e465e269a80cce7da9ffe72e072136facfb",
+      "raw": true
+    },
+    {
+      "path": "028-04-entry.png",
+      "sha256": "5d280f7c0b9de7ac886aae45dab0ec7091cd0df4220a9b8640415931db15bf3e",
+      "raw": true
+    },
+    {
+      "path": "029-04-entry-paused.png",
+      "sha256": "732d9dec1a530a373ead7624ee2791839ffd365e7f1ce1fa4259e06d8dda8213",
+      "raw": true
+    },
+    {
+      "path": "030-03-before-arch-center.png",
+      "sha256": "732d9dec1a530a373ead7624ee2791839ffd365e7f1ce1fa4259e06d8dda8213",
+      "raw": true
+    },
+    {
+      "path": "031-03-completion-or-transition.png",
+      "sha256": "5b08636f604142d40df5fbb0c1dc010d319ea5670e9e01c4ee3a36242b0c56ea",
+      "raw": true
+    },
+    {
+      "path": "032-04-actual-entry-paused.png",
+      "sha256": "f38b800f8ac94887f378123484727f1467c3b7a94fc5a86d41f5929928678817",
+      "raw": true
+    },
+    {
+      "path": "033-04-before-first-shelter.png",
+      "sha256": "f38b800f8ac94887f378123484727f1467c3b7a94fc5a86d41f5929928678817",
+      "raw": true
+    },
+    {
+      "path": "034-04-first-shelter.png",
+      "sha256": "957b93d3eb5e3a4726e06c0eb9d13c6fcdbb0f923b728574b3bb6f96c291f36f",
+      "raw": true
+    },
+    {
+      "path": "035-04-before-canopy-passage.png",
+      "sha256": "8f4ea09398de17245ea047eb16449229f629eec4a82162639f228f590ed6853b",
+      "raw": true
+    },
+    {
+      "path": "036-04-passage-observation.png",
+      "sha256": "6e99c4ca848b349c6b2a43cf345c8fb9392ad840d6d0a90245dedd8a1b413007",
+      "raw": true
+    },
+    {
+      "path": "037-04-before-stem-gap.png",
+      "sha256": "4fcc789963467b4c985b54aa59b49789da0e629c5cf53a0fc90c4253b71a7c0c",
+      "raw": true
+    },
+    {
+      "path": "038-04-after-stem-gap.png",
+      "sha256": "280ffcbb2e53f9e1c0fd3b16a4e42fb6e4771990d64e1da4b988fc9ee2370400",
+      "raw": true
+    },
+    {
+      "path": "039-04-before-rain-emergency.png",
+      "sha256": "652ba8241ffbb30e554e323731d2f2f5c546c7aa54c1865d8298763053931486",
+      "raw": true
+    },
+    {
+      "path": "040-04-after-input-api-limitation.png",
+      "sha256": "2a83c4a4a879f714ccc0a2bbdb0deb0ef185959cc850f9199ad301e1b8fbbc74",
+      "raw": true
+    },
+    {
+      "path": "041-04-reset-paused-confirmation.png",
+      "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+      "raw": true
+    },
+    {
+      "path": "042-04-before-dash-retry.png",
+      "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+      "raw": true
+    },
+    {
+      "path": "043-04-dash-preparation.png",
+      "sha256": "0b6df64616ad8036456941c3d44b6c246b733420dd279e153fd8a2978296aac4",
+      "raw": true
+    },
+    {
+      "path": "044-04-before-cross-then-dash.png",
+      "sha256": "8272ecca51f2ca77b6bc2a4d63466f088b489dae95b6a2f232cbc3026dd29335",
+      "raw": true
+    },
+    {
+      "path": "045-04-single-key-dash-result.png",
+      "sha256": "d39139940c7cfcf8c9c847fddceedf5719aca60237db8bbd380f725bb4ba2e0c",
+      "raw": true
+    },
+    {
+      "path": "046-04-blocked-final-paused.png",
+      "sha256": "1edeee49fa9c8f7f2034506e31442faf78ca47494c2ff439220db7bc56b951ed",
+      "raw": true
+    }
+  ],
+  "notes": {
+    "path": "notes.jsonl",
+    "format": "append-only JSON Lines",
+    "contains": [
+      "UTC timestamps",
+      "predictions",
+      "raw screenshot hashes",
+      "native input requests",
+      "AX observations",
+      "results",
+      "misunderstandings",
+      "tool limitation",
+      "blockers"
+    ]
+  },
+  "final_ui_state": "App保持暂停，场景雨中停走·从棚下抬高一步，1/5处叶下已抵达。尚未退出进程。"
+}

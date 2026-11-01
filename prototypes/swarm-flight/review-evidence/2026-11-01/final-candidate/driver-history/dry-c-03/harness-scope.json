@@ -1,0 +1,6 @@
+{
+  "classification": "ordinary-input route exhausted stamina; not a renderer failure or runtime crash",
+  "actual": "One stamina-zero recovery in first comparison chapter at tick11922, after driver disabled waits at shelter stops. Full ending and exact cold ending reached.",
+  "correction": "Use existing route_driver default wait_for_full=true so the comparison route includes real rest; no production change or state injection. Prior run retained.",
+  "renderer_errors": 0
+}

@@ -1,0 +1,505 @@
+{
+  "created_utc": "2026-11-01T05:34:38.060Z",
+  "sealed_report": {
+    "path": "review.json",
+    "sha256": "c5a9cc09f3311d7f6b56d49ef229c9322a16f7bdafe887d9b9af9b21aefba794"
+  },
+  "final_ui_state": "已用指定App原生super+q退出，随后cua.listApps确认无对应运行中进程；退出后未对旧App调用getAXState。",
+  "quit_confirmed": true,
+  "attempts": [
+    {
+      "label": "普通飞行+下降取晨露",
+      "start_utc": "2026-11-01T05:30:31.033Z",
+      "end_utc": "2026-11-01T05:31:52.839Z",
+      "events": [
+        {
+          "utc": "2026-11-01T05:30:31.033Z",
+          "type": "result",
+          "chapter": "04",
+          "approach": "04-low-shelters",
+          "text": "已到首个叶下，体力100，提示已记住这个叶亭。前方树冠下有开放通道，箭头指向右侧。"
+        },
+        {
+          "utc": "2026-11-01T05:30:31.033Z",
+          "type": "prediction",
+          "chapter": "04",
+          "decision": "under-canopy-passage",
+          "goal": "观察雨区分岔与下一处安全点",
+          "options": [
+            {
+              "approach": "04-low-shelters",
+              "action": "保持目前叶下高度向右穿过树冠下开放通道。",
+              "expected_consequence": "能够找到下一叶棚，当前还看不到降雨范围。",
+              "visual_basis": "树冠位于y300至425，蜂在y540，右箭头在相近高度。"
+            },
+            {
+              "approach": "04-upper-protection",
+              "action": "回到树冠左侧向上升到树冠上方。",
+              "expected_consequence": "可以寻找上层，但暂未知道护雨来源，可能冒雨。",
+              "visual_basis": "目标文字有护雨上层，但现有画面无护雨物。"
+            }
+          ]
+        },
+        {
+          "utc": "2026-11-01T05:30:32.416Z",
+          "type": "screenshot",
+          "path": "035-04-before-canopy-passage.png",
+          "sha256": "8f4ea09398de17245ea047eb16449229f629eec4a82162639f228f590ed6853b",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:30:32.416Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:30:34.591Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:30:34.591Z",
+          "type": "input",
+          "key": "Right",
+          "durationMs": 2300
+        },
+        {
+          "utc": "2026-11-01T05:30:39.738Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:30:42.319Z",
+          "type": "screenshot",
+          "path": "036-04-passage-observation.png",
+          "sha256": "6e99c4ca848b349c6b2a43cf345c8fb9392ad840d6d0a90245dedd8a1b413007",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:30:42.320Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:30:44.486Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:30:56.342Z",
+          "type": "result",
+          "chapter": "04",
+          "approach": "04-low-shelters",
+          "text": "进入树冠下后体力91，出现雨云及空心灰色雨滴。前方实体茎顶约y540，树冠底约y425；提示茎顶与叶棚之间可以抬高穿过去。右侧蓝色发光水滴与灰色雨滴样式不同。"
+        },
+        {
+          "utc": "2026-11-01T05:30:56.343Z",
+          "type": "prediction",
+          "chapter": "04",
+          "decision": "stem-canopy-gap",
+          "goal": "穿过茎顶与棚底之间的通口",
+          "options": [
+            {
+              "approach": "04-gap-rise",
+              "action": "上升到两者之间，向右越过茎干后再下降接近蓝色水滴。",
+              "expected_consequence": "不撞实体，在雨中短暂暴露并拾取晨露；可能扣体力。",
+              "visual_basis": "画面文字提示通口，蓝水滴在茎右方下层，周围有灰雨滴。"
+            },
+            {
+              "approach": "04-gap-low",
+              "action": "保持当前高度直接向右。",
+              "expected_consequence": "可能碰茎顶侧面，增加无效暴露时间。",
+              "visual_basis": "蜂当前与实心茎顶部相近，首场景已证实茎干实体。"
+            }
+          ]
+        },
+        {
+          "utc": "2026-11-01T05:30:57.725Z",
+          "type": "screenshot",
+          "path": "037-04-before-stem-gap.png",
+          "sha256": "4fcc789963467b4c985b54aa59b49789da0e629c5cf53a0fc90c4253b71a7c0c",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:30:57.725Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:31:00.897Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:00.898Z",
+          "type": "input",
+          "key": "Up",
+          "durationMs": 270
+        },
+        {
+          "utc": "2026-11-01T05:31:04.610Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:04.610Z",
+          "type": "input",
+          "key": "Right",
+          "durationMs": 1900
+        },
+        {
+          "utc": "2026-11-01T05:31:09.589Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:09.590Z",
+          "type": "input",
+          "key": "Down",
+          "durationMs": 350
+        },
+        {
+          "utc": "2026-11-01T05:31:13.373Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:14.922Z",
+          "type": "screenshot",
+          "path": "038-04-after-stem-gap.png",
+          "sha256": "280ffcbb2e53f9e1c0fd3b16a4e42fb6e4771990d64e1da4b988fc9ee2370400",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:31:14.922Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:31:16.550Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:28.632Z",
+          "type": "result",
+          "chapter": "04",
+          "approach": "04-gap-rise",
+          "text": "穿过茎顶通口并拿到晨露1/2，但体力从91降到7，画面提示“体力-30·雨滴可以绕开，或冲刺击散”。当前截图中蜂未清晰显示，可能碰撞闪烁，不能确定内部状态。下一叶下仍在右约400像素。"
+        },
+        {
+          "utc": "2026-11-01T05:31:28.632Z",
+          "type": "prediction",
+          "chapter": "04",
+          "decision": "rain-emergency",
+          "goal": "在低体力时到达右方叶下",
+          "options": [
+            {
+              "approach": "04-dash-to-shelter",
+              "action": "向右并蓄力冲刺，松开后继续短距离向右。",
+              "expected_consequence": "可能击散雨滴并更快进入叶下，避免再损失30体力。",
+              "visual_basis": "刚出现提示冲刺可以击散雨滴，下一叶下在右方。"
+            },
+            {
+              "approach": "04-return-after-rain",
+              "action": "按R回最近叶亭。",
+              "expected_consequence": "恢复安全但需要再走同一段，已拿晨露是否保留未知。",
+              "visual_basis": "R用于最近落脚点，当前体力7。"
+            }
+          ]
+        },
+        {
+          "utc": "2026-11-01T05:31:30.078Z",
+          "type": "screenshot",
+          "path": "039-04-before-rain-emergency.png",
+          "sha256": "652ba8241ffbb30e554e323731d2f2f5c546c7aa54c1865d8298763053931486",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:31:30.078Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:31:32.244Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:32.244Z",
+          "type": "input",
+          "key": "Right+space",
+          "durationMs": 650
+        },
+        {
+          "utc": "2026-11-01T05:31:39.064Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:31:41.230Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:42.749Z",
+          "type": "screenshot",
+          "path": "040-04-after-input-api-limitation.png",
+          "sha256": "2a83c4a4a879f714ccc0a2bbdb0deb0ef185959cc850f9199ad301e1b8fbbc74",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:31:42.749Z",
+          "type": "tool_limitation",
+          "chapter": "04",
+          "text": "原生pressKey拒绝Right+space两个非修饰键同时按，错误-10005；没有将此算成游戏冲刺结果。已暂停重新观察。后续只能先选朝向再单独按空格蓄力。"
+        },
+        {
+          "utc": "2026-11-01T05:31:49.525Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:31:51.387Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:31:52.839Z",
+          "type": "screenshot",
+          "path": "041-04-reset-paused-confirmation.png",
+          "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:31:52.839Z",
+          "type": "result",
+          "chapter": "04",
+          "approach": "04-dash-to-shelter",
+          "text": "未执行成功冲刺。随后观察已回到首处叶下，体力100，晨露从1/2回到0/2；这次雨中尝试失败且未保留拾取。没有手动按R，失败回退发生在工具错误后等待期间。"
+        }
+      ]
+    },
+    {
+      "label": "提前抬升+朝右后单键蓄力",
+      "start_utc": "2026-11-01T05:32:20.724Z",
+      "end_utc": "2026-11-01T05:33:32.516Z",
+      "events": [
+        {
+          "utc": "2026-11-01T05:32:20.724Z",
+          "type": "prediction",
+          "chapter": "04",
+          "decision": "retry-with-dash-preparation",
+          "goal": "重新到棚下通口，准备缩短雨中停留",
+          "options": [
+            {
+              "approach": "04-gap-dash",
+              "action": "离开叶亭后提前抬升，在通口以朝右方向单独蓄力冲刺，优先抵达下一叶下。",
+              "expected_consequence": "比边走边拾取更少暴露，暂时放弃晨露；单键空格应能按游戏说明冲刺。",
+              "visual_basis": "上次通口可通过但雨滴扣30，雨中停留太久；系统提示冲刺击散雨滴。"
+            },
+            {
+              "approach": "04-low-shelters",
+              "action": "重复此前普通飞行并下降取晨露。",
+              "expected_consequence": "有再次遭雨滴耗尽体力的风险，尤其观察停顿时。",
+              "visual_basis": "上次该做法已导致体力7并回退。"
+            }
+          ]
+        },
+        {
+          "utc": "2026-11-01T05:32:22.118Z",
+          "type": "screenshot",
+          "path": "042-04-before-dash-retry.png",
+          "sha256": "d3c5364e4191469645b2a24386c7768a151646c6a11cf46c3bf480b2c28ffbeb",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:32:22.118Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:32:24.285Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:32:24.285Z",
+          "type": "input",
+          "key": "Right",
+          "durationMs": 1600
+        },
+        {
+          "utc": "2026-11-01T05:32:28.457Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:32:28.458Z",
+          "type": "input",
+          "key": "Up",
+          "durationMs": 460
+        },
+        {
+          "utc": "2026-11-01T05:32:31.931Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:32:34.648Z",
+          "type": "screenshot",
+          "path": "043-04-dash-preparation.png",
+          "sha256": "0b6df64616ad8036456941c3d44b6c246b733420dd279e153fd8a2978296aac4",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:32:34.650Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:32:36.755Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:32:50.145Z",
+          "type": "observation",
+          "chapter": "04",
+          "text": "重试已提前抬到通口高度，体力86，仍在长树冠下；灰雨滴集中在右侧开放段。准备先穿过实体茎，再在开放段向右冲刺。"
+        },
+        {
+          "utc": "2026-11-01T05:32:50.145Z",
+          "type": "prediction",
+          "chapter": "04",
+          "decision": "cross-then-dash",
+          "goal": "越过茎干且把冲刺用于雨中开放段",
+          "options": [
+            {
+              "approach": "04-gap-dash",
+              "action": "向右越茎，到开放段后下降一点并重新朝右，单独蓄力冲刺。",
+              "expected_consequence": "避免冲向树冠，降低雨中暴露，抵达下一叶下。",
+              "visual_basis": "通口位置已对齐，下一段蓝滴位于下方，需要低于下一片树冠。"
+            },
+            {
+              "approach": "04-direct-gap-dash",
+              "action": "立即从当前高度朝右冲刺。",
+              "expected_consequence": "可以越茎，但可能撞上下一片更低树冠。",
+              "visual_basis": "右侧画面外低树冠在此前尝试已亲见。"
+            }
+          ]
+        },
+        {
+          "utc": "2026-11-01T05:32:51.534Z",
+          "type": "screenshot",
+          "path": "044-04-before-cross-then-dash.png",
+          "sha256": "8272ecca51f2ca77b6bc2a4d63466f088b489dae95b6a2f232cbc3026dd29335",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:32:51.534Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:32:54.729Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:32:54.730Z",
+          "type": "input",
+          "key": "Right",
+          "durationMs": 2200
+        },
+        {
+          "utc": "2026-11-01T05:32:59.952Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:32:59.952Z",
+          "type": "input",
+          "key": "Down",
+          "durationMs": 300
+        },
+        {
+          "utc": "2026-11-01T05:33:03.152Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:33:03.152Z",
+          "type": "input",
+          "key": "Right",
+          "durationMs": 100
+        },
+        {
+          "utc": "2026-11-01T05:33:05.310Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:33:05.311Z",
+          "type": "input",
+          "key": "space",
+          "durationMs": 650
+        },
+        {
+          "utc": "2026-11-01T05:33:08.425Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:33:10.985Z",
+          "type": "screenshot",
+          "path": "045-04-single-key-dash-result.png",
+          "sha256": "d39139940c7cfcf8c9c847fddceedf5719aca60237db8bbd380f725bb4ba2e0c",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:33:10.985Z",
+          "type": "input",
+          "key": "Escape",
+          "durationMs": null
+        },
+        {
+          "utc": "2026-11-01T05:33:13.148Z",
+          "type": "ax_observation",
+          "state": "There has been no change in the accessibility tree for Window: \"雨来之前 · 池岸归途\"."
+        },
+        {
+          "utc": "2026-11-01T05:33:32.515Z",
+          "type": "screenshot",
+          "path": "046-04-blocked-final-paused.png",
+          "sha256": "1edeee49fa9c8f7f2034506e31442faf78ca47494c2ff439220db7bc56b951ed",
+          "raw": true
+        },
+        {
+          "utc": "2026-11-01T05:33:32.516Z",
+          "type": "result",
+          "chapter": "04",
+          "approach": "04-gap-dash",
+          "text": "单独空格蓄力操作无工具报错，但最终画面回到首叶亭右侧、第一根茎仍在右方，晨露0/2、体力80。整段中间没有逐帧截图，不能声称看见冲刺击散雨滴；两种尝试最终均未到下一叶下，停止继续试错并报告阻断。"
+        },
+        {
+          "utc": "2026-11-01T05:33:32.516Z",
+          "type": "blocker",
+          "chapter": "04",
+          "text": "同一首段雨区，普通飞行/下降取露与重新抬高后蓄力冲刺两次尝试都未取得可持续进展。原生操作每次观察有延迟且不能同时按方向与空格，可能影响雨区实时操作，但没有足够证据归因为游戏或工具单方问题。未进入上层护雨分岔，不能完成所要求的低棚与护雨上层后果对照；第三场景未到达。"
+        }
+      ]
+    }
+  ],
+  "interpretation_limit": "两次最终未持续进展是内部AI探索阻断，不能据此判产品失败；没有逐帧视频确认第二次具体回退发生在哪个输入之前。"
+}

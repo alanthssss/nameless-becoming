@@ -1,0 +1,30 @@
+{
+  "classification": "failed native driver run; not completed journey",
+  "artifacts": [
+    {
+      "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/final-candidate-9611660/failed-native-c/continuous.avi",
+      "sha256": "4c54508f15dd08e55a021469018a61a9003f111a8296224e91aca46230c90e58",
+      "bytes": 1077985940
+    },
+    {
+      "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/final-candidate-9611660/failed-native-c/continuous.mp4",
+      "sha256": "e3260d97f48be207c377cb67fc8bdb93c0ca140cd54c501c95ff99b27732ceaf",
+      "bytes": 33506814
+    },
+    {
+      "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/final-candidate-9611660/failed-native-c/run.log",
+      "sha256": "456e82054a146ec3231805d1396f1530188cc1c731b641fcef2e961bbb0afac1",
+      "bytes": 1156
+    },
+    {
+      "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/final-candidate-9611660/failed-native-c/trace.json",
+      "sha256": "3dd6548560404eef85287ee94f7192500373e8552480326d66a6a763cc40343d",
+      "bytes": 3822650
+    },
+    {
+      "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-mvp/final-candidate-9611660/failed-native-c/harness-failure.json",
+      "sha256": "a3c1efca63a67e80ed61a60590e519dbf76b1b91973091c58325ec70e2efa3b1",
+      "bytes": 747
+    }
+  ]
+}

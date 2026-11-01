@@ -1,0 +1,310 @@
+{
+  "kind": "Targeted technical and evidence audit, not independent first-time exploration or human judgment",
+  "reviewer_role": "Driver and wind migration/test author; familiar with design. Read-only review of frozen native evidence, CI and export inventory.",
+  "frozen_revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "audit_started_utc": "2026-11-01 05:11:14 UTC",
+  "result": "No actionable production blocker observed in inspected evidence. Reporting boundaries below must be preserved.",
+  "routes": {
+    "a": {
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "assertions": 123,
+      "all_assertions_pass": true,
+      "failures": 0,
+      "movie_frames_from_log": 3297,
+      "movie_fps": 30,
+      "movie_seconds": 109.9,
+      "simulation_ticks": 6554,
+      "simulation_step": 0.0166666666666667,
+      "samples": 3277,
+      "every_two_ticks_complete": true,
+      "headless_fast_dry_run": false,
+      "final_mode": "ending",
+      "final_save_completed": true,
+      "recovery_events": [
+        {
+          "kind": "recover_manual",
+          "mode": "play",
+          "stage": 2,
+          "tick": 4157
+        }
+      ],
+      "any_observed": true,
+      "max_message_revision": 1,
+      "max_rings": 3,
+      "max_recoveries_by_stage": {
+        "0": 0,
+        "1": 0,
+        "2": 1
+      },
+      "cold_resume_assertions": [
+        {
+          "tick": 1271,
+          "label": "exact cold resume source observed"
+        },
+        {
+          "tick": 1711,
+          "label": "cold chapter boundary is paused at same chapter fact"
+        },
+        {
+          "tick": 2217,
+          "label": "exact cold resume rain before branch"
+        },
+        {
+          "tick": 2885,
+          "label": "exact cold resume upper rain landing with shield"
+        },
+        {
+          "tick": 4157,
+          "label": "exact cold resume first opening"
+        },
+        {
+          "tick": 4384,
+          "label": "exact cold resume keeper tidying after second opening"
+        },
+        {
+          "tick": 5518,
+          "label": "exact cold resume armed share"
+        },
+        {
+          "tick": 5764,
+          "label": "exact cold resume listeners departing"
+        },
+        {
+          "tick": 6554,
+          "label": "completed ending exact cold launch"
+        }
+      ],
+      "sha256": {
+        "trace.json": "eef705951dcadc7d22953bbad099e58b3554c5571ba3480e9d43040a135a10c3",
+        "run.log": "c072ca6d71ef0c1d0ae7ef17b3911faa36d5bc67e00b42e503ffc278d40e1410",
+        "save.json": "817a0b55b0db54a6319db14812453a42c272282ed320bf2ec7ed4d9247b80d9a"
+      }
+    },
+    "b": {
+      "revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+      "assertions": 113,
+      "all_assertions_pass": true,
+      "failures": 0,
+      "movie_frames_from_log": 2993,
+      "movie_fps": 30,
+      "movie_seconds": 99.76666666666667,
+      "simulation_ticks": 5952,
+      "simulation_step": 0.0166666666666667,
+      "samples": 2976,
+      "every_two_ticks_complete": true,
+      "headless_fast_dry_run": false,
+      "final_mode": "ending",
+      "final_save_completed": true,
+      "recovery_events": [],
+      "any_observed": false,
+      "max_message_revision": 0,
+      "max_rings": 0,
+      "max_recoveries_by_stage": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "cold_resume_assertions": [
+        {
+          "tick": 1345,
+          "label": "exact cold resume source skipped"
+        },
+        {
+          "tick": 1786,
+          "label": "cold chapter boundary is paused at same chapter fact"
+        },
+        {
+          "tick": 2292,
+          "label": "exact cold resume rain before branch"
+        },
+        {
+          "tick": 2863,
+          "label": "exact cold resume unshielded low leaf"
+        },
+        {
+          "tick": 4256,
+          "label": "exact cold resume first opening"
+        },
+        {
+          "tick": 4569,
+          "label": "exact cold resume keeper tidying after second opening"
+        },
+        {
+          "tick": 5952,
+          "label": "completed ending exact cold launch"
+        }
+      ],
+      "sha256": {
+        "trace.json": "0a8956020fcf41783d024d3064c6dbfdf64ced2a34a4cf9ea256c9aec9dee9aa",
+        "run.log": "155ead95f94fb6dc7e0270790572374560b087faf66b10e0df353b943bb0e9bf",
+        "save.json": "a1585729cd232ec62a931109fca6c445decdcc7a872c79780cd04f0c4bf8440b"
+      }
+    }
+  },
+  "input_and_continuity": {
+    "driver_paths": [
+      "/private/tmp/pond-mvp-final-drivers/route_a.gd",
+      "/private/tmp/pond-mvp-final-drivers/route_b.gd"
+    ],
+    "finding": "Both complete-route drivers use InputEventKey through root.push_input for movement/actions/menu. No direct position, gate, stage or earned-fact injection was found. They manually step game and world by1/60 and await a rendering frame every2ticks; native trace fast mode is false.",
+    "focus_behavior": "NativeFixture suppresses application focus-out pause for capture; this is a declared harness difference from a normal application.",
+    "not_raw_key_replay": "Trace is sampled state plus semantic sound/event notifications and assertions, not a complete key-event replay log. The ordinary-input claim is grounded in reviewed driver code together with native results.",
+    "continuity_boundary": "One chronological movie per route includes real menu pauses and scene destruction/recreation reading actual disk. This does not constitute executable/process cold launch or packaged-app launch verification."
+  },
+  "cold_scene_coverage": {
+    "observed_source_and_skip": "A observed-source exact save/resume; B skipped-source exact save/resume.",
+    "rain": "Both before-branch cold points are weather warning. Actual rain is additionally covered at A protected upper leaf and B unprotected low leaf.",
+    "openings": "Both first-open/second-closed and second-open keeper-tidying exact resumes are asserted. First pause occurs7ticks after burst event, with first gate committed; source BURST_SECONDS0.54 supports active released burst coverage.",
+    "charge_limit": "Neither A nor B pauses during held flight-charge before release. Their trace omits charge/burst_left fields and has no explicit flight-charge suspend assertion. Do not describe A/B alone as covering both held charge and released burst; cite a separate actual result if needed.",
+    "sharing": "A pauses armed-before-release at5428 and after message commit while share_state=dancing at5674; guard against fabricated release and listener departure exact state are asserted.",
+    "chapter_handoff": "Both cold-resume pond→rain pending transition and final ending. Rain→return is traversed automatically but not cold-resumed by these two routes."
+  },
+  "visual_review": {
+    "viewed_png_count": 23,
+    "viewed_original_route_pngs": 18,
+    "viewed_motion_extracts": 5,
+    "images": {
+      "a": [
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/03-source-observed.png",
+          "sha256": "9ad947a5895810ab52527745ca9ddad91e764c3f1580ebcc0bcc4bae8c527227"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/06-safe-rain-choice.png",
+          "sha256": "dda652078a33f941cc98dae31d055d846feb4764cfeab90ffa1c62a07552ba65"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/08-protected-upper-exposure.png",
+          "sha256": "c41f500ba4a65fe9565cc6c2eecc104ea99001ac281dfafceae7ccc67dca9f8e"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/09-upper-rain-landing.png",
+          "sha256": "d145af85849ea51142bf4a24e84f538727d8b881cc16fef71cfe29adb0650fd5"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/10-first-counting-window.png",
+          "sha256": "3c62868d7cc74a78b3192518b3f77e639a780ad2b9eef4441ad571aeb57f6513"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/11-wind-approach-to-back.png",
+          "sha256": "e35cdc79ec506ab2de0ece88f0d4f4ff5462f3a4f5ff1daf7ac202e7c9c2b41a"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/12-second-opening.png",
+          "sha256": "16627f8a6973c02f497aaa08f89509a498ed872f136062ce886bd6613b7acaac"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/13-keeper-placed-signs.png",
+          "sha256": "a5eae0d5d3ef246d0e0ad4b76fc729e68b1dc9af3b6c07ae180826abebeacac9"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/14-optional-sharing.png",
+          "sha256": "5d7f727705cd04869bcdbf489bde96c0dd0500351ebf55463e002d7a3e350368"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/15-listeners-at-source.png",
+          "sha256": "8127f87373ee1add4c87d1356eef874f2322813658b2b13ab77f0962b9438ee1"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/16-ending.png",
+          "sha256": "31e5eca22d2aaf47c5182b39665e7462690169b3048c997d8728a56dd21da9ac"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/motion-1.png",
+          "sha256": "4059cabe8dfaec65ec6151697617dcdd38239b52b99d63aa6aa689b69056c539"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/motion-2.png",
+          "sha256": "f6da5af28d3ed7dc4dce63700ecc4dd5cab7d5d5317819a52a781d88d776365a"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/motion-3.png",
+          "sha256": "b661f88a8aba648477e952ad9e8af8690dd0164e68666354d64832e603ba2d9e"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/motion-4.png",
+          "sha256": "b61818811b46de35924ea0f5e0dd3f0c3b89e1d0c16735e0916adc2ca04929bd"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-a/motion-5.png",
+          "sha256": "3cf3313d8effceecf8f72a94628b49c7dd6ae031fa5aa8f6cf738c46959e34bc"
+        }
+      ],
+      "b": [
+        {
+          "path": "/private/tmp/pond-mvp-final-native-b/03-upper-source-preview.png",
+          "sha256": "6acc1b42fac414e54aea561fc3a9cab9ee1b0ce3e35cfa2f9c13cf2cb2dff750"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-b/04-source-skipped.png",
+          "sha256": "a9977a2528e6eb19772ab1f83d1d416d692a2763c234b5ffd4e59b8330590821"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-b/07-unshielded-low-rest.png",
+          "sha256": "42ddcde13616542cbe3e3962cecd093d1fd0686595ff6899c1383699051df833"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-b/08-low-route-rejoins-high-leaf.png",
+          "sha256": "de7f42eafddf1e4cb7b795024e5df54891def9857f2c5dae85fa212c85065b66"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-b/11-ordinary-back-knot-approach.png",
+          "sha256": "fe833989a0762d6b84f2dda87a7c0f474d382c14af2e4f96569c30803e343e65"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-b/14-no-share-direct-home.png",
+          "sha256": "89261d30d56991ff7d4f8eabfd824eb7572cc829eb1919e1d0d06323d6a6ae00"
+        },
+        {
+          "path": "/private/tmp/pond-mvp-final-native-b/16-ending.png",
+          "sha256": "611c5b8c4c4001f6a2f9a2af2267ed66a05e78f91a81aecdd25cdcfd2e55bf9e"
+        }
+      ]
+    },
+    "finding": "Inspected first-flower stem reaches ground, rain upper stem joins foliage, leaves and props retain plausible support; selected UI/player scale and context captions remain readable. Feeding/skip, protected upper/unprotected low, ordinary/wind back approach, committed sharing/listeners and endings match sampled facts. No new basic visual blocker seen in these selected stills.",
+    "motion_limit": "A motion1–5 are sparse extracted frames of keeper travel, not a full-motion review. In motion4, keeper atworld3580 with camera2162.78 lies beyond right screen edge; image does not show the carrying descent. Motion1–3 and5 show approach/pickup/result, but these five images cannot establish that the whole carry path remains visible. Player camera is stationary at the developer observation point.",
+    "unviewed": "Did not watch completeAVI/MP4, listen to audio, or inspect every route PNG. No full-frame visual sweep is claimed."
+  },
+  "ci": {
+    "path": "/private/tmp/nameless-pond-mvp-candidate/.github/workflows/swarm-flight.yml",
+    "finding": "wind_route_verify and wind_route_save_verify are both in core; isolated SWARM_WIND_ROUTE_QA_DIR, pipefail, error-log rejection and explicit zero-failure completion checks retained. Matrix core/regressions/samples and8minute timeout retained.",
+    "boundary": "Static workflow review only; this audit does not certify CI execution."
+  },
+  "export": {
+    "inventory_path": "/private/tmp/pond-mvp-export-9611660/pck-inventory.json",
+    "entries": 122,
+    "inventory_revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+    "qa_evidence_hits": [],
+    "required_runtime_subset_present": [
+      "boot.gdc",
+      "spring_journey_content.gdc",
+      "spring_journey_model.gdc",
+      "spring_journey_main.gdc",
+      "spring_journey_view.gdc",
+      "long_journey_model.gdc",
+      "leaf_canopy_geometry.gdc",
+      "world_view.gdc",
+      "save_data.gdc",
+      "sound.gdc"
+    ],
+    "preset_finding": "Both rain_layout_expectations and wind_layout_expectations explicitly excluded along with QA verify/probe/driver/evidence patterns; runtime subset above and imported artwork remain in122entry inventory.",
+    "actual_pck_sha256": "5c0ca78329e43ab29c2c7fc5631ea550842a7b8b02dc1f7dc9040290749bdd05",
+    "matches_export_record_sha256": true,
+    "boundary": "Read supplied actual-PCK inventory and independently hashed PCK; did not rerun inventory parser or launch export. export-record still lists both launch entries pending and isolated_saves=false, so inventory alone cannot support two-entry launch/save-isolation success."
+  },
+  "scope_limits": [
+    "No GUI or Godot launched by this audit.",
+    "No repository/source edits, commits or delegation.",
+    "C recording and its results not inspected.",
+    "No novice/first-exploration, subjective enjoyment/audio or completeMVP/G4 approval."
+  ],
+  "actionable_reporting_corrections": [
+    "Separate held flight-charge from released-burst cold coverage.",
+    "Limit chapter cold handoff to pond→rain forA/B.",
+    "Do not claim all keeper carry movement visible from motion1–5.",
+    "Do not turn rawPCK inventory success into packaged two-entry launch/isolation acceptance."
+  ],
+  "production_blockers": [],
+  "audit_finished_utc": "2026-11-01 05:13:56 UTC",
+  "audit_elapsed_seconds": 162
+}

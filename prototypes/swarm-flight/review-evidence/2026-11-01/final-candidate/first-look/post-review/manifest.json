@@ -1,0 +1,82 @@
+{
+  "sealed_at_utc": "2026-11-01T05:59:22.983555+00:00",
+  "scope": "post-review only; no game-window use; no edits to blind review/continuation; root owns repository/tracker/packaging",
+  "calibration_created_at_utc": "2026-11-01T05:57:14.578809+00:00",
+  "first_source_design_access_started_at_utc": "2026-11-01T05:57:22.554745+00:00",
+  "files": [
+    {
+      "path": "calibration.json",
+      "sha256": "9304d9a751a7a7422c2505199797945368f0072cac3b226eed77bea7b5be65d9"
+    },
+    {
+      "path": "next-content-handoff.json",
+      "sha256": "d8fa43d8a5ca597c532daadf9fae8a3e35afdf0437dcd0ea2692e4aa31fcfbcf"
+    },
+    {
+      "path": "supplement-audit.json",
+      "sha256": "5907da6581078c28b2337971f1248229297ea57260746dd5c4aec318818c033e"
+    },
+    {
+      "path": "access-log.jsonl",
+      "sha256": "aeededa01290599b64ce1b45d66e4778388ede3109d2b546c16345591ec6b89c"
+    }
+  ],
+  "derived_media": [
+    {
+      "path": "calibration-frames/exact-001.png",
+      "sha256": "5a4f96ef2ac2b97fbe1fb03278fed1badd7c86c790550b834eef73a8262e8c34"
+    },
+    {
+      "path": "calibration-frames/exact-002.png",
+      "sha256": "7abe4b13053f61baf6300f373e9cccf3da3dbf8d07df93e679245d30e878ef98"
+    },
+    {
+      "path": "calibration-frames/exact-003.png",
+      "sha256": "bd34d64e0de7ab6bc9c8b1696afeeff45b5222fdc5db8b82f7f75608dada0281"
+    },
+    {
+      "path": "calibration-frames/exact-004.png",
+      "sha256": "442e9408cb5f0f604535d3a1bcb1fb674b733100590b0fa07c4c0a28a08e0e35"
+    },
+    {
+      "path": "calibration-frames/exact-005.png",
+      "sha256": "7d58c35a4e50e6c638530bf027f377bc55903789812e4dba3870c94e342414ed"
+    },
+    {
+      "path": "calibration-frames/exact-006.png",
+      "sha256": "0f68a23c100d06bafdf181228783fb712c4de5d9bb8b55bd25d15d1afa251142"
+    },
+    {
+      "path": "calibration-frames/exact-007.png",
+      "sha256": "b575290998542ec208de9f11ec5297251ca70403d6642fa96bbbc5b58585c80c"
+    },
+    {
+      "path": "calibration-frames/exact-008.png",
+      "sha256": "b0c11ea3ae6388a16982ddd984607da873c0e2fd127ca4d2a5f23897f62c27b7"
+    },
+    {
+      "path": "calibration-frames/exact-009.png",
+      "sha256": "2c11ca371d8cc80653ac3d91f06f3675617b7b6347215a92b5f4f6ce6f1445d7"
+    },
+    {
+      "path": "calibration-frames/exact-010.png",
+      "sha256": "088d15558932d03b46ef0c97932f86bd189000996ab964cbedb8fa2a4a70747c"
+    },
+    {
+      "path": "calibration-frames/exact-011.png",
+      "sha256": "39282b3ccc2fbf9a9f2903bbdb19d0aa8e006fab0dc801f9773b4544452dd24b"
+    },
+    {
+      "path": "calibration-frames/exact-012.png",
+      "sha256": "0ada14fc9723687451d905c97f5172d6e75a458ebbad714ac63237884fccd016"
+    },
+    {
+      "path": "calibration-frames/exact-013.png",
+      "sha256": "8c2bac1ee0afa18c7a74460babd0b9072effb3a8579fe3f8086b86b7b69295e1"
+    },
+    {
+      "path": "calibration-frames/exact-014.png",
+      "sha256": "3f125b8cbb0c8d7f2f337e1685d85f1695052ca391f8832d5b34a260c8109d34"
+    }
+  ]
+}

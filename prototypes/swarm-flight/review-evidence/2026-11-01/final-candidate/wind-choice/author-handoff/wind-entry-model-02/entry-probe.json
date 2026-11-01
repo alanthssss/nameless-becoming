@@ -1,0 +1,217 @@
+{
+	"checks": 15,
+	"failures": 0,
+	"kind": "controlled front-open model fixtures; no player-exploration claim",
+	"rows": [
+		{
+			"open": true,
+			"p": [
+				3545.96826171875,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2710,
+				457
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3545.68579101562,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2710,
+				465
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3550.87255859375,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2710,
+				473
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3500.84741210938,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2717.5,
+				457
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3495.02197265625,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2717.5,
+				465
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3476.50122070312,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2717.5,
+				473
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3472.24096679688,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2725,
+				457
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3471.88134765625,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2725,
+				465
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3433.36889648438,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2725,
+				473
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3552.91284179688,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2732.5,
+				457
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3552.630859375,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2732.5,
+				465
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3552.1826171875,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2732.5,
+				473
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3555.06201171875,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2740,
+				457
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3554.77978515625,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2740,
+				465
+			]
+		},
+		{
+			"open": true,
+			"p": [
+				3554.49731445312,
+				100.0
+			],
+			"passed": true,
+			"recovery": 0,
+			"rings": 3,
+			"start": [
+				2740,
+				473
+			]
+		}
+	]
+}

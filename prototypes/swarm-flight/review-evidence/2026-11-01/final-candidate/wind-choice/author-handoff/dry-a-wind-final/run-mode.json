@@ -1,0 +1,12 @@
+{
+  "headless_fast_dry_run": true,
+  "env": {
+    "SWARM_DRY_FAST": "1"
+  },
+  "simulation_step": 0.016666666666666666,
+  "sample_interval_ticks": 2,
+  "renderer_waits_skipped": true,
+  "scene_creation_and_disk_cold_resume_still_await_process_frame": true,
+  "reason_for_sidecar": "Trace generation field was added after this process had loaded; run command confirms this mode. Original trace remains unchanged.",
+  "driver_mutation_during_run": "Only trace metadata field for future runs; input/actions and simulation unchanged."
+}

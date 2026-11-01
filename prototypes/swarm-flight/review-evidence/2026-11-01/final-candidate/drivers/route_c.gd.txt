@@ -1,0 +1,181 @@
+extends SceneTree
+## Known-answer continuous07-09 developer input; no seeded position, gate or resource.
+class NativeFixture extends "res://main.gd":
+	func _notification(what: int):
+		if what==NOTIFICATION_APPLICATION_FOCUS_OUT: print("NATIVE_FOCUS_OUT: frame=",Engine.get_process_frames())
+const Model=preload("res://long_journey_model.gd")
+const Driver=preload("res://route_driver.gd")
+var PRODUCTION_REVISION=OS.get_environment("SWARM_PRODUCTION_REVISION") if not OS.get_environment("SWARM_PRODUCTION_REVISION").is_empty() else "uncommitted-wind-layout-after-17f84019ad64302e4c972d5b339c7c637b36d820"
+const MAX_TICKS=90000
+var game
+var folder:=OS.get_environment("SWARM_LONG_QA_DIR")
+var dry_fast=DisplayServer.get_name()=="headless" and OS.get_environment("SWARM_DRY_FAST")=="1"
+var checks:=0
+var failures:=0
+var movie_ticks:=0
+var pressed={}
+var samples=[]
+var marks=[]
+var waits=[]
+var verdicts=[]
+var event_trace=[]
+func _initialize(): call_deferred("run")
+func snapshot() -> Dictionary:
+	var m=game.model
+	return {"tick":movie_ticks,"engine_frame":Engine.get_process_frames(),"stage":m.stage,"mode":game.mode,"phase":m.phase,"p":[m.p.x,m.p.y],"velocity":[m.velocity.x,m.velocity.y],"stamina":m.stamina,"recoveries":m.recoveries,"burst_left":m.burst_left,"charge":m.charge,"charging":m.charging,"checkpoint":m.checkpoint_index,"rings":m.rings_hit,"camera_x":m.camera_x}
+func check(ok: bool,label: String):
+	checks+=1
+	verdicts.append({"tick":movie_ticks,"pass":ok,"label":label})
+	if not ok:
+		failures+=1
+		print("FAIL: "+label)
+func voiced(kind: String): event_trace.append({"tick":movie_ticks,"stage":game.model.stage,"kind":kind})
+func key(code: Key,down: bool):
+	var e:=InputEventKey.new()
+	e.physical_keycode=code
+	e.keycode=code
+	e.pressed=down
+	root.push_input(e)
+	if down: pressed[code]=true
+	else: pressed.erase(code)
+func tap(code: Key):
+	key(code,true)
+	key(code,false)
+func release_all():
+	for code in pressed.keys(): key(code,false)
+func action(command: Dictionary):
+	var d: Vector2=command.direction
+	var codes=[KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_SPACE]
+	var values=[d.x<-.1,d.x>.1,d.y<-.1,d.y>.1,command.held]
+	for i in codes.size():
+		if values[i]!=pressed.has(codes[i]): key(codes[i],values[i])
+func tick(count:=1):
+	for i in count:
+		if movie_ticks>=MAX_TICKS:
+			check(false,"bounded comparison simulation budget exceeded")
+			write_trace()
+			quit(1)
+			return
+		game.tick(1.0/60)
+		game.world._process(1.0/60)
+		movie_ticks+=1
+		if movie_ticks%2==0:
+			samples.append(snapshot())
+			if not dry_fast: await process_frame
+func observed_wait(count: int,label: String):
+	var start:=movie_ticks
+	await tick(count)
+	waits.append({"start_tick":start,"end_tick":movie_ticks,"reason":label})
+func shot(name: String):
+	marks.append({"name":name,"state":snapshot()})
+	if DisplayServer.get_name()=="headless": return
+	game.queue_redraw()
+	game.world.queue_redraw()
+	await RenderingServer.frame_post_draw
+	check(root.get_texture().get_image().save_png(folder.path_join(name+".png"))==OK,"capture "+name)
+func new_scene():
+	game=NativeFixture.new()
+	game.progress_file=folder.path_join("save.json")
+	root.add_child(game)
+	await process_frame
+	game.set_process(false)
+	game.world.set_process(false)
+	game.muted=false
+	game.sound.set_muted(false)
+	game.sound.event_played.connect(voiced)
+func cold_resume(label: String):
+	tap(KEY_ESCAPE)
+	var before: Dictionary=game.model.save_payload()
+	check(game.mode=="pause" and game.has_saved,"actual disk pause "+label)
+	await observed_wait(90,"paused comparison roundtrip: "+label)
+	check(game.model.save_payload()==before,"paused model exactly frozen "+label)
+	release_all()
+	game.queue_free()
+	await process_frame
+	await new_scene()
+	check(not game.saved_payload.is_empty(),"disk cold scene reads actual saved payload "+label)
+	tap(KEY_DOWN)
+	tap(KEY_ENTER)
+	if before.get("completed",false):
+		check(game.mode=="ending" and game.model.save_payload()==before,"completed arrival cold-resumes at exact ending "+label)
+		return
+	check(game.mode=="pause" and game.model.save_payload()==before,"exact actual-menu cold resume "+label)
+	tap(KEY_ESCAPE)
+func write_trace():
+	var f=FileAccess.open(folder.path_join("trace.json"),FileAccess.WRITE)
+	f.store_string(JSON.stringify({"kind":"known-answer continuous07-09 ordinary-input developer route; no player exploration or subjective listening claim","revision":PRODUCTION_REVISION,"headless_fast_dry_run":dry_fast,"fixed_fps":30,"simulation_step":1.0/60,"sample_interval_ticks":2,"total_simulation_ticks":movie_ticks,"simulation_seconds":movie_ticks/60.0,"checks":checks,"failures":failures,"assertions":verdicts,"marks":marks,"recorded_waits":waits,"samples":samples,"voiced_events":event_trace},"\t"))
+	f.close()
+func run():
+	if folder.is_empty() or FileAccess.file_exists(folder.path_join("save.json")):
+		print("Set SWARM_LONG_QA_DIR to a fresh directory; pass --long-journey")
+		quit(1)
+		return
+	DirAccess.make_dir_recursive_absolute(folder)
+	await new_scene()
+	check(game.long_journey and game.saved_payload.is_empty(),"fresh comparison via actual title and isolated save")
+	await shot("00-comparison-title")
+	tap(KEY_ENTER)
+	key(KEY_RIGHT,true)
+	await tick(45)
+	key(KEY_RIGHT,false)
+	key(KEY_SPACE,true)
+	await observed_wait(27,"ordinary charge before cold pause")
+	await cold_resume("live charge")
+	check(game.resume_charge_guard,"restored charge waits for actual player take-over")
+	await observed_wait(60,"verify no invented release after cold charge")
+	key(KEY_SPACE,true)
+	await tick()
+	key(KEY_SPACE,false)
+	await tick(4)
+	check(game.model.burst_left>0,"resumed real charge releases into burst")
+	await shot("01-live-burst-resumed")
+	await cold_resume("active burst")
+	var driver=Driver.new(game.model)
+	driver.wait_for_full=true
+	var captured={}
+	for frame in MAX_TICKS:
+		if game.mode=="ending" or movie_ticks>=MAX_TICKS or failures>0: break
+		if game.mode=="pause":
+			marks.append({"name":"external-pause-resumed-with-Escape","state":snapshot()})
+			tap(KEY_ESCAPE)
+			check(game.mode!="pause","ordinary Escape resumes unexpected native pause")
+		if game.mode in ["transition","arrival"]:
+			release_all()
+			var label="%02d-handoff" % (game.model.stage+7)
+			await shot(label)
+			await cold_resume(label)
+			if game.mode=="ending": break
+			check(game.mode in ["transition","arrival"],"handoff cold resume preserves actual pending transition")
+			tap(KEY_ENTER)
+			driver=Driver.new(game.model)
+			driver.wait_for_full=true
+			continue
+		var command: Dictionary=driver.next_input()
+		if not driver.error.is_empty():
+			check(false,driver.error)
+			break
+		action(command)
+		await tick()
+		var encounter: int=game.model.encounter_index()
+		var id: String="%d-%d" % [game.model.stage+7,encounter]
+		if not captured.has(id) and game.model.p.x>game.model.chapter.encounters[encounter].start_x+900:
+			captured[id]=true
+			await shot("play-"+id)
+		if frame%6000==0: print("COMPARISON_PROGRESS: stage=%d x=%.0f ticks=%d" % [game.model.stage+7,game.model.p.x,movie_ticks])
+	check(game.mode=="ending" and game.model.stage==2,"continuous ordinary comparison07-09 reaches ending")
+	check(game.model.recoveries==0,"comparison route has no forced failure recovery")
+	check(game.has_saved,"comparison ending persisted to isolated path")
+	await shot("09-comparison-ending")
+	var ending: Dictionary=game.model.save_payload()
+	release_all()
+	game.queue_free()
+	await process_frame
+	await new_scene()
+	tap(KEY_DOWN)
+	tap(KEY_ENTER)
+	check(game.mode=="ending" and game.model.save_payload()==ending,"completed comparison ending cold-loads exactly")
+	write_trace()
+	game.queue_free()
+	await process_frame
+	print("POND MVP ROUTE C VERIFIED: %d checks, %d failures; %d ticks at60Hz" % [checks,failures,movie_ticks])
+	quit(1 if failures else 0)

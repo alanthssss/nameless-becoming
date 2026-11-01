@@ -1,0 +1,87 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+COMPARISON_PROGRESS: stage=7 x=439 ticks=318
+COMPARISON_PROGRESS: stage=7 x=31769 ticks=6318
+COMPARISON_PROGRESS: stage=7 x=50375 ticks=12318
+COMPARISON_PROGRESS: stage=8 x=19612 ticks=18407
+FAIL: exact actual-menu cold resume 09-handoff
+FAIL: handoff cold resume preserves actual pending transition
+COMPARISON_PROGRESS: stage=7 x=5381 ticks=24585
+COMPARISON_PROGRESS: stage=7 x=36416 ticks=30585
+COMPARISON_PROGRESS: stage=8 x=5531 ticks=36674
+COMPARISON_PROGRESS: stage=8 x=36981 ticks=42674
+FAIL: exact actual-menu cold resume 09-handoff
+FAIL: handoff cold resume preserves actual pending transition
+COMPARISON_PROGRESS: stage=7 x=21828 ticks=48852
+COMPARISON_PROGRESS: stage=7 x=53092 ticks=54852
+COMPARISON_PROGRESS: stage=8 x=21959 ticks=60941
+FAIL: exact actual-menu cold resume 09-handoff
+FAIL: handoff cold resume preserves actual pending transition
+COMPARISON_PROGRESS: stage=7 x=7098 ticks=67119
+COMPARISON_PROGRESS: stage=7 x=39227 ticks=73119
+COMPARISON_PROGRESS: stage=8 x=7571 ticks=79208
+COMPARISON_PROGRESS: stage=9 x=2615 ticks=85297
+FAIL: exact actual-menu cold resume 09-handoff
+FAIL: handoff cold resume preserves actual pending transition
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded
+FAIL: bounded comparison simulation budget exceeded

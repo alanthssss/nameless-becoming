@@ -1,0 +1,322 @@
+[
+  {
+    "state": {
+      "camera_x": 2290.16674804688,
+      "color": 2,
+      "cue_caption_clear": true,
+      "cue_clear": true,
+      "dew": 4,
+      "engine_frame": 2278,
+      "exposed": false,
+      "front": true,
+      "keeper_pos": [
+        2448.0,
+        465.0
+      ],
+      "keeper_state": "tidy",
+      "keeper_target": [
+        2740.0,
+        465.0
+      ],
+      "listeners": [
+        {
+          "p": [
+            3905.0,
+            512.0
+          ],
+          "state": "waiting"
+        },
+        {
+          "p": [
+            3953.0,
+            536.0
+          ],
+          "state": "waiting"
+        }
+      ],
+      "message_revision": 0,
+      "mode": "play",
+      "observed": true,
+      "p": [
+        3390.16674804688,
+        621.1689453125
+      ],
+      "passage": true,
+      "phase": "playing",
+      "recoveries": 1,
+      "result": 0.0,
+      "rings": 3,
+      "share": "idle",
+      "shelter": -1,
+      "shield": 0.0,
+      "small_pos": [
+        2390.0,
+        285.0
+      ],
+      "small_state": "idle",
+      "stage": 2,
+      "stamina": 94.6500000000003,
+      "tick": 4534,
+      "warning": 0.0,
+      "weather": "after"
+    },
+    "raw_frame_index": 2278,
+    "note": "selected by recorded engine frame; Render frame mapping differs by initial frame offset at most a few frames"
+  },
+  {
+    "state": {
+      "camera_x": 2162.7822265625,
+      "color": 2,
+      "cue_caption_clear": true,
+      "cue_clear": true,
+      "dew": 4,
+      "engine_frame": 2374,
+      "exposed": false,
+      "front": true,
+      "keeper_pos": [
+        2966.0,
+        220.0
+      ],
+      "keeper_state": "tidy",
+      "keeper_target": [
+        2980.0,
+        220.0
+      ],
+      "listeners": [
+        {
+          "p": [
+            3905.0,
+            512.0
+          ],
+          "state": "waiting"
+        },
+        {
+          "p": [
+            3953.0,
+            536.0
+          ],
+          "state": "waiting"
+        }
+      ],
+      "message_revision": 0,
+      "mode": "play",
+      "observed": true,
+      "p": [
+        3262.7822265625,
+        615.704467773438
+      ],
+      "passage": true,
+      "phase": "playing",
+      "recoveries": 1,
+      "result": 0.0,
+      "rings": 3,
+      "share": "idle",
+      "shelter": -1,
+      "shield": 0.0,
+      "small_pos": [
+        2390.0,
+        285.0
+      ],
+      "small_state": "idle",
+      "stage": 2,
+      "stamina": 88.2500000000007,
+      "tick": 4726,
+      "warning": 0.0,
+      "weather": "after"
+    },
+    "raw_frame_index": 2374,
+    "note": "selected by recorded engine frame; Render frame mapping differs by initial frame offset at most a few frames"
+  },
+  {
+    "state": {
+      "camera_x": 2162.7822265625,
+      "color": 2,
+      "cue_caption_clear": true,
+      "cue_clear": true,
+      "dew": 4,
+      "engine_frame": 2414,
+      "exposed": false,
+      "front": true,
+      "keeper_pos": [
+        3236.0,
+        265.0
+      ],
+      "keeper_state": "tidy",
+      "keeper_target": [
+        3245.0,
+        265.0
+      ],
+      "listeners": [
+        {
+          "p": [
+            3905.0,
+            512.0
+          ],
+          "state": "waiting"
+        },
+        {
+          "p": [
+            3953.0,
+            536.0
+          ],
+          "state": "waiting"
+        }
+      ],
+      "message_revision": 0,
+      "mode": "play",
+      "observed": true,
+      "p": [
+        3262.7822265625,
+        615.704467773438
+      ],
+      "passage": true,
+      "phase": "playing",
+      "recoveries": 1,
+      "result": 0.0,
+      "rings": 3,
+      "share": "idle",
+      "shelter": -1,
+      "shield": 0.0,
+      "small_pos": [
+        2390.0,
+        285.0
+      ],
+      "small_state": "idle",
+      "stage": 2,
+      "stamina": 85.5833333333342,
+      "tick": 4806,
+      "warning": 0.0,
+      "weather": "after"
+    },
+    "raw_frame_index": 2414,
+    "note": "selected by recorded engine frame; Render frame mapping differs by initial frame offset at most a few frames"
+  },
+  {
+    "state": {
+      "camera_x": 2162.7822265625,
+      "color": 2,
+      "cue_caption_clear": true,
+      "cue_clear": true,
+      "dew": 4,
+      "engine_frame": 2481,
+      "exposed": false,
+      "front": true,
+      "keeper_pos": [
+        3580.0,
+        269.0
+      ],
+      "keeper_state": "tidy",
+      "keeper_target": [
+        3580.0,
+        630.0
+      ],
+      "listeners": [
+        {
+          "p": [
+            3905.0,
+            512.0
+          ],
+          "state": "waiting"
+        },
+        {
+          "p": [
+            3953.0,
+            536.0
+          ],
+          "state": "waiting"
+        }
+      ],
+      "message_revision": 0,
+      "mode": "play",
+      "observed": true,
+      "p": [
+        3262.7822265625,
+        615.704467773438
+      ],
+      "passage": true,
+      "phase": "playing",
+      "recoveries": 1,
+      "result": 0.6,
+      "rings": 3,
+      "share": "idle",
+      "shelter": -1,
+      "shield": 0.0,
+      "small_pos": [
+        2390.0,
+        285.0
+      ],
+      "small_state": "idle",
+      "stage": 2,
+      "stamina": 81.1166666666677,
+      "tick": 4940,
+      "warning": 0.0,
+      "weather": "after"
+    },
+    "raw_frame_index": 2481,
+    "note": "selected by recorded engine frame; Render frame mapping differs by initial frame offset at most a few frames"
+  },
+  {
+    "state": {
+      "camera_x": 2163.08471679688,
+      "color": 2,
+      "cue_caption_clear": true,
+      "cue_clear": true,
+      "dew": 4,
+      "engine_frame": 2620,
+      "exposed": false,
+      "front": true,
+      "keeper_pos": [
+        3270.0,
+        630.0
+      ],
+      "keeper_state": "settled",
+      "keeper_target": [
+        3270.0,
+        630.0
+      ],
+      "listeners": [
+        {
+          "p": [
+            3905.0,
+            512.0
+          ],
+          "state": "waiting"
+        },
+        {
+          "p": [
+            3953.0,
+            536.0
+          ],
+          "state": "waiting"
+        }
+      ],
+      "message_revision": 0,
+      "mode": "play",
+      "observed": true,
+      "p": [
+        3263.08471679688,
+        615.482971191406
+      ],
+      "passage": true,
+      "phase": "playing",
+      "recoveries": 1,
+      "result": 2.4,
+      "rings": 3,
+      "share": "idle",
+      "shelter": -1,
+      "shield": 0.0,
+      "small_pos": [
+        2390.0,
+        285.0
+      ],
+      "small_state": "idle",
+      "stage": 2,
+      "stamina": 71.8500000000016,
+      "tick": 5218,
+      "warning": 0.0,
+      "weather": "after"
+    },
+    "raw_frame_index": 2620,
+    "note": "selected by recorded engine frame; Render frame mapping differs by initial frame offset at most a few frames"
+  }
+]
