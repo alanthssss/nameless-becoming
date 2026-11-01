@@ -1,0 +1,8 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+ERROR: Invalid polygon data, triangulation failed.
+   at: canvas_item_add_polygon (servers/rendering/renderer_canvas_cull.cpp:1727)
+   GDScript backtrace (most recent call first):
+       [0] _ellipse (res://world_view.gd:823)
+       [1] _draw (res://ellipse_precision_probe.gd:17)
+ELLIPSE PRECISION VERIFIED: 128 production draws, 0 failures; renderer error log must also be empty
