@@ -392,6 +392,13 @@ func run() -> void:
 	frames(bird,60)
 	check(bird.bird_greeted and bird.observation_valid() and bird.stamina>70,"stationary source gives bird response, fact and real restoration")
 	roundtrip(bird,"bird response")
+	var visible_contact=fresh()
+	visible_contact.load_stage(2)
+	visible_contact.p=Model.SOURCE+Vector2(39,14)
+	visible_contact.velocity=Vector2.ZERO
+	check(visible_contact.context_cue().kind=="flower","visible flower contact is not masked by nearby lamp cue")
+	frames(visible_contact,60)
+	check(visible_contact.observation_valid(),"visible central flower contact records source at painted center")
 	var bud=fresh()
 	bud.p=Model.SMALL_FLOWER_HOME+Vector2(-14,62)
 	bud.stamina=60

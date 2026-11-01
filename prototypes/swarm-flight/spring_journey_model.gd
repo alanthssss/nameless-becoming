@@ -79,6 +79,8 @@ var bird_greeted=false
 var bird_elapsed=0.0
 const BIRD_PERCH=Vector2(3395+POND_APPROACH_EXTENSION,299)
 const SOURCE := Vector2(3200+POND_APPROACH_EXTENSION,420)
+# Match the center painted by BeeDanceView._source_cluster.
+const SOURCE_FEED_CENTER := SOURCE+Vector2(18,20)
 const COMB := Vector2(3850+POND_APPROACH_EXTENSION,500)
 const SOURCE_ID := "pond-blue-cluster"
 const FEED_SECONDS := 0.7
@@ -328,7 +330,7 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 	# Keep source, dancer and listeners in one view during communication.
 	if stage==2: camera_x = homeward_camera_left(p.x)
 	if phase != "playing": return
-	if stage!=1 and source_open and p.distance_to(SOURCE) < 34 and velocity.length() < 32 and not moving and not held and burst_left <= 0:
+	if stage!=1 and source_open and p.distance_to(SOURCE_FEED_CENTER) < 34 and velocity.length() < 32 and not moving and not held and burst_left <= 0:
 		feeding_elapsed = minf(FEED_SECONDS,feeding_elapsed+dt)
 		if feeding_elapsed >= FEED_SECONDS and not observation_valid():
 			observation = source_fact(source_revision)
@@ -414,7 +416,7 @@ func advance(direction: Vector2,dt: float) -> void:
 		if p.x>=3690:
 			weather_phase="after"
 			drops.clear()
-	if perched or (stage!=1 and source_open and p.distance_to(SOURCE)<34 and direction.is_zero_approx()): gain_energy(REST_RECOVERY*dt)
+	if perched or (stage!=1 and source_open and p.distance_to(SOURCE_FEED_CENTER)<34 and direction.is_zero_approx()): gain_energy(REST_RECOVERY*dt)
 	super.advance(direction,dt)
 	if retries!=recoveries: return
 	resolve_leaf_roofs(before)
@@ -596,8 +598,6 @@ func context_cue() -> Dictionary:
 		return {"pos":BIRD_PERCH,"text":"画眉：你也来尝这簇花？雨要来了，前面的叶棚能歇脚。","kind":"bird"}
 	if stage==0 and p.distance_to(SMALL_FLOWER_HOME+Vector2(-14,62))<100:
 		return {"pos":SMALL_FLOWER_HOME+Vector2(-14,62),"text":"花苞还没开","kind":"flower"}
-	if p.distance_to(shelters[-1].pos)<125:
-		return {"pos":shelters[-1].pos,"text":"花蜡灯 · 彩光落在歇脚的叶上","kind":"lamp"}
 	if stage!=1 and not source_open and p.distance_to(SOURCE)<180: return {"pos":SOURCE,"text":"花已经合拢 · 这条花路暂时歇了","kind":"flower"}
 	if stage==2 and not front_open and p.distance_to(KNOT)<430:
 		return {"pos":KNOT,"text":"绳松了 · 冲开干叶结" if keeper.state=="counting" else "绳还绷着 · 留意它何时盘点","kind":"keeper"}
@@ -606,6 +606,8 @@ func context_cue() -> Dictionary:
 	if stage==2 and perched:
 		return {"pos":COMB,"text":"松开空格开始 · 方向键取消" if share_state=="armed" else "方向键随时离开" if share_state=="dancing" else "空格按住再松开 · 分享花路" if can_share() else "旧花路已歇，等下一条消息" if not source_open else "它们已经听到了" if message_revision>0 else "还没有亲自看过的花路","kind":"dance"}
 	if stage!=1 and p.distance_to(SOURCE)<180 and not observation_valid(): return {"pos":SOURCE,"text":"在花心停稳，尝一口花蜜","kind":"flower"}
+	if p.distance_to(shelters[-1].pos)<125:
+		return {"pos":shelters[-1].pos,"text":"花蜡灯 · 彩光落在歇脚的叶上","kind":"lamp"}
 	if stage==2 and p.distance_to(COMB)<210: return {"pos":COMB,"text":"停在蜡脾上 · 可以分享花路","kind":"dance"}
 	return super.context_cue()
 
