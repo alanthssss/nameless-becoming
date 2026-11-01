@@ -98,6 +98,10 @@
       "sha256": "7ddbbc99571dab51bcbd3e0b1478e757d5735ed4242b24a5e9e2dc386b6b1adb"
     },
     {
+      "path": "final-audit.json",
+      "sha256": "a91dfa120bd540edbf023fbf33c804e6dbd964867b7773a7dce0d8d47e39dd7e"
+    },
+    {
       "path": "final-package-proof/comparison-before-exit.json",
       "sha256": "31f9d897c00b01568d650acb650603b952c555b3c3089a91e3750e99c9d6e608"
     },

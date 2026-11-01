@@ -1,0 +1,19 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+Movie Maker mode enabled, recording movie in 1280×800 @ 60 FPS...
+FAIL: pause freezes live charge, energy and clocks
+FAIL: charge resume waits for player to take Space
+FAIL: restored charge can launch normally
+UI_PROGRESS: stage=7 x=180
+UI_PROGRESS: stage=7 x=31911
+UI_PROGRESS: stage=8 x=930
+UI_PROGRESS: stage=8 x=32513
+LONG JOURNEY UI VERIFIED: 55 checks, 3 failures
+--------------------------------------------------------------------------------
+Done recording movie at path: /private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/native-comparison/run.avi
+21254 frames at 60 FPS (movie length: 00:05:54:14), recorded in 00:05:59 (98% of real-time speed).
+CPU render time: 15.80 seconds (average: 0.74 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 149.08 seconds (average: 7.01 ms/frame)
+--------------------------------------------------------------------------------
