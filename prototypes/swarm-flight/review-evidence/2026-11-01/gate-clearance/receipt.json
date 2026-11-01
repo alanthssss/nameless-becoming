@@ -9,13 +9,18 @@
       220,
       221,
       204
-    ]
+    ],
+    "support_fix_issue": 216
   },
-  "production_changes": false,
+  "production_changes": "One stage guard in spring_journey_view._terrain; see support-fix/receipt.json. No gameplay/geometry/audio/save changes.",
   "verification": {
-    "production_source_hashes": 40,
+    "unchanged_production_source_hashes": 39,
+    "explicitly_changed_source_files": 1,
     "inherited_artifact_hashes": 41,
-    "source_row_actual_call_hashes": 220
+    "unchanged_actual_call_hashes": 193,
+    "actual_calls_using_verified_view_delta": 27,
+    "support_native_checks": 12,
+    "support_native_failures": 0
   },
   "M3_allowed": true,
   "MVP_complete": false,
@@ -33,11 +38,23 @@
     "cumulative_active_effort": "unknown",
     "reliable_remaining": "unknown",
     "automation": "PAUSED",
-    "decision": "Continue already-authorized bounded MVP; no new spending or full-game expansion."
+    "decision": "Continue already-authorized bounded MVP; no new spending or full-game expansion.",
+    "estimate_revision": "Actual visual counterexample adds one bounded source repair and native review; additional10–15min estimated including review, CI/cleanup tracked in#204."
   },
   "artifact_hashes": {
-    "adjudication.json": "2a8681a2aa312cc21012daa434b56fbc2c006428b4ad49075582e2715653961a",
+    "adjudication.json": "f89eba51b6954f4cccf9de917b569129c0df0d398ce53f1f8279bc7228c91bf8",
     "listening-feedback.json": "889db425a4c7dfcf7ef61843cba5433e33e48c226f38328eab732569f364ad71",
-    "prior-independent-review.json": "3a2cb1740c2ed0a19809812360c268de4c4ccfb28e7030df3e91f35161fffd4c"
+    "prior-independent-review.json": "3a2cb1740c2ed0a19809812360c268de4c4ccfb28e7030df3e91f35161fffd4c",
+    "support-fix/01-lower-entry.png": "6ee4ef5b0a04ab9ff328ad78cb8bfa9d8e332117db855ffb997513d288748b1e",
+    "support-fix/02-between-background-stems.png": "8b1f7c32670ca55811508b13a3e126d06c320c816dab9831ccaecc709deb6e84",
+    "support-fix/03-lower-exit.png": "94f6a4cf7056d2926e1293c65ecc335eddac0fe20332d737620fbee9bf3cac70",
+    "support-fix/04-upper-entry.png": "5f25ffe12f07ac8645f05b4c5623cbc07ec2dc9fecdc8c8d7be9a9e7ca06508f",
+    "support-fix/05-upper-exit.png": "5d131604bbdf0b721fecb1cc7b77f273283584a1cae17d9483f8e0763f97484b",
+    "support-fix/driver.gd.txt": "5713dfc65274bc2e9d451fe045a0ca253b4b4ca6ebb6dd58d2f0310d8dc0ca3b",
+    "support-fix/encode.log.gz": "1e1eed1468fc6bfdfd0507caef17d1ce6ccabcb1493cfe72e5d8ec528398d158",
+    "support-fix/native.log": "51fc85b37af56a00cbf1ef2c8371eed84e32c596587dcc7b44cff7219010c3e2",
+    "support-fix/native.mp4": "0e8893a5058e0d9277ff8f7cae2fcdaee013435522b3c8ee103bfa5f1a98210c",
+    "support-fix/receipt.json": "e4dec6248e5bce7299243a0e0f5993858d12c1ea06e64d7e5dfa8abab3832010",
+    "support-fix/trace.json": "0e0d569528ec17b0301dbdc67dd27bf2416ce0485e2e1bc8c29c0a9edbe06f0d"
   }
 }

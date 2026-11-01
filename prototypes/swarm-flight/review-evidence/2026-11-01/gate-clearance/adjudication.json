@@ -9,10 +9,11 @@
       220,
       221,
       204
-    ]
+    ],
+    "support_fix_issue": 216
   },
   "baseline_revision": "13baf9d9dd5860dd489cb9dbff2e2bdbf98685d2",
-  "frozen_production_revision": "281da0047cf120a53d532229571827c67894c438",
+  "frozen_production_revision": "5e0856aae4d5a66e16bc1dd2240482f6b4025d33",
   "inherited_source_table": {
     "path": "../composition/source-adjudication.json",
     "sha256": "e3630537f236aeb3957a93605570a2d309dd40461cc1e72f0c66473eca63fba4",
@@ -32,7 +33,7 @@
         "舞蹈/取消",
         "抵达"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -54,7 +55,7 @@
         "真实茎边滑离",
         "真实叶体下沿展开"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -77,7 +78,7 @@
         "低于 20 拒绝起冲",
         "新按/松开的输入边界"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -98,7 +99,7 @@
         "R 清旧输入",
         "Esc 暂停/冷恢复"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -121,7 +122,7 @@
         "低于 20 拒冲",
         "恢复到 100"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -141,7 +142,7 @@
         "拒冲",
         "伤害后/恢复后值"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -162,7 +163,7 @@
         "就绪/起冲",
         "保护重要原因"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -184,7 +185,7 @@
         "无敌期不重复",
         "R 与雨耗尽恢复"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -206,7 +207,7 @@
         "分享提交",
         "抵达"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -226,7 +227,7 @@
         "普通消息给重要原因让位",
         "护雨挡击 0.35 秒节流"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -247,7 +248,7 @@
         "开口前后",
         "已观察/可分享/已提交"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -268,7 +269,7 @@
         "全身避让",
         "小窗"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -289,7 +290,7 @@
         "背牌/提牌/落位剔除",
         "有限截图视野"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -309,7 +310,7 @@
         "1280×800",
         "960×600 首屏提示避让"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -330,7 +331,7 @@
         "真实磁盘冷恢复",
         "声音暂停去重"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -349,7 +350,7 @@
         "实际固定露珠",
         "拾取/体力收益/已取保留"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -371,7 +372,7 @@
         "完整采食观察",
         "归来补观察"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -392,7 +393,7 @@
         "普通蚊旁小闭苞",
         "不显示开放蜜源轮廓"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -412,7 +413,7 @@
         "固定株茎落地",
         "源花/闭苞/棚/支架接地"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -434,7 +435,7 @@
         "叶棚支撑",
         "牌架曲枝"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -455,7 +456,7 @@
         "小闭苞侧叶同曲线生根",
         "棚叶"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -476,7 +477,7 @@
         "03 画眉落枝",
         "05 空枝重访"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -496,7 +497,7 @@
         "首屏叶面同伴待机/向玩家转头",
         "附近提示"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -518,7 +519,7 @@
         "实际接触",
         "保护期间接触"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -538,7 +539,7 @@
         "03 抬头回应/短鸣/转向叶棚",
         "05 空枝重访"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -558,7 +559,7 @@
         "闭苞/同伴/对话共同提示出去找花路",
         "庄主逐牌挂起铺垫"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -577,7 +578,7 @@
       "actual_use_states": [
         "03/05 同坐标水面/花簇/鸟枝重访"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -597,7 +598,7 @@
         "当前 Spring 背景/雨廊主题",
         "棚灯局部色光"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -617,7 +618,7 @@
         "末棚小灯中 draw_window",
         "color_step 当前局部回应"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -637,7 +638,7 @@
         "真实实体竖茎接触/滑行",
         "前后开口两侧立柱"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -657,7 +658,7 @@
         "可见雨挡止",
         "边缘绕行"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -678,7 +679,7 @@
         "第二口背面空间可破",
         "打开后移除"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -699,7 +700,7 @@
         "侧后方第二道开口",
         "普通上下绕行"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -720,7 +721,7 @@
         "接力后可离开",
         "普通飞行可绕过"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -740,7 +741,7 @@
         "三节点方向标",
         "节点间视觉提示"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -761,7 +762,7 @@
         "可转向",
         "上下普通绕行"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -782,7 +783,7 @@
         "05 树洞抵达",
         "实际最后路段"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -803,7 +804,7 @@
         "蜡脾邻近",
         "抵达/结尾"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -823,7 +824,7 @@
         "04 warning/rain 云层显示",
         "after 退去"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -844,7 +845,7 @@
         "受控物理雨滴碰撞",
         "棚/顶截断"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -865,7 +866,7 @@
         "雨中局部遮护",
         "重试"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -886,7 +887,7 @@
         "真实下沿接触",
         "遮雨/休息"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -907,7 +908,7 @@
         "灯悬点",
         "接地"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -928,7 +929,7 @@
         "遮雨边界",
         "离叶后露天"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -948,7 +949,7 @@
         "R 回安全点",
         "受雨耗尽恢复"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -967,7 +968,7 @@
         "通过键盘实际靠近拾取一次",
         "已取状态"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -989,7 +990,7 @@
         "临近结束",
         "自然消失"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1009,7 +1010,7 @@
         "小于0.5仍保护",
         "到0消失"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1030,7 +1031,7 @@
         "追逐/回位",
         "到挂点查看/提牌/携带/安置"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1051,7 +1052,7 @@
         "背牌实体梁",
         "挂点与落位支架"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1073,7 +1074,7 @@
         "携带双牌之间绳",
         "落位绳"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1094,7 +1095,7 @@
         "第二口背面露出",
         "解开后消失"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1116,7 +1117,7 @@
         "挂钩查看",
         "携带/安置与镜头剔除"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1136,7 +1137,7 @@
         "第一口/第二口真实已开事实",
         "重试/冷恢复保留"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1159,7 +1160,7 @@
         "05 真源补观察",
         "保存事实"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1181,7 +1182,7 @@
         "有效新输入",
         "方向离开"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1203,7 +1204,7 @@
         "新按提交",
         "重复无提交"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1224,7 +1225,7 @@
         "到源花采食",
         "冷恢复不重复起飞"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1244,7 +1245,7 @@
         "提交的信息指向同一 SOURCE",
         "左蜂 (3195,465) 安全采食"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1266,7 +1267,7 @@
         "成功只提交一次",
         "冷恢复不重提"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1286,7 +1287,7 @@
         "真实磁盘重建精确恢复",
         "不重放事件"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1306,7 +1307,7 @@
         "临时输入/危险清理",
         "安全点恢复"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1326,7 +1327,7 @@
         "临时文件原子替换",
         "失败不覆盖"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1345,7 +1346,7 @@
         "未知/损坏拒绝",
         "磁盘反例保留原字节"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1365,7 +1366,7 @@
         "升级 route_geometry_revision 前原字节备份",
         "备份失败拒绝覆盖"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1385,7 +1386,7 @@
         "真实最终路段抵达",
         "结尾保存/重开"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1404,7 +1405,7 @@
       "actual_use_states": [
         "就绪/早松/体力拒绝"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1425,7 +1426,7 @@
       "actual_use_states": [
         "起冲"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1446,7 +1447,7 @@
       "actual_use_states": [
         "固定风花接力"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1467,7 +1468,7 @@
       "actual_use_states": [
         "露珠拾取"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1488,7 +1489,7 @@
       "actual_use_states": [
         "解开两道叶结"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1509,7 +1510,7 @@
       "actual_use_states": [
         "实际蚊/雨伤"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1530,7 +1531,7 @@
       "actual_use_states": [
         "登记/R/受雨恢复/旧档安全回退"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1552,7 +1553,7 @@
       "actual_use_states": [
         "拾取/挡击节流/自然结束"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1573,7 +1574,7 @@
       "actual_use_states": [
         "抵达/结尾"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1594,7 +1595,7 @@
       "actual_use_states": [
         "预警/露天雨/叶下雨/after 静止"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1615,7 +1616,7 @@
       "actual_use_states": [
         "普通画眉一次回应"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1636,7 +1637,7 @@
       "actual_use_states": [
         "挂牢三次/每次盘点/提牌/安置"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1657,7 +1658,7 @@
       "actual_use_states": [
         "蜂舞循环/提交/各自真正起飞"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1678,7 +1679,7 @@
       "actual_use_states": [
         "完成观察一次"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1701,7 +1702,7 @@
         "04/05 当前 arrangement 2",
         "暂停/静音既有行为"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
@@ -1723,12 +1724,14 @@
         "03/04 默认 terrain 花篱实体正面",
         "04 棚边花篱顶盖与固定支撑"
       ],
-      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision.",
+      "source_version_use_locations_and_raw_evidence": "The inherited row supplies actual source paths and SHA256, state/use positions and raw artifacts. Its version_delta_review and referenced native receipts are part of this bounded decision. source_delta supplies the current view-file override and its targeted native revalidation.",
       "G0": "pass_declared_use",
       "G1": "pass_declared_use",
       "G2": "pass_declared_use",
-      "decision_reason": "Current terrain default calls actual hedge renderer;fixed front face/supports visible and1900roof real rain boundary proven;not every hedge cutout/season/scale.",
-      "additional_evidence": [],
+      "decision_reason": "Prior source-table support claim was false for the stage0 suspended hedge. G0 original first-fork image demonstrates the missing stems;5e0856a extends existing grounded rear stems to stage0. support-fix records12 native checks/398frames/5 inspected PNG and ordinary upper/lower traversal. Stage1 evidence remains unchanged. This replaces the inherited hedge support conclusion only within current authored use.",
+      "additional_evidence": [
+        "support-fix/receipt.json"
+      ],
       "unsupported_scope": [
         "terrain default material=hedge → Spring super._terrain → ArtSprites.hedge is actually called. Does not instantiate W01–08,landing-platform,or prove all front/back/opening variants.",
         "No G3 composition,independent exploration,human acceptance,other family variants or subjective audio approval from this row."
@@ -1765,7 +1768,8 @@
       "G3": "pass_declared_current_composition",
       "decision_by": "/root (integrator)",
       "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
-      "decision_reason": "Actual direction input,dew4 allocations,resource use,physical mosquito8hit,canopy rest,R and retained first-gate fact. Stem/leaf9→14,low20refusal and physicalrain30 boundaries use cited source-state/ordinary-mosquito/rain-sources receipts. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+      "decision_reason": "Actual direction input,dew4 allocations,resource use,physical mosquito8hit,canopy rest,R and retained first-gate fact. Stem/leaf9→14,low20refusal and physicalrain30 boundaries use cited source-state/ordinary-mosquito/rain-sources receipts. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency. The later stage0 floating-hedge counterexample was fixed and targeted native revalidation is in support-fix/receipt.json; this final decision supersedes the initially premature hedge approval.",
+      "source_delta_evidence": "support-fix/receipt.json"
     },
     {
       "id": "C02",
@@ -1794,7 +1798,8 @@
       "G3": "pass_declared_current_composition",
       "decision_by": "/root (integrator)",
       "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
-      "decision_reason": "Birth closed buds/companion,connected flower/perch and one real source observation persist through actual cold/stage transitions; keeper hanging3 occurs on same route. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+      "decision_reason": "Birth closed buds/companion,connected flower/perch and one real source observation persist through actual cold/stage transitions; keeper hanging3 occurs on same route. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency. The later stage0 floating-hedge counterexample was fixed and targeted native revalidation is in support-fix/receipt.json; this final decision supersedes the initially premature hedge approval.",
+      "source_delta_evidence": "support-fix/receipt.json"
     },
     {
       "id": "C03",
@@ -1937,7 +1942,8 @@
       "G3": "pass_declared_current_composition",
       "decision_by": "/root (integrator)",
       "operation_and_raw_evidence": "../composition/receipt.json, its native driver/trace/17PNG plus exact selected frames, and the per-source raw receipts referenced by source-adjudication.json. Known-answer developer route; not independent exploration.",
-      "decision_reason": "Current names and fitted ending;1280x800 and960x600 images;all sampledcue/body/caption assertions. Actual22voicekinds and recordedmix have no saturation. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency."
+      "decision_reason": "Current names and fitted ending;1280x800 and960x600 images;all sampledcue/body/caption assertions. Actual22voicekinds and recordedmix have no saturation. All actually used sources now have bounded G0–G2 above. The two explicit audio responses remove the outstanding listening dependency. The later stage0 floating-hedge counterexample was fixed and targeted native revalidation is in support-fix/receipt.json; this final decision supersedes the initially premature hedge approval.",
+      "source_delta_evidence": "support-fix/receipt.json"
     }
   ],
   "counts": {
@@ -1968,5 +1974,14 @@
     "#207 whole gate/keeper experience",
     "#208 controls-only independent review and J01–08",
     "#209 specified packaging and extracted dual-entry verification"
-  ]
+  ],
+  "source_delta": {
+    "path": "prototypes/swarm-flight/spring_journey_view.gd",
+    "old_sha256": "be349fc1223bfd1dd0ba4cb1e97e67b033ece49c02c10e0b3114c5ca900715e1",
+    "new_sha256": "6e07faaf10f92dd9d90dbec0b47fc4df3713e233a5dbfe939ba10e661404969f",
+    "changed_function": "_terrain",
+    "unchanged": "Stage1/2 rendering branches, geometry, input, audio, save state and assets unchanged.",
+    "evidence": "support-fix/receipt.json",
+    "applicability": "Inherited actual-call source hashes remain identical except this explicit view-file delta. The single stage guard is the complete production diff since281da00; prior unchanged function/geometry/state evidence remains applicable."
+  }
 }
