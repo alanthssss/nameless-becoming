@@ -1,0 +1,86 @@
+{
+  "sealed_at_utc": "2026-11-01T06:33:27.173926+00:00",
+  "reviewer": "first_look independent AI targeted reviewer",
+  "mode": "read-only targeted scheduling diff review; no UI, production changes, test rerun or delegation",
+  "scope": "Final worktree .github/workflows/swarm-flight.yml diff; downstream quality aggregator and its validation helper; supplied core failure log. No whole-repository audit.",
+  "verdict": "pass_for_scheduling_change",
+  "blocking_findings": [],
+  "conclusion": "合理并行拆分，保留原检查及失败门槛，没有延长单job时限或减少用例。新增migrations作为checks矩阵的一员，仍经整个矩阵verify和quality必需汇总约束。只能认可调度结构，实际是否在8分钟内完成须由新CI证实。",
+  "changes_observed": [
+    {
+      "change": "matrix adds migrations",
+      "effect": "core/regressions/samples仍保留；每个checks runner沿用官方Godot下载/校验和导入步骤；fail-fast:false不变。"
+    },
+    {
+      "change": "pond/rain model+disk step condition core→migrations",
+      "effect": "pond_source_routes_verify/save_verify及rain_choice_verify/save_verify命令、QA目录、日志错误检查与0 failures检查原样保留。"
+    },
+    {
+      "change": "wind migration and long-world particles becomes a separate core step",
+      "effect": "wind_route_verify/save_verify与ellipse_precision_probe的原命令及守卫原样保留，补有同样set -euo pipefail和GODOT_BIN环境。"
+    }
+  ],
+  "command_guard_comparison": {
+    "method": "HEAD/worktree Counter of exact stripped Godot invocations, QA-env invocations, Python/timeout commands, error grep and success grep lines",
+    "removed": {},
+    "added": {},
+    "meaning": "限定识别到的测试命令及守卫无丢失或替换；人工diff同时核查仅矩阵/条件/step边界变化。"
+  },
+  "budget": {
+    "checks_timeout_minutes": 8,
+    "verify_timeout_minutes": 1,
+    "fail_fast": false,
+    "continue_on_error_added": false,
+    "limits": "新增runner会另有启动/导入开销；此报告不把静态拆分当作新CI已通过或对所有后续耗时的保证。"
+  },
+  "required_coverage_chain": [
+    {
+      "file": ".github/workflows/swarm-flight.yml",
+      "basis": "verify: needs checks; if always(); CHECKS_RESULT=needs.checks.result; shell test =success",
+      "coverage": "checks的矩阵包含migrations；任何未成功矩阵结果不满足verify成功门槛。"
+    },
+    {
+      "file": ".github/workflows/quality.yml",
+      "basis": "swarm uses reusable swarm-flight.yml; required needs包含swarm并always运行；swarm-gate needs[scope,swarm]并always运行",
+      "coverage": "两个上层汇总继续接收整个swarm reusable workflow结果，未单列只检查旧三个suite。"
+    },
+    {
+      "file": "scripts/check_ci_results.py",
+      "basis": "JOBS含swarm；scope选中时expected=success，与needs.swarm.result严格比较；缺失/失败/取消/意外跳过不通过",
+      "coverage": "selected swarm必须成功；这不更改scope原有选择规则。"
+    }
+  ],
+  "quality_and_helper_diff_empty": true,
+  "failure_log_observation": {
+    "path": "/private/tmp/pond-ci-core-final.log",
+    "observed": "日志显示pond model80/0、pond disk69/0、rain198/0、rain disk140/0、wind model79/0，随后wind disk启动，约38.6秒后operation canceled；未出现wind disk成功标记。",
+    "interpretation": "支持将已经串行占用时间的pond/rain迁出core；取消不能记wind测试通过，也不能仅据该日志断定wind行为失败。",
+    "scope_limit": "其余suite成功来自父任务说明，本定向审查未另读其日志。"
+  },
+  "inputs": [
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/.github/workflows/swarm-flight.yml",
+      "sha256": "2f0c59fc9cf3b1c1504343afa606352b7a89fdd3539f6fcd60bd005202bbbc23"
+    },
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/.github/workflows/quality.yml",
+      "sha256": "8dbc6d4c500c96f7ef7dd7d416e4bb65d65d307d739fbf1411476f2a9c84b35d"
+    },
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/scripts/check_ci_results.py",
+      "sha256": "fe830bd23562ee3267f034c94e0ebbfad98df4eca7caead07ab1a962afffdc40"
+    },
+    {
+      "path": "/private/tmp/pond-ci-core-final.log",
+      "sha256": "da35c5f8084b3cb1d80e18e27e03b9510e4f64f504fab348af2e5dc8d9709227"
+    }
+  ],
+  "diff": "diff --git a/.github/workflows/swarm-flight.yml b/.github/workflows/swarm-flight.yml\nindex 9dc614e..5a45eb0 100644\n--- a/.github/workflows/swarm-flight.yml\n+++ b/.github/workflows/swarm-flight.yml\n@@ -17,7 +17,7 @@ jobs:\n       # Keep collecting all suites when another suite fails.\n       fail-fast: false\n       matrix:\n-        suite: [core, regressions, samples]\n+        suite: [core, regressions, samples, migrations]\n     env:\n       GODOT_RELEASE: 4.6.2-stable\n       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip\n@@ -83,7 +83,7 @@ jobs:\n           fi\n           grep -q '^SWARM FLIGHT UI VERIFIED:' \"$RUNNER_TEMP/swarm-flight-ui.log\"\n       - name: Verify pond layouts and real save migration\n-        if: matrix.suite == 'core'\n+        if: matrix.suite == 'migrations'\n         env:\n           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64\n         shell: bash\n@@ -101,6 +101,13 @@ jobs:\n           SWARM_RAIN_CHOICE_QA_DIR=\"$RUNNER_TEMP/rain-choice-disk\" \"$GODOT_BIN\" --headless --path prototypes/swarm-flight --script res://rain_choice_save_verify.gd 2>&1 | tee \"$RUNNER_TEMP/rain-choice-disk.log\"\n           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' \"$RUNNER_TEMP/rain-choice-disk.log\"; then exit 1; fi\n           grep -q '^RAIN CHOICE SAVE VERIFIED:.*0 failures' \"$RUNNER_TEMP/rain-choice-disk.log\"\n+      - name: Verify wind migration and long-world particles\n+        if: matrix.suite == 'core'\n+        env:\n+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64\n+        shell: bash\n+        run: |\n+          set -euo pipefail\n           \"$GODOT_BIN\" --headless --path prototypes/swarm-flight --script res://wind_route_verify.gd 2>&1 | tee \"$RUNNER_TEMP/wind-route-model.log\"\n           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' \"$RUNNER_TEMP/wind-route-model.log\"; then exit 1; fi\n           grep -q '^WIND ROUTE VERIFIED:.*0 failures' \"$RUNNER_TEMP/wind-route-model.log\"\n",
+  "diff_sha256": "fe2bdafba97043b466892800752df49018e25217ff75c720ac4a27aa6fcf871a",
+  "not_claimed": [
+    "没有亲自运行CI或游戏",
+    "没有改变测试阈值/生产源码/PCK",
+    "未审核整个CI路径筛选器或外部branch protection设置",
+    "不把本次静态审查当作产品接受或全作覆盖"
+  ]
+}

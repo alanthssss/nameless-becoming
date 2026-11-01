@@ -17,7 +17,7 @@ jobs:
       # Keep collecting all suites when another suite fails.
       fail-fast: false
       matrix:
-        suite: [core, regressions, samples]
+        suite: [core, regressions, samples, migrations]
     env:
       GODOT_RELEASE: 4.6.2-stable
       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
@@ -83,7 +83,7 @@ jobs:
           fi
           grep -q '^SWARM FLIGHT UI VERIFIED:' "$RUNNER_TEMP/swarm-flight-ui.log"
       - name: Verify pond layouts and real save migration
-        if: matrix.suite == 'core'
+        if: matrix.suite == 'migrations'
         env:
           GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
         shell: bash
@@ -101,6 +101,13 @@ jobs:
           SWARM_RAIN_CHOICE_QA_DIR="$RUNNER_TEMP/rain-choice-disk" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://rain_choice_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/rain-choice-disk.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/rain-choice-disk.log"; then exit 1; fi
           grep -q '^RAIN CHOICE SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/rain-choice-disk.log"
+      - name: Verify wind migration and long-world particles
+        if: matrix.suite == 'core'
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://wind_route_verify.gd 2>&1 | tee "$RUNNER_TEMP/wind-route-model.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/wind-route-model.log"; then exit 1; fi
           grep -q '^WIND ROUTE VERIFIED:.*0 failures' "$RUNNER_TEMP/wind-route-model.log"

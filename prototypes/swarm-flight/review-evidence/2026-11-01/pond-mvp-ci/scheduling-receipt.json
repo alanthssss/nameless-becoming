@@ -1,0 +1,43 @@
+{
+  "authority": {
+    "gdd": "13.6/J07–08",
+    "milestone": 3,
+    "issue": 209
+  },
+  "kind": "CI scheduling only; production/PCK/final ZIP unchanged",
+  "failed_run": 41280565682,
+  "failed_head": "684b19f3a79ff27cf6cd5676a9fec376107bd26e",
+  "failed_job": 124771683140,
+  "failure": "8-minute core timeout while wind disk still running; no success claim for that cancelled test",
+  "observed_passes_before_cancel": {
+    "pond_model": 80,
+    "pond_disk": 69,
+    "rain_model": 198,
+    "rain_disk": 140,
+    "wind_model": 79
+  },
+  "measured_serial_seconds": {
+    "pond_disk": 98.5,
+    "rain_disk": 188.5,
+    "wind_disk_before_cancel": 38.6
+  },
+  "change": "Separate original pond/rain commands into migrations matrix job; core retains wind/ellipse in new step. All test commands/error guards/success markers and8minute job budget unchanged. Whole matrix still required by both aggregate gates.",
+  "local_checks": {
+    "actionlint": "passed",
+    "ci_routing_unittest": 23,
+    "ci_scope_shell": "passed",
+    "diff_whitespace": "passed"
+  },
+  "independent_review": {
+    "path": "scheduling-review.json",
+    "sha256": "6f88996f725e327edc85a70a386c3654d4d52036048196a163672ac26b471e80",
+    "root_read_entire_report": true
+  },
+  "raw_log_archive": {
+    "path": "ci-41280565682-core-timeout.log.gz",
+    "original_sha256": "da35c5f8084b3cb1d80e18e27e03b9510e4f64f504fab348af2e5dc8d9709227"
+  },
+  "diff_original_sha256": "fe2bdafba97043b466892800752df49018e25217ff75c720ac4a27aa6fcf871a",
+  "status": "updated-head full CI pending; authoritative completion#209/integration-closeout.json",
+  "scope_limit": "Parallel scheduling does not pre-prove runtime or product acceptance; no broad production review implied."
+}
