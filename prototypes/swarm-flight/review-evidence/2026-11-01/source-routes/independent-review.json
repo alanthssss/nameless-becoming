@@ -1,0 +1,91 @@
+{
+  "kind": "bounded_independent_code_and_native_still_review",
+  "issue": 205,
+  "gdd": "§13.6",
+  "milestone": "M3",
+  "reviewed_at_utc": "2026-11-01T04:03:19.779682+00:00",
+  "baseline_commit": "002600a433ec3ddc174a4a94f4e5d2fa30e58054",
+  "candidate_status": "uncommitted_worktree",
+  "source_sha256": {
+    "prototypes/swarm-flight/spring_journey_content.gd": "463c4b3fbb8bef1a526d7830e22104041952a859ff54acb24ba1de6e73e890de",
+    "prototypes/swarm-flight/spring_journey_model.gd": "c62cb1f12933760f177b53c676d85a48492428f026635310603836982f40f967",
+    "prototypes/swarm-flight/spring_journey_main.gd": "e5fb76b00e704c71279503d52172187fd6260404727d764d5c1a362c056321cf"
+  },
+  "images_inspected": [
+    {
+      "path": "/private/tmp/pond-source-routes-native/01-lower-preview.png",
+      "sha256": "8c1521a04c7b62567646a1178bd394b33f5cd7e8724b5490741329dfe5e51498"
+    },
+    {
+      "path": "/private/tmp/pond-source-routes-native/02-upper-preview.png",
+      "sha256": "e57846aee0627c3fd724aed5f5a39a8c68098125e239c9e497271e8d7df5ca09"
+    },
+    {
+      "path": "/private/tmp/pond-source-routes-native/06-lower-past-foliage.png",
+      "sha256": "ce76d093e9bd9b08ae20311fff3494466b22f57ae06c28d6c13f80ef5c043873"
+    }
+  ],
+  "additional_read_context": [
+    "long_journey_model.gd valid_objects/valid_state/restore_payload",
+    "spring_journey_model.gd save/checkpoint/restore surroundings",
+    "native trace assertion list and known-solution capture boundary"
+  ],
+  "observations": [
+    "The source-near hedge is real stage0 terrain at Rect2(2860,330,200,120); route definitions pass above or below and retain SOURCE position/identity.",
+    "All three inspected native images show foliage-to-stem overlap and stems continuing into foreground cover; the new hedge is consistent with adjacent plant scale/style and does not cover the bee or flower cue.",
+    "The high-preview image reveals the real next shelter landing and preparation support; the low-preview image retains the real blue flower and its next shelter centre lies beyond the right viewport edge. The third image places the bee beyond the lower hedge edge on approach to the original flower.",
+    "Camera source uses bounded positional easing only at stage0 x2600..3500 with at most300px look-ahead; the reviewed stills cannot establish subjective motion comfort.",
+    "Legacy pond conversion validates the entire known old wall set for both live and checkpoint on copied state, inserts only an unbroken fork, rejects unsafe old checkpoint and uses existing recovery for old live poses inside the fork. Unchanged saved shelter/dew fields preserve compatibility."
+  ],
+  "actionable_review_items": [
+    {
+      "id": "save-marker-type-guard",
+      "status": "resolved",
+      "severity_if_confirmed": "blocking",
+      "file": "prototypes/swarm-flight/spring_journey_main.gd",
+      "line": 113,
+      "finding": "The new current-file backup bypass compares original.get(\"pond_layout_revision\") directly with an integer before validator rejection. A string marker has already been shown to require a number guard in model restore; the corresponding main path lacks that guard. Confirm New Game with a string marker cannot raise an operator error instead of preserving original bytes.",
+      "suggested_resolution": "Guard marker type before equality, or order the safe validator before typed marker comparisons, then verify the single string-marker backup path.",
+      "confirmation": {
+        "log": "/private/tmp/pond-source-string-before.log",
+        "sha256": "62dcbae35f6d2aa141a9a6746f3918b991d72c58d7b4fe47083ae598f090b95a",
+        "checks": 4,
+        "failures": 1,
+        "script_errors": 2,
+        "result": "Current main:113 raises Invalid operands String/int in operator== for string marker; explicit New Game cannot create required exact backup in the no-conflict case."
+      },
+      "resolution": "Root added SpringModel.number(original.get(\"pond_layout_revision\")) before the equality in preserve_legacy_save.",
+      "after_fix": {
+        "log": "/private/tmp/pond-source-string-after.log",
+        "sha256": "cd9656513fcf5d804bd5b120fd52dbaac68d6a1361187c29c7b3cda90206261d",
+        "checks": 4,
+        "failures": 0,
+        "script_errors": 0
+      }
+    }
+  ],
+  "scope_limits": [
+    "Root authorized the string-marker reproduction, same minimal regression and final pond save verifier. No broader model/UI suite repeated during this final review.",
+    "No native window launched; exactly the three listed stills inspected, not the full video or all native screenshots.",
+    "Developer known-solution inspection, not independent first-time exploration, subjective listening, G4 or full MVP acceptance.",
+    "Merge, CI and cleanup are owned by root and were not reviewed here."
+  ],
+  "reviewed_source_sha256_before_fix": {
+    "prototypes/swarm-flight/spring_journey_content.gd": "463c4b3fbb8bef1a526d7830e22104041952a859ff54acb24ba1de6e73e890de",
+    "prototypes/swarm-flight/spring_journey_model.gd": "c62cb1f12933760f177b53c676d85a48492428f026635310603836982f40f967",
+    "prototypes/swarm-flight/spring_journey_main.gd": "3b68b7d43b45545056f6aec12a8d1960cab4f1bc4cea95262a544b7cd56b9c05"
+  },
+  "final_save_verification": {
+    "log": "/private/tmp/pond-source-routes-save-final.log",
+    "sha256": "f915a37564d91d51bf04251bad1afde297ccfd40506611a5559b5ab99f8835bb",
+    "checks": 69,
+    "failures": 0,
+    "script_errors": 0,
+    "remaining_warning": "ObjectDB instances leaked at exit; retained in raw log."
+  },
+  "conclusion": {
+    "status": "no_remaining_blocker_within_reviewed_scope",
+    "basis": "Actual terrain split, bounded local camera and strict copied-state legacy conversion inspected; three native stills have no new basic visual defect. String-marker backup regression was reproduced, fixed by root and verified with4-check minimal slice plus69-check final save suite.",
+    "not_acceptance": "Not first-time exploration, full-video review, subjective motion comfort, G4 or full MVP acceptance."
+  }
+}

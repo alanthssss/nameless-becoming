@@ -1,6 +1,8 @@
 extends "res://long_journey_model.gd"
 ## Three chapters revisit one source; local behavior never changes07–09.
 const SpringContent=preload("res://spring_journey_content.gd")
+const POND_LAYOUT_REVISION=1
+const POND_FORK=SpringContent.POND_FORK
 const Canopy = preload("res://leaf_canopy_geometry.gd")
 const SPRING_SAVE_PATH="user://spring_03_05_v2.json"
 const SITE_ID="pond-and-home"
@@ -321,6 +323,13 @@ func step(direction: Vector2, held: bool, delta: float) -> void:
 		super.step(Vector2.ZERO,false,dt)
 	else:
 		super.step(direction,held and not suppress_space,dt)
+	# Altitude opens a view of the real next shelter from the flower-side fork.
+	# Position-based easing is continuous on approach/return and resumes exactly;
+	# it does not reveal a duplicate target or alter the vertical play scale.
+	if stage==0:
+		var near_flower:=smoothstep(2600.0,2740.0,p.x)*(1.0-smoothstep(3300.0,3500.0,p.x))
+		var above_foliage:=1.0-smoothstep(270.0,450.0,p.y)
+		camera_x=clampf(p.x-480.0+300.0*near_flower*above_foliage,0.0,world_width-1280.0)
 	# Keep source, dancer and listeners in one view during communication.
 	if stage==2 and p.x>3100: camera_x = clampf(p.x-1100.0,0.0,world_width-1280.0)
 	if phase != "playing": return
@@ -496,6 +505,7 @@ func save_payload() -> Dictionary:
 	payload["preparation_revision"]=PREPARATION_REVISION
 	payload["small_actor_revision"]=SMALL_ACTOR_REVISION
 	payload["route_geometry_revision"]=ROUTE_GEOMETRY_REVISION
+	payload["pond_layout_revision"]=POND_LAYOUT_REVISION
 	payload["story"]=pack(story_state())
 	payload["checkpoint_story"]=pack(checkpoint_story)
 	return payload
@@ -555,7 +565,21 @@ func upgrade_legacy_geometry(snapshot: Dictionary) -> bool:
 	snapshot.rings=replacement_rings
 	return true
 
+func upgrade_legacy_pond_geometry(snapshot: Dictionary) -> bool:
+	# Accept only the complete known old wall set, for both live and checkpoint.
+	# Dynamic flags on the existing walls survive; the new fork earns no facts.
+	var old_walls: Array=walls.filter(func(w): return w.rect!=POND_FORK).duplicate(true)
+	if not snapshot.get("walls") is Array: return false
+	if not valid_objects({"walls":snapshot.walls},{"walls":old_walls}): return false
+	var replacement: Array=walls.duplicate(true)
+	for wall in replacement:
+		for old in snapshot.walls:
+			if wall.rect==old.rect and wall.kind==old.kind: wall.broken=old.broken
+	snapshot.walls=replacement
+	return true
+
 func restore_payload(payload: Dictionary) -> bool:
+	if payload.has("pond_layout_revision") and (not number(payload.pond_layout_revision) or payload.pond_layout_revision!=POND_LAYOUT_REVISION): return false
 	if payload.has("small_actor_revision") and payload.small_actor_revision!=SMALL_ACTOR_REVISION: return false
 	if payload.has("preparation_revision") and payload.preparation_revision!=PREPARATION_REVISION: return false
 	if payload.has("route_geometry_revision") and payload.route_geometry_revision!=ROUTE_GEOMETRY_REVISION: return false
@@ -590,6 +614,15 @@ func restore_payload(payload: Dictionary) -> bool:
 					if wall.get("broken")!=pair[0].get("front_open" if wall.rect.position.x==2350 else "passage_open"): return false
 			if found!=2: return false
 	var legacy_geometry: bool=not payload.has("route_geometry_revision")
+	var legacy_pond: bool=not payload.has("pond_layout_revision")
+	if legacy_pond and index==0:
+		for snapshot in [base,base.checkpoint]:
+			if not probe.upgrade_legacy_pond_geometry(snapshot): return false
+		# A genuine saved flower/shelter checkpoint stays outside the new foliage.
+		# Unknown checkpoint geometry must not be silently relocated or accepted.
+		if POND_FORK.grow(14).has_point(base.checkpoint.p): return false
+		payload=payload.duplicate(true)
+		payload.state=pack(base)
 	if legacy_geometry and index==2:
 		for snapshot in [base,base.checkpoint]:
 			if not probe.upgrade_legacy_geometry(snapshot): return false
@@ -635,13 +668,15 @@ func restore_payload(payload: Dictionary) -> bool:
 	# Use the existing committed checkpoint contract, never silently push through.
 	if legacy_geometry and stage==2 and walls.any(func(w): return not w.broken and w.rect.grow(14).has_point(p)):
 		restore_checkpoint("geometry")
+	if legacy_pond and stage==0 and POND_FORK.grow(9.0 if charging else 14.0).has_point(p):
+		restore_checkpoint("geometry")
 	for leaf in shelters:
 		if not Canopy.contact(p,9.0 if charging else 14.0,leaf).is_empty():
 			restore_checkpoint("geometry")
 			break
 	return true
 func objective() -> String:
-	if stage==0: return "花路已经记住了 · 沿池岸绕向叶棚" if observation_valid() else "高低两路看见不同去向；蓝花心可以停一停"
+	if stage==0: return "花路已经记住了 · 沿池岸绕向叶棚" if observation_valid() else "蓝花还开着 · 沿池岸找回家的路"
 	if stage==1: return "抬升穿棚下通口，再选低棚绕行或护雨上层" if weather_phase!="after" else "雨停了，沿熟悉的池岸回去"
 	if not front_open: return "看它停下盘点，趁牌绳松开冲开叶结"
 	if not passage_open: return "借风抬升后穿过背面通口，也可以普通飞行换层再冲"

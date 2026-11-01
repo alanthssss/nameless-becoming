@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "kind": "pond_source_routes_implementation_receipt",
+  "authority": {
+    "GDD": "§8.1/§13.6 J01/J05/J06",
+    "milestone": 3,
+    "issue": 205
+  },
+  "baseline_revision": "002600a433ec3ddc174a4a94f4e5d2fa30e58054",
+  "frozen_production_revision": "4fbcd27e39458bbcb0752c6244f1f4cb7582621f",
+  "scope": {
+    "source": [
+      3200,
+      420
+    ],
+    "source_id": "pond-blue-cluster",
+    "fork_rect": [
+      2860,
+      330,
+      200,
+      120
+    ],
+    "camera": "Stage0 near flower; continuous position/altitude ease, max300px added horizontal lookahead. Scale/vertical framing unchanged.",
+    "unchanged": [
+      "0.40s charge/20 energy",
+      "optional observation/sharing",
+      "rain/shield rules",
+      "stage1/stage2 geometry",
+      "legacy07–09"
+    ],
+    "copy": "Departure purpose and neutral fork cue; serialized shelter/section names and dew purpose preserved."
+  },
+  "source_sha256": {
+    "spring_journey_content.gd": "463c4b3fbb8bef1a526d7830e22104041952a859ff54acb24ba1de6e73e890de",
+    "spring_journey_model.gd": "c62cb1f12933760f177b53c676d85a48492428f026635310603836982f40f967",
+    "spring_journey_main.gd": "e5fb76b00e704c71279503d52172187fd6260404727d764d5c1a362c056321cf",
+    "spring_journey_view.gd": "6e07faaf10f92dd9d90dbec0b47fc4df3713e233a5dbfe939ba10e661404969f",
+    "world_view.gd": "1cae5f78a190ebadaed49a716cb66114093a9d30b5799f1e56b13cdae3820d9d",
+    "game_model.gd": "6c9f7f397504526ce207cd1ff5b6ac09e6a91a361a48fd27cf21c4f4c936dee8",
+    "leaf_canopy_geometry.gd": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf"
+  },
+  "native": {
+    "path": "native/",
+    "kind": "known_answer_developer_run",
+    "seeded_state": false,
+    "input": "Default title/Enter; ordinary approach, upper bypass without feeding, actualR return, lower path and idle feeding, real stage transition, actualpause/diskcoldresume. Only OSfocusloss ignored for capture.",
+    "frames": 1396,
+    "fps": 30,
+    "seconds": 46.53333333333333,
+    "checks": 59,
+    "failures": 0,
+    "samples": 1388,
+    "root_reviewed_png": [
+      "00-title.png",
+      "01-lower-preview.png",
+      "02-upper-preview.png",
+      "03-upper-small-window.png",
+      "04-upper-clearance.png",
+      "05-upper-next-action.png",
+      "06-lower-past-foliage.png",
+      "07-source-observed.png",
+      "08-forward-transition.png"
+    ],
+    "review_scope": "Root inspected all9 native stills and continuous state trace. Stored46.533s video is movement evidence; no claim of human fullvideo playback or firsttime comprehension.",
+    "physical_window_sizes": [
+      [
+        1280,
+        800
+      ],
+      [
+        960,
+        600
+      ]
+    ],
+    "logical_viewport": [
+      1280,
+      800
+    ],
+    "capture_delta": "Same model/content/view as frozen production. Captured main preceded the later number guard in preserve_legacy_save; only malformed disk marker affected, verified separately4/4 and final69/69disk.",
+    "view_comparison": {
+      "01-lower-preview": {
+        "p": [
+          2750.4794921875,
+          497.614562988281
+        ],
+        "camera_x": 2270.4794921875,
+        "next_shelter_screen_x": 1439.5205078125,
+        "stamina": 98.8833333333334,
+        "observed": false
+      },
+      "02-upper-preview": {
+        "p": [
+          2755.4580078125,
+          226.692260742188
+        ],
+        "camera_x": 2575.4580078125,
+        "next_shelter_screen_x": 1134.5419921875,
+        "stamina": 95.9833333333336,
+        "observed": false
+      },
+      "06-lower-past-foliage": {
+        "p": [
+          3099.44482421875,
+          504.038360595703
+        ],
+        "camera_x": 2619.44482421875,
+        "next_shelter_screen_x": 1090.55517578125,
+        "stamina": 95.3166666666669,
+        "observed": false
+      },
+      "07-source-observed": {
+        "p": [
+          3199.888671875,
+          418.57421875
+        ],
+        "camera_x": 2744.12849305438,
+        "next_shelter_screen_x": 965.871506945617,
+        "stamina": 99.9833333333333,
+        "observed": true
+      }
+    },
+    "raw_archive": "outputs/swarm-flight/2026-11-01-pond-mvp/source-routes/"
+  },
+  "bounded_source_revalidation": {
+    "prior_gate": "../gate-clearance/receipt.json",
+    "G0": "Previous fixed framing/distant first fork did not reveal next shelter from source-near high path. New midline meets real collision; actual upper/lower projections compared at same x.",
+    "G1_G2": [
+      {
+        "id": "hedge",
+        "decision": "pass_this_use",
+        "limits": "One rooted200×120 hedge at2860,330; same handpainted source/support. Midline collision and ordinary upper/lower paths verified."
+      },
+      {
+        "id": "pond-high-view",
+        "decision": "pass_this_use",
+        "limits": "Upper y230 atx2750..2850 shows actual next leaf/branch; original source remains optional."
+      },
+      {
+        "id": "pond-low-approach",
+        "decision": "pass_this_use",
+        "limits": "Lower y500 passes below hedge then approaches original source afterx3100; skip also works."
+      },
+      {
+        "id": "camera-lookahead",
+        "decision": "pass_this_use",
+        "limits": "stage0 x2600..3500 only. Entry/reversal continuous; player screenx180..480; cold exact. Firsttime usability reserved."
+      }
+    ],
+    "G3": [
+      {
+        "id": "C01",
+        "decision": "pass_changed_implementation_use_only",
+        "basis": "Native approach/fork/flower/nextleaf context; current/old disk lifecycle; unchanged audio. Newgeometry checked here, not inherited untested."
+      },
+      {
+        "id": "C02",
+        "decision": "pass_changed_implementation_use_only",
+        "basis": "Native approach/fork/flower/nextleaf context; current/old disk lifecycle; unchanged audio. Newgeometry checked here, not inherited untested."
+      },
+      {
+        "id": "C18",
+        "decision": "pass_changed_implementation_use_only",
+        "basis": "Native approach/fork/flower/nextleaf context; current/old disk lifecycle; unchanged audio. Newgeometry checked here, not inherited untested."
+      }
+    ],
+    "audio": "No source/gain/routing changes. Alan two listening responses remain bounded to prior28/29s; no new listening claim."
+  },
+  "checks": {
+    "model": [
+      80,
+      0
+    ],
+    "disk": [
+      69,
+      0
+    ],
+    "existing_journey_model": [
+      393,
+      0
+    ],
+    "existing_journey_ui": [
+      50,
+      0
+    ],
+    "existing_mosquito_model": [
+      77,
+      0
+    ],
+    "existing_mosquito_disk": [
+      107,
+      0
+    ],
+    "string_marker_before": [
+      4,
+      1
+    ],
+    "string_marker_after": [
+      4,
+      0
+    ],
+    "actionlint": "pass",
+    "diff_check": "pass",
+    "CI": "Final authority is PR checks; pending at preparation."
+  },
+  "legacy": {
+    "provenance": "legacy-fixtures/provenance.json",
+    "genuine_old_fixtures": 7,
+    "contract": "Only complete known oldwall sets in both snapshots. Add declared wall/marker, preserve other facts/flags. Unsafecheckpoint rejected. Oldlive inside newhedge visibly recovers by existingcheckpoint. Originalbyte backup before overwrite; failedbackup preservesoriginal. Stripped newmarker cannot masquerade as oldlayout.",
+    "backup_name": "Existing .before-route-2-<sha12>.bak retained."
+  },
+  "failures_and_corrections": [
+    {
+      "evidence": "checks/initial-journey-failure.log",
+      "result": "Initial17/392 failed: changed persisted names/purpose rejected oldstate, reverted; old diagonal route collided with newvisiblehedge, added ordinary low waypoint."
+    },
+    {
+      "evidence": "checks/string-before.log",
+      "result": "Newgame on stringmarker producedString/intSCRIPTERROR and1/4 failed. Addednumberguard; same4/4passed."
+    }
+  ],
+  "level_flow": {
+    "LV01": {
+      "status": "pass_bounded",
+      "reason": "Earlier movement obstacle followed by nearflower actual information/approach difference."
+    },
+    "LV02": {
+      "status": "pass_bounded",
+      "reason": "Upper nextlanding visible; lower originalflower reachable. Firsttime interpretation#208."
+    },
+    "LV03": {
+      "status": "not_applicable_to_delta",
+      "reason": "No newattack/speed; existing mosquito77/107 preserved."
+    },
+    "LV04": {
+      "status": "not_applicable_to_required_route",
+      "reason": "Both newfork routes ordinaryflight; no forcedburst/newburstlanding. Optionalforkbursts not separately claimed."
+    },
+    "LV05": {
+      "status": "pass_bounded",
+      "reason": "Dew unchanged; actualfeeding creates originalsource observation; bothroutes may skip."
+    },
+    "LV06": {
+      "status": "pass_bounded",
+      "reason": "No newdrain/slow. Bothmodelroutes0recoveries. Sequentialnative stamina numbers are not a controlled costcomparison."
+    },
+    "LV07": {
+      "status": "pass_implementation_pending_experience",
+      "reason": "Upperpreview/lowerflower approach visible; firsttime understanding#208."
+    },
+    "LV08": {
+      "status": "pass_bounded",
+      "reason": "9stills incl960×600; body/cue/viewport trace; rootedhedge and actualnextleaf."
+    },
+    "LV09": {
+      "status": "pass_bounded",
+      "reason": "Pause/cold exact, actualR, strictold2snapshotmigration, bytebackup/failureprotection."
+    },
+    "LV10": {
+      "status": "pass_evidence_boundary",
+      "reason": "Knownanswer developer run/technicalreview; no humanacceptance/enjoyment/24levelclaim."
+    }
+  },
+  "decision": {
+    "implementation_ready_for_review": true,
+    "J01_final": "pending#208 fresh controlsonlyreview",
+    "MVP_complete": false,
+    "human_acceptance_claim": false,
+    "next": "ReviewedCI merge/cleanup then#206. #205 stays open untilJ01final."
+  },
+  "cost": {
+    "observed_window_start_utc": "2026-11-01T03:57:00Z",
+    "observed_end": "Authoritative#205 afterCI/merge/cleanup",
+    "estimate_minutes_including_verification_and_cleanup": [
+      45,
+      75
+    ],
+    "active_and_billed_hours": "unknown; elapsed is neither",
+    "cumulative_effort": "unknown",
+    "reliable_remaining": "unknown",
+    "control_hours": "200+40 unchanged",
+    "new_purchases": 0,
+    "image_generation_calls": 0,
+    "automation": "PAUSED",
+    "recommendation": "Continue authorized boundedMVP without spending/expansion."
+  },
+  "artifact_sha256": {
+    "checks/initial-journey-failure.log": "75d241b02a1efd6282e91fcbf813379ed4fa6f96c1cfa0c7604bd306106a6130",
+    "checks/journey-model.log": "addfa94d2c00565b10ce9b0726a68fc74eb78abcbb4689f5faeccdf68476b92e",
+    "checks/journey-ui.log": "c7abee41d494e940b018b2c8bf83162a8593a2fd16c474db6db1f0d7e0ec8711",
+    "checks/model.log": "f68855a97136979d92d1624a7b92e7b92230a1f837fce5e4e1decd8b968c2a43",
+    "checks/mosquito-model.log": "aebda03897ece26870677c4b55effa8d1aa54e352f0f1348096fc3802f2ac3d5",
+    "checks/mosquito-save.log": "24b99f5cce44308a26e568472f2ecf82ff3ba131e3805da49774832a21599f9c",
+    "checks/save.log": "f915a37564d91d51bf04251bad1afde297ccfd40506611a5559b5ab99f8835bb",
+    "checks/string-after.log": "cd9656513fcf5d804bd5b120fd52dbaac68d6a1361187c29c7b3cda90206261d",
+    "checks/string-before.log": "62dcbae35f6d2aa141a9a6746f3918b991d72c58d7b4fe47083ae598f090b95a",
+    "independent-review.json": "33b43c73420b5f8c9af1c94ccb23d4e4a97f723f9cc376e2b75b773b83f121e0",
+    "legacy-fixtures/generator.gd.txt": "0ffc2ed9bd6881243b742f03bc487909246b17a82b2dbc1fc2bb660b76e849a5",
+    "legacy-fixtures/old-before-fork.json": "2806e19863d6fd14694de9f031021315daef52c98a86b182239b91e98b3f5f68",
+    "legacy-fixtures/old-future-wall-live.json": "894fc0cfb815dcfaa5814d539bfc0e1ddc9a5d7b5f1c3c4502549f2d810304de",
+    "legacy-fixtures/old-initial.json": "fa3f7a5b5a12b1a2c8c5ae9cae9ae1ca997b5b29fb1567ed74e13ed9a7d9b197",
+    "legacy-fixtures/old-source-observed.json": "b0cbb3b9f3ffd356c6e1278457a55cf9d484216f897ca8c6bc6f47272f4b5d1f",
+    "legacy-fixtures/old-stage-1.json": "1c473f697164c5844a154b865e691def7e1487e65a9ee32756589ce088e453c3",
+    "legacy-fixtures/old-stage-2.json": "3280d770f668cfd5ba7d738efd9dec9f7afc2bdafeacc8b04b47fd9154e5fbba",
+    "legacy-fixtures/old-unsafe-checkpoint.json": "4a9c1f6accb5d8088c76e3227465e3fcdb1e207f74aae5b41527961502a550ef",
+    "legacy-fixtures/provenance.json": "97dc30f6b6bf7a4f61017c8e79675e0bdada4d14b52431c057b7d876c0ac3331",
+    "native/00-title.png": "794ef462aa0899d45b41e0b114b346735aae9dd85e354ee894bd3081be85dcbe",
+    "native/01-lower-preview.png": "8c1521a04c7b62567646a1178bd394b33f5cd7e8724b5490741329dfe5e51498",
+    "native/02-upper-preview.png": "e57846aee0627c3fd724aed5f5a39a8c68098125e239c9e497271e8d7df5ca09",
+    "native/03-upper-small-window.png": "e6e1ad561b3757d4a100e6a93fd77ad738ecf07bbcaf17b48104ec3b14f71f97",
+    "native/04-upper-clearance.png": "0d93a2574678e6a94f5225894578b06a8b44d8c4c78ae6d8e4340e3bafc72598",
+    "native/05-upper-next-action.png": "3e417d711597d16bd439bcfb4cc1f8437889cb7ab997e575a80bf7c613e7c2cb",
+    "native/06-lower-past-foliage.png": "ce76d093e9bd9b08ae20311fff3494466b22f57ae06c28d6c13f80ef5c043873",
+    "native/07-source-observed.png": "aea26726d36d6183421fd7fd8e7ff740d0aa8250b2116ffc7a706407d7a39ec7",
+    "native/08-forward-transition.png": "9e07a230ff85161c7d74d8cdfbb8e8ca69b93e33ac9efe7d07fe119ed6735883",
+    "native/driver.gd.txt": "aeec2fd22c92cba9f7324574cab4e2befc2444e97f646c6e4090cf7ff6a04b1d",
+    "native/encode.log.gz": "a7d8b1e553f89ce8d1f4deb9a9451aa2415cd43deebbc78f33a2ae7723f0a478",
+    "native/native.log": "149a96c57c23f26fe3e604fd76c70d1a6ea37c4331a4279d868e16701b17ca33",
+    "native/native.mp4": "525990db131fe06364424b2824f852b7091d42bc8731833858d059d97d0495f5",
+    "native/trace.json": "1413886b5a3f69c7adb9067f98e2ce4684a372dc7b78b04359d3ebd66af73adb"
+  }
+}

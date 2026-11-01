@@ -1,0 +1,47 @@
+extends SceneTree
+## Run against unmodified main@002600a; no new-layout payload is used.
+const M=preload("res://spring_journey_model.gd")
+var out=OS.get_environment("POND_LEGACY_OUTPUT")
+var failures=0
+func write_case(name: String,m,description: String):
+	var payload=m.save_payload()
+	var copy=M.new()
+	var accepted=copy.restore_payload(payload)
+	if not accepted or payload.has("pond_layout_revision"):
+		failures+=1
+		print("FAIL old model fixture "+name)
+		return
+	var path=out.path_join("old-"+name+".json")
+	var file=FileAccess.open(path,FileAccess.WRITE)
+	file.store_string(JSON.stringify(payload,"",true,true)+"\n")
+	file.close()
+	print(name+" | "+description+" | "+FileAccess.get_sha256(path))
+func fresh(index:=0):
+	var m=M.new()
+	m.load_stage(index)
+	return m
+func _initialize():
+	if out.is_empty(): quit(1); return
+	DirAccess.make_dir_recursive_absolute(out)
+	var m=fresh()
+	write_case("initial",m,"old-model load_stage(0) untouched")
+	m=fresh()
+	m.p=Vector2(2770,500)
+	m.started=true
+	m.save_checkpoint(m.p)
+	write_case("before-fork",m,"legal seeded live and committed checkpoint before the future fork")
+	m.p=Vector2(2950,390)
+	write_case("future-wall-live",m,"old legal live pose inside future wall; checkpoint remains2770,500")
+	m.save_checkpoint(m.p)
+	write_case("unsafe-checkpoint",m,"legal old committed checkpoint falls inside future wall")
+	m=fresh()
+	m.p=M.SOURCE
+	m.started=true
+	for i in 60: m.step(Vector2.ZERO,false,1.0/60)
+	if not m.observation_valid(): failures+=1
+	write_case("source-observed",m,"seeded at real source;60 ordinary idle steps earn source observation and checkpoint")
+	for index in [1,2]:
+		m=fresh(index)
+		write_case("stage-"+str(index),m,"old-model load_stage("+str(index)+") untouched")
+	print("LEGACY GENERATION failures="+str(failures))
+	quit(1 if failures else 0)

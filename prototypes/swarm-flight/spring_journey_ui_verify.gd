@@ -108,6 +108,7 @@ func run() -> void:
 	fly(Vector2(2280,530))
 	fly(Vector2(2520,500))
 	fly(Vector2(2770,500))
+	fly(Vector2(3100,500))
 	fly(Model.SOURCE)
 	tick(60)
 	check(game.model.observation_valid() and game.model.bird_greeted,"keyboard feeding observes source and bird responds")

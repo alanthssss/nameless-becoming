@@ -48,6 +48,7 @@ func chapter03(m,observe: bool,upper: bool) -> void:
 	fly(m,Vector2(2520,500))
 	if observe:
 		fly(m,Vector2(2770,500))
+		fly(m,Vector2(3100,500))
 		fly(m,Model.SOURCE)
 		frames(m,60)
 		check(m.observation_valid(),"03 feeding observes real flower")
