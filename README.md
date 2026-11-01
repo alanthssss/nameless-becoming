@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-11-01 制作状态快照：** 目标为24关；池岸归途82个实际源用途与7组当前组合取得限定G0–G3，见[版本回执](prototypes/swarm-flight/review-evidence/2026-11-01/gate-clearance/receipt.json)，当前希望交付的“池岸归途”，是从池边出发、选路穿雨、帮助邻居到回巢的一段连续游戏；它与完整24关正式版都尚未验收。当前组织与条件式排期见[最新项目评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)；动态下一动作只在[唯一执行状态Now](docs/design/solar-term-campaign-production-spec.md#production-now)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。累计成本/可靠剩余与完整内容产能仍未知；任务关闭数不代表产品完成率。下方“最新/当前”仅指各自历史日期；既有试玩包入口见[原型说明](prototypes/swarm-flight/README.md)，可玩不等于当前候选验收通过。
+**2026-11-01 制作状态快照：** 0.17.0“池岸归途”内部候选已交付；Alan评价设计与节奏0分，认为元素堆砌、没有设计和节奏，整体体验评审失败，当前先做[五款参考游戏对比分析](docs/analysis/pond-mvp-0170-comparison-20261101.md)，整体产品接受未通过。该段82个实际源用途与7组组合的限定G0–G3及候选验证保留，见[版本回执](prototypes/swarm-flight/review-evidence/2026-11-01/final-candidate/receipt.json)；它们不等于完整24关或用户接受。当前组织与条件式排期见[最新项目评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)，动态下一动作只在[唯一执行状态Now](docs/design/solar-term-campaign-production-spec.md#production-now)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。累计成本/可靠剩余与完整内容产能仍未知；任务关闭数不代表产品完成率。下方“最新/当前”仅指各自历史日期；既有试玩包入口见[原型说明](prototypes/swarm-flight/README.md)。
 
 **2026-10-26 最新可玩：07→08样板0.14.0。** 两个07中后段改为借风开叶门及低廊中的再运用，保持路线长度和08顺畅节奏；旧16关仍保留。完整包位于`outputs/swarm-flight/2026-10-26-seven-action-development/试玩包/`，双击`开始试玩.command`。[本批决定与待验证项 SF-R40](docs/design/swarm-flight-game-20261020.md#seven-action-development-20261026) · [当前试玩说明](prototypes/swarm-flight/README.md)。以下旧版记录保留历史语境。
 
@@ -210,6 +210,7 @@ npm run test
 
 按用途读取，避免把历史方案误当当前决定：
 
+- [0.17.0整体节奏与五款参考游戏的对比](docs/analysis/pond-mvp-0170-comparison-20261101.md)：记录Alan对本版设计与节奏0分的产品裁定，核对真实进展、动作发展/资源/探索/回应差距及待验证假设；仅分析，未实施改法。
 - [Swarm Flight CI 耗时分析与并行验证](docs/CI_PERFORMANCE_2026-11-01.md)：真实步骤耗时、保留全部回归的三组并行方案与远端验证入口。
 - [完整GDD元素总目录](docs/design/swarm-flight-element-catalog.md)：全作需求来源、元素族、必要状态与GitHub覆盖；族级起点不等于资产完成。
 - [《雨来之前》开发范式：稳定元素，再组合完整体验](docs/design/swarm-flight-production-paradigm.md)：**后续制作执行入口**；P0–P5阶段、G0–G5门禁、元素规范、十分钟工作段与交接，实际进度只见原Now。
