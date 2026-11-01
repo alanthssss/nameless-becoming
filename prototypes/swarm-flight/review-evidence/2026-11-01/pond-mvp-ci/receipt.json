@@ -1,0 +1,65 @@
+{
+  "authority": {
+    "gdd": "13.6/J03,J07",
+    "milestone": 3,
+    "issue": 209
+  },
+  "frozen_production_revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "failed_ci": {
+    "run_id": 41280221663,
+    "job_id": 124770516598,
+    "head": "2587be01d0f922829ba93693851f905da28931c3",
+    "checks": 234,
+    "failures": 4
+  },
+  "diagnosis": "Old canopy integration oracle still expected first wind at y465 and horizontal first-burst paths to automatically open back knot; deliberate second approach at y280 intentionally supersedes these expectations. Local unchanged test reproduced exactly4 failures.",
+  "change": "Only leaf_canopy_verify.gd: explicit expected migrated y280, retain all3 old horizontal inputs as no-auto-open/no-wind/no-recovery counterexamples, add3 upward approaches with all3winds/back-open/no-recovery/x>3400. Every canopy pixel/geometry/restore assertion retained. x>3400 means beyond back passage, not a general landing-geometry proof.",
+  "local_final": {
+    "checks": 237,
+    "failures": 0,
+    "widths": [
+      118,
+      149,
+      180
+    ],
+    "script_sha256": "24158e55016b90806b4d1ef890eba9a708d7cd8dd788463e83b0c83fe13b4f74"
+  },
+  "production_changed": false,
+  "export_unchanged": {
+    "excluded_pattern": "*_verify.gd",
+    "final_zip_sha256": "b4510e466940b4850408ff2c8721b26e42a48b83eab7fbf39f2c2551bf9b13cf",
+    "pck_sha256": "5c0ca78329e43ab29c2c7fc5631ea550842a7b8b02dc1f7dc9040290749bdd05",
+    "no_rebuild_required": "Only excluded test/oracle changed; no runtime/assets/input/geometry mutation."
+  },
+  "original_logs": [
+    {
+      "path": "ci-41280221663-samples.log.gz",
+      "archive_sha256": "661c4ab2dceebc4475ac99cf44f6650fd118859c512d62999c0a1be1e52598a0",
+      "original_sha256": "4ac14209bf7786bfbfcc4414d7f5dc4fa2c424ac35d72b79782d2462edb6ad1b"
+    },
+    {
+      "path": "canopy-before.log.gz",
+      "archive_sha256": "58310ddb4e0ba0559aa763a7d9164c91182459301c16dc0859f9b092afd79429",
+      "original_sha256": "b1892073a7276e00e243fa5c5ca56a2f32550d943b23f1b9df9e7ecb0303bd23"
+    },
+    {
+      "path": "canopy-after-initial.log.gz",
+      "archive_sha256": "1cd618119920c9879aaa9dfb5ad7d25e483355ce3e0e6139464721f5bed091db",
+      "original_sha256": "d9cab1b4ffbf2a099e503208dd6fad2f678da03385048f9b87bba09939bbd2e4"
+    },
+    {
+      "path": "canopy-after-final.log.gz",
+      "archive_sha256": "1cd618119920c9879aaa9dfb5ad7d25e483355ce3e0e6139464721f5bed091db",
+      "original_sha256": "d9cab1b4ffbf2a099e503208dd6fad2f678da03385048f9b87bba09939bbd2e4"
+    }
+  ],
+  "independent_review": "canopy-test-review.json",
+  "status": "local corrected oracle verified; updated-head CI pending",
+  "cost": "5–10 minute forecast for bounded CI repair/review/rerun, same04:47:53 window not reset; actual closeout in#209/permanent integration-closeout.json",
+  "independent_review_sha256": "2b8981db97be835c94e10e55fc51c017b6c87d4fd086c2aca227a7151c16ceae",
+  "root_read_entire_independent_review": true,
+  "diff_archive": {
+    "path": "test-update.patch.gz",
+    "original_sha256": "c3b589253ff7d73a6f593fcf734c8c4d323869982fc50e907b968040ed358014"
+  }
+}

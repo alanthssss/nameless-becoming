@@ -1,0 +1,88 @@
+{
+  "reviewed_at_utc": "2026-11-01T06:21:22.540105+00:00",
+  "author": "first_look independent AI reviewer after blind exploration seal",
+  "mode": "strict bounded read-only targeted review; no UI, no production/source edits, no subagents, no test rerun",
+  "production_revision": "9611660f0acfabc53ddf92c5215b37d7942cfc89",
+  "verdict": "reasonable_test_contract_sync_with_claim_limit",
+  "blocking_findings": [],
+  "conclusion": "这是将过时测试同步到已冻结的新空间合同，未见以删除旧反例或放松成功条件掩盖退化。水平旧输入保留为不自动连开的负例，主动向上输入补足合法借风成功侧；仍须以实际CI结果确认集成，不能代替原生/独立内容/最终包验证。",
+  "findings": [
+    {
+      "claim": "旧断言确实过时",
+      "evidence": "迁移期待(2760,465)，水平三起点要求自动开背结；当前content首风为该段局部(220,280)，作者记录明确全局(2760,280)，目标是隔开第一冲余势与主动背侧借风。"
+    },
+    {
+      "claim": "负例保留且输入未改",
+      "evidence": "2465/2485/2505,y465；RIGHT held30、release1、RIGHT180原样保留；新断言背结未开、rings_hit==0、recoveries==0。"
+    },
+    {
+      "claim": "成功侧有独立已存探针支持",
+      "evidence": "新增2710/2725/2740,y465，UP held30/released180与15/0探针一致；断言恰好3风、开背结、零恢复、p.x>3400，比旧至少2风更明确。"
+    },
+    {
+      "claim": "旧档校验没有被删去",
+      "evidence": "新位置用显式常数280断言active/checkpoint，两处active标记保留、未知布局原子拒绝仍在。"
+    },
+    {
+      "claim": "保留实际失败边界",
+      "evidence": "18行旧entry探针保留5失败，2750/2760在部分起点只1风、未开背结；本结论不扩大到这些起点。"
+    }
+  ],
+  "claim_limit": {
+    "severity": "nonblocking wording/scope limitation",
+    "detail": "p.x>3400仅证明越过3400横向门槛；例如2725,465探针终点约3471.881。尚不能由该比较独立证明越过实际风链落点，content写链目标局部(1010,300)。建议断言标签说continues beyond back passage，或另核实际目标再声称beyond landing。未自行扩读Builder或运行游戏。",
+    "resolution": "root已把最终标签改为continues beyond back passage；实际p.x>3400判据未变，接受其仅表示进入背通口后区域的范围，不再声称越过完整风落点。"
+  },
+  "local_validation_scope": "父任务提供before234/4、after237/0；本复核只读两份日志核对，不亲自运行。全CI仍由root确认。",
+  "inputs": [
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/leaf_canopy_verify.gd",
+      "sha256": "24158e55016b90806b4d1ef890eba9a708d7cd8dd788463e83b0c83fe13b4f74",
+      "read_scope": "135–190 before/after; final diff"
+    },
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/spring_journey_content.gd",
+      "sha256": "237cd0c6634696df0d57ae45bff21505e04ce067c6eb8dee4bb5da4db0c698c9",
+      "read_scope": "line33 back-side wind chain"
+    },
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/final-candidate/wind-choice/author-handoff/wind_entry_model_probe.gd",
+      "sha256": "b821af63b967ff537cb42ee4c0bd726662ed8c23bf2eb714c44c21b46eeedb3a",
+      "read_scope": "all"
+    },
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/final-candidate/wind-choice/author-handoff/wind-entry-model-01/entry-probe.json",
+      "sha256": "956e8ed83ac6ddfdd9820171e13e4fece67eb5052f2cededd3ecf7fc58d95a3d",
+      "read_scope": "all18 rows including5 failures"
+    },
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/final-candidate/wind-choice/author-handoff/wind-entry-model-02/entry-probe.json",
+      "sha256": "247c4db500686461b7b0423aa5963ef299d71fe339ab897aea1a3c49ff317e33",
+      "read_scope": "all15 rows"
+    },
+    {
+      "path": "/private/tmp/nameless-pond-mvp-candidate/prototypes/swarm-flight/review-evidence/2026-11-01/final-candidate/wind-choice/author-handoff/wind-change-results.json",
+      "sha256": "9270f31bb018bfee11b0633903e6ccf60c3feb34150c96b901baeeb70680b4f1",
+      "read_scope": "all"
+    }
+  ],
+  "logs": [
+    {
+      "path": "/private/tmp/pond-ci-canopy-before.log",
+      "sha256": "b1892073a7276e00e243fa5c5ca56a2f32550d943b23f1b9df9e7ecb0303bd23"
+    },
+    {
+      "path": "/private/tmp/pond-ci-canopy-after.log",
+      "sha256": "d9cab1b4ffbf2a099e503208dd6fad2f678da03385048f9b87bba09939bbd2e4"
+    }
+  ],
+  "diff": "diff --git a/prototypes/swarm-flight/leaf_canopy_verify.gd b/prototypes/swarm-flight/leaf_canopy_verify.gd\nindex 0e711f0..c324387 100644\n--- a/prototypes/swarm-flight/leaf_canopy_verify.gd\n+++ b/prototypes/swarm-flight/leaf_canopy_verify.gd\n@@ -150,7 +150,7 @@ func run() -> void:\n \t\tcheck(migrated.restore_payload(fixture),\"actual baseline-generated v2 fixture accepted stage \"+str(index))\n \t\tcheck(migrated.p==Vector2(180,420),\"safe legacy position remains exact stage \"+str(index))\n \t\tif index==2:\n-\t\t\tcheck(migrated.rings[0].pos==Vector2(2760,465) and migrated.checkpoint.rings[0].pos==Vector2(2760,465),\"known old wind positions migrated in active and checkpoint state\")\n+\t\t\tcheck(migrated.rings[0].pos==Vector2(2760,280) and migrated.checkpoint.rings[0].pos==Vector2(2760,280),\"known old wind positions migrate through current layout in active and checkpoint state\")\n \t\t\tcheck(migrated.rings[0].active and migrated.checkpoint.rings[0].active,\"legacy earned ring flags retained\")\n \t\t\tvar bad: Dictionary=fixture.duplicate(true)\n \t\t\tbad.state.rings[0].pos=Model.pack(Vector2(2641,465))\n@@ -166,7 +166,19 @@ func run() -> void:\n \t\tfor frame in 30: route.step(Vector2.RIGHT,true,1.0/60)\n \t\troute.step(Vector2.RIGHT,false,1.0/60)\n \t\tfor frame in 180: route.step(Vector2.RIGHT,false,1.0/60)\n-\t\tcheck(route.passage_open and route.rings_hit>=2 and route.recoveries==0 and route.p.x>3400,\"wind early/nominal/late release continues beyond landing \"+str(launch_x))\n+\t\t# Keep the former horizontal inputs as a counterexample: they must no\n+\t\t# longer automatically answer the separate back-side approach.\n+\t\tcheck(not route.passage_open and route.rings_hit==0 and route.recoveries==0,\"horizontal early/nominal/late release does not auto-open back knot \"+str(launch_x))\n+\tfor launch_x in [2710.0,2725.0,2740.0]:\n+\t\tvar route:=Model.new()\n+\t\troute.load_stage(2)\n+\t\troute.front_open=true\n+\t\troute.wall_at(2350).broken=true\n+\t\troute.keeper.state=\"watch\"\n+\t\troute.p=Vector2(launch_x,465)\n+\t\tfor frame in 30: route.step(Vector2.UP,true,1.0/60)\n+\t\tfor frame in 180: route.step(Vector2.UP,false,1.0/60)\n+\t\tcheck(route.passage_open and route.rings_hit==3 and route.recoveries==0 and route.p.x>3400,\"deliberate upward wind approach continues beyond back passage \"+str(launch_x))\n \tvar old:=Old.new()\n \told.load_stage(0)\n \tvar old_leaf: Dictionary=old.shelters[0]\n",
+  "diff_sha256": "c3b589253ff7d73a6f593fcf734c8c4d323869982fc50e907b968040ed358014",
+  "not_claimed": [
+    "未重跑CI或测试",
+    "未核全部生产文件/PCK哈希；root负责冻结一致性",
+    "不宣称无所有风入口退化，只覆盖所列输入包络",
+    "不是盲探索/真人接受"
+  ],
+  "sealed_at_utc": "2026-11-01T06:21:28.976399+00:00"
+}

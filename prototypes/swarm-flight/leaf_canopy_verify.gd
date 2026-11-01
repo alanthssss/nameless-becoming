@@ -150,7 +150,7 @@ func run() -> void:
 		check(migrated.restore_payload(fixture),"actual baseline-generated v2 fixture accepted stage "+str(index))
 		check(migrated.p==Vector2(180,420),"safe legacy position remains exact stage "+str(index))
 		if index==2:
-			check(migrated.rings[0].pos==Vector2(2760,465) and migrated.checkpoint.rings[0].pos==Vector2(2760,465),"known old wind positions migrated in active and checkpoint state")
+			check(migrated.rings[0].pos==Vector2(2760,280) and migrated.checkpoint.rings[0].pos==Vector2(2760,280),"known old wind positions migrate through current layout in active and checkpoint state")
 			check(migrated.rings[0].active and migrated.checkpoint.rings[0].active,"legacy earned ring flags retained")
 			var bad: Dictionary=fixture.duplicate(true)
 			bad.state.rings[0].pos=Model.pack(Vector2(2641,465))
@@ -166,7 +166,19 @@ func run() -> void:
 		for frame in 30: route.step(Vector2.RIGHT,true,1.0/60)
 		route.step(Vector2.RIGHT,false,1.0/60)
 		for frame in 180: route.step(Vector2.RIGHT,false,1.0/60)
-		check(route.passage_open and route.rings_hit>=2 and route.recoveries==0 and route.p.x>3400,"wind early/nominal/late release continues beyond landing "+str(launch_x))
+		# Keep the former horizontal inputs as a counterexample: they must no
+		# longer automatically answer the separate back-side approach.
+		check(not route.passage_open and route.rings_hit==0 and route.recoveries==0,"horizontal early/nominal/late release does not auto-open back knot "+str(launch_x))
+	for launch_x in [2710.0,2725.0,2740.0]:
+		var route:=Model.new()
+		route.load_stage(2)
+		route.front_open=true
+		route.wall_at(2350).broken=true
+		route.keeper.state="watch"
+		route.p=Vector2(launch_x,465)
+		for frame in 30: route.step(Vector2.UP,true,1.0/60)
+		for frame in 180: route.step(Vector2.UP,false,1.0/60)
+		check(route.passage_open and route.rings_hit==3 and route.recoveries==0 and route.p.x>3400,"deliberate upward wind approach continues beyond back passage "+str(launch_x))
 	var old:=Old.new()
 	old.load_stage(0)
 	var old_leaf: Dictionary=old.shelters[0]
