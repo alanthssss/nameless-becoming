@@ -70,6 +70,33 @@ class PackageTests(unittest.TestCase):
             self.assertIs(metadata['human_accepted'], False)
             self.assertIs(metadata['full_game_completed'], False)
 
+    def rename_executable(self, executable):
+        with zipfile.ZipFile(self.export, 'w') as archive:
+            archive.writestr('Synthetic.app/Contents/Info.plist', plistlib.dumps({
+                'CFBundleShortVersionString': '0.0.0', 'CFBundleExecutable': executable}))
+            archive.writestr('Synthetic.app/Contents/MacOS/' + executable, b'synthetic fixture')
+        self.export_record['sha256'] = tool.digest(self.export)
+
+    def test_localized_executable_keeps_a_quoted_relative_launch_path(self):
+        self.prepare()
+        executable = '雨来之前 · 池岸归途 0.17.0'
+        self.rename_executable(executable)
+        self.pack()
+        with zipfile.ZipFile(self.output) as archive:
+            for name in archive.namelist():
+                if name.endswith('.command'):
+                    body = archive.read(name).decode()
+                    self.assertIn('/Contents/MacOS/' + executable + '" ', body)
+
+    def test_executable_cannot_escape_app_or_inject_shell_syntax(self):
+        for executable in ['../outside', '..', 'bad"name', '$(touch bad)', '`touch bad`', 'bad\\name', 'bad\nname']:
+            with self.subTest(executable=repr(executable)):
+                self.prepare()
+                self.rename_executable(executable)
+                with self.assertRaises(ValueError):
+                    self.pack()
+                self.assertFalse(self.output.exists())
+
     def test_maintenance_cannot_generate_player_package(self):
         self.prepare(); self.receipt['claim'] = 'maintenance'
         self.blocked('claim does not match')

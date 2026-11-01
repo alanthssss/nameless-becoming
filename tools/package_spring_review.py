@@ -77,7 +77,7 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
         app = apps[0]
         metadata = plistlib.loads((app / 'Contents/Info.plist').read_bytes())
         version = metadata['CFBundleShortVersionString']; executable = metadata['CFBundleExecutable']
-        if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version) or not re.fullmatch(r'[A-Za-z0-9_.-]+', executable):
+        if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version) or not re.fullmatch(r'\w[\w .·-]*', executable):
             raise ValueError('Unexpected export version or executable name')
         old_name = app.name
         versioned = stage.parent / f'雨来之前-{version}-池岸归途-{revision[:8]}'
