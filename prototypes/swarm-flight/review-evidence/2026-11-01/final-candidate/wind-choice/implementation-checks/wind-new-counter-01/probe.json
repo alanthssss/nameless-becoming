@@ -1,0 +1,4853 @@
+{
+	"checks": 8,
+	"end": {
+		"front": true,
+		"p": [
+			3095.99877929688,
+			468.06982421875
+		],
+		"passage": false,
+		"rings": 0
+	},
+	"failures": 0,
+	"kind": "controlled actual-menu stage2 ordinary-input component, no position/gate seed, no cold resume",
+	"samples": [
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				180.937652587891,
+				420.826629638672
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.9333333333333,
+			"tick": 2
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				183.371795654297,
+				422.980072021484
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.8666666666667,
+			"tick": 4
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				187.295883178711,
+				426.467712402344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.8,
+			"tick": 6
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				192.699691772461,
+				431.300842285156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.7333333333333,
+			"tick": 8
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				199.463500976562,
+				437.412750244141
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.6666666666667,
+			"tick": 10
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				206.489379882812,
+				443.811645507812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.6,
+			"tick": 12
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				213.515258789062,
+				450.249145507812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.5333333333334,
+			"tick": 14
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				220.541137695312,
+				456.722961425781
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.4666666666667,
+			"tick": 16
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				227.567016601562,
+				463.230773925781
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.4,
+			"tick": 18
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				234.592895507812,
+				469.770050048828
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.3333333333334,
+			"tick": 20
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				241.618774414062,
+				476.338134765625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.2666666666667,
+			"tick": 22
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				248.644653320312,
+				482.932250976562
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.2,
+			"tick": 24
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				255.670532226562,
+				489.549499511719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.1333333333334,
+			"tick": 26
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				262.696411132812,
+				496.186981201172
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.0666666666667,
+			"tick": 28
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				269.722290039062,
+				502.841552734375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.0000000000001,
+			"tick": 30
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				276.748168945312,
+				509.510101318359
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.9333333333334,
+			"tick": 32
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				283.774047851562,
+				516.189514160156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.8666666666667,
+			"tick": 34
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				290.799926757812,
+				522.87646484375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.8000000000001,
+			"tick": 36
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				297.825805664062,
+				529.567749023438
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.7333333333334,
+			"tick": 38
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				304.851684570312,
+				536.260131835938
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.6666666666667,
+			"tick": 40
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				311.877563476562,
+				542.950256347656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.6000000000001,
+			"tick": 42
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				318.903442382812,
+				549.634887695312
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.5333333333334,
+			"tick": 44
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				325.929321289062,
+				556.310791015625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.4666666666668,
+			"tick": 46
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				332.955200195312,
+				562.974731445312
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.4000000000001,
+			"tick": 48
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				339.981079101562,
+				569.623657226562
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.3333333333334,
+			"tick": 50
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				347.006958007812,
+				576.254272460938
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.2666666666668,
+			"tick": 52
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				354.032836914062,
+				582.863708496094
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.2000000000001,
+			"tick": 54
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				361.058715820312,
+				589.448852539062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.1333333333334,
+			"tick": 56
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				368.084594726562,
+				596.007019042969
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.0666666666668,
+			"tick": 58
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				375.110473632812,
+				602.535461425781
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.0000000000001,
+			"tick": 60
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				382.136352539062,
+				609.031494140625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.9333333333335,
+			"tick": 62
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				389.162231445312,
+				615.49267578125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.8666666666668,
+			"tick": 64
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				396.6650390625,
+				620.784851074219
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.8000000000001,
+			"tick": 66
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				404.926483154297,
+				624.226501464844
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.7333333333335,
+			"tick": 68
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				413.936126708984,
+				625.813354492188
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.6666666666668,
+			"tick": 70
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				423.259246826172,
+				625.877868652344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.6000000000001,
+			"tick": 72
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				432.679840087891,
+				626.123474121094
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.5333333333335,
+			"tick": 74
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				441.957366943359,
+				625.982177734375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.4666666666668,
+			"tick": 76
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				451.280883789062,
+				625.896484375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.4000000000001,
+			"tick": 78
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				460.70166015625,
+				625.988464355469
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.3333333333335,
+			"tick": 80
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				470.025207519531,
+				625.796691894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.2666666666668,
+			"tick": 82
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				479.446044921875,
+				625.780822753906
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.2000000000002,
+			"tick": 84
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				488.912719726562,
+				625.816284179688
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.1333333333335,
+			"tick": 86
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				498.37939453125,
+				625.796630859375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.0666666666668,
+			"tick": 88
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				507.846069335938,
+				625.721923828125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.0000000000002,
+			"tick": 90
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				517.312683105469,
+				625.592590332031
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.9333333333335,
+			"tick": 92
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				526.779235839844,
+				625.409118652344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.8666666666668,
+			"tick": 94
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				536.245788574219,
+				625.172546386719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.8000000000002,
+			"tick": 96
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				545.712341308594,
+				624.883911132812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.7333333333335,
+			"tick": 98
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				555.178894042969,
+				624.544494628906
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.6666666666669,
+			"tick": 100
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				564.645446777344,
+				624.156005859375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.6000000000002,
+			"tick": 102
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				574.111999511719,
+				623.720336914062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.5333333333335,
+			"tick": 104
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				583.578552246094,
+				623.239501953125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.4666666666669,
+			"tick": 106
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				593.045104980469,
+				622.715759277344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.4000000000002,
+			"tick": 108
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				602.511657714844,
+				622.151672363281
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.3333333333335,
+			"tick": 110
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				611.978210449219,
+				621.5498046875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.2666666666669,
+			"tick": 112
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				618.672912597656,
+				621.114624023438
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.2000000000002,
+			"tick": 114
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				620.932556152344,
+				620.9677734375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.1333333333336,
+			"tick": 116
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				620.932556152344,
+				620.9677734375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.0666666666669,
+			"tick": 118
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				622.179077148438,
+				620.875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.0000000000002,
+			"tick": 120
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				625.419799804688,
+				620.630187988281
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.9333333333336,
+			"tick": 122
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				630.654235839844,
+				620.227233886719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.8666666666669,
+			"tick": 124
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				637.881713867188,
+				619.657592773438
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.8000000000002,
+			"tick": 126
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				646.975769042969,
+				618.916564941406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.7333333333336,
+			"tick": 128
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				656.442321777344,
+				618.129577636719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.6666666666669,
+			"tick": 130
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				665.908874511719,
+				617.334655761719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.6000000000003,
+			"tick": 132
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				675.375427246094,
+				616.535522460938
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.5333333333336,
+			"tick": 134
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				684.841979980469,
+				615.735961914062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.4666666666669,
+			"tick": 136
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				694.308532714844,
+				614.939758300781
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.4000000000003,
+			"tick": 138
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				703.775085449219,
+				614.150695800781
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.3333333333336,
+			"tick": 140
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				713.098266601562,
+				613.716613769531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.2666666666669,
+			"tick": 142
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				721.992980957031,
+				614.323425292969
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.2000000000003,
+			"tick": 144
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				731.413452148438,
+				613.687194824219
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.1333333333336,
+			"tick": 146
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				740.402526855469,
+				614.104187011719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.0666666666669,
+			"tick": 148
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				749.587585449219,
+				614.073303222656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.0000000000003,
+			"tick": 150
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				758.910949707031,
+				613.742980957031
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.9333333333336,
+			"tick": 152
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				767.808166503906,
+				614.455627441406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.866666666667,
+			"tick": 154
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				777.230590820312,
+				613.952880859375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.8000000000003,
+			"tick": 156
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				786.507507324219,
+				613.832885742188
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.7333333333336,
+			"tick": 158
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				795.497375488281,
+				614.434387207031
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.666666666667,
+			"tick": 160
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				804.686584472656,
+				614.598205566406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.6000000000003,
+			"tick": 162
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				814.153137207031,
+				614.156188964844
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.5333333333336,
+			"tick": 164
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				823.4765625,
+				614.098754882812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.466666666667,
+			"tick": 166
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				832.897094726562,
+				613.859497070312
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.4000000000003,
+			"tick": 168
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				842.174560546875,
+				614.007263183594
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.3333333333337,
+			"tick": 170
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				851.498046875,
+				614.099670410156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.266666666667,
+			"tick": 172
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				860.918701171875,
+				614.014465332031
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.2000000000003,
+			"tick": 174
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				870.2421875,
+				614.213195800781
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.1333333333337,
+			"tick": 176
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				879.662902832031,
+				614.235961914062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.066666666667,
+			"tick": 178
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				889.129455566406,
+				614.20751953125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.0000000000003,
+			"tick": 180
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				898.596008300781,
+				614.234252929688
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.9333333333337,
+			"tick": 182
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				908.062561035156,
+				614.315979003906
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.866666666667,
+			"tick": 184
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				917.529113769531,
+				614.452331542969
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.8000000000004,
+			"tick": 186
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				926.995666503906,
+				614.642639160156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.7333333333337,
+			"tick": 188
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				936.462219238281,
+				614.885986328125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.666666666667,
+			"tick": 190
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				945.928771972656,
+				615.181213378906
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.6000000000004,
+			"tick": 192
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				955.395324707031,
+				615.526977539062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.5333333333337,
+			"tick": 194
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				964.861877441406,
+				615.921569824219
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.466666666667,
+			"tick": 196
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				974.328430175781,
+				616.363220214844
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.4000000000004,
+			"tick": 198
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				983.794982910156,
+				616.849731445312
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.3333333333337,
+			"tick": 200
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				993.261535644531,
+				617.378784179688
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.266666666667,
+			"tick": 202
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				999.955017089844,
+				617.763793945312
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.2000000000004,
+			"tick": 204
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1002.21136474609,
+				617.893615722656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.1333333333337,
+			"tick": 206
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1002.21136474609,
+				617.893615722656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.0666666666671,
+			"tick": 208
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1003.21319580078,
+				617.14599609375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.0000000000004,
+			"tick": 210
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1005.8203125,
+				615.20556640625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.9333333333337,
+			"tick": 212
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1010.03692626953,
+				612.077880859375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.8666666666671,
+			"tick": 214
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1015.86975097656,
+				607.772094726562
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.8000000000004,
+			"tick": 216
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1022.85144042969,
+				602.651977539062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.7333333333337,
+			"tick": 218
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1029.87731933594,
+				597.518249511719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.6666666666671,
+			"tick": 220
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1036.90319824219,
+				592.399169921875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.6000000000004,
+			"tick": 222
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1043.92907714844,
+				587.291564941406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.5333333333338,
+			"tick": 224
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1050.95495605469,
+				582.192199707031
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.4666666666671,
+			"tick": 226
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1057.98083496094,
+				577.097778320312
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.4000000000004,
+			"tick": 228
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1065.00671386719,
+				572.005126953125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.3333333333338,
+			"tick": 230
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1072.03259277344,
+				566.910888671875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.2666666666671,
+			"tick": 232
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1079.05847167969,
+				561.811828613281
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.95,
+			"tick": 234
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1085.49328613281,
+				556.296630859375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 236
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1091.38586425781,
+				550.404052734375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 238
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1097.27844238281,
+				544.511474609375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 240
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1103.17102050781,
+				538.618896484375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 242
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1109.06359863281,
+				532.726318359375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 244
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1114.95617675781,
+				526.833740234375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 246
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1120.84875488281,
+				520.941162109375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 248
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1126.74133300781,
+				515.048583984375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 250
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1132.63391113281,
+				509.156005859375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 252
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1138.52648925781,
+				503.263427734375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 254
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1144.8974609375,
+				498.525726318359
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 256
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1152.03369140625,
+				495.635772705078
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 258
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1159.93542480469,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 260
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1168.26892089844,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 262
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1176.60241699219,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 264
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1184.93591308594,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 266
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1193.26940917969,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 268
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1201.60290527344,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 270
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1209.93640136719,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 272
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1218.26989746094,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 274
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1226.60339355469,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 276
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1234.93688964844,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 278
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1243.27038574219,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 280
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1251.60388183594,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 282
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1257.15942382812,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 284
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1258.40942382812,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 286
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1258.40942382812,
+				494.593566894531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 288
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1259.29321289062,
+				495.477447509766
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 290
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1261.59130859375,
+				497.775543212891
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 292
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1265.3037109375,
+				501.487854003906
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 294
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1270.43017578125,
+				506.614379882812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 296
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1276.32275390625,
+				512.506958007812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 298
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1282.21533203125,
+				518.399536132812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 300
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1288.10791015625,
+				524.292114257812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 302
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1294.00048828125,
+				530.184692382812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 304
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1299.89306640625,
+				536.077270507812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 306
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1305.78564453125,
+				541.969848632812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 308
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1311.67822265625,
+				547.862426757812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 310
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1317.57080078125,
+				553.755004882812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 312
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1323.46337890625,
+				559.647583007812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 314
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1329.35595703125,
+				565.540161132812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 316
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1335.24853515625,
+				571.432739257812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 318
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1341.14111328125,
+				577.325317382812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 320
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1347.91101074219,
+				582.621459960938
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.9333333333333,
+			"tick": 322
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1355.08032226562,
+				587.387756347656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.8666666666667,
+			"tick": 324
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1362.96630859375,
+				590.420715332031
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.8,
+			"tick": 326
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1371.61547851562,
+				591.60498046875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.7333333333333,
+			"tick": 328
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1380.95922851562,
+				591.103637695312
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.6666666666667,
+			"tick": 330
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1390.42602539062,
+				590.305053710938
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.6,
+			"tick": 332
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1399.89282226562,
+				589.511352539062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.5333333333334,
+			"tick": 334
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1409.35961914062,
+				588.726257324219
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.4666666666667,
+			"tick": 336
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1418.82641601562,
+				587.95361328125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.4,
+			"tick": 338
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1428.29321289062,
+				587.197021484375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.3333333333334,
+			"tick": 340
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1437.76000976562,
+				586.460083007812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.2666666666667,
+			"tick": 342
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1447.22680664062,
+				585.746337890625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.2,
+			"tick": 344
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1456.69360351562,
+				585.05908203125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.1333333333334,
+			"tick": 346
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1466.16040039062,
+				584.401733398438
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.0666666666667,
+			"tick": 348
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1475.62719726562,
+				583.77734375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.0000000000001,
+			"tick": 350
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1484.61682128906,
+				584.321350097656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.9333333333334,
+			"tick": 352
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1493.80517578125,
+				584.425476074219
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.8666666666667,
+			"tick": 354
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1503.27197265625,
+				583.916076660156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.8000000000001,
+			"tick": 356
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1512.54919433594,
+				583.896545410156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.7333333333334,
+			"tick": 358
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1521.82666015625,
+				583.921813964844
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.6666666666667,
+			"tick": 360
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1531.10412597656,
+				583.994079589844
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.6000000000001,
+			"tick": 362
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1540.38171386719,
+				584.115051269531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.5333333333334,
+			"tick": 364
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1549.70532226562,
+				584.1796875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.4666666666668,
+			"tick": 366
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1559.12622070312,
+				584.066223144531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.4000000000001,
+			"tick": 368
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1568.44982910156,
+				584.236145019531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.3333333333334,
+			"tick": 370
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1577.87072753906,
+				584.229858398438
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.2666666666668,
+			"tick": 372
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1587.33752441406,
+				584.172119140625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.2000000000001,
+			"tick": 374
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1596.80432128906,
+				584.16943359375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.1333333333334,
+			"tick": 376
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1606.27111816406,
+				584.221862792969
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.0666666666668,
+			"tick": 378
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1615.73791503906,
+				584.329040527344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.0000000000001,
+			"tick": 380
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1625.20471191406,
+				584.490661621094
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.9333333333335,
+			"tick": 382
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1634.67150878906,
+				584.705871582031
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.8666666666668,
+			"tick": 384
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1644.13830566406,
+				584.973571777344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.8000000000001,
+			"tick": 386
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1653.60510253906,
+				585.292602539062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.7333333333335,
+			"tick": 388
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1663.07189941406,
+				585.661376953125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.6666666666668,
+			"tick": 390
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1672.53869628906,
+				586.078186035156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.6000000000001,
+			"tick": 392
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1682.00549316406,
+				586.541015625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.5333333333335,
+			"tick": 394
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1691.47229003906,
+				587.047607421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.4666666666668,
+			"tick": 396
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1700.93908691406,
+				587.595703125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.4000000000001,
+			"tick": 398
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1710.40588378906,
+				588.1826171875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.3333333333335,
+			"tick": 400
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1719.87268066406,
+				588.805541992188
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.2666666666668,
+			"tick": 402
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1729.33947753906,
+				589.461547851562
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.2000000000002,
+			"tick": 404
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1738.80627441406,
+				590.147583007812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.1333333333335,
+			"tick": 406
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1748.27307128906,
+				590.860229492188
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.0666666666668,
+			"tick": 408
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1757.73986816406,
+				591.59619140625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.0000000000002,
+			"tick": 410
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1767.20666503906,
+				592.35205078125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.9333333333335,
+			"tick": 412
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1776.67346191406,
+				593.124084472656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.8666666666668,
+			"tick": 414
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1786.14025878906,
+				593.908752441406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.8000000000002,
+			"tick": 416
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1795.60705566406,
+				594.702209472656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.7333333333335,
+			"tick": 418
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1805.07385253906,
+				595.500732421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.6666666666669,
+			"tick": 420
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1814.54064941406,
+				596.300537109375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.6000000000002,
+			"tick": 422
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1823.52905273438,
+				595.945068359375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.5333333333335,
+			"tick": 424
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1832.7099609375,
+				596.04833984375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.4666666666669,
+			"tick": 426
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1841.69860839844,
+				595.681274414062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.4000000000002,
+			"tick": 428
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1849.90454101562,
+				595.441223144531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.3333333333335,
+			"tick": 430
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1853.99255371094,
+				595.379455566406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.2666666666669,
+			"tick": 432
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1854.3701171875,
+				595.373779296875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.2000000000002,
+			"tick": 434
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1854.67199707031,
+				595.151306152344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.1333333333336,
+			"tick": 436
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1856.48229980469,
+				593.815185546875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.0666666666669,
+			"tick": 438
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1859.8984375,
+				591.286926269531
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.0000000000002,
+			"tick": 440
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1864.91491699219,
+				587.55908203125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.9333333333336,
+			"tick": 442
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1871.47668457031,
+				582.646057128906
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.8666666666669,
+			"tick": 444
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1878.50256347656,
+				577.342895507812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.8000000000002,
+			"tick": 446
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1885.52844238281,
+				572.003967285156
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.7333333333336,
+			"tick": 448
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1892.55432128906,
+				566.626953125
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.6666666666669,
+			"tick": 450
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1899.58020019531,
+				561.209655761719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.6000000000003,
+			"tick": 452
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1906.60607910156,
+				555.750305175781
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.5333333333336,
+			"tick": 454
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1913.63195800781,
+				550.247009277344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.4666666666669,
+			"tick": 456
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1920.65783691406,
+				544.698181152344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.4000000000003,
+			"tick": 458
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1927.68371582031,
+				539.102416992188
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.3333333333336,
+			"tick": 460
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1934.70959472656,
+				533.458557128906
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.2666666666669,
+			"tick": 462
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1941.73547363281,
+				527.765502929688
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.2000000000003,
+			"tick": 464
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1948.76135253906,
+				522.0224609375
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.1333333333336,
+			"tick": 466
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1955.78723144531,
+				516.228759765625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.0666666666669,
+			"tick": 468
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1962.81311035156,
+				510.384063720703
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 87.0000000000003,
+			"tick": 470
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1969.83898925781,
+				504.488128662109
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.9333333333336,
+			"tick": 472
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1976.86486816406,
+				498.541046142578
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.866666666667,
+			"tick": 474
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1983.89074707031,
+				492.542999267578
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.8000000000003,
+			"tick": 476
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1990.91662597656,
+				486.494384765625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.7333333333336,
+			"tick": 478
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				1997.94250488281,
+				480.395874023438
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.666666666667,
+			"tick": 480
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2004.96838378906,
+				474.248321533203
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.6000000000003,
+			"tick": 482
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2011.99426269531,
+				468.052764892578
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.5333333333336,
+			"tick": 484
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2019.50036621094,
+				462.993591308594
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.466666666667,
+			"tick": 486
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2027.78002929688,
+				459.778778076172
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.4000000000003,
+			"tick": 488
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2036.59619140625,
+				458.420837402344
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.3333333333337,
+			"tick": 490
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2044.96252441406,
+				458.985076904297
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.266666666667,
+			"tick": 492
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2053.07739257812,
+				460.788116455078
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.2000000000003,
+			"tick": 494
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2062.07104492188,
+				461.073638916016
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.1333333333337,
+			"tick": 496
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2071.53784179688,
+				460.470336914062
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.066666666667,
+			"tick": 498
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2081.00463867188,
+				459.832275390625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.0000000000003,
+			"tick": 500
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2090.47143554688,
+				459.162536621094
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.9333333333337,
+			"tick": 502
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2099.79443359375,
+				458.815612792969
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.866666666667,
+			"tick": 504
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2108.68359375,
+				459.504943847656
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.8000000000004,
+			"tick": 506
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2118.095703125,
+				458.895233154297
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.7333333333337,
+			"tick": 508
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2127.08349609375,
+				459.297576904297
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.666666666667,
+			"tick": 510
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2136.2568359375,
+				459.235656738281
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.6000000000004,
+			"tick": 512
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2145.580078125,
+				458.795135498047
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.5333333333337,
+			"tick": 514
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2154.4716796875,
+				459.392974853516
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.466666666667,
+			"tick": 516
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2163.88891601562,
+				458.713989257812
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.4000000000004,
+			"tick": 518
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2172.87719726562,
+				459.068878173828
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.3333333333337,
+			"tick": 520
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2182.05737304688,
+				458.963714599609
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.266666666667,
+			"tick": 522
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2188.755859375,
+				458.402435302734
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.2000000000004,
+			"tick": 524
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2191.025390625,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.1333333333337,
+			"tick": 526
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2191.025390625,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.0666666666671,
+			"tick": 528
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2193.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.0000000000004,
+			"tick": 530
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2196.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.9333333333337,
+			"tick": 532
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2199.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.8666666666671,
+			"tick": 534
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2202.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.8000000000004,
+			"tick": 536
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2205.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.7333333333337,
+			"tick": 538
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2208.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.6666666666671,
+			"tick": 540
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2211.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.6000000000004,
+			"tick": 542
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2214.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.5333333333338,
+			"tick": 544
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2217.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.4666666666671,
+			"tick": 546
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2220.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.4000000000004,
+			"tick": 548
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2223.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.3333333333338,
+			"tick": 550
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2226.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.2666666666671,
+			"tick": 552
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2229.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.2000000000004,
+			"tick": 554
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2232.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.1333333333338,
+			"tick": 556
+		},
+		{
+			"burst": 0.0,
+			"front": false,
+			"p": [
+				2235.35888671875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.0666666666671,
+			"tick": 558
+		},
+		{
+			"burst": 0.506666666666667,
+			"front": false,
+			"p": [
+				2264.69189453125,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 64.0000000000005,
+			"tick": 560
+		},
+		{
+			"burst": 0.473333333333333,
+			"front": false,
+			"p": [
+				2294.02490234375,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 63.9333333333338,
+			"tick": 562
+		},
+		{
+			"burst": 0.44,
+			"front": false,
+			"p": [
+				2323.35791015625,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 64.0833333333338,
+			"tick": 564
+		},
+		{
+			"burst": 0.406666666666667,
+			"front": true,
+			"p": [
+				2352.69091796875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 64.8833333333338,
+			"tick": 566
+		},
+		{
+			"burst": 0.373333333333333,
+			"front": true,
+			"p": [
+				2382.02392578125,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 65.6833333333338,
+			"tick": 568
+		},
+		{
+			"burst": 0.34,
+			"front": true,
+			"p": [
+				2411.35693359375,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 66.4833333333338,
+			"tick": 570
+		},
+		{
+			"burst": 0.306666666666666,
+			"front": true,
+			"p": [
+				2440.68994140625,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 67.2833333333338,
+			"tick": 572
+		},
+		{
+			"burst": 0.273333333333333,
+			"front": true,
+			"p": [
+				2470.02294921875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 68.0833333333339,
+			"tick": 574
+		},
+		{
+			"burst": 0.239999999999999,
+			"front": true,
+			"p": [
+				2499.35595703125,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 68.8833333333339,
+			"tick": 576
+		},
+		{
+			"burst": 0.206666666666666,
+			"front": true,
+			"p": [
+				2528.68896484375,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 69.6833333333339,
+			"tick": 578
+		},
+		{
+			"burst": 0.173333333333333,
+			"front": true,
+			"p": [
+				2558.02197265625,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 70.4833333333339,
+			"tick": 580
+		},
+		{
+			"burst": 0.139999999999999,
+			"front": true,
+			"p": [
+				2587.35498046875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.2833333333339,
+			"tick": 582
+		},
+		{
+			"burst": 0.106666666666666,
+			"front": true,
+			"p": [
+				2616.68798828125,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.0833333333339,
+			"tick": 584
+		},
+		{
+			"burst": 0.0733333333333328,
+			"front": true,
+			"p": [
+				2646.02099609375,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.8833333333339,
+			"tick": 586
+		},
+		{
+			"burst": 0.0399999999999994,
+			"front": true,
+			"p": [
+				2675.35400390625,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.6833333333339,
+			"tick": 588
+		},
+		{
+			"burst": 0.0066666666666661,
+			"front": true,
+			"p": [
+				2704.68701171875,
+				458.212249755859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.6166666666673,
+			"tick": 590
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2722.80859375,
+				458.655059814453
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.5500000000006,
+			"tick": 592
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2732.275390625,
+				459.447509765625
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.4833333333339,
+			"tick": 594
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2741.7421875,
+				460.245544433594
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.4166666666673,
+			"tick": 596
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2751.208984375,
+				461.045379638672
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.3500000000006,
+			"tick": 598
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2760.67578125,
+				461.843231201172
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.283333333334,
+			"tick": 600
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2770.142578125,
+				462.635314941406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.2166666666673,
+			"tick": 602
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2779.609375,
+				463.417877197266
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.1500000000006,
+			"tick": 604
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2789.076171875,
+				464.187225341797
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.083333333334,
+			"tick": 606
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2798.54296875,
+				464.939605712891
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.0166666666673,
+			"tick": 608
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2808.009765625,
+				465.671539306641
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.9500000000006,
+			"tick": 610
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2817.4765625,
+				466.379516601562
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.883333333334,
+			"tick": 612
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2826.943359375,
+				467.060150146484
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.8166666666673,
+			"tick": 614
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2836.41015625,
+				467.710266113281
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.7500000000007,
+			"tick": 616
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2845.876953125,
+				468.326721191406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.683333333334,
+			"tick": 618
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2855.34375,
+				468.906585693359
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.6166666666673,
+			"tick": 620
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2864.810546875,
+				469.447174072266
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.5500000000007,
+			"tick": 622
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2874.27734375,
+				469.945861816406
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.483333333334,
+			"tick": 624
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2883.744140625,
+				470.400329589844
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.4166666666673,
+			"tick": 626
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2893.2109375,
+				470.808319091797
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.3500000000007,
+			"tick": 628
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2902.677734375,
+				471.16796875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.283333333334,
+			"tick": 630
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2912.14453125,
+				471.477569580078
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.2166666666674,
+			"tick": 632
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2921.611328125,
+				471.735626220703
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.1500000000007,
+			"tick": 634
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2931.078125,
+				471.94091796875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.083333333334,
+			"tick": 636
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2940.544921875,
+				472.092468261719
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.0166666666674,
+			"tick": 638
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2950.01171875,
+				472.189605712891
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.9500000000007,
+			"tick": 640
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2959.478515625,
+				472.231781005859
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.883333333334,
+			"tick": 642
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2968.9453125,
+				472.218902587891
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.8166666666674,
+			"tick": 644
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2978.412109375,
+				472.150909423828
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.7500000000007,
+			"tick": 646
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2987.87890625,
+				472.028198242188
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.683333333334,
+			"tick": 648
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				2997.345703125,
+				471.851348876953
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.6166666666674,
+			"tick": 650
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3006.8125,
+				471.621185302734
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.5500000000007,
+			"tick": 652
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3016.279296875,
+				471.338836669922
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.4833333333341,
+			"tick": 654
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3025.74609375,
+				471.005554199219
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.4166666666674,
+			"tick": 656
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3035.212890625,
+				470.622985839844
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.3500000000007,
+			"tick": 658
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3044.6796875,
+				470.192962646484
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.2833333333341,
+			"tick": 660
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3054.146484375,
+				469.717498779297
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.2166666666674,
+			"tick": 662
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3063.61328125,
+				469.198883056641
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.1500000000007,
+			"tick": 664
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3073.080078125,
+				468.639556884766
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.0833333333341,
+			"tick": 666
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3082.4365234375,
+				468.103057861328
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 71.2333333333341,
+			"tick": 668
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3090.83227539062,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.0333333333341,
+			"tick": 670
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.12377929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 72.8333333333341,
+			"tick": 672
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.87377929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 73.6333333333341,
+			"tick": 674
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 74.4333333333341,
+			"tick": 676
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 75.2333333333341,
+			"tick": 678
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 76.0333333333342,
+			"tick": 680
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 76.8333333333342,
+			"tick": 682
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 77.6333333333342,
+			"tick": 684
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 78.4333333333342,
+			"tick": 686
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 79.2333333333342,
+			"tick": 688
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 80.0333333333342,
+			"tick": 690
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 80.8333333333342,
+			"tick": 692
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 81.6333333333342,
+			"tick": 694
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 82.4333333333342,
+			"tick": 696
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 83.2333333333343,
+			"tick": 698
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.0333333333343,
+			"tick": 700
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 84.8333333333343,
+			"tick": 702
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 85.6333333333343,
+			"tick": 704
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 86.4333333333343,
+			"tick": 706
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 87.2333333333343,
+			"tick": 708
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 88.0333333333343,
+			"tick": 710
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 88.8333333333343,
+			"tick": 712
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 89.6333333333343,
+			"tick": 714
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 90.4333333333344,
+			"tick": 716
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 91.2333333333344,
+			"tick": 718
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.0333333333344,
+			"tick": 720
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 92.8333333333344,
+			"tick": 722
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 93.6333333333344,
+			"tick": 724
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 94.4333333333344,
+			"tick": 726
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 95.2333333333344,
+			"tick": 728
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.0333333333344,
+			"tick": 730
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 96.8333333333345,
+			"tick": 732
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 97.6333333333345,
+			"tick": 734
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 98.4333333333345,
+			"tick": 736
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 99.2333333333345,
+			"tick": 738
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 740
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 742
+		},
+		{
+			"burst": 0.0,
+			"front": true,
+			"p": [
+				3095.99877929688,
+				468.06982421875
+			],
+			"passage": false,
+			"recoveries": 0,
+			"rings": 0,
+			"stamina": 100.0,
+			"tick": 744
+		}
+	],
+	"ticks": 744
+}

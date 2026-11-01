@@ -109,11 +109,11 @@ func open_front(m) -> void:
 	check(m.front_open and not m.passage_open and m.keeper.state=="watch","retry retains only earned first passage")
 func open_back(m,wind: bool) -> void:
 	if wind:
-		fly(m,Vector2(2485,465))
-		frames(m,30,Vector2.RIGHT,true)
-		frames(m,1,Vector2.RIGHT,false)
+		fly(m,Vector2(2725,465))
+		frames(m,30,Vector2.UP,true)
+		frames(m,1,Vector2.UP,false)
 		for i in 180:
-			frames(m,1,Vector2.RIGHT)
+			frames(m,1,Vector2.UP)
 			if m.passage_open: break
 		check(m.rings_hit>=2,"wind changes height before back knot")
 	else:
@@ -233,6 +233,16 @@ func verify_keeper_tidy() -> void:
 	check(not restored.restore_payload(legacy) and restored.save_payload()==before_reject,"unknown presentation revision rejects atomically")
 
 func verify_back_sign() -> void:
+	# One unchanged first stroke must not choose the wind route and second gate.
+	# Ordinary approach, no position injection, checkpoint restore or cold resume.
+	var straight=fresh(2)
+	for point in [Vector2(620,620),Vector2(1000,620),Vector2(1260,500),Vector2(1850,590),Vector2(2190,465)]: fly(straight,point)
+	for i in 900:
+		if straight.keeper.state=="counting" and straight.keeper.elapsed<1.2: break
+		frames(straight,1)
+	frames(straight,30,Vector2.RIGHT,true)
+	frames(straight,180,Vector2.RIGHT)
+	check(straight.front_open and not straight.passage_open and straight.rings_hit==0,"one unchanged first stroke cannot choose wind and open both knots")
 	# Expected player rules: a thick sign cannot be dashed through; height changes
 	# reach a visible back knot, which opens without a second timing window.
 	for route in ["upper","lower"]:
@@ -240,7 +250,7 @@ func verify_back_sign() -> void:
 		m.front_open=true
 		m.wall_at(2350).broken=true
 		m.keeper.state="watch"
-		m.p=Vector2(2740,330)
+		m.p=Vector2(2740,400)
 		frames(m,30,Vector2.RIGHT,true)
 		frames(m,45,Vector2.RIGHT)
 		check(m.p.x<2817 and not m.passage_open,"solid board blocks a direct burst "+route)
@@ -256,15 +266,15 @@ func verify_back_sign() -> void:
 		check(m.passage_open and m.rings_hit==0,"ordinary "+route+" approach opens knot before any wind relay")
 		roundtrip(m,"back-sign "+route)
 	# Slightly different launch positions are ordinary play, not a pixel-perfect solution.
-	for x in [2465,2475,2485,2495,2505]:
+	for x in [2710,2717.5,2725,2732.5,2740]:
 		for y in [457,465,473]:
 			var wind=fresh(2)
 			wind.front_open=true
 			wind.wall_at(2350).broken=true
 			wind.keeper.state="watch"
 			wind.p=Vector2(x,y)
-			frames(wind,30,Vector2.RIGHT,true)
-			frames(wind,150,Vector2.RIGHT)
+			frames(wind,30,Vector2.UP,true)
+			frames(wind,180,Vector2.UP)
 			check(wind.passage_open and wind.rings_hit==3 and wind.recoveries==0,"wind entry envelope "+str(Vector2(x,y)))
 	var wrong=fresh(2)
 	wrong.front_open=true

@@ -101,6 +101,12 @@ jobs:
           SWARM_RAIN_CHOICE_QA_DIR="$RUNNER_TEMP/rain-choice-disk" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://rain_choice_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/rain-choice-disk.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/rain-choice-disk.log"; then exit 1; fi
           grep -q '^RAIN CHOICE SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/rain-choice-disk.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://wind_route_verify.gd 2>&1 | tee "$RUNNER_TEMP/wind-route-model.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/wind-route-model.log"; then exit 1; fi
+          grep -q '^WIND ROUTE VERIFIED:.*0 failures' "$RUNNER_TEMP/wind-route-model.log"
+          SWARM_WIND_ROUTE_QA_DIR="$RUNNER_TEMP/wind-route-disk" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://wind_route_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/wind-route-disk.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/wind-route-disk.log"; then exit 1; fi
+          grep -q '^WIND ROUTE SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/wind-route-disk.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://ellipse_precision_probe.gd 2>&1 | tee "$RUNNER_TEMP/ellipse-precision.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/ellipse-precision.log"; then exit 1; fi
           grep -q '^ELLIPSE PRECISION VERIFIED:.*0 failures' "$RUNNER_TEMP/ellipse-precision.log"
