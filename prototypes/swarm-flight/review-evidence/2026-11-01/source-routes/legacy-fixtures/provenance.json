@@ -1,0 +1,24 @@
+{
+  "kind": "genuine_previous_model_payloads",
+  "source_revision": "002600a433ec3ddc174a4a94f4e5d2fa30e58054",
+  "source_checkout": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming",
+  "engine": "Godot 4.6.2.stable.official.71f334935",
+  "generation": "External generator run with --path prototypes/swarm-flight against unchanged old primary model. Never derived by deleting a marker from new payloads. All seven payloads accepted by old restore_payload.",
+  "boundary": "Developer state fixtures. Positions are legal seeded old states, not independent player sessions. source-observed alone additionally uses60 ordinary idle steps at SOURCE to earn its observation. unsafe-checkpoint is valid in old geometry but intentionally invalid in new geometry.",
+  "generator": "generator.gd.txt",
+  "artifact_sha256": {
+    "generator.gd.txt": "0ffc2ed9bd6881243b742f03bc487909246b17a82b2dbc1fc2bb660b76e849a5",
+    "old-before-fork.json": "2806e19863d6fd14694de9f031021315daef52c98a86b182239b91e98b3f5f68",
+    "old-future-wall-live.json": "894fc0cfb815dcfaa5814d539bfc0e1ddc9a5d7b5f1c3c4502549f2d810304de",
+    "old-initial.json": "fa3f7a5b5a12b1a2c8c5ae9cae9ae1ca997b5b29fb1567ed74e13ed9a7d9b197",
+    "old-source-observed.json": "b0cbb3b9f3ffd356c6e1278457a55cf9d484216f897ca8c6bc6f47272f4b5d1f",
+    "old-stage-1.json": "1c473f697164c5844a154b865e691def7e1487e65a9ee32756589ce088e453c3",
+    "old-stage-2.json": "3280d770f668cfd5ba7d738efd9dec9f7afc2bdafeacc8b04b47fd9154e5fbba",
+    "old-unsafe-checkpoint.json": "4a9c1f6accb5d8088c76e3227465e3fcdb1e207f74aae5b41527961502a550ef"
+  },
+  "old_source_sha256": {
+    "spring_journey_model.gd": "4629ed0a8089c3650f4bb4dad273d9176841d4cf4287e18aa3432fd3ffbdf8bd",
+    "spring_journey_content.gd": "e0c955f67e9285a0b2195a2acea46e70a281dcd9577343e467828d776bc17880",
+    "spring_journey_main.gd": "0cc8bc4d5903f828bf9f640b3d48fe9bf2674f0fa3040e593cdceb79ba6eb715"
+  }
+}

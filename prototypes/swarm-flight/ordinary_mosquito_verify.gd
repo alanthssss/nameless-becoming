@@ -124,10 +124,15 @@ func restore_cases():
 		var upgraded=copy.save_payload()
 		var expected=original.duplicate(true)
 		expected.small_actor_revision=1
-		# Actor is the only permitted changed field in these already-current geometry/preparation fixtures.
+		expected.pond_layout_revision=1
+		# The later pond-layout migration may add only its declared wall to both snapshots.
+		if original.stage==0:
+			var fork=Model.pack({"kind":"terrain","material":"hedge","rect":Rect2(2860,330,200,120),"broken":false})
+			expected.state.walls.append(fork.duplicate(true))
+			expected.state.checkpoint.walls.append(fork.duplicate(true))
 		expected.story.small=upgraded.story.small.duplicate(true)
 		expected.checkpoint_story.small=upgraded.checkpoint_story.small.duplicate(true)
-		check(JSON.parse_string(JSON.stringify(upgraded,"",true,true))==JSON.parse_string(JSON.stringify(expected,"",true,true)),"old upgrade changes only two small actors and marker "+name)
+		check(JSON.parse_string(JSON.stringify(upgraded,"",true,true))==JSON.parse_string(JSON.stringify(expected,"",true,true)),"old upgrade changes only two small actors, declared pond wall and markers "+name)
 		var old_actor=Model.unpack(original.story.small)
 		var preserve=original.stage==0 and sampled_clear(copy,Model.SMALL_HOME,old_actor.pos) and old_actor.pos.distance_to(Model.SMALL_HOME)<=235.01 and old_actor.state not in ["idle","rest"]
 		var wanted=old_actor if preserve else Model.actor(Model.SMALL_HOME)

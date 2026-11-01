@@ -32,6 +32,13 @@ func without_small(value: Dictionary) -> Dictionary:
 	var copy=value.duplicate(true)
 	copy.erase("small")
 	return copy
+func expected_pond_state(old: Dictionary) -> Dictionary:
+	var state=old.state.duplicate(true)
+	if old.stage==0:
+		var fork=M.pack({"kind":"terrain","material":"hedge","rect":Rect2(2860,330,200,120),"broken":false})
+		state.walls.append(fork.duplicate(true))
+		state.checkpoint.walls.append(fork.duplicate(true))
+	return state
 func run():
 	if folder.is_empty():
 		push_error("SWARM_MOSQUITO_QA_DIR required")
@@ -64,7 +71,7 @@ func run():
 				var expected=M.new()
 				check(expected.restore_payload(old),"independent model accepts old snapshot "+label)
 				check(game.model.small==expected.small and game.model.checkpoint_story.small==expected.checkpoint_story.small,"disk path migrates both NPC snapshots "+label)
-				check(disk.state==old.state and disk.stage==old.stage and without_small(disk.story)==without_small(old.story) and without_small(disk.checkpoint_story)==without_small(old.checkpoint_story),"all original non-NPC state and earned facts retained "+label)
+				check(disk.state==expected_pond_state(old) and disk.get("pond_layout_revision")==1 and disk.stage==old.stage and without_small(disk.story)==without_small(old.story) and without_small(disk.checkpoint_story)==without_small(old.checkpoint_story),"all original non-NPC state and facts retained except declared pond wall "+label)
 				var saved: Dictionary=game.model.save_payload()
 				await release(game)
 				game=await scene(path)
