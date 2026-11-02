@@ -1,0 +1,1 @@
+First native comparison completed all long chapters but failed three initial charge/pause checks while other native applications were launched. Exact same diagnostic passed headless; retake in foreground with no other UI work is pending. Focus interference is a hypothesis until retake. No production code changed.

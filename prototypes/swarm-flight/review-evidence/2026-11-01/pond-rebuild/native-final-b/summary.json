@@ -1,0 +1,33 @@
+{
+  "checks": 39,
+  "failures": 0,
+  "stage_rings": {
+    "0": 0,
+    "1": 0,
+    "2": 0
+  },
+  "stage_samples": [
+    {
+      "stage": 0,
+      "min_energy": 59.9000000000018,
+      "max_recoveries": 0,
+      "max_shield": 0.0,
+      "samples": 2530
+    },
+    {
+      "stage": 1,
+      "min_energy": 67.8833333333335,
+      "max_recoveries": 0,
+      "max_shield": 0.0,
+      "samples": 1101
+    },
+    {
+      "stage": 2,
+      "min_energy": 67.8666666666681,
+      "max_recoveries": 0,
+      "max_shield": 0.0,
+      "samples": 2350
+    }
+  ],
+  "not_human_time": true
+}

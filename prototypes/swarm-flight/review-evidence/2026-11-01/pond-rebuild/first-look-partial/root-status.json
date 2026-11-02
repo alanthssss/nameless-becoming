@@ -1,0 +1,8 @@
+{
+  "revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "status": "incomplete, superseded after reproduced flower defect",
+  "author": "root record of available artifacts, not reviewer sign-off",
+  "last_raw_frame": "078-past-comb-toward-exit.png",
+  "completed_visible_ending": false,
+  "reason": "Reviewer execution interrupted repeatedly; source contact/readability failure independently observed and reproduced. This record cannot satisfy candidate experience gate."
+}

@@ -1,0 +1,7 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+SPRING_ROUTE: {"completed":true,"recoveries":3,"rings":9,"shared":true}
+SPRING_ROUTE: {"completed":true,"recoveries":2,"rings":0,"shared":false}
+FAIL: visible flower contact is not masked by nearby lamp cue
+FAIL: visible central flower contact records source at painted center
+SPRING JOURNEY VERIFIED: 322 checks, 2 failures

@@ -1,0 +1,74 @@
+{
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "status": "passed-bounded-candidate",
+  "author": "Codex root",
+  "scope": "GDD13.5/J01–08 +13.6; M3#208/#209, M4#211; internal candidate only",
+  "production_binding": "59 production files hash-match75b6 production-snapshot.json; c40a QA correction and75b6 real flower-contact fix are included. Evidence/docs commits must preserve these hashes.",
+  "runs": {
+    "native_a": {
+      "checks": 70,
+      "failures": 0,
+      "path": "native-final-a/",
+      "route": "Actual viewport keys through full wind/source/shield/return/share/ending journey; one deliberate R preserves first opening. Pause and real-disk new-scene resume at source/rain/gate/armed share/listeners/ending. Post-ending earned-keeper and embedded-pose fixtures disclosed in runner.",
+      "not_claimed": [
+        "blind exploration",
+        "human duration",
+        "process-memory restoration from external observations"
+      ]
+    },
+    "native_b": {
+      "checks": 39,
+      "failures": 0,
+      "path": "native-final-b/",
+      "route": "Actual viewport keys, all three chapters, no wind/no sharing, zero forced recovery; real-disk new-scene charge, active burst and second chapter boundary resume.",
+      "not_claimed": [
+        "blind exploration",
+        "human duration"
+      ]
+    },
+    "native_comparison": {
+      "checks": 55,
+      "failures": 0,
+      "path": "native-comparison/",
+      "route": "Complete07→08→09, actual viewport keys; current charge/burst/disk failure retry/ending/late-stage disk scene resume.",
+      "previous_failure": "../pond-rebuild/native-comparison/attempt-1-focus-interference is retained in permanent outputs. Initial concurrent-app run had three charge failures, headless diagnostic passed. Current QA fixture suppresses only pause_game called via OS _notification; explicit Esc/menu/disk checks remain real."
+    },
+    "native_source_states": {
+      "checks": 46,
+      "failures": 0,
+      "path": "native-states/",
+      "kind": "Controlled source state fixtures, not a continuous or independent journey; actual production keyboard actions, cancellation/repeat/late observation and supported source invalidation with disk scene restore."
+    }
+  },
+  "related_checks": {
+    "spring_model": 322,
+    "save_suites": 941,
+    "core": 1655,
+    "long_model": 813,
+    "source_routes": 61,
+    "rain_choices": 98,
+    "mosquito": 34,
+    "source_states": 107,
+    "audio": 129,
+    "departure": 17,
+    "canopy_variations": 232,
+    "charge_feedback": 18,
+    "package_and_review_unittests": 35,
+    "failures": 0,
+    "ci_head": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+    "ci_run": 41319107582,
+    "ci_evidence": "ci-summary.json",
+    "note": "Counts from distinct suites may overlap conceptually; not a score of enjoyment.",
+    "source_expiry_supplement": 135
+  },
+  "save_policy": "v3 independent save; old v2 is rejected atomically and original bytes preserved. No inferred relocation of old coordinates.",
+  "limits": [
+    "AI developer validation and AI independent exploration do not establish Alan acceptance.",
+    "07/08 long content and common flight/collision production files unchanged.",
+    "Known-answer route recordings do not replace exploratory content review."
+  ],
+  "superseded_revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "source_fix": "Visible flower center and cue ordering fixed at75b6; two regression checks reproduced before and pass after. Current native A70/B39/C55/D46 all zero failures and fresh independent exploration completes; old18096 evidence remains explicitly superseded.",
+  "focus_adapter": "Native fixture pause_game returns only when GDScript call stack contains _notification. This isolates multi-app OS-focus changes; does not alter rules, explicit pause or save. Earlier _notification override alone did not prevent inherited pause, explaining unreliable initial setup. Exported process focus/pause behavior is tested separately.",
+  "export_process_checks": "export-record.json/export-entry-smoke/ and final-package-proof/result.json: current original export and final ZIP actual two .command entries pass cold-process restore/continued movement/isolated saves. Identical PCK hash binds original, independent review and final package."
+}

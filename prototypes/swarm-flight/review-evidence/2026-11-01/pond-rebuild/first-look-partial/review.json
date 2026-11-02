@@ -1,0 +1,657 @@
+{
+  "revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "author": "Codex implementation team",
+  "reviewer": "pond_first_look AI independent explorer",
+  "human_acceptance_claim": false,
+  "overall_verdict": "incomplete_not_ready",
+  "status": "封存旧版探索；停止UI操作。已完成前两段并打开归途两道叶结，到达蜡脾；未取得最终结尾画面，未完成分享。",
+  "blockers": [
+    {
+      "id": "flower-route-registration-gap",
+      "description": "蜡脾显示“还没有亲自看过的花路”；回访附近蓝花并停到花心附近后，仍只看到花蜡灯提示，没有获得花路的明确反馈。独立画面证据支持交互/反馈缺口，不能仅凭画面断言代码根因。",
+      "evidence": [
+        "074-comb-share-prompt.png",
+        "076-flower-revisit.png",
+        "077-blue-flower-observed.png"
+      ]
+    },
+    {
+      "id": "ending-unverified",
+      "description": "未取得最终结尾/完成画面；最后078仍为暂停画面，不是成功退出关卡证据。"
+    },
+    {
+      "id": "rain-choice-consequence-gap",
+      "description": "两方案确实执行，但未观察到伤害、体力优势或后续决策的有意义差异；不能把拾取状态和路线不同自动视为充分的后果对照。"
+    }
+  ],
+  "limitations": [
+    "只看本人的游戏画面、截图与笔记；没有读取源码、设计、Issue、别人的录像或存档字段。",
+    "中段仅用本人到达的第二叶亭存档做原字节备份和恢复；恢复由父代理按隔离启动参数重启。",
+    "每次截图/输入工具等待会让游戏继续运行，除已暂停区间外会增加真实暴露；HUD计时与操作组工具耗时不能当自然游玩时长或自然难度。",
+    "长时间外部turn_aborted中断不属于自然游戏时长；本报告不把它记为游戏阻塞。",
+    "这是AI探索复核，不是人类试玩，不能裁定乐趣或真人认可。"
+  ],
+  "chapters": [
+    {
+      "id": "03",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "沿池岸向右，找仍开放的花。画面右侧箭头和同伴话语“池岸那头还有花香”给出方向。",
+        "options": [
+          {
+            "approach": "穿过中央窄口",
+            "action": "先向右飞近，再用空格蓄力冲向橙色竖片。",
+            "expected_consequence": "若橙色为可推动或可打破的阻挡，冲刺可能开出通路；也可能碰撞损失体力。",
+            "visual_basis": "上、下大叶丛之间留有狭长口，橙色板挡在口中。"
+          },
+          {
+            "approach": "从叶丛下缘绕行",
+            "action": "先向下再向右，试过下叶丛底部。",
+            "expected_consequence": "可能更安全但路更长；如叶丛延伸到底部则需回中央口。",
+            "visual_basis": "下叶丛底端与地面似有空间；右边有水滴资源。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "穿过中央窄口",
+          "consequence": "冲刺后橙色障碍消失；画面出现“叶间的路打开了”，能向右继续。体力96→69。未试下绕。"
+        },
+        {
+          "approach": "蓄力冲入风花",
+          "consequence": "一冲触发连续借风×3，蜂沿蓝花路径自动向右上跃进；提示“不用再蓄力·体力+4”。截图体力66→52，含最初冲刺及实时飞行消耗。"
+        },
+        {
+          "approach": "向下绕出",
+          "consequence": "下方可通行，继续向右，未卡路；采露附近体力67→69后到达高茎前。"
+        },
+        {
+          "approach": "先靠近蓝花",
+          "consequence": "靠近蓝花时画眉说“雨要来了，前面的叶棚能歇脚”，下方提示它转身望向叶棚。目标后续去向清楚。"
+        },
+        {
+          "approach": "03-after-exit",
+          "consequence": "看到完成勾号及“沿池岸绕到叶棚那一侧”，自动进入下一段。没有Esc的过场观察造成额外实时暴露，随后立刻暂停。"
+        }
+      ],
+      "verdict": "completed_with_observations",
+      "conclusion": "实际通过花铃叶拱，看到完成勾号并进入雨中停走。目标方向、冲刺破障、风花、叶下恢复和出口文字可读。第二组风花曾撞实心花篱，按反馈改走下方成功。靠近蓝花触发画眉对话不等于已记录花路，这点直到结尾才发现。",
+      "evidence": [
+        {
+          "path": "001-opening.png",
+          "sha256": "67aa74f790c00c730bc414018cf1129265f27c8ee6c0ba058a4b2f002a1655a2",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:33:23.083828+00:00"
+        },
+        {
+          "path": "002-first-scene.png",
+          "sha256": "6ab196162119fc94365e977f227fa34d11ff058c4a2b9a03a6551d28422da1e5",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:33:38.444543+00:00"
+        },
+        {
+          "path": "003-paused-confirmation.png",
+          "sha256": "ff48dd2ecac7e3540a6c94a64091fd137ae1a58213e19cc2d2446ea534817daf",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:33:39.921098+00:00"
+        },
+        {
+          "path": "004-approach-obstacle.png",
+          "sha256": "ee24131934bf8a9bbdc98bca2c17bbc807337641988184ae0cd9a23dd26cc26c",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:34:02.269635+00:00"
+        },
+        {
+          "path": "005-charge-opening.png",
+          "sha256": "3b81529a1d743f789400863fdc46907c89dc32590d3577416349689811d49168",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:34:16.657745+00:00"
+        },
+        {
+          "path": "006-dew-attempt.png",
+          "sha256": "fca772eefb152d484db68738ead913cc16e26cb58b398374c26a8287049a2520",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:34:32.275645+00:00"
+        },
+        {
+          "path": "007-blue-flower-approach.png",
+          "sha256": "2329a652d201604f1c2a77d5e4e09678e9674aacd8954961e0f04ecd6fd0c9c9",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:34:47.437569+00:00"
+        },
+        {
+          "path": "008-wind-flower-use.png",
+          "sha256": "1c77fec17199c647eb048984b4d41289510360cdff02d0d25e577e2744586ada",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:35:02.930548+00:00"
+        },
+        {
+          "path": "009-downstream-dew.png",
+          "sha256": "204cda13de827f32d81faa097dca9865d58b7fa5ce24a1991ce8c299c50a2c5a",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:35:18.525717+00:00"
+        },
+        {
+          "path": "010-leaf-shelter-approach.png",
+          "sha256": "bc18b8d900edbcbea18075f988cb7c8a2f0b6060fa317ce51000b145ac94e8ea",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:35:30.930429+00:00"
+        },
+        {
+          "path": "011-next-wind-flower.png",
+          "sha256": "6bbb237bf14fca6ee762320e87cdb4062b98890a73c5e7c3a72de60e359bbc88",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:35:49.570449+00:00"
+        },
+        {
+          "path": "012-second-wind-chain.png",
+          "sha256": "4797683cb127a7a7c6d2a4f083aac1aa51323709526e1a69c487397e98498f46",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:36:03.025173+00:00"
+        },
+        {
+          "path": "013-past-solid-hedge.png",
+          "sha256": "987a968c2ccd9c08e6b2b587c45607978a3f3dea9ba6579bd843bc55dbe65828",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:36:18.428303+00:00"
+        },
+        {
+          "path": "014-approach-open-flower.png",
+          "sha256": "a246041e8df67ceaaa535905f9924e56ad1252aab2888e8982747b6076bc68ae",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:36:33.679020+00:00"
+        },
+        {
+          "path": "015-over-tall-stem.png",
+          "sha256": "33fd4493eba6b0b7c283d9b8bfdd0d973ee9a8c6dbc1f18f39df4c041b188748",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:36:50.036770+00:00"
+        },
+        {
+          "path": "016-past-grey-insect.png",
+          "sha256": "10f657a8f3713fdbe812fd6f6aab6579611ecc89e5cb03e0ce33f99b2dbcd6c9",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:37:06.634900+00:00"
+        },
+        {
+          "path": "017-open-flower-visit.png",
+          "sha256": "4b49a84c7369ef1c09cea91b004b897a45a95304e307095120473c1eb25740ba",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:37:30.997466+00:00"
+        },
+        {
+          "path": "018-leaf-shed-arrival.png",
+          "sha256": "867e14f867d613e3d4a57ba276755e4fda54c9904e053f6016e0fe1c06274232",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:37:56.752747+00:00"
+        },
+        {
+          "path": "019-rest-leaf.png",
+          "sha256": "303a1cf5631a1052737fbb6fefedddc80d4ac7d9006bf616f2ecbed963fa2bdf",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:38:15.577623+00:00"
+        },
+        {
+          "path": "020-pond-edge-exit.png",
+          "sha256": "71b2cf218bd40be4054435677df8517530e56d7902779a8c7f9c0d8c73bf1cf5",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:38:30.973184+00:00"
+        },
+        {
+          "path": "021-first-chapter-complete.png",
+          "sha256": "fb9dab8d0a1e1d6202fdeb91df0993c7c6b38dd99912190855928ec59730db8d",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:38:44.615263+00:00"
+        },
+        {
+          "path": "022-second-chapter-opening.png",
+          "sha256": "74d4fdbe1d1be8ec7a2fa6a0856fdbd6a4b8e6e0e60f8f3242c0695cb4a899a2",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:38:55.248085+00:00"
+        },
+        {
+          "path": "023-second-chapter-paused.png",
+          "sha256": "773d7d61b09e88d87e09c391766a912b3ca3914b6df11d5f0a788a78b9513ec4",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:38:56.834618+00:00"
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "从第二叶亭穿过雨幕到右侧第三叶亭。",
+        "options": [
+          {
+            "approach": "先取护雨叶再走",
+            "action": "抬高到右侧护雨叶，轻触后迅速穿过雨幕，下降进入第三叶亭。",
+            "expected_consequence": "五秒防雨可覆盖跨越，主要付出移动/冲刺体力，下一步可以继续或在叶下恢复。",
+            "visual_basis": "护雨叶位于当前叶棚出口上侧，提示五秒防雨；下一小叶亭在右下方雨幕中。"
+          },
+          {
+            "approach": "直接沿下方雨幕飞行",
+            "action": "保持叶下高度，不抬高取叶，普通飞行或短冲直奔第三叶亭。",
+            "expected_consequence": "路线较直接但无防雨，可能被雨滴打到、体力下降更多，需要到叶下恢复。",
+            "visual_basis": "露天区有大号下落水滴；直接路线从护雨叶下方经过。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "先取护雨叶再走",
+          "consequence": "护罩可见后向下再向右跨雨幕，抵达第三叶亭；显示叶下安全·体力充足，100体力，3/5处叶下。未看到雨击提示，下一步可从叶亭直接继续。"
+        },
+        {
+          "approach": "直接沿下方雨幕飞行",
+          "consequence": "无护罩直接跨到第三叶亭，体力97→100、3/5处叶下；护雨叶仍可见留在后方。此次未观察到雨击或资源劣势，不能宣称A更安全。实际差别是A消耗护雨叶并获得可见护罩、需抬高再下降；B留下该资源并直接从低处进叶下。"
+        },
+        {
+          "approach": "对齐后普通飞行",
+          "consequence": "再次抬高后成功通过高茎与花篱之间窄口，体力96→87；误差可通过一次小调整解决，无需重置。前方可见花蜡灯叶亭。"
+        },
+        {
+          "approach": "直接穿过叶拱",
+          "consequence": "看到完成勾号和“那簇蓝花，又出现在归路旁”。Esc成功把抵达画面暂停，提示再Enter前往下一段。中段实际完成。"
+        }
+      ],
+      "verdict": "navigation_complete_comparison_inconclusive",
+      "conclusion": "实际抵达5/5叶下并看到第二叶拱完成勾号。窄口一次高度不够，抬高后通过；没有遇到无法推进的卡路。两方案没有充分证明有意义的后果差异。",
+      "choice_comparison": {
+        "dimensions": [
+          "护雨叶拾取与可见护罩",
+          "实际输入步骤",
+          "露天空隙中观察到的体力",
+          "第三叶亭到达结果"
+        ],
+        "description": "相同本人第二叶亭原字节起点，A抬高轻触护雨叶，叶消失且出现环形护罩，再下降跨到第三叶亭；B不取叶、保持较低路线直接跨过，护雨叶仍留后方且无护罩。A与B在露天空隙截图均为97体力，抵达第三叶亭均100、3/5。均未观察到雨击提示，因此未证明A更安全、资源更优或B必须补救。A与B输入步骤和可见拾取状态不同，但这些不足以独立证明有意义的玩法后果。截图等待也改变了保护计时与暴露。",
+        "route_or_state_only": true,
+        "meaningful_consequence_demonstrated": false
+      },
+      "evidence": [
+        {
+          "path": "024-reopen-midpoint.png",
+          "sha256": "ac8a9bb41ee843c3382e2eee049e655d0d2c2fcbe3d7773e890c43680b961aa8",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:40:01.544724+00:00"
+        },
+        {
+          "path": "025-midpoint-restored.png",
+          "sha256": "5f1ceb18c091a6e57fdbb8dbcfd0d99f96c1887aefc6e2a5c5f3d805e65059ea",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:42:47.790984+00:00"
+        },
+        {
+          "path": "026-midpoint-continued.png",
+          "sha256": "000d4a424a40fa22ed10d16a9a6a046687e3b4beedf2438f5eef4ebd367cf36a",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:43:01.248755+00:00"
+        },
+        {
+          "path": "027-plan-a-first-shelter.png",
+          "sha256": "7c616795a6cc84b8b61a2f21c70472bc3d813dbb9294f206d4900c2198c6f205",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:43:15.437084+00:00"
+        },
+        {
+          "path": "028-plan-a-pause-confirm.png",
+          "sha256": "72a8f1c600ee3d3f997faa1f4a6d6e168bb80a0956680a514524694b12592514",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:43:16.938408+00:00"
+        },
+        {
+          "path": "029-plan-a-first-gap.png",
+          "sha256": "e9ccca15e26e88b645b73f616956d366992773853f27c9e8fba75e03ddb603d9",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:43:37.582621+00:00"
+        },
+        {
+          "path": "030-plan-a-rain-edge.png",
+          "sha256": "94a91744c4b7e56ca39c44d859d9d230782d9abfa0da8dd22d969be1db9da35e",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:43:51.996644+00:00"
+        },
+        {
+          "path": "031-plan-a-second-shelter.png",
+          "sha256": "7c48d597f2b107f9023a35547542eb416e05105bbf4a3309ddf3a21f876b6de7",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:44:15.120988+00:00"
+        },
+        {
+          "path": "032-plan-a-second-shelter-paused.png",
+          "sha256": "ba9209f10b6617272ab4425c21cb58ce5434602d31210a0fd428f70c33a36327",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:44:16.630789+00:00"
+        },
+        {
+          "path": "033-choice-a-restored.png",
+          "sha256": "66410b3ded04a2d586194d61a3f8e68734db42b74bc4b224f2da57c2095980ea",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:46:31.566916+00:00"
+        },
+        {
+          "path": "034-choice-a-leaf-collected.png",
+          "sha256": "b339a4c7b98fb30b9119fd56c30e44a44a83d35eacd7dfe8a2939e54f3b4f86a",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:46:56.995779+00:00"
+        },
+        {
+          "path": "035-choice-a-protected.png",
+          "sha256": "c8c4452afe15c7a498aabf32036adda07612cd099a377de2005b1e939e28085e",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:47:14.417255+00:00"
+        },
+        {
+          "path": "036-choice-a-third-shelter.png",
+          "sha256": "e60ffca8fab7b755b96e71446e45c90d3a1cdd918b960e103c06e118dfb55dba",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:47:31.875642+00:00"
+        },
+        {
+          "path": "037-choice-a-third-paused.png",
+          "sha256": "707d34f945f686224da92cb980b2a4933c601032190a9218234b251f8f8758c4",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:47:33.457286+00:00"
+        },
+        {
+          "path": "038-choice-b-restored.png",
+          "sha256": "66410b3ded04a2d586194d61a3f8e68734db42b74bc4b224f2da57c2095980ea",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:50:50.711652+00:00"
+        },
+        {
+          "path": "039-choice-b-unprotected-gap.png",
+          "sha256": "3540d1e35ad51682c89c3ad9b671b51f4a4e605a593d8e53512cd2332b2f7c96",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:51:06.974976+00:00"
+        },
+        {
+          "path": "040-choice-b-third-shelter.png",
+          "sha256": "d17f985ef1923532f05a5877638c4d2655a3a931ed99f30e80ab539a07070292",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:51:31.048843+00:00"
+        },
+        {
+          "path": "041-choice-b-third-paused.png",
+          "sha256": "6efc1770c2c0dca58776695328dc32ec73aea1370e9dc0e079e8e1f0145bed0d",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:51:32.654281+00:00"
+        },
+        {
+          "path": "042-fourth-shelter.png",
+          "sha256": "1ea095e7f44a22178869a873305a7dd8a1ffd2e6d200f9cf222cb1dfdd268816",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:52:13.143001+00:00"
+        },
+        {
+          "path": "043-middle-narrow-gap.png",
+          "sha256": "67cabab7409b99be07ac36236544777e678f62480999aea83eed853bd3e625eb",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:52:38.799936+00:00"
+        },
+        {
+          "path": "044-middle-narrow-gap-retry.png",
+          "sha256": "ba80775e91decb096e0a9335b6928a20ce6cd9fb9cf8fd3ad211b11b271c9b00",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:53:01.826456+00:00"
+        },
+        {
+          "path": "045-fifth-leaf-shelter.png",
+          "sha256": "d7cef4dd31bc0b3d593ed5cfd3e2f0ab5f76b71209f78d421b23db26c67ef26e",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:53:40.814220+00:00"
+        },
+        {
+          "path": "046-fifth-shelter-paused.png",
+          "sha256": "abf3a09ae8b67e2d97e5ac1915f31b4bfcbaa37a7ecd2505a7848391358de57e",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:53:42.408662+00:00"
+        },
+        {
+          "path": "047-middle-exit.png",
+          "sha256": "ff3c640d00822cb6af6e7c2e89637667b4936c6a3b833bc7984cebcdbe96f354",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:54:05.948639+00:00"
+        },
+        {
+          "path": "048-middle-exit-paused.png",
+          "sha256": "7b683991800eaca5c3c1e20de652d282d4531ce8a7dac097f1cf4040b9907c6c",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:54:07.525378+00:00"
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "回家，处理归路上挡路的花牌。",
+        "options": [
+          {
+            "approach": "沿熟悉缺口前进",
+            "action": "直接向右穿过两团花篱之间已打开的空隙，继续寻找挡路花牌。",
+            "expected_consequence": "可以不冲刺通过旧缺口，保留体力以应对后面的牌。",
+            "visual_basis": "场景和第一段同样的上下花篱，但中间橙色阻挡已不见；目标写“回家的路上，花牌挡住了去向”。"
+          },
+          {
+            "approach": "从下方绕过整片花篱",
+            "action": "下降再绕右。",
+            "expected_consequence": "绕路较远，眼前已有中央空隙，可能无需绕行。",
+            "visual_basis": "花篱下方边缘仍有空域，但右箭头高度接近中央口。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "使用R回最近落脚点",
+          "consequence": "R实际把蜂送到叶亭下方，体力恢复100，并提示“回到落脚点·可以重新观察它的动作”。恢复机制可解除自己的屋顶绕行失误。"
+        },
+        {
+          "approach": "提前长蓄力",
+          "consequence": "1.5秒预蓄成功：第一绳结断开、两花牌落到下方，蜂通过门，目标变为“牌架另一面，还有一道叶结”；体力82→55。没有用R跳过该门。"
+        },
+        {
+          "approach": "沿上方风花绕行",
+          "consequence": "三连借风绕过牌上方并实际穿过第二叶结，绳结断开、牌面显示背面，目标变为“归路已经打开，蜡脾上可以把见过的花路告诉同伴”。体力55→38。"
+        },
+        {
+          "approach": "落入蜡脾中央停下",
+          "consequence": "停在蜡脾后体力100，但提示“还没有亲自看过的花路”，没有完成分享。此前只靠近蓝花触发画眉对话并不等于取得花路；这是实际理解缺口，不能写已完成。"
+        },
+        {
+          "approach": "回访旁边蓝花花心",
+          "consequence": "已到蓝花中心附近停留，仍只显示花蜡灯提示，未看到获得花路的明确反馈。此次回访不能证明已记录花路。现在遵循仍指向右侧的目标箭头继续找出口；分享作为未理解/未验证保留，不再往返。"
+        }
+      ],
+      "verdict": "incomplete_ending_and_share_unverified",
+      "conclusion": "实际打开两道叶结并抵达蜡脾。保留屋顶误判、庄主碰撞、松绳窗口错失和250毫秒蓄力不足等失败；通过预蓄1.5秒冲开第一叶结，再经上方风花打开第二叶结。蜡脾提示没有亲自看过的花路，回访蓝花未看到登记反馈。未完成分享，未取得最终结尾画面，不能判定全程通过。",
+      "evidence": [
+        {
+          "path": "049-final-chapter-opening.png",
+          "sha256": "8c192e41a7ff320827d24c3e2c9552f424edadb84f91951c97380a4f3ebf6c59",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:54:32.480656+00:00"
+        },
+        {
+          "path": "050-final-chapter-paused.png",
+          "sha256": "b165c2d68c01529c8b8fca79c40202c9d8ba70a7001362d294963ec1aef0ccf1",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:54:34.253162+00:00"
+        },
+        {
+          "path": "051-return-through-open-gap.png",
+          "sha256": "860ed31371071ed14bba5b1bc3e470ab5f83be15a9e5139b1642fb18e343abaa",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:55:02.792769+00:00"
+        },
+        {
+          "path": "052-return-wind-approach.png",
+          "sha256": "84978980a49f496bfc28c02e77b0f4519af548aeb0ff7f64d4ce653b3961184e",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:55:28.683828+00:00"
+        },
+        {
+          "path": "053-return-wind-chain.png",
+          "sha256": "572f7cffa6d85386a3e9b625587b984da5a1701acf8a284f38209deba3841e76",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:55:47.588724+00:00"
+        },
+        {
+          "path": "054-return-over-low-hedge.png",
+          "sha256": "f957e64aa093457ea2c618e86834fe577269a0c649d36a48614cccb12ce3f817",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:56:08.681743+00:00"
+        },
+        {
+          "path": "055-return-shelter.png",
+          "sha256": "5f151813f80e59165e2f768a03501386acd7d12e40f32d4365f4a0de0d1a6180",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:56:32.319885+00:00"
+        },
+        {
+          "path": "056-return-shelter-under-leaf.png",
+          "sha256": "7f8765f37a82eb134e6b24fe85f2f0b96e99f7b6e659133eb9db450e926bc83c",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:56:53.102730+00:00"
+        },
+        {
+          "path": "057-return-recovery-r.png",
+          "sha256": "9282b802b5752814ab2e31c7e3cf214cc0fd7338583b7f23ab4e3673ff666f01",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:57:17.194979+00:00"
+        },
+        {
+          "path": "058-return-second-wind-chain.png",
+          "sha256": "086c5f107615643a8c3b081d441a6dbd79ced25f4b52e9f49e32bcb0ab6ef91b",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:57:39.043514+00:00"
+        },
+        {
+          "path": "059-return-second-shelter.png",
+          "sha256": "0737ad9ddcfe8dd2af1c44a5fced0d411af241be091cc21947283448aae1ab47",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:57:58.746172+00:00"
+        },
+        {
+          "path": "060-return-owner-approach.png",
+          "sha256": "c0cb276b75d8c50be08cc8f43b6040fbf00325247ee658d18df94db51791a5f7",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:58:22.271642+00:00"
+        },
+        {
+          "path": "061-return-knot-approach.png",
+          "sha256": "9403f382001aad73ceb6ec3a9fbdd58255076be42719777221a543ec97a35cf5",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:58:56.605663+00:00"
+        },
+        {
+          "path": "062-return-knot-timing.png",
+          "sha256": "b7466ff99af23f8aac313da179b31db1cdcb94a809a1367f42e5109f90a288d8",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:59:24.518542+00:00"
+        },
+        {
+          "path": "063-return-knot-burst.png",
+          "sha256": "19bf3829b015e28e4c20634306d100b26caf40834517846f3c4fc73c81a98095",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T11:59:51.552062+00:00"
+        },
+        {
+          "path": "064-knot-timed-retry-1.png",
+          "sha256": "550ef0fad2a461e48ba99ace87445bc74de28f3c5857b5e6dad2c5fb4e8d0fa6",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:00:37.962626+00:00"
+        },
+        {
+          "path": "065-knot-timed-retry-2.png",
+          "sha256": "3a917ec72cdcc16052494492aeb0d00ca725bb63c429ef72324ac9bc93008b21",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:00:41.773070+00:00"
+        },
+        {
+          "path": "066-knot-timed-retry-3.png",
+          "sha256": "23ef098a29c995d7fd1ee6e67da8cee64c60144486295b967a073c91599d22fc",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:00:45.567000+00:00"
+        },
+        {
+          "path": "067-knot-reengage-owner.png",
+          "sha256": "ceedee36b8dba10266e6f77c2ecedf420b05ebf056069503de9de7fe65a5f710",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:02:19.727090+00:00"
+        },
+        {
+          "path": "068-knot-short-charge.png",
+          "sha256": "764cb9bc325175a55f1adfe0170c31449f7c99a3de31ff27f99cc35913fcf5e5",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:02:48.953973+00:00"
+        },
+        {
+          "path": "069-knot-precharge.png",
+          "sha256": "e234cab902998eef480521298f8870068e591979f013a125f201fa2f40d4202e",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:03:51.195333+00:00"
+        },
+        {
+          "path": "070-sign-upper-route.png",
+          "sha256": "9c1b85c8a24f3d0de8c6ecfde74e23dce025c627b1faafc8794ae25f7bebf356",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:04:56.197104+00:00"
+        },
+        {
+          "path": "071-final-leaf-rest.png",
+          "sha256": "16ff54e4e5580d537f83df92f93b3d17b6f0b80b12a47254125b28bd6b67bec0",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T12:06:14.700762+00:00"
+        },
+        {
+          "path": "072-resumed-state.png",
+          "sha256": "0ab60f4ca439f5bb357fed6c25f26b67a36218b027be827c0e22a6ce2f996d94",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T14:17:50.254821+00:00"
+        },
+        {
+          "path": "073-wax-comb-arrival.png",
+          "sha256": "ee16889e8691ba54da5c3219dd76740eebd763c202522f739416ffd9fe538441",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T14:24:10.019468+00:00"
+        },
+        {
+          "path": "074-comb-share-prompt.png",
+          "sha256": "c995eb1f9b6eb4e19adc0b8f1af79ebc9483490dfeb05c41005900ed6cdedb82",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T14:27:02.702304+00:00"
+        },
+        {
+          "path": "075-comb-paused.png",
+          "sha256": "8501e701671b1f072072607aa283e79cf1ef3ad23e743f978618ef2774981205",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T14:27:04.061951+00:00"
+        },
+        {
+          "path": "076-flower-revisit.png",
+          "sha256": "f98b4d4baf20b870577e39f5e2ee0acaccc22a58916b2639511fb0c186d67d17",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T14:34:56.409078+00:00"
+        },
+        {
+          "path": "077-blue-flower-observed.png",
+          "sha256": "8629fd2b2d449bacc91b63c8c78cfbade03b6f50e58cad7af223a75c91a66417",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T14:38:13.997103+00:00"
+        },
+        {
+          "path": "078-past-comb-toward-exit.png",
+          "sha256": "814c8bf5aef6a5c5910a2b414b06146b7dcd7f447dae343c7d03ec1aae3e70d1",
+          "raw": true,
+          "file_mtime_utc": "2026-11-01T14:48:20.458998+00:00"
+        }
+      ]
+    }
+  ],
+  "evidence_manifest": "evidence-manifest-final.json",
+  "notes": "notes.json"
+}

@@ -1,0 +1,106 @@
+{
+  "revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "reviewer": "Codex root, implementation author; native presentation inspection, not independent preference judgment",
+  "status": "pending-independent-full-run-and-comparison",
+  "media": "Native A 18 original PNG states, complete AVI + derived MP4 identified in native-final-a/media.json; root inspected three 6-second contact sheets and relevant original states. No claim of watching every frame or fresh whole-track listening.",
+  "observations": [
+    {
+      "segment": "departure",
+      "evidence": [
+        "native-final-a/00-title.png",
+        "native-final-a/01-connected-flight.png",
+        "native-final-a/contact-01.jpg"
+      ],
+      "finding": "Immediate flight goal is visible. Repeated wind uses lead into player-controlled vertical adjustment and a leaf landing; the journey uses existing hand-painted stems/leaves/flowers. Pickups sit on the onward movement line rather than becoming a main HUD quota."
+    },
+    {
+      "segment": "rain",
+      "evidence": [
+        "native-final-a/05-weather-forecast.png",
+        "native-final-a/06b-raised-opening.png",
+        "native-final-a/07-shelter-and-shield.png",
+        "native-final-a/contact-02.jpg"
+      ],
+      "finding": "Cloud cover, raised openings, leaf undersides and protective ring are visible at play scale. Known-answer A uses protection and raised gap; B follows lower shelter route. Independent choice consequence still read from its own report, not inferred from these test routes."
+    },
+    {
+      "segment": "return",
+      "evidence": [
+        "native-final-a/08-keeper-counting.png",
+        "native-final-a/09-wind-to-back-side.png",
+        "native-final-a/10-back-passage.png",
+        "native-final-a/11-returned-source-and-result.png"
+      ],
+      "finding": "The returning foreground develops familiar downward wind and a new upward approach. First opening uses keeper timing; second changes approach side. Front/back facts are independent; the actor reaches its settled position continuously. The 620px camera snap has been replaced with monotonic smooth widening toward source/companions."
+    },
+    {
+      "segment": "home",
+      "evidence": [
+        "native-final-a/12-sharing-seen-flower.png",
+        "native-final-a/13-listeners-reached-source.png",
+        "native-final-a/14-small-window.png",
+        "native-final-a/15-ending.png"
+      ],
+      "finding": "Share happens on the physical comb and listeners travel to the previously observed flower. The last stretch is an open coda to the tree hollow; no extra mandatory sharing or waiting blocks home. Small-window output remains readable."
+    }
+  ],
+  "visual_scope": "Actual assembled scenes retain the same linework, palette, plant attachments and source art. No newly generated bitmap art or audio. This bounded review does not approve all24 levels.",
+  "audio_scope": "Existing production music/SFX preserved; event/routing tests129/0 and native recordings contain audio. Earlier user approval of two clips is historical, not fresh whole-journey audio acceptance.",
+  "known_limits": [
+    "AI continuous exploration can reveal readability/rule failures but cannot declare the user now finds the pacing healthy.",
+    "Automated route durations are engine movie timelines, not expected player durations.",
+    "The initial native comparison failed three charge checks during cross-window work and is retained, pending a clean retake."
+  ],
+  "LV01_10": [
+    {
+      "id": "LV01",
+      "status": "pass-bounded",
+      "finding": "First wind chain sustains rise; next requires descent then a new takeoff. Return changes to descent and ascent. Two story openings require independent actions; chain flowers count as one action, not new mechanic count."
+    },
+    {
+      "id": "LV02",
+      "status": "pass-bounded",
+      "finding": "Two departure shelter rests, source pause, rain shelter decisions and open home coda have explicit uses. The last dew was placed behind the wind exit to remove the reward backtrack."
+    },
+    {
+      "id": "LV03",
+      "status": "pass-bounded",
+      "finding": "Existing mosquito/keeper warnings retained; source-state107, ordinary-mosquito34 and native keeper timing checked. No new attack flowers added."
+    },
+    {
+      "id": "LV04",
+      "status": "pass-bounded",
+      "finding": "Eight approach envelope probes and four full approach routes checked with zero contacts/forced recovery. Return leaf checkpoint moved to clear painted roof; complete native A/B paths pass. This does not promise every possible input is safe."
+    },
+    {
+      "id": "LV05",
+      "status": "pass-bounded",
+      "finding": "Shared onward dew placements checked on both native routes; final dew no longer asks reversal after wind. Optional collection stays optional."
+    },
+    {
+      "id": "LV06",
+      "status": "pass-bounded",
+      "finding": "Wind reward4 restores movement support without full refund; first shelters/actual recovery visible. Ordinary native B takes rain damage and still finishes with zero forced recoveries. Balance enjoyment remains user judgment."
+    },
+    {
+      "id": "LV07",
+      "status": "pass-implementation-pending-product",
+      "finding": "Authored order now develops own burst/borrowed motion/landing/next launch, rain reuse and familiar return before independent gate combination; the source, share and home close the journey. Whole pacing approval remains pending."
+    },
+    {
+      "id": "LV08",
+      "status": "pass-bounded",
+      "finding": "Native keyframes and continuous contact sheets reviewed; same hand-painted attached plants, actual shelter boundaries, small-window cue clearance. HUD names purpose, not dew quota."
+    },
+    {
+      "id": "LV09",
+      "status": "pass-bounded",
+      "finding": "Native A/B disk/new-scene save coverage, active charge/burst, both boundaries, R, ending; actual exported processes cold-resume/move on isolated saves. v2 files not mapped into new geometry."
+    },
+    {
+      "id": "LV10",
+      "status": "pass-evidence-boundary",
+      "finding": "Frozen59-file production snapshot, raw media and script provenance separate from controls-only AI exploration; no human acceptance or full24 extension claim."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "sha256": "4f52edb501e4e6c99e3a9560228d95098a176057f548aa6bf8891aefc64f7259",
+  "entries": {
+    "spring-03-05": "passed",
+    "comparison-07-09": "passed"
+  },
+  "isolated_saves": true,
+  "evidence": "export-entry-smoke/",
+  "method": "Original exported app; actual CUA title/start/movement/pause/quit/process restart/cold-resume/movement/quit; saved JSON checked before restart and each other save preserved. No process-memory full-field claim.",
+  "tool_limit": "An AX read after quit relaunches the app without custom args; extra own smoke instances stopped and final checks repeated with one process. Quit is verified using process disappearance instead."
+}

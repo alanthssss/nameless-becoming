@@ -1,0 +1,899 @@
+[
+  {
+    "time": "2026-11-01T11:33:57.007Z",
+    "stage": "03-before",
+    "goal": "沿池岸向右，找仍开放的花。画面右侧箭头和同伴话语“池岸那头还有花香”给出方向。",
+    "options": [
+      {
+        "approach": "穿过中央窄口",
+        "action": "先向右飞近，再用空格蓄力冲向橙色竖片。",
+        "expected_consequence": "若橙色为可推动或可打破的阻挡，冲刺可能开出通路；也可能碰撞损失体力。",
+        "visual_basis": "上、下大叶丛之间留有狭长口，橙色板挡在口中。"
+      },
+      {
+        "approach": "从叶丛下缘绕行",
+        "action": "先向下再向右，试过下叶丛底部。",
+        "expected_consequence": "可能更安全但路更长；如叶丛延伸到底部则需回中央口。",
+        "visual_basis": "下叶丛底端与地面似有空间；右边有水滴资源。"
+      }
+    ],
+    "caveat": "初始已暂停，第一次Esc导致短暂无输入运行；随后截图并Esc恢复暂停。该工具观察暴露不是自然游玩时间。"
+  },
+  {
+    "time": "2026-11-01T11:34:27.312Z",
+    "stage": "03-after-obstacle",
+    "approach": "穿过中央窄口",
+    "consequence": "冲刺后橙色障碍消失；画面出现“叶间的路打开了”，能向右继续。体力96→69。未试下绕。"
+  },
+  {
+    "time": "2026-11-01T11:34:27.312Z",
+    "stage": "03-before-dew-flower",
+    "goal": "先补体力，继续靠近右侧花。",
+    "options": [
+      {
+        "approach": "接触晨露",
+        "action": "向右下飞到水滴。",
+        "expected_consequence": "恢复最多12体力，随后继续向右。",
+        "visual_basis": "水滴旁提示“晨露·轻触收集，最多恢复12体力”。"
+      },
+      {
+        "approach": "直接向右",
+        "action": "略过水滴飞到蓝花。",
+        "expected_consequence": "省一些绕行但维持较低体力；蓝花中央箭头可能给下一段方向。",
+        "visual_basis": "蓝花中心可见向右上箭头，场景整体目标仍为寻找开放花。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:34:41.051Z",
+    "stage": "03-after-dew",
+    "approach": "接触晨露",
+    "consequence": "水滴消失，提示“晨露1/3·体力+12”；两次截图体力69→75，期间仍有飞行消耗。"
+  },
+  {
+    "time": "2026-11-01T11:34:57.587Z",
+    "stage": "03-before-wind-flower",
+    "goal": "借风花向右上跨过池岸。",
+    "options": [
+      {
+        "approach": "蓄力冲入风花",
+        "action": "保持向右，蓄力后撞入第一朵蓝花。",
+        "expected_consequence": "按花心箭头被送往右上方第二朵花；若仅普通飞行可能不触发。",
+        "visual_basis": "提示“冲进风花·沿箭头借力一次”，花心箭头和虚线朝右上。"
+      },
+      {
+        "approach": "普通飞行越过风花",
+        "action": "沿右上方向单键分段飞行。",
+        "expected_consequence": "可能不获借力而消耗更多时间与体力；仍可沿虚线辨方向。",
+        "visual_basis": "蓝花之间天空开放，未见硬墙。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:35:12.053Z",
+    "stage": "03-after-wind-flower",
+    "approach": "蓄力冲入风花",
+    "consequence": "一冲触发连续借风×3，蜂沿蓝花路径自动向右上跃进；提示“不用再蓄力·体力+4”。截图体力66→52，含最初冲刺及实时飞行消耗。"
+  },
+  {
+    "time": "2026-11-01T11:35:12.053Z",
+    "stage": "03-before-next-bank",
+    "goal": "向右下靠近下一颗晨露并绕过右上叶丛。",
+    "options": [
+      {
+        "approach": "下行采露",
+        "action": "先向下再向右追近晨露。",
+        "expected_consequence": "避免上侧叶丛并补充体力。",
+        "visual_basis": "水滴位于右下方，右侧叶丛在上半屏。"
+      },
+      {
+        "approach": "保持高处向右",
+        "action": "继续向右接近叶丛再判断。",
+        "expected_consequence": "路程更直接但可能遇到上方实心障碍；错过下方晨露。",
+        "visual_basis": "右边叶丛遮住上方路径，水滴不在同高度。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:35:42.434Z",
+    "stage": "03-after-next-bank",
+    "approach": "下行采露",
+    "consequence": "下行后向右到叶下，出现“已记住这个叶亭·体力正在恢复”及“叶下安全·体力恢复中”，体力43→80。晨露采集结果未单独截图，不能将全部恢复归因晨露。"
+  },
+  {
+    "time": "2026-11-01T11:35:42.434Z",
+    "stage": "03-before-shelter",
+    "goal": "利用叶亭恢复，然后继续向右的蓝花。",
+    "options": [
+      {
+        "approach": "叶亭内停留",
+        "action": "飞到叶亭中间再向右离开。",
+        "expected_consequence": "体力继续恢复，最近落脚点可用R回到这里。",
+        "visual_basis": "“已记住这个叶亭”以及叶下安全恢复提示。"
+      },
+      {
+        "approach": "立刻继续冲刺",
+        "action": "离开叶亭向下一蓝花冲刺。",
+        "expected_consequence": "更快推进但体力较少，或错过恢复机会。",
+        "visual_basis": "右侧蓝花和右箭头仍指向行程终点。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:35:56.924Z",
+    "stage": "03-after-shelter",
+    "approach": "叶亭内停留",
+    "consequence": "正常飞过叶亭后体力80→97，提示从落点接着出发。恢复功能明显可读。"
+  },
+  {
+    "time": "2026-11-01T11:36:11.368Z",
+    "stage": "03-after-second-chain",
+    "approach": "再次冲入风花",
+    "consequence": "触发借风×2，但第三花附近出现“实心花篱冲不开·从开口绕过去”。没有卡死，当前位置在花篱右下边缘。失误保留：原以为连续借风会自动安全通过整组。"
+  },
+  {
+    "time": "2026-11-01T11:36:11.368Z",
+    "stage": "03-before-solid-hedge",
+    "goal": "绕开花篱向右下空隙继续。",
+    "options": [
+      {
+        "approach": "向下绕出",
+        "action": "下飞后沿右侧空隙朝晨露前进。",
+        "expected_consequence": "离开实心花篱，不再碰撞并可采露。",
+        "visual_basis": "文字要求从开口绕过，右下方无遮挡。"
+      },
+      {
+        "approach": "继续撞花篱",
+        "action": "向左上/原方向冲刺。",
+        "expected_consequence": "依据刚出现提示预计不会打开，只可能再次受阻。",
+        "visual_basis": "“实心花篱冲不开”。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:36:42.181Z",
+    "stage": "03-after-solid-hedge",
+    "approach": "向下绕出",
+    "consequence": "下方可通行，继续向右，未卡路；采露附近体力67→69后到达高茎前。"
+  },
+  {
+    "time": "2026-11-01T11:36:42.181Z",
+    "stage": "03-before-tall-stem",
+    "goal": "越过右前方高茎继续沿池岸。",
+    "options": [
+      {
+        "approach": "越过顶部",
+        "action": "升至茎顶上方，再向右飞。",
+        "expected_consequence": "上方留白可通行，避开茎干。",
+        "visual_basis": "右侧竖茎高至画面约350px，顶部以上有天空。"
+      },
+      {
+        "approach": "直接撞茎",
+        "action": "同高度向右冲刺。",
+        "expected_consequence": "可能像实心花篱一样无法打破且损耗体力。",
+        "visual_basis": "茎干是实心绿色，没有橙色脆弱门的视觉特征。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:36:59.317Z",
+    "stage": "03-before-grey-insect",
+    "goal": "保持安全间距越过灰色飞虫。",
+    "options": [
+      {
+        "approach": "从上方绕过",
+        "action": "再稍向上飞，再向右通过。",
+        "expected_consequence": "避开同高度接触，体力有普通飞行消耗。",
+        "visual_basis": "灰虫位于我右下方，上方天空可通行。"
+      },
+      {
+        "approach": "冲刺穿过",
+        "action": "对准灰虫向右冲刺。",
+        "expected_consequence": "或能打退它，或会碰撞受损；画面尚无战斗提示，结果不明。",
+        "visual_basis": "灰色尖嘴虫外观不同于同伴，但没有明确说明其可攻击性。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:37:23.162Z",
+    "stage": "03-after-grey-insect",
+    "approach": "从上方绕过",
+    "consequence": "成功越过灰虫与高茎，未显示碰撞提示。出现“还开着的蓝花”，右下叶亭有目标箭头。"
+  },
+  {
+    "time": "2026-11-01T11:37:23.162Z",
+    "stage": "03-before-found-flower",
+    "goal": "接近仍开放的蓝花，再观察右侧叶亭是否是出口。",
+    "options": [
+      {
+        "approach": "先靠近蓝花",
+        "action": "向右下飞到三朵小蓝花附近。",
+        "expected_consequence": "可能完成寻找花的目标或触发采蜜/叙事。",
+        "visual_basis": "当前目标“找一处还开着的花”，下方提示“还开着的蓝花”。"
+      },
+      {
+        "approach": "直接去叶亭",
+        "action": "越过蓝花前往右下大叶下。",
+        "expected_consequence": "可能直接抵达目的地并恢复；也可能漏掉必要花互动。",
+        "visual_basis": "目标箭头向下指向右侧叶亭，类似先前恢复点。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:37:49.227Z",
+    "stage": "03-after-found-flower",
+    "approach": "先靠近蓝花",
+    "consequence": "靠近蓝花时画眉说“雨要来了，前面的叶棚能歇脚”，下方提示它转身望向叶棚。目标后续去向清楚。"
+  },
+  {
+    "time": "2026-11-01T11:38:10.279Z",
+    "stage": "03-before-flower-lantern",
+    "goal": "在花蜡灯下叶面休息，继续跟随向右箭头。",
+    "options": [
+      {
+        "approach": "下降至叶面",
+        "action": "靠近灯下横叶，短暂停留。",
+        "expected_consequence": "应能恢复体力，随后从叶棚出发。",
+        "visual_basis": "提示“花蜡灯·彩光落在歇脚的叶上”和恢复点已记住。"
+      },
+      {
+        "approach": "继续向右飞",
+        "action": "直接飞离叶棚。",
+        "expected_consequence": "会继续旅程但目前体力26可能不足。",
+        "visual_basis": "向右箭头仍在画面右缘，体力读数26。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:38:22.543Z",
+    "stage": "03-after-flower-lantern",
+    "approach": "下降至叶面",
+    "consequence": "体力26→65，灯下休息有效；随后准备顺箭头继续。"
+  },
+  {
+    "time": "2026-11-01T11:38:38.783Z",
+    "stage": "03-before-exit-arch",
+    "goal": "飞过花铃叶拱完成本关。",
+    "options": [
+      {
+        "approach": "穿过拱心",
+        "action": "上飞对准拱口，再向右飞。",
+        "expected_consequence": "完成关卡，出现后续旅程。",
+        "visual_basis": "明确提示“飞过花铃叶拱·完成本关”，双箭头在拱口内。"
+      },
+      {
+        "approach": "从拱下经过",
+        "action": "保持低高度向右。",
+        "expected_consequence": "可能错过出口触发位置，需要再上升。",
+        "visual_basis": "当前蜂在拱口下方，箭头高度明显更高。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:38:56.836Z",
+    "stage": "03-after-exit",
+    "consequence": "看到完成勾号及“沿池岸绕到叶棚那一侧”，自动进入下一段。没有Esc的过场观察造成额外实时暴露，随后立刻暂停。"
+  },
+  {
+    "time": "2026-11-01T11:39:17.009Z",
+    "stage": "04-before",
+    "goal": "雨来了，沿叶棚通向归路。先把第一处叶下当作安全观察点，再决定怎样跨露天空隙。",
+    "options": [
+      {
+        "approach": "叶下等待并分段走",
+        "action": "进入第一叶亭，观察雨势提示，再往下一处叶下走。",
+        "expected_consequence": "可恢复体力并减少淋雨，但需要等待/停走。",
+        "visual_basis": "章节名“雨中停走”，暂停副标题“从叶下看雨”，0/5处叶下已抵达，起点前叶亭有向下目标箭头。"
+      },
+      {
+        "approach": "直接冲过暴露区域",
+        "action": "从相同起点立即向右连续飞行/冲刺，跳过停留。",
+        "expected_consequence": "可能更快，但将承受雨势并耗更多体力；后续需要更早休息或回最近落点。",
+        "visual_basis": "目标文字说“雨来了”，叶亭之间是无遮蔽天空，体力条可用于比较。"
+      }
+    ],
+    "comparison_plan": "保存我自己到达的中段起点原字节存档；先尝试叶下停走，再恢复同一起点尝试直接穿行；不读取存档字段。实际方案将依据屏幕继续记录。"
+  },
+  {
+    "time": "2026-11-01T11:40:21.320Z",
+    "stage": "04-relaunch-boundary",
+    "consequence": "为了原字节备份，在暂停中退出。super+q工具返回App quit（预期进程退出）。已复制save.json至04-start-original-bytes.save，未解析字段。bundle ID重开报Invalid app，按给定App绝对路径重开后显示新标题、没有继续入口。已向父代理请求按最初隔离启动方式恢复；本探索者未读取实现或存档字段。"
+  },
+  {
+    "time": "2026-11-01T11:43:30.039Z",
+    "stage": "04-a-after-first-shelter",
+    "approach": "叶下等待并分段走",
+    "consequence": "进入第一叶亭后显示“叶下安全·体力充足”、体力100，暂停显示1/5叶下已抵达。尚未看到明显雨幕。"
+  },
+  {
+    "time": "2026-11-01T11:43:30.039Z",
+    "stage": "04-a-before-crossing",
+    "goal": "从第一处叶下到下一处叶下，穿过上方花篱和前方高茎之间的空隙。",
+    "options": [
+      {
+        "approach": "窄口普通飞行",
+        "action": "稍升至高茎顶部以上，沿花篱下方往右。",
+        "expected_consequence": "节约冲刺体力，可能淋雨较久。",
+        "visual_basis": "花篱下边约425px，高茎顶在530px，之间可飞。"
+      },
+      {
+        "approach": "窄口冲刺",
+        "action": "同样对准空隙后蓄力冲右。",
+        "expected_consequence": "减少外露时间，但额外体力消耗且窄口易撞。",
+        "visual_basis": "可见通路狭窄，右边箭头提示继续。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:44:07.401Z",
+    "stage": "04-a-before-rain-gap",
+    "goal": "穿过第一处明显降雨空隙，采晨露并抵达右侧叶亭。",
+    "options": [
+      {
+        "approach": "采露后叶下恢复",
+        "action": "先降到晨露高度，再普通飞行穿过空隙并到右侧叶亭。",
+        "expected_consequence": "会短暂淋雨，晨露和叶亭可补偿损失；下一步在叶下恢复。",
+        "visual_basis": "开口里有下落空心水滴，蓝色晨露在下方，下一叶亭悬灯及向下目标箭头清楚。"
+      },
+      {
+        "approach": "高位冲过开口",
+        "action": "保持目前高度向右冲刺。",
+        "expected_consequence": "快速越过雨区但可能撞右侧花篱，且略过晨露；得再向下找叶亭。",
+        "visual_basis": "右侧花篱占据目前高度，低处通路更开阔。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:44:37.367Z",
+    "stage": "04-a-after-rain-gap",
+    "approach": "采露后叶下恢复",
+    "consequence": "穿过雨滴开口到第二叶亭，体力86→100，2/5处叶下已抵达；护雨叶提示“轻触获得五秒防雨”。"
+  },
+  {
+    "time": "2026-11-01T11:44:37.367Z",
+    "stage": "04-before-choice-comparison",
+    "goal": "从第二叶亭穿过雨幕到右侧第三叶亭。",
+    "options": [
+      {
+        "approach": "先取护雨叶再走",
+        "action": "抬高到右侧护雨叶，轻触后迅速穿过雨幕，下降进入第三叶亭。",
+        "expected_consequence": "五秒防雨可覆盖跨越，主要付出移动/冲刺体力，下一步可以继续或在叶下恢复。",
+        "visual_basis": "护雨叶位于当前叶棚出口上侧，提示五秒防雨；下一小叶亭在右下方雨幕中。"
+      },
+      {
+        "approach": "直接沿下方雨幕飞行",
+        "action": "保持叶下高度，不抬高取叶，普通飞行或短冲直奔第三叶亭。",
+        "expected_consequence": "路线较直接但无防雨，可能被雨滴打到、体力下降更多，需要到叶下恢复。",
+        "visual_basis": "露天区有大号下落水滴；直接路线从护雨叶下方经过。"
+      }
+    ],
+    "comparison_note": "实际两次方案将从本人刚到达的第二叶亭原字节进度分别尝试。"
+  },
+  {
+    "time": "2026-11-01T11:47:25.159Z",
+    "stage": "04-choice-a-protection",
+    "approach": "先取护雨叶再走",
+    "consequence": "第一次抬高停在叶旁尚未触发；再向右轻触后叶消失、蜂周围出现环形护罩。体力97，旅程1:43。截图/暂停工具时间已消耗一部分五秒保护，不能按自然速度解释。"
+  },
+  {
+    "time": "2026-11-01T11:47:55.079Z",
+    "stage": "04-choice-a-after",
+    "approach": "先取护雨叶再走",
+    "consequence": "护罩可见后向下再向右跨雨幕，抵达第三叶亭；显示叶下安全·体力充足，100体力，3/5处叶下。未看到雨击提示，下一步可从叶亭直接继续。",
+    "observed_hud": {
+      "at_protected_edge": 97,
+      "at_third_shelter": 100,
+      "journey_at_protected_edge": "01:43",
+      "journey_at_third_shelter": "01:47"
+    },
+    "timing_limit": "这段包含截图与暂停开销；无法证明所有跨越时刻都有护罩，也不以旅程计时作自然玩法时长。"
+  },
+  {
+    "time": "2026-11-01T11:51:24.600Z",
+    "stage": "04-choice-b-gap",
+    "approach": "直接沿下方雨幕飞行",
+    "consequence": "从同一保存点直接右飞，不取护雨叶；叶仍留在后方，蜂没有护罩，体力97、旅程1:39。没有看到雨击提示。工具截图期间在露天区运行，属于额外观察暴露。"
+  },
+  {
+    "time": "2026-11-01T11:52:05.746Z",
+    "stage": "04-choice-b-after",
+    "approach": "直接沿下方雨幕飞行",
+    "consequence": "无护罩直接跨到第三叶亭，体力97→100、3/5处叶下；护雨叶仍可见留在后方。此次未观察到雨击或资源劣势，不能宣称A更安全。实际差别是A消耗护雨叶并获得可见护罩、需抬高再下降；B留下该资源并直接从低处进叶下。"
+  },
+  {
+    "time": "2026-11-01T11:52:05.746Z",
+    "stage": "04-before-higher-shelter",
+    "goal": "继续到右侧较高的第四叶亭。",
+    "options": [
+      {
+        "approach": "从低叶下抬高",
+        "action": "先向右离开低叶，再向上接近高叶下。",
+        "expected_consequence": "穿过一小段裸露雨幕后恢复；不必回头拿护雨叶。",
+        "visual_basis": "第四叶亭的灯比当前高约100px，右侧高柱及花篱限制上方绕行。"
+      },
+      {
+        "approach": "回头取护雨叶",
+        "action": "退回左侧拿仍保留的护雨叶再来。",
+        "expected_consequence": "获得五秒保护但增加往返与雨幕暴露；当前已满体力，暂不选择。",
+        "visual_basis": "B路线保留下来的护雨叶在左侧屏幕边。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:52:31.497Z",
+    "stage": "04-after-higher-shelter",
+    "approach": "从低叶下抬高",
+    "consequence": "到达高叶亭，体力100且提示叶下安全；没有观察到雨击反馈。"
+  },
+  {
+    "time": "2026-11-01T11:52:31.497Z",
+    "stage": "04-before-narrow-gap",
+    "goal": "从右边花篱下、高茎上方的窄口通过。",
+    "options": [
+      {
+        "approach": "对齐后普通飞行",
+        "action": "抬高到约花篱底缘与高茎顶之间，再向右飞。",
+        "expected_consequence": "需要准确高度但不会额外消耗冲刺体力；若受阻可回叶亭再调整。",
+        "visual_basis": "窄口高度约60px，远处晨露紧贴花篱下边缘。"
+      },
+      {
+        "approach": "蓄力冲过窄口",
+        "action": "对齐后冲向右侧。",
+        "expected_consequence": "可能更快，但偏高会撞实心花篱、偏低会撞高茎。",
+        "visual_basis": "前段已实测实心花篱不能冲开；两侧形状清楚。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:52:55.156Z",
+    "stage": "04-narrow-gap-first-attempt",
+    "approach": "对齐后普通飞行",
+    "consequence": "未通过，蜂停在高茎左侧，出现“实心茎干冲不开·从开口绕过去”。这是高度对齐失败，画面仍有上方开口可尝试。下一步再抬高。"
+  },
+  {
+    "time": "2026-11-01T11:53:34.195Z",
+    "stage": "04-after-narrow-gap",
+    "approach": "对齐后普通飞行",
+    "consequence": "再次抬高后成功通过高茎与花篱之间窄口，体力96→87；误差可通过一次小调整解决，无需重置。前方可见花蜡灯叶亭。"
+  },
+  {
+    "time": "2026-11-01T11:53:59.653Z",
+    "stage": "04-before-exit",
+    "goal": "雨停了，沿熟悉池岸回去并穿过花铃叶拱。",
+    "options": [
+      {
+        "approach": "直接穿过叶拱",
+        "action": "从满体力叶亭向右飞入拱心。",
+        "expected_consequence": "完成雨中停走段，进入归巢旅程。",
+        "visual_basis": "雨云消失，目标变为“雨停了，沿熟悉的池岸回去”，5/5叶下已抵达，右边是前段同样的出口叶拱。"
+      },
+      {
+        "approach": "继续停留叶亭",
+        "action": "留在花蜡灯下观察。",
+        "expected_consequence": "保持安全但不会推进，当前体力100无需恢复。",
+        "visual_basis": "安全叶亭和满体力显示仍在。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:54:26.865Z",
+    "stage": "04-after-exit",
+    "approach": "直接穿过叶拱",
+    "consequence": "看到完成勾号和“那簇蓝花，又出现在归路旁”。Esc成功把抵达画面暂停，提示再Enter前往下一段。中段实际完成。"
+  },
+  {
+    "time": "2026-11-01T11:54:54.500Z",
+    "stage": "05-before",
+    "goal": "回家，处理归路上挡路的花牌。",
+    "options": [
+      {
+        "approach": "沿熟悉缺口前进",
+        "action": "直接向右穿过两团花篱之间已打开的空隙，继续寻找挡路花牌。",
+        "expected_consequence": "可以不冲刺通过旧缺口，保留体力以应对后面的牌。",
+        "visual_basis": "场景和第一段同样的上下花篱，但中间橙色阻挡已不见；目标写“回家的路上，花牌挡住了去向”。"
+      },
+      {
+        "approach": "从下方绕过整片花篱",
+        "action": "下降再绕右。",
+        "expected_consequence": "绕路较远，眼前已有中央空隙，可能无需绕行。",
+        "visual_basis": "花篱下方边缘仍有空域，但右箭头高度接近中央口。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:55:20.249Z",
+    "stage": "05-after-open-gap",
+    "approach": "沿熟悉缺口前进",
+    "consequence": "无需冲刺便穿过旧缺口，体力100→92。右前方风花箭头改为右下方向。"
+  },
+  {
+    "time": "2026-11-01T11:55:20.249Z",
+    "stage": "05-before-return-wind",
+    "goal": "接近右上方风花，沿新的向右下箭头借力。",
+    "options": [
+      {
+        "approach": "采露后用风花",
+        "action": "先向下轻触晨露，再升高接近风花并冲入。",
+        "expected_consequence": "补充体力后借力朝右下前进。",
+        "visual_basis": "晨露提示仍为最多12体力，风花图案与前段相同但箭头转向右下。"
+      },
+      {
+        "approach": "沿低空直接飞",
+        "action": "略过风花保持当前高度向右。",
+        "expected_consequence": "仍可能到达后方，但错过借力，普通飞行耗时更长。",
+        "visual_basis": "风花下方是开放天空，没有提示必须使用。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:56:01.194Z",
+    "stage": "05-after-return-wind",
+    "approach": "采露后用风花",
+    "consequence": "向右下的三连借风成功，显示连续借风×3不用再蓄力、体力+4。现在落在较低空域，前方低花篱要求再次抬高。"
+  },
+  {
+    "time": "2026-11-01T11:56:01.194Z",
+    "stage": "05-before-low-hedge",
+    "goal": "升高越过右侧低花篱，顺路接近晨露。",
+    "options": [
+      {
+        "approach": "抬高采露",
+        "action": "先上升，再向右飞到高处晨露。",
+        "expected_consequence": "避开低花篱并补体力，继续归途。",
+        "visual_basis": "花篱在右下方，晨露在右上空旷处。"
+      },
+      {
+        "approach": "保持低位冲刺",
+        "action": "直接向右冲向低花篱。",
+        "expected_consequence": "预计撞上实心花篱无法通过，依据自己此前经验不选。",
+        "visual_basis": "外形与已遇实心花篱相同。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:56:23.870Z",
+    "stage": "05-after-low-hedge",
+    "approach": "抬高采露",
+    "consequence": "成功采到晨露2/4，体力+12提示可见，继续在低花篱上方飞行；前方出现叶亭。"
+  },
+  {
+    "time": "2026-11-01T11:56:45.681Z",
+    "stage": "05-shelter-roof-misread",
+    "approach": "接近叶亭恢复",
+    "consequence": "落在叶亭顶面，体力下降到64，显示“大叶下休息·恢复体力”但尚未恢复。我误把从上方下降当成进入叶下；顶面阻挡垂直下降，需要绕叶边进入。"
+  },
+  {
+    "time": "2026-11-01T11:56:45.681Z",
+    "stage": "05-before-under-leaf",
+    "goal": "绕进叶下恢复并从低处接近下一风花。",
+    "options": [
+      {
+        "approach": "绕左叶缘",
+        "action": "向左离开叶顶，然后下降，再往右进入叶下。",
+        "expected_consequence": "可以绕过屋顶碰撞并恢复体力。",
+        "visual_basis": "叶亭左边缘开放，灯和歇脚叶在屋顶下方。"
+      },
+      {
+        "approach": "继续向下压",
+        "action": "保持向下输入。",
+        "expected_consequence": "预计仍停在屋顶，不能进入叶下。",
+        "visual_basis": "刚才向下输入后蜂仍在叶顶。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:57:12.045Z",
+    "stage": "05-under-leaf-first-attempt",
+    "approach": "绕左叶缘",
+    "consequence": "仍落在屋顶，体力64→54。根据移动后的屋顶位置判断，左移距离不足以完全离开叶缘；提示恢复点已记住。保留这次误判。"
+  },
+  {
+    "time": "2026-11-01T11:57:12.045Z",
+    "stage": "05-before-recovery",
+    "goal": "验证最近落脚点恢复，解除当前屋顶绕行失误。",
+    "options": [
+      {
+        "approach": "使用R回最近落脚点",
+        "action": "恢复运行后按R。",
+        "expected_consequence": "回到刚记住的叶亭安全落脚位置，可能恢复体力。",
+        "visual_basis": "屏幕刚显示恢复点已记住，统一操作提示说明R回最近落脚点。"
+      },
+      {
+        "approach": "更远左绕",
+        "action": "向左移动超过整个叶缘再下降。",
+        "expected_consequence": "应可物理进入叶下，但额外耗体力。",
+        "visual_basis": "左侧开放，只是先前移动不足。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:57:32.587Z",
+    "stage": "05-after-recovery",
+    "approach": "使用R回最近落脚点",
+    "consequence": "R实际把蜂送到叶亭下方，体力恢复100，并提示“回到落脚点·可以重新观察它的动作”。恢复机制可解除自己的屋顶绕行失误。"
+  },
+  {
+    "time": "2026-11-01T11:57:51.629Z",
+    "stage": "05-before-second-shelter",
+    "goal": "提前下降，从叶亭左侧进入叶下，避免再次落在屋顶。",
+    "options": [
+      {
+        "approach": "先下降再靠近",
+        "action": "在屋顶左边空域下降到灯的高度，再向右。",
+        "expected_consequence": "直接进入恢复区并采附近晨露。",
+        "visual_basis": "蜂尚在叶亭左侧，屋顶下灯和露滴清楚可见；刚才已确认屋顶阻挡下降。"
+      },
+      {
+        "approach": "先飞到屋顶再下降",
+        "action": "保持高位靠近后再下。",
+        "expected_consequence": "会重复落在屋顶的失误。",
+        "visual_basis": "自身刚才的实际结果。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:58:15.054Z",
+    "stage": "05-after-second-shelter",
+    "approach": "先下降再靠近",
+    "consequence": "成功从左侧进入叶下，体力100，无需R。右边出现携带挂件的大灰虫。"
+  },
+  {
+    "time": "2026-11-01T11:58:15.054Z",
+    "stage": "05-before-large-insect",
+    "goal": "靠近挡路对象，先读可见提示再决定如何处理花牌。",
+    "options": [
+      {
+        "approach": "从低处接近观察",
+        "action": "保持当前较低高度向右靠近大灰虫。",
+        "expected_consequence": "可避免正面接触并读提示，确认花牌所在。",
+        "visual_basis": "大灰虫位于右上方，当前下方空域开放，目标仍说花牌挡路。"
+      },
+      {
+        "approach": "直接冲撞大灰虫",
+        "action": "上升对准它后冲刺。",
+        "expected_consequence": "可能击退，也可能受伤；尚未有可见弱点说明，因此不先选。",
+        "visual_basis": "此前只有橙色障碍可冲开，未验证灰虫可攻击。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:58:49.748Z",
+    "stage": "05-after-large-insect",
+    "approach": "从低处接近观察",
+    "consequence": "实际被移动中的庄主碰到，显示-8体力和“换层或冲刺甩开它”，体力100→87（含普通飞行耗损）。原先低处接近并未保证避开；右侧可见两块花牌及中间绳结。"
+  },
+  {
+    "time": "2026-11-01T11:58:49.748Z",
+    "stage": "05-before-flower-sign",
+    "goal": "先甩开庄主，再接近右侧花牌绳结。",
+    "options": [
+      {
+        "approach": "换层接近",
+        "action": "向上换高度，再向右靠近花牌。",
+        "expected_consequence": "暂时避开庄主接触，并能读到花牌互动提示。",
+        "visual_basis": "碰撞提示明确建议换层；花牌位于上下茎干间。"
+      },
+      {
+        "approach": "冲刺甩开",
+        "action": "保持向右蓄力冲出。",
+        "expected_consequence": "更快拉开距离，但未对齐花牌时可能撞茎干。",
+        "visual_basis": "提示允许冲刺甩开，门上下茎干形状清楚。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:59:18.696Z",
+    "stage": "05-before-taut-knot",
+    "goal": "找到花牌绳结可被处理的时机，打开通路。",
+    "options": [
+      {
+        "approach": "观察盘点后冲绳结",
+        "action": "对齐中央绳结，在画面提示可动手时向右冲刺。",
+        "expected_consequence": "庄主盘点时可能让绳松开，冲绳结可开门。",
+        "visual_basis": "当前明确提示“绳还绷着·留意它何时盘点”；绳结在上下花牌之间。"
+      },
+      {
+        "approach": "绳绷着时直接冲",
+        "action": "现在就向右冲向绳结。",
+        "expected_consequence": "可能因绷紧不能打开，消耗体力且庄主会追来。",
+        "visual_basis": "“还绷着”暗示当前不是合适时机，但尚未实际验证。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T11:59:45.411Z",
+    "stage": "05-knot-window-visible",
+    "consequence": "观察时再次被庄主碰撞（-8提示），体力78→63；绳结提示变为“绳松了·冲开干叶结”，这是明确可行动窗口。现按原预测冲绳结。"
+  },
+  {
+    "time": "2026-11-01T12:00:34.217Z",
+    "stage": "05-knot-first-burst-failed",
+    "approach": "观察盘点后冲绳结",
+    "consequence": "未开门，显示“牌绳还绷着·它停下盘点时再试”。先前看到松绳到实际冲刺间已经经过截图/暂停/恢复等工具间隔，不能把这次窗口错失直接当作自然操作难度。当前位置在绳结左近处，体力71。"
+  },
+  {
+    "time": "2026-11-01T12:00:34.217Z",
+    "stage": "05-before-timing-retry",
+    "goal": "保持对准绳结，跨过下一次盘点窗口。",
+    "options": [
+      {
+        "approach": "连续短蓄力尝试",
+        "action": "在当前位置进行最多三次700毫秒蓄力释放，每次留原始截图，最后暂停。",
+        "expected_consequence": "有机会在松绳窗口击中；若都不成，需回落点重新观察，不无限重复。",
+        "visual_basis": "绳结位置已对齐；提示要求在庄主停下盘点时冲击，先前已实际看到松绳阶段。"
+      },
+      {
+        "approach": "退回叶下重新观察",
+        "action": "按R回安全点，再靠近观察周期。",
+        "expected_consequence": "恢复体力但需重复接近，暂不选。",
+        "visual_basis": "刚才R实测可恢复100，当前仍有71体力可尝试。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T12:00:47.849Z",
+    "stage": "05-timed-retry-tool-duration",
+    "active_tool_interval_ms": 13631,
+    "detail": "三次确定性蓄力及截图整个期间连续运行；截图等待计入额外暴露。"
+  },
+  {
+    "time": "2026-11-01T12:02:13.880Z",
+    "stage": "05-timed-retry-result",
+    "approach": "连续短蓄力尝试",
+    "consequence": "三次均未打开，画面始终绳绷、庄主在左侧停住，体力反而恢复100。这表明当前靠近叶亭的安全位置与之前受追逐时不同；不能继续原样重复。"
+  },
+  {
+    "time": "2026-11-01T12:02:13.880Z",
+    "stage": "05-before-reengage",
+    "goal": "离开安全边缘观察庄主是否再次接近并盘点。",
+    "options": [
+      {
+        "approach": "向左短退再诱导",
+        "action": "向左离开门边恢复区约一小段，观察庄主动作；再按松绳提示冲回。",
+        "expected_consequence": "庄主可能重新接近，重新出现松绳窗口；会有受碰撞风险。",
+        "visual_basis": "近门连续截图庄主远处静止且体力恢复，之前窗口出现在庄主靠近蜂时。该因果目前只是推测。"
+      },
+      {
+        "approach": "留在门前继续冲",
+        "action": "原地重复蓄力。",
+        "expected_consequence": "已有三次不成功，现停止此方案。",
+        "visual_basis": "064—066三张原始截图都是相同绷绳状态。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T12:02:43.256Z",
+    "stage": "05-reengage-observed",
+    "consequence": "短退后庄主立即重新贴近并出现松绳提示，蜂又受-8。支持需要在安全区外引发该窗口的观察；现在缩短蓄力以减少工具间隔错失。"
+  },
+  {
+    "time": "2026-11-01T12:03:44.281Z",
+    "stage": "05-short-charge-result",
+    "approach": "缩短蓄力冲击",
+    "consequence": "250毫秒蓄力失败，画面明确提示“还没蓄好力·按住空格，等光环亮起再松开”。这是蓄力不足而非门不响应。当前仍在安全边缘外，可以尝试提前蓄好、等庄主动作过程中释放。"
+  },
+  {
+    "time": "2026-11-01T12:03:44.281Z",
+    "stage": "05-before-precharge",
+    "goal": "在庄主接近过程中预先蓄力，使释放落在盘点窗口。",
+    "options": [
+      {
+        "approach": "提前长蓄力",
+        "action": "面对右侧绳结按住空格1.5秒再释放。",
+        "expected_consequence": "期间庄主可能接近并开始盘点，完整蓄力释放有机会击开；仍可能错过。",
+        "visual_basis": "短蓄力不足有明确提示，庄主当前在附近且不在叶下安全区。"
+      },
+      {
+        "approach": "看到松绳后再蓄力",
+        "action": "继续逐帧观察后再700毫秒蓄力。",
+        "expected_consequence": "此前观察工具延迟已两次错失窗口，因此先尝试预蓄。",
+        "visual_basis": "本人061—068记录的时序结果。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T12:04:49.333Z",
+    "stage": "05-first-knot-open",
+    "approach": "提前长蓄力",
+    "consequence": "1.5秒预蓄成功：第一绳结断开、两花牌落到下方，蜂通过门，目标变为“牌架另一面，还有一道叶结”；体力82→55。没有用R跳过该门。"
+  },
+  {
+    "time": "2026-11-01T12:04:49.333Z",
+    "stage": "05-before-sign-backside",
+    "goal": "绕到牌架背面，处理第二道叶结。",
+    "options": [
+      {
+        "approach": "沿上方风花绕行",
+        "action": "升到第一风花高度，冲入并沿箭头经过牌面上方到后面的叶结。",
+        "expected_consequence": "风花把蜂送过牌架上方，能接近第二叶结；有蓄力耗损。",
+        "visual_basis": "提示“牌面挡住直路·上下都能绕到背面”，上方三朵风花箭头连成弧形越过牌面。"
+      },
+      {
+        "approach": "从牌面下方绕行",
+        "action": "保持当前较低高度从牌底下穿过，再在后侧升高。",
+        "expected_consequence": "避免额外冲刺但需自行调整高度，可能被后面的叶棚屋顶挡住。",
+        "visual_basis": "牌底约510px、当前蜂约530px，下方开放；右侧叶棚屋顶更高。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T12:06:08.187Z",
+    "stage": "05-after-sign-backside",
+    "approach": "沿上方风花绕行",
+    "consequence": "三连借风绕过牌上方并实际穿过第二叶结，绳结断开、牌面显示背面，目标变为“归路已经打开，蜡脾上可以把见过的花路告诉同伴”。体力55→38。"
+  },
+  {
+    "time": "2026-11-01T12:06:08.187Z",
+    "stage": "05-before-wax-comb",
+    "goal": "到右侧蜡脾，把见过的花路告诉同伴。",
+    "options": [
+      {
+        "approach": "先在花蜡灯叶下恢复",
+        "action": "从叶棚右边下降，再向左进入灯下，恢复后去右侧蜡脾。",
+        "expected_consequence": "补足当前38体力，之后安全接近结尾互动。",
+        "visual_basis": "熟悉花蜡灯叶亭在下方，右侧可见蜂巢状蜡脾和目标箭头。"
+      },
+      {
+        "approach": "采晨露直去蜡脾",
+        "action": "向右下碰晨露，再向右进入蜡脾。",
+        "expected_consequence": "可能足够完成并节省回叶下步骤，但恢复量最多12。",
+        "visual_basis": "右下晨露与蜡脾相邻，体力38仍有余量。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T14:24:02.626Z",
+    "stage": "interruption-resume",
+    "detail": "071之后执行被外部turn_aborted中断；没有挂起的CUA动作，恢复时072确认游戏暂停，4/4叶下。中断时长不属于游戏自然游玩时间。"
+  },
+  {
+    "time": "2026-11-01T14:26:56.707Z",
+    "stage": "05-before-share",
+    "goal": "停在蜡脾上向同伴分享花路。",
+    "options": [
+      {
+        "approach": "落入蜡脾中央停下",
+        "action": "略向右下移动到同伴附近，然后停止方向输入。",
+        "expected_consequence": "触发分享花路或出现确认提示。",
+        "visual_basis": "提示“停在蜡脾上·可以分享花路”，同伴聚集在蜡脾上。"
+      },
+      {
+        "approach": "继续飞过蜡脾",
+        "action": "保持向右穿过。",
+        "expected_consequence": "可能错过需要停下的互动，故不选。",
+        "visual_basis": "提示明确要求停在蜡脾上。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T14:34:49.539Z",
+    "stage": "05-share-first-result",
+    "approach": "落入蜡脾中央停下",
+    "consequence": "停在蜡脾后体力100，但提示“还没有亲自看过的花路”，没有完成分享。此前只靠近蓝花触发画眉对话并不等于取得花路；这是实际理解缺口，不能写已完成。"
+  },
+  {
+    "time": "2026-11-01T14:34:49.539Z",
+    "stage": "05-before-flower-revisit",
+    "goal": "亲自查看花路后再回蜡脾分享。",
+    "options": [
+      {
+        "approach": "回访旁边蓝花花心",
+        "action": "向左回到花蜡灯叶亭内的蓝花，贴近花心停下观察。",
+        "expected_consequence": "可能记录可分享的花路，随后再返回蜡脾。",
+        "visual_basis": "蜡脾提示缺少亲自看过的花路；附近蓝花与前段目标花相同，标题说明过花心可以停一停。"
+      },
+      {
+        "approach": "在蜡脾继续等待",
+        "action": "不移动继续停留。",
+        "expected_consequence": "缺少花路信息的问题预计不会自行解决，暂不选择。",
+        "visual_basis": "当前提示明确说没有亲自看过的花路，而非等待确认。"
+      }
+    ]
+  },
+  {
+    "time": "2026-11-01T14:48:14.388Z",
+    "stage": "05-flower-revisit-result",
+    "approach": "回访旁边蓝花花心",
+    "consequence": "已到蓝花中心附近停留，仍只显示花蜡灯提示，未看到获得花路的明确反馈。此次回访不能证明已记录花路。现在遵循仍指向右侧的目标箭头继续找出口；分享作为未理解/未验证保留，不再往返。"
+  }
+]

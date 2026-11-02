@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "goal": "spring-03-05-review",
+  "claim": "candidate",
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "human_accepted": false,
+  "full_game_completed": false,
+  "evidence": [
+    {
+      "criterion": "continuous_run",
+      "kind": "technical",
+      "status": "passed",
+      "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+      "path": "technical.json",
+      "sha256": "5b16cd19b44c808785218d25448a8546cca48550421b37b26b546604b686fd35"
+    },
+    {
+      "criterion": "experience",
+      "kind": "content_review",
+      "status": "passed",
+      "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+      "path": "experience.json",
+      "sha256": "57c041b64ef3464f9c46586727aca3b7ca795d364534e44f50f272cc70d6ec88"
+    },
+    {
+      "criterion": "presentation",
+      "kind": "in_engine_visual",
+      "status": "passed",
+      "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+      "path": "presentation.json",
+      "sha256": "e4364cc20fcba5cf69adf83d1914402358787a082b4027235caf90fafbb71966"
+    },
+    {
+      "criterion": "production_limits",
+      "kind": "production_record",
+      "status": "passed",
+      "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+      "path": "production-forecast.json",
+      "sha256": "a1758c1ae56ca6802c3e8f6a72921b788f2b04c9b01fba5ea3cb1468ddb42a2f"
+    }
+  ],
+  "journey_criteria": "journey-criteria.json",
+  "final_package_proof": "final-package-proof/result.json"
+}

@@ -1,0 +1,12 @@
+{
+  "pid": 84655,
+  "args": [
+    "/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/final/export-entry-smoke/雨来之前 · 池岸归途 0.18.0.app/Contents/MacOS/雨来之前 · 池岸归途 0.18.0",
+    "--log-file",
+    "/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/final/export-entry-smoke/spring.log",
+    "--",
+    "--spring-journey",
+    "--entry-chapter=0",
+    "--progress-file=/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/final/export-entry-smoke/spring-save.json"
+  ]
+}

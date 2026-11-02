@@ -1,0 +1,34 @@
+[
+  {
+    "script": "spring_journey_ui_verify",
+    "exit": 0,
+    "summary": [
+      "SPRING JOURNEY UI VERIFIED: 52 checks, 0 failures"
+    ],
+    "failures": []
+  },
+  {
+    "script": "pond_source_states_probe",
+    "exit": 0,
+    "summary": [
+      "POND SOURCE STATES VERIFIED: 107 checks, 0 failures"
+    ],
+    "failures": []
+  },
+  {
+    "script": "pond_audio_verify",
+    "exit": 0,
+    "summary": [
+      "POND AUDIO VERIFIED: 129 checks, 0 failures"
+    ],
+    "failures": []
+  },
+  {
+    "script": "departure_probe",
+    "exit": 0,
+    "summary": [
+      "DEPARTURE VERIFIED: 17 checks, 0 failures"
+    ],
+    "failures": []
+  }
+]

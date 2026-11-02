@@ -1,5 +1,7 @@
 extends SceneTree
 const Model=preload("res://spring_journey_model.gd")
+const Driver=preload("res://route_driver.gd")
+const O=Model.POND_APPROACH_EXTENSION
 const Old=preload("res://long_journey_model.gd")
 var checks=0
 var failures=0
@@ -34,32 +36,42 @@ func roundtrip(m,label: String) -> void:
 	clone.step(Vector2.RIGHT,false,1.0/60)
 	other.step(Vector2.RIGHT,false,1.0/60)
 	check(other.save_payload()==clone.save_payload(),"next input "+label)
+func approach(m,alternate:=false) -> void:
+	var driver=Driver.new(m,alternate)
+	driver.stage=m.stage
+	driver.wait_for_full=false
+	var boundary: float=6000.0 if m.stage==0 else 6240.0
+	for command in (m.chapter.optional_route if alternate else m.chapter.route):
+		if command.kind=="move" and command.target.x>=boundary: break
+		driver.commands.append(command)
+	for i in 15000:
+		if driver.cursor>=driver.commands.size() or not driver.error.is_empty(): break
+		var input: Dictionary=driver.next_input()
+		m.step(input.direction,input.held,1.0/60)
+	check(driver.error.is_empty() and driver.cursor==driver.commands.size(),"connected approach completes with ordinary controls "+str(m.stage)+" alternate "+str(alternate)+" error="+driver.error+" p="+str(m.p)+" recoveries="+str(m.recoveries))
+
 func chapter03(m,observe: bool,upper: bool) -> void:
-	fly(m,Vector2(400,230 if upper else 610))
-	fly(m,Vector2(1080,230 if upper else 610))
-	if upper: fly(m,Vector2(1270,500))
-	fly(m,Vector2(1060,500))
-	fly(m,Vector2(1270,500))
-	fly(m,Vector2(1450,630 if not upper else 190))
-	fly(m,Vector2(1820,630 if not upper else 190))
-	fly(m,Vector2(2050,190))
-	fly(m,Vector2(2280,190))
-	fly(m,Vector2(2280,530))
-	fly(m,Vector2(2520,500))
+	approach(m,not upper)
+	fly(m,Vector2(1450+O,630 if not upper else 190))
+	fly(m,Vector2(1820+O,630 if not upper else 190))
+	fly(m,Vector2(2050+O,190))
+	fly(m,Vector2(2280+O,190))
+	fly(m,Vector2(2280+O,530))
+	fly(m,Vector2(2520+O,500))
 	if observe:
-		fly(m,Vector2(2770,500))
-		fly(m,Vector2(3100,500))
+		fly(m,Vector2(2770+O,500))
+		fly(m,Vector2(3100+O,500))
 		fly(m,Model.SOURCE)
 		frames(m,60)
 		check(m.observation_valid(),"03 feeding observes real flower")
 		roundtrip(m,"03 source observed")
 		m.restore_checkpoint()
 		check(m.observation_valid(),"observed flower committed on retry")
-	fly(m,Vector2(3470,600))
-	fly(m,Vector2(3710,600))
-	fly(m,Vector2(3970,600))
-	fly(m,Vector2(4170,500))
-	fly(m,Vector2(4410 if m.stage!=1 else 4360,500))
+	fly(m,Vector2(3470+O,600))
+	fly(m,Vector2(3710+O,600))
+	fly(m,Vector2(3970+O,600))
+	fly(m,Vector2(4170+O,500))
+	fly(m,Vector2(4410+O if m.stage!=1 else 4360,500))
 	fly(m,m.exit_pos+Vector2(45,0))
 	check(m.phase=="transition" and m.stage==0,"03 ends at real exit")
 	roundtrip(m,"03 transition")
@@ -88,11 +100,9 @@ func chapter04(m,upper: bool) -> void:
 	check(m.phase=="transition" and m.observation==fact,"04 route keeps observed flower identity")
 	roundtrip(m,"04 transition")
 func open_front(m) -> void:
-	fly(m,Vector2(620,620))
-	fly(m,Vector2(1000,620))
-	fly(m,Vector2(1260,500))
-	fly(m,Vector2(1850,590))
-	fly(m,Vector2(2190,465))
+	approach(m,true)
+	fly(m,Vector2(1850+O,590))
+	fly(m,Vector2(2190+O,465))
 	for i in 900:
 		if m.keeper.state=="counting" and m.keeper.elapsed<1.2: break
 		frames(m,1)
@@ -109,7 +119,7 @@ func open_front(m) -> void:
 	check(m.front_open and not m.passage_open and m.keeper.state=="watch","retry retains only earned first passage")
 func open_back(m,wind: bool) -> void:
 	if wind:
-		fly(m,Vector2(2725,465))
+		fly(m,Vector2(2725+O,465))
 		frames(m,30,Vector2.UP,true)
 		frames(m,1,Vector2.UP,false)
 		for i in 180:
@@ -117,11 +127,11 @@ func open_back(m,wind: bool) -> void:
 			if m.passage_open: break
 		check(m.rings_hit>=2,"wind changes height before back knot")
 	else:
-		fly(m,Vector2(2740,465))
-		fly(m,Vector2(2740,500))
-		fly(m,Vector2(3040,500))
-		fly(m,Vector2(3040,300))
-		fly(m,Vector2(3070,300))
+		fly(m,Vector2(2740+O,465))
+		fly(m,Vector2(2740+O,500))
+		fly(m,Vector2(3040+O,500))
+		fly(m,Vector2(3040+O,300))
+		fly(m,Vector2(3070+O,300))
 		frames(m,30,Vector2.RIGHT,true)
 		frames(m,1,Vector2.RIGHT,false)
 		for i in 90:
@@ -132,8 +142,8 @@ func open_back(m,wind: bool) -> void:
 	roundtrip(m,"second passage tidy")
 	m.restore_checkpoint()
 	check(m.passage_open and m.keeper.state=="settled","retry keeps both gates and completed tidying")
-	fly(m,Vector2(3070,300))
-	fly(m,Vector2(3180,300))
+	fly(m,Vector2(3070+O,300))
+	fly(m,Vector2(3180+O,300))
 func chapter05(m,share: bool,wind: bool) -> void:
 	m.load_stage(2)
 	if not share: m.stamina=40.0
@@ -141,9 +151,9 @@ func chapter05(m,share: bool,wind: bool) -> void:
 	open_front(m)
 	open_back(m,wind)
 	# The full painted canopy is solid: descend beyond its right tip.
-	fly(m,Vector2(3460,300))
-	fly(m,Vector2(3460,620))
-	fly(m,Vector2(3260,620))
+	fly(m,Vector2(3460+O,300))
+	fly(m,Vector2(3460+O,620))
+	fly(m,Vector2(3260+O,620))
 	fly(m,Model.COMB)
 	frames(m,60)
 	check(m.perched,"05 wax is real landing")
@@ -171,9 +181,9 @@ func chapter05(m,share: bool,wind: bool) -> void:
 		frames(m,30,Vector2.ZERO,true)
 		frames(m,180)
 		check(m.message_revision==0 and m.listeners.all(func(bee): return bee.state=="waiting"),"unseen flower never fabricates a report")
-	fly(m,Vector2(3970,600))
-	fly(m,Vector2(4170,500))
-	fly(m,Vector2(4410 if m.stage!=1 else 4360,500))
+	fly(m,Vector2(3970+O,600))
+	fly(m,Vector2(4170+O,500))
+	fly(m,Vector2(4410+O if m.stage!=1 else 4360,500))
 	fly(m,m.exit_pos+Vector2(45,0))
 	check(m.phase=="ending","05 complete ending with optional share "+str(share))
 	roundtrip(m,"journey ending")
@@ -181,7 +191,7 @@ func verify_keeper_tidy() -> void:
 	var m=fresh(2)
 	m.front_open=true
 	m.passage_open=true
-	m.wall_at(2350).broken=true
+	m.wall_at(Model.FRONT_WALL_X).broken=true
 	m.wall_at(Model.BACK_WALL_X).broken=true
 	m.keeper=Model.actor(Model.KEEPER_HOME)
 	m.keeper.state="tidy"
@@ -220,23 +230,18 @@ func verify_keeper_tidy() -> void:
 	var frozen: Dictionary=m.story_state()
 	m.advance_tidy(1.0)
 	check(m.story_state()==frozen,"settled result stops changing")
-	# Legacy v2 had already displayed finished signs before the actor arrived.
-	m.keeper.state="tidy"
-	m.keeper.pos=Vector2(2800,300)
 	var legacy: Dictionary=m.save_payload()
 	legacy.erase("keeper_presentation_revision")
 	var restored=fresh()
-	check(restored.restore_payload(legacy),"legacy v2 in-progress presentation remains loadable")
-	check(restored.p==m.p and restored.passage_open and restored.keeper.state=="settled","legacy presentation upgrade preserves player and earned passage")
-	var before_reject: Dictionary=restored.save_payload()
-	legacy.keeper_presentation_revision=3
-	check(not restored.restore_payload(legacy) and restored.save_payload()==before_reject,"unknown presentation revision rejects atomically")
+	var stable: Dictionary=restored.save_payload()
+	check(not restored.restore_payload(legacy) and restored.save_payload()==stable,"missing schema marker rejects atomically on rebuilt journey")
 
 func verify_back_sign() -> void:
 	# One unchanged first stroke must not choose the wind route and second gate.
 	# Ordinary approach, no position injection, checkpoint restore or cold resume.
 	var straight=fresh(2)
-	for point in [Vector2(620,620),Vector2(1000,620),Vector2(1260,500),Vector2(1850,590),Vector2(2190,465)]: fly(straight,point)
+	approach(straight,true)
+	for point in [Vector2(1850+O,590),Vector2(2190+O,465)]: fly(straight,point)
 	for i in 900:
 		if straight.keeper.state=="counting" and straight.keeper.elapsed<1.2: break
 		frames(straight,1)
@@ -248,16 +253,16 @@ func verify_back_sign() -> void:
 	for route in ["upper","lower"]:
 		var m=fresh(2)
 		m.front_open=true
-		m.wall_at(2350).broken=true
+		m.wall_at(Model.FRONT_WALL_X).broken=true
 		m.keeper.state="watch"
-		m.p=Vector2(2740,400)
+		m.p=Vector2(2740+O,400)
 		frames(m,30,Vector2.RIGHT,true)
 		frames(m,45,Vector2.RIGHT)
-		check(m.p.x<2817 and not m.passage_open,"solid board blocks a direct burst "+route)
-		fly(m,Vector2(2740,240 if route=="upper" else 500))
-		fly(m,Vector2(3040,240 if route=="upper" else 500))
-		fly(m,Vector2(3040,300))
-		fly(m,Vector2(3070,300))
+		check(m.p.x<2817+O and not m.passage_open,"solid board blocks a direct burst "+route)
+		fly(m,Vector2(2740+O,240 if route=="upper" else 500))
+		fly(m,Vector2(3040+O,240 if route=="upper" else 500))
+		fly(m,Vector2(3040+O,300))
+		fly(m,Vector2(3070+O,300))
 		frames(m,30,Vector2.RIGHT,true)
 		frames(m,1,Vector2.RIGHT)
 		for i in 60:
@@ -270,66 +275,29 @@ func verify_back_sign() -> void:
 		for y in [457,465,473]:
 			var wind=fresh(2)
 			wind.front_open=true
-			wind.wall_at(2350).broken=true
+			wind.wall_at(Model.FRONT_WALL_X).broken=true
 			wind.keeper.state="watch"
-			wind.p=Vector2(x,y)
+			wind.p=Vector2(x+O,y)
 			frames(wind,30,Vector2.UP,true)
 			frames(wind,180,Vector2.UP)
 			check(wind.passage_open and wind.rings_hit==3 and wind.recoveries==0,"wind entry envelope "+str(Vector2(x,y)))
 	var wrong=fresh(2)
 	wrong.front_open=true
-	wrong.p=Vector2(3100,355)
+	wrong.p=Vector2(3100+O,355)
 	wrong.face=Vector2.RIGHT
 	check(not wrong.gate_ready(wrong.wall_at(Model.BACK_WALL_X)),"hitting the boards away from the leaf knot does not open it")
-	wrong.p=Vector2(3160,300)
+	wrong.p=Vector2(3160+O,300)
 	wrong.face=Vector2.LEFT
 	check(not wrong.gate_ready(wrong.wall_at(Model.BACK_WALL_X)),"reverse contact is not the exposed fastening")
 	var folder="res://review-evidence/2026-11-01/back-sign/legacy-fixtures/"
 	for name in ["stage0-plain","stage1-plain","stage2-closed","stage2-front","stage2-second_gate","stage2-tidy","stage2-settled","stage2-foraging","stage2-ending"]:
-		var original: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder+name+".json"))
-		var data: Dictionary=original.duplicate(true)
+		var path: String=folder+name+".json"
+		var bytes: PackedByteArray=FileAccess.get_file_as_bytes(path)
+		var old: Dictionary=JSON.parse_string(bytes.get_string_from_utf8())
 		var m=fresh()
-		check(m.restore_payload(data),"real old-source fixture migrates "+name)
-		check(data==original,"migration leaves original payload intact "+name)
-		var base: Dictionary=Model.unpack(original.state)
-		check(m.p==base.p and m.stamina==base.stamina and m.rings_hit==base.rings_hit and m.garden_awards==base.garden_awards.map(func(v): return int(v)),"legacy player and earned state preserved "+name)
-		if m.stage==2:
-			check(m.rings.size()==3 and not m.rings[2].active and m.rings[0].active==base.rings[0].active,"new wind flower earns nothing retroactively "+name)
-			if m.passage_open:
-				check(m.keeper.state=="settled" and m.keeper.pos==Model.RESULT_HOME and m.keeper.target==Model.RESULT_HOME and m.keeper_sign_position()==Model.RESULT_HOME+Vector2(-70,35),"old active/completed keeper is coherent with the new support "+name)
-		if name=="stage2-second_gate": check(m.checkpoint.p==Vector2(3100,300) and m.passage_open,"old committed checkpoint remains inside the opened new gate")
-		if name=="stage2-foraging": check(m.listeners[0].pos==Model.forage_target(0) and m.message_revision==1,"old committed forager clears moved post without losing message")
-		roundtrip(m,"migrated "+name)
-	var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder+"stage2-front.json"))
-	var old: Dictionary=Model.unpack(legacy.state)
-	for state in [old,old.checkpoint]:
-		state.rings[0].pos=Vector2(2640,465)
-		state.rings[0].direction=Vector2(220,-165).normalized()
-	legacy.state=Model.pack(old)
-	var m=fresh()
-	check(m.restore_payload(legacy),"known pre-canopy geometry also migrates")
-	var stable: Dictionary=m.save_payload()
-	for defect in ["wall","direction","count","revision","checkpoint","checkpoint_type","checkpoint_missing"]:
-		var bad: Dictionary=legacy.duplicate(true)
-		var state: Dictionary=Model.unpack(bad.state)
-		match defect:
-			"wall": state.walls[0].rect.size.x+=1
-			"direction": state.rings[0].direction=Vector2.RIGHT
-			"count": state.rings.pop_back()
-			"revision": bad.route_geometry_revision=99
-			"checkpoint": state.checkpoint.p=Model.FRONT_SIGN.get_center()
-			"checkpoint_type": state.checkpoint.p="invalid"
-			"checkpoint_missing": state.checkpoint.erase("p")
-		bad.state=Model.pack(state)
-		check(not m.restore_payload(bad) and m.save_payload()==stable,"invalid legacy "+defect+" rejects atomically")
-	old.p=Model.FRONT_SIGN.get_center()
-	legacy.state=Model.pack(old)
-	check(m.restore_payload(legacy) and m.p==old.checkpoint.p and m.front_open and not m.passage_open,"new solid overlap restores safe earned checkpoint")
-	legacy=JSON.parse_string(FileAccess.get_file_as_string(folder+"stage2-settled.json"))
-	old=Model.unpack(legacy.state)
-	old.p=Vector2(3125,190)
-	legacy.state=Model.pack(old)
-	check(m.restore_payload(legacy) and m.p==old.checkpoint.p and m.passage_open,"moved upper post also restores safe earned checkpoint")
+		var stable: Dictionary=m.save_payload()
+		check(not m.restore_payload(old) and m.save_payload()==stable,"v2 coordinates are rejected without changing v3: "+name)
+		check(FileAccess.get_file_as_bytes(path)==bytes,"v2 evidence/save bytes remain untouched: "+name)
 
 func verify_departure_preparation() -> void:
 	var m=fresh()
@@ -337,7 +305,7 @@ func verify_departure_preparation() -> void:
 	check(m.keeper==Model.preparation_actor(),"keeper begins at first actual hanger")
 	frames(m,120,Vector2.RIGHT)
 	check(m.p.x>180 and m.keeper.elapsed==0,"departure stays playable; distant preparation does not finish unseen")
-	m.p=Vector2(3000,420)
+	m.p=Vector2(3000+O,420)
 	m.velocity=Vector2.ZERO
 	m.clear_input()
 	m.started=true
@@ -360,28 +328,37 @@ func verify_departure_preparation() -> void:
 	roundtrip(m,"all signs attached")
 	m.load_stage(2)
 	check(m.keeper==Model.actor(Model.KEEPER_HOME) and not m.front_open,"return encounter starts independently")
-	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://review-evidence/2026-11-01/back-sign/legacy-fixtures/stage0-plain.json"))
 	var restored=fresh()
-	check(restored.restore_payload(old),"genuine pre-preparation stage0 save remains loadable")
-	check(restored.keeper==Model.preparation_actor() and restored.checkpoint_story.keeper==Model.preparation_actor(),"both old snapshots normalize before first rendered frame")
-	for phase in ["initial","working","hung","watch","inherited_idle"]:
-		var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://review-evidence/2026-11-01/departure/legacy-fixtures/"+phase+".json"))
-		check(restored.restore_payload(legacy),"genuine c5 preparation save "+phase)
-		var complete: bool=phase in ["hung","watch"]
-		check((restored.keeper.state=="watch")==complete and (restored.checkpoint_story.keeper.state=="watch")==complete,"legacy attached signs remain earned "+phase)
-		roundtrip(restored,"migrated preparation "+phase)
 	var frozen: Dictionary=restored.save_payload()
+	for marker in ["preparation_revision","small_actor_revision","wind_layout_revision","rain_layout_revision","pond_layout_revision","route_geometry_revision"]:
+		var bad: Dictionary=frozen.duplicate(true)
+		bad[marker]=91
+		check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"unknown marker rejects atomically: "+marker)
 	var bad: Dictionary=frozen.duplicate(true)
-	bad.preparation_revision=91
-	check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"unknown preparation version rejects atomically")
-	bad=old.duplicate(true)
-	bad.story.keeper.elapsed=1
-	check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"unrecognized old preparation actor is not normalized silently")
-	bad=frozen.duplicate(true)
 	bad.story.keeper.elapsed=7
-	check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"invalid new work progress rejects atomically")
+	check(not restored.restore_payload(bad) and restored.save_payload()==frozen,"invalid work progress rejects atomically")
+
+func verify_return_camera() -> void:
+	var m=fresh(2)
+	var previous: float=m.homeward_camera_left(Model.SOURCE.x-900)
+	var monotone:=true
+	var bounded:=true
+	var visible:=true
+	for offset in range(-899,1001):
+		var x: float=Model.SOURCE.x+offset
+		var left: float=m.homeward_camera_left(x)
+		monotone=monotone and left>=previous
+		bounded=bounded and absf(left-previous)<=1.001
+		visible=visible and x-left>=400 and x-left<=1150
+		previous=left
+	check(monotone and bounded,"homeward camera never reverses or jumps while player advances")
+	check(visible,"bee stays visible while view opens toward source and listeners")
+	m.p=Model.COMB
+	frames(m,2)
+	roundtrip(m,"broadened return camera")
 
 func run() -> void:
+	verify_return_camera()
 	verify_departure_preparation()
 	verify_back_sign()
 	verify_keeper_tidy()
@@ -415,6 +392,13 @@ func run() -> void:
 	frames(bird,60)
 	check(bird.bird_greeted and bird.observation_valid() and bird.stamina>70,"stationary source gives bird response, fact and real restoration")
 	roundtrip(bird,"bird response")
+	var visible_contact=fresh()
+	visible_contact.load_stage(2)
+	visible_contact.p=Model.SOURCE+Vector2(39,14)
+	visible_contact.velocity=Vector2.ZERO
+	check(visible_contact.context_cue().kind=="flower","visible flower contact is not masked by nearby lamp cue")
+	frames(visible_contact,60)
+	check(visible_contact.observation_valid(),"visible central flower contact records source at painted center")
 	var bud=fresh()
 	bud.p=Model.SMALL_FLOWER_HOME+Vector2(-14,62)
 	bud.stamina=60

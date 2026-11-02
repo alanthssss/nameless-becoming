@@ -1,0 +1,187 @@
+extends SceneTree
+# Test adapter suppresses only OS focus-loss auto-pause. Explicit Esc, saving,
+# production physics, rendering, audio and actor updates remain unchanged.
+class NativeFixture extends "res://spring_journey_main.gd":
+	func _notification(what: int):
+		if what!=NOTIFICATION_APPLICATION_FOCUS_OUT: super._notification(what)
+const Scene = preload("res://spring_journey.tscn")
+const Model = preload("res://spring_journey_model.gd")
+const Driver = preload("res://route_driver.gd")
+const Save = preload("res://save_data.gd")
+var game
+var checks := 0
+var failures := 0
+var pressed := {}
+var folder := OS.get_environment("SWARM_SPRING_QA_DIR")
+
+func _initialize() -> void: call_deferred("run")
+
+func check(ok: bool,label: String) -> void:
+	checks += 1
+	if not ok:
+		failures += 1
+		print("FAIL: "+label)
+
+func key(code: Key,down: bool) -> void:
+	var event := InputEventKey.new()
+	event.physical_keycode = code
+	event.keycode = code
+	event.pressed = down
+	root.push_input(event)
+	if down: pressed[code] = true
+	else: pressed.erase(code)
+
+func tap(code: Key) -> void:
+	key(code,true)
+	key(code,false)
+
+func release_all() -> void:
+	for code in pressed.keys(): key(code,false)
+
+func action(command: Dictionary) -> void:
+	var d: Vector2 = command.direction
+	var codes := [KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_SPACE]
+	var values := [d.x < -0.1,d.x > 0.1,d.y < -0.1,d.y > 0.1,command.held]
+	for i in codes.size():
+		if values[i] != pressed.has(codes[i]): key(codes[i],values[i])
+
+func tick(count := 1) -> void:
+	for i in count:
+		game.tick(1.0/60)
+		game.world._process(1.0/60)
+		await process_frame
+
+func shot(name: String) -> void:
+	if DisplayServer.get_name() == "headless": return
+	game.queue_redraw()
+	game.world.queue_redraw()
+	await RenderingServer.frame_post_draw
+	check(root.get_texture().get_image().save_png(folder.path_join(name+".png")) == OK,"capture "+name)
+
+func new_scene() -> void:
+	game = NativeFixture.new()
+	game.progress_file=folder.path_join("save.json")
+	root.add_child(game)
+	await process_frame
+	game.set_process(false)
+	game.world.set_process(false)
+	game.sound.set_muted(false)
+
+func fly(target: Vector2) -> void:
+	if game.model.stage!=1 and target.x<4800: target.x+=Model.POND_APPROACH_EXTENSION
+	for frame in 1500:
+		var d: Vector2 = target-game.model.p
+		if d.length() < 10 or game.model.phase != "playing": break
+		action({"direction":Vector2(signf(d.x) if absf(d.x)>6 else 0.0,signf(d.y) if absf(d.y)>6 else 0.0),"held":false})
+		await tick()
+	release_all()
+	await tick(24)
+
+func approach(alternate:=false) -> void:
+	var driver=Driver.new(game.model,alternate)
+	driver.stage=game.model.stage
+	driver.wait_for_full=false
+	var boundary: float=6000.0 if game.model.stage==0 else 6240.0
+	for command in (game.model.chapter.optional_route if alternate else game.model.chapter.route):
+		if command.kind=="move" and command.target.x>=boundary: break
+		driver.commands.append(command)
+	for i in 15000:
+		if driver.cursor>=driver.commands.size() or not driver.error.is_empty(): break
+		action(driver.next_input())
+		await tick()
+	release_all()
+	check(driver.error.is_empty() and driver.cursor==driver.commands.size(),"native keyboard connected approach "+str(game.model.stage))
+
+func cold_resume(label: String) -> void:
+	tap(KEY_ESCAPE)
+	var before: Dictionary = game.model.save_payload()
+	check(game.mode=="pause" and game.has_saved,"actual disk pause "+label)
+	await tick(90)
+	check(game.model.save_payload()==before,"pause freezes transaction and listeners "+label)
+	release_all()
+	game.queue_free()
+	await process_frame
+	await new_scene()
+	check(not game.saved_payload.is_empty(),"cold launch reads save "+label)
+	game.on_secondary()
+	check(game.mode=="pause" and game.model.save_payload()==before,"exact cold resume "+label)
+	tap(KEY_ESCAPE)
+
+
+func run() -> void:
+	DirAccess.make_dir_recursive_absolute(folder)
+	await new_scene()
+	await shot("00-title")
+	tap(KEY_ENTER)
+	key(KEY_RIGHT,true)
+	await tick(35)
+	key(KEY_RIGHT,false)
+	key(KEY_SPACE,true)
+	await tick(27)
+	check(game.model.charging,"ordinary input holds an unreleased charge")
+	await cold_resume("unreleased charge")
+	check(game.resume_charge_guard,"cold charge waits for actual Space")
+	key(KEY_SPACE,true)
+	await tick()
+	key(KEY_SPACE,false)
+	await tick(4)
+	check(game.model.burst_left>0,"restored charge releases a real burst")
+	await cold_resume("active burst")
+	check(game.model.burst_left>0,"active burst survives disk scene reload")
+	var driver=Driver.new(game.model,true)
+	driver.wait_for_full=false
+	var samples: Array=[]
+	var captured: Dictionary={}
+	var stage_rings: Dictionary={}
+	var boundary_restored=false
+	for frame in 20000:
+		if game.mode=="ending": break
+		if game.mode in ["transition","arrival"]:
+			release_all()
+			if game.model.stage==1 and not boundary_restored:
+				await cold_resume_transition("04 to05")
+				driver.model=game.model
+				boundary_restored=true
+			stage_rings[str(game.model.stage)]=game.model.rings_hit
+			await tick()
+			continue
+		if game.mode!="play":
+			check(false,"unexpected menu "+game.mode)
+			break
+		driver.collecting=game.model.stage!=1
+		var command: Dictionary=driver.next_input()
+		if not driver.error.is_empty():
+			check(false,driver.error)
+			break
+		action(command)
+		await tick()
+		var m=game.model
+		samples.append({"frame":frame,"stage":m.stage,"x":m.p.x,"y":m.p.y,"energy":m.stamina,"shield":m.shield_left,"camera":m.camera_x,"recoveries":m.recoveries,"front":m.front_open,"back":m.passage_open,"keeper":m.keeper.state,"message":m.message_revision,"direction":[command.direction.x,command.direction.y],"held":command.held})
+		var mark: String=str(m.stage)+"-"+str(m.encounter_index())
+		if not captured.has(mark) and m.p.x>m.chapter.encounters[m.encounter_index()].start_x+450:
+			captured[mark]=true
+			await shot(mark)
+	release_all()
+	check(game.mode=="ending" and game.model.stage==2,"ordinary bypass input finishes complete journey")
+	check(game.model.recoveries==0,"complete ordinary route needs no forced recovery")
+	check(game.model.front_open and game.model.passage_open,"both independent openings earned")
+	check(game.model.message_revision==0,"return remains complete without sharing")
+	check(stage_rings.get("0",-1)==0 and game.model.rings_hit==0,"ordinary alternative uses no wind flowers")
+	await shot("ending-without-sharing")
+	FileAccess.open(folder.path_join("trace.json"),FileAccess.WRITE).store_string(JSON.stringify({"kind":"known-answer native keyboard route, not independent exploration","simulation_step":1.0/60,"checks":checks,"failures":failures,"stage_rings":stage_rings,"samples":samples}))
+	game.queue_free()
+	await process_frame
+	print("POND ORDINARY NATIVE VERIFIED: %d checks, %d failures"%[checks,failures])
+	quit(1 if failures else 0)
+
+func cold_resume_transition(label: String) -> void:
+	tap(KEY_ESCAPE)
+	var before: Dictionary=game.model.save_payload()
+	check(game.mode=="pause","pause at chapter boundary "+label)
+	game.queue_free()
+	await process_frame
+	await new_scene()
+	game.on_secondary()
+	check(game.model.save_payload()==before and game.mode=="pause" and game.paused_from=="transition","cold chapter boundary is paused at same chapter fact")
+	tap(KEY_ESCAPE)
+	check(game.mode=="transition","explicit resume restores pending handoff")

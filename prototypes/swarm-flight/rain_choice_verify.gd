@@ -28,45 +28,23 @@ func reject(data: Dictionary,label: String):
 	check(not m.restore_payload(data) and m.save_payload()==before and data==original,"atomic rejection "+label)
 func run():
 	for name in ["stage-0","stage-2","checkpoint--1","checkpoint-0","checkpoint-1","checkpoint-2","checkpoint-3","rain-shield-live","rain-shield-committed","after-third"]:
-		var old=fixture(name)
-		var before=old.duplicate(true)
-		var m=fresh()
-		check(not old.has("rain_layout_revision") and m.restore_payload(old) and old==before,"genuine old fixture accepts without caller mutation "+name)
-		check(E.normalized(m.save_payload())==E.normalized(E.upgraded(old)),"only independent declared layout delta "+name)
-		exact(m,name)
-	for kind in ["new-overhead","new-upper-stem","new-low-leaf","new-high-leaf"]:
-		var old=fixture(kind+"-live")
-		var original=old.duplicate(true)
-		var m=fresh()
-		check(m.restore_payload(old) and old==original,"legal old collision pose accepts "+kind)
-		check(m.p==Vector2(2170,520) and m.recoveries==int(old.state.recoveries)+1 and m.events.any(func(e): return e.kind=="recover_geometry"),"only existing safe checkpoint recovery "+kind)
-		check(m.checkpoint_index==1 and not m.shelters[2].reached and not m.shelters[3].reached,"recovery does not grant new station facts "+kind)
-		exact(m,kind)
-		reject(fixture(kind+"-checkpoint"),"unsafe old checkpoint "+kind)
+		reject(fixture(name),"v2 rain state is isolated "+name)
+	var valid=fresh().save_payload()
 	for snapshot in ["live","checkpoint"]:
 		for defect in ["missing-wall","extra-wall","wall-rect","shelter-name","shelter-width","dew-purpose","dew-section","bad-prefix","bad-index","shield-position"]:
-			var bad=fixture("checkpoint-1")
+			var bad=valid.duplicate(true)
 			var state=bad.state if snapshot=="live" else bad.state.checkpoint
 			if defect=="missing-wall": state.walls.pop_back()
 			if defect=="extra-wall": state.walls.append(state.walls[0].duplicate(true))
 			if defect=="wall-rect": state.walls[0].rect.r[0]+=1
 			if defect=="shelter-name": state.shelters[2].name="unrecognized"
-			if defect=="shelter-width": state.shelters[2].half_width=M.pack(118.0)
+			if defect=="shelter-width": state.shelters[2].half_width=M.pack(117.0)
 			if defect=="dew-purpose": state.dew[1].purpose="changed"
 			if defect=="dew-section": state.dew[1].section=1
 			if defect=="bad-prefix": state.shelters[2].reached=true
 			if defect=="bad-index": state.checkpoint_index=99
 			if defect=="shield-position": state.shields[0].pos=M.pack(Vector2(2380,450))
-			reject(bad,snapshot+" "+defect)
-	for kind in ["rain-rect","rain-timer","stamina","rng","index-mismatch","fractional-index"]:
-		var bad=fixture("checkpoint-1")
-		if kind=="rain-rect": bad.state.rain_fields[0].rect.r[2]+=1
-		if kind=="rain-timer": bad.state.rain_fields[0].timer="bad"
-		if kind=="stamina": bad.state.stamina=M.pack(-1.0)
-		if kind=="rng": bad.rng_state="not-a-number"
-		if kind=="index-mismatch": bad.state.checkpoint_index=0
-		if kind=="fractional-index": bad.state.checkpoint_index=1.5
-		reject(bad,kind)
+			reject(bad,snapshot+" current validation "+defect)
 	var current=fresh().save_payload()
 	for marker in [2,-1,"1",null,true]:
 		var bad=current.duplicate(true)
@@ -94,9 +72,8 @@ func legacy_chain_cases():
 		var data=JSON.parse_string(FileAccess.get_file_as_string("res://review-evidence/2026-11-01/"+path))
 		var before=data.duplicate(true)
 		var m=fresh()
-		check(m.restore_payload(data) and data==before,"all earlier genuine marker chains "+path)
-		check(m.stage==int(data.stage) and E.normalized(M.pack(m.observation))==E.normalized(data.story.dance.observation),"earlier chain preserves stage and earned source fact "+path)
-		exact(m,path)
+		var stable=m.save_payload()
+		check(not m.restore_payload(data) and data==before and m.save_payload()==stable,"earlier map remains isolated "+path)
 func bounded_player_rules():
 	var m=fresh()
 	m.p=Vector2(2630,600)

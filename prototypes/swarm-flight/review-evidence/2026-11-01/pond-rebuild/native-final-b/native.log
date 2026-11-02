@@ -1,0 +1,12 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+Movie Maker mode enabled, recording movie in 1280×800 @ 60 FPS...
+POND ORDINARY NATIVE VERIFIED: 39 checks, 0 failures
+--------------------------------------------------------------------------------
+Done recording movie at path: /private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/native-final-b/run.avi
+6671 frames at 60 FPS (movie length: 00:01:51:11), recorded in 00:02:48 (66% of real-time speed).
+CPU render time: 24.17 seconds (average: 3.62 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 47.07 seconds (average: 7.06 ms/frame)
+--------------------------------------------------------------------------------

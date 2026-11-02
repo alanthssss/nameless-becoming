@@ -1,0 +1,15 @@
+{
+  "revision": "18096b87600d9fff06318d2efdfb75180e0ffc52",
+  "raw_avi": {
+    "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-rebuild/native-final-a/run.avi",
+    "bytes": 1140741988,
+    "sha256": "a7261731dad515fc38e023f049caf07dcd6ded320b4d991b791d62c419f71843"
+  },
+  "mp4": {
+    "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-rebuild/native-final-a/run.mp4",
+    "sha256": "cef58152a95a478e4ee3ba7e2a93aef5db502061df78b4dbbe8ac1d03bb0e727",
+    "derived": true,
+    "encoding": "H.264 CRF23 + AAC, original AVI retained"
+  },
+  "note": "Native ordinary-input scripted route; author knew solution. Current probe supplements follow ending and are disclosed by runner. 8719 movie frames/60fps is render timeline, not human playtime."
+}

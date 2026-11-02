@@ -1,81 +1,29 @@
-extends SceneTree
-const Scene=preload("res://spring_journey.tscn")
-const M=preload("res://spring_journey_model.gd")
-const Save=preload("res://save_data.gd")
-const FIXTURES="res://review-evidence/2026-11-01/rain-choice/legacy-fixtures/"
-var checks=0
-var failures=0
-var folder=OS.get_environment("SWARM_RAIN_CHOICE_QA_DIR")
-func _initialize(): call_deferred("run")
-func check(ok: bool,label: String):
-	checks+=1
-	if not ok:
-		failures+=1
-		print("FAIL: "+label)
-func write_bytes(path: String,raw: PackedByteArray):
-	var file=FileAccess.open(path,FileAccess.WRITE)
-	file.store_buffer(raw)
-	file.close()
-func scene(path: String):
-	var game=Scene.instantiate()
-	game.progress_file=path
-	root.add_child(game)
-	await process_frame
-	game.set_process(false)
-	game.world.set_process(false)
-	game.sound.set_muted(true)
-	return game
-func release(game):
-	game.queue_free()
-	await process_frame
-func run():
-	if folder.is_empty(): push_error("SWARM_RAIN_CHOICE_QA_DIR required"); quit(1); return
-	DirAccess.make_dir_recursive_absolute(folder)
-	for name in ["stage-0","stage-2","checkpoint--1","checkpoint-0","checkpoint-1","checkpoint-2","checkpoint-3","rain-shield-live","rain-shield-committed","after-third","new-overhead-live","new-upper-stem-live","new-low-leaf-live","new-high-leaf-live"]:
-		var raw=FileAccess.get_file_as_bytes(FIXTURES+"old-"+name+".json")
-		check(not raw.is_empty(),"genuine old bytes exist "+name)
-		for blocked in [false,true]:
-			var label=name+"-"+str(blocked)
-			var path=folder.path_join(label+".json")
-			write_bytes(path,raw)
-			var backup=path+".before-route-2-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
-			if blocked: DirAccess.make_dir_recursive_absolute(backup)
-			var game=await scene(path)
-			check(not game.saved_payload.is_empty(),"title recognizes true old save "+label)
-			game.on_secondary()
-			if blocked:
-				check(not game.has_saved and game.save_warning and FileAccess.get_file_as_bytes(path)==raw,"backup failure cannot overwrite old bytes "+label)
-			else:
-				var disk=Save.read_payload(path,M.new())
-				check(game.has_saved and disk.get("rain_layout_revision")==1,"current marker is cold readable "+label)
-				check(FileAccess.get_file_as_bytes(backup)==raw,"original SHA backup retains exact bytes "+label)
-				if name.begins_with("new-"): check(game.model.p==Vector2(2170,520) and game.heading.text=="已回到安全的落脚点","geometry recovery explained "+label)
-				var saved=game.model.save_payload()
-				await release(game)
-				game=await scene(path)
-				game.on_secondary()
-				check(game.mode=="pause" and game.model.save_payload()==saved,"exact current cold reopen "+label)
-				var current_backup=path+".before-route-2-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
-				check(game.persist_progress() and not FileAccess.file_exists(current_backup) and FileAccess.get_file_as_bytes(backup)==raw,"current rewrite creates no redundant backup "+label)
-			await release(game)
-	for kind in ["unknown","string-marker","corrupt","unsafe-checkpoint","damaged-layout","damaged-prefix"]:
-		for blocked in [false,true]:
-			var data=JSON.parse_string(FileAccess.get_file_as_string(FIXTURES+"old-"+("new-low-leaf-checkpoint" if kind=="unsafe-checkpoint" else "checkpoint-1")+".json"))
-			if kind=="unknown": data.rain_layout_revision=99
-			if kind=="string-marker": data.rain_layout_revision="1"
-			if kind=="damaged-layout": data.state.checkpoint.shelters[2].name="unknown"
-			if kind=="damaged-prefix": data.state.checkpoint.shelters[2].reached=true
-			var raw=("not JSON" if kind=="corrupt" else JSON.stringify(data,"",true,true)).to_utf8_buffer()
-			var label=kind+"-"+str(blocked)
-			var path=folder.path_join(label+".json")
-			write_bytes(path,raw)
-			var backup=path+".before-route-2-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
-			if blocked: DirAccess.make_dir_recursive_absolute(backup)
-			var game=await scene(path)
-			check(game.saved_payload.is_empty() and FileAccess.get_file_as_bytes(path)==raw,"invalid save refuses continue without mutation "+label)
-			game.on_primary()
-			if blocked: check(not game.has_saved and game.save_warning and FileAccess.get_file_as_bytes(path)==raw,"new game preserves unsupported bytes on backup failure "+label)
-			else: check(game.has_saved and FileAccess.get_file_as_bytes(backup)==raw,"new game backs up unsupported bytes "+label)
-			await release(game)
-	print("RAIN CHOICE SAVE VERIFIED: %d checks, %d failures" % [checks,failures])
-	quit(1 if failures else 0)
+extends "res://wind_route_save_verify.gd"
+## Preserve v2 rain snapshots as bytes; only current-map rain state may resume in v3.
+func suite_name() -> String: return "RAIN CHOICE SAVE"
+func folder_environment() -> String: return "SWARM_RAIN_CHOICE_QA_DIR"
+func legacy_sources() -> Array:
+	return paths("res://review-evidence/2026-11-01/rain-choice/legacy-fixtures",["stage-0","stage-2","checkpoint--1","checkpoint-0","checkpoint-1","checkpoint-2","checkpoint-3","rain-shield-live","rain-shield-committed","after-third","new-overhead-live","new-upper-stem-live","new-low-leaf-live","new-high-leaf-live"])
+func shielded_rain():
+	var m=fresh(1)
+	m.p=m.shields[0].pos
+	m.step(Vector2.RIGHT,false,1.0/60)
+	for i in 30: m.step(Vector2.ZERO,false,1.0/60)
+	check(m.shield_left>0 and m.shields[0].collected,"current rain fixture has a real active shield")
+	return m
+func current_cases() -> Array:
+	return [item("dry",fresh(1).save_payload()),item("shield-live",shielded_rain().save_payload())]
+func invalid_cases() -> Array:
+	var base=shielded_rain().save_payload()
+	var result=[]
+	for kind in ["unknown","string-marker","missing-marker","damaged-layout","damaged-prefix","shield-duration"]:
+		var bad=base.duplicate(true)
+		match kind:
+			"unknown": bad.rain_layout_revision=99
+			"string-marker": bad.rain_layout_revision="1"
+			"missing-marker": bad.erase("rain_layout_revision")
+			"damaged-layout": bad.state.checkpoint.shelters[2].name="unknown"
+			"damaged-prefix": bad.state.checkpoint.shelters[2].reached=true
+			"shield-duration": bad.state.shield_left=M.pack(50.0)
+		result.append(mutation(kind,base,bad))
+	return result

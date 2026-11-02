@@ -1,0 +1,70 @@
+{
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "status": "passed",
+  "timestamp": "2026-11-01T15:57:03.507410+00:00",
+  "package": {
+    "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-rebuild/雨来之前-0.18.0-池岸归途-Mac-75b6bda6.zip",
+    "sha256": "98a7c746f922d06bda848a878fd2c1039c44a521010872cb090586127a75638b",
+    "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0"
+  },
+  "entries": {
+    "spring-03-05": "passed",
+    "comparison-07-09": "passed"
+  },
+  "method": "Final gated ZIP extracted with archive executable modes; both actual .command entrypoints launched, native movement and Esc save, normal Quit/process gone, script cold restart and visible saved-position restore, continued movement and normal Quit. Spring save remains byte-identical through comparison checks. First-run scripts autoenter chapter0 as designed.",
+  "isolated_saves": true,
+  "pck_sha256": {
+    "original": {
+      "雨来之前 · 池岸归途 0.18.0.pck": "89ed6b8c25b2962c6bbf1779456e8bffcfd7497ff77a384d9dfe58eb32f8705d"
+    },
+    "independent": {
+      "雨来之前 · 池岸归途 0.18.0.pck": "89ed6b8c25b2962c6bbf1779456e8bffcfd7497ff77a384d9dfe58eb32f8705d"
+    },
+    "final": {
+      "雨来之前 · 池岸归途 0.18.0.pck": "89ed6b8c25b2962c6bbf1779456e8bffcfd7497ff77a384d9dfe58eb32f8705d"
+    }
+  },
+  "raw": [
+    {
+      "path": "comparison-cold-title.png",
+      "sha256": "552f66f0c4900580ae1f44b4ab9ddb4231e1e7326b5582bd38f5849c5de277a2"
+    },
+    {
+      "path": "comparison-continued.png",
+      "sha256": "be5c36a0468c65bba32028696b4d614041bd21a5b966cfd1c60ff933ec7f851b"
+    },
+    {
+      "path": "comparison-restored.png",
+      "sha256": "9f0a9e9f2efb18508ac29488cb275d0c0a755e720912995aa97ad039743de8b5"
+    },
+    {
+      "path": "comparison-saved.png",
+      "sha256": "3d92f3021abcf1ece5654b09e71a6b34071bb85008411b68f7d54513ccf3ab1b"
+    },
+    {
+      "path": "comparison-start.png",
+      "sha256": "6b1926845ce1b34856a9c416b1fba8362308c96d9f9d2b95ddcc4b3dd699e41c"
+    },
+    {
+      "path": "spring-cold-title.png",
+      "sha256": "aa69e1a134024ca984d70ff69837da09d68c5fd620b625eb36fa1f5b30f03047"
+    },
+    {
+      "path": "spring-continued.png",
+      "sha256": "c294dc3b62267976f38170886678436ebe6f1b448c1ccac22a4067f508b28444"
+    },
+    {
+      "path": "spring-restored.png",
+      "sha256": "2011de1d031cbb0b20730cae02480777996d51240265ff4e24cb24a65461fceb"
+    },
+    {
+      "path": "spring-saved.png",
+      "sha256": "653b27d79fc263896d4a33d83d8c98e1026187d7dbf231215e560de0e71bf550"
+    },
+    {
+      "path": "spring-title.png",
+      "sha256": "acff1b5df12bd0fcefc6067bcbe40d523e35b9d310cabc46b470f112537f443e"
+    }
+  ],
+  "limits": "Process-level persisted position/UI/continued movement; full-state round trips are in native evidence. Not product acceptance."
+}

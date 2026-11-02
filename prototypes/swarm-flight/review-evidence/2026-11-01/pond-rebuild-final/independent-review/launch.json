@@ -1,0 +1,14 @@
+{
+  "pid": 84215,
+  "args": [
+    "/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/final/review-app/PondRebuildFixedReview.app/Contents/MacOS/雨来之前 · 池岸归途 0.18.0",
+    "--log-file",
+    "/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/final/independent-review/godot.log",
+    "--",
+    "--spring-journey",
+    "--entry-chapter=0",
+    "--progress-file=/private/tmp/nameless-pond-journey-rebuild/outputs/swarm-flight/2026-11-01-pond-rebuild/final/independent-review/save.json"
+  ],
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "wrapper": "Bundle identifier/name changed solely for UI targeting; PCK and binary unmodified"
+}

@@ -129,7 +129,7 @@ func run() -> void:
 			for frame in 30: m.step(Vector2.ZERO,false,1.0/60)
 			check(m.stamina>50,"real leaf pocket restores reached="+str(reached))
 			check(m.shelter_index_at(q+Vector2(0,-210))<0,"above roof is not recovery")
-	# Synthetic legacy v2 fixture uses the actual G0 embedded coordinate.
+	# Controlled current-map fixture uses the recorded G0 embedded coordinate.
 	var legacy:=Model.new()
 	legacy.load_stage(1)
 	legacy.p=legacy.shelters[0].pos
@@ -138,31 +138,31 @@ func run() -> void:
 	legacy.p=Vector2(619.65,409.71)
 	var payload: Dictionary=legacy.save_payload()
 	var restored:=Model.new()
-	check(restored.restore_payload(JSON.parse_string(JSON.stringify(payload))),"legacy v2 overlapping position accepted via safe checkpoint")
-	check(restored.p==safe and restored.events.any(func(e):return e.kind=="recover_geometry"),"old embedded coordinate recovers before first frame")
+	check(restored.restore_payload(JSON.parse_string(JSON.stringify(payload))),"current overlapping position accepted via safe checkpoint")
+	check(restored.p==safe and restored.events.any(func(e):return e.kind=="recover_geometry"),"embedded coordinate recovers before first frame")
 	check(restored.checkpoint_story==legacy.checkpoint_story and restored.story_state()==legacy.checkpoint_story,"committed story preserved on geometry recovery")
 	var exact: Dictionary=restored.save_payload()
 	var clone:=Model.new()
 	check(clone.restore_payload(exact) and clone.save_payload()==exact,"valid geometry snapshot remains exact")
 	for index in [0,1,2]:
 		var fixture: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://review-evidence/2026-10-30/leaf-canopy/g1/legacy-stage-%d.json"%index))
-		var migrated:=Model.new()
-		check(migrated.restore_payload(fixture),"actual baseline-generated v2 fixture accepted stage "+str(index))
-		check(migrated.p==Vector2(180,420),"safe legacy position remains exact stage "+str(index))
-		if index==2:
-			check(migrated.rings[0].pos==Vector2(2760,280) and migrated.checkpoint.rings[0].pos==Vector2(2760,280),"known old wind positions migrate through current layout in active and checkpoint state")
-			check(migrated.rings[0].active and migrated.checkpoint.rings[0].active,"legacy earned ring flags retained")
-			var bad: Dictionary=fixture.duplicate(true)
-			bad.state.rings[0].pos=Model.pack(Vector2(2641,465))
-			var unchanged: Dictionary=migrated.save_payload()
-			check(not migrated.restore_payload(bad) and migrated.save_payload()==unchanged,"unknown ring layout rejected atomically")
+		var rebuilt:=Model.new()
+		var stable: Dictionary=rebuilt.save_payload()
+		var original: Dictionary=fixture.duplicate(true)
+		check(not rebuilt.restore_payload(fixture) and rebuilt.save_payload()==stable and fixture==original,"v2 canopy snapshot is isolated from rebuilt map stage "+str(index))
+	var ring_state:=Model.new()
+	ring_state.load_stage(2)
+	var ring_payload: Dictionary=ring_state.save_payload()
+	var ring_before: Dictionary=ring_payload.duplicate(true)
+	ring_payload.state.rings[0].pos=Model.pack(Vector2(2641,465))
+	check(not ring_state.restore_payload(ring_payload) and ring_state.save_payload()==ring_before,"current unknown ring layout rejected atomically")
 	for launch_x in [2465.0,2485.0,2505.0]:
 		var route:=Model.new()
 		route.load_stage(2)
 		route.front_open=true
-		route.wall_at(2350).broken=true
+		route.wall_at(Model.FRONT_WALL_X).broken=true
 		route.keeper.state="watch"
-		route.p=Vector2(launch_x,465)
+		route.p=Vector2(launch_x+Model.POND_APPROACH_EXTENSION,465)
 		for frame in 30: route.step(Vector2.RIGHT,true,1.0/60)
 		route.step(Vector2.RIGHT,false,1.0/60)
 		for frame in 180: route.step(Vector2.RIGHT,false,1.0/60)
@@ -173,12 +173,12 @@ func run() -> void:
 		var route:=Model.new()
 		route.load_stage(2)
 		route.front_open=true
-		route.wall_at(2350).broken=true
+		route.wall_at(Model.FRONT_WALL_X).broken=true
 		route.keeper.state="watch"
-		route.p=Vector2(launch_x,465)
+		route.p=Vector2(launch_x+Model.POND_APPROACH_EXTENSION,465)
 		for frame in 30: route.step(Vector2.UP,true,1.0/60)
 		for frame in 180: route.step(Vector2.UP,false,1.0/60)
-		check(route.passage_open and route.rings_hit==3 and route.recoveries==0 and route.p.x>3400,"deliberate upward wind approach continues beyond back passage "+str(launch_x))
+		check(route.passage_open and route.rings_hit==3 and route.recoveries==0 and route.p.x>3400+Model.POND_APPROACH_EXTENSION,"deliberate upward wind approach continues beyond back passage "+str(launch_x))
 	var old:=Old.new()
 	old.load_stage(0)
 	var old_leaf: Dictionary=old.shelters[0]

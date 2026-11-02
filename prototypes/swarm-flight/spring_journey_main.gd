@@ -22,7 +22,7 @@ Esc 保存并暂停；R 回最近落脚点。"
 func refresh_hud() -> void:
 	super.refresh_hud()
 	hud_bees.text="池岸归途"
-	hud_title.text="%s · %s   ·   晨露 %d/%d" % [titles[model.stage],model.encounter_name(),model.garden_awards[model.stage],model.stage_dew_total()]
+	hud_title.text=titles[model.stage]
 	var cue: Dictionary=model.context_cue()
 	if cue_panel.visible:
 		# Keep the actual bee and its shield/readiness ring readable at every cue.
@@ -91,9 +91,10 @@ func event_message(kind: String,text: String,seconds: float,tint := Color("ffe7a
 		for event in model.events:
 			if event.kind=="hit" and event.get("reason")=="mosquito": text="撞了一下 · 体力 −8；换层或冲刺甩开它"
 	if kind=="blocked" and model.p.distance_to(SpringModel.KNOT)<120: text="绳已松 · 按住空格蓄力，松开冲过叶结" if model.keeper.state=="counting" else "牌绳还绷着 · 它停下盘点时再试"
-	if kind=="blocked" and model.front_open and not model.passage_open and model.p.x>2700:
+	if kind=="blocked" and model.front_open and not model.passage_open and model.p.x>SpringModel.KNOT.x+329:
 		text="这是厚木牌 · 从上方或下方绕过去" if model.p.x<SpringModel.FRONT_SIGN.end.x else "背面只有叶结能解开 · 对准中间冲刺"
-	if kind=="gate": text="背面的通口开了 · 花牌让出归路" if model.passage_open else "第一道牌绳松开了 · 前面的风花能送你抬升"
+	if kind=="gate":
+		text=("背面的通口开了 · 花牌让出归路" if model.passage_open else "第一道牌绳松开了 · 前面的风花能送你抬升") if model.stage==2 else "叶间的路打开了"
 	if kind=="recover_manual": text="回到落脚点"+(" · 已打开的通口保留" if model.passage_open else " · 可以重新观察它的动作")
 	if kind in ["recover_rain","recover_exhaustion"]: text="体力耗尽，回到落脚点"+(" · 已打开的通口保留" if model.passage_open else " · 重新出发")
 	super.event_message(kind,text,seconds,tint)
@@ -111,7 +112,7 @@ func preserve_legacy_save() -> bool:
 	var parser:=JSON.new()
 	var original=parser.data if parser.parse(raw.get_string_from_utf8())==OK else null
 	if original is Dictionary and SpringModel.number(original.get("wind_layout_revision")) and original.get("wind_layout_revision")==SpringModel.WIND_LAYOUT_REVISION and SpringModel.number(original.get("rain_layout_revision")) and original.get("rain_layout_revision")==SpringModel.RAIN_LAYOUT_REVISION and create_journey_model().restore_payload(original) and SpringModel.number(original.get("pond_layout_revision")) and original.get("pond_layout_revision")==SpringModel.POND_LAYOUT_REVISION and original.get("route_geometry_revision")==SpringModel.ROUTE_GEOMETRY_REVISION and original.get("preparation_revision")==SpringModel.PREPARATION_REVISION and original.get("small_actor_revision")==SpringModel.SMALL_ACTOR_REVISION: return true
-	var backup:=path+".before-route-2-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
+	var backup:=path+".before-rebuild-v3-"+FileAccess.get_sha256(path).substr(0,12)+".bak"
 	if DirAccess.dir_exists_absolute(backup): return false
 	if FileAccess.file_exists(backup): return FileAccess.get_file_as_bytes(backup)==raw
 	return DirAccess.copy_absolute(path,backup)==OK and FileAccess.get_file_as_bytes(backup)==raw

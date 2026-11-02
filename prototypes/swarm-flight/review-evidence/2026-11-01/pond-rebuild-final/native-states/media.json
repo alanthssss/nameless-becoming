@@ -1,0 +1,10 @@
+{
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "raw_avi_sha256": "0fdcb8c080c95bb56a1a50b6a071ef2b4d6dbf8e2a25a58f2241579382f5fa68",
+  "movie": {
+    "path": "outputs/swarm-flight/2026-11-01-pond-rebuild/final/native-states/run.mp4",
+    "derived_from_raw_avi": true,
+    "sha256": "adffa9f4a14ced8091e63decd81808cdbb73627b1e0f0e6c5b09d663ad205fb7"
+  },
+  "not_human_duration": true
+}

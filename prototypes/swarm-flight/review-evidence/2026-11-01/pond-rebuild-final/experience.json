@@ -1,0 +1,888 @@
+{
+  "author": "Codex implementation team",
+  "reviewer": "final_explorer independent AI",
+  "human_acceptance_claim": false,
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "status": "ready",
+  "blockers": [],
+  "method": "exploratory_continuous",
+  "known_solution_used": false,
+  "scope": "Controls-only native app exploration, three connected stages; no repository, source, GDD, prior review or hidden state read. Screenshots and this reviewer own notes only. No nested agents.",
+  "before_recording": "Visible stage goals and options recorded at entry before navigational exploration. Stage transitions were automatic; detailed stage goals could only be read once each stage appeared. This is not a claim that unseen goals were recorded before loading.",
+  "ending": {
+    "visible": true,
+    "screenshot": "60-stage05-home.png",
+    "title": "路通了，花还开着。",
+    "text": [
+      "你替庄主留下了通路，他终于可以收拾那些花牌。",
+      "你告诉了它们那簇蓝花的方向。",
+      "这段池岸归途已走完。"
+    ],
+    "journey": "05:54",
+    "checkpoint_returns_displayed": 2,
+    "explicit_R_inputs_noted": 1,
+    "return_count_note": "The ending displays two returns. One explicit R input is in the notes; the second count was not isolated from visible observations. Do not replace the UI count with an inferred count.",
+    "quit_after_ending": true
+  },
+  "chapters": [
+    {
+      "chapter": "03",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "沿池岸，找一处还开着的花；标题提示从池边出发，穿雨区回蜂巢。",
+        "options": [
+          {
+            "approach": "middle_opening",
+            "action": "保持当前高度，向右通过上下树丛之间的开口；遇立挡尝试蓄力冲刺。",
+            "expected_consequence": "路径较短；橙色立挡可能阻止普通飞行，需要冲刺。",
+            "visual_basis": "01-initial.png 标题说明池边出发；02-stage03-entry.png 可见上下树丛间的开口和橙色立挡。"
+          },
+          {
+            "approach": "lower_detour",
+            "action": "下降到下方树丛以下，再向右寻找绕行通路。",
+            "expected_consequence": "可能避开中间立挡，但飞行距离和体力成本更高；能否完全通过尚未知。",
+            "visual_basis": "02-stage03-entry.png 可见下方树丛及其下方天空，是否可完整绕行当时未知。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "middle_opening",
+          "consequence": "右移并蓄力冲刺后越过立挡，身后出现断开的挡物；体力100→71。晨露随后消失，移动后体力71→75，确认净恢复而非精确总恢复量。",
+          "evidence": [
+            "03-stage03-direct.png",
+            "04-stage03-dew-attempt.png"
+          ]
+        }
+      ],
+      "verdict": "pass",
+      "conclusion": "主目标、补给、风花与叶亭均可从可见提示推进；无未解决基础阻塞。",
+      "supplemental_observations": [
+        {
+          "approach": "windflower_and_shelters",
+          "consequence": "风花自动连续借风×3；叶亭恢复到100并记住落脚点。绕过高茎和树丛后停在蓝花花心，目标改变为记住花香、趁雨前回去。",
+          "evidence": [
+            "06-stage03-windflower.png",
+            "08-stage03-leaf.png",
+            "13-stage03-flower-rest.png"
+          ]
+        },
+        {
+          "approach": "chapter_exit",
+          "consequence": "通过花铃叶拱，出现沿池岸绕到叶棚那一侧的过渡。未实际重放开场下方绕行备选。",
+          "evidence": [
+            "17-stage03-complete.png"
+          ]
+        }
+      ],
+      "verdict_scope": "仅判断本次独立操作中是否存在未解决的基本可读性、规则或路线阻断；不是产品、体验质量或真人验收。",
+      "evidence": [
+        {
+          "path": "independent-review/01-initial.png",
+          "sha256": "f2924f2c354c4c66698563d69e42238e13efa7e50799e7d7fc7911ab0f23325b",
+          "raw": true
+        },
+        {
+          "path": "independent-review/02-stage03-entry.png",
+          "sha256": "6f230aed345e4d7ab483639cd008f8ca3a75d42bd5c5087e073a83a2a72a96d7",
+          "raw": true
+        },
+        {
+          "path": "independent-review/03-stage03-direct.png",
+          "sha256": "0d1ea42807d46098c43cbd1743f20095a90ac7d1c6a13fa9b4cb74bc6b3839bd",
+          "raw": true
+        },
+        {
+          "path": "independent-review/04-stage03-dew-attempt.png",
+          "sha256": "299e988ade31b8d361bf33e9a6e9234e612c94c6f3d824f5374237f3007f5ad7",
+          "raw": true
+        },
+        {
+          "path": "independent-review/05-stage03-flower-near.png",
+          "sha256": "9fdc3c6e03007a51694eb99e681b14a8b111583e7525cb66c6afa1e9939fab43",
+          "raw": true
+        },
+        {
+          "path": "independent-review/06-stage03-windflower.png",
+          "sha256": "8ee2e02cc3d2f657b0e8bfcff7ee4a1f330d8951f34d17b1dfc35e3ac8e9e62c",
+          "raw": true
+        },
+        {
+          "path": "independent-review/07-stage03-lower-route.png",
+          "sha256": "8c3d596bb5288760cc4afcd9e0604063310b8fa4346e49a752017146e476eb22",
+          "raw": true
+        },
+        {
+          "path": "independent-review/08-stage03-leaf.png",
+          "sha256": "fa90c87ad3dd794d14fba8f05ad1ebd070e1bb6af2752117643818e49f3279b7",
+          "raw": true
+        },
+        {
+          "path": "independent-review/09-stage03-nextflower.png",
+          "sha256": "e09157cab318c5a0bd3f03f6ec3f7d8959dfec709d45795028766bdece223f03",
+          "raw": true
+        },
+        {
+          "path": "independent-review/10-stage03-destination.png",
+          "sha256": "bd00abb7a75be9af0a1f7215480161fd5b0cdba7f5bb168478e16a79af897e46",
+          "raw": true
+        },
+        {
+          "path": "independent-review/11-stage03-overstalk.png",
+          "sha256": "ea8c5f5de81b089105c978bd6f827209515ebeb6fc1936655c0263578c43616d",
+          "raw": true
+        },
+        {
+          "path": "independent-review/12-stage03-openflower.png",
+          "sha256": "11461a866812ed99bce204a1d5c16b5c0243d5a57a4427d29ef7a3463eafe61e",
+          "raw": true
+        },
+        {
+          "path": "independent-review/13-stage03-flower-rest.png",
+          "sha256": "23f33a200c00c173b96d7f2900828d8cde3ae5ee764361e50f3e190cb29c56c8",
+          "raw": true
+        },
+        {
+          "path": "independent-review/14-stage03-exit.png",
+          "sha256": "80d84acea8456355f0206496f7dd9c60febb4b103469531d0561247c3c0f0590",
+          "raw": true
+        },
+        {
+          "path": "independent-review/15-stage04-entry.png",
+          "sha256": "322107cb04ce7028991c7006907d339b6077b061f8848b10f36467d05979bddb",
+          "raw": true
+        },
+        {
+          "path": "independent-review/16-stage04-threshold.png",
+          "sha256": "cbdd2ffa0d39103fdce34a592ffb4c4702cea28e86aee38a7f504907db812593",
+          "raw": true
+        },
+        {
+          "path": "independent-review/17-stage03-complete.png",
+          "sha256": "f3e1396a7705f3b6d1c18209e81bf6cdfc7e4cce30a4eb04733ce7cb44ab434e",
+          "raw": true
+        }
+      ]
+    },
+    {
+      "chapter": "04",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "雨来了，叶棚通向归路；暂停菜单提示从叶下看雨，0/5处叶下已抵达。",
+        "options": [
+          {
+            "approach": "exposed_continuous_flight",
+            "action": "穿过露天空隙，减少主动停靠，遇茎顶再调整高度。",
+            "expected_consequence": "更快向前，但更长时间暴露于雨中并消耗体力。",
+            "visual_basis": "18-stage04-paused-entry.png 显示雨中停走与0/5叶下；19-stage04-visible-start.png 可见通往叶棚的露天空隙。"
+          },
+          {
+            "approach": "shelter_then_cross",
+            "action": "先进入叶棚停靠，再从恢复后的状态跨下一段空隙。",
+            "expected_consequence": "可恢复体力、获得安全与检查点信息，但需要停靠和调整高度。",
+            "visual_basis": "18-stage04-paused-entry.png 提示从叶下看雨；19-stage04-visible-start.png 可见带向下标记的宽叶棚；08-stage03-leaf.png 是本次旅程此前亲自观察的叶下恢复。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "exposed_continuous_flight",
+          "consequence": "从第一叶亭以100体力出发，持续向右，在茎前90；升高越茎并穿过可见落雨后75。直线受到茎和下一树丛限制，需要改高度。",
+          "evidence": [
+            "20-stage04-first-shelter.png",
+            "21-stage04-exposed-crossing.png",
+            "22-stage04-rain-exposure.png"
+          ]
+        },
+        {
+          "approach": "shelter_then_cross",
+          "consequence": "改为下降进入下一叶棚，75恢复到100；雨仍在下。看到护雨叶五秒防雨提示。之后经第三、第四和最终灯叶棚推进，最后雨停。",
+          "evidence": [
+            "23-stage04-shelter-recovery.png",
+            "26-stage04-third-shelter.png",
+            "27-stage04-fourth-shelter.png",
+            "29-stage04-final-shelter.png"
+          ]
+        }
+      ],
+      "choice_comparison": {
+        "dimensions": [
+          "exposure",
+          "resource_use",
+          "next_action",
+          "information"
+        ],
+        "description": "实际采用露天连续飞行与下降叶下停靠两种做法：露天段体力100→90→75且需要处理茎/树丛阻挡；叶下段75→100并提供安全、恢复及护雨叶信息，下一步可从满体力出发。是同一连续旅程的先后观察，非同条件计时实验；不能单独分离雨滴伤害与普通飞行消耗，也没有声称护雨叶已生效。",
+        "route_or_state_only": false
+      },
+      "verdict": "pass",
+      "conclusion": "完成雨中路线且保留实质选择比较；护雨叶是未验证的可选互动，不构成基本通路阻塞。",
+      "supplemental_observations": [
+        {
+          "approach": "optional_protection_leaf",
+          "consequence": "两次靠近未看到明确拾取或防雨生效确认。体力100发生在叶棚内，不能归因于护雨叶；该可选效果保持未验证。",
+          "evidence": [
+            "24-stage04-protection-attempt.png",
+            "25-stage04-protection-contact.png"
+          ]
+        },
+        {
+          "approach": "narrow_gap",
+          "consequence": "小幅上调后成功通过树冠与茎顶之间的窄口，没有卡住。",
+          "evidence": [
+            "28-stage04-tight-gap.png"
+          ]
+        }
+      ],
+      "verdict_scope": "仅判断本次独立操作中是否存在未解决的基本可读性、规则或路线阻断；不是产品、体验质量或真人验收。",
+      "evidence": [
+        {
+          "path": "independent-review/18-stage04-paused-entry.png",
+          "sha256": "43238aea388f34ffa66f9e06facf6219da04df7d726736a08d7dfecc8152b612",
+          "raw": true
+        },
+        {
+          "path": "independent-review/19-stage04-visible-start.png",
+          "sha256": "b1fa5465378b0b8421c13603cdbf78af1f9e3412dd8bb1560cb90e0964c2a312",
+          "raw": true
+        },
+        {
+          "path": "independent-review/20-stage04-first-shelter.png",
+          "sha256": "4be6582771321d859e8d1ac16f3989ec08f89861229bba738dceed7e65a834ca",
+          "raw": true
+        },
+        {
+          "path": "independent-review/21-stage04-exposed-crossing.png",
+          "sha256": "c40ed9b45a10e32130bb98147668ef2fd0c1908aec1a6ca570d504c68f69fe58",
+          "raw": true
+        },
+        {
+          "path": "independent-review/22-stage04-rain-exposure.png",
+          "sha256": "200b16a2a384fe835de472598dbd49249f60349043bcdb9dc51d3d80bd364304",
+          "raw": true
+        },
+        {
+          "path": "independent-review/23-stage04-shelter-recovery.png",
+          "sha256": "ce4e138f7d57e86e03a5389957f18eaa2df8088e789c4266cd40725e80d2be9b",
+          "raw": true
+        },
+        {
+          "path": "independent-review/24-stage04-protection-attempt.png",
+          "sha256": "6cef8255b784c63ce27dabb07e9ba424571c7724e46546240148a7bc5f09cc3d",
+          "raw": true
+        },
+        {
+          "path": "independent-review/25-stage04-protection-contact.png",
+          "sha256": "891ac653b13b108fee0489d052b3d082ba88b451c72382e86b9b90c692c46229",
+          "raw": true
+        },
+        {
+          "path": "independent-review/26-stage04-third-shelter.png",
+          "sha256": "6152eed7a5f752aa720e9168a518bb845374652394c60febcc4ea45362c6dee9",
+          "raw": true
+        },
+        {
+          "path": "independent-review/27-stage04-fourth-shelter.png",
+          "sha256": "6aeba85d126ac1d6d66a99327d68533c8f1e26d936ccf8df963d5bdc46c412c5",
+          "raw": true
+        },
+        {
+          "path": "independent-review/28-stage04-tight-gap.png",
+          "sha256": "d14398647cb9b278f19d6ad3e4b2ca029843067a1232a2904753b78352be3a01",
+          "raw": true
+        },
+        {
+          "path": "independent-review/29-stage04-final-shelter.png",
+          "sha256": "3b3a5b2631c6796b3348ee6754e8c6bcc29a355ef359088db26e06c4d3f98237",
+          "raw": true
+        },
+        {
+          "path": "independent-review/30-stage04-exit.png",
+          "sha256": "9239b828951cef354d0328036baebc4e23cb2d7be3ebf7ec4a0b8934d98fc784",
+          "raw": true
+        }
+      ]
+    },
+    {
+      "chapter": "05",
+      "method": "exploratory_continuous",
+      "known_solution_used": false,
+      "before": {
+        "goal": "回家的路上，花牌挡住了去向；庄主把花牌挂到了路中间。",
+        "options": [
+          {
+            "approach": "direct_gap_and_signs",
+            "action": "通过当前中间开口，靠近花牌，按提示尝试冲刺。",
+            "expected_consequence": "直接向家前进；花牌可能需要类似此前挡物的蓄力冲开。",
+            "visual_basis": "31-stage05-entry.png 显示中间开口、向右标记和花牌挡路目标；03-stage03-direct.png 是本次旅程此前亲自观察的冲刺穿挡。"
+          },
+          {
+            "approach": "lower_detour",
+            "action": "尝试从低处绕树丛和牌面，找到可绕行的背面。",
+            "expected_consequence": "可能绕开正面障碍，但距离更长并需后续高度调整；未预知是否允许绕行。",
+            "visual_basis": "31-stage05-entry.png 可见下方树丛和其下方空间，作为低处绕行的可见线索；没有预先知道牌架后续布局。"
+          }
+        ]
+      },
+      "after": [
+        {
+          "approach": "direct_gap_and_signs",
+          "consequence": "从开场中间缺口向右通过并接近花牌。第一道叶结的近处/较短蓄力尝试多次未开；在退后600ms、Right50ms、蓄力1100ms的一次尝试后绳结破开，目标改为另一道叶结。距离、蓄力和时机同时变化，唯一原因未被分离。",
+          "evidence": [
+            "32-stage05-gap.png",
+            "41-stage05-gate-prompt.png",
+            "42-stage05-knot-burst.png",
+            "49-stage05-longcharge.png"
+          ]
+        }
+      ],
+      "verdict": "pass",
+      "conclusion": "两道叶结和结局都已通过；第一叶结所需的蓄力/距离/时机未被单独解释，但不再构成未解决通路阻塞。",
+      "supplemental_observations": [
+        {
+          "approach": "windflower_retry",
+          "consequence": "暂停后直接按Space未前进且消耗体力；重新给Right方向后通过风花。保留失败34与重试35。",
+          "evidence": [
+            "34-stage05-windchain.png",
+            "35-stage05-windchain-retry.png"
+          ]
+        },
+        {
+          "approach": "first_knot_trials",
+          "consequence": "追逐者碰撞出现体力-8提示。绳结松紧提示可见；多次近处/较短蓄力未打开。退后600ms、Right50ms、蓄力1100ms后第一绳结破开，目标改变为另一道叶结。距离、蓄力和时机一起变化，不能断言唯一原因。",
+          "evidence": [
+            "41-stage05-gate-prompt.png",
+            "42-stage05-knot-burst.png",
+            "43-stage05-knot-retry.png",
+            "44-stage05-knot-aligned.png",
+            "45-stage05-timing-batch.png",
+            "46-stage05-bait-outside.png",
+            "47-stage05-bait-burst.png",
+            "48-stage05-close-loose-burst.png",
+            "49-stage05-longcharge.png"
+          ]
+        },
+        {
+          "approach": "upper_board_route",
+          "consequence": "看到上下都能绕到背面提示，选上方风花；到背面时体力18。下一次冲刺被明确拒绝：体力不足20，按R恢复。未把拒绝操作描述为成功冲刺。",
+          "evidence": [
+            "50-stage05-second-knot.png",
+            "51-stage05-upper-approach.png",
+            "52-stage05-second-burst.png"
+          ]
+        },
+        {
+          "approach": "checkpoint_lower_route_retry",
+          "consequence": "按R回第一绳结后的叶亭，体力100，第一绳结保持破开。改从牌面下方绕行，无需冲刺到达背面时91；对齐并长蓄力后第二绳结破开。不同起始预算使两路线不能作为严格效率基准。",
+          "evidence": [
+            "53-stage05-checkpoint-retry.png",
+            "54-stage05-lower-bypass.png",
+            "55-stage05-second-knot-open.png"
+          ]
+        },
+        {
+          "approach": "share_route_and_home",
+          "consequence": "停在蜡脾上恢复100，按住松开Space分享花路；同伴离开、目标明确前面就是家。进入树洞后出现完整结局并退出。",
+          "evidence": [
+            "57-stage05-sharing.png",
+            "58-stage05-shared-route.png",
+            "60-stage05-home.png"
+          ]
+        }
+      ],
+      "verdict_scope": "仅判断本次独立操作中是否存在未解决的基本可读性、规则或路线阻断；不是产品、体验质量或真人验收。",
+      "evidence": [
+        {
+          "path": "independent-review/31-stage05-entry.png",
+          "sha256": "26e592e308c5807c925d6b20fd84e2c3acd923d5be32bbee5ef6cbc11851d079",
+          "raw": true
+        },
+        {
+          "path": "independent-review/32-stage05-gap.png",
+          "sha256": "f61e4aa8f68e2a86396975153bc766fadc15c1b9ebf07fb1f1f599997d675c7a",
+          "raw": true
+        },
+        {
+          "path": "independent-review/33-stage05-windflower.png",
+          "sha256": "53667e1b20810c3b074a71b0a775c02853dd1616ed9a832609ab0e9b4c1e0a19",
+          "raw": true
+        },
+        {
+          "path": "independent-review/34-stage05-windchain.png",
+          "sha256": "d23acd4d812a72235eb70f119dbd53d66ff2d65f7e3467a65d75a7df0e52c1ae",
+          "raw": true
+        },
+        {
+          "path": "independent-review/35-stage05-windchain-retry.png",
+          "sha256": "1d30a9326f3a384ee40ddfa736e03d876eaa7f236b372c1bf031aa0987a825b0",
+          "raw": true
+        },
+        {
+          "path": "independent-review/36-stage05-upper-dew.png",
+          "sha256": "ef7600428d9d4aa51b0a218b3f0f63dbd7debe4bb7cfe80703bd35ca2bdafccb",
+          "raw": true
+        },
+        {
+          "path": "independent-review/37-stage05-shelter.png",
+          "sha256": "078f1ef42bfa50b071d21ae7f0dd19d01e28cb205b66293be3821b8a53d4a660",
+          "raw": true
+        },
+        {
+          "path": "independent-review/38-stage05-second-chain.png",
+          "sha256": "ed4add44874d080d86d5c1bed713619fdc72ec273d49927dfef72be170ef0a61",
+          "raw": true
+        },
+        {
+          "path": "independent-review/39-stage05-mid-shelter.png",
+          "sha256": "79a2076149a8a839e30697a8443810e1d1f07f892903dcadf55689dd7a16a803",
+          "raw": true
+        },
+        {
+          "path": "independent-review/40-stage05-signs.png",
+          "sha256": "958194c13beecc885e3c6eff2af118c7cf2b0890bdb46360b61f8f80dbc8dffb",
+          "raw": true
+        },
+        {
+          "path": "independent-review/41-stage05-gate-prompt.png",
+          "sha256": "10735bf30e438537c21af4d833bffe244af19266fd260dce590778f39f86c9d5",
+          "raw": true
+        },
+        {
+          "path": "independent-review/42-stage05-knot-burst.png",
+          "sha256": "260a28bcf3534be174883822a965020c59d639a64a4fb32775ac7a5037a9e56b",
+          "raw": true
+        },
+        {
+          "path": "independent-review/43-stage05-knot-retry.png",
+          "sha256": "45f6670e240fe5d417affc10d13f2630aab65325c8f4c2fc8fb2b232b8f88cfa",
+          "raw": true
+        },
+        {
+          "path": "independent-review/44-stage05-knot-aligned.png",
+          "sha256": "051208b2a565c82db494aded816a824057eb21bc0a8a2237b59b136cfb574474",
+          "raw": true
+        },
+        {
+          "path": "independent-review/45-stage05-timing-batch.png",
+          "sha256": "a1b749aada12d0b472c8a22d62596201974a82763dc31630f5dff07c9bf2954b",
+          "raw": true
+        },
+        {
+          "path": "independent-review/46-stage05-bait-outside.png",
+          "sha256": "e3baf1f7752b2b2166e6f8413c724b0f225448da56ef9b719865cfc9a03445e2",
+          "raw": true
+        },
+        {
+          "path": "independent-review/47-stage05-bait-burst.png",
+          "sha256": "f35bb49e51e35818665fa09d3aa13ca4c659bb06111175e6d5054a0d15c59e89",
+          "raw": true
+        },
+        {
+          "path": "independent-review/48-stage05-close-loose-burst.png",
+          "sha256": "8c481ecaaf8ad3cb80bae28bad0138719e0f51f6db98077259880c348b8ebb07",
+          "raw": true
+        },
+        {
+          "path": "independent-review/49-stage05-longcharge.png",
+          "sha256": "737b92f690c2c9fb0bf8a0a91c774112e20129cc79f335f79d045386f09e7999",
+          "raw": true
+        },
+        {
+          "path": "independent-review/50-stage05-second-knot.png",
+          "sha256": "3d1c5635e4dda2346818829e522f5e1f4f52f1096cb199a7c8c7ade89bb3a1b8",
+          "raw": true
+        },
+        {
+          "path": "independent-review/51-stage05-upper-approach.png",
+          "sha256": "eb575302053bdf7611ceb5e309a3c9180e704f772875b9604bd794659bf8be23",
+          "raw": true
+        },
+        {
+          "path": "independent-review/52-stage05-second-burst.png",
+          "sha256": "8beed7f37b00c0a67571e2c2eb596f365e8ce643e58acadacaa1a56ecc9b6fad",
+          "raw": true
+        },
+        {
+          "path": "independent-review/53-stage05-checkpoint-retry.png",
+          "sha256": "f29484ec8bcbf9aadb487fc73815954f0c2309409638d9062b6a0d6a7d54d643",
+          "raw": true
+        },
+        {
+          "path": "independent-review/54-stage05-lower-bypass.png",
+          "sha256": "2eb9e576031ebb23030d905910765bdb00d0418a7978da9a2368f7cc5a497706",
+          "raw": true
+        },
+        {
+          "path": "independent-review/55-stage05-second-knot-open.png",
+          "sha256": "1b5390e68096e3be6f8985e82c81af6e11f9453b850e05fd6c976cb5b9e47ccd",
+          "raw": true
+        },
+        {
+          "path": "independent-review/56-stage05-hive.png",
+          "sha256": "99089474042ab2a7540dbf84df1401fcea0523771e501f34856d53d38ff850e4",
+          "raw": true
+        },
+        {
+          "path": "independent-review/57-stage05-sharing.png",
+          "sha256": "6034defb094bd49ba0034d34ce016a433ba85c67ad6f2f186fef3f77d6ee3ece",
+          "raw": true
+        },
+        {
+          "path": "independent-review/58-stage05-shared-route.png",
+          "sha256": "477b0fa3faf156b70e22b6d5d412e2601546fbc531e4c3be3ac23887f57b918e",
+          "raw": true
+        },
+        {
+          "path": "independent-review/59-stage05-home-approach.png",
+          "sha256": "8ce1aeffc914f30874e1c72c1d107e2398a880a804f6d739db3d4a817f4f3ffb",
+          "raw": true
+        },
+        {
+          "path": "independent-review/60-stage05-home.png",
+          "sha256": "2c664bc19e986ec68a1bd1ed70ef1cae886e3ca69c4b4a01a9c2bfd1f2968d28",
+          "raw": true
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Independent AI operation, not human playtesting or product acceptance.",
+    "Input/tool latency contributes to live time and timing trials; journey time is a game-visible value, not human completion-time evidence.",
+    "Protection-leaf benefit unverified; no invented beneficial consequence.",
+    "First knot successful condition changed charge duration, spacing and timing together; causal rule not isolated.",
+    "Ending shows two checkpoint returns while notes identify one explicit R input; unexplained count is preserved."
+  ],
+  "conclusion": "Controls-only continuous exploration reached the visible three-stage ending with raw screenshot evidence and recorded errors/retries. No unresolved basic readability, rule or route blocker prevents completion in this run. Ready means ready for implementation-team review only; it does not assert human acceptance.",
+  "evidence": [
+    {
+      "path": "01-initial.png",
+      "sha256": "f2924f2c354c4c66698563d69e42238e13efa7e50799e7d7fc7911ab0f23325b",
+      "raw": true
+    },
+    {
+      "path": "02-stage03-entry.png",
+      "sha256": "6f230aed345e4d7ab483639cd008f8ca3a75d42bd5c5087e073a83a2a72a96d7",
+      "raw": true
+    },
+    {
+      "path": "03-stage03-direct.png",
+      "sha256": "0d1ea42807d46098c43cbd1743f20095a90ac7d1c6a13fa9b4cb74bc6b3839bd",
+      "raw": true
+    },
+    {
+      "path": "04-stage03-dew-attempt.png",
+      "sha256": "299e988ade31b8d361bf33e9a6e9234e612c94c6f3d824f5374237f3007f5ad7",
+      "raw": true
+    },
+    {
+      "path": "05-stage03-flower-near.png",
+      "sha256": "9fdc3c6e03007a51694eb99e681b14a8b111583e7525cb66c6afa1e9939fab43",
+      "raw": true
+    },
+    {
+      "path": "06-stage03-windflower.png",
+      "sha256": "8ee2e02cc3d2f657b0e8bfcff7ee4a1f330d8951f34d17b1dfc35e3ac8e9e62c",
+      "raw": true
+    },
+    {
+      "path": "07-stage03-lower-route.png",
+      "sha256": "8c3d596bb5288760cc4afcd9e0604063310b8fa4346e49a752017146e476eb22",
+      "raw": true
+    },
+    {
+      "path": "08-stage03-leaf.png",
+      "sha256": "fa90c87ad3dd794d14fba8f05ad1ebd070e1bb6af2752117643818e49f3279b7",
+      "raw": true
+    },
+    {
+      "path": "09-stage03-nextflower.png",
+      "sha256": "e09157cab318c5a0bd3f03f6ec3f7d8959dfec709d45795028766bdece223f03",
+      "raw": true
+    },
+    {
+      "path": "10-stage03-destination.png",
+      "sha256": "bd00abb7a75be9af0a1f7215480161fd5b0cdba7f5bb168478e16a79af897e46",
+      "raw": true
+    },
+    {
+      "path": "11-stage03-overstalk.png",
+      "sha256": "ea8c5f5de81b089105c978bd6f827209515ebeb6fc1936655c0263578c43616d",
+      "raw": true
+    },
+    {
+      "path": "12-stage03-openflower.png",
+      "sha256": "11461a866812ed99bce204a1d5c16b5c0243d5a57a4427d29ef7a3463eafe61e",
+      "raw": true
+    },
+    {
+      "path": "13-stage03-flower-rest.png",
+      "sha256": "23f33a200c00c173b96d7f2900828d8cde3ae5ee764361e50f3e190cb29c56c8",
+      "raw": true
+    },
+    {
+      "path": "14-stage03-exit.png",
+      "sha256": "80d84acea8456355f0206496f7dd9c60febb4b103469531d0561247c3c0f0590",
+      "raw": true
+    },
+    {
+      "path": "15-stage04-entry.png",
+      "sha256": "322107cb04ce7028991c7006907d339b6077b061f8848b10f36467d05979bddb",
+      "raw": true
+    },
+    {
+      "path": "16-stage04-threshold.png",
+      "sha256": "cbdd2ffa0d39103fdce34a592ffb4c4702cea28e86aee38a7f504907db812593",
+      "raw": true
+    },
+    {
+      "path": "17-stage03-complete.png",
+      "sha256": "f3e1396a7705f3b6d1c18209e81bf6cdfc7e4cce30a4eb04733ce7cb44ab434e",
+      "raw": true
+    },
+    {
+      "path": "18-stage04-paused-entry.png",
+      "sha256": "43238aea388f34ffa66f9e06facf6219da04df7d726736a08d7dfecc8152b612",
+      "raw": true
+    },
+    {
+      "path": "19-stage04-visible-start.png",
+      "sha256": "b1fa5465378b0b8421c13603cdbf78af1f9e3412dd8bb1560cb90e0964c2a312",
+      "raw": true
+    },
+    {
+      "path": "20-stage04-first-shelter.png",
+      "sha256": "4be6582771321d859e8d1ac16f3989ec08f89861229bba738dceed7e65a834ca",
+      "raw": true
+    },
+    {
+      "path": "21-stage04-exposed-crossing.png",
+      "sha256": "c40ed9b45a10e32130bb98147668ef2fd0c1908aec1a6ca570d504c68f69fe58",
+      "raw": true
+    },
+    {
+      "path": "22-stage04-rain-exposure.png",
+      "sha256": "200b16a2a384fe835de472598dbd49249f60349043bcdb9dc51d3d80bd364304",
+      "raw": true
+    },
+    {
+      "path": "23-stage04-shelter-recovery.png",
+      "sha256": "ce4e138f7d57e86e03a5389957f18eaa2df8088e789c4266cd40725e80d2be9b",
+      "raw": true
+    },
+    {
+      "path": "24-stage04-protection-attempt.png",
+      "sha256": "6cef8255b784c63ce27dabb07e9ba424571c7724e46546240148a7bc5f09cc3d",
+      "raw": true
+    },
+    {
+      "path": "25-stage04-protection-contact.png",
+      "sha256": "891ac653b13b108fee0489d052b3d082ba88b451c72382e86b9b90c692c46229",
+      "raw": true
+    },
+    {
+      "path": "26-stage04-third-shelter.png",
+      "sha256": "6152eed7a5f752aa720e9168a518bb845374652394c60febcc4ea45362c6dee9",
+      "raw": true
+    },
+    {
+      "path": "27-stage04-fourth-shelter.png",
+      "sha256": "6aeba85d126ac1d6d66a99327d68533c8f1e26d936ccf8df963d5bdc46c412c5",
+      "raw": true
+    },
+    {
+      "path": "28-stage04-tight-gap.png",
+      "sha256": "d14398647cb9b278f19d6ad3e4b2ca029843067a1232a2904753b78352be3a01",
+      "raw": true
+    },
+    {
+      "path": "29-stage04-final-shelter.png",
+      "sha256": "3b3a5b2631c6796b3348ee6754e8c6bcc29a355ef359088db26e06c4d3f98237",
+      "raw": true
+    },
+    {
+      "path": "30-stage04-exit.png",
+      "sha256": "9239b828951cef354d0328036baebc4e23cb2d7be3ebf7ec4a0b8934d98fc784",
+      "raw": true
+    },
+    {
+      "path": "31-stage05-entry.png",
+      "sha256": "26e592e308c5807c925d6b20fd84e2c3acd923d5be32bbee5ef6cbc11851d079",
+      "raw": true
+    },
+    {
+      "path": "32-stage05-gap.png",
+      "sha256": "f61e4aa8f68e2a86396975153bc766fadc15c1b9ebf07fb1f1f599997d675c7a",
+      "raw": true
+    },
+    {
+      "path": "33-stage05-windflower.png",
+      "sha256": "53667e1b20810c3b074a71b0a775c02853dd1616ed9a832609ab0e9b4c1e0a19",
+      "raw": true
+    },
+    {
+      "path": "34-stage05-windchain.png",
+      "sha256": "d23acd4d812a72235eb70f119dbd53d66ff2d65f7e3467a65d75a7df0e52c1ae",
+      "raw": true
+    },
+    {
+      "path": "35-stage05-windchain-retry.png",
+      "sha256": "1d30a9326f3a384ee40ddfa736e03d876eaa7f236b372c1bf031aa0987a825b0",
+      "raw": true
+    },
+    {
+      "path": "36-stage05-upper-dew.png",
+      "sha256": "ef7600428d9d4aa51b0a218b3f0f63dbd7debe4bb7cfe80703bd35ca2bdafccb",
+      "raw": true
+    },
+    {
+      "path": "37-stage05-shelter.png",
+      "sha256": "078f1ef42bfa50b071d21ae7f0dd19d01e28cb205b66293be3821b8a53d4a660",
+      "raw": true
+    },
+    {
+      "path": "38-stage05-second-chain.png",
+      "sha256": "ed4add44874d080d86d5c1bed713619fdc72ec273d49927dfef72be170ef0a61",
+      "raw": true
+    },
+    {
+      "path": "39-stage05-mid-shelter.png",
+      "sha256": "79a2076149a8a839e30697a8443810e1d1f07f892903dcadf55689dd7a16a803",
+      "raw": true
+    },
+    {
+      "path": "40-stage05-signs.png",
+      "sha256": "958194c13beecc885e3c6eff2af118c7cf2b0890bdb46360b61f8f80dbc8dffb",
+      "raw": true
+    },
+    {
+      "path": "41-stage05-gate-prompt.png",
+      "sha256": "10735bf30e438537c21af4d833bffe244af19266fd260dce590778f39f86c9d5",
+      "raw": true
+    },
+    {
+      "path": "42-stage05-knot-burst.png",
+      "sha256": "260a28bcf3534be174883822a965020c59d639a64a4fb32775ac7a5037a9e56b",
+      "raw": true
+    },
+    {
+      "path": "43-stage05-knot-retry.png",
+      "sha256": "45f6670e240fe5d417affc10d13f2630aab65325c8f4c2fc8fb2b232b8f88cfa",
+      "raw": true
+    },
+    {
+      "path": "44-stage05-knot-aligned.png",
+      "sha256": "051208b2a565c82db494aded816a824057eb21bc0a8a2237b59b136cfb574474",
+      "raw": true
+    },
+    {
+      "path": "45-stage05-timing-batch.png",
+      "sha256": "a1b749aada12d0b472c8a22d62596201974a82763dc31630f5dff07c9bf2954b",
+      "raw": true
+    },
+    {
+      "path": "46-stage05-bait-outside.png",
+      "sha256": "e3baf1f7752b2b2166e6f8413c724b0f225448da56ef9b719865cfc9a03445e2",
+      "raw": true
+    },
+    {
+      "path": "47-stage05-bait-burst.png",
+      "sha256": "f35bb49e51e35818665fa09d3aa13ca4c659bb06111175e6d5054a0d15c59e89",
+      "raw": true
+    },
+    {
+      "path": "48-stage05-close-loose-burst.png",
+      "sha256": "8c481ecaaf8ad3cb80bae28bad0138719e0f51f6db98077259880c348b8ebb07",
+      "raw": true
+    },
+    {
+      "path": "49-stage05-longcharge.png",
+      "sha256": "737b92f690c2c9fb0bf8a0a91c774112e20129cc79f335f79d045386f09e7999",
+      "raw": true
+    },
+    {
+      "path": "50-stage05-second-knot.png",
+      "sha256": "3d1c5635e4dda2346818829e522f5e1f4f52f1096cb199a7c8c7ade89bb3a1b8",
+      "raw": true
+    },
+    {
+      "path": "51-stage05-upper-approach.png",
+      "sha256": "eb575302053bdf7611ceb5e309a3c9180e704f772875b9604bd794659bf8be23",
+      "raw": true
+    },
+    {
+      "path": "52-stage05-second-burst.png",
+      "sha256": "8beed7f37b00c0a67571e2c2eb596f365e8ce643e58acadacaa1a56ecc9b6fad",
+      "raw": true
+    },
+    {
+      "path": "53-stage05-checkpoint-retry.png",
+      "sha256": "f29484ec8bcbf9aadb487fc73815954f0c2309409638d9062b6a0d6a7d54d643",
+      "raw": true
+    },
+    {
+      "path": "54-stage05-lower-bypass.png",
+      "sha256": "2eb9e576031ebb23030d905910765bdb00d0418a7978da9a2368f7cc5a497706",
+      "raw": true
+    },
+    {
+      "path": "55-stage05-second-knot-open.png",
+      "sha256": "1b5390e68096e3be6f8985e82c81af6e11f9453b850e05fd6c976cb5b9e47ccd",
+      "raw": true
+    },
+    {
+      "path": "56-stage05-hive.png",
+      "sha256": "99089474042ab2a7540dbf84df1401fcea0523771e501f34856d53d38ff850e4",
+      "raw": true
+    },
+    {
+      "path": "57-stage05-sharing.png",
+      "sha256": "6034defb094bd49ba0034d34ce016a433ba85c67ad6f2f186fef3f77d6ee3ece",
+      "raw": true
+    },
+    {
+      "path": "58-stage05-shared-route.png",
+      "sha256": "477b0fa3faf156b70e22b6d5d412e2601546fbc531e4c3be3ac23887f57b918e",
+      "raw": true
+    },
+    {
+      "path": "59-stage05-home-approach.png",
+      "sha256": "8ce1aeffc914f30874e1c72c1d107e2398a880a804f6d739db3d4a817f4f3ffb",
+      "raw": true
+    },
+    {
+      "path": "60-stage05-home.png",
+      "sha256": "2c664bc19e986ec68a1bd1ed70ef1cae886e3ca69c4b4a01a9c2bfd1f2968d28",
+      "raw": true
+    },
+    {
+      "path": "notes.txt",
+      "sha256": "18ace2d1ab2615c340e177a233a0722c26cd4816179a0c86af5222a22f7a82de",
+      "raw": true
+    }
+  ],
+  "format_adaptation": {
+    "source_report": "report.json",
+    "source_report_sha256": "683f7ca9769276d03892bc29ef208577b88ea695d4845a6e675cb9deb0c33f9e",
+    "adapted_report": "report-gate.json",
+    "purpose": "只适配既有内部复核记录schema，原始report.json保持不变。",
+    "allowed_schema_read": "tools/spring_review_gate.py only; no game source, solution or additional game session read.",
+    "judgment": "独立确认三章可标pass，范围仅为本次已经实际完成且无未解决基本可读性、规则或路线阻断。不是为格式门禁改成正面产品判断。",
+    "changes": [
+      "verdict从completed/completed_with_recorded_retries映射为上述限定范围的pass。",
+      "visual_basis数组改为描述同一既有可见线索的非空字符串，保留原图片引用。",
+      "每章增加原始PNG的相对路径、原sha256及raw:true。",
+      "after只保留实际声明并观察的选项；03/04额外记录移至supplemental_observations。05原有额外记录完整保留在supplemental_observations，after以同一已记录事实归入开场声明的direct_gap_and_signs，未新增预测。"
+    ],
+    "preserved_boundaries": [
+      "04保持两种预先声明做法的实际结果及非坐标状态式比较；连续先后观察非受控实验。",
+      "护雨叶仍未验证，不声称防雨收益。",
+      "第一叶结蓄力/距离/时机因果不确定仍保留。",
+      "结局显示返回2次、笔记仅确认1次明确R输入的矛盾仍保留。",
+      "详细目标在自动切换后的入口、首次导航前记录的时间边界保留。",
+      "human_acceptance_claim=false and known_solution_used=false unchanged."
+    ]
+  },
+  "packaging_path_adapter": "Only chapter evidence paths prefixed independent-review/; independent reviewer authored report-gate.json retained unchanged alongside original report and manifest."
+}

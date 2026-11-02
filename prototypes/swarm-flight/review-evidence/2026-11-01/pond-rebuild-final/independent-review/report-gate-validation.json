@@ -1,0 +1,12 @@
+{
+  "record": "report-gate.json",
+  "record_sha256": "785bbca017ada4688d58d4b5501aac311f02223211fecdea09c8bd39955b86c8",
+  "original_report": "report.json",
+  "original_report_sha256": "683f7ca9769276d03892bc29ef208577b88ea695d4845a6e675cb9deb0c33f9e",
+  "original_unchanged": true,
+  "validator": "tools/spring_review_gate.py",
+  "revision": "75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0",
+  "exit_code": 0,
+  "output": "Internal review declarations and evidence are complete; this is not product or human acceptance.",
+  "scope": "Schema/declarations/raw media existence and hashes only; not semantic proof, game rerun, product acceptance or human acceptance."
+}

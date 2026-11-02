@@ -1,10 +1,22 @@
-# 当前试玩 0.16.1 · 03→05集中修订
+# 雨来之前 · 池岸归途0.18.0候选
+
+2026-11-01冻结运行版本：`75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0`。本轮重编池边出发、穿雨、帮助邻居和回巢的完整旅程，保护获认可的长关对照；0.17.0设计与节奏0分、整体产品评审失败的记录保留。
+
+**最终试玩包已核验。** 双击[开始池岸归途](</Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-rebuild/试玩/雨来之前-0.18.0-池岸归途-75b6bda6/开始池岸归途.command>)；[Mac候选ZIP](</Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/swarm-flight/2026-11-01-pond-rebuild/雨来之前-0.18.0-池岸归途-Mac-75b6bda6.zip>)的SHA256为`98a7c746f922d06bda848a878fd2c1039c44a521010872cb090586127a75638b`。最终ZIP解压后的两份实际`.command`入口均通过启动/移动、Esc保存、正常退出与进程消失、冷启动续接、继续移动及再次退出，存档隔离。[J07记录](review-evidence/2026-11-01/pond-rebuild-final/final-package-proof/result.json)保留过程证据。原导出、独立评审包与最终包PCK一致；PR #263的集成收口由主任务完成，远端最终状态以[#209](https://github.com/alanthssss/nameless-becoming/issues/209)读回为准。当前进入#211的整体产品与成本判断，动态动作仅见[唯一Now](../../docs/design/solar-term-campaign-production-spec.md#production-now)。
+
+方向键/WASD飞行，空格按住蓄力后松开冲刺，Esc暂停并保存，R返回已提交的落脚点。默认源码入口为池岸归途，`--long-journey`进入原长关对照。新旅程使用独立`pond-journey-rebuild-v3`保存身份；原0.17的v2存档明确拒绝续入，不猜测迁移旧坐标，原文件保留。旧包及对照入口继续各自分档。
+
+同版原生已知路线、保存/恢复与定向源状态检查通过；另一个未读源码/设计的AI探索者只获操作信息，实际完成完整旅程和结尾，失败及重试原图保留。其雨路比较是露天消耗与叶棚恢复，未确认护雨叶实际效果；护雨路线规则由定向验证支持。这些证据不是真人试玩、自然完成时长或Alan的整体节奏认可。[设计与完整边界](../../docs/design/swarm-flight-gdd.md#pond-journey-finish-plan) · [冻结版技术证据](review-evidence/2026-11-01/pond-rebuild-final/technical.json)。
+
+以下保留历史包和实现记录，其中“当前/最新”只指相应历史版本；旧20关描述不替代现有24关目标。
+
+## 历史试玩0.16.1 · 集中修订
 
 默认双击应用进入池岸归途03→05；`--long-journey`显式进入07→09对照。03/05保持同一花源，03采食有一次信息反馈和画眉回应，邻近恢复点拉开；未开花苞不再冒用开放花蜜外观。原独立色窗改为末尾叶亭的花蜡灯，彩光落在停靠叶上。04保持路长、移动与雨伤，棚下抬升后选择低棚绕行或取护雨穿上层。03→05叶冠实体，两侧进出；07/08原节奏与物理保留，共享绿线删除及暂停/关末按键说明修正。
 
 新存档为`spring-03-05-v2` / `spring_03_05_v2.json`，新包独立保存，旧0.16.0档保留、不自动迁入变更后的几何。该修订响应Alan真实负面反馈，程序和原生输入检查只证明已测行为；新版本理解/趣味、全20关GDD实现仍未验收。状态仅见设计规格的Now和`outputs/swarm-flight/2026-10-27-spring-feedback/build-receipt.json`。
 
-# 雨来之前 · 池岸归途03—05 0.16.0
+## 历史试玩0.16.0 · 池岸归途
 
 `outputs/swarm-flight/2026-10-27-spring-03-05/试玩包/连续试玩03至05.command`：03自愿观察蓝花源，04选择棚下/护雨路线，05通过庄主盘点和借风换层打开两处归路，在巢门可分享03亲见的同一花源。三章自动衔接，Esc原地保存，R只返回本章已提交的落脚点；不采食、不分享、不用风花均有可完成路径。
 

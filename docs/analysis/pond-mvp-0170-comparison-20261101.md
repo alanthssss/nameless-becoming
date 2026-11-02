@@ -1,5 +1,7 @@
 # 《雨来之前》0.17.0：整体节奏与五款参考游戏的对比分析
 
+> 后续反馈：0.18重编与交付已发生；2026-11-02 Alan认为有进步，但整段只相当于一关。最新成长体系研究见[新分析](pond-growth-loop-references-20261102.md)。本页以下保留0.17的历史证据，不把旧问题当作0.18仍然存在。
+
 日期：2026-11-01。状态：**Alan对0.17.0 MVP的设计与节奏评价为0分，整体体验评审失败；原因分析和改法仍待验证，本轮未改玩法。**
 
 关联：[GDD§1–2、§6、§13.6](../design/swarm-flight-gdd.md) → [M4](https://github.com/alanthssss/nameless-becoming/milestone/4) → [#211](https://github.com/alanthssss/nameless-becoming/issues/211)；反馈影响[M3整体产品接受](https://github.com/alanthssss/nameless-becoming/milestone/3)。唯一执行指针仍在[Now](../design/solar-term-campaign-production-spec.md#production-now)，本报告不建立第二任务队列。

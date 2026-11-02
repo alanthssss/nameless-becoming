@@ -62,6 +62,7 @@ func new_scene() -> void:
 	game.sound.set_muted(true)
 
 func fly(target: Vector2) -> void:
+	if game.model.stage!=1 and target.x<4800: target.x+=Model.POND_APPROACH_EXTENSION
 	for frame in 1500:
 		var d: Vector2 = target-game.model.p
 		if d.length() < 10 or game.model.phase != "playing": break
@@ -69,6 +70,21 @@ func fly(target: Vector2) -> void:
 		tick()
 	release_all()
 	tick(24)
+
+func approach(alternate:=false) -> void:
+	var driver=Driver.new(game.model,alternate)
+	driver.stage=game.model.stage
+	driver.wait_for_full=false
+	var boundary: float=6000.0 if game.model.stage==0 else 6240.0
+	for command in (game.model.chapter.optional_route if alternate else game.model.chapter.route):
+		if command.kind=="move" and command.target.x>=boundary: break
+		driver.commands.append(command)
+	for i in 15000:
+		if driver.cursor>=driver.commands.size() or not driver.error.is_empty(): break
+		action(driver.next_input())
+		tick()
+	release_all()
+	check(driver.error.is_empty() and driver.cursor==driver.commands.size(),"native keyboard connected approach "+str(game.model.stage))
 
 func cold_resume(label: String) -> void:
 	tap(KEY_ESCAPE)
@@ -92,15 +108,13 @@ func run() -> void:
 		return
 	DirAccess.make_dir_recursive_absolute(folder)
 	await new_scene()
-	check(game.model.journey_id()=="spring-03-05-v2","independent integrated journey")
+	check(game.model.journey_id()=="pond-journey-rebuild-v3","independent integrated journey")
 	await shot("00-title")
 	tap(KEY_ENTER)
-	fly(Vector2(400,230))
-	await shot("01-03-two-levels")
-	fly(Vector2(1080,230))
-	fly(Vector2(1270,500))
-	fly(Vector2(1060,500))
-	fly(Vector2(1270,500))
+	game.event_message("gate","",2.0)
+	check(game.toast.text=="叶间的路打开了","outward leaf door does not claim keeper gate progress")
+	approach()
+	await shot("01-connected-flight")
 	fly(Vector2(1450,190))
 	fly(Vector2(2050,190))
 	fly(Vector2(2280,190))
@@ -148,9 +162,7 @@ func run() -> void:
 	fly(game.model.exit_pos+Vector2(45,0))
 	tick(150)
 	check(game.model.stage==2 and game.model.observation_valid(),"automatic04→05 preserves source")
-	fly(Vector2(620,620))
-	fly(Vector2(1000,620))
-	fly(Vector2(1260,500))
+	approach()
 	fly(Vector2(1850,590))
 	fly(Vector2(2190,465))
 	for i in 900:
@@ -230,14 +242,14 @@ func run() -> void:
 	check(game.mode=="ending" and game.model.save_payload()==ending,"completed cold launch")
 	# Controlled boundary fixture: an earned result still animates after arrival.
 	game.model.keeper.state="tidy"
-	game.model.keeper.pos=Vector2(3580,630)
+	game.model.keeper.pos=Vector2(3580+Model.POND_APPROACH_EXTENSION,630)
 	game.model.keeper.target=Model.RESULT_HOME
 	game.model.result_elapsed=Model.INSPECT_SECONDS
 	tick(210)
 	check(game.model.keeper.state=="settled" and game.model.keeper.pos==Model.RESULT_HOME,"ending advances earned keeper result without blocking player")
 	game.queue_free()
 	await process_frame
-	# Actual disk/cold-scene path for the old geometry's embedded v2 position.
+	# Controlled current-map overlap uses the existing safe checkpoint before drawing.
 	var legacy:=Model.new()
 	legacy.load_stage(1)
 	legacy.p=legacy.shelters[0].pos
@@ -246,9 +258,9 @@ func run() -> void:
 	FileAccess.open(folder.path_join("save.json"),FileAccess.WRITE).store_string(JSON.stringify(legacy.save_payload()))
 	await new_scene()
 	game.on_secondary()
-	check(game.mode=="pause" and game.model.p==legacy.checkpoint.p,"legacy disk load uses safe checkpoint before drawing")
+	check(game.mode=="pause" and game.model.p==legacy.checkpoint.p,"current embedded pose uses safe checkpoint before drawing")
 	check(game.heading.text=="已回到安全的落脚点" and game.description.text.contains("旅程保留"),"geometry recovery is explained on resume page")
-	await shot("16-legacy-safe-resume")
+	await shot("16-current-safe-resume")
 	game.queue_free()
 	await process_frame
 	print("SPRING JOURNEY UI VERIFIED: %d checks, %d failures" % [checks,failures])

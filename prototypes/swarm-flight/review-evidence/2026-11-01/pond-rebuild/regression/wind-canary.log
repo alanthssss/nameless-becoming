@@ -1,0 +1,4 @@
+SWARM REGRESSION BASELINE: 140 checks passed
+SWARM REGRESSION CAUGHT: wind_requires_steering, 12 expected failures
+SWARM REGRESSION CAUGHT: preview_claims_contact, 6 expected failures
+SWARM REGRESSIONS VERIFIED: 2/2 known bug classes rejected

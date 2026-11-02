@@ -79,6 +79,9 @@ func next_input() -> Dictionary:
 				continue
 			"burst":
 				if burst_phase == 0:
+					# Authored review input observes the real keeper state; it never
+					# advances that state, opens a gate or changes the playable rules.
+					if command.get("wait_for_keeper_counting",false) and (model.keeper.state!="counting" or model.keeper.elapsed>1.2): return output()
 					burst_phase = 1
 					burst_ticks = 0
 					return output(command.direction)

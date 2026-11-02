@@ -1,0 +1,73 @@
+Controls-only independent AI exploration. Frozen revision 75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0. No source or solution read. Initial visible goal: leave pond, follow path across rain to hive. Flowers permit stopping and leaves resting.
+
+03 BEFORE (02-stage03-entry.png): Goal 沿池岸，找一处还开着的花. Option A: stay near current altitude and fly right through the narrow visible opening between upper/lower foliage; predict shorter path but orange upright may block or need burst. Option B: descend and try below lower foliage then proceed right; predict longer distance and effort, avoids middle upright if lower space is traversable. First choose A.
+
+03 A result (03-stage03-direct.png): crossed central upright with right movement plus charged burst; upright now appears broken behind. Stamina 100→71. Visible morning dew says touch to restore up to 12 stamina; a blue flower lies ahead.
+
+03 resource result (04-stage03-dew-attempt.png): dew disappeared and stamina 71→75 after movement/tool overhead; positive net recovery observed, exact gross amount unmeasured.
+
+03 now on first wind flower (05-stage03-flower-near.png). Prompt says burst into flower to borrow force once along arrow; visible dotted route rises right toward two further flowers.
+
+03 wind result (06-stage03-windflower.png): one burst automatically chained right/up across three flowers; on-screen 连续借风×3，不用再蓄力，体力+4. Bee at higher altitude with shrub ahead and dew below. Stamina shown 45; overall burst had cost despite chain recovery.
+
+03 checkpoint (08-stage03-leaf.png): lower route traversable; arriving beneath leaf raised stamina to 100 and message 已记住这个叶亭，体力正在恢复 / 叶下安全，体力充足. No failure yet.
+
+03 later route (10-stage03-destination.png): tall stalk blocks current level, flying insect above right. Choose rise above stalk; predict avoids solid trunk but approaches insect altitude, so pass high.
+
+03 objective completion (13-stage03-flower-rest.png): stopping in flower changed goal to 记住花香，趁雨前回去, restored stamina to 98, displayed 尝到花蜜，记住了这簇蓝花的位置，回巢时可以告诉同伴. Bird warns rain and leaf shelter ahead.
+
+04 BEFORE (18-stage04-paused-entry.png,19-stage04-visible-start.png; no movement yet): Goal 雨来了，叶棚通向归路 / 从叶下看雨. Pause counts 0/5 leaves. Option A: fly onward through open air, skipping or leaving shelters immediately; expect faster forward progress but greater rain exposure and stamina use. Visual basis: open sky gaps, coming-rain title, prior stamina drain while flying. Option B: enter each broad leaf canopy and stop before crossing the next gap; expect recovery/protection and new checkpoint, but extra stopping time. Visual basis: first leaf with downward marker, instructions leaf rest, previous leaf recovery. Choose B first to establish an observed checkpoint, then compare an exposed flight from it.
+
+04 B first observation (20-stage04-first-shelter.png): inside first leaf, stamina 100 and checkpoint message; visible protection label 叶下安全. Now test A: continue across open gap at current height, without stopping deliberately for next leaf.
+
+04 A first result (21-stage04-exposed-crossing.png): open crossing reduced stamina 100→90 and revealed active falling rain. Straight line stopped at solid stalk; must change altitude. Next shelter is farther right beneath canopy, dew exposed between.
+
+04 A exposed outcome (22-stage04-rain-exposure.png): stamina 90→75 across rain gap, with rain drops visibly beside bee. Underside of next shrub blocks continuation at this height; next action must descend. This is actual exposure/resource difference, not just icon state. Now switch to B: descend under canopy and stop at hanging light to recover before next gap.
+
+04 B result (23-stage04-shelter-recovery.png): descending into second shelter restored stamina 75→100 despite continuing rain; next action changes to prepared crossing from full resource. New visible information: 护雨叶，轻触获得五秒防雨 at canopy edge. Comparison A vs B supported dimensions exposure/resource_use/next_action/information; timing is observed journey 1:40→1:48→1:54, not controlled performance benchmark.
+
+04 optional interaction (24,25): two short approaches toward visible protection leaf did not produce a clear pickup/buff confirmation. Stamina stayed 100 within shelter; cannot attribute benefit to protection. Leave this optional effect unverified, proceed with shelter strategy.
+
+04 continued B (26,27): third and fourth shelters reached with stamina 100. Next visible challenge is a narrow corridor between hanging foliage (bottom near 490) and stalk top (~548); dew lies beyond. Prediction: thread center through gap, otherwise collision will require alignment.
+
+04 gap result (28-stage04-tight-gap.png): narrow opening traversed successfully with small upward adjustment; no route blocker. Stamina 92.
+
+04 final shelter (29-stage04-final-shelter.png): reached last light canopy, stamina100, rain visibly stopped and goal changed to 雨停了，沿熟悉的池岸回去. Dew near narrow gap remains visible behind, so the attempted pass did not verify that particular dew pickup.
+
+05 BEFORE (31-stage05-entry.png; no movement): visible goal 回家的路上，花牌挡住了去向; bottom text 绕回熟悉的池岸，庄主把花牌挂到了路中间. Option A: fly right through visible middle gap and approach the obstructing signs; expect direct route, use charged burst if boards resemble breakable upright from03. Visual basis: open gap ahead, right direction marker, sign blockage instruction, own observed break earlier. Option B: descend around lower foliage to try bypassing sign route; expect more flight distance/resource and possible route limits but may avoid confronting obstacle. Visual basis: visible sky below lower shrub. Choose A.
+
+05 first burst attempt (34-stage05-windchain.png): pressing Space from paused-on-flower state did not visibly displace bee; stamina84→74. Error retained. Likely need to set direction after pause; this is an input hypothesis, not hidden-state fact. Retry with explicit right movement before charge.
+
+05 retry result (35-stage05-windchain-retry.png): explicit direction then burst moved through flower chain to lower exit; stamina55. No unresolved blocker.
+
+05 obstacle (40,41): chasing/overlapping fly caused visible 撞了一下，体力-8，换层或冲刺甩开它; total stamina84→63 across approach. Gate prompt 绳松了，冲开干叶结. Choose direct charged burst through knot, prediction opening and escape pursuit; alternative altitude dodge enemy then reapproach would conserve hit damage but take more time.
+
+05 timing retry (42-stage05-knot-burst.png): first burst did not break knot; prompt now 绳还绷着，留意它何时盘点. Stamina100 because nearby shelter overlaps approach. Inference: opening is timed; prior loose state changed before contact. Keep failure, try another release cycle from close range.
+
+05 retries (43,44): two release attempts, then lower alignment and 850 ms charge still left gate intact. No damage cost while sheltered. Trying a short batch of differently timed releases; evidence will not identify exact winning timing if it opens.
+
+05 hypothesis after45: all shelter-side trials left rope taut. Earlier loose prompt coincided with fly close to bee. It may require drawing pursuer into a counting pause; test one bait/reapproach, based only on prompt 留意它何时盘点 and visible enemy positions.
+
+05 bait test (46–48): leaving shelter brings fly close and loose-rope prompt; returning burst reached knot but did not open, subsequent burst still left it intact. Basic knot rule/timing remains unclear in this input method. Last direct-route trial will start farther away with longer charge, then try visibly available upper bypass if unsuccessful.
+
+05 first knot resolved (49-stage05-longcharge.png): retreat 600 ms, direction Right50 ms, charge1100 ms resulted in broken dangling signs and changed goal 牌架另一面，还有一道叶结. No bypass used. Charge strength, start distance and timing were varied together, so exact causal factor unisolated. Earlier failure was recoverable, not unresolved route blocker.
+
+05 second obstacle (50-stage05-second-knot.png): prompt explicitly 牌面挡住直路，上下都能绕到背面; visible upper wind flowers and lower path. Choose upper flowers for directed traversal; lower path would allow approach beneath board but require climb near knot.
+
+05 upper result (51-stage05-upper-approach.png): flowers spent; plank shows back, prompt 背面叶结露出来了，对准它冲开. Stamina18 means limited margin. Choose align downward to knot and long burst from modest retreat, accepting possible exhaustion/checkpoint retry.
+
+05 insufficient-resource failure (52-stage05-second-burst.png): explicit 体力不足20，无法冲刺，按R回到恢复点补充. Burst did not occur; stamina5. Follow displayed R instruction and preserve retry evidence.
+
+05 retry recovery (53): R returned to first-knot shelter with stamina100; first knot remains broken, wind flowers reset and plank front restored. Continuing upper path with restored budget.
+
+05 retry decision: choose explicit lower bypass this time to preserve burst energy: pass below board, ascend behind it, reserve one long burst for second knot. This differs from upper flower route resource use (fewer bursts), predicted but must observe.
+
+05 lower bypass result (54): passed under board and ascended behind, exposed knot, stamina100→91. Starting budget differs from upper trial, so compare qualitatively: no burst used during lower bypass.
+
+05 second knot success (55): 1100 ms aligned burst after lower bypass broke second knot; goal changed 归路已经打开，蜡脾上可以把见过的花路告诉同伴. Stamina62, hive visible right, checkpoint remembered.
+
+05 wax interaction (57): landed and restored stamina100; prompt 空格按住再松开，分享花路.
+
+05 sharing success (58): goal became 它们沿你告诉的花路出发了，前面就是家; companions visibly left wax to left. Continue right to home.
+
+ENDING (60-stage05-home.png): 路通了，花还开着。你替庄主留下了通路，他终于可以收拾那些花牌。你告诉了它们那簇蓝花的方向。这段池岸归途已走完。Journey05:54, visible 返回落脚点2次. I explicitly issued R once; UI total reports2 and this discrepancy remains unisolated. Ending original screenshot saved. Choose 留在这一刻，退出 now; no further app state query after quit.

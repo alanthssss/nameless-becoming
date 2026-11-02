@@ -1,0 +1,20 @@
+SUPPLY REGRESSION BASELINE: passed
+SUPPLY REGRESSION CAUGHT: 05_lower_dew, 3 assertions
+SUPPLY REGRESSION CAUGHT: 10_lower_dew, 12 assertions
+SUPPLY REGRESSION CAUGHT: 13_lower_dew, 12 assertions
+LONG SUPPLY REGRESSION CAUGHT: long_upper_relay_lower_dew, 7 assertions
+LONG SUPPLY REGRESSION CAUGHT: long_lower_relay_upper_dew, 7 assertions
+EIGHT RHYTHM REGRESSION CAUGHT: attack_after_pass, 2 assertions
+EIGHT RHYTHM REGRESSION CAUGHT: dew_off_dash_lane, 6 assertions
+EIGHT RHYTHM REGRESSION CAUGHT: wall_at_dash_exit, 22 assertions
+EIGHT RHYTHM REGRESSION CAUGHT: redundant_same_line_flower, 3 assertions
+EIGHT RHYTHM REGRESSION CAUGHT: empty_preparation_travel, 2 assertions
+EIGHT RHYTHM REGRESSION CAUGHT: opening_full_refill, 4 assertions
+SEVEN FLOW REGRESSION CAUGHT: wall_before_turn_finishes, 3 assertions
+SEVEN FLOW REGRESSION CAUGHT: excess_wind_supply, 2 assertions
+SEVEN FLOW REGRESSION CAUGHT: missing_development_door, 9 assertions
+SEVEN FLOW REGRESSION CAUGHT: door_beyond_wind_momentum, 6 assertions
+SEVEN FLOW REGRESSION CAUGHT: empty_breather_tail, 2 assertions
+SWARM SUPPLY REGRESSIONS VERIFIED: 5/5 layouts rejected
+EIGHT RHYTHM REGRESSIONS VERIFIED: 6/6 behavior defects rejected
+SEVEN FLOW REGRESSIONS VERIFIED: 5/5 behavior defects rejected
