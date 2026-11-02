@@ -8,6 +8,7 @@ var failures: Array[String] = []
 var trace: Array[Dictionary] = []
 var output := ""
 var input_keys: Array[int] = []
+var serialization_differences := {}
 
 func _initialize() -> void: call_deferred("run")
 func check(ok: bool, words: String) -> void:
@@ -222,10 +223,16 @@ func run() -> void:
 	game.pause_game()
 	var before: Dictionary = game.model.to_payload()
 	var again = Model.new()
-	check(again.restore_payload(Save.read_payload(game.saved_path,Model.new())) and JSON.stringify(again.to_payload(),"",true,true) == JSON.stringify(before,"",true,true),"persistent state survives disk serialization")
+	var restored: bool = again.restore_payload(Save.read_payload(game.saved_path,Model.new()))
+	var after: Dictionary = again.to_payload()
+	for field in before:
+		if JSON.stringify(before[field],"",true,true) != JSON.stringify(after[field],"",true,true):
+			serialization_differences[field] = {"before":before[field],"after":after[field]}
+	check(restored and same_state(before,after),"persistent discrete state is exact; float round-trip error stays below 1e-7")
+	if not serialization_differences.is_empty(): print("UI SERIALIZATION DIFFERENCES: ",JSON.stringify(serialization_differences,"",true,true))
 	if not output.is_empty():
 		var file := FileAccess.open(output.path_join("ui-result.json"),FileAccess.WRITE)
-		file.store_string(JSON.stringify({"checks":checks,"failures":failures,"classification":"developer targeted UI/native fixtures; not independent play","trace":trace},"\t"))
+		file.store_string(JSON.stringify({"checks":checks,"failures":failures,"classification":"developer targeted UI/native fixtures; not independent play","serialization_differences":serialization_differences,"trace":trace},"\t"))
 	print("NECTAR UI VERIFIED: %d checks, %d failures" % [checks,failures.size()])
 	game.queue_free()
 	await frames(3)
@@ -236,3 +243,20 @@ func _unique(values: Array[String]) -> Array[String]:
 	for value in values:
 		if value not in result: result.append(value)
 	return result
+
+# JSON decimal parsing can differ at the final bit of a double. Integer economy,
+# IDs, booleans, shape and collection sizes remain exact; no gameplay tolerance.
+func same_state(a,b) -> bool:
+	if a is Dictionary and b is Dictionary:
+		if a.size() != b.size(): return false
+		for field in a:
+			if not b.has(field) or not same_state(a[field],b[field]): return false
+		return true
+	if a is Array and b is Array:
+		if a.size() != b.size(): return false
+		for i in a.size():
+			if not same_state(a[i],b[i]): return false
+		return true
+	if a is int: return b is int and a == b
+	if a is float: return b is float and absf(a-b) <= 0.0000001
+	return typeof(a) == typeof(b) and a == b
