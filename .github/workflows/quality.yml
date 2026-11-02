@@ -197,8 +197,7 @@ jobs:
     needs: [scope, web, godot, web-candidate, content, swarm, flower, garden]
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    # Checkout of the art repository can exceed two minutes; assertions stay unchanged.
-    timeout-minutes: 5
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
       - name: Require success for every selected check
@@ -212,8 +211,7 @@ jobs:
     needs: [scope, swarm]
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    # Checkout of the art repository can exceed two minutes; assertions stay unchanged.
-    timeout-minutes: 5
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
       - name: Require the selected Swarm Flight suite

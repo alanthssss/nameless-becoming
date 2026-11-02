@@ -148,7 +148,7 @@
     "packager": 50,
     "failures": 0
   },
-  "source_scope": "Final game runtime frozen b643fe8. Later packaging/default-profile and CI-checkout timeout edits do not change executable game or native media. Package manifest identifies frozen game, package-tool commit is PR final head.",
+  "source_scope": "Final game runtime frozen b643fe8. Later packaging/default-profile edits do not change executable game or native media. Temporary CI timeout edits were reverted after cancellation annotations identified superseding PR metadata runs. Package manifest identifies frozen game, package-tool commit is PR final head.",
   "integration": "PR272 pending final CI/merge; authoritative live state in GitHub Issues/PR, not overwritten as local done.",
   "human_accepted": false
 }
