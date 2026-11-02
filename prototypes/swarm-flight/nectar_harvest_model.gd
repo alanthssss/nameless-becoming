@@ -7,7 +7,7 @@ const HOME := Vector2(230,575)
 const GATE_X := 1780.0
 const CHARGE_READY := 0.32
 const SAVE_ID := "nectar-harvest-v1"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 const SHORTCUTS := [Vector2(1040,400),Vector2(3000,400)]
 const UPGRADE_IDS := ["gather1","gather2","reach","twin","bag1","wings1","bag2","wings2","meadow","shortcut","market","reserve"]
 var chapter := {"region":0}
@@ -24,6 +24,8 @@ var coins := 0
 var cargo := {"blue":0,"rose":0}
 var flowers: Array[Dictionary] = []
 var owned: Array[String] = []
+# Exact v1 ownership inherited at migration; never add new purchases here.
+var legacy_owned: Array[String] = []
 var events: Array[Dictionary] = []
 var completed := false
 var trip_index := 0
@@ -67,22 +69,31 @@ func upgrade_defs() -> Array:
 	return [
 		{"id":"gather1","name":"轻巧采蜜","description":"每秒采蜜 5 → 7.5 份","cost":12,"branch":0,"row":0,"requires":[]},
 		{"id":"gather2","name":"熟练采蜜","description":"每秒采蜜 7.5 → 11 份","cost":32,"branch":0,"row":1,"requires":["gather1"]},
-		{"id":"reach","name":"花香触角","description":"吸到更远的花蜜（范围 +55%）","cost":48,"branch":0,"row":2,"requires":["gather2"]},
-		{"id":"twin","name":"一簇接一簇","description":"同时采集范围内的两朵花","cost":85,"branch":0,"row":3,"requires":["reach"]},
+		{"id":"reach","name":"花香触角","description":"吸到更远的花蜜（范围 +55%）","cost":48,"branch":0,"row":2,"requires":["gather1"]},
+		{"id":"twin","name":"双簇采蜜","description":"同时采集范围内的两朵花","cost":85,"branch":0,"row":3,"requires":["gather2","reach"]},
 		{"id":"bag1","name":"舒展蜜囊","description":"携带上限 18 → 30","cost":18,"branch":1,"row":0,"requires":[]},
-		{"id":"wings1","name":"轻盈双翼","description":"续航上限 85 → 110","cost":25,"branch":1,"row":1,"requires":["bag1"]},
-		{"id":"bag2","name":"丰收蜜囊","description":"携带上限 30 → 48","cost":55,"branch":1,"row":2,"requires":["wings1"]},
-		{"id":"wings2","name":"远行双翼","description":"续航上限 110 → 145","cost":75,"branch":1,"row":3,"requires":["bag2"]},
-		{"id":"meadow","name":"开往紫花地","description":"开放远方花地；先买任一初期成长","cost":90,"branch":2,"row":0,"requires":[]},
+		{"id":"wings1","name":"轻盈双翼","description":"续航上限 85 → 110","cost":25,"branch":1,"row":1,"requires":[]},
+		{"id":"bag2","name":"丰收蜜囊","description":"携带上限 30 → 48","cost":55,"branch":1,"row":2,"requires":["bag1"]},
+		{"id":"wings2","name":"远行双翼","description":"续航上限 110 → 145","cost":75,"branch":1,"row":3,"requires":["wings1"]},
+		{"id":"meadow","name":"开往紫花地","description":"开放远方花地；基础能力累计成长3次","cost":90,"branch":2,"row":0,"requires":[]},
 		{"id":"shortcut","name":"叶间近道","description":"开通池岸与远方花地的双向近道","cost":65,"branch":2,"row":1,"requires":["meadow"]},
-		{"id":"market","name":"蜂巢好口碑","description":"每次售卖获得额外 25% 金币","cost":90,"branch":2,"row":2,"requires":["shortcut"]},
-		{"id":"reserve","name":"备好花蜜","description":"交售过 18 份紫花蜜后，为蜂巢备好储粮","cost":180,"branch":2,"row":3,"requires":["market"]}
+		{"id":"market","name":"好口碑","description":"每次售卖获得额外 25% 金币","cost":90,"branch":2,"row":2,"requires":["meadow"]},
+		{"id":"reserve","name":"备好花蜜","description":"交售过 18 份紫花蜜后，为蜂巢备好储粮","cost":180,"branch":2,"row":3,"requires":["meadow"]}
 	]
 
 func upgrade(id: String) -> Dictionary:
 	for definition in upgrade_defs():
 		if definition.id == id: return definition
 	return {}
+
+func growth_count() -> int:
+	return _growth_count(owned)
+
+static func _growth_count(ids: Array) -> int:
+	var count := 0
+	for id in ["gather1","gather2","bag1","bag2","wings1","wings2","reach","twin"]:
+		if id in ids: count += 1
+	return count
 
 func locked_reason(id: String) -> String:
 	var definition := upgrade(id)
@@ -91,8 +102,11 @@ func locked_reason(id: String) -> String:
 	if not at_home(): return "回蜂巢后购买"
 	for prerequisite in definition.requires:
 		if prerequisite not in owned: return "先获得："+str(upgrade(prerequisite).name)
-	if id == "meadow" and "gather1" not in owned and "bag1" not in owned: return "先购买轻巧采蜜或舒展蜜囊"
+	if id == "wings1" and "gather1" not in owned and "bag1" not in owned: return "采蜜技巧或蜜囊容量达到1级"
+	if id == "meadow" and growth_count() < 3: return "基础能力成长 %d / 3 次" % growth_count()
+	if id == "market" and (not visited_meadow or rose_sold < 1): return "先探索紫花地，并交售至少1份紫蜜"
 	if id == "reserve" and (not visited_meadow or rose_sold < 18): return "先探索花地并交售 18 份紫花蜜（%d / 18）" % rose_sold
+	if id == "reserve" and "twin" not in owned and "shortcut" not in owned: return "双簇采蜜或叶间近道：任选其一"
 	if coins < int(definition.cost): return "还需 %d 金币" % (int(definition.cost)-coins)
 	return ""
 
@@ -242,17 +256,17 @@ func goal_text() -> String:
 	if completed: return "花蜜备好了 · 继续探索，或回蜂巢歇一歇"
 	if "meadow" not in owned:
 		if owned.is_empty(): return "带回第一囊花蜜，换一项成长"
+		if growth_count() < 3: return "基础能力成长 %d / 3 · 再开放紫花地" % growth_count()
 		return "攒够 90 金币，开放远方紫花地"
 	if not visited_meadow: return "新花地已开放 · 飞过池岸右侧的叶门"
 	if rose_sold < 18: return "带回紫花蜜 · 已交售 %d / 18" % rose_sold
-	if "shortcut" not in owned: return "开通叶间近道，让两处花地连起来"
-	if "market" not in owned: return "让蜂巢口碑带来更丰盛的收获"
+	if "shortcut" not in owned and "twin" not in owned: return "双簇采蜜或叶间近道 · 任选一项成长"
 	return "备好花蜜 · 为蜂巢留出 180 金币的储粮"
 
 func to_payload() -> Dictionary:
 	var stock: Array = []
 	for flower in flowers: stock.append({"id":flower.id,"stock":flower.stock,"progress":flower.progress})
-	return {"id":SAVE_ID,"version":SAVE_VERSION,"p":[p.x,p.y],"v":[v.x,v.y],"face":[face.x,face.y],"phase":phase,"energy":energy,"charge":charge,"charging":charging,"burst_left":burst_left,"coins":coins,"cargo":cargo.duplicate(true),"owned":owned.duplicate(),"flowers":stock,"completed":completed,"trip_index":trip_index,"sold_total":sold_total,"rose_sold":rose_sold,"visited_meadow":visited_meadow}
+	return {"id":SAVE_ID,"version":SAVE_VERSION,"p":[p.x,p.y],"v":[v.x,v.y],"face":[face.x,face.y],"phase":phase,"energy":energy,"charge":charge,"charging":charging,"burst_left":burst_left,"coins":coins,"cargo":cargo.duplicate(true),"owned":owned.duplicate(),"legacy_owned":legacy_owned.duplicate(),"flowers":stock,"completed":completed,"trip_index":trip_index,"sold_total":sold_total,"rose_sold":rose_sold,"visited_meadow":visited_meadow}
 
 static func number(value) -> bool:
 	return (value is int or value is float) and is_finite(float(value))
@@ -270,9 +284,26 @@ static func keys_match(value: Dictionary,keys: Array) -> bool:
 	return true
 
 func restore_payload(data) -> bool:
+	return _restore_payload(data,false)
+
+# Used only by the migration boundary, never by the v2 transaction writer.
+func restore_v1_payload(data) -> bool:
+	return _restore_payload(data,true)
+
+static func _legacy_prerequisites_valid(ids: Array) -> bool:
+	var old_requirements := {"gather2":["gather1"],"reach":["gather2"],"twin":["reach"],"wings1":["bag1"],"bag2":["wings1"],"wings2":["bag2"],"shortcut":["meadow"],"market":["shortcut"],"reserve":["market"]}
+	for id in ids:
+		for required in old_requirements.get(id,[]):
+			if required not in ids: return false
+	return "meadow" not in ids or "gather1" in ids or "bag1" in ids
+
+func _restore_payload(data,from_v1: bool) -> bool:
 	if not data is Dictionary: return false
-	if not keys_match(data,to_payload().keys()): return false
-	if data.id != SAVE_ID or not whole(data.version,1,1): return false
+	var expected_keys: Array = to_payload().keys()
+	if from_v1: expected_keys.erase("legacy_owned")
+	if not keys_match(data,expected_keys): return false
+	var expected_version := 1 if from_v1 else SAVE_VERSION
+	if data.id != SAVE_ID or not whole(data.version,expected_version,expected_version): return false
 	for key in ["p","v","face"]:
 		if not pair(data[key]): return false
 	if data.phase not in ["home","field"]: return false
@@ -291,10 +322,23 @@ func restore_payload(data) -> bool:
 	for id in data.owned:
 		if not id is String or id not in UPGRADE_IDS or id in next_owned: return false
 		next_owned.append(id)
+	var next_legacy: Array[String] = []
+	if from_v1:
+		next_legacy.assign(next_owned)
+	else:
+		if not data.legacy_owned is Array or data.legacy_owned.size() > next_owned.size(): return false
+		for id in data.legacy_owned:
+			if not id is String or id not in next_owned or id in next_legacy: return false
+			next_legacy.append(id)
+	if not _legacy_prerequisites_valid(next_legacy): return false
 	for id in next_owned:
+		if id in next_legacy: continue
 		for prerequisite in upgrade(id).requires:
 			if prerequisite not in next_owned: return false
-	if "meadow" in next_owned and "gather1" not in next_owned and "bag1" not in next_owned: return false
+		if id == "wings1" and "gather1" not in next_owned and "bag1" not in next_owned: return false
+		if id == "meadow" and _growth_count(next_owned) < 3: return false
+		if id == "market" and (not data.visited_meadow or data.rose_sold < 1): return false
+		if id == "reserve" and "twin" not in next_owned and "shortcut" not in next_owned: return false
 	if data.completed != ("reserve" in next_owned): return false
 	if data.visited_meadow and "meadow" not in next_owned: return false
 	if (int(data.cargo.rose) > 0 or data.rose_sold > 0) and not data.visited_meadow: return false
@@ -338,6 +382,7 @@ func restore_payload(data) -> bool:
 	coins = int(data.coins)
 	cargo = {"blue":int(data.cargo.blue),"rose":int(data.cargo.rose)}
 	owned = next_owned
+	legacy_owned = next_legacy
 	flowers = next_flowers
 	completed = data.completed
 	trip_index = int(data.trip_index)

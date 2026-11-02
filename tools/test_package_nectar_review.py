@@ -50,7 +50,7 @@ class PackageTests(unittest.TestCase):
             for role in row['roles']:
                 suffix = '.mp4' if role == 'continuous_video' else '.png' if role == 'native_frame' else '.log' if role == 'rules_log' else '.json'
                 path = self.root/(row['id']+'-'+role+suffix)
-                content = (json.dumps({'synthetic_fixture':True,'id':'nectar-harvest-v1','version':1}).encode()
+                content = (json.dumps({'synthetic_fixture':True,'id':'nectar-harvest-v1','version':2}).encode()
                            if role in {'save_before','save_after'} else b'SYNTHETIC TEST DATA; not actual game evidence\n')
                 path.write_bytes(content)
                 artifact = {'role':role,'path':path.name,'sha256':tool.digest(path),'revision':REVISION}
@@ -233,6 +233,11 @@ class PackageTests(unittest.TestCase):
         self.blocked('legacy_save_after')
     def test_new_save_cannot_be_old_journey_payload(self):
         path = self.root/'NH-C07-save_before.json'; path.write_text(json.dumps({'id':'pond-journey-rebuild-v3','version':1}))
+        self.mutate('NH-C07',lambda r:next(a for a in r['artifacts'] if a['role'] == 'save_before').update(sha256=tool.digest(path)))
+        self.blocked('independent identity')
+    def test_unmigrated_save_rejected_for_new_candidate(self):
+        path = self.root/'NH-C07-save_before.json'
+        path.write_text(json.dumps({'id':'nectar-harvest-v1','version':1}))
         self.mutate('NH-C07',lambda r:next(a for a in r['artifacts'] if a['role'] == 'save_before').update(sha256=tool.digest(path)))
         self.blocked('independent identity')
     def test_negative_cost_is_not_unknown(self):

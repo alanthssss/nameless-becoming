@@ -113,7 +113,62 @@ func reject(m,data: Dictionary,label: String) -> void:
 	check(not m.restore_payload(data),label+" rejected")
 	check(JSON.stringify(m.to_payload()) == before,label+" restore is atomic")
 
+func growth_tree_rules() -> void:
+	# Isolated purchase predicates, not a prediction of player pacing.
+	var m = Model.new()
+	m.coins = 2000
+	check(not m.can_buy("wings1") and not m.can_buy("meadow"),"new tree starts with exactly the two initial skill families")
+	check(m.buy("gather1") and m.can_buy("wings1") and m.can_buy("reach"),"first gather rank reveals independent endurance and reach")
+	check(m.buy("reach") and m.growth_count() == 2 and not m.can_buy("meadow"),"two ability ranks are below region threshold")
+	check(not m.can_buy("twin"),"range alone cannot bypass twin's gather-two AND prerequisite")
+	check(m.buy("gather2") and m.growth_count() == 3 and m.can_buy("meadow") and m.can_buy("twin"),"three ranks include repeated ranks and satisfy meadow; twin AND is complete")
+	check(m.buy("meadow") and m.growth_count() == 3,"region purchase does not add a base growth rank")
+	check(not m.can_buy("market") and not m.can_buy("reserve"),"region ownership alone does not fabricate purple deliveries")
+	m.visited_meadow = true
+	m.sold_total = 1
+	m.rose_sold = 1
+	check(m.can_buy("market") and not m.can_buy("reserve"),"one purple delivery opens optional income, not completion")
+	m.sold_total = 18
+	m.rose_sold = 18
+	check(not m.can_buy("reserve"),"18 deliveries still need one capability or route change")
+	check(m.buy("twin") and m.can_buy("reserve"),"twin alone satisfies completion OR without shortcut")
+	check("口碑" not in m.goal_text() and "180" in m.goal_text(),"twin route goal advances directly to reserve without optional market")
+	check(m.buy("reserve") and m.completed and "market" not in m.owned and "shortcut" not in m.owned,"twin route finishes without market or full tree")
+	var clone = Model.new()
+	check(clone.restore_payload(m.to_payload()) and clone.completed,"twin completion survives strict new save validation")
+	check(m.buy("bag1") and m.buy("bag2") and "wings1" not in m.owned,"capacity ranks can be bought independently after completion")
+	check(clone.restore_payload(m.to_payload()),"capacity-two without wings is a legal cold state")
+	var wings = Model.new()
+	wings.coins = 2000
+	check(wings.buy("gather1") and wings.buy("wings1") and wings.buy("wings2") and "bag1" not in wings.owned,"endurance ranks do not require capacity ranks")
+	check(clone.restore_payload(wings.to_payload()),"endurance-two without capacity is a legal cold state")
+	var shortcut = Model.new()
+	shortcut.coins = 2000
+	for id in ["gather1","bag1","wings1","meadow","shortcut"]:
+		check(shortcut.buy(id),"shortcut route legal purchase: "+id)
+	shortcut.visited_meadow = true
+	shortcut.sold_total = 18
+	shortcut.rose_sold = 18
+	check("口碑" not in shortcut.goal_text() and "180" in shortcut.goal_text(),"shortcut route goal advances directly to reserve without optional market")
+	check(shortcut.buy("reserve") and "twin" not in shortcut.owned and "market" not in shortcut.owned,"shortcut route finishes without twin or market")
+	check(clone.restore_payload(shortcut.to_payload()),"shortcut completion survives strict save validation")
+	var bad := Model.new().to_payload()
+	bad.owned = ["gather1","meadow"]
+	reject(clone,bad,"new saves cannot use old one-rank region threshold")
+	bad = Model.new().to_payload()
+	bad.owned = ["bag1","bag2","meadow"]
+	reject(clone,bad,"two capacity ranks still cannot open region")
+	bad = Model.new().to_payload()
+	bad.owned = ["gather1","gather2","reach","meadow","market"]
+	reject(clone,bad,"new income upgrade requires actual purple exploration and sale")
+	for ids in [["wings1"],["bag1","wings2"],["gather2"],["reach"],["gather1","reach","twin"],["gather1","gather2","twin"]]:
+		bad = Model.new().to_payload()
+		bad.owned = ids
+		bad.energy = 145.0 if "wings2" in ids else 110.0 if "wings1" in ids else 85.0
+		reject(clone,bad,"new save missing a required ability: "+str(ids))
+
 func run() -> void:
+	growth_tree_rules()
 	var m = Model.new()
 	check(m.at_home() and m.capacity() == 18 and m.energy == 85.0,"new game starts supplied at home")
 	check(m.flowers.size() == 14 and m.upgrade_defs().size() == 12,"two seven-flower regions and twelve growth nodes")
@@ -192,7 +247,7 @@ func run() -> void:
 	check(growth.buy("wings1") and growth.max_energy() == 110.0 and growth.energy == 110.0,"energy upgrade takes effect and refills at home")
 	check(growth.buy("bag2") and growth.capacity() == 48,"larger bag expands carrying limit")
 	check(growth.buy("wings2") and growth.max_energy() == 145.0,"final wings expand endurance")
-	check(growth.buy("meadow"),"either initial branch permits meadow unlock")
+	check(growth.buy("meadow"),"three base ranks permit meadow unlock")
 	field(growth,Vector2(1750,400))
 	tick(growth,0.5,Vector2.RIGHT)
 	check(growth.p.x > Model.GATE_X and growth.visited_meadow,"unlock opens actual movement into new area")
@@ -207,13 +262,13 @@ func run() -> void:
 	check(growth.use_shortcut() and growth.p == Model.SHORTCUTS[1],"shortcut travels outward")
 	check(growth.use_shortcut() and growth.p == Model.SHORTCUTS[0],"shortcut travels homeward")
 	home(growth)
-	check(growth.buy("market"),"market follows shortcut")
+	check(growth.buy("market"),"market follows actual first purple sale")
 	growth.cargo = {"blue":0,"rose":4}
 	check(growth.cargo_value() == 15 and growth.sell() == 15,"market applies one visible 25 percent bonus")
 	check(growth.buy("reserve") and growth.completed,"real purple deliveries allow final reserve milestone")
 	check(growth.phase == "home" and fly(growth,Vector2(600,400)),"milestone does not end free play")
 	var rain = Model.new()
-	rain.owned.assign(["bag1","meadow"])
+	rain.owned.assign(["gather1","gather2","reach","meadow"])
 	field(rain,Vector2(2700,400))
 	tick(rain,1.0)
 	check(absf(rain.energy-82.5) < 0.001,"exposed rain edge consumes extra endurance")
@@ -253,7 +308,7 @@ func run() -> void:
 	reject(copy,bad,"unopened far flowers harvested")
 	bad = valid.duplicate(true); bad.extra = true
 	reject(copy,bad,"unexpected save field")
-	bad = valid.duplicate(true); bad.version = 2
+	bad = valid.duplicate(true); bad.version = 3
 	reject(copy,bad,"unsupported schema")
 	bad = valid.duplicate(true); bad.completed = true
 	reject(copy,bad,"false milestone flag")

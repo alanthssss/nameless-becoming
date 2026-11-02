@@ -95,6 +95,9 @@ jobs:
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://nectar_harvest_ui_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/nectar-ui.json" 2>&1 | tee "$RUNNER_TEMP/nectar-ui.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/nectar-ui.log"; then exit 1; fi
           grep -q '^NECTAR UI VERIFIED:.*0 failures' "$RUNNER_TEMP/nectar-ui.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://nectar_save_migration_verify.gd 2>&1 | tee "$RUNNER_TEMP/nectar-migration.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/nectar-migration.log"; then exit 1; fi
+          grep -q '^NECTAR MIGRATION:.*0 failures' "$RUNNER_TEMP/nectar-migration.log"
           python3 -m unittest discover -s tools -p 'test_package_nectar_review.py' -v
       - name: Verify pond layouts and real save migration
         if: matrix.suite == 'migrations'
