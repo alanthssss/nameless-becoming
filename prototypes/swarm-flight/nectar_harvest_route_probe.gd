@@ -84,7 +84,7 @@ func capture(name: String) -> void:
 
 func save_json(name: String,data) -> void:
 	var file := FileAccess.open(output.path_join(name),FileAccess.WRITE)
-	file.store_string(JSON.stringify(data,"\t"))
+	file.store_string(JSON.stringify(data,"\t",true,true))
 
 func run() -> void:
 	for arg in OS.get_cmdline_user_args():
