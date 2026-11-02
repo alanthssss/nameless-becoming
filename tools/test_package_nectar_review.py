@@ -5,6 +5,7 @@ native game runs, independent reviews, exports or player acceptance evidence.
 """
 from __future__ import annotations
 import copy
+import configparser
 import hashlib
 import json
 import os
@@ -114,6 +115,31 @@ class PackageTests(unittest.TestCase):
             self.assertIs(metadata['human_accepted'],False)
             self.assertIs(metadata['full_game_completed'],False)
             self.assertEqual(metadata['launcher_sha256'],self.export_record['launcher_sha256'])
+
+    @unittest.skipUnless(shutil.which('zsh'),'zsh required for actual launcher execution')
+    def test_default_launcher_profile_matches_godot_custom_user_directory(self):
+        project = configparser.ConfigParser(interpolation=None)
+        project.read_string('[godot_file]\n'+(tool.ROOT/'prototypes/swarm-flight/project.godot').read_text())
+        application = project['application']
+        self.assertTrue(application.getboolean('config/use_custom_user_dir'))
+        profile = json.loads(application['config/custom_user_dir_name'])
+        expected = Path.home()/'Library/Application Support'/profile/tool.SAVE_NAME
+        main = (tool.ROOT/'prototypes/swarm-flight/nectar_harvest_main.gd').read_text()
+        self.assertIn('const SAVE_PATH := "user://'+tool.SAVE_NAME+'"',main)
+        stage = self.root/'default launch fixture'; stage.mkdir()
+        tool.extract_export(self.export,stage)
+        command = stage/'开始采蜜小店.command'; command.write_text(tool.launcher_text(APP,EXE)); command.chmod(0o755)
+        # Exercise the actual command with no override, but prevent its mkdir
+        # from touching any real user profile. The synthetic binary only records args.
+        helpers = self.root/'test helpers'; helpers.mkdir()
+        mkdir = helpers/'mkdir'; mkdir.write_text('#!/bin/sh\nexit 0\n'); mkdir.chmod(0o755)
+        args_file = self.root/'default-args.txt'
+        env = dict(os.environ,NECTAR_TEST_ARGS=str(args_file),PATH=str(helpers)+os.pathsep+os.environ['PATH'])
+        subprocess.run([str(command)],env=env,check=True)
+        args = args_file.read_text().splitlines()
+        self.assertIn('--nectar-harvest',args)
+        self.assertEqual([arg for arg in args if arg.startswith('--progress-file=')],['--progress-file='+str(expected)])
+        self.assertNotIn(str(stage/'存档'),args_file.read_text())
 
     @unittest.skipUnless(shutil.which('zsh'),'zsh required for actual launcher execution')
     def test_exact_launcher_runs_expected_binary_and_only_explicit_isolated_override(self):

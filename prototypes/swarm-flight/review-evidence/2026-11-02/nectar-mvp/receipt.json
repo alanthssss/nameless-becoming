@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "goal": "nectar-harvest-mvp",
+  "claim": "candidate",
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "human_acceptance_claim": false,
+  "blockers": [],
+  "warnings": [
+    {
+      "message": "Godot ObjectDB cleanup warning occurs on some headless/export exits.",
+      "disposition": "nonblocking",
+      "reason": "Observed normal process exit0 with flushed valid save and successful cold continuation; no error during gameplay. Native full-route runs have no script errors. This is not claimed resolved."
+    }
+  ],
+  "evidence": [
+    {
+      "criterion": "NH-C01",
+      "kind": "technical",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C01.json",
+      "sha256": "2cd8673b2339f36ea7088928cd182d1866cf3a196410887430da3c6d222dc452"
+    },
+    {
+      "criterion": "NH-C02",
+      "kind": "technical",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C02.json",
+      "sha256": "effe53a5edda0d2b73adc4d6c853baa09ca2b8fece9348bb90c485bd1f7cc96f"
+    },
+    {
+      "criterion": "NH-C03",
+      "kind": "technical",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C03.json",
+      "sha256": "f7e46fd5d8c69efea2db4c78710684cf812300cb3d339f2dbea144b85b31a8d2"
+    },
+    {
+      "criterion": "NH-C04",
+      "kind": "technical",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C04.json",
+      "sha256": "24a766e19c7603d4fe842047d383b4d4b2f844dc85efdef2bf4d1081413bf6bf"
+    },
+    {
+      "criterion": "NH-C05",
+      "kind": "in_engine_visual",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C05.json",
+      "sha256": "d43ac6cca68619a12ca2b7260dd408f3834614d5d8d62b43ba0b23fb779b7ba7"
+    },
+    {
+      "criterion": "NH-C06",
+      "kind": "content_review",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C06.json",
+      "sha256": "ce9926caed693c3d49538bbbb5a83e860d98fee01df36965ebfc778664e0eff3"
+    },
+    {
+      "criterion": "NH-C07",
+      "kind": "technical",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C07.json",
+      "sha256": "32960a2884977f9a9cee58e1280715f49398d8a212118d2e327091344ee9a079"
+    },
+    {
+      "criterion": "NH-C08",
+      "kind": "production_record",
+      "status": "passed",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "path": "NH-C08.json",
+      "sha256": "83f88027b4694de4cf15df91f1fb315c4029ab0d7c57cedfbd1c1670215d5e4a"
+    }
+  ]
+}

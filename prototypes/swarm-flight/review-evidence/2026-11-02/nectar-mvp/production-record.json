@@ -1,0 +1,28 @@
+{
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "observed_start": "2026-11-02T03:08:57Z",
+  "observed_end": "2026-11-02T05:33:06.997937+00:00",
+  "coverage": "Main task observed wall interval; interrupted approx03:19–03:51:37 UTC and background rendering wait approx04:26–04:45 UTC kept separate. No continuous active/billed metering. Parallel agent intervals overlap and are not summed. Includes implementation, debugging, native media, export and review; PR integration/cleanup recorded later.",
+  "active": null,
+  "billed": null,
+  "cumulative": null,
+  "remaining": null,
+  "new_purchases": 0,
+  "limit_hours": [
+    200,
+    40
+  ],
+  "automation": "PAUSED",
+  "estimate_minutes": [
+    90,
+    120
+  ],
+  "overrun_explanation": "Wall duration includes user interruption, failed background frame waiting, and repeated cold-test precision/type diagnostics; no runtime save rules were loosened. Actual active work cannot be inferred exactly from wall time.",
+  "subtask_observed_intervals": [
+    "model:03:14:28–03:19:03 UTC",
+    "packaging:03:53:33–03:59:50 UTC"
+  ],
+  "new_image_generation": 0,
+  "recommendation": "Deliver this bounded MVP for Alan to assess the Shelldiver-like core loop; do not add systems before feedback. Full-game and cost acceptance remain #211.",
+  "human_acceptance_claim": false
+}

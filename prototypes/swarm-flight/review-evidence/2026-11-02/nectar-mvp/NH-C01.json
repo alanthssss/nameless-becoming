@@ -1,0 +1,16 @@
+{
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "status": "passed",
+  "method": "native_input",
+  "summary": "87/0 ordinary native input checks, 12 trips, actual E harvest / full cargo / hive sell / growth clicks; no granted resources.",
+  "blockers": [],
+  "warnings": [],
+  "artifacts": [
+    {
+      "path": "candidate-evidence/route-result.json",
+      "sha256": "a484573b98481e75bfe87e1d9150d65a889550cca3491e8291effb8f116566ab",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "input_trace"
+    }
+  ]
+}

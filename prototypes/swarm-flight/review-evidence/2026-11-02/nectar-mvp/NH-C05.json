@@ -1,0 +1,38 @@
+{
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "status": "passed",
+  "method": "native_visual",
+  "summary": "Native1280/960 inspected; two UI defects fixed and independently rechecked. UI6 captured runtime identical to frozen revision (only excluded probe serializer changed later).",
+  "blockers": [],
+  "warnings": [],
+  "artifacts": [
+    {
+      "path": "ui-native-6/06-small-window.png",
+      "sha256": "9464a36381ae00ba54bd4c9df1082d2a5d3bbeaeebe699cb0e56e2b9fadfc762",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "native_frame"
+    },
+    {
+      "path": "candidate-evidence/08-shortcut-unlocked.png",
+      "sha256": "df2fb712645b482a9199c94252e7ec0b8ac869c66f21274b918e9fd8bd547cff",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "native_frame"
+    },
+    {
+      "path": "ui-native-6/07-purple-meadow.png",
+      "sha256": "b53a1f45311e6a37f06023a958c58ab8809806a3771a7dfee50346ee67d637dd",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "native_frame"
+    }
+  ],
+  "viewport_sizes": [
+    [
+      960,
+      600
+    ],
+    [
+      1280,
+      800
+    ]
+  ]
+}

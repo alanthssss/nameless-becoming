@@ -244,7 +244,7 @@ def launcher_text(app_name, executable):
     return f'''#!/bin/zsh
 set -eu
 cd -- "$(dirname -- "$0")"
-nectar_save="$PWD/存档/{SAVE_NAME}"
+nectar_save="$HOME/Library/Application Support/BeforeTheRain/{SAVE_NAME}"
 while (( $# )); do
   case "$1" in
     --progress-file=*) nectar_save="${{1#--progress-file=}}"; shift ;;
