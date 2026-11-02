@@ -1,0 +1,18 @@
+{
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "status": "passed",
+  "method": "rules_test",
+  "summary": "169 checks, zero failures; economy, 12 upgrades, save validation/rollback, rescue, rain shelter and 30/60 FPS full purchase routes.",
+  "blockers": [],
+  "warnings": [],
+  "artifacts": [
+    {
+      "path": "rules.log",
+      "sha256": "88698c9f00eed86a059ab4fc44e989d52d6d62a689481048422f323248f8862a",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "rules_log"
+    }
+  ],
+  "checks": 169,
+  "failures": 0
+}

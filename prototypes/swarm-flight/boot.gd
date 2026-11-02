@@ -9,4 +9,5 @@ func _ready() -> void:
 	if "--bee-dance" in OS.get_cmdline_user_args(): scene = "res://bee_dance.tscn"
 	if "--sign-keeper" in OS.get_cmdline_user_args(): scene = "res://sign_keeper.tscn"
 	if "--spring-journey" in OS.get_cmdline_user_args(): scene = "res://spring_journey.tscn"
+	if "--nectar-harvest" in args or OS.has_feature("nectar_mvp"): scene="res://nectar_harvest.tscn"
 	get_tree().change_scene_to_file.call_deferred(scene)

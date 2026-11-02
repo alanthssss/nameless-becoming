@@ -1,5 +1,7 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
+**2026-11-02 · 采蜜小店0.19候选已构建。** 现有蜜蜂、花园与故事已组成采集→售卖→12项成长→两处花地/近道→储粮完成的循环。[玩法与范围](docs/design/swarm-flight-gdd.md#nectar-harvest-mvp) · [构建与验证回执](prototypes/swarm-flight/review-evidence/2026-11-02/nectar-mvp/README.md) · [唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。旧0.18与旧档保留；新版等待Alan整包试玩判断。
+
 **2026-11-01 · 池岸归途0.18.0候选收口快照。** Alan对0.17.0“元素堆在一起、没有设计和节奏”判0分，整体产品评审失败。授权重编已形成冻结运行版本`75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0`：从池边出发、选路穿雨、帮助邻居到回巢，完整主线已取得同版技术验证及独立AI无攻略探索证据，可选行动另按实际验证范围记录。最终包已完成双入口启动、保存、退出、冷续与存档隔离复验，可交整体产品判断；PR #263的集成收口由主任务完成，远端状态以原Issue回读为准。候选不等于Alan接受或MVP已修好。[本轮设计与证据边界](docs/design/swarm-flight-gdd.md#pond-journey-finish-plan) · [试玩与保存说明](prototypes/swarm-flight/README.md)。
 
 **当前产品边界。** 目标仍为24关；新池岸归途使用独立存档，原0.17包、旧档与获认可长关保留。独立AI探索已完成结尾，但不是真人试玩或趣味验收；历史82个源用途、7组组合的限定门禁也不能代签新版整段产品质量。累计成本、可靠剩余与完整内容产能仍未知，200＋40小时控制和10月29日检查点不重置，自动化暂停。动态下一动作只看[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)，产品/成本判断见[成熟度评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。以下“最新/当前”仅指各自历史日期。

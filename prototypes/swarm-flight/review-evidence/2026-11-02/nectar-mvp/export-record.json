@@ -1,0 +1,13 @@
+{
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "engine": "4.6.2",
+  "sha256": "c4fc01c8eeb04e388e7b90f77b9ab40817560c7f87477c25c24286cdaa97af6c",
+  "entry": "nectar-harvest",
+  "custom_features": [
+    "nectar_mvp"
+  ],
+  "save_filename": "nectar_harvest_v1.json",
+  "launcher_sha256": "4417c34c36ec4059542adae276c72c818e4ffb0704e1805e3333e8a17e535c90",
+  "app": "/private/tmp/nameless-nectar-harvest-mvp/outputs/nectar-mvp/candidate-app/雨来之前 · 采蜜小店 0.19.0.app",
+  "executable": "雨来之前 · 采蜜小店 0.19.0"
+}

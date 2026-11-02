@@ -1,0 +1,34 @@
+{
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "status": "passed",
+  "method": "native_save_restore",
+  "summary": "Cold process3/0. save-before and cold-loaded byte identical; real continued movement changes only p/v/energy. Expected JSON is schema validated and typed before exact full payload comparison.",
+  "blockers": [],
+  "warnings": [],
+  "artifacts": [
+    {
+      "path": "candidate-evidence/cold-result.json",
+      "sha256": "50d88dad79cd3a6e0a7b7a41b1576283a60855bc2eb9bf02d45139bf3fb7d414",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "input_trace"
+    },
+    {
+      "path": "candidate-evidence/save-before.json",
+      "sha256": "0148978a388f44f750500f71d8f96193fdbb0fbb27e9a0e00617c92e30d86444",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "save_before"
+    },
+    {
+      "path": "candidate-evidence/save-after.json",
+      "sha256": "25d07d904346a19a5a2a417ac802a9b3ee9f8c54ba9eadd1c56312c4e7aa55c8",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "save_after"
+    },
+    {
+      "path": "candidate-evidence/cold-loaded.json",
+      "sha256": "0148978a388f44f750500f71d8f96193fdbb0fbb27e9a0e00617c92e30d86444",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "cold_loaded"
+    }
+  ]
+}

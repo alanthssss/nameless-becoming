@@ -1,0 +1,30 @@
+{
+  "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+  "status": "passed",
+  "method": "production_record",
+  "summary": "Observed intervals and unknown active/cumulative/remaining retained; no purchase; candidate only, PR/CI status explicit.",
+  "blockers": [],
+  "warnings": [],
+  "artifacts": [
+    {
+      "path": "production-record.json",
+      "sha256": "65f8ee2e2f9758bdebdca354bbc0c7801f9d807f2271fd463307543028c171a2",
+      "revision": "b643fe85285eae08dbb8bb38c4f7c9d6682eac15",
+      "role": "production_record"
+    }
+  ],
+  "cost": {
+    "observed_start": "2026-11-02T03:08:57Z",
+    "observed_end": "2026-11-02T05:33:06.997937+00:00",
+    "coverage": "Main task observed wall interval; interrupted approx03:19–03:51:37 UTC and background rendering wait approx04:26–04:45 UTC kept separate. No continuous active/billed metering. Parallel agent intervals overlap and are not summed. Includes implementation, debugging, native media, export and review; PR integration/cleanup recorded later.",
+    "active": null,
+    "billed": null,
+    "cumulative": null,
+    "remaining": null,
+    "new_purchases": 0
+  },
+  "tracking": "GitHub M3 #264–271 active/review, #211 remains open; writes read back. Now is sole queue.",
+  "ci": "b643fe8 all substantive CI suites successful; aggregate completion checked before merge.",
+  "integration": "PR272 open pending final package/integration closeout; not yet claimed merged.",
+  "human_acceptance_claim": false
+}
