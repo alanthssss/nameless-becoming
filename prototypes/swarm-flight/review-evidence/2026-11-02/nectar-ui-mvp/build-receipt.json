@@ -20,11 +20,11 @@
     "packager": 51
   },
   "NH_GT": {
-    "01": "passed: zero-economy departures/sales and first choice in two native routes",
-    "02": "passed: progressive reveal, locked/max inspection, per-rank purchase, no rapid or OS-double purchase",
-    "03": "passed: original-byte v1 backup, retained history, v2 cold read and failure rollback",
-    "04": "passed: both OR branches and actual dual-source depletion; no mandatory market/full tree",
-    "05": "passed at developer/AI evidence scope: two distinct ordinary-input purchase sequences; no human pacing conclusion"
+    "01": "passed internally: 9 paid display nodes/12 rank purchases/free root, exact costs/effects, one-rank confirmation and max inspection",
+    "02": "passed internally: AND/OR, three-growth and purple-sale boundaries; actual shortcut and twin completion without market/full tree",
+    "03": "passed internally: independent bag/wings order, inherited v1 early ownership/completed/corrupt/failure cases, disk and native cold recovery, unchanged legacy bytes",
+    "04": "passed internally: mouse/keyboard, 960x600/1280x800, inspectable locks/ranks/cost/effect, focus and double-click, actual dual-flower/shortcut feedback and optional market",
+    "05": "developer process portion completed: two full actual purchase sequences retained; Alan or unfamiliar player observation of understanding, choice reasons and pacing remains pending in #211"
   },
   "scope_limits": [
     "Two existing regions; no new levels/currencies/companions.",
