@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "goal": "nectar-harvest-mvp",
+  "source": "docs/design/swarm-flight-gdd.md",
+  "gdd_section": "13.7; NH-C01–08",
+  "claim": "candidate",
+  "entry": "nectar-harvest",
+  "save_filename": "nectar_harvest_v1.json",
+  "engine": "4.6.2",
+  "criteria": [
+    {"id":"NH-C01","kind":"technical","methods":["native_input"],"roles":["input_trace"],"requirement":"Ordinary input completes harvest, full cargo, sale and purchase with consistent feedback."},
+    {"id":"NH-C02","kind":"technical","methods":["native_input"],"roles":["input_trace"],"requirement":"Both regions, flower contacts, unlock requirements and two-way shortcut are actually usable."},
+    {"id":"NH-C03","kind":"technical","methods":["rules_test"],"roles":["rules_log"],"requirement":"Twelve upgrades, economy, reserve completion and invalid/duplicate transactions pass rules checks."},
+    {"id":"NH-C04","kind":"technical","methods":["native_save_restore"],"roles":["input_trace","save_before","save_after"],"requirement":"Pause/focus loss clears input; actual shutdown and cold resume preserve current and permanent state without legacy-save interference."},
+    {"id":"NH-C05","kind":"in_engine_visual","methods":["native_visual"],"roles":["native_frame"],"requirement":"Native 960x600 and 1280x800 presentation is readable, coherent and spatially credible."},
+    {"id":"NH-C06","kind":"content_review","methods":["independent_read_only","independent_interactive"],"roles":["review_notes","continuous_video"],"requirement":"Complete ordinary-input native media and independent review, with no unresolved basic defect and honest actor/evidence boundaries."},
+    {"id":"NH-C07","kind":"technical","methods":["export_launch"],"roles":["exported_input_trace","save_before","save_after","legacy_save_before","legacy_save_after"],"requirement":"Same frozen source/export, direct app and maintained command entry, input, save, exit, cold resume and old-save isolation are tested; old-save hashes correspond to retained before/after bytes."},
+    {"id":"NH-C08","kind":"production_record","methods":["production_record"],"roles":["production_record"],"requirement":"Measured effort and unknowns, tracking readback, CI/integration state and candidate-only status are recorded accurately."}
+  ]
+}
