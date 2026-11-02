@@ -97,7 +97,10 @@ func run() -> void:
 	await frames(12)
 	if resume_check:
 		var expected = JSON.parse_string(FileAccess.get_file_as_string(output.path_join("save-before.json")))
-		check(game.has_save and game.model.to_payload() == expected,"cold process restores exact persisted state before continuation")
+		var expected_model = Model.new()
+		var expected_valid: bool = expected_model.restore_payload(expected)
+		check(game.has_save and expected_valid and game.model.to_payload() == expected_model.to_payload(),"cold process restores exact persisted state before continuation")
+		save_json("cold-loaded.json",game.model.to_payload())
 		await capture("11-cold-title")
 		await tap(KEY_ENTER)
 		check(game.mode == "play","actual continue input resumes exported-independent scene")
