@@ -4,6 +4,8 @@ const View = preload("res://nectar_harvest_view.gd")
 const Interface = preload("res://nectar_harvest_ui.gd")
 const Save = preload("res://save_data.gd")
 const Sound = preload("res://sound.gd")
+const Migration = preload("res://nectar_save_migration.gd")
+signal presentation_changed
 const SAVE_PATH := "user://nectar_harvest_v1.json"
 var model = Model.new()
 var world
@@ -26,19 +28,18 @@ var low_energy_announced := false
 var event_log: Array[Dictionary] = []
 
 func _ready() -> void:
-	get_window().title = "雨来之前 · 采蜜小店 MVP"
+	get_window().title = "雨来之前 · 采蜜小店 0.20"
 	get_tree().auto_accept_quit = false
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--nectar-qa": test_mode = true
 		if arg.begins_with("--progress-file="): saved_path = arg.trim_prefix("--progress-file=")
 	# The new mode must never overwrite a named legacy journey save.
 	if "journey" in saved_path.get_file(): saved_path = SAVE_PATH
-	var existed := FileAccess.file_exists(saved_path)
-	var data := Save.read_payload(saved_path,Model.new())
-	if not data.is_empty():
-		has_save = model.restore_payload(data)
+	var loaded := Migration.load_progress(saved_path)
+	if loaded.ok:
+		has_save = model.restore_payload(loaded.payload)
 		model.clear_controls()
-	elif existed:
+	elif loaded.blocked:
 		save_blocked = true
 	world = View.new()
 	world.model = model
@@ -59,6 +60,7 @@ func _process(delta: float) -> void:
 	toast_left = maxf(0,toast_left-dt)
 	sound_cooldown = maxf(0,sound_cooldown-dt)
 	if mode == "play":
+		var old_hud := _hud_signature()
 		played_seconds += dt
 		var move := Vector2(float(down(KEY_D) or down(KEY_RIGHT))-float(down(KEY_A) or down(KEY_LEFT)),float(down(KEY_S) or down(KEY_DOWN))-float(down(KEY_W) or down(KEY_UP))).limit_length()
 		var collecting: bool = (down(KEY_E) or mouse_collect) and not model.at_home()
@@ -74,20 +76,27 @@ func _process(delta: float) -> void:
 			low_energy_announced = true
 			message("续航不多了 · 带着花蜜回蜂巢吧",4)
 		if model.at_home(): low_energy_announced = false
+		if old_hud != _hud_signature(): presentation_changed.emit()
 	else:
 		world.collecting = false
-	world.presentation_active = mode in ["play","shop","complete"]
+	world.presentation_active = mode in ["play","shop","tree","complete"]
 	if is_instance_valid(sound):
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
-	ui.refresh()
+
+func _hud_signature() -> String:
+	return str([int(ceil(model.energy)),model.cargo,model.coins,model.owned,model.phase,model.at_home(),model.p.x > model.GATE_X,model.p.x > 1610,model.rain_exposed(),model.trip_index,model.rose_sold])
 
 func down(key: Key) -> bool: return bool(held.get(key,false))
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and is_instance_valid(ui) and ui.tree_key(event):
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		var key: Key = event.physical_keycode if event.physical_keycode != 0 else event.keycode
 		if key == KEY_ESCAPE:
-			if mode == "shop": close_shop()
+			if mode == "tree": close_tree()
+			elif mode == "shop": close_shop()
 			elif mode == "play": pause_game()
 			elif mode == "pause": start_game()
 			elif mode == "complete": start_game()
@@ -108,7 +117,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if key == KEY_F and event.pressed:
 			if model.use_shortcut(): persist()
 			return
-		held[key] = event.pressed
+		if event.pressed and key in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,KEY_E,KEY_SPACE]: held[key] = true
+		else: held.erase(key)
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		mouse_collect = event.pressed
 
@@ -148,6 +158,18 @@ func close_shop() -> void:
 	ui.show_mode(mode)
 	get_viewport().gui_release_focus()
 
+func open_tree() -> void:
+	if mode != "shop" or not model.at_home(): return
+	release_controls()
+	mode = "tree"
+	ui.show_mode(mode)
+
+func close_tree() -> void:
+	if mode != "tree": return
+	release_controls()
+	mode = "shop"
+	ui.show_mode(mode)
+
 func sell_cargo() -> void:
 	if mode != "shop": return
 	var candidate = Model.new()
@@ -159,7 +181,7 @@ func sell_cargo() -> void:
 		ui.refresh()
 
 func buy_upgrade(id: String) -> void:
-	if mode != "shop": return
+	if mode != "tree": return
 	var candidate = Model.new()
 	if not candidate.restore_payload(model.to_payload()): return
 	if not candidate.buy(id):
@@ -222,6 +244,7 @@ func quit_game() -> void:
 func message(words: String,seconds := 3.0) -> void:
 	toast_text = words
 	toast_left = seconds
+	if is_instance_valid(ui) and is_instance_valid(ui.toast_timer): ui.show_toast(words,seconds)
 
 func consume_events(pending: Array) -> void:
 	for event in pending:
@@ -249,5 +272,8 @@ func consume_events(pending: Array) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		quit_game()
-	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT and not test_mode and mode == "play" and is_instance_valid(ui):
-		pause_game()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT and not test_mode and is_instance_valid(ui):
+		release_controls()
+		ui.enter_held = false
+		ui.purchase_double_click = false
+		if mode == "play": pause_game()
