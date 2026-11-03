@@ -297,7 +297,7 @@ func run() -> void:
 	await transition_settled()
 	await fly_to(Vector2(640,480))
 	key(KEY_E,true)
-	await transition_settled()
+	await frames(20)
 	key(KEY_E,false)
 	await tap(KEY_ESCAPE)
 	save_json("save-before.json",game.model.to_payload())

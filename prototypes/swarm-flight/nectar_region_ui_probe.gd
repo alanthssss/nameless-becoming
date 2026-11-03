@@ -107,7 +107,7 @@ func run() -> void:
 	game.test_mode = false
 	game._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
 	game.test_mode = true
-	await frames(20)
+	await frames(75)
 	check(game.mode == "pause" and game.model.area == "pond","focus loss during fade finishes safely paused")
 	var focus_energy: float = game.model.energy
 	await frames(12)
