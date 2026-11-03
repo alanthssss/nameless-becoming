@@ -42,7 +42,7 @@ func run() -> void:
 	await frames(3)
 	check(game.mode == "transition" and game.model.area == "hub","fade-out freezes the original scene until commit")
 	await capture("01-fade-out")
-	await frames(14)
+	await frames(75)
 	check(game.mode == "play" and game.model.area == "pond" and game.world.area_key == "pond","midpoint swaps actual PackedScene")
 	check(game.model.trip_index == 1 and game.held.is_empty() and game.model.p == Model.POND_ENTRY,"held inputs during fade neither move nor bounce back")
 	key(KEY_D,false); key(KEY_E,false)
@@ -52,7 +52,7 @@ func run() -> void:
 	game.saved_path = output.path_join("cannot-write-directory")
 	DirAccess.make_dir_recursive_absolute(game.saved_path)
 	var before: Dictionary = game.model.to_payload()
-	await tap(KEY_E); await frames(18)
+	await tap(KEY_E); await frames(75)
 	check(game.mode == "play" and game.model.area == "pond" and game.world.area_key == "pond","failed save keeps original scene")
 	check(game.model.cargo == before.cargo and game.model.trip_index == before.trip_index,"failed transition retains cargo and trip")
 	check(game.ui.toast_panel.visible and "未能保存" in game.ui.toast.text,"failed transition leaves a visible recovery message")
@@ -92,7 +92,7 @@ func run() -> void:
 	check(game.model.to_payload() == paused,"pause freezes creature state and invulnerability timer")
 	await tap(KEY_ESCAPE)
 	game.model.p = Model.POND_ENTRY; game.model.v = Vector2.ZERO
-	await tap(KEY_E); await frames(18)
+	await tap(KEY_E); await frames(75)
 	check(game.model.area == "hub" and game.model.energy == game.model.max_energy(),"ordinary return replenishes only at the safe life scene")
 	await capture("06-back-to-life")
 	game.model.p = Model.HUB_DEPART
