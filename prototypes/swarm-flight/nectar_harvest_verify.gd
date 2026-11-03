@@ -21,35 +21,50 @@ func field(m,where: Vector2) -> void:
 	m.p = where
 	m.v = Vector2.ZERO
 	m.phase = "field"
+	m.area = "meadow" if where.x > Model.GATE_X else "pond"
 	m.trip_index = maxi(1,m.trip_index)
 	m.energy = m.max_energy()
+	m.creatures = Model.Encounters.layout(m.trip_index)
+	for creature in m.creatures: creature.state = "gone"
 	if where.x > Model.GATE_X: m.visited_meadow = true
 
 func home(m) -> void:
 	m.p = Model.HOME
 	m.v = Vector2.ZERO
 	m.phase = "home"
+	m.area = "hub"
+	m.hurt_left = 0.0
 	m.energy = m.max_energy()
 	m.clear_controls()
 	m.burst_left = 0.0
 
+func travel(m,target: Vector2,dt: float,digital: bool) -> bool:
+	# Movement fixtures use the same explicit gate request as the native E input.
+	if target == Model.HOME and m.area != "hub":
+		var entry: Vector2 = Model.POND_ENTRY if m.area == "pond" else Model.MEADOW_ENTRY
+		if not local_fly(m,entry,dt,digital) or not m.transition_to("hub"): return false
+	elif target != Model.HOME:
+		var destination := "meadow" if target.x > Model.GATE_X else "pond"
+		if m.area == "hub":
+			if not local_fly(m,Model.HUB_DEPART,dt,digital) or not m.transition_to(destination): return false
+		elif m.area != destination:
+			var gate: Vector2 = Model.POND_EXIT if m.area == "pond" else Model.MEADOW_ENTRY
+			if not local_fly(m,gate,dt,digital) or not m.transition_to(destination): return false
+	return local_fly(m,target,dt,digital)
+
 func fly(m,target: Vector2) -> bool:
-	for frame in 2400:
-		var delta: Vector2 = target-m.p
-		if delta.length() < 9.0:
-			tick(m,0.15)
-			return true
-		m.step(1.0/60.0,delta.normalized(),false,false)
-	return false
+	return travel(m,target,1.0/60.0,false)
 
 func fly_input_frames(m,target: Vector2,dt: float) -> bool:
-	# Match the native route's digital WASD thresholds and six release frames.
-	for frame in 1600:
+	return travel(m,target,dt,true)
+
+func local_fly(m,target: Vector2,dt: float,digital: bool) -> bool:
+	for frame in 2400:
 		var delta: Vector2 = target-m.p
-		if delta.length() < 16.0:
+		if delta.length() < (16.0 if digital else 9.0):
 			for released in 6: m.step(dt,Vector2.ZERO,false,false)
 			return true
-		var move := Vector2(float(delta.x > 8)-float(delta.x < -8),float(delta.y > 8)-float(delta.y < -8))
+		var move: Vector2 = Vector2(float(delta.x > 8)-float(delta.x < -8),float(delta.y > 8)-float(delta.y < -8)) if digital else delta.normalized()
 		m.step(dt,move.limit_length(),false,false)
 	return false
 
@@ -212,15 +227,15 @@ func run() -> void:
 	empty.flowers[0].stock = 0
 	check(fly(empty,Vector2(500,575)) and empty.flowers[0].stock == 12 and empty.trip_index == 2,"empty return does not block next-trip replenishment")
 	var edge = Model.new()
-	edge.p = Model.HOME+Vector2(160,0)
-	tick(edge,0.3)
-	check(edge.phase == "home" and edge.trip_index == 0,"home-side hysteresis does not start trips at 160px")
-	edge.p = Model.HOME+Vector2(181,0)
-	edge.step(1.0/60.0,Vector2.ZERO,false,false)
+	edge.p = Model.HUB_DEPART
+	tick(edge,0.3,Vector2.RIGHT)
+	check(edge.area == "hub" and edge.trip_index == 0,"walking across the hub never auto-starts an expedition")
+	edge.p = Model.HUB_DEPART
+	check(edge.transition_to("pond"),"departure requires explicit gate interaction")
 	edge.flowers[0].stock = 3
-	edge.p = Model.HOME+Vector2(160,0)
+	edge.p = Model.POND_ENTRY
 	tick(edge,0.3)
-	check(edge.phase == "field" and edge.trip_index == 1 and edge.flowers[0].stock == 3,"field-side hysteresis prevents boundary refill exploit")
+	check(edge.area == "pond" and edge.trip_index == 1 and edge.flowers[0].stock == 3,"standing on entry never refills or auto-returns")
 	var rescued = Model.new()
 	field(rescued,Vector2(900,400))
 	rescued.cargo = {"blue":10,"rose":0}
@@ -248,8 +263,8 @@ func run() -> void:
 	check(growth.buy("bag2") and growth.capacity() == 48,"larger bag expands carrying limit")
 	check(growth.buy("wings2") and growth.max_energy() == 145.0,"final wings expand endurance")
 	check(growth.buy("meadow"),"three base ranks permit meadow unlock")
-	field(growth,Vector2(1750,400))
-	tick(growth,0.5,Vector2.RIGHT)
+	field(growth,Model.POND_EXIT)
+	check(growth.transition_to("meadow"),"unlocked gate explicitly switches region")
 	check(growth.p.x > Model.GATE_X and growth.visited_meadow,"unlock opens actual movement into new area")
 	check(not growth.buy("shortcut"),"buy is denied outside home")
 	field(growth,growth.flowers[7].pos)
@@ -308,7 +323,7 @@ func run() -> void:
 	reject(copy,bad,"unopened far flowers harvested")
 	bad = valid.duplicate(true); bad.extra = true
 	reject(copy,bad,"unexpected save field")
-	bad = valid.duplicate(true); bad.version = 3
+	bad = valid.duplicate(true); bad.version = 4
 	reject(copy,bad,"unsupported schema")
 	bad = valid.duplicate(true); bad.completed = true
 	reject(copy,bad,"false milestone flag")

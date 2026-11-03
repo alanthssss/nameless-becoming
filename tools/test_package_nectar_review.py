@@ -50,7 +50,7 @@ class PackageTests(unittest.TestCase):
             for role in row['roles']:
                 suffix = '.mp4' if role == 'continuous_video' else '.png' if role == 'native_frame' else '.log' if role == 'rules_log' else '.json'
                 path = self.root/(row['id']+'-'+role+suffix)
-                content = (json.dumps({'synthetic_fixture':True,'id':'nectar-harvest-v1','version':2}).encode()
+                content = (json.dumps({'synthetic_fixture':True,'id':'nectar-harvest-v1','version':3}).encode()
                            if role in {'save_before','save_after'} else b'SYNTHETIC TEST DATA; not actual game evidence\n')
                 path.write_bytes(content)
                 artifact = {'role':role,'path':path.name,'sha256':tool.digest(path),'revision':REVISION}

@@ -1,9 +1,12 @@
 extends "res://world_view.gd"
 ## Reuses the painted garden family. Every harvest centre comes from the model.
+@export var area_key := "hub"
+const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
 var collecting := false
 var nectar_motes: Array[Dictionary] = []
 var harvest_texts: Array[Dictionary] = []
 var celebration := 0.0
+var departing_creatures: Array[Dictionary] = []
 
 func _ready() -> void:
 	_rng.seed = 2601102
@@ -13,6 +16,10 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	clock += delta
+	for creature in departing_creatures:
+		creature.age += delta
+		creature.pos += creature.face*delta*240+Vector2(0,-100)*delta
+	departing_creatures = departing_creatures.filter(func(c): return c.age < 0.65)
 	celebration = maxf(0.0, celebration-delta)
 	for mote in nectar_motes:
 		mote.age += delta
@@ -26,6 +33,15 @@ func _process(delta: float) -> void:
 func nectar_event(event: Dictionary) -> void:
 	var kind: String = event.get("kind", "")
 	var at: Vector2 = event.get("pos", model.p)
+	if kind == "repel":
+		for creature in model.creatures:
+			if creature.id == event.get("id", ""):
+				var flying: Dictionary = creature.duplicate(true)
+				flying.state = "flee"
+				flying.age = 0.0
+				flying.face = Vector2.RIGHT if creature.pos.x >= model.p.x else Vector2.LEFT
+				departing_creatures.append(flying)
+				break
 	if kind == "harvest":
 		for i in 3:
 			nectar_motes.append({"from":at+Vector2(_rng.randf_range(-12,12),_rng.randf_range(-12,12)),"age":-i*0.035,"duration":0.42,"gold":event.get("type", "blue") == "rose"})
@@ -40,21 +56,30 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO)
 	SampleLandscape.background(self,0,model.camera_x,clock,0,0)
 	# A broad atmosphere shift accompanies the second flower meadow.
-	var far_mix: float = clampf((model.camera_x-700.0)/1500.0,0.0,1.0)
+	var far_mix: float = 1.0 if area_key == "meadow" else 0.0
 	draw_rect(Rect2(0,0,1280,800),Color(0.69,0.60,0.87,far_mix*0.07))
 	_world_offset = Vector2(-model.camera_x,0)
 	draw_set_transform(_world_offset)
-	_draw_home()
-	_draw_boundary()
-	_draw_leaf_stop(Vector2(1420,565),93)
-	if "meadow" in model.owned:
-		_draw_leaf_stop(model.RAIN_SHELTER.pos,model.RAIN_SHELTER.half_width)
-	for flower in model.flowers:
-		if flower.pos.x > model.camera_x-150 and flower.pos.x < model.camera_x+1430:
-			_draw_source(flower)
-	_draw_shortcut(Vector2(1040,400),false)
-	_draw_shortcut(Vector2(3000,400),true)
-	_draw_rain()
+	if area_key == "hub":
+		_draw_hub()
+	else:
+		if area_key == "pond":
+			_draw_leaf_stop(Vector2(1420,565),93)
+			_draw_shortcut(Vector2(1040,400),false)
+		else:
+			_draw_leaf_stop(model.RAIN_SHELTER.pos,model.RAIN_SHELTER.half_width)
+			_draw_shortcut(Vector2(3000,400),true)
+			_draw_rain()
+		for flower in model.flowers:
+			if int(flower.region) == (0 if area_key == "pond" else 1) and flower.pos.x > model.camera_x-150 and flower.pos.x < model.camera_x+1430:
+				_draw_source(flower)
+		for creature in model.creatures:
+			if int(creature.region) == (0 if area_key == "pond" else 1): _draw_creature(creature)
+		if area_key == "pond":
+			_draw_gate(Vector2(470,575),"回庭院",true)
+			_draw_gate(Vector2(1660,575),"前往紫花地", "meadow" in model.owned)
+		else: _draw_gate(Vector2(1900,575),"返程路牌",true)
+	for creature in departing_creatures: _draw_creature(creature)
 	if collecting and model.phase == "field" and model.cargo_total() < model.capacity():
 		draw_arc(model.p,model.harvest_radius(),0,TAU,64,Color(1.0,0.87,0.40,0.22),1.5,true)
 	for mote in nectar_motes:
@@ -63,7 +88,7 @@ func _draw() -> void:
 		var q: Vector2 = mote.from.lerp(model.p+Vector2(-7,7),t*t)
 		draw_circle(q,3.3*(1.0-t*0.35),Color("ffed87") if mote.gold else Color("d4f4ff"))
 		draw_circle(q+Vector2(-1,-1),1.1,Color.WHITE)
-	_bee(model.p,1.02,model.face,1.0,false,0.0)
+	_bee(model.p,1.02,model.face,0.45 if model.hurt_left > 0.0 and fmod(clock,0.16)<0.08 else 1.0,false,0.0)
 	_draw_bag()
 	for item in harvest_texts:
 		if feedback_font:
@@ -71,24 +96,72 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO)
 	SampleLandscape.foreground(self,model.camera_x,clock)
 
-func _draw_home() -> void:
-	if model.camera_x > 850: return
-	ArtProps.home(self,model.HOME+Vector2(-25,-22),0,1,0.70)
-	# The leaf counter and waiting bee are rooted in the tree's entrance.
-	var stand: Vector2 = model.HOME+Vector2(118,52)
-	ArtProps.stalk(self,stand,stand+Vector2(7,80),Vector2(370,760),Vector2(348,830),12)
-	ArtSprites.small_leaf(self,stand,stand+Vector2(-155,2),36)
-	_bee(stand+Vector2(-41,-18),0.75,Vector2.LEFT,1,false,1.7,"waiting")
-	ArtProps.decor(self,model.HOME+Vector2(10,96),"sign")
-	if feedback_font:
-		draw_string(feedback_font,model.HOME+Vector2(-27,103),"蜂巢小店",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("382d16"))
-	for i in mini(5,int(model.sold_total/30)):
-		var jar: Vector2 = stand+Vector2(-104+i*17,-7)
-		_oval(jar,Vector2(7,10),Color("e4ad42"),Color("78512a"),1.5)
-		draw_line(jar+Vector2(-5,-8),jar+Vector2(5,-8),Color("ffe8a1"),3,true)
+func _label(p: Vector2, words: String, active := false, width := 180.0) -> void:
+	p.x = clampf(p.x,model.camera_x+width*0.5+16,model.camera_x+1280-width*0.5-16)
+	var r := Rect2(p-Vector2(width*0.5,22),Vector2(width,42))
+	draw_style_box(_box_style(Color("294c3eea"),Color("edce83") if active else Color("98ab7d"),2,12),r)
+	if feedback_font: draw_string(feedback_font,p+Vector2(-width*0.5+13,7),words,HORIZONTAL_ALIGNMENT_LEFT,width-24,18,Color("fff1cc"))
+
+func _stand(p: Vector2, half: float) -> void:
+	ArtProps.stalk(self,p+Vector2(0,5),p+Vector2(18,110),p+Vector2(-21,210),Vector2(p.x,835),12)
+	ArtSprites.small_leaf(self,p+Vector2(half,0),p+Vector2(-half,-10),32)
+
+func _draw_hub() -> void:
+	# A quiet one-screen courtyard: each visual address has one main action.
+	ArtProps.home(self,Vector2(220,455),0,1,0.72)
+	_stand(Vector2(315,610),105)
+	_bee(Vector2(300,545),0.78,Vector2.RIGHT,1,false,1.7,"waiting")
+	for i in 4:
+		var jar := Vector2(246+i*29,597)
+		_oval(jar,Vector2(10,15),Color("d7a347"),Color("70542c"),2)
+		draw_line(jar+Vector2(-8,-12),jar+Vector2(8,-12),Color("f6dc91"),4,true)
+	_label(Vector2(300,405),"蜜铺 · 交付花蜜",model.interaction()=="shop",210)
+	_stand(Vector2(650,557),108)
+	_bee(Vector2(692,500),0.65,Vector2.LEFT,1,false,2.9,"waiting")
+	# Abstract hexagonal chart, resting on the leaf desk; not a hive building.
+	var hex := PackedVector2Array()
+	for i in 6: hex.append(Vector2(621,520)+Vector2.from_angle(PI/3*i)*27)
+	draw_colored_polygon(hex,Color("e8d99b"))
+	var outline := hex.duplicate(); outline.append(hex[0])
+	draw_polyline(outline,Color("807342"),3,true)
+	for point in hex:
+		draw_line(Vector2(621,520),point,Color("9ca16b"),1.5,true)
+		draw_circle(point,4,Color("edf0c6"))
+	_label(Vector2(640,365),"成长台 · 提升能力",model.interaction()=="tree",218)
+	_draw_gate(Vector2(1020,540),"路牌 · 选择目的地",true)
 	if model.completed:
-		for i in 3:
-			_bee(model.HOME+Vector2(50+i*42,-128+sin(clock*1.7+i)*8),0.58,Vector2.LEFT,1,false,float(i+3),"waiting")
+		_bee(Vector2(480,320+sin(clock)*5),0.6,Vector2.RIGHT,1,false,4.0,"waiting")
+
+func _draw_gate(p: Vector2, title: String, available: bool) -> void:
+	if p.x < model.camera_x-90 or p.x > model.camera_x+1370: return
+	var base := p+Vector2(0,65)
+	ArtProps.stalk(self,base+Vector2(0,-30),base+Vector2(8,40),base+Vector2(-9,140),Vector2(p.x,832),9)
+	ArtProps.decor(self,base,"sign")
+	ArtSprites.small_leaf(self,base+Vector2(3,80),base+Vector2(84,47),21)
+	if feedback_font:
+		draw_string(feedback_font,base+Vector2(-24,5),"→" if available else "锁",HORIZONTAL_ALIGNMENT_LEFT,-1,24,Color("4f512d"))
+	_label(p+Vector2(0,-60),title,model.p.distance_to(p)<=100,224 if area_key=="hub" else 180)
+	if not available and feedback_font:
+		draw_string(feedback_font,Vector2(clampf(p.x,model.camera_x+106,model.camera_x+1174)-79,p.y-23),"成长台开放后通行",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("4f623f"))
+
+func _draw_creature(creature: Dictionary) -> void:
+	if creature.state == "gone": return
+	var p: Vector2 = creature.pos
+	if p.x < model.camera_x-90 or p.x > model.camera_x+1370: return
+	var guard: bool = creature.kind == "guard"
+	var scale := 0.37 if guard else 0.30
+	var facing: Vector2 = creature.get("face",Vector2.RIGHT)
+	var mirror := -1.0 if facing.x < 0 else 1.0
+	var flutter := 1.0+sin(clock*32+p.x)*0.018
+	draw_set_transform(_world_offset+p,0.0,Vector2(mirror,flutter))
+	draw_texture_rect_region(CREATURE_ATLAS,Rect2(-Vector2(256,192)*scale*0.5,Vector2(256,192)*scale),Rect2(256,0,256,192),Color(1,1,1,1.0-float(creature.get("age",0))/0.65))
+	draw_set_transform(_world_offset)
+	if creature.state in ["warn","chase"]:
+		draw_circle(p+Vector2(0,-47),13,Color("a74d38") if guard else Color("b98537"))
+		if feedback_font: draw_string(feedback_font,p+Vector2(-4,-40),"!",HORIZONTAL_ALIGNMENT_LEFT,-1,20,Color("fff0c8"))
+		if creature.state == "warn": draw_arc(p,49,-PI*.8,PI*.8,36,Color("dd925d"),2,true)
+	elif model.p.distance_to(p)<210 and feedback_font:
+		draw_string(feedback_font,p+Vector2(-31,-45),"警戒蚊" if guard else "巡游蚊",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("435640"))
 
 func _draw_source(flower: Dictionary) -> void:
 	var p: Vector2 = flower.pos
@@ -154,7 +227,7 @@ func _draw_shortcut(p: Vector2, far: bool) -> void:
 		draw_string(feedback_font,p+Vector2(-48,-70),"F · 借风穿行",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("2c5544"))
 
 func _draw_rain() -> void:
-	if "meadow" not in model.owned: return
+	if area_key != "meadow": return
 	var left: float = 2600
 	var right: float = 2920
 	# A broad light shower in the far flower meadow, never a narrow invisible wall.

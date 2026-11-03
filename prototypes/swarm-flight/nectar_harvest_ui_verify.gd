@@ -75,7 +75,16 @@ func run() -> void:
 	await create_timer(2.0).timeout
 	key(KEY_D,false)
 	await frames(4)
-	check(game.model.p.x > 500 and game.model.phase == "field","real movement leaves hive and starts a trip")
+	check(game.model.p.x > 1000 and game.model.area == "hub" and game.model.trip_index == 0,"walking past stations never auto-departs or refreshes resources")
+	game.model.p = Model.HUB_DEPART
+	game.model.v = Vector2.ZERO
+	await tap(KEY_E)
+	check(game.mode == "regions" and game.ui.meadow_button.disabled,"departure sign opens destinations with locked meadow")
+	await capture("02b-destination-board")
+	await click(game.ui.pond_button)
+	check(game.mode == "transition","destination confirmation starts a distinct transition")
+	await create_timer(.5).timeout
+	check(game.model.area == "pond" and game.world.area_key == "pond" and game.model.trip_index == 1,"confirmed departure loads pond scene once")
 	# Targeted fixture positions are explicit; full journey coverage is separate.
 	game.model.p = Vector2(620,520)
 	game.model.v = Vector2.ZERO
@@ -97,8 +106,12 @@ func run() -> void:
 	check(not loaded.is_empty() and loaded.cargo.blue == old_cargo,"pause writes actual cargo to isolated disk")
 	await tap(KEY_ESCAPE)
 	check(game.mode == "play" and not game.model.charging,"resume does not trigger a held charge")
-	game.model.p = Model.HOME
+	game.model.p = Model.POND_ENTRY
 	game.model.v = Vector2.ZERO
+	await tap(KEY_E)
+	await create_timer(.5).timeout
+	check(game.model.area == "hub" and game.world.area_key == "hub","return portal loads courtyard scene")
+	game.model.p = Model.HUB_SHOP
 	await frames(3)
 	await tap(KEY_E)
 	check(game.mode == "shop","home E opens shop instead of harvesting")
@@ -107,6 +120,10 @@ func run() -> void:
 	await click(game.ui.sell_button)
 	check(game.model.cargo_total() == 0 and game.model.coins == old_cargo,"sell commits exact visible cargo value")
 	await click(game.ui.tree_button)
+	check(game.mode == "play","sale action returns to courtyard rather than opening growth")
+	game.model.p = Model.HUB_TREE
+	await frames(2)
+	await tap(KEY_E)
 	check(game.mode == "tree" and not game.ui.shop.visible and not game.ui.hud.visible,"growth is a dedicated screen")
 	check(game.ui.board.visible_ids() == ["gather","bag","meadow","reserve"],"fresh tree reveals two choices and two landmarks")
 	await capture("05-initial-tree")
@@ -205,14 +222,21 @@ func run() -> void:
 		check(Rect2(0,0,1280,800).encloses(b.get_global_rect()),"visible growth node remains inside logical canvas")
 	check(Rect2(0,0,1280,800).encloses(game.ui.buy_button.get_global_rect()),"small window retains purchase action")
 	await tap(KEY_ESCAPE)
-	check(game.mode == "shop","Esc tree returns to selling")
+	check(game.mode == "play","Esc tree returns to its physical courtyard station")
+	game.model.p = Model.HUB_SHOP
+	await frames(2)
+	await tap(KEY_E)
 	await capture("09-small-shop")
 	check(Rect2(0,0,1280,800).encloses(game.ui.leave_button.get_global_rect()),"small sale panel retains leave action")
 	await tap(KEY_ESCAPE)
 	check(game.mode == "play" and game.held.is_empty(),"second Esc returns to flight with no stuck input")
 	root.size = Vector2i(1280,800)
+	game.model.p = Model.HUB_DEPART
+	await tap(KEY_E)
+	await click(game.ui.meadow_button)
+	await create_timer(.5).timeout
+	check(game.model.area == "meadow" and game.world.area_key == "meadow","unlocked direct departure loads meadow scene")
 	game.model.p = Vector2(2140,410)
-	game.model.phase = "field"
 	await frames(3)
 	await capture("10-purple-meadow")
 	check(game.ui.help_text.get_visible_line_count() == 1,"field context is one readable action line")
