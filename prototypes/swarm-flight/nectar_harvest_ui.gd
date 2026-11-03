@@ -51,6 +51,15 @@ var purchase_double_click := false
 var last_purchase_msec := -1000
 var shop_cache := ""
 var toast_timer: Timer
+var regions: Control
+var region_title: Label
+var region_hint: Label
+var pond_button: Button
+var meadow_button: Button
+var home_button: Button
+var region_back: Button
+var transition_layer: ColorRect
+var transition_label: Label
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -63,6 +72,8 @@ func _ready() -> void:
 	_build_hud()
 	_build_shop()
 	_build_tree()
+	_build_regions()
+	_build_transition()
 	_build_menu()
 	_build_toast()
 	restart_dialog = ConfirmationDialog.new()
@@ -214,7 +225,7 @@ func _build_shop() -> void:
 	var p := card(shop,PAPER,Color("a7a77c"))
 	anchored(p,Rect2(1,.5,0,0),Rect2(-535,-350,500,700))
 	var v := column(p,12)
-	text_line(v,"池岸收购点",17,Color("7b895f"))
+	text_line(v,"庭院蜜铺 · 收购员",17,Color("7b895f"))
 	text_line(v,"这一趟，收获不错。",30)
 	shop_story = text_line(v,"带回花蜜，就能换取下一次成长。",19,Color("768064"),true)
 	var cargo_card := card(v,Color("e5e8d0"),Color("bec8a5"))
@@ -224,9 +235,43 @@ func _build_shop() -> void:
 	sell_button = action(v,"全部交付",driver.sell_cargo,true)
 	shop_coins = text_line(v,"",19,Color("718160"))
 	spacer(v)
-	tree_button = action(v,"查看成长树  →",driver.open_tree,true)
-	leave_button = action(v,"继续出发",driver.close_shop)
-	text_line(v,"Esc 返回花园 · 交付立即结算",16,Color("839071"))
+	tree_button = action(v,"回庭院 · 去中央成长台",driver.close_shop)
+	leave_button = action(v,"回到庭院",driver.close_shop)
+	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071"))
+
+func _build_regions() -> void:
+	regions = screen(self)
+	shade(regions,Color("173d35d9"))
+	var panel := card(regions,PAPER,Color("a7a77c"))
+	anchored(panel,Rect2(.5,.5,0,0),Rect2(-420,-285,840,570))
+	var v := column(panel,16)
+	text_line(v,"出发路牌",18,Color("7b895f"))
+	region_title = text_line(v,"这次去哪里？",32)
+	region_hint = text_line(v,"",19,INK,true)
+	pond_button = action(v,"池岸花丛",func(): driver.request_transition("pond"),true)
+	text_line(v,"蓝花蜜 · 开阔花丛 · 一只可绕行的巡游蚊",18,Color("7b895f"),true)
+	meadow_button = action(v,"紫花地",func(): driver.request_transition("meadow"),true)
+	text_line(v,"紫花蜜 · 警戒蚊与细雨 · 留意入口返程路牌",18,Color("7b895f"),true)
+	home_button = action(v,"直接回蜂巢庭院",func(): driver.request_transition("hub"),true)
+	spacer(v)
+	region_back = action(v,"先留在这里",driver.close_regions)
+	text_line(v,"Esc 关闭路牌 · 选择后切换场景",16,Color("839071"))
+
+func _build_transition() -> void:
+	transition_layer = ColorRect.new()
+	add_child(transition_layer)
+	transition_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	transition_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	transition_layer.color = Color("183d34")
+	transition_label = text_line(transition_layer,"",30,PAPER)
+	anchored(transition_label,Rect2(.5,.5,0,0),Rect2(-300,-30,600,60))
+	transition_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	transition_layer.hide()
+
+func set_transition(alpha: float, words: String) -> void:
+	transition_layer.modulate.a = alpha
+	transition_label.text = words
+	move_child(transition_layer,get_child_count()-1)
 
 func _build_tree() -> void:
 	tree = screen(self)
@@ -243,7 +288,7 @@ func _build_tree() -> void:
 	tree_progress = text_line(titles,"",18,MUTED)
 	tree_coins = text_line(header,"",26,GOLD)
 	tree_coins.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	tree_back = action(header,"返回收购点",driver.close_tree)
+	tree_back = action(header,"回到庭院",driver.close_tree)
 	tree_back.size_flags_horizontal = Control.SIZE_SHRINK_END
 	tree_back.custom_minimum_size.x = 180
 	var split := row(layout,18)
@@ -289,7 +334,7 @@ func _build_menu() -> void:
 	var bottom := row(v,14)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"0.20 · WASD 飞行 / E 采集 / Esc 暂停",16,Color("8a9175"))
+	text_line(v,"0.21 · WASD 飞行 / E 交互与采集 / Esc 暂停",16,Color("8a9175"))
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
@@ -316,24 +361,29 @@ func show_mode(mode: String) -> void:
 	shop.visible = mode == "shop"
 	tree.visible = mode == "tree"
 	menu.visible = mode in ["title","pause","complete"]
+	regions.visible = mode == "regions"
+	transition_layer.visible = mode == "transition"
+	if mode == "regions":
+		refresh()
+		pond_button.grab_focus()
 	enter_held = false
 	shop_cache = ""
 	toast_panel.hide()
 	if mode == "shop":
 		refresh()
 		if not sell_button.disabled: sell_button.grab_focus()
-		else: tree_button.grab_focus()
+		else: leave_button.grab_focus()
 	elif mode == "tree":
 		refresh()
 		board.select_node(board.selected)
 	elif menu.visible:
 		if mode == "title":
 			menu_title.text = "采蜜小店"
-			menu_body.text = "雨来之前，带回一份丰收。\n\n飞进花丛，收集花蜜；回到池岸交付，\n让每一次成长带你去得更远。"
+			menu_body.text = "雨来之前，带回一份丰收。\n\n从庭院路牌出发，飞进花丛采蜜；回家交付，\n让每一次成长带你去得更远。"
 			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
 		elif mode == "pause":
 			menu_title.text = "歇一会儿"
-			menu_body.text = "这一趟的收获与成长都记下了。\n\nWASD / 方向键：飞行\n按住 E / 鼠标：采蜜\n空格蓄力，松开冲刺"
+			menu_body.text = "这一趟的收获与成长都记下了。\n\nWASD / 方向键：飞行\n靠近功能点按 E；花丛中按住 E 采蜜\n空格蓄力松开：冲刺，可驱离蚊子"
 			menu_primary.text = "继续这趟出行"
 		else:
 			menu_title.text = "花蜜，备好了"
@@ -431,13 +481,28 @@ func refresh() -> void:
 	energy_bar.max_value = m.max_energy()
 	energy_bar.value = m.energy
 	coins_text.text = "金币  %d" % m.coins
-	trip_text.text = ("蜂巢旁" if m.at_home() else "紫花地" if m.p.x > m.GATE_X else "池岸花丛")+" · 第 %d 趟" % maxi(1,m.trip_index)
+	trip_text.text = driver.area_name(m.area)+(" · 安全生活区" if m.at_home() else " · 第 %d 趟" % maxi(1,m.trip_index))
 	goal_text.text = m.goal_text()
-	if m.at_home(): help_text.text = "E  进入收购点，交付花蜜       向右飞，开始下一趟"
-	elif m.cargo_total() >= m.capacity(): help_text.text = "蜜囊满了 · 带着花蜜回蜂巢，按 E 交付"
-	elif m.p.x > 1610 and "meadow" not in m.owned: help_text.text = "前面是紫花地 · 在成长树中查看开放条件"
-	elif m.rain_exposed(): help_text.text = "细雨会消耗更多续航 · 可以从花地低处绕行"
-	else: help_text.text = "靠近花心，按住 E / 鼠标采蜜"
+	var nearby: String = m.interaction()
+	if nearby == "shop": help_text.text = "E  找收购员 · 出售这一趟的花蜜"
+	elif nearby == "tree": help_text.text = "E  使用成长台 · 选择下一项成长"
+	elif nearby == "depart": help_text.text = "E  查看路牌 · 选择目的地，再出发"
+	elif nearby == "home": help_text.text = "E  返回蜂巢庭院 · 保留全部花蜜"
+	elif nearby == "pond": help_text.text = "E  选择返程 · 返回池岸或直接回庭院"
+	elif nearby == "meadow": help_text.text = "E  前往紫花地" if "meadow" in m.owned else "紫花地尚未开放 · 回庭院成长台查看条件"
+	elif m.at_home(): help_text.text = "左边交付花蜜 · 中央选择成长 · 右边路牌出发"
+	elif m.hurt_left > 0: help_text.text = "被蚊子碰到了 · 续航减少，先拉开距离"
+	elif m.cargo_total() >= m.capacity(): help_text.text = "蜜囊满了 · 找入口路牌返回庭院交付"
+	elif m.rain_exposed(): help_text.text = "细雨消耗续航 · 从叶棚下绕行，留意警戒蚊"
+	else: help_text.text = "按住 E / 鼠标采蜜 · 蚊子先预警，绕开或用冲刺驱离"
+	var from_hub: bool = m.area == "hub"
+	region_title.text = "这次去哪里？" if from_hub else "带着收获回去"
+	region_hint.text = "新一趟会补满续航，花源与蚊子重新出现。" if from_hub else "沿途状态保留；回庭院可以补满续航和交付花蜜。"
+	pond_button.text = "池岸花丛  →  蓝花蜜 · 1 金币 / 份" if from_hub else "返回池岸花丛  →  保留这趟进度"
+	meadow_button.visible = from_hub
+	meadow_button.disabled = "meadow" not in m.owned
+	meadow_button.text = "紫花地  →  紫花蜜 · 3 金币 / 份" if "meadow" in m.owned else "紫花地未开放 · 在成长台解锁"
+	home_button.visible = not from_hub
 	shop_coins.text = "当前金币  %d" % m.coins
 	shop_cargo.text = "蓝花蜜    %d 份\n紫花蜜    %d 份" % [m.cargo.blue,m.cargo.rose]
 	shop_value.text = "本趟可售  %d 金币" % m.cargo_value()

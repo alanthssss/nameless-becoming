@@ -1,6 +1,7 @@
 extends SceneTree
 ## Real disk migration/failure fixtures, not player-experience evidence.
 const Model = preload("res://nectar_harvest_model.gd")
+const Legacy = preload("res://nectar_legacy_model_v2.gd")
 const Save = preload("res://save_data.gd")
 const Migration = preload("res://nectar_save_migration.gd")
 var checks := 0
@@ -21,7 +22,7 @@ func write_bytes(path: String,bytes: PackedByteArray) -> void:
 	file.close()
 
 func v1_fixture() -> Dictionary:
-	var m = Model.new()
+	var m = Legacy.new()
 	m.coins = 100
 	m.owned.assign(["gather1","meadow","shortcut","market"])
 	m.cargo = {"blue":7,"rose":0}
@@ -46,13 +47,13 @@ func run() -> void:
 	write_bytes(path,original)
 	var v1 = Model.new()
 	check(v1.restore_v1_payload(old),"frozen v1 allows early region and pre-sale market")
-	check(not Model.new().restore_payload(old),"v2 transaction validator refuses raw v1")
+	check(not Model.new().restore_payload(old),"v3 transaction validator refuses raw v1")
 	var migrated := Migration.load_progress(path)
 	check(migrated.ok and migrated.existed and migrated.migrated and not migrated.blocked,"valid v1 migrates on disk")
 	check(FileAccess.get_file_as_bytes(path+".v1.bak") == original,"backup retains original whitespace and every byte")
-	check(migrated.payload.version == 2 and migrated.payload.legacy_owned == old.owned,"v2 retains historical ownership explicitly")
+	check(migrated.payload.version == 3 and migrated.payload.legacy_owned == old.owned,"v3 retains historical ownership explicitly")
 	for key in old.keys():
-		if key == "version": continue
+		if key in ["version","p"]: continue
 		check(JSON.stringify(migrated.payload[key],"",true,true) == JSON.stringify(old[key],"",true,true),"migration preserves old field: "+key)
 	var live = Model.new()
 	check(live.restore_payload(migrated.payload),"migrated model restores")
@@ -62,7 +63,7 @@ func run() -> void:
 	check(candidate.sell() == 8 and candidate.coins == 108,"old pre-sale market keeps its bonus in later sale")
 	check(Save.write_payload(candidate.to_payload(),path,Model.new()),"later sale persists with historical authorization")
 	var cold := Migration.load_progress(path)
-	check(cold.ok and not cold.migrated and cold.payload.legacy_owned == old.owned,"cold v2 load does not remigrate or remove inheritance")
+	check(cold.ok and not cold.migrated and cold.payload.legacy_owned == old.owned,"cold v3 load does not remigrate or remove inheritance")
 	check(candidate.restore_payload(cold.payload) and candidate.buy("reach"),"migrated ownership supports subsequent new-rule purchase")
 	check(Save.write_payload(candidate.to_payload(),path,Model.new()),"subsequent purchase writes successfully")
 	var last := Migration.load_progress(path)
@@ -83,7 +84,7 @@ func run() -> void:
 	for key in ["p","v","face","energy","charge","charging","burst_left","trip_index","flowers"]:
 		check(JSON.stringify(field_result.payload[key],"",true,true) == JSON.stringify(field_old[key],"",true,true),"in-flight migration retains "+key)
 
-	var completed = Model.new()
+	var completed = Legacy.new()
 	completed.coins = 500
 	completed.owned.assign(Model.UPGRADE_IDS)
 	completed.energy = completed.max_energy()
@@ -100,6 +101,50 @@ func run() -> void:
 	check(done.ok and done.payload.completed and done.payload.owned.size() == 12,"completed v1 remains completed with all effects")
 	var done_model = Model.new()
 	check(done_model.restore_payload(done.payload) and done_model.events.is_empty(),"completed migration does not replay completion events")
+
+	# A genuine 0.20 v2 save has independent bag ranks and its original schema.
+	var old_v2 = Legacy.new()
+	old_v2.coins = 1000
+	for id in ["gather1","bag1","bag2","meadow"]: old_v2.buy(id)
+	old_v2.phase = "field"
+	old_v2.p = Vector2(1790,400)
+	old_v2.trip_index = 4
+	old_v2.visited_meadow = true
+	old_v2.energy = 60.0
+	old_v2.flowers[0].stock = 2
+	old_v2.cargo = {"blue":8,"rose":4}
+	var old_v2_data: Dictionary = old_v2.to_payload()
+	check(Legacy.new().restore_payload(old_v2_data),"v2 fixture passes its frozen schema before migration")
+	var old_v2_bytes := fixture_bytes(old_v2_data)
+	var v2_path := directory+"/v2.json"
+	write_bytes(v2_path,old_v2_bytes)
+	var v2_result := Migration.load_progress(v2_path)
+	check(v2_result.ok and v2_result.migrated and v2_result.payload.version == 3,"valid v2 migrates to v3 on disk")
+	check(FileAccess.get_file_as_bytes(v2_path+".v2.bak") == old_v2_bytes and not FileAccess.file_exists(v2_path+".v1.bak"),"v2 backup records actual original version and exact bytes")
+	check(v2_result.payload.area == "meadow" and v2_result.payload.p == [1840.0,400.0],"old inter-region gap maps into meadow's valid entrance bounds")
+	for key in ["coins","cargo","owned","legacy_owned","flowers","trip_index","energy","sold_total","rose_sold"]:
+		check(v2_result.payload[key] == old_v2_data[key],"v2 migration retains economic/expedition field: "+key)
+	check(v2_result.payload.creatures.all(func(c): return c.state == "gone"),"migration never spawns enemies onto an existing expedition")
+	var v2_live = Model.new()
+	check(v2_live.restore_payload(v2_result.payload),"v2 conversion is a legal strict-v3 state")
+	v2_live.p = Model.MEADOW_ENTRY
+	check(v2_live.transition_to("hub") and v2_live.p == Model.HOME,"migrated field can return to new life scene")
+	v2_live.p = Model.HUB_DEPART
+	check(v2_live.transition_to("pond") and v2_live.creatures[0].state == "patrol" and v2_live.trip_index == 5,"only the next expedition starts new enemy population")
+	var v2_conflict_path := directory+"/v2-conflict.json"
+	write_bytes(v2_conflict_path,old_v2_bytes)
+	write_bytes(v2_conflict_path+".v2.bak","keep v2 backup".to_utf8_buffer())
+	check(Migration.load_progress(v2_conflict_path).blocked and FileAccess.get_file_as_bytes(v2_conflict_path) == old_v2_bytes,"v2 backup conflict preserves original")
+	var v2_write_path := directory+"/v2-write-fail.json"
+	write_bytes(v2_write_path,old_v2_bytes)
+	DirAccess.make_dir_absolute(v2_write_path+".tmp")
+	check(Migration.load_progress(v2_write_path).blocked and FileAccess.get_file_as_bytes(v2_write_path) == old_v2_bytes and FileAccess.get_file_as_bytes(v2_write_path+".v2.bak") == old_v2_bytes,"v2 write failure retains source and verified rollback")
+	DirAccess.remove_absolute(v2_write_path+".tmp")
+	var v2_bad := old_v2_data.duplicate(true)
+	v2_bad.owned = ["gather1","meadow"]
+	var v2_bad_path := directory+"/v2-invalid.json"
+	write_bytes(v2_bad_path,fixture_bytes(v2_bad))
+	check(Migration.load_progress(v2_bad_path).blocked and not FileAccess.file_exists(v2_bad_path+".v2.bak"),"v2 invalid early region cannot be laundered by migration")
 
 	var malformed := v1_fixture()
 	malformed.owned = ["bag1","bag2"]
@@ -131,7 +176,7 @@ func run() -> void:
 	write_bytes(write_fail_path,original)
 	DirAccess.make_dir_absolute(write_fail_path+".tmp")
 	var failed := Migration.load_progress(write_fail_path)
-	check(failed.blocked and not failed.ok and not failed.migrated and failed.payload.is_empty(),"v2 write failure does not publish migrated state")
+	check(failed.blocked and not failed.ok and not failed.migrated and failed.payload.is_empty(),"v3 write failure does not publish migrated state")
 	check(FileAccess.get_file_as_bytes(write_fail_path) == original and FileAccess.get_file_as_bytes(write_fail_path+".v1.bak") == original,"write failure retains both original and exact backup")
 	DirAccess.remove_absolute(write_fail_path+".tmp")
 	var retry := Migration.load_progress(write_fail_path)
@@ -142,7 +187,7 @@ func run() -> void:
 	state.buy("bag1")
 	state.buy("bag2")
 	var good := state.to_payload()
-	check(Model.new().restore_payload(good),"new capacity-only sequence is legal in v2")
+	check(Model.new().restore_payload(good),"new capacity-only sequence is legal in v3")
 	for kind in ["unknown","duplicate","not-owned","broken-v1-chain"]:
 		var bad := good.duplicate(true)
 		if kind == "unknown": bad.legacy_owned = ["invented"]
@@ -152,7 +197,7 @@ func run() -> void:
 		check(not Model.new().restore_payload(bad),"invalid legacy list rejected: "+kind)
 	var missing := good.duplicate(true)
 	missing.erase("legacy_owned")
-	check(not Model.new().restore_payload(missing),"v2 cannot omit migration metadata")
+	check(not Model.new().restore_payload(missing),"v3 cannot omit migration metadata")
 	var raw_path := directory+"/raw-old.json"
 	check(not Save.write_payload(old,raw_path,Model.new()) and not FileAccess.file_exists(raw_path),"generic transaction writer cannot bypass migration backup")
 

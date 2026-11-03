@@ -36,7 +36,7 @@ func frames(count: int) -> void:
 		frame_count += 1
 		if is_instance_valid(game):
 			var m = game.model
-			frame_samples.append([frame_count,game.mode,m.p.x,m.p.y,m.energy,m.cargo.blue,m.cargo.rose,m.coins,m.owned.size()])
+			frame_samples.append([frame_count,game.mode,m.p.x,m.p.y,m.energy,m.cargo.blue,m.cargo.rose,m.coins,m.owned.size(),m.area])
 
 func key(code: int,value: bool) -> void:
 	if bool(pressed.get(code,false)) == value: return
@@ -174,12 +174,23 @@ func run() -> void:
 	await capture("02-hive-departure")
 	for expedition in 30:
 		if planned.is_empty(): break
-		check(await fly_to(Vector2(470,575)),"ordinary departure %d" % expedition)
+		check(await fly_to(Model.HUB_DEPART),"ordinary flight to departure sign %d" % expedition)
+		await tap(KEY_E)
+		check(game.mode == "regions","E opens the physical departure sign")
+		await click(game.ui.pond_button)
+		await frames(20)
+		check(game.model.area == "pond" and game.world.area_key == "pond","ordinary confirmation enters distinct pond scene")
 		if not failures.is_empty(): break
 		if "shortcut" in game.model.owned:
 			check(await fly_to(Model.SHORTCUTS[0]),"reach near shortcut")
 			await tap(KEY_F)
-			check(game.model.p.distance_to(Model.SHORTCUTS[1]) < 5,"F uses actual outward shortcut")
+			await frames(20)
+			check(game.model.area == "meadow" and game.model.p.distance_to(Model.SHORTCUTS[1]) < 5,"F uses actual outward scene shortcut")
+		elif "meadow" in game.model.owned:
+			check(await fly_to(Model.POND_EXIT),"reach the meadow passage by ordinary flight")
+			await tap(KEY_E)
+			await frames(20)
+			check(game.model.area == "meadow","passage enters unlocked meadow")
 		while game.model.cargo_total() < game.model.capacity():
 			var target: Dictionary={}
 			for flower in game.model.flowers:
@@ -222,8 +233,18 @@ func run() -> void:
 		if "shortcut" in game.model.owned:
 			check(await fly_to(Model.SHORTCUTS[1]),"reach far shortcut")
 			await tap(KEY_F)
-			check(game.model.p.distance_to(Model.SHORTCUTS[0])<5,"F uses actual return shortcut")
-		check(await fly_to(Model.HOME),"normal return to hive")
+			await frames(20)
+			check(game.model.area == "pond" and game.model.p.distance_to(Model.SHORTCUTS[0])<5,"F uses actual return scene shortcut")
+		if game.model.area == "meadow":
+			check(await fly_to(Model.MEADOW_ENTRY),"reach meadow return sign")
+			await tap(KEY_E)
+			await click(game.ui.home_button)
+		else:
+			check(await fly_to(Model.POND_ENTRY),"reach pond return sign")
+			await tap(KEY_E)
+		await frames(20)
+		check(game.model.area == "hub" and game.world.area_key == "hub","loaded safe courtyard with full cargo")
+		check(await fly_to(Model.HUB_SHOP),"ordinary flight to the separate sale NPC")
 		if not failures.is_empty(): break
 		await tap(KEY_E)
 		check(game.mode == "shop","E opens hive transaction screen")
@@ -234,8 +255,10 @@ func run() -> void:
 		check(game.model.cargo_total()==0 and game.model.coins==coins_before+gain,"sale commits real collected cargo")
 		if not failures.is_empty(): break
 		earned_total += gain
-		await click(game.ui.tree_button)
-		check(game.mode == "tree" and game.ui.tree.visible and not game.ui.shop.visible,"growth button opens its own page after the sale")
+		await click(game.ui.leave_button)
+		check(await fly_to(Model.HUB_TREE),"ordinary flight to separate growth station")
+		await tap(KEY_E)
+		check(game.mode == "tree" and game.ui.tree.visible and not game.ui.shop.visible,"growth station opens its own page after the sale")
 		if not failures.is_empty(): break
 		while not planned.is_empty() and game.model.can_buy(planned[0]):
 			var id: String=planned[0]
@@ -249,9 +272,7 @@ func run() -> void:
 		if not failures.is_empty(): break
 		if game.mode == "complete": break
 		await tap(KEY_ESCAPE)
-		check(game.mode == "shop","Esc from growth returns to the collection counter")
-		await click(game.ui.leave_button)
-		check(game.mode == "play","counter departure resumes ordinary flight")
+		check(game.mode == "play","Esc from growth returns to the courtyard station")
 		if not failures.is_empty(): break
 	check(game.model.completed and planned.is_empty() and purchased == purchase_plan,"chosen route completes reserve through six actual confirmed purchases")
 	check(purple_recorded and game.model.rose_sold >= 18,"completion uses actual purple exploration and at least 18 sold purple nectar")
@@ -264,6 +285,10 @@ func run() -> void:
 	await capture("09-reserve-complete")
 	await tap(KEY_ENTER)
 	check(game.mode == "play","completion allows continued free play")
+	await fly_to(Model.HUB_DEPART)
+	await tap(KEY_E)
+	await click(game.ui.pond_button)
+	await frames(20)
 	await fly_to(Vector2(640,480))
 	key(KEY_E,true)
 	await frames(20)
@@ -275,7 +300,7 @@ func run() -> void:
 
 func finish(name: String) -> void:
 	release()
-	save_json(name,{"checks":checks,"failures":failures,"frames":frame_count,"game_seconds":game.played_seconds,"classification":"known-route developer native input; not uncoached or human play","run_kind":"cold_resume" if resume_check else "new_route","progress_path":game.saved_path,"purchase_plan":purchase_plan,"growth_route":growth_route,"twin_recorded":twin_recorded,"purchased":purchased,"earned_total":earned_total,"spent_total":spent_total,"frame_sample_columns":["frame","mode","x","y","energy","blue_cargo","rose_cargo","coins","owned_count"],"frame_samples":frame_samples,"trace":trace,"events":game.event_log,"final":game.model.to_payload()})
+	save_json(name,{"checks":checks,"failures":failures,"frames":frame_count,"game_seconds":game.played_seconds,"classification":"known-route developer native input; not uncoached or human play","run_kind":"cold_resume" if resume_check else "new_route","progress_path":game.saved_path,"purchase_plan":purchase_plan,"growth_route":growth_route,"twin_recorded":twin_recorded,"purchased":purchased,"earned_total":earned_total,"spent_total":spent_total,"frame_sample_columns":["frame","mode","x","y","energy","blue_cargo","rose_cargo","coins","owned_count","area"],"frame_samples":frame_samples,"trace":trace,"events":game.event_log,"final":game.model.to_payload()})
 	print("NECTAR NATIVE ROUTE: %d checks, %d failures, %.1f game seconds" % [checks,failures.size(),game.played_seconds])
 	game.queue_free()
 	await frames(4)

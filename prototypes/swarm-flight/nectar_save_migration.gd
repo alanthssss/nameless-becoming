@@ -1,5 +1,5 @@
 extends RefCounted
-## Only this boundary accepts v1. The live transaction writer remains v2-only.
+## This boundary validates frozen v1/v2 then atomically migrates to v3.
 const Model = preload("res://nectar_harvest_model.gd")
 const Save = preload("res://save_data.gd")
 
@@ -16,16 +16,16 @@ static func load_progress(path: String) -> Dictionary:
 		return _block(result,"进度文件不是有效的采蜜记录")
 	var data: Dictionary = parser.data
 	var model = Model.new()
-	if Model.whole(data.get("version"),2,2):
+	if Model.whole(data.get("version"),3,3):
 		if not model.restore_payload(data): return _block(result,"这份采蜜进度未通过完整性检查")
 		result.ok = true
 		result.payload = model.to_payload()
 		return result
-	if not Model.whole(data.get("version"),1,1) or not model.restore_v1_payload(data):
+	if not Model.whole(data.get("version"),1,2) or not model.restore_legacy_payload(data,int(data.version)):
 		return _block(result,"旧版采蜜进度未通过完整性检查")
 	# Write an exact rollback copy before replacing the original. Never replace a
 	# different existing backup, including one left by an earlier migration.
-	var backup := path+".v1.bak"
+	var backup := path+".v%d.bak" % int(data.version)
 	if FileAccess.file_exists(backup):
 		if FileAccess.get_file_as_bytes(backup) != original:
 			return _block(result,"已有旧版备份与当前进度不同，原进度保持不变")
@@ -43,7 +43,7 @@ static func load_progress(path: String) -> Dictionary:
 		if DirAccess.rename_absolute(temporary,backup) != OK:
 			DirAccess.remove_absolute(temporary)
 			return _block(result,"旧版进度备份无法完成，尚未升级进度")
-	# A second running application must not have changed v1 while we prepared its
+	# A second running application must not have changed the old save while we prepared its
 	# backup. A failed write below leaves that original file intact.
 	if FileAccess.get_file_as_bytes(path) != original:
 		return _block(result,"进度被其他窗口修改，请关闭其他窗口后重试")
