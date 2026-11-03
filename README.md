@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-11-03 · 采蜜小店0.21场景迭代。** [地区与遭遇设计](docs/design/nectar-regions-mvp.md)明确独立庭院、两片野外、收购/成长/出发功能点与有限蚊群；GDD§13.8 / M3 #281–286，实际完成与证据沿[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。以下为历史候选记录。
+**2026-11-03 · 采蜜小店0.21场景迭代。** [地区与遭遇设计](docs/design/nectar-regions-mvp.md)已实现独立庭院、两片野外、收购/成长/出发功能点与有限蚊群；[构建与验证回执](prototypes/swarm-flight/review-evidence/2026-11-03/nectar-regions-mvp/README.md)记录0.21候选。GDD§13.8 / M3 #281–286，最终集成与下一检查点沿[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。以下为历史候选记录。
 
 **2026-11-02 · 采蜜小店0.19候选已构建。** 现有蜜蜂、花园与故事已组成采集→售卖→12项成长→两处花地/近道→储粮完成的循环。[玩法与范围](docs/design/swarm-flight-gdd.md#nectar-harvest-mvp) · [构建与验证回执](prototypes/swarm-flight/review-evidence/2026-11-02/nectar-mvp/README.md) · [唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。旧0.18与旧档保留；新版等待Alan整包试玩判断。
 

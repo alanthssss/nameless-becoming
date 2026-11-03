@@ -1,0 +1,195 @@
+{
+  "revision": "28d7e8295411471e916deca50d775227a06113c1",
+  "cost": {
+    "observed_start": "2026-11-03T01:48:28Z",
+    "observed_end": "2026-11-03T02:21:33.209723+00:00",
+    "coverage": "本轮设计、实现、原生路线、复核、导出和实机至候选打包前的墙钟区间；含等待、并行及工具失败。最终集成/清理在final-handoff.json补记。",
+    "active": null,
+    "billed": null,
+    "cumulative": null,
+    "remaining": null,
+    "new_purchases": 0,
+    "control_limit_hours": [
+      200,
+      40
+    ],
+    "automation": "PAUSED",
+    "recommendation": "完成本批集成后由#211承接Alan整包反馈及成本/范围复核；不据技术通过批量扩展地区。"
+  },
+  "tracking": "GDD§13.8 / M3 / #281–286; #281–284 review; #285/#286 finishing proof. Parent#211, M3/M4 remain open; updates read back.",
+  "ci": "Frozen source PR287 all required checks successful; docs/evidence head will be checked again.",
+  "integration": "PR287 draft; candidate verified/exported, merge and cleanup pending. Final state recorded in final-handoff.json and authority Issues.",
+  "human_acceptance_claim": false,
+  "version": "0.21.0",
+  "claim": "candidate",
+  "gdd": "13.8 / NH-RG-v1",
+  "milestone": 3,
+  "issues": [
+    281,
+    282,
+    283,
+    284,
+    285,
+    286
+  ],
+  "parent_issue": 211,
+  "pr": 287,
+  "source": {
+    "revision": "28d7e8295411471e916deca50d775227a06113c1",
+    "files": {
+      ".github/workflows/swarm-flight.yml": "a6df987e6360489f757be602c1598025487228efd42a0d4fa6f77004d2b1e77a",
+      "README.md": "8ca82e2488b98f1da178643938cc36538e67861a8265b21449f57b298266773a",
+      "docs/design/nectar-regions-mvp.md": "126e2b322f3568412eb8ce8e2daa1c14c4e90a5ba5d0418c199fd9314bf01725",
+      "docs/design/solar-term-campaign-production-spec.md": "2f6ddb4ae5654ad37eaf2bd54c361b89a986b9812efdb5a37789344ac9bf6c16",
+      "docs/design/swarm-flight-gdd.md": "b061b376e75af377ceeafbf896305ea1f39ba4f6535cafff377c24b17df3282a",
+      "prototypes/swarm-flight/export_presets.cfg": "b747a6945d1be9914f272a0436793fe44a024cd78e6a253e3ce6f62ebd882029",
+      "prototypes/swarm-flight/nectar-review-contract.json": "73abffdc80c651b23abb950503cb78c01c982cf7cb0e3d64085e5834b258d7d9",
+      "prototypes/swarm-flight/nectar-review-readme.txt": "2bca31cf3b400adf218d47f5257cdc730b79f4d693f03a9df6808a2cc6deca58",
+      "prototypes/swarm-flight/nectar_encounters.gd": "a2df81cca018ee543418a1aebed92ddf78abc4f2180ffaa2a22e434ac9cf683d",
+      "prototypes/swarm-flight/nectar_encounters.gd.uid": "354c52dc7b9f194fd982d9e69c3e0d827f3a9b780592c219112abcdb5e8533e2",
+      "prototypes/swarm-flight/nectar_harvest_main.gd": "018aec9477e529360807e7f0c3a038ffd67856f944b7a4983dd72f4a1d8e85a4",
+      "prototypes/swarm-flight/nectar_harvest_model.gd": "bff57c45239b18607bc9070f142656729d7fd89e60af3ec1f45997368784d477",
+      "prototypes/swarm-flight/nectar_harvest_route_probe.gd": "9335f908e0fc046483fe17373ab82cb2213f6dcf018d7b582af04d424b1f50ad",
+      "prototypes/swarm-flight/nectar_harvest_route_probe.gd.uid": "87523d4c8ed621bf5793812758a614656fb095adec173d4a3a80480e41f98be6",
+      "prototypes/swarm-flight/nectar_harvest_ui.gd": "8aae4d4a7b8178fe02e4f29405217e9a8a13a88ee3b2772f73e40f67f8a28f38",
+      "prototypes/swarm-flight/nectar_harvest_ui_verify.gd": "e6a150dbcc890a29c4c8bd308502ddbf246dcf445250da5cc0157e7393054c6c",
+      "prototypes/swarm-flight/nectar_harvest_ui_verify.gd.uid": "42e42644e54961893dd0dbb9846ba11f45b9f176cb5cba495654d17d867df48e",
+      "prototypes/swarm-flight/nectar_harvest_verify.gd": "245268215baaee4e20e30a29d84c5a57431dfef0943568a10244fc0cfaa52e38",
+      "prototypes/swarm-flight/nectar_harvest_view.gd": "5fb9720ac74087caaa145601fe1d8e761b97f9fb7898f3f2971eae3e1b15b04a",
+      "prototypes/swarm-flight/nectar_hub.tscn": "5c65a25537ab4c39cda168242be377d8750929e02e18bf9568ae50935d470f63",
+      "prototypes/swarm-flight/nectar_legacy_model_v2.gd": "1eba967955ec509c9c66897f6f6020b3c87acf253d9a71149de2f7e8441e7d8d",
+      "prototypes/swarm-flight/nectar_legacy_model_v2.gd.uid": "0356c365ed188cfebe243b42989fc2544b3cf490192a35c93d2a15d3b9eb1cb1",
+      "prototypes/swarm-flight/nectar_meadow.tscn": "272e434d2da1c03d3f6a959988cb8c0b677fd2e116e51f162207dd181cc9f5f1",
+      "prototypes/swarm-flight/nectar_pond.tscn": "0a0e219ac30e2393536634ca39da4f84fd53122c8e75ff6d9621d82765ae9806",
+      "prototypes/swarm-flight/nectar_region_ui_probe.gd": "36c0dd645138e94ac0187f90b2546b5f5c8929637978995d229b9e4fdde6b75d",
+      "prototypes/swarm-flight/nectar_regions_verify.gd": "e71f309959f87305f6220a15c17dddaad27f8f3999b79f5deb0f1398144191a0",
+      "prototypes/swarm-flight/nectar_save_migration.gd": "3d72a6e5c3cf6e21c5b907d8a5d6b5449bb7efa2b6f3bdec74a971ae3c47e2f0",
+      "prototypes/swarm-flight/nectar_save_migration_verify.gd": "ad1d03e960bf19d316b7b89a04f3d5c6cdc2c01be4ee43b7619a99e8bbeb08ce",
+      "prototypes/swarm-flight/project.godot": "d31c976f6acf65935e0710693331320f23c76b335d6da803d0c83b7ec58e8ad0",
+      "tools/package_nectar_review.py": "0927c36b5ad705f1578b098ebf330a5d90663160aafbf3b0ab2e086471f9ff50",
+      "tools/test_package_nectar_review.py": "caab10cefe8018b1b83a5431b795d4cf2264f14f2d998bae03e94189d9cca628"
+    }
+  },
+  "export": {
+    "revision": "28d7e8295411471e916deca50d775227a06113c1",
+    "sha256": "f900be1d16d39c1eff3c5edde3ebd0c745e65156542bc8379699a6c470156534",
+    "engine": "4.6.2",
+    "custom_features": [
+      "nectar_mvp"
+    ],
+    "entry": "nectar-harvest",
+    "save_filename": "nectar_harvest_v1.json",
+    "launcher_sha256": "0db6a46ed25e5033c5b5dca8f0253d7c90faf41a1380d17e39a778a1de12a7fd",
+    "app_name": "雨来之前 · 采蜜小店 0.21.0.app",
+    "executable": "雨来之前 · 采蜜小店 0.21.0"
+  },
+  "package": {
+    "zip_sha256": "719b25ff81bfad6235da53d2a14adbd6c51d8f84386be2561b8410a6362ae39d",
+    "all_app_files_identical": true,
+    "file_count": 6,
+    "app_files": {
+      "Contents/Info.plist": "17ee3d74f3fc39f9bb54fb98c63beb93c58d929c3c55c9f33ccc0945df13053a",
+      "Contents/PkgInfo": "7e50a30efad50208a173203ced60818d693bb61266b75aa10927d1a2adce80cb",
+      "Contents/MacOS/雨来之前 · 采蜜小店 0.21.0": "965e83aaa960cd619f3e202101578bc06a0ec320f5d88fdb5696566c9850c91b",
+      "Contents/Resources/icon.icns": "cc280826b4487d03a2f745e12bd56bde3dbfe0c569784f0602ee06008401fce4",
+      "Contents/Resources/雨来之前 · 采蜜小店 0.21.0.pck": "29fcefe756d2ffffa6175378d4d9ecc990639451fbfefa6c606827c9f39aa96a",
+      "Contents/Resources/PrivacyInfo.xcprivacy": "0535353bb08c25b8ce5ed9ac7e442a5994f402e0f6cbc4bed668cfc63c2ceac3"
+    },
+    "launcher_sha256": "0db6a46ed25e5033c5b5dca8f0253d7c90faf41a1380d17e39a778a1de12a7fd",
+    "revision": "28d7e8295411471e916deca50d775227a06113c1"
+  },
+  "evidence_root": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/nectar-harvest-0.21.0/evidence",
+  "checks": {
+    "nectar_rules": 214,
+    "migration": 83,
+    "regions": 57,
+    "native_ui": 59,
+    "region_native_probe": 21,
+    "shortcut_route": 144,
+    "twin_route": 229,
+    "each_cold_restore": 3,
+    "legacy_pond": 322,
+    "legacy_core": 1655,
+    "package_tool": 51,
+    "failures": 0
+  },
+  "independent_review": {
+    "reviewer": "nectar_regions_independent_review",
+    "kind": "AI read-only source / fixture / media sampling",
+    "unresolved_P1_P2": 0,
+    "native_frames_sampled": 174,
+    "full_video_decode_frames": [
+      211,
+      5631,
+      8768
+    ],
+    "source_hashes": 31,
+    "state_steps": 24000,
+    "JSON_restores": 2182,
+    "not_human_acceptance": true
+  },
+  "warnings": [
+    {
+      "message": "首次导出启动在 FileAccess.open 等待约4分钟；随后恢复。",
+      "reason": "保留采样；后续命令入口、直接应用冷启动均数秒进入标题并完成实际输入，未修改安全设置。具体文件等待根因未确证。",
+      "disposition": "nonblocking"
+    },
+    {
+      "message": "首轮 CUA 定位窗口失败，标题键鼠未响应。",
+      "reason": "退出并从维护的命令入口重启后恢复；随后直接 .app 冷启动也完成点击/移动/返程/保存退出。失败不计成功操作。",
+      "disposition": "resolved"
+    },
+    {
+      "message": "初次 UI harness 被错误传入 --fixed-fps，造成购买防抖等待不足。",
+      "reason": "原始13个失败保留；同一冻结源码不传固定帧参数重跑，59/0。未修改游戏防抖或放宽断言。",
+      "disposition": "resolved"
+    },
+    {
+      "message": "本轮为开发原生输入与AI限定复核，未取得新真人首玩反馈。",
+      "reason": "174个视觉样帧及全视频解码不等于完整人工观看或趣味验收。#211保持开放。",
+      "disposition": "nonblocking"
+    }
+  ],
+  "level_flow": {
+    "LV01": {
+      "status": "pass_scoped",
+      "evidence": "生活区三功能各单一；两区为资源/风险差异；不把重复趟数当关卡。重复体验待玩家。"
+    },
+    "LV02": {
+      "status": "pass_scoped",
+      "evidence": "庭院安全可规划；出发面板说明价值与风险；入口可撤退，直返庭院不强制空跑。原生图与完整路线。"
+    },
+    "LV03": {
+      "status": "fix_verified",
+      "evidence": "0.65秒预警、有限追击/低于玩家速度、1.5秒受击保护及入口安全区；region-ui21/0与独立视频样帧。"
+    },
+    "LV04": {
+      "status": "pass_scoped",
+      "evidence": "宽阔飞行区，冲刺接触先驱离；跨门清键及冲刺；探针与两完整路线。未新增精确落点机关。"
+    },
+    "LV05": {
+      "status": "pass_scoped",
+      "evidence": "入口首簇安全；蓝蜜支撑基础成长，紫蜜推进储粮；两路线实际采满/出售，无赠币/瞬移。"
+    },
+    "LV06": {
+      "status": "pass_scoped",
+      "evidence": "近道/双采路线最低续航51.13/76.04，无救援；受击/耗尽救援规则另测。已知路线余量不是自然难度证据。"
+    },
+    "LV07": {
+      "status": "pass_scoped",
+      "evidence": "采集→卖出→成长→新花地→近道或双采→储粮；战斗仅腾出采集空间，不新增战斗货币。因果可用，趣味待验收。"
+    },
+    "LV08": {
+      "status": "fix_verified",
+      "evidence": "门牌/锁定副文裁边修正；1280/960原生及连续样帧，三功能物理位置可区分，沿用手绘素材。没有640或无障碍人群验证。"
+    },
+    "LV09": {
+      "status": "fix_verified",
+      "evidence": "转场失焦暂停修复；v1/v2原字节备份迁移v3；两个实际进程冷续和Mac双入口，7旧旅程不变。失败保存保持原区。"
+    },
+    "LV10": {
+      "status": "pass_boundary",
+      "evidence": "冻结28d7e82，自动规则/已知输入/定位夹具/AI媒体抽查与实际Mac操作分别标注；不声称自然首通时长/真人认可/24关完成。"
+    }
+  }
+}
