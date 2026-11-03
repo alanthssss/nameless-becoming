@@ -136,7 +136,7 @@
     },
     {
       "message": "首轮 CUA 定位窗口失败，标题键鼠未响应。",
-      "reason": "退出并从维护的命令入口重启后恢复；随后直接 .app 冷启动也完成点击/移动/返程/保存退出。失败不计成功操作。",
+      "reason": "退出并从维护的命令入口重启后恢复；随后直接 .app 冷启动也完成点击/移动/返程/保存退出。失败不计成功操作。 这是该轮恢复，最终副本后来复发的工具限制见单列记录。",
       "disposition": "resolved"
     },
     {
@@ -148,6 +148,11 @@
       "message": "本轮为开发原生输入与AI限定复核，未取得新真人首玩反馈。",
       "reason": "174个视觉样帧及全视频解码不等于完整人工观看或趣味验收。#211保持开放。",
       "disposition": "nonblocking"
+    },
+    {
+      "message": "最终解压副本CUA再次无法定位输入窗口。",
+      "disposition": "nonblocking",
+      "reason": "staging同导出双入口完整输入与冷续已通过。最终副本.app/.command均见标题且6应用文件和launcher字节相同，但未再次完成该副本普通输入，不能宣称工具问题永久修复；final-package-control-note.json保留范围。"
     }
   ],
   "level_flow": {
@@ -191,5 +196,17 @@
       "status": "pass_boundary",
       "evidence": "冻结28d7e82，自动规则/已知输入/定位夹具/AI媒体抽查与实际Mac操作分别标注；不声称自然首通时长/真人认可/24关完成。"
     }
+  },
+  "final_copy_control": {
+    "revision": "28d7e8295411471e916deca50d775227a06113c1",
+    "staging_export": ".command ordinary harvest/sale/growth/departure/save/exit and direct .app cold-resume/continued-input passed through CUA",
+    "final_copy": {
+      "integrity": "all 6 app files and maintained launcher byte-identical to staging",
+      "direct_app": "visible title verified; later CUA coordinate call returned noWindowsAvailable",
+      "command": "process running; visible title obtained after inventory refresh; actual new ordinary-input sequence NOT verified",
+      "user_profile": "actual v2→v3 migration preserves18 blue,0 coins,no growth,trip1; original exact .v2.bak retained",
+      "engine_sample": "normal process/redraw/frame delay, not blocked FileAccess at later sample"
+    },
+    "classification": "nonblocking control-tool limitation; not claimed fixed permanently; no observed gameplay regression; no reduction of staging NH-C07 evidence"
   }
 }
