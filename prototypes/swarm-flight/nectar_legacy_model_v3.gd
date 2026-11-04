@@ -1,0 +1,404 @@
+extends RefCounted
+## Frozen 0.22/v3 validator. Do not update economic or encounter rules.
+const Legacy = preload("res://nectar_legacy_model_v2.gd")
+const Encounters = preload("res://nectar_legacy_encounters_v3.gd")
+const Canopy = preload("res://leaf_canopy_geometry.gd")
+const RAIN_SHELTER := {"pos":Vector2(2760,660),"half_width":160.0}
+const WORLD_WIDTH := 3600.0
+const HOME := Vector2(840,575)
+const HUB_SHOP := Vector2(260,540)
+const HUB_TREE := Vector2(650,480)
+const HUB_JOURNAL := Vector2(1110,440)
+const HUB_DEPART := Vector2(1530,555)
+const POND_ENTRY := Vector2(470,575)
+const POND_EXIT := Vector2(1660,575)
+const MEADOW_ENTRY := Vector2(1900,575)
+const GATE_X := 1780.0
+const CHARGE_READY := 0.32
+const SAVE_ID := "nectar-harvest-v1"
+const SAVE_VERSION := 3
+const SHORTCUTS := [Vector2(1040,400),Vector2(3000,400)]
+const UPGRADE_IDS := ["gather1","gather2","reach","twin","bag1","wings1","bag2","wings2","meadow","shortcut","market","reserve"]
+var chapter := {"region":0}
+var p := HOME
+var v := Vector2.ZERO
+var face := Vector2.RIGHT
+var camera_x := 0.0
+var phase := "home"
+var area := "hub"
+var creatures: Array[Dictionary] = []
+var hurt_left := 0.0
+var energy := 85.0
+var charge := 0.0
+var charging := false
+var burst_left := 0.0
+var coins := 0
+var cargo := {"blue":0,"rose":0}
+var flowers: Array[Dictionary] = []
+var owned: Array[String] = []
+# Exact v1 ownership inherited at migration; never add new purchases here.
+var legacy_owned: Array[String] = []
+var events: Array[Dictionary] = []
+var completed := false
+var trip_index := 0
+var sold_total := 0
+var rose_sold := 0
+var visited_meadow := false
+var harvesting_ids: Array[String] = []
+var _full_announced := false
+
+func _init() -> void:
+	flowers = flower_layout()
+	creatures = Encounters.layout(0)
+
+static func flower_layout() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var near := [Vector2(620,520),Vector2(800,385),Vector2(960,570),Vector2(1120,300),Vector2(1280,450),Vector2(1440,590),Vector2(1600,330)]
+	var far := [Vector2(2110,390),Vector2(2280,565),Vector2(2450,300),Vector2(2630,485),Vector2(2820,310),Vector2(3040,555),Vector2(3270,375)]
+	for region in 2:
+		var positions: Array = near if region == 0 else far
+		for i in positions.size():
+			var amount := 12 if region == 0 else 16
+			result.append({"id":("blue_" if region == 0 else "rose_")+str(i),"pos":positions[i],"type":"blue" if region == 0 else "rose","stock":amount,"max":amount,"region":region,"progress":0.0})
+	return result
+
+func emit(kind: String,where: Vector2,amount := 0) -> void:
+	events.append({"kind":kind,"pos":where,"amount":amount})
+
+func at_home() -> bool: return area == "hub"
+func cargo_total() -> int: return int(cargo.blue)+int(cargo.rose)
+func cargo_value() -> int:
+	var base := int(cargo.blue)+int(cargo.rose)*3
+	return base+int(floor(base*0.25)) if "market" in owned else base
+func capacity() -> int: return 48 if "bag2" in owned else 30 if "bag1" in owned else 18
+func max_energy() -> float: return 145.0 if "wings2" in owned else 110.0 if "wings1" in owned else 85.0
+func harvest_radius() -> float: return 155.0 if "reach" in owned else 100.0
+func harvest_rate() -> float: return 11.0 if "gather2" in owned else 7.5 if "gather1" in owned else 5.0
+func rain_floor_at(x: float) -> float:
+	return minf(800.0,Canopy.top_at(x,RAIN_SHELTER))
+func rain_exposed() -> bool: return area == "meadow" and p.x >= 2600.0 and p.x <= 2920.0 and p.y < rain_floor_at(p.x)
+
+func upgrade_defs() -> Array:
+	return [
+		{"id":"gather1","name":"轻巧采蜜","description":"每秒采蜜 5 → 7.5 份","cost":12,"branch":0,"row":0,"requires":[]},
+		{"id":"gather2","name":"熟练采蜜","description":"每秒采蜜 7.5 → 11 份","cost":32,"branch":0,"row":1,"requires":["gather1"]},
+		{"id":"reach","name":"花香触角","description":"采集半径 100 → 155（+55%）","cost":48,"branch":0,"row":2,"requires":["gather1"]},
+		{"id":"twin","name":"双簇采蜜","description":"同时采集范围内的两朵花","cost":85,"branch":0,"row":3,"requires":["gather2","reach"]},
+		{"id":"bag1","name":"舒展蜜囊","description":"携带上限 18 → 30","cost":18,"branch":1,"row":0,"requires":[]},
+		{"id":"wings1","name":"轻盈双翼","description":"续航上限 85 → 110","cost":25,"branch":1,"row":1,"requires":[]},
+		{"id":"bag2","name":"丰收蜜囊","description":"携带上限 30 → 48","cost":55,"branch":1,"row":2,"requires":["bag1"]},
+		{"id":"wings2","name":"远行双翼","description":"续航上限 110 → 145","cost":75,"branch":1,"row":3,"requires":["wings1"]},
+		{"id":"meadow","name":"开往紫花地","description":"开放远方花地；基础能力累计成长3次","cost":90,"branch":2,"row":0,"requires":[]},
+		{"id":"shortcut","name":"叶间近道","description":"开通池岸与远方花地的双向近道","cost":65,"branch":2,"row":1,"requires":["meadow"]},
+		{"id":"market","name":"好口碑","description":"每次售卖获得额外 25% 金币","cost":90,"branch":2,"row":2,"requires":["meadow"]},
+		{"id":"reserve","name":"备好花蜜","description":"交售过 18 份紫花蜜后，为蜂巢备好储粮","cost":180,"branch":2,"row":3,"requires":["meadow"]}
+	]
+
+func upgrade(id: String) -> Dictionary:
+	for definition in upgrade_defs():
+		if definition.id == id: return definition
+	return {}
+
+func growth_count() -> int:
+	return _growth_count(owned)
+
+static func _growth_count(ids: Array) -> int:
+	var count := 0
+	for id in ["gather1","gather2","bag1","bag2","wings1","wings2","reach","twin"]:
+		if id in ids: count += 1
+	return count
+
+func locked_reason(id: String) -> String:
+	var definition := upgrade(id)
+	if definition.is_empty(): return "未知成长"
+	if id in owned: return "已经拥有"
+	if not at_home(): return "回蜂巢后购买"
+	for prerequisite in definition.requires:
+		if prerequisite not in owned: return "先获得："+str(upgrade(prerequisite).name)
+	if id == "wings1" and "gather1" not in owned and "bag1" not in owned: return "采蜜技巧或蜜囊容量达到1级"
+	if id == "meadow" and growth_count() < 3: return "基础能力成长 %d / 3 次" % growth_count()
+	if id == "market" and (not visited_meadow or rose_sold < 1): return "先探索紫花地，并交售至少1份紫蜜"
+	if id == "reserve" and (not visited_meadow or rose_sold < 18): return "先探索花地并交售 18 份紫花蜜（%d / 18）" % rose_sold
+	if id == "reserve" and "twin" not in owned and "shortcut" not in owned: return "双簇采蜜或叶间近道：任选其一"
+	if coins < int(definition.cost): return "还需 %d 金币" % (int(definition.cost)-coins)
+	return ""
+
+func can_buy(id: String) -> bool: return locked_reason(id).is_empty()
+
+func buy(id: String) -> bool:
+	if not can_buy(id): return false
+	coins -= int(upgrade(id).cost)
+	owned.append(id)
+	energy = max_energy()
+	emit("buy",HOME,int(upgrade(id).cost))
+	if id in ["meadow","shortcut"]: emit("unlock",HOME)
+	if id == "reserve":
+		completed = true
+		emit("complete",HOME)
+	return true
+
+func sell() -> int:
+	if not at_home() or cargo_total() == 0: return 0
+	var value := cargo_value()
+	coins += value
+	sold_total += cargo_total()
+	rose_sold += int(cargo.rose)
+	cargo = {"blue":0,"rose":0}
+	_full_announced = false
+	emit("sell",HOME,value)
+	return value
+
+func clear_controls() -> void:
+	charge = 0.0
+	charging = false
+	harvesting_ids.clear()
+
+func interaction() -> String:
+	if area == "hub":
+		for point in [{"p":HUB_SHOP,"action":"shop"},{"p":HUB_TREE,"action":"tree"},{"p":HUB_JOURNAL,"action":"journal"},{"p":HUB_DEPART,"action":"depart"}]:
+			if p.distance_to(point.p) <= 100.0: return point.action
+	elif area == "pond":
+		if p.distance_to(POND_ENTRY) <= 70.0: return "home"
+		if p.distance_to(POND_EXIT) <= 70.0: return "meadow"
+	elif p.distance_to(MEADOW_ENTRY) <= 70.0: return "pond"
+	return ""
+
+func update_camera() -> void:
+	camera_x = clampf(p.x-640.0,0.0,640.0) if area == "hub" else clampf(p.x-480.0,400.0,440.0) if area == "pond" else clampf(p.x-480.0,1840.0,2240.0)
+	chapter.region = 1 if area == "meadow" else 0
+
+func transition_to(destination: String,via: String = "gate") -> bool:
+	if destination not in ["hub","pond","meadow"] or destination == area: return false
+	if destination == "meadow" and "meadow" not in owned: return false
+	var arrival := HOME
+	if via == "shortcut":
+		if "shortcut" not in owned or area == "hub" or destination == "hub": return false
+		var source_index := 0 if area == "pond" else 1
+		if p.distance_to(SHORTCUTS[source_index]) > 115.0: return false
+		arrival = SHORTCUTS[1-source_index]
+	elif via != "gate": return false
+	elif area == "hub":
+		if interaction() != "depart" or destination == "hub": return false
+		arrival = POND_ENTRY if destination == "pond" else MEADOW_ENTRY
+	elif area == "pond":
+		if destination == "hub":
+			if interaction() != "home": return false
+		elif destination == "meadow":
+			if interaction() != "meadow": return false
+			arrival = MEADOW_ENTRY
+		else: return false
+	else:
+		if interaction() != "pond" or destination not in ["hub","pond"]: return false
+		arrival = POND_EXIT if destination == "pond" else HOME
+	var previous := area
+	if previous == "hub":
+		trip_index += 1
+		for flower in flowers:
+			flower.stock = flower.max
+			flower.progress = 0.0
+		creatures = Encounters.layout(trip_index)
+		hurt_left = 0.0
+	area = destination
+	phase = "home" if area == "hub" else "field"
+	p = arrival
+	v = Vector2.ZERO
+	burst_left = 0.0
+	clear_controls()
+	if area == "hub":
+		energy = max_energy()
+		hurt_left = 0.0
+		emit("return",p,cargo_total())
+	elif previous == "hub": emit("depart",p,trip_index)
+	if area == "meadow": visited_meadow = true
+	update_camera()
+	emit("area_change",p)
+	events[-1]["from"] = previous
+	events[-1]["to"] = area
+	return true
+
+func _rescue() -> void:
+	var before := cargo_total()
+	var previous := area
+	cargo.blue = int(floor(float(cargo.blue)*0.5))
+	cargo.rose = int(floor(float(cargo.rose)*0.5))
+	area = "hub"
+	phase = "home"
+	p = HOME
+	energy = max_energy()
+	v = Vector2.ZERO
+	burst_left = 0.0
+	hurt_left = 0.0
+	clear_controls()
+	update_camera()
+	_full_announced = false
+	emit("area_change",HOME)
+	events[-1]["from"] = previous
+	events[-1]["to"] = area
+	emit("rescue",HOME,before-cargo_total())
+
+func use_shortcut() -> bool:
+	return transition_to("meadow" if area == "pond" else "pond","shortcut")
+
+func can_damage(creature: Dictionary) -> bool:
+	return area != "hub" and int(creature.region) == (1 if area == "meadow" else 0) and creature.state == "chase" and hurt_left <= 0.0 and not Encounters.safe_at(area,p)
+
+func step(delta: float,move: Vector2,collect: bool,space_held: bool) -> void:
+	if not is_finite(delta) or delta <= 0.0 or not move.is_finite(): return
+	var dt := minf(delta,0.1)
+	hurt_left = maxf(0.0,hurt_left-dt)
+	move = move.limit_length(1.0)
+	harvesting_ids.clear()
+	if cargo_total() < capacity(): _full_announced = false
+	if burst_left <= 0.0:
+		if not move.is_zero_approx(): face = move.normalized()
+		if space_held:
+			charging = true
+			charge = minf(CHARGE_READY,charge+dt)
+		elif charging:
+			if charge >= CHARGE_READY and energy >= 4.0:
+				burst_left = 0.32
+				energy -= 4.0
+				emit("dash",p)
+			charging = false
+			charge = 0.0
+	var dashing := burst_left > 0.0
+	if burst_left > 0.0:
+		v = face*500.0
+		burst_left = maxf(0.0,burst_left-dt)
+	else:
+		var speed := 135.0 if charging else 230.0
+		v = v.move_toward(move*speed,(1800.0 if move.is_zero_approx() else 1300.0)*dt)
+	p += v*dt
+	var left := 80.0 if area == "hub" else 400.0 if area == "pond" else 1840.0
+	var right := 1840.0 if area == "hub" else 1720.0 if area == "pond" else 3520.0
+	var limited := Vector2(clampf(p.x,left,right),clampf(p.y,160.0,650.0))
+	if limited.x != p.x: v.x = 0.0
+	if limited.y != p.y: v.y = 0.0
+	p = limited
+	if area == "hub":
+		energy = max_energy()
+	else:
+		energy = maxf(0.0,energy-dt*(0.7+(1.8 if rain_exposed() else 0.0)))
+		Encounters.step(self,dt,dashing)
+		if energy <= 0.0:
+			_rescue()
+			return
+		if collect and not charging and not dashing:
+			_harvest(dt)
+	update_camera()
+
+func _harvest(dt: float) -> void:
+	if cargo_total() >= capacity():
+		if not _full_announced:
+			emit("full",p,capacity())
+			_full_announced = true
+		return
+	var candidates: Array[Dictionary] = []
+	for flower in flowers:
+		if int(flower.stock) > 0 and int(flower.region) == (1 if area == "meadow" else 0) and p.distance_to(flower.pos) <= harvest_radius(): candidates.append(flower)
+	candidates.sort_custom(func(a,b): return p.distance_squared_to(a.pos) < p.distance_squared_to(b.pos))
+	for i in mini(candidates.size(),2 if "twin" in owned else 1):
+		var flower: Dictionary = candidates[i]
+		if cargo_total() >= capacity(): break
+		harvesting_ids.append(flower.id)
+		flower.progress = minf(2.0,float(flower.progress)+harvest_rate()*dt)
+		var amount := mini(int(floor(float(flower.progress))),mini(int(flower.stock),capacity()-cargo_total()))
+		if amount > 0:
+			flower.progress -= amount
+			flower.stock -= amount
+			cargo[flower.type] += amount
+			emit("harvest",flower.pos,amount)
+			events[-1]["type"] = flower.type
+		if int(flower.stock) == 0: flower.progress = 0.0
+	if cargo_total() >= capacity() and not _full_announced:
+		emit("full",p,capacity())
+		_full_announced = true
+
+func goal_text() -> String:
+	if completed: return "花蜜备好了 · 继续探索，或回蜂巢歇一歇"
+	if "meadow" not in owned:
+		if owned.is_empty(): return "带回第一囊花蜜，换一项成长"
+		if growth_count() < 3: return "基础能力成长 %d / 3 · 再开放紫花地" % growth_count()
+		return "攒够 90 金币，开放远方紫花地"
+	if not visited_meadow: return "新花地已开放 · 到出发路牌选择紫花地"
+	if rose_sold < 18: return "带回紫花蜜 · 已交售 %d / 18" % rose_sold
+	if "shortcut" not in owned and "twin" not in owned: return "双簇采蜜或叶间近道 · 任选一项成长"
+	return "备好花蜜 · 为蜂巢留出 180 金币的储粮"
+
+func to_payload() -> Dictionary:
+	var stock: Array = []
+	for flower in flowers: stock.append({"id":flower.id,"stock":flower.stock,"progress":flower.progress})
+	return {"id":SAVE_ID,"version":SAVE_VERSION,"area":area,"creatures":Encounters.payload(creatures),"hurt_left":hurt_left,"p":[p.x,p.y],"v":[v.x,v.y],"face":[face.x,face.y],"phase":phase,"energy":energy,"charge":charge,"charging":charging,"burst_left":burst_left,"coins":coins,"cargo":cargo.duplicate(true),"owned":owned.duplicate(),"legacy_owned":legacy_owned.duplicate(),"flowers":stock,"completed":completed,"trip_index":trip_index,"sold_total":sold_total,"rose_sold":rose_sold,"visited_meadow":visited_meadow}
+
+static func number(value) -> bool:
+	return (value is int or value is float) and is_finite(float(value))
+
+static func whole(value,low: int,high: int) -> bool:
+	return number(value) and float(value) == floor(float(value)) and float(value) >= low and float(value) <= high
+
+static func pair(value) -> bool:
+	return value is Array and value.size() == 2 and number(value[0]) and number(value[1])
+
+static func keys_match(value: Dictionary,keys: Array) -> bool:
+	if value.size() != keys.size(): return false
+	for key in keys:
+		if not value.has(key): return false
+	return true
+
+func restore_payload(data) -> bool:
+	if not data is Dictionary or not keys_match(data,to_payload().keys()): return false
+	if not whole(data.version,3,3) or data.area not in ["hub","pond","meadow"]: return false
+	if data.phase != ("home" if data.area == "hub" else "field"): return false
+	if not pair(data.p) or not number(data.hurt_left) or data.hurt_left < 0.0 or data.hurt_left > 1.5: return false
+	var next_p := Vector2(float(data.p[0]),float(data.p[1]))
+	var left := 80.0 if data.area == "hub" else 400.0 if data.area == "pond" else 1840.0
+	var right := 1840.0 if data.area == "hub" else 1720.0 if data.area == "pond" else 3520.0
+	if next_p.x < left or next_p.x > right or next_p.y < 160.0 or next_p.y > 650.0: return false
+	if data.area == "hub" and data.hurt_left != 0.0: return false
+	var economic: Dictionary = data.duplicate(true)
+	for key in ["area","creatures","hurt_left"]: economic.erase(key)
+	economic.version = 2
+	if data.area == "hub": economic.p = [230.0,575.0]
+	var previous = Legacy.new()
+	if not previous.restore_payload(economic): return false
+	if data.area == "meadow" and (not data.visited_meadow or "meadow" not in data.owned): return false
+	var next_creatures: Array[Dictionary] = Encounters.restore(data.creatures,int(data.trip_index))
+	if next_creatures.size() != 3: return false
+	_copy_progress(previous)
+	p = next_p
+	area = data.area
+	creatures = next_creatures
+	hurt_left = float(data.hurt_left)
+	update_camera()
+	return true
+
+# Migration validates the frozen old schema first; new writes only accept v3.
+func restore_v1_payload(data) -> bool:
+	return restore_legacy_payload(data,1)
+
+func restore_legacy_payload(data,version: int) -> bool:
+	var previous = Legacy.new()
+	var valid: bool = previous.restore_v1_payload(data) if version == 1 else previous.restore_payload(data) if version == 2 else false
+	if not valid: return false
+	_copy_progress(previous)
+	area = "hub" if phase == "home" else "meadow" if p.x > GATE_X else "pond"
+	if area == "hub": p = HOME
+	else: p.x = clampf(p.x,400.0 if area == "pond" else 1840.0,1720.0 if area == "pond" else 3520.0)
+	creatures = Encounters.layout(trip_index)
+	for creature in creatures:
+		creature.state = "gone"
+		creature.timer = 0.0
+	hurt_left = 0.0
+	update_camera()
+	return true
+
+func _copy_progress(previous) -> void:
+	for property in ["p","v","face","phase","energy","charge","charging","burst_left","coins","completed","trip_index","sold_total","rose_sold","visited_meadow"]:
+		set(property,previous.get(property))
+	cargo = previous.cargo.duplicate(true)
+	owned.assign(previous.owned)
+	legacy_owned.assign(previous.legacy_owned)
+	flowers.assign(previous.flowers.duplicate(true))
+	events.clear()
+	harvesting_ids.clear()
+	_full_announced = false

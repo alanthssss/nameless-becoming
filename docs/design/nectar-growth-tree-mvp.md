@@ -1,5 +1,7 @@
 # 采蜜小店：抽象成长树 MVP 定稿与扩展方向
 
+> 2026-11-04数值修订：0.23按单花1份同步压缩容量/费用；当前数值与v4迁移以[SD-v1.1反馈裁定](nectar-steam-demo.md#2026-11-04-十条试玩反馈修订sd-v11)为准，下文原表保留为NH-GT-v1历史基线。9节点/12次升级及分支关系保持。
+
 版本：NH-GT-v1，2026-11-02。关联：[GDD §13.7](swarm-flight-gdd.md#nectar-harvest-mvp) → [M3](https://github.com/alanthssss/nameless-becoming/milestone/3) → [#273](https://github.com/alanthssss/nameless-becoming/issues/273)；产品与成本仍由 [#211](https://github.com/alanthssss/nameless-becoming/issues/211)承接，执行状态只见[唯一 Now](solar-term-campaign-production-spec.md#production-now)。
 
 ## 1. 定稿的含义与体验目标

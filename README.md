@@ -1,5 +1,7 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
+**2026-11-04 · Demo 0.23反馈修订。** [十条反馈与规则](docs/design/nectar-steam-demo.md#2026-11-04-十条试玩反馈修订sd-v11)涵盖同款蜜罐、紧凑庭院、灯球返回、单花单份与和平生物、集中HUD；当前制作/验证沿[Now](docs/design/solar-term-campaign-production-spec.md#production-now)与M3 #301–304，尚不代表用户接受。
+
 **2026-11-03 · macOS Steam Demo制作。** 按Alan新决定推进[蜂舞、生活区与发布规格](docs/design/nectar-steam-demo.md)，GDD§13.9 / M3 #288–298；唯一执行状态见[Now](docs/design/solar-term-campaign-production-spec.md#production-now)。0.21为历史基线，本轮未验证项目不会被写成已发布。
 
 **2026-11-03 · 采蜜小店0.21场景迭代。** [地区与遭遇设计](docs/design/nectar-regions-mvp.md)已实现独立庭院、两片野外、收购/成长/出发功能点与有限蚊群；[构建与验证回执](prototypes/swarm-flight/review-evidence/2026-11-03/nectar-regions-mvp/README.md)记录0.21候选。GDD§13.8 / M3 #281–286，最终集成与下一检查点沿[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。以下为历史候选记录。

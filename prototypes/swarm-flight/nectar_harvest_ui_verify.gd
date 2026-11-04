@@ -70,6 +70,9 @@ func run() -> void:
 	await capture("01-title")
 	await tap(KEY_ENTER)
 	check(game.mode == "play","focused title button starts with actual Enter input")
+	check(not game.ui.goal_text.visible and not game.ui.trip_text.visible,"permanent objective and area text removed from flight HUD")
+	for item in [game.ui.bag_text,game.ui.energy_text,game.ui.coins_text]:
+		check(game.ui.hud_status.get_global_rect().encloses(item.get_global_rect()),"all resource indicators live inside a single status block")
 	await capture("02-first-garden")
 	key(KEY_D,true)
 	await create_timer(2.0).timeout
@@ -93,8 +96,8 @@ func run() -> void:
 	await create_timer(1.25).timeout
 	key(KEY_E,false)
 	await frames(3)
-	check(game.model.cargo_total() >= 4,"actual hold-E collects visible source")
-	check(game.model.flowers[0].stock < 12,"source stock decreases with cargo")
+	check(game.model.cargo_total() == 1,"actual hold-E collects visible source")
+	check(game.model.flowers[0].stock == 0,"source stock decreases with cargo")
 	await capture("03-harvesting")
 	var old_cargo: int = game.model.cargo_total()
 	await tap(KEY_ESCAPE)
@@ -110,7 +113,7 @@ func run() -> void:
 	game.model.v = Vector2.ZERO
 	await tap(KEY_E)
 	await create_timer(2.2).timeout
-	check(game.model.area == "hub" and game.world.area_key == "hub","return portal loads courtyard scene")
+	check(game.model.area == "hub" and game.world.area_key == "hub" and game.model.p.distance_to(Model.HUB_DEPART)<1,"return arrives at the courtyard lamp rather than growth tree")
 	game.model.p = Model.HUB_SHOP
 	await frames(3)
 	await tap(KEY_E)
@@ -144,7 +147,7 @@ func run() -> void:
 	repeat.echo = true
 	root.push_input(repeat,true)
 	await frames(3)
-	check(game.model.owned == ["gather1"] and game.model.coins == 988,"held Enter and key repeat buy exactly one rank")
+	check(game.model.owned == ["gather1"] and game.model.coins == 996,"held Enter and key repeat buy exactly one rank")
 	# Explicit focus-loss notification fixture: key-up happened in another app.
 	game.test_mode = false
 	game._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
@@ -153,12 +156,12 @@ func run() -> void:
 	await frames(2)
 	check(game.ui.board.buttons.reach.visible and game.ui.board.buttons.wings.visible,"first purchase reveals relevant next choices")
 	check(not game.ui.board.buttons.twin.visible,"double gather stays concealed until reach is found")
-	check("7.5 → 11" in game.ui.detail_effect.text,"detail advances to the next rank")
+	check("1.5 → 2.2" in game.ui.detail_effect.text,"detail advances to the next rank")
 	await tap(KEY_ENTER)
-	check("gather2" in game.model.owned and game.model.coins == 956,"a separate confirmation buys second rank at its own cost")
+	check("gather2" in game.model.owned and game.model.coins == 985,"a separate confirmation buys second rank at its own cost")
 	check(game.ui.buy_button.disabled and not game.ui.board.buttons.gather.disabled,"max node is inspectable but purchase is disabled")
 	var after_buy := Save.read_payload(game.saved_path,Model.new())
-	check("gather2" in after_buy.get("owned",[]) and int(after_buy.get("coins",-1))==956,"purchase snapshot retains matching debit and ranks")
+	check("gather2" in after_buy.get("owned",[]) and int(after_buy.get("coins",-1))==985,"purchase snapshot retains matching debit and ranks")
 	await create_timer(.4).timeout
 	await click(game.ui.board.buttons.bag)
 	await click(game.ui.buy_button)
@@ -175,10 +178,10 @@ func run() -> void:
 	var before_wings: int = game.model.coins
 	await click(game.ui.buy_button)
 	await click(game.ui.buy_button)
-	check("wings1" in game.model.owned and "wings2" not in game.model.owned and game.model.coins == before_wings-25,"rapid double click cannot consume both ranks")
+	check("wings1" in game.model.owned and "wings2" not in game.model.owned and game.model.coins == before_wings-9,"rapid double click cannot consume both ranks")
 	await create_timer(.42).timeout
 	await click(game.ui.buy_button,true)
-	check("wings2" not in game.model.owned and game.model.coins == before_wings-25,"OS slower double-click second activation cannot buy another rank")
+	check("wings2" not in game.model.owned and game.model.coins == before_wings-9,"OS slower double-click second activation cannot buy another rank")
 	await create_timer(.4).timeout
 	await click(game.ui.board.buttons.reach)
 	var valid_path: String = game.saved_path
@@ -239,7 +242,7 @@ func run() -> void:
 	game.model.p = Vector2(2140,410)
 	await frames(3)
 	await capture("10-purple-meadow")
-	check(game.ui.help_text.get_visible_line_count() == 1,"field context is one readable action line")
+	check(game.ui.help_text.get_visible_line_count() <= 1,"field context is one readable action line")
 	game.model.p = Vector2(2750,650)
 	await frames(3)
 	await capture("11-sheltered-low-route")

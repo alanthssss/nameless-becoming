@@ -58,6 +58,23 @@
       "post_processing": "none; source PNG copied without raster edits",
       "usage": "nectar_harvest_view.gd; hub and field stages / hub shop / hub books",
       "review_status": "native review candidate; professional art approval pending"
+    },
+    {
+      "id": "nectar-honey-jar",
+      "version": 1,
+      "file": "nectar-honey-jar.png",
+      "sha256": "8349e15f79ebfca1a84c28d7ed4325de63a341efdd2cda81b452cb759a0d2dd4",
+      "source": "OpenAI built-in image_gen; pre-generated transparent raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a47c-5721-7fb3-b13a-5a67a774cacc/exec-fee6a20a-5f39-4649-a513-f6e7d992b543.png",
+      "date": "2026-11-04",
+      "brief": "Extract/reproduce one original amber honey jar: squat round glass, cream cloth cap and brown tied bow, warm painted outline and upper-left highlight. Same original design, no shop/shelf/background/text. Transparent outside only; readable at 35x34 in game.",
+      "style_references": [
+        "nectar-honey-shop.png"
+      ],
+      "post_processing": "Source PNG copied without raster edits; native texture region excludes transparent margins.",
+      "usage": "nectar_harvest_view.gd _draw_hub; six shelf slots aligned to existing shelf surfaces",
+      "review_status": "Developer and independent AI native screenshot review; human art acceptance pending",
+      "issue": 301
     }
   ]
 }

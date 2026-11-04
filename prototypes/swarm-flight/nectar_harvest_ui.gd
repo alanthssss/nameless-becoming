@@ -1,6 +1,7 @@
 extends Control
 ## Compact field HUD, contextual selling, and an abstract growth map.
 const Board = preload("res://nectar_growth_board.gd")
+const HudIcon = preload("res://nectar_hud_icon.gd")
 const INK := Color("294d40")
 const PAPER := Color("f5edcf")
 const GOLD := Color("eccb7c")
@@ -8,6 +9,10 @@ const MUTED := Color("a9beac")
 var driver
 var font := SystemFont.new()
 var hud: Control
+var hud_status: PanelContainer
+var menu_guide: Button
+var pond_info: Label
+var meadow_info: Label
 var bag_text: Label
 var energy_text: Label
 var coins_text: Label
@@ -197,39 +202,47 @@ func spacer(parent: Node) -> void:
 	c.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	parent.add_child(c)
 
+func hud_symbol(parent: Node, kind: String, hint: String) -> void:
+	var symbol := HudIcon.new()
+	symbol.kind = kind
+	symbol.custom_minimum_size = Vector2(32,32)
+	symbol.tooltip_text = hint
+	parent.add_child(symbol)
+
 func _build_hud() -> void:
 	hud = screen(self)
-	var resources := card(hud,Color("254a3eef"),Color("79947b"))
-	anchored(resources,Rect2(0,0,0,0),Rect2(24,22,202,86))
-	var rv := column(resources,4)
-	coins_text = text_line(rv,"",26,GOLD)
-	trip_text = text_line(rv,"",17,Color("d1ddc1"))
-	var target := card(hud,Color("f5edcfe8"))
-	anchored(target,Rect2(1,0,0,0),Rect2(-354,22,330,95))
-	text_line(column(target,5),"下一步",15,Color("7e8868"))
-	goal_text = text_line(target.get_child(0),"",19,INK,true)
-	var status := card(hud,Color("24483ef2"),Color("86a181"))
-	anchored(status,Rect2(.5,1,0,0),Rect2(-260,-89,520,65))
-	var hr := row(status,24)
-	var bag := column(hr,5)
+	hud_status = card(hud,Color("254a3eef"),Color("79947b"))
+	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-104,570,80))
+	var hr := row(hud_status,22)
+	var money := row(hr,4)
+	hud_symbol(money,"coin","金币：交付花蜜后获得，用于成长")
+	coins_text = text_line(money,"",22,GOLD)
+	coins_text.custom_minimum_size.x = 55
+	coins_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var bag := column(hr,4)
 	bag.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bag_text = text_line(bag,"",19,PAPER)
+	var br := row(bag,4)
+	hud_symbol(br,"bag","携带花蜜 / 蜜囊容量")
+	bag_text = text_line(br,"",20,PAPER)
 	bag_bar = bar(bag,GOLD)
-	var energy := column(hr,5)
+	var energy := column(hr,4)
 	energy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	energy_text = text_line(energy,"",19,PAPER)
+	var er := row(energy,4)
+	hud_symbol(er,"wings","续航：庭院恢复，外出和淋雨消耗")
+	energy_text = text_line(er,"",20,PAPER)
 	energy_bar = bar(energy,Color("a5c791"))
+	goal_text = text_line(hud,"",18)
+	goal_text.hide()
+	trip_text = text_line(hud,"",18)
+	trip_text.hide()
 	help_text = text_line(hud,"",19,INK)
-	anchored(help_text,Rect2(.5,1,0,0),Rect2(-500,-139,1000,32))
+	anchored(help_text,Rect2(.5,1,0,0),Rect2(-350,-151,700,32))
 	help_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	help_text.add_theme_color_override("font_shadow_color",Color("f5edcfff"))
-	help_text.add_theme_constant_override("shadow_offset_x",1)
+	help_text.add_theme_color_override("font_shadow_color",PAPER)
 	help_text.add_theme_constant_override("shadow_offset_y",1)
-	var controls := text_line(hud,"WASD 飞行   空格 冲刺   Esc 暂停",15,INK)
-	controls.add_theme_color_override("font_shadow_color",PAPER)
-	controls.add_theme_constant_override("shadow_offset_x",1)
-	controls.add_theme_constant_override("shadow_offset_y",1)
-	anchored(controls,Rect2(0,1,0,0),Rect2(25,-38,330,24))
+	var pause := action(hud,"Ⅱ",driver.pause_game)
+	pause.tooltip_text = "暂停与操作说明 · Esc"
+	anchored(pause,Rect2(1,1,0,0),Rect2(-76,-76,52,52))
 
 func _build_shop() -> void:
 	shop = screen(self)
@@ -247,8 +260,8 @@ func _build_shop() -> void:
 	sell_button = action(v,"全部交付",driver.sell_cargo,true)
 	shop_coins = text_line(v,"",19,Color("718160"))
 	spacer(v)
-	tree_button = action(v,"回庭院 · 去中央成长台",driver.close_shop)
 	leave_button = action(v,"回到庭院",driver.close_shop)
+	tree_button = leave_button # Compatibility alias for the single return action.
 	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071"))
 
 func _build_regions() -> void:
@@ -261,13 +274,13 @@ func _build_regions() -> void:
 	region_title = text_line(v,"这次去哪里？",32)
 	region_hint = text_line(v,"",19,INK,true)
 	pond_button = action(v,"池岸花丛",func(): driver.request_transition("pond"),true)
-	text_line(v,"蓝花蜜 · 开阔花丛 · 一只可绕行的巡游蚊",18,Color("7b895f"),true)
+	pond_info = text_line(v,"每花 1 份 · 每份 1 金币 · 晴",18,Color("7b895f"),true)
 	meadow_button = action(v,"紫花地",func(): driver.request_transition("meadow"),true)
-	text_line(v,"紫花蜜 · 警戒蚊与细雨 · 留意入口返程路牌",18,Color("7b895f"),true)
+	meadow_info = text_line(v,"每花 1 份 · 每份 3 金币 · 局部细雨",18,Color("7b895f"),true)
 	home_button = action(v,"直接回蜂巢庭院",func(): driver.request_transition("hub"),true)
 	spacer(v)
 	region_back = action(v,"先留在这里",driver.close_regions)
-	text_line(v,"Esc 留在这里 · 选定后蜂舞出发",16,Color("839071"))
+	text_line(v,"Esc 返回",16,Color("839071"))
 
 func _build_transition() -> void:
 	transition_layer = ColorRect.new()
@@ -350,11 +363,12 @@ func _build_menu() -> void:
 	menu_body = text_line(v,"",21,INK,true)
 	menu_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	menu_primary = action(v,"开始采蜜",driver.start_game,true)
-	menu_settings = action(v,"设置 · 操作 · 关于",driver.open_settings)
+	menu_settings = action(v,"设置",driver.open_settings)
+	menu_guide = action(v,"花路与操作",driver.open_journal)
 	var bottom := row(v,14)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.22 · WASD 飞行 / E 交互与采集 / Esc 暂停",16,Color("8a9175"))
+	text_line(v,"Demo 0.23 · WASD 飞行 / E 交互与采集 / Esc 暂停",16,Color("8a9175"))
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
@@ -386,6 +400,7 @@ func show_mode(mode: String) -> void:
 	transition_hint.visible = mode == "transition"
 	journal.visible = mode == "journal"
 	settings.visible = mode == "settings"
+	menu_guide.visible = mode == "pause"
 	if mode == "journal":
 		journal_status.text = "紫花地已记录 · 已交付紫蜜 %d 份" % driver.model.rose_sold if driver.model.visited_meadow else "池岸已备好 · 紫花地待探索"
 		journal_back.grab_focus()
@@ -412,7 +427,7 @@ func show_mode(mode: String) -> void:
 			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
 		elif mode == "pause":
 			menu_title.text = "歇一会儿"
-			menu_body.text = "这一趟的收获与成长都记下了。\n\nWASD / 方向键：飞行\n靠近功能点按 E；花丛中按住 E 采蜜\n空格蓄力松开：冲刺，可驱离蚊子"
+			menu_body.text = driver.model.goal_text()+"\n\nWASD / 方向键：飞行\nE / 鼠标按住：采蜜；E：交互\n空格蓄力松开：冲刺"
 			menu_primary.text = "继续这趟出行"
 		else:
 			menu_title.text = "花蜜，备好了"
@@ -440,7 +455,7 @@ func _requirements(id: String) -> String:
 		"meadow": return "基础能力成长  %d / 3 次\n同一能力升两级，计两次" % mini(3,m.growth_count())
 		"shortcut": return "紫花地已开放"
 		"market": return "已经探索紫花地\n已交售紫蜜  %d / 1 份" % mini(1,m.rose_sold)
-		"reserve": return "已经探索紫花地\n已交售紫蜜  %d / 18 份\n\n任选其一：\n双簇采蜜 或 叶间近道" % mini(18,m.rose_sold)
+		"reserve": return "已经探索紫花地\n已交售紫蜜  %d / 6 份\n\n任选其一：\n双簇采蜜 或 叶间近道" % mini(6,m.rose_sold)
 	return ""
 
 func _detail() -> void:
@@ -454,7 +469,7 @@ func _detail() -> void:
 	detail_level.text = ["采集","出行","花路与收益","阶段成果"][int(data.group)]+"  ·  %d / %d" % [rank,data.ranks.size()]
 	detail_requirements.text = _requirements(id)
 	if next.is_empty():
-		var current_effects := {"gather":"每秒采蜜 11 份", "bag":"最多携带 48 份花蜜", "wings":"续航上限 145", "reach":"采集范围 155", "twin":"同时采集范围内的两朵花", "meadow":"远方紫花地已开放", "shortcut":"池岸与紫花地可双向通行", "market":"每次交付获得额外 25% 金币", "reserve":"已经为蜂巢备好花蜜"}
+		var current_effects := {"gather":"每秒采蜜 2.2 份", "bag":"最多携带 16 份花蜜", "wings":"续航上限 145", "reach":"采集范围 155", "twin":"同时采集范围内的两朵花", "meadow":"远方紫花地已开放", "shortcut":"池岸与紫花地可双向通行", "market":"每次交付获得额外 25% 金币", "reserve":"已经为蜂巢备好花蜜"}
 		detail_effect.text = current_effects[id]
 		buy_button.text = "✓ 已满级"
 		buy_button.disabled = true
@@ -503,35 +518,34 @@ func tree_key(event: InputEventKey) -> bool:
 func refresh() -> void:
 	if driver == null or not is_instance_valid(board): return
 	var m = driver.model
-	bag_text.text = "蜜囊  %d / %d" % [m.cargo_total(),m.capacity()]
+	bag_text.text = "%d / %d" % [m.cargo_total(),m.capacity()]
 	bag_bar.max_value = m.capacity()
 	bag_bar.value = m.cargo_total()
-	energy_text.text = "续航  %d / %d" % [int(ceil(m.energy)),int(m.max_energy())]
+	energy_text.text = "%d / %d" % [int(ceil(m.energy)),int(m.max_energy())]
 	energy_bar.max_value = m.max_energy()
 	energy_bar.value = m.energy
-	coins_text.text = "金币  %d" % m.coins
+	coins_text.text = "%d" % m.coins
 	trip_text.text = driver.area_name(m.area)+(" · 安全生活区" if m.at_home() else " · 第 %d 趟" % maxi(1,m.trip_index))
 	goal_text.text = m.goal_text()
 	var nearby: String = m.interaction()
-	if nearby == "shop": help_text.text = "E  找收购员 · 出售这一趟的花蜜"
-	elif nearby == "tree": help_text.text = "E  进入成长书屋 · 选择下一项成长"
-	elif nearby == "depart": help_text.text = "E  蜂舞广场 · 选好目的地，起舞出发"
-	elif nearby == "journal": help_text.text = "E  花路观测台 · 查看资源、风险与回家路线"
-	elif nearby == "home": help_text.text = "E  返回蜂巢庭院 · 保留全部花蜜"
-	elif nearby == "pond": help_text.text = "E  选择返程 · 返回池岸或直接回庭院"
-	elif nearby == "meadow": help_text.text = "E  前往紫花地" if "meadow" in m.owned else "紫花地尚未开放 · 回庭院成长台查看条件"
-	elif m.at_home(): help_text.text = "蜜铺 ←  成长书屋 · 花路观测台  → 蜂舞广场"
-	elif m.hurt_left > 0: help_text.text = "被蚊子碰到了 · 续航减少，先拉开距离"
-	elif m.cargo_total() >= m.capacity(): help_text.text = "蜜囊满了 · 找入口路牌返回庭院交付"
-	elif m.rain_exposed(): help_text.text = "细雨消耗续航 · 从叶棚下绕行，留意警戒蚊"
-	else: help_text.text = "按住 E / 鼠标采蜜 · 蚊子先预警，绕开或用冲刺驱离"
+	help_text.text = ""
+	if not m.at_home():
+		if m.cargo_total() >= m.capacity(): help_text.text = "蜜囊已满"
+		elif nearby.is_empty():
+			for flower in m.flowers:
+				if flower.stock > 0 and int(flower.region) == (1 if m.area=="meadow" else 0) and m.p.distance_to(flower.pos)<=m.harvest_radius():
+					help_text.text = "按住 E  采蜜"
+					break
+	help_text.visible = not help_text.text.is_empty()
 	var from_hub: bool = m.area == "hub"
 	region_title.text = "这次去哪里？" if from_hub else "带着收获回去"
-	region_hint.text = "新一趟会补满续航，花源与蚊子重新出现。" if from_hub else "沿途状态保留；回庭院可以补满续航和交付花蜜。"
-	pond_button.text = "池岸花丛  →  蓝花蜜 · 1 金币 / 份" if from_hub else "返回池岸花丛  →  保留这趟进度"
+	region_hint.text = "出发会补满续航，花蜜重新蓄满。" if from_hub else "这趟采过的花保持原状。"
+	pond_button.text = "池岸花丛 · 蓝花蜜" if from_hub else "返回池岸花丛"
 	meadow_button.visible = from_hub
+	meadow_info.visible = from_hub
+	pond_info.visible = from_hub
 	meadow_button.disabled = "meadow" not in m.owned
-	meadow_button.text = "紫花地  →  紫花蜜 · 3 金币 / 份" if "meadow" in m.owned else "紫花地未开放 · 在成长台解锁"
+	meadow_button.text = "紫花地 · 紫花蜜" if "meadow" in m.owned else "紫花地 · 在成长书屋开放"
 	home_button.visible = not from_hub
 	shop_coins.text = "当前金币  %d" % m.coins
 	shop_cargo.text = "蓝花蜜    %d 份\n紫花蜜    %d 份" % [m.cargo.blue,m.cargo.rose]
@@ -566,8 +580,8 @@ func _build_journal() -> void:
 	journal_status = text_line(v,"",18,Color("7b895f"))
 	var h := row(v,18)
 	for entry in [
-		["池岸花丛","蓝花蜜 · 每份 1 金币","花簇开阔，适合熟悉采集。\n一只巡游蚊：先预警，再追近。\n拉开距离或蓄力冲刺可脱身。"],
-		["紫花地","紫花蜜 · 每份 3 金币","在书屋解锁紫花地后出发。\n两只警戒蚊，细雨增加消耗。\n叶棚下歇脚，入口可直接回家。"]]:
+		["池岸花丛","蓝花蜜 · 每份 1 金币","每朵花有 1 份花蜜。\n晴朗、开阔，生物不会攻击。\n采够了即可从灯球返回。"],
+		["紫花地","紫花蜜 · 每份 3 金币","在成长书屋开放后出发。\n每朵花 1 份，价值更高。\n细雨增加消耗，叶棚下可避雨。"]]:
 		var c := card(h,Color("e7e9cf"))
 		c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		c.custom_minimum_size.x = 430
@@ -575,10 +589,10 @@ func _build_journal() -> void:
 		text_line(cv,entry[0],27)
 		text_line(cv,entry[1],21,Color("9a6c28"))
 		text_line(cv,entry[2],20,INK,true)
-	text_line(v,"一次出行里，采空的花和驱走的蚊子不会重生。回庭院再出发，开始新的一趟。",19,INK,true)
-	text_line(v,"蜜囊满了就可以回家。续航耗尽会损失一半未交付花蜜；金币与成长保留。",19,INK,true)
+	text_line(v,"WASD / 方向键飞行，按住 E / 鼠标采蜜，空格蓄力松开冲刺。",19,INK,true)
+	text_line(v,"采空的花在下次出发时恢复。续航耗尽会损失一半携带花蜜；金币与成长保留。",19,INK,true)
 	spacer(v)
-	journal_back = action(v,"记住了 · 回到庭院",driver.close_journal,true)
+	journal_back = action(v,"返回",driver.close_journal,true)
 
 func _build_settings() -> void:
 	settings = screen(self)

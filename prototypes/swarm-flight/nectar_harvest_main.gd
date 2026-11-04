@@ -38,7 +38,7 @@ var settings_return := "title"
 var transition_short := false
 
 func _ready() -> void:
-	get_window().title = "雨来之前 · 采蜜与蜂舞 Demo 0.22"
+	get_window().title = "雨来之前 · 采蜜与蜂舞 Demo 0.23"
 	get_tree().auto_accept_quit = false
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--nectar-qa": test_mode = true
@@ -248,10 +248,10 @@ func start_game() -> void:
 	mode = "play"
 	ui.show_mode(mode)
 	get_viewport().gui_release_focus()
-	if model.trip_index == 0: message("雨来前，备好花蜜。右侧蜂舞广场出发；花路观测台可了解旅途。",5)
+	if model.trip_index == 0: message("靠近灯球，按 E 出发",3)
 
 func open_journal() -> void:
-	if mode != "play" or model.interaction() != "journal": return
+	if mode != "pause": return
 	release_controls()
 	mode = "journal"
 	ui.show_mode(mode)
@@ -259,9 +259,8 @@ func open_journal() -> void:
 func close_journal() -> void:
 	if mode != "journal": return
 	release_controls()
-	mode = "play"
+	mode = "pause"
 	ui.show_mode(mode)
-	get_viewport().gui_release_focus()
 
 func open_settings() -> void:
 	if mode not in ["title","pause","complete"]: return
@@ -434,9 +433,9 @@ func consume_events(pending: Array) -> void:
 			sound.play_event("recover",0)
 			message("同伴把你送回了蜂巢 · 未交付花蜜损失了一半",5)
 			persist()
-		elif kind == "full": message("蜜囊装满了 · 从入口回庭院，找收购员交付",4)
+		elif kind == "full": message("蜜囊已满",2)
 		elif kind == "return":
-			message("回到庭院 · 左边交付花蜜，中央选择成长",4)
+			message("回来了",1.4)
 			persist()
 
 func _notification(what: int) -> void:
