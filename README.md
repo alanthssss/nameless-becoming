@@ -279,7 +279,7 @@ npm run test
 ### Steam Demo 深化资料（SD-v1）
 
 - [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
-- [Shelldiver 完整实机研究：覆盖与续接记录](docs/research/shelldiver-fullplay-checkpoint.md)（额度暂停、未完成；含[地图/美术/交互研究方法与媒体归档](docs/research/shelldiver-fullplay-checkpoint.md#study-method)、实际时码和缺口）。
+- [Shelldiver 完整实机研究：覆盖与续接记录](docs/research/shelldiver-fullplay-checkpoint.md)（10%额度检查点暂停、未完成；已保存[25张实机图证清单](docs/research/shelldiver-S11-captures.json)，含[地图/美术/交互研究方法与媒体归档](docs/research/shelldiver-fullplay-checkpoint.md#study-method)、实际时码和缺口）。
 - [Shelldiver Windows 实机验证方案](docs/research/shelldiver-windows-verification.md)（待执行：先完成视频研究，再做设备能力探测、存档保护与控制实验）。
 - [采蜜 Demo 环境支撑与地貌审计](docs/research/nectar-environment-grounding-review.md)（0.24 结构证据与三地改法；尚未实施，待视频研究归纳后落实改善）。
 - [macOS Demo 发行准备与商店材料](docs/release/nectar-demo-steam-macos.md)（暂无AppID；签名、公证与Steam审核待完成）。

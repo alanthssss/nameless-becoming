@@ -1,0 +1,602 @@
+{
+  "schema_version": 1,
+  "source_id": "S11",
+  "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+  "title": "SHELLDIVER Gameplay Walkthrough FULL GAME No Commentary + ENDING",
+  "source_build": "unknown",
+  "status": "paused_for_user_10_percent_usage_checkpoint",
+  "last_observed_video_time": 4263.734491,
+  "note": "Original browser screenshots saved directly; observations and coverage remain limited to recorded frames.",
+  "captures": [
+    {
+      "id": "S11-C001",
+      "file": "S11_02-31-06.914_magma-effects.jpg",
+      "video_time": "02:31:06.914",
+      "video_seconds": 9066.914491,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:26:45.332Z",
+      "question": "后期动作与地形可读性",
+      "observation": "火山色场景的岩体、开放空间和紫晶；角色发射激光，命中处强白光，周边还有另一束作用及白色分叉亮线，HUD与目标同时可见。",
+      "limits": "单帧不能证明其他光束来源、伤害公式、碰撞或持续遮挡；区域名称未在此帧显示。",
+      "source_resolution": [
+        1280,
+        720
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "b6f800b3829fd79d14d0a16c6e0693bcc6e38053fe689c233b9faf75868e2dfb",
+      "bytes": 70617
+    },
+    {
+      "id": "S11-C002",
+      "file": "S11_02-30-46.914_submarine-transfer-after.jpg",
+      "video_time": "02:30:46.914",
+      "video_seconds": 9046.914491,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:28:28.270Z",
+      "question": "潜艇转存与再次出潜",
+      "observation": "黑底转场，右下仍有录像水印，未见可读库存；不能用此帧证明转存完成。",
+      "limits": "位于结算后切换阶段，具体转存证据须看此前画面。",
+      "source_resolution": [
+        1280,
+        720
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "a229eff6a3ecffb74f356f28b856512c25de48014c27da725b0d6eed70d00dba",
+      "bytes": 3546
+    },
+    {
+      "id": "S11-C003",
+      "file": "S11_02-30-46.581_submarine-transfer-moving.jpg",
+      "video_time": "02:30:46.581",
+      "video_seconds": 9046.581151,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:28:52.047Z",
+      "question": "潜艇转存与再次出潜",
+      "observation": "结算47.09秒、水母+30、Obsidians+54,766；身上原商品图标不可见，白粒子覆盖部分格；潜艇前三格亮白并出现转移动画，再出发箭头高亮。",
+      "limits": "这帧支持转移动画发生，不独立证明潜艇最终类型/数量或30只全部无损到账；动画结束后的可读库存尚缺。",
+      "source_resolution": [
+        1280,
+        720
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "32ada58bcb46999a99a87eb97fcbb6ba267bbe5258637fd59b9b7e9ed12b4959",
+      "bytes": 43916
+    },
+    {
+      "id": "S11-C004",
+      "file": "S11_02-30-46.148_submarine-transfer-before.jpg",
+      "video_time": "02:30:46.148",
+      "video_seconds": 9046.147809,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:29:10.306Z",
+      "question": "潜艇转存与再次出潜",
+      "observation": "结算47.09秒、水母+30、Obsidians+54,766；身上三组12、7、11共30只，潜艇12格为空，再出发箭头被选中。",
+      "limits": "同一次结算的前后比较，不证明解锁或保存规则。",
+      "source_resolution": [
+        1280,
+        720
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "a1b06ee16004cd037152c3347bcc6135f3bc477ff98c5fa98bc6cec48ac55fae",
+      "bytes": 45636
+    },
+    {
+      "id": "S11-C005",
+      "file": "S11_00-15-16.153_shallows-upper-water.jpg",
+      "video_time": "00:15:16.153",
+      "video_seconds": 916.153488,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:31:33.950Z",
+      "question": "200m地图：入口、空间与路线",
+      "observation": "潜艇在左上开阔水域；角色居中朝右下用激光采集杂物。下方两侧出现海床/建筑装饰，上方仍有宽阔通行空间；远景蓝色剪影对比较低。",
+      "limits": "当前可见空间；不是全图或完整轨迹。",
+      "source_resolution": [
+        1280,
+        720
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "4bb71b0e5cb652d174a318513042f670da63e779ff5badb6583b210916eb035a",
+      "bytes": 53227
+    },
+    {
+      "id": "S11-C006",
+      "file": "S11_00-15-11.153_shallows-region-entry.jpg",
+      "video_time": "00:15:11.153",
+      "video_seconds": 911.153488,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:31:59.425Z",
+      "question": "200m地图：入口、空间与路线",
+      "observation": "入口标题Ocean Shallows (200m)；潜艇在左侧，角色右侧上方有目标，大片开阔水域和下方低对比远景；尚未看到完整海床。",
+      "limits": "入口样本；区域名与空间只按实际画面记录。",
+      "source_resolution": [
+        1280,
+        720
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "cccafc24e5430e871e568cad9910f7b5d4ff324415369af4443eca12ab865e2c",
+      "bytes": 50492
+    },
+    {
+      "id": "S11-C007",
+      "file": "S11_00-15-26.518_shallows-descending.jpg",
+      "video_time": "00:15:26.518",
+      "video_seconds": 926.517793,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:33:32.456Z",
+      "question": "200m地图：入口、空间与路线",
+      "observation": "右侧出现深色波纹边界，下方海床向右阶梯下降，海床上有珊瑚/植物；粉色和浅色水母及杂物分布在开放水域。",
+      "limits": "从入口播放后取样；两截图之间不是逐帧审计。",
+      "source_resolution": [
+        1280,
+        720
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "e2d3c37abbeed93ffeafbe6e664695f109f1e2b1d03efcce0d61155b9f042b82",
+      "bytes": 68781
+    },
+    {
+      "id": "S11-C008",
+      "file": "S11_00-15-39.713_shallows-upper-right.jpg",
+      "video_time": "00:15:39.713",
+      "video_seconds": 939.713209,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:38:52.233Z",
+      "question": "200m地图：入口、空间与路线",
+      "observation": "角色在靠右侧深色波纹带的开阔水域中采集；粉色/浅色水母与杂物同屏，海床只在下沿局部出现，潜艇已不在本帧视野。",
+      "limits": "480p来源，细小文字与材质不作精细结论；用户协助恢复播放后暂停。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "68073b0cefd6232f88797f93567f74dd4f64c0850edc2b4852be8bc3cbd0db54",
+      "bytes": 47270
+    },
+    {
+      "id": "S11-C009",
+      "file": "S11_00-15-54.790_shallows-open-water-loop.jpg",
+      "video_time": "00:15:54.790",
+      "video_seconds": 954.790345,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:39:33.041Z",
+      "question": "200m地图：入口、空间与路线",
+      "observation": "右侧边界仍可见，角色周围有两类水母；背包面板展开并显示FULL，气泡枪00/18，激光03/30，材料余额177。",
+      "limits": "实际播放后取样；不以取样间隔推完整轨迹或固定刷新。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "6e3a764ca3284c81eb8acd1c4638d917c3d52f2e4e69c6430401a9ce48cd5aa4",
+      "bytes": 52938
+    },
+    {
+      "id": "S11-C010",
+      "file": "S11_00-16-06.407_shallows-full-materials.jpg",
+      "video_time": "00:16:06.407",
+      "video_seconds": 966.407371,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:41:07.672Z",
+      "question": "满载后的动作与资源选择",
+      "observation": "满载面板可读粉水母5、浅色水母6；角色回到右侧阶梯海床附近，激光弹量21/30、气泡00/18，材料177；附近有碎裂和散落小物。",
+      "limits": "比较同次出行的可读余额；单帧不能推材料掉落公式。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "029c91b3c8b47bc15ab3bd0cfb541c5e4b1244c09a74ed8beb909bd44471cd50",
+      "bytes": 57064
+    },
+    {
+      "id": "S11-C011",
+      "file": "S11_00-16-16.254_shallows-full-returnward.jpg",
+      "video_time": "00:16:16.254",
+      "video_seconds": 976.25399,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:42:06.595Z",
+      "question": "满载后的动作与资源选择",
+      "observation": "返程方向的画面再次出现左侧潜艇，角色朝左上；背包仍粉5/浅色6并显示FULL，材料已从177变为369，两工具显示00/18与00/30。",
+      "limits": "支持满载后材料仍可增长与潜艇再次进入视野；不能单独断言返程由弹药、体力或容量哪项触发，也未核工具补充机制。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "f955ac1bec91ac46ed1da519245a50429fb2b64b66b4944a86bee6b8bc5414d2",
+      "bytes": 46086
+    },
+    {
+      "id": "S11-C012",
+      "file": "S11_00-16-21.254_village-transition.jpg",
+      "video_time": "00:16:21.254",
+      "video_seconds": 981.25399,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:42:40.914Z",
+      "question": "200m返程与结算",
+      "observation": "返村过渡：黑底上出现人物、宝箱、商店等白色剪影，商店在右侧；不是结算面板。",
+      "limits": "单次出行结果；不能当平均玩家表现。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "56171cb0488b5372dfc85abc0191cb6492110323518c9986ecd031a02b9e2645",
+      "bytes": 13857
+    },
+    {
+      "id": "S11-C013",
+      "file": "S11_00-16-19.254_shallows-return-event.jpg",
+      "video_time": "00:16:19.254",
+      "video_seconds": 979.25395,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:43:08.267Z",
+      "question": "200m返程与结算",
+      "observation": "接近返回点后出现强白色消失/切换效果，HUD已隐去；左侧高阶地形和深色波纹带可见，海床装饰沿土体生长。",
+      "limits": "亮白效果遮住主体；不能把它当结算或剩余资源读数。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "21c511dbc733091773f1729db8f0433adf404923697ac04d594973a44d573c33",
+      "bytes": 35271
+    },
+    {
+      "id": "S11-C014",
+      "file": "S11_00-16-19.921_shallows-expedition-result.jpg",
+      "video_time": "00:16:19.921",
+      "video_seconds": 979.92061,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:43:33.035Z",
+      "question": "200m返程与结算",
+      "observation": "结算面板进入中，库存可读粉5/浅色6；左侧数值亮白动画尚未稳定，回村按钮高亮。",
+      "limits": "不以此帧读精确时长和材料量，需后续稳定面板。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "d4918ca5465e2c86ece786dfab55f5b9adbd57397cb632f04efde2f66efd210b",
+      "bytes": 26637
+    },
+    {
+      "id": "S11-C015",
+      "file": "S11_00-16-20.254_shallows-result-stable.jpg",
+      "video_time": "00:16:20.254",
+      "video_seconds": 980.25394,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:43:52.773Z",
+      "question": "200m返程与结算",
+      "observation": "稳定结算：Total Time 00:01:10:87（70.87秒），Jellyfishes +11，Scraps +397；库存粉5/浅色6，回村按钮被选中。",
+      "limits": "此玩家单趟读数，不推平均时长；材料+397是净收集值，不是最终余额。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "b9a0aa9dca99e92157a5965f915160be47d947d208aa1d3882ea6b24af0f82ec",
+      "bytes": 26881
+    },
+    {
+      "id": "S11-C016",
+      "file": "S11_00-16-25.254_village-delivery.jpg",
+      "video_time": "00:16:25.254",
+      "video_seconds": 985.25394,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:44:31.131Z",
+      "question": "村落经营空间与交货反馈",
+      "observation": "村落连续地面连接左侧潜艇坡道、宝箱和商店；店上货物粉5/浅色6，右侧随身两格空；宝箱显示433，可用金币26，材料414。设施外形和库存/积款/余额分开显示。",
+      "limits": "这帧不能证明交货输入、自动取款或售卖速率；黄色地面装饰的材质未确定。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "7025a9cd69e1257433c3e85ee7a4f3df56e666b13e86c4bac1fd39e3d3eabe41",
+      "bytes": 59761
+    },
+    {
+      "id": "S11-C017",
+      "file": "S11_00-16-30.254_village-next-action.jpg",
+      "video_time": "00:16:30.254",
+      "video_seconds": 990.25394,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:45:35.729Z",
+      "question": "村落经营空间与交货反馈",
+      "observation": "玩家位于宝箱处，出现B提示及领取粒子；HUD金币26伴随+314到账动画，材料414；店上库存由粉5/浅色6变为粉4/浅色6。",
+      "limits": "余额仍在动画中，不能把26+314当最终全部收益；未隔离精确出售与领取周期。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "d6ebb0feb4b08a3535250ca48e42639b1c3dddaf8e250196eb092a275960c6b8",
+      "bytes": 59929
+    },
+    {
+      "id": "S11-C018",
+      "file": "S11_00-31-04.195_glacial-entry-layout.jpg",
+      "video_time": "00:31:04.195",
+      "video_seconds": 1864.194509,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:50:04.906Z",
+      "question": "400m入口、通道与资源摆放",
+      "observation": "潜艇在左上；冰白边沿围出下方浅蓝开口与右侧凹部，入口横向暗色结构有方形透空；玩家位于浅蓝空间右缘，紫晶在左下凹部、水母分布在下方和右侧，远景船形剪影低对比。",
+      "limits": "只记录当前可见局部；不据单帧判定碰撞、完整连接或刷新。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "669adf03d96f0e56f4b2878f176529c91a2193e4a01e57b18e013a28c3c27971",
+      "bytes": 77219
+    },
+    {
+      "id": "S11-C019",
+      "file": "S11_00-31-13.347_glacial-lower-pocket.jpg",
+      "video_time": "00:31:13.347",
+      "video_seconds": 1873.346509,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:50:38.060Z",
+      "question": "冰区入口下侧空间与返程参照",
+      "observation": "镜头移至入口下方/右侧：上下冰白边沿形成折线轮廓，尖状冰体与粉色植物沿边布置；玩家当前位于暗色背景区，左侧浅蓝空间仍见远景剪影，潜艇离开画面；水母可见于上方，红材料25。明暗区域不能直接解释为可走/不可走。",
+      "limits": "离散状态取样；不能证明完整路线或碰撞，也不推断是否刷新。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "5f89a2a8d1d37339237d5adda722a63624561c8753b1ba48dfafbe7303fa2ee1",
+      "bytes": 75598
+    },
+    {
+      "id": "S11-C020",
+      "file": "S11_00-31-23.347_glacial-low-oxygen.jpg",
+      "video_time": "00:31:23.347",
+      "video_seconds": 1883.346509,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:52:24.415Z",
+      "question": "冰区低氧与返程可见性",
+      "observation": "红色边缘暗角出现，玩家在入口下侧浅蓝区，潜艇重新位于左上；水母仍在周围、红材料25、背包角标3。顶部附近白色小条较亮，不据此精读氧气。",
+      "limits": "单次录像的界面状态，不代表区域难度或返程决策原因。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "7ddc40116dcefbbe0acab8bcff1fe54375352816c0c1eb026390d18106dd0b7d",
+      "bytes": 72411
+    },
+    {
+      "id": "S11-C021",
+      "file": "S11_00-19-38.338_growth-plasma-damage-ii.jpg",
+      "video_time": "00:19:38.338",
+      "video_seconds": 1178.338328,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:53:38.912Z",
+      "question": "成长详情、缺钱状态与树的视觉层级",
+      "observation": "Plasma Damage II Lv00/10：plasma damage增加25%，150%→175%，价格250币红色；左侧现有34币、1.91K材料、红材料0，顶部Prestige Lv03 104/140。选中节点有白色四角，详情靠右，底部列升级/选择移动/缩放键位；不能由本帧解释全部线色含义。",
+      "limits": "本帧核实该节点与缺钱状态，不外推实际伤害公式或全树前置；初次截取受滚动影响，已在同一暂停点重存完整画面并更新哈希。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "b0038f584238df868f2fcd7ed002368a7e02ac4175cedcc2e869a8d6f04faa46",
+      "bytes": 71391
+    },
+    {
+      "id": "S11-C022",
+      "file": "S11_00-19-49.616_growth-store-speed-max.jpg",
+      "video_time": "00:19:49.616",
+      "video_seconds": 1189.616079,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:54:03.776Z",
+      "question": "成长树选择变化及新节点",
+      "observation": "Store Speed I Lv5/5：明确写提高水母售卖速度100%，当前总面板500%、MAX；Prestige Lv03 109/140，左侧币34、材料1.63K伴随-10动画，出现浅蓝材料0栏。购买庆祝粒子覆盖选中节点，不据动画精读最终材料余额。",
+      "limits": "支持售卖速度是独立成长维度；不从500%推每件具体出售秒数，未记录完整逐级购买账目，新增材料栏也不代表首次解锁时刻。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "e83414cfcc5add597f60b3499f9387593ca4df1421aa47c68a90107d9ef976b2",
+      "bytes": 61720
+    },
+    {
+      "id": "S11-C023",
+      "file": "S11_00-19-39.616_growth-chest-speed.jpg",
+      "video_time": "00:19:39.616",
+      "video_seconds": 1179.616079,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:54:32.450Z",
+      "question": "取款速度与售卖速度的明确区别",
+      "observation": "Chest Speed I：Collect shells from the chest 250% quicker，0%→250%，费用250材料，费用条绿色；当前币34、材料1.91K、红材料0，Prestige Lv03 104/140。与C022 Store Speed I出售速度明确不同。",
+      "limits": "只记录面板明确文字；非控制实验，不推取款按键保持时长、销售周期或全树公式。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "87a787827dbc5d13a595e120d00f0f1b3f670fa6a923cec7ea1f123fb4581a6e",
+      "bytes": 62088
+    },
+    {
+      "id": "S11-C024",
+      "file": "S11_01-10-48.234_green-ruins-side-pocket.jpg",
+      "video_time": "01:10:48.234",
+      "video_seconds": 4248.234491,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:55:56.162Z",
+      "question": "跨区域地貌与目标分布对照",
+      "observation": "绿色遗迹画面：苔缘石块形成上方横梁、竖向残墙与下方连续层级轮廓；玩家在中部横向凹处，浅蓝晶簇在左、红色水母在右；右侧较开阔竖向空间有发光星形物，左边缘潜艇部分可见。材料HUD100，远景为低对比绿色剪影。星形物功能未知。",
+      "limits": "正式区域名与深度当前帧未显示；不由单帧推地形碰撞、全图连通或刷新。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "d01b88f5071d40f21bbffafd810c1d83268ea51ea2587fcab5f14a66130618db",
+      "bytes": 70840
+    },
+    {
+      "id": "S11-C025",
+      "file": "S11_01-11-03.734_green-ruins-return.jpg",
+      "video_time": "01:11:03.734",
+      "video_seconds": 4263.734491,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "captured_at": "2026-11-04T10:56:54.238Z",
+      "question": "遗迹区返程提示与地标",
+      "observation": "玩家已到左侧潜艇前，B提示可见；潜艇位于较宽竖向空间，右侧是苔缘石砌遗迹轮廓。材料112、气泡18/18、Plasma35/70；画面上方有带旋翼的小箱外形物。与C024相比材料100→112、气泡8/18→18/18，但补充触发条件和旋翼物功能未知。",
+      "limits": "离散返程状态；不凭单帧解释失败规则或完整回撤路径。",
+      "source_resolution": [
+        854,
+        480
+      ],
+      "capture_rect": {
+        "height": 519,
+        "width": 923,
+        "x": 295,
+        "y": 56
+      },
+      "sha256": "d501e5e8613a6bb1aef530fb87c3931dbd2d3eda6b2d6f104a4e9b23c0f58a39",
+      "bytes": 71221
+    }
+  ],
+  "local_media_root": "/Users/alanthssss/LocalGames/research/shelldiver/S11",
+  "checkpoint": {
+    "timezone": "Asia/Shanghai",
+    "resume_started_at": "2026-11-04T18:14:46+08:00",
+    "sampling_stopped_at": "2026-11-04T18:56:54+08:00",
+    "video_tab_closed_at": "2026-11-04T18:57+08:00",
+    "closure_verified": true,
+    "account_used_percent_at_save_start": 9,
+    "account_remaining_percent_at_save_start": 91,
+    "requested_pause_used_percent": 10,
+    "usage_scope": "shared account; exact task token count unavailable",
+    "next_video_cursor_seconds": 4263.734491,
+    "next_video_cursor": "01:11:03.734",
+    "scope_complete": false
+  }
+}
