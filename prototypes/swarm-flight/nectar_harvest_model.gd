@@ -562,7 +562,7 @@ func pulse() -> bool:
 	nearest.stun = 0.42
 	var away: Vector2 = (nearest.pos-p).normalized()
 	if away.is_zero_approx(): away = Vector2.RIGHT
-	nearest.pos += away*24.0
+	nearest.pos = nearest.anchor+(nearest.pos+away*24.0-nearest.anchor).limit_length(Encounters.leash(nearest))
 	emit("tap",nearest.pos,nearest.hits)
 	var needed := 2 if nearest.kind == "scout" else 3
 	if nearest.hits >= needed:

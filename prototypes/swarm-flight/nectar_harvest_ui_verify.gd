@@ -89,6 +89,35 @@ func run() -> void:
 	await create_timer(2.4).timeout
 	check(game.model.area == "pond" and game.world.area_key == "pond" and game.model.trip_index == 1,"confirmed departure loads pond scene once")
 	# Targeted fixture positions are explicit; full journey coverage is separate.
+	game.model.p = Vector2(500,200)
+	game.model.v = Vector2.ZERO
+	game.model.energy = 35.75
+	game.ui.refresh()
+	await tap(KEY_Q)
+	check(game.ui.energy_text.text.begins_with("34 /"),"Q pulse immediately refreshes the spent stamina before next integer drain")
+	await create_timer(.6).timeout
+	game.model.energy = 35.75
+	game.ui.refresh()
+	var right := InputEventMouseButton.new()
+	right.button_index = MOUSE_BUTTON_RIGHT
+	right.pressed = true
+	right.position = Vector2(500,200)
+	root.push_input(right,true)
+	await frames(1)
+	right = right.duplicate(); right.pressed = false; root.push_input(right,true)
+	check(game.ui.energy_text.text.begins_with("34 /"),"right-click pulse immediately refreshes stamina too")
+	await create_timer(.6).timeout
+	var carrier: Dictionary = game.model.creatures[0]
+	game.model.p = carrier.pos-Vector2(90,0)
+	game.model.energy = 35.75
+	carrier.hits = 1
+	game.ui.refresh()
+	check(game.has_material_hint(),"near partial carrier has a material affordance")
+	await tap(KEY_Q)
+	check(carrier.state == "gone" and not game.has_material_hint() and "Q" not in game.ui.help_text.text,"final pulse removes stale Q affordance immediately")
+	game.model.p = Model.POND_ENTRY
+	game.model.v = Vector2.ZERO
+
 	game.model.p = game.model.flower_point(game.model.flowers[0])+Vector2(0,-101)
 	game.model.v = Vector2(0,230)
 	game.model.energy = 35.75
@@ -228,7 +257,7 @@ func run() -> void:
 	game.model.sold_total = maxi(game.model.sold_total,18)
 	game.ui.refresh()
 	await click(game.ui.board.buttons.reserve)
-	check(game.ui.buy_button.disabled and "任选其一" in game.ui.detail_requirements.text or "任选其一" in game.ui.detail_hint.text,"stage clearly shows the OR condition")
+	check(game.ui.buy_button.disabled and ("任选其一" in game.ui.detail_requirements.text or "任选其一" in game.ui.detail_hint.text),"stage clearly shows the OR condition")
 	await click(game.ui.board.buttons.shortcut)
 	await create_timer(.4).timeout
 	await click(game.ui.buy_button)

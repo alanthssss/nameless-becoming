@@ -240,7 +240,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 				return
 		if key == KEY_Q and event.pressed:
-			model.pulse()
+			if model.pulse(): presentation_changed.emit()
 			return
 		if key == KEY_F and event.pressed:
 			request_transition("meadow" if model.area == "pond" else "pond","shortcut")
@@ -248,7 +248,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and key in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,KEY_E,KEY_SPACE]: held[key] = true
 		else: held.erase(key)
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-		model.pulse()
+		if model.pulse(): presentation_changed.emit()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		mouse_collect = event.pressed
 

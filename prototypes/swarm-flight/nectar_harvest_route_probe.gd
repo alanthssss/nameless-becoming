@@ -102,6 +102,13 @@ func purchase(id: String) -> bool:
 	return bought
 
 func fly_to(target: Vector2) -> bool:
+	# Known-route choice: use the visible low shelter when crossing the shower.
+	if game.model.area == "meadow" and minf(target.x,game.model.p.x)<2920 and maxf(target.x,game.model.p.x)>2600 and minf(target.y,game.model.p.y)<640:
+		if not await fly_direct(Vector2(game.model.p.x,645)): return false
+		if not await fly_direct(Vector2(target.x,645)): return false
+	return await fly_direct(target)
+
+func fly_direct(target: Vector2) -> bool:
 	for i in 1600:
 		var delta: Vector2 = target-game.model.p
 		if delta.length() < 16:
@@ -181,6 +188,7 @@ func run() -> void:
 	for expedition in 50:
 		if planned.is_empty(): break
 		var m = game.model
+		var materials_before: Dictionary = m.materials.duplicate()
 		var need_fiber := 0
 		var need_resin := 0
 		for id in planned:
@@ -206,7 +214,7 @@ func run() -> void:
 			if region == 1 and m.materials.resin >= need_resin: continue
 			var cost: float = m.p.distance_to(creature.pos)/180+creature.pos.distance_to(home)/180+(3 if creature.kind == "guard" else 2)*2.6+4
 			if m.energy < cost: break
-			check(await fly_to(creature.pos-Vector2(95,0)),"ordinary flight approaches material carrier")
+			check(await fly_to(creature.pos+Vector2(95 if creature.pos.x>2800 else -95,0)),"ordinary flight approaches material carrier")
 			for hit in 3:
 				if creature.state == "gone": break
 				await tap(KEY_Q)
@@ -255,7 +263,7 @@ func run() -> void:
 			await frames(3)
 			picked.append(target.id)
 			if m.at_home(): check(false,"planned route unexpectedly exhausted energy"); break
-		check(m.cargo_total()>0,"trip returns with earned cargo and a chosen energy reserve")
+		check(m.cargo_total()>0 or m.materials.fiber>materials_before.fiber or m.materials.resin>materials_before.resin,"trip returns with actual nectar or material rewards and an energy reserve")
 		if not failures.is_empty(): break
 		if expedition == 0: await capture("04-first-return-reserve")
 		check(await fly_to(home),"ordinary flight returns before exhaustion")
@@ -270,7 +278,8 @@ func run() -> void:
 		if expedition==0: await capture("05-first-sale-offer")
 		var gain: int=game.model.cargo_value()
 		var coins_before: int=game.model.coins
-		await click(game.ui.sell_button)
+		if gain > 0: await click(game.ui.sell_button)
+		else: check(game.ui.sell_button.disabled,"material expedition does not invent nectar sale proceeds")
 		check(game.model.cargo_total()==0 and game.model.coins==coins_before+gain,"sale commits real collected cargo")
 		if not failures.is_empty(): break
 		earned_total += gain

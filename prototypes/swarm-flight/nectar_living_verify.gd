@@ -1,7 +1,10 @@
 extends SceneTree
 ## Deterministic rule fixtures and ordinary stepped routes, never player evidence.
 const Model = preload("res://nectar_harvest_model.gd")
+const V3 = preload("res://nectar_legacy_model_v3.gd")
 const V4 = preload("res://nectar_legacy_model_v4.gd")
+const MATERIAL_COSTS := {"gather2":{"fiber":2},"reach":{"fiber":3},"twin":{"resin":3},"wings1":{"fiber":2},"bag2":{"fiber":3},"wings2":{"fiber":4,"resin":2},"beat":{"fiber":2}}
+var step_dt := 1.0/60.0
 var checks := 0
 var failures := 0
 
@@ -12,7 +15,7 @@ func check(ok: bool, label: String) -> void:
 		failures += 1
 		print("FAIL: "+label)
 func tick(m, seconds: float, collect := false) -> void:
-	for i in roundi(seconds*60): m.step(1.0/60,Vector2.ZERO,collect,false)
+	for i in roundi(seconds/step_dt): m.step(step_dt,Vector2.ZERO,collect,false)
 func clone_ok(m,label: String) -> void:
 	var clone = Model.new()
 	check(clone.restore_payload(JSON.parse_string(JSON.stringify(m.to_payload(),"",true,true))),label)
@@ -24,7 +27,7 @@ func fly(m,target: Vector2) -> bool:
 		if d.length() < 12:
 			tick(m,.1)
 			return true
-		m.step(1.0/60,Vector2(float(d.x>5)-float(d.x< -5),float(d.y>5)-float(d.y< -5)).limit_length(),false,false)
+		m.step(step_dt,Vector2(float(d.x>5)-float(d.x< -5),float(d.y>5)-float(d.y< -5)).limit_length(),false,false)
 	return false
 
 func run() -> void:
@@ -91,12 +94,15 @@ func run() -> void:
 	stronger.step(0.0,Vector2.ZERO,false,false)
 	check(stronger.energy == spent_energy and stronger.pulse_left == .55,"paused frame cannot advance pulse or drops")
 	clone_ok(stronger,"strength drop state saves")
+	legacy_edge_pulses()
 	endurance_curve()
 	for branch in ["shortcut","twin","all"]: run_route(branch)
+	run_route("all",1.0/30.0)
 	print("NECTAR LIVING: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)
 
-func run_route(branch: String) -> void:
+func run_route(branch: String, dt := 1.0/60.0) -> void:
+	step_dt = dt
 	var m = Model.new()
 	var plan: Array = ["gather1","bag1","wings1","meadow","shortcut","reserve"]
 	if branch == "twin": plan = ["gather1","gather2","reach","meadow","twin","reserve"]
@@ -105,6 +111,7 @@ func run_route(branch: String) -> void:
 	var earned := 0
 	var spent := 0
 	var minima: Array = []
+	var material_spent := {"fiber":0,"resin":0}
 	for expedition in 80:
 		if plan.is_empty(): break
 		# Materials determine which expedition is useful; no resources are granted.
@@ -141,8 +148,8 @@ func run_route(branch: String) -> void:
 			var required: float = m.p.distance_to(target.pos)/180+target.pos.distance_to(home)/180+1.9/m.harvest_rate()+3.0
 			if m.energy <= required: break
 			safe = fly(m,target.pos) and safe
-			for frame in 130:
-				m.step(1.0/60,Vector2.ZERO,true,false)
+			for frame in ceili(2.2/step_dt):
+				m.step(step_dt,Vector2.ZERO,true,false)
 				if target.stock == 0 or m.cargo_total() == m.capacity(): break
 			picked.append(target.id)
 		minima.append(m.energy)
@@ -151,11 +158,25 @@ func run_route(branch: String) -> void:
 		earned += m.sell()
 		while not plan.is_empty() and m.can_buy(plan[0]):
 			spent += int(m.upgrade(plan[0]).cost)
+			for kind in ["fiber","resin"]: material_spent[kind] += int(MATERIAL_COSTS.get(plan[0],{}).get(kind,0))
 			m.buy(plan.pop_front())
 		clone_ok(m,branch+" purchases serialize")
 		if not safe: break
 	check(safe and plan.is_empty() and m.completed,branch+" completes through earned nectar and collected materials")
 	check(m.coins == earned-spent,branch+" exact coin conservation")
+	var produced := {"fiber":0,"resin":0}
+	var collected := {"fiber":0,"resin":0}
+	for event in m.events:
+		if event.kind == "repel": produced["fiber" if event.id == "mosquito_0" else "resin"] += 2 if event.id == "mosquito_0" else 1
+		if event.kind == "material": collected[event.type] += int(event.amount)
+	for kind in ["fiber","resin"]:
+		var pending := 0
+		for drop in m.drops:
+			if drop.kind == kind: pending += int(drop.amount)
+		check(produced[kind] == collected[kind]+pending,branch+" "+kind+" drop/pickup ledger conserves every item")
+		check(m.materials[kind] == collected[kind]-material_spent[kind],branch+" "+kind+" pickup/spend/wallet ledger conserves every item")
+	print("MATERIAL LEDGER %s %dFPS produced=%s collected=%s spent=%s wallet=%s" % [branch,roundi(1.0/step_dt),str(produced),str(collected),str(material_spent),str(m.materials)])
+	step_dt = 1.0/60.0
 	print("LIVING ROUTE: %s trips=%d earned=%d spent=%d remaining=%s material=%s energy_before_return=%s" % [branch,m.trip_index,earned,spent,str(plan),str(m.materials),str(minima)])
 
 func endurance_curve() -> void:
@@ -184,3 +205,32 @@ func endurance_curve() -> void:
 	check(ending[0] > 0 and ending[0] < 12,"fresh trip leaves a meaningful but nonzero reserve")
 	check(ending[2] > ending[1]+13 and ending[3] > ending[2]+19,"wing growth creates measured headroom on the same itinerary")
 	print("ENDURANCE SAME ROUTE (fresh/gather1/wing1/wing2): returned energy="+str(ending))
+
+func legacy_edge_pulses() -> void:
+	for version in [3,4]:
+		var old = V3.new() if version == 3 else V4.new()
+		old.p = old.HUB_DEPART
+		old.transition_to("pond")
+		old.creatures[0].pos = old.creatures[0].anchor+Vector2(180,0)
+		old.p = old.creatures[0].pos-Vector2(70,0)
+		if version == 3:
+			old.creatures[0].state = "chase"
+			old.creatures[0].timer = .4
+		var verify_old = V3.new() if version == 3 else V4.new()
+		check(verify_old.restore_payload(old.to_payload()),"edge fixture is valid under immutable v%d rules" % version)
+		var m = Model.new()
+		check(m.restore_legacy_payload(old.to_payload(),version),"legal edge v%d migrates" % version)
+		check(m.pulse(),"edge first pulse")
+		clone_ok(m,"edge partial mosquito remains saveable")
+		tick(m,.56)
+		check(m.pulse() and m.creatures[0].state == "gone","edge second pulse releases material")
+		clone_ok(m,"edge gone mosquito and drop remain saveable")
+		if m.drops.is_empty():
+			check(false,"edge sequence has a real drop")
+			continue
+		m.p = m.drops[0].pos
+		tick(m,.32)
+		check(m.materials.fiber == 2,"edge drop can actually be collected")
+		clone_ok(m,"edge material pickup remains saveable")
+		check(fly(m,Model.POND_ENTRY) and m.transition_to("hub"),"edge expedition can still return")
+		clone_ok(m,"edge returned state remains saveable")
