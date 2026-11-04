@@ -20,6 +20,37 @@
     "local_spec": "Existing authoritative specification for our game",
     "community_gameplay_video": "Direct visual observation of public gameplay video with timestamp; build unknown, not agent-controlled experiment"
   },
+  "media_archive_audit": {
+    "date": "2026-11-04",
+    "scope": "Known game checkout, research worktree and local 0.24 candidate only",
+    "existing_official_media_root": "/Users/alanthssss/LocalGames/nectar-demo-0.24.0/evidence/reference",
+    "existing_official_media": [
+      {
+        "file": "official-trailer.mp4",
+        "bytes": 9412981,
+        "sha256": "74c9097a083a58e8fa9c107b0c7303d63d8251502f8acddec077a7609ebf3306"
+      },
+      {
+        "file": "iris-5.1-6.5s.png",
+        "bytes": 2676131,
+        "sha256": "7024be8afa203d4d97daf4ec51e5323c0127aa85ff6c89834edd02843731f6a3"
+      },
+      {
+        "file": "laser-28.2-30.2s.png",
+        "bytes": 3565052,
+        "sha256": "c2f053f3e27902c73ab6d9f21e90ec53b35a155ad384b8c3ef5e6ac648d4ca39"
+      },
+      {
+        "file": "steam-screen-00.jpg",
+        "bytes": 471500,
+        "sha256": "26b228d73c00d62e898d6d8be3dd0a2fd7597f3b5eb362851beebd86d92db440"
+      }
+    ],
+    "S11_fullplay_local_captures_found": false,
+    "S11_fullplay_state": "Timestamp observations recorded; persistent screenshot set not yet collected",
+    "planned_S11_media_root": "/Users/alanthssss/LocalGames/research/shelldiver/S11/",
+    "method": "shelldiver-fullplay-checkpoint.md#study-method"
+  },
   "sources": [
     {
       "id": "S01",
