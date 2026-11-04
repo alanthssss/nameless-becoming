@@ -1,13 +1,14 @@
 {
   "schema_version": 1,
-  "research_date": "2026-11-03",
+  "research_date": "2026-11-04",
   "timezone": "Asia/Shanghai",
   "project": "nameless-becoming",
   "gdd": "13.9",
   "milestone": "M3",
-  "issues": [288, 289],
-  "scope": "Shelldiver elements, growth graph, visible numerical sample, interaction and comparison to Nectar Harvest 0.21",
-  "status": "bounded_research_complete_with_explicit_unknowns",
+  "issues": [288, 289, 311, 312, 313],
+  "scope": "Original bounded research plus full-game video event sampling, first trips, growth, store, maps and interactions; comparison to merged 0.24 ae411496. Expanded coverage incomplete.",
+  "status": "expanded_fullplay_research_in_progress",
+  "historical_status": "2026-11-03 bounded_research_complete_with_explicit_unknowns (SD01/SD02 original scope)",
   "not_claimed": ["complete original skill database", "source-code reconstruction", "original spawning algorithm", "hands-on successful dive", "human playtest", "proof of player enjoyment"],
   "evidence_classes": {
     "official_statement": "Developer or official product text; may describe intended rather than tested behavior",
@@ -16,7 +17,8 @@
     "community_report": "Player or guide statement not independently reproduced",
     "analysis": "Reasoned inference or calculation with assumptions",
     "proposal": "Suggestion for our game, not a fact about Shelldiver",
-    "local_spec": "Existing authoritative specification for our game"
+    "local_spec": "Existing authoritative specification for our game",
+    "community_gameplay_video": "Direct visual observation of public gameplay video with timestamp; build unknown, not agent-controlled experiment"
   },
   "sources": [
     {
@@ -144,6 +146,33 @@
       "accessed": "2026-11-03",
       "version_context": "0.21 worktree baseline 61db0864483219144bc0c720575973c8ecfc0eba",
       "verified": ["9 paid visible nodes", "12 paid ranks", "costs and parameters in comparison table", "market optional for completion", "completion requires twin OR shortcut"]
+    },
+    {
+      "id": "S11",
+      "type": "community_gameplay_video",
+      "title": "Zhain Gaming: SHELLDIVER Gameplay Walkthrough FULL GAME No Commentary + ENDING",
+      "url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "accessed": "2026-11-04",
+      "duration_seconds": 11767.581,
+      "version_context": "Recorded build unidentified; cannot equate to current Steam build",
+      "method": "CUA browser playback and paused event snapshots; verify currentTime, duration and decoding after seeks; ads excluded. Sparse index through ending plus denser first-trip samples. Not all intervals observed.",
+      "coverage_record": "shelldiver-fullplay-checkpoint.md",
+      "local_video_artifact": null,
+      "observed": [
+        "First normal trip panel 32.84 seconds, 4 pink jellyfish, 0 scraps; shop delivery separates inventory from proceeds; final first-trip balance 40",
+        "First spending: Plasma Gun 20, Deep Breath 10, Bubble Damage I 5; balance 5",
+        "Second trip panel 39.76 seconds, zero jellyfish inventory and +8 scraps following low-oxygen sequence; immediate retry",
+        "Third normal trip panel 29.68 seconds, +3 jellyfish and +19 scraps; total scraps 27; subsequent sales raise balance 5 to 35",
+        "Chest Speed I at 19:39.92: 250% quicker chest collection for 250 scraps; this is not shop sale speed",
+        "Oxygen Tank II 10/10, Bubble Strike I first-hit modifier, Hammock Repair ending goal and sleeping credits observed at separate index points"
+      ],
+      "limits": [
+        "Complete first-three-trip input/purchase sequence still has sampling gaps",
+        "No complete skill database, costs or graph prerequisites reconstructed",
+        "No controlled respawn, leave-area selling, pause-time or save-reload test",
+        "Sparse coverage and unknown build; time played during user interruption is not counted as observed",
+        "Third-party video observation is not independent human testing of our game"
+      ]
     }
   ],
   "calculations": [
