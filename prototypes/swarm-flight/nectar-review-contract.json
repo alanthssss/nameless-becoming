@@ -2,7 +2,7 @@
   "schema": 1,
   "goal": "nectar-harvest-mvp",
   "source": "docs/design/swarm-flight-gdd.md",
-  "gdd_section": "13.7 / 13.8; NH-C01–08 / NH-RG01–06 / 13.9 SD-v1",
+  "gdd_section": "13.7 / 13.8; NH-C01–08 / NH-RG01–06 / 13.9 SD-v1 / SD-v1.1 feedback 2026-11-04",
   "claim": "candidate",
   "entry": "nectar-harvest",
   "save_filename": "nectar_harvest_v1.json",
@@ -28,7 +28,7 @@
       "roles": [
         "input_trace"
       ],
-      "requirement": "Both regions, flower contacts, unlock requirements and two-way shortcut are actually usable. Distinct hub/pond/meadow scenes, separate functional stations, creature warnings/repel and per-trip refresh are checked. Demo adds observation station, contextual stocked courtyard, dance gates and skip/reduced-motion transitions."
+      "requirement": "Both regions, single-serving flowers, unlock requirements and two-way shortcut are usable through ordinary input. Hub/pond/meadow stay distinct; courtyard return lands at its dance gate, sale/growth/departure remain individually reachable, creatures do not chase or damage, and per-trip refresh is checked. Route information is available at destination selection and in optional pause help; stocked jars match the original painted shop. Dance skip/reduced-motion/save transitions remain valid."
     },
     {
       "id": "NH-C03",

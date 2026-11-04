@@ -68,11 +68,13 @@ func local_fly(m,target: Vector2,dt: float,digital: bool) -> bool:
 		m.step(dt,move.limit_length(),false,false)
 	return false
 
-func transaction_route_regression(dt: float) -> void:
+func transaction_route_regression(dt: float,branch := "all") -> void:
 	# Regression for the native trip-12 +180 sale: real time steps, no granted
 	# upgrades/cargo, and the same clone-before-transaction contract as main.
 	var route = Model.new()
 	var plan := ["gather1","bag1","wings1","gather2","bag2","meadow","reach","shortcut","market","twin","wings2","reserve"]
+	if branch == "twin": plan = ["gather1","gather2","reach","meadow","twin","reserve"]
+	if branch == "shortcut": plan = ["gather1","bag1","wings1","meadow","shortcut","reserve"]
 	var route_ok := true
 	var final_sale := false
 	for expedition in 30:
@@ -87,7 +89,8 @@ func transaction_route_regression(dt: float) -> void:
 				if flower.stock <= 0: continue
 				if (flower.region == 1) != ("meadow" in route.owned): continue
 				if target.is_empty() or route.p.distance_to(flower.pos) < route.p.distance_to(target.pos): target = flower
-			if target.is_empty() or not fly_input_frames(route,target.pos,dt):
+			if target.is_empty(): break # A depleted region is a valid reason to return before full.
+			if not fly_input_frames(route,target.pos,dt):
 				route_ok = false
 				break
 			for frame in 600:
@@ -114,14 +117,17 @@ func transaction_route_regression(dt: float) -> void:
 			break
 		var gain: int = candidate.sell()
 		check(gain > 0 and candidate.cargo_total() == 0 and candidate.coins == route.coins+gain,"digital-input trip %d sale transfers cargo once" % (expedition+1))
-		final_sale = final_sale or (route.owned.size() == 11 and route.energy == 145.0 and gain == 180)
+		final_sale = final_sale or (not plan.is_empty() and plan[0] == "reserve" and gain > 0)
 		route_ok = route.restore_payload(candidate.to_payload()) and route_ok
 		while not plan.is_empty() and route.can_buy(plan[0]):
 			candidate = Model.new()
 			route_ok = candidate.restore_payload(route.to_payload()) and route_ok
 			route_ok = candidate.buy(plan.pop_front()) and route_ok
 			route_ok = route.restore_payload(candidate.to_payload()) and route_ok
-	check(route_ok and final_sale and route.completed and route.owned.size() == 12,"digital-input %d FPS route sells +180 with final wings and completes reserve" % roundi(1.0/dt))
+	check(route_ok and final_sale and route.completed and plan.is_empty(),"digital-input %d FPS %s route completes reserve using collected nectar" % [roundi(1.0/dt),branch])
+	if branch == "twin": check("shortcut" not in route.owned and "market" not in route.owned,"twin economy finishes without optional purchases")
+	if branch == "shortcut": check("twin" not in route.owned and "market" not in route.owned,"shortcut economy finishes without optional purchases")
+	print("NECTAR ROUTE: %s %d FPS %d trips, %d coins, %d purple sold" % [branch,roundi(1.0/dt),route.trip_index,route.coins,route.rose_sold])
 
 func reject(m,data: Dictionary,label: String) -> void:
 	var before := JSON.stringify(m.to_payload())
@@ -143,11 +149,14 @@ func growth_tree_rules() -> void:
 	m.sold_total = 1
 	m.rose_sold = 1
 	check(m.can_buy("market") and not m.can_buy("reserve"),"one purple delivery opens optional income, not completion")
-	m.sold_total = 18
-	m.rose_sold = 18
-	check(not m.can_buy("reserve"),"18 deliveries still need one capability or route change")
+	m.sold_total = 5
+	m.rose_sold = 5
+	check(not m.can_buy("reserve"),"five purple deliveries remain below the six-unit reserve threshold")
+	m.sold_total = 6
+	m.rose_sold = 6
+	check(not m.can_buy("reserve"),"6 deliveries still need one capability or route change")
 	check(m.buy("twin") and m.can_buy("reserve"),"twin alone satisfies completion OR without shortcut")
-	check("口碑" not in m.goal_text() and "180" in m.goal_text(),"twin route goal advances directly to reserve without optional market")
+	check("口碑" not in m.goal_text() and "60" in m.goal_text(),"twin route goal advances directly to reserve without optional market")
 	check(m.buy("reserve") and m.completed and "market" not in m.owned and "shortcut" not in m.owned,"twin route finishes without market or full tree")
 	var clone = Model.new()
 	check(clone.restore_payload(m.to_payload()) and clone.completed,"twin completion survives strict new save validation")
@@ -162,9 +171,9 @@ func growth_tree_rules() -> void:
 	for id in ["gather1","bag1","wings1","meadow","shortcut"]:
 		check(shortcut.buy(id),"shortcut route legal purchase: "+id)
 	shortcut.visited_meadow = true
-	shortcut.sold_total = 18
-	shortcut.rose_sold = 18
-	check("口碑" not in shortcut.goal_text() and "180" in shortcut.goal_text(),"shortcut route goal advances directly to reserve without optional market")
+	shortcut.sold_total = 6
+	shortcut.rose_sold = 6
+	check("口碑" not in shortcut.goal_text() and "60" in shortcut.goal_text(),"shortcut route goal advances directly to reserve without optional market")
 	check(shortcut.buy("reserve") and "twin" not in shortcut.owned and "market" not in shortcut.owned,"shortcut route finishes without twin or market")
 	check(clone.restore_payload(shortcut.to_payload()),"shortcut completion survives strict save validation")
 	var bad := Model.new().to_payload()
@@ -185,7 +194,7 @@ func growth_tree_rules() -> void:
 func run() -> void:
 	growth_tree_rules()
 	var m = Model.new()
-	check(m.at_home() and m.capacity() == 18 and m.energy == 85.0,"new game starts supplied at home")
+	check(m.at_home() and m.capacity() == 6 and m.energy == 85.0,"new game starts supplied at home")
 	check(m.flowers.size() == 14 and m.upgrade_defs().size() == 12,"two seven-flower regions and twelve growth nodes")
 	check(m.sell() == 0 and m.coins == 0,"empty sale creates no money")
 	check(not m.buy("unknown") and not m.buy("gather1"),"unknown or unaffordable purchase denied")
@@ -193,21 +202,25 @@ func run() -> void:
 	check(m.phase == "field" and m.trip_index == 1,"first departure opens one trip")
 	var initial_stock: int = m.flowers[0].stock
 	tick(m,1.0,Vector2.ZERO,true)
-	check(m.cargo_total() == 5 and m.flowers[0].stock == initial_stock-5,"one second harvesting transfers five units")
+	check(m.cargo_total() == 1 and m.flowers[0].stock == initial_stock-1,"one second harvesting transfers one finite unit")
 	var no_collect := m.cargo_total()
 	tick(m,0.5)
 	check(m.cargo_total() == no_collect,"releasing collection stops intake")
 	check(fly(m,Model.HOME),"ordinary movement returns to home")
 	check(m.at_home() and m.energy == m.max_energy(),"return refills expedition energy")
-	check(m.sell() == 5 and m.coins == 5 and m.cargo_total() == 0,"sale transfers cargo into coins")
-	check(m.sell() == 0 and m.coins == 5,"repeat sale cannot pay twice")
+	check(m.sell() == 1 and m.coins == 1 and m.cargo_total() == 0,"sale transfers cargo into coins")
+	check(m.events[-1].kind == "sell" and m.events[-1].pos == Model.HUB_SHOP,"sale feedback belongs to the actual shop")
+	check(m.sell() == 0 and m.coins == 1,"repeat sale cannot pay twice")
 	check(fly(m,m.flowers[0].pos) and m.trip_index == 2,"second departure is available after sale")
 	check(m.flowers[0].stock == initial_stock,"new trip replenishes normal flower stock")
 	tick(m,3.0,Vector2.ZERO,true)
-	check(m.cargo_total() == 12 and m.flowers[0].stock == 0,"source can be exhausted without over-harvesting")
+	check(m.cargo_total() == 1 and m.flowers[0].stock == 0,"source can be exhausted without over-harvesting")
 	check(fly(m,m.flowers[1].pos),"next source reachable")
 	tick(m,3.0,Vector2.ZERO,true)
-	check(m.cargo_total() == 18 and m.flowers[1].stock == 6,"full bag stops exactly at capacity")
+	for i in range(2,7):
+		check(fly(m,m.flowers[i].pos),"ordinary flight reaches finite flower %d" % i)
+		tick(m,1.1,Vector2.ZERO,true)
+	check(m.cargo_total() == 6 and m.flowers[6].stock == 1,"six separate flowers fill bag; seventh remains available")
 	var full_stock: int = m.flowers[1].stock
 	tick(m,1.0,Vector2.ZERO,true)
 	check(m.flowers[1].stock == full_stock,"full bag does not destroy nectar")
@@ -225,26 +238,26 @@ func run() -> void:
 	var empty = Model.new()
 	check(fly(empty,Vector2(500,575)) and fly(empty,Model.HOME),"empty expedition can return")
 	empty.flowers[0].stock = 0
-	check(fly(empty,Vector2(500,575)) and empty.flowers[0].stock == 12 and empty.trip_index == 2,"empty return does not block next-trip replenishment")
+	check(fly(empty,Vector2(500,575)) and empty.flowers[0].stock == 1 and empty.trip_index == 2,"empty return does not block next-trip replenishment")
 	var edge = Model.new()
 	edge.p = Model.HUB_DEPART
 	tick(edge,0.3,Vector2.RIGHT)
 	check(edge.area == "hub" and edge.trip_index == 0,"walking across the hub never auto-starts an expedition")
 	edge.p = Model.HUB_DEPART
 	check(edge.transition_to("pond"),"departure requires explicit gate interaction")
-	edge.flowers[0].stock = 3
+	edge.flowers[0].stock = 0
 	edge.p = Model.POND_ENTRY
 	tick(edge,0.3)
-	check(edge.area == "pond" and edge.trip_index == 1 and edge.flowers[0].stock == 3,"standing on entry never refills or auto-returns")
+	check(edge.area == "pond" and edge.trip_index == 1 and edge.flowers[0].stock == 0,"standing on entry never refills or auto-returns")
 	var rescued = Model.new()
 	field(rescued,Vector2(900,400))
-	rescued.cargo = {"blue":10,"rose":0}
+	rescued.cargo = {"blue":6,"rose":0}
 	rescued.coins = 19
 	rescued.owned.append("gather1")
 	rescued.energy = 0.001
 	rescued.step(0.1,Vector2.ZERO,false,false)
-	check(rescued.at_home() and rescued.cargo_total() == 5 and rescued.coins == 19 and "gather1" in rescued.owned,"exhaustion halves unsold cargo and preserves permanent rewards")
-	check(rescued.energy == rescued.max_energy() and rescued.events.any(func(e): return e.kind == "rescue"),"rescue supplies home and reports loss")
+	check(rescued.at_home() and rescued.cargo_total() == 3 and rescued.coins == 19 and "gather1" in rescued.owned,"exhaustion halves unsold cargo and preserves permanent rewards")
+	check(rescued.energy == rescued.max_energy() and rescued.p == Model.HUB_DEPART and rescued.camera_x == 0 and rescued.events.any(func(e): return e.kind == "rescue"),"rescue supplies the visible departure orb and reports loss")
 	check(fly(rescued,Vector2(500,575)) and rescued.trip_index == 2,"rescue permits a new trip")
 	var dash = Model.new()
 	field(dash,Vector2(800,450))
@@ -257,10 +270,11 @@ func run() -> void:
 	var growth = Model.new()
 	growth.coins = 1000
 	check(not growth.buy("meadow") and not growth.buy("gather2"),"visible prerequisites cannot be skipped")
-	check(growth.buy("bag1") and growth.capacity() == 30 and growth.coins == 982,"capacity upgrade charges correct amount")
-	check(not growth.buy("bag1") and growth.coins == 982,"owned node cannot be purchased twice")
+	check(growth.buy("bag1") and growth.capacity() == 10 and growth.coins == 994,"capacity upgrade charges correct amount")
+	check(growth.events[-1].kind == "buy" and growth.events[-1].pos == Model.HUB_TREE,"growth feedback belongs to the actual tree")
+	check(not growth.buy("bag1") and growth.coins == 994,"owned node cannot be purchased twice")
 	check(growth.buy("wings1") and growth.max_energy() == 110.0 and growth.energy == 110.0,"energy upgrade takes effect and refills at home")
-	check(growth.buy("bag2") and growth.capacity() == 48,"larger bag expands carrying limit")
+	check(growth.buy("bag2") and growth.capacity() == 16,"larger bag expands carrying limit")
 	check(growth.buy("wings2") and growth.max_energy() == 145.0,"final wings expand endurance")
 	check(growth.buy("meadow"),"three base ranks permit meadow unlock")
 	field(growth,Model.POND_EXIT)
@@ -269,17 +283,17 @@ func run() -> void:
 	check(not growth.buy("shortcut"),"buy is denied outside home")
 	field(growth,growth.flowers[7].pos)
 	tick(growth,4.0,Vector2.ZERO,true)
-	check(growth.cargo.rose == 16 and growth.cargo_value() == 48,"far flower yields more valuable purple nectar")
+	check(growth.cargo.rose == 1 and growth.cargo_value() == 3,"far flower yields more valuable purple nectar")
 	home(growth)
-	check(growth.sell() == 48 and growth.rose_sold == 16,"purple sale tracks milestone progress")
+	check(growth.sell() == 3 and growth.rose_sold == 1,"purple sale tracks milestone progress")
 	check(growth.buy("shortcut"),"shortcut purchase follows meadow")
 	field(growth,Model.SHORTCUTS[0])
 	check(growth.use_shortcut() and growth.p == Model.SHORTCUTS[1],"shortcut travels outward")
 	check(growth.use_shortcut() and growth.p == Model.SHORTCUTS[0],"shortcut travels homeward")
 	home(growth)
 	check(growth.buy("market"),"market follows actual first purple sale")
-	growth.cargo = {"blue":0,"rose":4}
-	check(growth.cargo_value() == 15 and growth.sell() == 15,"market applies one visible 25 percent bonus")
+	growth.cargo = {"blue":0,"rose":5}
+	check(growth.cargo_value() == 18 and growth.sell() == 18,"market applies one visible 25 percent bonus")
 	check(growth.buy("reserve") and growth.completed,"real purple deliveries allow final reserve milestone")
 	check(growth.phase == "home" and fly(growth,Vector2(600,400)),"milestone does not end free play")
 	var rain = Model.new()
@@ -300,7 +314,7 @@ func run() -> void:
 	twin.owned.assign(["gather1","gather2","reach","twin","bag1"])
 	field(twin,(twin.flowers[1].pos+twin.flowers[2].pos)*0.5)
 	tick(twin,1.0,Vector2.ZERO,true)
-	check(twin.flowers[1].stock < 12 and twin.flowers[2].stock < 12 and twin.cargo_total() >= 20,"twin affects two real nearby sources")
+	check(twin.flowers[1].stock == 0 and twin.flowers[2].stock == 0 and twin.cargo_total() == 2,"twin affects two real nearby sources")
 	var valid: Dictionary = JSON.parse_string(JSON.stringify(m.to_payload(),"",true,true))
 	var bad := valid.duplicate(true)
 	bad.coins = -1
@@ -313,7 +327,7 @@ func run() -> void:
 	reject(copy,bad,"missing upgrade prerequisite")
 	bad = valid.duplicate(true); bad.owned = ["bag1","bag1"]
 	reject(copy,bad,"duplicate upgrade")
-	bad = valid.duplicate(true); bad.cargo.blue = 19
+	bad = valid.duplicate(true); bad.cargo.blue = 7
 	reject(copy,bad,"over-capacity cargo")
 	bad = valid.duplicate(true); bad.flowers[0].stock = 99
 	reject(copy,bad,"invented flower stock")
@@ -323,7 +337,7 @@ func run() -> void:
 	reject(copy,bad,"unopened far flowers harvested")
 	bad = valid.duplicate(true); bad.extra = true
 	reject(copy,bad,"unexpected save field")
-	bad = valid.duplicate(true); bad.version = 4
+	bad = valid.duplicate(true); bad.version = 5
 	reject(copy,bad,"unsupported schema")
 	bad = valid.duplicate(true); bad.completed = true
 	reject(copy,bad,"false milestone flag")
@@ -345,7 +359,7 @@ func run() -> void:
 	check(not Save.write_payload(candidate.to_payload(),failed_path,Model.new()),"unavailable save destination reports failure")
 	check(transaction.coins == 20 and transaction.owned.is_empty(),"failed staged purchase leaves live money and ownership intact")
 	check(Save.write_payload(candidate.to_payload(),path,Model.new()) and transaction.restore_payload(candidate.to_payload()),"saved purchase candidate can commit")
-	check(transaction.coins == 8 and "gather1" in transaction.owned,"committed purchase has both debit and benefit")
+	check(transaction.coins == 16 and "gather1" in transaction.owned,"committed purchase has both debit and benefit")
 	var restored_purchase = Model.new()
 	check(restored_purchase.restore_payload(Save.read_payload(path,Model.new())) and not restored_purchase.buy("gather1"),"cold resume cannot repeat a purchased node")
 	DirAccess.remove_absolute(path)
@@ -358,6 +372,7 @@ func run() -> void:
 			economy.buy(planned.pop_front())
 		if planned.is_empty(): break
 		var before_count: int = economy.trip_index
+		route_ok = fly(economy,Model.MEADOW_ENTRY if "meadow" in economy.owned else Model.POND_ENTRY) and route_ok
 		while economy.cargo_total() < economy.capacity():
 			var target: Dictionary = {}
 			for flower in economy.flowers:
@@ -365,9 +380,7 @@ func run() -> void:
 				if flower.region == 1 and "meadow" not in economy.owned: continue
 				if "meadow" in economy.owned and flower.region == 0: continue
 				if target.is_empty() or economy.p.distance_to(flower.pos) < economy.p.distance_to(target.pos): target = flower
-			if target.is_empty():
-				route_ok = false
-				break
+			if target.is_empty(): break # Exhausted region does not require a full bag.
 			var distance: float = economy.p.distance_to(target.pos)
 			route_ok = fly(economy,target.pos) and route_ok
 			simulated_seconds += distance/230.0
@@ -386,9 +399,11 @@ func run() -> void:
 		var after_trip = Model.new()
 		check(after_trip.restore_payload(JSON.parse_string(JSON.stringify(economy.to_payload(),"",true,true))),"economy trip %d remains save-valid" % (expedition+1))
 	check(route_ok and economy.completed and economy.owned.size() == 12,"ordinary collection/sale route can buy all twelve nodes and finish reserve")
-	check(economy.rose_sold >= 18 and economy.coins >= 0 and economy.trip_index < 40,"progression uses delivered nectar without negative balances or test-loop exhaustion")
+	check(economy.rose_sold >= 6 and economy.coins >= 0 and economy.trip_index < 40,"progression uses delivered nectar without negative balances or test-loop exhaustion")
 	print("NECTAR ECONOMY FIXTURE: %d trips; approximate movement/collection %.1f seconds, excludes menus and player decisions" % [economy.trip_index,simulated_seconds])
 	transaction_route_regression(1.0/30.0)
 	transaction_route_regression(1.0/60.0)
+	transaction_route_regression(1.0/60.0,"twin")
+	transaction_route_regression(1.0/60.0,"shortcut")
 	print("NECTAR RULES: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures > 0 else 0)

@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / 'prototypes/swarm-flight/nectar-review-contract.json'
 README = ROOT / 'prototypes/swarm-flight/nectar-review-readme.txt'
 SAVE_NAME = 'nectar_harvest_v1.json'
+SAVE_VERSION = 4
 ENTRY_CHECKS = {'direct_app', 'command_entry', 'ordinary_input', 'save', 'exit', 'cold_resume', 'continued_input'}
 VIDEO_SUFFIXES = {'.mp4', '.mov', '.webm', '.m4v'}
 
@@ -153,7 +154,7 @@ def validate_record(record, row, root, revision, export_record):
                 try:
                     saved = read(target)
                     if (not isinstance(saved,dict) or saved.get('id') != 'nectar-harvest-v1'
-                            or type(saved.get('version')) is not int or saved['version'] != 3):
+                            or type(saved.get('version')) is not int or saved['version'] != SAVE_VERSION):
                         errors.append(label + ': new-save snapshot has wrong independent identity')
                 except (ValueError,OSError) as exc:
                     errors.append(label + ': cannot read new-save snapshot: ' + str(exc))

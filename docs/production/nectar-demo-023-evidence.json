@@ -1,0 +1,79 @@
+{
+  "runtime_revision": "669ad7423ecc76408adc9521f0c9d2ad9f8f99dd",
+  "media_original_revision": "d5524d0c0e8e99da7e87c994c6ad3b71e7620310",
+  "difference": "Final runtime only changes drawn18purple→6purple caption; finalUI/export repeated. Earlier51ce artifact applicability verified in source-equivalence.json.",
+  "package": {
+    "path": "/Users/alanthssss/Library/CloudStorage/SynologyDrive-on-demand-sync/ChatGPT/nameless-becoming/outputs/nectar-demo-0.23.0/采蜜与蜂舞-Demo-0.23.0-Mac.zip",
+    "sha256": "bd4474b36559a93ff88ca082ea64887a8fbb57b95f7ef1b5db2a17d8e49ca8f7",
+    "revision": "669ad7423ecc76408adc9521f0c9d2ad9f8f99dd",
+    "claim": "candidate"
+  },
+  "export_sha256": "eee479318d7658ded33cc0eb1f1692c103e16fd80b722238148f7adf33774e35",
+  "app_and_launcher_byte_comparison": {
+    "revision": "669ad7423ecc76408adc9521f0c9d2ad9f8f99dd",
+    "app_files_equal": [
+      "Contents/Info.plist",
+      "Contents/PkgInfo",
+      "Contents/MacOS/雨来之前 · 采蜜与蜂舞 Demo 0.23.0",
+      "Contents/Resources/icon.icns",
+      "Contents/Resources/雨来之前 · 采蜜与蜂舞 Demo 0.23.0.pck",
+      "Contents/Resources/PrivacyInfo.xcprivacy"
+    ],
+    "launcher_equal": true,
+    "launcher_executable": true,
+    "package_sha256": "bd4474b36559a93ff88ca082ea64887a8fbb57b95f7ef1b5db2a17d8e49ca8f7"
+  },
+  "checks": {
+    "rules": 330,
+    "regions": 52,
+    "migration": 15362,
+    "native_ui": 66,
+    "native_demo": 23,
+    "native_region": 29,
+    "shortcut": 216,
+    "twin": 267,
+    "cold_each": 3,
+    "package_tools": 51,
+    "failures": 0
+  },
+  "independent_review": {
+    "actor": "AI independent_review",
+    "closed_P2": 2,
+    "remaining_P1_P2": 0,
+    "events": 371,
+    "frames": 28004,
+    "source": "nectar-demo-023-independent-review.md",
+    "human_acceptance": false
+  },
+  "cost_package_checkpoint": {
+    "observed_start": "2026-11-04 02:57:48 UTC",
+    "observed_end": "2026-11-04 03:53:36 UTC",
+    "coverage": "First explicit clock through local packaging checkpoint, including code, generation waits, review, native input, two media passes, export and CI waits; earlier02:51 was estimate and pre-clock reading unmeasured. Not active/billed time.",
+    "active": null,
+    "billed": null,
+    "cumulative": null,
+    "remaining": null,
+    "new_purchases": 0
+  },
+  "local_evidence_root": "outputs/nectar-demo-0.23.0/evidence",
+  "tracking": [
+    "GDD13.9 SD-v1.1",
+    "M3",
+    "#301",
+    "#302",
+    "#303",
+    "#304",
+    "#211",
+    "PR305"
+  ],
+  "artifact_hashes": {
+    "candidate-receipt.json": "3f3675f93fd5da5ef3e429a97af36d975a1045230e895a747177e067046746e8",
+    "preflight.json": "ef303d8294430667e50198c8d613c1c2a078768ad772d12de8c3e9c96c30a980",
+    "independent-review.md": "c50898cc137b132e50c3e19b2cafec683ddcf39d263b0f66b44a33e91e3246b9",
+    "independent-ledger-review.json": "61629d61804c707a492f4c1312794d9100b7ebcf6f00d623ae0c6516ecb4f3c4",
+    "export/input-trace.json": "64f7e3c26b14f000626b9a888b217f44ed55ca10c9f67e5ede1fcd4fd9d63508",
+    "source-equivalence.json": "2afc772eea52c081687c212db14d75901b1c29e4248e9c23e53a04418c7ab048",
+    "shortcut/continuous.mp4": "cdd37eee858c57ac76a4f5de02a4f11300a1a84206874613b995012e88a4e830",
+    "twin/continuous.mp4": "69321ea7d65a1d90997c711bcc621a6d83db35543cfd2f921abe5061f796eeb8"
+  }
+}

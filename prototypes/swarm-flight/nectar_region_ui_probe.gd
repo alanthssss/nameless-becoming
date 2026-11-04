@@ -1,5 +1,5 @@
 extends SceneTree
-## Explicit developer fixtures for transition boundaries and visible combat feedback.
+## Explicit developer fixtures for transition boundaries and peaceful wildlife.
 const Scene = preload("res://nectar_harvest.tscn")
 const Model = preload("res://nectar_harvest_model.gd")
 var game
@@ -15,6 +15,12 @@ func frames(count: int) -> void:
 	for i in count:
 		await process_frame
 		trace.append({"mode":game.mode,"area":game.model.area,"p":[game.model.p.x,game.model.p.y],"energy":game.model.energy,"creatures":game.model.to_payload().creatures})
+func until_mode(expected: String,limit := 360) -> bool:
+	for i in limit:
+		if game.mode == expected: return true
+		await frames(1)
+	return game.mode == expected
+
 func key(code: int,value: bool) -> void:
 	var e := InputEventKey.new(); e.keycode = code; e.physical_keycode = code; e.pressed = value
 	root.push_input(e,true)
@@ -42,7 +48,7 @@ func run() -> void:
 	await frames(3)
 	check(game.mode == "transition" and game.model.area == "hub","fade-out freezes the original scene until commit")
 	await capture("01-fade-out")
-	await frames(75)
+	check(await until_mode("play"),"departure transition finishes within bounded frames")
 	check(game.mode == "play" and game.model.area == "pond" and game.world.area_key == "pond","midpoint swaps actual PackedScene")
 	check(game.model.trip_index == 1 and game.held.is_empty() and game.model.p == Model.POND_ENTRY,"held inputs during fade neither move nor bounce back")
 	key(KEY_D,false); key(KEY_E,false)
@@ -52,48 +58,59 @@ func run() -> void:
 	game.saved_path = output.path_join("cannot-write-directory")
 	DirAccess.make_dir_recursive_absolute(game.saved_path)
 	var before: Dictionary = game.model.to_payload()
-	await tap(KEY_E); await frames(75)
+	await tap(KEY_E); check(await until_mode("play"),"failed transition returns control within bounded frames")
 	check(game.mode == "play" and game.model.area == "pond" and game.world.area_key == "pond","failed save keeps original scene")
 	check(game.model.cargo == before.cargo and game.model.trip_index == before.trip_index,"failed transition retains cargo and trip")
 	check(game.ui.toast_panel.visible and "未能保存" in game.ui.toast.text,"failed transition leaves a visible recovery message")
 	game.saved_path = path
-	# Position fixture, then real held-space/release input produces the full repel.
+	# Position fixture + real held-space/release input crosses peaceful wildlife.
 	var mosquito: Dictionary = game.model.creatures[0]
-	game.model.p = mosquito.pos-Vector2(100,0)
+	game.model.p = mosquito.pos-Vector2(80,0)
 	game.model.v = Vector2.ZERO
 	game.model.face = Vector2.RIGHT
 	game.presentation_changed.emit()
 	await frames(3)
-	check(mosquito.state == "warn","ordinary proximity visibly warns before attack")
-	await capture("03-warning")
+	check(mosquito.state == "patrol","ordinary proximity leaves wildlife in peaceful patrol")
+	await capture("03-peaceful-neighbor")
 	var energy: float = game.model.energy
-	key(KEY_SPACE,true); key(KEY_D,true)
-	await frames(11)
-	key(KEY_SPACE,false)
+	var played: float = game.played_seconds
+	var dash_count: int = game.event_log.filter(func(e): return e.kind == "dash").size()
+	key(KEY_SPACE,true)
+	for i in 120:
+		await frames(1)
+		if game.model.charge >= Model.CHARGE_READY: break
+	check(game.model.charging and game.model.charge == Model.CHARGE_READY,"real held Space charges to readiness")
+	game.model.p = mosquito.pos-Vector2(25,0)
+	game.model.v = Vector2.ZERO
+	key(KEY_SPACE,false); key(KEY_D,true)
 	await frames(6)
 	key(KEY_D,false)
-	check(mosquito.state == "gone","charged release drives away the mosquito")
-	check(game.model.energy > energy-6.0,"dash wins without concurrent contact damage")
-	check(not game.world.departing_creatures.is_empty(),"repel produces a visible departing creature")
-	await capture("04-repel-flight")
+	check(game.event_log.filter(func(e): return e.kind == "dash").size() == dash_count+1,"real released Space produces one dash")
+	check(mosquito.state == "patrol" and game.world.departing_creatures.is_empty(),"dash through wildlife neither removes it nor produces a repel animation")
+	check(absf(game.model.energy-(energy-4.0-0.7*(game.played_seconds-played))) < 0.01,"dash pays exactly dash cost and ordinary drain without contact damage")
+	await capture("04-dash-past-neighbor")
 	await frames(25)
-	check(game.world.departing_creatures.is_empty(),"repel animation ends without leaving a duplicate creature")
-	# A separate explicit encounter fixture verifies damage, safety recovery and pause.
-	mosquito.state = "patrol"; mosquito.pos = mosquito.anchor; mosquito.timer = 0.0
-	game.model.p = mosquito.anchor-Vector2(75,0); game.model.v = Vector2.ZERO
-	for i in 60:
-		await frames(1)
-		if game.model.hurt_left > 0: break
-	check(game.model.hurt_left > 0,"waiting through warning allows one guarded contact hit")
-	await capture("05-contact-hit")
+	# Waiting in direct contact remains harmless; resource/time pressure is separate.
+	mosquito.pos = mosquito.anchor; mosquito.timer = 0.0
+	game.model.p = mosquito.anchor; game.model.v = Vector2.ZERO
+	game.model.burst_left = 0.0
+	energy = game.model.energy; played = game.played_seconds
+	await frames(60)
+	check(game.model.hurt_left == 0 and mosquito.state == "patrol","waiting next to wildlife never begins warning, chase or invulnerability")
+	check(absf(game.model.energy-(energy-0.7*(game.played_seconds-played))) < 0.01,"continuous overlap pays only ordinary endurance drain")
+	check(not game.event_log.any(func(e): return e.kind in ["warn","hurt","repel"]),"ordinary input emits no combat feedback")
+	await capture("05-peaceful-contact")
 	await tap(KEY_ESCAPE)
 	var paused: Dictionary = game.model.to_payload()
 	await frames(12)
-	check(game.model.to_payload() == paused,"pause freezes creature state and invulnerability timer")
+	check(game.model.to_payload() == paused,"pause freezes wildlife, player and endurance")
 	await tap(KEY_ESCAPE)
+	check(game.persist(),"peaceful encounter state writes to isolated save")
+	var resumed = Model.new()
+	check(resumed.restore_payload(JSON.parse_string(FileAccess.get_file_as_string(game.saved_path))) and resumed.creatures == game.model.creatures and resumed.hurt_left == 0,"cold model resume preserves peaceful wildlife without spawning combat")
 	game.model.p = Model.POND_ENTRY; game.model.v = Vector2.ZERO
-	await tap(KEY_E); await frames(75)
-	check(game.model.area == "hub" and game.model.energy == game.model.max_energy(),"ordinary return replenishes only at the safe life scene")
+	await tap(KEY_E); check(await until_mode("play"),"return transition finishes within bounded frames")
+	check(game.model.area == "hub" and game.model.energy == game.model.max_energy() and game.model.p == Model.HUB_DEPART and game.model.camera_x == 0,"ordinary return restores endurance at the visible departure orb")
 	await capture("06-back-to-life")
 	game.model.p = Model.HUB_DEPART
 	await tap(KEY_E)
@@ -107,7 +124,7 @@ func run() -> void:
 	game.test_mode = false
 	game._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
 	game.test_mode = true
-	await frames(75)
+	check(await until_mode("pause"),"focus-loss transition finishes paused within bounded frames")
 	check(game.mode == "pause" and game.model.area == "pond","focus loss during fade finishes safely paused")
 	var focus_energy: float = game.model.energy
 	await frames(12)
