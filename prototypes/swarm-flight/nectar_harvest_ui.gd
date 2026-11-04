@@ -527,15 +527,10 @@ func refresh() -> void:
 	coins_text.text = "%d" % m.coins
 	trip_text.text = driver.area_name(m.area)+(" · 安全生活区" if m.at_home() else " · 第 %d 趟" % maxi(1,m.trip_index))
 	goal_text.text = m.goal_text()
-	var nearby: String = m.interaction()
 	help_text.text = ""
 	if not m.at_home():
 		if m.cargo_total() >= m.capacity(): help_text.text = "蜜囊已满"
-		elif nearby.is_empty():
-			for flower in m.flowers:
-				if flower.stock > 0 and int(flower.region) == (1 if m.area=="meadow" else 0) and m.p.distance_to(flower.pos)<=m.harvest_radius():
-					help_text.text = "按住 E  采蜜"
-					break
+		elif driver.has_harvest_hint(): help_text.text = "按住 E  采蜜"
 	help_text.visible = not help_text.text.is_empty()
 	var from_hub: bool = m.area == "hub"
 	region_title.text = "这次去哪里？" if from_hub else "带着收获回去"

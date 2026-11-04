@@ -177,7 +177,13 @@ func _process(delta: float) -> void:
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
 func _hud_signature() -> String:
-	return str([int(ceil(model.energy)),model.cargo,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold])
+	return str([int(ceil(model.energy)),model.cargo,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint()])
+
+func has_harvest_hint() -> bool:
+	if model.at_home() or model.cargo_total() >= model.capacity() or not model.interaction().is_empty(): return false
+	for flower in model.flowers:
+		if flower.stock > 0 and int(flower.region) == (1 if model.area == "meadow" else 0) and model.p.distance_to(flower.pos) <= model.harvest_radius(): return true
+	return false
 
 func down(key: Key) -> bool: return bool(held.get(key,false))
 

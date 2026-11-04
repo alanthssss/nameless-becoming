@@ -89,6 +89,22 @@ func run() -> void:
 	await create_timer(2.2).timeout
 	check(game.model.area == "pond" and game.world.area_key == "pond" and game.model.trip_index == 1,"confirmed departure loads pond scene once")
 	# Targeted fixture positions are explicit; full journey coverage is separate.
+	game.model.p = Vector2(620,419)
+	game.model.v = Vector2(0,230)
+	game.model.energy = 84.75
+	game.ui.refresh()
+	check(not game.ui.help_text.visible,"outside harvest radius has no collection prompt")
+	key(KEY_S,true)
+	await frames(4)
+	key(KEY_S,false)
+	check(int(ceil(game.model.energy)) == 85 and game.ui.help_text.visible,"entering harvest radius updates prompt before rounded energy changes")
+	game.model.p = Vector2(620,421)
+	game.model.v = Vector2(0,-230)
+	game.ui.refresh()
+	key(KEY_W,true)
+	await frames(4)
+	key(KEY_W,false)
+	check(int(ceil(game.model.energy)) == 85 and not game.ui.help_text.visible,"leaving harvest radius clears prompt before rounded energy changes")
 	game.model.p = Vector2(620,520)
 	game.model.v = Vector2.ZERO
 	await frames(2)
