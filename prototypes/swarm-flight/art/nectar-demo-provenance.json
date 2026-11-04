@@ -75,6 +75,66 @@
       "usage": "nectar_harvest_view.gd _draw_hub; six shelf slots aligned to existing shelf surfaces",
       "review_status": "Developer and independent AI native screenshot review; human art acceptance pending",
       "issue": 301
+    },
+    {
+      "id": "nectar-rooted-stump",
+      "version": 1,
+      "file": "nectar-rooted-stump.png",
+      "sha256": "7b0f813197e52a197df220c757c5fab90aba856c19c0ec06077fadf0874edc35",
+      "source": "OpenAI built-in image_gen; exact model/server ID not exposed",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a645-3a38-7e51-902c-38600bf4132d/exec-0d4f8b00-7d61-42c6-941f-35c189a81034.png",
+      "date": "2026-11-04",
+      "prompt_file": "nectar-grounding-prompts.json",
+      "prompt_key": "rooted_stump",
+      "style_references": [
+        "garden-home.png"
+      ],
+      "post_processing": "none; original PNG copied byte-for-byte, no alpha editing; runtime maps declared source contact points",
+      "pixel_size": [
+        1536,
+        1024
+      ],
+      "alpha": "Godot Image.detect_alpha=2; corner alpha=0; native after-painted views show no opaque matte; source alpha preserved",
+      "usage": "nectar_landscape.gd rooted_stump; shop and low gates",
+      "review_status": "Root developer native review at 1280x800; independent review/two-window and continuous verification recorded in batch receipt; human art approval pending",
+      "issue": 313,
+      "collision_role": "background structural support; no new collider or shelter rule",
+      "source_anchors": {
+        "foot_contact_y": 300,
+        "root_y": 865
+      }
+    },
+    {
+      "id": "nectar-branch-support",
+      "version": 1,
+      "file": "nectar-branch-support.png",
+      "sha256": "7211ecc4320c07b56aaf52d5caa3e331c100a53fe06d2cb3e72e6f91f77ef54b",
+      "source": "OpenAI built-in image_gen; exact model/server ID not exposed",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a645-3a38-7e51-902c-38600bf4132d/exec-1c95efe9-007b-4e34-aecd-27b04fe41f80.png",
+      "date": "2026-11-04",
+      "prompt_file": "nectar-grounding-prompts.json",
+      "prompt_key": "branch_support",
+      "style_references": [
+        "garden-home.png"
+      ],
+      "post_processing": "none; original PNG copied byte-for-byte, no alpha editing; runtime maps declared source contact points",
+      "pixel_size": [
+        1024,
+        1536
+      ],
+      "alpha": "Godot Image.detect_alpha=2; corner alpha=0; native after-painted views show no opaque matte; source alpha preserved",
+      "usage": "nectar_landscape.gd platform; two shortcut locations",
+      "review_status": "Root developer native review at 1280x800; independent review/two-window and continuous verification recorded in batch receipt; human art approval pending",
+      "issue": 313,
+      "collision_role": "background structural support; no new collider or shelter rule",
+      "source_anchors": {
+        "saddle_x": [
+          170,
+          690
+        ],
+        "saddle_y": 345,
+        "root_y": 1465
+      }
     }
   ]
 }

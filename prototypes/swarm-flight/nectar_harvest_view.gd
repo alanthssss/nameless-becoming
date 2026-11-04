@@ -4,6 +4,7 @@ extends "res://world_view.gd"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
 const UIArt = preload("res://nectar_ui_art.gd")
 const Dance = preload("res://nectar_dance.gd")
+const Landscape = preload("res://nectar_landscape.gd")
 const STAGE: Texture2D = preload("res://art/nectar-dance-stage.png")
 const BOOK_ART: Texture2D = preload("res://art/nectar-field-book.png")
 const SHOP_ART: Texture2D = preload("res://art/nectar-honey-shop.png")
@@ -74,12 +75,10 @@ func nectar_event(event: Dictionary) -> void:
 func _draw() -> void:
 	if model == null: return
 	draw_set_transform(Vector2.ZERO)
-	SampleLandscape.background(self,0,model.camera_x,clock,0,0)
-	# A broad atmosphere shift accompanies the second flower meadow.
-	var far_mix: float = 1.0 if area_key == "meadow" else 0.0
-	draw_rect(Rect2(0,0,1280,800),Color(0.69,0.60,0.87,far_mix*0.07))
+	Landscape.background(self,area_key)
 	_world_offset = Vector2(-model.camera_x,0)
 	draw_set_transform(_world_offset)
+	Landscape.terrain(self,area_key,model.camera_x,clock)
 	if area_key == "hub":
 		_draw_hub()
 	else:
@@ -123,7 +122,7 @@ func _draw() -> void:
 		if feedback_font:
 			draw_string(feedback_font,item.p+Vector2(14,-30-item.age*26),item.text,HORIZONTAL_ALIGNMENT_LEFT,-1,17,Color(1,0.96,0.72,1-item.age))
 	draw_set_transform(Vector2.ZERO)
-	SampleLandscape.foreground(self,model.camera_x,clock)
+	# Ground and roots share the world transform; parallax leaves cannot hide their joins.
 
 func _label(p: Vector2, words: String, active := false, width := 180.0) -> void:
 	if p.x < model.camera_x+8 or p.x > model.camera_x+1272: return
@@ -132,14 +131,10 @@ func _label(p: Vector2, words: String, active := false, width := 180.0) -> void:
 	draw_style_box(_box_style(Color("294c3eea"),Color("edce83") if active else Color("98ab7d"),2,12),r)
 	if feedback_font: draw_string(feedback_font,p+Vector2(-width*0.5+13,7),words,HORIZONTAL_ALIGNMENT_LEFT,width-24,18,Color("fff1cc"))
 
-func _stand(p: Vector2, half: float) -> void:
-	ArtProps.stalk(self,p+Vector2(0,-24),p+Vector2(18,110),p+Vector2(-21,210),Vector2(p.x,835),12)
-	ArtSprites.small_leaf(self,p+Vector2(half,0),p+Vector2(-half,-10),32)
-
 func _draw_hub() -> void:
 	# Three addresses in one view; shelf inventory uses the same painted jar family.
 	var shop_origin: Vector2 = model.HUB_SHOP+Vector2(-175,-230)
-	_stand(model.HUB_SHOP+Vector2(0,85),145)
+	Landscape.shop_base(self,model.HUB_SHOP)
 	draw_texture_rect(SHOP_ART,Rect2(shop_origin,Vector2(350,350)),false)
 	_bee(model.HUB_SHOP+Vector2(10,5),0.70,Vector2.RIGHT,1,false,1.7,"waiting")
 	var jars: int = mini(6,int(model.sold_total/6))
@@ -148,7 +143,7 @@ func _draw_hub() -> void:
 		var foot: Vector2 = shop_origin+Vector2(87+(i%3)*39,176-(i/3)*39)
 		draw_texture_rect_region(JAR_ART,Rect2(foot+Vector2(0,-34),Vector2(35,34)),JAR_SOURCE)
 	ArtProps.home(self,model.HUB_TREE+Vector2(25,60),0,1,0.64)
-	_stand(model.HUB_TREE+Vector2(0,120),108)
+	Landscape.book_bracket(self,model.HUB_TREE+Vector2(0,75))
 	_bee(model.HUB_TREE+Vector2(48,0),0.62,Vector2.LEFT,1,false,2.9,"waiting")
 	_book(model.HUB_TREE+Vector2(0,75),true)
 	# The old nonfunctional wind flowers and standalone information desk are removed.
@@ -173,9 +168,9 @@ func _draw_gate(p: Vector2, title: String, available: bool) -> void:
 		draw_string(feedback_font,Vector2(clampf(p.x,model.camera_x+106,model.camera_x+1174)-79,p.y-23),"尚未开放",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("4f623f"))
 
 func _stage(p: Vector2, size: float, active: bool) -> void:
-	# Native asset platform contact at ~0.88 of its canvas. The rooted stem supports it.
+	# Feet rest on a wooden saddle joined to a visible trunk and ground roots.
 	var base := p+Vector2(0,size*.14)
-	ArtProps.stalk(self,base,base+Vector2(12,60),Vector2(p.x-15,740),Vector2(p.x,835),13)
+	Landscape.platform(self,area_key,p,size)
 	draw_texture_rect(STAGE,Rect2(p+Vector2(-size*.5,-size*.68),Vector2.ONE*size),false,Color.WHITE if active else Color("829481"))
 	if not active: return
 	var lamp := p+Vector2(0,-size*.24)
@@ -221,9 +216,10 @@ func _draw_source(flower: Dictionary) -> void:
 	var purple: bool = flower.type == "rose"
 	var stocked: bool = flower.stock > 0
 	var join := p+Vector2(54,23) if purple else p+Vector2(0,22)
-	var root := Vector2(flower.pos.x+26,832)
+	var root := Vector2(flower.pos.x+26,Landscape.ground_y(area_key,flower.pos.x+26)+3)
 	var stem := PackedVector2Array([join,join+Vector2(12,110),root+Vector2(-25,-125),root])
 	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],5.5)
+	Landscape.root_crown(self,root,.8)
 	for t in [0.42,0.70]:
 		var leaf_root: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],t)
 		var direction := -1.0 if t < 0.5 else 1.0
@@ -303,7 +299,14 @@ func _draw_boundary() -> void:
 			ArtSprites.hedge(self,Rect2(x-60+i*105,760,78,66))
 
 func _draw_leaf_stop(p: Vector2, half: float) -> void:
-	ArtProps.shelter_plant(self,p,half)
+	# Keep the shared canopy geometry; only the source of its stalk moves into view.
+	var root := Vector2(p.x+half-34,Landscape.ground_y(area_key,p.x+half-34)+3)
+	var stem := PackedVector2Array([p+Vector2(half+4,-80),p+Vector2(half+17,8),root+Vector2(-10,-50),root])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],12.0)
+	ArtProps.branch(self,stem,.48,p+Vector2(58,54),4.5)
+	ArtSprites.canopy(self,p,half)
+	ArtSprites.small_leaf(self,p+Vector2(60,57),p+Vector2(-60,57),29)
+	Landscape.root_crown(self,root,1.4)
 
 func _draw_shortcut(p: Vector2, far: bool) -> void:
 	if p.x < model.camera_x-100 or p.x > model.camera_x+1400: return
