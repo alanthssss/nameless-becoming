@@ -7,7 +7,7 @@
   "milestone": "M3",
   "issues": [288, 289, 311, 312, 313],
   "scope": "Original bounded research plus full-game video event sampling, first trips, growth, store, maps and interactions; comparison to merged 0.24 ae411496. Expanded coverage incomplete.",
-  "status": "expanded_fullplay_research_in_progress",
+  "status": "expanded_fullplay_research_paused_at_user_quota_checkpoint",
   "historical_status": "2026-11-03 bounded_research_complete_with_explicit_unknowns (SD01/SD02 original scope)",
   "not_claimed": ["complete original skill database", "source-code reconstruction", "original spawning algorithm", "hands-on successful dive", "human playtest", "proof of player enjoyment"],
   "evidence_classes": {
@@ -163,6 +163,7 @@
         "First spending: Plasma Gun 20, Deep Breath 10, Bubble Damage I 5; balance 5",
         "Second trip panel 39.76 seconds, zero jellyfish inventory and +8 scraps following low-oxygen sequence; immediate retry",
         "Third normal trip panel 29.68 seconds, +3 jellyfish and +19 scraps; total scraps 27; subsequent sales raise balance 5 to 35",
+        "At 2:30:46.15 inventory contains 30 jellyfish and submarine storage is empty; at 2:30:46.65 retry confirmation empties carried inventory and populates submarine storage, followed by a new dive",
         "Chest Speed I at 19:39.92: 250% quicker chest collection for 250 scraps; this is not shop sale speed",
         "Oxygen Tank II 10/10, Bubble Strike I first-hit modifier, Hammock Repair ending goal and sleeping credits observed at separate index points"
       ],
