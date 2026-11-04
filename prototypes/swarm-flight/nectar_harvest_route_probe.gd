@@ -108,6 +108,27 @@ func fly_to(target: Vector2) -> bool:
 		if not await fly_direct(Vector2(target.x,645)): return false
 	return await fly_direct(target)
 
+func planned_flight_cost(origin: Vector2,target: Vector2) -> float:
+	# Budget the actual low-route waypoints, including each vertical rain crossing.
+	# This is a conservative pilot estimate, never a change to game energy.
+	var points: Array[Vector2] = [origin]
+	if game.model.area == "meadow" and minf(target.x,origin.x)<2920 and maxf(target.x,origin.x)>2600 and minf(target.y,origin.y)<640:
+		points.append(Vector2(origin.x,645))
+		points.append(Vector2(target.x,645))
+	points.append(target)
+	var cost := 0.0
+	for i in range(1,points.size()):
+		var a := points[i-1]
+		var b := points[i]
+		var drain := 1.0
+		# Axis steering can briefly take more than the straight-line distance.
+		for sample in 25:
+			var p := a.lerp(b,float(sample)/24.0)
+			if game.model.area == "meadow" and p.x>=2600 and p.x<=2920 and p.y<game.model.rain_floor_at(p.x):
+				drain = 2.8
+		cost += (absf(b.x-a.x)+absf(b.y-a.y))/180.0*drain+0.6
+	return cost
+
 func fly_direct(target: Vector2) -> bool:
 	for i in 1600:
 		var delta: Vector2 = target-game.model.p
@@ -125,7 +146,7 @@ func fly_direct(target: Vector2) -> bool:
 	return false
 
 func capture(name: String) -> void:
-	if output.is_empty(): return
+	if output.is_empty() or DisplayServer.get_name() == "headless": return
 	await frames(3)
 	RenderingServer.force_draw()
 	root.get_texture().get_image().save_png(output.path_join(name+".png"))
@@ -212,7 +233,7 @@ func run() -> void:
 			if creature.region != region: continue
 			if region == 0 and m.materials.fiber >= need_fiber: continue
 			if region == 1 and m.materials.resin >= need_resin: continue
-			var cost: float = m.p.distance_to(creature.pos)/180+creature.pos.distance_to(home)/180+(3 if creature.kind == "guard" else 2)*2.6+4
+			var cost: float = planned_flight_cost(m.p,creature.pos)+planned_flight_cost(creature.pos,home)+(3 if creature.kind == "guard" else 2)*2.6+6
 			if m.energy < cost: break
 			check(await fly_to(creature.pos+Vector2(95 if creature.pos.x>2800 else -95,0)),"ordinary flight approaches material carrier")
 			for hit in 3:
@@ -234,7 +255,7 @@ func run() -> void:
 				if flower.stock <= 0 or flower.region != region or flower.id in picked: continue
 				if target.is_empty() or m.p.distance_to(flower.pos) < m.p.distance_to(target.pos): target = flower
 			if target.is_empty(): break
-			var required: float = m.p.distance_to(target.pos)/180+target.pos.distance_to(home)/180+1.9/m.harvest_rate()+4.0
+			var required: float = planned_flight_cost(m.p,target.pos)+planned_flight_cost(target.pos,home)+3.7/m.harvest_rate()+4.0
 			if m.energy <= required: break
 			var approach: Vector2 = target.pos
 			var paired: Dictionary = {}
