@@ -20,7 +20,7 @@
         "garden-landmarks.png"
       ],
       "post_processing": "none; source PNG copied without raster edits",
-      "usage": "nectar_harvest_view.gd; hub and field stages / hub shop / hub books",
+      "usage": "nectar_harvest_view.gd: LAMP_SOURCE atlas crop reuses only mirror ball for field markers, no wooden pavilion",
       "review_status": "native review candidate; professional art approval pending"
     },
     {
@@ -77,6 +77,68 @@
       "issue": 301
     },
     {
+      "id": "nectar-courtyard-oblique",
+      "version": 1,
+      "file": "nectar-courtyard-oblique.png",
+      "sha256": "8ec5dd01754fe080dd8bf3c2cbebc5f4886263ab5d98dfe90b1b799833a379d0",
+      "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a645-3a38-7e51-902c-38600bf4132d/exec-7e7fc3ac-4cd3-423e-a948-07581a2dc925.png",
+      "date": "2026-11-04",
+      "prompt_file": "nectar-oblique-prompts.json",
+      "prompt_key": "courtyard",
+      "pixel_size": [
+        1586,
+        992
+      ],
+      "post_processing": "none; source PNG copied byte-for-byte; mapped to one world-space ground rectangle, not tiled",
+      "usage": "nectar_landscape.gd; native view anchors in nectar_harvest_model/view",
+      "collision_role": "scenery only; no terrain collision or collectible flowers baked into field backgrounds",
+      "review_status": "internal native scene review pending; no Alan acceptance",
+      "issue": 313
+    },
+    {
+      "id": "nectar-pond-oblique",
+      "version": 1,
+      "file": "nectar-pond-oblique.png",
+      "sha256": "62226dcb9c20a079053361ee77e68a7081d23251ac8660b4a5c67fe95b5e59b6",
+      "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a645-3a38-7e51-902c-38600bf4132d/exec-f6e2c0a4-ca3a-4218-b11c-18a20c59b985.png",
+      "date": "2026-11-04",
+      "prompt_file": "nectar-oblique-prompts.json",
+      "prompt_key": "pond",
+      "pixel_size": [
+        1586,
+        992
+      ],
+      "post_processing": "none; source PNG copied byte-for-byte; mapped to one world-space ground rectangle, not tiled",
+      "usage": "nectar_landscape.gd; native view anchors in nectar_harvest_model/view",
+      "collision_role": "scenery only; no terrain collision or collectible flowers baked into field backgrounds",
+      "review_status": "internal native scene review pending; no Alan acceptance",
+      "issue": 313
+    },
+    {
+      "id": "nectar-meadow-oblique",
+      "version": 1,
+      "file": "nectar-meadow-oblique.png",
+      "sha256": "becbdfd20fffc1891a70729e0f1458f53cf3274ba28d1ef7aa63a5878db9ffdb",
+      "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a645-3a38-7e51-902c-38600bf4132d/exec-8d79aa13-27f0-4f40-ba04-930c3f305471.png",
+      "date": "2026-11-04",
+      "prompt_file": "nectar-oblique-prompts.json",
+      "prompt_key": "meadow",
+      "pixel_size": [
+        1817,
+        866
+      ],
+      "post_processing": "none; source PNG copied byte-for-byte; mapped to one world-space ground rectangle, not tiled",
+      "usage": "nectar_landscape.gd; native view anchors in nectar_harvest_model/view",
+      "collision_role": "scenery only; no terrain collision or collectible flowers baked into field backgrounds",
+      "review_status": "internal native scene review pending; no Alan acceptance",
+      "issue": 313
+    }
+  ],
+  "withdrawn_assets": [
+    {
       "id": "nectar-rooted-stump",
       "version": 1,
       "file": "nectar-rooted-stump.png",
@@ -95,8 +157,8 @@
         1024
       ],
       "alpha": "Godot Image.detect_alpha=2; corner alpha=0; native after-painted views show no opaque matte; source alpha preserved",
-      "usage": "nectar_landscape.gd rooted_stump; shop and low gates",
-      "review_status": "Root developer native review at 1280x800; independent review/two-window and continuous verification recorded in batch receipt; human art approval pending",
+      "usage": "Historical only; original file recoverable at commit 4150b1fdf0782bde45033ca888cc28113af1a4a1",
+      "review_status": "WITHDRAWN: Alan rejected the whole wooden-stump composition on 2026-11-04; not shipped or accepted",
       "issue": 313,
       "collision_role": "background structural support; no new collider or shelter rule",
       "source_anchors": {
@@ -123,8 +185,8 @@
         1536
       ],
       "alpha": "Godot Image.detect_alpha=2; corner alpha=0; native after-painted views show no opaque matte; source alpha preserved",
-      "usage": "nectar_landscape.gd platform; two shortcut locations",
-      "review_status": "Root developer native review at 1280x800; independent review/two-window and continuous verification recorded in batch receipt; human art approval pending",
+      "usage": "Historical only; original file recoverable at commit 4150b1fdf0782bde45033ca888cc28113af1a4a1",
+      "review_status": "WITHDRAWN: Alan rejected the whole wooden-stump composition on 2026-11-04; not shipped or accepted",
       "issue": 313,
       "collision_role": "background structural support; no new collider or shelter rule",
       "source_anchors": {

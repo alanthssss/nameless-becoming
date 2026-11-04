@@ -27,11 +27,15 @@ func run() -> void:
 	game.model.owned.assign(["gather1", "bag1", "wings1", "meadow", "shortcut"])
 	game.model.energy = game.model.max_energy()
 	var fixtures := [
-		{"id":"hub", "area":"hub", "p":Vector2(1080,555)},
+		{"id":"hub", "area":"hub", "p":Vector2(1015,490)},
+		{"id":"hub-shop", "area":"hub", "p":Vector2(360,520)},
+		{"id":"hub-growth", "area":"hub", "p":Vector2(740,485)},
+		{"id":"hub-full-shelves", "area":"hub", "p":Vector2(360,520), "sold":36},
 		{"id":"pond-entry", "area":"pond", "p":Vector2(470,575)},
 		{"id":"pond-far", "area":"pond", "p":Vector2(1660,575)},
 		{"id":"pond-shortcut", "area":"pond", "p":Vector2(1040,400)},
 		{"id":"meadow-entry", "area":"meadow", "p":Vector2(1900,575)},
+		{"id":"meadow-canopy-overlap", "area":"meadow", "p":Vector2(2760,550)},
 		{"id":"meadow-rain", "area":"meadow", "p":Vector2(2760,580)},
 		{"id":"meadow-shelter", "area":"meadow", "p":Vector2(2760,650)},
 		{"id":"meadow-shortcut", "area":"meadow", "p":Vector2(3000,400)}
@@ -39,6 +43,7 @@ func run() -> void:
 	for size in [Vector2i(1280,800),Vector2i(960,600)]:
 		root.size = size
 		for fixture in fixtures:
+			game.model.sold_total = fixture.get("sold",0)
 			game.model.area = fixture.area
 			game.model.phase = "home" if fixture.area == "hub" else "field"
 			game.model.p = fixture.p

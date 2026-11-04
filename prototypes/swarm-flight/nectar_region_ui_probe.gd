@@ -11,6 +11,20 @@ func _initialize() -> void: call_deferred("run")
 func check(ok: bool,label: String) -> void:
 	checks += 1
 	if not ok: failures.append(label); push_error(label)
+func same_creatures(a: Array,b: Array) -> bool:
+	if a.size() != b.size(): return false
+	for i in a.size():
+		if a[i].size() != b[i].size(): return false
+		for field in a[i]:
+			if not b[i].has(field): return false
+			var old = a[i][field]
+			var new = b[i][field]
+			# JSON decimals need not round-trip a double's last binary bit.
+			# Match the existing UI probe's 1e-7 tolerance; identities stay exact.
+			if old is float and new is float:
+				if absf(old-new) > 0.0000001: return false
+			elif old != new: return false
+	return true
 func frames(count: int) -> void:
 	for i in count:
 		await process_frame
@@ -107,7 +121,13 @@ func run() -> void:
 	await tap(KEY_ESCAPE)
 	check(game.persist(),"peaceful encounter state writes to isolated save")
 	var resumed = Model.new()
-	check(resumed.restore_payload(JSON.parse_string(FileAccess.get_file_as_string(game.saved_path))) and resumed.creatures == game.model.creatures and resumed.hurt_left == 0,"cold model resume preserves peaceful wildlife without spawning combat")
+	check(resumed.restore_payload(JSON.parse_string(FileAccess.get_file_as_string(game.saved_path))) and same_creatures(resumed.creatures,game.model.creatures) and resumed.hurt_left == 0,"cold model resume preserves peaceful wildlife without spawning combat")
+	var changed: Array = resumed.creatures.duplicate(true)
+	changed[0].timer += 0.001
+	check(not same_creatures(changed,resumed.creatures),"round-trip comparison rejects a changed timer above decimal precision")
+	changed = resumed.creatures.duplicate(true)
+	changed[0].state = "warn"
+	check(not same_creatures(changed,resumed.creatures),"round-trip comparison keeps discrete wildlife state exact")
 	game.model.p = Model.POND_ENTRY; game.model.v = Vector2.ZERO
 	await tap(KEY_E); check(await until_mode("play"),"return transition finishes within bounded frames")
 	check(game.model.area == "hub" and game.model.energy == game.model.max_energy() and game.model.p == Model.HUB_DEPART and game.model.camera_x == 0,"ordinary return restores endurance at the visible departure orb")
