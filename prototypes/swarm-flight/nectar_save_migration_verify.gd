@@ -1,6 +1,7 @@
 extends SceneTree
 ## Real disk migration/failure fixtures, not player-experience evidence.
 const Model = preload("res://nectar_harvest_model.gd")
+const LegacyV4 = preload("res://nectar_legacy_model_v4.gd")
 const LegacyV3 = preload("res://nectar_legacy_model_v3.gd")
 const Legacy = preload("res://nectar_legacy_model_v2.gd")
 const Save = preload("res://save_data.gd")
@@ -52,9 +53,9 @@ func run() -> void:
 	var migrated := Migration.load_progress(path)
 	check(migrated.ok and migrated.existed and migrated.migrated and not migrated.blocked,"valid v1 migrates on disk")
 	check(FileAccess.get_file_as_bytes(path+".v1.bak") == original,"backup retains original whitespace and every byte")
-	check(migrated.payload.version == 4 and migrated.payload.legacy_owned == old.owned,"v4 retains historical ownership explicitly")
+	check(migrated.payload.version == 5 and migrated.payload.legacy_owned == old.owned,"v4 retains historical ownership explicitly")
 	for key in old.keys():
-		if key in ["version","p","v","charge","charging","burst_left","coins","cargo","flowers","sold_total","rose_sold"]: continue
+		if key in ["version","energy","p","v","charge","charging","burst_left","coins","cargo","flowers","sold_total","rose_sold"]: continue
 		check(JSON.stringify(migrated.payload[key],"",true,true) == JSON.stringify(old[key],"",true,true),"migration preserves old field: "+key)
 	var live = Model.new()
 	check(live.restore_payload(migrated.payload),"migrated model restores")
@@ -65,7 +66,9 @@ func run() -> void:
 	check(Save.write_payload(candidate.to_payload(),path,Model.new()),"later sale persists with historical authorization")
 	var cold := Migration.load_progress(path)
 	check(cold.ok and not cold.migrated and cold.payload.legacy_owned == old.owned,"cold v4 load does not remigrate or remove inheritance")
-	check(candidate.restore_payload(cold.payload) and candidate.buy("reach"),"migrated ownership supports subsequent new-rule purchase")
+	check(candidate.restore_payload(cold.payload),"migrated state reloads before new material purchase")
+	candidate.materials.fiber = 3 # Isolated post-migration transaction fixture.
+	check(candidate.buy("reach"),"migrated ownership supports subsequent new-rule purchase")
 	check(Save.write_payload(candidate.to_payload(),path,Model.new()),"subsequent purchase writes successfully")
 	var last := Migration.load_progress(path)
 	check(last.ok and "reach" in last.payload.owned and "reach" not in last.payload.legacy_owned,"new purchase never enters historical exceptions")
@@ -82,12 +85,12 @@ func run() -> void:
 	write_bytes(field_path,fixture_bytes(field_old))
 	var field_result := Migration.load_progress(field_path)
 	check(field_result.ok and field_result.payload.phase == "field","in-flight v1 migrates without returning the player home")
-	for key in ["p","v","face","energy","charge","charging","burst_left","trip_index"]:
+	for key in ["p","v","face","charge","charging","burst_left","trip_index"]:
 		check(JSON.stringify(field_result.payload[key],"",true,true) == JSON.stringify(field_old[key],"",true,true),"in-flight migration retains "+key)
 
 	var completed = Legacy.new()
 	completed.coins = 500
-	completed.owned.assign(Model.UPGRADE_IDS)
+	completed.owned.assign(Legacy.UPGRADE_IDS)
 	completed.energy = completed.max_energy()
 	completed.visited_meadow = true
 	completed.sold_total = 22
@@ -120,10 +123,10 @@ func run() -> void:
 	var v2_path := directory+"/v2.json"
 	write_bytes(v2_path,old_v2_bytes)
 	var v2_result := Migration.load_progress(v2_path)
-	check(v2_result.ok and v2_result.migrated and v2_result.payload.version == 4,"valid v2 migrates to v4 on disk")
+	check(v2_result.ok and v2_result.migrated and v2_result.payload.version == 5,"valid v2 migrates to v4 on disk")
 	check(FileAccess.get_file_as_bytes(v2_path+".v2.bak") == old_v2_bytes and not FileAccess.file_exists(v2_path+".v1.bak"),"v2 backup records actual original version and exact bytes")
 	check(v2_result.payload.area == "meadow" and v2_result.payload.p == [1840.0,400.0],"old inter-region gap maps into meadow's valid entrance bounds")
-	for key in ["owned","legacy_owned","trip_index","energy"]:
+	for key in ["owned","legacy_owned","trip_index"]:
 		check(v2_result.payload[key] == old_v2_data[key],"v2 migration retains economic/expedition field: "+key)
 	check(v2_result.payload.creatures.all(func(c): return c.state == "gone"),"migration never spawns enemies onto an existing expedition")
 	var v2_live = Model.new()
@@ -185,6 +188,7 @@ func run() -> void:
 
 	var state = Model.new()
 	state.coins = 1000
+	state.materials.fiber = 3
 	state.buy("bag1")
 	state.buy("bag2")
 	var good := state.to_payload()
@@ -202,6 +206,7 @@ func run() -> void:
 	var raw_path := directory+"/raw-old.json"
 	check(not Save.write_payload(old,raw_path,Model.new()) and not FileAccess.file_exists(raw_path),"generic transaction writer cannot bypass migration backup")
 
+	v4_migration_matrix()
 	v3_migration_matrix()
 	for filename in DirAccess.get_files_at(directory): DirAccess.remove_absolute(directory+"/"+filename)
 	for dirname in DirAccess.get_directories_at(directory): DirAccess.remove_absolute(directory+"/"+dirname)
@@ -258,7 +263,7 @@ func v3_migration_matrix() -> void:
 	check(live.flowers[0].stock == 0 and live.flowers[1].stock == 1 and is_equal_approx(live.flowers[1].progress,1.4/3.0),"old empty flower remains empty and partial work scales without a reward")
 	var energy: float = live.energy
 	live.step(0.1,Vector2.ZERO,false,false)
-	check(is_equal_approx(live.energy,energy-0.07) and live.hurt_left == 0,"migrated hostile contact only pays ordinary endurance drain")
+	check(is_equal_approx(live.energy,energy-0.06) and live.hurt_left == 0,"migrated hostile contact only pays ordinary endurance drain")
 	check(Migration.load_progress(path).ok and not Migration.load_progress(path).migrated,"cold v4 read never rescales again")
 	var bad: Dictionary = old.to_payload()
 	bad.creatures[0].timer = 999
@@ -266,3 +271,28 @@ func v3_migration_matrix() -> void:
 	var bad_bytes := fixture_bytes(bad)
 	write_bytes(bad_path,bad_bytes)
 	check(Migration.load_progress(bad_path).blocked and FileAccess.get_file_as_bytes(bad_path) == bad_bytes and not FileAccess.file_exists(bad_path+".v3.bak"),"invalid frozen v3 cannot be normalized into a valid v4")
+
+func v4_migration_matrix() -> void:
+	for area in ["hub","pond","meadow"]:
+		for rank in [0,1,2]:
+			var old = LegacyV4.new()
+			old.coins = 800
+			for id in ["gather1","bag1","gather2","meadow"]: old.buy(id)
+			if rank >= 1: old.buy("wings1")
+			if rank == 2: old.buy("wings2")
+			if area != "hub":
+				old.transition_to(area)
+				old.energy = old.max_energy()*.4
+				old.flowers[0].stock = 0
+			old.cargo.blue = 2
+			var bytes := fixture_bytes(old.to_payload())
+			var path := directory+"/v4-%s-%d.json" % [area,rank]
+			write_bytes(path,bytes)
+			var result := Migration.load_progress(path)
+			check(result.ok and result.migrated and result.payload.version == 5,"v4 disk migration: %s %d" % [area,rank])
+			check(FileAccess.get_file_as_bytes(path+".v4.bak") == bytes,"v4 exact original retained")
+			var live = Model.new()
+			check(live.restore_payload(result.payload) and live.cargo == old.cargo and live.coins == old.coins and live.owned == old.owned,"v4 economy and ownership retained")
+			check(is_equal_approx(live.energy/live.max_energy(),old.energy/old.max_energy()),"v4 remaining endurance ratio retained")
+			check(live.materials == {"fiber":0,"resin":0} and live.drops.is_empty(),"migration cannot invent materials")
+			check(not Migration.load_progress(path).migrated,"cold v5 does not repeat migration")

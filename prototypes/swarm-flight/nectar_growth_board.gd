@@ -4,7 +4,8 @@ const Art = preload("res://nectar_ui_art.gd")
 signal selected_changed(id: String)
 const NODES := [
 	{"id":"gather","title":"采蜜技巧","ranks":["gather1","gather2"],"group":0,"at":Vector2(.18,.35)},
-	{"id":"reach","title":"花香触角","ranks":["reach"],"group":0,"at":Vector2(.18,.63)},
+	{"id":"reach","title":"花香触角","ranks":["reach"],"group":0,"at":Vector2(.14,.62)},
+	{"id":"beat","title":"利落振翅","ranks":["beat"],"group":0,"at":Vector2(.36,.54)},
 	{"id":"twin","title":"双簇采蜜","ranks":["twin"],"group":0,"at":Vector2(.36,.81)},
 	{"id":"bag","title":"蜜囊容量","ranks":["bag1","bag2"],"group":1,"at":Vector2(.72,.35)},
 	{"id":"wings","title":"双翼续航","ranks":["wings1","wings2"],"group":1,"at":Vector2(.80,.63)},
@@ -18,6 +19,7 @@ var font: Font
 var buttons := {}
 var selected := "gather"
 var group_memory := {}
+var reduced_motion := false
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -55,7 +57,7 @@ func is_revealed(id: String) -> bool:
 	if rank_of(id) > 0 or id in ["gather","bag","meadow","reserve"]: return true
 	match id:
 		"wings": return "gather1" in model.owned or "bag1" in model.owned
-		"reach": return "gather1" in model.owned
+		"reach", "beat": return "gather1" in model.owned
 		"twin": return "reach" in model.owned
 		"shortcut", "market": return "meadow" in model.owned
 	return false
@@ -72,7 +74,8 @@ func refresh(next_model) -> void:
 	for data in NODES:
 		var b = buttons[data.id]
 		b.visible = is_revealed(data.id)
-		b.rank = rank_of(data.id)
+		b.reduced_motion = reduced_motion
+		b.set_rank(rank_of(data.id))
 		b.selected = selected == data.id
 		var rank_id := next_id(data.id)
 		b.state = "max" if rank_id.is_empty() else "ready" if model.can_buy(rank_id) else "poor" if model.locked_reason(rank_id).begins_with("还需") else "locked"
@@ -154,6 +157,7 @@ func _draw() -> void:
 	_edge("root","gather",rank_of("gather")>0)
 	_edge("root","bag",rank_of("bag")>0)
 	_edge("gather","reach",rank_of("gather")>0)
+	_edge("gather","beat",rank_of("gather")>0)
 	_edge("reach","twin",rank_of("reach")>0)
 	_edge("gather","twin",rank_of("gather")==2,true)
 	_edge("bag","wings",rank_of("bag")>0,true)
@@ -177,6 +181,3 @@ func _draw() -> void:
 		draw_string(font,Vector2(24,size.y*.13),"采 集",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("a3c4ae"))
 		draw_string(font,Vector2(size.x*.78,size.y*.31),"出 行",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("a3c4ae"))
 		draw_string(font,Vector2(size.x*.36,12),"花 路 与 收 益",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("a3c4ae"))
-		if buttons.twin.visible: draw_string(font,point("twin")+Vector2(-48,-59),"技巧 2级 ＋ 触角",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("c8d1b8"))
-		if buttons.wings.visible: draw_string(font,point("wings")+Vector2(-59,-59),"初始成长任选一项",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("c8d1b8"))
-		draw_string(font,point("reserve")+Vector2(-67,-61),"双采 或 近道 · 6紫蜜",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("c8d1b8"))

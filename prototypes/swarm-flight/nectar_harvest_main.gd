@@ -38,7 +38,7 @@ var settings_return := "title"
 var transition_short := false
 
 func _ready() -> void:
-	get_window().title = "雨来之前 · 采蜜与蜂舞 Demo 0.23"
+	get_window().title = "雨来之前 · 采蜜与蜂舞 Demo 0.24"
 	get_tree().auto_accept_quit = false
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--nectar-qa": test_mode = true
@@ -109,7 +109,9 @@ func _advance_transition(dt: float) -> void:
 			return
 		transition_committed = true
 		_load_world()
-	var alpha := clampf((transition_elapsed-(commit_time-0.18))/0.18,0,1) if not transition_committed else 1.0-(transition_elapsed-commit_time)/(duration-commit_time)
+	var close_span := 0.18 if transition_short else 0.42
+	var hold_span := 0.0 if transition_short else 0.22
+	var alpha := clampf((transition_elapsed-(commit_time-close_span))/close_span,0,1) if not transition_committed else 1.0-maxf(0.0,transition_elapsed-commit_time-hold_span)/(duration-commit_time-hold_span)
 	ui.set_transition(clampf(alpha,0,1),area_name(transition_target))
 	if transition_elapsed >= duration:
 		transition_candidate = null
@@ -117,7 +119,7 @@ func _advance_transition(dt: float) -> void:
 		mode = "pause" if pause_after_transition else "play"
 		ui.show_mode(mode)
 		if mode == "play": get_viewport().gui_release_focus()
-		message("抵达「%s」" % area_name(model.area),2)
+		presentation_changed.emit()
 
 func area_name(area: String) -> String:
 	return {"hub":"蜂巢庭院","pond":"池岸花丛","meadow":"紫花地"}.get(area,area)
@@ -165,9 +167,9 @@ func _process(delta: float) -> void:
 		if autosave >= 4.0:
 			autosave = 0.0
 			persist()
-		if model.energy < 20 and not low_energy_announced:
+		if model.energy < model.max_energy()*0.27 and not low_energy_announced:
 			low_energy_announced = true
-			message("续航不多了 · 带着花蜜回蜂巢吧",4)
+			message("体力偏低",4)
 		if model.at_home(): low_energy_announced = false
 		if old_hud != _hud_signature(): presentation_changed.emit()
 	else:
@@ -177,12 +179,18 @@ func _process(delta: float) -> void:
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
 func _hud_signature() -> String:
-	return str([int(ceil(model.energy)),model.cargo,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint()])
+	return str([int(ceil(model.energy)),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
 
 func has_harvest_hint() -> bool:
 	if model.at_home() or model.cargo_total() >= model.capacity() or not model.interaction().is_empty(): return false
 	for flower in model.flowers:
-		if flower.stock > 0 and int(flower.region) == (1 if model.area == "meadow" else 0) and model.p.distance_to(flower.pos) <= model.harvest_radius(): return true
+		if flower.stock > 0 and int(flower.region) == (1 if model.area == "meadow" else 0) and model.p.distance_to(model.flower_point(flower)) <= model.harvest_radius(): return true
+	return false
+
+func has_material_hint() -> bool:
+	if model.at_home(): return false
+	for creature in model.creatures:
+		if creature.state != "gone" and int(creature.region) == (1 if model.area == "meadow" else 0) and model.p.distance_to(creature.pos) <= model.pulse_radius(): return true
 	return false
 
 func down(key: Key) -> bool: return bool(held.get(key,false))
@@ -231,11 +239,16 @@ func _unhandled_input(event: InputEvent) -> void:
 						else: message("紫花地尚未开放 · 在庭院成长台查看条件",4)
 				get_viewport().set_input_as_handled()
 				return
+		if key == KEY_Q and event.pressed:
+			if model.pulse(): presentation_changed.emit()
+			return
 		if key == KEY_F and event.pressed:
 			request_transition("meadow" if model.area == "pond" else "pond","shortcut")
 			return
 		if event.pressed and key in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,KEY_E,KEY_SPACE]: held[key] = true
 		else: held.erase(key)
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		if model.pulse(): presentation_changed.emit()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		mouse_collect = event.pressed
 
@@ -340,7 +353,7 @@ func sell_cargo() -> void:
 	var gain: int = candidate.sell()
 	if gain <= 0: return
 	if commit_candidate(candidate):
-		message("交付完成 · +%d 金币，可到中央成长台挑选成长" % gain,4)
+		message("+%d 金币" % gain,1.6)
 		ui.refresh()
 
 func buy_upgrade(id: String) -> void:
@@ -352,7 +365,7 @@ func buy_upgrade(id: String) -> void:
 		return
 	var title: String = candidate.upgrade(id).name
 	if commit_candidate(candidate):
-		message("已获得「%s」· 下一趟就能用上" % title,4)
+		message(title+" ↑",1.6)
 		if id == "reserve":
 			mode = "complete"
 			ui.show_mode(mode)
@@ -421,16 +434,16 @@ func consume_events(pending: Array) -> void:
 	for event in pending:
 		world.nectar_event(event)
 		var kind: String = event.kind
-		event_log.append({"kind":kind,"area":model.area,"detail":event.duplicate(true),"time":played_seconds,"trip":model.trip_index,"coins":model.coins,"cargo":model.cargo_total(),"owned":model.owned.duplicate()})
+		event_log.append({"kind":kind,"area":model.area,"detail":event.duplicate(true),"time":played_seconds,"trip":model.trip_index,"coins":model.coins,"cargo":model.cargo_total(),"materials":model.materials.duplicate(),"energy":model.energy,"owned":model.owned.duplicate()})
 		if event_log.size() > 2048: event_log.pop_front()
 		if kind == "harvest":
 			if sound_cooldown <= 0:
 				sound.play_event("dew",0)
 				sound_cooldown = 0.13
 		elif kind == "dash": sound.play_event("burst",0)
-		elif kind == "repel":
-			sound.play_event("burst",0)
-			message("蚊子飞走了 · 这只蚊子本趟不会再回来",2.5)
+		elif kind == "pulse": sound.play_event("burst",0)
+		elif kind == "tap": sound.play_event("spray",0)
+		elif kind == "material": sound.play_event("dew",0)
 		elif kind == "hurt": sound.play_event("hit",0)
 		elif kind == "sell": sound.play_event("arrival_bell",0)
 		elif kind in ["buy","unlock"]: sound.play_event("ring",0)

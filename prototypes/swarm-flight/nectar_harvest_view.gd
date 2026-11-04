@@ -2,6 +2,7 @@ extends "res://world_view.gd"
 ## Reuses the painted garden family. Every harvest centre comes from the model.
 @export var area_key := "hub"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
+const UIArt = preload("res://nectar_ui_art.gd")
 const Dance = preload("res://nectar_dance.gd")
 const STAGE: Texture2D = preload("res://art/nectar-dance-stage.png")
 const BOOK_ART: Texture2D = preload("res://art/nectar-field-book.png")
@@ -15,6 +16,8 @@ var collecting := false
 var nectar_motes: Array[Dictionary] = []
 var harvest_texts: Array[Dictionary] = []
 var celebration := 0.0
+var pulse_rings: Array[Dictionary] = []
+var harvest_recoil := 0.0
 var departing_creatures: Array[Dictionary] = []
 
 func _ready() -> void:
@@ -25,6 +28,9 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	clock += delta
+	harvest_recoil = maxf(0.0,harvest_recoil-delta)
+	for ring in pulse_rings: ring.age += delta
+	pulse_rings = pulse_rings.filter(func(r): return r.age < 0.4)
 	for creature in departing_creatures:
 		creature.age += delta
 		creature.pos += creature.face*delta*240+Vector2(0,-100)*delta
@@ -51,8 +57,13 @@ func nectar_event(event: Dictionary) -> void:
 				flying.face = Vector2.RIGHT if creature.pos.x >= model.p.x else Vector2.LEFT
 				departing_creatures.append(flying)
 				break
+	if kind == "pulse": pulse_rings.append({"p":at,"age":0.0})
+	if kind == "material":
+		nectar_motes.append({"from":at,"age":0.0,"duration":0.36,"gold":true,"material":event.type})
+		harvest_texts.append({"p":at,"text":"+%d %s" % [event.amount,"纤维" if event.type == "fiber" else "树脂"],"age":0.0})
 	if kind == "harvest":
-		for i in 3:
+		harvest_recoil = 0.24
+		for i in 1:
 			nectar_motes.append({"from":at+Vector2(_rng.randf_range(-12,12),_rng.randf_range(-12,12)),"age":-i*0.035,"duration":0.42,"gold":event.get("type", "blue") == "rose"})
 		harvest_texts.append({"p":at,"text":"+"+str(event.get("amount",1)),"age":0.0})
 	if kind in ["complete", "unlock", "buy"]:
@@ -89,18 +100,24 @@ func _draw() -> void:
 			_draw_gate(Vector2(1660,575),"前往紫花地", "meadow" in model.owned)
 		else: _draw_gate(Vector2(1900,575),"返程路牌",true)
 	for creature in departing_creatures: _draw_creature(creature)
+	_draw_materials()
+	for ring in pulse_rings:
+		var t: float = ring.age/0.4
+		draw_arc(ring.p,lerpf(22,model.pulse_radius(),1-pow(1-t,3)),0,TAU,64,Color(1,.94,.67,(1-t)*.7),3.0*(1-t)+1,true)
 	if collecting and model.phase == "field" and model.cargo_total() < model.capacity():
 		draw_arc(model.p,model.harvest_radius(),0,TAU,64,Color(1.0,0.87,0.40,0.22),1.5,true)
 	for mote in nectar_motes:
 		if mote.age < 0.0: continue
 		var t: float = clampf(mote.age/mote.duration,0,1)
 		var q: Vector2 = mote.from.lerp(model.p+Vector2(-7,7),t*t)
-		draw_circle(q,3.3*(1.0-t*0.35),Color("ffed87") if mote.gold else Color("d4f4ff"))
-		draw_circle(q+Vector2(-1,-1),1.1,Color.WHITE)
+		if mote.has("material"): UIArt.icon(self,mote.material,q,9*(1-t*.5))
+		else:
+			draw_circle(q,3.3*(1.0-t*0.35),Color("ffed87") if mote.gold else Color("d4f4ff"))
+			draw_circle(q+Vector2(-1,-1),1.1,Color.WHITE)
 	if dance_elapsed >= 0.0 and not reduced_motion:
 		_draw_dance()
 	else:
-		_bee(model.p,1.02,model.face,0.65 if model.hurt_left > 0.0 and (reduced_motion or fmod(clock,0.16)<0.08) else 1.0,false,0.0)
+		_draw_working_bee()
 		_draw_bag()
 	for item in harvest_texts:
 		if feedback_font:
@@ -186,41 +203,88 @@ func _draw_creature(creature: Dictionary) -> void:
 	var scale := 0.37 if guard else 0.30
 	var facing: Vector2 = creature.get("face",Vector2.RIGHT)
 	var mirror := -1.0 if facing.x < 0 else 1.0
+	var reaction: float = sin(float(creature.get("stun",0))/.42*PI)
 	var flutter := 1.0+sin(clock*32+p.x)*0.018
+	if not reduced_motion: flutter += reaction*.12
 	draw_set_transform(_world_offset+p,0.0,Vector2(mirror,flutter))
-	draw_texture_rect_region(CREATURE_ATLAS,Rect2(-Vector2(256,192)*scale*0.5,Vector2(256,192)*scale),Rect2(256,0,256,192),Color(1,1,1,1.0-float(creature.get("age",0))/0.65))
+	draw_texture_rect_region(CREATURE_ATLAS,Rect2(-Vector2(256,192)*scale*0.5,Vector2(256,192)*scale),Rect2(256,0,256,192),Color(1+reaction*.25,1+reaction*.18,1,1.0-float(creature.get("age",0))/0.65))
 	draw_set_transform(_world_offset)
+	UIArt.icon(self,"resin" if guard else "fiber",p+Vector2(0,22),10)
+	if model.p.distance_to(p) <= model.pulse_radius()+25 and creature.state != "flee":
+		var total := 3 if guard else 2
+		for i in total:
+			draw_circle(p+Vector2((i-(total-1)*.5)*12,-39),4,Color("f3cf75") if i >= int(creature.hits) else Color("546f57"))
+		if feedback_font: draw_string(feedback_font,p+Vector2(-7,-51),"Q",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("294d40"))
 
 func _draw_source(flower: Dictionary) -> void:
-	var p: Vector2 = flower.pos
+	var p: Vector2 = flower.pos if reduced_motion else model.flower_point(flower)
 	var purple: bool = flower.type == "rose"
 	var stocked: bool = flower.stock > 0
 	var join := p+Vector2(54,23) if purple else p+Vector2(0,22)
-	var root := Vector2(p.x+26,832)
+	var root := Vector2(flower.pos.x+26,832)
 	var stem := PackedVector2Array([join,join+Vector2(12,110),root+Vector2(-25,-125),root])
 	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],5.5)
 	for t in [0.42,0.70]:
 		var leaf_root: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],t)
 		var direction := -1.0 if t < 0.5 else 1.0
 		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2(64*direction,-28),17)
-	var tint := Color.WHITE if stocked else Color("899880")
+	var tint := Color.WHITE if stocked else Color("aaa986")
+	var opening: float = float(flower.bloom)
+	var head_scale := lerpf(0.42,1.0,smoothstep(0,1,opening))
+	var working: bool = flower.id in model.harvesting_ids
+	var tug := sin(clock*25)*0.025 if working and not reduced_motion else 0.0
+	# Scale the flower around its stalk contact, preserving attachment at all poses.
+	draw_set_transform(_world_offset+join,tug,Vector2(head_scale,lerpf(.78,1.0,opening)))
+	var local_p := p-join
 	if purple:
 		var factor := 0.19
 		var pivot := Vector2(771,431)
-		draw_texture_rect_region(ArtProps.FLORA,Rect2(p+(ArtProps.SNEEZE.position-pivot)*factor,ArtProps.SNEEZE.size*factor),ArtProps.SNEEZE,tint)
+		draw_texture_rect_region(ArtProps.FLORA,Rect2(local_p+(ArtProps.SNEEZE.position-pivot)*factor,ArtProps.SNEEZE.size*factor),ArtProps.SNEEZE,tint)
 	else:
 		var factor := 0.15
-		draw_texture_rect_region(ArtSprites.ATLAS,Rect2(p+(ArtSprites.FLOWER.position-ArtSprites.FLOWER_PIVOT)*factor,ArtSprites.FLOWER.size*factor),ArtSprites.FLOWER,tint)
+		draw_texture_rect_region(ArtSprites.ATLAS,Rect2(local_p+(ArtSprites.FLOWER.position-ArtSprites.FLOWER_PIVOT)*factor,ArtSprites.FLOWER.size*factor),ArtSprites.FLOWER,tint)
+	draw_set_transform(_world_offset)
 	if stocked:
 		var radius := 5.0+sin(clock*2+p.x*0.013)*0.8
 		draw_circle(p,radius+3,Color(1.0,0.84,0.34,0.18))
 		draw_circle(p,radius,Color("ffe99c") if purple else Color("fff2bd"))
 		draw_circle(p+Vector2(-1.8,-1.7),1.8,Color.WHITE)
-	if p.distance_to(model.p) < model.harvest_radius()+65:
-		var rect := Rect2(p+Vector2(-27,58),Vector2(54,5))
-		draw_style_box(_box_style(Color("315b4c"),Color("e8ead0"),1,3),rect)
-		if stocked:
-			draw_style_box(_box_style(Color("edc85b"),Color.TRANSPARENT,0,2),Rect2(rect.position,Vector2(rect.size.x*float(flower.stock)/float(flower.max),5)))
+	if working or (stocked and float(flower.progress)>0.0 and p.distance_to(model.p)<model.harvest_radius()+40):
+		var rect := Rect2(p+Vector2(-38,-70),Vector2(76,11))
+		draw_style_box(_box_style(Color("264a3b"),Color("fff3cf"),2,6),rect)
+		var fill: float = clampf(float(flower.progress),0,1)
+		if fill > 0.0: draw_style_box(_box_style(Color("f6ce61"),Color.TRANSPARENT,0,4),Rect2(rect.position+Vector2(2,2),Vector2(72*fill,7)))
+		draw_circle(p+Vector2(48,-65),5,Color("f6ce61"))
+		if working:
+			var mouth: Vector2 = model.p+Vector2(15 if p.x>=model.p.x else -15,10)
+			for i in 5:
+				var t: float = fposmod(clock*1.8+i*.2,1.0)
+				var q := p.lerp(mouth,t)+Vector2(0,-sin(t*PI)*12)
+				draw_circle(q,2.2,Color(1,.91,.54,.4+.5*t))
+
+func _draw_working_bee() -> void:
+	var at: Vector2 = model.p
+	var facing: Vector2 = model.face
+	var size := 1.02
+	if collecting and not model.harvesting_ids.is_empty():
+		for flower in model.flowers:
+			if flower.id == model.harvesting_ids[0]:
+				var target: Vector2 = model.flower_point(flower)
+				facing = Vector2(1 if target.x >= at.x else -1,.28)
+				if not reduced_motion:
+					at += Vector2(sin(clock*26)*1.8,sin(clock*13)*2.2)
+					size += sin(clock*18)*.018
+				break
+	if not reduced_motion and harvest_recoil > 0.0: at.y -= sin(harvest_recoil/.24*PI)*7
+	_bee(at,size,facing,1.0,false,0.0)
+
+func _draw_materials() -> void:
+	for drop in model.drops:
+		if int(drop.region) != (1 if area_key == "meadow" else 0) or area_key == "hub": continue
+		var bounce: float = sin(minf(float(drop.age)/.3,1)*PI)*22
+		var at: Vector2 = drop.pos+Vector2(0,-bounce+sin(clock*3)*3)
+		draw_circle(at,17,Color(1,.93,.65,.12))
+		UIArt.icon(self,drop.kind,at,13)
 
 func _draw_boundary() -> void:
 	var x: float = model.GATE_X

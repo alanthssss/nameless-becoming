@@ -11,7 +11,7 @@ var failures: Array[String] = []
 var checks := 0
 var frame_count := 0
 var resume_check := false
-const SHORTCUT_PLAN := ["gather1","bag1","gather2","meadow","shortcut","reserve"]
+const SHORTCUT_PLAN := ["gather1","bag1","wings1","meadow","shortcut","reserve"]
 const TWIN_PLAN := ["gather1","reach","gather2","meadow","twin","reserve"]
 var purchase_plan: Array = SHORTCUT_PLAN.duplicate()
 var growth_route := "shortcut"
@@ -46,7 +46,7 @@ func key(code: int,value: bool) -> void:
 	event.physical_keycode = code
 	event.pressed = value
 	root.push_input(event,true)
-	trace.append({"frame":frame_count,"event":"key","key":code,"pressed":value,"pos":[game.model.p.x,game.model.p.y],"cargo":game.model.cargo_total(),"coins":game.model.coins})
+	trace.append({"frame":frame_count,"event":"key","key":code,"pressed":value,"pos":[game.model.p.x,game.model.p.y],"cargo":game.model.cargo_total(),"coins":game.model.coins,"materials":game.model.materials.duplicate()})
 
 func release() -> void:
 	for code in pressed.keys(): key(code,false)
@@ -102,6 +102,34 @@ func purchase(id: String) -> bool:
 	return bought
 
 func fly_to(target: Vector2) -> bool:
+	# Known-route choice: use the visible low shelter when crossing the shower.
+	if game.model.area == "meadow" and minf(target.x,game.model.p.x)<2920 and maxf(target.x,game.model.p.x)>2600 and minf(target.y,game.model.p.y)<640:
+		if not await fly_direct(Vector2(game.model.p.x,645)): return false
+		if not await fly_direct(Vector2(target.x,645)): return false
+	return await fly_direct(target)
+
+func planned_flight_cost(origin: Vector2,target: Vector2) -> float:
+	# Budget the actual low-route waypoints, including each vertical rain crossing.
+	# This is a conservative pilot estimate, never a change to game energy.
+	var points: Array[Vector2] = [origin]
+	if game.model.area == "meadow" and minf(target.x,origin.x)<2920 and maxf(target.x,origin.x)>2600 and minf(target.y,origin.y)<640:
+		points.append(Vector2(origin.x,645))
+		points.append(Vector2(target.x,645))
+	points.append(target)
+	var cost := 0.0
+	for i in range(1,points.size()):
+		var a := points[i-1]
+		var b := points[i]
+		var drain := 1.0
+		# Axis steering can briefly take more than the straight-line distance.
+		for sample in 25:
+			var p := a.lerp(b,float(sample)/24.0)
+			if game.model.area == "meadow" and p.x>=2600 and p.x<=2920 and p.y<game.model.rain_floor_at(p.x):
+				drain = 2.8
+		cost += (absf(b.x-a.x)+absf(b.y-a.y))/180.0*drain+0.6
+	return cost
+
+func fly_direct(target: Vector2) -> bool:
 	for i in 1600:
 		var delta: Vector2 = target-game.model.p
 		if delta.length() < 16:
@@ -118,7 +146,7 @@ func fly_to(target: Vector2) -> bool:
 	return false
 
 func capture(name: String) -> void:
-	if output.is_empty(): return
+	if output.is_empty() or DisplayServer.get_name() == "headless": return
 	await frames(3)
 	RenderingServer.force_draw()
 	root.get_texture().get_image().save_png(output.path_join(name+".png"))
@@ -178,81 +206,92 @@ func run() -> void:
 	await capture("01-new-title")
 	await tap(KEY_ENTER)
 	await capture("02-hive-departure")
-	for expedition in 30:
+	for expedition in 50:
 		if planned.is_empty(): break
-		check(await fly_to(Model.HUB_DEPART),"ordinary flight to departure sign %d" % expedition)
+		var m = game.model
+		var materials_before: Dictionary = m.materials.duplicate()
+		var need_fiber := 0
+		var need_resin := 0
+		for id in planned:
+			need_fiber += int(m.upgrade(id).get("fiber",0))
+			need_resin += int(m.upgrade(id).get("resin",0))
+		var destination := "meadow" if "meadow" in m.owned and m.materials.fiber >= need_fiber else "pond"
+		check(await fly_to(Model.HUB_DEPART),"ordinary flight to departure %d" % expedition)
 		await tap(KEY_E)
-		check(game.mode == "regions","E opens the physical departure sign")
-		await click(game.ui.pond_button)
+		check(game.mode == "regions","E opens actual departure lamp")
+		await click(game.ui.meadow_button if destination == "meadow" else game.ui.pond_button)
+		if expedition == 0:
+			await frames(16); await capture("02a-dance")
+			await frames(22); await capture("02b-iris")
+			await frames(6); await capture("02c-silhouette")
 		await transition_settled()
-		check(game.model.area == "pond" and game.world.area_key == "pond","ordinary confirmation enters distinct pond scene")
+		check(m.area == destination and game.world.area_key == destination,"departure loads selected scene once")
 		if not failures.is_empty(): break
-		if "shortcut" in game.model.owned:
-			check(await fly_to(Model.SHORTCUTS[0]),"reach near shortcut")
-			await tap(KEY_F)
-			await transition_settled()
-			check(game.model.area == "meadow" and game.model.p.distance_to(Model.SHORTCUTS[1]) < 5,"F uses actual outward scene shortcut")
-		elif "meadow" in game.model.owned:
-			check(await fly_to(Model.POND_EXIT),"reach the meadow passage by ordinary flight")
-			await tap(KEY_E)
-			await transition_settled()
-			check(game.model.area == "meadow","passage enters unlocked meadow")
-		while game.model.cargo_total() < game.model.capacity():
-			var target: Dictionary={}
-			for flower in game.model.flowers:
-				if flower.stock<=0: continue
-				if flower.region==1 and "meadow" not in game.model.owned: continue
-				if flower.region==0 and "meadow" in game.model.owned: continue
-				if target.is_empty() or game.model.p.distance_to(flower.pos)<game.model.p.distance_to(target.pos): target=flower
-			if target.is_empty(): break # A depleted region is a valid reason to return with a partial load.
+		var region := 0 if destination == "pond" else 1
+		var home: Vector2 = Model.POND_ENTRY if region == 0 else Model.MEADOW_ENTRY
+		for creature in m.creatures:
+			if creature.region != region: continue
+			if region == 0 and m.materials.fiber >= need_fiber: continue
+			if region == 1 and m.materials.resin >= need_resin: continue
+			var cost: float = planned_flight_cost(m.p,creature.pos)+planned_flight_cost(creature.pos,home)+(3 if creature.kind == "guard" else 2)*2.6+6
+			if m.energy < cost: break
+			check(await fly_to(creature.pos+Vector2(95 if creature.pos.x>2800 else -95,0)),"ordinary flight approaches material carrier")
+			for hit in 3:
+				if creature.state == "gone": break
+				await tap(KEY_Q)
+				if expedition == 0 and hit == 0: await capture("03a-wing-pulse")
+				await frames(17)
+			check(creature.state == "gone" and not m.drops.is_empty(),"distinct pulse input sheds physical material")
+			if not m.drops.is_empty():
+				if expedition == 0: await capture("03b-material-drop")
+				check(await fly_to(m.drops[-1].pos),"ordinary movement retrieves material")
+				await frames(12)
+			if not failures.is_empty(): break
+		var picked: Array = []
+		for attempt in 20:
+			if m.cargo_total() >= m.capacity(): break
+			var target: Dictionary = {}
+			for flower in m.flowers:
+				if flower.stock <= 0 or flower.region != region or flower.id in picked: continue
+				if target.is_empty() or m.p.distance_to(flower.pos) < m.p.distance_to(target.pos): target = flower
+			if target.is_empty(): break
+			var required: float = planned_flight_cost(m.p,target.pos)+planned_flight_cost(target.pos,home)+3.7/m.harvest_rate()+4.0
+			if m.energy <= required: break
 			var approach: Vector2 = target.pos
 			var paired: Dictionary = {}
 			var stock_before := int(target.stock)
 			var paired_before := 0
-			if "twin" in game.model.owned and not twin_recorded:
-				for flower in game.model.flowers:
-					if flower.id != target.id and flower.region == target.region and flower.stock > 0 and target.pos.distance_to(flower.pos) < 2*game.model.harvest_radius()-20:
-						paired = flower
-						paired_before = int(flower.stock)
+			if "twin" in m.owned and not twin_recorded:
+				for flower in m.flowers:
+					if flower.id != target.id and flower.region == target.region and flower.stock > 0 and target.pos.distance_to(flower.pos) < 2*m.harvest_radius()-30:
+						paired = flower; paired_before = int(flower.stock)
 						approach = (target.pos+flower.pos)*.5
 						break
-			if not await fly_to(approach): check(false,"source reachable through ordinary controls"); break
-			if target.region == 1 and not purple_recorded:
-				check(game.model.visited_meadow and game.model.p.x > Model.GATE_X,"ordinary flight enters the unlocked purple meadow")
+			check(await fly_to(approach),"source reached through ordinary controls")
+			if region == 1 and not purple_recorded:
 				purple_recorded = true
 				await capture("07b-first-purple-visit")
 			key(KEY_E,true)
-			for tick in 600:
+			for tick in 150:
 				await frames(1)
-				if not paired.is_empty() and not twin_recorded and game.model.harvesting_ids.size()==2 and int(target.stock)<stock_before and int(paired.stock)<paired_before:
+				if expedition == 0 and attempt == 0 and tick == 20: await capture("03c-active-harvest-progress")
+				if not paired.is_empty() and not twin_recorded and m.harvesting_ids.size()==2 and int(target.stock)<stock_before and int(paired.stock)<paired_before:
 					twin_recorded = true
-					trace.append({"frame":frame_count,"event":"two_sources_harvested","ids":[target.id,paired.id],"before":[stock_before,paired_before],"after":[target.stock,paired.stock],"pos":[game.model.p.x,game.model.p.y]})
+					trace.append({"frame":frame_count,"event":"two_sources_harvested","ids":[target.id,paired.id],"before":[stock_before,paired_before],"after":[target.stock,paired.stock]})
 					await capture("08b-two-source-harvest")
-				if game.model.cargo_total()>=game.model.capacity() or target.stock<=0: break
+				if m.cargo_total()>=m.capacity() or target.stock<=0: break
 			key(KEY_E,false)
 			await frames(3)
-			if expedition==0 and game.model.cargo_total()<game.model.capacity(): await capture("03-first-harvest")
-			if game.model.phase != "field": check(false,"no forced rescue on the planned route"); break
-		var remaining_stock := 0
-		for flower in game.model.flowers:
-			if int(flower.region)==(1 if game.model.area=="meadow" else 0): remaining_stock += int(flower.stock)
-		check(game.model.cargo_total()>0 and (game.model.cargo_total()==game.model.capacity() or remaining_stock==0),"trip %d returns with full cargo or a completely harvested region" % expedition)
+			picked.append(target.id)
+			if m.at_home(): check(false,"planned route unexpectedly exhausted energy"); break
+		check(m.cargo_total()>0 or m.materials.fiber>materials_before.fiber or m.materials.resin>materials_before.resin,"trip returns with actual nectar or material rewards and an energy reserve")
 		if not failures.is_empty(): break
-		if expedition==0: await capture("04-first-full-cargo")
-		if "shortcut" in game.model.owned:
-			check(await fly_to(Model.SHORTCUTS[1]),"reach far shortcut")
-			await tap(KEY_F)
-			await transition_settled()
-			check(game.model.area == "pond" and game.model.p.distance_to(Model.SHORTCUTS[0])<5,"F uses actual return scene shortcut")
-		if game.model.area == "meadow":
-			check(await fly_to(Model.MEADOW_ENTRY),"reach meadow return sign")
-			await tap(KEY_E)
-			await click(game.ui.home_button)
-		else:
-			check(await fly_to(Model.POND_ENTRY),"reach pond return sign")
-			await tap(KEY_E)
+		if expedition == 0: await capture("04-first-return-reserve")
+		check(await fly_to(home),"ordinary flight returns before exhaustion")
+		await tap(KEY_E)
+		if region == 1: await click(game.ui.home_button)
 		await transition_settled()
-		check(game.model.area == "hub" and game.world.area_key == "hub","loaded safe courtyard with full cargo")
+		check(m.area == "hub" and m.p.distance_to(Model.HUB_DEPART)<5,"return arrives at actual courtyard lamp")
 		check(await fly_to(Model.HUB_SHOP),"ordinary flight to the separate sale NPC")
 		if not failures.is_empty(): break
 		await tap(KEY_E)
@@ -260,7 +299,8 @@ func run() -> void:
 		if expedition==0: await capture("05-first-sale-offer")
 		var gain: int=game.model.cargo_value()
 		var coins_before: int=game.model.coins
-		await click(game.ui.sell_button)
+		if gain > 0: await click(game.ui.sell_button)
+		else: check(game.ui.sell_button.disabled,"material expedition does not invent nectar sale proceeds")
 		check(game.model.cargo_total()==0 and game.model.coins==coins_before+gain,"sale commits real collected cargo")
 		if not failures.is_empty(): break
 		earned_total += gain
@@ -298,7 +338,13 @@ func run() -> void:
 	await tap(KEY_E)
 	await click(game.ui.pond_button)
 	await transition_settled()
-	await fly_to(Vector2(640,480))
+	if growth_route == "shortcut":
+		check(await fly_to(Model.SHORTCUTS[0]),"reach shortcut after upgrade")
+		await tap(KEY_F); await transition_settled()
+		check(game.model.area == "meadow","outward shortcut works through ordinary F")
+		await tap(KEY_F); await transition_settled()
+		check(game.model.area == "pond","return shortcut preserves same trip")
+	await fly_to(game.model.flowers[0].pos)
 	key(KEY_E,true)
 	await frames(40)
 	key(KEY_E,false)

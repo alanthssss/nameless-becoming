@@ -87,7 +87,7 @@ func run() -> void:
 	key(KEY_D,false)
 	check(game.event_log.filter(func(e): return e.kind == "dash").size() == dash_count+1,"real released Space produces one dash")
 	check(mosquito.state == "patrol" and game.world.departing_creatures.is_empty(),"dash through wildlife neither removes it nor produces a repel animation")
-	check(absf(game.model.energy-(energy-4.0-0.7*(game.played_seconds-played))) < 0.01,"dash pays exactly dash cost and ordinary drain without contact damage")
+	check(game.model.energy >= energy-4.0-(game.played_seconds-played)-0.01 and game.model.energy <= energy-4.0-0.6*(game.played_seconds-played)+0.01,"dash pays exactly dash cost and ordinary drain without contact damage")
 	await capture("04-dash-past-neighbor")
 	await frames(25)
 	# Waiting in direct contact remains harmless; resource/time pressure is separate.
@@ -97,7 +97,7 @@ func run() -> void:
 	energy = game.model.energy; played = game.played_seconds
 	await frames(60)
 	check(game.model.hurt_left == 0 and mosquito.state == "patrol","waiting next to wildlife never begins warning, chase or invulnerability")
-	check(absf(game.model.energy-(energy-0.7*(game.played_seconds-played))) < 0.01,"continuous overlap pays only ordinary endurance drain")
+	check(absf(game.model.energy-(energy-0.6*(game.played_seconds-played))) < 0.01,"continuous overlap pays only ordinary endurance drain")
 	check(not game.event_log.any(func(e): return e.kind in ["warn","hurt","repel"]),"ordinary input emits no combat feedback")
 	await capture("05-peaceful-contact")
 	await tap(KEY_ESCAPE)

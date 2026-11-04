@@ -1,5 +1,5 @@
 extends RefCounted
-## This boundary validates frozen v1/v2/v3 then atomically migrates to v4.
+## This boundary validates frozen v1/v2/v3/v4 then atomically migrates to v5.
 const Model = preload("res://nectar_harvest_model.gd")
 const Save = preload("res://save_data.gd")
 
@@ -16,12 +16,12 @@ static func load_progress(path: String) -> Dictionary:
 		return _block(result,"进度文件不是有效的采蜜记录")
 	var data: Dictionary = parser.data
 	var model = Model.new()
-	if Model.whole(data.get("version"),4,4):
+	if Model.whole(data.get("version"),5,5):
 		if not model.restore_payload(data): return _block(result,"这份采蜜进度未通过完整性检查")
 		result.ok = true
 		result.payload = model.to_payload()
 		return result
-	if not Model.whole(data.get("version"),1,3) or not model.restore_legacy_payload(data,int(data.version)):
+	if not Model.whole(data.get("version"),1,4) or not model.restore_legacy_payload(data,int(data.version)):
 		return _block(result,"旧版采蜜进度未通过完整性检查")
 	# Write an exact rollback copy before replacing the original. Never replace a
 	# different existing backup, including one left by an earlier migration.

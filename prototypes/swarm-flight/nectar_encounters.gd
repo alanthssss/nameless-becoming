@@ -11,7 +11,7 @@ static func layout(trip: int) -> Array[Dictionary]:
 	var anchors := [Vector2(1200+offset*100,420),Vector2(2420+offset*80,350),Vector2(3060-offset*80,510)]
 	var result: Array[Dictionary] = []
 	for i in 3:
-		result.append({"id":"mosquito_"+str(i),"kind":"scout" if i == 0 else "guard","region":0 if i == 0 else 1,"anchor":anchors[i],"pos":anchors[i],"face":Vector2.LEFT,"state":"gone" if trip == 0 else "patrol","timer":0.0})
+		result.append({"id":"mosquito_"+str(i),"kind":"scout" if i == 0 else "guard","region":0 if i == 0 else 1,"anchor":anchors[i],"pos":anchors[i],"face":Vector2.LEFT,"state":"gone" if trip == 0 else "patrol","timer":0.0,"hits":0,"stun":0.0})
 	return result
 
 static func safe_at(area: String,position: Vector2) -> bool:
@@ -29,6 +29,8 @@ static func step(model,dt: float,_dashing: bool) -> void:
 	var region := 1 if model.area == "meadow" else 0
 	for creature in model.creatures:
 		if int(creature.region) != region or creature.state == "gone": continue
+		creature.stun = maxf(0.0,float(creature.stun)-dt)
+		if creature.stun > 0.0: continue
 		var previous: Vector2 = creature.pos
 		creature.state = "patrol"
 		creature.timer = fmod(float(creature.timer)+dt,TAU)
@@ -65,6 +67,10 @@ static func restore(data,trip: int) -> Array[Dictionary]:
 		for key in ["anchor","pos","face"]:
 			if not vector(item[key]): return none
 		if Vector2(item.anchor[0],item.anchor[1]) != expected[i].anchor: return none
+		if not numeric(item.hits) or item.hits != floor(item.hits) or item.hits < 0 or item.hits > 3: return none
+		if not numeric(item.stun) or item.stun < 0.0 or item.stun > 0.42: return none
+		if item.state == "patrol" and item.hits >= (2 if item.kind == "scout" else 3): return none
+		if item.state == "gone" and item.stun != 0.0: return none
 		if item.state not in STATES or not numeric(item.timer): return none
 		var maximum := TAU if item.state == "patrol" else 0.0
 		if item.timer < 0.0 or item.timer > maximum: return none
@@ -72,6 +78,8 @@ static func restore(data,trip: int) -> Array[Dictionary]:
 		var pos := Vector2(float(item.pos[0]),float(item.pos[1]))
 		var face := Vector2(float(item.face[0]),float(item.face[1]))
 		if pos.distance_to(expected[i].anchor) > leash(expected[i])+20.0 or absf(face.length()-1.0) > 0.001: return none
+		expected[i].hits = int(item.hits)
+		expected[i].stun = float(item.stun)
 		expected[i].pos = pos
 		expected[i].face = face
 		expected[i].state = item.state
