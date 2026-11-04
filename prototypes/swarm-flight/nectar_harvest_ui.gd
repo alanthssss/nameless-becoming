@@ -16,6 +16,18 @@ var meadow_info: Label
 var bag_text: Label
 var energy_text: Label
 var coins_text: Label
+var fiber_text: Label
+var resin_text: Label
+var tree_fiber: Label
+var tree_resin: Label
+var detail_card: PanelContainer
+var detail_preview
+var detail_costs := {}
+var detail_cost_row: HBoxContainer
+var hud_values := {}
+var hud_tweens := {}
+var energy_pulse: Tween
+var low_energy := false
 var trip_text: Label
 var goal_text: Label
 var help_text: Label
@@ -212,13 +224,20 @@ func hud_symbol(parent: Node, kind: String, hint: String) -> void:
 func _build_hud() -> void:
 	hud = screen(self)
 	hud_status = card(hud,Color("254a3eef"),Color("79947b"))
-	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-104,570,80))
-	var hr := row(hud_status,22)
+	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-104,690,80))
+	var hr := row(hud_status,16)
 	var money := row(hr,4)
 	hud_symbol(money,"coin","金币：交付花蜜后获得，用于成长")
 	coins_text = text_line(money,"",22,GOLD)
 	coins_text.custom_minimum_size.x = 55
 	coins_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var materials := column(hr,0)
+	var fr := row(materials,3)
+	hud_symbol(fr,"fiber","纤维：振翅后拾取，用于成长；救援时保留")
+	fiber_text = text_line(fr,"0",18,PAPER)
+	var rr := row(materials,3)
+	hud_symbol(rr,"resin","树脂：振翅后拾取，用于成长；救援时保留")
+	resin_text = text_line(rr,"0",18,PAPER)
 	var bag := column(hr,4)
 	bag.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var br := row(bag,4)
@@ -283,7 +302,7 @@ func _build_regions() -> void:
 	text_line(v,"Esc 返回",16,Color("839071"))
 
 func _build_transition() -> void:
-	transition_layer = ColorRect.new()
+	transition_layer = preload("res://nectar_iris_transition.gd").new()
 	add_child(transition_layer)
 	transition_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	transition_layer.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -291,7 +310,8 @@ func _build_transition() -> void:
 	transition_label = text_line(transition_layer,"",30,PAPER)
 	anchored(transition_label,Rect2(.5,.5,0,0),Rect2(-300,-30,600,60))
 	transition_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	transition_hint = text_line(self,"蜂舞出发 · 空格跳过",20,PAPER)
+	transition_label.hide()
+	transition_hint = text_line(self,"空格 跳过",17,Color("c0cbb1"))
 	anchored(transition_hint,Rect2(.5,1,0,0),Rect2(-280,-88,560,40))
 	transition_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	transition_hint.add_theme_color_override("font_shadow_color",INK)
@@ -300,7 +320,7 @@ func _build_transition() -> void:
 	transition_layer.hide()
 
 func set_transition(alpha: float, words: String) -> void:
-	transition_layer.modulate.a = alpha
+	transition_layer.configure(alpha,driver.model.p-Vector2(driver.model.camera_x,0),driver.transition_short,driver.transition_elapsed)
 	transition_label.text = words
 	move_child(transition_layer,get_child_count()-1)
 	move_child(transition_hint,get_child_count()-1)
@@ -308,49 +328,99 @@ func set_transition(alpha: float, words: String) -> void:
 func _build_tree() -> void:
 	tree = screen(self)
 	shade(tree,Color("183e35fa"))
-	var margin := MarginContainer.new()
-	tree.add_child(margin)
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,24)
-	var layout := column(margin,14)
-	var header := row(layout,20)
-	var titles := column(header,3)
+	var header := row(tree,18)
+	anchored(header,Rect2(0,0,1,0),Rect2(28,20,-56,70))
+	var titles := column(header,2)
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_line(titles,"成长",34,PAPER)
-	tree_progress = text_line(titles,"",18,MUTED)
-	tree_coins = text_line(header,"",26,GOLD)
+	text_line(titles,"成长",32,PAPER)
+	tree_progress = text_line(titles,"",16,MUTED)
+	var balance := row(header,5)
+	hud_symbol(balance,"coin","金币")
+	tree_coins = text_line(balance,"",23,GOLD)
 	tree_coins.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	tree_back = action(header,"回到庭院",driver.close_tree)
+	for kind in ["fiber","resin"]:
+		var resource := row(header,4)
+		hud_symbol(resource,kind,"纤维" if kind == "fiber" else "树脂")
+		var count := text_line(resource,"0",21,PAPER)
+		count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		if kind == "fiber": tree_fiber = count
+		else: tree_resin = count
+	tree_back = action(header,"返回",driver.close_tree)
 	tree_back.size_flags_horizontal = Control.SIZE_SHRINK_END
-	tree_back.custom_minimum_size.x = 180
-	var split := row(layout,18)
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tree_back.custom_minimum_size.x = 100
 	board = Board.new()
 	board.font = font
-	board.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	board.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	board.custom_minimum_size = Vector2(640,570)
-	split.add_child(board)
+	tree.add_child(board)
+	anchored(board,Rect2(0,0,1,1),Rect2(28,122,-56,-168))
 	board.selected_changed.connect(_selected)
-	var detail := card(split,PAPER,Color("b5b58c"))
-	detail.custom_minimum_size.x = 326
-	var dv := column(detail,16)
-	detail_level = text_line(dv,"",17,Color("7a8865"))
-	detail_title = text_line(dv,"",29)
-	detail_effect = text_line(dv,"",22,INK,true)
-	var line := HSeparator.new()
-	dv.add_child(line)
-	text_line(dv,"成长条件",17,Color("7b8968"))
-	detail_requirements = text_line(dv,"",18,INK,true)
-	spacer(dv)
-	detail_hint = text_line(dv,"",18,Color("758365"),true)
+	board.resized.connect(_place_detail)
+	detail_card = card(tree,PAPER,Color("b5b58c"))
+	detail_card.custom_minimum_size = Vector2(280,0)
+	detail_card.size = Vector2(280,260)
+	detail_card.resized.connect(func(): _place_detail.call_deferred())
+	var dv := column(detail_card,8)
+	var title_row := row(dv,8)
+	detail_title = text_line(title_row,"",25)
+	detail_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail_level = text_line(title_row,"",16,Color("7a8865"))
+	detail_level.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	detail_effect = text_line(dv,"",24,INK,true)
+	detail_effect.custom_minimum_size.x = 244
+	detail_effect.size.x = 244
+	detail_preview = HudIcon.new()
+	detail_preview.preview = true
+	detail_preview.custom_minimum_size = Vector2(0,46)
+	detail_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dv.add_child(detail_preview)
+	detail_cost_row = row(dv,14)
+	for kind in ["coin","fiber","resin"]:
+		var cost := row(detail_cost_row,3)
+		hud_symbol(cost,kind,{"coin":"金币","fiber":"纤维","resin":"树脂"}[kind])
+		var count := text_line(cost,"",19,INK)
+		count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		detail_costs[kind] = count
+	detail_requirements = text_line(dv,"",16,Color("85683f"),true)
+	detail_requirements.custom_minimum_size.x = 244
+	detail_requirements.size.x = 244
+	detail_hint = text_line(dv,"",16,Color("758365"),true)
+	detail_hint.hide()
 	buy_button = action(dv,"",_purchase_button_activated,true)
+	buy_button.custom_minimum_size.y = 46
 	buy_button.gui_input.connect(_purchase_button_input)
-	text_line(dv,"每次确认提升一级",16,Color("8a9477"))
-	var foot := text_line(layout,"点击节点查看 · Enter 升级 · ↑↓ 选节点 · ←→ 换分区 · Tab 依次浏览 · Esc 返回",17,MUTED)
+	var foot := text_line(tree,"方向键 选择   ·   Enter 成长   ·   Esc 返回",16,MUTED)
+	anchored(foot,Rect2(.5,1,0,0),Rect2(-300,-36,600,26))
 	foot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	foot.tooltip_text = "↑↓ 同区选择 · ←→ 换区 · Tab 依次浏览 · 每次确认提升一级"
+	foot.mouse_filter = Control.MOUSE_FILTER_PASS
 	for data in Board.NODES:
 		for id in data.ranks: upgrade_buttons[id] = board.buttons[data.id]
+
+func _place_detail() -> void:
+	if not is_instance_valid(detail_card) or not is_instance_valid(board) or not tree.visible: return
+	var bounds := Rect2(board.position,board.size)
+	var point: Vector2 = board.position+board.point(board.selected)
+	var box := Vector2(280,maxf(242,detail_card.get_combined_minimum_size().y))
+	detail_card.size = box
+	var best := Vector2.ZERO
+	var best_score := INF
+	var candidates := [Vector2(point.x+82,point.y-80),Vector2(point.x-box.x-82,point.y-80),Vector2(point.x-box.x*.5,point.y+86),Vector2(point.x-box.x*.5,point.y-box.y-80)]
+	# Find a nearby clear pocket before accepting any overlap with a selectable node.
+	for y in range(int(bounds.position.y),int(bounds.end.y-box.y)+1,12):
+		for x in range(int(bounds.position.x),int(bounds.end.x-box.x)+1,12):
+			candidates.append(Vector2(x,y))
+	for candidate in candidates:
+		var at := Vector2(clampf(candidate.x,bounds.position.x,bounds.end.x-box.x),clampf(candidate.y,bounds.position.y,bounds.end.y-box.y))
+		var rect := Rect2(at,box)
+		var score: float = at.distance_to(candidate)*.15+(at+box*.5).distance_to(point)*.01
+		for id in board.buttons:
+			if not board.buttons[id].visible: continue
+			var node_rect: Rect2 = board.buttons[id].get_global_rect().grow(3)
+			node_rect.position -= tree.global_position
+			if rect.intersects(node_rect): score += rect.intersection(node_rect).get_area()*(6.0 if id == board.selected else 1.0)
+		if score < best_score:
+			best_score = score
+			best = at
+	detail_card.position = best
 
 func _build_menu() -> void:
 	menu = screen(self)
@@ -368,7 +438,7 @@ func _build_menu() -> void:
 	var bottom := row(v,14)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.23 · WASD 飞行 / E 交互与采集 / Esc 暂停",16,Color("8a9175"))
+	text_line(v,"Demo 0.24 · WASD 飞行 · E 采蜜 · Q 振翅",16,Color("8a9175"))
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
@@ -384,11 +454,12 @@ func _build_toast() -> void:
 
 func show_toast(words: String, seconds: float) -> void:
 	toast.text = words
+	if driver.mode == "tree" and words.ends_with(" ↑"): return # The selected node already acknowledges growth.
 	if driver.mode == "tree": anchored(toast_panel,Rect2(.5,1,0,0),Rect2(-380,-60,760,54))
 	elif driver.mode == "shop": anchored(toast_panel,Rect2(0,0,0,0),Rect2(24,24,680,60))
 	else: anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,60))
 	toast_panel.show()
-	toast_timer.start(seconds)
+	toast_timer.start(minf(seconds,3.0) if words.length()<35 else seconds)
 
 func show_mode(mode: String) -> void:
 	hud.visible = mode == "play"
@@ -427,7 +498,7 @@ func show_mode(mode: String) -> void:
 			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
 		elif mode == "pause":
 			menu_title.text = "歇一会儿"
-			menu_body.text = driver.model.goal_text()+"\n\nWASD / 方向键：飞行\nE / 鼠标按住：采蜜；E：交互\n空格蓄力松开：冲刺"
+			menu_body.text = driver.model.goal_text()+"\n\nWASD / 方向键：飞行\nE / 鼠标按住：采蜜；E：交互\nQ / 右键：振翅\n空格蓄力松开：冲刺"
 			menu_primary.text = "继续这趟出行"
 		else:
 			menu_title.text = "花蜜，备好了"
@@ -450,7 +521,7 @@ func _requirements(id: String) -> String:
 	match id:
 		"gather", "bag": return "✓ 一级随时可选\n二级需要先获得一级"
 		"wings": return "采蜜技巧 1级 或 蜜囊容量 1级\n二级需要先获得一级"
-		"reach": return "采蜜技巧至少 1级"
+		"reach", "beat": return "采蜜技巧至少 1级"
 		"twin": return "同时满足：\n采蜜技巧 2级\n花香触角已获得"
 		"meadow": return "基础能力成长  %d / 3 次\n同一能力升两级，计两次" % mini(3,m.growth_count())
 		"shortcut": return "紫花地已开放"
@@ -466,22 +537,49 @@ func _detail() -> void:
 	var next: String = board.next_id(id)
 	var m = driver.model
 	detail_title.text = data.title
-	detail_level.text = ["采集","出行","花路与收益","阶段成果"][int(data.group)]+"  ·  %d / %d" % [rank,data.ranks.size()]
-	detail_requirements.text = _requirements(id)
+	detail_level.text = "%d / %d" % [rank,data.ranks.size()]
+	detail_card.tooltip_text = _requirements(id)
+	detail_cost_row.visible = not next.is_empty()
+	var previews := {
+		"gather":[[1.8,1.2,.8][rank],[1.8,1.2,.8][mini(rank+1,2)]],
+		"bag":[[6,10,16][rank],[6,10,16][mini(rank+1,2)]],
+		"wings":[[36,50,70][rank],[36,50,70][mini(rank+1,2)]],
+		"reach":[100 if rank == 0 else 155,155], "beat":[1 if rank == 0 else 2,2], "twin":[1 if rank == 0 else 2,2]}
+	detail_preview.visible = id in previews and not next.is_empty()
+	detail_preview.kind = id
+	detail_preview.reduced_motion = driver.reduced_motion
+	if id in previews:
+		detail_preview.current_value = float(previews[id][0])
+		detail_preview.next_value = float(previews[id][1])
+	detail_preview.tooltip_text = "上：现在 · 下：成长后"+("；每条走完获得一份" if id == "gather" else "")
+	detail_preview.mouse_filter = Control.MOUSE_FILTER_PASS
+	detail_preview.queue_redraw()
 	if next.is_empty():
-		var current_effects := {"gather":"每秒采蜜 2.2 份", "bag":"最多携带 16 份花蜜", "wings":"续航上限 145", "reach":"采集范围 155", "twin":"同时采集范围内的两朵花", "meadow":"远方紫花地已开放", "shortcut":"池岸与紫花地可双向通行", "market":"每次交付获得额外 25% 金币", "reserve":"已经为蜂巢备好花蜜"}
-		detail_effect.text = current_effects[id]
-		buy_button.text = "✓ 已满级"
+		var effects := {"gather":"0.8 秒 / 份", "bag":"16 份", "wings":"70 续航", "reach":"采蜜 155 · 振翅 205", "beat":"振翅强度 2", "twin":"同时采 2 朵", "meadow":"紫花地已开放", "shortcut":"双向近道已点亮", "market":"售卖 +25%", "reserve":"花蜜已备好"}
+		detail_effect.text = effects[id]
+		buy_button.text = "✓ 已成长"
 		buy_button.disabled = true
-		detail_hint.text = "效果会一直保留，继续挑选其他成长吧。"
+		detail_requirements.text = ""
+		detail_hint.text = "效果已保留"
 	else:
-		var def: Dictionary = m.upgrade(next)
-		detail_effect.text = def.description
-		buy_button.text = ("完成储备" if id == "reserve" else "开放花地" if id == "meadow" else "升级")+"  ·  %d 金币" % def.cost
+		var definition: Dictionary = m.upgrade(next)
+		var effects := {"gather":definition.description,"bag":definition.description,"wings":definition.description,"reach":"采蜜 100 → 155","beat":"振翅 1 → 2","twin":"1 → 2 朵","meadow":"解锁紫花蜜","shortcut":"两片花地直接往返","market":"售卖 +25%","reserve":"备好雨前储粮"}
+		detail_effect.text = effects[id]
+		detail_effect.tooltip_text = definition.description+("；振翅半径 150 → 205" if id == "reach" else "")
+		detail_effect.mouse_filter = Control.MOUSE_FILTER_PASS
+		for kind in detail_costs:
+			var cost: int = definition.cost if kind == "coin" else int(definition.get(kind,0))
+			var held: int = m.coins if kind == "coin" else int(m.materials[kind])
+			detail_costs[kind].get_parent().visible = cost > 0
+			detail_costs[kind].text = str(cost)
+			detail_costs[kind].add_theme_color_override("font_color",Color("a06042") if held < cost else INK)
+		buy_button.text = "完成储备" if id == "reserve" else "开放花地" if id == "meadow" else "成长"
 		buy_button.disabled = not m.can_buy(next)
-		detail_hint.text = m.locked_reason(next) if buy_button.disabled else "下一趟就能感受到变化。"
-		if id == "reserve" and not buy_button.disabled: detail_hint.text = "完成这一段采蜜生活，之后仍可继续探索。"
-		if id == "market" and not buy_button.disabled: detail_hint.text = "适合继续积累的长期投资；完成阶段不必购买。"
+		detail_requirements.text = m.locked_reason(next) if buy_button.disabled else ""
+		detail_hint.text = detail_requirements.text
+		buy_button.tooltip_text = _requirements(id)
+	detail_requirements.visible = not detail_requirements.text.is_empty()
+	_place_detail.call_deferred()
 
 func _purchase_button_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -518,23 +616,27 @@ func tree_key(event: InputEventKey) -> bool:
 func refresh() -> void:
 	if driver == null or not is_instance_valid(board): return
 	var m = driver.model
-	bag_text.text = "%d / %d" % [m.cargo_total(),m.capacity()]
+	_number(bag_text,"%d / %d" % [m.cargo_total(),m.capacity()],m.cargo_total())
 	bag_bar.max_value = m.capacity()
 	bag_bar.value = m.cargo_total()
 	energy_text.text = "%d / %d" % [int(ceil(m.energy)),int(m.max_energy())]
 	energy_bar.max_value = m.max_energy()
 	energy_bar.value = m.energy
-	coins_text.text = "%d" % m.coins
+	_number(coins_text,str(m.coins),m.coins)
+	_number(fiber_text,str(m.materials.fiber),m.materials.fiber)
+	_number(resin_text,str(m.materials.resin),m.materials.resin)
+	_energy_attention(m.energy < m.max_energy()*.25 and not m.at_home())
 	trip_text.text = driver.area_name(m.area)+(" · 安全生活区" if m.at_home() else " · 第 %d 趟" % maxi(1,m.trip_index))
 	goal_text.text = m.goal_text()
 	help_text.text = ""
 	if not m.at_home():
-		if m.cargo_total() >= m.capacity(): help_text.text = "蜜囊已满"
-		elif driver.has_harvest_hint(): help_text.text = "按住 E  采蜜"
+		if driver.has_harvest_hint(): help_text.text = "按住 E  采蜜"
+		elif driver.has_material_hint(): help_text.text = "Q  振翅"
+		elif m.cargo_total() >= m.capacity(): help_text.text = "蜜囊已满"
 	help_text.visible = not help_text.text.is_empty()
 	var from_hub: bool = m.area == "hub"
 	region_title.text = "这次去哪里？" if from_hub else "带着收获回去"
-	region_hint.text = "出发会补满续航，花蜜重新蓄满。" if from_hub else "这趟采过的花保持原状。"
+	region_hint.text = "蜜囊 %d / %d · 续航 %d" % [m.cargo_total(),m.capacity(),m.max_energy()] if from_hub else "花蜜与材料随身带回。"
 	pond_button.text = "池岸花丛 · 蓝花蜜" if from_hub else "返回池岸花丛"
 	meadow_button.visible = from_hub
 	meadow_info.visible = from_hub
@@ -551,9 +653,12 @@ func refresh() -> void:
 	elif m.rose_sold > 0: shop_story.text = "货架上也有紫花蜜了。\n这一趟改善采集、出行，还是先留钱备粮？"
 	elif m.sold_total > 0: shop_story.text = "你带回的花蜜已摆上货架。\n去书屋挑一项成长，再从广场出发吧。"
 	else: shop_story.text = "雨来前，我们一起备好花蜜。\n第一趟蓝花蜜可以换来采集或蜜囊成长。"
+	board.reduced_motion = driver.reduced_motion
 	board.refresh(m)
-	tree_coins.text = "金币  %d" % m.coins
-	tree_progress.text = "紫花地已开放 · 按自己的节奏继续成长" if "meadow" in m.owned else "下一片花地  ·  基础能力成长 %d / 3" % mini(3,m.growth_count())
+	tree_coins.text = str(m.coins)
+	tree_fiber.text = str(m.materials.fiber)
+	tree_resin.text = str(m.materials.resin)
+	tree_progress.text = "紫花地已开放" if "meadow" in m.owned else "花路成长 %d / 3" % mini(3,m.growth_count())
 	_detail()
 
 func ask_restart() -> void:
@@ -575,8 +680,8 @@ func _build_journal() -> void:
 	journal_status = text_line(v,"",18,Color("7b895f"))
 	var h := row(v,18)
 	for entry in [
-		["池岸花丛","蓝花蜜 · 每份 1 金币","每朵花有 1 份花蜜。\n晴朗、开阔，生物不会攻击。\n采够了即可从灯球返回。"],
-		["紫花地","紫花蜜 · 每份 3 金币","在成长书屋开放后出发。\n每朵花 1 份，价值更高。\n细雨增加消耗，叶棚下可避雨。"]]:
+		["池岸花丛","蓝花蜜 · 每份 1 金币","每花 1 份 · 生物不会攻击。\n振翅驱离小飞虫，拾取纤维。\n采够了即可从灯球返回。"],
+		["紫花地","紫花蜜 · 每份 3 金币","在成长书屋开放后出发。\n每花 1 份 · 可收集树脂。\n细雨增加消耗，叶棚下可避雨。"]]:
 		var c := card(h,Color("e7e9cf"))
 		c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		c.custom_minimum_size.x = 430
@@ -584,8 +689,8 @@ func _build_journal() -> void:
 		text_line(cv,entry[0],27)
 		text_line(cv,entry[1],21,Color("9a6c28"))
 		text_line(cv,entry[2],20,INK,true)
-	text_line(v,"WASD / 方向键飞行，按住 E / 鼠标采蜜，空格蓄力松开冲刺。",19,INK,true)
-	text_line(v,"采空的花在下次出发时恢复。续航耗尽会损失一半携带花蜜；金币与成长保留。",19,INK,true)
+	text_line(v,"按住 E / 左键采蜜 · Q / 右键振翅 · 空格蓄力冲刺。",19,INK,true)
+	text_line(v,"花蜜在野外 18 秒后恢复，暂停时停止计时。续航耗尽损失一半花蜜，材料、金币与成长保留。",19,INK,true)
 	spacer(v)
 	journal_back = action(v,"返回",driver.close_journal,true)
 
@@ -606,9 +711,9 @@ func _build_settings() -> void:
 		driver.dance_style = "side_step" if driver.dance_style == "waggle" else "waggle"
 		driver.save_settings())
 	settings_sound = action(v,"",toggle_sound)
-	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\n空格蓄力松开冲刺 · F 使用已点亮的近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
+	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
 	text_line(v,"关于 Demo",23)
-	text_line(v,"雨来之前 · 采蜜与蜂舞 0.22\n一处生活庭院、两片采蜜花地、9 个成长节点（共 12 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。",18,INK,true)
+	text_line(v,"雨来之前 · 采蜜与蜂舞 0.24\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。",18,INK,true)
 	text_line(v,"制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞为通信动作启发的幻想演绎；侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。",17,Color("687957"),true)
 	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
 	settings_back = action(v,"返回",driver.close_settings,true)
@@ -619,3 +724,34 @@ func refresh_settings() -> void:
 	settings_dance.text = "舞蹈：侧步摆肩 · 原创拟人小组合" if driver.dance_style == "side_step" else "舞蹈：摆尾回环 · 蜜蜂通信启发"
 	settings_dance.disabled = driver.reduced_motion
 	settings_sound.text = "声音：关闭" if muted else "声音：开启"
+
+func _number(label: Label, words: String, value: int) -> void:
+	var key := label.get_instance_id()
+	var gained: bool = hud_values.has(key) and value > int(hud_values[key])
+	hud_values[key] = value
+	label.text = words
+	if not gained or driver.reduced_motion: return
+	if hud_tweens.has(key): hud_tweens[key].kill()
+	label.pivot_offset = label.size*.5
+	label.scale = Vector2(1.15,1.15)
+	var tween := create_tween()
+	tween.tween_property(label,"scale",Vector2.ONE,.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	hud_tweens[key] = tween
+
+func _energy_attention(warning: bool) -> void:
+	warning = warning and not driver.reduced_motion
+	if warning == low_energy: return
+	low_energy = warning
+	if energy_pulse: energy_pulse.kill()
+	energy_bar.modulate = Color.WHITE
+	energy_text.modulate = Color.WHITE
+	if warning:
+		energy_pulse = create_tween().set_loops()
+		energy_pulse.tween_property(energy_bar,"modulate",Color("efb678"),.6)
+		energy_pulse.tween_property(energy_bar,"modulate",Color.WHITE,.6)
+
+func _exit_tree() -> void:
+	if energy_pulse: energy_pulse.kill()
+	energy_pulse = null
+	for tween in hud_tweens.values(): tween.kill()
+	hud_tweens.clear()

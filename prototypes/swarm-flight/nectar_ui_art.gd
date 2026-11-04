@@ -13,6 +13,20 @@ static func icon(c: CanvasItem, kind: String, p: Vector2, r: float, ink := Color
 			c.draw_polyline(poly+PackedVector2Array([poly[0]]),Color("927644"),2,true)
 			c.draw_line(p+Vector2(-r*.5,-r*.25),p+Vector2(r*.5,-r*.25),gold,4,true)
 			c.draw_circle(p+Vector2(0,r*.25),r*.20,gold)
+		"fiber":
+			for i in 3:
+				var y: float = (i-1)*r*.34
+				c.draw_polyline(PackedVector2Array([p+Vector2(-r*.76,y+r*.2),p+Vector2(-r*.22,y-r*.18),p+Vector2(r*.35,y+r*.08),p+Vector2(r*.73,y-r*.22)]),Color("dbd7a0"),r*.23,true)
+			c.draw_line(p+Vector2(-r*.08,-r*.65),p+Vector2(r*.13,r*.65),Color("8d915a"),r*.16,true)
+		"resin":
+			var drop := PackedVector2Array([p+Vector2(0,-r*.86),p+Vector2(-r*.58,-r*.05),p+Vector2(-r*.61,r*.40),p+Vector2(-r*.28,r*.73),p+Vector2(r*.29,r*.73),p+Vector2(r*.61,r*.40),p+Vector2(r*.58,-r*.05)])
+			c.draw_colored_polygon(drop,Color("d9a05c"))
+			c.draw_polyline(drop+PackedVector2Array([drop[0]]),Color("805f38"),r*.11,true)
+			c.draw_line(p+Vector2(-r*.25,-r*.06),p+Vector2(-r*.29,r*.30),Color("ffe4a1"),r*.17,true)
+		"beat":
+			icon(c,"wings",p,r*.70,ink)
+			for side in [-1,1]:
+				c.draw_arc(p+Vector2(side*r*.20,0),r*.76,-.72 if side>0 else PI-.72,.72 if side>0 else PI+.72,16,gold,2,true)
 		"wings", "root":
 			for side in [-1,1]:
 				var v := PackedVector2Array([p,p+Vector2(side*r*.88,-r*.66),p+Vector2(side*r*.75,r*.12),p+Vector2(side*r*.30,r*.52)])

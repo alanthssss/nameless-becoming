@@ -16,6 +16,7 @@ func tick(m,seconds: float,move := Vector2.ZERO) -> void:
 	for i in int(round(seconds*60.0)): m.step(1.0/60.0,move,false,false)
 func unlock(m) -> void:
 	m.coins = 1000
+	m.materials = {"fiber":100,"resin":100} # Explicit region-rule fixture.
 	for id in ["gather1","bag1","gather2","meadow","shortcut"]: m.buy(id)
 func depart(m,area := "pond") -> bool:
 	m.p = Model.HUB_DEPART
@@ -34,7 +35,7 @@ func run() -> void:
 	m.p = Vector2(90,400)
 	check(m.interaction().is_empty() and not m.transition_to("pond"),"hub has no remote menu/exit trigger")
 	m.step(0.1,Vector2.RIGHT,true,false)
-	check(m.area == "hub" and m.energy == 85 and m.cargo_total() == 0 and m.trip_index == 0,"life scene neither collects nor spends expedition energy")
+	check(m.area == "hub" and m.energy == 36 and m.cargo_total() == 0 and m.trip_index == 0,"life scene neither collects nor spends expedition energy")
 	m.p = Model.HUB_DEPART
 	check(not m.transition_to("meadow") and m.trip_index == 0,"locked destination is denied without starting trip")
 	check(m.transition_to("pond") and m.p == Model.POND_ENTRY and m.phase == "field" and m.trip_index == 1,"departure creates one explicit expedition")
@@ -56,21 +57,22 @@ func run() -> void:
 	unlock(m)
 	check(depart(m),"upgraded expedition starts")
 	m.flowers[0].stock = 0
+	m.flowers[0].regrow = 18.0
 	m.creatures[0].state = "gone"
-	m.energy = 63.0
+	m.energy = 23.0
 	m.p = Model.POND_EXIT
 	m.v = Vector2(100,0)
 	m.charging = true
 	m.charge = 0.2
 	check(m.transition_to("meadow") and m.area == "meadow" and m.visited_meadow,"physical gate enters different unlocked area")
-	check(m.energy == 63.0 and m.trip_index == 2 and m.flowers[0].stock == 0 and m.creatures[0].state == "gone","cross-region move preserves depletion, population and energy")
+	check(m.energy == 23.0 and m.trip_index == 2 and m.flowers[0].stock == 0 and m.creatures[0].state == "gone","cross-region move preserves depletion, population and energy")
 	check(m.v == Vector2.ZERO and not m.charging and m.charge == 0 and m.burst_left == 0,"scene transition clears movement, charge and burst")
 	check(m.camera_x >= 1840 and m.camera_x <= 2240,"meadow uses its own camera bounds")
 	m.p = Model.MEADOW_ENTRY
-	check(m.transition_to("pond") and m.p == Model.POND_EXIT and m.energy == 63.0,"reverse gate preserves field expedition")
+	check(m.transition_to("pond") and m.p == Model.POND_EXIT and m.energy == 23.0,"reverse gate preserves field expedition")
 	m.p = Model.SHORTCUTS[0]
 	check(m.use_shortcut() and m.area == "meadow" and m.p == Model.SHORTCUTS[1] and m.trip_index == 2,"near shortcut is actual scene travel")
-	check(m.use_shortcut() and m.area == "pond" and m.energy == 63.0,"reverse shortcut grants no energy or refill")
+	check(m.use_shortcut() and m.area == "pond" and m.energy == 23.0,"reverse shortcut grants no energy or refill")
 	var path := "user://nectar-regions-%d.json" % OS.get_process_id()
 	check(Save.write_payload(m.to_payload(),path,Model.new()),"depleted region state atomically saves")
 	var cold = Model.new()
@@ -80,7 +82,7 @@ func run() -> void:
 	check(Encounters.payload(cold.creatures) == saved_population and cold.trip_index == 2,"pause cannot reset or advance population")
 	m.p = Model.POND_ENTRY
 	check(m.transition_to("hub") and m.energy == m.max_energy() and m.cargo_total() == 1,"return restores energy and retains carried nectar")
-	check(depart(m) and m.trip_index == 3 and m.flowers[0].stock == 1 and m.creatures[0].state == "patrol","only a new departure refreshes flowers and encounters")
+	check(depart(m) and m.trip_index == 3 and m.flowers[0].stock == 1 and m.creatures[0].state == "patrol","new departure refreshes flower and encounter population")
 	var c: Dictionary = m.creatures[0]
 	m.p = c.anchor
 	m.v = Vector2.ZERO
@@ -88,14 +90,14 @@ func run() -> void:
 	var before_coins: int = m.coins
 	var before_cargo: Dictionary = m.cargo.duplicate()
 	tick(m,1.0)
-	check(c.state == "patrol" and is_equal_approx(m.energy,start_energy-0.7) and m.hurt_left == 0,"overlapping wildlife remains peaceful and only ordinary endurance drains")
+	check(c.state == "patrol" and is_equal_approx(m.energy,start_energy-0.6) and m.hurt_left == 0,"overlapping wildlife remains peaceful and only ordinary endurance drains")
 	check(not m.can_damage(c) and not m.events.any(func(e): return e.kind in ["warn","hurt","repel"]),"proximity emits no combat event or damage permission")
 	m.p = c.pos-Vector2(10,0)
 	m.face = Vector2.RIGHT
 	m.burst_left = 0.01
 	start_energy = m.energy
 	m.step(1.0/60.0,Vector2.ZERO,false,false)
-	check(c.state == "patrol" and m.hurt_left == 0 and is_equal_approx(m.energy,start_energy-0.7/60.0),"dash passes through wildlife without destroying or hurting it")
+	check(c.state == "patrol" and m.hurt_left == 0 and is_equal_approx(m.energy,start_energy-1.0/60.0),"dash passes through wildlife without destroying or hurting it")
 	check(m.coins == before_coins and m.cargo == before_cargo,"wildlife contact never creates currency or cargo")
 	tick(m,4.0)
 	check(c.state == "patrol" and c.pos.distance_to(c.anchor) < 45,"peaceful animal remains within its patrol habitat")

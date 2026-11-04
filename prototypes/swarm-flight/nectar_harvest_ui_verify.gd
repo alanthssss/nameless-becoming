@@ -86,30 +86,30 @@ func run() -> void:
 	await capture("02b-destination-board")
 	await click(game.ui.pond_button)
 	check(game.mode == "transition","destination confirmation starts a distinct transition")
-	await create_timer(2.2).timeout
+	await create_timer(2.4).timeout
 	check(game.model.area == "pond" and game.world.area_key == "pond" and game.model.trip_index == 1,"confirmed departure loads pond scene once")
 	# Targeted fixture positions are explicit; full journey coverage is separate.
-	game.model.p = Vector2(620,419)
+	game.model.p = game.model.flower_point(game.model.flowers[0])+Vector2(0,-101)
 	game.model.v = Vector2(0,230)
-	game.model.energy = 84.75
+	game.model.energy = 35.75
 	game.ui.refresh()
 	check(not game.ui.help_text.visible,"outside harvest radius has no collection prompt")
 	key(KEY_S,true)
 	await frames(4)
 	key(KEY_S,false)
-	check(int(ceil(game.model.energy)) == 85 and game.ui.help_text.visible,"entering harvest radius updates prompt before rounded energy changes")
-	game.model.p = Vector2(620,421)
+	check(int(ceil(game.model.energy)) == 36 and game.ui.help_text.visible,"entering harvest radius updates prompt before rounded energy changes")
+	game.model.p = game.model.flower_point(game.model.flowers[0])+Vector2(0,-99)
 	game.model.v = Vector2(0,-230)
 	game.ui.refresh()
 	key(KEY_W,true)
 	await frames(4)
 	key(KEY_W,false)
-	check(int(ceil(game.model.energy)) == 85 and not game.ui.help_text.visible,"leaving harvest radius clears prompt before rounded energy changes")
-	game.model.p = Vector2(620,520)
+	check(int(ceil(game.model.energy)) == 36 and not game.ui.help_text.visible,"leaving harvest radius clears prompt before rounded energy changes")
+	game.model.p = game.model.flowers[0].pos
 	game.model.v = Vector2.ZERO
 	await frames(2)
 	key(KEY_E,true)
-	await create_timer(1.25).timeout
+	await create_timer(1.95).timeout
 	key(KEY_E,false)
 	await frames(3)
 	check(game.model.cargo_total() == 1,"actual hold-E collects visible source")
@@ -128,7 +128,7 @@ func run() -> void:
 	game.model.p = Model.POND_ENTRY
 	game.model.v = Vector2.ZERO
 	await tap(KEY_E)
-	await create_timer(2.2).timeout
+	await create_timer(2.4).timeout
 	check(game.model.area == "hub" and game.world.area_key == "hub" and game.model.p.distance_to(Model.HUB_DEPART)<1,"return arrives at the courtyard lamp rather than growth tree")
 	game.model.p = Model.HUB_SHOP
 	await frames(3)
@@ -153,6 +153,7 @@ func run() -> void:
 	check(game.ui.buy_button.disabled and "0 / 3" in game.ui.detail_requirements.text,"locked node remains inspectable with measurable condition")
 	# Explicit funded UI fixture, distinct from the ordinary-input full journey.
 	game.model.coins = 1000
+	game.model.materials = {"fiber":100,"resin":100} # Explicit UI predicate fixture.
 	game.ui.refresh()
 	await click(game.ui.board.buttons.gather)
 	key(KEY_ENTER,true)
@@ -172,7 +173,7 @@ func run() -> void:
 	await frames(2)
 	check(game.ui.board.buttons.reach.visible and game.ui.board.buttons.wings.visible,"first purchase reveals relevant next choices")
 	check(not game.ui.board.buttons.twin.visible,"double gather stays concealed until reach is found")
-	check("1.5 → 2.2" in game.ui.detail_effect.text,"detail advances to the next rank")
+	check("1.2 → 0.8" in game.ui.detail_effect.text,"detail advances to the next rank")
 	await tap(KEY_ENTER)
 	check("gather2" in game.model.owned and game.model.coins == 985,"a separate confirmation buys second rank at its own cost")
 	check(game.ui.buy_button.disabled and not game.ui.board.buttons.gather.disabled,"max node is inspectable but purchase is disabled")
@@ -188,7 +189,7 @@ func run() -> void:
 	await click(game.ui.buy_button)
 	check("meadow" in game.model.owned and game.ui.board.buttons.market.visible,"meadow opens the later choices")
 	await click(game.ui.board.buttons.market)
-	check(game.ui.buy_button.disabled and "0 / 1" in game.ui.detail_requirements.text,"market needs exploration and a sale, not merely meadow purchase")
+	check(game.ui.buy_button.disabled and "紫" in game.ui.detail_requirements.text,"market needs exploration and a sale, not merely meadow purchase")
 	await click(game.ui.board.buttons.wings)
 	await create_timer(.4).timeout
 	var before_wings: int = game.model.coins
@@ -220,14 +221,14 @@ func run() -> void:
 	for i in game.ui.board.visible_ids().size():
 		visited.append(game.ui.board.selected)
 		await tap(KEY_TAB)
-	check(visited.size() == 9 and _unique(visited).size() == game.ui.board.visible_ids().size(),"Tab traverses every revealed node")
+	check(visited.size() == 10 and _unique(visited).size() == game.ui.board.visible_ids().size(),"Tab traverses every revealed node")
 	await capture("06-progressed-tree")
 	game.model.visited_meadow = true
 	game.model.rose_sold = 18
 	game.model.sold_total = maxi(game.model.sold_total,18)
 	game.ui.refresh()
 	await click(game.ui.board.buttons.reserve)
-	check(game.ui.buy_button.disabled and "任选其一" in game.ui.detail_requirements.text,"stage clearly shows the OR condition")
+	check(game.ui.buy_button.disabled and "任选其一" in game.ui.detail_requirements.text or "任选其一" in game.ui.detail_hint.text,"stage clearly shows the OR condition")
 	await click(game.ui.board.buttons.shortcut)
 	await create_timer(.4).timeout
 	await click(game.ui.buy_button)
@@ -253,7 +254,7 @@ func run() -> void:
 	game.model.p = Model.HUB_DEPART
 	await tap(KEY_E)
 	await click(game.ui.meadow_button)
-	await create_timer(2.2).timeout
+	await create_timer(2.4).timeout
 	check(game.model.area == "meadow" and game.world.area_key == "meadow","unlocked direct departure loads meadow scene")
 	game.model.p = Vector2(2140,410)
 	await frames(3)
