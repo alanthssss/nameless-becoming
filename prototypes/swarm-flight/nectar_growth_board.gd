@@ -179,4 +179,4 @@ func _draw() -> void:
 		draw_string(font,Vector2(size.x*.36,12),"花 路 与 收 益",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("a3c4ae"))
 		if buttons.twin.visible: draw_string(font,point("twin")+Vector2(-48,-59),"技巧 2级 ＋ 触角",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("c8d1b8"))
 		if buttons.wings.visible: draw_string(font,point("wings")+Vector2(-59,-59),"初始成长任选一项",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("c8d1b8"))
-		draw_string(font,point("reserve")+Vector2(-67,-61),"双采 或 近道 · 18紫蜜",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("c8d1b8"))
+		draw_string(font,point("reserve")+Vector2(-67,-61),"双采 或 近道 · 6紫蜜",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("c8d1b8"))
