@@ -280,4 +280,4 @@ npm run test
 - [macOS Demo 发行准备与商店材料](docs/release/nectar-demo-steam-macos.md)（暂无AppID；签名、公证与Steam审核待完成）。
 - [美术评审手册可编辑源](docs/art/nectar-demo-art-review.json)与[构建脚本](tools/build_nectar_art_manual.py)。PDF随本轮候选交付，尚未获专业评审。
 
-- [0.22构建回执与当前阻塞](docs/production/nectar-demo-022-build-receipt.md)：实际导出验收待Mac解锁；PR #300，尚未合并或交付通过门禁的候选。
+- [0.22历史构建回执](docs/production/nectar-demo-022-build-receipt.md)：PR #300已合并，双入口与旧档隔离已验证；本轮变更见0.23回执。
