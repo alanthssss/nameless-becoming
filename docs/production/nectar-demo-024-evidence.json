@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "claim": "candidate",
+  "human_acceptance_claim": false,
+  "gdd": "13.9 / SD-v1.2",
+  "milestone": 3,
+  "issues": [
+    306,
+    307,
+    308,
+    309
+  ],
+  "pull_request": 310,
+  "runtime_revision": "e210c3277c80e1f2a0495239553485a3cbb2ff54",
+  "export_revision": "378a230638659a5f77f2fcbe2f10698ba07018e3",
+  "candidate_sha256": "142537e20faee987da85d9b70c677b34a61d3a7d62d293830010eb4e758464ff",
+  "export_sha256": "b5fb96211b929fb2eae0712dfabf8b5427245d88bfb0b319838b0ce618a92db0",
+  "delivery_root": "/Users/alanthssss/LocalGames/nectar-demo-0.24.0",
+  "candidate": "采蜜与蜂舞-Demo-0.24.0-Mac.zip",
+  "entry": "/Users/alanthssss/LocalGames/nectar-demo-0.24.0/review/采蜜与蜂舞-Demo/开始采蜜小店.command",
+  "rules": {
+    "legacy_base": 146,
+    "regions": 52,
+    "migration": 15414,
+    "living": 251,
+    "failures": 0,
+    "coverage": "shortcut/twin/all60FPS + all30FPS"
+  },
+  "native": {
+    "ui": 71,
+    "demo": 23,
+    "regions": 29,
+    "shortcut": 282,
+    "twin": 446,
+    "cold_shortcut": 3,
+    "cold_twin": 3,
+    "failures": 0
+  },
+  "source_equivalence": "e210→378 only probe and external README; shortcut media246 scope explicitly retained",
+  "media": {
+    "shortcut_frames": 13798,
+    "twin_frames": 19912,
+    "twin_runtime_printed_frames_not_used": 13359,
+    "independent_visual_scope": "shortcut whole-time contact sheet plus transition/collection/material/growth frames; twin metadata/ledger only",
+    "root_twin_full_decode": {
+      "exit_code": 0,
+      "frames": 19912,
+      "errors": 0
+    }
+  },
+  "independent_unresolved_p1_p2": [],
+  "native_export_checks": "actual .app + maintained .command; save/exit/cold resume/continued input;8original saves restored byte-identically",
+  "NH_C01_08": "passed",
+  "local_raw_evidence": "evidence/candidate-receipt.json; independent-review.json; verification-boundaries.json; source-equivalence.json",
+  "integration": "Final PR310 CI/merge/cleanup tracked by#309; runtime378 checks13success/1skip before documentation closure. Final integration-readback.json records actual merge.",
+  "cost": {
+    "observed_start": "2026-11-04 07:19:27 UTC",
+    "observed_end": "2026-11-04 08:25:06 UTC",
+    "coverage": "First explicit task clock through local package checkpoint; prior reading not fully covered. Includes implementation, failed routes, verification/media/export and CI waits; wall time is not active or billed time.",
+    "active": null,
+    "billed": null,
+    "cumulative": null,
+    "remaining": null,
+    "new_purchases": 0
+  }
+}

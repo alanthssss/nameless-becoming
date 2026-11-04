@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-11-04 · Demo 0.24动作与材料修订执行中。** [本轮回执](docs/production/nectar-demo-024-feedback-receipt.md) · [Now](docs/design/solar-term-campaign-production-spec.md#production-now)。采蜜/动态花源/材料成长/体力与转场一并验证，当前不宣称候选已完成。
+**2026-11-04 · Demo 0.24可玩候选已构建。** 采蜜进度与动作、动态花源和18秒再生、主动振翅材料成长、36→50→70体力、少字浮卡及焦点蜂舞转场已接入。[本轮回执](docs/production/nectar-demo-024-feedback-receipt.md) · [证据摘要](docs/production/nectar-demo-024-evidence.json) · [Now](docs/design/solar-term-campaign-production-spec.md#production-now)。最终本地产物位于`/Users/alanthssss/LocalGames/nectar-demo-0.24.0`；保留PVZ美术与蜜铺造型。技术/限定AI检查通过不代替用户试玩接受；PR #310 / #309负责最终CI、合并与清理，随后产品/成本评议沿#211。
 
 **历史：Demo 0.23候选已构建。** 保留蜜铺整体、只修新增蜜罐；三点庭院、灯球返回、单花单份、温和生物与集中HUD已实现。[十条反馈](docs/design/nectar-steam-demo.md#2026-11-04-十条试玩反馈修订sd-v11) · [构建回执](docs/production/nectar-demo-023-feedback-receipt.md) · [Now](docs/design/solar-term-campaign-production-spec.md#production-now)。本批集成沿PR #305 / M3 #301–304，用户产品与成本评议沿#211，尚不代表用户接受。
 
