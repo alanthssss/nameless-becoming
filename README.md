@@ -1,6 +1,6 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-11-04 · Demo 0.23反馈修订。** [十条反馈与规则](docs/design/nectar-steam-demo.md#2026-11-04-十条试玩反馈修订sd-v11)涵盖同款蜜罐、紧凑庭院、灯球返回、单花单份与和平生物、集中HUD；当前制作/验证沿[Now](docs/design/solar-term-campaign-production-spec.md#production-now)与M3 #301–304，尚不代表用户接受。
+**2026-11-04 · Demo 0.23候选已构建。** 保留蜜铺整体、只修新增蜜罐；三点庭院、灯球返回、单花单份、温和生物与集中HUD已实现。[十条反馈](docs/design/nectar-steam-demo.md#2026-11-04-十条试玩反馈修订sd-v11) · [构建回执](docs/production/nectar-demo-023-feedback-receipt.md) · [Now](docs/design/solar-term-campaign-production-spec.md#production-now)。本批集成沿PR #305 / M3 #301–304，用户产品与成本评议沿#211，尚不代表用户接受。
 
 **2026-11-03 · macOS Steam Demo制作。** 按Alan新决定推进[蜂舞、生活区与发布规格](docs/design/nectar-steam-demo.md)，GDD§13.9 / M3 #288–298；唯一执行状态见[Now](docs/design/solar-term-campaign-production-spec.md#production-now)。0.21为历史基线，本轮未验证项目不会被写成已发布。
 
@@ -278,7 +278,7 @@ npm run test
 
 - [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
 - [macOS Demo 发行准备与商店材料](docs/release/nectar-demo-steam-macos.md)（暂无AppID；签名、公证与Steam审核待完成）。
-- [美术评审手册可编辑源](docs/art/nectar-demo-art-review.json)与[构建脚本](tools/build_nectar_art_manual.py)。PDF随本轮候选交付，尚未获专业评审。
+- [美术评审手册可编辑源](docs/art/nectar-demo-art-review.json)与[构建脚本](tools/build_nectar_art_manual.py)。这是0.22历史手册，含本轮已调整的四点庭院；0.23变化见下方回执，尚未获专业评审。
 
-- [0.23反馈修订与验证回执](docs/production/nectar-demo-023-feedback-receipt.md)：十条反馈、v4兼容、原生与导出验证、证据及成本边界。
+- [0.23反馈修订与验证回执](docs/production/nectar-demo-023-feedback-receipt.md)：十条反馈、v4兼容、原生与导出验证、证据及成本边界；[独立复核](docs/production/nectar-demo-023-independent-review.md)与[哈希摘要](docs/production/nectar-demo-023-evidence.json)。
 - [0.22历史构建回执](docs/production/nectar-demo-022-build-receipt.md)：PR #300已合并，双入口与旧档隔离已验证；本轮变更见0.23回执。

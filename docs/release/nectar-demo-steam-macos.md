@@ -4,7 +4,7 @@
 
 ## 已完成和仍未完成
 
-已准备中文页面草稿、AI 内容调查草稿、macOS 签名公证步骤、SteamPipe 参数化生成器与本地完整性检查。游戏 0.22 候选的完整运行证据由本轮构建回执承接，不能用本文件的脚本测试替代。未登录任何发行账户，没有申请账号、付费、上传或发布。
+已准备中文页面草稿、AI 内容调查草稿、macOS 签名公证步骤、SteamPipe 参数化生成器与本地完整性检查。游戏 0.23 候选的完整运行证据由[反馈修订回执](../production/nectar-demo-023-feedback-receipt.md)承接，不能用本文件的脚本测试替代。未登录任何发行账户，没有申请账号、付费、上传或发布。
 
 | 外部事项 | 当前状态 | 解除条件 |
 |---|---|---|
@@ -59,7 +59,7 @@ Steam 当前内容调查关注随游戏交付、由玩家消费的生成式 AI �
 
 ## macOS 支持范围和证据
 
-本次只读机器信息为 macOS 26.6.2、Apple M1 Pro、arm64、32 GiB 内存。这是测试环境记录，不是最低配置。已有 0.21 内部 macOS 候选的[构建回执](../../prototypes/swarm-flight/review-evidence/2026-11-03/nectar-regions-mvp/build-receipt.json)不能代替 0.22 运行验收；本文件没有新增游戏实机性能测试。
+本次只读机器信息为 macOS 26.6.2、Apple M1 Pro、arm64、32 GiB 内存。这是测试环境记录，不是最低配置。已有 0.21 内部 macOS 候选的[构建回执](../../prototypes/swarm-flight/review-evidence/2026-11-03/nectar-regions-mvp/build-receipt.json)不能代替 0.23 运行验收；本文件没有新增游戏实机性能测试。
 
 | 商店字段 | 目前可填程度 |
 |---|---|
@@ -68,7 +68,7 @@ Steam 当前内容调查关注随游戏交付、由玩家消费的生成式 AI �
 | Intel / Apple Silicon | 导出预设为 Universal；必须用 `lipo` 核对最终二进制，并分别实机验证；Universal 不等于 Intel 已测 |
 | 存储空间 | 最终签名、公证后按实际安装体积测量并留更新空间，暂不编造 MB 数 |
 | 输入 / 网络 | 键盘鼠标；游戏本地玩法；Steam 获取安装包需要平台网络条件 |
-| 显示 / 性能 | 既有 960×600 与 1280×800 内部 UI 检查属前版证据；0.22 重验，未承诺最低帧率 |
+| 显示 / 性能 | 既有 960×600 与 1280×800 内部 UI 检查属前版证据；0.23 原生UI重验，未承诺最低帧率 |
 
 Steam 官方 macOS 发布说明要求新应用具有 64 位二进制和 Apple 公证，且 Steam 发行不采用 Mac App Store 的 App Sandbox 配置。Steam overlay/SDK 的加载权限须随实际接入另行配置并验证，不因为模板写了权限就宣称 overlay 已支持。[Steam Platforms](https://partner.steamgames.com/doc/store/application/platforms)
 
