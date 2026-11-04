@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "gdd": "13.9 SD-v1",
+  "issue": 293,
+  "lighting": "upper left",
+  "authoring": "AI-assisted raster; runtime animation/labels/code authored in project",
+  "assets": [
+    {
+      "id": "nectar-dance-stage",
+      "version": 1,
+      "file": "nectar-dance-stage.png",
+      "sha256": "535f0c5505b81802a13036ea9c19a5ac90755561cf5d44f3006f662837ddc4ea",
+      "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a19353-8478-75d1-998b-16d1bd0a873d/exec-a47abc94-75e4-41eb-a2eb-7bd1413e3778.png",
+      "date": "2026-11-03",
+      "brief": "One front-view transparent storybook leaf-vine dance pavilion with clearly suspended muted gold/sage/silver/blue mirror ball; open center, wooden platform, attached root feet. No candle, text, characters, neon or unrelated scenery. Match warm dark outlines, lime edges, emerald leaves, amber wood and upper-left light of approved references.",
+      "brief_kind": "production brief summary; verbatim invocation retained in task tool history",
+      "style_references": [
+        "garden-home.png",
+        "garden-landmarks.png"
+      ],
+      "post_processing": "none; source PNG copied without raster edits",
+      "usage": "nectar_harvest_view.gd; hub and field stages / hub shop / hub books",
+      "review_status": "native review candidate; professional art approval pending"
+    },
+    {
+      "id": "nectar-honey-shop",
+      "version": 1,
+      "file": "nectar-honey-shop.png",
+      "sha256": "f5ce0ac0a061812a0292e2ea5bf44c31eda85067b97aadcb86625c7b68677376",
+      "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a19353-8478-75d1-998b-16d1bd0a873d/exec-99274a45-7fef-439c-a6cf-264f65ad36d8.png",
+      "date": "2026-11-03",
+      "brief": "One front-view transparent painted honey stall: supported leaf canopy, warm carved wood counter and shelves, two amber honey jars, cream ledger, root feet; no character or text. Same material/light/contour family as reference dance pavilion.",
+      "brief_kind": "production brief summary; verbatim invocation retained in task tool history",
+      "style_references": [
+        "garden-home.png",
+        "nectar-dance-stage.png"
+      ],
+      "post_processing": "none; source PNG copied without raster edits",
+      "usage": "nectar_harvest_view.gd; hub and field stages / hub shop / hub books",
+      "review_status": "native review candidate; professional art approval pending"
+    },
+    {
+      "id": "nectar-field-book",
+      "version": 1,
+      "file": "nectar-field-book.png",
+      "sha256": "52761eab996ee7e693a18236e18a8011eab8c645923b076e2c5f6d13e0385a1b",
+      "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a19353-8478-75d1-998b-16d1bd0a873d/exec-c5529e84-15be-42ba-8817-17780fe4a6e1.png",
+      "date": "2026-11-03",
+      "brief": "One front-view transparent low honey-wood lectern with open cream botanical book, connected root legs, page marks and flower sketches, no lettering. Book rests on desk lip. Same painterly outline, wood grain and upper-left light as references.",
+      "brief_kind": "production brief summary; verbatim invocation retained in task tool history",
+      "style_references": [
+        "nectar-honey-shop.png",
+        "garden-home.png"
+      ],
+      "post_processing": "none; source PNG copied without raster edits",
+      "usage": "nectar_harvest_view.gd; hub and field stages / hub shop / hub books",
+      "review_status": "native review candidate; professional art approval pending"
+    }
+  ]
+}

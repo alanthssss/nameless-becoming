@@ -83,7 +83,7 @@ func run() -> void:
 	await capture("02b-destination-board")
 	await click(game.ui.pond_button)
 	check(game.mode == "transition","destination confirmation starts a distinct transition")
-	await create_timer(.5).timeout
+	await create_timer(2.2).timeout
 	check(game.model.area == "pond" and game.world.area_key == "pond" and game.model.trip_index == 1,"confirmed departure loads pond scene once")
 	# Targeted fixture positions are explicit; full journey coverage is separate.
 	game.model.p = Vector2(620,520)
@@ -109,7 +109,7 @@ func run() -> void:
 	game.model.p = Model.POND_ENTRY
 	game.model.v = Vector2.ZERO
 	await tap(KEY_E)
-	await create_timer(.5).timeout
+	await create_timer(2.2).timeout
 	check(game.model.area == "hub" and game.world.area_key == "hub","return portal loads courtyard scene")
 	game.model.p = Model.HUB_SHOP
 	await frames(3)
@@ -234,7 +234,7 @@ func run() -> void:
 	game.model.p = Model.HUB_DEPART
 	await tap(KEY_E)
 	await click(game.ui.meadow_button)
-	await create_timer(.5).timeout
+	await create_timer(2.2).timeout
 	check(game.model.area == "meadow" and game.world.area_key == "meadow","unlocked direct departure loads meadow scene")
 	game.model.p = Vector2(2140,410)
 	await frames(3)

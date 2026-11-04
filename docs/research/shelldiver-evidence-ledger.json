@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-11-03",
+  "timezone": "Asia/Shanghai",
+  "project": "nameless-becoming",
+  "gdd": "13.9",
+  "milestone": "M3",
+  "issues": [288, 289],
+  "scope": "Shelldiver elements, growth graph, visible numerical sample, interaction and comparison to Nectar Harvest 0.21",
+  "status": "bounded_research_complete_with_explicit_unknowns",
+  "not_claimed": ["complete original skill database", "source-code reconstruction", "original spawning algorithm", "hands-on successful dive", "human playtest", "proof of player enjoyment"],
+  "evidence_classes": {
+    "official_statement": "Developer or official product text; may describe intended rather than tested behavior",
+    "official_visual": "Directly inspected official game image; version unspecified unless shown",
+    "community_visual": "Directly inspected public player image; save and version unknown",
+    "community_report": "Player or guide statement not independently reproduced",
+    "analysis": "Reasoned inference or calculation with assumptions",
+    "proposal": "Suggestion for our game, not a fact about Shelldiver",
+    "local_spec": "Existing authoritative specification for our game"
+  },
+  "sources": [
+    {
+      "id": "S01",
+      "type": "official_statement",
+      "title": "Shelldiver Steam store",
+      "url": "https://store.steampowered.com/app/3862670/Shelldiver/",
+      "accessed": "2026-11-03",
+      "method": "web and CUA visible page",
+      "version_context": "Store showed latest announcement 1.0.2 dated 2026-06-21; screenshots not version-stamped",
+      "verified": ["developer Gagonfe", "release date 2025-11-16", "jellyfish capture and shop sales", "bubble gun", "laser and regional scrap materials", "oxygen and shop-related upgrades", "regional biomes and depths"],
+      "limits": ["No internal algorithms", "No complete numerical table", "Latest patch label is not a verified installed build"]
+    },
+    {
+      "id": "S02",
+      "type": "official_visual",
+      "title": "Official skill tree close-up, screenshot #1",
+      "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3862670/8db98935b90ce26a668eb2bb39f07dc97e6313b2/ss_8db98935b90ce26a668eb2bb39f07dc97e6313b2.1920x1080.jpg",
+      "accessed": "2026-11-03",
+      "method": "CUA browser displayed official original image; URL read from store DOM img src",
+      "version_context": "Undated marketing screenshot, build unknown",
+      "local_artifact": null,
+      "observed": {
+        "selected_skill": "Bubble Damage V",
+        "current_level": 6,
+        "max_level": 10,
+        "displayed_next_increment_percent": 1300,
+        "displayed_current_total_percent": 35080,
+        "displayed_next_total_percent": 36380,
+        "price_amount": 50,
+        "price_resource": "light-blue material icon; official name unverified",
+        "prestige_level": 2,
+        "prestige_progress": [75, 95],
+        "layout": ["diamond nodes", "solid and dotted connecting lines", "cyan/red/green node frames", "resource balances on left", "Prestige top center", "adjacent floating detail panel", "upgrade/select-move/zoom hints bottom right"]
+      },
+      "limits": ["Colors and line semantics not interactively tested", "No unknown node names inferred from icons", "No material name inferred from icon", "No global cost formula inferred"]
+    },
+    {
+      "id": "S03",
+      "type": "official_visual",
+      "title": "Official volcanic area image, screenshot #4",
+      "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3862670/dd775d91cdf09d703f3ef631ffc7980f1d6746bf/ss_dd775d91cdf09d703f3ef631ffc7980f1d6746bf.1920x1080.jpg",
+      "accessed": "2026-11-03",
+      "method": "CUA direct image observation",
+      "version_context": "Undated marketing screenshot",
+      "observed": ["different jellyfish silhouettes distributed in terrain corridors", "large red circular region around creatures", "purple crystal-like environmental object"],
+      "limits": ["Red circle exact trigger/meaning not established by a still", "No timed behavior", "No spawn probabilities, counts or respawn rules"]
+    },
+    {
+      "id": "S04",
+      "type": "official_statement",
+      "title": "Official Next Fest Demo announcement and 1.0.1 hotfix",
+      "url": "https://steamcommunity.com/app/3862670/allnews/?l=japanese",
+      "accessed": "2026-11-03",
+      "method": "web retrieved official announcement text",
+      "version_context": "Demo announcement displayed 2025-10-10; 1.0.1 hotfix 2025-11-19",
+      "verified": ["Demo first 3 regions", "Demo over 30 different upgrades", "1.0.1 increased mushrooms at 600m", "resource hover shows upgrades using those collectables", "Shellphone open-tree binding became remappable", "description can align left", "reduced flashing option"],
+      "limits": ["Demo upgrades counting convention unspecified", "No current Demo package tested", "No pre/post material density values"]
+    },
+    {
+      "id": "S05",
+      "type": "official_statement",
+      "title": "Developer reply: Can't unlock Alchemy?",
+      "url": "https://steamcommunity.com/app/3862670/discussions/0/691994366768692802/",
+      "accessed": "2026-11-03",
+      "method": "web retrieved discussion with developer role",
+      "version_context": "Developer reply 2025-12-01",
+      "verified": ["Gagonfe directs player to unlock Shellphone and continue upward to unlock Alchemy"],
+      "community_report": ["Player skipped phone because it seemed unrelated and forgot new nodes would appear"],
+      "limits": ["Only one concrete confusion case; no incidence estimate", "Intermediate nodes and costs unknown", "100T Life Vial cost in later comment is not developer-confirmed here"]
+    },
+    {
+      "id": "S06",
+      "type": "official_statement",
+      "title": "Developer reply: Feedback For The Developer",
+      "url": "https://steamcommunity.com/app/3862670/discussions/0/682986292645068962/",
+      "accessed": "2026-11-03",
+      "method": "web retrieved discussion with developer role",
+      "version_context": "Developer reply 2025-11-21",
+      "verified": ["Available facilities take interaction priority over nearby NPCs", "If store is full and cannot accept jellyfish the interaction may wave at NPC instead"],
+      "community_report": ["One player reported reduced visual clarity with many late NPCs", "Another player described repeated depth layouts as the same"],
+      "limits": ["Repeated layouts not independently tested", "No evidence for spawn randomness or fixed seed", "No universal player preference claim"]
+    },
+    {
+      "id": "S07",
+      "type": "community_visual",
+      "title": "Seesaw public complete tree screenshot, 100%!",
+      "url": "https://images.steamusercontent.com/ugc/11967220245888068328/83163432CB240BF7D9609AE6E7F6322265AF067B/?ima=fit&imcolor=%23000000&impolicy=Letterbox&imw=1024&letterbox=false",
+      "parent_url": "https://steamcommunity.com/app/3862670/screenshots/",
+      "accessed": "2026-11-03",
+      "method": "CUA displayed community image linked by Steam screenshots page",
+      "version_context": "Korean UI; date, game build and save provenance unverified",
+      "observed": ["five principal directions", "shorter top branch and longer lower branches", "branching network rather than perimeter star", "dense central connections", "top progress displays MAX"],
+      "limits": ["Cannot read all small node labels", "Does not alone establish unlock direction", "Does not establish 800 ranks", "Not an official full-tree specification"]
+    },
+    {
+      "id": "S08",
+      "type": "official_statement",
+      "title": "Gagonfe Shelldiver GX.games Demo",
+      "url": "https://gx.games/games/kvqb1o/shelldiver/",
+      "accessed": "2026-11-03",
+      "method": "CUA page and embedded game title-screen observation",
+      "version_context": "Page says released 2025-08-27; updated 2025-08-29; GameMaker",
+      "verified": ["Public developer Demo listing", "Embedded game loaded to title screen with Press ENTER to start"],
+      "attempt": {"successful_play": false, "actions": ["Loaded listing and accepted cookie selection", "Continued loader without account signup", "Observed title screen", "Tried keyboard focus and Enter", "Opened observed public iframe URL as standalone canvas"], "result": "Embedded input did not advance; standalone canvas remained at Downloading data. Stopped without installing software, signing up or claiming playtest.", "closed_tabs": true},
+      "limits": ["Not the later Next Fest demo", "No successful dive or tree purchase observed", "Does not validate current release numbers"]
+    },
+    {
+      "id": "S09",
+      "type": "community_report",
+      "title": "XboxAchievements guide and print guide",
+      "url": "https://www.xboxachievements.com/game/shelldiver/print-guide/",
+      "additional_url": "https://www.xboxachievements.com/game/shelldiver/guide/",
+      "accessed": "2026-11-03",
+      "method": "Search-indexed guide text; direct guide fetch returned 403",
+      "version_context": "Xbox-oriented guide; source build not verified",
+      "reported_only": ["left-upper bubble gun branch and right-upper plasma/robot branch", "all five branches converge to center final node", "799/800 before final rank", "final node 10 quadrillion shells", "Shellslot Capacity 5 costs 5 Life Vials and raises slots to 99", "Biovalue Multiplication X grants 16 jellyfish per capture", "12 slots", "400m Prestige4/140, 700m Prestige7/300, 1000m Prestige10/500"],
+      "limits": ["No figures promoted to official fact", "No use as our economy defaults", "Needs visible current-game node panels or primary confirmation"]
+    },
+    {
+      "id": "S10",
+      "type": "local_spec",
+      "title": "Nectar growth tree frozen MVP specification",
+      "path": "docs/design/nectar-growth-tree-mvp.md",
+      "accessed": "2026-11-03",
+      "version_context": "0.21 worktree baseline 61db0864483219144bc0c720575973c8ecfc0eba",
+      "verified": ["9 paid visible nodes", "12 paid ranks", "costs and parameters in comparison table", "market optional for completion", "completion requires twin OR shortcut"]
+    }
+  ],
+  "calculations": [
+    {"id": "C01", "classification": "analysis", "sources": ["S02"], "expression": "36380 / 35080 - 1", "result": 0.037058152793614685, "meaning": "Relative change of displayed total, approximately 3.706%", "assumption": "Displayed total compared directly; does not prove actual damage formula"},
+    {"id": "C02", "classification": "analysis", "sources": ["S02"], "expression": "(100 + 36380) / (100 + 35080) - 1", "result": 0.03695281409891993, "meaning": "Approximately 3.695% if percentage is additional bonus", "assumption": "100 percent base added to both values"},
+    {"id": "C03", "classification": "analysis", "sources": ["S10"], "expression": "12+32+48+85+18+55+25+75+90+65+90+180", "result": 775, "meaning": "Our all-rank cost, not Shelldiver cost or required completion spend"},
+    {"id": "C04", "classification": "analysis", "sources": ["S10"], "expression": "18/5 -> 18/7.5", "result": [3.6, 2.4], "unit": "seconds", "assumption": "Uninterrupted pure gathering; travel, availability and risk excluded"},
+    {"id": "C05", "classification": "analysis", "sources": ["S10"], "expression": "90/0.25", "result": 360, "meaning": "Ideal base sale value to recoup our market upgrade before per-sale rounding"},
+    {"id": "C06", "classification": "analysis", "sources": ["S10"], "expression": "ceil(90/floor(18*0.25))*18", "result": 414, "meaning": "Our market payback with fixed base-value 18 sales", "assumption": "Fixed sale size, no changing mix; not a run simulation"},
+    {"id": "C07", "classification": "analysis", "sources": ["S10"], "expression": "ceil(90/floor(54*0.25))*54", "result": 378, "meaning": "Our market payback with fixed base-value 54 sales", "assumption": "Fixed sale size, no changing mix; not a run simulation"}
+  ],
+  "unknowns": [
+    {"id": "U01", "question": "All original node names, costs, rank effects and prerequisite edges", "needed_evidence": "Current build readable node panels and recorded purchase sequence"},
+    {"id": "U02", "question": "Exact five-branch functional partition and inward/outward unlock topology", "needed_evidence": "Initial and intermediate tree captures; final overview alone insufficient"},
+    {"id": "U03", "question": "Resource and monster generation counts, seeds and reset conditions", "needed_evidence": "At least three same-depth entries, capture-clear test, wait test and return test"},
+    {"id": "U04", "question": "Current initial oxygen, capacity, capture time, first three trips and upgrade prices", "needed_evidence": "Successful fresh-save play or clearly timestamped continuous gameplay observation"},
+    {"id": "U05", "question": "Alchemy, automation and prestige exact economy", "needed_evidence": "Current build panels and transaction records; third-party guide is only a lead"},
+    {"id": "U06", "question": "Does our 0.22 feel rewarding to real players?", "needed_evidence": "Human playtest explaining actual choices; formulas and AI operation do not establish enjoyment"}
+  ],
+  "recommendations": [
+    {"id": "R01", "classification": "proposal", "basis": ["S02", "S05", "S10"], "proposal": "Show current-to-next values, missing prerequisite and next revealed benefit; do not hide essential systems behind unrelated convenience nodes"},
+    {"id": "R02", "classification": "proposal", "basis": ["S04", "S06"], "proposal": "Use separated functional hub points with one primary interaction, explicit unavailable reason and optional reduced flash/short repeated dance"},
+    {"id": "R03", "classification": "proposal", "basis": ["S02", "S07", "S10"], "proposal": "Use abstract six-direction visual order for our small graph; fill only meaningful functional branches, not fake locked nodes"},
+    {"id": "R04", "classification": "proposal", "basis": ["S01", "S04", "S10"], "proposal": "Add a material only after naming its unique use and regional supply; measure gathering/travel/sale bottlenecks before copying queues or automation"}
+  ]
+}

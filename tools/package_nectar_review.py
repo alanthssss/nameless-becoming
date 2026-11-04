@@ -309,7 +309,7 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
     if errors: raise ValueError('Nectar candidate blocked:\n- '+'\n- '.join(errors))
     output.parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='nectar-package-',dir=output.parent) as tmp:
-        stage = Path(tmp)/'采蜜小店-MVP'; stage.mkdir()
+        stage = Path(tmp)/'采蜜与蜂舞-Demo'; stage.mkdir()
         app, executable, version = extract_export(export_zip,stage)
         command_body = launcher_text(app.name,executable)
         command_hash = hashlib.sha256(command_body.encode('utf-8')).hexdigest()

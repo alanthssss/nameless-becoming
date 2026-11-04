@@ -127,6 +127,12 @@ func save_json(name: String,data) -> void:
 	var file := FileAccess.open(output.path_join(name),FileAccess.WRITE)
 	file.store_string(JSON.stringify(data,"\t",true,true))
 
+func transition_settled() -> void:
+	for i in 90:
+		await frames(1)
+		if game.mode != "transition": break
+	check(game.mode != "transition","dance transition settles within three seconds")
+
 func run() -> void:
 	var progress_argument := ""
 	for arg in OS.get_cmdline_user_args():
@@ -178,18 +184,18 @@ func run() -> void:
 		await tap(KEY_E)
 		check(game.mode == "regions","E opens the physical departure sign")
 		await click(game.ui.pond_button)
-		await frames(20)
+		await transition_settled()
 		check(game.model.area == "pond" and game.world.area_key == "pond","ordinary confirmation enters distinct pond scene")
 		if not failures.is_empty(): break
 		if "shortcut" in game.model.owned:
 			check(await fly_to(Model.SHORTCUTS[0]),"reach near shortcut")
 			await tap(KEY_F)
-			await frames(20)
+			await transition_settled()
 			check(game.model.area == "meadow" and game.model.p.distance_to(Model.SHORTCUTS[1]) < 5,"F uses actual outward scene shortcut")
 		elif "meadow" in game.model.owned:
 			check(await fly_to(Model.POND_EXIT),"reach the meadow passage by ordinary flight")
 			await tap(KEY_E)
-			await frames(20)
+			await transition_settled()
 			check(game.model.area == "meadow","passage enters unlocked meadow")
 		while game.model.cargo_total() < game.model.capacity():
 			var target: Dictionary={}
@@ -233,7 +239,7 @@ func run() -> void:
 		if "shortcut" in game.model.owned:
 			check(await fly_to(Model.SHORTCUTS[1]),"reach far shortcut")
 			await tap(KEY_F)
-			await frames(20)
+			await transition_settled()
 			check(game.model.area == "pond" and game.model.p.distance_to(Model.SHORTCUTS[0])<5,"F uses actual return scene shortcut")
 		if game.model.area == "meadow":
 			check(await fly_to(Model.MEADOW_ENTRY),"reach meadow return sign")
@@ -242,7 +248,7 @@ func run() -> void:
 		else:
 			check(await fly_to(Model.POND_ENTRY),"reach pond return sign")
 			await tap(KEY_E)
-		await frames(20)
+		await transition_settled()
 		check(game.model.area == "hub" and game.world.area_key == "hub","loaded safe courtyard with full cargo")
 		check(await fly_to(Model.HUB_SHOP),"ordinary flight to the separate sale NPC")
 		if not failures.is_empty(): break
@@ -288,7 +294,7 @@ func run() -> void:
 	await fly_to(Model.HUB_DEPART)
 	await tap(KEY_E)
 	await click(game.ui.pond_button)
-	await frames(20)
+	await transition_settled()
 	await fly_to(Vector2(640,480))
 	key(KEY_E,true)
 	await frames(20)

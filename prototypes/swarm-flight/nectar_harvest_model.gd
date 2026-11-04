@@ -6,9 +6,10 @@ const Canopy = preload("res://leaf_canopy_geometry.gd")
 const RAIN_SHELTER := {"pos":Vector2(2760,660),"half_width":160.0}
 const WORLD_WIDTH := 3600.0
 const HOME := Vector2(840,575)
-const HUB_SHOP := Vector2(300,540)
-const HUB_TREE := Vector2(640,470)
-const HUB_DEPART := Vector2(1020,540)
+const HUB_SHOP := Vector2(260,540)
+const HUB_TREE := Vector2(650,480)
+const HUB_JOURNAL := Vector2(1110,440)
+const HUB_DEPART := Vector2(1530,555)
 const POND_ENTRY := Vector2(470,575)
 const POND_EXIT := Vector2(1660,575)
 const MEADOW_ENTRY := Vector2(1900,575)
@@ -81,7 +82,7 @@ func upgrade_defs() -> Array:
 	return [
 		{"id":"gather1","name":"轻巧采蜜","description":"每秒采蜜 5 → 7.5 份","cost":12,"branch":0,"row":0,"requires":[]},
 		{"id":"gather2","name":"熟练采蜜","description":"每秒采蜜 7.5 → 11 份","cost":32,"branch":0,"row":1,"requires":["gather1"]},
-		{"id":"reach","name":"花香触角","description":"吸到更远的花蜜（范围 +55%）","cost":48,"branch":0,"row":2,"requires":["gather1"]},
+		{"id":"reach","name":"花香触角","description":"采集半径 100 → 155（+55%）","cost":48,"branch":0,"row":2,"requires":["gather1"]},
 		{"id":"twin","name":"双簇采蜜","description":"同时采集范围内的两朵花","cost":85,"branch":0,"row":3,"requires":["gather2","reach"]},
 		{"id":"bag1","name":"舒展蜜囊","description":"携带上限 18 → 30","cost":18,"branch":1,"row":0,"requires":[]},
 		{"id":"wings1","name":"轻盈双翼","description":"续航上限 85 → 110","cost":25,"branch":1,"row":1,"requires":[]},
@@ -154,7 +155,7 @@ func clear_controls() -> void:
 
 func interaction() -> String:
 	if area == "hub":
-		for point in [{"p":HUB_SHOP,"action":"shop"},{"p":HUB_TREE,"action":"tree"},{"p":HUB_DEPART,"action":"depart"}]:
+		for point in [{"p":HUB_SHOP,"action":"shop"},{"p":HUB_TREE,"action":"tree"},{"p":HUB_JOURNAL,"action":"journal"},{"p":HUB_DEPART,"action":"depart"}]:
 			if p.distance_to(point.p) <= 100.0: return point.action
 	elif area == "pond":
 		if p.distance_to(POND_ENTRY) <= 70.0: return "home"
@@ -163,7 +164,7 @@ func interaction() -> String:
 	return ""
 
 func update_camera() -> void:
-	camera_x = 0.0 if area == "hub" else clampf(p.x-480.0,400.0,440.0) if area == "pond" else clampf(p.x-480.0,1840.0,2240.0)
+	camera_x = clampf(p.x-640.0,0.0,640.0) if area == "hub" else clampf(p.x-480.0,400.0,440.0) if area == "pond" else clampf(p.x-480.0,1840.0,2240.0)
 	chapter.region = 1 if area == "meadow" else 0
 
 func transition_to(destination: String,via: String = "gate") -> bool:
@@ -269,7 +270,7 @@ func step(delta: float,move: Vector2,collect: bool,space_held: bool) -> void:
 		v = v.move_toward(move*speed,(1800.0 if move.is_zero_approx() else 1300.0)*dt)
 	p += v*dt
 	var left := 80.0 if area == "hub" else 400.0 if area == "pond" else 1840.0
-	var right := 1200.0 if area == "hub" else 1720.0 if area == "pond" else 3520.0
+	var right := 1840.0 if area == "hub" else 1720.0 if area == "pond" else 3520.0
 	var limited := Vector2(clampf(p.x,left,right),clampf(p.y,160.0,650.0))
 	if limited.x != p.x: v.x = 0.0
 	if limited.y != p.y: v.y = 0.0
@@ -351,7 +352,7 @@ func restore_payload(data) -> bool:
 	if not pair(data.p) or not number(data.hurt_left) or data.hurt_left < 0.0 or data.hurt_left > 1.5: return false
 	var next_p := Vector2(float(data.p[0]),float(data.p[1]))
 	var left := 80.0 if data.area == "hub" else 400.0 if data.area == "pond" else 1840.0
-	var right := 1200.0 if data.area == "hub" else 1720.0 if data.area == "pond" else 3520.0
+	var right := 1840.0 if data.area == "hub" else 1720.0 if data.area == "pond" else 3520.0
 	if next_p.x < left or next_p.x > right or next_p.y < 160.0 or next_p.y > 650.0: return false
 	if data.area == "hub" and data.hurt_left != 0.0: return false
 	var economic: Dictionary = data.duplicate(true)

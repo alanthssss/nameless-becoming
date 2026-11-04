@@ -2,6 +2,13 @@ extends "res://world_view.gd"
 ## Reuses the painted garden family. Every harvest centre comes from the model.
 @export var area_key := "hub"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
+const Dance = preload("res://nectar_dance.gd")
+const STAGE: Texture2D = preload("res://art/nectar-dance-stage.png")
+const BOOK_ART: Texture2D = preload("res://art/nectar-field-book.png")
+const SHOP_ART: Texture2D = preload("res://art/nectar-honey-shop.png")
+var reduced_motion := false
+var dance_elapsed := -1.0
+var dance_style := "waggle"
 var collecting := false
 var nectar_motes: Array[Dictionary] = []
 var harvest_texts: Array[Dictionary] = []
@@ -88,8 +95,11 @@ func _draw() -> void:
 		var q: Vector2 = mote.from.lerp(model.p+Vector2(-7,7),t*t)
 		draw_circle(q,3.3*(1.0-t*0.35),Color("ffed87") if mote.gold else Color("d4f4ff"))
 		draw_circle(q+Vector2(-1,-1),1.1,Color.WHITE)
-	_bee(model.p,1.02,model.face,0.45 if model.hurt_left > 0.0 and fmod(clock,0.16)<0.08 else 1.0,false,0.0)
-	_draw_bag()
+	if dance_elapsed >= 0.0 and not reduced_motion:
+		_draw_dance()
+	else:
+		_bee(model.p,1.02,model.face,0.65 if model.hurt_left > 0.0 and (reduced_motion or fmod(clock,0.16)<0.08) else 1.0,false,0.0)
+		_draw_bag()
 	for item in harvest_texts:
 		if feedback_font:
 			draw_string(feedback_font,item.p+Vector2(14,-30-item.age*26),item.text,HORIZONTAL_ALIGNMENT_LEFT,-1,17,Color(1,0.96,0.72,1-item.age))
@@ -97,52 +107,83 @@ func _draw() -> void:
 	SampleLandscape.foreground(self,model.camera_x,clock)
 
 func _label(p: Vector2, words: String, active := false, width := 180.0) -> void:
+	if p.x < model.camera_x+8 or p.x > model.camera_x+1272: return
 	p.x = clampf(p.x,model.camera_x+width*0.5+16,model.camera_x+1280-width*0.5-16)
 	var r := Rect2(p-Vector2(width*0.5,22),Vector2(width,42))
 	draw_style_box(_box_style(Color("294c3eea"),Color("edce83") if active else Color("98ab7d"),2,12),r)
 	if feedback_font: draw_string(feedback_font,p+Vector2(-width*0.5+13,7),words,HORIZONTAL_ALIGNMENT_LEFT,width-24,18,Color("fff1cc"))
 
 func _stand(p: Vector2, half: float) -> void:
-	ArtProps.stalk(self,p+Vector2(0,5),p+Vector2(18,110),p+Vector2(-21,210),Vector2(p.x,835),12)
+	ArtProps.stalk(self,p+Vector2(0,-24),p+Vector2(18,110),p+Vector2(-21,210),Vector2(p.x,835),12)
 	ArtSprites.small_leaf(self,p+Vector2(half,0),p+Vector2(-half,-10),32)
 
 func _draw_hub() -> void:
-	# A quiet one-screen courtyard: each visual address has one main action.
-	ArtProps.home(self,Vector2(220,455),0,1,0.72)
-	_stand(Vector2(315,610),105)
-	_bee(Vector2(300,545),0.78,Vector2.RIGHT,1,false,1.7,"waiting")
-	for i in 4:
-		var jar := Vector2(246+i*29,597)
-		_oval(jar,Vector2(10,15),Color("d7a347"),Color("70542c"),2)
-		draw_line(jar+Vector2(-8,-12),jar+Vector2(8,-12),Color("f6dc91"),4,true)
-	_label(Vector2(300,405),"蜜铺 · 交付花蜜",model.interaction()=="shop",210)
-	_stand(Vector2(650,557),108)
-	_bee(Vector2(692,500),0.65,Vector2.LEFT,1,false,2.9,"waiting")
-	# Abstract hexagonal chart, resting on the leaf desk; not a hive building.
-	var hex := PackedVector2Array()
-	for i in 6: hex.append(Vector2(621,520)+Vector2.from_angle(PI/3*i)*27)
-	draw_colored_polygon(hex,Color("e8d99b"))
-	var outline := hex.duplicate(); outline.append(hex[0])
-	draw_polyline(outline,Color("807342"),3,true)
-	for point in hex:
-		draw_line(Vector2(621,520),point,Color("9ca16b"),1.5,true)
-		draw_circle(point,4,Color("edf0c6"))
-	_label(Vector2(640,365),"成长台 · 提升能力",model.interaction()=="tree",218)
-	_draw_gate(Vector2(1020,540),"路牌 · 选择目的地",true)
+	# Four recognizable addresses with open flight space and physical supports.
+	for point in [Vector2(260,625),Vector2(1110,555)]:
+		_stand(point,145)
+	ArtProps.home(self,Vector2(675,560),0,1,0.64)
+	_stand(Vector2(650,620),108)
+	draw_texture_rect(SHOP_ART,Rect2(85,310,350,350),false)
+	_bee(Vector2(270,545),0.70,Vector2.RIGHT,1,false,1.7,"waiting")
+	var jars: int = mini(6,int(model.sold_total/18))
+	for i in jars:
+		var jar := Vector2(215+i%3*32,472-int(i/3)*44)
+		_oval(jar,Vector2(9,12),Color("d7a347"),Color("70542c"),2)
+		draw_line(jar+Vector2(-7,-10),jar+Vector2(7,-10),Color("f6dc91"),3,true)
+	_label(Vector2(260,290),"蜜铺 · 交付花蜜",model.interaction()=="shop",210)
+	_bee(Vector2(698,500),0.62,Vector2.LEFT,1,false,2.9,"waiting")
+	_book(Vector2(650,575),true)
+	_label(Vector2(650,240),"成长书屋 · 提升能力",model.interaction()=="tree",238)
+	# A field notebook on a leaf desk, with a lookout sharing observations.
+	ArtProps.shelter_plant(self,Vector2(1110,390),142)
+	_book(Vector2(1100,510),false)
+	_bee(Vector2(1163,455),0.63,Vector2.LEFT,1,false,3.1,"waiting")
+	_label(Vector2(1110,280),"观测台 · 花路见闻",model.interaction()=="journal",224)
+	_draw_gate(model.HUB_DEPART,"蜂舞广场 · 选择目的地",true)
+	if model.sold_total > 0:
+		# Progress lives in the courtyard, without a second quest state or currency.
+		for i in mini(4,1+int(model.growth_count()/2)):
+			var at := Vector2(850+i*95,625+sin(i)*17)
+			ArtProps.stalk(self,at+Vector2(0,18),at+Vector2(12,65),Vector2(at.x-12,760),Vector2(at.x,835),5)
+			ArtSprites.flower(self,at,Vector2.RIGHT,0,0,false)
 	if model.completed:
-		_bee(Vector2(480,320+sin(clock)*5),0.6,Vector2.RIGHT,1,false,4.0,"waiting")
+		for i in 3:
+			var pose: Dictionary = Dance.pose(fposmod(clock+i*.12,1.4),"waggle",i)
+			_bee(Vector2(1450+i*65,555)+(Vector2.ZERO if reduced_motion else pose.offset),0.62,Vector2.RIGHT,1,false,float(i),"greet")
+
+func _book(p: Vector2, _growth: bool) -> void:
+	draw_texture_rect(BOOK_ART,Rect2(p+Vector2(-70,-58),Vector2(140,98)),false)
 
 func _draw_gate(p: Vector2, title: String, available: bool) -> void:
-	if p.x < model.camera_x-90 or p.x > model.camera_x+1370: return
-	var base := p+Vector2(0,65)
-	ArtProps.stalk(self,base+Vector2(0,-30),base+Vector2(8,40),base+Vector2(-9,140),Vector2(p.x,832),9)
-	ArtProps.decor(self,base,"sign")
-	ArtSprites.small_leaf(self,base+Vector2(3,80),base+Vector2(84,47),21)
-	if feedback_font:
-		draw_string(feedback_font,base+Vector2(-24,5),"→" if available else "锁",HORIZONTAL_ALIGNMENT_LEFT,-1,24,Color("4f512d"))
-	_label(p+Vector2(0,-60),title,model.p.distance_to(p)<=100,224 if area_key=="hub" else 180)
+	if p.x < model.camera_x-160 or p.x > model.camera_x+1440: return
+	var size := 370.0 if area_key == "hub" else 230.0
+	_stage(p,size,available)
+	_label(p+Vector2(0,-size*.66),title,model.p.distance_to(p)<=100,260 if area_key=="hub" else 176)
 	if not available and feedback_font:
-		draw_string(feedback_font,Vector2(clampf(p.x,model.camera_x+106,model.camera_x+1174)-79,p.y-23),"成长台开放后通行",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("4f623f"))
+		draw_string(feedback_font,Vector2(clampf(p.x,model.camera_x+106,model.camera_x+1174)-79,p.y-23),"先在书屋解锁紫花地",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("4f623f"))
+
+func _stage(p: Vector2, size: float, active: bool) -> void:
+	# Native asset platform contact at ~0.88 of its canvas. The rooted stem supports it.
+	var base := p+Vector2(0,size*.14)
+	ArtProps.stalk(self,base,base+Vector2(12,60),Vector2(p.x-15,740),Vector2(p.x,835),13)
+	draw_texture_rect(STAGE,Rect2(p+Vector2(-size*.5,-size*.68),Vector2.ONE*size),false,Color.WHITE if active else Color("829481"))
+	if not active: return
+	var lamp := p+Vector2(0,-size*.24)
+	if not reduced_motion:
+		for i in 3:
+			var foot := base+Vector2(sin(clock*.85+i*TAU/3)*size*.27,-size*.09)
+			draw_colored_polygon(PackedVector2Array([lamp,foot+Vector2(-17,0),foot+Vector2(17,0)]),Color(.98,.89,.54,.07))
+			_ellipse(foot,Vector2(20,5),Color(.98,.90,.58,.18))
+	_ellipse(lamp,Vector2(size*.095,size*.09),Color(1,.89,.56,.10))
+
+func _draw_dance() -> void:
+	var group: int = mini(3,model.growth_count())
+	var pose: Dictionary = Dance.pose(dance_elapsed,dance_style)
+	_bee(model.p+pose.offset,1.02,pose.face,1,false,0,"dance")
+	for i in group:
+		var follower: Dictionary = Dance.pose(dance_elapsed,dance_style,i+1)
+		var at: Vector2 = model.p+Vector2(-58-(i%2)*44,22+(i/2)*25)+follower.offset
+		_bee(at,0.65,follower.face,smoothstep(0,.22,dance_elapsed),false,float(i+1),"dance")
 
 func _draw_creature(creature: Dictionary) -> void:
 	if creature.state == "gone": return
@@ -219,12 +260,10 @@ func _draw_leaf_stop(p: Vector2, half: float) -> void:
 func _draw_shortcut(p: Vector2, far: bool) -> void:
 	if p.x < model.camera_x-100 or p.x > model.camera_x+1400: return
 	if far and "meadow" not in model.owned: return
-	ArtProps.stalk(self,p+Vector2(0,32),p+Vector2(12,130),Vector2(p.x-28,710),Vector2(p.x,830),6)
-	ArtSprites.small_leaf(self,p+Vector2(8,107),p+Vector2(-62,77),20)
 	var active: bool = "shortcut" in model.owned
-	ArtSprites.flower(self,p,Vector2.LEFT if far else Vector2.RIGHT,0 if active else 0.55,0,not active)
-	if active and feedback_font:
-		draw_string(feedback_font,p+Vector2(-48,-70),"F · 借风穿行",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("2c5544"))
+	_stage(p,170,active)
+	if feedback_font:
+		draw_string(feedback_font,p+Vector2(-63,-125),"F · 灯球近道" if active else "近道 · 尚未点亮",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("2c5544"))
 
 func _draw_rain() -> void:
 	if area_key != "meadow": return

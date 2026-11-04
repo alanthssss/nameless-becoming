@@ -5,6 +5,7 @@ const Interface = preload("res://nectar_harvest_ui.gd")
 const Save = preload("res://save_data.gd")
 const Sound = preload("res://sound.gd")
 const Migration = preload("res://nectar_save_migration.gd")
+const Dance = preload("res://nectar_dance.gd")
 signal presentation_changed
 const SAVE_PATH := "user://nectar_harvest_v1.json"
 var model = Model.new()
@@ -31,9 +32,13 @@ var transition_elapsed := 0.0
 var transition_committed := false
 var transition_target := ""
 var pause_after_transition := false
+var reduced_motion := false
+var dance_style := "waggle"
+var settings_return := "title"
+var transition_short := false
 
 func _ready() -> void:
-	get_window().title = "雨来之前 · 采蜜小店 0.21"
+	get_window().title = "雨来之前 · 采蜜与蜂舞 Demo 0.22"
 	get_tree().auto_accept_quit = false
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--nectar-qa": test_mode = true
@@ -46,6 +51,7 @@ func _ready() -> void:
 		model.clear_controls()
 	elif loaded.blocked:
 		save_blocked = true
+	model.update_camera()
 	_load_world()
 	sound = Sound.new()
 	add_child(sound)
@@ -54,6 +60,7 @@ func _ready() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
 	layer.add_child(ui)
+	load_settings()
 	world.feedback_font = ui.font
 	ui.show_mode(mode)
 	ui.refresh()
@@ -64,6 +71,7 @@ func _load_world() -> void:
 		world.queue_free()
 	world = AREA_SCENES[model.area].instantiate()
 	world.model = model
+	world.reduced_motion = reduced_motion
 	add_child(world)
 	move_child(world,0)
 	if is_instance_valid(ui): world.feedback_font = ui.font
@@ -78,6 +86,7 @@ func request_transition(destination: String,via := "gate") -> void:
 	transition_candidate = candidate
 	transition_target = destination
 	transition_elapsed = 0.0
+	transition_short = reduced_motion
 	transition_committed = false
 	pause_after_transition = false
 	mode = "transition"
@@ -86,19 +95,25 @@ func request_transition(destination: String,via := "gate") -> void:
 
 func _advance_transition(dt: float) -> void:
 	transition_elapsed += dt
-	if not transition_committed and transition_elapsed >= 0.18:
+	var commit_time: float = Dance.SHORT_COMMIT if transition_short else Dance.COMMIT
+	var duration: float = Dance.SHORT_DURATION if transition_short else Dance.DURATION
+	world.dance_elapsed = transition_elapsed if not transition_short and not transition_committed else -1.0
+	world.dance_style = dance_style
+	if not transition_committed and transition_elapsed >= commit_time:
 		if not commit_candidate(transition_candidate):
 			transition_candidate = null
+			world.dance_elapsed = -1.0
 			mode = "pause" if pause_after_transition else "play"
 			ui.show_mode(mode)
 			message("地区切换未能保存 · 已留在原处，请稍后重试",4)
 			return
 		transition_committed = true
 		_load_world()
-	var alpha := transition_elapsed/0.18 if not transition_committed else 1.0-(transition_elapsed-0.18)/0.22
+	var alpha := clampf((transition_elapsed-(commit_time-0.18))/0.18,0,1) if not transition_committed else 1.0-(transition_elapsed-commit_time)/(duration-commit_time)
 	ui.set_transition(clampf(alpha,0,1),area_name(transition_target))
-	if transition_elapsed >= 0.40:
+	if transition_elapsed >= duration:
 		transition_candidate = null
+		world.dance_elapsed = -1.0
 		mode = "pause" if pause_after_transition else "play"
 		ui.show_mode(mode)
 		if mode == "play": get_viewport().gui_release_focus()
@@ -139,7 +154,8 @@ func _process(delta: float) -> void:
 			transition_target = model.area
 			transition_candidate = null
 			transition_committed = true
-			transition_elapsed = 0.18
+			transition_short = true
+			transition_elapsed = Dance.SHORT_COMMIT
 			ui.show_mode(mode)
 			ui.set_transition(1.0,area_name(model.area))
 		world.collecting = collecting and not model.harvesting_ids.is_empty()
@@ -156,7 +172,7 @@ func _process(delta: float) -> void:
 		if old_hud != _hud_signature(): presentation_changed.emit()
 	else:
 		world.collecting = false
-	world.presentation_active = mode in ["play","shop","tree","regions","transition","complete"]
+	world.presentation_active = mode in ["play","shop","tree","regions","journal","transition","complete"]
 	if is_instance_valid(sound):
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
@@ -171,10 +187,17 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		var key: Key = event.physical_keycode if event.physical_keycode != 0 else event.keycode
+		if mode == "transition" and key == KEY_SPACE:
+			# Skip presentation only; _advance_transition still performs one verified commit.
+			transition_elapsed = Dance.SHORT_DURATION if transition_short else Dance.DURATION
+			get_viewport().set_input_as_handled()
+			return
 		if key == KEY_ESCAPE:
 			if mode == "tree": close_tree()
 			elif mode == "shop": close_shop()
 			elif mode == "regions": close_regions()
+			elif mode == "journal": close_journal()
+			elif mode == "settings": close_settings()
 			elif mode == "play": pause_game()
 			elif mode == "pause": start_game()
 			elif mode == "complete": start_game()
@@ -194,6 +217,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				match action:
 					"shop": open_shop()
 					"tree": open_tree()
+					"journal": open_journal()
 					"depart", "pond": open_regions()
 					"home": request_transition("hub")
 					"meadow":
@@ -224,7 +248,52 @@ func start_game() -> void:
 	mode = "play"
 	ui.show_mode(mode)
 	get_viewport().gui_release_focus()
-	if model.trip_index == 0: message("同伴：右侧路牌出发，带回花蜜交给左边的收购员。",5)
+	if model.trip_index == 0: message("雨来前，备好花蜜。右侧蜂舞广场出发；花路观测台可了解旅途。",5)
+
+func open_journal() -> void:
+	if mode != "play" or model.interaction() != "journal": return
+	release_controls()
+	mode = "journal"
+	ui.show_mode(mode)
+
+func close_journal() -> void:
+	if mode != "journal": return
+	release_controls()
+	mode = "play"
+	ui.show_mode(mode)
+	get_viewport().gui_release_focus()
+
+func open_settings() -> void:
+	if mode not in ["title","pause","complete"]: return
+	settings_return = mode
+	release_controls()
+	mode = "settings"
+	ui.show_mode(mode)
+
+func close_settings() -> void:
+	if mode != "settings": return
+	mode = settings_return
+	ui.show_mode(mode)
+
+func load_settings() -> void:
+	var config := ConfigFile.new()
+	if config.load(saved_path+".settings.cfg") != OK: return
+	var motion: Variant = config.get_value("presentation","reduced_motion",false)
+	var muted: Variant = config.get_value("presentation","muted",false)
+	reduced_motion = motion is bool and motion
+	ui.muted = muted is bool and muted
+	dance_style = "side_step" if config.get_value("presentation","dance_style","") == "side_step" else "waggle"
+	world.reduced_motion = reduced_motion
+	sound.set_muted(ui.muted)
+
+func save_settings() -> void:
+	var config := ConfigFile.new()
+	config.set_value("presentation","reduced_motion",reduced_motion)
+	config.set_value("presentation","muted",ui.muted)
+	config.set_value("presentation","dance_style",dance_style)
+	if config.save(saved_path+".settings.cfg") != OK: message("设置暂时未保存，本次仍生效。",3)
+	world.reduced_motion = reduced_motion
+	ui.refresh_settings()
 
 func pause_game() -> void:
 	release_controls()
@@ -327,6 +396,14 @@ func quit_game() -> void:
 	release_controls()
 	if save_blocked or persist(): get_tree().quit()
 	else:
+		# A failed quit cancels presentation, preserving whichever stable area
+		# was last committed. Resuming must not retain an abandoned dance pose.
+		transition_candidate = null
+		transition_elapsed = 0.0
+		transition_committed = false
+		transition_target = ""
+		pause_after_transition = false
+		world.dance_elapsed = -1.0
 		mode = "pause"
 		ui.show_mode(mode)
 

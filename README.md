@@ -1,5 +1,7 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
+**2026-11-03 · macOS Steam Demo制作。** 按Alan新决定推进[蜂舞、生活区与发布规格](docs/design/nectar-steam-demo.md)，GDD§13.9 / M3 #288–298；唯一执行状态见[Now](docs/design/solar-term-campaign-production-spec.md#production-now)。0.21为历史基线，本轮未验证项目不会被写成已发布。
+
 **2026-11-03 · 采蜜小店0.21场景迭代。** [地区与遭遇设计](docs/design/nectar-regions-mvp.md)已实现独立庭院、两片野外、收购/成长/出发功能点与有限蚊群；[构建与验证回执](prototypes/swarm-flight/review-evidence/2026-11-03/nectar-regions-mvp/README.md)记录0.21候选。GDD§13.8 / M3 #281–286，最终集成与下一检查点沿[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。以下为历史候选记录。
 
 **2026-11-02 · 采蜜小店0.19候选已构建。** 现有蜜蜂、花园与故事已组成采集→售卖→12项成长→两处花地/近道→储粮完成的循环。[玩法与范围](docs/design/swarm-flight-gdd.md#nectar-harvest-mvp) · [构建与验证回执](prototypes/swarm-flight/review-evidence/2026-11-02/nectar-mvp/README.md) · [唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。旧0.18与旧档保留；新版等待Alan整包试玩判断。
@@ -269,3 +271,11 @@ npm run test
 8. `[需独立玩家验证]` 24 关完整首轮中有多少是有判断的行动，多少是无决策往返、说明阅读或重复固定；18～24 小时目标是否真实成立并支持 Demo 边界与未来售价？
 
 当前仍是封闭开发构建。实现事实、自动化和资产哈希都不能替代 Alan 最终批准、真实设备 QA 与独立外部玩家证据。
+
+### Steam Demo 深化资料（SD-v1）
+
+- [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
+- [macOS Demo 发行准备与商店材料](docs/release/nectar-demo-steam-macos.md)（暂无AppID；签名、公证与Steam审核待完成）。
+- [美术评审手册可编辑源](docs/art/nectar-demo-art-review.json)与[构建脚本](tools/build_nectar_art_manual.py)。PDF随本轮候选交付，尚未获专业评审。
+
+- [0.22构建回执与当前阻塞](docs/production/nectar-demo-022-build-receipt.md)：实际导出验收待Mac解锁；PR #300，尚未合并或交付通过门禁的候选。
