@@ -1,0 +1,21 @@
+{
+  "revision": "f1dbbd782f0d0b408bcd4ee832b9c32be1c0da3c",
+  "classification": "Developer-positioned native 1280x800 screenshots. Not player validation or exported candidate.",
+  "screenshots": [
+    {
+      "file": "courtyard.png",
+      "source": "/Users/alanthssss/LocalGames/nectar-environment-20261104/redesign/native-frozen/hub-1280.png",
+      "sha256": "3e998d8124473a07470c68058c8792c99cc3321aa88238bcca2f0c3874647d8f"
+    },
+    {
+      "file": "pond.png",
+      "source": "/Users/alanthssss/LocalGames/nectar-environment-20261104/redesign/native-frozen/pond-entry-1280.png",
+      "sha256": "e4e8b2b76212794a9a25639dd4133d98a8fa2d6cf8e95e3a3b7d6eee42c42ea1"
+    },
+    {
+      "file": "meadow.png",
+      "source": "/Users/alanthssss/LocalGames/nectar-environment-20261104/redesign/native-frozen/meadow-rain-1280.png",
+      "sha256": "11248dd05f6b988569f08bf524c31a7c572e975e02b29511a0be766e3faa5eb9"
+    }
+  ]
+}

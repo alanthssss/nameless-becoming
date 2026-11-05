@@ -6,10 +6,10 @@ const Encounters = preload("res://nectar_encounters.gd")
 const Canopy = preload("res://leaf_canopy_geometry.gd")
 const RAIN_SHELTER := {"pos":Vector2(2760,660),"half_width":160.0}
 const WORLD_WIDTH := 3600.0
-const HUB_SHOP := Vector2(390,540)
-const HUB_TREE := Vector2(760,500)
+const HUB_SHOP := Vector2(360,520)
+const HUB_TREE := Vector2(740,485)
 const HUB_JOURNAL := Vector2(1110,440) # Historical probe identifier; no station interaction.
-const HUB_DEPART := Vector2(1080,555)
+const HUB_DEPART := Vector2(1015,490)
 const HOME := HUB_DEPART
 const POND_ENTRY := Vector2(470,575)
 const POND_EXIT := Vector2(1660,575)
@@ -508,6 +508,7 @@ func restore_legacy_payload(data,version: int) -> bool:
 	if not valid: return false
 	var candidate: Dictionary = previous.to_payload()
 	candidate.version = SAVE_VERSION
+	if previous.at_home(): candidate.p = [HOME.x,HOME.y]
 	var old_max: float = previous.max_energy()
 	var new_max := 70.0 if "wings2" in previous.owned else 50.0 if "wings1" in previous.owned else 36.0
 	candidate.energy = new_max if previous.at_home() else maxf(0.01,new_max*previous.energy/old_max)

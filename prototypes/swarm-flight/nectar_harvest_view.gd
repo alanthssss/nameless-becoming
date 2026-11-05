@@ -4,9 +4,10 @@ extends "res://world_view.gd"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
 const UIArt = preload("res://nectar_ui_art.gd")
 const Dance = preload("res://nectar_dance.gd")
+const Landscape = preload("res://nectar_landscape.gd")
 const STAGE: Texture2D = preload("res://art/nectar-dance-stage.png")
-const BOOK_ART: Texture2D = preload("res://art/nectar-field-book.png")
-const SHOP_ART: Texture2D = preload("res://art/nectar-honey-shop.png")
+# Only the suspended vine and mirror ball; the timber pavilion is not reused outdoors.
+const LAMP_SOURCE := Rect2(500,430,246,246)
 const JAR_ART: Texture2D = preload("res://art/nectar-honey-jar.png")
 const JAR_SOURCE := Rect2(216,238,824,786)
 var reduced_motion := false
@@ -21,6 +22,7 @@ var harvest_recoil := 0.0
 var departing_creatures: Array[Dictionary] = []
 
 func _ready() -> void:
+	super._ready()
 	_rng.seed = 2601102
 
 func _process(delta: float) -> void:
@@ -74,32 +76,16 @@ func nectar_event(event: Dictionary) -> void:
 func _draw() -> void:
 	if model == null: return
 	draw_set_transform(Vector2.ZERO)
-	SampleLandscape.background(self,0,model.camera_x,clock,0,0)
-	# A broad atmosphere shift accompanies the second flower meadow.
-	var far_mix: float = 1.0 if area_key == "meadow" else 0.0
-	draw_rect(Rect2(0,0,1280,800),Color(0.69,0.60,0.87,far_mix*0.07))
+	Landscape.background(self,area_key)
 	_world_offset = Vector2(-model.camera_x,0)
 	draw_set_transform(_world_offset)
+	Landscape.terrain(self,area_key,model.camera_x,clock)
 	if area_key == "hub":
 		_draw_hub()
 	else:
-		if area_key == "pond":
-			_draw_leaf_stop(Vector2(1420,565),93)
-			_draw_shortcut(Vector2(1040,400),false)
-		else:
-			_draw_leaf_stop(model.RAIN_SHELTER.pos,model.RAIN_SHELTER.half_width)
-			_draw_shortcut(Vector2(3000,400),true)
-			_draw_rain()
-		for flower in model.flowers:
-			if int(flower.region) == (0 if area_key == "pond" else 1) and flower.pos.x > model.camera_x-150 and flower.pos.x < model.camera_x+1430:
-				_draw_source(flower)
-		for creature in model.creatures:
-			if int(creature.region) == (0 if area_key == "pond" else 1): _draw_creature(creature)
-		if area_key == "pond":
-			_draw_gate(Vector2(470,575),"回庭院",true)
-			_draw_gate(Vector2(1660,575),"前往紫花地", "meadow" in model.owned)
-		else: _draw_gate(Vector2(1900,575),"返程路牌",true)
-	for creature in departing_creatures: _draw_creature(creature)
+		_draw_field_scene()
+	if area_key == "hub":
+		for creature in departing_creatures: _draw_creature(creature)
 	_draw_materials()
 	for ring in pulse_rings:
 		var t: float = ring.age/0.4
@@ -114,16 +100,86 @@ func _draw() -> void:
 		else:
 			draw_circle(q,3.3*(1.0-t*0.35),Color("ffed87") if mote.gold else Color("d4f4ff"))
 			draw_circle(q+Vector2(-1,-1),1.1,Color.WHITE)
+	if area_key == "hub": _draw_player()
+	else:
+		# Indicators stay readable above the depth-sorted scenery and character.
+		for flower in model.flowers:
+			if _field_flower_visible(flower): _draw_source_feedback(flower)
+		if area_key == "pond":
+			_draw_gate_hint(Vector2(470,575),"回庭院",true)
+			_draw_gate_hint(Vector2(1660,575),"前往紫花地","meadow" in model.owned)
+			_draw_shortcut_hint(Vector2(1040,400),false)
+		else:
+			_draw_gate_hint(Vector2(1900,575),"返程路牌",true)
+			_draw_shortcut_hint(Vector2(3000,400),true)
+	for item in harvest_texts:
+		if feedback_font:
+			draw_string(feedback_font,item.p+Vector2(14,-30-item.age*26),item.text,HORIZONTAL_ALIGNMENT_LEFT,-1,17,Color(1,0.96,0.72,1-item.age))
+	draw_set_transform(Vector2.ZERO)
+	# Ground anchors remain in world space as the camera follows the bee.
+
+func _field_flower_visible(flower: Dictionary) -> bool:
+	return int(flower.region) == (0 if area_key == "pond" else 1) and flower.pos.x > model.camera_x-150 and flower.pos.x < model.camera_x+1430
+
+func _flower_root(flower: Dictionary) -> Vector2:
+	return flower.pos+Vector2(54 if flower.type == "rose" else 4,60)
+
+func _ground_shadow(p: Vector2, radius: Vector2, opacity := .14) -> void:
+	# Soft contact shadow, without the outlined ellipse used for gameplay marks.
+	draw_set_transform(_world_offset+p)
+	for layer in 3:
+		var points := PackedVector2Array()
+		var size: float = 1.0-float(layer)*.22
+		for i in 32:
+			var angle: float = TAU*float(i)/32.0
+			points.append(Vector2(cos(angle),sin(angle))*radius*size)
+		draw_colored_polygon(points,Color(.16,.27,.15,opacity*.32))
+	draw_set_transform(_world_offset)
+
+func _draw_player() -> void:
 	if dance_elapsed >= 0.0 and not reduced_motion:
 		_draw_dance()
 	else:
 		_draw_working_bee()
 		_draw_bag()
-	for item in harvest_texts:
-		if feedback_font:
-			draw_string(feedback_font,item.p+Vector2(14,-30-item.age*26),item.text,HORIZONTAL_ALIGNMENT_LEFT,-1,17,Color(1,0.96,0.72,1-item.age))
-	draw_set_transform(Vector2.ZERO)
-	SampleLandscape.foreground(self,model.camera_x,clock)
+
+func _draw_field_scene() -> void:
+	# A ground plane with upright sprites: sort their feet, not their picture tops.
+	var items: Array[Dictionary] = []
+	for flower in model.flowers:
+		if not _field_flower_visible(flower): continue
+		var root: Vector2 = _flower_root(flower)
+		_ground_shadow(root,Vector2(23,7),.13)
+		items.append({"kind":"flower","y":root.y,"data":flower})
+	var shelter: Vector2 = Vector2(1420,565) if area_key == "pond" else model.RAIN_SHELTER.pos
+	var half: float = 93.0 if area_key == "pond" else model.RAIN_SHELTER.half_width
+	_ground_shadow(shelter+Vector2(0,62),Vector2(half*.68,20),.12)
+	items.append({"kind":"leaf","y":shelter.y+65,"p":shelter,"half":half})
+	var shortcut := Vector2(1040,400) if area_key == "pond" else Vector2(3000,400)
+	if area_key == "pond" or "meadow" in model.owned:
+		_ground_shadow(shortcut+Vector2(0,64),Vector2(46,12),.12)
+		items.append({"kind":"lamp","y":shortcut.y+65,"p":shortcut,"size":170.0,"active":"shortcut" in model.owned})
+	var gates: Array = [{"p":Vector2(470,575),"active":true},{"p":Vector2(1660,575),"active":"meadow" in model.owned}] if area_key == "pond" else [{"p":Vector2(1900,575),"active":true}]
+	for gate in gates:
+		_ground_shadow(gate.p+Vector2(0,64),Vector2(57,14),.12)
+		items.append({"kind":"lamp","y":gate.p.y+65,"p":gate.p,"size":230.0,"active":gate.active})
+	for creature in model.creatures:
+		if int(creature.region) != (0 if area_key == "pond" else 1) or creature.state == "gone": continue
+		_ground_shadow(creature.pos+Vector2(0,30),Vector2(18,6),.10)
+		items.append({"kind":"creature","y":creature.pos.y+30,"data":creature})
+	for creature in departing_creatures:
+		items.append({"kind":"creature","y":creature.pos.y+30,"data":creature})
+	_ground_shadow(model.p+Vector2(0,35),Vector2(22,7),.15)
+	items.append({"kind":"player","y":model.p.y+35})
+	items.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y)<float(b.y))
+	for item in items:
+		match item.kind:
+			"flower": _draw_source(item.data)
+			"leaf": _draw_leaf_stop(item.p,item.half)
+			"lamp": _stage(item.p,item.size,item.active)
+			"creature": _draw_creature(item.data)
+			"player": _draw_player()
+	_draw_rain()
 
 func _label(p: Vector2, words: String, active := false, width := 180.0) -> void:
 	if p.x < model.camera_x+8 or p.x > model.camera_x+1272: return
@@ -132,59 +188,71 @@ func _label(p: Vector2, words: String, active := false, width := 180.0) -> void:
 	draw_style_box(_box_style(Color("294c3eea"),Color("edce83") if active else Color("98ab7d"),2,12),r)
 	if feedback_font: draw_string(feedback_font,p+Vector2(-width*0.5+13,7),words,HORIZONTAL_ALIGNMENT_LEFT,width-24,18,Color("fff1cc"))
 
-func _stand(p: Vector2, half: float) -> void:
-	ArtProps.stalk(self,p+Vector2(0,-24),p+Vector2(18,110),p+Vector2(-21,210),Vector2(p.x,835),12)
-	ArtSprites.small_leaf(self,p+Vector2(half,0),p+Vector2(-half,-10),32)
-
 func _draw_hub() -> void:
-	# Three addresses in one view; shelf inventory uses the same painted jar family.
-	var shop_origin: Vector2 = model.HUB_SHOP+Vector2(-175,-230)
-	_stand(model.HUB_SHOP+Vector2(0,85),145)
-	draw_texture_rect(SHOP_ART,Rect2(shop_origin,Vector2(350,350)),false)
-	_bee(model.HUB_SHOP+Vector2(10,5),0.70,Vector2.RIGHT,1,false,1.7,"waiting")
+	# The house, counter, notebook and leaf terrace share one painted courtyard.
+	# Dynamic inventory sits on the two empty shelf surfaces in that painting.
 	var jars: int = mini(6,int(model.sold_total/6))
 	for i in jars:
-		# Feet touch the two existing shelf surfaces, no flat procedural oval jars.
-		var foot: Vector2 = shop_origin+Vector2(87+(i%3)*39,176-(i/3)*39)
+		var foot := Vector2(246+(i%3)*48,391-(i/3)*42)
 		draw_texture_rect_region(JAR_ART,Rect2(foot+Vector2(0,-34),Vector2(35,34)),JAR_SOURCE)
-	ArtProps.home(self,model.HUB_TREE+Vector2(25,60),0,1,0.64)
-	_stand(model.HUB_TREE+Vector2(0,120),108)
-	_bee(model.HUB_TREE+Vector2(48,0),0.62,Vector2.LEFT,1,false,2.9,"waiting")
-	_book(model.HUB_TREE+Vector2(0,75),true)
-	# The old nonfunctional wind flowers and standalone information desk are removed.
-	_draw_gate(model.HUB_DEPART,"E  出发",true)
-	if model.interaction()=="shop": _label(model.HUB_SHOP+Vector2(0,-250),"E  交付花蜜",true,160)
-	elif model.interaction()=="tree": _label(model.HUB_TREE+Vector2(0,-220),"E  成长",true,130)
+	_bee(Vector2(414,476),0.65,Vector2.LEFT,1,false,1.7,"waiting")
+	_bee(Vector2(788,467),0.58,Vector2.LEFT,1,false,2.9,"waiting")
+	_ground_shadow(model.p+Vector2(0,35),Vector2(22,7),.12)
+	var lamp := Vector2(1011,357)
+	if not reduced_motion:
+		for i in 3:
+			var foot := Vector2(1008+sin(clock*.85+i*TAU/3)*57,505)
+			draw_colored_polygon(PackedVector2Array([lamp,foot+Vector2(-14,0),foot+Vector2(14,0)]),Color(.98,.89,.54,.045))
+			_ellipse(foot,Vector2(18,5),Color(.98,.90,.58,.18))
+		var glint := lamp+Vector2(sin(clock*.7)*28,cos(clock*.7)*22)
+		draw_line(glint-Vector2(4,0),glint+Vector2(4,0),Color(1,.97,.78,.62),1.4,true)
+		draw_line(glint-Vector2(0,4),glint+Vector2(0,4),Color(1,.97,.78,.62),1.4,true)
+	if model.interaction()=="shop": _label(Vector2(333,280),"E  交付花蜜",true,160)
+	elif model.interaction()=="tree": _label(Vector2(735,354),"E  成长",true,130)
+	elif model.interaction()=="depart": _label(Vector2(1015,270),"E  出发",true,150)
 	if model.completed:
 		for i in 3:
 			var pose: Dictionary = Dance.pose(fposmod(clock+i*.12,1.4),"waggle",i)
-			_bee(model.HUB_DEPART+Vector2(-80+i*65,0)+(Vector2.ZERO if reduced_motion else pose.offset),0.62,Vector2.RIGHT,1,false,float(i),"greet")
-
-func _book(p: Vector2, _growth: bool) -> void:
-	draw_texture_rect(BOOK_ART,Rect2(p+Vector2(-70,-58),Vector2(140,98)),false)
+			_bee(model.HUB_DEPART+Vector2(-65+i*55,12)+(Vector2.ZERO if reduced_motion else pose.offset),0.62,Vector2.RIGHT,1,false,float(i),"greet")
 
 func _draw_gate(p: Vector2, title: String, available: bool) -> void:
 	if p.x < model.camera_x-160 or p.x > model.camera_x+1440: return
 	var size := 300.0 if area_key == "hub" else 230.0
 	_stage(p,size,available)
+	_draw_gate_hint(p,title,available)
+
+func _draw_gate_hint(p: Vector2, title: String, available: bool) -> void:
+	if p.x < model.camera_x-160 or p.x > model.camera_x+1440: return
+	var height := 198.0 if area_key == "hub" else 117.0
 	if model.p.distance_to(p)<=(100 if area_key=="hub" else 70):
-		_label(p+Vector2(0,-size*.66),title,true,150 if area_key=="hub" else 176)
+		_label(p+Vector2(0,-height),title,true,150 if area_key=="hub" else 176)
 	if not available and feedback_font:
 		draw_string(feedback_font,Vector2(clampf(p.x,model.camera_x+106,model.camera_x+1174)-79,p.y-23),"尚未开放",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("4f623f"))
 
 func _stage(p: Vector2, size: float, active: bool) -> void:
-	# Native asset platform contact at ~0.88 of its canvas. The rooted stem supports it.
-	var base := p+Vector2(0,size*.14)
-	ArtProps.stalk(self,base,base+Vector2(12,60),Vector2(p.x-15,740),Vector2(p.x,835),13)
-	draw_texture_rect(STAGE,Rect2(p+Vector2(-size*.5,-size*.68),Vector2.ONE*size),false,Color.WHITE if active else Color("829481"))
+	# A small suspended marker belongs to a local plant on the ground plane.
+	# Source crop preserves the existing mirror ball without its timber pavilion.
+	var scale := .24 if size < 200.0 else .29
+	var root := p+Vector2(44,63)
+	var hanging := p+Vector2(0,-86)
+	var stem := PackedVector2Array([root,root+Vector2(38,-95),hanging+Vector2(34,-21),hanging])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],6.0)
+	for t in [.28,.62]:
+		var leaf_root: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],t)
+		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2(36 if t<.5 else -34,-19),15)
+	ArtSprites.small_leaf(self,root,root+Vector2(-101,1),22)
+	ArtSprites.small_leaf(self,root+Vector2(-5,0),root+Vector2(32,-14),11)
+	var lamp_origin := hanging-Vector2(123*scale,0)
+	draw_texture_rect_region(STAGE,Rect2(lamp_origin,LAMP_SOURCE.size*scale),LAMP_SOURCE,Color.WHITE if active else Color("829481"))
 	if not active: return
-	var lamp := p+Vector2(0,-size*.24)
+	var lamp := lamp_origin+Vector2(123,127)*scale
+	var base := p+Vector2(0,58)
 	if not reduced_motion:
 		for i in 3:
-			var foot := base+Vector2(sin(clock*.85+i*TAU/3)*size*.27,-size*.09)
-			draw_colored_polygon(PackedVector2Array([lamp,foot+Vector2(-17,0),foot+Vector2(17,0)]),Color(.98,.89,.54,.07))
-			_ellipse(foot,Vector2(20,5),Color(.98,.90,.58,.18))
-	_ellipse(lamp,Vector2(size*.095,size*.09),Color(1,.89,.56,.10))
+			var foot := base+Vector2(sin(clock*.85+i*TAU/3)*30,-4)
+			draw_colored_polygon(PackedVector2Array([lamp,foot+Vector2(-9,0),foot+Vector2(9,0)]),Color(.98,.89,.54,.055))
+			_ellipse(foot,Vector2(12,4),Color(.98,.90,.58,.15))
+	_ellipse(lamp,Vector2(26,24)*scale/.29,Color(1,.89,.56,.08))
 
 func _draw_dance() -> void:
 	var group: int = mini(3,model.growth_count())
@@ -221,14 +289,17 @@ func _draw_source(flower: Dictionary) -> void:
 	var purple: bool = flower.type == "rose"
 	var stocked: bool = flower.stock > 0
 	var join := p+Vector2(54,23) if purple else p+Vector2(0,22)
-	var root := Vector2(flower.pos.x+26,832)
-	var stem := PackedVector2Array([join,join+Vector2(12,110),root+Vector2(-25,-125),root])
-	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],5.5)
-	for t in [0.42,0.70]:
+	var root := _flower_root(flower)
+	var stem := PackedVector2Array([join,join+Vector2(7,15),root+Vector2(-7,-15),root])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],4.0)
+	for t in [.48,.80]:
 		var leaf_root: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],t)
-		var direction := -1.0 if t < 0.5 else 1.0
-		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2(64*direction,-28),17)
+		var direction := -1.0 if t < .6 else 1.0
+		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2(29*direction,-13),10)
 	var tint := Color.WHITE if stocked else Color("aaa986")
+	# A bee flying behind a petal remains legible; the root still sets draw order.
+	if model.p.y+35.0 < root.y and model.p.y > p.y-65.0 and absf(model.p.x-p.x-(40.0 if purple else 0.0)) < 65.0:
+		tint.a = .62
 	var opening: float = float(flower.bloom)
 	var head_scale := lerpf(0.42,1.0,smoothstep(0,1,opening))
 	var working: bool = flower.id in model.harvesting_ids
@@ -249,6 +320,11 @@ func _draw_source(flower: Dictionary) -> void:
 		draw_circle(p,radius+3,Color(1.0,0.84,0.34,0.18))
 		draw_circle(p,radius,Color("ffe99c") if purple else Color("fff2bd"))
 		draw_circle(p+Vector2(-1.8,-1.7),1.8,Color.WHITE)
+
+func _draw_source_feedback(flower: Dictionary) -> void:
+	var p: Vector2 = flower.pos if reduced_motion else model.flower_point(flower)
+	var stocked: bool = flower.stock > 0
+	var working: bool = flower.id in model.harvesting_ids
 	if working or (stocked and float(flower.progress)>0.0 and p.distance_to(model.p)<model.harvest_radius()+40):
 		var rect := Rect2(p+Vector2(-38,-70),Vector2(76,11))
 		draw_style_box(_box_style(Color("264a3b"),Color("fff3cf"),2,6),rect)
@@ -303,15 +379,30 @@ func _draw_boundary() -> void:
 			ArtSprites.hedge(self,Rect2(x-60+i*105,760,78,66))
 
 func _draw_leaf_stop(p: Vector2, half: float) -> void:
-	ArtProps.shelter_plant(self,p,half)
+	# Keep the shared rain contour, with the petiole rooted locally on this plane.
+	var root := p+Vector2(half-34,65)
+	var stem := PackedVector2Array([p+Vector2(half+4,-80),p+Vector2(half+17,-8),root+Vector2(-10,-32),root])
+	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],12.0)
+	ArtProps.branch(self,stem,.48,p+Vector2(58,54),4.5)
+	var canopy_rect: Rect2 = ArtSprites.Canopy.rect({"pos":p,"half_width":half})
+	var alpha := .55 if canopy_rect.grow(24).has_point(model.p) else 1.0
+	draw_texture_rect_region(ArtSprites.ATLAS,canopy_rect,ArtSprites.LEAF,Color(1,1,1,alpha))
+	ArtSprites.small_leaf(self,p+Vector2(60,57),p+Vector2(-60,57),29)
+	ArtSprites.small_leaf(self,root,root+Vector2(35,-10),12)
 
 func _draw_shortcut(p: Vector2, far: bool) -> void:
 	if p.x < model.camera_x-100 or p.x > model.camera_x+1400: return
 	if far and "meadow" not in model.owned: return
 	var active: bool = "shortcut" in model.owned
 	_stage(p,170,active)
+	_draw_shortcut_hint(p,far)
+
+func _draw_shortcut_hint(p: Vector2, far: bool) -> void:
+	if p.x < model.camera_x-100 or p.x > model.camera_x+1400: return
+	if far and "meadow" not in model.owned: return
+	var active: bool = "shortcut" in model.owned
 	if feedback_font and model.p.distance_to(p)<=115:
-		draw_string(feedback_font,p+Vector2(-63,-125),"F  近道" if active else "尚未点亮",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("2c5544"))
+		_label(p+Vector2(0,-117),"F  近道" if active else "尚未点亮",active,140)
 
 func _draw_rain() -> void:
 	if area_key != "meadow": return
