@@ -279,6 +279,10 @@ npm run test
 ### Steam Demo 深化资料（SD-v1）
 
 - [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
+- [Shelldiver 完整实机研究：覆盖与续接记录](docs/research/shelldiver-fullplay-checkpoint.md)（10%额度检查点暂停、未完成；已保存[86张实机图证清单](docs/research/shelldiver-S11-captures.json)，含[地图/美术/交互研究方法与媒体归档](docs/research/shelldiver-fullplay-checkpoint.md#study-method)、实际时码和缺口）。
+- [Shelldiver 11月5日增量报告](docs/research/shelldiver-increment-2026-11-05.md)（第三趟购买、跨趟库存、400/500/700/800/1000米局部地图、经营便利和终局；新增61张图证，设计采用待Alan评议）。
+- [Shelldiver Windows 实机验证方案](docs/research/shelldiver-windows-verification.md)（待执行：先完成视频研究，再做设备能力探测、存档保护与控制实验）。
+- [采蜜 Demo 环境支撑与地貌审计](docs/research/nectar-environment-grounding-review.md)（0.24 结构证据与三地改法；尚未实施，待视频研究归纳后落实改善）。
 - [macOS Demo 发行准备与商店材料](docs/release/nectar-demo-steam-macos.md)（暂无AppID；签名、公证与Steam审核待完成）。
 - [美术评审手册可编辑源](docs/art/nectar-demo-art-review.json)与[构建脚本](tools/build_nectar_art_manual.py)。这是0.22历史手册，含本轮已调整的四点庭院；0.23变化见下方回执，尚未获专业评审。
 
