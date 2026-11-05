@@ -150,6 +150,7 @@ func buy(id: String) -> bool:
 
 func sell() -> int:
 	if not at_home() or cargo_total() == 0: return 0
+	var delivered: Dictionary = cargo.duplicate()
 	var value := cargo_value()
 	coins += value
 	sold_total += cargo_total()
@@ -157,6 +158,7 @@ func sell() -> int:
 	cargo = {"blue":0,"rose":0}
 	_full_announced = false
 	emit("sell",HUB_SHOP,value)
+	events[-1]["cargo"] = delivered
 	return value
 
 func clear_controls() -> void:
@@ -219,6 +221,8 @@ func transition_to(destination: String,via: String = "gate") -> bool:
 		energy = max_energy()
 		hurt_left = 0.0
 		emit("return",p,cargo_total())
+		events[-1]["cargo"] = cargo.duplicate()
+		events[-1]["materials"] = materials.duplicate()
 	elif previous == "hub": emit("depart",p,trip_index)
 	if area == "meadow": visited_meadow = true
 	update_camera()
@@ -229,6 +233,7 @@ func transition_to(destination: String,via: String = "gate") -> bool:
 
 func _rescue() -> void:
 	var before := cargo_total()
+	var carried: Dictionary = cargo.duplicate()
 	var previous := area
 	cargo.blue = int(floor(float(cargo.blue)*0.5))
 	cargo.rose = int(floor(float(cargo.rose)*0.5))
@@ -246,6 +251,9 @@ func _rescue() -> void:
 	events[-1]["from"] = previous
 	events[-1]["to"] = area
 	emit("rescue",HOME,before-cargo_total())
+	events[-1]["cargo"] = cargo.duplicate()
+	events[-1]["lost"] = {"blue":int(carried.blue)-int(cargo.blue),"rose":int(carried.rose)-int(cargo.rose)}
+	events[-1]["materials"] = materials.duplicate()
 
 func use_shortcut() -> bool:
 	return transition_to("meadow" if area == "pond" else "pond","shortcut")

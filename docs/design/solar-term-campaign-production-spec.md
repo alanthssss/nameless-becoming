@@ -342,6 +342,8 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
+**2026-11-05 · SD-v1.4研究应用进行中。** Alan授权把已研究内容用于游戏；GDD§8.1/13.9→M3→[#318](https://github.com/alanthssss/nameless-becoming/issues/318)、[#319](https://github.com/alanthssss/nameless-becoming/issues/319)、[#320](https://github.com/alanthssss/nameless-becoming/issues/320)。唯一下一动作是在庭院/临时名基线上完成返程地标、准确结算和可见成长，再以普通双路线/原生画面/冷续及原NH-C01–08交付0.25候选。已有研究314已集成；315→317为待CI集成依赖，当前改动不代表Alan审美接受。详细进展/成本只见[本批回执](../production/nectar-demo-025-build-receipt.md)及上述Issue；#211、M3和未完成原作研究保持开放，200＋40小时、累计/可靠剩余未知、新采购0、自动化PAUSED。
+
 **2026-11-05 · 采蜜 Demo 临时显示名进入复核。** GDD §13.9 / M3 / [#316](https://github.com/alanthssss/nameless-becoming/issues/316)。Alan 要求撤下正式游戏名，沿 [#315](https://github.com/alanthssss/nameless-becoming/pull/315) 冻结头 `54d2da8` 制作独立草稿。Codex 已用三个独立 Godot 进程检查新会话、新档冷续与预览旧档恢复，核对当前窗口、标题、设置、macOS 应用显示名与原存档位置。等待草稿复核，场景画面沿 #313、视频研究沿 #288 接续。
 <!-- nectar-oblique-preview -->
 **2026-11-04 · 伪俯视开发预览技术收口，待新画面产品判断。** GDD§8.1/§13.9→M3→#313 / Draft #315，冻结f1dbbd7：真实庭院蜂房＋连续斜俯视地面＋侧面短花已可运行，24张两窗口实景、普通输入全程340项及冷续3项均无失败，源码CI通过。详细来源、失败历史、独立性与成本见原[回执](../production/nectar-environment-grounding-receipt.md#本轮开发预览与验证收口)。本轮保留开发预览，未合并/导出/替换0.24候选；用户接受仍未知，#313研究待办/M3/#211保持开放。大树是举例，高低长杆花簇方向已退回；只沿此Now与原Issue接续。

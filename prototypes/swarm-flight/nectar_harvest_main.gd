@@ -37,6 +37,9 @@ var reduced_motion := false
 var dance_style := "waggle"
 var settings_return := "title"
 var transition_short := false
+# Current home visit only. A cold load has no witnessed expedition result.
+var home_return_summary := ""
+var home_sale_summary := ""
 
 func _ready() -> void:
 	get_window().title = DISPLAY_NAME
@@ -120,6 +123,8 @@ func _advance_transition(dt: float) -> void:
 		mode = "pause" if pause_after_transition else "play"
 		ui.show_mode(mode)
 		if mode == "play": get_viewport().gui_release_focus()
+		if mode == "play" and model.at_home() and toast_left > 0.0:
+			ui.show_toast(toast_text,toast_left)
 		presentation_changed.emit()
 
 func area_name(area: String) -> String:
@@ -354,7 +359,6 @@ func sell_cargo() -> void:
 	var gain: int = candidate.sell()
 	if gain <= 0: return
 	if commit_candidate(candidate):
-		message("+%d 金币" % gain,1.6)
 		ui.refresh()
 
 func buy_upgrade(id: String) -> void:
@@ -364,13 +368,18 @@ func buy_upgrade(id: String) -> void:
 	if not candidate.buy(id):
 		message(model.locked_reason(id),3)
 		return
-	var title: String = candidate.upgrade(id).name
+	var definition: Dictionary = candidate.upgrade(id)
 	if commit_candidate(candidate):
-		message(title+" ↑",1.6)
+		var effect: String = {"meadow":"紫花地已开放，可从出发处选择","shortcut":"池岸与紫花地可用近道往返","reserve":"花蜜储备完成，伙伴已在广场等你"}.get(id,definition.description)
+		var paid := "%d 金币" % int(definition.cost)
+		for kind in ["fiber","resin"]:
+			if int(definition.get(kind,0)) > 0:
+				paid += " · %d %s" % [int(definition[kind]),"纤维" if kind == "fiber" else "树脂"]
 		if id == "reserve":
 			mode = "complete"
 			ui.show_mode(mode)
 		ui.refresh()
+		message("%s · %s\n花费 %s" % [definition.name,effect,paid],4.5)
 
 func commit_candidate(candidate) -> bool:
 	if save_blocked or not Save.write_payload(candidate.to_payload(),saved_path,Model.new()):
@@ -404,6 +413,8 @@ func restart_game() -> void:
 		message("新进度无法保存，原进度未改变。",5)
 		return
 	model = candidate
+	home_return_summary = ""
+	home_sale_summary = ""
 	_load_world()
 	save_blocked = false
 	has_save = true
@@ -446,17 +457,28 @@ func consume_events(pending: Array) -> void:
 		elif kind == "tap": sound.play_event("spray",0)
 		elif kind == "material": sound.play_event("dew",0)
 		elif kind == "hurt": sound.play_event("hit",0)
-		elif kind == "sell": sound.play_event("arrival_bell",0)
+		elif kind == "sell":
+			sound.play_event("arrival_bell",0)
+			var delivered: Dictionary = event.cargo
+			home_sale_summary = "已交付 · 蓝花蜜 %d · 紫花蜜 %d\n获得 %d 金币" % [delivered.blue,delivered.rose,event.amount]
+			message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
 		elif kind in ["buy","unlock"]: sound.play_event("ring",0)
 		elif kind == "complete": sound.play_event("finish",0)
 		elif kind == "rescue":
 			sound.play_event("recover",0)
-			message("同伴把你送回了蜂巢 · 未交付花蜜损失了一半",5)
+			home_return_summary = "救援带回 · 蓝花蜜 %d · 紫花蜜 %d\n损失 · 蓝花蜜 %d · 紫花蜜 %d\n材料保留 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.lost.blue,event.lost.rose,event.materials.fiber,event.materials.resin]
+			home_sale_summary = ""
+			message("同伴送回 · 蓝蜜保留 %d、损失 %d\n紫蜜保留 %d、损失 %d · 材料保留" % [event.cargo.blue,event.lost.blue,event.cargo.rose,event.lost.rose],5)
 			persist()
 		elif kind == "full": message("蜜囊已满",2)
 		elif kind == "return":
-			message("回来了",1.4)
+			home_return_summary = "本次带回 · 蓝花蜜 %d · 紫花蜜 %d\n材料现有 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.materials.fiber,event.materials.resin]
+			home_sale_summary = ""
+			message("带回蓝花蜜 %d、紫花蜜 %d · 体力已补满" % [event.cargo.blue,event.cargo.rose],4)
 			persist()
+		elif kind == "depart":
+			home_return_summary = ""
+			home_sale_summary = ""
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:

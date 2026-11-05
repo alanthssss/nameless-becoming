@@ -228,6 +228,7 @@ func run() -> void:
 		check(m.area == destination and game.world.area_key == destination,"departure loads selected scene once")
 		if not failures.is_empty(): break
 		var region := 0 if destination == "pond" else 1
+		trace.append({"frame":frame_count,"event":"trip_departure","trip":m.trip_index,"capacity":m.capacity(),"max_energy":m.max_energy(),"harvest_seconds":1.0/m.harvest_rate(),"owned":m.owned.duplicate()})
 		var home: Vector2 = Model.POND_ENTRY if region == 0 else Model.MEADOW_ENTRY
 		for creature in m.creatures:
 			if creature.region != region: continue
@@ -248,15 +249,27 @@ func run() -> void:
 				await frames(12)
 			if not failures.is_empty(): break
 		var picked: Array = []
+		var turn_reason := "attempt_limit"
 		for attempt in 20:
-			if m.cargo_total() >= m.capacity(): break
+			if m.cargo_total() >= m.capacity():
+				turn_reason = "cargo_full"
+				break
 			var target: Dictionary = {}
 			for flower in m.flowers:
 				if flower.stock <= 0 or flower.region != region or flower.id in picked: continue
 				if target.is_empty() or m.p.distance_to(flower.pos) < m.p.distance_to(target.pos): target = flower
-			if target.is_empty(): break
+			# Finish a circuit, then use an already-regrown flower without waiting.
+			if target.is_empty():
+				for flower in m.flowers:
+					if flower.stock <= 0 or flower.region != region: continue
+					if target.is_empty() or m.p.distance_to(flower.pos) < m.p.distance_to(target.pos): target = flower
+			if target.is_empty():
+				turn_reason = "no_stocked_flower"
+				break
 			var required: float = planned_flight_cost(m.p,target.pos)+planned_flight_cost(target.pos,home)+3.7/m.harvest_rate()+4.0
-			if m.energy <= required: break
+			if m.energy <= required:
+				turn_reason = "pilot_energy_margin"
+				break
 			var approach: Vector2 = target.pos
 			var paired: Dictionary = {}
 			var stock_before := int(target.stock)
@@ -285,6 +298,10 @@ func run() -> void:
 			picked.append(target.id)
 			if m.at_home(): check(false,"planned route unexpectedly exhausted energy"); break
 		check(m.cargo_total()>0 or m.materials.fiber>materials_before.fiber or m.materials.resin>materials_before.resin,"trip returns with actual nectar or material rewards and an energy reserve")
+		var regrowth: Array = []
+		for flower in m.flowers:
+			if flower.id in picked: regrowth.append({"id":flower.id,"stock":flower.stock,"regrow":flower.regrow})
+		trace.append({"frame":frame_count,"event":"trip_turnback","trip":m.trip_index,"reason":turn_reason,"cargo":m.cargo_total(),"capacity":m.capacity(),"energy":m.energy,"picked":picked.duplicate(),"flowers":regrowth})
 		if not failures.is_empty(): break
 		if expedition == 0: await capture("04-first-return-reserve")
 		check(await fly_to(home),"ordinary flight returns before exhaustion")

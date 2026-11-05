@@ -39,6 +39,7 @@ var shop: Control
 var shop_coins: Label
 var shop_cargo: Label
 var shop_story: Label
+var shop_recap: Label
 var shop_value: Label
 var sell_button: Button
 var leave_button: Button
@@ -272,6 +273,8 @@ func _build_shop() -> void:
 	text_line(v,"庭院蜜铺 · 收购员",17,Color("7b895f"))
 	text_line(v,"这一趟，收获不错。",30)
 	shop_story = text_line(v,"带回花蜜，就能换取下一次成长。",19,Color("768064"),true)
+	shop_recap = text_line(v,"",18,INK,true)
+	shop_recap.hide()
 	var cargo_card := card(v,Color("e5e8d0"),Color("bec8a5"))
 	var cargo_v := column(cargo_card,12)
 	shop_cargo = text_line(cargo_v,"",22)
@@ -351,7 +354,7 @@ func _build_tree() -> void:
 	board = Board.new()
 	board.font = font
 	tree.add_child(board)
-	anchored(board,Rect2(0,0,1,1),Rect2(28,122,-56,-168))
+	anchored(board,Rect2(0,0,1,1),Rect2(28,122,-56,-252))
 	board.selected_changed.connect(_selected)
 	board.resized.connect(_place_detail)
 	detail_card = card(tree,PAPER,Color("b5b58c"))
@@ -437,11 +440,11 @@ func _build_menu() -> void:
 	var bottom := row(v,14)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.24.1 · WASD 飞行 · E 采蜜 · Q 振翅",16,Color("8a9175"))
+	text_line(v,"Demo 0.25.0 · WASD 飞行 · E 采蜜 · Q 振翅",16,Color("8a9175"))
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
-	anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,60))
+	anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,84))
 	toast_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	toast = text_line(toast_panel,"",20,PAPER,true)
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -453,10 +456,9 @@ func _build_toast() -> void:
 
 func show_toast(words: String, seconds: float) -> void:
 	toast.text = words
-	if driver.mode == "tree" and words.ends_with(" ↑"): return # The selected node already acknowledges growth.
-	if driver.mode == "tree": anchored(toast_panel,Rect2(.5,1,0,0),Rect2(-380,-60,760,54))
-	elif driver.mode == "shop": anchored(toast_panel,Rect2(0,0,0,0),Rect2(24,24,680,60))
-	else: anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,60))
+	if driver.mode == "tree": anchored(toast_panel,Rect2(.5,1,0,0),Rect2(-380,-128,760,84))
+	elif driver.mode == "shop": anchored(toast_panel,Rect2(0,0,0,0),Rect2(24,24,680,84))
+	else: anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,84))
 	toast_panel.show()
 	toast_timer.start(minf(seconds,3.0) if words.length()<35 else seconds)
 
@@ -644,6 +646,8 @@ func refresh() -> void:
 	meadow_button.text = "紫花地 · 紫花蜜" if "meadow" in m.owned else "紫花地 · 在成长书屋开放"
 	home_button.visible = not from_hub
 	shop_coins.text = "当前金币  %d" % m.coins
+	shop_recap.text = "\n".join([driver.home_return_summary,driver.home_sale_summary]).strip_edges()
+	shop_recap.visible = not shop_recap.text.is_empty()
 	shop_cargo.text = "蓝花蜜    %d 份\n紫花蜜    %d 份" % [m.cargo.blue,m.cargo.rose]
 	shop_value.text = "本趟可售  %d 金币" % m.cargo_value()
 	sell_button.text = "全部交付  +%d 金币" % m.cargo_value() if m.cargo_total() else "花蜜已交付"
@@ -712,7 +716,7 @@ func _build_settings() -> void:
 	settings_sound = action(v,"",toggle_sound)
 	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
 	text_line(v,"关于 Demo",23)
-	text_line(v,"%s 0.24.1\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
+	text_line(v,"%s 0.25.0\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
 	text_line(v,"制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞为通信动作启发的幻想演绎；侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。",17,Color("687957"),true)
 	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
 	settings_back = action(v,"返回",driver.close_settings,true)

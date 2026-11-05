@@ -290,3 +290,5 @@ npm run test
 - [庭院蜂房与伪俯视花田：退回及返工](docs/production/nectar-environment-grounding-receipt.md)：4150整体美术退回；按最新“斜俯视地面＋侧视物件”提议接入庭院蜂房与采集区，沿#313/PR315 Draft实机验证，尚未获整体接受。
 - [0.23反馈修订与验证回执](docs/production/nectar-demo-023-feedback-receipt.md)：十条反馈、v4兼容、原生与导出验证、证据及成本边界；[独立复核](docs/production/nectar-demo-023-independent-review.md)与[哈希摘要](docs/production/nectar-demo-023-evidence.json)。
 - [0.22历史构建回执](docs/production/nectar-demo-022-build-receipt.md)：PR #300已合并，双入口与旧档隔离已验证；本轮变更见0.23回执。
+
+- [采蜜 Demo 0.25：研究应用与试玩回执](docs/production/nectar-demo-025-build-receipt.md)

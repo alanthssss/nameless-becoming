@@ -106,6 +106,9 @@ jobs:
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://nectar_demo_ui_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/nectar-demo.json" --capture-dir="$RUNNER_TEMP/nectar-demo-ui" 2>&1 | tee "$RUNNER_TEMP/nectar-demo-ui.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/nectar-demo-ui.log"; then exit 1; fi
           grep -q '^NECTAR DEMO UI:.*0 failures' "$RUNNER_TEMP/nectar-demo-ui.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://nectar_return_feedback_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/nectar-return-feedback.json" 2>&1 | tee "$RUNNER_TEMP/nectar-return-feedback.log"
+          if grep -E 'SCRIPT ERROR|FAIL:' "$RUNNER_TEMP/nectar-return-feedback.log"; then exit 1; fi
+          grep -q '^NECTAR RETURN FEEDBACK:.*0 failures' "$RUNNER_TEMP/nectar-return-feedback.log"
           python3 -m unittest discover -s tools -p 'test_package_nectar_review.py' -v
           python3 -m unittest discover -s tools -p 'test_prepare_nectar_steam_demo.py' -v
       - name: Verify pond layouts and real save migration

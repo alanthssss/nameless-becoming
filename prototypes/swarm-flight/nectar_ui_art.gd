@@ -3,6 +3,13 @@ extends RefCounted
 static func icon(c: CanvasItem, kind: String, p: Vector2, r: float, ink := Color("f5e9b7")) -> void:
 	var gold := Color("e7be62")
 	match kind:
+		"home":
+			# Hive doorway: shared by the home landmark and the off-screen bearing.
+			c.draw_arc(p+Vector2(0,r*.18),r*.7,PI,TAU,24,ink,r*.22,true)
+			c.draw_line(p+Vector2(-r*.7,r*.18),p+Vector2(-r*.7,r*.67),ink,r*.22,true)
+			c.draw_line(p+Vector2(r*.7,r*.18),p+Vector2(r*.7,r*.67),ink,r*.22,true)
+			c.draw_line(p+Vector2(-r*.78,r*.67),p+Vector2(r*.78,r*.67),ink,r*.18,true)
+			c.draw_circle(p+Vector2(0,r*.27),r*.25,ink)
 		"coin", "market":
 			c.draw_circle(p,r*0.72,gold)
 			c.draw_arc(p,r*0.53,0,TAU,32,Color("876432"),2,true)

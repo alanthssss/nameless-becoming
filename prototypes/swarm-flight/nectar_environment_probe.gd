@@ -31,18 +31,28 @@ func run() -> void:
 		{"id":"hub-shop", "area":"hub", "p":Vector2(360,520)},
 		{"id":"hub-growth", "area":"hub", "p":Vector2(740,485)},
 		{"id":"hub-full-shelves", "area":"hub", "p":Vector2(360,520), "sold":36},
+		{"id":"hub-reserve-sealed", "area":"hub", "p":Vector2(539,500), "sold":36, "complete":true},
 		{"id":"pond-entry", "area":"pond", "p":Vector2(470,575)},
 		{"id":"pond-far", "area":"pond", "p":Vector2(1660,575)},
 		{"id":"pond-shortcut", "area":"pond", "p":Vector2(1040,400)},
+		{"id":"pond-return-view", "area":"pond", "p":Vector2(1320,575)},
+		{"id":"pond-base-bag", "area":"pond", "p":Vector2(820,560), "bag":0},
+		{"id":"pond-large-bag", "area":"pond", "p":Vector2(820,560), "bag":2},
 		{"id":"meadow-entry", "area":"meadow", "p":Vector2(1900,575)},
 		{"id":"meadow-canopy-overlap", "area":"meadow", "p":Vector2(2760,550)},
 		{"id":"meadow-rain", "area":"meadow", "p":Vector2(2760,580)},
 		{"id":"meadow-shelter", "area":"meadow", "p":Vector2(2760,650)},
-		{"id":"meadow-shortcut", "area":"meadow", "p":Vector2(3000,400)}
+		{"id":"meadow-shortcut", "area":"meadow", "p":Vector2(3000,400)},
+		{"id":"meadow-return-bearing", "area":"meadow", "p":Vector2(3350,575)}
 	]
 	for size in [Vector2i(1280,800),Vector2i(960,600)]:
 		root.size = size
 		for fixture in fixtures:
+			game.model.owned.assign(["gather1", "wings1", "meadow", "shortcut"])
+			if fixture.get("bag",1) >= 1: game.model.owned.append("bag1")
+			if fixture.get("bag",1) == 2: game.model.owned.append("bag2")
+			game.model.completed = fixture.get("complete",false)
+			if game.model.completed: game.model.owned.append("reserve")
 			game.model.sold_total = fixture.get("sold",0)
 			game.model.area = fixture.area
 			game.model.phase = "home" if fixture.area == "hub" else "field"
