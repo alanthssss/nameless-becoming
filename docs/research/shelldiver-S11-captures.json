@@ -4,8 +4,7 @@
   "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
   "title": "SHELLDIVER Gameplay Walkthrough FULL GAME No Commentary + ENDING",
   "source_build": "unknown",
-  "status": "paused_for_user_10_percent_usage_checkpoint",
-  "last_observed_video_time": 4263.734491,
+  "status": "round2_paused_for_report_review",
   "note": "Original browser screenshots saved directly; observations and coverage remain limited to recorded frames.",
   "captures": [
     {
@@ -582,6 +581,1958 @@
       },
       "sha256": "d501e5e8613a6bb1aef530fb87c3931dbd2d3eda6b2d6f104a4e9b23c0f58a39",
       "bytes": 71221
+    },
+    {
+      "id": "S11-C026",
+      "file": "round2-samples/opening-world_006.jpg",
+      "video_time": "00:00:13",
+      "video_seconds": 13,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        4,
+        51
+      ],
+      "batch_file": "round2-samples/opening-world.json",
+      "batch_sha256": "b16e03c524c53a5d0e23b76deed8b14580bb3d1195bb077116a6008db66cca14",
+      "capture_wall_offsets_ms": [
+        8705,
+        8834
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:17:21.609Z",
+        "2026-11-05T03:17:21.738Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "开场与收尾",
+      "observation": "两株棕榈之间挂着棕色吊床，角色横躺，右边两间房屋与岛岸同时可见。",
+      "limits": "单帧未呈现之后怎样修好吊床。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "5b5de99ebca6f43c307f1f4bf0de6754be5f83f68b4bcc8bb156ca53917ae62a",
+      "bytes": 458273
+    },
+    {
+      "id": "S11-C027",
+      "file": "round2-samples/opening-world_016.jpg",
+      "video_time": "00:00:27",
+      "video_seconds": 27,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        4,
+        51
+      ],
+      "batch_file": "round2-samples/opening-world.json",
+      "batch_sha256": "b16e03c524c53a5d0e23b76deed8b14580bb3d1195bb077116a6008db66cca14",
+      "capture_wall_offsets_ms": [
+        23202,
+        23321
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:17:36.106Z",
+        "2026-11-05T03:17:36.225Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "开场与收尾",
+      "observation": "任务提示 Unlock your submarine，选中 Submarine 节点，价格写 Free。",
+      "limits": "此帧是购买前界面。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "df6295703feddbe19e42855f77fa20ffc53be9459eec33ef406dfe07495024ad",
+      "bytes": 272121
+    },
+    {
+      "id": "S11-C028",
+      "file": "round2-samples/shallows-failure_014.jpg",
+      "video_time": "00:03:09",
+      "video_seconds": 189,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        175,
+        203
+      ],
+      "batch_file": "round2-samples/shallows-failure.json",
+      "batch_sha256": "d3c4540344232c132077c151f557bc4cd72948476a023d8c0c4d10814e33fb1a",
+      "capture_wall_offsets_ms": [
+        14008,
+        14132
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:13:40.771Z",
+        "2026-11-05T03:13:40.895Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "浅海遇险",
+      "observation": "角色在黄潜艇右侧发射，右边是黄色阶梯岸，屏幕边缘泛红。",
+      "limits": "红边不能量出剩余氧气或安全距离。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "cd63a792b68eb2f6136fcee7197bc3164198d24c1411b9cb5f06881628be9fcc",
+      "bytes": 409461
+    },
+    {
+      "id": "S11-C029",
+      "file": "round2-samples/shallows-failure_023.jpg",
+      "video_time": "00:03:18",
+      "video_seconds": 198,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        175,
+        203
+      ],
+      "batch_file": "round2-samples/shallows-failure.json",
+      "batch_sha256": "d3c4540344232c132077c151f557bc4cd72948476a023d8c0c4d10814e33fb1a",
+      "capture_wall_offsets_ms": [
+        23005,
+        23146
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:13:49.768Z",
+        "2026-11-05T03:13:49.909Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "浅海遇险",
+      "observation": "结算39.76秒，水母0，废料+8，随身栏空。",
+      "limits": "用冰区遇险结算对照，损失比例仍待分离测试。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "b0aa8864d10808c11562f75ecfbfcb9670f6ba0f7394f37c8bbe0cefcff0dbd7",
+      "bytes": 260237
+    },
+    {
+      "id": "S11-C030",
+      "file": "round2-samples/trip3seq_010.jpg",
+      "video_time": "00:04:30",
+      "video_seconds": 270,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        261,
+        286
+      ],
+      "batch_file": "round2-samples/trip3seq.json",
+      "batch_sha256": "ca4c75cfde74648b5c2ad7d1068828630fdd978d962792b60fd2c7bdf1af361f",
+      "capture_wall_offsets_ms": [
+        8503,
+        8636
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:57:24.711Z",
+        "2026-11-05T02:57:24.844Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "第三趟成长账目",
+      "observation": "Oxygen Tank I 为0/10，基础氧气100→110，价5币；左上35币、27材料，进度4/50。",
+      "limits": "详情中的右值是下一档。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "302eb1e37a0d7b90143fc13a3f3ef2b02dbbedf31b47bb80f53095b6d0674f80",
+      "bytes": 359453
+    },
+    {
+      "id": "S11-C031",
+      "file": "round2-samples/trip3seq_014.jpg",
+      "video_time": "00:04:33",
+      "video_seconds": 273,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        261,
+        286
+      ],
+      "batch_file": "round2-samples/trip3seq.json",
+      "batch_sha256": "ca4c75cfde74648b5c2ad7d1068828630fdd978d962792b60fd2c7bdf1af361f",
+      "capture_wall_offsets_ms": [
+        11901,
+        12023
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:57:28.109Z",
+        "2026-11-05T02:57:28.231Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "第三趟成长账目",
+      "observation": "Oxygen Tank I 已是2/10，显示120→130，进度6/50。",
+      "limits": "余额处仍在滚动，累计花费以稳定前后画面核对。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "6fedc5d307982cade62cfa91b4f18f6215d7e3aa6df3b8386e391f83b513554d",
+      "bytes": 378333
+    },
+    {
+      "id": "S11-C032",
+      "file": "round2-samples/trip3seq_020.jpg",
+      "video_time": "00:04:38",
+      "video_seconds": 278,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        261,
+        286
+      ],
+      "batch_file": "round2-samples/trip3seq.json",
+      "batch_sha256": "ca4c75cfde74648b5c2ad7d1068828630fdd978d962792b60fd2c7bdf1af361f",
+      "capture_wall_offsets_ms": [
+        17001,
+        17134
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:57:33.209Z",
+        "2026-11-05T02:57:33.342Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "第三趟成长账目",
+      "observation": "Shellpack Slots I 显示2格、MAX，进度7/50，左上15币、27材料。",
+      "limits": "格数与每格能叠几只需分别看。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "fefc84afeb3304e33e34d0a6623858c8e7540ef6a969011fb84941612da01127",
+      "bytes": 392791
+    },
+    {
+      "id": "S11-C033",
+      "file": "round2-samples/trip3seq_023.jpg",
+      "video_time": "00:04:41",
+      "video_seconds": 281,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        261,
+        286
+      ],
+      "batch_file": "round2-samples/trip3seq.json",
+      "batch_sha256": "ca4c75cfde74648b5c2ad7d1068828630fdd978d962792b60fd2c7bdf1af361f",
+      "capture_wall_offsets_ms": [
+        19552,
+        19676
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:57:35.760Z",
+        "2026-11-05T02:57:35.884Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "第三趟成长账目",
+      "observation": "此前选中的货架节点冒出彩屑，进度升到8/50，材料旁出现扣20的动画。",
+      "limits": "白闪遮住详情字段，货架节点名需对照该批次前帧。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "2d0e14432d0ee116081c7fb9a6d4b06cb145bd3140e65fdfad91a442784363c2",
+      "bytes": 356145
+    },
+    {
+      "id": "S11-C034",
+      "file": "round2-samples/trip3seq_029.jpg",
+      "video_time": "00:04:46",
+      "video_seconds": 286,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        261,
+        286
+      ],
+      "batch_file": "round2-samples/trip3seq.json",
+      "batch_sha256": "ca4c75cfde74648b5c2ad7d1068828630fdd978d962792b60fd2c7bdf1af361f",
+      "capture_wall_offsets_ms": [
+        24651,
+        24782
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:57:40.859Z",
+        "2026-11-05T02:57:40.990Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "第三趟成长账目",
+      "observation": "Bubble Damage I 已4/10，当前20%、下一档25%，进度11/50。",
+      "limits": "当前加成与下一档预告分开，余额仍有动画。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "8f17a91b2a630c24365ab03f2b1746695913bbfcc0d623dd30a997fc96c61ba9",
+      "bytes": 410356
+    },
+    {
+      "id": "S11-C035",
+      "file": "round2-samples/trip3seq_030.jpg",
+      "video_time": "00:04:46",
+      "video_seconds": 286,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        261,
+        286
+      ],
+      "batch_file": "round2-samples/trip3seq.json",
+      "batch_sha256": "ca4c75cfde74648b5c2ad7d1068828630fdd978d962792b60fd2c7bdf1af361f",
+      "capture_wall_offsets_ms": [
+        25501,
+        25615
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:57:41.709Z",
+        "2026-11-05T02:57:41.823Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "第三趟成长账目",
+      "observation": "退回村落，左下角稳定为0币、7材料。",
+      "limits": "此余额需与各节点详情配合核对购买顺序。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "2c7b5299be09d93dc7635a9ceb86b0cd3c1721a3b4e4146fa594f536e862dd4b",
+      "bytes": 390250
+    },
+    {
+      "id": "S11-C036",
+      "file": "round2-samples/ice-origin_011.jpg",
+      "video_time": "00:29:29",
+      "video_seconds": 1769,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1752,
+        1778
+      ],
+      "batch_file": "round2-samples/ice-origin.json",
+      "batch_sha256": "9bfebe676aabd334c0d6dc66409ec988d27328ffe8242013752f8f0f6e3fe736",
+      "capture_wall_offsets_ms": [
+        16503,
+        16642
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:06:47.365Z",
+        "2026-11-05T03:06:47.504Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "选区界面显示 Glacial Depths 400m。",
+      "limits": "名称和深度由区卡确认，布局看后续画面。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "50bc6221ca6ace81492c6cd0a8caf3366cc3b501dfcfeb0e859b936ccc78a88f",
+      "bytes": 446392
+    },
+    {
+      "id": "S11-C037",
+      "file": "round2-samples/ice-origin_013.jpg",
+      "video_time": "00:29:32",
+      "video_seconds": 1772,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1752,
+        1778
+      ],
+      "batch_file": "round2-samples/ice-origin.json",
+      "batch_sha256": "9bfebe676aabd334c0d6dc66409ec988d27328ffe8242013752f8f0f6e3fe736",
+      "capture_wall_offsets_ms": [
+        19501,
+        19633
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:06:50.363Z",
+        "2026-11-05T03:06:50.495Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "黄色潜艇下有镂空横梁，梁下靠左有紫晶，右侧覆冰轮廓向下弯。",
+      "limits": "单帧只定位入口和这一簇。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "76ac613fa946300e1b6122d3ad3adee52126ee95271af5208f6d137641fc7903",
+      "bytes": 462548
+    },
+    {
+      "id": "S11-C038",
+      "file": "round2-samples/ice-first_006.jpg",
+      "video_time": "00:29:51",
+      "video_seconds": 1791,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1783,
+        1812
+      ],
+      "batch_file": "round2-samples/ice-first.json",
+      "batch_sha256": "8fdb735aed6056dda412ab28fb93148d117fa3d587df751cf9d55abd37a60b8d",
+      "capture_wall_offsets_ms": [
+        8102,
+        8231
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:02:47.821Z",
+        "2026-11-05T03:02:47.950Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "右侧悬冰下方的紫晶完整可见，左方角色在其身旁，左下地区材料55。",
+      "limits": "用冰缘折点与后续画面对位。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "eb8ee3cfe14ae18ea493207544bb170fee98663d8814b207bdbdb5b93d917f88",
+      "bytes": 597786
+    },
+    {
+      "id": "S11-C039",
+      "file": "round2-samples/ice-first_010.jpg",
+      "video_time": "00:29:57",
+      "video_seconds": 1797,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1783,
+        1812
+      ],
+      "batch_file": "round2-samples/ice-first.json",
+      "batch_sha256": "8fdb735aed6056dda412ab28fb93148d117fa3d587df751cf9d55abd37a60b8d",
+      "capture_wall_offsets_ms": [
+        13502,
+        13633
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:02:53.221Z",
+        "2026-11-05T03:02:53.352Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "相同折点下的紫晶图形消失，原位置出现一圈碎光。",
+      "limits": "本趟同点对位能支持采空，不推出再生机制。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "0c284fd7c70bc39a42842569a3090a02151f9d70b8256d581c36bcbf84cff33f",
+      "bytes": 582484
+    },
+    {
+      "id": "S11-C040",
+      "file": "round2-samples/ice-reenter_006.jpg",
+      "video_time": "00:31:00",
+      "video_seconds": 1860,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1852,
+        1880
+      ],
+      "batch_file": "round2-samples/ice-reenter.json",
+      "batch_sha256": "d48349626afad6671f50c73ae5b224c6625b337afa4d80fb1ebcfb41ff82cbb9",
+      "capture_wall_offsets_ms": [
+        7802,
+        7937
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:03:35.074Z",
+        "2026-11-05T03:03:35.209Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "重入出现 Glacial Depths (400m) 标题；横梁和右侧冰顶可辨，亮室里可见两簇紫晶。",
+      "limits": "晶簇数是这一时刻视野内计数，未覆盖整区。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "ea497eb2ada0806787a8d9c149cd88069edeb7b4a1260672cd5864651eb9dc8a",
+      "bytes": 621752
+    },
+    {
+      "id": "S11-C041",
+      "file": "round2-samples/ice-reenter_018.jpg",
+      "video_time": "00:31:15",
+      "video_seconds": 1875,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1852,
+        1880
+      ],
+      "batch_file": "round2-samples/ice-reenter.json",
+      "batch_sha256": "d48349626afad6671f50c73ae5b224c6625b337afa4d80fb1ebcfb41ff82cbb9",
+      "capture_wall_offsets_ms": [
+        23402,
+        23537
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:03:50.674Z",
+        "2026-11-05T03:03:50.809Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "人物位于暗背景冰缘之间，右侧另一个亮室进入画面。",
+      "limits": "可以从角色轨迹看已走路段；明暗本身不能判碰撞。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "d83191dbca24a86eeb317a5f9e5a89aeb5af6a91690aed33b7ef7aa878513204",
+      "bytes": 619159
+    },
+    {
+      "id": "S11-C042",
+      "file": "round2-samples/ice-return_000.jpg",
+      "video_time": "00:31:20",
+      "video_seconds": 1880,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1880,
+        1894
+      ],
+      "batch_file": "round2-samples/ice-return.json",
+      "batch_sha256": "f213fcb539640b02361714a786e0419061100802ce401191643970ab7eb6230a",
+      "capture_wall_offsets_ms": [
+        4,
+        971
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:04:25.619Z",
+        "2026-11-05T03:04:26.586Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "回程画面再次出现黄潜艇、镂空横梁和弯冰顶。",
+      "limits": "看到潜艇还不能说明已触发普通返程。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "b91e8536659d1584367fe4627216ea9c95c2e144824d0ac54e9570b677523f64",
+      "bytes": 563433
+    },
+    {
+      "id": "S11-C043",
+      "file": "round2-samples/ice-return_007.jpg",
+      "video_time": "00:31:27",
+      "video_seconds": 1887,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1880,
+        1894
+      ],
+      "batch_file": "round2-samples/ice-return.json",
+      "batch_sha256": "f213fcb539640b02361714a786e0419061100802ce401191643970ab7eb6230a",
+      "capture_wall_offsets_ms": [
+        7002,
+        7136
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:04:32.617Z",
+        "2026-11-05T03:04:32.751Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "横梁下多只紫色小体在角色周围分散，旁边出现白色动作亮点。",
+      "limits": "损失按后续结算读取，单帧不计算保留率。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "9aabc424be18d7437324c5186222c949e73f66f8f5939314985697ec6dfe4dd4",
+      "bytes": 500175
+    },
+    {
+      "id": "S11-C044",
+      "file": "round2-samples/ice-failure_008.jpg",
+      "video_time": "00:31:31",
+      "video_seconds": 1891,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        1889,
+        1893
+      ],
+      "batch_file": "round2-samples/ice-failure.json",
+      "batch_sha256": "1f5c688f1d4a30adbb169e0202732c23fb35afd1297cc98be42c4757ff5a5fb5",
+      "capture_wall_offsets_ms": [
+        1724,
+        1841
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:05:00.857Z",
+        "2026-11-05T03:05:00.974Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "遇险结算33.58秒、水母+1、晶体+4，随身栏剩一只。",
+      "limits": "这一趟的结算数无法推出通用损失率。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "5389901a32a563712846da1be6dab2459ca85b12d077d6662f4fedf928df5ab2",
+      "bytes": 330471
+    },
+    {
+      "id": "S11-C045",
+      "file": "round2-samples/ice-failure_025.jpg",
+      "video_time": "00:31:33",
+      "video_seconds": 1893,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        1889,
+        1893
+      ],
+      "batch_file": "round2-samples/ice-failure.json",
+      "batch_sha256": "1f5c688f1d4a30adbb169e0202732c23fb35afd1297cc98be42c4757ff5a5fb5",
+      "capture_wall_offsets_ms": [
+        3519,
+        3631
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:05:02.652Z",
+        "2026-11-05T03:05:02.764Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "400米入口与重访",
+      "observation": "重试后又见黄潜艇与横梁，右下方有一簇大晶体。",
+      "limits": "并非所有采空点都已逐点对齐；等待与重试触发仍未分离。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "73c388bea3e7850a10b5c7bb707ada3195b41066c430e5f194b3fc5f85db48c2",
+      "bytes": 563761
+    },
+    {
+      "id": "S11-C046",
+      "file": "round2-samples/ruin-path_004.jpg",
+      "video_time": "01:10:30",
+      "video_seconds": 4230,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        4224,
+        4262
+      ],
+      "batch_file": "round2-samples/ruin-path.json",
+      "batch_sha256": "627f220a83068c2da3b2817ba27668848d6c5481e0b597ef48be6c69cd2388dd",
+      "capture_wall_offsets_ms": [
+        6002,
+        6141
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:07:39.393Z",
+        "2026-11-05T03:07:39.532Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "700米沼泽地标",
+      "observation": "选区的详情卡写 Swamp Waters 700m，水母和地区资源各自有图标和100.0%。",
+      "limits": "画面没有说明这个百分比的分母。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "7d107819326544453398ea5f77b2bb782021a9b8011b178c6a33f8ba0812f30b",
+      "bytes": 505587
+    },
+    {
+      "id": "S11-C047",
+      "file": "round2-samples/ruin-path_009.jpg",
+      "video_time": "01:10:38",
+      "video_seconds": 4238,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        4224,
+        4262
+      ],
+      "batch_file": "round2-samples/ruin-path.json",
+      "batch_sha256": "627f220a83068c2da3b2817ba27668848d6c5481e0b597ef48be6c69cd2388dd",
+      "capture_wall_offsets_ms": [
+        13507,
+        13628
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:07:46.898Z",
+        "2026-11-05T03:07:47.019Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "700米沼泽地标",
+      "observation": "潜艇在左端，玩家位于苔绿石拱的开口内，前后石台连入画面。",
+      "limits": "画面可定位这个开口，未测完整碰撞范围。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "35e21964bc31abd3054eceb46efe54e68aa72d8213b37a3f06d5c32e550bd414",
+      "bytes": 572422
+    },
+    {
+      "id": "S11-C048",
+      "file": "round2-samples/ruin-path_018.jpg",
+      "video_time": "01:10:51",
+      "video_seconds": 4251,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        4224,
+        4262
+      ],
+      "batch_file": "round2-samples/ruin-path.json",
+      "batch_sha256": "627f220a83068c2da3b2817ba27668848d6c5481e0b597ef48be6c69cd2388dd",
+      "capture_wall_offsets_ms": [
+        27001,
+        27141
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:08:00.392Z",
+        "2026-11-05T03:08:00.532Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "700米沼泽地标",
+      "observation": "角色在两段石拱之间的低凹处，右侧石台、资源和亮色星形物同时可见。",
+      "limits": "星形物用途及支路尽头待核。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "35a0a23a4936187ae97426c8f26fd3f6f19d8391ee502c6f4b78a40cd6816a06",
+      "bytes": 561465
+    },
+    {
+      "id": "S11-C049",
+      "file": "round2-samples/ruin-path_023.jpg",
+      "video_time": "01:10:59",
+      "video_seconds": 4259,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        4224,
+        4262
+      ],
+      "batch_file": "round2-samples/ruin-path.json",
+      "batch_sha256": "627f220a83068c2da3b2817ba27668848d6c5481e0b597ef48be6c69cd2388dd",
+      "capture_wall_offsets_ms": [
+        34501,
+        34635
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:08:07.892Z",
+        "2026-11-05T03:08:08.026Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "700米沼泽地标",
+      "observation": "红色边缘下，黄潜艇重新在左边入镜，角色处在它与右方拱脚之间。",
+      "limits": "本段是一位玩家的去回路线。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "90ffa3061854e0d2941704bd39ebae34b11a3b2917edd3bb58154f5f785a89ef",
+      "bytes": 544082
+    },
+    {
+      "id": "S11-C050",
+      "file": "round2-samples/store-handoff_003.jpg",
+      "video_time": "01:38:03",
+      "video_seconds": 5883,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5879,
+        5908
+      ],
+      "batch_file": "round2-samples/store-handoff.json",
+      "batch_sha256": "19c5aca34b5c89044a673b1cd72f5e95905283534f3fc6f984aa210ab05d43de",
+      "capture_wall_offsets_ms": [
+        3601,
+        3734
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:16:18.747Z",
+        "2026-11-05T03:16:18.880Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落货架与售卖",
+      "observation": "商店顶上四格空，角色的蓝色面板内仍有多个货堆；宝箱旁和左下的金额分别显示。",
+      "limits": "同帧的宝箱金额与可用余额应分开读。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "69bb3823786b960ac69b9f5f3eedaace2f0d87112dea300d864ef8c3088f7c0c",
+      "bytes": 557213
+    },
+    {
+      "id": "S11-C051",
+      "file": "round2-samples/store-handoff_006.jpg",
+      "video_time": "01:38:06",
+      "video_seconds": 5886,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5879,
+        5908
+      ],
+      "batch_file": "round2-samples/store-handoff.json",
+      "batch_sha256": "19c5aca34b5c89044a673b1cd72f5e95905283534f3fc6f984aa210ab05d43de",
+      "capture_wall_offsets_ms": [
+        7201,
+        7340
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:16:22.347Z",
+        "2026-11-05T03:16:22.486Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落货架与售卖",
+      "observation": "同一货架已有四堆，右侧随身面板六格空，商店下方出现收益文字。",
+      "limits": "两帧说明交接前后，不能据此推算离场售卖。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "22b9b750df7f215da77205b02b2060f63ef35515dd2162bf57a4bf14be88c5a2",
+      "bytes": 593264
+    },
+    {
+      "id": "S11-C052",
+      "file": "round2-samples/store-handoff_019.jpg",
+      "video_time": "01:38:22",
+      "video_seconds": 5902,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5879,
+        5908
+      ],
+      "batch_file": "round2-samples/store-handoff.json",
+      "batch_sha256": "19c5aca34b5c89044a673b1cd72f5e95905283534f3fc6f984aa210ab05d43de",
+      "capture_wall_offsets_ms": [
+        22801,
+        22925
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:16:37.947Z",
+        "2026-11-05T03:16:38.071Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落货架与售卖",
+      "observation": "宝箱旁出现粒子，商店上方出现价款，左下余额旁有增加提示。",
+      "limits": "同时看到两处反馈不代表它们采用同一计时器。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "3176bc06125a54ee7c3a18032a966a2726db9c4fad112e9f5ec661bb8bc73d88",
+      "bytes": 602430
+    },
+    {
+      "id": "S11-C053",
+      "file": "round2-samples/store-mid_007.jpg",
+      "video_time": "01:38:34",
+      "video_seconds": 5914,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5906,
+        5945
+      ],
+      "batch_file": "round2-samples/store-mid.json",
+      "batch_sha256": "c0dfbf402e7c95afaba53723a3c929ec86b98a3d0fcaacd510bd86da523d956d",
+      "capture_wall_offsets_ms": [
+        7702,
+        7835
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:15:11.758Z",
+        "2026-11-05T03:15:11.891Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落货架与售卖",
+      "observation": "Store Upsell 详情写售出水母时有10%机会额外售出一只，0%→10%，价1,400蓝材料。",
+      "limits": "这是节点说明，实际触发频率待采样。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "f3dc971d03946f74d52a2d75ba843bb26ee5d5b53579b7d28075faefa791a0a7",
+      "bytes": 455314
+    },
+    {
+      "id": "S11-C054",
+      "file": "round2-samples/store-mid_009.jpg",
+      "video_time": "01:38:36",
+      "video_seconds": 5916,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5906,
+        5945
+      ],
+      "batch_file": "round2-samples/store-mid.json",
+      "batch_sha256": "c0dfbf402e7c95afaba53723a3c929ec86b98a3d0fcaacd510bd86da523d956d",
+      "capture_wall_offsets_ms": [
+        9901,
+        10041
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:15:13.957Z",
+        "2026-11-05T03:15:14.097Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落货架与售卖",
+      "observation": "同节点已标10%和MAX，蓝材料旁扣1.40K，Prestige进度407/430。",
+      "limits": "这次购买可核，未实测概率和吞吐。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "41d04338600c160119a702ccb6966c2e4bd844c915cc9c4168d33fe123bcfc85",
+      "bytes": 488417
+    },
+    {
+      "id": "S11-C055",
+      "file": "round2-samples/late-village_021.jpg",
+      "video_time": "02:17:48",
+      "video_seconds": 8268,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        8241,
+        8272
+      ],
+      "batch_file": "round2-samples/late-village.json",
+      "batch_sha256": "a9590ed58dcb5d7dfeec27c99aed2ca24579b73492fbc851ee4f77741fde0e5c",
+      "capture_wall_offsets_ms": [
+        27301,
+        27437
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:19:40.310Z",
+        "2026-11-05T03:19:40.446Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "1000米岩脊与潜艇",
+      "observation": "区域标题 Magma Abyss (1000m) 与左侧潜艇同时可见，人物位于两座深色岩峰之间上方。",
+      "limits": "深度适用于这个有标题的入口。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "9014afbc9c3c105ad63689480c3bce26518de129a765c69153f3e3412df2ac1b",
+      "bytes": 498590
+    },
+    {
+      "id": "S11-C056",
+      "file": "round2-samples/magma-route_005.jpg",
+      "video_time": "02:17:59",
+      "video_seconds": 8279,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        8272,
+        8314
+      ],
+      "batch_file": "round2-samples/magma-route.json",
+      "batch_sha256": "3c3abe08f18771264aae28718d0b6f3c4e018e1048806942d77b20d9ea8c39eb",
+      "capture_wall_offsets_ms": [
+        7000,
+        7136
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:20:15.682Z",
+        "2026-11-05T03:20:15.818Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "1000米岩脊与潜艇",
+      "observation": "角色在两座岩脊的窄隙内向下射击，邻近另一个狭口有紫色晶体。",
+      "limits": "只显示这一条经过的沟隙。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "275834b602ecc3b00b4146a2a91ad1b25384da3be8d7795dee36d3d2553d3a6c",
+      "bytes": 568969
+    },
+    {
+      "id": "S11-C057",
+      "file": "round2-samples/magma-route_013.jpg",
+      "video_time": "02:18:10",
+      "video_seconds": 8290,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        8272,
+        8314
+      ],
+      "batch_file": "round2-samples/magma-route.json",
+      "batch_sha256": "3c3abe08f18771264aae28718d0b6f3c4e018e1048806942d77b20d9ea8c39eb",
+      "capture_wall_offsets_ms": [
+        18201,
+        18342
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:20:26.883Z",
+        "2026-11-05T03:20:27.024Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "1000米岩脊与潜艇",
+      "observation": "玩家再接近黄潜艇，船体周围有圆形亮边，下面有带锁图案的箱形物。",
+      "limits": "圆形亮边和箱体的机制不能从此帧确定。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "5c99288521a4108af0424b763ab3dd374135c9bb8aeba4db0a174ea42f81729e",
+      "bytes": 486015
+    },
+    {
+      "id": "S11-C058",
+      "file": "round2-samples/first-transfer_001.jpg",
+      "video_time": "02:30:46",
+      "video_seconds": 9046,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        9045,
+        9048
+      ],
+      "batch_file": "round2-samples/first-transfer.json",
+      "batch_sha256": "478b4b81b17c22e7a829fb847809b16c290ba208032ec550ae10913b88bae0aa",
+      "capture_wall_offsets_ms": [
+        960,
+        1067
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:01:32.387Z",
+        "2026-11-05T03:01:32.494Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "两趟潜艇库存",
+      "observation": "结算47.09秒、水母+30、黑曜石+54,766；随身三格12、7、11，潜艇货舱空。",
+      "limits": "以稳定结算区分本趟新增与潜艇累计。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "34ecdeafec250cb6826549f9fc3e9074139db2c06007dca219f2d912b96627ef",
+      "bytes": 400710
+    },
+    {
+      "id": "S11-C059",
+      "file": "round2-samples/first-transfer_004.jpg",
+      "video_time": "02:30:46",
+      "video_seconds": 9046,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        9045,
+        9048
+      ],
+      "batch_file": "round2-samples/first-transfer.json",
+      "batch_sha256": "478b4b81b17c22e7a829fb847809b16c290ba208032ec550ae10913b88bae0aa",
+      "capture_wall_offsets_ms": [
+        1291,
+        1401
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:01:32.718Z",
+        "2026-11-05T03:01:32.828Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "两趟潜艇库存",
+      "observation": "自身格出现白色粒子，下面潜艇前三格同步出现白色轮廓。",
+      "limits": "转移动画暂时遮住格数，用下一趟稳定格数核账。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "9ae29ad3cac2820c0012c2fa697a46b5f257823fd964a19d308912ed3df7d85c",
+      "bytes": 388893
+    },
+    {
+      "id": "S11-C060",
+      "file": "round2-samples/first-transfer_021.jpg",
+      "video_time": "02:30:48",
+      "video_seconds": 9048,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        9045,
+        9048
+      ],
+      "batch_file": "round2-samples/first-transfer.json",
+      "batch_sha256": "478b4b81b17c22e7a829fb847809b16c290ba208032ec550ae10913b88bae0aa",
+      "capture_wall_offsets_ms": [
+        3101,
+        3214
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:01:34.528Z",
+        "2026-11-05T03:01:34.641Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "两趟潜艇库存",
+      "observation": "转场后人物重现于黄潜艇下、火山色凹地上方，右下工具格重现。",
+      "limits": "这张只定位再出发后的场景。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "cc8929deca009d013018dab137a870d0bdedd29adda3932ed5ee0b8da88d1b7f",
+      "bytes": 529445
+    },
+    {
+      "id": "S11-C061",
+      "file": "round2-samples/next-ledger_015.jpg",
+      "video_time": "02:31:23",
+      "video_seconds": 9083,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        9081,
+        9085
+      ],
+      "batch_file": "round2-samples/next-ledger.json",
+      "batch_sha256": "66cec7eec582631c80128c0cd9c0f1d7bb1eb245a0b0142ff9346358da260d10",
+      "capture_wall_offsets_ms": [
+        2551,
+        2665
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:00:41.636Z",
+        "2026-11-05T03:00:41.750Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "两趟潜艇库存",
+      "observation": "下一趟结算35.51秒、水母+33、黑曜石+42,585；右侧从随身向潜艇的动画进行中。",
+      "limits": "黑曜石末位为5；货舱细数用下一张。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "db4aa5a740da283912a1eb9aaca5797258435dfc1d0c01515b213789fe842e7f",
+      "bytes": 409671
+    },
+    {
+      "id": "S11-C062",
+      "file": "round2-samples/next-ledger_016.jpg",
+      "video_time": "02:31:23",
+      "video_seconds": 9083,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        9081,
+        9085
+      ],
+      "batch_file": "round2-samples/next-ledger.json",
+      "batch_sha256": "66cec7eec582631c80128c0cd9c0f1d7bb1eb245a0b0142ff9346358da260d10",
+      "capture_wall_offsets_ms": [
+        2721,
+        2828
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:00:41.806Z",
+        "2026-11-05T03:00:41.913Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "两趟潜艇库存",
+      "observation": "收圈时潜艇上排12、12、12、12，第二排1、12、2，共占七格、合计63只。",
+      "limits": "随身和潜艇分栏；63为累计货物，并非本趟新增。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "7731160734046d82249eddd151e1fa916dc6ef4fa11b77ca847e65383de01cbf",
+      "bytes": 354998
+    },
+    {
+      "id": "S11-C063",
+      "file": "round2-samples/magma-next_010.jpg",
+      "video_time": "02:31:28",
+      "video_seconds": 9088,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        9079,
+        9111
+      ],
+      "batch_file": "round2-samples/magma-next.json",
+      "batch_sha256": "9cbd4fe1f0a4317df6b9ea958e220a210d63615298c6ec1bfd01dcf286e17782",
+      "capture_wall_offsets_ms": [
+        8502,
+        8626
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:59:50.694Z",
+        "2026-11-05T02:59:50.818Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "后期村落货物流",
+      "observation": "村落商店右侧出现一块蓝色12格面板，上两排可见多堆紫色和棕色水母。",
+      "limits": "蓝面板正式名称与交付规则待核。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "103cdd4e38eb7b08a33bff052445a6d35b235d3c9c81499162ee6c17c149bfeb",
+      "bytes": 625944
+    },
+    {
+      "id": "S11-C064",
+      "file": "round2-samples/magma-next_016.jpg",
+      "video_time": "02:31:33",
+      "video_seconds": 9093,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        9079,
+        9111
+      ],
+      "batch_file": "round2-samples/magma-next.json",
+      "batch_sha256": "9cbd4fe1f0a4317df6b9ea958e220a210d63615298c6ec1bfd01dcf286e17782",
+      "capture_wall_offsets_ms": [
+        13602,
+        13744
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T02:59:55.794Z",
+        "2026-11-05T02:59:55.936Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "后期村落货物流",
+      "observation": "蓝色面板剩余堆数减少，旁边两组金色格间有箭头，部分格子已有图标；商店和角色可同屏。",
+      "limits": "单凭格子外形或箭头方向不能命名设备或还原配方。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "b293d722612c9ca837dac93e14bda590abdf9fe18c37c2654c951524706f9b86",
+      "bytes": 681184
+    },
+    {
+      "id": "S11-C065",
+      "file": "round2-samples/magma-next_027.jpg",
+      "video_time": "02:31:42",
+      "video_seconds": 9102,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        9079,
+        9111
+      ],
+      "batch_file": "round2-samples/magma-next.json",
+      "batch_sha256": "9cbd4fe1f0a4317df6b9ea958e220a210d63615298c6ec1bfd01dcf286e17782",
+      "capture_wall_offsets_ms": [
+        22951,
+        23088
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:00:05.143Z",
+        "2026-11-05T03:00:05.280Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "后期村落货物流",
+      "observation": "玩家在宝箱旁，商店上方叠有多笔绿色售卖文字，左下币值旁出现增加。",
+      "limits": "这段是角色在村落时的反馈。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "645af23aaf049c973d4197cda0cb303c92db26d5ab27fb7fb1ef89347014af93",
+      "bytes": 619027
+    },
+    {
+      "id": "S11-C066",
+      "file": "round2-samples/hammock-buy_008.jpg",
+      "video_time": "03:14:12",
+      "video_seconds": 11652,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        11645,
+        11659
+      ],
+      "batch_file": "round2-samples/hammock-buy.json",
+      "batch_sha256": "7490205822aa41dbe9a4c7825b3924e2233b1f7946dd457ebc33b05ecf59bb80",
+      "capture_wall_offsets_ms": [
+        7201,
+        7347
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:12:46.376Z",
+        "2026-11-05T03:12:46.522Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "开场与收尾",
+      "observation": "Hammock Repair 价格显示10.0Q，Prestige进度799/800，节点说明与睡觉相关。",
+      "limits": "节点效果另用村落画面对照。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "92dc1953bf2d06fa59e8a7d34fd756b0086bd57b282c3004cdd8e0c6db53604d",
+      "bytes": 807833
+    },
+    {
+      "id": "S11-C067",
+      "file": "round2-samples/hammock-buy_011.jpg",
+      "video_time": "03:14:15",
+      "video_seconds": 11655,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        11645,
+        11659
+      ],
+      "batch_file": "round2-samples/hammock-buy.json",
+      "batch_sha256": "7490205822aa41dbe9a4c7825b3924e2233b1f7946dd457ebc33b05ecf59bb80",
+      "capture_wall_offsets_ms": [
+        9904,
+        10038
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:12:49.079Z",
+        "2026-11-05T03:12:49.213Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "开场与收尾",
+      "observation": "Hammock Repair 同节点变为MAX。",
+      "limits": "MAX表示节点状态，后续仍有走去使用吊床的步骤。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "8cfc4faf21329c64d2c8d4d366bb588dd71c9db59a555f18f49b28d06aed8bde",
+      "bytes": 754371
+    },
+    {
+      "id": "S11-C068",
+      "file": "round2-samples/hammock-end_004.jpg",
+      "video_time": "03:14:20",
+      "video_seconds": 11660,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        11654,
+        11686
+      ],
+      "batch_file": "round2-samples/hammock-end.json",
+      "batch_sha256": "3593b963359f5b198004e614eeda43f13f598f84f59f885f9dfc91bee190cebe",
+      "capture_wall_offsets_ms": [
+        6010,
+        6135
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:11:32.311Z",
+        "2026-11-05T03:11:32.436Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "开场与收尾",
+      "observation": "镜头回到村落两株棕榈之间，吊床所在位置出现白色闪光。",
+      "limits": "闪光盖住细节，颜色和互动提示看后图。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "bff891708beaeb6bb372161432d6b57ebf587215e1499c8f81d505fb80c10e1f",
+      "bytes": 449897
+    },
+    {
+      "id": "S11-C069",
+      "file": "round2-samples/hammock-end_012.jpg",
+      "video_time": "03:14:32",
+      "video_seconds": 11672,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        11654,
+        11686
+      ],
+      "batch_file": "round2-samples/hammock-end.json",
+      "batch_sha256": "3593b963359f5b198004e614eeda43f13f598f84f59f885f9dfc91bee190cebe",
+      "capture_wall_offsets_ms": [
+        18001,
+        18132
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:11:44.302Z",
+        "2026-11-05T03:11:44.433Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "开场与收尾",
+      "observation": "玩家走到两棕榈间的紫吊床旁，头上出现B提示。",
+      "limits": "看见提示与后来的躺下时刻分开记录。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "6f0c308bdca4418c5741e9662b940b6079d6b6b01e7547fd85fdb7fd0452fe0c",
+      "bytes": 539877
+    },
+    {
+      "id": "S11-C070",
+      "file": "round2-samples/hammock-end_021.jpg",
+      "video_time": "03:14:46",
+      "video_seconds": 11686,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        11654,
+        11686
+      ],
+      "batch_file": "round2-samples/hammock-end.json",
+      "batch_sha256": "3593b963359f5b198004e614eeda43f13f598f84f59f885f9dfc91bee190cebe",
+      "capture_wall_offsets_ms": [
+        31506,
+        31631
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:11:57.807Z",
+        "2026-11-05T03:11:57.932Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "开场与收尾",
+      "observation": "角色躺在两树之间，村民入镜，左上出现片尾制作字幕。",
+      "limits": "画面确定本次录像进入片尾，未观察其他结局。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "e182c41f3fe0b6e6da30d98a64c9cea0cc4bfbd83c5ff7c9837910256d8e158c",
+      "bytes": 519609
+    },
+    {
+      "id": "S11-C071",
+      "file": "round2-samples/late-village_007.jpg",
+      "video_time": "02:17:30",
+      "video_seconds": 8250,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        8241,
+        8272
+      ],
+      "batch_file": "round2-samples/late-village.json",
+      "batch_sha256": "a9590ed58dcb5d7dfeec27c99aed2ca24579b73492fbc851ee4f77741fde0e5c",
+      "capture_wall_offsets_ms": [
+        9105,
+        9238
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:19:22.114Z",
+        "2026-11-05T03:19:22.247Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落设施与出航售卖",
+      "observation": "Transmuter Automation 已标MAX；节点说明写 Jellyfish Transmuter 会把水母自动放入商店。",
+      "limits": "这是功能文字。它没有逐一标注村落中每个蓝框或金框。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "99c9aa7711dc26dff2c5e510f5936b4fab863a145f81777dd3d000d56a2ae445",
+      "bytes": 524579
+    },
+    {
+      "id": "S11-C072",
+      "file": "round2-samples/convenience-tree_001.jpg",
+      "video_time": "02:00:43",
+      "video_seconds": 7243,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        7242,
+        7290
+      ],
+      "batch_file": "round2-samples/convenience-tree.json",
+      "batch_sha256": "2ff981f91aff100acf00df5a80288bd090a1a6a8e464c780ad77b20cdb08766c",
+      "capture_wall_offsets_ms": [
+        1301,
+        1448
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:24:25.152Z",
+        "2026-11-05T03:24:25.299Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落设施与出航售卖",
+      "observation": "箭头左侧两格绿色水母9和10，右侧金框内白色水母5，画面右边随身蓝框空。",
+      "limits": "与下一帧对照位置和数量，输入动作未显示。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "8dc9606629275898305627456e273df79873d32018713eaf4e6f88ee0c43a8c4",
+      "bytes": 668809
+    },
+    {
+      "id": "S11-C073",
+      "file": "round2-samples/convenience-tree_002.jpg",
+      "video_time": "02:00:44",
+      "video_seconds": 7244,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        7242,
+        7290
+      ],
+      "batch_file": "round2-samples/convenience-tree.json",
+      "batch_sha256": "2ff981f91aff100acf00df5a80288bd090a1a6a8e464c780ad77b20cdb08766c",
+      "capture_wall_offsets_ms": [
+        2601,
+        2753
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:24:26.452Z",
+        "2026-11-05T03:24:26.604Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落设施与出航售卖",
+      "observation": "箭头右侧金框空，随身蓝框第一格出现白色水母5，左侧仍是9和10。",
+      "limits": "可以对上这组货物的转移，未测自动分配或配方。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "3a79c0a2a3b0a46d3bd91017448e121093e5f52fc9892bd23a37653476f06a93",
+      "bytes": 661339
+    },
+    {
+      "id": "S11-C074",
+      "file": "round2-samples/convenience-tree_021.jpg",
+      "video_time": "02:01:09",
+      "video_seconds": 7269,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        7242,
+        7290
+      ],
+      "batch_file": "round2-samples/convenience-tree.json",
+      "batch_sha256": "2ff981f91aff100acf00df5a80288bd090a1a6a8e464c780ad77b20cdb08766c",
+      "capture_wall_offsets_ms": [
+        27301,
+        27443
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:24:51.152Z",
+        "2026-11-05T03:24:51.294Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落设施与出航售卖",
+      "observation": "Starfish Friend I 为2/2、MAX。说明写召唤会向附近水母发射气泡的海星。",
+      "limits": "技能文字能说明伙伴用途；实际射速、射程和目标选择待测。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "baa27bbf33e78e025b202085ccece9588c9fe31eb459ac21e487d9aa2fe5b24b",
+      "bytes": 656962
+    },
+    {
+      "id": "S11-C075",
+      "file": "round2-samples/convenience-tree_024.jpg",
+      "video_time": "02:01:13",
+      "video_seconds": 7273,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        7242,
+        7290
+      ],
+      "batch_file": "round2-samples/convenience-tree.json",
+      "batch_sha256": "2ff981f91aff100acf00df5a80288bd090a1a6a8e464c780ad77b20cdb08766c",
+      "capture_wall_offsets_ms": [
+        31201,
+        31339
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:24:55.052Z",
+        "2026-11-05T03:24:55.190Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落设施与出航售卖",
+      "observation": "Storage Slots II 写储存格数8→12，价10.0B贝壳。",
+      "limits": "画面是下一档预览，不能据此认定这次已购买。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "87afc7dd7e689afcf64a811c05fb0b1499197987af2dac55b83e107ad866aa99",
+      "bytes": 656496
+    },
+    {
+      "id": "S11-C076",
+      "file": "round2-samples/convenience-tree_025.jpg",
+      "video_time": "02:01:15",
+      "video_seconds": 7275,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        7242,
+        7290
+      ],
+      "batch_file": "round2-samples/convenience-tree.json",
+      "batch_sha256": "2ff981f91aff100acf00df5a80288bd090a1a6a8e464c780ad77b20cdb08766c",
+      "capture_wall_offsets_ms": [
+        32501,
+        32632
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:24:56.352Z",
+        "2026-11-05T03:24:56.483Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落设施与出航售卖",
+      "observation": "Alchemy Station 节点说明写可把贝壳换成生命药瓶，红色价格1.0T贝壳。",
+      "limits": "这是解锁站点的价格；每瓶兑换比例没有给出。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "414c81b126a23d368773ca2716295c65509d07a54ffe56a65629cb296c4ecf28",
+      "bytes": 454890
+    },
+    {
+      "id": "S11-C077",
+      "file": "round2-samples/convenience-tree_027.jpg",
+      "video_time": "02:01:17",
+      "video_seconds": 7277,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        7242,
+        7290
+      ],
+      "batch_file": "round2-samples/convenience-tree.json",
+      "batch_sha256": "2ff981f91aff100acf00df5a80288bd090a1a6a8e464c780ad77b20cdb08766c",
+      "capture_wall_offsets_ms": [
+        35101,
+        35239
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:24:58.952Z",
+        "2026-11-05T03:24:59.090Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "村落设施与出航售卖",
+      "observation": "Expedition Demand I 标MAX，说明出航期间商店售卖水母速度为5倍。",
+      "limits": "这是已解锁节点说明。基础离场售速、逐笔入账时刻仍待实测。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "a8d42393d7e91366124ab48ac1214c0307252d0d3525a0e44c539ffcce5640f5",
+      "bytes": 716676
+    },
+    {
+      "id": "S11-C078",
+      "file": "round2-samples/deep-ice_013.jpg",
+      "video_time": "00:54:30",
+      "video_seconds": 3270,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        3252,
+        3294
+      ],
+      "batch_file": "round2-samples/deep-ice.json",
+      "batch_sha256": "ca6fb8f4c2d8497f798d405cb48e5bfac7d6a6fa0e280c4dff59ddb71be22b33",
+      "capture_wall_offsets_ms": [
+        17551,
+        17679
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:28:36.015Z",
+        "2026-11-05T03:28:36.143Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "水母生成与资源到来",
+      "observation": "Shallows Biodiversity 为10/10、MAX。说明写 Ocean Shallows 的水母 spawn rate 增加25%，当前显示250%。",
+      "limits": "节点使用spawn rate措辞；实际数量、生成间隔与每次掉落量仍需分开测试。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "742ed1c2b915680f5660c8ca0a0a951174b8e44df1dd85d39821ade50ee17d33",
+      "bytes": 561344
+    },
+    {
+      "id": "S11-C079",
+      "file": "round2-samples/deep-ice_014.jpg",
+      "video_time": "00:54:31",
+      "video_seconds": 3271,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        3252,
+        3294
+      ],
+      "batch_file": "round2-samples/deep-ice.json",
+      "batch_sha256": "ca6fb8f4c2d8497f798d405cb48e5bfac7d6a6fa0e280c4dff59ddb71be22b33",
+      "capture_wall_offsets_ms": [
+        18905,
+        19041
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:28:37.369Z",
+        "2026-11-05T03:28:37.505Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "水母生成与资源到来",
+      "observation": "Faster Waters I 标MAX。说明写 Jellyfishes and Resources arrive 250% faster，当前显示250%。",
+      "limits": "这是到来速度的技能说明，未直接给出固定重生秒数或地图重置规则。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "f6fad4254f014a5290668eb6a045ed781f51c02c2d4dc39aad90b2bf9e1b6e5b",
+      "bytes": 491202
+    },
+    {
+      "id": "S11-C080",
+      "file": "round2-samples/deep-ice_020.jpg",
+      "video_time": "00:54:39",
+      "video_seconds": 3279,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        3252,
+        3294
+      ],
+      "batch_file": "round2-samples/deep-ice.json",
+      "batch_sha256": "ca6fb8f4c2d8497f798d405cb48e5bfac7d6a6fa0e280c4dff59ddb71be22b33",
+      "capture_wall_offsets_ms": [
+        27001,
+        27129
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:28:45.465Z",
+        "2026-11-05T03:28:45.593Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "500米冰区地标",
+      "observation": "Glacial Depths 500m 地区卡显示两种水母60.0%与40.0%，两种资源70.0%与30.0%。",
+      "limits": "卡片未说明这些百分比的统计分母，不能直接当全图数量。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "0a270dab5657ad5e54b12c8c2d35266149d3b4e670d7ac90e7e644c361cfb9ee",
+      "bytes": 536013
+    },
+    {
+      "id": "S11-C081",
+      "file": "round2-samples/deep-ice_024.jpg",
+      "video_time": "00:54:44",
+      "video_seconds": 3284,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        3252,
+        3294
+      ],
+      "batch_file": "round2-samples/deep-ice.json",
+      "batch_sha256": "ca6fb8f4c2d8497f798d405cb48e5bfac7d6a6fa0e280c4dff59ddb71be22b33",
+      "capture_wall_offsets_ms": [
+        32402,
+        32545
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:28:50.866Z",
+        "2026-11-05T03:28:51.009Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "500米冰区地标",
+      "observation": "画面标题 Glacial Depths (500m)；黄潜艇在左上，中央多根竖向结构围出窄道，下方有覆冰网格，右侧可见多簇资源。",
+      "limits": "这张展示500米入口局部，与400米样本分别定位；资源的漂移和再出现仍待控制实验。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "0aeacff6fd681d23116604c60569eaadbc8ba33ef560eb6e0a0f6c136b832186",
+      "bytes": 763938
+    },
+    {
+      "id": "S11-C082",
+      "file": "round2-samples/swamp-depth-card_018.jpg",
+      "video_time": "01:31:22",
+      "video_seconds": 5482,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5460,
+        5489
+      ],
+      "batch_file": "round2-samples/swamp-depth-card.json",
+      "batch_sha256": "5007b91a1792daaba12593681702513d9aa18be52f30ea18eaafe448780eeee9",
+      "capture_wall_offsets_ms": [
+        21605,
+        21751
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:57:55.840Z",
+        "2026-11-05T03:57:55.986Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "800米沼泽回撤与悬浮箱",
+      "observation": "画面标题 Swamp Waters (800m)。黄潜艇在左上，中央斜坡廊由覆苔石壁和竖石柱围成，下方悬着带小叶的箱形物。",
+      "limits": "标题出自稍后的独立窗口；与回撤段依地貌对位，两个窗口之间的路线未全部连续记录。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "66e3f4ff15031d51e913400924c777fed572b820225806f79a28b53ddaf76dc7",
+      "bytes": 597170
+    },
+    {
+      "id": "S11-C083",
+      "file": "round2-samples/swamp-lower_002.jpg",
+      "video_time": "01:30:03",
+      "video_seconds": 5403,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        5401,
+        5438
+      ],
+      "batch_file": "round2-samples/swamp-lower.json",
+      "batch_sha256": "94653c76fe63268049f36d0a9dfa4022c7c662b07251d35d0d4874786613cac3",
+      "capture_wall_offsets_ms": [
+        2801,
+        2922
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:37:11.211Z",
+        "2026-11-05T03:37:11.332Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "800米沼泽回撤与悬浮箱",
+      "observation": "角色在下层凹室内采集，周围竖石柱、上方狭口和多个资源簇同时可见。",
+      "limits": "与同批次后两张串联已走回撤路段，未覆盖800米全图。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "f253a31bda9c0791b0eb1a25143437f1d551b363138a403821898a415c0d92a6",
+      "bytes": 548917
+    },
+    {
+      "id": "S11-C084",
+      "file": "round2-samples/swamp-lower_007.jpg",
+      "video_time": "01:30:11",
+      "video_seconds": 5411,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5401,
+        5438
+      ],
+      "batch_file": "round2-samples/swamp-lower.json",
+      "batch_sha256": "94653c76fe63268049f36d0a9dfa4022c7c662b07251d35d0d4874786613cac3",
+      "capture_wall_offsets_ms": [
+        9801,
+        9941
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:37:18.211Z",
+        "2026-11-05T03:37:18.351Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "800米沼泽回撤与悬浮箱",
+      "observation": "角色已经到斜向上开的坡廊，右侧竖石柱沿坡排列，下方凹室出口仍在画面。",
+      "limits": "地标与前后截图可对位；精确碰撞范围没有测试。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "d1f62b1c3479b42dd44e80c4541f35d6a8e85d0b954d825d763e1edd80af2f0d",
+      "bytes": 536077
+    },
+    {
+      "id": "S11-C085",
+      "file": "round2-samples/swamp-lower_012.jpg",
+      "video_time": "01:30:18",
+      "video_seconds": 5418,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "batch_player_start_plus_midcapture_wall_offset",
+      "video_window_seconds": [
+        5401,
+        5438
+      ],
+      "batch_file": "round2-samples/swamp-lower.json",
+      "batch_sha256": "94653c76fe63268049f36d0a9dfa4022c7c662b07251d35d0d4874786613cac3",
+      "capture_wall_offsets_ms": [
+        16806,
+        16934
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:37:25.216Z",
+        "2026-11-05T03:37:25.344Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "800米沼泽回撤与悬浮箱",
+      "observation": "黄潜艇重现在左上，角色在通向潜艇的坡廊内，下方可见带小叶的箱形物。",
+      "limits": "这组截图记录凹室到入口的回撤，尚不能说明已触发返程。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "ca13486a7e677f62ab3016f61e39ce2fad3feed5595b1ddb16cb5c6e69d226b9",
+      "bytes": 539932
+    },
+    {
+      "id": "S11-C086",
+      "file": "round2-samples/swamp-box-ledger_014.jpg",
+      "video_time": "01:30:13",
+      "video_seconds": 5413,
+      "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "video_time_precision": "approximate_whole_second",
+      "video_time_basis": "visible_integer_player_readout",
+      "video_window_seconds": [
+        5411,
+        5414
+      ],
+      "batch_file": "round2-samples/swamp-box-ledger.json",
+      "batch_sha256": "0eeb5629ac5f9c91cdc131c26b5c1d8da54affb6ec95e86d6dbdf950b811f126",
+      "capture_wall_offsets_ms": [
+        2589,
+        2711
+      ],
+      "capture_wall_interval_utc": [
+        "2026-11-05T03:44:47.501Z",
+        "2026-11-05T03:44:47.623Z"
+      ],
+      "output_resolution": [
+        3024,
+        1898
+      ],
+      "question": "800米沼泽回撤与悬浮箱",
+      "observation": "潜水中悬浮箱上方显示四格蓝框，右侧自身面板有浅褐水母2，箱旁出现B交互提示。",
+      "limits": "操作后的最终库存未读清；不能据此确定已完成寄存或无损保留。 来源时码约至整秒，本机全屏截图。",
+      "sha256": "ee5b3b8a4444ab568cfd64f6ea12f8867e3f0c8abb8ca09c9bf0b2445666e122",
+      "bytes": 590376
     }
   ],
   "local_media_root": "/Users/alanthssss/LocalGames/research/shelldiver/S11",
@@ -598,5 +2549,320 @@
     "next_video_cursor_seconds": 4263.734491,
     "next_video_cursor": "01:11:03.734",
     "scope_complete": false
+  },
+  "round2_capture_method": {
+    "date": "2026-11-05",
+    "first_id": "S11-C026",
+    "note": "C026起为本机全屏原始JPEG，output_resolution以各文件实读。视频流原始分辨率未知。整秒链接仅供回看定位。若截图播放器显示时间则取其整秒，否则按批次起点与截图墙钟区间中点估算并限制在批次整秒区间。本机墙钟毫秒不等于源视频毫秒。连续播放短窗内的离散截图不能证明全片或完整地图。",
+    "previous_checkpoint": "顶层checkpoint保留11月4日暂停与关页回执，仅对应C001–025。"
+  },
+  "excluded_batches": [
+    {
+      "batch_file": "round2-samples/deep-swamp.json",
+      "sha256": "0a40715787585b269accf248e08798a2c6f2bc255431036f68c3b90a6a484b9b",
+      "from": {
+        "sec": 5392,
+        "main": true,
+        "playing": false,
+        "full": true
+      },
+      "to": {
+        "sec": 5,
+        "main": false,
+        "playing": false,
+        "full": true
+      },
+      "sample_count": 34,
+      "reason": "批次含中插广告且结束时播放器并非正片。全批次排除，不纳入有效截图或完整区间覆盖，原始文件保留。"
+    },
+    {
+      "batch_file": "round2-samples/swamp-next-region.json",
+      "sha256": "fa4d8e223a2ac4fa503b429cf4bc80d3c19ad65d25a9ee1db1306cb372175b5c",
+      "from": {
+        "sec": 5454,
+        "main": true,
+        "playing": false,
+        "full": true
+      },
+      "to": {
+        "sec": 5,
+        "main": false,
+        "playing": false,
+        "full": true
+      },
+      "sample_count": 28,
+      "reason": "批次含中插广告且结束时播放器并非正片。全批次排除，不纳入有效截图或完整区间覆盖，原始文件保留。"
+    }
+  ],
+  "round2_checkpoint": {
+    "date": "2026-11-05",
+    "timezone": "Asia/Shanghai",
+    "baseline_used_percent": 21,
+    "requested_cap_used_percent": 31,
+    "used_percent_when_sampling_stopped": 28,
+    "last_operation_video_seconds": 5489,
+    "video_tab_closed_at": "2026-11-05T05:22:12.126Z",
+    "closure_verified": true,
+    "closure_evidence": "Native Chrome close confirmation accepted for this task-created single-tab group. Tab list then contained GitHub and idictation only, without S7EaREatF4w.",
+    "final_used_percent": null,
+    "quota_scope": "shared account weekly window, not task token count",
+    "report": "shelldiver-increment-2026-11-05.md"
+  },
+  "round2_sampling_windows": {
+    "windows": [
+      {
+        "batch": "round2-samples/convenience-probe.json",
+        "start_second": 7202,
+        "end_second": 7242,
+        "raw_samples": 27
+      },
+      {
+        "batch": "round2-samples/convenience-tree.json",
+        "start_second": 7242,
+        "end_second": 7290,
+        "raw_samples": 38
+      },
+      {
+        "batch": "round2-samples/deep-ice-return.json",
+        "start_second": 3294,
+        "end_second": 3341,
+        "raw_samples": 33
+      },
+      {
+        "batch": "round2-samples/deep-ice.json",
+        "start_second": 3252,
+        "end_second": 3294,
+        "raw_samples": 32
+      },
+      {
+        "batch": "round2-samples/first-transfer.json",
+        "start_second": 9045,
+        "end_second": 9048,
+        "raw_samples": 26
+      },
+      {
+        "batch": "round2-samples/hammock-buy.json",
+        "start_second": 11645,
+        "end_second": 11659,
+        "raw_samples": 16
+      },
+      {
+        "batch": "round2-samples/hammock-end.json",
+        "start_second": 11654,
+        "end_second": 11686,
+        "raw_samples": 22
+      },
+      {
+        "batch": "round2-samples/ice-failure.json",
+        "start_second": 1889,
+        "end_second": 1893,
+        "raw_samples": 26
+      },
+      {
+        "batch": "round2-samples/ice-first.json",
+        "start_second": 1783,
+        "end_second": 1812,
+        "raw_samples": 22
+      },
+      {
+        "batch": "round2-samples/ice-origin.json",
+        "start_second": 1752,
+        "end_second": 1778,
+        "raw_samples": 18
+      },
+      {
+        "batch": "round2-samples/ice-reenter.json",
+        "start_second": 1852,
+        "end_second": 1880,
+        "raw_samples": 23
+      },
+      {
+        "batch": "round2-samples/ice-return.json",
+        "start_second": 1880,
+        "end_second": 1894,
+        "raw_samples": 15
+      },
+      {
+        "batch": "round2-samples/late-village.json",
+        "start_second": 8241,
+        "end_second": 8272,
+        "raw_samples": 25
+      },
+      {
+        "batch": "round2-samples/magma-home.json",
+        "start_second": 8304,
+        "end_second": 8309,
+        "raw_samples": 23
+      },
+      {
+        "batch": "round2-samples/magma-next.json",
+        "start_second": 9079,
+        "end_second": 9111,
+        "raw_samples": 38
+      },
+      {
+        "batch": "round2-samples/magma-result.json",
+        "start_second": 8309,
+        "end_second": 8311,
+        "raw_samples": 16
+      },
+      {
+        "batch": "round2-samples/magma-route.json",
+        "start_second": 8272,
+        "end_second": 8314,
+        "raw_samples": 31
+      },
+      {
+        "batch": "round2-samples/next-ledger.json",
+        "start_second": 9081,
+        "end_second": 9085,
+        "raw_samples": 26
+      },
+      {
+        "batch": "round2-samples/opening-world.json",
+        "start_second": 4,
+        "end_second": 51,
+        "raw_samples": 33
+      },
+      {
+        "batch": "round2-samples/ruin-path.json",
+        "start_second": 4224,
+        "end_second": 4262,
+        "raw_samples": 26
+      },
+      {
+        "batch": "round2-samples/shallows-failure.json",
+        "start_second": 175,
+        "end_second": 203,
+        "raw_samples": 28
+      },
+      {
+        "batch": "round2-samples/store-handoff.json",
+        "start_second": 5879,
+        "end_second": 5908,
+        "raw_samples": 25
+      },
+      {
+        "batch": "round2-samples/store-mid.json",
+        "start_second": 5906,
+        "end_second": 5945,
+        "raw_samples": 36
+      },
+      {
+        "batch": "round2-samples/swamp-box-ledger.json",
+        "start_second": 5411,
+        "end_second": 5414,
+        "raw_samples": 20
+      },
+      {
+        "batch": "round2-samples/swamp-box-transfer.json",
+        "start_second": 5412,
+        "end_second": 5416,
+        "raw_samples": 22
+      },
+      {
+        "batch": "round2-samples/swamp-box.json",
+        "start_second": 5407,
+        "end_second": 5412,
+        "raw_samples": 35
+      },
+      {
+        "batch": "round2-samples/swamp-depth-card.json",
+        "start_second": 5460,
+        "end_second": 5489,
+        "raw_samples": 25
+      },
+      {
+        "batch": "round2-samples/swamp-lower.json",
+        "start_second": 5401,
+        "end_second": 5438,
+        "raw_samples": 28
+      },
+      {
+        "batch": "round2-samples/swamp-storage.json",
+        "start_second": 5413,
+        "end_second": 5417,
+        "raw_samples": 26
+      },
+      {
+        "batch": "round2-samples/trip3seq.json",
+        "start_second": 261,
+        "end_second": 286,
+        "raw_samples": 31
+      }
+    ],
+    "unique_window_seconds": 693,
+    "merged_windows_seconds": [
+      [
+        4,
+        51
+      ],
+      [
+        175,
+        203
+      ],
+      [
+        261,
+        286
+      ],
+      [
+        1752,
+        1778
+      ],
+      [
+        1783,
+        1812
+      ],
+      [
+        1852,
+        1894
+      ],
+      [
+        3252,
+        3341
+      ],
+      [
+        4224,
+        4262
+      ],
+      [
+        5401,
+        5438
+      ],
+      [
+        5460,
+        5489
+      ],
+      [
+        5879,
+        5945
+      ],
+      [
+        7202,
+        7290
+      ],
+      [
+        8241,
+        8314
+      ],
+      [
+        9045,
+        9048
+      ],
+      [
+        9079,
+        9111
+      ],
+      [
+        11645,
+        11686
+      ]
+    ],
+    "valid_batch_raw_samples": 792,
+    "excluded_whole_batches": [
+      "deep-swamp.json",
+      "swamp-next-region.json"
+    ],
+    "limits": "Window lengths are whole-second player endpoints, not proof that every intervening frame was inspected. Overlaps are merged. Ads and gaps outside these windows are excluded."
   }
 }

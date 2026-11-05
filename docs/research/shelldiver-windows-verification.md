@@ -57,3 +57,8 @@
 对照表分为“原作实测事实／视频观察”“本作0.23历史基线 `9dd609d`”“已合并0.24：[PR #310](https://github.com/alanthssss/nameless-becoming/pull/310)，合并提交 `ae411496`”“差距与建议／验证方法”。此前取样提交 `378a230` 与最终PR头 `1efd4c5` 的 `prototypes/swarm-flight` 运行源码无差异，保留原证据来源，不改写成重新实测。每条建议说明想改变的玩家选择或反馈，并保留不适用的差异。首三趟／全片索引归 [#311](https://github.com/alanthssss/nameless-becoming/issues/311)，成长与中后期取样归 [#312](https://github.com/alanthssss/nameless-becoming/issues/312)，本表及返程刷新对照归 #313；引用同一证据，不重复建账。
 
 每10–15分钟做一次可独立复核检查点，写已覆盖区间、发现和剩余；长视频或实际等待超过估算时如实延长／拆续项，不到时即报完成。设备尚未就绪时可完成文档及视频部分，但Windows实验继续标待执行。结束正常退出研究应用、关闭本任务新开的浏览器页面，保留用户原有窗口；核对存档、证据路径和未解决问题后再向权威Issue回写。方法文档通过检查不等于原作实验完成，也不等于本作产品验收。
+
+
+## 11月5日视频取证后的实验补充
+
+视频新增证据见[增量报告](shelldiver-increment-2026-11-05.md)，Windows实验仍待执行。W02/W03须同时记Shallows Biodiversity、Faster Waters、地区深度、材料产量成长，资源会受视野和可能漂移影响，优先用400米镂空横梁与冰顶定位。W05须固定Store Speed、Expedition Demand、Store Upsell和Transmuter Automation，分别记录售出量、额外售出、货架空格、待领取积款，不能把出航5倍文字直接当测量结果。W09添加本趟新采与出发前已有材料两列，先分清净增保留和旧余额。水中悬浮箱的最终存入、遇险及重载行为仍需独立对账。

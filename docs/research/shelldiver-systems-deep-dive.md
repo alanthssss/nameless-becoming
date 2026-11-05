@@ -1,5 +1,7 @@
 # Shelldiver 系统拆解：元素、成长图、场景与 Demo 对照
 
+2026-11-05续接已形成[增量研究报告](shelldiver-increment-2026-11-05.md)，合计86张可复核图证。以下保留各阶段历史分析；当前项目暂称「采蜜 Demo」，已有场景预览与新的设计候选以增量报告为准。
+
 关联：[SD01 #288](https://github.com/alanthssss/nameless-becoming/issues/288)、[SD02 #289](https://github.com/alanthssss/nameless-becoming/issues/289)；GDD §13.9；M3。研究日期：2026-11-03。配套：[证据台账](shelldiver-evidence-ledger.json)。这是产品研究，不是本作真人试玩结论，也不是 Shelldiver 内部实现说明。
 
 本文主体保留0.21时代的本作基线与当时建议；“当前”、9节点、威胁和四功能等描述属于历史语境，不覆盖后来0.23／0.24的实现。2026-11-04完整视频研究未完成，按用户额度约定暂停，新观察、覆盖缺口与已合并0.24的对照见[覆盖与续接记录](shelldiver-fullplay-checkpoint.md)，Windows控制实验稍后执行。

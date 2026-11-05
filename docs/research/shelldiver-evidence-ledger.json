@@ -12,8 +12,8 @@
     312,
     313
   ],
-  "scope": "Original bounded research plus full-game video event sampling, first trips, growth, store, maps and interactions; comparison to merged 0.24 ae411496. Expanded coverage incomplete.",
-  "status": "expanded_fullplay_research_paused_at_user_10_percent_checkpoint",
+  "scope": "Event-focused incremental video research and comparison to main ae411496 plus existing scene preview PR315 runtime f1dbbd7. Full video, full maps, controlled experiments and all node data remain incomplete.",
+  "status": "incremental_report_ready_for_review_full_video_study_incomplete",
   "historical_status": "2026-11-03 bounded_research_complete_with_explicit_unknowns (SD01/SD02 original scope)",
   "not_claimed": [
     "complete original skill database",
@@ -60,12 +60,13 @@
       }
     ],
     "S11_fullplay_local_captures_found": true,
-    "S11_fullplay_state": "Persistent original browser screenshots archived after quota reset; full-length video not downloaded; see capture manifest for count, limits and timestamps",
+    "S11_fullplay_state": "86 curated original screenshots, local offline gallery, dated November5 incremental report",
     "method": "shelldiver-fullplay-checkpoint.md#study-method",
     "S11_capture_manifest": "shelldiver-S11-captures.json",
-    "S11_capture_count": 25,
+    "S11_capture_count": 86,
     "S11_media_root": "/Users/alanthssss/LocalGames/research/shelldiver/S11",
-    "historical_audit_note": "Before the 2026-11-04 18:14 Asia/Shanghai restart, only four official reference artifacts existed; current fields supersede that no-S11-captures snapshot."
+    "historical_audit_note": "Before the 2026-11-04 18:14 Asia/Shanghai restart, only four official reference artifacts existed; current fields supersede that no-S11-captures snapshot.",
+    "updated": "2026-11-05"
   },
   "sources": [
     {
@@ -324,24 +325,35 @@
         "First spending: Plasma Gun 20, Deep Breath 10, Bubble Damage I 5; balance 5",
         "Second trip panel 39.76 seconds, zero jellyfish inventory and +8 scraps following low-oxygen sequence; immediate retry",
         "Third normal trip panel 29.68 seconds, +3 jellyfish and +19 scraps; total scraps 27; subsequent sales raise balance 5 to 35",
-        "At 2:30:46.148 carried inventory is 12+7+11 with empty submarine slots; C003 at 2:30:46.581 shows original carried icons no longer visible and bright transfer effects over the first three submarine slots. Final stable storage quantities are still unreadable; later new-dive footage supports retry flow, not proof of lossless storage.",
         "Chest Speed I at 19:39.92: 250% quicker chest collection for 250 scraps; this is not shop sale speed",
         "Oxygen Tank II 10/10, Bubble Strike I first-hit modifier, Hammock Repair ending goal and sleeping credits observed at separate index points",
         "Persistent C010/C011 show carried 5+6 FULL while scraps rise 177 to 369; C015 stable result shows 70.87 seconds, +11 jellyfish and +397 scraps; C016 wallet scraps 414 agrees with starting17+397.",
         "C016/C017 distinguish shop stock, chest proceeds, wallet and collection animation; 26 plus314 animation is not treated as stable final balance.",
         "C018-C020 record ice-edged contours and entry submarine; C019 player is in a dark background region, so brightness cannot define walkability or collision.",
         "C021 Plasma Damage II level00/10: +25%, displayed150 to175%, red price250 shells versus balance34.",
-        "C022 Store Speed I level5/5 describes +100% sale speed, total500% MAX; distinct from C023 Chest Speed I +250% chest withdrawal for250 scraps. Exact time formulas untested."
+        "C022 Store Speed I level5/5 describes +100% sale speed, total500% MAX; distinct from C023 Chest Speed I +250% chest withdrawal for250 scraps. Exact time formulas untested.",
+        "November5 C030-C035 and trip3seq burst resolve seven third-trip purchases: Oxygen Tank I twice, Shellpack Slots I once, Store Slots I once, Bubble Damage I three times; coins35->0, scraps27->7, Prestige4->11.",
+        "C058 first inventory30, C061 next result33, C062 seven submarine stacks12+12+12+12+1+12+2=63, linking two normal trips. No universal failure/save guarantee inferred.",
+        "C036-C045 match 400m entrance landmarks and harvested crystal location across visits; death result33.58s,1 jellyfish,4 Crystals. Returning resources does not isolate respawn trigger, drift or fixed time.",
+        "C046-C049 confirm Swamp Waters700m and local arch route; C055-C057 Magma Abyss1000m rock gullies; C080-C081 Glacial Depths500m; C082-C085 Swamp Waters800m lower chamber and rising return corridor.",
+        "C050-C054 preserve staged inventory->store->chest->wallet and Store Upsell10% extra sale text.",
+        "C071 Transmuter Automation; C072-C073 white5 in gold output then own inventory; C074 Starfish Friend2/2; C075 Storage Slots8->12; C076 AlchemyStation shell-to-vial unlock1T; C077 Expedition Demand5x while exploring. Descriptions distinguished from tested mechanics.",
+        "C078 Shallows Biodiversity spawn rate and C079 Faster Waters arrival speed are separate from Crystal Master per-block yield. Control experiments must hold upgrades fixed.",
+        "C026-C027 opening hammock/free submarine purchase; C066-C070 final hammock purchase, visible repair, approach withB, rest and credits.",
+        "C086 underwater floating-box UI has four empty-looking blue slots and own tan2, but transfer outcome remains unreadable."
       ],
       "limits": [
-        "Complete first-three-trip input/purchase sequence still has sampling gaps",
         "No complete skill database, costs or graph prerequisites reconstructed",
         "No controlled respawn, leave-area selling, pause-time or save-reload test",
         "Sparse coverage and unknown build; time played during user interruption is not counted as observed",
         "Third-party video observation is not independent human testing of our game",
-        "Raw screenshots are selected states, not continuous recording or a complete map; millisecond timestamps are player readouts, not frame-accurate certification."
+        "Raw screenshots are selected states, not continuous recording or a complete map; millisecond timestamps are player readouts, not frame-accurate certification.",
+        "November5 screenshots use approximate whole seconds and local3024x1898 output; raw video resolution unverified. Two ad-interrupted windows excluded in full.",
+        "Complete video and all depth routes still unobserved; audio design not independently reviewed."
       ],
-      "capture_manifest": "shelldiver-S11-captures.json"
+      "capture_manifest": "shelldiver-S11-captures.json",
+      "incremental_report": "shelldiver-increment-2026-11-05.md",
+      "capture_count": 86
     }
   ],
   "calculations": [
@@ -510,5 +522,20 @@
     "next_video_cursor_seconds": 4263.734491,
     "next_video_cursor": "01:11:03.734",
     "scope_complete": false
+  },
+  "research_updated": "2026-11-05",
+  "incremental_checkpoint": {
+    "date": "2026-11-05",
+    "timezone": "Asia/Shanghai",
+    "baseline_used_percent": 21,
+    "requested_cap_used_percent": 31,
+    "used_percent_when_sampling_stopped": 28,
+    "last_operation_video_seconds": 5489,
+    "video_tab_closed_at": "2026-11-05T05:22:12.126Z",
+    "closure_verified": true,
+    "closure_evidence": "Native Chrome close confirmation accepted for this task-created single-tab group. Tab list then contained GitHub and idictation only, without S7EaREatF4w.",
+    "final_used_percent": null,
+    "quota_scope": "shared account weekly window, not task token count",
+    "report": "shelldiver-increment-2026-11-05.md"
   }
 }
