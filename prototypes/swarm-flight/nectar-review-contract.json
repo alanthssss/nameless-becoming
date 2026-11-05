@@ -2,7 +2,7 @@
   "schema": 1,
   "goal": "nectar-harvest-mvp",
   "source": "docs/design/swarm-flight-gdd.md",
-  "gdd_section": "13.7 / 13.8; NH-C01–08 / NH-RG01–06 / 13.9 SD-v1 / SD-v1.1 feedback 2026-11-04 / SD-v1.2 living collection 2026-11-04",
+  "gdd_section": "13.7 / 13.8; NH-C01–08 / NH-RG01–06 / 13.9 SD-v1 / SD-v1.1 feedback 2026-11-04 / SD-v1.2 living collection 2026-11-04 / SD-v1.4 research adoption 2026-11-05",
   "claim": "candidate",
   "entry": "nectar-harvest",
   "save_filename": "nectar_harvest_v1.json",
@@ -17,7 +17,7 @@
       "roles": [
         "input_trace"
       ],
-      "requirement": "Ordinary input completes harvest, full cargo, sale and purchase with consistent feedback."
+      "requirement": "Ordinary input completes harvest, full cargo, sale and purchase with consistent feedback. Return/rescue results show actual kept/lost cargo and retained materials; failed saves do not report purchases, and current-visit recap clears on new departure/restart."
     },
     {
       "id": "NH-C02",
@@ -63,7 +63,7 @@
       "roles": [
         "native_frame"
       ],
-      "requirement": "Native 960x600 and 1280x800 presentation is readable, coherent and spatially credible. Dance stage supports, art family, field guide and settings are checked at native scales."
+      "requirement": "Native 960x600 and 1280x800 presentation is readable, coherent and spatially credible. Dance stage supports, art family, field guide and settings are checked at native scales. Home/flower/shortcut waymarks, off-screen return bearing, capacity appearance and sealed home reserve are checked at both scales."
     },
     {
       "id": "NH-C06",

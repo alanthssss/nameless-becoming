@@ -110,12 +110,13 @@ func _draw() -> void:
 			_draw_gate_hint(Vector2(1660,575),"前往紫花地","meadow" in model.owned)
 			_draw_shortcut_hint(Vector2(1040,400),false)
 		else:
-			_draw_gate_hint(Vector2(1900,575),"返程路牌",true)
+			_draw_gate_hint(Vector2(1900,575),"池岸 / 庭院",true)
 			_draw_shortcut_hint(Vector2(3000,400),true)
 	for item in harvest_texts:
 		if feedback_font:
 			draw_string(feedback_font,item.p+Vector2(14,-30-item.age*26),item.text,HORIZONTAL_ALIGNMENT_LEFT,-1,17,Color(1,0.96,0.72,1-item.age))
 	draw_set_transform(Vector2.ZERO)
+	_draw_return_bearing()
 	# Ground anchors remain in world space as the camera follows the bee.
 
 func _field_flower_visible(flower: Dictionary) -> bool:
@@ -158,11 +159,11 @@ func _draw_field_scene() -> void:
 	var shortcut := Vector2(1040,400) if area_key == "pond" else Vector2(3000,400)
 	if area_key == "pond" or "meadow" in model.owned:
 		_ground_shadow(shortcut+Vector2(0,64),Vector2(46,12),.12)
-		items.append({"kind":"lamp","y":shortcut.y+65,"p":shortcut,"size":170.0,"active":"shortcut" in model.owned})
-	var gates: Array = [{"p":Vector2(470,575),"active":true},{"p":Vector2(1660,575),"active":"meadow" in model.owned}] if area_key == "pond" else [{"p":Vector2(1900,575),"active":true}]
+		items.append({"kind":"lamp","y":shortcut.y+65,"p":shortcut,"size":170.0,"active":"shortcut" in model.owned,"symbol":"shortcut"})
+	var gates: Array = [{"p":Vector2(470,575),"active":true,"symbol":"home"},{"p":Vector2(1660,575),"active":"meadow" in model.owned,"symbol":"meadow"}] if area_key == "pond" else [{"p":Vector2(1900,575),"active":true,"symbol":"home"}]
 	for gate in gates:
 		_ground_shadow(gate.p+Vector2(0,64),Vector2(57,14),.12)
-		items.append({"kind":"lamp","y":gate.p.y+65,"p":gate.p,"size":230.0,"active":gate.active})
+		items.append({"kind":"lamp","y":gate.p.y+65,"p":gate.p,"size":230.0,"active":gate.active,"symbol":gate.symbol})
 	for creature in model.creatures:
 		if int(creature.region) != (0 if area_key == "pond" else 1) or creature.state == "gone": continue
 		_ground_shadow(creature.pos+Vector2(0,30),Vector2(18,6),.10)
@@ -176,7 +177,9 @@ func _draw_field_scene() -> void:
 		match item.kind:
 			"flower": _draw_source(item.data)
 			"leaf": _draw_leaf_stop(item.p,item.half)
-			"lamp": _stage(item.p,item.size,item.active)
+			"lamp":
+				_stage(item.p,item.size,item.active)
+				_draw_waymark(item.p,item.symbol,item.active)
 			"creature": _draw_creature(item.data)
 			"player": _draw_player()
 	_draw_rain()
@@ -195,6 +198,15 @@ func _draw_hub() -> void:
 	for i in jars:
 		var foot := Vector2(246+(i%3)*48,391-(i/3)*42)
 		draw_texture_rect_region(JAR_ART,Rect2(foot+Vector2(0,-34),Vector2(35,34)),JAR_SOURCE)
+	# Sale jars are shop history. The sealed reserve has its own place at home.
+	if model.completed:
+		var reserve := Vector2(539,456)
+		_ground_shadow(reserve,Vector2(40,9),.16)
+		for i in 3:
+			var foot := reserve+Vector2((i-1)*25,abs(i-1)*4)
+			draw_texture_rect_region(JAR_ART,Rect2(foot+Vector2(-17,-38),Vector2(35,38)),JAR_SOURCE)
+			UIArt.icon(self,"reserve",foot+Vector2(0,-20),6)
+		if model.p.distance_to(reserve)<240: _label(reserve+Vector2(0,-68),"蜂巢储备已封好",false,190)
 	_bee(Vector2(414,476),0.65,Vector2.LEFT,1,false,1.7,"waiting")
 	_bee(Vector2(788,467),0.58,Vector2.LEFT,1,false,2.9,"waiting")
 	_ground_shadow(model.p+Vector2(0,35),Vector2(22,7),.12)
@@ -224,24 +236,59 @@ func _draw_gate(p: Vector2, title: String, available: bool) -> void:
 func _draw_gate_hint(p: Vector2, title: String, available: bool) -> void:
 	if p.x < model.camera_x-160 or p.x > model.camera_x+1440: return
 	var height := 198.0 if area_key == "hub" else 117.0
-	if model.p.distance_to(p)<=(100 if area_key=="hub" else 70):
-		_label(p+Vector2(0,-height),title,true,150 if area_key=="hub" else 176)
+	var close: bool = model.p.distance_to(p)<=(100 if area_key=="hub" else 70)
+	if close:
+		_label(p+Vector2(0,-height),"E  "+title if available else title,available,150 if area_key=="hub" else 200)
+	elif model.p.distance_to(p)<=420:
+		_label(p+Vector2(0,-height),title,false,150 if area_key=="hub" else 190)
 	if not available and feedback_font:
 		draw_string(feedback_font,Vector2(clampf(p.x,model.camera_x+106,model.camera_x+1174)-79,p.y-23),"尚未开放",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("4f623f"))
+
+func _draw_waymark(p: Vector2, symbol: String, active: bool) -> void:
+	# The destination plaque is lashed to the same stem as the hanging lamp.
+	var stem := _marker_stem(p)
+	var at: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],.32)
+	var radius := 30.0 if symbol == "home" else 23.0
+	var points := PackedVector2Array()
+	for i in 6: points.append(at+Vector2(cos(i*TAU/6),sin(i*TAU/6))*radius)
+	draw_colored_polygon(points,Color("f0ce86") if symbol == "home" else Color("466648") if active else Color("6a7766"))
+	draw_polyline(points+PackedVector2Array([points[0]]),Color("806845"),2.3,true)
+	for x in [-9,9]: draw_line(at+Vector2(x,-radius*.87),at+Vector2(x,-radius*.55),Color("c3ad70"),2,true)
+	UIArt.icon(self,symbol,at+Vector2(0,2),radius*.57,Color("715431") if symbol == "home" else Color("f5e9b7") if active else Color("a6af9a"))
+
+func _draw_return_bearing() -> void:
+	if area_key == "hub": return
+	var destination: Vector2 = model.POND_ENTRY if area_key == "pond" else model.MEADOW_ENTRY
+	var x: float = destination.x-model.camera_x
+	if x >= -80 and x <= 1360: return
+	var at := Vector2(34 if x<0 else 1246,575)
+	draw_style_box(_box_style(Color("294c3eea"),Color("edce83"),2,13),Rect2(at-Vector2(25,29),Vector2(50,58)))
+	UIArt.icon(self,"home",at,18,Color("f0ce86"))
+	var direction := -1.0 if x<0 else 1.0
+	var arrow := at+Vector2(direction*17,-40)
+	draw_polyline(PackedVector2Array([arrow+Vector2(-direction*6,-6),arrow,arrow+Vector2(-direction*6,6)]),Color("f0ce86"),3,true)
+
+func _marker_stem(p: Vector2) -> PackedVector2Array:
+	# The right-hand gate grows inward, keeping its attached destination visible.
+	var side := -1.0 if area_key == "pond" and p == model.POND_EXIT else 1.0
+	var root := p+Vector2(44*side,63)
+	var hanging := p+Vector2(0,-86)
+	return PackedVector2Array([root,root+Vector2(38*side,-95),hanging+Vector2(34*side,-21),hanging])
 
 func _stage(p: Vector2, size: float, active: bool) -> void:
 	# A small suspended marker belongs to a local plant on the ground plane.
 	# Source crop preserves the existing mirror ball without its timber pavilion.
 	var scale := .24 if size < 200.0 else .29
-	var root := p+Vector2(44,63)
-	var hanging := p+Vector2(0,-86)
-	var stem := PackedVector2Array([root,root+Vector2(38,-95),hanging+Vector2(34,-21),hanging])
+	var stem := _marker_stem(p)
+	var root: Vector2 = stem[0]
+	var hanging: Vector2 = stem[3]
+	var side := signf(root.x-p.x)
 	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],6.0)
 	for t in [.28,.62]:
 		var leaf_root: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],t)
-		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2(36 if t<.5 else -34,-19),15)
-	ArtSprites.small_leaf(self,root,root+Vector2(-101,1),22)
-	ArtSprites.small_leaf(self,root+Vector2(-5,0),root+Vector2(32,-14),11)
+		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2((36 if t<.5 else -34)*side,-19),15)
+	ArtSprites.small_leaf(self,root,root+Vector2(-101*side,1),22)
+	ArtSprites.small_leaf(self,root+Vector2(-5*side,0),root+Vector2(32*side,-14),11)
 	var lamp_origin := hanging-Vector2(123*scale,0)
 	draw_texture_rect_region(STAGE,Rect2(lamp_origin,LAMP_SOURCE.size*scale),LAMP_SOURCE,Color.WHITE if active else Color("829481"))
 	if not active: return
@@ -401,8 +448,9 @@ func _draw_shortcut_hint(p: Vector2, far: bool) -> void:
 	if p.x < model.camera_x-100 or p.x > model.camera_x+1400: return
 	if far and "meadow" not in model.owned: return
 	var active: bool = "shortcut" in model.owned
-	if feedback_font and model.p.distance_to(p)<=115:
-		_label(p+Vector2(0,-117),"F  近道" if active else "尚未点亮",active,140)
+	if feedback_font and model.p.distance_to(p)<=300:
+		var close: bool = model.p.distance_to(p)<=115
+		_label(p+Vector2(0,-117),("F  近道" if close else "叶间近道") if active else "近道未点亮",active and close,160)
 
 func _draw_rain() -> void:
 	if area_key != "meadow": return
@@ -419,8 +467,10 @@ func _draw_rain() -> void:
 		draw_line(Vector2(x,y),Vector2(x-5,end_y),Color(0.72,0.89,1,0.24),1.4,true)
 
 func _draw_bag() -> void:
-	if model.cargo_total() <= 0: return
+	if model.cargo_total() <= 0 and "bag1" not in model.owned: return
 	var p: Vector2 = model.p+Vector2(-20 if model.face.x >= 0 else 21,17)
-	_oval(p,Vector2(7,9),Color("dba344"),Color("6e4e29"),1.3)
+	var size := 1.55 if "bag2" in model.owned else 1.25 if "bag1" in model.owned else 1.0
+	_oval(p,Vector2(7,9)*size,Color("dba344"),Color("6e4e29"),1.3)
+	draw_line(p+Vector2(-5,-7)*size,p+Vector2(5,-7)*size,Color("f4df9c"),2,true)
 	var ratio: float = float(model.cargo_total())/float(model.capacity())
-	_ellipse(p+Vector2(0,4-ratio*5),Vector2(4,2+ratio*4),Color("ffdb67"))
+	if ratio > 0: _ellipse(p+Vector2(0,4-ratio*5)*size,Vector2(4,2+ratio*4)*size,Color("ffdb67"))
