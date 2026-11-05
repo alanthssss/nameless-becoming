@@ -246,9 +246,8 @@ func _draw_gate_hint(p: Vector2, title: String, available: bool) -> void:
 
 func _draw_waymark(p: Vector2, symbol: String, active: bool) -> void:
 	# The destination plaque is lashed to the same stem as the hanging lamp.
-	var root := p+Vector2(44,63)
-	var hanging := p+Vector2(0,-86)
-	var at: Vector2 = root.bezier_interpolate(root+Vector2(38,-95),hanging+Vector2(34,-21),hanging,.32)
+	var stem := _marker_stem(p)
+	var at: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],.32)
 	var radius := 30.0 if symbol == "home" else 23.0
 	var points := PackedVector2Array()
 	for i in 6: points.append(at+Vector2(cos(i*TAU/6),sin(i*TAU/6))*radius)
@@ -269,19 +268,27 @@ func _draw_return_bearing() -> void:
 	var arrow := at+Vector2(direction*17,-40)
 	draw_polyline(PackedVector2Array([arrow+Vector2(-direction*6,-6),arrow,arrow+Vector2(-direction*6,6)]),Color("f0ce86"),3,true)
 
+func _marker_stem(p: Vector2) -> PackedVector2Array:
+	# The right-hand gate grows inward, keeping its attached destination visible.
+	var side := -1.0 if area_key == "pond" and p == model.POND_EXIT else 1.0
+	var root := p+Vector2(44*side,63)
+	var hanging := p+Vector2(0,-86)
+	return PackedVector2Array([root,root+Vector2(38*side,-95),hanging+Vector2(34*side,-21),hanging])
+
 func _stage(p: Vector2, size: float, active: bool) -> void:
 	# A small suspended marker belongs to a local plant on the ground plane.
 	# Source crop preserves the existing mirror ball without its timber pavilion.
 	var scale := .24 if size < 200.0 else .29
-	var root := p+Vector2(44,63)
-	var hanging := p+Vector2(0,-86)
-	var stem := PackedVector2Array([root,root+Vector2(38,-95),hanging+Vector2(34,-21),hanging])
+	var stem := _marker_stem(p)
+	var root: Vector2 = stem[0]
+	var hanging: Vector2 = stem[3]
+	var side := signf(root.x-p.x)
 	ArtProps.stalk(self,stem[0],stem[1],stem[2],stem[3],6.0)
 	for t in [.28,.62]:
 		var leaf_root: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],t)
-		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2(36 if t<.5 else -34,-19),15)
-	ArtSprites.small_leaf(self,root,root+Vector2(-101,1),22)
-	ArtSprites.small_leaf(self,root+Vector2(-5,0),root+Vector2(32,-14),11)
+		ArtSprites.small_leaf(self,leaf_root,leaf_root+Vector2((36 if t<.5 else -34)*side,-19),15)
+	ArtSprites.small_leaf(self,root,root+Vector2(-101*side,1),22)
+	ArtSprites.small_leaf(self,root+Vector2(-5*side,0),root+Vector2(32*side,-14),11)
 	var lamp_origin := hanging-Vector2(123*scale,0)
 	draw_texture_rect_region(STAGE,Rect2(lamp_origin,LAMP_SOURCE.size*scale),LAMP_SOURCE,Color.WHITE if active else Color("829481"))
 	if not active: return

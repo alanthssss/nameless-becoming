@@ -69,12 +69,16 @@ func click(b: Button) -> bool:
 	root.push_input(motion,true)
 	await frames(2)
 	for value in [true,false]:
+		# Reassert the recorded pointer at each edge. Native OS motion can arrive
+		# while this fixed-step movie is advancing between mouse down and up.
+		root.push_input(motion,true)
 		var event := InputEventMouseButton.new()
 		event.position = at
 		event.global_position = at
 		event.button_index = MOUSE_BUTTON_LEFT
 		event.pressed = value
 		root.push_input(event,true)
+		trace.append({"frame":frame_count,"event":"mouse_edge","pressed":value,"target":b.text,"hover_matches":root.gui_get_hovered_control()==b,"button_pressed":b.button_pressed,"mode":game.mode})
 		await frames(3)
 	trace.append({"frame":frame_count,"event":"button","text_before":label,"text_after":b.text,"at":[at.x,at.y],"mode":game.mode,"coins":game.model.coins,"owned":game.model.owned.duplicate()})
 	return true
