@@ -1,14 +1,28 @@
 {
   "schema_version": 1,
-  "research_date": "2026-11-03",
+  "research_date": "2026-11-04",
   "timezone": "Asia/Shanghai",
   "project": "nameless-becoming",
   "gdd": "13.9",
   "milestone": "M3",
-  "issues": [288, 289],
-  "scope": "Shelldiver elements, growth graph, visible numerical sample, interaction and comparison to Nectar Harvest 0.21",
-  "status": "bounded_research_complete_with_explicit_unknowns",
-  "not_claimed": ["complete original skill database", "source-code reconstruction", "original spawning algorithm", "hands-on successful dive", "human playtest", "proof of player enjoyment"],
+  "issues": [
+    288,
+    289,
+    311,
+    312,
+    313
+  ],
+  "scope": "Event-focused incremental video research and comparison to main ae411496 plus existing scene preview PR315 runtime f1dbbd7. Full video, full maps, controlled experiments and all node data remain incomplete.",
+  "status": "incremental_report_ready_for_review_full_video_study_incomplete",
+  "historical_status": "2026-11-03 bounded_research_complete_with_explicit_unknowns (SD01/SD02 original scope)",
+  "not_claimed": [
+    "complete original skill database",
+    "source-code reconstruction",
+    "original spawning algorithm",
+    "hands-on successful dive",
+    "human playtest",
+    "proof of player enjoyment"
+  ],
   "evidence_classes": {
     "official_statement": "Developer or official product text; may describe intended rather than tested behavior",
     "official_visual": "Directly inspected official game image; version unspecified unless shown",
@@ -16,7 +30,43 @@
     "community_report": "Player or guide statement not independently reproduced",
     "analysis": "Reasoned inference or calculation with assumptions",
     "proposal": "Suggestion for our game, not a fact about Shelldiver",
-    "local_spec": "Existing authoritative specification for our game"
+    "local_spec": "Existing authoritative specification for our game",
+    "community_gameplay_video": "Direct visual observation of public gameplay video with timestamp; build unknown, not agent-controlled experiment"
+  },
+  "media_archive_audit": {
+    "date": "2026-11-04",
+    "scope": "Known game checkout, research worktree and local 0.24 candidate only",
+    "existing_official_media_root": "/Users/alanthssss/LocalGames/nectar-demo-0.24.0/evidence/reference",
+    "existing_official_media": [
+      {
+        "file": "official-trailer.mp4",
+        "bytes": 9412981,
+        "sha256": "74c9097a083a58e8fa9c107b0c7303d63d8251502f8acddec077a7609ebf3306"
+      },
+      {
+        "file": "iris-5.1-6.5s.png",
+        "bytes": 2676131,
+        "sha256": "7024be8afa203d4d97daf4ec51e5323c0127aa85ff6c89834edd02843731f6a3"
+      },
+      {
+        "file": "laser-28.2-30.2s.png",
+        "bytes": 3565052,
+        "sha256": "c2f053f3e27902c73ab6d9f21e90ec53b35a155ad384b8c3ef5e6ac648d4ca39"
+      },
+      {
+        "file": "steam-screen-00.jpg",
+        "bytes": 471500,
+        "sha256": "26b228d73c00d62e898d6d8be3dd0a2fd7597f3b5eb362851beebd86d92db440"
+      }
+    ],
+    "S11_fullplay_local_captures_found": true,
+    "S11_fullplay_state": "86 curated original screenshots, local offline gallery, dated November5 incremental report",
+    "method": "shelldiver-fullplay-checkpoint.md#study-method",
+    "S11_capture_manifest": "shelldiver-S11-captures.json",
+    "S11_capture_count": 86,
+    "S11_media_root": "/Users/alanthssss/LocalGames/research/shelldiver/S11",
+    "historical_audit_note": "Before the 2026-11-04 18:14 Asia/Shanghai restart, only four official reference artifacts existed; current fields supersede that no-S11-captures snapshot.",
+    "updated": "2026-11-05"
   },
   "sources": [
     {
@@ -27,8 +77,20 @@
       "accessed": "2026-11-03",
       "method": "web and CUA visible page",
       "version_context": "Store showed latest announcement 1.0.2 dated 2026-06-21; screenshots not version-stamped",
-      "verified": ["developer Gagonfe", "release date 2025-11-16", "jellyfish capture and shop sales", "bubble gun", "laser and regional scrap materials", "oxygen and shop-related upgrades", "regional biomes and depths"],
-      "limits": ["No internal algorithms", "No complete numerical table", "Latest patch label is not a verified installed build"]
+      "verified": [
+        "developer Gagonfe",
+        "release date 2025-11-16",
+        "jellyfish capture and shop sales",
+        "bubble gun",
+        "laser and regional scrap materials",
+        "oxygen and shop-related upgrades",
+        "regional biomes and depths"
+      ],
+      "limits": [
+        "No internal algorithms",
+        "No complete numerical table",
+        "Latest patch label is not a verified installed build"
+      ]
     },
     {
       "id": "S02",
@@ -49,10 +111,26 @@
         "price_amount": 50,
         "price_resource": "light-blue material icon; official name unverified",
         "prestige_level": 2,
-        "prestige_progress": [75, 95],
-        "layout": ["diamond nodes", "solid and dotted connecting lines", "cyan/red/green node frames", "resource balances on left", "Prestige top center", "adjacent floating detail panel", "upgrade/select-move/zoom hints bottom right"]
+        "prestige_progress": [
+          75,
+          95
+        ],
+        "layout": [
+          "diamond nodes",
+          "solid and dotted connecting lines",
+          "cyan/red/green node frames",
+          "resource balances on left",
+          "Prestige top center",
+          "adjacent floating detail panel",
+          "upgrade/select-move/zoom hints bottom right"
+        ]
       },
-      "limits": ["Colors and line semantics not interactively tested", "No unknown node names inferred from icons", "No material name inferred from icon", "No global cost formula inferred"]
+      "limits": [
+        "Colors and line semantics not interactively tested",
+        "No unknown node names inferred from icons",
+        "No material name inferred from icon",
+        "No global cost formula inferred"
+      ]
     },
     {
       "id": "S03",
@@ -62,8 +140,16 @@
       "accessed": "2026-11-03",
       "method": "CUA direct image observation",
       "version_context": "Undated marketing screenshot",
-      "observed": ["different jellyfish silhouettes distributed in terrain corridors", "large red circular region around creatures", "purple crystal-like environmental object"],
-      "limits": ["Red circle exact trigger/meaning not established by a still", "No timed behavior", "No spawn probabilities, counts or respawn rules"]
+      "observed": [
+        "different jellyfish silhouettes distributed in terrain corridors",
+        "large red circular region around creatures",
+        "purple crystal-like environmental object"
+      ],
+      "limits": [
+        "Red circle exact trigger/meaning not established by a still",
+        "No timed behavior",
+        "No spawn probabilities, counts or respawn rules"
+      ]
     },
     {
       "id": "S04",
@@ -73,8 +159,20 @@
       "accessed": "2026-11-03",
       "method": "web retrieved official announcement text",
       "version_context": "Demo announcement displayed 2025-10-10; 1.0.1 hotfix 2025-11-19",
-      "verified": ["Demo first 3 regions", "Demo over 30 different upgrades", "1.0.1 increased mushrooms at 600m", "resource hover shows upgrades using those collectables", "Shellphone open-tree binding became remappable", "description can align left", "reduced flashing option"],
-      "limits": ["Demo upgrades counting convention unspecified", "No current Demo package tested", "No pre/post material density values"]
+      "verified": [
+        "Demo first 3 regions",
+        "Demo over 30 different upgrades",
+        "1.0.1 increased mushrooms at 600m",
+        "resource hover shows upgrades using those collectables",
+        "Shellphone open-tree binding became remappable",
+        "description can align left",
+        "reduced flashing option"
+      ],
+      "limits": [
+        "Demo upgrades counting convention unspecified",
+        "No current Demo package tested",
+        "No pre/post material density values"
+      ]
     },
     {
       "id": "S05",
@@ -84,9 +182,17 @@
       "accessed": "2026-11-03",
       "method": "web retrieved discussion with developer role",
       "version_context": "Developer reply 2025-12-01",
-      "verified": ["Gagonfe directs player to unlock Shellphone and continue upward to unlock Alchemy"],
-      "community_report": ["Player skipped phone because it seemed unrelated and forgot new nodes would appear"],
-      "limits": ["Only one concrete confusion case; no incidence estimate", "Intermediate nodes and costs unknown", "100T Life Vial cost in later comment is not developer-confirmed here"]
+      "verified": [
+        "Gagonfe directs player to unlock Shellphone and continue upward to unlock Alchemy"
+      ],
+      "community_report": [
+        "Player skipped phone because it seemed unrelated and forgot new nodes would appear"
+      ],
+      "limits": [
+        "Only one concrete confusion case; no incidence estimate",
+        "Intermediate nodes and costs unknown",
+        "100T Life Vial cost in later comment is not developer-confirmed here"
+      ]
     },
     {
       "id": "S06",
@@ -96,9 +202,19 @@
       "accessed": "2026-11-03",
       "method": "web retrieved discussion with developer role",
       "version_context": "Developer reply 2025-11-21",
-      "verified": ["Available facilities take interaction priority over nearby NPCs", "If store is full and cannot accept jellyfish the interaction may wave at NPC instead"],
-      "community_report": ["One player reported reduced visual clarity with many late NPCs", "Another player described repeated depth layouts as the same"],
-      "limits": ["Repeated layouts not independently tested", "No evidence for spawn randomness or fixed seed", "No universal player preference claim"]
+      "verified": [
+        "Available facilities take interaction priority over nearby NPCs",
+        "If store is full and cannot accept jellyfish the interaction may wave at NPC instead"
+      ],
+      "community_report": [
+        "One player reported reduced visual clarity with many late NPCs",
+        "Another player described repeated depth layouts as the same"
+      ],
+      "limits": [
+        "Repeated layouts not independently tested",
+        "No evidence for spawn randomness or fixed seed",
+        "No universal player preference claim"
+      ]
     },
     {
       "id": "S07",
@@ -109,8 +225,19 @@
       "accessed": "2026-11-03",
       "method": "CUA displayed community image linked by Steam screenshots page",
       "version_context": "Korean UI; date, game build and save provenance unverified",
-      "observed": ["five principal directions", "shorter top branch and longer lower branches", "branching network rather than perimeter star", "dense central connections", "top progress displays MAX"],
-      "limits": ["Cannot read all small node labels", "Does not alone establish unlock direction", "Does not establish 800 ranks", "Not an official full-tree specification"]
+      "observed": [
+        "five principal directions",
+        "shorter top branch and longer lower branches",
+        "branching network rather than perimeter star",
+        "dense central connections",
+        "top progress displays MAX"
+      ],
+      "limits": [
+        "Cannot read all small node labels",
+        "Does not alone establish unlock direction",
+        "Does not establish 800 ranks",
+        "Not an official full-tree specification"
+      ]
     },
     {
       "id": "S08",
@@ -120,9 +247,27 @@
       "accessed": "2026-11-03",
       "method": "CUA page and embedded game title-screen observation",
       "version_context": "Page says released 2025-08-27; updated 2025-08-29; GameMaker",
-      "verified": ["Public developer Demo listing", "Embedded game loaded to title screen with Press ENTER to start"],
-      "attempt": {"successful_play": false, "actions": ["Loaded listing and accepted cookie selection", "Continued loader without account signup", "Observed title screen", "Tried keyboard focus and Enter", "Opened observed public iframe URL as standalone canvas"], "result": "Embedded input did not advance; standalone canvas remained at Downloading data. Stopped without installing software, signing up or claiming playtest.", "closed_tabs": true},
-      "limits": ["Not the later Next Fest demo", "No successful dive or tree purchase observed", "Does not validate current release numbers"]
+      "verified": [
+        "Public developer Demo listing",
+        "Embedded game loaded to title screen with Press ENTER to start"
+      ],
+      "attempt": {
+        "successful_play": false,
+        "actions": [
+          "Loaded listing and accepted cookie selection",
+          "Continued loader without account signup",
+          "Observed title screen",
+          "Tried keyboard focus and Enter",
+          "Opened observed public iframe URL as standalone canvas"
+        ],
+        "result": "Embedded input did not advance; standalone canvas remained at Downloading data. Stopped without installing software, signing up or claiming playtest.",
+        "closed_tabs": true
+      },
+      "limits": [
+        "Not the later Next Fest demo",
+        "No successful dive or tree purchase observed",
+        "Does not validate current release numbers"
+      ]
     },
     {
       "id": "S09",
@@ -133,8 +278,21 @@
       "accessed": "2026-11-03",
       "method": "Search-indexed guide text; direct guide fetch returned 403",
       "version_context": "Xbox-oriented guide; source build not verified",
-      "reported_only": ["left-upper bubble gun branch and right-upper plasma/robot branch", "all five branches converge to center final node", "799/800 before final rank", "final node 10 quadrillion shells", "Shellslot Capacity 5 costs 5 Life Vials and raises slots to 99", "Biovalue Multiplication X grants 16 jellyfish per capture", "12 slots", "400m Prestige4/140, 700m Prestige7/300, 1000m Prestige10/500"],
-      "limits": ["No figures promoted to official fact", "No use as our economy defaults", "Needs visible current-game node panels or primary confirmation"]
+      "reported_only": [
+        "left-upper bubble gun branch and right-upper plasma/robot branch",
+        "all five branches converge to center final node",
+        "799/800 before final rank",
+        "final node 10 quadrillion shells",
+        "Shellslot Capacity 5 costs 5 Life Vials and raises slots to 99",
+        "Biovalue Multiplication X grants 16 jellyfish per capture",
+        "12 slots",
+        "400m Prestige4/140, 700m Prestige7/300, 1000m Prestige10/500"
+      ],
+      "limits": [
+        "No figures promoted to official fact",
+        "No use as our economy defaults",
+        "Needs visible current-game node panels or primary confirmation"
+      ]
     },
     {
       "id": "S10",
@@ -143,30 +301,243 @@
       "path": "docs/design/nectar-growth-tree-mvp.md",
       "accessed": "2026-11-03",
       "version_context": "0.21 worktree baseline 61db0864483219144bc0c720575973c8ecfc0eba",
-      "verified": ["9 paid visible nodes", "12 paid ranks", "costs and parameters in comparison table", "market optional for completion", "completion requires twin OR shortcut"]
+      "verified": [
+        "9 paid visible nodes",
+        "12 paid ranks",
+        "costs and parameters in comparison table",
+        "market optional for completion",
+        "completion requires twin OR shortcut"
+      ]
+    },
+    {
+      "id": "S11",
+      "type": "community_gameplay_video",
+      "title": "Zhain Gaming: SHELLDIVER Gameplay Walkthrough FULL GAME No Commentary + ENDING",
+      "url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+      "accessed": "2026-11-04",
+      "duration_seconds": 11767.581,
+      "version_context": "Recorded build unidentified; cannot equate to current Steam build",
+      "method": "CUA browser playback and paused event snapshots; verify currentTime, duration and decoding after seeks; ads excluded. Sparse index through ending plus denser first-trip samples. Not all intervals observed.",
+      "coverage_record": "shelldiver-fullplay-checkpoint.md",
+      "local_video_artifact": null,
+      "observed": [
+        "First normal trip panel 32.84 seconds, 4 pink jellyfish, 0 scraps; shop delivery separates inventory from proceeds; final first-trip balance 40",
+        "First spending: Plasma Gun 20, Deep Breath 10, Bubble Damage I 5; balance 5",
+        "Second trip panel 39.76 seconds, zero jellyfish inventory and +8 scraps following low-oxygen sequence; immediate retry",
+        "Third normal trip panel 29.68 seconds, +3 jellyfish and +19 scraps; total scraps 27; subsequent sales raise balance 5 to 35",
+        "Chest Speed I at 19:39.92: 250% quicker chest collection for 250 scraps; this is not shop sale speed",
+        "Oxygen Tank II 10/10, Bubble Strike I first-hit modifier, Hammock Repair ending goal and sleeping credits observed at separate index points",
+        "Persistent C010/C011 show carried 5+6 FULL while scraps rise 177 to 369; C015 stable result shows 70.87 seconds, +11 jellyfish and +397 scraps; C016 wallet scraps 414 agrees with starting17+397.",
+        "C016/C017 distinguish shop stock, chest proceeds, wallet and collection animation; 26 plus314 animation is not treated as stable final balance.",
+        "C018-C020 record ice-edged contours and entry submarine; C019 player is in a dark background region, so brightness cannot define walkability or collision.",
+        "C021 Plasma Damage II level00/10: +25%, displayed150 to175%, red price250 shells versus balance34.",
+        "C022 Store Speed I level5/5 describes +100% sale speed, total500% MAX; distinct from C023 Chest Speed I +250% chest withdrawal for250 scraps. Exact time formulas untested.",
+        "November5 C030-C035 and trip3seq burst resolve seven third-trip purchases: Oxygen Tank I twice, Shellpack Slots I once, Store Slots I once, Bubble Damage I three times; coins35->0, scraps27->7, Prestige4->11.",
+        "C058 first inventory30, C061 next result33, C062 seven submarine stacks12+12+12+12+1+12+2=63, linking two normal trips. No universal failure/save guarantee inferred.",
+        "C036-C045 match 400m entrance landmarks and harvested crystal location across visits; death result33.58s,1 jellyfish,4 Crystals. Returning resources does not isolate respawn trigger, drift or fixed time.",
+        "C046-C049 confirm Swamp Waters700m and local arch route; C055-C057 Magma Abyss1000m rock gullies; C080-C081 Glacial Depths500m; C082-C085 Swamp Waters800m lower chamber and rising return corridor.",
+        "C050-C054 preserve staged inventory->store->chest->wallet and Store Upsell10% extra sale text.",
+        "C071 Transmuter Automation; C072-C073 white5 in gold output then own inventory; C074 Starfish Friend2/2; C075 Storage Slots8->12; C076 AlchemyStation shell-to-vial unlock1T; C077 Expedition Demand5x while exploring. Descriptions distinguished from tested mechanics.",
+        "C078 Shallows Biodiversity spawn rate and C079 Faster Waters arrival speed are separate from Crystal Master per-block yield. Control experiments must hold upgrades fixed.",
+        "C026-C027 opening hammock/free submarine purchase; C066-C070 final hammock purchase, visible repair, approach withB, rest and credits.",
+        "C086 underwater floating-box UI has four empty-looking blue slots and own tan2, but transfer outcome remains unreadable."
+      ],
+      "limits": [
+        "No complete skill database, costs or graph prerequisites reconstructed",
+        "No controlled respawn, leave-area selling, pause-time or save-reload test",
+        "Sparse coverage and unknown build; time played during user interruption is not counted as observed",
+        "Third-party video observation is not independent human testing of our game",
+        "Raw screenshots are selected states, not continuous recording or a complete map; millisecond timestamps are player readouts, not frame-accurate certification.",
+        "November5 screenshots use approximate whole seconds and local3024x1898 output; raw video resolution unverified. Two ad-interrupted windows excluded in full.",
+        "Complete video and all depth routes still unobserved; audio design not independently reviewed."
+      ],
+      "capture_manifest": "shelldiver-S11-captures.json",
+      "incremental_report": "shelldiver-increment-2026-11-05.md",
+      "capture_count": 86
     }
   ],
   "calculations": [
-    {"id": "C01", "classification": "analysis", "sources": ["S02"], "expression": "36380 / 35080 - 1", "result": 0.037058152793614685, "meaning": "Relative change of displayed total, approximately 3.706%", "assumption": "Displayed total compared directly; does not prove actual damage formula"},
-    {"id": "C02", "classification": "analysis", "sources": ["S02"], "expression": "(100 + 36380) / (100 + 35080) - 1", "result": 0.03695281409891993, "meaning": "Approximately 3.695% if percentage is additional bonus", "assumption": "100 percent base added to both values"},
-    {"id": "C03", "classification": "analysis", "sources": ["S10"], "expression": "12+32+48+85+18+55+25+75+90+65+90+180", "result": 775, "meaning": "Our all-rank cost, not Shelldiver cost or required completion spend"},
-    {"id": "C04", "classification": "analysis", "sources": ["S10"], "expression": "18/5 -> 18/7.5", "result": [3.6, 2.4], "unit": "seconds", "assumption": "Uninterrupted pure gathering; travel, availability and risk excluded"},
-    {"id": "C05", "classification": "analysis", "sources": ["S10"], "expression": "90/0.25", "result": 360, "meaning": "Ideal base sale value to recoup our market upgrade before per-sale rounding"},
-    {"id": "C06", "classification": "analysis", "sources": ["S10"], "expression": "ceil(90/floor(18*0.25))*18", "result": 414, "meaning": "Our market payback with fixed base-value 18 sales", "assumption": "Fixed sale size, no changing mix; not a run simulation"},
-    {"id": "C07", "classification": "analysis", "sources": ["S10"], "expression": "ceil(90/floor(54*0.25))*54", "result": 378, "meaning": "Our market payback with fixed base-value 54 sales", "assumption": "Fixed sale size, no changing mix; not a run simulation"}
+    {
+      "id": "C01",
+      "classification": "analysis",
+      "sources": [
+        "S02"
+      ],
+      "expression": "36380 / 35080 - 1",
+      "result": 0.037058152793614685,
+      "meaning": "Relative change of displayed total, approximately 3.706%",
+      "assumption": "Displayed total compared directly; does not prove actual damage formula"
+    },
+    {
+      "id": "C02",
+      "classification": "analysis",
+      "sources": [
+        "S02"
+      ],
+      "expression": "(100 + 36380) / (100 + 35080) - 1",
+      "result": 0.03695281409891993,
+      "meaning": "Approximately 3.695% if percentage is additional bonus",
+      "assumption": "100 percent base added to both values"
+    },
+    {
+      "id": "C03",
+      "classification": "analysis",
+      "sources": [
+        "S10"
+      ],
+      "expression": "12+32+48+85+18+55+25+75+90+65+90+180",
+      "result": 775,
+      "meaning": "Our all-rank cost, not Shelldiver cost or required completion spend"
+    },
+    {
+      "id": "C04",
+      "classification": "analysis",
+      "sources": [
+        "S10"
+      ],
+      "expression": "18/5 -> 18/7.5",
+      "result": [
+        3.6,
+        2.4
+      ],
+      "unit": "seconds",
+      "assumption": "Uninterrupted pure gathering; travel, availability and risk excluded"
+    },
+    {
+      "id": "C05",
+      "classification": "analysis",
+      "sources": [
+        "S10"
+      ],
+      "expression": "90/0.25",
+      "result": 360,
+      "meaning": "Ideal base sale value to recoup our market upgrade before per-sale rounding"
+    },
+    {
+      "id": "C06",
+      "classification": "analysis",
+      "sources": [
+        "S10"
+      ],
+      "expression": "ceil(90/floor(18*0.25))*18",
+      "result": 414,
+      "meaning": "Our market payback with fixed base-value 18 sales",
+      "assumption": "Fixed sale size, no changing mix; not a run simulation"
+    },
+    {
+      "id": "C07",
+      "classification": "analysis",
+      "sources": [
+        "S10"
+      ],
+      "expression": "ceil(90/floor(54*0.25))*54",
+      "result": 378,
+      "meaning": "Our market payback with fixed base-value 54 sales",
+      "assumption": "Fixed sale size, no changing mix; not a run simulation"
+    }
   ],
   "unknowns": [
-    {"id": "U01", "question": "All original node names, costs, rank effects and prerequisite edges", "needed_evidence": "Current build readable node panels and recorded purchase sequence"},
-    {"id": "U02", "question": "Exact five-branch functional partition and inward/outward unlock topology", "needed_evidence": "Initial and intermediate tree captures; final overview alone insufficient"},
-    {"id": "U03", "question": "Resource and monster generation counts, seeds and reset conditions", "needed_evidence": "At least three same-depth entries, capture-clear test, wait test and return test"},
-    {"id": "U04", "question": "Current initial oxygen, capacity, capture time, first three trips and upgrade prices", "needed_evidence": "Successful fresh-save play or clearly timestamped continuous gameplay observation"},
-    {"id": "U05", "question": "Alchemy, automation and prestige exact economy", "needed_evidence": "Current build panels and transaction records; third-party guide is only a lead"},
-    {"id": "U06", "question": "Does our 0.22 feel rewarding to real players?", "needed_evidence": "Human playtest explaining actual choices; formulas and AI operation do not establish enjoyment"}
+    {
+      "id": "U01",
+      "question": "All original node names, costs, rank effects and prerequisite edges",
+      "needed_evidence": "Current build readable node panels and recorded purchase sequence"
+    },
+    {
+      "id": "U02",
+      "question": "Exact five-branch functional partition and inward/outward unlock topology",
+      "needed_evidence": "Initial and intermediate tree captures; final overview alone insufficient"
+    },
+    {
+      "id": "U03",
+      "question": "Resource and monster generation counts, seeds and reset conditions",
+      "needed_evidence": "At least three same-depth entries, capture-clear test, wait test and return test"
+    },
+    {
+      "id": "U04",
+      "question": "Current initial oxygen, capacity, capture time, first three trips and upgrade prices",
+      "needed_evidence": "Successful fresh-save play or clearly timestamped continuous gameplay observation"
+    },
+    {
+      "id": "U05",
+      "question": "Alchemy, automation and prestige exact economy",
+      "needed_evidence": "Current build panels and transaction records; third-party guide is only a lead"
+    },
+    {
+      "id": "U06",
+      "question": "Does our 0.22 feel rewarding to real players?",
+      "needed_evidence": "Human playtest explaining actual choices; formulas and AI operation do not establish enjoyment"
+    }
   ],
   "recommendations": [
-    {"id": "R01", "classification": "proposal", "basis": ["S02", "S05", "S10"], "proposal": "Show current-to-next values, missing prerequisite and next revealed benefit; do not hide essential systems behind unrelated convenience nodes"},
-    {"id": "R02", "classification": "proposal", "basis": ["S04", "S06"], "proposal": "Use separated functional hub points with one primary interaction, explicit unavailable reason and optional reduced flash/short repeated dance"},
-    {"id": "R03", "classification": "proposal", "basis": ["S02", "S07", "S10"], "proposal": "Use abstract six-direction visual order for our small graph; fill only meaningful functional branches, not fake locked nodes"},
-    {"id": "R04", "classification": "proposal", "basis": ["S01", "S04", "S10"], "proposal": "Add a material only after naming its unique use and regional supply; measure gathering/travel/sale bottlenecks before copying queues or automation"}
-  ]
+    {
+      "id": "R01",
+      "classification": "proposal",
+      "basis": [
+        "S02",
+        "S05",
+        "S10"
+      ],
+      "proposal": "Show current-to-next values, missing prerequisite and next revealed benefit; do not hide essential systems behind unrelated convenience nodes"
+    },
+    {
+      "id": "R02",
+      "classification": "proposal",
+      "basis": [
+        "S04",
+        "S06"
+      ],
+      "proposal": "Use separated functional hub points with one primary interaction, explicit unavailable reason and optional reduced flash/short repeated dance"
+    },
+    {
+      "id": "R03",
+      "classification": "proposal",
+      "basis": [
+        "S02",
+        "S07",
+        "S10"
+      ],
+      "proposal": "Use abstract six-direction visual order for our small graph; fill only meaningful functional branches, not fake locked nodes"
+    },
+    {
+      "id": "R04",
+      "classification": "proposal",
+      "basis": [
+        "S01",
+        "S04",
+        "S10"
+      ],
+      "proposal": "Add a material only after naming its unique use and regional supply; measure gathering/travel/sale bottlenecks before copying queues or automation"
+    }
+  ],
+  "quota_checkpoint": {
+    "timezone": "Asia/Shanghai",
+    "resume_started_at": "2026-11-04T18:14:46+08:00",
+    "sampling_stopped_at": "2026-11-04T18:56:54+08:00",
+    "video_tab_closed_at": "2026-11-04T18:57+08:00",
+    "closure_verified": true,
+    "account_used_percent_at_save_start": 9,
+    "account_remaining_percent_at_save_start": 91,
+    "requested_pause_used_percent": 10,
+    "usage_scope": "shared account; exact task token count unavailable",
+    "next_video_cursor_seconds": 4263.734491,
+    "next_video_cursor": "01:11:03.734",
+    "scope_complete": false
+  },
+  "research_updated": "2026-11-05",
+  "incremental_checkpoint": {
+    "date": "2026-11-05",
+    "timezone": "Asia/Shanghai",
+    "baseline_used_percent": 21,
+    "requested_cap_used_percent": 31,
+    "used_percent_when_sampling_stopped": 28,
+    "last_operation_video_seconds": 5489,
+    "video_tab_closed_at": "2026-11-05T05:22:12.126Z",
+    "closure_verified": true,
+    "closure_evidence": "Native Chrome close confirmation accepted for this task-created single-tab group. Tab list then contained GitHub and idictation only, without S7EaREatF4w.",
+    "quota_scope": "shared account weekly window, not task token count",
+    "report": "shelldiver-increment-2026-11-05.md",
+    "used_percent_at_report_review": 29,
+    "quota_read_at_utc": "2026-11-05T05:33:30+00:00",
+    "stop_reason": "Focused increment questions and evidence review completed within10-point cap; stopped sampling at28 and entered report review at29, preserving remaining headroom."
+  }
 }
