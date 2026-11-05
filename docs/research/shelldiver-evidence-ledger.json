@@ -534,8 +534,10 @@
     "video_tab_closed_at": "2026-11-05T05:22:12.126Z",
     "closure_verified": true,
     "closure_evidence": "Native Chrome close confirmation accepted for this task-created single-tab group. Tab list then contained GitHub and idictation only, without S7EaREatF4w.",
-    "final_used_percent": null,
     "quota_scope": "shared account weekly window, not task token count",
-    "report": "shelldiver-increment-2026-11-05.md"
+    "report": "shelldiver-increment-2026-11-05.md",
+    "used_percent_at_report_review": 29,
+    "quota_read_at_utc": "2026-11-05T05:33:30+00:00",
+    "stop_reason": "Focused increment questions and evidence review completed within10-point cap; stopped sampling at28 and entered report review at29, preserving remaining headroom."
   }
 }
