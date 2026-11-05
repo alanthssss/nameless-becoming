@@ -7,6 +7,7 @@ const Sound = preload("res://sound.gd")
 const Migration = preload("res://nectar_save_migration.gd")
 const Dance = preload("res://nectar_dance.gd")
 signal presentation_changed
+const DISPLAY_NAME := "采蜜 Demo"
 const SAVE_PATH := "user://nectar_harvest_v1.json"
 var model = Model.new()
 var world
@@ -38,7 +39,7 @@ var settings_return := "title"
 var transition_short := false
 
 func _ready() -> void:
-	get_window().title = "雨来之前 · 采蜜与蜂舞 Demo 0.24.1"
+	get_window().title = DISPLAY_NAME
 	get_tree().auto_accept_quit = false
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--nectar-qa": test_mode = true

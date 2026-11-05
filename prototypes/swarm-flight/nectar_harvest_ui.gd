@@ -428,8 +428,7 @@ func _build_menu() -> void:
 	var panel := card(menu,PAPER,Color("9fa97b"))
 	anchored(panel,Rect2(.5,.5,0,0),Rect2(-320,-320,640,640))
 	var v := column(panel,14)
-	text_line(v,"BEFORE THE RAIN",16,Color("7a865e"))
-	menu_title = text_line(v,"采蜜小店",43)
+	menu_title = text_line(v,driver.DISPLAY_NAME,43)
 	menu_body = text_line(v,"",21,INK,true)
 	menu_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	menu_primary = action(v,"开始采蜜",driver.start_game,true)
@@ -493,8 +492,8 @@ func show_mode(mode: String) -> void:
 		board.select_node(board.selected)
 	elif menu.visible:
 		if mode == "title":
-			menu_title.text = "采蜜与蜂舞"
-			menu_body.text = "雨来之前，带回一份丰收。\n\n在蜂舞广场选一条花路，带着花蜜回来。\n交付、成长，再去更远的地方。"
+			menu_title.text = driver.DISPLAY_NAME
+			menu_body.text = "在蜂舞广场选一条花路，带着花蜜回来。\n交付、成长，再去更远的地方。"
 			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
 		elif mode == "pause":
 			menu_title.text = "歇一会儿"
@@ -713,7 +712,7 @@ func _build_settings() -> void:
 	settings_sound = action(v,"",toggle_sound)
 	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
 	text_line(v,"关于 Demo",23)
-	text_line(v,"雨来之前 · 采蜜与蜂舞 0.24.1\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。",18,INK,true)
+	text_line(v,"%s 0.24.1\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
 	text_line(v,"制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞为通信动作启发的幻想演绎；侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。",17,Color("687957"),true)
 	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
 	settings_back = action(v,"返回",driver.close_settings,true)
