@@ -1,5 +1,9 @@
 # Shelldiver 系统拆解：元素、成长图、场景与 Demo 对照
 
+**2026-11-07 核心补核。** 原作不是仅有两种怪物，而是两类主要采集对象：水母→气泡捕获→售卖；环境垃圾/晶体/蘑菇等→激光拆解→成长材料。[官方说明](https://store.steampowered.com/app/3862670/Shelldiver/)确认该分工；[开发者2025-12-02答复](https://steamcommunity.com/app/3862670/discussions/0/691994648689835927/)确认LMB气泡枪、RMB Plasma Gun，后者需购买，两者均可按住。因此“离散气泡弹体/连续材料光束”不能误写成必须逐发点击/按住的键位区别。材料的全部刷新、错用工具反应及精确耗能仍未控测。本轮未新增视频播放。
+
+既有录像首趟购Plasma Gun20币、15:57–16:13满商品包继续取材177→310，以及第三趟20材料购货架见[原事件记录](shelldiver-fullplay-checkpoint.md)和[增量报告](shelldiver-increment-2026-11-05.md)。这些样本支持研究“主商品容量满后仍可为特定成长取材”，不支持推定全材料无上限或固定损失比例。此前把动态资源集中对应携料蚊并不充分；本作现推荐环境取材作为第二循环，具体操作、来源、地图与限制见[修订设计](../design/nectar-steam-demo.md#dual-harvest-core-20261107)。以下0.21历史建议（含暂不加材料等）不覆盖这份新提案，也不代表0.25已经按新提案改完。
+
 2026-11-05续接已形成[增量研究报告](shelldiver-increment-2026-11-05.md)，合计86张可复核图证。以下保留各阶段历史分析；当前项目暂称「采蜜 Demo」，已有场景预览与新的设计候选以增量报告为准。
 
 关联：[SD01 #288](https://github.com/alanthssss/nameless-becoming/issues/288)、[SD02 #289](https://github.com/alanthssss/nameless-becoming/issues/289)；GDD §13.9；M3。研究日期：2026-11-03。配套：[证据台账](shelldiver-evidence-ledger.json)。这是产品研究，不是本作真人试玩结论，也不是 Shelldiver 内部实现说明。
