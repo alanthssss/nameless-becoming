@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "gdd": "8.1 / 13.9",
+  "issue": 330,
+  "assets": [
+    {
+      "id": "nectar-route-thicket",
+      "version": 1,
+      "file": "nectar-route-thicket.png",
+      "sha256": "5b37e4a7001c513b69a86d9151de394d91bb9d48c1b3e67aa750a80e54a95490",
+      "source": "OpenAI built-in image_gen; AI-assisted generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-577edfa4-753c-42b5-9f06-f0975fcb67a6.png",
+      "reference": "nectar-pond-oblique.png",
+      "brief": "One broad dense rooted shrub island at flight height; oblique garden palette, upper-left light, connected wooden stems, transparent background. No text, flowers, characters, scenery.",
+      "post_processing": "none, source copied byte-for-byte; runtime atlas crop only",
+      "usage": "nectar_harvest_view.gd using nectar_map.gd collider footprint",
+      "review_status": "native visual verification pending"
+    },
+    {
+      "id": "nectar-home-sign",
+      "version": 1,
+      "file": "nectar-home-sign.png",
+      "sha256": "f35aaedf71f23cb9fff03f38f28d053ca9f1a008be31937f2b5455dc087a68c0",
+      "source": "OpenAI built-in image_gen; AI-assisted raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-46185dc3-e5cb-4628-b2d8-64d1ec5bfffe.png",
+      "reference": "nectar-pond-oblique.png",
+      "brief": "Warm handpainted wooden hanging waymark; bee house / paired leafy arrows, no geometric hexagon. Connected rope holes, transparent outside.",
+      "post_processing": "none; byte-identical source, runtime atlas crop",
+      "usage": "nectar_harvest_view.gd waymarks; consistent upper-left light",
+      "review_status": "native review pending"
+    },
+    {
+      "id": "nectar-shortcut-sign",
+      "version": 1,
+      "file": "nectar-shortcut-sign.png",
+      "sha256": "28fdc8ac1ba5970374c41121b31f92d579d6b1dcc5a04f5328496886c35943ba",
+      "source": "OpenAI built-in image_gen; AI-assisted raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-8dd40964-b298-43dc-a103-d9b77c5ea652.png",
+      "reference": "nectar-pond-oblique.png",
+      "brief": "Warm handpainted wooden hanging waymark; bee house / paired leafy arrows, no geometric hexagon. Connected rope holes, transparent outside.",
+      "post_processing": "none; byte-identical source, runtime atlas crop",
+      "usage": "nectar_harvest_view.gd waymarks; consistent upper-left light",
+      "review_status": "native review pending"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ extends RefCounted
 const Legacy = preload("res://nectar_legacy_model_v2.gd")
 const LegacyV4 = preload("res://nectar_legacy_model_v4.gd")
 const Encounters = preload("res://nectar_encounters.gd")
+const Map = preload("res://nectar_map.gd")
 const Canopy = preload("res://leaf_canopy_geometry.gd")
 const RAIN_SHELTER := {"pos":Vector2(2760,660),"half_width":160.0}
 const WORLD_WIDTH := 3600.0
@@ -12,14 +13,14 @@ const HUB_JOURNAL := Vector2(1110,440) # Historical probe identifier; no station
 const HUB_DEPART := Vector2(1015,490)
 const HOME := HUB_DEPART
 const POND_ENTRY := Vector2(470,575)
-const POND_EXIT := Vector2(1660,575)
+const POND_EXIT := Vector2(1620,575)
 const MEADOW_ENTRY := Vector2(1900,575)
 const GATE_X := 1780.0
 const CHARGE_READY := 0.32
 const SAVE_ID := "nectar-harvest-v1"
 const SAVE_VERSION := 5
 const REGROW_SECONDS := 18.0
-const SHORTCUTS := [Vector2(1040,400),Vector2(3000,400)]
+const SHORTCUTS := [Vector2(1460,265),Vector2(3000,400)]
 const UPGRADE_IDS := ["gather1","gather2","reach","twin","bag1","wings1","bag2","wings2","meadow","shortcut","market","reserve","beat"]
 var chapter := {"region":0}
 var p := HOME
@@ -63,8 +64,8 @@ func _init() -> void:
 
 static func flower_layout(trip := 0) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
-	var near := [Vector2(620,520),Vector2(800,385),Vector2(960,570),Vector2(1120,300),Vector2(1280,450),Vector2(1440,590),Vector2(1600,330)]
-	var far := [Vector2(2110,390),Vector2(2280,565),Vector2(2450,300),Vector2(2630,485),Vector2(2820,310),Vector2(3040,555),Vector2(3270,375)]
+	var near := [Vector2(620,520),Vector2(805,580),Vector2(1005,580),Vector2(1215,580),Vector2(1400,480),Vector2(1310,260),Vector2(1030,225)]
+	var far := [Vector2(2110,390),Vector2(2250,605),Vector2(2450,285),Vector2(2630,585),Vector2(2820,310),Vector2(3040,555),Vector2(3270,375)]
 	for region in 2:
 		var positions: Array = near if region == 0 else far
 		for i in positions.size():
@@ -298,7 +299,10 @@ func step(delta: float,move: Vector2,collect: bool,space_held: bool,pulse_held: 
 	else:
 		var speed := 135.0 if charging else 230.0
 		v = v.move_toward(move*speed,(1800.0 if move.is_zero_approx() else 1300.0)*dt)
-	p += v*dt
+	var desired := p+v*dt
+	p = Map.move(area,p,v*dt)
+	if absf(p.x-desired.x)>0.01: v.x = 0.0
+	if absf(p.y-desired.y)>0.01: v.y = 0.0
 	var left := 80.0 if area == "hub" else 400.0 if area == "pond" else 1840.0
 	var right := 1200.0 if area == "hub" else 1720.0 if area == "pond" else 3520.0
 	var limited := Vector2(clampf(p.x,left,right),clampf(p.y,160.0,650.0))
@@ -332,7 +336,7 @@ func _harvest(dt: float) -> void:
 		return
 	var candidates: Array[Dictionary] = []
 	for flower in flowers:
-		if int(flower.stock) > 0 and int(flower.region) == (1 if area == "meadow" else 0) and p.distance_to(flower_point(flower)) <= harvest_radius(): candidates.append(flower)
+		if int(flower.stock) > 0 and int(flower.region) == (1 if area == "meadow" else 0) and p.distance_to(flower_point(flower)) <= harvest_radius() and Map.clear_segment(area,p,flower_point(flower)): candidates.append(flower)
 	candidates.sort_custom(func(a,b): return p.distance_squared_to(flower_point(a)) < p.distance_squared_to(flower_point(b)))
 	var selected: Array[Dictionary] = []
 	# Keep begun flowers in their original order. Only vacant slots acquire a new target.
@@ -502,8 +506,8 @@ func restore_payload(data) -> bool:
 	pulse_left = float(data.pulse_left)
 	materials = {"fiber":int(data.materials.fiber),"resin":int(data.materials.resin)}
 	drops = next_drops
-	p = next_p
-	v = next_v
+	p = Map.safe_point(data.area,next_p)
+	v = next_v if p.is_equal_approx(next_p) else Vector2.ZERO
 	face = next_face
 	phase = data.phase
 	energy = float(data.energy)
@@ -522,6 +526,10 @@ func restore_payload(data) -> bool:
 	visited_meadow = data.visited_meadow
 	area = data.area
 	creatures = next_creatures
+	for creature in creatures:
+		creature.pos = Map.safe_point("pond" if creature.region == 0 else "meadow",creature.pos,10.0)
+	for drop in drops:
+		drop.pos = Map.safe_point("pond" if drop.region == 0 else "meadow",drop.pos,10.0)
 	hurt_left = 0.0
 	update_camera()
 	events.clear()
@@ -597,7 +605,7 @@ func pulse_target(direction: Vector2 = Vector2.ZERO) -> Dictionary:
 		var offset: Vector2 = creature.pos-p
 		if offset.length_squared() > pulse_radius()*pulse_radius(): continue
 		if not offset.is_zero_approx() and aim.dot(offset.normalized()) < 0.5-0.000001: continue
-		# These gardens have no solid occluders; decorative foliage does not block actions.
+		if not Map.clear_segment(area,p,creature.pos): continue
 		if nearest.is_empty() or offset.length_squared() < p.distance_squared_to(nearest.pos): nearest = creature
 	return nearest
 
@@ -624,7 +632,8 @@ func pulse(direction: Vector2 = Vector2.ZERO) -> bool:
 	nearest.stun = 0.42
 	var away: Vector2 = (nearest.pos-p).normalized()
 	if away.is_zero_approx(): away = Vector2.RIGHT
-	nearest.pos = nearest.anchor+(nearest.pos+away*24.0-nearest.anchor).limit_length(Encounters.leash(nearest))
+	var pushed: Vector2 = nearest.anchor+(nearest.pos+away*24.0-nearest.anchor).limit_length(Encounters.leash(nearest))
+	nearest.pos = Map.move(area,nearest.pos,pushed-nearest.pos,10.0)
 	emit("tap",nearest.pos,nearest.hits)
 	var needed := 2 if nearest.kind == "scout" else 3
 	if nearest.hits >= needed:
@@ -642,7 +651,7 @@ func _pickup_drops(dt: float) -> void:
 		if int(drop.region) != (1 if area == "meadow" else 0): continue
 		drop.age = minf(1.0,float(drop.age)+dt)
 		if drop.age < 0.3: continue
-		if p.distance_to(drop.pos) <= 85.0:
+		if p.distance_to(drop.pos) <= 85.0 and Map.clear_segment(area,p,drop.pos):
 			materials[drop.kind] += int(drop.amount)
 			emit("material",drop.pos,int(drop.amount))
 			events[-1]["type"] = drop.kind

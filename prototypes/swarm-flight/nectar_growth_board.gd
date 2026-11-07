@@ -1,18 +1,18 @@
 extends Control
-const HexNode = preload("res://nectar_growth_node.gd")
+const GrowthNode = preload("res://nectar_growth_node.gd")
 const Art = preload("res://nectar_ui_art.gd")
 signal selected_changed(id: String)
 const NODES := [
-	{"id":"gather","title":"采蜜技巧","ranks":["gather1","gather2"],"group":0,"at":Vector2(.18,.35)},
-	{"id":"reach","title":"花香触角","ranks":["reach"],"group":0,"at":Vector2(.14,.62)},
-	{"id":"beat","title":"利落振翅","ranks":["beat"],"group":0,"at":Vector2(.36,.54)},
-	{"id":"twin","title":"双簇采蜜","ranks":["twin"],"group":0,"at":Vector2(.36,.81)},
-	{"id":"bag","title":"蜜囊容量","ranks":["bag1","bag2"],"group":1,"at":Vector2(.72,.35)},
-	{"id":"wings","title":"双翼续航","ranks":["wings1","wings2"],"group":1,"at":Vector2(.80,.63)},
-	{"id":"meadow","title":"紫花地","ranks":["meadow"],"group":2,"at":Vector2(.43,.12)},
-	{"id":"shortcut","title":"叶间近道","ranks":["shortcut"],"group":2,"at":Vector2(.66,.10)},
-	{"id":"market","title":"好口碑","ranks":["market"],"group":2,"at":Vector2(.87,.16)},
-	{"id":"reserve","title":"备好花蜜","ranks":["reserve"],"group":3,"at":Vector2(.60,.83)}
+	{"id":"gather","title":"采蜜技巧","ranks":["gather1","gather2"],"group":0,"at":Vector2(.17,.15)},
+	{"id":"reach","title":"花香触角","ranks":["reach"],"group":0,"at":Vector2(.17,.44)},
+	{"id":"beat","title":"利落振翅","ranks":["beat"],"group":0,"at":Vector2(.46,.15)},
+	{"id":"twin","title":"双簇采蜜","ranks":["twin"],"group":0,"at":Vector2(.46,.44)},
+	{"id":"bag","title":"蜜囊容量","ranks":["bag1","bag2"],"group":1,"at":Vector2(.17,.79)},
+	{"id":"wings","title":"双翼续航","ranks":["wings1","wings2"],"group":1,"at":Vector2(.46,.79)},
+	{"id":"meadow","title":"紫花地","ranks":["meadow"],"group":2,"at":Vector2(.81,.10)},
+	{"id":"shortcut","title":"叶间近道","ranks":["shortcut"],"group":2,"at":Vector2(.81,.37)},
+	{"id":"market","title":"好口碑","ranks":["market"],"group":2,"at":Vector2(.81,.64)},
+	{"id":"reserve","title":"备好花蜜","ranks":["reserve"],"group":3,"at":Vector2(.81,.91)}
 ]
 var model
 var font: Font
@@ -24,7 +24,7 @@ var reduced_motion := false
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for data in NODES:
-		var b = HexNode.new()
+		var b = GrowthNode.new()
 		b.kind = data.id
 		b.title = data.title
 		b.ui_font = font
@@ -134,50 +134,36 @@ func _layout() -> void:
 	queue_redraw()
 
 func _edge(a: String,b: String, lit: bool, dashed := false) -> void:
-	if a != "root" and not buttons[a].visible: return
-	if b != "root" and not buttons[b].visible: return
+	if not buttons[a].visible or not buttons[b].visible: return
 	var from := point(a)
 	var to := point(b)
 	var direction := (to-from).normalized()
-	from += direction*48
-	to -= direction*48
-	var color := Color("b9bd80") if lit else Color("58776b")
-	if dashed: draw_dashed_line(from,to,color,2,7,true,true)
-	else: draw_line(from,to,color,2.2,true)
-	var tip := to-direction*5
-	var side := Vector2(-direction.y,direction.x)*4
-	draw_colored_polygon(PackedVector2Array([tip,tip-direction*9+side,tip-direction*9-side]),color)
+	from += direction*55
+	to -= direction*55
+	# A pencil-like curved stroke keeps dependencies readable on the field journal.
+	var normal := direction.orthogonal()*12
+	var points := PackedVector2Array()
+	for i in 19:
+		points.append(from.bezier_interpolate(from+(to-from)*.33+normal,to-(to-from)*.33+normal,to,float(i)/18))
+	var color := Color("73814f") if lit else Color("b8aa83")
+	if dashed:
+		for i in range(0,18,3): draw_line(points[i],points[i+1],color,1.6,true)
+	else:
+		draw_polyline(points,Color(color,.20),4.5,true)
+		draw_polyline(points,color,1.6,true)
+	var tip := to-direction*3
+	var side := direction.orthogonal()*3
+	draw_polyline(PackedVector2Array([tip-direction*7+side,tip,tip-direction*7-side]),color,1.6,true)
 
 func _draw() -> void:
 	if model == null or buttons.is_empty(): return
-	# Faint abstract guides provide direction without suggesting purchasable cells.
-	for i in 6:
-		var angle: float = TAU*i/6
-		draw_line(point("root"),point("root")+Vector2(cos(angle),sin(angle))*210,Color(0.5,.66,.56,.06),1,true)
-	_edge("root","gather",rank_of("gather")>0)
-	_edge("root","bag",rank_of("bag")>0)
 	_edge("gather","reach",rank_of("gather")>0)
 	_edge("gather","beat",rank_of("gather")>0)
 	_edge("reach","twin",rank_of("reach")>0)
 	_edge("gather","twin",rank_of("gather")==2,true)
 	_edge("bag","wings",rank_of("bag")>0,true)
-	_edge("root","wings",rank_of("gather")>0,true)
-	_edge("root","meadow",model.growth_count()>=3,true)
 	_edge("meadow","shortcut",rank_of("meadow")>0)
-	# Market shares the meadow prerequisite; it does not require the shortcut.
-	if buttons.market.visible:
-		var from := point("meadow")+Vector2(35,35)
-		var to := point("market")+Vector2(0,48)
-		var route_y := size.y*.27
-		draw_polyline(PackedVector2Array([from,Vector2(from.x,route_y),Vector2(to.x,route_y),to]),Color("b9bd80"),2,true)
-	_edge("twin","reserve",rank_of("twin")>0,true)
-	# Shortcut has an OR route to the outcome, documented in the outcome condition strip.
-	var root_at := point("root")
-	draw_circle(root_at,35,Color("365c4d"))
-	draw_arc(root_at,35,0,TAU,48,Color("a9b282"),1.5,true)
-	Art.icon(self,"root",root_at,23)
+	_edge("meadow","market",rank_of("meadow")>0)
 	if font:
-		draw_string(font,root_at+Vector2(-45,62),"此刻的你",HORIZONTAL_ALIGNMENT_CENTER,90,16,Color("9bb5a0"))
-		draw_string(font,Vector2(24,size.y*.13),"采 集",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("a3c4ae"))
-		draw_string(font,Vector2(size.x*.78,size.y*.31),"出 行",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("a3c4ae"))
-		draw_string(font,Vector2(size.x*.36,12),"花 路 与 收 益",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("a3c4ae"))
+		draw_string(font,Vector2(18,2),"采蜜与出行",HORIZONTAL_ALIGNMENT_LEFT,-1,19,Color("716b42"))
+		draw_string(font,Vector2(size.x*.73,2),"花路与收获",HORIZONTAL_ALIGNMENT_LEFT,-1,19,Color("716b42"))

@@ -288,6 +288,7 @@ npm run test
 - [macOS Demo 发行准备与商店材料](docs/release/nectar-demo-steam-macos.md)（暂无AppID；签名、公证与Steam审核待完成）。
 - [美术评审手册可编辑源](docs/art/nectar-demo-art-review.json)与[构建脚本](tools/build_nectar_art_manual.py)。这是0.22历史手册，含本轮已调整的四点庭院；0.23变化见下方回执，尚未获专业评审。
 
+- [0.27地图与手绘界面回执](docs/production/nectar-demo-027-map-style-receipt.md)
 - [0.26采蜜与振翅动作回执](docs/production/nectar-demo-026-actions-receipt.md)：本批授权范围、验收及成本覆盖；实施验证中。
 - [0.24动作与材料修订回执](docs/production/nectar-demo-024-feedback-receipt.md)：本轮机制、原生动态与交付证据。
 - [庭院蜂房与伪俯视花田：退回及返工](docs/production/nectar-environment-grounding-receipt.md)：4150整体美术退回；按最新“斜俯视地面＋侧视物件”提议接入庭院蜂房与采集区，沿#313/PR315 Draft实机验证，尚未获整体接受。

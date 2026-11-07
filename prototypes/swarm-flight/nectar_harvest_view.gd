@@ -4,6 +4,10 @@ extends "res://world_view.gd"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
 const UIArt = preload("res://nectar_ui_art.gd")
 const Dance = preload("res://nectar_dance.gd")
+const RouteMap = preload("res://nectar_map.gd")
+const HOME_SIGN: Texture2D = preload("res://art/nectar-home-sign.png")
+const SHORTCUT_SIGN: Texture2D = preload("res://art/nectar-shortcut-sign.png")
+const THICKET: Texture2D = preload("res://art/nectar-route-thicket.png")
 const Landscape = preload("res://nectar_landscape.gd")
 const STAGE: Texture2D = preload("res://art/nectar-dance-stage.png")
 # Only the suspended vine and mirror ball; the timber pavilion is not reused outdoors.
@@ -117,11 +121,11 @@ func _draw() -> void:
 		for flower in model.flowers:
 			if _field_flower_visible(flower): _draw_source_feedback(flower)
 		if area_key == "pond":
-			_draw_gate_hint(Vector2(470,575),"回庭院",true)
-			_draw_gate_hint(Vector2(1660,575),"前往紫花地","meadow" in model.owned)
-			_draw_shortcut_hint(Vector2(1040,400),false)
+			_draw_gate_hint(model.POND_ENTRY,"回庭院",true)
+			_draw_gate_hint(model.POND_EXIT,"前往紫花地","meadow" in model.owned)
+			_draw_shortcut_hint(model.SHORTCUTS[0],false)
 		else:
-			_draw_gate_hint(Vector2(1900,575),"池岸 / 庭院",true)
+			_draw_gate_hint(model.MEADOW_ENTRY,"池岸 / 庭院",true)
 			_draw_shortcut_hint(Vector2(3000,400),true)
 	for item in harvest_texts:
 		if feedback_font:
@@ -158,6 +162,9 @@ func _draw_player() -> void:
 func _draw_field_scene() -> void:
 	# A ground plane with upright sprites: sort their feet, not their picture tops.
 	var items: Array[Dictionary] = []
+	for solid in RouteMap.solids(area_key):
+		_ground_shadow(solid.p+Vector2(0,solid.r.y-8),Vector2(solid.r.x*.85,22),.20)
+		items.append({"kind":"thicket","y":solid.p.y+solid.r.y,"data":solid})
 	for flower in model.flowers:
 		if not _field_flower_visible(flower): continue
 		var root: Vector2 = _flower_root(flower)
@@ -167,11 +174,11 @@ func _draw_field_scene() -> void:
 	var half: float = 93.0 if area_key == "pond" else model.RAIN_SHELTER.half_width
 	_ground_shadow(shelter+Vector2(0,62),Vector2(half*.68,20),.12)
 	items.append({"kind":"leaf","y":shelter.y+65,"p":shelter,"half":half})
-	var shortcut := Vector2(1040,400) if area_key == "pond" else Vector2(3000,400)
+	var shortcut: Vector2 = model.SHORTCUTS[0] if area_key == "pond" else model.SHORTCUTS[1]
 	if area_key == "pond" or "meadow" in model.owned:
 		_ground_shadow(shortcut+Vector2(0,64),Vector2(46,12),.12)
 		items.append({"kind":"lamp","y":shortcut.y+65,"p":shortcut,"size":170.0,"active":"shortcut" in model.owned,"symbol":"shortcut"})
-	var gates: Array = [{"p":Vector2(470,575),"active":true,"symbol":"home"},{"p":Vector2(1660,575),"active":"meadow" in model.owned,"symbol":"meadow"}] if area_key == "pond" else [{"p":Vector2(1900,575),"active":true,"symbol":"home"}]
+	var gates: Array = [{"p":model.POND_ENTRY,"active":true,"symbol":"home"},{"p":model.POND_EXIT,"active":"meadow" in model.owned,"symbol":"meadow"}] if area_key == "pond" else [{"p":model.MEADOW_ENTRY,"active":true,"symbol":"home"}]
 	for gate in gates:
 		_ground_shadow(gate.p+Vector2(0,64),Vector2(57,14),.12)
 		items.append({"kind":"lamp","y":gate.p.y+65,"p":gate.p,"size":230.0,"active":gate.active,"symbol":gate.symbol})
@@ -186,6 +193,9 @@ func _draw_field_scene() -> void:
 	items.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y)<float(b.y))
 	for item in items:
 		match item.kind:
+			"thicket":
+				var solid: Dictionary = item.data
+				draw_texture_rect_region(THICKET,Rect2(solid.p-solid.r,solid.r*2.0),Rect2(45,45,1680,755))
 			"flower": _draw_source(item.data)
 			"leaf": _draw_leaf_stop(item.p,item.half)
 			"lamp":
@@ -198,9 +208,10 @@ func _draw_field_scene() -> void:
 func _label(p: Vector2, words: String, active := false, width := 180.0) -> void:
 	if p.x < model.camera_x+8 or p.x > model.camera_x+1272: return
 	p.x = clampf(p.x,model.camera_x+width*0.5+16,model.camera_x+1280-width*0.5-16)
-	var r := Rect2(p-Vector2(width*0.5,22),Vector2(width,42))
-	draw_style_box(_box_style(Color("294c3eea"),Color("edce83") if active else Color("98ab7d"),2,12),r)
-	if feedback_font: draw_string(feedback_font,p+Vector2(-width*0.5+13,7),words,HORIZONTAL_ALIGNMENT_LEFT,width-24,18,Color("fff1cc"))
+	if feedback_font:
+		var baseline := p+Vector2(-width*.5+13,7)
+		draw_string_outline(feedback_font,baseline,words,HORIZONTAL_ALIGNMENT_LEFT,width-24,18,5,Color("29452de0"))
+		draw_string(feedback_font,baseline,words,HORIZONTAL_ALIGNMENT_LEFT,width-24,18,Color("ffedb2") if active else Color("f6efcf"))
 
 func _draw_hub() -> void:
 	# The house, counter, notebook and leaf terrace share one painted courtyard.
@@ -256,16 +267,22 @@ func _draw_gate_hint(p: Vector2, title: String, available: bool) -> void:
 		draw_string(feedback_font,Vector2(clampf(p.x,model.camera_x+106,model.camera_x+1174)-79,p.y-23),"尚未开放",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("4f623f"))
 
 func _draw_waymark(p: Vector2, symbol: String, active: bool) -> void:
-	# The destination plaque is lashed to the same stem as the hanging lamp.
+	# Painted plaques hang from the actual lamp stem, not a floating UI badge.
 	var stem := _marker_stem(p)
 	var at: Vector2 = stem[0].bezier_interpolate(stem[1],stem[2],stem[3],.32)
-	var radius := 30.0 if symbol == "home" else 23.0
-	var points := PackedVector2Array()
-	for i in 6: points.append(at+Vector2(cos(i*TAU/6),sin(i*TAU/6))*radius)
-	draw_colored_polygon(points,Color("f0ce86") if symbol == "home" else Color("466648") if active else Color("6a7766"))
-	draw_polyline(points+PackedVector2Array([points[0]]),Color("806845"),2.3,true)
-	for x in [-9,9]: draw_line(at+Vector2(x,-radius*.87),at+Vector2(x,-radius*.55),Color("c3ad70"),2,true)
-	UIArt.icon(self,symbol,at+Vector2(0,2),radius*.57,Color("715431") if symbol == "home" else Color("f5e9b7") if active else Color("a6af9a"))
+	var span := Vector2(82,49) if symbol=="home" else Vector2(72,43)
+	var tone := Color.WHITE if active else Color(.61,.68,.55)
+	for side in [-1,1]:
+		draw_line(at+Vector2(0,-29),at+Vector2(side*span.x*.25,-span.y*.38),Color("7d6036"),2.8,true)
+		draw_line(at+Vector2(0,-29),at+Vector2(side*span.x*.25,-span.y*.38),Color("c5a66b"),1.1,true)
+	if symbol=="home":
+		draw_texture_rect_region(HOME_SIGN,Rect2(at-span*.5,span),Rect2(210,215,1060,610),tone)
+	elif symbol=="shortcut":
+		draw_texture_rect_region(SHORTCUT_SIGN,Rect2(at-span*.5,span),Rect2(105,215,1135,680),tone)
+	else:
+		# A real painted flower is the destination marker for the purple field.
+		ArtSprites.small_leaf(self,at+Vector2(-34,19),at+Vector2(30,18),20)
+		UIArt.painted_icon(self,"meadow",at,25,tone)
 
 func _draw_return_bearing() -> void:
 	if area_key == "hub": return
@@ -273,8 +290,7 @@ func _draw_return_bearing() -> void:
 	var x: float = destination.x-model.camera_x
 	if x >= -80 and x <= 1360: return
 	var at := Vector2(34 if x<0 else 1246,575)
-	draw_style_box(_box_style(Color("294c3eea"),Color("edce83"),2,13),Rect2(at-Vector2(25,29),Vector2(50,58)))
-	UIArt.icon(self,"home",at,18,Color("f0ce86"))
+	draw_texture_rect_region(HOME_SIGN,Rect2(at-Vector2(32,20),Vector2(64,40)),Rect2(210,215,1060,610))
 	var direction := -1.0 if x<0 else 1.0
 	var arrow := at+Vector2(direction*17,-40)
 	draw_polyline(PackedVector2Array([arrow+Vector2(-direction*6,-6),arrow,arrow+Vector2(-direction*6,6)]),Color("f0ce86"),3,true)
@@ -399,7 +415,7 @@ func _draw_source_feedback(flower: Dictionary) -> void:
 	if working or (stocked and float(flower.progress)>0.0 and p.distance_to(model.p)<model.harvest_radius()+40):
 		var rect := Rect2(p+Vector2(-38,-94),Vector2(76,11))
 		# Gate labels are centered near y=458; move only overlapping flower feedback.
-		var gates: Array = [Vector2(470,575),Vector2(1660,575)] if area_key == "pond" else [Vector2(1900,575)]
+		var gates: Array = [model.POND_ENTRY,model.POND_EXIT] if area_key == "pond" else [model.MEADOW_ENTRY]
 		for gate in gates:
 			var center := Vector2(clampf(gate.x,model.camera_x+106,model.camera_x+1174),gate.y-117)
 			if model.p.distance_to(gate) <= 420 and rect.intersects(Rect2(center-Vector2(102,22),Vector2(204,44))):
@@ -515,9 +531,12 @@ func _draw_rain() -> void:
 
 func _draw_bag() -> void:
 	if model.cargo_total() <= 0 and "bag1" not in model.owned: return
-	var p: Vector2 = model.p+Vector2(-20 if model.face.x >= 0 else 21,17)
-	var size := 1.55 if "bag2" in model.owned else 1.25 if "bag1" in model.owned else 1.0
-	_oval(p,Vector2(7,9)*size,Color("dba344"),Color("6e4e29"),1.3)
-	draw_line(p+Vector2(-5,-7)*size,p+Vector2(5,-7)*size,Color("f4df9c"),2,true)
-	var ratio: float = float(model.cargo_total())/float(model.capacity())
-	if ratio > 0: _ellipse(p+Vector2(0,4-ratio*5)*size,Vector2(4,2+ratio*4)*size,Color("ffdb67"))
+	var side := -1.0 if model.face.x>=0 else 1.0
+	var p: Vector2 = model.p+Vector2(20*side,18)
+	var scale := 1.55 if "bag2" in model.owned else 1.25 if "bag1" in model.owned else 1.0
+	# The same painted honey vessel as the HUD and shop, visibly tied to the bee.
+	var span := Vector2(18,20)*scale
+	for offset in [-4,4]:
+		draw_line(model.p+Vector2(8*side,7+offset),p+Vector2(offset,-span.y*.36),Color("8a673b"),1.5,true)
+	var tone := Color.WHITE if model.cargo_total()>0 else Color(.68,.73,.59)
+	draw_texture_rect_region(JAR_ART,Rect2(p-span*.5,span),JAR_SOURCE,tone)

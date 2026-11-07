@@ -37,7 +37,7 @@ func reset_carrier() -> Dictionary:
 	carrier.state = "patrol"
 	carrier.hits = 0
 	carrier.stun = 0.0
-	carrier.pos = carrier.anchor
+	carrier.pos = carrier.anchor+Vector2(100,0)
 	m.p = carrier.pos-Vector2(85,0)
 	m.v = Vector2.ZERO
 	m.face = Vector2.LEFT
@@ -113,6 +113,7 @@ func run() -> void:
 		key(KEY_E,false)
 		check(m.cargo_total() == 1,"held E finishes one flower")
 		await capture("collected-"+str(size.x))
+		m.creatures[0].pos = m.creatures[0].anchor+Vector2(100,0)
 		m.p = m.creatures[0].pos+Vector2(-85,0)
 		m.v = Vector2.ZERO
 		m.face = Vector2.RIGHT

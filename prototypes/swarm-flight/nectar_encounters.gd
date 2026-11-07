@@ -1,5 +1,6 @@
 extends RefCounted
 ## Peaceful per-expedition wildlife; proximity and dash never inflict harm.
+const Map = preload("res://nectar_map.gd")
 const STATES := ["patrol","gone"]
 const WARN_TIME := 0.65
 const CHASE_TIME := 2.2
@@ -16,7 +17,7 @@ static func layout(trip: int) -> Array[Dictionary]:
 
 static func safe_at(area: String,position: Vector2) -> bool:
 	if area == "hub": return true
-	var gates := [Vector2(470,575),Vector2(1660,575)] if area == "pond" else [Vector2(1900,575)]
+	var gates := [Vector2(470,575),Vector2(1620,575)] if area == "pond" else [Vector2(1900,575)]
 	for gate in gates:
 		if position.distance_to(gate) < 220.0: return true
 	return false
@@ -34,8 +35,18 @@ static func step(model,dt: float,_dashing: bool) -> void:
 		var previous: Vector2 = creature.pos
 		creature.state = "patrol"
 		creature.timer = fmod(float(creature.timer)+dt,TAU)
-		var target: Vector2 = creature.anchor+Vector2(sin(float(creature.timer))*34.0,cos(float(creature.timer)*2.0)*16.0)
-		creature.pos = creature.pos.move_toward(target,50.0*dt)
+		# Each lap has two readable pauses. Timer remains the persisted 0..TAU phase.
+		var t: float = float(creature.timer)/TAU
+		var travel := 0.0
+		if t<0.22: travel = 0.0
+		elif t<0.50: travel = smoothstep(0.22,0.50,t)
+		elif t<0.70: travel = 1.0
+		else: travel = 1.0-smoothstep(0.70,1.0,t)
+		var span := Vector2(25,-58) if creature.kind == "scout" else Vector2(72,24)
+		var target: Vector2 = creature.anchor+span*(travel*2.0-1.0)
+		var speed := 76.0 if creature.kind == "scout" else 105.0
+		var next: Vector2 = creature.pos.move_toward(target,speed*dt)
+		creature.pos = Map.move(model.area,creature.pos,next-creature.pos,10.0)
 		var movement: Vector2 = creature.pos-previous
 		if not movement.is_zero_approx(): creature.face = movement.normalized()
 

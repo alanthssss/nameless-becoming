@@ -342,6 +342,10 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
+**2026-11-07 · 0.27地图与统一手绘实施中。** Alan明确要求地图深化并交付实物、成长树与场景画风统一。GDD§8.1/13.9→M3→父#322→#330地图/#331成长美术/#333通用菜单与HUD/#332验证交付；专用分支`codex/nectar-map-style-027`。唯一下一动作是实现池岸双路环与紫花地避雨选择、统一成长手册视觉，再原生输入验证并经维护入口生成试玩包。基线0.26已交付；本批尚无完成证据。200＋40小时不重置，累计/可靠剩余未知、采购0、自动化PAUSED。
+
+以下为历史快照，不构成另一个执行队列。
+
 **2026-11-07 · SD-v1.5动作候选进入最终集成。** GDD§8.1/13.9→M3→#324/#325/#326（后者拆#328路线复核、#329导出集成）/[PR327](https://github.com/alanthssss/nameless-becoming/pull/327)。按Alan授权落实稳定采蜜、方向单体振翅/按住与既有成长；运行冻结c4e7ebf：规则16201、原生动作44/UI73/Demo23/地区31、完整近道340/双采446和两侧冷续各3均0失败，两完整MP4解码通过，16动作/34环境图与独立AI复核无未解P1/P2。最终.app/.command实际采蜜/保存/退出/冷续与七旧档原字节保留通过，原NH-C01–08已生成0.26候选。唯一下一动作是本PR最终文档CI通过后集成清理、读回权威状态并交付Alan试玩；最终集成以PR327与本批integration-readback为准。产物/失败历史/P3/成本见[0.26回执](../production/nectar-demo-026-actions-receipt.md)。#322地图、#313未完研究、M3和#211保持开放，尚无Alan接受；200＋40小时、累计/可靠剩余未知、采购0、PAUSED不变。以下均为历史快照，不构成第二执行队列。
 
 **历史：2026-11-05 · SD-v1.4研究应用进入候选收口。** GDD§8.1/13.9→M3→[#318](https://github.com/alanthssss/nameless-becoming/issues/318)、[#319](https://github.com/alanthssss/nameless-becoming/issues/319)、[#320](https://github.com/alanthssss/nameless-becoming/issues/320)，集成沿[PR #321](https://github.com/alanthssss/nameless-becoming/pull/321)。庭院／临时名基线上已实现返程地标、准确结算、蜜囊成长及巢口储备；最终运行81f5fda的近道340／双采446项与两侧冷续各3项均0失败，34张原生图重采、独立AI复核无剩余P1/P2，两份连续MP4完整解码通过。实际导出两入口、保存退出与冷续移动通过，七份旧档hash相同，原NH-C01–08候选检查及0.25 ZIP已生成；唯一下一动作是本PR通过最终CI后完成集成清理、回读权威状态并交付Alan试玩。具体合并结果以PR #321及本批integration-readback为准。f9与81证据身份、两次失败录制、非阻断P3和LV01–10边界只见[本批回执](../production/nectar-demo-025-build-receipt.md)。地图[#322](https://github.com/alanthssss/nameless-becoming/issues/322)仅为候选，本批无布局变化。07:41:30 UTC候选检查点覆盖65分03秒，最终集成时钟与清理回读见本批证据；#211、M3和未完成原作研究保持开放，200＋40小时、累计／可靠剩余未知、新采购0、自动化PAUSED，未称Alan或真人接受。
