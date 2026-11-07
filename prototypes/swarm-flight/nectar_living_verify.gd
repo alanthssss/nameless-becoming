@@ -1,5 +1,6 @@
 extends SceneTree
 ## Deterministic rule fixtures and ordinary stepped routes, never player evidence.
+const Pilot = preload("res://nectar_test_pilot.gd")
 const Model = preload("res://nectar_harvest_model.gd")
 const V3 = preload("res://nectar_legacy_model_v3.gd")
 const V4 = preload("res://nectar_legacy_model_v4.gd")
@@ -20,6 +21,11 @@ func clone_ok(m,label: String) -> void:
 	var clone = Model.new()
 	check(clone.restore_payload(JSON.parse_string(JSON.stringify(m.to_payload(),"",true,true))),label)
 func fly(m,target: Vector2) -> bool:
+	for point in Pilot.points(m.area,m.p,target):
+		if not fly_direct(m,point): return false
+	return true
+
+func fly_direct(m,target: Vector2) -> bool:
 	var area: String = m.area
 	for frame in 1800:
 		if m.area != area: return false
@@ -28,7 +34,20 @@ func fly(m,target: Vector2) -> bool:
 			tick(m,.1)
 			return true
 		m.step(step_dt,Vector2(float(d.x>5)-float(d.x< -5),float(d.y>5)-float(d.y< -5)).limit_length(),false,false)
+	print("PILOT FAILED target=",target," at=",m.p," energy=",m.energy," area=",m.area)
 	return false
+
+func flight_cost(m,origin: Vector2,target: Vector2) -> float:
+	var total := 0.0
+	var at := origin
+	for point in Pilot.points(m.area,origin,target):
+		var drain := 1.0
+		for i in 25:
+			var sample := at.lerp(point,float(i)/24.0)
+			if m.area=="meadow" and sample.x>=2600 and sample.x<=2920 and sample.y<m.rain_floor_at(sample.x): drain = 2.8
+		total += (absf(point.x-at.x)+absf(point.y-at.y))/180.0*drain+.6
+		at = point
+	return total
 
 func run() -> void:
 	var m = Model.new()
@@ -57,6 +76,7 @@ func run() -> void:
 	check(other.flowers[0].pos != m.flowers[0].pos,"different expeditions generate different bounded flower positions")
 	check(Model.flower_layout(2) == Model.flower_layout(2),"generation is reproducible")
 	var bug = Model.new(); bug.transition_to("pond")
+	bug.creatures[0].pos += Vector2(100,0) # Clear-space action fixture.
 	bug.p = bug.creatures[0].pos-Vector2(70,0)
 	var energy: float = bug.energy
 	check(bug.pulse() and bug.energy == energy-2 and bug.creatures[0].hits == 1,"first pulse spends energy and makes partial material progress")
@@ -128,9 +148,9 @@ func run_route(branch: String, dt := 1.0/60.0) -> void:
 			if creature.region != region: continue
 			if destination == "pond" and m.materials.fiber >= need_fiber: continue
 			if destination == "meadow" and m.materials.resin >= need_resin: continue
-			var cost: float = m.p.distance_to(creature.pos)/180+creature.pos.distance_to(home)/180+(3 if creature.kind == "guard" else 2)*2.6+4
+			var cost: float = flight_cost(m,m.p,creature.pos)+flight_cost(m,creature.pos,home)+(3 if creature.kind == "guard" else 2)*2.6+4
 			if m.energy < cost: break
-			safe = fly(m,creature.pos) and safe
+			safe = fly(m,creature.pos+Vector2(95,0)) and safe
 			for hit in 3:
 				if creature.state == "gone": break
 				m.pulse(creature.pos-m.p); tick(m,.56)
@@ -145,7 +165,7 @@ func run_route(branch: String, dt := 1.0/60.0) -> void:
 				if flower.region != region or flower.stock == 0 or flower.id in picked: continue
 				if target.is_empty() or m.p.distance_to(flower.pos) < m.p.distance_to(target.pos): target = flower
 			if target.is_empty(): break
-			var required: float = m.p.distance_to(target.pos)/180+target.pos.distance_to(home)/180+1.9/m.harvest_rate()+3.0
+			var required: float = flight_cost(m,m.p,target.pos)+flight_cost(m,target.pos,home)+1.9/m.harvest_rate()+3.0
 			if m.energy <= required: break
 			safe = fly(m,target.pos) and safe
 			for frame in ceili(2.2/step_dt):

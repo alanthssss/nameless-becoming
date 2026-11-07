@@ -19,11 +19,11 @@ func field():
 
 func flowers_fixture(twin := false):
 	var m = field()
-	m.p = Vector2(900,450)
+	m.p = Vector2(900,600)
 	for flower in m.flowers: flower.pos = Vector2(1600,200)
-	m.flowers[0].pos = Vector2(930,450)
-	m.flowers[1].pos = Vector2(960,450)
-	m.flowers[2].pos = Vector2(980,450)
+	m.flowers[0].pos = Vector2(930,600)
+	m.flowers[1].pos = Vector2(960,600)
+	m.flowers[2].pos = Vector2(980,600)
 	if twin: m.owned.assign(["gather1","gather2","reach","twin"])
 	return m
 
@@ -34,6 +34,7 @@ func pulse_fixture(guard := false):
 		m.area = "meadow"
 		m.visited_meadow = true
 	var index := 1 if guard else 0
+	m.creatures[index].pos += Vector2(100,0) # Clear-space action fixture.
 	m.p = m.creatures[index].pos-Vector2(70,0)
 	return m
 
@@ -47,7 +48,7 @@ func test_harvest_lock() -> void:
 	var m = flowers_fixture()
 	m.step(.1,Vector2.ZERO,true,false)
 	check(m.harvesting_ids == ["blue_0"],"nearest flower begins collection")
-	m.p = Vector2(965,450)
+	m.p = Vector2(965,600)
 	m.step(.1,Vector2.ZERO,true,false)
 	check(m.harvesting_ids == ["blue_0"] and m.flowers[1].progress == 0,"closer flower cannot steal an active target")
 	var saved: float = m.flowers[0].progress
@@ -55,8 +56,8 @@ func test_harvest_lock() -> void:
 	check(m.harvesting_ids.is_empty() and m.flowers[0].progress == saved,"release stops action and preserves partial nectar")
 	m.step(.1,Vector2.ZERO,true,false)
 	check(m.harvesting_ids == ["blue_1"],"press after release acquires the currently nearest flower")
-	m.p = Vector2(1110,450)
-	m.flowers[2].pos = Vector2(1100,450)
+	m.p = Vector2(1110,600)
+	m.flowers[2].pos = Vector2(1100,600)
 	m.step(.1,Vector2.ZERO,true,false)
 	check(m.harvesting_ids == ["blue_2"],"out of range target releases and a vacant slot can acquire")
 	m.flowers[2].progress = .99
@@ -68,7 +69,7 @@ func test_harvest_lock() -> void:
 	var twin = flowers_fixture(true)
 	twin.step(.1,Vector2.ZERO,true,false)
 	check(twin.harvesting_ids == ["blue_0","blue_1"],"twin begins two targets in nearest order")
-	twin.p = Vector2(981,450)
+	twin.p = Vector2(981,600)
 	twin.step(.1,Vector2.ZERO,true,false)
 	check(twin.harvesting_ids == ["blue_0","blue_1"] and twin.flowers[2].progress == 0,"twin retains both begun flowers despite a closer third flower")
 	twin.cargo.blue = 5

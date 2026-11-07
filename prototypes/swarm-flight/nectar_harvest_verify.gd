@@ -203,7 +203,7 @@ func run() -> void:
 	check(rescued.energy == rescued.max_energy() and rescued.p == Model.HUB_DEPART and rescued.camera_x == 0 and rescued.events.any(func(e): return e.kind == "rescue"),"rescue supplies the visible departure orb and reports loss")
 	check(fly(rescued,Vector2(500,575)) and rescued.trip_index == 2,"rescue permits a new trip")
 	var dash = Model.new()
-	field(dash,Vector2(800,450))
+	field(dash,Vector2(800,600)) # Isolate dash release from the route obstacle.
 	tick(dash,0.4,Vector2.RIGHT,false,true)
 	check(dash.charging and dash.charge == Model.CHARGE_READY,"held charge reaches readiness")
 	dash.step(1.0/60.0,Vector2.RIGHT,false,false)

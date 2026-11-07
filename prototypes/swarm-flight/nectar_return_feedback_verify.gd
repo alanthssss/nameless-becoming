@@ -166,7 +166,10 @@ func run() -> void:
 		for kind in ["fiber","resin"]:
 			if int(definition.get(kind,0)) > 0:
 				check("%d %s" % [definition[kind],"纤维" if kind == "fiber" else "树脂"] in game.toast_text,"purchase confirms material cost "+id)
-		check(game.ui.toast_panel.visible,"growth result remains visible "+id)
+		if id == "reserve":
+			check(game.ui.menu.visible and "花蜜储备完成" in game.ui.menu_body.text and "花费 60 金币" in game.ui.menu_body.text and not game.ui.toast_panel.visible,"completion card shows actual result and paid price without duplicate toast")
+		else:
+			check(game.ui.toast_panel.visible,"growth result remains visible "+id)
 		await process_frame
 		await process_frame
 		if game.mode == "tree":

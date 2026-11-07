@@ -92,6 +92,7 @@ func run() -> void:
 	tick(m,1.0)
 	check(c.state == "patrol" and is_equal_approx(m.energy,start_energy-0.6) and m.hurt_left == 0,"overlapping wildlife remains peaceful and only ordinary endurance drains")
 	check(not m.can_damage(c) and not m.events.any(func(e): return e.kind in ["warn","hurt","repel"]),"proximity emits no combat event or damage permission")
+	c.pos = c.anchor+Vector2(40,0) # Contact fixture stays clear of the authored thicket.
 	m.p = c.pos-Vector2(10,0)
 	m.face = Vector2.RIGHT
 	m.burst_left = 0.01
@@ -100,7 +101,7 @@ func run() -> void:
 	check(c.state == "patrol" and m.hurt_left == 0 and is_equal_approx(m.energy,start_energy-1.0/60.0),"dash passes through wildlife without destroying or hurting it")
 	check(m.coins == before_coins and m.cargo == before_cargo,"wildlife contact never creates currency or cargo")
 	tick(m,4.0)
-	check(c.state == "patrol" and c.pos.distance_to(c.anchor) < 45,"peaceful animal remains within its patrol habitat")
+	check(c.state == "patrol" and c.pos.distance_to(c.anchor) < 90,"peaceful animal remains within its patrol habitat")
 	check(Model.new().restore_payload(m.to_payload()),"peaceful patrol satisfies strict persistence")
 	var valid: Dictionary = m.to_payload()
 	for key in ["area","creatures","hurt_left"]:

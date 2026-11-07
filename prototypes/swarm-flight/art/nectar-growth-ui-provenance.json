@@ -1,0 +1,168 @@
+{
+  "schema": 1,
+  "gdd": "8.1 / 13.9",
+  "milestone": 3,
+  "issue": 331,
+  "date": "2026-11-07",
+  "style": "Approved garden: warm ivory paper, amber book cover, green leaves, painterly edges, upper-left light",
+  "assets": [
+    {
+      "id": "nectar-growth-journal",
+      "version": 1,
+      "file": "nectar-growth-journal.png",
+      "sha256": "2b0a7eb4483ffc74f211fcee9ce7297c6eac7a0282946a14aebed6510fcba89c",
+      "source": "OpenAI built-in image_gen, AI-assisted pre-generated raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1b3b7-0ade-7fa0-9472-1dd1bee022d6/exec-c26b6937-d2b2-4736-a3bb-d777c45a2a37.png",
+      "style_references": [
+        "nectar-field-book.png"
+      ],
+      "brief": "Landscape open botanical journal seen exactly overhead with large empty cream parchment pages, narrow stitched gutter and amber cover. Same painterly texture, soft brown outlines, warm upper-left light and green leaf accents as reference. No text, symbols, scene or stand. Native labels and controls remain editable.",
+      "post_processing": "none; byte-identical copy of generated PNG",
+      "pixel_size": [
+        1536,
+        1024
+      ],
+      "png_color_type": 6,
+      "alpha_policy": "Requested transparent background; UI uses the whole book rectangle and does not rely on outside alpha. No raster removal or edits.",
+      "usage": "nectar_harvest_ui.gd growth screen background; 1280×800 logical canvas; linear filtering",
+      "collision": "none / UI background ignores pointer",
+      "review_status": "Developer native review at 1280×800 and 960×600: illustrated nodes, clear details and inputs; user acceptance pending"
+    },
+    {
+      "id": "nectar-resource-icons",
+      "version": 1,
+      "file": "nectar-resource-icons.png",
+      "sha256": "f6229b2db7917e02c9e376aa35ff5983c3f60f16e52b4c759b5e9bc4d293a7d6",
+      "source": "OpenAI built-in image_gen; AI-assisted raster, then built-in imagegen edit to remove unwanted background haze",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1b3b7-0ade-7fa0-9472-1dd1bee022d6/exec-0ae5f770-1d28-4887-b993-ca92ff5fef5c.png",
+      "discarded_initial_source": "/Users/alanthssss/.codex/generated_images/01a1b3b7-0ade-7fa0-9472-1dd1bee022d6/exec-1d08d342-27a7-49cb-b860-43c40a6da94e.png",
+      "pixel_size": [
+        1254,
+        1254
+      ],
+      "style_references": [
+        "nectar-honey-jar.png"
+      ],
+      "brief": "2x2 painted sprite atlas: flower-embossed gold coin, tied plant-fiber bundle, amber resin teardrop and translucent ivory bee wings. Warm painterly brush texture, soft brown contours, upper-left light; legible at 28 px. Transparent padding, no labels, grid, frame or scene.",
+      "edit_brief": "Preserve all four icons and locations; remove all cream/white/gray haze, glow, paper texture and external shadows. All pixels outside actual silhouettes must be transparent alpha0; preserve antialiased edges.",
+      "post_processing": "none; generated edited PNG copied byte-identically. Atlas crops are code-native rendering only.",
+      "crop_regions": {
+        "coin": [
+          100,
+          120,
+          455,
+          465
+        ],
+        "fiber": [
+          669,
+          108,
+          510,
+          480
+        ],
+        "resin": [
+          151,
+          690,
+          365,
+          460
+        ],
+        "wings": [
+          641,
+          777,
+          538,
+          290
+        ]
+      },
+      "usage": "nectar_ui_art.gd shared HUD, growth, carrying materials and pickup feedback; no gameplay rules",
+      "collision": "none",
+      "review_status": "Native developer UI scene+paper contrast observed; alpha padding checked by nectar_style_probe; user acceptance pending"
+    },
+    {
+      "id": "nectar-hud-paper",
+      "version": 2,
+      "issue": 333,
+      "file": "nectar-hud-paper.png",
+      "sha256": "2ff3878da38441c5096156f47b797169b2f5c1f4168cf66955a2afd458c46fe7",
+      "source": "OpenAI built-in image_gen; pre-generated AI-assisted raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-c6ba23d8-bdec-47a0-a05b-fe3cf7178129.png",
+      "brief": "Edit the blank label into a2.2:1 compact HUD panel; warm ivory low-fiber inner field, thin quiet ochre painted edge and very subtle lower shadow, transparent padding; no text/icons/dividers/rivets/wood/patterns/leaves. Preserve native proportions.",
+      "post_processing": "None; byte-identical generated PNG. Whole texture KEEP_ASPECT_CENTERED in360x164 logical HUD; mipmaps on. All numbers and the ring are separate native controls.",
+      "pixel_size": [
+        1860,
+        846
+      ],
+      "usage": "Unified background behind portrait/stamina and all four resource rows; no separate nectar backdrop",
+      "collision": "none; HUD indicators ignore mouse, pause remains functional",
+      "review_status": "Native preview pending six-point user feedback check; no user acceptance claimed",
+      "edit_history": [
+        {
+          "version": 1,
+          "sha256": "4cb92ea61c72360969203240cb3a58eee3c0364a43efe83136a94eb58735035d",
+          "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-44e3a888-e320-4166-a888-3210b651d945.png",
+          "disposition": "rejected separate pack plate; preserved in generated source and development-shelldiver-hud/rejected-pack-paper.png"
+        }
+      ]
+    },
+    {
+      "id": "nectar-resin-chunks",
+      "version": 1,
+      "issue": 333,
+      "file": "nectar-resin-chunks.png",
+      "sha256": "15b0a48d72b91a9449869d9a368bf76a076d68e503665aff2d7333f380950b57",
+      "source": "OpenAI built-in image_gen; own pre-generated AI-assisted game art",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-5f210928-dd5b-498f-ad64-88655dc111e0.png",
+      "brief": "Two touching solid tree-resin chunks with irregular angular rust-brown amber chipped matte planes and a little tree bark; soft hand-painted warm outline and top-left light, readable at28px. Explicitly avoid liquid droplets, syrup, jars, gem jewels, flame silhouette, scenery, labels and checkerboard.",
+      "pixel_size": [
+        1254,
+        1254
+      ],
+      "post_processing": "None; byte-identical PNG. Runtime AtlasTexture crop(190,165,810,890), uniform icon scale and mipmaps.",
+      "usage": "Shared resin symbol in HUD, growth prices, carried monster material, pickups and resource motes; old liquid resin icon no longer used.",
+      "review_status": "Native preview pending; paired with explicit树脂 label inHUD"
+    }
+  ],
+  "reused_assets": [
+    {
+      "file": "revision-atlas.png",
+      "usage": "growth icons reuse exact painted bee, flower and leaf atlas regions; small native pencil annotations",
+      "provenance": "existing revision atlas records unchanged"
+    },
+    {
+      "file": "nectar-honey-jar.png",
+      "usage": "growth capacity, sale and reserve icons reuse same painted jar",
+      "provenance": "nectar-demo-provenance.json"
+    },
+    {
+      "file": "garden-landmarks.png",
+      "usage": "SIGN region [671,908,537,214] used as painted wood primary buttons and HUD surface; original atlas unchanged"
+    },
+    {
+      "file": "nectar-pond-oblique.png / nectar-meadow-oblique.png / nectar-courtyard-oblique.png",
+      "usage": "Destination cards show environment illustrations, not actual gameplay route-layout screenshots; current obstacles are rendered by map scene separately"
+    },
+    {
+      "file": "nectar-home-sign.png",
+      "usage": "Painted home icon fallback owned by map-sign implementation; source in nectar-map provenance"
+    }
+  ],
+  "issue_family": [
+    331,
+    333
+  ],
+  "technical_frame": {
+    "engine": "Godot4.6.2",
+    "canvas": [
+      1280,
+      800
+    ],
+    "native_window_verified": [
+      1280,
+      800,
+      960,
+      600
+    ],
+    "filter": "linear CanvasItem texture sampling",
+    "text": "native editable labels, no baked typography",
+    "animation": "existing rank tween retained, reduced motion respected",
+    "approval": "technical/developer visual review; user aesthetic acceptance pending"
+  }
+}

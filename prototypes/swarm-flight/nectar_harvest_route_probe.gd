@@ -1,6 +1,7 @@
 extends SceneTree
 ## Known-route developer input recording. No teleport, granted currency or upgrades.
 const Scene = preload("res://nectar_harvest.tscn")
+const Pilot = preload("res://nectar_test_pilot.gd")
 const Model = preload("res://nectar_harvest_model.gd")
 var game
 var output := ""
@@ -117,31 +118,25 @@ func purchase(id: String) -> bool:
 		trace.append({"frame":frame_count,"event":"confirmed_purchase","id":id,"cost":cost,"coins_before":before,"coins_after":game.model.coins,"owned":game.model.owned.duplicate()})
 	return bought
 
+func route_points(origin: Vector2,target: Vector2) -> Array[Vector2]:
+	return Pilot.points(game.model.area,origin,target)
+
 func fly_to(target: Vector2) -> bool:
-	# Known-route choice: use the visible low shelter when crossing the shower.
-	if game.model.area == "meadow" and minf(target.x,game.model.p.x)<2920 and maxf(target.x,game.model.p.x)>2600 and minf(target.y,game.model.p.y)<640:
-		if not await fly_direct(Vector2(game.model.p.x,645)): return false
-		if not await fly_direct(Vector2(target.x,645)): return false
-	return await fly_direct(target)
+	for point in route_points(game.model.p,target):
+		if not await fly_direct(point): return false
+	return true
 
 func planned_flight_cost(origin: Vector2,target: Vector2) -> float:
-	# Budget the actual low-route waypoints, including each vertical rain crossing.
-	# This is a conservative pilot estimate, never a change to game energy.
 	var points: Array[Vector2] = [origin]
-	if game.model.area == "meadow" and minf(target.x,origin.x)<2920 and maxf(target.x,origin.x)>2600 and minf(target.y,origin.y)<640:
-		points.append(Vector2(origin.x,645))
-		points.append(Vector2(target.x,645))
-	points.append(target)
+	points.append_array(route_points(origin,target))
 	var cost := 0.0
 	for i in range(1,points.size()):
 		var a := points[i-1]
 		var b := points[i]
 		var drain := 1.0
-		# Axis steering can briefly take more than the straight-line distance.
 		for sample in 25:
 			var p := a.lerp(b,float(sample)/24.0)
-			if game.model.area == "meadow" and p.x>=2600 and p.x<=2920 and p.y<game.model.rain_floor_at(p.x):
-				drain = 2.8
+			if game.model.area == "meadow" and p.x>=2600 and p.x<=2920 and p.y<game.model.rain_floor_at(p.x): drain = 2.8
 		cost += (absf(b.x-a.x)+absf(b.y-a.y))/180.0*drain+0.6
 	return cost
 
@@ -232,6 +227,9 @@ func run() -> void:
 			need_fiber += int(m.upgrade(id).get("fiber",0))
 			need_resin += int(m.upgrade(id).get("resin",0))
 		var destination := "meadow" if "meadow" in m.owned and m.materials.fiber >= need_fiber else "pond"
+		# Demonstrate the earned upgrade on the visibly close pond flowers. The
+		# conservative pilot returns from the meadow before its far paired flowers.
+		if "twin" in m.owned and not twin_recorded: destination = "pond"
 		check(await fly_to(Model.HUB_DEPART),"ordinary flight to departure %d" % expedition)
 		await tap(KEY_E)
 		check(game.mode == "regions","E opens actual departure lamp")
@@ -252,17 +250,30 @@ func run() -> void:
 			if region == 1 and m.materials.resin >= need_resin: continue
 			var cost: float = planned_flight_cost(m.p,creature.pos)+planned_flight_cost(creature.pos,home)+(3 if creature.kind == "guard" else 2)*2.6+6
 			if m.energy < cost: break
-			check(await fly_to(creature.pos+Vector2(95 if creature.pos.x>2800 else -95,0)),"ordinary flight approaches material carrier")
+			var approach: Vector2 = creature.pos+Vector2(95,0)
+			check(await fly_to(approach),"ordinary flight approaches material carrier")
+			var material_kind: String = "fiber" if creature.kind == "scout" else "resin"
+			var expected_amount: int = 2 if creature.kind == "scout" else 1
+			var material_before: int = m.materials[material_kind]
 			for hit in 3:
 				if creature.state == "gone": break
 				await aim_pulse(creature.pos)
 				if expedition == 0 and hit == 0: await capture("03a-wing-pulse")
 				await frames(17)
-			check(creature.state == "gone" and not m.drops.is_empty(),"distinct pulse input sheds physical material")
-			if not m.drops.is_empty():
+			var own_drop: Dictionary = {}
+			var own_drop_count := 0
+			for drop in m.drops:
+				if drop.id == creature.id:
+					own_drop = drop
+					own_drop_count += 1
+			check(own_drop_count<=1,"one carrier creates at most one physical drop")
+			check(creature.state == "gone" and ((not own_drop.is_empty() and own_drop.amount==expected_amount and m.materials[material_kind]==material_before) or (own_drop.is_empty() and m.materials[material_kind]==material_before+expected_amount)),"distinct pulse sheds this carrier's material or has already auto-collected its exact amount")
+			if not own_drop.is_empty():
 				if expedition == 0: await capture("03b-material-drop")
-				check(await fly_to(m.drops[-1].pos),"ordinary movement retrieves material")
+				check(await fly_to(own_drop.pos),"ordinary movement retrieves this carrier's material")
 				await frames(12)
+			check(m.materials[material_kind]==material_before+expected_amount,"one carrier delivers its exact material amount once")
+			check(m.drops.filter(func(drop): return drop.id==creature.id).is_empty(),"collected carrier has no leftover duplicate drop")
 			if not failures.is_empty(): break
 		var picked: Array = []
 		var turn_reason := "attempt_limit"
@@ -292,7 +303,7 @@ func run() -> void:
 			var paired_before := 0
 			if "twin" in m.owned and not twin_recorded:
 				for flower in m.flowers:
-					if flower.id != target.id and flower.region == target.region and flower.stock > 0 and target.pos.distance_to(flower.pos) < 2*m.harvest_radius()-30:
+					if flower.id != target.id and flower.region == target.region and flower.stock > 0 and target.pos.distance_to(flower.pos) < 2*m.harvest_radius()-30 and Model.Map.clear_segment(m.area,target.pos,flower.pos,36):
 						paired = flower; paired_before = int(flower.stock)
 						approach = (target.pos+flower.pos)*.5
 						break

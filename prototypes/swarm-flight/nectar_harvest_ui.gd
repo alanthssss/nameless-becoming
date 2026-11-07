@@ -1,7 +1,11 @@
 extends Control
-## Compact field HUD, contextual selling, and an abstract growth map.
+## Compact field HUD, contextual selling, and an illustrated field-journal growth screen.
 const Board = preload("res://nectar_growth_board.gd")
+const UIArt = preload("res://nectar_ui_art.gd")
+const LANDMARKS: Texture2D = preload("res://art/garden-landmarks.png")
 const HudIcon = preload("res://nectar_hud_icon.gd")
+const EnergyDial = preload("res://nectar_energy_dial.gd")
+const HUD_PAPER: Texture2D = preload("res://art/nectar-hud-paper.png")
 const INK := Color("294d40")
 const PAPER := Color("f5edcf")
 const GOLD := Color("eccb7c")
@@ -35,6 +39,7 @@ var toast: Label
 var toast_panel: PanelContainer
 var bag_bar: ProgressBar
 var energy_bar: ProgressBar
+var energy_dial: Control
 var shop: Control
 var shop_coins: Label
 var shop_cargo: Label
@@ -49,6 +54,7 @@ var tree: Control
 var board
 var tree_coins: Label
 var tree_progress: Label
+var tree_footer: Label
 var detail_title: Label
 var detail_level: Label
 var detail_effect: Label
@@ -76,6 +82,9 @@ var pond_button: Button
 var meadow_button: Button
 var home_button: Button
 var region_back: Button
+var region_cards: HBoxContainer
+var region_caption: Label
+var region_meadow_art: TextureRect
 var transition_layer: ColorRect
 var transition_label: Label
 var transition_hint: Label
@@ -90,6 +99,7 @@ var settings_back: Button
 var menu_settings: Button
 
 func _ready() -> void:
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	font.font_names = PackedStringArray(["PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei","sans-serif"])
@@ -127,11 +137,39 @@ func style(fill: Color, edge := Color("81957a"), thickness := 1, radius := 14) -
 	s.content_margin_bottom = 14
 	return s
 
+func painted_style(texture: Texture2D, region: Rect2, tint := Color.WHITE, inset := Vector2(24,20)) -> StyleBoxTexture:
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = region
+	var painted := StyleBoxTexture.new()
+	painted.texture = atlas
+	painted.modulate_color = tint
+	painted.content_margin_left = inset.x
+	painted.content_margin_right = inset.x
+	painted.content_margin_top = inset.y
+	painted.content_margin_bottom = inset.y
+	return painted
+
 func card(parent: Node, fill := PAPER, edge := Color("81957a")) -> PanelContainer:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel",style(fill,edge))
+	if fill.r > .65:
+		# One cropped page from the same painted book: no giant flat white panels.
+		p.add_theme_stylebox_override("panel",painted_style(UIArt.JOURNAL,Rect2(35,48,715,900),Color.WHITE,Vector2(26,24)))
+	else:
+		# Field HUD stays compact/translucent; its icons use the painted material set.
+		p.add_theme_stylebox_override("panel",style(fill,edge))
 	parent.add_child(p)
 	return p
+
+func picture(parent: Node, texture: Texture2D, height: float) -> TextureRect:
+	var art := TextureRect.new()
+	art.texture = texture
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art.custom_minimum_size = Vector2(0,height)
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(art)
+	return art
 
 func anchored(node: Control, anchors: Rect2, offsets: Rect2) -> void:
 	node.set_anchor(SIDE_LEFT,anchors.position.x)
@@ -183,17 +221,22 @@ func text_line(parent: Node, words: String, pixels := 20, tint := INK, wrap := f
 func action(parent: Node, words: String, callback: Callable, primary := false) -> Button:
 	var b := Button.new()
 	b.text = words
-	b.custom_minimum_size = Vector2(0,52)
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.custom_minimum_size = Vector2(240 if primary else 0,52)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if primary else Control.SIZE_EXPAND_FILL
 	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	b.add_theme_font_size_override("font_size",20)
-	for key in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]: b.add_theme_color_override(key,INK)
-	b.add_theme_color_override("font_disabled_color",Color("8c9a87"))
-	b.add_theme_stylebox_override("normal",style(GOLD if primary else Color("f7f3df")))
-	b.add_theme_stylebox_override("hover",style(Color("fff1bd"),Color("a68b49"),2))
-	b.add_theme_stylebox_override("pressed",style(Color("d8bc76"),INK,2))
-	b.add_theme_stylebox_override("disabled",style(Color("dce2d4"),Color("aab7a0")))
-	b.add_theme_stylebox_override("focus",style(Color.TRANSPARENT,Color("c18b38"),3))
+	for key in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]: b.add_theme_color_override(key,Color("503d23") if primary else INK)
+	b.add_theme_color_override("font_disabled_color",Color("84846b"))
+	if primary:
+		for key in ["normal","hover","pressed","disabled"]:
+			var tint := Color("d8cfb6") if key == "disabled" else Color("fff1c7") if key == "hover" else Color("dfbd80") if key == "pressed" else Color.WHITE
+			b.add_theme_stylebox_override(key,painted_style(LANDMARKS,Rect2(671,908,537,214),tint,Vector2(28,12)))
+	else:
+		b.add_theme_stylebox_override("normal",StyleBoxEmpty.new())
+		b.add_theme_stylebox_override("hover",style(Color("e7d6a74d"),Color("b7a575"),0,8))
+		b.add_theme_stylebox_override("pressed",style(Color("d5bc7e70"),Color.TRANSPARENT,0,8))
+		b.add_theme_stylebox_override("disabled",StyleBoxEmpty.new())
+	b.add_theme_stylebox_override("focus",style(Color.TRANSPARENT,Color("a98040"),2,8))
 	b.pressed.connect(callback)
 	parent.add_child(b)
 	return b
@@ -203,7 +246,7 @@ func bar(parent: Node, tint: Color) -> ProgressBar:
 	p.custom_minimum_size.y = 8
 	p.show_percentage = false
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for pair in [["background",Color("345649")],["fill",tint]]:
+	for pair in [["background",Color("ead8ae")],["fill",tint]]:
 		var bar_style := style(pair[1],Color.TRANSPARENT,0,4)
 		for side in [SIDE_LEFT,SIDE_TOP,SIDE_RIGHT,SIDE_BOTTOM]: bar_style.set_content_margin(side,0)
 		p.add_theme_stylebox_override(pair[0],bar_style)
@@ -224,33 +267,60 @@ func hud_symbol(parent: Node, kind: String, hint: String) -> void:
 
 func _build_hud() -> void:
 	hud = screen(self)
-	hud_status = card(hud,Color("254a3eef"),Color("79947b"))
-	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-104,690,80))
-	var hr := row(hud_status,16)
-	var money := row(hr,4)
-	hud_symbol(money,"coin","金币：交付花蜜后获得，用于成长")
-	coins_text = text_line(money,"",22,GOLD)
-	coins_text.custom_minimum_size.x = 55
-	coins_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	var materials := column(hr,0)
-	var fr := row(materials,3)
-	hud_symbol(fr,"fiber","纤维：振翅后拾取，用于成长；救援时保留")
-	fiber_text = text_line(fr,"0",18,PAPER)
-	var rr := row(materials,3)
-	hud_symbol(rr,"resin","树脂：振翅后拾取，用于成长；救援时保留")
-	resin_text = text_line(rr,"0",18,PAPER)
-	var bag := column(hr,4)
-	bag.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var br := row(bag,4)
-	hud_symbol(br,"bag","携带花蜜 / 蜜囊容量")
-	bag_text = text_line(br,"",20,PAPER)
-	bag_bar = bar(bag,GOLD)
-	var energy := column(hr,4)
-	energy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var er := row(energy,4)
-	hud_symbol(er,"wings","续航：庭院恢复，外出和淋雨消耗")
-	energy_text = text_line(er,"",20,PAPER)
-	energy_bar = bar(energy,Color("a5c791"))
+	# Adapt the reference hierarchy to this busy garden: one quiet shared backdrop,
+	# whole bee/stamina on the left, aligned assets and nectar on the right.
+	hud_status = PanelContainer.new()
+	hud_status.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
+	hud.add_child(hud_status)
+	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-188,360,164))
+	var cluster := Control.new()
+	cluster.custom_minimum_size = Vector2(360,164)
+	hud_status.add_child(cluster)
+	var paper := TextureRect.new()
+	paper.texture = HUD_PAPER
+	paper.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	paper.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	paper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cluster.add_child(paper)
+	paper.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	energy_bar = bar(cluster,Color("85bc65"))
+	energy_bar.hide() # Range source for the circular indicator, still refreshed centrally.
+	energy_dial = EnergyDial.new()
+	energy_dial.source = energy_bar
+	cluster.add_child(energy_dial)
+	energy_dial.size = Vector2(120,108)
+	energy_text = text_line(cluster,"",18,Color("503d23"))
+	energy_text.position = Vector2(18,110)
+	energy_text.size = Vector2(92,24)
+	energy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	energy_text.tooltip_text = "续航：庭院恢复，外出和淋雨消耗"
+	var assets := column(cluster,0)
+	assets.position = Vector2(132,18)
+	assets.size = Vector2(196,116)
+	var values: Array[Label] = []
+	for kind in ["coin","fiber","resin","bag"]:
+		var line := row(assets,5)
+		line.custom_minimum_size.y = 28
+		var symbol := HudIcon.new()
+		symbol.kind = kind
+		symbol.custom_minimum_size = Vector2(24,24)
+		line.add_child(symbol)
+		var caption := text_line(line,{"coin":"金币","fiber":"纤维","resin":"树脂","bag":"花蜜"}[kind],18,Color("63533b"))
+		caption.custom_minimum_size.x = 38
+		var amount := text_line(line,"0",20,Color("3e3526"))
+		amount.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		amount.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		values.append(amount)
+	coins_text = values[0]
+	fiber_text = values[1]
+	resin_text = values[2]
+	bag_text = values[3]
+	bag_bar = bar(cluster,Color("b97524"))
+	bag_bar.hide() # Capacity is shown once as a fraction, not a second decorative meter.
+	hud_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cluster.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for indicator in cluster.find_children("*","Control",true,false):
+		indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	goal_text = text_line(hud,"",18)
 	goal_text.hide()
 	trip_text = text_line(hud,"",18)
@@ -261,8 +331,11 @@ func _build_hud() -> void:
 	help_text.add_theme_color_override("font_shadow_color",PAPER)
 	help_text.add_theme_constant_override("shadow_offset_y",1)
 	var pause := action(hud,"Ⅱ",driver.pause_game)
+	pause.custom_minimum_size = Vector2(56,56)
+	for key in ["normal","hover","pressed","disabled"]:
+		pause.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
 	pause.tooltip_text = "暂停与操作说明 · Esc"
-	anchored(pause,Rect2(1,1,0,0),Rect2(-76,-76,52,52))
+	anchored(pause,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
 
 func _build_shop() -> void:
 	shop = screen(self)
@@ -270,12 +343,13 @@ func _build_shop() -> void:
 	var p := card(shop,PAPER,Color("a7a77c"))
 	anchored(p,Rect2(1,.5,0,0),Rect2(-535,-350,500,700))
 	var v := column(p,12)
-	text_line(v,"庭院蜜铺 · 收购员",17,Color("7b895f"))
-	text_line(v,"这一趟，收获不错。",30)
+	text_line(v,"庭院蜜铺 · 收购员",17,Color("7b895f")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_line(v,"这一趟，收获不错。",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	shop_story = text_line(v,"带回花蜜，就能换取下一次成长。",19,Color("768064"),true)
 	shop_recap = text_line(v,"",18,INK,true)
 	shop_recap.hide()
 	var cargo_card := card(v,Color("e5e8d0"),Color("bec8a5"))
+	cargo_card.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
 	var cargo_v := column(cargo_card,12)
 	shop_cargo = text_line(cargo_v,"",22)
 	shop_value = text_line(cargo_v,"",27,Color("9a6c28"))
@@ -284,25 +358,37 @@ func _build_shop() -> void:
 	spacer(v)
 	leave_button = action(v,"回到庭院",driver.close_shop)
 	tree_button = leave_button # Compatibility alias for the single return action.
-	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071"))
+	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _build_regions() -> void:
 	regions = screen(self)
-	shade(regions,Color("173d35d9"))
-	var panel := card(regions,PAPER,Color("a7a77c"))
-	anchored(panel,Rect2(.5,.5,0,0),Rect2(-420,-285,840,570))
-	var v := column(panel,16)
-	text_line(v,"蜂舞广场",18,Color("7b895f"))
-	region_title = text_line(v,"这次去哪里？",32)
-	region_hint = text_line(v,"",19,INK,true)
-	pond_button = action(v,"池岸花丛",func(): driver.request_transition("pond"),true)
-	pond_info = text_line(v,"每花 1 份 · 每份 1 金币 · 晴",18,Color("7b895f"),true)
-	meadow_button = action(v,"紫花地",func(): driver.request_transition("meadow"),true)
-	meadow_info = text_line(v,"每花 1 份 · 每份 3 金币 · 局部细雨",18,Color("7b895f"),true)
-	home_button = action(v,"直接回蜂巢庭院",func(): driver.request_transition("hub"),true)
-	spacer(v)
-	region_back = action(v,"先留在这里",driver.close_regions)
-	text_line(v,"Esc 返回",16,Color("839071"))
+	shade(regions,Color("193c329c"))
+	var v := column(regions,14)
+	anchored(v,Rect2(.5,.5,0,0),Rect2(-450,-310,900,620))
+	region_title = text_line(v,"这次去哪里？",32,PAPER)
+	region_title.add_theme_color_override("font_shadow_color",INK)
+	region_title.add_theme_constant_override("shadow_offset_y",2)
+	region_hint = text_line(v,"",19,PAPER,true)
+	region_cards = row(v,22)
+	region_cards.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var pond_card := card(region_cards)
+	pond_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pond_card.custom_minimum_size.x = 435
+	var pv := column(pond_card,12)
+	picture(pv,preload("res://art/nectar-pond-oblique.png"),210)
+	pond_button = action(pv,"池岸花丛",func(): driver.request_transition("pond"),true)
+	pond_info = text_line(pv,"每花 1 份 · 每份 1 金币 · 晴",18,INK,true)
+	var meadow_card := card(region_cards)
+	meadow_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	meadow_card.custom_minimum_size.x = 435
+	var mv := column(meadow_card,12)
+	region_meadow_art = picture(mv,preload("res://art/nectar-meadow-oblique.png"),210)
+	meadow_button = action(mv,"紫花地",func(): driver.request_transition("meadow"),true)
+	meadow_info = text_line(mv,"每花 1 份 · 每份 3 金币 · 局部细雨",18,INK,true)
+	home_button = action(mv,"回到蜂巢庭院",func(): driver.request_transition("hub"),true)
+	region_caption = text_line(mv,"花蜜与材料随身带回。",18,INK,true)
+	region_back = action(v,"先留在这里  ·  Esc",driver.close_regions)
+	for key in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]: region_back.add_theme_color_override(key,PAPER)
 
 func _build_transition() -> void:
 	transition_layer = preload("res://nectar_iris_transition.gd").new()
@@ -330,21 +416,28 @@ func set_transition(alpha: float, words: String) -> void:
 
 func _build_tree() -> void:
 	tree = screen(self)
-	shade(tree,Color("183e35fa"))
+	shade(tree,Color("314d38d9"))
+	var journal_art := TextureRect.new()
+	journal_art.texture = preload("res://art/nectar-growth-journal.png")
+	journal_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	journal_art.stretch_mode = TextureRect.STRETCH_SCALE
+	journal_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tree.add_child(journal_art)
+	anchored(journal_art,Rect2(0,0,1,1),Rect2(10,12,-20,-24))
 	var header := row(tree,18)
-	anchored(header,Rect2(0,0,1,0),Rect2(28,20,-56,70))
+	anchored(header,Rect2(0,0,1,0),Rect2(120,78,-200,66))
 	var titles := column(header,2)
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_line(titles,"成长",32,PAPER)
-	tree_progress = text_line(titles,"",16,MUTED)
+	text_line(titles,"成长手册",30,INK)
+	tree_progress = text_line(titles,"",16,Color("798054"))
 	var balance := row(header,5)
 	hud_symbol(balance,"coin","金币")
-	tree_coins = text_line(balance,"",23,GOLD)
+	tree_coins = text_line(balance,"",23,INK)
 	tree_coins.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	for kind in ["fiber","resin"]:
 		var resource := row(header,4)
 		hud_symbol(resource,kind,"纤维" if kind == "fiber" else "树脂")
-		var count := text_line(resource,"0",21,PAPER)
+		var count := text_line(resource,"0",21,INK)
 		count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		if kind == "fiber": tree_fiber = count
 		else: tree_resin = count
@@ -354,10 +447,16 @@ func _build_tree() -> void:
 	board = Board.new()
 	board.font = font
 	tree.add_child(board)
-	anchored(board,Rect2(0,0,1,1),Rect2(28,122,-56,-252))
+	anchored(board,Rect2(0,0,.7,1),Rect2(70,180,-80,-300))
 	board.selected_changed.connect(_selected)
 	board.resized.connect(_place_detail)
 	detail_card = card(tree,PAPER,Color("b5b58c"))
+	var page_detail := StyleBoxEmpty.new()
+	page_detail.content_margin_left = 18
+	page_detail.content_margin_right = 18
+	page_detail.content_margin_top = 14
+	page_detail.content_margin_bottom = 14
+	detail_card.add_theme_stylebox_override("panel",page_detail)
 	detail_card.custom_minimum_size = Vector2(280,0)
 	detail_card.size = Vector2(280,260)
 	detail_card.resized.connect(func(): _place_detail.call_deferred())
@@ -390,8 +489,9 @@ func _build_tree() -> void:
 	buy_button = action(dv,"",_purchase_button_activated,true)
 	buy_button.custom_minimum_size.y = 46
 	buy_button.gui_input.connect(_purchase_button_input)
-	var foot := text_line(tree,"方向键 选择   ·   Enter 成长   ·   Esc 返回",16,MUTED)
-	anchored(foot,Rect2(.5,1,0,0),Rect2(-300,-36,600,26))
+	var foot := text_line(tree,"方向键 选择   ·   Enter 成长   ·   Esc 返回",16,Color("65704a"))
+	tree_footer = foot
+	anchored(foot,Rect2(0,1,0,0),Rect2(90,-105,500,26))
 	foot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	foot.tooltip_text = "↑↓ 同区选择 · ←→ 换区 · Tab 依次浏览 · 每次确认提升一级"
 	foot.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -400,65 +500,63 @@ func _build_tree() -> void:
 
 func _place_detail() -> void:
 	if not is_instance_valid(detail_card) or not is_instance_valid(board) or not tree.visible: return
-	var bounds := Rect2(board.position,board.size)
-	var point: Vector2 = board.position+board.point(board.selected)
+	# The right margin is reserved for the selected entry. It never covers the
+	# botanical nodes or changes position while browsing the book.
 	var box := Vector2(280,maxf(242,detail_card.get_combined_minimum_size().y))
 	detail_card.size = box
-	var best := Vector2.ZERO
-	var best_score := INF
-	var candidates := [Vector2(point.x+82,point.y-80),Vector2(point.x-box.x-82,point.y-80),Vector2(point.x-box.x*.5,point.y+86),Vector2(point.x-box.x*.5,point.y-box.y-80)]
-	# Find a nearby clear pocket before accepting any overlap with a selectable node.
-	for y in range(int(bounds.position.y),int(bounds.end.y-box.y)+1,12):
-		for x in range(int(bounds.position.x),int(bounds.end.x-box.x)+1,12):
-			candidates.append(Vector2(x,y))
-	for candidate in candidates:
-		var at := Vector2(clampf(candidate.x,bounds.position.x,bounds.end.x-box.x),clampf(candidate.y,bounds.position.y,bounds.end.y-box.y))
-		var rect := Rect2(at,box)
-		var score: float = at.distance_to(candidate)*.15+(at+box*.5).distance_to(point)*.01
-		for id in board.buttons:
-			if not board.buttons[id].visible: continue
-			var node_rect: Rect2 = board.buttons[id].get_global_rect().grow(3)
-			node_rect.position -= tree.global_position
-			if rect.intersects(node_rect): score += rect.intersection(node_rect).get_area()*(6.0 if id == board.selected else 1.0)
-		if score < best_score:
-			best_score = score
-			best = at
-	detail_card.position = best
+	detail_card.position = Vector2(size.x-348,180)
 
 func _build_menu() -> void:
 	menu = screen(self)
-	shade(menu,Color(.09,.20,.15,.36))
-	var panel := card(menu,PAPER,Color("9fa97b"))
-	anchored(panel,Rect2(.5,.5,0,0),Rect2(-320,-320,640,640))
-	var v := column(panel,14)
-	menu_title = text_line(v,driver.DISPLAY_NAME,43)
-	menu_body = text_line(v,"",21,INK,true)
+	shade(menu,Color(.09,.20,.15,.24))
+	var panel := card(menu)
+	panel.add_theme_stylebox_override("panel",painted_style(UIArt.JOURNAL,Rect2(35,48,715,900),Color.WHITE,Vector2(38,38)))
+	anchored(panel,Rect2(0,.5,0,0),Rect2(76,-286,440,572))
+	var v := column(panel,16)
+	menu_title = text_line(v,driver.DISPLAY_NAME,34)
+	menu_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	menu_body = text_line(v,"",20,INK,true)
 	menu_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	menu_primary = action(v,"开始采蜜",driver.start_game,true)
-	menu_settings = action(v,"设置",driver.open_settings)
-	menu_guide = action(v,"花路与操作",driver.open_journal)
-	var bottom := row(v,14)
+	var middle := row(v,12)
+	menu_settings = action(middle,"设置",driver.open_settings)
+	menu_guide = action(middle,"花路手册",driver.open_journal)
+	var bottom := row(v,12)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.26.0 · WASD 飞行 · E 采蜜 · Q 振翅",16,Color("8a9175"))
+	text_line(v,"Demo 0.27.0  ·  Esc 返回",16,Color("7d7a56")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
-	anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,84))
+	toast_panel.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
+	anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-260,96,520,44))
 	toast_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	toast = text_line(toast_panel,"",20,PAPER,true)
+	toast = text_line(toast_panel,"",20,Color("fff2d4"),true)
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.add_theme_color_override("font_outline_color",Color("324336"))
+	toast.add_theme_constant_override("outline_size",3)
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast_panel.hide()
 	toast_timer = Timer.new()
 	toast_timer.one_shot = true
 	toast_timer.timeout.connect(toast_panel.hide)
+	toast_timer.timeout.connect(func(): tree_footer.show())
 	add_child(toast_timer)
 
 func show_toast(words: String, seconds: float) -> void:
+	# Completion already presents the result and next actions in its own card.
+	# Duplicating that message above it covered the heading (0.26 review P3).
+	if driver.mode == "complete":
+		if "花费 " in words:
+			menu_body.text = words+"\n\n同伴们在蜂舞广场等你。\n也可以继续探索和成长。"
+		toast_panel.hide()
+		return
 	toast.text = words
-	if driver.mode == "tree": anchored(toast_panel,Rect2(.5,1,0,0),Rect2(-380,-128,760,84))
+	if driver.mode == "tree":
+		anchored(toast_panel,Rect2(0,1,0,0),Rect2(90,-153,490,74))
+		tree_footer.hide()
 	elif driver.mode == "shop": anchored(toast_panel,Rect2(0,0,0,0),Rect2(24,24,680,84))
-	else: anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,84))
+	else: anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-260,96,520,44))
 	toast_panel.show()
 	toast_timer.start(minf(seconds,3.0) if words.length()<35 else seconds)
 
@@ -499,7 +597,7 @@ func show_mode(mode: String) -> void:
 			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
 		elif mode == "pause":
 			menu_title.text = "歇一会儿"
-			menu_body.text = driver.model.goal_text()+"\n\nWASD / 方向键：飞行\nE / 左键按住：采蜜；E：交互\nQ 按住：朝前振翅；右键按住：朝指针振翅\n空格蓄力松开：冲刺"
+			menu_body.text = driver.model.goal_text()+"\n\nWASD 飞行  ·  E 采蜜\nQ 振翅  ·  空格蓄力冲刺\n\n详细操作与花路，翻看手册。"
 			menu_primary.text = "继续这趟出行"
 		else:
 			menu_title.text = "花蜜，备好了"
@@ -641,9 +739,13 @@ func refresh() -> void:
 	pond_button.text = "池岸花丛 · 蓝花蜜" if from_hub else "返回池岸花丛"
 	meadow_button.visible = from_hub
 	meadow_info.visible = from_hub
-	pond_info.visible = from_hub
+	pond_info.visible = true
+	pond_info.text = "每份 1 金币 · 晴\n近岸采蜜，草岸回弯取纤维。" if from_hub else "回到池岸花丛，继续这一趟。"
+	region_meadow_art.texture = preload("res://art/nectar-meadow-oblique.png") if from_hub else preload("res://art/nectar-courtyard-oblique.png")
+	region_caption.visible = not from_hub
 	meadow_button.disabled = "meadow" not in m.owned
-	meadow_button.text = "紫花地 · 紫花蜜" if "meadow" in m.owned else "紫花地 · 在成长书屋开放"
+	meadow_button.text = "紫花地 · 紫花蜜" if "meadow" in m.owned else "紫花地 · 尚未开放"
+	meadow_info.text = "每份 3 金币 · 局部细雨\n"+("穿雨或绕叶棚，取蜜与树脂。" if "meadow" in m.owned else "在成长手册中开放这条花路。")
 	home_button.visible = not from_hub
 	shop_coins.text = "当前金币  %d" % m.coins
 	shop_recap.text = "\n".join([driver.home_return_summary,driver.home_sale_summary]).strip_edges()
@@ -679,13 +781,14 @@ func _build_journal() -> void:
 	var p := card(journal)
 	anchored(p,Rect2(.5,.5,0,0),Rect2(-480,-315,960,630))
 	var v := column(p,14)
-	text_line(v,"花路见闻",32)
+	text_line(v,"花路见闻",32).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	journal_status = text_line(v,"",18,Color("7b895f"))
 	var h := row(v,18)
 	for entry in [
 		["池岸花丛","蓝花蜜 · 每份 1 金币","每花 1 份 · 生物不会攻击。\n振翅驱离小飞虫，拾取纤维。\n采够了即可从灯球返回。"],
 		["紫花地","紫花蜜 · 每份 3 金币","在成长书屋开放后出发。\n每花 1 份 · 可收集树脂。\n细雨增加消耗，叶棚下可避雨。"]]:
 		var c := card(h,Color("e7e9cf"))
+		c.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
 		c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		c.custom_minimum_size.x = 430
 		var cv := column(c,14)
@@ -701,12 +804,12 @@ func _build_settings() -> void:
 	settings = screen(self)
 	shade(settings,Color("173d35ee"))
 	var p := card(settings)
-	anchored(p,Rect2(.5,.5,0,0),Rect2(-470,-365,940,730))
+	anchored(p,Rect2(.5,.5,0,0),Rect2(-350,-340,700,680))
 	var scroll := ScrollContainer.new()
 	p.add_child(scroll)
-	var v := column(scroll,10)
+	var v := column(scroll,14)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_line(v,"设置与旅途说明",30)
+	text_line(v,"设置与旅途说明",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	settings_motion = action(v,"",func():
 		driver.reduced_motion = not driver.reduced_motion
 		driver.save_settings())
@@ -716,7 +819,7 @@ func _build_settings() -> void:
 	settings_sound = action(v,"",toggle_sound)
 	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
 	text_line(v,"关于 Demo",23)
-	text_line(v,"%s 0.25.0\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
+	text_line(v,"%s 0.27.0\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
 	text_line(v,"制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞为通信动作启发的幻想演绎；侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。",17,Color("687957"),true)
 	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
 	settings_back = action(v,"返回",driver.close_settings,true)
@@ -747,11 +850,12 @@ func _energy_attention(warning: bool) -> void:
 	low_energy = warning
 	if energy_pulse: energy_pulse.kill()
 	energy_bar.modulate = Color.WHITE
+	energy_dial.modulate = Color.WHITE
 	energy_text.modulate = Color.WHITE
 	if warning:
 		energy_pulse = create_tween().set_loops()
-		energy_pulse.tween_property(energy_bar,"modulate",Color("efb678"),.6)
-		energy_pulse.tween_property(energy_bar,"modulate",Color.WHITE,.6)
+		energy_pulse.tween_property(energy_dial,"modulate",Color("efb678"),.6)
+		energy_pulse.tween_property(energy_dial,"modulate",Color.WHITE,.6)
 
 func _exit_tree() -> void:
 	if energy_pulse: energy_pulse.kill()

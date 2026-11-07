@@ -1,72 +1,63 @@
 extends RefCounted
-## Small abstract UI symbols; no gameplay or progression state.
-static func icon(c: CanvasItem, kind: String, p: Vector2, r: float, ink := Color("f5e9b7")) -> void:
-	var gold := Color("e7be62")
-	match kind:
-		"home":
-			# Hive doorway: shared by the home landmark and the off-screen bearing.
-			c.draw_arc(p+Vector2(0,r*.18),r*.7,PI,TAU,24,ink,r*.22,true)
-			c.draw_line(p+Vector2(-r*.7,r*.18),p+Vector2(-r*.7,r*.67),ink,r*.22,true)
-			c.draw_line(p+Vector2(r*.7,r*.18),p+Vector2(r*.7,r*.67),ink,r*.22,true)
-			c.draw_line(p+Vector2(-r*.78,r*.67),p+Vector2(r*.78,r*.67),ink,r*.18,true)
-			c.draw_circle(p+Vector2(0,r*.27),r*.25,ink)
-		"coin", "market":
-			c.draw_circle(p,r*0.72,gold)
-			c.draw_arc(p,r*0.53,0,TAU,32,Color("876432"),2,true)
-			c.draw_line(p+Vector2(0,-r*0.34),p+Vector2(0,r*0.34),Color("876432"),3,true)
-		"bag":
-			var poly := PackedVector2Array([p+Vector2(-r*.46,-r*.36),p+Vector2(-r*.72,r*.50),p+Vector2(-r*.42,r*.76),p+Vector2(r*.42,r*.76),p+Vector2(r*.72,r*.50),p+Vector2(r*.46,-r*.36)])
-			c.draw_colored_polygon(poly,ink)
-			c.draw_polyline(poly+PackedVector2Array([poly[0]]),Color("927644"),2,true)
-			c.draw_line(p+Vector2(-r*.5,-r*.25),p+Vector2(r*.5,-r*.25),gold,4,true)
-			c.draw_circle(p+Vector2(0,r*.25),r*.20,gold)
-		"fiber":
-			for i in 3:
-				var y: float = (i-1)*r*.34
-				c.draw_polyline(PackedVector2Array([p+Vector2(-r*.76,y+r*.2),p+Vector2(-r*.22,y-r*.18),p+Vector2(r*.35,y+r*.08),p+Vector2(r*.73,y-r*.22)]),Color("dbd7a0"),r*.23,true)
-			c.draw_line(p+Vector2(-r*.08,-r*.65),p+Vector2(r*.13,r*.65),Color("8d915a"),r*.16,true)
-		"resin":
-			var drop := PackedVector2Array([p+Vector2(0,-r*.86),p+Vector2(-r*.58,-r*.05),p+Vector2(-r*.61,r*.40),p+Vector2(-r*.28,r*.73),p+Vector2(r*.29,r*.73),p+Vector2(r*.61,r*.40),p+Vector2(r*.58,-r*.05)])
-			c.draw_colored_polygon(drop,Color("d9a05c"))
-			c.draw_polyline(drop+PackedVector2Array([drop[0]]),Color("805f38"),r*.11,true)
-			c.draw_line(p+Vector2(-r*.25,-r*.06),p+Vector2(-r*.29,r*.30),Color("ffe4a1"),r*.17,true)
-		"beat":
-			icon(c,"wings",p,r*.70,ink)
-			for side in [-1,1]:
-				c.draw_arc(p+Vector2(side*r*.20,0),r*.76,-.72 if side>0 else PI-.72,.72 if side>0 else PI+.72,16,gold,2,true)
-		"wings", "root":
-			for side in [-1,1]:
-				var v := PackedVector2Array([p,p+Vector2(side*r*.88,-r*.66),p+Vector2(side*r*.75,r*.12),p+Vector2(side*r*.30,r*.52)])
-				c.draw_colored_polygon(v,ink)
-				c.draw_line(p,p+Vector2(side*r*.60,-r*.30),Color("a2bda5"),2,true)
-			c.draw_line(p+Vector2(0,-r*.20),p+Vector2(0,r*.70),gold,5,true)
-		"reach":
-			for side in [-1,1]:
-				var q := p+Vector2(side*r*.65,-r*.55)
-				c.draw_line(p+Vector2(side*r*.12,r*.58),q,ink,3,true)
-				c.draw_circle(q,r*.14,gold)
-			c.draw_arc(p,r*.92,PI*1.12,PI*1.88,24,Color("9fcbb4"),2,true)
-		"shortcut":
-			for dy in [-.32,.32]:
-				c.draw_line(p+Vector2(-r*.85,r*dy),p+Vector2(r*.85,r*dy),ink,3,true)
-			c.draw_polyline(PackedVector2Array([p+Vector2(r*.35,-r*.8),p+Vector2(r*.85,-r*.32),p+Vector2(r*.35,r*.12)]),gold,3,true)
-			c.draw_polyline(PackedVector2Array([p+Vector2(-r*.35,-r*.12),p+Vector2(-r*.85,r*.32),p+Vector2(-r*.35,r*.8)]),gold,3,true)
-		"reserve":
-			var pts := PackedVector2Array()
-			for n in 10:
-				var a: float = -PI/2+n*PI/5
-				pts.append(p+Vector2(cos(a),sin(a))*r*(.92 if n%2 == 0 else .43))
-			c.draw_colored_polygon(pts,gold)
-			c.draw_circle(p,r*.20,ink)
-		"twin":
-			flower(c,p+Vector2(-r*.4,0),r*.56,Color("a6c4dc"))
-			flower(c,p+Vector2(r*.4,-r*.13),r*.56,Color("d4add7"))
-		_:
-			flower(c,p,r*.85,Color("c4a1cc") if kind == "meadow" else Color("9fbfcb"))
+## Shared HUD symbols and field-journal illustrations; no progression state.
+const HOME_SIGN: Texture2D = preload("res://art/nectar-home-sign.png")
+const JOURNAL: Texture2D = preload("res://art/nectar-growth-journal.png")
+const PAINTED: Texture2D = preload("res://art/revision-atlas.png")
+const RESOURCES: Texture2D = preload("res://art/nectar-resource-icons.png")
+const RESIN: Texture2D = preload("res://art/nectar-resin-chunks.png")
+const JAR: Texture2D = preload("res://art/nectar-honey-jar.png")
+const FLOWER := Rect2(638,100,571,596)
+const BEE := Rect2(67,158,510,456)
+const LEAF := Rect2(19,822,592,251)
 
-static func flower(c: CanvasItem, p: Vector2, r: float, tint: Color) -> void:
-	for n in 5:
-		var a: float = -PI/2+n*TAU/5
-		c.draw_circle(p+Vector2(cos(a),sin(a))*r*.58,r*.38,tint)
-	c.draw_circle(p,r*.30,Color("f0d389"))
-	c.draw_circle(p+Vector2(-r*.07,-r*.09),r*.10,Color("fff4cf"))
+static func painted_sprite(c: CanvasItem, texture: Texture2D, source: Rect2, p: Vector2, extent: float, tint := Color.WHITE) -> void:
+	var span := source.size * (extent * 2.0 / maxf(source.size.x,source.size.y))
+	c.draw_texture_rect_region(texture,Rect2(p-span*.5,span),source,tint)
+
+static func painted_icon(c: CanvasItem, kind: String, p: Vector2, r: float, tint := Color.WHITE) -> void:
+	match kind:
+		"resin":
+			painted_sprite(c,RESIN,Rect2(190,165,810,890),p,r,tint)
+		"coin", "fiber", "wings", "beat":
+			var source: Rect2 = {"coin":Rect2(100,120,455,465),"fiber":Rect2(669,108,510,480),"resin":Rect2(151,690,365,460),"wings":Rect2(641,777,538,290),"beat":Rect2(641,777,538,290)}[kind]
+			painted_sprite(c,RESOURCES,source,p,r,tint)
+			if kind == "beat":
+				for side in [-1,1]:
+					c.draw_arc(p,r*1.06,-.6 if side>0 else PI-.6,.6 if side>0 else PI+.6,14,Color("b08a45"),1.8,true)
+		"gather", "meadow":
+			painted_sprite(c,PAINTED,FLOWER,p,r,tint if kind == "gather" else tint*Color(2.2,.75,1.2))
+		"twin":
+			painted_sprite(c,PAINTED,FLOWER,p+Vector2(-r*.43,r*.15),r*.69,tint)
+			painted_sprite(c,PAINTED,FLOWER,p+Vector2(r*.43,-r*.15),r*.69,tint*Color(2.2,.75,1.2))
+		"bag", "reserve", "market":
+			painted_sprite(c,JAR,Rect2(225,240,800,790),p,r,tint)
+			if kind == "reserve":
+				painted_sprite(c,JAR,Rect2(225,240,800,790),p+Vector2(r*.65,r*.28),r*.55,tint)
+			elif kind == "market": icon(c,"coin",p+Vector2(r*.66,r*.36),r*.36)
+		"shortcut":
+			painted_sprite(c,PAINTED,LEAF,p+Vector2(0,r*.27),r,tint)
+			c.draw_arc(p+Vector2(0,-r*.14),r*.62,PI*1.04,TAU*.98,20,Color("a67539"),2,true)
+			c.draw_line(p+Vector2(r*.62,-r*.15),p+Vector2(r*.32,-r*.31),Color("a67539"),2,true)
+		"reach":
+			# The same painted bee's antennae provide the field-book illustration.
+			painted_sprite(c,PAINTED,BEE,p,r,tint)
+			c.draw_arc(p+Vector2(0,-r*.12),r*.98,PI*1.12,PI*1.88,20,Color("91a574"),1.6,true)
+		_:
+			# Match the painted body and translucent wings used in the world view.
+			for side in [-1,1]:
+				var points := PackedVector2Array()
+				for i in 25:
+					var a := TAU*i/24.0
+					points.append(p+Vector2(side*r*.36,-r*.49)+Vector2(cos(a)*r*.32,sin(a)*r*.62).rotated(side*.5))
+				c.draw_colored_polygon(points,Color(.9,.94,.82,.82)*tint)
+				c.draw_polyline(points,Color("9eac85")*tint,1.2,true)
+			painted_sprite(c,PAINTED,BEE,p+Vector2(0,r*.10),r*.88,tint)
+			if kind == "beat":
+				for side in [-1,1]:
+					c.draw_arc(p+Vector2(0,r*.1),r*1.06,-.6 if side>0 else PI-.6,.6 if side>0 else PI+.6,14,Color("b08a45"),1.8,true)
+
+static func icon(c: CanvasItem, kind: String, p: Vector2, r: float, _ink := Color("f5e9b7")) -> void:
+	if kind == "home":
+		painted_sprite(c,HOME_SIGN,Rect2(210,215,1060,610),p,r)
+	else:
+		painted_icon(c,kind,p,r)

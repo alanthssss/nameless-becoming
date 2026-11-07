@@ -342,6 +342,10 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
+**2026-11-07 · 0.27地图与统一手绘候选进入最终集成。** GDD§8.1/13.9 SD16→M3→#330/#331/#333/#332，[PR334](https://github.com/alanthssss/nameless-becoming/pull/334)。池岸双路环、紫花地避雨分路、手绘成长/菜单/绳系路标及经Alan六点纠正的统一浅底HUD已实现；冻结运行5a615，规则17355、原生451、完整普通输入326/464与两冷续各3均0失败，77图/三份连续影片及独立限定AI复核通过。实际导出两入口、采蜜保存退出冷续与七旧档原字节保留通过，原NH-C01–08已生成0.27候选；test-only双采驾驶补丁和全部否定/失败历史见[回执](../production/nectar-demo-027-map-style-receipt.md)。唯一当前动作是#332/#335完成两次samples超时后的CI-only必需作业拆分，待PR334最终CI通过后合并读回与清理交付；完成后沿#211做Alan整包操作、美术与成本评议，未经新判断不追加本批功能。#322生态/原角色、#313全视频/Windows研究、M3保持开放，未称Alan接受。200＋40小时不重置，观察墙钟包含多轮返工/生成/测试/等待，主动/累计/可靠剩余未知、采购0、图像费用未知、自动化PAUSED。以下均为历史快照。
+
+以下为历史快照，不构成另一个执行队列。
+
 **2026-11-07 · SD-v1.5动作候选进入最终集成。** GDD§8.1/13.9→M3→#324/#325/#326（后者拆#328路线复核、#329导出集成）/[PR327](https://github.com/alanthssss/nameless-becoming/pull/327)。按Alan授权落实稳定采蜜、方向单体振翅/按住与既有成长；运行冻结c4e7ebf：规则16201、原生动作44/UI73/Demo23/地区31、完整近道340/双采446和两侧冷续各3均0失败，两完整MP4解码通过，16动作/34环境图与独立AI复核无未解P1/P2。最终.app/.command实际采蜜/保存/退出/冷续与七旧档原字节保留通过，原NH-C01–08已生成0.26候选。唯一下一动作是本PR最终文档CI通过后集成清理、读回权威状态并交付Alan试玩；最终集成以PR327与本批integration-readback为准。产物/失败历史/P3/成本见[0.26回执](../production/nectar-demo-026-actions-receipt.md)。#322地图、#313未完研究、M3和#211保持开放，尚无Alan接受；200＋40小时、累计/可靠剩余未知、采购0、PAUSED不变。以下均为历史快照，不构成第二执行队列。
 
 **历史：2026-11-05 · SD-v1.4研究应用进入候选收口。** GDD§8.1/13.9→M3→[#318](https://github.com/alanthssss/nameless-becoming/issues/318)、[#319](https://github.com/alanthssss/nameless-becoming/issues/319)、[#320](https://github.com/alanthssss/nameless-becoming/issues/320)，集成沿[PR #321](https://github.com/alanthssss/nameless-becoming/pull/321)。庭院／临时名基线上已实现返程地标、准确结算、蜜囊成长及巢口储备；最终运行81f5fda的近道340／双采446项与两侧冷续各3项均0失败，34张原生图重采、独立AI复核无剩余P1/P2，两份连续MP4完整解码通过。实际导出两入口、保存退出与冷续移动通过，七份旧档hash相同，原NH-C01–08候选检查及0.25 ZIP已生成；唯一下一动作是本PR通过最终CI后完成集成清理、回读权威状态并交付Alan试玩。具体合并结果以PR #321及本批integration-readback为准。f9与81证据身份、两次失败录制、非阻断P3和LV01–10边界只见[本批回执](../production/nectar-demo-025-build-receipt.md)。地图[#322](https://github.com/alanthssss/nameless-becoming/issues/322)仅为候选，本批无布局变化。07:41:30 UTC候选检查点覆盖65分03秒，最终集成时钟与清理回读见本批证据；#211、M3和未完成原作研究保持开放，200＋40小时、累计／可靠剩余未知、新采购0、自动化PAUSED，未称Alan或真人接受。
