@@ -398,10 +398,16 @@ func _draw_source_feedback(flower: Dictionary) -> void:
 	var working: bool = flower.id in model.harvesting_ids
 	if working or (stocked and float(flower.progress)>0.0 and p.distance_to(model.p)<model.harvest_radius()+40):
 		var rect := Rect2(p+Vector2(-38,-94),Vector2(76,11))
+		# Gate labels are centered near y=458; move only overlapping flower feedback.
+		var gates: Array = [Vector2(470,575),Vector2(1660,575)] if area_key == "pond" else [Vector2(1900,575)]
+		for gate in gates:
+			var center := Vector2(clampf(gate.x,model.camera_x+106,model.camera_x+1174),gate.y-117)
+			if model.p.distance_to(gate) <= 420 and rect.intersects(Rect2(center-Vector2(102,22),Vector2(204,44))):
+				rect.position.y = p.y+42
 		draw_style_box(_box_style(Color("264a3b"),Color("fff3cf"),2,6),rect)
 		var fill: float = clampf(float(flower.progress),0,1)
 		if fill > 0.0: draw_style_box(_box_style(Color("f6ce61"),Color.TRANSPARENT,0,4),Rect2(rect.position+Vector2(2,2),Vector2(72*fill,7)))
-		draw_circle(p+Vector2(48,-89),5,Color("f6ce61"))
+		draw_circle(rect.position+Vector2(86,5),5,Color("f6ce61"))
 		if working:
 			draw_arc(p,19,-PI*.8,PI*.7,24,Color(1,.88,.49,.75),2,true)
 			var mouth: Vector2 = _working_bee_position()+_working_bee_direction()*25

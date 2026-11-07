@@ -137,7 +137,11 @@ func run() -> void:
 		game._load_world()
 		game.open_tree()
 		for id in ["reach","beat","twin"]:
+			if id == "twin":
+				m.owned.assign(["gather1","gather2","reach"])
+				game.ui.board.refresh(m)
 			game.ui.board.select_node(id)
+			check(game.ui.board.selected == id,"growth fixture actually selects "+id)
 			game.ui._detail()
 			await frames(5)
 			await capture("growth-"+id+"-"+str(size.x))
