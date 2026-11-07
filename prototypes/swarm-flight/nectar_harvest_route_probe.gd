@@ -227,6 +227,9 @@ func run() -> void:
 			need_fiber += int(m.upgrade(id).get("fiber",0))
 			need_resin += int(m.upgrade(id).get("resin",0))
 		var destination := "meadow" if "meadow" in m.owned and m.materials.fiber >= need_fiber else "pond"
+		# Demonstrate the earned upgrade on the visibly close pond flowers. The
+		# conservative pilot returns from the meadow before its far paired flowers.
+		if "twin" in m.owned and not twin_recorded: destination = "pond"
 		check(await fly_to(Model.HUB_DEPART),"ordinary flight to departure %d" % expedition)
 		await tap(KEY_E)
 		check(game.mode == "regions","E opens actual departure lamp")
