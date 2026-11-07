@@ -513,6 +513,8 @@ func show_toast(words: String, seconds: float) -> void:
 	# Completion already presents the result and next actions in its own card.
 	# Duplicating that message above it covered the heading (0.26 review P3).
 	if driver.mode == "complete":
+		if "花费 " in words:
+			menu_body.text = words+"\n\n同伴们在蜂舞广场等你。\n也可以继续探索和成长。"
 		toast_panel.hide()
 		return
 	toast.text = words
