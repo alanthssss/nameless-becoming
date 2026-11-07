@@ -528,8 +528,15 @@ func restore_payload(data) -> bool:
 	creatures = next_creatures
 	for creature in creatures:
 		creature.pos = Map.safe_point("pond" if creature.region == 0 else "meadow",creature.pos,10.0)
+		# A radial escape can cross the original save leash. The unchanged anchor
+		# is clear in both layouts and keeps the next save valid without new loot.
+		if creature.pos.distance_to(creature.anchor) > Encounters.leash(creature)+20.0:
+			creature.pos = creature.anchor
 	for drop in drops:
 		drop.pos = Map.safe_point("pond" if drop.region == 0 else "meadow",drop.pos,10.0)
+		var owner_index := int(str(drop.id).trim_prefix("mosquito_"))
+		if drop.pos.distance_to(creatures[owner_index].anchor) > 300.0:
+			drop.pos = creatures[owner_index].anchor
 	hurt_left = 0.0
 	update_camera()
 	events.clear()

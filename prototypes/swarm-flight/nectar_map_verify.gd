@@ -63,6 +63,34 @@ func run() -> void:
 	check(cold.coins==17 and cold.cargo.blue==3 and cold.materials.fiber==5 and cold.owned==m.owned and is_equal_approx(cold.flowers[0].progress,.4),"layout update preserves currency, cargo, upgrades and partial flower progress")
 	var again = Model.new()
 	check(again.restore_payload(cold.to_payload()) and again.to_payload()==cold.to_payload(),"safe-position correction is idempotent on cold restore")
+	# Historical positions near a leash edge can project beyond that leash.
+	# Cover both anchor variations and preserve collected/hit/drop state on re-save.
+	for trip in [1,2]:
+		for index in 3:
+			for angle_index in 16:
+				for is_drop in [false,true]:
+					m = field("pond" if index==0 else "meadow")
+					m.trip_index = trip
+					m.creatures = Model.Encounters.layout(trip)
+					m.flowers = Model.flower_layout(trip)
+					var owner: Dictionary = m.creatures[index]
+					var limit: float = 299.9 if is_drop else Model.Encounters.leash(owner)+19.9
+					var old_point: Vector2 = owner.anchor+Vector2.from_angle(angle_index*TAU/16.0)*limit
+					if is_drop:
+						owner.state = "gone"
+						owner.hits = 2 if index==0 else 3
+						m.drops.append({"id":owner.id,"kind":"fiber" if index==0 else "resin","pos":old_point,"region":owner.region,"amount":2 if index==0 else 1,"age":0.5})
+					else:
+						owner.pos = old_point
+						owner.hits = 1
+					cold = Model.new()
+					check(cold.restore_payload(m.to_payload()),"old leash-edge save remains accepted")
+					if cold.creatures.size()!=3: continue
+					var restored_point: Vector2 = cold.drops[0].pos if is_drop else cold.creatures[index].pos
+					check(not Model.Map.blocked(m.area,restored_point,10),"restored creature/material lies outside new bush")
+					again = Model.new()
+					check(again.restore_payload(cold.to_payload()) and again.to_payload()==cold.to_payload(),"relocated leash-edge save remains stable on repeated cold restore")
+					check(cold.creatures[index].hits==owner.hits and cold.drops.size()==m.drops.size() and (not is_drop or cold.drops[0].amount==m.drops[0].amount),"relocation preserves hits and exact material amount")
 	# Rain traversal compares ordinary movement at two visible heights.
 	var costs: Array[float] = []
 	for height in [320.0,645.0]:
