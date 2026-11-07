@@ -287,7 +287,7 @@ func run() -> void:
 	reject(copy,bad,"false milestone flag")
 	bad = valid.duplicate(true); bad.phase = "home"
 	reject(copy,bad,"home flag outside home")
-	var path := "user://nectar-harvest-rule-test-%d.json" % OS.get_process_id()
+	var path := OS.get_temp_dir().path_join("nectar-harvest-rule-test-%d.json" % OS.get_process_id())
 	check(Save.write_payload(valid,path,Model.new()),"atomic file writer accepts new independent validator")
 	var disk: Dictionary = Save.read_payload(path,Model.new())
 	var disk_model = Model.new()
@@ -299,7 +299,7 @@ func run() -> void:
 	transaction.coins = 20
 	var candidate = Model.new()
 	check(candidate.restore_payload(transaction.to_payload()) and candidate.buy("gather1"),"purchase can be staged in an independent candidate")
-	var failed_path := "user://missing-nectar-test-%d/save.json" % OS.get_process_id()
+	var failed_path := OS.get_temp_dir().path_join("missing-nectar-test-%d/save.json" % OS.get_process_id())
 	check(not Save.write_payload(candidate.to_payload(),failed_path,Model.new()),"unavailable save destination reports failure")
 	check(transaction.coins == 20 and transaction.owned.is_empty(),"failed staged purchase leaves live money and ownership intact")
 	check(Save.write_payload(candidate.to_payload(),path,Model.new()) and transaction.restore_payload(candidate.to_payload()),"saved purchase candidate can commit")

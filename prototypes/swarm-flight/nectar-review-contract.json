@@ -2,7 +2,7 @@
   "schema": 1,
   "goal": "nectar-harvest-mvp",
   "source": "docs/design/swarm-flight-gdd.md",
-  "gdd_section": "13.7 / 13.8; NH-C01–08 / NH-RG01–06 / 13.9 SD-v1 / SD-v1.1 feedback 2026-11-04 / SD-v1.2 living collection 2026-11-04 / SD-v1.4 research adoption 2026-11-05",
+  "gdd_section": "13.7 / 13.8; NH-C01–08 / NH-RG01–06 / 13.9 SD-v1 / SD-v1.1 feedback 2026-11-04 / SD-v1.2 living collection 2026-11-04 / SD-v1.4 research adoption 2026-11-05 / 13.9 SD-v1.5 harvest and directional wing actions 2026-11-07",
   "claim": "candidate",
   "entry": "nectar-harvest",
   "save_filename": "nectar_harvest_v1.json",
@@ -28,7 +28,7 @@
       "roles": [
         "input_trace"
       ],
-      "requirement": "Both regions, single-serving flowers, unlock requirements and two-way shortcut are usable through ordinary input. Hub/pond/meadow stay distinct; courtyard return lands at its dance gate, sale/growth/departure remain individually reachable, creatures do not chase or damage, and per-trip refresh is checked. Route information is available at destination selection and in optional pause help; stocked jars match the original painted shop. Dance skip/reduced-motion/save transitions remain valid. Active progress/work animation, seeded moving flowers with saved regrowth, Q/right-click material collection and material upgrades, stamina return pressure, focal iris/dance transitions must be checked."
+      "requirement": "Both regions, single-serving flowers, unlock requirements and two-way shortcut are usable through ordinary input. Hub/pond/meadow stay distinct; courtyard return lands at its dance gate, sale/growth/departure remain individually reachable, creatures do not chase or damage, and per-trip refresh is checked. Route information is available at destination selection and in optional pause help; stocked jars match the original painted shop. Dance skip/reduced-motion/save transitions remain valid. Active progress/work animation, seeded moving flowers with saved regrowth, Q/right-click material collection and material upgrades, stamina return pressure, focal iris/dance transitions must be checked. SD15: stable harvest selection, held Q/right-mouse directional single target, empty pulse without action cost, partial-progress preservation and hold/charge/dash precedence. Both harvest and wing range growth and actual fewer-hit gains must be visible."
     },
     {
       "id": "NH-C03",
@@ -63,7 +63,7 @@
       "roles": [
         "native_frame"
       ],
-      "requirement": "Native 960x600 and 1280x800 presentation is readable, coherent and spatially credible. Dance stage supports, art family, field guide and settings are checked at native scales. Home/flower/shortcut waymarks, off-screen return bearing, capacity appearance and sealed home reserve are checked at both scales."
+      "requirement": "Native 960x600 and 1280x800 presentation is readable, coherent and spatially credible. Dance stage supports, art family, field guide and settings are checked at native scales. Home/flower/shortcut waymarks, off-screen return bearing, capacity appearance and sealed home reserve are checked at both scales. Selected flower work/nectar trail, directional gust, carried material loosening/drop/pickup and legible growth detail must agree with the rules."
     },
     {
       "id": "NH-C06",

@@ -94,6 +94,9 @@ jobs:
           grep -q '^NECTAR RULES:.*0 failures' "$RUNNER_TEMP/nectar-rules.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://nectar_living_verify.gd 2>&1 | tee "$RUNNER_TEMP/nectar-living.log"
           grep -q '^NECTAR LIVING:.*0 failures' "$RUNNER_TEMP/nectar-living.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://nectar_actions_verify.gd 2>&1 | tee "$RUNNER_TEMP/nectar-actions.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/nectar-actions.log"; then exit 1; fi
+          grep -q '^NECTAR ACTIONS:.*0 failures' "$RUNNER_TEMP/nectar-actions.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://nectar_harvest_ui_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/nectar-ui.json" 2>&1 | tee "$RUNNER_TEMP/nectar-ui.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/nectar-ui.log"; then exit 1; fi
           grep -q '^NECTAR UI VERIFIED:.*0 failures' "$RUNNER_TEMP/nectar-ui.log"

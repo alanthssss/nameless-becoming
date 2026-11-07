@@ -715,7 +715,7 @@ func _ending_weather(cam: float) -> void:
 		var y := fposmod(float(i) * 67.3 + clock * 390.0, 880.0) - 40.0
 		draw_line(Vector2(x, y), Vector2(x - 8, y + 25), Color(0.77, 0.91, 0.98, 0.29), 1.0, true)
 
-func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, seed_value: float, pose := "leader") -> void:
+func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, seed_value: float, pose := "leader", wing_push := 0.0) -> void:
 	var axis := face.normalized() if not face.is_zero_approx() else Vector2.RIGHT
 	var charge := 0.0
 	var dash := 0.0
@@ -745,6 +745,7 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 	var flutter := 0.5+0.5*sin(clock*(39.0 if charge>0.0 else 31.0)+seed_value*1.7)
 	var wing_height := lerpf(17.0+flutter*11.0,3.0,rest)
 	wing_height = lerpf(wing_height,8.0,dash)
+	wing_height = lerpf(wing_height,5.0,clampf(wing_push,0,1))
 	# Unequal, rooted wings fold along the back at rest and sweep aft on a launch.
 	_silhouette([Vector2(0,-6),Vector2(-1,-wing_height-11),Vector2(-15,-wing_height-17),Vector2(-18,-wing_height-7),Vector2(-22,-wing_height+3),Vector2(-11,-5),Vector2(0,-6)],Color(0.77,0.92,0.84,alpha),ink,1.5)
 	_silhouette([Vector2(-4,-5),Vector2(-12,-wing_height-12),Vector2(-32,-wing_height-8),Vector2(-28,-wing_height+1),Vector2(-24,-3),Vector2(-13,-1),Vector2(-4,-5)],wing_color,ink,1.8)
