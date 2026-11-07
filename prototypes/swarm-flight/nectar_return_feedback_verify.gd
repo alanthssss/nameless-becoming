@@ -145,7 +145,7 @@ func run() -> void:
 		"gather1":"1.8 → 1.2", "gather2":"1.2 → 0.8", "reach":"100 → 155",
 		"twin":"两朵花", "bag1":"6 → 10", "wings1":"36 → 50",
 		"bag2":"10 → 16", "wings2":"50 → 70", "meadow":"紫花地已开放",
-		"shortcut":"近道往返", "market":"25%", "reserve":"花蜜储备完成", "beat":"1 → 2"}
+		"shortcut":"近道往返", "market":"25%", "reserve":"花蜜储备完成", "beat":"2 → 1 次"}
 	var plan := ["gather1","bag1","wings1","gather2","reach","twin","bag2","wings2","meadow","shortcut","market","beat","reserve"]
 	for id in plan:
 		if id in ["market","reserve"]:

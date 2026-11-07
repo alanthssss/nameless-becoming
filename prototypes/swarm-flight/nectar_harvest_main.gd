@@ -157,8 +157,8 @@ func _process(delta: float) -> void:
 		played_seconds += dt
 		var move := Vector2(float(down(KEY_D) or down(KEY_RIGHT))-float(down(KEY_A) or down(KEY_LEFT)),float(down(KEY_S) or down(KEY_DOWN))-float(down(KEY_W) or down(KEY_UP))).limit_length()
 		var collecting: bool = (down(KEY_E) or mouse_collect) and not model.at_home()
-		world.aim_direction = pulse_direction()
 		model.step(dt,move,collecting,down(KEY_SPACE),down(KEY_Q) or mouse_pulse,pulse_direction())
+		world.aim_direction = model.pulse_direction(pulse_direction())
 		if world.area_key != model.area:
 			_load_world() # Rescue is stable before its fade-in and cannot double-charge.
 			mode = "transition"
@@ -207,7 +207,8 @@ func down(key: Key) -> bool: return bool(held.get(key,false))
 func pulse_direction() -> Vector2:
 	if mouse_pulse:
 		return (mouse_aim+Vector2(model.camera_x,0)-model.p).normalized()
-	return model.face
+	# Resolve keyboard facing after this frame's movement; mouse aim remains explicit.
+	return Vector2.ZERO
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion: mouse_aim = event.position
