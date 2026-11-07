@@ -4,6 +4,7 @@ const HOME_SIGN: Texture2D = preload("res://art/nectar-home-sign.png")
 const JOURNAL: Texture2D = preload("res://art/nectar-growth-journal.png")
 const PAINTED: Texture2D = preload("res://art/revision-atlas.png")
 const RESOURCES: Texture2D = preload("res://art/nectar-resource-icons.png")
+const RESIN: Texture2D = preload("res://art/nectar-resin-chunks.png")
 const JAR: Texture2D = preload("res://art/nectar-honey-jar.png")
 const FLOWER := Rect2(638,100,571,596)
 const BEE := Rect2(67,158,510,456)
@@ -15,7 +16,9 @@ static func painted_sprite(c: CanvasItem, texture: Texture2D, source: Rect2, p: 
 
 static func painted_icon(c: CanvasItem, kind: String, p: Vector2, r: float, tint := Color.WHITE) -> void:
 	match kind:
-		"coin", "fiber", "resin", "wings", "beat":
+		"resin":
+			painted_sprite(c,RESIN,Rect2(190,165,810,890),p,r,tint)
+		"coin", "fiber", "wings", "beat":
 			var source: Rect2 = {"coin":Rect2(100,120,455,465),"fiber":Rect2(669,108,510,480),"resin":Rect2(151,690,365,460),"wings":Rect2(641,777,538,290),"beat":Rect2(641,777,538,290)}[kind]
 			painted_sprite(c,RESOURCES,source,p,r,tint)
 			if kind == "beat":

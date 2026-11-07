@@ -70,6 +70,19 @@ func run():
 	await mode("tree");game.ui.board.select_node("reserve");await frames(3);bounds();await capture("style-small")
 	await mode("regions");await capture("style-regions-small")
 	await mode("pause");await capture("style-pause-small")
+	game.model.p = game.model.HUB_DEPART
+	check(game.model.transition_to("pond"),"low-stamina field fixture enters pond")
+	game.model.events.clear() # Positioned UI fixture; no departure cinematic during capture.
+	game._load_world()
+	game.model.energy = 8.0
+	game.model.cargo.blue = 4
+	game.ui.refresh()
+	await mode("play")
+	check(game.ui.hud.visible,"low-stamina capture actually shows the HUD")
+	await capture("style-hud-low-small")
+	check(game.model.area=="pond" and game.model.energy<game.model.max_energy()*.25,"small HUD captures actual low field stamina")
+	for indicator in [game.ui.coins_text,game.ui.fiber_text,game.ui.resin_text,game.ui.bag_text,game.ui.energy_text]:
+		check(game.ui.hud_status.get_global_rect().encloses(indicator.get_global_rect()),"small HUD keeps its reading inside the compact cluster")
 	var file=FileAccess.open(output.path_join("style-result.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"classification":"native developer UI fixtures; funded snapshot, not player evidence"},"\t"));file.close()
 	print("STYLE VERIFIED ",checks," / ",failures.size())

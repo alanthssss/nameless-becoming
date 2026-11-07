@@ -75,6 +75,49 @@
       "usage": "nectar_ui_art.gd shared HUD, growth, carrying materials and pickup feedback; no gameplay rules",
       "collision": "none",
       "review_status": "Native developer UI scene+paper contrast observed; alpha padding checked by nectar_style_probe; user acceptance pending"
+    },
+    {
+      "id": "nectar-hud-paper",
+      "version": 2,
+      "issue": 333,
+      "file": "nectar-hud-paper.png",
+      "sha256": "2ff3878da38441c5096156f47b797169b2f5c1f4168cf66955a2afd458c46fe7",
+      "source": "OpenAI built-in image_gen; pre-generated AI-assisted raster",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-c6ba23d8-bdec-47a0-a05b-fe3cf7178129.png",
+      "brief": "Edit the blank label into a2.2:1 compact HUD panel; warm ivory low-fiber inner field, thin quiet ochre painted edge and very subtle lower shadow, transparent padding; no text/icons/dividers/rivets/wood/patterns/leaves. Preserve native proportions.",
+      "post_processing": "None; byte-identical generated PNG. Whole texture KEEP_ASPECT_CENTERED in360x164 logical HUD; mipmaps on. All numbers and the ring are separate native controls.",
+      "pixel_size": [
+        1860,
+        846
+      ],
+      "usage": "Unified background behind portrait/stamina and all four resource rows; no separate nectar backdrop",
+      "collision": "none; HUD indicators ignore mouse, pause remains functional",
+      "review_status": "Native preview pending six-point user feedback check; no user acceptance claimed",
+      "edit_history": [
+        {
+          "version": 1,
+          "sha256": "4cb92ea61c72360969203240cb3a58eee3c0364a43efe83136a94eb58735035d",
+          "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-44e3a888-e320-4166-a888-3210b651d945.png",
+          "disposition": "rejected separate pack plate; preserved in generated source and development-shelldiver-hud/rejected-pack-paper.png"
+        }
+      ]
+    },
+    {
+      "id": "nectar-resin-chunks",
+      "version": 1,
+      "issue": 333,
+      "file": "nectar-resin-chunks.png",
+      "sha256": "15b0a48d72b91a9449869d9a368bf76a076d68e503665aff2d7333f380950b57",
+      "source": "OpenAI built-in image_gen; own pre-generated AI-assisted game art",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1a594-cd5f-7083-9861-252c2f5a1203/exec-5f210928-dd5b-498f-ad64-88655dc111e0.png",
+      "brief": "Two touching solid tree-resin chunks with irregular angular rust-brown amber chipped matte planes and a little tree bark; soft hand-painted warm outline and top-left light, readable at28px. Explicitly avoid liquid droplets, syrup, jars, gem jewels, flame silhouette, scenery, labels and checkerboard.",
+      "pixel_size": [
+        1254,
+        1254
+      ],
+      "post_processing": "None; byte-identical PNG. Runtime AtlasTexture crop(190,165,810,890), uniform icon scale and mipmaps.",
+      "usage": "Shared resin symbol in HUD, growth prices, carried monster material, pickups and resource motes; old liquid resin icon no longer used.",
+      "review_status": "Native preview pending; paired with explicit树脂 label inHUD"
     }
   ],
   "reused_assets": [

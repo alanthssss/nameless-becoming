@@ -4,6 +4,8 @@ const Board = preload("res://nectar_growth_board.gd")
 const UIArt = preload("res://nectar_ui_art.gd")
 const LANDMARKS: Texture2D = preload("res://art/garden-landmarks.png")
 const HudIcon = preload("res://nectar_hud_icon.gd")
+const EnergyDial = preload("res://nectar_energy_dial.gd")
+const HUD_PAPER: Texture2D = preload("res://art/nectar-hud-paper.png")
 const INK := Color("294d40")
 const PAPER := Color("f5edcf")
 const GOLD := Color("eccb7c")
@@ -37,6 +39,7 @@ var toast: Label
 var toast_panel: PanelContainer
 var bag_bar: ProgressBar
 var energy_bar: ProgressBar
+var energy_dial: Control
 var shop: Control
 var shop_coins: Label
 var shop_cargo: Label
@@ -264,37 +267,60 @@ func hud_symbol(parent: Node, kind: String, hint: String) -> void:
 
 func _build_hud() -> void:
 	hud = screen(self)
-	hud_status = card(hud,Color("254a3eef"),Color("79947b"))
-	hud_status.add_theme_stylebox_override("panel",painted_style(LANDMARKS,Rect2(671,908,537,214),Color.WHITE,Vector2(22,14)))
-	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-104,690,80))
-	var hr := row(hud_status,16)
-	var money := row(hr,4)
-	hud_symbol(money,"coin","金币：交付花蜜后获得，用于成长")
-	coins_text = text_line(money,"",22,Color("503d23"))
-	coins_text.custom_minimum_size.x = 55
-	coins_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	var materials := column(hr,0)
-	var fr := row(materials,3)
-	hud_symbol(fr,"fiber","纤维：振翅后拾取，用于成长；救援时保留")
-	fiber_text = text_line(fr,"0",18,Color("503d23"))
-	var rr := row(materials,3)
-	hud_symbol(rr,"resin","树脂：振翅后拾取，用于成长；救援时保留")
-	resin_text = text_line(rr,"0",18,Color("503d23"))
-	var bag := column(hr,4)
-	bag.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var br := row(bag,4)
-	hud_symbol(br,"bag","携带花蜜 / 蜜囊容量")
-	bag_text = text_line(br,"",20,Color("503d23"))
-	bag_bar = bar(bag,Color("b97524"))
-	var energy := column(hr,4)
-	energy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var er := row(energy,4)
-	hud_symbol(er,"wings","续航：庭院恢复，外出和淋雨消耗")
-	energy_text = text_line(er,"",20,Color("503d23"))
-	energy_bar = bar(energy,Color("39765c"))
-	for value_label in [coins_text,fiber_text,resin_text,bag_text,energy_text]:
-		value_label.add_theme_color_override("font_outline_color",Color("fff0d0"))
-		value_label.add_theme_constant_override("outline_size",2)
+	# Adapt the reference hierarchy to this busy garden: one quiet shared backdrop,
+	# whole bee/stamina on the left, aligned assets and nectar on the right.
+	hud_status = PanelContainer.new()
+	hud_status.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
+	hud.add_child(hud_status)
+	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-188,360,164))
+	var cluster := Control.new()
+	cluster.custom_minimum_size = Vector2(360,164)
+	hud_status.add_child(cluster)
+	var paper := TextureRect.new()
+	paper.texture = HUD_PAPER
+	paper.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	paper.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	paper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cluster.add_child(paper)
+	paper.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	energy_bar = bar(cluster,Color("85bc65"))
+	energy_bar.hide() # Range source for the circular indicator, still refreshed centrally.
+	energy_dial = EnergyDial.new()
+	energy_dial.source = energy_bar
+	cluster.add_child(energy_dial)
+	energy_dial.size = Vector2(120,108)
+	energy_text = text_line(cluster,"",18,Color("503d23"))
+	energy_text.position = Vector2(18,110)
+	energy_text.size = Vector2(92,24)
+	energy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	energy_text.tooltip_text = "续航：庭院恢复，外出和淋雨消耗"
+	var assets := column(cluster,0)
+	assets.position = Vector2(132,18)
+	assets.size = Vector2(196,116)
+	var values: Array[Label] = []
+	for kind in ["coin","fiber","resin","bag"]:
+		var line := row(assets,5)
+		line.custom_minimum_size.y = 28
+		var symbol := HudIcon.new()
+		symbol.kind = kind
+		symbol.custom_minimum_size = Vector2(24,24)
+		line.add_child(symbol)
+		var caption := text_line(line,{"coin":"金币","fiber":"纤维","resin":"树脂","bag":"花蜜"}[kind],18,Color("63533b"))
+		caption.custom_minimum_size.x = 38
+		var amount := text_line(line,"0",20,Color("3e3526"))
+		amount.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		amount.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		values.append(amount)
+	coins_text = values[0]
+	fiber_text = values[1]
+	resin_text = values[2]
+	bag_text = values[3]
+	bag_bar = bar(cluster,Color("b97524"))
+	bag_bar.hide() # Capacity is shown once as a fraction, not a second decorative meter.
+	hud_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cluster.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for indicator in cluster.find_children("*","Control",true,false):
+		indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	goal_text = text_line(hud,"",18)
 	goal_text.hide()
 	trip_text = text_line(hud,"",18)
@@ -304,10 +330,10 @@ func _build_hud() -> void:
 	help_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	help_text.add_theme_color_override("font_shadow_color",PAPER)
 	help_text.add_theme_constant_override("shadow_offset_y",1)
-	var pause := action(hud,"Ⅱ",driver.pause_game,true)
+	var pause := action(hud,"Ⅱ",driver.pause_game)
 	pause.custom_minimum_size = Vector2(56,56)
 	for key in ["normal","hover","pressed","disabled"]:
-		pause.add_theme_stylebox_override(key,painted_style(LANDMARKS,Rect2(671,908,537,214),Color.WHITE,Vector2(12,10)))
+		pause.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
 	pause.tooltip_text = "暂停与操作说明 · Esc"
 	anchored(pause,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
 
@@ -502,9 +528,13 @@ func _build_menu() -> void:
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
-	anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,84))
+	toast_panel.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
+	anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-260,96,520,44))
 	toast_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	toast = text_line(toast_panel,"",20,PAPER,true)
+	toast = text_line(toast_panel,"",20,Color("fff2d4"),true)
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.add_theme_color_override("font_outline_color",Color("324336"))
+	toast.add_theme_constant_override("outline_size",3)
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast_panel.hide()
 	toast_timer = Timer.new()
@@ -526,7 +556,7 @@ func show_toast(words: String, seconds: float) -> void:
 		anchored(toast_panel,Rect2(0,1,0,0),Rect2(90,-153,490,74))
 		tree_footer.hide()
 	elif driver.mode == "shop": anchored(toast_panel,Rect2(0,0,0,0),Rect2(24,24,680,84))
-	else: anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-380,130,760,84))
+	else: anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-260,96,520,44))
 	toast_panel.show()
 	toast_timer.start(minf(seconds,3.0) if words.length()<35 else seconds)
 
@@ -820,11 +850,12 @@ func _energy_attention(warning: bool) -> void:
 	low_energy = warning
 	if energy_pulse: energy_pulse.kill()
 	energy_bar.modulate = Color.WHITE
+	energy_dial.modulate = Color.WHITE
 	energy_text.modulate = Color.WHITE
 	if warning:
 		energy_pulse = create_tween().set_loops()
-		energy_pulse.tween_property(energy_bar,"modulate",Color("efb678"),.6)
-		energy_pulse.tween_property(energy_bar,"modulate",Color.WHITE,.6)
+		energy_pulse.tween_property(energy_dial,"modulate",Color("efb678"),.6)
+		energy_pulse.tween_property(energy_dial,"modulate",Color.WHITE,.6)
 
 func _exit_tree() -> void:
 	if energy_pulse: energy_pulse.kill()

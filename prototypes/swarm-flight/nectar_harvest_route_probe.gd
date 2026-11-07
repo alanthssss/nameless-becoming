@@ -249,16 +249,28 @@ func run() -> void:
 			if m.energy < cost: break
 			var approach: Vector2 = creature.pos+Vector2(95,0)
 			check(await fly_to(approach),"ordinary flight approaches material carrier")
+			var material_kind: String = "fiber" if creature.kind == "scout" else "resin"
+			var expected_amount: int = 2 if creature.kind == "scout" else 1
+			var material_before: int = m.materials[material_kind]
 			for hit in 3:
 				if creature.state == "gone": break
 				await aim_pulse(creature.pos)
 				if expedition == 0 and hit == 0: await capture("03a-wing-pulse")
 				await frames(17)
-			check(creature.state == "gone" and not m.drops.is_empty(),"distinct pulse input sheds physical material")
-			if not m.drops.is_empty():
+			var own_drop: Dictionary = {}
+			var own_drop_count := 0
+			for drop in m.drops:
+				if drop.id == creature.id:
+					own_drop = drop
+					own_drop_count += 1
+			check(own_drop_count<=1,"one carrier creates at most one physical drop")
+			check(creature.state == "gone" and ((not own_drop.is_empty() and own_drop.amount==expected_amount and m.materials[material_kind]==material_before) or (own_drop.is_empty() and m.materials[material_kind]==material_before+expected_amount)),"distinct pulse sheds this carrier's material or has already auto-collected its exact amount")
+			if not own_drop.is_empty():
 				if expedition == 0: await capture("03b-material-drop")
-				check(await fly_to(m.drops[-1].pos),"ordinary movement retrieves material")
+				check(await fly_to(own_drop.pos),"ordinary movement retrieves this carrier's material")
 				await frames(12)
+			check(m.materials[material_kind]==material_before+expected_amount,"one carrier delivers its exact material amount once")
+			check(m.drops.filter(func(drop): return drop.id==creature.id).is_empty(),"collected carrier has no leftover duplicate drop")
 			if not failures.is_empty(): break
 		var picked: Array = []
 		var turn_reason := "attempt_limit"
