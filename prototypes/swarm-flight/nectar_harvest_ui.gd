@@ -243,7 +243,7 @@ func bar(parent: Node, tint: Color) -> ProgressBar:
 	p.custom_minimum_size.y = 8
 	p.show_percentage = false
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for pair in [["background",Color("345649")],["fill",tint]]:
+	for pair in [["background",Color("ead8ae")],["fill",tint]]:
 		var bar_style := style(pair[1],Color.TRANSPARENT,0,4)
 		for side in [SIDE_LEFT,SIDE_TOP,SIDE_RIGHT,SIDE_BOTTOM]: bar_style.set_content_margin(side,0)
 		p.add_theme_stylebox_override(pair[0],bar_style)
@@ -265,33 +265,36 @@ func hud_symbol(parent: Node, kind: String, hint: String) -> void:
 func _build_hud() -> void:
 	hud = screen(self)
 	hud_status = card(hud,Color("254a3eef"),Color("79947b"))
-	hud_status.add_theme_stylebox_override("panel",painted_style(LANDMARKS,Rect2(671,908,537,214),Color(.36,.45,.29,.96),Vector2(22,14)))
+	hud_status.add_theme_stylebox_override("panel",painted_style(LANDMARKS,Rect2(671,908,537,214),Color.WHITE,Vector2(22,14)))
 	anchored(hud_status,Rect2(0,1,0,0),Rect2(24,-104,690,80))
 	var hr := row(hud_status,16)
 	var money := row(hr,4)
 	hud_symbol(money,"coin","金币：交付花蜜后获得，用于成长")
-	coins_text = text_line(money,"",22,GOLD)
+	coins_text = text_line(money,"",22,Color("503d23"))
 	coins_text.custom_minimum_size.x = 55
 	coins_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var materials := column(hr,0)
 	var fr := row(materials,3)
 	hud_symbol(fr,"fiber","纤维：振翅后拾取，用于成长；救援时保留")
-	fiber_text = text_line(fr,"0",18,PAPER)
+	fiber_text = text_line(fr,"0",18,Color("503d23"))
 	var rr := row(materials,3)
 	hud_symbol(rr,"resin","树脂：振翅后拾取，用于成长；救援时保留")
-	resin_text = text_line(rr,"0",18,PAPER)
+	resin_text = text_line(rr,"0",18,Color("503d23"))
 	var bag := column(hr,4)
 	bag.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var br := row(bag,4)
 	hud_symbol(br,"bag","携带花蜜 / 蜜囊容量")
-	bag_text = text_line(br,"",20,PAPER)
-	bag_bar = bar(bag,GOLD)
+	bag_text = text_line(br,"",20,Color("503d23"))
+	bag_bar = bar(bag,Color("b97524"))
 	var energy := column(hr,4)
 	energy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var er := row(energy,4)
 	hud_symbol(er,"wings","续航：庭院恢复，外出和淋雨消耗")
-	energy_text = text_line(er,"",20,PAPER)
-	energy_bar = bar(energy,Color("a5c791"))
+	energy_text = text_line(er,"",20,Color("503d23"))
+	energy_bar = bar(energy,Color("39765c"))
+	for value_label in [coins_text,fiber_text,resin_text,bag_text,energy_text]:
+		value_label.add_theme_color_override("font_outline_color",Color("fff0d0"))
+		value_label.add_theme_constant_override("outline_size",2)
 	goal_text = text_line(hud,"",18)
 	goal_text.hide()
 	trip_text = text_line(hud,"",18)
