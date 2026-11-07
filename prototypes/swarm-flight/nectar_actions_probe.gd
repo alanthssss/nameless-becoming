@@ -47,15 +47,19 @@ func reset_carrier() -> Dictionary:
 	return carrier
 func input_combinations() -> void:
 	var carrier := reset_carrier()
+	game.model.face = Vector2.RIGHT
 	key(KEY_SPACE,true)
 	key(KEY_Q,true)
 	await frames(2)
 	check(game.model.charging and carrier.hits == 0,"same-frame SPACE takes precedence over a fresh Q press")
 	carrier = reset_carrier()
+	game.model.face = Vector2.RIGHT
+	var energy_before: float = game.model.energy
+	var time_before: float = game.model.field_time
 	key(KEY_Q,true)
-	mouse(true,carrier.pos)
+	mouse(true,game.model.p-Vector2(90,0))
 	await frames(2)
-	check(carrier.hits == 1,"same-frame right mouse aim wins over opposite Q facing")
+	check(carrier.hits == 0 and is_equal_approx(game.model.energy,energy_before-.6*(game.model.field_time-time_before)),"same-frame right mouse aim wins over a valid Q target and adds no empty cost")
 	carrier = reset_carrier()
 	key(KEY_D,true)
 	key(KEY_Q,true)
