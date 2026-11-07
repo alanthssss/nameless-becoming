@@ -133,7 +133,7 @@ func run_route(branch: String, dt := 1.0/60.0) -> void:
 			safe = fly(m,creature.pos) and safe
 			for hit in 3:
 				if creature.state == "gone": break
-				m.pulse(); tick(m,.56)
+				m.pulse(creature.pos-m.p); tick(m,.56)
 			if not m.drops.is_empty():
 				safe = fly(m,m.drops[-1].pos) and safe
 				tick(m,.35)

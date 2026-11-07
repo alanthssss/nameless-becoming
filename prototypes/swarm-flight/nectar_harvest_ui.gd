@@ -440,7 +440,7 @@ func _build_menu() -> void:
 	var bottom := row(v,14)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.25.0 · WASD 飞行 · E 采蜜 · Q 振翅",16,Color("8a9175"))
+	text_line(v,"Demo 0.26.0 · WASD 飞行 · E 采蜜 · Q 振翅",16,Color("8a9175"))
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
@@ -499,7 +499,7 @@ func show_mode(mode: String) -> void:
 			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
 		elif mode == "pause":
 			menu_title.text = "歇一会儿"
-			menu_body.text = driver.model.goal_text()+"\n\nWASD / 方向键：飞行\nE / 鼠标按住：采蜜；E：交互\nQ / 右键：振翅\n空格蓄力松开：冲刺"
+			menu_body.text = driver.model.goal_text()+"\n\nWASD / 方向键：飞行\nE / 左键按住：采蜜；E：交互\nQ 按住：朝前振翅；右键按住：朝指针振翅\n空格蓄力松开：冲刺"
 			menu_primary.text = "继续这趟出行"
 		else:
 			menu_title.text = "花蜜，备好了"
@@ -556,7 +556,7 @@ func _detail() -> void:
 	detail_preview.mouse_filter = Control.MOUSE_FILTER_PASS
 	detail_preview.queue_redraw()
 	if next.is_empty():
-		var effects := {"gather":"0.8 秒 / 份", "bag":"16 份", "wings":"70 续航", "reach":"采蜜 155 · 振翅 205", "beat":"振翅强度 2", "twin":"同时采 2 朵", "meadow":"紫花地已开放", "shortcut":"双向近道已点亮", "market":"售卖 +25%", "reserve":"花蜜已备好"}
+		var effects := {"gather":"0.8 秒 / 份", "bag":"16 份", "wings":"70 续航", "reach":"采蜜 155 · 振翅 205", "beat":"振翅强度 2\n纤维 1次 · 树脂 2次", "twin":"同时采 2 朵", "meadow":"紫花地已开放", "shortcut":"双向近道已点亮", "market":"售卖 +25%", "reserve":"花蜜已备好"}
 		detail_effect.text = effects[id]
 		buy_button.text = "✓ 已成长"
 		buy_button.disabled = true
@@ -564,7 +564,7 @@ func _detail() -> void:
 		detail_hint.text = "效果已保留"
 	else:
 		var definition: Dictionary = m.upgrade(next)
-		var effects := {"gather":definition.description,"bag":definition.description,"wings":definition.description,"reach":"采蜜 100 → 155","beat":"振翅 1 → 2","twin":"1 → 2 朵","meadow":"解锁紫花蜜","shortcut":"两片花地直接往返","market":"售卖 +25%","reserve":"备好雨前储粮"}
+		var effects := {"gather":definition.description,"bag":definition.description,"wings":definition.description,"reach":"采蜜 100 → 155\n振翅 150 → 205","beat":"振翅强度 1 → 2\n纤维：2次 → 1次\n树脂：3次 → 2次","twin":"1 → 2 朵","meadow":"解锁紫花蜜","shortcut":"两片花地直接往返","market":"售卖 +25%","reserve":"备好雨前储粮"}
 		detail_effect.text = effects[id]
 		detail_effect.tooltip_text = definition.description+("；振翅半径 150 → 205" if id == "reach" else "")
 		detail_effect.mouse_filter = Control.MOUSE_FILTER_PASS

@@ -33,6 +33,9 @@ var hurt_left := 0.0
 var energy := 36.0
 var field_time := 0.0
 var pulse_left := 0.0
+# Input/action presentation state is deliberately absent from the v5 save schema.
+var pulse_action_left := 0.0
+var _pulse_empty_left := 0.0
 var materials := {"fiber":0,"resin":0}
 var drops: Array[Dictionary] = []
 var charge := 0.0
@@ -51,6 +54,7 @@ var sold_total := 0
 var rose_sold := 0
 var visited_meadow := false
 var harvesting_ids: Array[String] = []
+var _harvest_locked_ids: Array[String] = []
 var _full_announced := false
 
 func _init() -> void:
@@ -89,7 +93,7 @@ func upgrade_defs() -> Array:
 	return [
 		{"id":"gather1","name":"轻巧采蜜","description":"1.8 → 1.2 秒 / 份","cost":4,"branch":0,"row":0,"requires":[]},
 		{"id":"gather2","name":"熟练采蜜","description":"1.2 → 0.8 秒 / 份","cost":11,"fiber":2,"branch":0,"row":1,"requires":["gather1"]},
-		{"id":"reach","name":"花香触角","description":"采集半径 100 → 155（+55%）","cost":16,"fiber":3,"branch":0,"row":2,"requires":["gather1"]},
+		{"id":"reach","name":"花香触角","description":"采蜜范围 100 → 155；振翅 150 → 205","cost":16,"fiber":3,"branch":0,"row":2,"requires":["gather1"]},
 		{"id":"twin","name":"双簇采蜜","description":"同时采集范围内的两朵花","cost":29,"resin":3,"branch":0,"row":3,"requires":["gather2","reach"]},
 		{"id":"bag1","name":"舒展蜜囊","description":"携带上限 6 → 10","cost":6,"branch":1,"row":0,"requires":[]},
 		{"id":"wings1","name":"轻盈双翼","description":"体力 36 → 50","cost":9,"fiber":2,"branch":1,"row":1,"requires":[]},
@@ -99,7 +103,7 @@ func upgrade_defs() -> Array:
 		{"id":"shortcut","name":"叶间近道","description":"开通池岸与远方花地的双向近道","cost":22,"branch":2,"row":1,"requires":["meadow"]},
 		{"id":"market","name":"好口碑","description":"每次售卖获得额外 25% 金币","cost":30,"branch":2,"row":2,"requires":["meadow"]},
 		{"id":"reserve","name":"备好花蜜","description":"交售过 6 份紫花蜜后，为蜂巢备好储粮","cost":60,"branch":2,"row":3,"requires":["meadow"]},
-		{"id":"beat","name":"利落振翅","description":"振翅强度 1 → 2","cost":8,"fiber":2,"branch":0,"row":2,"requires":["gather1"]}
+		{"id":"beat","name":"利落振翅","description":"普通目标 2 → 1 次；较牢目标 3 → 2 次","cost":8,"fiber":2,"branch":0,"row":2,"requires":["gather1"]}
 	]
 
 func upgrade(id: String) -> Dictionary:
@@ -165,6 +169,9 @@ func clear_controls() -> void:
 	charge = 0.0
 	charging = false
 	harvesting_ids.clear()
+	_harvest_locked_ids.clear()
+	pulse_action_left = 0.0
+	_pulse_empty_left = 0.0
 
 func interaction() -> String:
 	if area == "hub":
@@ -261,17 +268,20 @@ func use_shortcut() -> bool:
 func can_damage(_creature: Dictionary) -> bool:
 	return false
 
-func step(delta: float,move: Vector2,collect: bool,space_held: bool) -> void:
+func step(delta: float,move: Vector2,collect: bool,space_held: bool,pulse_held: bool = false,pulse_direction: Vector2 = Vector2.ZERO) -> void:
 	if not is_finite(delta) or delta <= 0.0 or not move.is_finite(): return
 	var dt := minf(delta,0.1)
 	hurt_left = maxf(0.0,hurt_left-dt)
 	pulse_left = maxf(0.0,pulse_left-dt)
+	pulse_action_left = maxf(0.0,pulse_action_left-dt)
+	_pulse_empty_left = maxf(0.0,_pulse_empty_left-dt)
 	move = move.limit_length(1.0)
 	harvesting_ids.clear()
+	if not collect: _harvest_locked_ids.clear()
 	if cargo_total() < capacity(): _full_announced = false
 	if burst_left <= 0.0:
 		if not move.is_zero_approx(): face = move.normalized()
-		if space_held:
+		if space_held and pulse_action_left <= 0.0:
 			charging = true
 			charge = minf(CHARGE_READY,charge+dt)
 		elif charging:
@@ -306,7 +316,9 @@ func step(delta: float,move: Vector2,collect: bool,space_held: bool) -> void:
 		if energy <= 0.0:
 			_rescue()
 			return
-		if collect and not charging and not dashing:
+		# Resolve one valid wing action before collection; cooldown never blocks movement.
+		if pulse_held and not dashing: pulse(pulse_direction)
+		if collect and not charging and not dashing and pulse_action_left <= 0.0:
 			_harvest(dt)
 			if not harvesting_ids.is_empty(): energy = maxf(0.0,energy-1.3*dt)
 			if energy <= 0.0: _rescue()
@@ -322,8 +334,20 @@ func _harvest(dt: float) -> void:
 	for flower in flowers:
 		if int(flower.stock) > 0 and int(flower.region) == (1 if area == "meadow" else 0) and p.distance_to(flower_point(flower)) <= harvest_radius(): candidates.append(flower)
 	candidates.sort_custom(func(a,b): return p.distance_squared_to(flower_point(a)) < p.distance_squared_to(flower_point(b)))
-	for i in mini(candidates.size(),2 if "twin" in owned else 1):
-		var flower: Dictionary = candidates[i]
+	var selected: Array[Dictionary] = []
+	# Keep begun flowers in their original order. Only vacant slots acquire a new target.
+	for id in _harvest_locked_ids:
+		for flower in candidates:
+			if flower.id == id:
+				selected.append(flower)
+				break
+	var limit := 2 if "twin" in owned else 1
+	for flower in candidates:
+		if selected.size() >= limit: break
+		if flower not in selected: selected.append(flower)
+	_harvest_locked_ids.clear()
+	for flower in selected: _harvest_locked_ids.append(flower.id)
+	for flower in selected:
 		if cargo_total() >= capacity(): break
 		harvesting_ids.append(flower.id)
 		flower.progress = minf(2.0,float(flower.progress)+harvest_rate()*dt)
@@ -502,6 +526,9 @@ func restore_payload(data) -> bool:
 	update_camera()
 	events.clear()
 	harvesting_ids.clear()
+	_harvest_locked_ids.clear()
+	pulse_action_left = 0.0
+	_pulse_empty_left = 0.0
 	_full_announced = false
 	return true
 
@@ -557,16 +584,42 @@ func _grow_flowers(dt: float) -> void:
 
 func pulse_radius() -> float: return 205.0 if "reach" in owned else 150.0
 
-func pulse() -> bool:
-	if at_home() or pulse_left > 0.0 or energy <= 2.0 or charging or burst_left > 0.0: return false
-	energy -= 2.0
-	pulse_left = 0.55
-	emit("pulse",p)
+func pulse_direction(direction: Vector2 = Vector2.ZERO) -> Vector2:
+	if not direction.is_finite() or direction.is_zero_approx(): return face
+	return direction.normalized()
+
+func pulse_target(direction: Vector2 = Vector2.ZERO) -> Dictionary:
+	if at_home(): return {}
+	var aim := pulse_direction(direction)
 	var nearest: Dictionary = {}
 	for creature in creatures:
 		if creature.state == "gone" or int(creature.region) != (1 if area == "meadow" else 0): continue
-		if p.distance_to(creature.pos) <= pulse_radius() and (nearest.is_empty() or p.distance_squared_to(creature.pos) < p.distance_squared_to(nearest.pos)): nearest = creature
-	if nearest.is_empty(): return true
+		var offset: Vector2 = creature.pos-p
+		if offset.length_squared() > pulse_radius()*pulse_radius(): continue
+		if not offset.is_zero_approx() and aim.dot(offset.normalized()) < 0.5-0.000001: continue
+		# These gardens have no solid occluders; decorative foliage does not block actions.
+		if nearest.is_empty() or offset.length_squared() < p.distance_squared_to(nearest.pos): nearest = creature
+	return nearest
+
+func pulse(direction: Vector2 = Vector2.ZERO) -> bool:
+	if at_home() or pulse_left > 0.0 or energy <= 2.0 or charging or burst_left > 0.0: return false
+	var aim := pulse_direction(direction)
+	var nearest := pulse_target(aim)
+	if nearest.is_empty():
+		if _pulse_empty_left <= 0.0:
+			emit("pulse_empty",p)
+			events[-1]["direction"] = aim
+			_pulse_empty_left = 0.55
+		return false
+	energy -= 2.0
+	pulse_left = 0.55
+	pulse_action_left = 0.18
+	harvesting_ids.clear()
+	emit("pulse",p)
+	events[-1]["to"] = nearest.pos
+	events[-1]["direction"] = aim
+	events[-1]["strength"] = 2 if "beat" in owned else 1
+	events[-1]["id"] = nearest.id
 	nearest.hits = mini(3,int(nearest.hits)+(2 if "beat" in owned else 1))
 	nearest.stun = 0.42
 	var away: Vector2 = (nearest.pos-p).normalized()

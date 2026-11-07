@@ -1,6 +1,8 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
-**2026-11-04 · Demo 0.24可玩候选已构建。** 采蜜进度与动作、动态花源和18秒再生、主动振翅材料成长、36→50→70体力、少字浮卡及焦点蜂舞转场已接入。[本轮回执](docs/production/nectar-demo-024-feedback-receipt.md) · [证据摘要](docs/production/nectar-demo-024-evidence.json) · [Now](docs/design/solar-term-campaign-production-spec.md#production-now)。最终本地产物位于`/Users/alanthssss/LocalGames/nectar-demo-0.24.0`；保留PVZ美术与蜜铺造型。技术/限定AI检查通过不代替用户试玩接受；PR #310 / #309负责最终CI、合并与清理，随后产品/成本评议沿#211。
+**2026-11-07 · Demo 0.26采蜜与振翅动作验证中。** 本批落实稳定采蜜、方向单目标振翅及按住重复，明确既有成长效果；最终试玩包、原生观察和冷续验证尚在进行。[范围与验收回执](docs/production/nectar-demo-026-actions-receipt.md) · [唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。未定地图／物种不在本批范围内，当前不代表候选已交付或用户接受。
+
+**历史：2026-11-04 · Demo 0.24可玩候选已构建。** 采蜜进度与动作、动态花源和18秒再生、主动振翅材料成长、36→50→70体力、少字浮卡及焦点蜂舞转场已接入。[本轮回执](docs/production/nectar-demo-024-feedback-receipt.md) · [证据摘要](docs/production/nectar-demo-024-evidence.json) · [Now](docs/design/solar-term-campaign-production-spec.md#production-now)。最终本地产物位于`/Users/alanthssss/LocalGames/nectar-demo-0.24.0`；保留PVZ美术与蜜铺造型。技术/限定AI检查通过不代替用户试玩接受；PR #310 / #309负责最终CI、合并与清理，随后产品/成本评议沿#211。
 
 **历史：Demo 0.23候选已构建。** 保留蜜铺整体、只修新增蜜罐；三点庭院、灯球返回、单花单份、温和生物与集中HUD已实现。[十条反馈](docs/design/nectar-steam-demo.md#2026-11-04-十条试玩反馈修订sd-v11) · [构建回执](docs/production/nectar-demo-023-feedback-receipt.md) · [Now](docs/design/solar-term-campaign-production-spec.md#production-now)。本批集成沿PR #305 / M3 #301–304，用户产品与成本评议沿#211，尚不代表用户接受。
 
@@ -286,6 +288,7 @@ npm run test
 - [macOS Demo 发行准备与商店材料](docs/release/nectar-demo-steam-macos.md)（暂无AppID；签名、公证与Steam审核待完成）。
 - [美术评审手册可编辑源](docs/art/nectar-demo-art-review.json)与[构建脚本](tools/build_nectar_art_manual.py)。这是0.22历史手册，含本轮已调整的四点庭院；0.23变化见下方回执，尚未获专业评审。
 
+- [0.26采蜜与振翅动作回执](docs/production/nectar-demo-026-actions-receipt.md)：本批授权范围、验收及成本覆盖；实施验证中。
 - [0.24动作与材料修订回执](docs/production/nectar-demo-024-feedback-receipt.md)：本轮机制、原生动态与交付证据。
 - [庭院蜂房与伪俯视花田：退回及返工](docs/production/nectar-environment-grounding-receipt.md)：4150整体美术退回；按最新“斜俯视地面＋侧视物件”提议接入庭院蜂房与采集区，沿#313/PR315 Draft实机验证，尚未获整体接受。
 - [0.23反馈修订与验证回执](docs/production/nectar-demo-023-feedback-receipt.md)：十条反馈、v4兼容、原生与导出验证、证据及成本边界；[独立复核](docs/production/nectar-demo-023-independent-review.md)与[哈希摘要](docs/production/nectar-demo-023-evidence.json)。

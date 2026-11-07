@@ -57,6 +57,18 @@ func tap(code: int) -> void:
 	key(code,false)
 	await frames(2)
 
+func aim_pulse(at: Vector2) -> void:
+	# Aim through the same mouse input as the player, never grant a model hit.
+	for value in [true,false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_RIGHT
+		event.position = at-Vector2(game.model.camera_x,0)
+		event.global_position = event.position
+		event.pressed = value
+		root.push_input(event,true)
+		trace.append({"frame":frame_count,"event":"aim_pulse","pressed":value,"at":[at.x,at.y]})
+		await frames(2)
+
 func click(b: Button) -> bool:
 	if not is_instance_valid(b) or not b.is_visible_in_tree() or b.disabled:
 		check(false,"requested mouse target is a visible enabled button")
@@ -243,7 +255,7 @@ func run() -> void:
 			check(await fly_to(creature.pos+Vector2(95 if creature.pos.x>2800 else -95,0)),"ordinary flight approaches material carrier")
 			for hit in 3:
 				if creature.state == "gone": break
-				await tap(KEY_Q)
+				await aim_pulse(creature.pos)
 				if expedition == 0 and hit == 0: await capture("03a-wing-pulse")
 				await frames(17)
 			check(creature.state == "gone" and not m.drops.is_empty(),"distinct pulse input sheds physical material")

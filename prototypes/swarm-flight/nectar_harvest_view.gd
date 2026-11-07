@@ -14,6 +14,8 @@ var reduced_motion := false
 var dance_elapsed := -1.0
 var dance_style := "waggle"
 var collecting := false
+var aim_direction := Vector2.RIGHT
+var wing_direction := Vector2.RIGHT
 var nectar_motes: Array[Dictionary] = []
 var harvest_texts: Array[Dictionary] = []
 var celebration := 0.0
@@ -59,7 +61,10 @@ func nectar_event(event: Dictionary) -> void:
 				flying.face = Vector2.RIGHT if creature.pos.x >= model.p.x else Vector2.LEFT
 				departing_creatures.append(flying)
 				break
-	if kind == "pulse": pulse_rings.append({"p":at,"age":0.0})
+	if kind in ["pulse", "pulse_empty"]:
+		var direction: Vector2 = event.get("direction",model.face)
+		if kind == "pulse": wing_direction = direction
+		pulse_rings.append({"p":at,"to":event.get("to",at+direction*52),"direction":direction,"empty":kind == "pulse_empty","age":0.0})
 	if kind == "material":
 		nectar_motes.append({"from":at,"age":0.0,"duration":0.36,"gold":true,"material":event.type})
 		harvest_texts.append({"p":at,"text":"+%d %s" % [event.amount,"纤维" if event.type == "fiber" else "树脂"],"age":0.0})
@@ -89,9 +94,15 @@ func _draw() -> void:
 	_draw_materials()
 	for ring in pulse_rings:
 		var t: float = ring.age/0.4
-		draw_arc(ring.p,lerpf(22,model.pulse_radius(),1-pow(1-t,3)),0,TAU,64,Color(1,.94,.67,(1-t)*.7),3.0*(1-t)+1,true)
-	if collecting and model.phase == "field" and model.cargo_total() < model.capacity():
-		draw_arc(model.p,model.harvest_radius(),0,TAU,64,Color(1.0,0.87,0.40,0.22),1.5,true)
+		var axis: Vector2 = (ring.to-ring.p).normalized()
+		var cross_axis := axis.orthogonal()
+		var front: Vector2 = ring.p.lerp(ring.to,minf(t/.45,1.0))
+		var fade: float = (1-t)*(.25 if ring.empty else .8)
+		for lane in [-1,0,1]:
+			var offset: Vector2 = cross_axis*float(lane)*11
+			draw_line(front-axis*minf(35,ring.p.distance_to(ring.to)*.3)+offset,front+offset*.65,Color(1,.95,.72,fade),2,true)
+		if not ring.empty:
+			draw_arc(front,16,axis.angle()-.8,axis.angle()+.8,16,Color(1,.95,.72,fade),2,true)
 	for mote in nectar_motes:
 		if mote.age < 0.0: continue
 		var t: float = clampf(mote.age/mote.duration,0,1)
@@ -324,8 +335,18 @@ func _draw_creature(creature: Dictionary) -> void:
 	draw_set_transform(_world_offset+p,0.0,Vector2(mirror,flutter))
 	draw_texture_rect_region(CREATURE_ATLAS,Rect2(-Vector2(256,192)*scale*0.5,Vector2(256,192)*scale),Rect2(256,0,256,192),Color(1+reaction*.25,1+reaction*.18,1,1.0-float(creature.get("age",0))/0.65))
 	draw_set_transform(_world_offset)
-	UIArt.icon(self,"resin" if guard else "fiber",p+Vector2(0,22),10)
+	if creature.state != "flee":
+		# The creature visibly carries the material; hits loosen its little sling.
+		var loosen: float = float(creature.hits)*3
+		var load_at := p+Vector2(sin(clock*9)*reaction*7,23+loosen)
+		draw_line(p+Vector2(-9,12),load_at+Vector2(-7,3),Color("6d7251"),2,true)
+		draw_line(p+Vector2(9,12),load_at+Vector2(7,3),Color("6d7251"),2,true)
+		draw_arc(load_at+Vector2(0,-2),12,0,PI,16,Color("b19963"),4,true)
+		UIArt.icon(self,"resin" if guard else "fiber",load_at,10)
 	if model.p.distance_to(p) <= model.pulse_radius()+25 and creature.state != "flee":
+		var selected: Dictionary = model.pulse_target(aim_direction)
+		if selected.get("id", "") == creature.id:
+			draw_arc(p,39,-.5,PI+.5,32,Color(.98,.85,.45,.8),2,true)
 		var total := 3 if guard else 2
 		for i in total:
 			draw_circle(p+Vector2((i-(total-1)*.5)*12,-39),4,Color("f3cf75") if i >= int(creature.hits) else Color("546f57"))
@@ -347,6 +368,9 @@ func _draw_source(flower: Dictionary) -> void:
 	# A bee flying behind a petal remains legible; the root still sets draw order.
 	if model.p.y+35.0 < root.y and model.p.y > p.y-65.0 and absf(model.p.x-p.x-(40.0 if purple else 0.0)) < 65.0:
 		tint.a = .62
+	var selected: Dictionary = model.pulse_target(aim_direction)
+	if not selected.is_empty() and selected.pos.distance_to(p) < 80:
+		tint.a = minf(tint.a,.42)
 	var opening: float = float(flower.bloom)
 	var head_scale := lerpf(0.42,1.0,smoothstep(0,1,opening))
 	var working: bool = flower.id in model.harvesting_ids
@@ -373,33 +397,56 @@ func _draw_source_feedback(flower: Dictionary) -> void:
 	var stocked: bool = flower.stock > 0
 	var working: bool = flower.id in model.harvesting_ids
 	if working or (stocked and float(flower.progress)>0.0 and p.distance_to(model.p)<model.harvest_radius()+40):
-		var rect := Rect2(p+Vector2(-38,-70),Vector2(76,11))
+		var rect := Rect2(p+Vector2(-38,-94),Vector2(76,11))
+		# Gate labels are centered near y=458; move only overlapping flower feedback.
+		var gates: Array = [Vector2(470,575),Vector2(1660,575)] if area_key == "pond" else [Vector2(1900,575)]
+		for gate in gates:
+			var center := Vector2(clampf(gate.x,model.camera_x+106,model.camera_x+1174),gate.y-117)
+			if model.p.distance_to(gate) <= 420 and rect.intersects(Rect2(center-Vector2(102,22),Vector2(204,44))):
+				rect.position.y = p.y+42
 		draw_style_box(_box_style(Color("264a3b"),Color("fff3cf"),2,6),rect)
 		var fill: float = clampf(float(flower.progress),0,1)
 		if fill > 0.0: draw_style_box(_box_style(Color("f6ce61"),Color.TRANSPARENT,0,4),Rect2(rect.position+Vector2(2,2),Vector2(72*fill,7)))
-		draw_circle(p+Vector2(48,-65),5,Color("f6ce61"))
+		draw_circle(rect.position+Vector2(86,5),5,Color("f6ce61"))
 		if working:
-			var mouth: Vector2 = model.p+Vector2(15 if p.x>=model.p.x else -15,10)
-			for i in 5:
-				var t: float = fposmod(clock*1.8+i*.2,1.0)
-				var q := p.lerp(mouth,t)+Vector2(0,-sin(t*PI)*12)
-				draw_circle(q,2.2,Color(1,.91,.54,.4+.5*t))
+			draw_arc(p,19,-PI*.8,PI*.7,24,Color(1,.88,.49,.75),2,true)
+			var mouth: Vector2 = _working_bee_position()+_working_bee_direction()*25
+			# A short dotted nectar trail follows the actual selected flower.
+			for i in 3:
+				var t: float = fposmod(clock*1.4+i/3.0,1.0)
+				var q := p.lerp(mouth,t)+Vector2(0,-sin(t*PI)*6)
+				draw_circle(q,2.3,Color(1,.91,.54,.3+.5*t))
+
+func _working_bee_direction() -> Vector2:
+	if model.pulse_action_left > 0: return wing_direction.normalized()
+	if collecting and not model.harvesting_ids.is_empty():
+		for flower in model.flowers:
+			if flower.id == model.harvesting_ids[0]:
+				return (model.flower_point(flower)-model.p).normalized()
+	return model.face
+
+func _working_bee_position() -> Vector2:
+	# Lean towards the selected flower without moving the gameplay collider.
+	return model.p+_working_bee_direction()*12 if collecting else model.p
 
 func _draw_working_bee() -> void:
-	var at: Vector2 = model.p
-	var facing: Vector2 = model.face
+	var at := _working_bee_position()
+	var facing := _working_bee_direction()
 	var size := 1.02
 	if collecting and not model.harvesting_ids.is_empty():
 		for flower in model.flowers:
 			if flower.id == model.harvesting_ids[0]:
 				var target: Vector2 = model.flower_point(flower)
-				facing = Vector2(1 if target.x >= at.x else -1,.28)
 				if not reduced_motion:
 					at += Vector2(sin(clock*26)*1.8,sin(clock*13)*2.2)
 					size += sin(clock*18)*.018
 				break
 	if not reduced_motion and harvest_recoil > 0.0: at.y -= sin(harvest_recoil/.24*PI)*7
-	_bee(at,size,facing,1.0,false,0.0)
+	if model.pulse_action_left > 0 and not reduced_motion:
+		at -= facing*sin(model.pulse_action_left/.18*PI)*5
+		size += sin(model.pulse_action_left/.18*PI)*.08
+	var push: float = sin(model.pulse_action_left/.18*PI) if not reduced_motion else 0.0
+	_bee(at,size,facing,1.0,false,0.0,"leader",push)
 
 func _draw_materials() -> void:
 	for drop in model.drops:

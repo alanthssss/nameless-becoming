@@ -89,32 +89,55 @@ func run() -> void:
 	await create_timer(2.4).timeout
 	check(game.model.area == "pond" and game.world.area_key == "pond" and game.model.trip_index == 1,"confirmed departure loads pond scene once")
 	# Targeted fixture positions are explicit; full journey coverage is separate.
-	game.model.p = Vector2(500,200)
+	var carrier: Dictionary = game.model.creatures[0]
+	game.model.p = carrier.pos-Vector2(90,0)
 	game.model.v = Vector2.ZERO
+	game.model.face = Vector2.RIGHT
+	game.model.update_camera()
 	game.model.energy = 35.75
 	game.ui.refresh()
 	await tap(KEY_Q)
 	check(game.ui.energy_text.text.begins_with("34 /"),"Q pulse immediately refreshes the spent stamina before next integer drain")
 	await create_timer(.6).timeout
+	# A second partial-hit fixture verifies mouse aim independently of keyboard facing.
+	carrier.hits = 0
+	game.model.p = carrier.pos-Vector2(90,0)
+	game.model.face = Vector2.LEFT
+	game.model.update_camera()
 	game.model.energy = 35.75
 	game.ui.refresh()
 	var right := InputEventMouseButton.new()
 	right.button_index = MOUSE_BUTTON_RIGHT
 	right.pressed = true
-	right.position = Vector2(500,200)
+	right.position = carrier.pos-Vector2(game.model.camera_x,0)
+	right.global_position = right.position
 	root.push_input(right,true)
-	await frames(1)
+	# process_frame resumes before Node._process; allow the queued action one full tick.
+	await frames(2)
 	right = right.duplicate(); right.pressed = false; root.push_input(right,true)
 	check(game.ui.energy_text.text.begins_with("34 /"),"right-click pulse immediately refreshes stamina too")
 	await create_timer(.6).timeout
-	var carrier: Dictionary = game.model.creatures[0]
 	game.model.p = carrier.pos-Vector2(90,0)
+	game.model.face = Vector2.RIGHT
 	game.model.energy = 35.75
 	carrier.hits = 1
 	game.ui.refresh()
 	check(game.has_material_hint(),"near partial carrier has a material affordance")
 	await tap(KEY_Q)
 	check(carrier.state == "gone" and not game.has_material_hint() and "Q" not in game.ui.help_text.text,"final pulse removes stale Q affordance immediately")
+	await create_timer(.6).timeout
+	game.model.energy = 35.75
+	game.ui.refresh()
+	var empty_energy: float = game.model.energy
+	var empty_time: float = game.model.field_time
+	await tap(KEY_Q)
+	check(is_equal_approx(game.model.energy,empty_energy-.6*(game.model.field_time-empty_time)) and game.ui.energy_text.text.begins_with(str(ceili(game.model.energy))+" /"),"empty Q action preserves stamina apart from ordinary idle drain")
+	right.pressed = true
+	root.push_input(right,true)
+	# process_frame resumes before Node._process; allow the queued action one full tick.
+	await frames(2)
+	right = right.duplicate(); right.pressed = false; root.push_input(right,true)
+	check(is_equal_approx(game.model.energy,empty_energy-.6*(game.model.field_time-empty_time)) and game.model.pulse_left == 0,"empty right-click has no extra energy cost or attack cooldown")
 	game.model.p = Model.POND_ENTRY
 	game.model.v = Vector2.ZERO
 
