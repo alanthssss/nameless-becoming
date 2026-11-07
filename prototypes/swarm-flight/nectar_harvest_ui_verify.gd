@@ -112,7 +112,8 @@ func run() -> void:
 	right.position = carrier.pos-Vector2(game.model.camera_x,0)
 	right.global_position = right.position
 	root.push_input(right,true)
-	await frames(1)
+	# process_frame resumes before Node._process; allow the queued action one full tick.
+	await frames(2)
 	right = right.duplicate(); right.pressed = false; root.push_input(right,true)
 	check(game.ui.energy_text.text.begins_with("34 /"),"right-click pulse immediately refreshes stamina too")
 	await create_timer(.6).timeout
@@ -133,7 +134,8 @@ func run() -> void:
 	check(is_equal_approx(game.model.energy,empty_energy-.6*(game.model.field_time-empty_time)) and game.ui.energy_text.text.begins_with(str(ceili(game.model.energy))+" /"),"empty Q action preserves stamina apart from ordinary idle drain")
 	right.pressed = true
 	root.push_input(right,true)
-	await frames(1)
+	# process_frame resumes before Node._process; allow the queued action one full tick.
+	await frames(2)
 	right = right.duplicate(); right.pressed = false; root.push_input(right,true)
 	check(is_equal_approx(game.model.energy,empty_energy-.6*(game.model.field_time-empty_time)) and game.model.pulse_left == 0,"empty right-click has no extra energy cost or attack cooldown")
 	game.model.p = Model.POND_ENTRY

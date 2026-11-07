@@ -15,6 +15,7 @@ var dance_elapsed := -1.0
 var dance_style := "waggle"
 var collecting := false
 var aim_direction := Vector2.RIGHT
+var wing_direction := Vector2.RIGHT
 var nectar_motes: Array[Dictionary] = []
 var harvest_texts: Array[Dictionary] = []
 var celebration := 0.0
@@ -62,6 +63,7 @@ func nectar_event(event: Dictionary) -> void:
 				break
 	if kind in ["pulse", "pulse_empty"]:
 		var direction: Vector2 = event.get("direction",model.face)
+		if kind == "pulse": wing_direction = direction
 		pulse_rings.append({"p":at,"to":event.get("to",at+direction*52),"direction":direction,"empty":kind == "pulse_empty","age":0.0})
 	if kind == "material":
 		nectar_motes.append({"from":at,"age":0.0,"duration":0.36,"gold":true,"material":event.type})
@@ -410,7 +412,7 @@ func _draw_source_feedback(flower: Dictionary) -> void:
 				draw_circle(q,2.3,Color(1,.91,.54,.3+.5*t))
 
 func _working_bee_direction() -> Vector2:
-	if model.pulse_action_left > 0: return aim_direction.normalized()
+	if model.pulse_action_left > 0: return wing_direction.normalized()
 	if collecting and not model.harvesting_ids.is_empty():
 		for flower in model.flowers:
 			if flower.id == model.harvesting_ids[0]:

@@ -30,6 +30,50 @@ func mouse(pressed: bool, at: Vector2) -> void:
 func capture(label: String) -> void:
 	await RenderingServer.frame_post_draw
 	check(root.get_texture().get_image().save_png(output.path_join(label+".png")) == OK,"save "+label)
+func reset_carrier() -> Dictionary:
+	game.release_controls()
+	var m = game.model
+	var carrier: Dictionary = m.creatures[0]
+	carrier.state = "patrol"
+	carrier.hits = 0
+	carrier.stun = 0.0
+	carrier.pos = carrier.anchor
+	m.p = carrier.pos-Vector2(85,0)
+	m.v = Vector2.ZERO
+	m.face = Vector2.LEFT
+	m.energy = m.max_energy()
+	m.pulse_left = 0.0
+	m.update_camera()
+	return carrier
+func input_combinations() -> void:
+	var carrier := reset_carrier()
+	key(KEY_SPACE,true)
+	key(KEY_Q,true)
+	await frames(2)
+	check(game.model.charging and carrier.hits == 0,"same-frame SPACE takes precedence over a fresh Q press")
+	carrier = reset_carrier()
+	key(KEY_Q,true)
+	mouse(true,carrier.pos)
+	await frames(2)
+	check(carrier.hits == 1,"same-frame right mouse aim wins over opposite Q facing")
+	carrier = reset_carrier()
+	key(KEY_D,true)
+	key(KEY_Q,true)
+	await frames(2)
+	check(carrier.hits == 1,"fresh Q follows this frame's movement direction")
+	carrier = reset_carrier()
+	game.model.face = Vector2.RIGHT
+	key(KEY_Q,true)
+	key(KEY_Q,false)
+	await frames(2)
+	check(carrier.hits == 1 and not game.down(KEY_Q),"quick Q press/release is one action without a held key")
+	carrier = reset_carrier()
+	mouse(true,carrier.pos)
+	game.pause_game()
+	check(not game.mouse_pulse and not game.pulse_requested and not game.mouse_pulse_requested,"pause clears held and pending wing actions")
+	game.start_game()
+	await frames(2)
+	check(carrier.hits == 0,"resume never fires an abandoned wing press")
 func run() -> void:
 	var isolated := false
 	for arg in OS.get_cmdline_user_args():
@@ -80,6 +124,7 @@ func run() -> void:
 		mouse(false,m.creatures[0].pos)
 		check(m.creatures[0].state == "gone","held right repeats and releases material")
 		await capture("material-drop-"+str(size.x))
+		await input_combinations()
 		game.release_controls()
 		m.area = "hub"
 		m.phase = "home"

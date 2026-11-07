@@ -17,6 +17,8 @@ var mode := "title"
 var held := {}
 var mouse_collect := false
 var mouse_pulse := false
+var pulse_requested := false
+var mouse_pulse_requested := false
 var mouse_aim := Vector2.ZERO
 var has_save := false
 var save_blocked := false
@@ -157,8 +159,11 @@ func _process(delta: float) -> void:
 		played_seconds += dt
 		var move := Vector2(float(down(KEY_D) or down(KEY_RIGHT))-float(down(KEY_A) or down(KEY_LEFT)),float(down(KEY_S) or down(KEY_DOWN))-float(down(KEY_W) or down(KEY_UP))).limit_length()
 		var collecting: bool = (down(KEY_E) or mouse_collect) and not model.at_home()
-		model.step(dt,move,collecting,down(KEY_SPACE),down(KEY_Q) or mouse_pulse,pulse_direction())
+		model.step(dt,move,collecting,down(KEY_SPACE),down(KEY_Q) or mouse_pulse or pulse_requested,pulse_direction())
 		world.aim_direction = model.pulse_direction(pulse_direction())
+		# One-frame presses preserve quick taps, without buffering behind cooldowns.
+		pulse_requested = false
+		mouse_pulse_requested = false
 		if world.area_key != model.area:
 			_load_world() # Rescue is stable before its fade-in and cannot double-charge.
 			mode = "transition"
@@ -205,7 +210,7 @@ func has_material_hint() -> bool:
 func down(key: Key) -> bool: return bool(held.get(key,false))
 
 func pulse_direction() -> Vector2:
-	if mouse_pulse:
+	if mouse_pulse or mouse_pulse_requested:
 		return (mouse_aim+Vector2(model.camera_x,0)-model.p).normalized()
 	# Resolve keyboard facing after this frame's movement; mouse aim remains explicit.
 	return Vector2.ZERO
@@ -258,7 +263,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if key == KEY_Q:
 			if event.pressed:
 				held[key] = true
-				if model.pulse(pulse_direction()): presentation_changed.emit()
+				pulse_requested = true
 			else: held.erase(key)
 			return
 		if key == KEY_F and event.pressed:
@@ -269,7 +274,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		mouse_pulse = event.pressed
 		mouse_aim = event.position
-		if event.pressed and model.pulse(pulse_direction()): presentation_changed.emit()
+		if event.pressed:
+			pulse_requested = true
+			mouse_pulse_requested = true
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		mouse_collect = event.pressed
 
@@ -277,6 +284,8 @@ func release_controls() -> void:
 	held.clear()
 	mouse_collect = false
 	mouse_pulse = false
+	pulse_requested = false
+	mouse_pulse_requested = false
 	model.clear_controls()
 	world.collecting = false
 
