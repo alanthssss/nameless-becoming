@@ -1,0 +1,1490 @@
+{
+  "kind": "read_only_code_and_existing_model_log_analysis",
+  "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5",
+  "human_playtest": false,
+  "fresh_model_execution": false,
+  "scope": [
+    "layout.gd",
+    "model.gd",
+    "routes-summary.json"
+  ],
+  "limits": [
+    "Straight centreline lengths / 230 are geometric travel estimates, not native timings.",
+    "Non-harvest time includes travel, turning/braking and material actions; it is not measured empty-flight time.",
+    "Route driver was instructed to follow routes, so observed route differences do not establish a spontaneous player choice."
+  ],
+  "regions": {
+    "pond": {
+      "flowers": {
+        "node_2": 4,
+        "node_3": 2,
+        "far_node": 4,
+        "far_count": 10,
+        "resource_type": "same nectar, same unit stock and harvest action"
+      },
+      "materials": {
+        "node": 7,
+        "count": 2,
+        "type": "static neutral markers"
+      },
+      "nodes_without_collectible_or_entry": [
+        1,
+        5,
+        6
+      ],
+      "corridor_collectibles": 0,
+      "edges": [
+        {
+          "edge": [
+            0,
+            1
+          ],
+          "length_px": 701.81,
+          "cruise_seconds": 3.05,
+          "between_room_discs_px": 341.81,
+          "between_room_discs_cruise_seconds": 1.49
+        },
+        {
+          "edge": [
+            1,
+            2
+          ],
+          "length_px": 800.0,
+          "cruise_seconds": 3.48,
+          "between_room_discs_px": 440.0,
+          "between_room_discs_cruise_seconds": 1.91
+        },
+        {
+          "edge": [
+            2,
+            3
+          ],
+          "length_px": 871.23,
+          "cruise_seconds": 3.79,
+          "between_room_discs_px": 511.23,
+          "between_room_discs_cruise_seconds": 2.22
+        },
+        {
+          "edge": [
+            3,
+            1
+          ],
+          "length_px": 844.37,
+          "cruise_seconds": 3.67,
+          "between_room_discs_px": 484.37,
+          "between_room_discs_cruise_seconds": 2.11
+        },
+        {
+          "edge": [
+            3,
+            4
+          ],
+          "length_px": 923.02,
+          "cruise_seconds": 4.01,
+          "between_room_discs_px": 563.02,
+          "between_room_discs_cruise_seconds": 2.45
+        },
+        {
+          "edge": [
+            4,
+            5
+          ],
+          "length_px": 715.54,
+          "cruise_seconds": 3.11,
+          "between_room_discs_px": 355.54,
+          "between_room_discs_cruise_seconds": 1.55
+        },
+        {
+          "edge": [
+            5,
+            6
+          ],
+          "length_px": 1007.49,
+          "cruise_seconds": 4.38,
+          "between_room_discs_px": 647.49,
+          "between_room_discs_cruise_seconds": 2.82
+        },
+        {
+          "edge": [
+            6,
+            1
+          ],
+          "length_px": 954.65,
+          "cruise_seconds": 4.15,
+          "between_room_discs_px": 594.65,
+          "between_room_discs_cruise_seconds": 2.59
+        },
+        {
+          "edge": [
+            5,
+            7
+          ],
+          "length_px": 644.98,
+          "cruise_seconds": 2.8,
+          "between_room_discs_px": 284.98,
+          "between_room_discs_cruise_seconds": 1.24
+        },
+        {
+          "edge": [
+            7,
+            6
+          ],
+          "length_px": 839.96,
+          "cruise_seconds": 3.65,
+          "between_room_discs_px": 479.96,
+          "between_room_discs_cruise_seconds": 2.09
+        }
+      ],
+      "longest_base_edge": {
+        "edge": [
+          5,
+          6
+        ],
+        "length_px": 1007.49,
+        "cruise_seconds": 4.38,
+        "between_room_discs_px": 647.49,
+        "between_room_discs_cruise_seconds": 2.82
+      },
+      "variant_added_edge": {
+        "edge": [
+          2,
+          4
+        ],
+        "length_px": 2397.21,
+        "cruise_seconds": 10.42,
+        "between_room_discs_cruise_seconds": 8.86
+      },
+      "growth_edges_unchanged": true,
+      "same_weather_positions_and_stocks": true,
+      "rain_far_same_target_comparison": {
+        "extra_sheltered_seconds": 8.79,
+        "saved_energy": 6.2,
+        "direct_return_energy": 25.74,
+        "sheltered_return_energy": 31.94,
+        "direct_rain_seconds": 10.63,
+        "sheltered_rain_seconds": 2.4
+      },
+      "selected_existing_samples": {
+        "sunny_g0_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 3917.1,
+          "elapsed_seconds": 24.62,
+          "energy_start": 36.0,
+          "energy_left": 6.94,
+          "harvest_seconds": 5.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 19.22,
+          "non_harvest_fraction": 0.7807
+        },
+        "sunny_g0_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 6,
+          "materials": 0,
+          "distance_px": 3215.8,
+          "elapsed_seconds": 26.6,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 10.8,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            5
+          ],
+          "non_harvest_seconds": 15.8,
+          "non_harvest_fraction": 0.594
+        },
+        "sunny_g1_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 3917.1,
+          "elapsed_seconds": 21.62,
+          "energy_start": 70.0,
+          "energy_left": 46.64,
+          "harvest_seconds": 2.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 19.22,
+          "non_harvest_fraction": 0.889
+        },
+        "sunny_g1_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 8,
+          "materials": 2,
+          "distance_px": 6500.9,
+          "elapsed_seconds": 39.05,
+          "energy_start": 70.0,
+          "energy_left": 22.01,
+          "harvest_seconds": 6.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 32.65,
+          "non_harvest_fraction": 0.8361
+        },
+        "rain_g0_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 2916.3,
+          "elapsed_seconds": 19.47,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 5.4,
+          "rain_seconds": 6.63,
+          "visits": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "non_harvest_seconds": 14.07,
+          "non_harvest_fraction": 0.7227
+        },
+        "rain_g0_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 4,
+          "materials": 0,
+          "distance_px": 2468.7,
+          "elapsed_seconds": 19.75,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 7.7,
+          "rain_seconds": 5.32,
+          "visits": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "non_harvest_seconds": 12.05,
+          "non_harvest_fraction": 0.6101
+        },
+        "rain_g1_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 3917.1,
+          "elapsed_seconds": 21.62,
+          "energy_start": 70.0,
+          "energy_left": 33.14,
+          "harvest_seconds": 2.4,
+          "rain_seconds": 7.5,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 19.22,
+          "non_harvest_fraction": 0.889
+        },
+        "rain_g1_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 8,
+          "materials": 2,
+          "distance_px": 6179.9,
+          "elapsed_seconds": 37.28,
+          "energy_start": 70.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 6.4,
+          "rain_seconds": 13.17,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            6,
+            1
+          ],
+          "non_harvest_seconds": 30.88,
+          "non_harvest_fraction": 0.8283
+        },
+        "variant_g0_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 3917.1,
+          "elapsed_seconds": 24.62,
+          "energy_start": 36.0,
+          "energy_left": 6.94,
+          "harvest_seconds": 5.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 19.22,
+          "non_harvest_fraction": 0.7807
+        },
+        "variant_g0_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 4,
+          "materials": 0,
+          "distance_px": 3897.8,
+          "elapsed_seconds": 28.47,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 8.92,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "non_harvest_seconds": 19.55,
+          "non_harvest_fraction": 0.6867
+        },
+        "variant_g1_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 3917.1,
+          "elapsed_seconds": 21.62,
+          "energy_start": 70.0,
+          "energy_left": 46.64,
+          "harvest_seconds": 2.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 19.22,
+          "non_harvest_fraction": 0.889
+        },
+        "variant_g1_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 8,
+          "materials": 2,
+          "distance_px": 7930.4,
+          "elapsed_seconds": 46.55,
+          "energy_start": 70.0,
+          "energy_left": 14.75,
+          "harvest_seconds": 6.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            7,
+            6,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 40.15,
+          "non_harvest_fraction": 0.8625
+        },
+        "rain_g0_rain_direct_one": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            3,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 3641.3,
+          "elapsed_seconds": 19.45,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 8.48,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            3
+          ],
+          "non_harvest_seconds": 17.65,
+          "non_harvest_fraction": 0.9075
+        },
+        "rain_g0_rain_sheltered_one": {
+          "planned_route": [
+            0,
+            1,
+            6,
+            5,
+            4,
+            5,
+            6,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 6053.2,
+          "elapsed_seconds": 30.97,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 2.17,
+          "visits": [
+            0,
+            1,
+            6,
+            5,
+            4,
+            5,
+            6,
+            1
+          ],
+          "non_harvest_seconds": 29.17,
+          "non_harvest_fraction": 0.9419
+        },
+        "rain_g1_rain_direct_one": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 4937.0,
+          "elapsed_seconds": 24.88,
+          "energy_start": 70.0,
+          "energy_left": 25.74,
+          "harvest_seconds": 0.8,
+          "rain_seconds": 10.63,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 24.08,
+          "non_harvest_fraction": 0.9678
+        },
+        "rain_g1_rain_sheltered_one": {
+          "planned_route": [
+            0,
+            1,
+            6,
+            5,
+            4,
+            5,
+            6,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 6756.8,
+          "elapsed_seconds": 33.67,
+          "energy_start": 70.0,
+          "energy_left": 31.94,
+          "harvest_seconds": 0.8,
+          "rain_seconds": 2.4,
+          "visits": [
+            0,
+            1,
+            6,
+            5,
+            4,
+            5,
+            6,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 32.87,
+          "non_harvest_fraction": 0.9762
+        },
+        "rain_g0_rain_first_one_at_two": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 3001.5,
+          "elapsed_seconds": 16.6,
+          "energy_start": 36.0,
+          "energy_left": 9.41,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 4.83,
+          "visits": [
+            0,
+            1,
+            2,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 14.8,
+          "non_harvest_fraction": 0.8916
+        },
+        "rain_g0_rain_first_one_at_three": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 3091.0,
+          "elapsed_seconds": 16.98,
+          "energy_start": 36.0,
+          "energy_left": 8.36,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 5.2,
+          "visits": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 15.18,
+          "non_harvest_fraction": 0.894
+        }
+      },
+      "shortest_centreline_route_to_far_no_collection_or_weather": {
+        "base": {
+          "route": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "length_px": 2469.2,
+          "cruise_seconds": 10.74
+        },
+        "variant": {
+          "route": [
+            0,
+            1,
+            6,
+            5,
+            4
+          ],
+          "length_px": 3379.49,
+          "cruise_seconds": 14.69
+        }
+      }
+    },
+    "violet": {
+      "flowers": {
+        "node_2": 4,
+        "node_3": 2,
+        "far_node": 5,
+        "far_count": 10,
+        "resource_type": "same nectar, same unit stock and harvest action"
+      },
+      "materials": {
+        "node": 6,
+        "count": 2,
+        "type": "static neutral markers"
+      },
+      "nodes_without_collectible_or_entry": [
+        1,
+        4,
+        7
+      ],
+      "corridor_collectibles": 0,
+      "edges": [
+        {
+          "edge": [
+            0,
+            1
+          ],
+          "length_px": 693.19,
+          "cruise_seconds": 3.01,
+          "between_room_discs_px": 333.19,
+          "between_room_discs_cruise_seconds": 1.45
+        },
+        {
+          "edge": [
+            1,
+            2
+          ],
+          "length_px": 689.67,
+          "cruise_seconds": 3.0,
+          "between_room_discs_px": 329.67,
+          "between_room_discs_cruise_seconds": 1.43
+        },
+        {
+          "edge": [
+            2,
+            3
+          ],
+          "length_px": 1270.46,
+          "cruise_seconds": 5.52,
+          "between_room_discs_px": 910.46,
+          "between_room_discs_cruise_seconds": 3.96
+        },
+        {
+          "edge": [
+            3,
+            1
+          ],
+          "length_px": 978.1,
+          "cruise_seconds": 4.25,
+          "between_room_discs_px": 618.1,
+          "between_room_discs_cruise_seconds": 2.69
+        },
+        {
+          "edge": [
+            2,
+            5
+          ],
+          "length_px": 1333.67,
+          "cruise_seconds": 5.8,
+          "between_room_discs_px": 973.67,
+          "between_room_discs_cruise_seconds": 4.23
+        },
+        {
+          "edge": [
+            3,
+            4
+          ],
+          "length_px": 787.91,
+          "cruise_seconds": 3.43,
+          "between_room_discs_px": 427.91,
+          "between_room_discs_cruise_seconds": 1.86
+        },
+        {
+          "edge": [
+            4,
+            5
+          ],
+          "length_px": 779.25,
+          "cruise_seconds": 3.39,
+          "between_room_discs_px": 419.25,
+          "between_room_discs_cruise_seconds": 1.82
+        },
+        {
+          "edge": [
+            5,
+            7
+          ],
+          "length_px": 1584.32,
+          "cruise_seconds": 6.89,
+          "between_room_discs_px": 1224.32,
+          "between_room_discs_cruise_seconds": 5.32
+        },
+        {
+          "edge": [
+            7,
+            2
+          ],
+          "length_px": 772.16,
+          "cruise_seconds": 3.36,
+          "between_room_discs_px": 412.16,
+          "between_room_discs_cruise_seconds": 1.79
+        },
+        {
+          "edge": [
+            4,
+            6
+          ],
+          "length_px": 567.49,
+          "cruise_seconds": 2.47,
+          "between_room_discs_px": 207.49,
+          "between_room_discs_cruise_seconds": 0.9
+        },
+        {
+          "edge": [
+            6,
+            5
+          ],
+          "length_px": 694.11,
+          "cruise_seconds": 3.02,
+          "between_room_discs_px": 334.11,
+          "between_room_discs_cruise_seconds": 1.45
+        }
+      ],
+      "longest_base_edge": {
+        "edge": [
+          5,
+          7
+        ],
+        "length_px": 1584.32,
+        "cruise_seconds": 6.89,
+        "between_room_discs_px": 1224.32,
+        "between_room_discs_cruise_seconds": 5.32
+      },
+      "variant_added_edge": {
+        "edge": [
+          2,
+          4
+        ],
+        "length_px": 1409.45,
+        "cruise_seconds": 6.13,
+        "between_room_discs_cruise_seconds": 4.56
+      },
+      "growth_edges_unchanged": true,
+      "same_weather_positions_and_stocks": true,
+      "rain_far_same_target_comparison": {
+        "extra_sheltered_seconds": 5.37,
+        "saved_energy": 13.99,
+        "direct_return_energy": 19.56,
+        "sheltered_return_energy": 33.55,
+        "direct_rain_seconds": 12.87,
+        "sheltered_rain_seconds": 2.2
+      },
+      "selected_existing_samples": {
+        "sunny_g0_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 4322.5,
+          "elapsed_seconds": 26.38,
+          "energy_start": 36.0,
+          "energy_left": 5.17,
+          "harvest_seconds": 5.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 20.98,
+          "non_harvest_fraction": 0.7953
+        },
+        "sunny_g0_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 2,
+          "materials": 2,
+          "distance_px": 3893.7,
+          "elapsed_seconds": 25.3,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 4.17,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            5
+          ],
+          "non_harvest_seconds": 21.13,
+          "non_harvest_fraction": 0.8352
+        },
+        "sunny_g1_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 4322.5,
+          "elapsed_seconds": 23.38,
+          "energy_start": 70.0,
+          "energy_left": 44.87,
+          "harvest_seconds": 2.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 20.98,
+          "non_harvest_fraction": 0.8973
+        },
+        "sunny_g1_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 8,
+          "materials": 2,
+          "distance_px": 7632.1,
+          "elapsed_seconds": 44.38,
+          "energy_start": 70.0,
+          "energy_left": 16.77,
+          "harvest_seconds": 6.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 37.98,
+          "non_harvest_fraction": 0.8558
+        },
+        "rain_g0_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 3215.7,
+          "elapsed_seconds": 20.77,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 5.4,
+          "rain_seconds": 5.9,
+          "visits": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "non_harvest_seconds": 15.37,
+          "non_harvest_fraction": 0.74
+        },
+        "rain_g0_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 0,
+          "materials": 2,
+          "distance_px": 3252.3,
+          "elapsed_seconds": 17.98,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 0.0,
+          "rain_seconds": 6.12,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            6
+          ],
+          "non_harvest_seconds": 17.98,
+          "non_harvest_fraction": 1.0
+        },
+        "rain_g1_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 4322.5,
+          "elapsed_seconds": 23.38,
+          "energy_start": 70.0,
+          "energy_left": 33.5,
+          "harvest_seconds": 2.4,
+          "rain_seconds": 6.32,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 20.98,
+          "non_harvest_fraction": 0.8973
+        },
+        "rain_g1_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 8,
+          "materials": 2,
+          "distance_px": 5673.8,
+          "elapsed_seconds": 34.63,
+          "energy_start": 70.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 6.4,
+          "rain_seconds": 14.62,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            5,
+            7
+          ],
+          "non_harvest_seconds": 28.23,
+          "non_harvest_fraction": 0.8152
+        },
+        "variant_g0_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 4322.5,
+          "elapsed_seconds": 26.38,
+          "energy_start": 36.0,
+          "energy_left": 5.17,
+          "harvest_seconds": 5.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 20.98,
+          "non_harvest_fraction": 0.7953
+        },
+        "variant_g0_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 1,
+          "materials": 2,
+          "distance_px": 4226.2,
+          "elapsed_seconds": 25.98,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 3.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            5
+          ],
+          "non_harvest_seconds": 22.58,
+          "non_harvest_fraction": 0.8691
+        },
+        "variant_g1_near_three": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 3,
+          "materials": 0,
+          "distance_px": 4322.5,
+          "elapsed_seconds": 23.38,
+          "energy_start": 70.0,
+          "energy_left": 44.87,
+          "harvest_seconds": 2.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 20.98,
+          "non_harvest_fraction": 0.8973
+        },
+        "variant_g1_far_eight_and_materials": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 8,
+          "materials": 2,
+          "distance_px": 7964.6,
+          "elapsed_seconds": 45.85,
+          "energy_start": 70.0,
+          "energy_left": 15.3,
+          "harvest_seconds": 6.4,
+          "rain_seconds": 0.0,
+          "visits": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            5,
+            7,
+            2,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 39.45,
+          "non_harvest_fraction": 0.8604
+        },
+        "rain_g0_rain_direct_one": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            5,
+            2,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 3471.5,
+          "elapsed_seconds": 18.28,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 9.08,
+          "visits": [
+            0,
+            1,
+            2,
+            5
+          ],
+          "non_harvest_seconds": 16.48,
+          "non_harvest_fraction": 0.9015
+        },
+        "rain_g0_rain_sheltered_one": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            4,
+            3,
+            1,
+            0
+          ],
+          "result": "exhausted",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 6051.4,
+          "elapsed_seconds": 31.2,
+          "energy_start": 36.0,
+          "energy_left": 0.0,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 2.08,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            4,
+            3,
+            1
+          ],
+          "non_harvest_seconds": 29.4,
+          "non_harvest_fraction": 0.9423
+        },
+        "rain_g1_rain_direct_one": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            5,
+            2,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 5430.9,
+          "elapsed_seconds": 27.05,
+          "energy_start": 70.0,
+          "energy_left": 19.56,
+          "harvest_seconds": 0.8,
+          "rain_seconds": 12.87,
+          "visits": [
+            0,
+            1,
+            2,
+            5,
+            2,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 26.25,
+          "non_harvest_fraction": 0.9704
+        },
+        "rain_g1_rain_sheltered_one": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            4,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 6475.0,
+          "elapsed_seconds": 32.42,
+          "energy_start": 70.0,
+          "energy_left": 33.55,
+          "harvest_seconds": 0.8,
+          "rain_seconds": 2.2,
+          "visits": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            4,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 31.62,
+          "non_harvest_fraction": 0.9753
+        },
+        "rain_g0_rain_first_one_at_two": {
+          "planned_route": [
+            0,
+            1,
+            2,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 2764.0,
+          "elapsed_seconds": 15.58,
+          "energy_start": 36.0,
+          "energy_left": 12.16,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 3.87,
+          "visits": [
+            0,
+            1,
+            2,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 13.78,
+          "non_harvest_fraction": 0.8845
+        },
+        "rain_g0_rain_first_one_at_three": {
+          "planned_route": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ],
+          "result": "returned",
+          "cargo": 1,
+          "materials": 0,
+          "distance_px": 3341.3,
+          "elapsed_seconds": 18.08,
+          "energy_start": 36.0,
+          "energy_left": 14.58,
+          "harvest_seconds": 1.8,
+          "rain_seconds": 1.13,
+          "visits": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ],
+          "non_harvest_seconds": 16.28,
+          "non_harvest_fraction": 0.9004
+        }
+      },
+      "shortest_centreline_route_to_far_no_collection_or_weather": {
+        "base": {
+          "route": [
+            0,
+            1,
+            2,
+            5
+          ],
+          "length_px": 2716.53,
+          "cruise_seconds": 11.81
+        },
+        "variant": {
+          "route": [
+            0,
+            1,
+            3,
+            4,
+            5
+          ],
+          "length_px": 3238.45,
+          "cruise_seconds": 14.08
+        }
+      }
+    }
+  }
+}
