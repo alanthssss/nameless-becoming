@@ -78,13 +78,21 @@ func _build_ui() -> void:
 	layer.add_child(root)
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hud = MarginContainer.new()
+	hud = PanelContainer.new()
 	root.add_child(hud)
 	hud.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	hud.offset_left = 20
 	hud.offset_top = 12
 	hud.offset_right = -20
 	hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var hud_style := StyleBoxFlat.new()
+	hud_style.bg_color = Color(0.09, 0.18, 0.14, 0.94)
+	hud_style.content_margin_left = 12
+	hud_style.content_margin_right = 12
+	hud_style.content_margin_top = 8
+	hud_style.content_margin_bottom = 8
+	hud_style.set_corner_radius_all(8)
+	hud.add_theme_stylebox_override("panel", hud_style)
 	var hud_box := VBoxContainer.new()
 	hud.add_child(hud_box)
 	var row := HBoxContainer.new()
@@ -101,6 +109,8 @@ func _build_ui() -> void:
 	hud_box.add_child(hint)
 	hud_box.add_child(_label("浅色地面可飞 · 深色为实体灌木 · 绿色圆区遮雨", 17))
 	var help := _label("移动 WASD / 方向键   E / 左键采蜜 · 入口按 E 返回   Q / 右键振翅   空格蓄力冲刺   M 已探索图", 18)
+	help.add_theme_constant_override("outline_size", 4)
+	help.add_theme_color_override("font_outline_color", Color("20372e"))
 	root.add_child(help)
 	help.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	help.offset_left = 20

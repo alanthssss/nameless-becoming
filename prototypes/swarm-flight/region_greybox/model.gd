@@ -134,6 +134,7 @@ func step(delta: float, motion: Vector2, collect: bool, space_held: bool = false
 		_harvest(dt)
 	else:
 		_locked = -1
+		if last_action == "采蜜中": last_action = "选择下一处目标，或沿来路返回"
 	for item in materials:
 		if item.dropped and not item.taken and p.distance_to(item.p) < 42:
 			item.taken = true

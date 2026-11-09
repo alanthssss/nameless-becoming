@@ -87,6 +87,11 @@ for relative in sorted(seen):
         raise SystemExit(f'Runtime differs from frozen commit: {relative}')
 (out / 'source-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
 (out / '使用说明.txt').write_text('池岸与紫花地 · 可玩灰盒\n\n这是地图实验，不替换采蜜Demo，也不读取正式存档。\n选择区域、晴日/细雨/支路变体和成长前/后，然后出发。\nWASD/方向键移动；靠花按住E或左键采蜜；Q或右键振翅取材料。\n空格蓄力后松开冲刺；入口按E返回；M看已探索路线；Esc暂停。\n深色是实体灌木，浅色可飞，绿色圈是叶棚。\n每趟条件固定；结算可看耗时、余量、收获、经过地标。\n区域大小与路线乐趣仍待真人判断，画面仅为灰盒。\n\n源码提交：' + sha + '\n')
+launcher = out / '启动灰盒.command'
+launcher.write_text('#!/bin/zsh\npackage_dir="${0:A:h}"\nopen "$package_dir/池岸与紫花地 · 区域灰盒.app"\n')
+launcher.chmod(0o755)
+manifest['launcher_sha256'] = hashlib.sha256(launcher.read_bytes()).hexdigest()
+(out / 'source-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
 if not a.stage_only:
     for args in [ ['--editor', '--import', '--quit'], ['--export-release', 'Region Greybox macOS', str(out / '区域灰盒.zip')] ]:
         result = subprocess.run([a.godot, '--headless', '--path', str(stage), *args], capture_output=True, text=True)
