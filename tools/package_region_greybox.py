@@ -50,6 +50,7 @@ window/stretch/aspect="keep"
 [rendering]
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 [audio]
 driver/enable_input=false
 ''')
