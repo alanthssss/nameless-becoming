@@ -280,6 +280,7 @@ npm run test
 
 ### Steam Demo 深化资料（SD-v1）
 
+- [两作地图图解与本作整体方案](docs/research/exploration-map-atlas.md)（六张参考图＋三张本作候选图；只用已有资料，缺口标待验证）；[Dave详细研究](docs/research/dave-map-study.md)。
 - [探索地图：调研与制作准备候选](docs/research/exploration-map-preparation.md)（世界/区域/出行三层、竞品取样、六份准备材料与灰盒验收；未实施）。
 - [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
 - [Shelldiver 完整实机研究：覆盖与续接记录](docs/research/shelldiver-fullplay-checkpoint.md)（10%额度检查点暂停、未完成；已保存[86张实机图证清单](docs/research/shelldiver-S11-captures.json)，含[地图/美术/交互研究方法与媒体归档](docs/research/shelldiver-fullplay-checkpoint.md#study-method)、实际时码和缺口）。

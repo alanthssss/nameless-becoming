@@ -1,0 +1,109 @@
+{
+  "status": "existing_evidence_only",
+  "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+  "source_build": "unknown",
+  "local_media_root": "/Users/alanthssss/LocalGames/research/maps-20261109/shelldiver",
+  "capture_method": "Native Chrome screenshots, previously observed; this consolidation adds no media observation",
+  "limits": [
+    "5-second samples are not continuous frame review",
+    "Whole area geometry and quantitative growth range remain unverified"
+  ],
+  "existing_s11_manifest": "shelldiver-S11-captures.json",
+  "existing_s11_region_capture_ids": [
+    "C036",
+    "C046"
+  ],
+  "existing_s11_local_route_ids": [
+    "C040",
+    "C041",
+    "C042",
+    "C044",
+    "C055",
+    "C080",
+    "C082"
+  ],
+  "captures": [
+    {
+      "file": "first-049.png",
+      "sha256": "6519d67e1d34162a4780ecaafe0d072ceb361b5483dedd7c0c11a4703ed54c57",
+      "bytes": 502192
+    },
+    {
+      "file": "first-00.png",
+      "sha256": "bcd257519dc535aba5c1209add4e1de0486d05a1a0b455b445494ac84863ab7e",
+      "bytes": 475427
+    },
+    {
+      "file": "first-01.png",
+      "sha256": "362b92f001e225aa5544a212d0c3bebaa82b36b09870b9b3ca5f1fc1beff0852",
+      "bytes": 501676
+    },
+    {
+      "file": "first-02.png",
+      "sha256": "519ea0e1c60b8e14c2c899cc13f5d91e76110a5252fefd5f80add1b108bbe96a",
+      "bytes": 523067
+    },
+    {
+      "file": "first-03.png",
+      "sha256": "4c43ea132ad0e95b04e86da5bd193b1a5883506a9c0995ff38f2cf7cbf71c780",
+      "bytes": 526347
+    },
+    {
+      "file": "first-04.png",
+      "sha256": "2fc3e77051cff1d53dc099f1e6623a0863cb5ff7269b331aaf2d2b3d1ec17763",
+      "bytes": 535016
+    },
+    {
+      "file": "first-05.png",
+      "sha256": "30ac9f4910d49dc17ac79dd39aae5aeed7e05328275174b98a4134e461eb084c",
+      "bytes": 502853
+    },
+    {
+      "file": "first-06.png",
+      "sha256": "b74f660a5db0ee590fd1579b63988bf90c1988ebf830e0000ea69e62b0fb3677",
+      "bytes": 508826
+    },
+    {
+      "file": "first-07.png",
+      "sha256": "50aaefbb886eb6985d2962c15472646a6c6d05590522d05293a6a2ed40625770",
+      "bytes": 352232
+    },
+    {
+      "file": "first-08.png",
+      "sha256": "067ec4c5371ba8fd46a9f4d36a3c63d8f85fe5f374d32193b7419726e3d3eb9a",
+      "bytes": 578381
+    },
+    {
+      "file": "first-09.png",
+      "sha256": "0e32ec3480b45a4d9fdc5f9bb3b271725f23fb739047e4aaeba832ee760fcdbd",
+      "bytes": 571358
+    },
+    {
+      "file": "result-0.png",
+      "sha256": "2c1101fccee1ad880d7ef157bd547194b64079c3c452dcabd72caea57ec9ee73",
+      "bytes": 405160
+    }
+  ],
+  "sequence_files": [
+    {
+      "file": "first-sequence.json",
+      "sha256": "f5976e55de87e883c3d3a6628b3f9d6b21e92324c8b6635617204c9ec789bf40"
+    },
+    {
+      "file": "result-sequence.json",
+      "sha256": "5dca340de6a9d0e9a6b4a11f284fa90dc2bf7abe912ffe4f0c44da9c0294ec21"
+    }
+  ],
+  "first_trip": {
+    "destination_depth_m": 100,
+    "source_start_seconds": 49,
+    "observed_result_seconds": 87,
+    "displayed_duration_seconds": 32.84,
+    "jellyfish": 4,
+    "scraps": 0,
+    "return_to_village_window_seconds": [
+      89,
+      99
+    ]
+  }
+}

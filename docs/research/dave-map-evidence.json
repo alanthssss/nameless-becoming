@@ -1,0 +1,1073 @@
+{
+  "schema_version": 1,
+  "title": "Dave the Diver 地图研究事实集",
+  "date": "2026-11-09",
+  "tracking": {
+    "gdd": [
+      "8.1",
+      "13.9"
+    ],
+    "milestone": "M3",
+    "issue": 337,
+    "parent_issue": 322
+  },
+  "scope": {
+    "game": "Dave the Diver",
+    "baseline": "2023 base-game story; community snapshots from 2024–2025",
+    "build_number": null,
+    "coverage": "macro area graph and key branches, not every side room or DLC",
+    "schematic_coordinates": "arbitrary layout units, not world distances",
+    "complete_route_status": "partial_observed_route_with_unverified_return_schematic"
+  },
+  "sources": [
+    {
+      "id": "D01",
+      "title": "导演 Jaeho Hwang 访谈",
+      "url": "https://www.gamedeveloper.com/design/dave-the-diver",
+      "evidence_type": "developer_interview",
+      "source_date": "2023-08-24",
+      "checked_at": "2026-11-09",
+      "notes": "有限但变化的环境；天气、水流与鱼的位置。"
+    },
+    {
+      "id": "D02",
+      "title": "BlueMaps 社区制图源码固定快照",
+      "url": "https://github.com/chentieli/bluemaps/blob/63a2a42a42975560423ac785cd7a3bc2861af0b3/map.html",
+      "evidence_type": "community_map_source",
+      "source_date": "2025-04-01",
+      "checked_at": "2026-11-09",
+      "notes": "网页图层选择和原始底图；不等同游戏生成算法。"
+    },
+    {
+      "id": "D03",
+      "title": "BlueMaps 制图者社区说明",
+      "url": "https://www.reddit.com/r/DavetheDiverOfficial/comments/1col3yn/i_made_a_map_of_the_blue_hole/",
+      "evidence_type": "map_author_post",
+      "source_date": "2024-05-10",
+      "checked_at": "2026-11-09",
+      "notes": "浅层 A 为教学图及中层编号说明；作者陈述。"
+    },
+    {
+      "id": "D04",
+      "title": "Equipment",
+      "url": "https://dave-the-diver.fandom.com/wiki/Equipment",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "潜水服标深、气瓶、载重、耐寒服。"
+    },
+    {
+      "id": "D05",
+      "title": "Analog: The Complete Diver’s Guide",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=3012589046",
+      "evidence_type": "player_authored_guide",
+      "source_date": "2025-05-20",
+      "checked_at": "2026-11-09",
+      "notes": "2023-08-07 首发；超深耗氧、逃生舱、UV 珊瑚通路。"
+    },
+    {
+      "id": "D06",
+      "title": "Blue Hole",
+      "url": "https://dave-the-diver.fandom.com/wiki/Blue_Hole",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "前三深度带；主线期间布局可能保持。"
+    },
+    {
+      "id": "D07",
+      "title": "Blue Hole Medium Depth",
+      "url": "https://dave-the-diver.fandom.com/wiki/Blue_Hole_Medium_Depth",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "中层子区及夜潜下限。"
+    },
+    {
+      "id": "D08",
+      "title": "Sea People Mirror",
+      "url": "https://dave-the-diver.fandom.com/wiki/Sea_People_Mirror",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "白天村落镜子；冷区直达和区域返回。"
+    },
+    {
+      "id": "D09",
+      "title": "The Sea People Village’s Trust",
+      "url": "https://dave-the-diver.fandom.com/wiki/The_Sea_People_Village%27s_Trust",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "主线给予村落镜子。"
+    },
+    {
+      "id": "D10",
+      "title": "Open the door in Glacial Passage",
+      "url": "https://dave-the-diver.fandom.com/wiki/Open_the_door_in_Glacial_Passage",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "交钥匙之后第5章开门。"
+    },
+    {
+      "id": "D11",
+      "title": "Explore the Glacial Area",
+      "url": "https://dave-the-diver.fandom.com/wiki/Explore_the_Glacial_Area",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "第6章耐寒服与冷区进入。"
+    },
+    {
+      "id": "D12",
+      "title": "Glacial Area",
+      "url": "https://dave-the-diver.fandom.com/wiki/Glacial_Area",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "热泉在下方、初期过热；第二洞穴单次任务；冷区支洞。"
+    },
+    {
+      "id": "D13",
+      "title": "Hydrothermal Vents",
+      "url": "https://dave-the-diver.fandom.com/wiki/Hydrothermal_Vents",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "Ancient Control Room 主线推进解锁；不采纳其不确定深度。"
+    },
+    {
+      "id": "D14",
+      "title": "HeavyUser: Glacial Area / Hydrothermal Vents map for finding item",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=3149602342",
+      "evidence_type": "map_author_guide",
+      "source_date": "2024-02-16",
+      "checked_at": "2026-11-09",
+      "notes": "2024-01-28 首发；三组物品位置、Ice Hollow 任务门槛；本次未拿到原图。"
+    },
+    {
+      "id": "D15",
+      "title": "Loopy Longplays: Dave the Diver - Longplay 100% Full Game Walkthrough [No Commentary]",
+      "url": "https://www.youtube.com/watch?v=stCnndmvQmE",
+      "evidence_type": "player_recorded_video",
+      "source_date": "2023-08-07",
+      "checked_at": "2026-11-09",
+      "notes": "本体时代视频；时长125356秒；构建号未知。作者章节索引与屏幕观察分开。"
+    },
+    {
+      "id": "D16",
+      "title": "To the Abandoned Cave",
+      "url": "https://dave-the-diver.fandom.com/wiki/To_the_Abandoned_Cave",
+      "evidence_type": "community_reference",
+      "source_date": null,
+      "checked_at": "2026-11-09",
+      "notes": "村落主线进入废弃洞穴寻找钥匙。"
+    },
+    {
+      "id": "D17",
+      "title": "Klinkerklank: Underwater Cartography [WIP]",
+      "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2921898835",
+      "evidence_type": "map_author_guide",
+      "source_date": "2023-07-11",
+      "checked_at": "2026-11-09",
+      "notes": "2023-01-22 首发；明确 WIP，BlueMaps 地图来源背景。"
+    },
+    {
+      "id": "D18",
+      "title": "Does the Sea People Necklace stop UV flashlights from spawning?",
+      "url": "https://steamcommunity.com/app/1868140/discussions/0/3805028278542280969/",
+      "evidence_type": "player_authored_discussion",
+      "source_date": "2023-07-10",
+      "checked_at": "2026-11-09",
+      "notes": "已有研究中读取：玩家报告项链或攻击也可通过管珊瑚；不把 UV 写成唯一硬门槛。"
+    }
+  ],
+  "source_assets": [
+    {
+      "id": "ShallowsB",
+      "source_id": "D02",
+      "url": "https://raw.githubusercontent.com/chentieli/bluemaps/63a2a42a42975560423ac785cd7a3bc2861af0b3/assets/New%20Shallows/ShallowsB/ShallowsB.png",
+      "local_path": "/Users/alanthssss/LocalGames/research/dave-map-20261109/ShallowsB.png",
+      "sha256": "4c51d5bf5f61939d01171a8bb2f9e2af4500de09b99a13fe4ba3fb555f43f5d9",
+      "bytes": 830392,
+      "inspection": "direct_visual",
+      "redistributed_in_repository": false
+    },
+    {
+      "id": "ShallowsC",
+      "source_id": "D02",
+      "url": "https://raw.githubusercontent.com/chentieli/bluemaps/63a2a42a42975560423ac785cd7a3bc2861af0b3/assets/New%20Shallows/ShallowsC/ShallowsC.png",
+      "local_path": "/Users/alanthssss/LocalGames/research/dave-map-20261109/ShallowsC.png",
+      "sha256": "9203f4053b8649625d37b9646df927f6663fc4423a9091f99a192ff8d88e93a4",
+      "bytes": 845516,
+      "inspection": "direct_visual",
+      "redistributed_in_repository": false
+    },
+    {
+      "id": "MediumA",
+      "source_id": "D02",
+      "url": "https://raw.githubusercontent.com/chentieli/bluemaps/63a2a42a42975560423ac785cd7a3bc2861af0b3/assets/New%20Mediums/MediumA/MediumA.png",
+      "local_path": "/Users/alanthssss/LocalGames/research/dave-map-20261109/MediumA.png",
+      "sha256": "c1411034f866bee06aa5e96f3d297020533cf9438989c26c33f476a15e4ade56",
+      "bytes": 869104,
+      "inspection": "direct_visual",
+      "redistributed_in_repository": false
+    },
+    {
+      "id": "DepthsA",
+      "source_id": "D02",
+      "url": "https://raw.githubusercontent.com/chentieli/bluemaps/63a2a42a42975560423ac785cd7a3bc2861af0b3/assets/New%20Depths/DepthsA/DepthsA.png",
+      "local_path": "/Users/alanthssss/LocalGames/research/dave-map-20261109/DepthsA.png",
+      "sha256": "8902206ace35379ee7a9c4dcc2ae29853738762ab78a4f9575c7c68a51d4955a",
+      "bytes": 1023053,
+      "inspection": "direct_visual",
+      "redistributed_in_repository": false
+    },
+    {
+      "id": "map_html",
+      "source_id": "D02",
+      "url": "https://raw.githubusercontent.com/chentieli/bluemaps/63a2a42a42975560423ac785cd7a3bc2861af0b3/map.html",
+      "local_path": "/Users/alanthssss/LocalGames/research/dave-map-20261109/map.html",
+      "sha256": "64242e8ae5c87e0e52e0bdf8c31763d1c6b66eb2e6b48a412efb8972569ef194",
+      "bytes": 12926,
+      "inspection": "source_text",
+      "redistributed_in_repository": false
+    }
+  ],
+  "layout_snapshot": {
+    "source_id": "D02",
+    "commit": "63a2a42a42975560423ac785cd7a3bc2861af0b3",
+    "shallow_options": [
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "medium_options": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "F"
+    ],
+    "depth_options": [
+      "A",
+      "B"
+    ],
+    "directly_viewed": [
+      "ShallowsB",
+      "ShallowsC",
+      "MediumA",
+      "DepthsA"
+    ],
+    "valid_runtime_combinations": null,
+    "algorithm_verified": false
+  },
+  "nodes": [
+    {
+      "id": "boat",
+      "label": "船",
+      "kind": "hub",
+      "schematic_position": [
+        0,
+        0
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D08",
+        "D15"
+      ]
+    },
+    {
+      "id": "shallows",
+      "label": "浅水区",
+      "kind": "exploration",
+      "schematic_position": [
+        0,
+        1
+      ],
+      "depth_band_m": [
+        0,
+        50
+      ],
+      "source_ids": [
+        "D02",
+        "D06"
+      ]
+    },
+    {
+      "id": "medium",
+      "label": "中层",
+      "kind": "exploration",
+      "schematic_position": [
+        0,
+        2
+      ],
+      "depth_band_m": [
+        50,
+        130
+      ],
+      "source_ids": [
+        "D02",
+        "D06"
+      ]
+    },
+    {
+      "id": "depths",
+      "label": "深层",
+      "kind": "exploration",
+      "schematic_position": [
+        0,
+        3
+      ],
+      "depth_band_m": [
+        130,
+        250
+      ],
+      "source_ids": [
+        "D02",
+        "D06"
+      ]
+    },
+    {
+      "id": "limestone",
+      "label": "石灰岩洞",
+      "kind": "subarea",
+      "schematic_position": [
+        -1,
+        2
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D07"
+      ]
+    },
+    {
+      "id": "record_chamber",
+      "label": "鲛人记录室",
+      "kind": "subarea",
+      "schematic_position": [
+        1,
+        2
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D07"
+      ]
+    },
+    {
+      "id": "wreck_interior",
+      "label": "沉船内部",
+      "kind": "subarea",
+      "schematic_position": [
+        2,
+        2
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D07"
+      ]
+    },
+    {
+      "id": "village",
+      "label": "鲛人村",
+      "kind": "underwater_hub",
+      "schematic_position": [
+        1,
+        4
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D08",
+        "D09"
+      ]
+    },
+    {
+      "id": "abandoned_cave",
+      "label": "废弃洞穴",
+      "kind": "story_space",
+      "schematic_position": [
+        0,
+        4
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D16"
+      ]
+    },
+    {
+      "id": "passage",
+      "label": "冰河通道",
+      "kind": "story_passage",
+      "schematic_position": [
+        1,
+        5
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D10",
+        "D06"
+      ]
+    },
+    {
+      "id": "glacial",
+      "label": "冰河区域",
+      "kind": "exploration",
+      "schematic_position": [
+        1,
+        6
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D11",
+        "D12"
+      ]
+    },
+    {
+      "id": "hydrothermal",
+      "label": "热泉区域",
+      "kind": "exploration",
+      "schematic_position": [
+        1,
+        7
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D12",
+        "D13"
+      ]
+    },
+    {
+      "id": "control_room",
+      "label": "控制室／终局空间",
+      "kind": "story_space",
+      "schematic_position": [
+        1,
+        8
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D13"
+      ]
+    },
+    {
+      "id": "ice_hollow",
+      "label": "冰湖洞窟",
+      "kind": "subarea",
+      "schematic_position": [
+        -1,
+        6
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D14"
+      ]
+    },
+    {
+      "id": "first_glacial_cave",
+      "label": "第一冰河洞穴",
+      "kind": "subarea",
+      "schematic_position": [
+        2,
+        6
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D14"
+      ]
+    },
+    {
+      "id": "second_glacial_cave",
+      "label": "第二冰河洞穴",
+      "kind": "one_time_story_space",
+      "schematic_position": [
+        3,
+        6
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D12"
+      ]
+    },
+    {
+      "id": "third_glacial_cave",
+      "label": "第三冰河洞穴",
+      "kind": "subarea",
+      "schematic_position": [
+        2,
+        7
+      ],
+      "depth_band_m": null,
+      "source_ids": [
+        "D12",
+        "D14"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "E01",
+      "from_node": "boat",
+      "to_node": "shallows",
+      "kind": "dive_entry",
+      "direction": "one_way",
+      "gate": null,
+      "source_ids": [
+        "D15"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E02",
+      "from_node": "shallows",
+      "to_node": "medium",
+      "kind": "swim",
+      "direction": "bidirectional",
+      "gate": null,
+      "source_ids": [
+        "D06"
+      ],
+      "notes": "潜水服安全标深另作运行限制，不画成物理门。"
+    },
+    {
+      "id": "E03",
+      "from_node": "medium",
+      "to_node": "depths",
+      "kind": "swim",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "time_of_day",
+        "condition": "day"
+      },
+      "source_ids": [
+        "D06",
+        "D07",
+        "D18"
+      ],
+      "notes": "深层局部管珊瑚可用 UV；已有玩家提出项链或攻击替代，不能把 UV 灯写成唯一硬门槛。"
+    },
+    {
+      "id": "E04",
+      "from_node": "medium",
+      "to_node": "limestone",
+      "kind": "subarea",
+      "direction": "bidirectional",
+      "gate": null,
+      "source_ids": [
+        "D07"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E05",
+      "from_node": "medium",
+      "to_node": "record_chamber",
+      "kind": "subarea",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story",
+        "condition": "Beyond the Rock Pile"
+      },
+      "source_ids": [
+        "D07"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E06",
+      "from_node": "medium",
+      "to_node": "wreck_interior",
+      "kind": "subarea",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story",
+        "condition": "The Leahs-chan Rescue"
+      },
+      "source_ids": [
+        "D07"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E07",
+      "from_node": "depths",
+      "to_node": "village",
+      "kind": "first_access",
+      "direction": "one_way",
+      "gate": {
+        "type": "story",
+        "condition": "village entrance opened"
+      },
+      "source_ids": [
+        "D09",
+        "D16"
+      ],
+      "notes": "入口细节未独立实测；这里画首次推进，不保证任意任务状态可逆。"
+    },
+    {
+      "id": "E08",
+      "from_node": "boat",
+      "to_node": "village",
+      "kind": "mirror",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story_and_time",
+        "condition": "mirror received; daytime"
+      },
+      "source_ids": [
+        "D08",
+        "D09"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E09",
+      "from_node": "village",
+      "to_node": "abandoned_cave",
+      "kind": "story_route",
+      "direction": "one_way",
+      "gate": {
+        "type": "story",
+        "condition": "To the Abandoned Cave"
+      },
+      "source_ids": [
+        "D16"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E10",
+      "from_node": "abandoned_cave",
+      "to_node": "village",
+      "kind": "story_return",
+      "direction": "one_way",
+      "gate": {
+        "type": "story",
+        "condition": "key found and returned"
+      },
+      "source_ids": [
+        "D10",
+        "D16"
+      ],
+      "notes": "剧情次序边，不是具体空间通道几何。"
+    },
+    {
+      "id": "E11",
+      "from_node": "village",
+      "to_node": "passage",
+      "kind": "door",
+      "direction": "one_way",
+      "gate": {
+        "type": "story_key",
+        "condition": "key delivered; Open the door in Glacial Passage"
+      },
+      "source_ids": [
+        "D10"
+      ],
+      "notes": "未断言返程通行；重复访问路线需另验。"
+    },
+    {
+      "id": "E12",
+      "from_node": "passage",
+      "to_node": "glacial",
+      "kind": "first_story_sequence",
+      "direction": "one_way",
+      "gate": {
+        "type": "story",
+        "condition": "passage story cleared and glacial exploration mission"
+      },
+      "source_ids": [
+        "D06",
+        "D11"
+      ],
+      "notes": "只表示首次推进；不推断常规重复出行必须重走。"
+    },
+    {
+      "id": "E13",
+      "from_node": "boat",
+      "to_node": "glacial",
+      "kind": "mirror",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story_and_time",
+        "condition": "glacial mirror unlocked; daytime"
+      },
+      "source_ids": [
+        "D08",
+        "D11"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E14",
+      "from_node": "village",
+      "to_node": "glacial",
+      "kind": "mirror",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story",
+        "condition": "glacial mirror unlocked"
+      },
+      "source_ids": [
+        "D08"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E15",
+      "from_node": "glacial",
+      "to_node": "hydrothermal",
+      "kind": "swim",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story_environment",
+        "condition": "main-story cooling/access state"
+      },
+      "source_ids": [
+        "D12",
+        "D13"
+      ],
+      "notes": "不写不可靠的绝对深度；访问章节分界存在第6章末/第7章表述差异。"
+    },
+    {
+      "id": "E16",
+      "from_node": "hydrothermal",
+      "to_node": "control_room",
+      "kind": "story_route",
+      "direction": "one_way",
+      "gate": {
+        "type": "story",
+        "condition": "Ancient Control Room"
+      },
+      "source_ids": [
+        "D13"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E17",
+      "from_node": "glacial",
+      "to_node": "ice_hollow",
+      "kind": "subarea",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "quest",
+        "condition": "Lost Baby Manatee"
+      },
+      "source_ids": [
+        "D14"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "E18",
+      "from_node": "glacial",
+      "to_node": "first_glacial_cave",
+      "kind": "subarea",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story",
+        "condition": "glacial main-story access"
+      },
+      "source_ids": [
+        "D14"
+      ],
+      "notes": "具体首次门槛未单独核对。"
+    },
+    {
+      "id": "E19",
+      "from_node": "glacial",
+      "to_node": "second_glacial_cave",
+      "kind": "mission_only",
+      "direction": "one_way",
+      "gate": {
+        "type": "story_and_companion",
+        "condition": "Check the Control Room Entrance; beluga"
+      },
+      "source_ids": [
+        "D12"
+      ],
+      "notes": "一次性任务空间；不加入重复采集可达集。"
+    },
+    {
+      "id": "E20",
+      "from_node": "glacial",
+      "to_node": "third_glacial_cave",
+      "kind": "subarea",
+      "direction": "bidirectional",
+      "gate": {
+        "type": "story_and_companion",
+        "condition": "cooled access; Suwam-assisted story"
+      },
+      "source_ids": [
+        "D12",
+        "D14"
+      ],
+      "notes": "可重访与首次协作门槛分别处理。"
+    },
+    {
+      "id": "RETURN_shallows",
+      "from_node": "shallows",
+      "to_node": "boat",
+      "kind": "escape_pod",
+      "direction": "one_way",
+      "gate": {
+        "type": "local_interaction",
+        "condition": "reach usable pod"
+      },
+      "source_ids": [
+        "D02",
+        "D05"
+      ],
+      "notes": "不是每个坐标随时一键返船。"
+    },
+    {
+      "id": "RETURN_medium",
+      "from_node": "medium",
+      "to_node": "boat",
+      "kind": "escape_pod",
+      "direction": "one_way",
+      "gate": {
+        "type": "local_interaction",
+        "condition": "reach usable pod"
+      },
+      "source_ids": [
+        "D02",
+        "D05"
+      ],
+      "notes": "不是每个坐标随时一键返船。"
+    },
+    {
+      "id": "RETURN_depths",
+      "from_node": "depths",
+      "to_node": "boat",
+      "kind": "escape_pod",
+      "direction": "one_way",
+      "gate": {
+        "type": "local_interaction",
+        "condition": "reach usable pod"
+      },
+      "source_ids": [
+        "D02",
+        "D05"
+      ],
+      "notes": "不是每个坐标随时一键返船。"
+    },
+    {
+      "id": "RETURN_surface",
+      "from_node": "shallows",
+      "to_node": "boat",
+      "kind": "swim_surface",
+      "direction": "one_way",
+      "gate": null,
+      "source_ids": [
+        "D05"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "RETURN_thermal",
+      "from_node": "hydrothermal",
+      "to_node": "boat",
+      "kind": "mirror",
+      "direction": "one_way",
+      "gate": {
+        "type": "local_interaction",
+        "condition": "reach usable regional mirror"
+      },
+      "source_ids": [
+        "D08"
+      ],
+      "notes": ""
+    }
+  ],
+  "progression_stages": [
+    {
+      "id": "early",
+      "label": "早期",
+      "origins": [
+        "boat"
+      ],
+      "safe_depth_example_m": [
+        40,
+        80
+      ],
+      "spatial_inference": "浅层和中层上部逐步变为可持续范围；不等于硬可达边界。",
+      "new_hard_unlocks": [],
+      "economy_changes": [
+        "氧气与载重限制一趟停留、带回与绕行"
+      ],
+      "source_ids": [
+        "D04",
+        "D05"
+      ]
+    },
+    {
+      "id": "equipment_growth",
+      "label": "装备成长",
+      "origins": [
+        "boat"
+      ],
+      "safe_depth_example_m": [
+        150,
+        230
+      ],
+      "spatial_inference": "中深层目标更可持续；剧情门与工具门仍需另外满足。",
+      "new_hard_unlocks": [],
+      "economy_changes": [
+        "氧气",
+        "载重",
+        "采集与战斗效率"
+      ],
+      "source_ids": [
+        "D04",
+        "D05"
+      ]
+    },
+    {
+      "id": "village_origin",
+      "label": "村落成为新原点",
+      "origins": [
+        "boat",
+        "village"
+      ],
+      "new_hard_unlocks": [
+        "mirror_village"
+      ],
+      "spatial_inference": "可从村落开始深层相关活动，或选择从船覆盖浅中层。",
+      "source_ids": [
+        "D08",
+        "D09"
+      ]
+    },
+    {
+      "id": "glacial_origin",
+      "label": "冷区开放",
+      "origins": [
+        "boat",
+        "village",
+        "glacial"
+      ],
+      "new_hard_unlocks": [
+        "cold_suit_story",
+        "glacial_mirror"
+      ],
+      "spatial_inference": "新生态区和支洞开放，并改变出发位置；不是半径等比例放大。",
+      "source_ids": [
+        "D08",
+        "D11",
+        "D12"
+      ]
+    },
+    {
+      "id": "hydrothermal",
+      "label": "主线热泉开放",
+      "origins": [
+        "boat",
+        "village",
+        "glacial"
+      ],
+      "new_hard_unlocks": [
+        "hydrothermal_access"
+      ],
+      "spatial_inference": "冷区下方进一步拓展；热泉镜子缩短回程。",
+      "source_ids": [
+        "D08",
+        "D12",
+        "D13"
+      ]
+    }
+  ],
+  "route_observations": [
+    {
+      "id": "R01",
+      "source_id": "D15",
+      "status": "partial_observed_with_schematic_unverified_return",
+      "observer": "root agent via native browser; child received observation record, no independent image review",
+      "candidate_start_s": 417,
+      "candidate_end_s": 724,
+      "candidate_window_basis": "author chapter index only",
+      "observed_start_s": 450,
+      "last_observed_event_s": 565,
+      "unreviewed_from_s": 570,
+      "events": [
+        {
+          "time_s": 450,
+          "event": "开始下潜",
+          "evidence": "direct_video_observation_by_root"
+        },
+        {
+          "time_s": null,
+          "event": "下探至约34.6m",
+          "evidence": "direct_video_observation_by_root",
+          "exact_time_unknown": true
+        },
+        {
+          "time_s": 505,
+          "event": "低氧",
+          "evidence": "direct_video_observation_by_root"
+        },
+        {
+          "time_s": 510,
+          "end_time_s": 515,
+          "event": "补气",
+          "evidence": "direct_video_observation_by_root"
+        },
+        {
+          "time_s": 535,
+          "event": "完成7/7",
+          "evidence": "direct_video_observation_by_root"
+        },
+        {
+          "time_s": 545,
+          "end_time_s": 555,
+          "event": "继续采铜",
+          "evidence": "direct_video_observation_by_root"
+        },
+        {
+          "time_s": 565,
+          "event": "上行",
+          "evidence": "direct_video_observation_by_root"
+        },
+        {
+          "time_s": null,
+          "event": "返回水面／船",
+          "evidence": "unverified_schematic",
+          "line_style": "dashed"
+        },
+        {
+          "time_s": null,
+          "event": "结算",
+          "evidence": "unverified_schematic",
+          "line_style": "dashed"
+        }
+      ]
+    }
+  ],
+  "unknowns": [
+    "视频构建号",
+    "原游戏碰撞与所有出口实际通行",
+    "完整成长前后同存档路线成本对照",
+    "运行时布局组合及生成算法",
+    "所有 DLC 与限时区域",
+    "冷区所有首次门槛与重复访问的逐一实测"
+  ],
+  "validation": {
+    "json_parse": true,
+    "source_artifact_hashes": "computed from local public-source cache",
+    "video_complete_route": false,
+    "original_game_run": false,
+    "human_playtest": false
+  },
+  "research_stop": {
+    "reason": "user requested concise maps from existing material; no further research",
+    "remaining": [
+      "09:30 后实际返程",
+      "回船与结算",
+      "成长前后控制路线对照",
+      "全部出口与地图运行组合核实"
+    ]
+  }
+}
