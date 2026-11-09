@@ -17,7 +17,7 @@ jobs:
       # Keep collecting all suites when another suite fails.
       fail-fast: false
       matrix:
-        suite: [core, regressions, samples, samples-save, migrations]
+        suite: [core, regressions, samples, samples-save, migrations, region-greybox]
     env:
       GODOT_RELEASE: 4.6.2-stable
       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
@@ -257,6 +257,21 @@ jobs:
           SWARM_BACK_SIGN_QA_DIR="$RUNNER_TEMP/back-sign-save" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://back_sign_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/back-sign-save.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/back-sign-save.log"; then exit 1; fi
           grep -q '^BACK SIGN SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/back-sign-save.log"
+      - name: Verify isolated region greybox
+        if: matrix.suite == 'region-greybox'
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in layout_verify model_verify ui_verify; do
+            "$GODOT_BIN" --headless --path prototypes/swarm-flight --script "res://region_greybox/$suite.gd" 2>&1 | tee "$RUNNER_TEMP/region-$suite.log"
+            if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/region-$suite.log"; then exit 1; fi
+            grep -Eq 'failures=0|0 failures' "$RUNNER_TEMP/region-$suite.log"
+          done
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://region_greybox/route_probe.gd -- --output="$RUNNER_TEMP/region-routes.json" 2>&1 | tee "$RUNNER_TEMP/region-routes.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/region-routes.log"; then exit 1; fi
+          test -s "$RUNNER_TEMP/region-routes.json"
       - name: Verify garden music and new sound effects
         if: matrix.suite == 'core'
         env:
