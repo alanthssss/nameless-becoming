@@ -1,0 +1,137 @@
+{
+  "local_root": "/Users/alanthssss/LocalGames/region-greybox-0.1.0/evidence",
+  "human_playtest": false,
+  "kinds": [
+    "developer_known_route_model_execution",
+    "native_UI_automation_observation"
+  ],
+  "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5",
+  "package_zip_sha256": "2034f74c049f9821411af83161182b095df74f3fbda3d6e8a8022dde7a5c2ac4",
+  "verified_source_files": 13,
+  "package_hashes_verified": true,
+  "files": [
+    {
+      "name": "failed-export-1.log",
+      "sha256": "6a4629a97777e47d0999a8c37ea4073566815c802ead7200f49e2883af28fab0"
+    },
+    {
+      "name": "final-ready.png",
+      "sha256": "3bd153bb7be9d929f3d6d405a3f5999c0349a1a45a4b291cd2b0259b94d61bca",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5"
+    },
+    {
+      "name": "greybox-layout-final.log",
+      "sha256": "050a61170cf83f8b28568eb7422b13d7e0c72d66b2e0399a0308e3f55bf63d8c"
+    },
+    {
+      "name": "greybox-model-final.log",
+      "sha256": "f0db8bcf4f05a9961e0b74606888c3dce8fa88d864640c32cef24e3efd5536f7"
+    },
+    {
+      "name": "greybox-nectar-regression.log",
+      "sha256": "51a4a1305c2785f9a48af3ba5964ae4feef2a3e6570fc9643dc7620be2703a9c"
+    },
+    {
+      "name": "greybox-probe-final.log",
+      "sha256": "d69a2ef985e586543bb71154c2431eb4fb33ce5d2a5c26d713ab987bdb81e4fd"
+    },
+    {
+      "name": "greybox-routes-final.json",
+      "sha256": "b950b1626c93ce3111f5bf4cdb1a41b41344c59b19438887c2a0457e63177f53"
+    },
+    {
+      "name": "greybox-ui-final.log",
+      "sha256": "e1a0ec4f7d22c94713116e39401c78b3adf1ff9bc34e0d298bfe02fda0b1ddb7"
+    },
+    {
+      "name": "native-sessions-final.jsonl",
+      "sha256": "e25ceb40a0da9717bdc36dcf7c6eeb1737fa49934ad367c1ff6460f03e7d1ca1",
+      "note": "Contains one 90b0de6 pond return and four d77eab4 final-package sessions including abandoned runs."
+    },
+    {
+      "name": "native-sessions-r1.jsonl",
+      "sha256": "f3365fe10fce6a866ef3b7d0927f8189b84b315644e53713b85041fc934951b2"
+    },
+    {
+      "name": "pond-fork.png",
+      "sha256": "888e64a03be23f4f9858c03e564c6115d8f6e0f4b47b5bad8a0bc26b7b9dbfc1",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "90b0de64b747f6cca5073df0b326314095951af7"
+    },
+    {
+      "name": "pond-harvest.png",
+      "sha256": "81cbfa332b686d69af563ce57382a71cf40a1869d7292674ea638178b493fc48",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "90b0de64b747f6cca5073df0b326314095951af7"
+    },
+    {
+      "name": "pond-loop.png",
+      "sha256": "24885acdb663c7ae8b830a090a9b96c48cfa9f6490a5b55310023269b8129d81",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "90b0de64b747f6cca5073df0b326314095951af7"
+    },
+    {
+      "name": "pond-return.png",
+      "sha256": "69a9b06113c54cc1cf1e224c3bcdb895267a11f027fc5403459420758c24ff1d",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "90b0de64b747f6cca5073df0b326314095951af7"
+    },
+    {
+      "name": "region-greybox-routes-first.json",
+      "sha256": "54703c9f7cf23946561d3aa022246850a0e5525d604d6f287bfaf853f0874674"
+    },
+    {
+      "name": "region-greybox-routes-shelter-adjusted-v2.json",
+      "sha256": "b950b1626c93ce3111f5bf4cdb1a41b41344c59b19438887c2a0457e63177f53"
+    },
+    {
+      "name": "region-greybox-shelter-adjustment.json",
+      "sha256": "2052ebfdda5c00c16a2f4bca8abfab5f17d84eb45668aa2acf6285596c702fac"
+    },
+    {
+      "name": "setup.png",
+      "sha256": "418a646c8bfe19bbe92298719205c190bbf11fd643c9b174bf793d055ac10aef",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "90b0de64b747f6cca5073df0b326314095951af7"
+    },
+    {
+      "name": "small-window.png",
+      "sha256": "b521c903ef520a509880b98902e7aad344d2150de3b7427176372aeec2cc1b11",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5"
+    },
+    {
+      "name": "violet-rain-fork.png",
+      "sha256": "f07441ab2c321f8556f4f3003ca29886b564a94fafe01a4e2ccf343afbae146b",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5"
+    },
+    {
+      "name": "violet-rain-harvest.png",
+      "sha256": "874adba265c36e15ffcd87369405cdf2c9d3789e6b2381c1f58bef5f1cee0473",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5",
+      "note": "Failed movement attempt, blocked at wall, zero honey; not harvest success."
+    },
+    {
+      "name": "violet-rain-leaf-route.png",
+      "sha256": "285fe656f770f9a7797da9b289b2600cc9e707a9555b39ad63abb59a4d8d56dc",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5"
+    },
+    {
+      "name": "violet-rain-return.png",
+      "sha256": "30fa07e3fd865f25eea78955908ca2ebcc217108b6b16e2057b4409a4340d991",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5"
+    },
+    {
+      "name": "violet-variant-junction.png",
+      "sha256": "ae940347e9521e384c807d54dc492a11004c29057c47f8d6486bad086e260f1d",
+      "kind": "native_UI_automation_observation",
+      "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5",
+      "note": "Reached junction and observed altered paths, not a complete native loop."
+    }
+  ]
+}

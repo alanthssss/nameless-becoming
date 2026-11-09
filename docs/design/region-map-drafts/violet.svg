@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="970" viewBox="0 0 1400 970">
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC",sans-serif;fill:#263c35}.title{font-size:32px;font-weight:650}.sub{font-size:20px;fill:#617069}.body{font-size:20px}.small{font-size:17px;fill:#62716b}.terrain{font-size:19px;fill:#52695d}.node{font-size:21px;font-weight:600}.id{font-size:18px;fill:#fff;font-weight:700}.panel{font-size:22px;font-weight:650}.route{font-size:18px;font-weight:600}.tag{font-size:18px;font-weight:600}</style>
+<rect width="1400" height="970" fill="#f5f2e9"/>
+<text x="35" y="52" class="title" >紫花地｜正面花带与背坡双路</text>
+<text x="35" y="90" class="sub" >坡脚 → 花带岔口 → 露天正面或叶棚背路 → 深处花圃 → 回坡</text>
+<text x="35" y="124" class="small" >8个相连景段 · 入口不显示全区 · 非等比例候选，实际尺寸待验证</text>
+<rect x="28" y="150" width="935" height="625" rx="26" fill="#e8edde" stroke="#d8decf"/>
+<path d="M430 340 Q515 305 620 385 Q660 450 600 495 Q490 485 430 430Z" fill="#b5a6bb"/><text x="472" y="411" class="terrain">高密花篱</text><path d="M480 525 Q590 515 665 565 Q720 625 685 665 Q635 610 545 595Z" fill="#c4d9ab"/><text x="490" y="562" class="terrain">叶棚边缘</text>
+<polyline points="130,690 335,620" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="130,690 335,620" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="335,620 320,405" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="335,620 320,405" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="320,405 640,640" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="320,405 640,640" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="640,640 335,620" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="640,640 335,620" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="320,405 680,195" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="320,405 680,195" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="640,640 760,425" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="640,640 760,425" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="760,425 680,195" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="760,425 680,195" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="680,195 185,205" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="680,195 185,205" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="185,205 320,405" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="185,205 320,405" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="760,425 875,290" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="760,425 875,290" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="875,290 680,195" fill="none" stroke="#fdfaf1" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="875,290 680,195" fill="none" stroke="#b7bca8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="130,690 335,620 640,640 760,425 875,290 680,195 185,205 320,405 335,620 130,690" fill="none" stroke="#ce722e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="130,690 335,620 320,405 640,640 335,620 130,690" fill="none" stroke="#2c7b8e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 8"/>
+<path d="M320 405 C475 480 615 485 760 425" fill="none" stroke="#8760a4" stroke-width="4" stroke-dasharray="5 8"/>
+<rect x="454.0" y="283.0" width="92" height="29" rx="10" fill="#fff9ed"/>
+<text x="500.0" y="304.0" class="small" text-anchor="middle">变体关闭</text>
+<rect x="52" y="653" width="156" height="74" rx="22" fill="#fffdf7" stroke="#829177" stroke-width="2"/>
+<circle cx="64" cy="658" r="17" fill="#485f4e"/>
+<text x="64" y="664" class="id" text-anchor="middle">0</text>
+<text x="130" y="685" class="node" text-anchor="middle">坡脚入口</text>
+<text x="130" y="713" class="small" text-anchor="middle">接池岸</text>
+<rect x="257" y="583" width="156" height="74" rx="22" fill="#fffdf7" stroke="#829177" stroke-width="2"/>
+<circle cx="269" cy="588" r="17" fill="#485f4e"/>
+<text x="269" y="594" class="id" text-anchor="middle">1</text>
+<text x="335" y="615" class="node" text-anchor="middle">花带岔口</text>
+<text x="335" y="643" class="small" text-anchor="middle">主分岔</text>
+<rect x="242" y="368" width="156" height="74" rx="22" fill="#fffdf7" stroke="#829177" stroke-width="2"/>
+<circle cx="254" cy="373" r="17" fill="#485f4e"/>
+<text x="254" y="379" class="id" text-anchor="middle">2</text>
+<text x="320" y="400" class="node" text-anchor="middle">露天长花带</text>
+<text x="320" y="428" class="small" text-anchor="middle">近场／直达路</text>
+<rect x="562" y="603" width="156" height="74" rx="22" fill="#fffdf7" stroke="#829177" stroke-width="2"/>
+<circle cx="574" cy="608" r="17" fill="#485f4e"/>
+<text x="574" y="614" class="id" text-anchor="middle">3</text>
+<text x="640" y="635" class="node" text-anchor="middle">叶棚小径</text>
+<text x="640" y="663" class="small" text-anchor="middle">遮雨侧路</text>
+<rect x="682" y="388" width="156" height="74" rx="22" fill="#fffdf7" stroke="#829177" stroke-width="2"/>
+<circle cx="694" cy="393" r="17" fill="#485f4e"/>
+<text x="694" y="399" class="id" text-anchor="middle">4</text>
+<text x="760" y="420" class="node" text-anchor="middle">背坡转折</text>
+<text x="760" y="448" class="small" text-anchor="middle">远环分岔</text>
+<rect x="602" y="158" width="156" height="74" rx="22" fill="#fff1cd" stroke="#829177" stroke-width="2"/>
+<circle cx="614" cy="163" r="17" fill="#485f4e"/>
+<text x="614" y="169" class="id" text-anchor="middle">5</text>
+<text x="680" y="190" class="node" text-anchor="middle">深处花圃</text>
+<text x="680" y="218" class="small" text-anchor="middle">远端目标</text>
+<rect x="797" y="253" width="156" height="74" rx="22" fill="#fff1cd" stroke="#829177" stroke-width="2"/>
+<circle cx="809" cy="258" r="17" fill="#485f4e"/>
+<text x="809" y="264" class="id" text-anchor="middle">6</text>
+<text x="875" y="285" class="node" text-anchor="middle">根边材料窝</text>
+<text x="875" y="313" class="small" text-anchor="middle">远端支路</text>
+<rect x="107" y="168" width="156" height="74" rx="22" fill="#fffdf7" stroke="#829177" stroke-width="2"/>
+<circle cx="119" cy="173" r="17" fill="#485f4e"/>
+<text x="119" y="179" class="id" text-anchor="middle">7</text>
+<text x="185" y="200" class="node" text-anchor="middle">回坡缺口</text>
+<text x="185" y="228" class="small" text-anchor="middle">固定回接</text>
+<rect x="987" y="150" width="385" height="625" rx="24" fill="#fffdf7"/>
+<text x="1010" y="185" class="panel" >三种出行状态</text>
+<text x="1010" y="230" class="tag" >晴日｜深处花圃丰盛</text>
+<text x="1010" y="269" class="route" >0–1–2–5–7–2–1–0</text>
+<text x="1010" y="305" class="small" >正面采蜜上行，回坡绕回。</text>
+<text x="1010" y="400" class="tag" >细雨｜背坡遮雨线</text>
+<text x="1010" y="439" class="route" >0–1–3–4–5，沿原路返</text>
+<text x="1010" y="475" class="small" >正面更暴露；背路仍有露天间隔。</text>
+<text x="1010" y="570" class="tag" >变体｜花篱缺口移位（候选）</text>
+<text x="1010" y="609" class="route" >关闭2–5；改为2–4</text>
+<text x="1010" y="645" class="small" >0–1–2–4–6–5–7–2–1–0</text>
+<text x="1010" y="745" class="small" >状态在入区时固定；途中不重排。</text>
+<rect x="28" y="800" width="1344" height="136" rx="22" fill="#fffdf7"/>
+<line x1="52" y1="831" x2="105" y2="831" stroke="#2c7b8e" stroke-width="5" stroke-dasharray="12 8"/>
+<text x="120" y="838" class="tag" >成长前：近场回路</text>
+<text x="52" y="874" class="route" >0–1–2–3–1–0</text>
+<text x="52" y="909" class="small" >先学会近场双路与回程</text>
+<line x1="410" y1="831" x2="465" y2="831" stroke="#ce722e" stroke-width="8"/>
+<text x="480" y="838" class="tag" >成长后：组合远端目标</text>
+<text x="410" y="874" class="route" >0–1–3–4–6–5–7–2–1–0</text>
+<text x="410" y="909" class="small" >背坡材料＋花圃，绕回坡返回</text>
+<line x1="955" y1="831" x2="1005" y2="831" stroke="#8760a4" stroke-width="4" stroke-dasharray="5 8"/>
+<text x="1020" y="838" class="tag" >变体新增连接</text>
+<text x="955" y="874" class="small" >成长改变行程预算，不凭空开墙。</text>
+<text x="955" y="909" class="small" >真实尺寸、耗时及返程余量待验证。</text>
+<text x="35" y="959" class="small" >成长线为晴日基础布局示例。水面不作空气墙；通路需用实体植被组织，碰撞轮廓待灰盒验证。</text>
+</svg>
