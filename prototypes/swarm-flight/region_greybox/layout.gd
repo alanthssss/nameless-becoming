@@ -1,94 +1,65 @@
 extends RefCounted
-## Greybox geometry for the approved 2026-11-09 interior diagrams.
-## Traversable space is the union of visible room discs and path capsules.
-## Everything outside that union is a visible flight-height vegetation block,
-## not water or an invisible wall. Units are game pixels, not source-map metres.
+## Fixed collecting grounds for the 2026-11-10 no-weather design.
+## The visible pale surface and collision share this union of discs/capsules.
+## Main-path width is 520px; only the short material pocket narrows to 240px.
 const BODY_RADIUS := 16.0
-const DEFAULT_SCALE := 3.2
-const ROOM_RADIUS := 180.0
-const CORRIDOR_RADIUS := 90.0
-const RAW_NODES := {
+const ROOM_RADIUS := 260.0
+const CORRIDOR_RADIUS := 260.0
+const POCKET_RADIUS := 120.0
+const NODE_DATA := {
 	"pond": [
-		[130,690,"入口湾"], [330,600,"芦苇岔口"], [180,400,"内湾花丛"],
-		[450,365,"荷叶棚"], [690,205,"远岸花源"], [790,405,"岸边根拱"],
-		[620,670,"回岸岔口"], [870,590,"材料侧湾"]
+		[200,700,"入口湾"], [825,600,"近岸蓝花"], [1515,760,"沿岸混合带"],
+		[2205,560,"远岸纤维点"], [1515,1140,"侧湾纤维点"]
 	],
 	"violet": [
-		[130,690,"坡脚入口"], [335,620,"花带岔口"], [320,405,"露天长花带"],
-		[640,640,"叶棚小径"], [760,425,"背坡转折"], [680,195,"深处花圃"],
-		[875,290,"根边材料窝"], [185,205,"回坡缺口"]
+		[200,600,"坡脚入口"], [825,730,"近处紫花"], [1515,580,"连续紫花带"],
+		[2205,790,"深处树脂点"], [1515,200,"侧坡树脂点"]
 	]
 }
-const RAW_EDGES := {
-	"pond": [[0,1],[1,2],[2,3],[3,1],[3,4],[4,5],[5,6],[6,1],[5,7],[7,6]],
-	"violet": [[0,1],[1,2],[2,3],[3,1],[2,5],[3,4],[4,5],[5,7],[7,2],[4,6],[6,5]]
-}
-const REMOVED := {"pond": Vector2i(3,4), "violet": Vector2i(2,5)}
-const SHELTER_EDGES := {
-	"pond": [Vector2i(1,6),Vector2i(6,5),Vector2i(5,4)],
-	"violet": [Vector2i(1,3),Vector2i(3,4),Vector2i(4,5)]
-}
+const EDGES := [Vector2i(0,1),Vector2i(1,2),Vector2i(2,3),Vector2i(2,4)]
+const CLUSTER_X := [480.0,825.0,1170.0,1515.0,1860.0,2205.0]
 
-static func build(region: String, state: String, scale: float = DEFAULT_SCALE) -> Dictionary:
-	assert(region in RAW_NODES, "Unknown greybox region")
-	assert(state in ["sunny","rain","variant"], "Unknown greybox state")
-	assert(scale >= 2.5, "Room and corridor clearances require scale >= 2.5")
+static func build(region: String) -> Dictionary:
+	assert(region in NODE_DATA, "Unknown greybox region")
 	var nodes: Array[Dictionary] = []
-	for i in RAW_NODES[region].size():
-		var raw: Array = RAW_NODES[region][i]
-		nodes.append({"id":i,"name":str(raw[2]),"p":_position(Vector2(float(raw[0]),float(raw[1])),scale),"radius":ROOM_RADIUS})
+	for i in NODE_DATA[region].size():
+		var data: Array = NODE_DATA[region][i]
+		nodes.append({"id":i,"name":str(data[2]),"p":Vector2(float(data[0]),float(data[1])),
+			"radius":150.0 if i == 4 else ROOM_RADIUS})
 	var edges: Array[Vector2i] = []
 	var paths: Array[PackedVector2Array] = []
-	for pair in RAW_EDGES[region]:
-		var edge := Vector2i(int(pair[0]),int(pair[1]))
-		if state == "variant" and edge == REMOVED[region]: continue
+	var path_radii: Array[float] = []
+	for edge in EDGES:
 		edges.append(edge)
 		paths.append(PackedVector2Array([nodes[edge.x].p,nodes[edge.y].p]))
-	if state == "variant":
-		edges.append(Vector2i(2,4))
-		if region == "pond":
-			# An outer reed passage: a straight 2–4 chord would cut through
-			# the near loop and silently create junctions absent from the diagram.
-			var outer := PackedVector2Array([nodes[2].p])
-			for raw in [Vector2(145,250),Vector2(260,150),Vector2(455,130)]:
-				outer.append(_position(raw,scale))
-			outer.append(nodes[4].p)
-			paths.append(outer)
-		else:
-			paths.append(PackedVector2Array([nodes[2].p,nodes[4].p]))
-	var shelters: Array[Dictionary] = []
-	# Leaf patches are present in all weather. Rain only changes their utility.
-	# Each chain cell covers 88% of its centreline; visible gaps stay exposed.
-	# This is measured greybox geometry, not an energy/velocity adjustment.
-	var covered_edges: Array = SHELTER_EDGES[region].duplicate()
-	covered_edges.append(Vector2i(0,1))
-	for edge in covered_edges:
-		var a: Vector2 = nodes[edge.x].p
-		var b: Vector2 = nodes[edge.y].p
-		var length := a.distance_to(b)
-		var count := maxi(1,ceili(length/330.0))
-		var patch_radius := minf(150.0,length/float(count)*0.44)
-		for i in count:
-			var t := (float(i)+0.5)/float(count)
-			shelters.append({"p":a.lerp(b,t),"radius":patch_radius})
-	# Sheltered decision/collection nodes make a short first rainy outing
-	# possible. No patch restores stamina and exposed direct links stay open.
-	var covered_nodes: Array = [0,1,2,3,4,5,6] if region == "pond" else [0,1,2,3,4,5]
-	for id in covered_nodes:
-		shelters.append({"p":nodes[id].p,"radius":150.0})
+		path_radii.append(POCKET_RADIUS if edge.y == 4 else CORRIDOR_RADIUS)
+	var clusters: Array[Dictionary] = []
+	for i in CLUSTER_X.size():
+		var x: float = CLUSTER_X[i]
+		var edge_index := 0 if i < 2 else 1 if i < 4 else 2
+		var a: Vector2 = paths[edge_index][0]
+		var b: Vector2 = paths[edge_index][1]
+		var centre := a.lerp(b,clampf((x-a.x)/(b.x-a.x),0.0,1.0))
+		var anchors: Array[Vector2] = [centre]
+		if i > 0:
+			anchors.append(centre+Vector2(0,-35))
+			anchors.append(centre+Vector2(0,35))
+		clusters.append({"band":"near" if i < 2 else "middle" if i < 4 else "far",
+			"node":1 if i < 2 else 2 if i < 4 else 3,"count":2 if i < 2 else 3,"anchors":anchors})
+	var material_spawns: Array[Dictionary] = [
+		{"p":nodes[4].p,"node":4,"band":"middle"},
+		{"p":nodes[3].p+Vector2(70,55 if region == "pond" else -55),"node":3,"band":"far"}
+	]
+	# Bounds include every rendered cap, including the smaller side pocket.
 	var low := Vector2(INF,INF)
 	var high := Vector2(-INF,-INF)
-	for path in paths:
-		for at in path:
-			low = low.min(at)
-			high = high.max(at)
-	var padding := Vector2.ONE*(ROOM_RADIUS+80.0)
-	return {"region":region,"state":state,"scale":scale,"nodes":nodes,"edges":edges,
-		"paths":paths,"corridor_radius":CORRIDOR_RADIUS,"shelters":shelters,
+	for node in nodes:
+		low = low.min(node.p-Vector2.ONE*float(node.radius))
+		high = high.max(node.p+Vector2.ONE*float(node.radius))
+	var padding := Vector2.ONE*70.0
+	return {"region":region,"nodes":nodes,"edges":edges,"paths":paths,"path_radii":path_radii,
+		"corridor_radius":CORRIDOR_RADIUS,"clusters":clusters,"material_spawns":material_spawns,
 		"bounds":Rect2(low-padding,high-low+padding*2.0)}
-
-static func _position(raw: Vector2, scale: float) -> Vector2:
-	return (raw-Vector2(100,110))*scale+Vector2(260,260)
 
 static func segment_distance(at: Vector2, a: Vector2, b: Vector2) -> float:
 	var axis := b-a
@@ -100,8 +71,9 @@ static func walkable(layout: Dictionary, at: Vector2, margin: float = BODY_RADIU
 	for node in layout.nodes:
 		var radius: float = maxf(0.0,float(node.radius)-margin)
 		if at.distance_squared_to(node.p) <= radius*radius: return true
-	var radius: float = maxf(0.0,float(layout.corridor_radius)-margin)
-	for path in layout.paths:
+	for index in layout.paths.size():
+		var path: PackedVector2Array = layout.paths[index]
+		var radius: float = maxf(0.0,float(layout.path_radii[index])-margin)
 		for i in path.size()-1:
 			if segment_distance(at,path[i],path[i+1]) <= radius: return true
 	return false
@@ -120,11 +92,6 @@ static func move(layout: Dictionary, origin: Vector2, displacement: Vector2, mar
 		if walkable(layout,at+Vector2(offset.x,0),margin): at.x += offset.x
 		if walkable(layout,at+Vector2(0,offset.y),margin): at.y += offset.y
 	return at
-
-static func sheltered(layout: Dictionary, at: Vector2) -> bool:
-	for shelter in layout.shelters:
-		if at.distance_squared_to(shelter.p) <= float(shelter.radius)*float(shelter.radius): return true
-	return false
 
 static func node_at(layout: Dictionary, at: Vector2) -> int:
 	var nearest := -1

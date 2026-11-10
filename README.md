@@ -28,7 +28,7 @@
 
 后续游戏工作评审入口：[Alan 雨水试玩经验 R01–R13](docs/design/commercial-product-requirements.md#rain-playtest-review)，覆盖可读性、真实任务机会、资源语义、互助回应及验证入口；按适用项复核，不将修改完成等同玩家认可。
 
-- [池岸与紫花地可玩灰盒](docs/production/region-greybox-receipt.md)：两区内部地图、三状态与成长路线实验，独立于正式采蜜Demo。
+- [池岸与紫花地可玩灰盒](docs/production/region-greybox-receipt.md)：两区无天气采集地图、资源补充与成长对照，独立于正式采蜜Demo。
 
 ## 本轮整体试玩：雨水 · 把路走熟
 
@@ -297,4 +297,5 @@ npm run test
 - [0.23反馈修订与验证回执](docs/production/nectar-demo-023-feedback-receipt.md)：十条反馈、v4兼容、原生与导出验证、证据及成本边界；[独立复核](docs/production/nectar-demo-023-independent-review.md)与[哈希摘要](docs/production/nectar-demo-023-evidence.json)。
 - [0.22历史构建回执](docs/production/nectar-demo-022-build-receipt.md)：PR #300已合并，双入口与旧档隔离已验证；本轮变更见0.23回执。
 
+- [池岸与紫花地：无天气地图与资源生成设计](docs/design/pond-violet-map-resource-design.md)
 - [采蜜 Demo 0.25：研究应用与试玩回执](docs/production/nectar-demo-025-build-receipt.md)
