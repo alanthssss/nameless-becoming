@@ -1,5 +1,7 @@
 # 池岸与紫花地：区域内部地图候选
 
+> 2026-11-10：本8景段/天气/多环版本改列历史；当前方向见[无天气地图与资源生成设计](pond-violet-map-resource-design.md)。旧图与验证证据保留，不作为新实施规格。
+
 2026-11-09；GDD§8.1／§13.9 → M3 → [#322](https://github.com/alanthssss/nameless-becoming/issues/322)，沿 Draft PR336。只用[既有地图研究](https://github.com/alanthssss/nameless-becoming/blob/bcf38cc3a1bc79b54d9758566b1cad65c90403cc/docs/research/exploration-map-atlas.md)及[现行采蜜规则](nectar-steam-demo.md)，未追加网页、视频或原作研究，未改游戏。
 
 > 后续授权：Alan已要求把两图实施为可玩灰盒。实验入口、尺寸与测量见[本轮回执](../production/region-greybox-receipt.md)；下文“只交图”描述保留为绘图时的历史边界。

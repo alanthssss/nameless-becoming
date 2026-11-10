@@ -282,7 +282,8 @@ npm run test
 
 ### Steam Demo 深化资料（SD-v1）
 
-- [池岸与紫花地内部地图](docs/design/pond-violet-interior-maps.md)（各8景段、近远回路、三种状态和成长路线；候选，未实施）。
+- [池岸与紫花地：无天气地图与资源生成](docs/design/pond-violet-map-resource-design.md)（当前设计：固定深入方向、资源分带与补充，未实施）。
+- [池岸与紫花地旧内部地图](docs/design/pond-violet-interior-maps.md)（8景段/天气/多环方案已灰盒验证，现作为历史，结论见[灰盒回执](docs/production/region-greybox-receipt.md)）。
 - [两作地图图解与本作整体方案](docs/research/exploration-map-atlas.md)（六张参考图＋三张本作候选图；只用已有资料，缺口标待验证）；[Dave详细研究](docs/research/dave-map-study.md)。
 - [探索地图：调研与制作准备候选](docs/research/exploration-map-preparation.md)（世界/区域/出行三层、竞品取样、六份准备材料与灰盒验收；未实施）。
 - [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
