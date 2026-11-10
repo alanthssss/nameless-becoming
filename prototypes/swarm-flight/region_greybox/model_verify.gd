@@ -111,6 +111,7 @@ func materials_and_growth() -> void:
 	check(item.dropped and item.phase=="fading" and item.phase_duration==12,"detached material has visible twelve-second decay")
 	life_tick(drop,11.9); check(item.dropped,"drop remains available before timeout")
 	life_tick(drop,0.1); check(not item.dropped and item.phase=="empty" and drop.material_count==0,"unpicked drop expires without awarding material")
+	check("已消散" in drop.last_action,"expired drop no longer asks player to pick it up")
 	var repeated := fresh("pond",1)
 	for cycle in 7:
 		var carrier: Dictionary = repeated.materials[0]

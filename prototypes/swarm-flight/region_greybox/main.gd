@@ -311,7 +311,7 @@ func _record() -> void:
 	if file:
 		file.seek_end()
 		var data: Dictionary = model.summary()
-		data["build"] = "resource-greybox-0.3.0"
+		data["build"] = "resource-greybox-0.3.1"
 		data["observed_at"] = Time.get_datetime_string_from_system()
 		file.store_line(JSON.stringify(data))
 

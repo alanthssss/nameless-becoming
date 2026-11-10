@@ -145,6 +145,7 @@ func _advance_life(item: Dictionary, dt: float, material: bool) -> void:
 	# A dropped item has its own visible 12-second decay, then vacates this
 	# habitat. Normal maturation and expiry use the same phase contract.
 	if material and item.dropped:
+		if last_action == "材料已松落，靠近拾取": last_action = "落地材料已消散，可寻找其他成熟材料"
 		_enter_phase(item,"empty",true)
 		return
 	var next := str(PHASE_ORDER[(PHASE_ORDER.find(item.phase)+1)%PHASE_ORDER.size()])
