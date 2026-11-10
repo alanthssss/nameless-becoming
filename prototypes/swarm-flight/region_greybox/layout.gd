@@ -72,6 +72,13 @@ static func segment_distance(at: Vector2, a: Vector2, b: Vector2) -> float:
 	return at.distance_to(a+axis*t)
 
 static func walkable(layout: Dictionary, at: Vector2, margin: float = BODY_RADIUS) -> bool:
+	if layout.has("coast"):
+		var coast: PackedVector2Array = layout.coast
+		if not at.is_finite() or coast.size()<3 or not Geometry2D.is_point_in_polygon(at,coast): return false
+		if margin>0.0:
+			for i in coast.size():
+				if segment_distance(at,coast[i],coast[(i+1)%coast.size()])<margin: return false
+		return true
 	for node in layout.nodes:
 		var radius: float = maxf(0.0,float(node.radius)-margin)
 		if at.distance_squared_to(node.p) <= radius*radius: return true

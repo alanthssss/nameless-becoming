@@ -9,13 +9,14 @@ func _reword(node: Node) -> void:
 	if node is Label:
 		node.text = node.text.replace("振翅驱离小飞虫，拾取纤维。","振翅松动种穗，飞近拾取纤维。")
 		node.text = node.text.replace("从灯球返回","从入口木牌返回")
-		node.text = node.text.replace("花蜜在野外 18 秒后恢复","采空的花先收拢再长芽，10秒后盛开；成熟资源也会凋谢并重新生长")
+		node.text = node.text.replace("花蜜在野外 18 秒后恢复","采空的花先收拢再长芽，初始20秒后盛开；花地成长可增加资源并加快再生")
 		node.text = node.text.replace("细雨增加消耗，叶棚下可避雨。","花丛不断生长和凋谢；成熟材料可振翅取下。")
 		node.text = node.text.replace(" · F 使用近道","")
-		node.text = node.text.replace("0.27.0","0.28.0").replace("10 个成长节点（共 13 级）","9 个成长节点（共 12 级）")
+		node.text = node.text.replace("0.27.0","0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
 	for child in node.get_children(): _reword(child)
 
 func _requirements(id: String) -> String:
+	if id == "supply": return "先学会轻巧采蜜；第二级需开放紫花地。\n下一趟两区的花源、材料增多，空位恢复加快。"
 	if id == "reserve": return "已经探索紫花地\n已交售紫蜜  %d / 6 份\n\n学会双簇采蜜" % mini(6,driver.model.rose_sold)
 	return super._requirements(id)
 

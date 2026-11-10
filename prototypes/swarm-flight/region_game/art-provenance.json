@@ -7,7 +7,7 @@
   ],
   "milestone": "M3",
   "parent_issue": 322,
-  "scope": "Presentation of current fixed pond/violet collecting grounds plus inherited courtyard; no new map routes, collision, weather or lifecycle rules.",
+  "scope": "Current pond/violet collecting grounds and inherited courtyard; natural coast and sparse-to-grown resource display. No extra paths or weather.",
   "technical_frame": {
     "engine": "Godot 4",
     "design_viewport": [
@@ -20,7 +20,7 @@
     "source_modification": "Two new original opaque PNG material tiles copied byte-for-byte from built-in image_gen. No pixel editing, cropping, resizing or postprocessing. Runtime normal repeat maps each full tile to 512 by 512 world pixels; old painted-scene crops and mirrored/four-way sampling were removed.",
     "shader_sampling": "One texture(TEXTURE, world_position / 512 + flow) sample directly in fragment(). CanvasItem texture_repeat is enabled. No custom sampler helper or mirrored/cropped samples."
   },
-  "geometry_contract": "Core turf polygon is the union of authoritative layout capsules and node discs (64 samples per circle). Three low-opacity banks extend 5/11/18 pixels for a soft grass/soil lip; no hard boundary outlines. Collision is unchanged. Shore leaf roots sit 25 pixels inside the actual turf; leaves may overhang. Fixed far landmarks remain off the route. No legacy painted route.",
+  "geometry_contract": "Version 0.29 uses the same authored coast polygon for collision and core turf drawing. The accepted five-node tree is retained. Its outline is equally resampled, smoothed and shaped into varying-width banks and shallow bays. Three low-opacity 5/11/18px banks form a soft soil lip. Six uneven rooted foliage groups leave open stretches. Disabled potential resource sites and feedback are hidden.",
   "states": {
     "flower": {
       "bud": "curved attached stem with monotonic controls, basal leaves and expanding green-tinted head; deterministic ID-based size/height variation",
@@ -166,7 +166,7 @@
       "source_unchanged": true
     }
   ],
-  "feedback_revision": "Two native passes rejected old scene-crop tiling due to visible plants, mirrors and grids. Exactly two purpose-made object-free tiles generated; normal 512px world repeat replaces all scene crop sampling. Soft banks, inside-bank roots and monotonic stems retained.",
+  "feedback_revision": "Two native passes rejected old scene-crop tiling due to visible plants, mirrors and grids. Exactly two purpose-made object-free tiles generated; normal 512px world repeat replaces all scene crop sampling. Soft banks, inside-bank roots and monotonic stems retained. User rejected rigid monotonous shores and dense initial resource sites. 0.29 replaces actual boundary and scatters potential flower positions; resource growth becomes two paid ranks.",
   "generation_calls": [
     {
       "id": "gen-ground",

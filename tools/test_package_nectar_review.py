@@ -310,7 +310,7 @@ class RegionalPackageTests(unittest.TestCase):
             for artifact in record['artifacts']:
                 if artifact['role'] in {'save_before','save_after'}:
                     path=f.root/artifact['path']
-                    path.write_text(json.dumps({'synthetic_fixture':True,'id':'nectar-regions','version':1}))
+                    path.write_text(json.dumps({'synthetic_fixture':True,'id':'nectar-regions','version':2}))
                     artifact['sha256']=tool.digest(path)
             (f.root/row['path']).write_text(json.dumps(record))
             row['sha256']=tool.digest(f.root/row['path'])
@@ -321,7 +321,7 @@ class RegionalPackageTests(unittest.TestCase):
         with zipfile.ZipFile(f.output) as archive:
             launcher=next(n for n in archive.namelist() if n.endswith('.command'))
             text=archive.read(launcher).decode()
-            self.assertIn('BeforeTheRain-Regions/nectar_regions_v1.json',text)
+            self.assertIn('BeforeTheRain-Regions/nectar_regions_v2.json',text)
             self.assertIn('--nectar-regions',text)
     def test_regional_export_rejects_legacy_entry(self):
         self.fixture.export_record['entry']='nectar-harvest'

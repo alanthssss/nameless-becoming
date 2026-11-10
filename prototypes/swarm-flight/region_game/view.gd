@@ -1,6 +1,6 @@
 extends "res://nectar_harvest_view.gd"
 ## Painted presentation for the fixed collecting grounds. No simulation writes.
-## The turf edge is the same union of capsules/discs used by field collision.
+## The turf edge uses the same authored natural coast as field collision.
 const FieldLayout = preload("res://region_greybox/layout.gd")
 const FieldLife = preload("res://region_greybox/model.gd")
 const GROUND_TILE: Texture2D = preload("res://art/region-ground.png")
@@ -55,10 +55,12 @@ func nectar_event(event: Dictionary) -> void:
 	if model != null and model.field != null and id >= 0:
 		var list: Array = model.field.materials if material else model.field.flowers
 		if id < list.size(): item = list[id]
+	if (kind.begins_with("flower_") or kind.begins_with("material_")) and not item.is_empty() and not bool(item.get("enabled",true)): return
 	if kind == "material_hit": _material_recoil[id] = 0.24
 	if kind == "pulse" and model != null and model.field != null:
 		var target: Vector2 = event.get("to", model.p)
 		for candidate in model.field.materials:
+			if not bool(candidate.get("enabled",true)): continue
 			if candidate.p.distance_to(target)<8: _material_recoil[int(candidate.id)] = 0.24
 	if not item.is_empty() and (kind.ends_with("_bud") or kind.ends_with("_ripe") or kind.ends_with("_fading") or kind.ends_with("_empty")):
 		_life_motes.append({"p":item.p,"age":0.0,"duration":0.9,
@@ -84,16 +86,19 @@ func _prepare_field() -> void:
 	var field = model.field
 	if _field_key == str(field.region): return
 	_field_key = str(field.region)
-	var shapes: Array[PackedVector2Array] = []
-	# Merge the connected tree in edge order; visual triangulation never changes collision.
-	for i in field.layout.paths.size():
-		var path: PackedVector2Array = field.layout.paths[i]
-		shapes.append(_capsule_polygon(path[0], path[1], float(field.layout.path_radii[i])))
-	for node in field.layout.nodes: shapes.append(_circle_polygon(node.p, float(node.radius)))
-	_coast = shapes[0]
-	for i in range(1, shapes.size()):
-		var merged: Array[PackedVector2Array] = Geometry2D.merge_polygons(_coast, shapes[i])
-		if not merged.is_empty(): _coast = merged[0]
+	if field.layout.has("coast"):
+		# No separate visual smoothing: these exact vertices also stop the bee.
+		_coast = field.layout.coast.duplicate()
+	else:
+		var shapes: Array[PackedVector2Array] = []
+		for i in field.layout.paths.size():
+			var path: PackedVector2Array = field.layout.paths[i]
+			shapes.append(_capsule_polygon(path[0], path[1], float(field.layout.path_radii[i])))
+		for node in field.layout.nodes: shapes.append(_circle_polygon(node.p, float(node.radius)))
+		_coast = shapes[0]
+		for i in range(1, shapes.size()):
+			var merged: Array[PackedVector2Array] = Geometry2D.merge_polygons(_coast, shapes[i])
+			if not merged.is_empty(): _coast = merged[0]
 	if not is_instance_valid(_outside):
 		_outside = Polygon2D.new()
 		_outside.z_index = -3
@@ -141,22 +146,38 @@ func _prepare_field() -> void:
 	_grass_marks.clear()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 349001 if pond else 349002
-	# Roots sit in actual bank soil; leaves may overhang the water, roots may not.
-	for i in _coast.size():
-		var a: Vector2 = _coast[i]
-		var b: Vector2 = _coast[(i+1)%_coast.size()]
-		var normal := (b-a).normalized().orthogonal()
-		if FieldLayout.walkable(field.layout, (a+b)*.5+normal*10, 0): normal = -normal
-		var count := maxi(1, int(a.distance_to(b)/62))
+	# Authored dense groups alternate with long open banks. Roots follow the
+	# actual coast, with irregular depth/spacing rather than a row of planters.
+	var groups: Array = [Vector2(130,480),Vector2(650,380),Vector2(1080,880),Vector2(1460,1240),Vector2(1870,380),Vector2(2390,690)] if pond else [Vector2(120,810),Vector2(700,970),Vector2(1080,420),Vector2(1420,80),Vector2(1820,990),Vector2(2370,860)]
+	for group in groups.size():
+		var nearest := 0
+		for i in _coast.size():
+			if _coast[i].distance_squared_to(groups[group])<_coast[nearest].distance_squared_to(groups[group]): nearest = i
+		var count := 5 if group%3 == 0 else 9 if group%3 == 1 else 7
 		for j in count:
-			var at := a.lerp(b,(float(j)+.5)/float(count))
-			if rng.randf() < .62:
-				_shore_plants.append({"p":at-normal*25-Vector2(0,9),"normal":normal,"size":rng.randf_range(.75,1.3),"kind":rng.randi_range(0,4)})
+			var index := posmod(nearest+rng.randi_range(-4,4),_coast.size())
+			var at: Vector2 = _coast[index]
+			var tangent := (_coast[(index+1)%_coast.size()]-_coast[(index-1+_coast.size())%_coast.size()]).normalized()
+			var outward := tangent.orthogonal()
+			if FieldLayout.walkable(field.layout,at+outward*8,0): outward = -outward
+			var foot := at-outward*rng.randf_range(22,63)+tangent*rng.randf_range(-15,15)
+			if not FieldLayout.walkable(field.layout,foot,10) or _close_to_resource(foot,60): continue
+			if foot.distance_to(field.layout.nodes[0].p)<130: continue
+			var kind := 0 if j<2 else 4 if pond and j%3==0 else rng.randi_range(1,3)
+			_shore_plants.append({"p":foot-Vector2(0,9),"normal":outward,"size":rng.randf_range(.65,1.55),"kind":kind})
 	for i in 240:
 		var bounds: Rect2 = field.layout.bounds
 		var at := bounds.position + Vector2(rng.randf()*bounds.size.x,rng.randf()*bounds.size.y)
 		if FieldLayout.walkable(field.layout,at,42):
 			_grass_marks.append({"p":at,"turn":rng.randf_range(-.6,.6),"size":rng.randf_range(.6,1.25)})
+
+func _close_to_resource(at: Vector2,radius: float) -> bool:
+	# Keep room for future unlocked sources too, without drawing their empty slots.
+	for flower in model.field.flowers:
+		if at.distance_to(flower.p)<radius: return true
+	for item in model.field.materials:
+		if at.distance_to(item.anchor)<radius: return true
+	return false
 
 func _visible(at: Vector2, padding := 130.0) -> bool:
 	return Rect2(model.camera_offset-Vector2.ONE*padding,get_viewport_rect().size+Vector2.ONE*padding*2).has_point(at)
@@ -186,10 +207,12 @@ func _draw() -> void:
 	for plant in _shore_plants:
 		if _visible(plant.p): actors.append({"kind":"shore","y":plant.p.y,"data":plant})
 	for flower in model.field.flowers:
+		if not bool(flower.get("enabled",true)): continue
 		if _visible(flower.p):
 			_ground_shadow(_resource_root(flower),Vector2(18,5),.13)
 			actors.append({"kind":"flower","y":_resource_root(flower).y,"data":flower})
 	for item in model.field.materials:
+		if not bool(item.get("enabled",true)): continue
 		if _visible(item.p):
 			_ground_shadow(item.anchor+Vector2(0,47),Vector2(23,7),.17)
 			actors.append({"kind":"material","y":item.anchor.y+47,"data":item})
@@ -222,14 +245,13 @@ func _draw_region_floor() -> void:
 			var root := at+Vector2(float(blade-1)*4,0)
 			_curve(root,root+Vector2(-2,-4),root+Vector2(-6+blade*4,-8),root+Vector2(-7+blade*5,-11)*float(mark.size),tone,1.5)
 	# Quiet water and floor marks lie outside the collecting surface only.
-	for i in 34:
-		var at := Vector2(-50+float(i%9)*310,180+float(i/9)*330)
+	var water_marks: Array[Vector2] = [Vector2(350,230),Vector2(990,290),Vector2(1790,180),Vector2(2280,1030),Vector2(850,1080)]
+	for i in water_marks.size():
+		var at: Vector2 = water_marks[i]
 		if not _visible(at,120) or FieldLayout.walkable(model.field.layout,at,-45): continue
 		if pond:
 			var drift := 0.0 if reduced_motion else sin(clock*.55+float(i)) * 9
 			_curve(at+Vector2(-65,drift),at+Vector2(-25,-5+drift),at+Vector2(24,5+drift),at+Vector2(68,drift),Color(.79,.91,.77,.21),2)
-			if i%3 == 0:
-				ArtSprites.small_leaf(self,at+Vector2(20,20),at+Vector2(-38,19),23)
 		else:
 			_ellipse(at,Vector2(100,42),Color(.16,.27,.20,.22))
 	_draw_distant_landmarks()
@@ -292,6 +314,7 @@ func _flower_visual_point(flower: Dictionary) -> Vector2:
 	return at
 
 func _draw_living_flower(flower: Dictionary) -> void:
+	if not bool(flower.get("enabled",true)): return
 	var phase := str(flower.phase)
 	var root := _resource_root(flower)
 	var ratio := FieldLife.phase_ratio(flower)
@@ -339,6 +362,7 @@ func _draw_living_flower(flower: Dictionary) -> void:
 		_ellipse(at+Vector2(18+sin(fall*PI)*9,fall*43),Vector2(3,1.5),Color(.74,.59,.37,(1-fall)*.65))
 
 func _draw_living_material(item: Dictionary) -> void:
+	if not bool(item.get("enabled",true)): return
 	var root: Vector2 = item.anchor+Vector2(0,47)
 	var at: Vector2 = item.p
 	var phase := str(item.phase)
@@ -398,8 +422,13 @@ func _draw_working_bee() -> void:
 	var facing: Vector2 = field.face
 	var at: Vector2 = field.p
 	var scale := 1.02
-	if collecting and not field._locked.is_empty():
-		var flower: Dictionary = field.flowers[int(field._locked[0])]
+	var locked_flower: Dictionary = {}
+	for id in field._locked:
+		if bool(field.flowers[int(id)].get("enabled",true)):
+			locked_flower = field.flowers[int(id)]
+			break
+	if collecting and not locked_flower.is_empty():
+		var flower: Dictionary = locked_flower
 		facing = (flower.p-at).normalized()
 		at += facing*9
 		if not reduced_motion:
@@ -419,6 +448,7 @@ func _draw_resource_feedback() -> void:
 	var nearest_flower: Dictionary = {}
 	var flower_distance := 105.0
 	for flower in model.field.flowers:
+		if not bool(flower.get("enabled",true)): continue
 		var at: Vector2 = flower.p
 		if not _visible(at): continue
 		var distance: float = model.p.distance_to(at)
@@ -437,6 +467,7 @@ func _draw_resource_feedback() -> void:
 	var closest: Dictionary = {}
 	var shortest := 155.0
 	for item in model.field.materials:
+		if not bool(item.get("enabled",true)): continue
 		var distance: float = model.p.distance_to(item.p)
 		if distance < shortest:
 			closest = item

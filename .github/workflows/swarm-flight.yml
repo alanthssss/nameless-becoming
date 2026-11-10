@@ -264,6 +264,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          for suite in field layout; do
+            "$GODOT_BIN" --headless --path prototypes/swarm-flight --script "res://region_game/${suite}_verify.gd" 2>&1 | tee "$RUNNER_TEMP/region-game-${suite}.log"
+            ! grep -E "SCRIPT ERROR|ERROR:|Parse Error|FAIL " "$RUNNER_TEMP/region-game-${suite}.log"
+          done
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://region_game/model_verify.gd 2>&1 | tee "$RUNNER_TEMP/region-game-model.log"
           ! grep -E "SCRIPT ERROR|Parse Error|FAIL " "$RUNNER_TEMP/region-game-model.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --fixed-fps 60 --script res://region_game/ui_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/region-game-empty.json" 2>&1 | tee "$RUNNER_TEMP/region-game-ui.log"

@@ -3,7 +3,7 @@ extends "res://nectar_harvest_model.gd"
 ## A canonical v5 home profile preserves its transaction validation; the field
 ## has a separate, bounded binary snapshot inside this versioned JSON envelope.
 const Profile = preload("res://nectar_harvest_model.gd")
-const Field = preload("res://region_greybox/model.gd")
+const Field = preload("res://region_game/field.gd")
 const PROFILE_KEYS := ["coins","cargo","materials","owned","completed","trip_index","sold_total","rose_sold","visited_meadow"]
 var field
 var camera_offset := Vector2.ZERO
@@ -11,7 +11,12 @@ var last_trip := {}
 var return_requested := false
 
 func upgrade_defs() -> Array:
-	return super.upgrade_defs().filter(func(d): return d.id != "shortcut")
+	var definitions: Array = super.upgrade_defs().filter(func(d): return d.id != "shortcut")
+	definitions.append({"id":"supply1","name":"花地萌发","description":"花源 16 → 24 · 材料 3 → 4\n花再生 20 → 14 秒","cost":8,"fiber":1,"branch":2,"row":1,"requires":["gather1"]})
+	definitions.append({"id":"supply2","name":"花地繁盛","description":"花源 24 → 36 · 材料 4 → 6\n花再生 14 → 10 秒","cost":18,"fiber":3,"resin":1,"branch":2,"row":2,"requires":["supply1","meadow"]})
+	return definitions
+
+func resource_rank() -> int: return 2 if "supply2" in owned else 1 if "supply1" in owned else 0
 
 func locked_reason(id: String) -> String:
 	if id == "shortcut": return "这片花路没有近道"
@@ -51,6 +56,7 @@ func transition_to(destination: String,via: String = "gate") -> bool:
 		field = Field.new()
 		field.configure("pond" if destination == "pond" else "violet",1,trip_index)
 		field.stats.owned.assign(owned)
+		field.set_supply_rank(resource_rank())
 		field.energy = max_energy()
 		field.cargo = cargo_total()
 		area = destination
@@ -168,6 +174,7 @@ func _profile() -> RefCounted:
 	for key in PROFILE_KEYS:
 		if get(key) is Array or get(key) is Dictionary: result.set(key,get(key).duplicate(true))
 		else: result.set(key,get(key))
+	result.owned.assign(owned.filter(func(id): return id not in ["supply1","supply2"]))
 	result.flowers = flower_layout(trip_index)
 	result.creatures = Encounters.layout(trip_index)
 	result.energy = result.max_energy()
@@ -185,27 +192,36 @@ func to_payload() -> Dictionary:
 		state.trace = []
 		state.events = []
 		snapshot = Marshalls.raw_to_base64(var_to_bytes(state))
-	return {"id":"nectar-regions","version":1,"profile":_profile().to_payload(),"field":snapshot}
+	return {"id":"nectar-regions","version":2,"profile":_profile().to_payload(),"field":snapshot,"resource_growth":owned.filter(func(id): return id in ["supply1","supply2"])}
 
 func restore_payload(data) -> bool:
-	if not data is Dictionary or not keys_match(data,["id","version","profile","field"]): return false
-	if data.id != "nectar-regions" or data.version != 1 or not data.field is String or data.field.length() > 180000: return false
+	if not data is Dictionary or not keys_match(data,["id","version","profile","field","resource_growth"]): return false
+	if data.id != "nectar-regions" or data.version != 2 or not data.field is String or data.field.length() > 180000: return false
 	var next_profile = Profile.new()
 	if not next_profile.restore_payload(data.profile) or not next_profile.at_home() or "shortcut" in next_profile.owned: return false
+	if not data.resource_growth is Array or data.resource_growth.size() > 2: return false
+	var extra: Array[String] = []
+	for id in data.resource_growth:
+		if not id is String or id not in ["supply1","supply2"] or id in extra: return false
+		extra.append(id)
+	if "supply1" in extra and "gather1" not in next_profile.owned: return false
+	if "supply2" in extra and ("supply1" not in extra or "meadow" not in next_profile.owned): return false
+	var expected_rank := 2 if "supply2" in extra else 1 if "supply1" in extra else 0
 	var next_field
 	if not data.field.is_empty():
 		var decoded = bytes_to_var(Marshalls.base64_to_raw(data.field))
 		next_field = Field.new()
-		if not next_field.restore(decoded): return false
+		if not next_field.restore(decoded) or next_field.supply_rank != expected_rank: return false
 		if next_field.region == "violet" and ("meadow" not in next_profile.owned or not next_profile.visited_meadow): return false
 		if next_profile.trip_index < 1 or next_field.trip_seed != next_profile.trip_index: return false
 		if next_field.cargo != next_profile.cargo_total() or next_field.energy > next_profile.max_energy(): return false
 		if next_field.v.length() > 500.01 or absf(next_field.face.length()-1.0) > 0.001: return false
 		if next_field.charge > 0.32 or next_field.burst_left > 0.32 or (not next_field.charging and next_field.charge != 0): return false
-		next_field.stats.owned.assign(next_profile.owned)
+		next_field.stats.owned.assign(next_profile.owned+extra)
 	for key in PROFILE_KEYS:
 		if get(key) is Array: get(key).assign(next_profile.get(key))
 		else: set(key,next_profile.get(key))
+	owned.append_array(extra)
 	field = next_field
 	if field == null:
 		area = "hub"

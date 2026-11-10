@@ -34,7 +34,7 @@ def configure_product(product):
     if product == 'regions':
         CONTRACT = ROOT / 'prototypes/swarm-flight/region_game/review-contract.json'
         README = ROOT / 'prototypes/swarm-flight/region_game/review-readme.txt'
-        SAVE_NAME, SAVE_VERSION, SAVE_ID = 'nectar_regions_v1.json', 1, 'nectar-regions'
+        SAVE_NAME, SAVE_VERSION, SAVE_ID = 'nectar_regions_v2.json', 2, 'nectar-regions'
         ENTRY, FEATURE, USER_DIR = 'nectar-regions', 'nectar_regions', 'BeforeTheRain-Regions'
     elif product == 'nectar':
         CONTRACT = ROOT / 'prototypes/swarm-flight/nectar-review-contract.json'

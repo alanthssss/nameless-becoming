@@ -2,7 +2,7 @@ extends "res://nectar_harvest_main.gd"
 const RegionalModel = preload("res://region_game/model.gd")
 const RegionalUI = preload("res://region_game/ui.gd")
 const RegionalView = preload("res://region_game/view.gd")
-const PROGRESS := "user://nectar_regions_v1.json"
+const PROGRESS := "user://nectar_regions_v2.json"
 var evidence_log := ""
 
 
