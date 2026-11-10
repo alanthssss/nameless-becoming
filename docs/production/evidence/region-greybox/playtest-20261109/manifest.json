@@ -1,0 +1,140 @@
+{
+  "local_root": "/Users/alanthssss/LocalGames/region-greybox-0.1.0/evidence/playtest-20261109",
+  "runtime_commit": "d77eab409e68b604382a805af44ce62322b8dcd5",
+  "kind": "AI_native_playthrough_and_existing_data_analysis",
+  "human_playtest": false,
+  "screenshots_and_raw_evidence": [
+    {
+      "name": "P1-leaf.png",
+      "sha256": "e9362ea9e76923bf6394d66729082d82cc15ab823fde87f4870bbb378172808b"
+    },
+    {
+      "name": "P1-near-harvest.png",
+      "sha256": "2f8f3529bff1fe27ecc02e7bc7c671efa14ea13dd8f8a7d731cbaf53d21b011f"
+    },
+    {
+      "name": "P1-result.png",
+      "sha256": "7ba0ab8b30071046422604c9dd9dcc4ac58a6f7485720f91210f1145b9edbb13"
+    },
+    {
+      "name": "P2-leaf-turn.png",
+      "sha256": "1bb9250251ffec18a820102d52998b4ffbf5496630f0afbfdcbb59027dea8915"
+    },
+    {
+      "name": "P2-material-bay.png",
+      "sha256": "15ea94d60feaa7019b3f738ea68d6dac8ef0d5eaf89e2259f788bd80b355db27"
+    },
+    {
+      "name": "P2-result.png",
+      "sha256": "6d13c70c24f730dbc0eb3b1b85b1cb14a573c55b0912a7ffa30d8e63dba9d343"
+    },
+    {
+      "name": "P2r-far-harvest.png",
+      "sha256": "4a83ee4acf9cd58d6f31f5d3616ff13eb769cc5544d4cd9a89217c4deaee0849"
+    },
+    {
+      "name": "P3-final-result.png",
+      "sha256": "602666b3b3cb5a4a6a5db60b55a9c87f136a55dbdc62befe4b6dbba3c9179e36"
+    },
+    {
+      "name": "P3-rain-far.png",
+      "sha256": "152e217a23f33633147d83d3ee8bac05ee6bd1bc93232b1bd4585e41febbf018"
+    },
+    {
+      "name": "P3-result.png",
+      "sha256": "238e67afe068e2134285c0a02af8fb626d3b0cfcb49b194962ad2c605789f04b"
+    },
+    {
+      "name": "P3-return-blocked.png",
+      "sha256": "3e363ad737e60405bf4549022b2445eec4c7b36e5160038d604c2c339c8ea673"
+    },
+    {
+      "name": "P3-sheltered-root.png",
+      "sha256": "d51b423d25fd0428df44247f45afc740b866570c86b52fd4419bcd0a584035a7"
+    },
+    {
+      "name": "P4-long-empty-passage.png",
+      "sha256": "b9272a355e419f52e72098459411d67a6beca5e685cef6048a2955a09efe4172"
+    },
+    {
+      "name": "P4-result.png",
+      "sha256": "44d6cd061c77fc0da559a2706f46ef4d5acb302ea7d3bd58b9679bbef84bab2a"
+    },
+    {
+      "name": "P4-return-junction.png",
+      "sha256": "7cf23ac2b37afbce4656019c25dac69fb4f1c3910f6d2b923f5f088d2dde0ceb"
+    },
+    {
+      "name": "P4-return-root.png",
+      "sha256": "11ec23f50f596ef66074f3cc4f128d69b2dfbab9c5f3859842fcd4f471ce9b15"
+    },
+    {
+      "name": "P4-variant-entrance.png",
+      "sha256": "9a54e011e4e278e383986ad949216bca1091252af1198b080007c8b8818eb6c9"
+    },
+    {
+      "name": "V1-leaf-route.png",
+      "sha256": "f732dc64be65bd6d6f4c2b78ced7684e175645fd1871493c92294e40e35694bd"
+    },
+    {
+      "name": "V1-near-harvest.png",
+      "sha256": "5db17dd6a4513f3fb988bcbdd6c49cb5cc5523a10693c742fc03cabbb7324a28"
+    },
+    {
+      "name": "V1-result.png",
+      "sha256": "15d0258a5c595bfafaddd2e7379554590617bc0f0248cddf688a133e2956d0b0"
+    },
+    {
+      "name": "V2-empty-return-gap.png",
+      "sha256": "15167562011852060c38f4b45c9bd0a3bc79475e47d15c0413967040a3756f01"
+    },
+    {
+      "name": "V2-far-harvest.png",
+      "sha256": "56c2c75a0a36189ddc463f37bcd3a732312d2a8e872f76657b87794b886debb4"
+    },
+    {
+      "name": "V2-far-materials.png",
+      "sha256": "2a57116aa5429a66ac59da32b8daedd030aed6606729a42375d52df0245444f4"
+    },
+    {
+      "name": "V2-result.png",
+      "sha256": "ba0fabfa69182836d267e6a1f9ecd3a7bf8614650c765d051532b9e68d7248f3"
+    },
+    {
+      "name": "V3-rain-far.png",
+      "sha256": "ecee6352044f87fc9d0fd8f6de833f6336759880e6d7f1eb6a4c1152cb27d408"
+    },
+    {
+      "name": "V3-rain-return-leaf.png",
+      "sha256": "26eef70529028fc10f479c62c5a17af6ebe84e568875117caab633d4a9c2bf99"
+    },
+    {
+      "name": "V3-result.png",
+      "sha256": "07813768d7eb60c46f56b49edd076817ef281a5724b4e475ef62cd372aed4398"
+    },
+    {
+      "name": "V4-new-connection.png",
+      "sha256": "a305813bcc876952dca338d863a9e75fe8eacf63d0a21c3cd1ddec25d66fd0b6"
+    },
+    {
+      "name": "V4-result.png",
+      "sha256": "2ea00e0d42ea17ce10bace7347198d1d8abdd30537f6ada8bb2df2f03a5e3a42"
+    },
+    {
+      "name": "V4-return-gap.png",
+      "sha256": "35f25707e784bf56a43be47d1d468c27daef76fbf8af301ef3a0fb94d96a6d91"
+    },
+    {
+      "name": "greybox-trip-metrics.json",
+      "sha256": "e7183a8fed39576e9cea9e3349346c55313d131623e551508735586979319faa"
+    },
+    {
+      "name": "greybox-trip-metrics.md",
+      "sha256": "9537c07402245117c4a02d2960a37947dd8b1d8194661704eb0665cbd8d58e29"
+    },
+    {
+      "name": "native-sessions.jsonl",
+      "sha256": "3d1e61d62f0fca96e9d665cc96fd2c6091f9a8a9f3656a8c11fa0e02aa5785fb"
+    }
+  ]
+}

@@ -28,6 +28,8 @@
 
 后续游戏工作评审入口：[Alan 雨水试玩经验 R01–R13](docs/design/commercial-product-requirements.md#rain-playtest-review)，覆盖可读性、真实任务机会、资源语义、互助回应及验证入口；按适用项复核，不将修改完成等同玩家认可。
 
+- [池岸与紫花地可玩灰盒](docs/production/region-greybox-receipt.md)：两区内部地图、三状态与成长路线实验，独立于正式采蜜Demo。
+
 ## 本轮整体试玩：雨水 · 把路走熟
 
 2026-10-19，按 Alan“先把能从头玩到尾的完整雨水章节做出来”的决定，当前方向评审请使用 **`scripts/play_rain_route.command`**。这是同一工程中的十五日完整章：独自认路 → 选择建台、改善路线与帮助邻居 → 带五位伙伴真实到过花田并一起回巢 → 可自由移动的收尾。保留每日收工和晨间继续，不把局部细节逐项交给 Alan 审批。
