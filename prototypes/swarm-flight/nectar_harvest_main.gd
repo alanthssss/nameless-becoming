@@ -45,6 +45,10 @@ var transition_short := false
 var home_return_summary := ""
 var home_sale_summary := ""
 
+func new_model(): return Model.new()
+func read_progress(path: String) -> Dictionary: return Migration.load_progress(path)
+func create_interface(): return Interface.new()
+
 func _ready() -> void:
 	get_window().title = DISPLAY_NAME
 	get_tree().auto_accept_quit = false
@@ -53,7 +57,7 @@ func _ready() -> void:
 		if arg.begins_with("--progress-file="): saved_path = arg.trim_prefix("--progress-file=")
 	# The new mode must never overwrite a named legacy journey save.
 	if "journey" in saved_path.get_file(): saved_path = SAVE_PATH
-	var loaded := Migration.load_progress(saved_path)
+	var loaded: Dictionary = read_progress(saved_path)
 	if loaded.ok:
 		has_save = model.restore_payload(loaded.payload)
 		model.clear_controls()
@@ -63,7 +67,7 @@ func _ready() -> void:
 	_load_world()
 	sound = Sound.new()
 	add_child(sound)
-	ui = Interface.new()
+	ui = create_interface()
 	ui.driver = self
 	var layer := CanvasLayer.new()
 	add_child(layer)
@@ -86,7 +90,7 @@ func _load_world() -> void:
 
 func request_transition(destination: String,via := "gate") -> void:
 	if mode not in ["play","regions"]: return
-	var candidate = Model.new()
+	var candidate = new_model()
 	if not candidate.restore_payload(model.to_payload()) or not candidate.transition_to(destination,via):
 		message("这条路暂时不能通行 · 先靠近入口，或查看成长条件",3)
 		return
@@ -379,7 +383,7 @@ func close_tree() -> void:
 
 func sell_cargo() -> void:
 	if mode != "shop": return
-	var candidate = Model.new()
+	var candidate = new_model()
 	if not candidate.restore_payload(model.to_payload()): return
 	var gain: int = candidate.sell()
 	if gain <= 0: return
@@ -388,7 +392,7 @@ func sell_cargo() -> void:
 
 func buy_upgrade(id: String) -> void:
 	if mode != "tree": return
-	var candidate = Model.new()
+	var candidate = new_model()
 	if not candidate.restore_payload(model.to_payload()): return
 	if not candidate.buy(id):
 		message(model.locked_reason(id),3)
@@ -407,7 +411,7 @@ func buy_upgrade(id: String) -> void:
 		message("%s · %s\n花费 %s" % [definition.name,effect,paid],4.5)
 
 func commit_candidate(candidate) -> bool:
-	if save_blocked or not Save.write_payload(candidate.to_payload(),saved_path,Model.new()):
+	if save_blocked or not Save.write_payload(candidate.to_payload(),saved_path,new_model()):
 		message("进度未能写入，这次操作没有扣钱、扣货或切换地区。",5)
 		return false
 	var pending: Array = candidate.events.duplicate(true)
@@ -418,7 +422,7 @@ func commit_candidate(candidate) -> bool:
 
 func persist() -> bool:
 	if save_blocked: return false
-	var ok: bool = Save.write_payload(model.to_payload(),saved_path,Model.new())
+	var ok: bool = Save.write_payload(model.to_payload(),saved_path,new_model())
 	if ok:
 		has_save = true
 		save_warning = false
@@ -433,8 +437,8 @@ func restart_game() -> void:
 		if DirAccess.copy_absolute(saved_path,backup) != OK:
 			message("旧进度备份失败，尚未重新开始。",5)
 			return
-	var candidate = Model.new()
-	if not Save.write_payload(candidate.to_payload(),saved_path,Model.new()):
+	var candidate = new_model()
+	if not Save.write_payload(candidate.to_payload(),saved_path,new_model()):
 		message("新进度无法保存，原进度未改变。",5)
 		return
 	model = candidate

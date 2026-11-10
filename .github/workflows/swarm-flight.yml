@@ -257,6 +257,17 @@ jobs:
           SWARM_BACK_SIGN_QA_DIR="$RUNNER_TEMP/back-sign-save" "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://back_sign_save_verify.gd 2>&1 | tee "$RUNNER_TEMP/back-sign-save.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL:' "$RUNNER_TEMP/back-sign-save.log"; then exit 1; fi
           grep -q '^BACK SIGN SAVE VERIFIED:.*0 failures' "$RUNNER_TEMP/back-sign-save.log"
+      - name: Verify complete regional model
+        if: matrix.suite == 'region-greybox'
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot-bin/Godot_v4.6.2-stable_linux.x86_64
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --script res://region_game/model_verify.gd 2>&1 | tee "$RUNNER_TEMP/region-game-model.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL " "$RUNNER_TEMP/region-game-model.log"
+          "$GODOT_BIN" --headless --path prototypes/swarm-flight --fixed-fps 60 --script res://region_game/ui_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/region-game-empty.json" 2>&1 | tee "$RUNNER_TEMP/region-game-ui.log"
+          ! grep -E "SCRIPT ERROR|ERROR:|SHADER ERROR|Parse Error|FAIL " "$RUNNER_TEMP/region-game-ui.log"
       - name: Verify isolated region greybox
         if: matrix.suite == 'region-greybox'
         env:

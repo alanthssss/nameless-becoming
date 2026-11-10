@@ -54,6 +54,7 @@ func next_id(id: String) -> String:
 	return "" if level >= data.ranks.size() else str(data.ranks[level])
 
 func is_revealed(id: String) -> bool:
+	if model != null and model.upgrade(str(definition(id).ranks[0])).is_empty(): return false
 	if rank_of(id) > 0 or id in ["gather","bag","meadow","reserve"]: return true
 	match id:
 		"wings": return "gather1" in model.owned or "bag1" in model.owned

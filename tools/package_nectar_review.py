@@ -24,6 +24,26 @@ CONTRACT = ROOT / 'prototypes/swarm-flight/nectar-review-contract.json'
 README = ROOT / 'prototypes/swarm-flight/nectar-review-readme.txt'
 SAVE_NAME = 'nectar_harvest_v1.json'
 SAVE_VERSION = 5
+SAVE_ID = 'nectar-harvest-v1'
+ENTRY = 'nectar-harvest'
+FEATURE = 'nectar_mvp'
+USER_DIR = 'BeforeTheRain'
+
+def configure_product(product):
+    global CONTRACT, README, SAVE_NAME, SAVE_VERSION, SAVE_ID, ENTRY, FEATURE, USER_DIR
+    if product == 'regions':
+        CONTRACT = ROOT / 'prototypes/swarm-flight/region_game/review-contract.json'
+        README = ROOT / 'prototypes/swarm-flight/region_game/review-readme.txt'
+        SAVE_NAME, SAVE_VERSION, SAVE_ID = 'nectar_regions_v1.json', 1, 'nectar-regions'
+        ENTRY, FEATURE, USER_DIR = 'nectar-regions', 'nectar_regions', 'BeforeTheRain-Regions'
+    elif product == 'nectar':
+        CONTRACT = ROOT / 'prototypes/swarm-flight/nectar-review-contract.json'
+        README = ROOT / 'prototypes/swarm-flight/nectar-review-readme.txt'
+        SAVE_NAME, SAVE_VERSION, SAVE_ID = 'nectar_harvest_v1.json', 5, 'nectar-harvest-v1'
+        ENTRY, FEATURE, USER_DIR = 'nectar-harvest', 'nectar_mvp', 'BeforeTheRain'
+    else:
+        raise ValueError('Unknown review product')
+
 ENTRY_CHECKS = {'direct_app', 'command_entry', 'ordinary_input', 'save', 'exit', 'cold_resume', 'continued_input'}
 VIDEO_SUFFIXES = {'.mp4', '.mov', '.webm', '.m4v'}
 
@@ -133,7 +153,7 @@ def validate_record(record, row, root, revision, export_record):
             errors.append(label + ': actual exported entry, input, save, exit and cold-resume checks required')
         for key, expected in [('export_sha256',export_record.get('sha256')),
                               ('launcher_sha256',export_record.get('launcher_sha256')),
-                              ('entry','nectar-harvest'),('save_filename',SAVE_NAME)]:
+                              ('entry',ENTRY),('save_filename',SAVE_NAME)]:
             if record.get(key) != expected:
                 errors.append(label + ': wrong ' + key)
         before = record.get('legacy_save_hashes_before')
@@ -153,7 +173,7 @@ def validate_record(record, row, root, revision, export_record):
             elif role in ('save_before','save_after'):
                 try:
                     saved = read(target)
-                    if (not isinstance(saved,dict) or saved.get('id') != 'nectar-harvest-v1'
+                    if (not isinstance(saved,dict) or saved.get('id') != SAVE_ID
                             or type(saved.get('version')) is not int or saved['version'] != SAVE_VERSION):
                         errors.append(label + ': new-save snapshot has wrong independent identity')
                 except (ValueError,OSError) as exc:
@@ -198,10 +218,10 @@ def preflight(contract, receipt, evidence_root, revision, export_record, export_
     errors += warnings_errors(receipt.get('warnings'), 'receipt')
     if type(receipt.get('schema')) is not int:
         errors.append('receipt schema must be an integer')
-    for key, expected in [('revision',revision),('engine','4.6.2'),('entry','nectar-harvest'),('save_filename',SAVE_NAME)]:
+    for key, expected in [('revision',revision),('engine','4.6.2'),('entry',ENTRY),('save_filename',SAVE_NAME)]:
         if export_record.get(key) != expected: errors.append('export record has wrong ' + key)
-    if not isinstance(export_record.get('custom_features'), list) or 'nectar_mvp' not in export_record['custom_features']:
-        errors.append('export must have nectar_mvp direct-app feature')
+    if not isinstance(export_record.get('custom_features'), list) or FEATURE not in export_record['custom_features']:
+        errors.append('export must have '+FEATURE+' direct-app feature')
     if not hash_string(export_record.get('launcher_sha256')):
         errors.append('export record requires the tested launcher hash')
     try:
@@ -245,7 +265,7 @@ def launcher_text(app_name, executable):
     return f'''#!/bin/zsh
 set -eu
 cd -- "$(dirname -- "$0")"
-nectar_save="$HOME/Library/Application Support/BeforeTheRain/{SAVE_NAME}"
+nectar_save="$HOME/Library/Application Support/{USER_DIR}/{SAVE_NAME}"
 while (( $# )); do
   case "$1" in
     --progress-file=*) nectar_save="${{1#--progress-file=}}"; shift ;;
@@ -259,7 +279,7 @@ if [[ "$nectar_save" != /*/{SAVE_NAME} ]]; then
   print -u2 '测试路径须为绝对路径，并以 {SAVE_NAME} 结尾'; exit 2
 fi
 mkdir -p -- "$(dirname -- "$nectar_save")" "$PWD/日志"
-exec "$PWD/{app_name}/Contents/MacOS/{executable}" --log-file "$PWD/日志/采蜜小店.log" -- --nectar-harvest --progress-file="$nectar_save"
+exec "$PWD/{app_name}/Contents/MacOS/{executable}" --log-file "$PWD/日志/采蜜小店.log" -- --{ENTRY} --progress-file="$nectar_save"
 '''
 
 def extract_export(export_zip, destination):
@@ -321,7 +341,7 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
         (stage/'先读我.txt').write_text(README.read_text(encoding='utf-8').replace('{version}',version),encoding='utf-8')
         (stage/'版本信息.json').write_text(json.dumps({
             'goal':'nectar-harvest-mvp','claim':'candidate','version':version,'revision':revision,
-            'engine':'4.6.2','entry':'nectar-harvest','save_filename':SAVE_NAME,
+            'engine':'4.6.2','entry':ENTRY,'save_filename':SAVE_NAME,
             'human_accepted':False,'full_game_completed':False,'export_sha256':digest(export_zip),
             'launcher_sha256':command_hash,'executable_sha256':digest(app/'Contents/MacOS'/executable)
         },ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
@@ -344,7 +364,9 @@ def main():
     for name in ['export','export-record','receipt','evidence-root','output']:
         parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--revision',required=True)
+    parser.add_argument('--product',choices=['nectar','regions'],default='nectar')
     args = parser.parse_args()
+    configure_product(args.product)
     try:
         result = package(args.export,read(args.export_record),read(args.receipt),args.evidence_root,args.revision,args.output)
     except (OSError,ValueError,KeyError,TypeError,zipfile.BadZipFile) as exc:

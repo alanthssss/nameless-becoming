@@ -358,6 +358,42 @@
       "mode": "RGBA",
       "sha256": "42f23656d8b907cca1aaf83294720a8059df4586da4f9a2cfa1e7d670a3b9d48",
       "acceptance": "INT-DEV / AUTH-PENDING / ALAN-PENDING / PLAYER-PENDING / MKT-NO"
+    },
+    {
+      "path": "art/region-ground.png",
+      "role": "Fine object-free painted grass/soil tile for both regional collecting grounds",
+      "family": "painted_garden",
+      "classification": "sample_specific",
+      "levels": [],
+      "source": "Built-in image_gen; full prompt and byte-identical source in region_game/art-provenance.json#gen-ground",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "source_bytes": 2307057,
+      "sha256": "a28ce9e150ac449d1461dde2e3b892aec1c055336fff4b2f75fbcd8ed355bc66",
+      "metadata_status": "Original generated PNG unchanged; dimensions and hash verified. Native tile/world review pending.",
+      "import_settings": "Opaque source, linear rendering, CanvasItem normal repeat; full tile spans 512 world pixels.",
+      "acceptance": "Internal development candidate; source-only inspection, native/player approval pending"
+    },
+    {
+      "path": "art/region-water.png",
+      "role": "Fine object-free jade water tile outside the pond bank",
+      "family": "painted_garden",
+      "classification": "sample_specific",
+      "levels": [],
+      "source": "Built-in image_gen; full prompt and byte-identical source in region_game/art-provenance.json#gen-water",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "source_bytes": 1698525,
+      "sha256": "3c5668bbb30a3df9f5ce651d3fcbc022d1690d9c55c498253ccff7b4a8861fc5",
+      "metadata_status": "Original generated PNG unchanged; dimensions and hash verified. Native tile/world review pending.",
+      "import_settings": "Opaque source, linear rendering, CanvasItem normal repeat; full tile spans 512 world pixels.",
+      "acceptance": "Internal development candidate; source-only inspection, native/player approval pending"
     }
   ],
   "code_native_art": {

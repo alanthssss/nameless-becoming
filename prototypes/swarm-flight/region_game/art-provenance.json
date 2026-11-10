@@ -1,0 +1,212 @@
+{
+  "schema": "nameless-region-game-art/v1",
+  "issue": 349,
+  "gdd": [
+    "8.1",
+    "13.9"
+  ],
+  "milestone": "M3",
+  "parent_issue": 322,
+  "scope": "Presentation of current fixed pond/violet collecting grounds plus inherited courtyard; no new map routes, collision, weather or lifecycle rules.",
+  "technical_frame": {
+    "engine": "Godot 4",
+    "design_viewport": [
+      1280,
+      800
+    ],
+    "camera": "two-dimensional world offset; same world coordinates as field model",
+    "filter": "linear with mipmaps",
+    "lighting": "warm upper-left; cool low-contrast shadows",
+    "source_modification": "Two new original opaque PNG material tiles copied byte-for-byte from built-in image_gen. No pixel editing, cropping, resizing or postprocessing. Runtime normal repeat maps each full tile to 512 by 512 world pixels; old painted-scene crops and mirrored/four-way sampling were removed.",
+    "shader_sampling": "One texture(TEXTURE, world_position / 512 + flow) sample directly in fragment(). CanvasItem texture_repeat is enabled. No custom sampler helper or mirrored/cropped samples."
+  },
+  "geometry_contract": "Core turf polygon is the union of authoritative layout capsules and node discs (64 samples per circle). Three low-opacity banks extend 5/11/18 pixels for a soft grass/soil lip; no hard boundary outlines. Collision is unchanged. Shore leaf roots sit 25 pixels inside the actual turf; leaves may overhang. Fixed far landmarks remain off the route. No legacy painted route.",
+  "states": {
+    "flower": {
+      "bud": "curved attached stem with monotonic controls, basal leaves and expanding green-tinted head; deterministic ID-based size/height variation",
+      "ripe": "open painted head, nectar glint and collection arc; fixed ID-based size/height variation",
+      "fading": "brown droop/shrink and falling petals, still collectable",
+      "empty": "root leaves and growing shoot, no nectar"
+    },
+    "material": {
+      "bud": "fiber seed head or resin on rooted woody twig gradually forms",
+      "ripe": "full fiber head / resin on bark, hit marks when nearby",
+      "fading": "weathered fiber head / resin; dropped items show expiry arc",
+      "empty": "rooted stalk/leaves without collectible icon"
+    },
+    "feedback": [
+      "existing bee wing animation and harvest lean",
+      "nectar trail and count",
+      "directional pulse lines and pod recoil",
+      "falling drop bounce and pickup motes",
+      "quiet lifecycle pollen / falling petals"
+    ]
+  },
+  "approval": {
+    "direction": "Reuses the existing approved hand-painted garden family; source records retain their own historical acceptance/rights status.",
+    "new_composition": "Tile source inspection passed for object-free, low-contrast material appearance; native full-map review and runtime checks pending. Direction approval is inherited, not final player acceptance.",
+    "new_generation": true,
+    "new_purchase": false
+  },
+  "assets": [
+    {
+      "path": "art/revision-atlas.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "fa2c315fe44595e9f7d08f489777788f523bf7654cf8af5ae7d5fcf83ec801e8",
+      "use": "bee / blue flower / rooted leaves",
+      "source_record": "art/provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/garden-flora.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "2df7c7a844bd7ab53909eee6adf2667d68e4fd4729e38214d0668158f58f55ef",
+      "use": "violet flower head / distant pond fountain",
+      "source_record": "art/rollout-provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/garden-terrain.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "2e85d0fe6f0c84208676de426bcd3f9eb6b9c48b7f413875844c9bb16d778536",
+      "use": "curved attached flower and material stems",
+      "source_record": "art/rollout-provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/nectar-route-thicket.png",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "sha256": "5b37e4a7001c513b69a86d9151de394d91bb9d48c1b3e67aa750a80e54a95490",
+      "use": "rooted foliage on closed shore inside actual turf; distant landmarks outside route",
+      "source_record": "art/nectar-route-provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/nectar-home-sign.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "f35aaedf71f23cb9fff03f38f28d053ca9f1a008be31937f2b5455dc087a68c0",
+      "use": "supported entry sign",
+      "source_record": "art/nectar-route-provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/nectar-resource-icons.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "f6229b2db7917e02c9e376aa35ff5983c3f60f16e52b4c759b5e9bc4d293a7d6",
+      "use": "fiber icon inside attached pod / dropped pickup",
+      "source_record": "art/nectar-growth-ui-provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/nectar-resin-chunks.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "15b0a48d72b91a9449869d9a368bf76a076d68e503665aff2d7333f380950b57",
+      "use": "solid resin on attached woody twig / dropped pickup",
+      "source_record": "art/nectar-growth-ui-provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/nectar-honey-jar.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "8349e15f79ebfca1a84c28d7ed4325de63a341efdd2cda81b452cb759a0d2dd4",
+      "use": "bee bag attached by straps, inherited courtyard inventory",
+      "source_record": "art/nectar-demo-provenance.json",
+      "collision": "none; layout controls movement"
+    },
+    {
+      "path": "art/region-ground.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "a28ce9e150ac449d1461dde2e3b892aec1c055336fff4b2f75fbcd8ed355bc66",
+      "use": "Fine object-free painted grass/soil tile for both regional collecting grounds",
+      "source_record": "region_game/art-provenance.json#gen-ground",
+      "collision": "none; layout controls movement",
+      "source_path": "/Users/alanthssss/.codex/generated_images/01a1c3f4-fbd3-78e1-998e-389ccaaf1b5b/exec-af39814e-ae4d-4e91-860b-6e13b02196ec.png",
+      "source_bytes": 2307057,
+      "source_unchanged": true
+    },
+    {
+      "path": "art/region-water.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "3c5668bbb30a3df9f5ce651d3fcbc022d1690d9c55c498253ccff7b4a8861fc5",
+      "use": "Fine object-free jade water tile outside the pond bank",
+      "source_record": "region_game/art-provenance.json#gen-water",
+      "collision": "none; layout controls movement",
+      "source_path": "/Users/alanthssss/.codex/generated_images/01a1c3f4-fbd3-78e1-998e-389ccaaf1b5b/exec-a9728ba9-21ea-43ca-91e7-7ef9bcd8674f.png",
+      "source_bytes": 1698525,
+      "source_unchanged": true
+    }
+  ],
+  "feedback_revision": "Two native passes rejected old scene-crop tiling due to visible plants, mirrors and grids. Exactly two purpose-made object-free tiles generated; normal 512px world repeat replaces all scene crop sampling. Soft banks, inside-bank roots and monotonic stems retained.",
+  "generation_calls": [
+    {
+      "id": "gen-ground",
+      "tool": "OpenAI built-in image_gen",
+      "date": "2026-11-10",
+      "mode": "generate",
+      "transparent_background": false,
+      "prompt": "Use case: stylized-concept. Asset type: ONE square seamless repeating 2D game GROUND TEXTURE, opaque, flat overhead view. This is a quiet material swatch, not scenery and not an illustration of a place. Cover the entire square uniformly with very soft finely painted short grass mixed with tiny warm olive soil specks, muted yellow-green and sage-green colors with faint warm ochre undertone. Match a friendly hand-painted gouache garden game with soft sculpted brushwork and warm upper-left illumination, but no directional scene lighting or gradient across the tile. Low contrast. Texture microdetails should read as 1–12 pixels when this whole image repeats every 512 game pixels; all marks are tiny strokes and flecks, never identifiable objects. Subtle fine grass fiber strokes only. Seamlessly tileable on all four edges with even hue and density, no border, no seams, no vignetting, no central motif. Absolutely NO leaves, NO leaf clusters, NO bushes, NO flowers, NO big grass tufts, NO moss islands, NO roots, NO rocks, NO path, NO road, NO shore, NO objects, NO characters, NO text, NO UI, NO shadows of plants, NO mirrored patterns, NO checkerboard, NO large clumps. Do not draw a repeating tile preview; output only the single full-bleed square material texture. Prefer 1024x1024 output.",
+      "references": [],
+      "reference_role": "Existing approved garden colors and soft gouache described in prompt; no images supplied",
+      "source_path": "/Users/alanthssss/.codex/generated_images/01a1c3f4-fbd3-78e1-998e-389ccaaf1b5b/exec-af39814e-ae4d-4e91-860b-6e13b02196ec.png",
+      "output_path": "art/region-ground.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "a28ce9e150ac449d1461dde2e3b892aec1c055336fff4b2f75fbcd8ed355bc66",
+      "source_pixels_unchanged": true,
+      "model_version": "not returned by tool",
+      "server_generation_id": "not returned by tool"
+    },
+    {
+      "id": "gen-water",
+      "tool": "OpenAI built-in image_gen",
+      "date": "2026-11-10",
+      "mode": "generate",
+      "transparent_background": false,
+      "prompt": "Use case: stylized-concept. Asset type: ONE square seamless repeating 2D game WATER SURFACE TEXTURE, opaque, flat overhead view. This is a quiet material swatch, not scenery and not an illustration of a pond. Cover the entire square uniformly with soft muted jade/teal-green clear water, very gentle fine broken pale aqua ripples and subtle hand-painted gouache brush marks. Same warm friendly hand-painted garden-game palette: muted jade midtones, soft turquoise highlights, quiet moss-green depths, no electric cyan. Low contrast with uniform hue and density, no sun hotspot or large lighting gradient. Microdetails should be 1–12 pixels when the entire image repeats every 512 game pixels; no large swirling pattern, no big waves, no wide bands or identifiable shapes. Seamlessly tileable on all four edges, seamless even value, no border or vignette. Absolutely NO shore, NO bank, NO leaves or reflected leaves, NO plant silhouettes or reflected plants, NO flowers, NO lilies, NO pads, NO rocks, NO fish, NO bubbles, NO sky/cloud reflections, NO objects, NO characters, NO letters, NO UI, NO grid, NO mirrored motifs, NO repeating tile preview. Output only the single full-bleed square material texture. Prefer 1024x1024 output.",
+      "references": [],
+      "reference_role": "Existing approved garden colors and soft gouache described in prompt; no images supplied",
+      "source_path": "/Users/alanthssss/.codex/generated_images/01a1c3f4-fbd3-78e1-998e-389ccaaf1b5b/exec-a9728ba9-21ea-43ca-91e7-7ef9bcd8674f.png",
+      "output_path": "art/region-water.png",
+      "actual_dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "3c5668bbb30a3df9f5ce651d3fcbc022d1690d9c55c498253ccff7b4a8861fc5",
+      "source_pixels_unchanged": true,
+      "model_version": "not returned by tool",
+      "server_generation_id": "not returned by tool"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "goal": "nectar-harvest-mvp",
+  "source": "docs/design/swarm-flight-gdd.md",
+  "gdd_section": "13.7 / 13.8; NH-C01–08 / NH-RG01–06 / 13.9 SD-v1 / SD-v1.1 feedback 2026-11-04 / SD-v1.2 living collection 2026-11-04 / SD-v1.4 research adoption 2026-11-05 / 13.9 SD-v1.5 harvest and directional wing actions 2026-11-07 / SD-v1.6 routes and coherent painted UI 2026-11-07 / SD-v1.7 fixed regional resource world 2026-11-10",
+  "claim": "candidate",
+  "entry": "nectar-regions",
+  "save_filename": "nectar_regions_v1.json",
+  "engine": "4.6.2",
+  "criteria": [
+    {
+      "id": "NH-C01",
+      "kind": "technical",
+      "methods": [
+        "native_input"
+      ],
+      "roles": [
+        "input_trace"
+      ],
+      "requirement": "Ordinary input completes harvest, full cargo, sale and purchase with consistent feedback. Return/rescue results show actual kept/lost cargo and retained materials; failed saves do not report purchases, and current-visit recap clears on new departure/restart."
+    },
+    {
+      "id": "NH-C02",
+      "kind": "technical",
+      "methods": [
+        "native_input"
+      ],
+      "roles": [
+        "input_trace"
+      ],
+      "requirement": "Both fixed regions, single-serving flowers, a useful short material branch and far destination are usable through ordinary input. Weather and redundant loops/shortcuts are removed per Alan SD-v1.7. Hub/pond/meadow stay distinct; return lands at the dance gate; sale/growth/departure remain reachable. Flowers and materials visibly grow, mature, fade and replenish during active play; pause/cold resume preserve phases. Growth uses actual purchased upgrades, action ranges and fewer-hit gains remain visible. Harvest selection/partial progress and Q/right-click direction/empty-free/charge-dash precedence remain valid. Collision and resource affordances match scenery. Dance skip/reduced-motion and saving remain valid."
+    },
+    {
+      "id": "NH-C03",
+      "kind": "technical",
+      "methods": [
+        "rules_test"
+      ],
+      "roles": [
+        "rules_log"
+      ],
+      "requirement": "Twelve applicable upgrade purchases (obsolete shortcut removed), economy, reserve completion and invalid/duplicate transactions pass rules checks. Resource conservation, lifecycle, stamina/capacity/harvest growth and strict regional persistence are included. Existing v1–v4 to v5 migration tests still pass; old Nectar and greybox saves remain untouched in their namespaces."
+    },
+    {
+      "id": "NH-C04",
+      "kind": "technical",
+      "methods": [
+        "native_save_restore"
+      ],
+      "roles": [
+        "input_trace",
+        "save_before",
+        "save_after"
+      ],
+      "requirement": "Pause/focus loss clears input; actual shutdown and cold resume preserve current and permanent state without legacy-save interference."
+    },
+    {
+      "id": "NH-C05",
+      "kind": "in_engine_visual",
+      "methods": [
+        "native_visual"
+      ],
+      "roles": [
+        "native_frame"
+      ],
+      "requirement": "Native 960x600 and 1280x800 presentation is readable, coherent and spatially credible. Dance stage supports, art family, field guide and settings are checked at native scales. Home/flower/material waymarks, off-screen return bearing, capacity appearance and sealed home reserve are checked at both scales. Selected flower work/nectar trail, directional gust, carried material loosening/drop/pickup and legible growth detail must agree with the rules. SD16: growth, destination, pause, shop, settings, completion, HUD resources and scene waymarks must share the painted garden family. No geometric hexagon waymark or oversized flat modal may stand in for the requested visual revision."
+    },
+    {
+      "id": "NH-C06",
+      "kind": "content_review",
+      "methods": [
+        "independent_read_only",
+        "independent_interactive"
+      ],
+      "roles": [
+        "review_notes",
+        "continuous_video"
+      ],
+      "requirement": "Complete ordinary-input native media and independent review, with no unresolved basic defect and honest actor/evidence boundaries."
+    },
+    {
+      "id": "NH-C07",
+      "kind": "technical",
+      "methods": [
+        "export_launch"
+      ],
+      "roles": [
+        "exported_input_trace",
+        "save_before",
+        "save_after",
+        "legacy_save_before",
+        "legacy_save_after"
+      ],
+      "requirement": "Same frozen source/export, direct app and maintained command entry, input, save, exit, cold resume and old-save isolation are tested; old-save hashes correspond to retained before/after bytes."
+    },
+    {
+      "id": "NH-C08",
+      "kind": "production_record",
+      "methods": [
+        "production_record"
+      ],
+      "roles": [
+        "production_record"
+      ],
+      "requirement": "Measured effort and unknowns, tracking readback, CI/integration state and candidate-only status are recorded accurately."
+    }
+  ]
+}

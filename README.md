@@ -28,7 +28,7 @@
 
 后续游戏工作评审入口：[Alan 雨水试玩经验 R01–R13](docs/design/commercial-product-requirements.md#rain-playtest-review)，覆盖可读性、真实任务机会、资源语义、互助回应及验证入口；按适用项复核，不将修改完成等同玩家认可。
 
-- [池岸与紫花地可玩灰盒](docs/production/region-greybox-receipt.md)：两区无天气采集地图、密集花丛/材料的生成衰败再生与成长对照，独立于正式采蜜Demo。
+- [池岸与紫花地可玩灰盒](docs/production/region-greybox-receipt.md)：两区无天气采集地图、资源生命周期与成长对照；接续0.28手绘两区完整循环制作及验证记录。
 
 ## 本轮整体试玩：雨水 · 把路走熟
 
