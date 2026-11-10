@@ -654,7 +654,7 @@ func _detail() -> void:
 	detail_preview.mouse_filter = Control.MOUSE_FILTER_PASS
 	detail_preview.queue_redraw()
 	if next.is_empty():
-		var effects := {"gather":"0.8 秒 / 份", "bag":"16 份", "wings":"70 续航", "reach":"采蜜 155 · 振翅 205", "beat":"振翅强度 2\n纤维 1次 · 树脂 2次", "twin":"同时采 2 朵", "meadow":"紫花地已开放", "shortcut":"双向近道已点亮", "market":"售卖 +25%", "reserve":"花蜜已备好"}
+		var effects := {"gather":"0.8 秒 / 份", "bag":"16 份", "wings":"70 续航", "reach":"采蜜 155 · 振翅 205", "beat":"振翅强度 2\n纤维 1次 · 树脂 2次", "twin":"同时采 2 朵", "meadow":"紫花地已开放", "shortcut":"双向近道已点亮", "market":"售卖 +25%", "reserve":"花蜜已备好", "supply":"36 处花源 · 6 处材料\n花再生 10 秒"}
 		detail_effect.text = effects[id]
 		buy_button.text = "✓ 已成长"
 		buy_button.disabled = true
@@ -662,7 +662,7 @@ func _detail() -> void:
 		detail_hint.text = "效果已保留"
 	else:
 		var definition: Dictionary = m.upgrade(next)
-		var effects := {"gather":definition.description,"bag":definition.description,"wings":definition.description,"reach":"采蜜 100 → 155\n振翅 150 → 205","beat":"振翅强度 1 → 2\n纤维：2次 → 1次\n树脂：3次 → 2次","twin":"1 → 2 朵","meadow":"解锁紫花蜜","shortcut":"两片花地直接往返","market":"售卖 +25%","reserve":"备好雨前储粮"}
+		var effects := {"gather":definition.description,"bag":definition.description,"wings":definition.description,"reach":"采蜜 100 → 155\n振翅 150 → 205","beat":"振翅强度 1 → 2\n纤维：2次 → 1次\n树脂：3次 → 2次","twin":"1 → 2 朵","meadow":"解锁紫花蜜","shortcut":"两片花地直接往返","market":"售卖 +25%","reserve":"备好雨前储粮", "supply":definition.description}
 		detail_effect.text = effects[id]
 		detail_effect.tooltip_text = definition.description+("；振翅半径 150 → 205" if id == "reach" else "")
 		detail_effect.mouse_filter = Control.MOUSE_FILTER_PASS

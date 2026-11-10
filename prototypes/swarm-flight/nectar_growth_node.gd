@@ -47,7 +47,11 @@ func _draw() -> void:
 			points.append(center+Vector2(cos(angle)*47,sin(angle)*42)+Vector2(sin(angle*3)*1.5,cos(angle*5)))
 		draw_polyline(points,Color(stroke,.18),7,true)
 		draw_polyline(points,stroke,1.7,true)
-	Art.painted_icon(self,kind,center,30,Color("a9ad94") if muted else Color.WHITE)
+	if kind == "supply":
+		for blossom in [[Vector2(-15,9),"gather"],[Vector2(15,9),"meadow"],[Vector2(0,-14),"gather"]]:
+			Art.painted_icon(self,blossom[1],center+blossom[0],18,Color("a9ad94") if muted else Color.WHITE)
+	else:
+		Art.painted_icon(self,kind,center,30,Color("a9ad94") if muted else Color.WHITE)
 	for i in max_rank:
 		var at := center+Vector2((i-(max_rank-1)*.5)*15,42)
 		draw_circle(at,4.5,Color("a77a32") if i < rank else Color("d9cbae"))

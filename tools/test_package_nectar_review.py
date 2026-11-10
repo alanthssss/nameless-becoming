@@ -291,4 +291,46 @@ class PackageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'overwrite'): self.pack()
         self.assertTrue(self.output.is_symlink())
 
+
+class RegionalPackageTests(unittest.TestCase):
+    """Synthetic declarations exercise the same eight gates for the new entry."""
+    def setUp(self):
+        tool.configure_product('nectar')
+        self.fixture = PackageTests('test_synthetic_candidate_layout_permissions_and_boundaries')
+        self.fixture.setUp()
+        self.addCleanup(self.fixture.doCleanups)
+        self.addCleanup(tool.configure_product,'nectar')
+        tool.configure_product('regions')
+        f = self.fixture
+        f.export_record.update(custom_features=['nectar_regions'],entry=tool.ENTRY,save_filename=tool.SAVE_NAME,
+            launcher_sha256=hashlib.sha256(tool.launcher_text(APP,EXE).encode()).hexdigest())
+        f.mutate('NH-C07',lambda r:r.update(entry=tool.ENTRY,save_filename=tool.SAVE_NAME,launcher_sha256=f.export_record['launcher_sha256']))
+        for row in f.receipt['evidence']:
+            record = tool.read(f.root/row['path'])
+            for artifact in record['artifacts']:
+                if artifact['role'] in {'save_before','save_after'}:
+                    path=f.root/artifact['path']
+                    path.write_text(json.dumps({'synthetic_fixture':True,'id':'nectar-regions','version':2}))
+                    artifact['sha256']=tool.digest(path)
+            (f.root/row['path']).write_text(json.dumps(record))
+            row['sha256']=tool.digest(f.root/row['path'])
+    def test_regional_package_uses_all_existing_quality_gates(self):
+        f=self.fixture
+        result=f.pack()
+        self.assertEqual(result['claim'],'candidate')
+        with zipfile.ZipFile(f.output) as archive:
+            launcher=next(n for n in archive.namelist() if n.endswith('.command'))
+            text=archive.read(launcher).decode()
+            self.assertIn('BeforeTheRain-Regions/nectar_regions_v2.json',text)
+            self.assertIn('--nectar-regions',text)
+    def test_regional_export_rejects_legacy_entry(self):
+        self.fixture.export_record['entry']='nectar-harvest'
+        self.fixture.blocked('wrong entry')
+    def test_regional_export_still_requires_continuous_video(self):
+        self.fixture.mutate('NH-C06',lambda r:r.update(artifacts=[a for a in r['artifacts'] if a['role']!='continuous_video']))
+        self.fixture.blocked('continuous_video')
+    def test_regional_export_rejects_missing_native_cold_resume(self):
+        self.fixture.mutate('NH-C07',lambda r:r['checks'].update(cold_resume='not_run'))
+        self.fixture.blocked('cold-resume')
+
 if __name__ == '__main__': unittest.main()

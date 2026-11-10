@@ -10,6 +10,7 @@ const NODES := [
 	{"id":"bag","title":"蜜囊容量","ranks":["bag1","bag2"],"group":1,"at":Vector2(.17,.79)},
 	{"id":"wings","title":"双翼续航","ranks":["wings1","wings2"],"group":1,"at":Vector2(.46,.79)},
 	{"id":"meadow","title":"紫花地","ranks":["meadow"],"group":2,"at":Vector2(.81,.10)},
+	{"id":"supply","title":"花地繁盛","ranks":["supply1","supply2"],"group":2,"at":Vector2(.81,.37)},
 	{"id":"shortcut","title":"叶间近道","ranks":["shortcut"],"group":2,"at":Vector2(.81,.37)},
 	{"id":"market","title":"好口碑","ranks":["market"],"group":2,"at":Vector2(.81,.64)},
 	{"id":"reserve","title":"备好花蜜","ranks":["reserve"],"group":3,"at":Vector2(.81,.91)}
@@ -54,7 +55,8 @@ func next_id(id: String) -> String:
 	return "" if level >= data.ranks.size() else str(data.ranks[level])
 
 func is_revealed(id: String) -> bool:
-	if rank_of(id) > 0 or id in ["gather","bag","meadow","reserve"]: return true
+	if model != null and model.upgrade(str(definition(id).ranks[0])).is_empty(): return false
+	if rank_of(id) > 0 or id in ["gather","bag","meadow","reserve","supply"]: return true
 	match id:
 		"wings": return "gather1" in model.owned or "bag1" in model.owned
 		"reach", "beat": return "gather1" in model.owned
