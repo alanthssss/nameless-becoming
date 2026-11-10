@@ -78,7 +78,7 @@ func verify(region: String) -> void:
 	check(stopped.x >= entry.x-Layout.ROOM_RADIUS,region+" vegetation stops outward dash")
 
 func verify_supply_anchors(layout: Dictionary, label: String) -> void:
-	check(layout.clusters.size() == 6,label+" six compact flower clusters")
+	check(layout.clusters.size() == 12,label+" twelve closely spaced flower clusters")
 	var counts := {"near":0,"middle":0,"far":0}
 	for i in layout.clusters.size():
 		var cluster: Dictionary = layout.clusters[i]
@@ -87,22 +87,22 @@ func verify_supply_anchors(layout: Dictionary, label: String) -> void:
 		if i == 0:
 			check(cluster.anchors.size() == 1,label+" first flowers stay predictable")
 			var entry: Vector2 = layout.nodes[0].p
-			check(entry.distance_to(cluster.anchors[0]) < 400.0 and entry.distance_to(cluster.anchors[0]) > 220.0,label+" first flower visible outside return zone")
+			check(entry.distance_to(cluster.anchors[0]) < 400.0 and entry.distance_to(cluster.anchors[0]) > 125.0,label+" first flower visible beside entry")
 		else:
 			check(cluster.anchors.size() > 1,label+" later clusters permit small position changes")
 		for anchor in cluster.anchors:
-			# All proposed 30px flower offsets plus collection/body clearance
+			# All proposed 45px flower offsets plus collection/body clearance
 			# remain in the same visible geometry, including anchor extremes.
 			for angle in 12:
-				var at: Vector2 = anchor+Vector2.from_angle(float(angle)/12.0*TAU)*30.0
+				var at: Vector2 = anchor+Vector2.from_angle(float(angle)/12.0*TAU)*45.0
 				check(Layout.walkable(layout,at,Layout.BODY_RADIUS+45.0),label+" flower offset has approach clearance")
 			if i > 0:
 				for previous in layout.clusters[i-1].anchors:
 					var seconds: float = previous.distance_to(anchor)/230.0
-					check(seconds >= 1.45 and seconds <= 3.0,label+" successive clusters avoid long empty links")
-	check(counts == {"near":4,"middle":6,"far":6},label+" supply budgets are 4/6/6")
-	check(layout.material_spawns.size() == 2,label+" two guaranteed material habitats")
-	check(layout.material_spawns[0].node == 4 and layout.material_spawns[1].node == 3,label+" material pocket and far goal")
+					check(seconds >= 0.70 and seconds <= 1.05,label+" successive clusters stay roughly 170–190px apart")
+	check(counts == {"near":12,"middle":12,"far":12},label+" 36 flower sites span all three bands")
+	check(layout.material_spawns.size() == 6,label+" six distributed material habitats")
+	check(layout.material_spawns[0].node == 1 and layout.material_spawns[1].node == 2 and layout.material_spawns[2].node == 4 and layout.material_spawns[3].node == 4 and layout.material_spawns[4].node == 3 and layout.material_spawns[5].node == 3,label+" near/middle materials plus two branch and two far sites")
 	for item in layout.material_spawns:
 		for angle in 16:
 			var approach: Vector2 = item.p+Vector2.from_angle(float(angle)/16.0*TAU)*70.0

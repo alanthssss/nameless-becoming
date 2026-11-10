@@ -11,7 +11,7 @@ var region_select: OptionButton
 var keep_layout: CheckButton
 var resume_button: Button
 var last_seed := 0
-var save_path := "user://region_greybox/resource-trip-v2.dat"
+var save_path := "user://region_greybox/resource-trip-v3.dat"
 var growth_select: OptionButton
 var setup_panel: Control
 var result_panel: Control
@@ -23,7 +23,7 @@ var hint: Label
 var result_text: Label
 var clock := 0.0
 var _recorded := false
-var session_log := "user://region_greybox/resource-sessions-v2.jsonl"
+var session_log := "user://region_greybox/resource-sessions-v3.jsonl"
 
 func _ready() -> void:
 	font.font_names = PackedStringArray(["PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", "sans-serif"])
@@ -112,32 +112,41 @@ func _build_ui() -> void:
 	hud_box.add_child(energy_bar)
 	hint = _label("", 19)
 	hud_box.add_child(hint)
-	var help := _label("WASD / 方向键移动 · E / 左键采蜜 · 入口 E 返回 · Q / 右键振翅 · 空格冲刺 · M 看图 · 浅色可飞", 18)
+	var help := _label("WASD / 方向键移动 · E / 左键采蜜 · 入口 E 返回 · Q / 右键振翅 · 空格冲刺 · M 看图", 18)
 	help.add_theme_constant_override("outline_size", 4)
 	help.add_theme_color_override("font_outline_color", Color("20372e"))
 	root.add_child(help)
 	help.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	help.offset_left = 20
-	help.offset_top = -38
+	help.offset_top = -61
 	help.offset_right = 1260
-	help.offset_bottom = -6
+	help.offset_bottom = -30
+	var lifecycle_help := _label("资源：小芽生长 → 盛开可采 → 褐色将谢 → 空圈再生；材料掉落后及时拾取", 17)
+	lifecycle_help.add_theme_constant_override("outline_size", 4)
+	lifecycle_help.add_theme_color_override("font_outline_color", Color("20372e"))
+	root.add_child(lifecycle_help)
+	lifecycle_help.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	lifecycle_help.offset_left = 20
+	lifecycle_help.offset_top = -32
+	lifecycle_help.offset_right = 1260
+	lifecycle_help.offset_bottom = -6
 	setup_panel = _panel(root, 680, 600)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)
 	setup_panel.add_child(box)
 	box.add_child(_label("池岸与紫花地 · 可玩灰盒", 29))
 	box.add_child(_label("沿花丛深入，采蜜、取材，再返回入口。", 21))
-	box.add_child(_label("地形固定；每次出发，花丛位置略有变化。", 19))
+	box.add_child(_label("沿途花丛与材料会生长、成熟、衰败，再次补充。", 19))
 	region_select = _choices(["池岸 · 蓝蜜与纤维", "紫花地 · 紫蜜与树脂"])
 	keep_layout = CheckButton.new()
-	keep_layout.text = "保留上趟花丛位置，对比成长"
+	keep_layout.text = "保留上趟资源分布，对比成长"
 	keep_layout.add_theme_font_override("font", font)
 	keep_layout.add_theme_font_size_override("font_size", 19)
 	growth_select = _choices(["成长前 · 体力36 / 容量6 / 采蜜1.8秒", "成长后 · 体力70 / 容量16 / 双采0.8秒"])
 	box.add_child(region_select)
 	box.add_child(growth_select)
 	box.add_child(keep_layout)
-	box.add_child(_label("方向键或 WASD 移动；靠近花按住 E 采蜜。\n材料点按 Q 振翅，松落后靠近拾取。\n体力耗尽会结束本趟；Esc 可暂停。", 19))
+	box.add_child(_label("方向键或 WASD 移动；靠近花按住 E 采蜜。\n成熟材料按 Q 振翅，松落后及时靠近拾取。\n体力耗尽会结束本趟；Esc 可暂停。", 19))
 	box.add_child(_button("出发", start_trip))
 	resume_button = _button("继续上次保存的出行", _resume_saved)
 	box.add_child(resume_button)
@@ -302,7 +311,7 @@ func _record() -> void:
 	if file:
 		file.seek_end()
 		var data: Dictionary = model.summary()
-		data["build"] = "resource-greybox-0.2.1"
+		data["build"] = "resource-greybox-0.3.0"
 		data["observed_at"] = Time.get_datetime_string_from_system()
 		file.store_line(JSON.stringify(data))
 
@@ -328,20 +337,43 @@ func _draw() -> void:
 			draw_circle(center, 62, Color("86aa85"))
 			draw_string(font, center + Vector2(-75, 8), "E 返回", HORIZONTAL_ALIGNMENT_CENTER, 150, 22, Color("203d34"))
 	for flower in model.flowers:
-		if flower.stock <= 0:
-			draw_circle(flower.p, 7, Color("a2a38c"))
-			draw_arc(flower.p, 13, -PI / 2, -PI / 2 + float(flower.regrow) / model.REGROW_SECONDS * TAU, 18, Color("a6ad89"), 2, true)
-			continue
+		var life: String = flower.phase
+		var ratio: float = model.phase_ratio(flower)
 		var color := Color("89b7d4") if model.region == "pond" else Color("ab86cb")
-		draw_circle(flower.p, 15, color)
-		draw_circle(flower.p, 5, Color("faf0bf"))
-		if flower.progress > 0: draw_arc(flower.p, 22, -PI / 2, -PI / 2 + flower.progress * TAU, 22, Color("f4ba48"), 4, true)
+		if life == "empty":
+			draw_arc(flower.p, 9, 0, TAU, 16, Color("777d68"), 1.5, true)
+			draw_arc(flower.p, 13, -PI / 2, -PI / 2 + ratio * TAU, 18, Color("889c70"), 2, true)
+		elif life == "bud":
+			var radius := lerpf(4, 11, ratio)
+			draw_line(flower.p + Vector2(0, 12), flower.p, Color("627d50"), 3, true)
+			draw_circle(flower.p, radius, Color("91ad73"))
+			draw_line(flower.p + Vector2(-7, 7), flower.p + Vector2(7, 7), Color("627d50"), 2, true)
+		else:
+			var radius := 15.0 if life == "ripe" else lerpf(15, 7, ratio)
+			if life == "fading": color = color.lerp(Color("97734d"), 0.5 + ratio * 0.5)
+			draw_circle(flower.p, radius, color)
+			draw_circle(flower.p, 5, Color("faf0bf") if life == "ripe" else Color("bba47b"))
+			if life == "fading": draw_arc(flower.p, 19, -PI / 2, -PI / 2 + (1-ratio) * TAU, 20, Color("80542f"), 2, true)
+			if flower.progress > 0: draw_arc(flower.p, 23, -PI / 2, -PI / 2 + flower.progress * TAU, 22, Color("f4ba48"), 4, true)
 	for item in model.materials:
-		if item.taken:
-			draw_rect(Rect2(item.anchor - Vector2.ONE * 10, Vector2.ONE * 20), Color("a2a38c"), false, 2)
-			continue
-		draw_rect(Rect2(item.p - Vector2.ONE * 13, Vector2.ONE * 26), Color("cc9b64") if item.dropped else Color("927b61"))
-		draw_string(font, item.p + Vector2(-45, -27), "拾取" if item.dropped else "Q 材料", HORIZONTAL_ALIGNMENT_CENTER, 90, 18, Color("3c483b"))
+		var life: String = item.phase
+		var ratio: float = model.phase_ratio(item)
+		var center: Vector2 = item.p
+		var label := "Q 取材"
+		if life == "empty":
+			draw_rect(Rect2(center - Vector2.ONE * 10, Vector2.ONE * 20), Color("777d68"), false, 1.5)
+			draw_arc(center, 17, -PI / 2, -PI / 2 + ratio * TAU, 18, Color("889c70"), 2, true)
+			label = "再生中"
+		elif life == "bud":
+			var half := lerpf(4, 13, ratio)
+			draw_rect(Rect2(center - Vector2.ONE * half, Vector2.ONE * half * 2), Color("91ad73"), false, 3)
+			label = "生长中"
+		else:
+			var half := 13.0 if life == "ripe" else lerpf(13, 8, ratio)
+			draw_rect(Rect2(center - Vector2.ONE * half, Vector2.ONE * half * 2), Color("cc9b64") if item.dropped else Color("927b61") if life == "ripe" else Color("8c684a"))
+			if life == "fading": draw_arc(center, 20, -PI / 2, -PI / 2 + (1-ratio) * TAU, 22, Color("80542f"), 2, true)
+			label = "拾取 · 将散" if item.dropped else "Q · 将败" if life == "fading" else "Q 取材"
+		draw_string(font, center + Vector2(-50, -27), label, HORIZONTAL_ALIGNMENT_CENTER, 100, 17, Color("3c483b"))
 	var bee: Vector2 = model.p
 	draw_circle(bee + Vector2(-10, -9), 12, Color("ecf2df"))
 	draw_circle(bee + Vector2(10, -9), 12, Color("ecf2df"))

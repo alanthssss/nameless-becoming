@@ -17,7 +17,7 @@ const NODE_DATA := {
 	]
 }
 const EDGES := [Vector2i(0,1),Vector2i(1,2),Vector2i(2,3),Vector2i(2,4)]
-const CLUSTER_X := [480.0,825.0,1170.0,1515.0,1860.0,2205.0]
+const CLUSTER_X := [400.0,570.0,740.0,910.0,1080.0,1250.0,1420.0,1590.0,1760.0,1930.0,2100.0,2270.0]
 
 static func build(region: String) -> Dictionary:
 	assert(region in NODE_DATA, "Unknown greybox region")
@@ -36,19 +36,23 @@ static func build(region: String) -> Dictionary:
 	var clusters: Array[Dictionary] = []
 	for i in CLUSTER_X.size():
 		var x: float = CLUSTER_X[i]
-		var edge_index := 0 if i < 2 else 1 if i < 4 else 2
+		var edge_index := 0 if x <= nodes[1].p.x else 1 if x <= nodes[2].p.x else 2
 		var a: Vector2 = paths[edge_index][0]
 		var b: Vector2 = paths[edge_index][1]
-		var centre := a.lerp(b,clampf((x-a.x)/(b.x-a.x),0.0,1.0))
+		var centre := a.lerp(b,(x-a.x)/(b.x-a.x))
 		var anchors: Array[Vector2] = [centre]
 		if i > 0:
 			anchors.append(centre+Vector2(0,-35))
 			anchors.append(centre+Vector2(0,35))
-		clusters.append({"band":"near" if i < 2 else "middle" if i < 4 else "far",
-			"node":1 if i < 2 else 2 if i < 4 else 3,"count":2 if i < 2 else 3,"anchors":anchors})
+		clusters.append({"band":"near" if i < 4 else "middle" if i < 8 else "far",
+			"node":1 if i < 4 else 2 if i < 8 else 3,"count":3,"anchors":anchors})
 	var material_spawns: Array[Dictionary] = [
-		{"p":nodes[4].p,"node":4,"band":"middle"},
-		{"p":nodes[3].p+Vector2(70,55 if region == "pond" else -55),"node":3,"band":"far"}
+		{"p":nodes[1].p+Vector2(-80,-100),"node":1,"band":"near"},
+		{"p":nodes[2].p+Vector2(-230,-50),"node":2,"band":"middle"},
+		{"p":nodes[4].p+Vector2(-55,0),"node":4,"band":"branch"},
+		{"p":nodes[4].p+Vector2(55,0),"node":4,"band":"branch"},
+		{"p":nodes[3].p+Vector2(-40,-75),"node":3,"band":"far"},
+		{"p":nodes[3].p+Vector2(80,55),"node":3,"band":"far"}
 	]
 	# Bounds include every rendered cap, including the smaller side pocket.
 	var low := Vector2(INF,INF)
