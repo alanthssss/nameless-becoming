@@ -112,8 +112,7 @@ func _build_ui() -> void:
 	hud_box.add_child(energy_bar)
 	hint = _label("", 19)
 	hud_box.add_child(hint)
-	hud_box.add_child(_label("浅色地面可飞 · 深色为实体灌木 · 空花逐渐蓄满花蜜", 17))
-	var help := _label("移动 WASD / 方向键   E / 左键采蜜 · 入口按 E 返回   Q / 右键振翅   空格蓄力冲刺   M 已探索图", 18)
+	var help := _label("WASD / 方向键移动 · E / 左键采蜜 · 入口 E 返回 · Q / 右键振翅 · 空格冲刺 · M 看图 · 浅色可飞", 18)
 	help.add_theme_constant_override("outline_size", 4)
 	help.add_theme_color_override("font_outline_color", Color("20372e"))
 	root.add_child(help)
@@ -153,7 +152,7 @@ func _build_ui() -> void:
 	results.add_child(result_scroll)
 	result_text = _label("", 21)
 	result_scroll.add_child(result_text)
-	results.add_child(_button("再出发 · 新一批花丛", start_trip))
+	results.add_child(_button("再出发", start_trip))
 	results.add_child(_button("更换区域 / 成长", _show_setup))
 	results.add_child(_button("退出灰盒", func(): get_tree().quit()))
 	result_panel.hide()
@@ -303,7 +302,7 @@ func _record() -> void:
 	if file:
 		file.seek_end()
 		var data: Dictionary = model.summary()
-		data["build"] = "resource-greybox-0.2.0"
+		data["build"] = "resource-greybox-0.2.1"
 		data["observed_at"] = Time.get_datetime_string_from_system()
 		file.store_line(JSON.stringify(data))
 

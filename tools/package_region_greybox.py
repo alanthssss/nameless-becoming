@@ -65,8 +65,8 @@ script_export_mode=2
 [preset.0.options]
 binary_format/architecture="universal"
 application/bundle_identifier="com.alanthssss.regiongreybox.resources"
-application/short_version="0.2.0"
-application/version="0.2.0"
+application/short_version="0.2.1"
+application/version="0.2.1"
 application/signature="RegionGreybox"
 codesign/codesign=0
 codesign/entitlements/app_sandbox/enabled=false
