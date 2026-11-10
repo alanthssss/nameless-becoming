@@ -1,0 +1,39 @@
+{
+  "agent_intervals_utc": [
+    {
+      "scope": "geometry",
+      "start": "2026-11-10 05:36:32",
+      "end": "2026-11-10 05:39:00"
+    },
+    {
+      "scope": "model/main review",
+      "start": "2026-11-10 05:39:40",
+      "end": "2026-11-10 05:40:26"
+    },
+    {
+      "scope": "0.2.0 package review",
+      "start": "2026-11-10 05:59:21",
+      "end": "2026-11-10 05:59:55"
+    },
+    {
+      "scope": "lifecycle implementation",
+      "start": "2026-11-10 06:08:26",
+      "end": "2026-11-10 06:14:53"
+    },
+    {
+      "scope": "final independent review",
+      "start": "2026-11-10 06:31:04",
+      "end": "2026-11-10 06:31:38"
+    }
+  ],
+  "main_recorded_start_utc": "2026-11-10 05:35:06",
+  "feedback_revision_start_utc": "2026-11-10 06:07:35",
+  "active_hours": null,
+  "billed_usage": null,
+  "historical_total": null,
+  "reliable_remaining": null,
+  "cash_purchases": 0,
+  "image_generation_calls": 0,
+  "budget_control_hours": "200 + 40, unchanged",
+  "automation": "PAUSED"
+}

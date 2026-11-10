@@ -2,7 +2,7 @@
 
 2026-11-09；GDD§8.1／§13.9 → M3 → [#322](https://github.com/alanthssss/nameless-becoming/issues/322)，沿 Draft PR336。只用[既有地图研究](https://github.com/alanthssss/nameless-becoming/blob/bcf38cc3a1bc79b54d9758566b1cad65c90403cc/docs/research/exploration-map-atlas.md)及[现行采蜜规则](nectar-steam-demo.md)，未追加网页、视频或原作研究，未改游戏。
 
-> 后续授权：Alan已要求把两图实施为可玩灰盒。实验入口、尺寸与测量见[本轮回执](../production/region-greybox-receipt.md)；下文“只交图”描述保留为绘图时的历史边界。
+> 历史图稿：8景段、天气和多回路已被后续无天气简化方案替代。当前执行见[地图与资源设计](pond-violet-map-resource-design.md)及[灰盒回执](../production/region-greybox-receipt.md)；下文保留原图与当时边界。
 
 ## 设计结论
 

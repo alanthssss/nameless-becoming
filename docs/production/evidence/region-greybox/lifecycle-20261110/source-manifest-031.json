@@ -1,0 +1,27 @@
+{
+  "type": "internal_playable_greybox",
+  "commit": "8dc527b5fa2490564a56b33a357415233ad116d9",
+  "save_namespace": "BeforeTheRain-RegionGreybox-v3",
+  "packager_sha256": "11217fdc9767b59c93f869774a2cf799099cee6e86068f2988f6be20e2d4d153",
+  "generated_configs": {
+    "project.godot": "a54c9ea71ab3e6412bb4227da136b8b40aa2949ca6f4b4857f82b213b8785110",
+    "export_presets.cfg": "f122d61923bc6fab4006e3bf57525dc0e07c78a6833cfd6d4149df9adf03413c"
+  },
+  "files": {
+    "leaf_canopy_geometry.gd": "ed12a94bc3a2813a0ea9a835ab056ed434f0b9fe33e54f3e8cc77e5138ad92cf",
+    "nectar_encounters.gd": "e868abb4729e52176986e61e0ed2d7258272554ae62abd5f3d70c45381174b12",
+    "nectar_harvest_model.gd": "399a33c4ed5e9280c2dd188e273846ae59d52f84838ea39b1c16dd55c7e20b10",
+    "nectar_legacy_encounters_v3.gd": "6cebd4e6f4e0beb8394def5399cfb7034223c385dd6c8080610c15d7ce5e1a7d",
+    "nectar_legacy_encounters_v4.gd": "51f1399139fb6ab47938b46ec3247063d998b3e775f852e1505044c351a2c88b",
+    "nectar_legacy_model_v2.gd": "1eba967955ec509c9c66897f6f6020b3c87acf253d9a71149de2f7e8441e7d8d",
+    "nectar_legacy_model_v3.gd": "2340dbea6ad10c41853ef07cdbe771664a492745f676aca7f00e3089a14c8562",
+    "nectar_legacy_model_v4.gd": "d3a26be642aeb2fdbe328ec078c014bf15dbad2ac16f5d5f3e4f66d4cc497109",
+    "nectar_map.gd": "c6b479611089bd825a02cb6f180e3134c3f27be930a34705371b5f51c103095b",
+    "region_greybox/greybox.tscn": "846c168dfeb2c590633578bc39855082926927d1919b0153af600eb78740a03b",
+    "region_greybox/layout.gd": "0212679da0a264bf914c4569f78a7e50e70e4ce25e2c511c636888960cfffbb4",
+    "region_greybox/main.gd": "0732a11bd4c83bf3dacfddc4603d4478b2ef6619d736d5bc13cc52ab310b8ce4",
+    "region_greybox/model.gd": "7c4f7b22c50306c0466ed77ef8ef39ad33b56c3fca2c491e5afb714f9e5333ee"
+  },
+  "launcher_sha256": "596e98e530f2c8a24d1fb9c1dfe249bc1cc30782fbbbf3ec22835de666b035c9",
+  "zip_sha256": "9a8d4c827a1966492c3839e731f7e0f42e1c42f2802693d549c639e924e964f8"
+}

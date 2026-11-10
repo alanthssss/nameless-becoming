@@ -1,0 +1,1818 @@
+{
+  "purpose": "Expired drop prompt corrected, final export launch and full return; zero cargo intentional",
+  "raw_session": {
+    "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+    "build": "resource-greybox-0.3.1",
+    "capacity": 6,
+    "cargo": 0,
+    "collision_seconds": 0.0,
+    "distance_px": 1245.8,
+    "elapsed_seconds": 25.41,
+    "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+    "energy_left": 14.45,
+    "energy_start": 36.0,
+    "events": [
+      {
+        "id": 2,
+        "kind": "flower_empty",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 7,
+        "kind": "flower_fading",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 8,
+        "kind": "flower_bud",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 14,
+        "kind": "flower_empty",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 19,
+        "kind": "flower_fading",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 20,
+        "kind": "flower_bud",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 26,
+        "kind": "flower_empty",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 31,
+        "kind": "flower_fading",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 32,
+        "kind": "flower_bud",
+        "t": 1.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 11,
+        "kind": "flower_ripe",
+        "t": 2.01,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 23,
+        "kind": "flower_ripe",
+        "t": 2.01,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 35,
+        "kind": "flower_ripe",
+        "t": 2.01,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 3,
+        "kind": "material_empty",
+        "t": 3.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 5,
+        "kind": "material_empty",
+        "t": 3.0,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "id": 4,
+        "kind": "flower_fading",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 5,
+        "kind": "flower_bud",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 10,
+        "kind": "flower_empty",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 16,
+        "kind": "flower_fading",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 17,
+        "kind": "flower_bud",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 22,
+        "kind": "flower_empty",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 28,
+        "kind": "flower_fading",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 29,
+        "kind": "flower_bud",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 34,
+        "kind": "flower_empty",
+        "t": 4.0,
+        "x": 384.0,
+        "y": 700.0
+      },
+      {
+        "id": 8,
+        "kind": "flower_ripe",
+        "t": 5.0,
+        "x": 612.5,
+        "y": 700.0
+      },
+      {
+        "id": 20,
+        "kind": "flower_ripe",
+        "t": 5.0,
+        "x": 612.5,
+        "y": 700.0
+      },
+      {
+        "id": 32,
+        "kind": "flower_ripe",
+        "t": 5.0,
+        "x": 612.5,
+        "y": 700.0
+      },
+      {
+        "id": 0,
+        "kind": "material_hit",
+        "t": 6.02,
+        "x": 634.6,
+        "y": 494.4
+      },
+      {
+        "id": 0,
+        "kind": "material_hit",
+        "t": 6.58,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 0,
+        "kind": "material_dropped",
+        "t": 6.58,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 1,
+        "kind": "flower_fading",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 2,
+        "kind": "flower_bud",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 7,
+        "kind": "flower_empty",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 13,
+        "kind": "flower_fading",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 14,
+        "kind": "flower_bud",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 19,
+        "kind": "flower_empty",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 25,
+        "kind": "flower_fading",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 26,
+        "kind": "flower_bud",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 31,
+        "kind": "flower_empty",
+        "t": 7.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 5,
+        "kind": "flower_ripe",
+        "t": 8.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 17,
+        "kind": "flower_ripe",
+        "t": 8.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 29,
+        "kind": "flower_ripe",
+        "t": 8.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 9,
+        "kind": "flower_fading",
+        "t": 9.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 21,
+        "kind": "flower_fading",
+        "t": 9.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 33,
+        "kind": "flower_fading",
+        "t": 9.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 4,
+        "kind": "flower_empty",
+        "t": 10.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 10,
+        "kind": "flower_bud",
+        "t": 10.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 16,
+        "kind": "flower_empty",
+        "t": 10.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 22,
+        "kind": "flower_bud",
+        "t": 10.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 28,
+        "kind": "flower_empty",
+        "t": 10.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 34,
+        "kind": "flower_bud",
+        "t": 10.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 2,
+        "kind": "flower_ripe",
+        "t": 11.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 14,
+        "kind": "flower_ripe",
+        "t": 11.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 26,
+        "kind": "flower_ripe",
+        "t": 11.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 6,
+        "kind": "flower_fading",
+        "t": 12.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 18,
+        "kind": "flower_fading",
+        "t": 12.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 30,
+        "kind": "flower_fading",
+        "t": 12.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 1,
+        "kind": "flower_empty",
+        "t": 13.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 7,
+        "kind": "flower_bud",
+        "t": 13.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 13,
+        "kind": "flower_empty",
+        "t": 13.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 19,
+        "kind": "flower_bud",
+        "t": 13.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 25,
+        "kind": "flower_empty",
+        "t": 13.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 31,
+        "kind": "flower_bud",
+        "t": 13.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 10,
+        "kind": "flower_ripe",
+        "t": 14.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 22,
+        "kind": "flower_ripe",
+        "t": 14.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 34,
+        "kind": "flower_ripe",
+        "t": 14.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 3,
+        "kind": "flower_fading",
+        "t": 15.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 9,
+        "kind": "flower_empty",
+        "t": 15.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 15,
+        "kind": "flower_fading",
+        "t": 15.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 21,
+        "kind": "flower_empty",
+        "t": 15.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 27,
+        "kind": "flower_fading",
+        "t": 15.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 33,
+        "kind": "flower_empty",
+        "t": 15.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 1,
+        "kind": "material_fading",
+        "t": 16.0,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 4,
+        "kind": "flower_bud",
+        "t": 16.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 16,
+        "kind": "flower_bud",
+        "t": 16.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 28,
+        "kind": "flower_bud",
+        "t": 16.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 7,
+        "kind": "flower_ripe",
+        "t": 17.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 19,
+        "kind": "flower_ripe",
+        "t": 17.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 31,
+        "kind": "flower_ripe",
+        "t": 17.02,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 0,
+        "kind": "flower_fading",
+        "t": 18.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 6,
+        "kind": "flower_empty",
+        "t": 18.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 12,
+        "kind": "flower_fading",
+        "t": 18.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 18,
+        "kind": "flower_empty",
+        "t": 18.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 24,
+        "kind": "flower_fading",
+        "t": 18.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 30,
+        "kind": "flower_empty",
+        "t": 18.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 0,
+        "kind": "material_empty",
+        "t": 18.59,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 1,
+        "kind": "flower_bud",
+        "t": 19.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 13,
+        "kind": "flower_bud",
+        "t": 19.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 25,
+        "kind": "flower_bud",
+        "t": 19.03,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 11,
+        "kind": "flower_fading",
+        "t": 20.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 23,
+        "kind": "flower_fading",
+        "t": 20.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 35,
+        "kind": "flower_fading",
+        "t": 20.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 4,
+        "kind": "flower_ripe",
+        "t": 20.04,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 16,
+        "kind": "flower_ripe",
+        "t": 20.04,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 28,
+        "kind": "flower_ripe",
+        "t": 20.04,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 3,
+        "kind": "flower_empty",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 9,
+        "kind": "flower_bud",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 15,
+        "kind": "flower_empty",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 21,
+        "kind": "flower_bud",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 27,
+        "kind": "flower_empty",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 33,
+        "kind": "flower_bud",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 3,
+        "kind": "material_bud",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 5,
+        "kind": "material_bud",
+        "t": 21.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 1,
+        "kind": "material_empty",
+        "t": 22.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 2,
+        "kind": "material_fading",
+        "t": 22.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 4,
+        "kind": "material_fading",
+        "t": 22.01,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "id": 8,
+        "kind": "flower_fading",
+        "t": 23.0,
+        "x": 635.9,
+        "y": 558.6
+      },
+      {
+        "id": 20,
+        "kind": "flower_fading",
+        "t": 23.0,
+        "x": 635.9,
+        "y": 558.6
+      },
+      {
+        "id": 32,
+        "kind": "flower_fading",
+        "t": 23.0,
+        "x": 635.9,
+        "y": 558.6
+      },
+      {
+        "id": 1,
+        "kind": "flower_ripe",
+        "t": 23.03,
+        "x": 635.9,
+        "y": 564.4
+      },
+      {
+        "id": 13,
+        "kind": "flower_ripe",
+        "t": 23.03,
+        "x": 635.9,
+        "y": 564.4
+      },
+      {
+        "id": 25,
+        "kind": "flower_ripe",
+        "t": 23.03,
+        "x": 635.9,
+        "y": 564.4
+      },
+      {
+        "id": 0,
+        "kind": "flower_empty",
+        "t": 24.02,
+        "x": 537.9,
+        "y": 689.0
+      },
+      {
+        "id": 6,
+        "kind": "flower_bud",
+        "t": 24.02,
+        "x": 537.9,
+        "y": 689.0
+      },
+      {
+        "id": 12,
+        "kind": "flower_empty",
+        "t": 24.02,
+        "x": 537.9,
+        "y": 689.0
+      },
+      {
+        "id": 18,
+        "kind": "flower_bud",
+        "t": 24.02,
+        "x": 537.9,
+        "y": 689.0
+      },
+      {
+        "id": 24,
+        "kind": "flower_empty",
+        "t": 24.02,
+        "x": 537.9,
+        "y": 689.0
+      },
+      {
+        "id": 30,
+        "kind": "flower_bud",
+        "t": 24.02,
+        "x": 537.9,
+        "y": 689.0
+      },
+      {
+        "id": 9,
+        "kind": "flower_ripe",
+        "t": 25.02,
+        "x": 305.6,
+        "y": 689.0
+      },
+      {
+        "id": 21,
+        "kind": "flower_ripe",
+        "t": 25.02,
+        "x": 305.6,
+        "y": 689.0
+      },
+      {
+        "id": 33,
+        "kind": "flower_ripe",
+        "t": 25.02,
+        "x": 305.6,
+        "y": 689.0
+      },
+      {
+        "id": 3,
+        "kind": "material_ripe",
+        "t": 25.02,
+        "x": 305.6,
+        "y": 689.0
+      },
+      {
+        "id": 5,
+        "kind": "material_ripe",
+        "t": 25.02,
+        "x": 305.6,
+        "y": 689.0
+      },
+      {
+        "id": -1,
+        "kind": "returned",
+        "t": 25.41,
+        "x": 216.2,
+        "y": 689.0
+      }
+    ],
+    "growth": 0,
+    "harvest_seconds": 0.0,
+    "longest_actionless_flight_seconds": 2.9,
+    "longest_empty_flight_seconds": 0.0,
+    "materials": 0,
+    "observed_at": "2026-11-10T14:33:24",
+    "region": "pond",
+    "result": "returned",
+    "schema": 3,
+    "seed": 992985388,
+    "trace": [
+      {
+        "cargo": 0,
+        "energy": 35.99,
+        "materials": 0,
+        "t": 0.01,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 35.85,
+        "materials": 0,
+        "t": 0.26,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 35.69,
+        "materials": 0,
+        "t": 0.51,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 35.54,
+        "materials": 0,
+        "t": 0.76,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 35.4,
+        "materials": 0,
+        "t": 1.0,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 35.25,
+        "materials": 0,
+        "t": 1.25,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 35.1,
+        "materials": 0,
+        "t": 1.5,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 34.95,
+        "materials": 0,
+        "t": 1.76,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 34.8,
+        "materials": 0,
+        "t": 2.01,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 34.65,
+        "materials": 0,
+        "t": 2.25,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 34.5,
+        "materials": 0,
+        "t": 2.5,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 34.35,
+        "materials": 0,
+        "t": 2.75,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 34.2,
+        "materials": 0,
+        "t": 3.0,
+        "target_nearby": true,
+        "x": 200.0,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 33.99,
+        "materials": 0,
+        "t": 3.26,
+        "target_nearby": true,
+        "x": 215.3,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 33.73,
+        "materials": 0,
+        "t": 3.51,
+        "target_nearby": true,
+        "x": 273.5,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 33.49,
+        "materials": 0,
+        "t": 3.75,
+        "target_nearby": true,
+        "x": 328.5,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 33.24,
+        "materials": 0,
+        "t": 4.0,
+        "target_nearby": true,
+        "x": 386.6,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 32.99,
+        "materials": 0,
+        "t": 4.26,
+        "target_nearby": true,
+        "x": 444.4,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 32.74,
+        "materials": 0,
+        "t": 4.51,
+        "target_nearby": true,
+        "x": 502.7,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 32.49,
+        "materials": 0,
+        "t": 4.75,
+        "target_nearby": true,
+        "x": 558.1,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 32.24,
+        "materials": 0,
+        "t": 5.0,
+        "target_nearby": true,
+        "x": 614.9,
+        "y": 700.0
+      },
+      {
+        "cargo": 0,
+        "energy": 31.99,
+        "materials": 0,
+        "t": 5.26,
+        "target_nearby": true,
+        "x": 632.3,
+        "y": 666.5
+      },
+      {
+        "cargo": 0,
+        "energy": 31.73,
+        "materials": 0,
+        "t": 5.51,
+        "target_nearby": true,
+        "x": 632.3,
+        "y": 608.6
+      },
+      {
+        "cargo": 0,
+        "energy": 31.49,
+        "materials": 0,
+        "t": 5.75,
+        "target_nearby": true,
+        "x": 632.3,
+        "y": 552.5
+      },
+      {
+        "cargo": 0,
+        "energy": 31.24,
+        "materials": 0,
+        "t": 6.0,
+        "target_nearby": true,
+        "x": 634.0,
+        "y": 496.9
+      },
+      {
+        "cargo": 0,
+        "energy": 29.06,
+        "materials": 0,
+        "t": 6.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 28.91,
+        "materials": 0,
+        "t": 6.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 26.76,
+        "materials": 0,
+        "t": 6.75,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 26.61,
+        "materials": 0,
+        "t": 7.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 26.46,
+        "materials": 0,
+        "t": 7.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 26.31,
+        "materials": 0,
+        "t": 7.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 26.16,
+        "materials": 0,
+        "t": 7.75,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 26.0,
+        "materials": 0,
+        "t": 8.02,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 25.85,
+        "materials": 0,
+        "t": 8.27,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 25.71,
+        "materials": 0,
+        "t": 8.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 25.55,
+        "materials": 0,
+        "t": 8.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 25.4,
+        "materials": 0,
+        "t": 9.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 25.26,
+        "materials": 0,
+        "t": 9.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 25.11,
+        "materials": 0,
+        "t": 9.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 24.95,
+        "materials": 0,
+        "t": 9.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 24.8,
+        "materials": 0,
+        "t": 10.02,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 24.66,
+        "materials": 0,
+        "t": 10.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 24.51,
+        "materials": 0,
+        "t": 10.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 24.35,
+        "materials": 0,
+        "t": 10.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 24.21,
+        "materials": 0,
+        "t": 11.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 24.06,
+        "materials": 0,
+        "t": 11.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 23.91,
+        "materials": 0,
+        "t": 11.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 23.76,
+        "materials": 0,
+        "t": 11.75,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 23.61,
+        "materials": 0,
+        "t": 12.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 23.46,
+        "materials": 0,
+        "t": 12.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 23.31,
+        "materials": 0,
+        "t": 12.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 23.16,
+        "materials": 0,
+        "t": 12.75,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 23.01,
+        "materials": 0,
+        "t": 13.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 22.85,
+        "materials": 0,
+        "t": 13.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 22.71,
+        "materials": 0,
+        "t": 13.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 22.56,
+        "materials": 0,
+        "t": 13.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 22.4,
+        "materials": 0,
+        "t": 14.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 22.26,
+        "materials": 0,
+        "t": 14.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 22.11,
+        "materials": 0,
+        "t": 14.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 21.96,
+        "materials": 0,
+        "t": 14.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 21.8,
+        "materials": 0,
+        "t": 15.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 21.65,
+        "materials": 0,
+        "t": 15.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 21.5,
+        "materials": 0,
+        "t": 15.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 21.35,
+        "materials": 0,
+        "t": 15.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 21.21,
+        "materials": 0,
+        "t": 16.0,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 21.06,
+        "materials": 0,
+        "t": 16.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 20.91,
+        "materials": 0,
+        "t": 16.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 20.75,
+        "materials": 0,
+        "t": 16.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 20.61,
+        "materials": 0,
+        "t": 17.0,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 20.46,
+        "materials": 0,
+        "t": 17.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 20.31,
+        "materials": 0,
+        "t": 17.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 20.16,
+        "materials": 0,
+        "t": 17.75,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 20.0,
+        "materials": 0,
+        "t": 18.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 19.86,
+        "materials": 0,
+        "t": 18.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 19.71,
+        "materials": 0,
+        "t": 18.51,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 19.56,
+        "materials": 0,
+        "t": 18.75,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 19.41,
+        "materials": 0,
+        "t": 19.0,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 19.26,
+        "materials": 0,
+        "t": 19.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 19.11,
+        "materials": 0,
+        "t": 19.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 18.96,
+        "materials": 0,
+        "t": 19.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 18.8,
+        "materials": 0,
+        "t": 20.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 18.66,
+        "materials": 0,
+        "t": 20.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 18.51,
+        "materials": 0,
+        "t": 20.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 18.35,
+        "materials": 0,
+        "t": 20.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 18.2,
+        "materials": 0,
+        "t": 21.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 18.06,
+        "materials": 0,
+        "t": 21.25,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 17.91,
+        "materials": 0,
+        "t": 21.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 17.75,
+        "materials": 0,
+        "t": 21.76,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 17.6,
+        "materials": 0,
+        "t": 22.01,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 17.46,
+        "materials": 0,
+        "t": 22.26,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 17.31,
+        "materials": 0,
+        "t": 22.5,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 489.4
+      },
+      {
+        "cargo": 0,
+        "energy": 17.1,
+        "materials": 0,
+        "t": 22.75,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 503.9
+      },
+      {
+        "cargo": 0,
+        "energy": 16.85,
+        "materials": 0,
+        "t": 23.0,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 561.1
+      },
+      {
+        "cargo": 0,
+        "energy": 16.59,
+        "materials": 0,
+        "t": 23.27,
+        "target_nearby": true,
+        "x": 635.9,
+        "y": 621.5
+      },
+      {
+        "cargo": 0,
+        "energy": 16.35,
+        "materials": 0,
+        "t": 23.5,
+        "target_nearby": true,
+        "x": 634.9,
+        "y": 673.7
+      },
+      {
+        "cargo": 0,
+        "energy": 16.1,
+        "materials": 0,
+        "t": 23.76,
+        "target_nearby": true,
+        "x": 594.2,
+        "y": 689.0
+      },
+      {
+        "cargo": 0,
+        "energy": 15.85,
+        "materials": 0,
+        "t": 24.0,
+        "target_nearby": true,
+        "x": 537.9,
+        "y": 689.0
+      },
+      {
+        "cargo": 0,
+        "energy": 15.6,
+        "materials": 0,
+        "t": 24.26,
+        "target_nearby": true,
+        "x": 478.9,
+        "y": 689.0
+      },
+      {
+        "cargo": 0,
+        "energy": 15.36,
+        "materials": 0,
+        "t": 24.5,
+        "target_nearby": true,
+        "x": 423.3,
+        "y": 689.0
+      },
+      {
+        "cargo": 0,
+        "energy": 15.1,
+        "materials": 0,
+        "t": 24.76,
+        "target_nearby": true,
+        "x": 364.3,
+        "y": 689.0
+      },
+      {
+        "cargo": 0,
+        "energy": 14.84,
+        "materials": 0,
+        "t": 25.01,
+        "target_nearby": true,
+        "x": 305.6,
+        "y": 689.0
+      },
+      {
+        "cargo": 0,
+        "energy": 14.61,
+        "materials": 0,
+        "t": 25.25,
+        "target_nearby": true,
+        "x": 250.6,
+        "y": 689.0
+      }
+    ],
+    "visits": [
+      0,
+      1,
+      0
+    ]
+  },
+  "screenshots": [
+    "native-final/final-expiry-prompt.png",
+    "native-final/final-return.png",
+    "native-final/final-menu.png"
+  ]
+}

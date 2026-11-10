@@ -1,0 +1,80 @@
+TAP version 13
+# Subtest: artifact identity includes bytes, version, full commit, platform and clean state
+ok 1 - artifact identity includes bytes, version, full commit, platform and clean state
+  ---
+  duration_ms: 0.991291
+  ...
+# Subtest: allowlist has exactly 21 runtime originals, 6 historical screenshots and no obsolete direction or secrets
+ok 2 - allowlist has exactly 21 runtime originals, 6 historical screenshots and no obsolete direction or secrets
+  ---
+  duration_ms: 44.542834
+  ...
+# Subtest: HTML escapes arbitrary document strings and local path redaction leaves asset IDs intact
+ok 3 - HTML escapes arbitrary document strings and local path redaction leaves asset IDs intact
+  ---
+  duration_ms: 0.746459
+  ...
+# Subtest: Git gate rejects dirty, staged and untracked files
+ok 4 - Git gate rejects dirty, staged and untracked files
+  ---
+  duration_ms: 130.511625
+  ...
+# Subtest: material reads reject unlisted paths, untracked files and symlinks
+ok 5 - material reads reject unlisted paths, untracked files and symlinks
+  ---
+  duration_ms: 35.610875
+  ...
+# Subtest: workflow packages only after both platform builds, on immutable source, with restricted artifact output
+ok 6 - workflow packages only after both platform builds, on immutable source, with restricted artifact output
+  ---
+  duration_ms: 0.8855
+  ...
+# Subtest: Mac expert handoff is single-platform, one-unzip and security-honest
+ok 7 - Mac expert handoff is single-platform, one-unzip and security-honest
+  ---
+  duration_ms: 0.4865
+  ...
+# Subtest: commercial player path excludes rejected names and abstract conflict framing
+ok 8 - commercial player path excludes rejected names and abstract conflict framing
+  ---
+  duration_ms: 35.943125
+  ...
+# Subtest: commercial copy names several kinds of work beyond nectar collection
+ok 9 - commercial copy names several kinds of work beyond nectar collection
+  ---
+  duration_ms: 6.224125
+  ...
+# Subtest: commercial copy stays in the neighborhood instead of rebutting design requirements
+ok 10 - commercial copy stays in the neighborhood instead of rebutting design requirements
+  ---
+  duration_ms: 8.630542
+  ...
+# Subtest: commercial copy audit is limited to shipping product sources
+ok 11 - commercial copy audit is limited to shipping product sources
+  ---
+  duration_ms: 1.828
+  ...
+# Subtest: commercial art directory retains only current runtime candidates
+ok 12 - commercial art directory retains only current runtime candidates
+  ---
+  duration_ms: 57.2525
+  ...
+# Subtest: four seasonal result heroes keep their reviewed bytes and first-clear climax mapping
+ok 13 - four seasonal result heroes keep their reviewed bytes and first-clear climax mapping
+  ---
+  duration_ms: 22.74825
+  ...
+# Subtest: README current-product section stays clean while preserving marked history below it
+ok 14 - README current-product section stays clean while preserving marked history below it
+  ---
+  duration_ms: 1.444583
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 282.243792

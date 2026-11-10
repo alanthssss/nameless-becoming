@@ -1,0 +1,35 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+pond seed1201 g0 money: returned nectar6 material0 time21.65 energy5.04 empty2.28
+pond seed1201 g0 far_material: returned nectar0 material1 time22.17 energy10.63 empty0.00
+pond seed1201 g0 materials: returned nectar0 material2 time26.92 energy2.28 empty0.38
+pond seed1201 g0 mixed: exhausted nectar6 material1 time23.00 energy0.00 empty0.48
+pond seed1201 g1 money: returned nectar6 material0 time13.25 energy55.00 empty2.28
+pond seed1201 g1 far_material: returned nectar0 material1 time21.60 energy46.97 empty0.00
+pond seed1201 g1 materials: returned nectar0 material2 time25.78 energy40.96 empty0.38
+pond seed1201 g1 mixed: returned nectar16 material2 time35.72 energy24.15 empty3.73
+pond seed1202 g0 money: returned nectar6 material0 time21.65 energy5.04 empty2.28
+pond seed1202 g0 far_material: returned nectar0 material1 time22.17 energy10.63 empty0.00
+pond seed1202 g0 materials: returned nectar0 material2 time26.92 energy2.28 empty0.38
+pond seed1202 g0 mixed: exhausted nectar6 material1 time23.00 energy0.00 empty0.48
+pond seed1202 g1 money: returned nectar6 material0 time13.25 energy55.00 empty2.28
+pond seed1202 g1 far_material: returned nectar0 material1 time21.60 energy46.97 empty0.00
+pond seed1202 g1 materials: returned nectar0 material2 time25.78 energy40.96 empty0.38
+pond seed1202 g1 mixed: returned nectar16 material2 time35.72 energy24.14 empty3.73
+violet seed1201 g0 money: returned nectar6 material0 time21.53 energy5.15 empty2.30
+violet seed1201 g0 far_material: returned nectar0 material1 time22.75 energy8.28 empty0.00
+violet seed1201 g0 materials: exhausted nectar0 material2 time25.57 energy0.00 empty0.68
+violet seed1201 g0 mixed: exhausted nectar6 material0 time23.92 energy0.00 empty0.43
+violet seed1201 g1 money: returned nectar6 material0 time13.13 energy55.11 empty2.30
+violet seed1201 g1 far_material: returned nectar0 material1 time22.18 energy44.62 empty0.00
+violet seed1201 g1 materials: returned nectar0 material2 time26.93 energy36.26 empty0.68
+violet seed1201 g1 mixed: returned nectar16 material2 time36.80 energy19.51 empty3.25
+violet seed1202 g0 money: returned nectar6 material0 time21.53 energy5.15 empty2.30
+violet seed1202 g0 far_material: returned nectar0 material1 time22.75 energy8.28 empty0.00
+violet seed1202 g0 materials: exhausted nectar0 material2 time25.57 energy0.00 empty0.68
+violet seed1202 g0 mixed: exhausted nectar6 material0 time23.92 energy0.00 empty0.43
+violet seed1202 g1 money: returned nectar6 material0 time13.13 energy55.11 empty2.30
+violet seed1202 g1 far_material: returned nectar0 material1 time22.18 energy44.62 empty0.00
+violet seed1202 g1 materials: returned nectar0 material2 time26.93 energy36.26 empty0.68
+violet seed1202 g1 mixed: returned nectar16 material2 time36.82 energy19.49 empty3.23
+GREYBOX_ROUTES samples=32 output=/private/tmp/region-resource-evidence/routes.json
