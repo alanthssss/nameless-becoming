@@ -1,0 +1,503 @@
+{
+  "runtime_commit": "783f05ed1384a384de51e44dfc9becb0f690593c",
+  "build": "0.3.0",
+  "kind": "AI known-route native operation",
+  "human_playtest_participants": 0,
+  "all_returned": true,
+  "matched_seed_pairs": [
+    [
+      2,
+      3
+    ],
+    [
+      5,
+      6
+    ]
+  ],
+  "samples": [
+    {
+      "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+      "build": "resource-greybox-0.3.0",
+      "capacity": 6,
+      "cargo": 6,
+      "collision_seconds": 0.0,
+      "distance_px": 1174.4,
+      "elapsed_seconds": 20.48,
+      "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+      "energy_left": 7.31,
+      "energy_start": 36.0,
+      "growth": 0,
+      "harvest_seconds": 10.85,
+      "longest_actionless_flight_seconds": 2.51,
+      "longest_empty_flight_seconds": 0.0,
+      "materials": 0,
+      "observed_at": "2026-11-10T14:16:53",
+      "region": "pond",
+      "result": "returned",
+      "schema": 3,
+      "seed": 1598355587,
+      "visits": [
+        0,
+        1,
+        0
+      ],
+      "row": 1,
+      "label": "P1 initial money",
+      "event_counts": {
+        "flower_empty": 25,
+        "flower_fading": 22,
+        "flower_bud": 24,
+        "flower_ripe": 23,
+        "material_empty": 2,
+        "nectar_picked": 6,
+        "material_fading": 1,
+        "returned": 1
+      }
+    },
+    {
+      "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+      "build": "resource-greybox-0.3.0",
+      "capacity": 6,
+      "cargo": 0,
+      "collision_seconds": 0.0,
+      "distance_px": 4336.0,
+      "elapsed_seconds": 24.45,
+      "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+      "energy_left": 9.6,
+      "energy_start": 36.0,
+      "growth": 0,
+      "harvest_seconds": 0.0,
+      "longest_actionless_flight_seconds": 9.99,
+      "longest_empty_flight_seconds": 0.0,
+      "materials": 1,
+      "observed_at": "2026-11-10T14:17:50",
+      "region": "pond",
+      "result": "returned",
+      "schema": 3,
+      "seed": 1523494957,
+      "visits": [
+        0,
+        1,
+        2,
+        3,
+        2,
+        1,
+        0
+      ],
+      "row": 2,
+      "label": "P2 initial far material",
+      "event_counts": {
+        "flower_empty": 27,
+        "flower_fading": 27,
+        "flower_bud": 27,
+        "flower_ripe": 24,
+        "material_empty": 4,
+        "material_hit": 2,
+        "material_dropped": 1,
+        "material_picked": 1,
+        "material_fading": 3,
+        "material_bud": 2,
+        "returned": 1
+      }
+    },
+    {
+      "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+      "build": "resource-greybox-0.3.0",
+      "capacity": 16,
+      "cargo": 16,
+      "collision_seconds": 0.0,
+      "distance_px": 6456.1,
+      "elapsed_seconds": 48.68,
+      "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+      "energy_left": 11.26,
+      "energy_start": 70.0,
+      "growth": 1,
+      "harvest_seconds": 8.64,
+      "longest_actionless_flight_seconds": 8.27,
+      "longest_empty_flight_seconds": 0.68,
+      "materials": 3,
+      "observed_at": "2026-11-10T14:21:03",
+      "region": "pond",
+      "result": "returned",
+      "schema": 3,
+      "seed": 1523494957,
+      "visits": [
+        0,
+        1,
+        2,
+        4,
+        2,
+        3,
+        2,
+        4,
+        2,
+        1,
+        0
+      ],
+      "row": 3,
+      "label": "P3 grown mixed + cold resume",
+      "event_counts": {
+        "flower_empty": 57,
+        "flower_fading": 49,
+        "flower_bud": 56,
+        "flower_ripe": 52,
+        "material_empty": 8,
+        "nectar_picked": 16,
+        "material_hit": 3,
+        "material_dropped": 3,
+        "material_picked": 3,
+        "material_fading": 3,
+        "material_bud": 6,
+        "material_ripe": 4,
+        "returned": 1
+      }
+    },
+    {
+      "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+      "build": "resource-greybox-0.3.0",
+      "capacity": 6,
+      "cargo": 6,
+      "collision_seconds": 0.0,
+      "distance_px": 1347.4,
+      "elapsed_seconds": 20.94,
+      "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+      "energy_left": 6.49,
+      "energy_start": 36.0,
+      "growth": 0,
+      "harvest_seconds": 11.04,
+      "longest_actionless_flight_seconds": 3.15,
+      "longest_empty_flight_seconds": 0.0,
+      "materials": 0,
+      "observed_at": "2026-11-10T14:22:34",
+      "region": "violet",
+      "result": "returned",
+      "schema": 3,
+      "seed": 2067171105,
+      "visits": [
+        0,
+        1,
+        0
+      ],
+      "row": 4,
+      "label": "V1 initial money",
+      "event_counts": {
+        "flower_empty": 25,
+        "flower_fading": 21,
+        "flower_bud": 24,
+        "flower_ripe": 23,
+        "material_empty": 2,
+        "nectar_picked": 6,
+        "material_fading": 1,
+        "returned": 1
+      }
+    },
+    {
+      "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+      "build": "resource-greybox-0.3.0",
+      "capacity": 6,
+      "cargo": 0,
+      "collision_seconds": 0.0,
+      "distance_px": 3984.1,
+      "elapsed_seconds": 24.61,
+      "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+      "energy_left": 8.12,
+      "energy_start": 36.0,
+      "growth": 0,
+      "harvest_seconds": 0.0,
+      "longest_actionless_flight_seconds": 9.37,
+      "longest_empty_flight_seconds": 0.0,
+      "materials": 1,
+      "observed_at": "2026-11-10T14:23:32",
+      "region": "violet",
+      "result": "returned",
+      "schema": 3,
+      "seed": 842017475,
+      "visits": [
+        0,
+        1,
+        2,
+        3,
+        2,
+        1,
+        0
+      ],
+      "row": 5,
+      "label": "V2 initial far material + tool recovery",
+      "event_counts": {
+        "flower_empty": 27,
+        "flower_fading": 27,
+        "flower_bud": 27,
+        "flower_ripe": 24,
+        "material_empty": 4,
+        "material_hit": 3,
+        "material_dropped": 1,
+        "material_picked": 1,
+        "material_fading": 3,
+        "material_bud": 2,
+        "returned": 1
+      }
+    },
+    {
+      "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+      "build": "resource-greybox-0.3.0",
+      "capacity": 16,
+      "cargo": 16,
+      "collision_seconds": 0.0,
+      "distance_px": 5475.5,
+      "elapsed_seconds": 59.74,
+      "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+      "energy_left": 3.05,
+      "energy_start": 70.0,
+      "growth": 1,
+      "harvest_seconds": 8.08,
+      "longest_actionless_flight_seconds": 9.73,
+      "longest_empty_flight_seconds": 0.7,
+      "materials": 2,
+      "observed_at": "2026-11-10T14:26:47",
+      "region": "violet",
+      "result": "returned",
+      "schema": 3,
+      "seed": 842017475,
+      "visits": [
+        0,
+        1,
+        2,
+        4,
+        2,
+        3,
+        2,
+        1,
+        0
+      ],
+      "row": 6,
+      "label": "V3 grown mixed",
+      "event_counts": {
+        "flower_empty": 72,
+        "flower_fading": 56,
+        "flower_bud": 71,
+        "flower_ripe": 69,
+        "material_empty": 8,
+        "nectar_picked": 16,
+        "material_hit": 5,
+        "material_fading": 4,
+        "material_bud": 7,
+        "material_ripe": 7,
+        "material_dropped": 2,
+        "material_picked": 2,
+        "returned": 1
+      }
+    },
+    {
+      "actionless_flight_definition": "moving time between harvesting/pulse/pickup actions; stationary pauses do not reset it",
+      "build": "resource-greybox-0.3.0",
+      "capacity": 16,
+      "cargo": 7,
+      "collision_seconds": 0.0,
+      "distance_px": 2463.5,
+      "elapsed_seconds": 76.27,
+      "empty_flight_definition": "moving with no stocked flower/untaken material within 250px and clear line; excludes entry",
+      "energy_left": 9.21,
+      "energy_start": 70.0,
+      "growth": 1,
+      "harvest_seconds": 3.24,
+      "longest_actionless_flight_seconds": 3.12,
+      "longest_empty_flight_seconds": 0.0,
+      "materials": 2,
+      "observed_at": "2026-11-10T14:30:12",
+      "region": "pond",
+      "result": "returned",
+      "schema": 3,
+      "seed": 842017475,
+      "visits": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "row": 7,
+      "label": "L lifecycle expiry/regeneration/revisit",
+      "event_counts": {
+        "flower_empty": 84,
+        "flower_fading": 76,
+        "flower_bud": 84,
+        "flower_ripe": 85,
+        "material_empty": 11,
+        "nectar_picked": 7,
+        "material_hit": 3,
+        "material_dropped": 3,
+        "material_fading": 8,
+        "material_bud": 9,
+        "material_ripe": 9,
+        "material_picked": 2,
+        "returned": 1
+      }
+    }
+  ],
+  "limitations": [
+    "Native keyboard inputs, screenshots and pauses; no teleport, energy or cargo writes.",
+    "Route familiarity, axis movement, targeting corrections and active observation time prevent natural-play duration claims.",
+    "V2 tool timed out after movement; game was paused and the same trip continued; no lost/abandoned row.",
+    "P3 first branch attempt missed and revisited after far target; V3 missed near target and brought two materials, not simulated three/four.",
+    "Empty-flight counts nearby ready resources even if bag is full; actionless-flight separately records empty return.",
+    "0.3.1 changes only expiry prompt and build version, with separate final smoke evidence."
+  ],
+  "lifecycle_material_0": [
+    {
+      "id": 0,
+      "kind": "material_hit",
+      "t": 7.8,
+      "x": 625.2,
+      "y": 486.7
+    },
+    {
+      "id": 0,
+      "kind": "material_dropped",
+      "t": 7.8,
+      "x": 625.2,
+      "y": 486.7
+    },
+    {
+      "id": 0,
+      "kind": "material_empty",
+      "t": 19.8,
+      "x": 625.4,
+      "y": 486.0
+    },
+    {
+      "id": 0,
+      "kind": "material_bud",
+      "t": 37.8,
+      "x": 625.4,
+      "y": 486.0
+    },
+    {
+      "id": 0,
+      "kind": "material_ripe",
+      "t": 41.8,
+      "x": 625.4,
+      "y": 486.0
+    },
+    {
+      "id": 0,
+      "kind": "material_hit",
+      "t": 44.78,
+      "x": 625.4,
+      "y": 486.0
+    },
+    {
+      "id": 0,
+      "kind": "material_dropped",
+      "t": 44.78,
+      "x": 625.4,
+      "y": 486.0
+    },
+    {
+      "id": 0,
+      "kind": "material_picked",
+      "t": 45.74,
+      "x": 707.6,
+      "y": 486.0
+    },
+    {
+      "id": 0,
+      "kind": "material_empty",
+      "t": 45.74,
+      "x": 707.6,
+      "y": 486.0
+    },
+    {
+      "id": 0,
+      "kind": "material_bud",
+      "t": 63.75,
+      "x": 716.8,
+      "y": 487.8
+    },
+    {
+      "id": 0,
+      "kind": "material_ripe",
+      "t": 67.76,
+      "x": 716.8,
+      "y": 487.8
+    },
+    {
+      "id": 0,
+      "kind": "material_hit",
+      "t": 69.63,
+      "x": 656.4,
+      "y": 487.8
+    },
+    {
+      "id": 0,
+      "kind": "material_dropped",
+      "t": 69.63,
+      "x": 656.4,
+      "y": 487.8
+    },
+    {
+      "id": 0,
+      "kind": "material_picked",
+      "t": 73.14,
+      "x": 723.0,
+      "y": 487.8
+    },
+    {
+      "id": 0,
+      "kind": "material_empty",
+      "t": 73.14,
+      "x": 723.0,
+      "y": 487.8
+    }
+  ],
+  "lifecycle_nectar_picks": [
+    {
+      "id": 1,
+      "kind": "nectar_picked",
+      "t": 4.84,
+      "x": 413.5,
+      "y": 700.0
+    },
+    {
+      "id": 0,
+      "kind": "nectar_picked",
+      "t": 4.84,
+      "x": 413.5,
+      "y": 700.0
+    },
+    {
+      "id": 4,
+      "kind": "nectar_picked",
+      "t": 5.65,
+      "x": 413.5,
+      "y": 700.0
+    },
+    {
+      "id": 2,
+      "kind": "nectar_picked",
+      "t": 51.9,
+      "x": 412.4,
+      "y": 648.8
+    },
+    {
+      "id": 0,
+      "kind": "nectar_picked",
+      "t": 51.9,
+      "x": 412.4,
+      "y": 648.8
+    },
+    {
+      "id": 1,
+      "kind": "nectar_picked",
+      "t": 52.71,
+      "x": 412.4,
+      "y": 648.8
+    },
+    {
+      "id": 4,
+      "kind": "nectar_picked",
+      "t": 52.71,
+      "x": 412.4,
+      "y": 648.8
+    }
+  ]
+}
