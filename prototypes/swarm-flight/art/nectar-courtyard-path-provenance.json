@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "date": "2026-11-11",
+  "issue": 349,
+  "parent": 322,
+  "milestone": 3,
+  "source_commit": "e07dca582f499c460e46a4baa942322dd0b88b31",
+  "source": "art/nectar-courtyard-oblique.png",
+  "output": "art/nectar-courtyard-oblique.png",
+  "tool": "built-in image_gen.imagegen",
+  "prompt": "Edit this existing 16:10 game background, as a tightly controlled paintover. Change ONLY the large flat paved apron in front of the hive steps, in the bottom third. Replace the all-over paving and repetitive seams across the foreground with broad muted warm compacted earth, with soft sparse low-detail moss at the edges. A single narrow readable path naturally continues from the very bottom stone stair of the hive, bending gently toward lower right. 2-3 irregular flat warm stone steps near the house transition to 3-4 overlapping muted olive and amber leaves laid across this narrow trail like a little handmade leaf boardwalk. The leaves rest on the earth, cast small contact shadows, have slightly curled edges and some real relief. Their shapes should lead the eye back into the hive doorway. Clear simple composition, most of the foreground is calm mostly plain earth, no stone seams outside the path, no replacement pattern or dense scattered pebbles. Modest soft dappled light. Keep the original near bottom border clover, big side leaves, basin, main hive, honey shop and blue/coral jars, book station, lantern and landing leaf, stairs, background blur, lighting and all landmark coordinates and scale exactly as provided. Do not move or redesign anything outside the apron. Same game-art painterly style, 16:10 exact camera/crop, no game interface, text, bee characters or screenshot chrome.",
+  "generated_source": "/Users/alanthssss/.codex/generated_images/01a1c85d-cd60-7833-8a72-6cd132df3712/exec-1792e29e-7ae5-4c2a-8dee-dd9702f9ef5b.png",
+  "generation_count": 1,
+  "cash_purchase": 0,
+  "billed_cost": "unknown",
+  "output_sha256": "d4926c5197c036eef3d9a81491765ff087bd190c59285595fa7a691579bdadc0",
+  "output_size": [
+    1586,
+    992
+  ]
+}
