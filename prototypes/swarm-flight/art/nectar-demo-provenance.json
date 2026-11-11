@@ -78,22 +78,22 @@
     },
     {
       "id": "nectar-courtyard-oblique",
-      "version": 2,
+      "version": 3,
       "file": "nectar-courtyard-oblique.png",
-      "sha256": "c10baa606be28aaf9eb8ac19744f2ddbd36a32e5182aaa3d71c642ca140813f3",
+      "sha256": "d4926c5197c036eef3d9a81491765ff087bd190c59285595fa7a691579bdadc0",
       "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
-      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1c85d-cd60-7833-8a72-6cd132df3712/exec-8aa144ac-929d-49b4-92a5-91aaaf1685e9.png",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a1c85d-cd60-7833-8a72-6cd132df3712/exec-1792e29e-7ae5-4c2a-8dee-dd9702f9ef5b.png",
       "date": "2026-11-11",
-      "prompt_file": "nectar-courtyard-feedback-provenance.json",
+      "prompt_file": "nectar-courtyard-path-provenance.json",
       "prompt_key": "prompt",
       "pixel_size": [
-        1585,
+        1586,
         992
       ],
       "post_processing": "none; source PNG copied byte-for-byte; mapped to one world-space ground rectangle, not tiled",
       "usage": "nectar_landscape.gd; native view anchors in nectar_harvest_model/view",
       "collision_role": "scenery only; no terrain collision or collectible flowers baked into field backgrounds",
-      "review_status": "Bounded native 1280x800/960x600 plus independent AI background review; Alan art acceptance pending",
+      "review_status": "Foreground revision for #349; player feedback pending",
       "issue": 349,
       "previous_versions": [
         {
@@ -115,6 +115,26 @@
           "collision_role": "scenery only; no terrain collision or collectible flowers baked into field backgrounds",
           "review_status": "internal native scene review pending; no Alan acceptance",
           "issue": 313
+        },
+        {
+          "id": "nectar-courtyard-oblique",
+          "version": 2,
+          "file": "nectar-courtyard-oblique.png",
+          "sha256": "c10baa606be28aaf9eb8ac19744f2ddbd36a32e5182aaa3d71c642ca140813f3",
+          "source": "OpenAI built-in image_gen; AI-assisted pre-generated raster",
+          "generated_source": "/Users/alanthssss/.codex/generated_images/01a1c85d-cd60-7833-8a72-6cd132df3712/exec-8aa144ac-929d-49b4-92a5-91aaaf1685e9.png",
+          "date": "2026-11-11",
+          "prompt_file": "nectar-courtyard-feedback-provenance.json",
+          "prompt_key": "prompt",
+          "pixel_size": [
+            1585,
+            992
+          ],
+          "post_processing": "none; source PNG copied byte-for-byte; mapped to one world-space ground rectangle, not tiled",
+          "usage": "nectar_landscape.gd; native view anchors in nectar_harvest_model/view",
+          "collision_role": "scenery only; no terrain collision or collectible flowers baked into field backgrounds",
+          "review_status": "Bounded native 1280x800/960x600 plus independent AI background review; Alan art acceptance pending",
+          "issue": 349
         }
       ]
     },
