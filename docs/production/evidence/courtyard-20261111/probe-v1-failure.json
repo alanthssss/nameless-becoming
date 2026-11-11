@@ -1,0 +1,12 @@
+{
+	"checks": 69,
+	"classification": "positioned developer UI fixtures; not player validation",
+	"failures": [
+		"release opens tree",
+		"station hides flight HUD and releases controls",
+		"E remains equivalent for tree",
+		"release opens shop",
+		"station hides flight HUD and releases controls",
+		"E remains equivalent for shop"
+	]
+}

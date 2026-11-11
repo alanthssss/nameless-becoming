@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date": "2026-11-11",
+  "issue": 349,
+  "parent": 322,
+  "milestone": 3,
+  "gdd": "§8.1 / §13.9",
+  "tool": "built-in image_gen.imagegen",
+  "source_commit": "341fa4bfcb1197a2ef7b726d9fc2ed26717bf993",
+  "source": "art/nectar-courtyard-oblique.png",
+  "output": "art/nectar-courtyard-oblique.png",
+  "prompt": "Use case: precise-object-edit. Asset type: existing production background painting for a hand-painted 2D bee garden game. EDIT THE PROVIDED ORIGINAL, preserve its EXACT composition, camera, framing and all landmark positions/sizes. No UI, text, characters, borders or watermark. Landscape aspect 16:10, same original canvas composition.\nRequired changes only:\n1. Establish painted depth/focus. Keep the main central straw/wax house, roof and attached shop on the left, the botanical book and stone ledge on the right, hanging mirror ball and its supporting vine, near large leaves and bottom foreground crisp and richly hand-painted. The foliage and distant stone path BEHIND/ABOVE the house and behind the hanging ball (upper outer background and receding right path) should be visibly softer, less busy, lower contrast, lower saturation and slightly cooler sage-green atmospheric light. Simplify tiny leaf veins, grass and stone highlights there. Soft defocus naturally increases with distance. This is depth separation, not a fog layer over the entire picture; do not blur main house or front props. Preserve the grounded painted garden style and warm upper-left lighting. Reduce excessive high-frequency texture across distant ground while keeping continuous believable path.\n2. Add restrained color variation ONLY on existing small shop props. The two existing amber honey jars at lower-left shop shelf remain honey and same positions/size; give one jar's tied fabric lid a soft dusty cornflower-blue fabric, the other's a muted coral/terracotta fabric. Give existing cream rolled ledger a narrow faded plum binding ribbon. Keep shop foliage green, wood warm, honey amber, cream paper. Leave the upper narrow shop shelves EMPTY for dynamic game stock. Accent colors occupy small areas but are recognizable at small game scale, harmonious painterly shading/edge treatment, not neon and not new invented collectible categories.\nInvariants: all architecture/plant connections, path shape and steps, tree branches, supports, jar and ledger silhouettes, book drawings, disco-ball attachment, overall dominant yellow/green palette and original proportions. Do not redesign the house or move, remove, enlarge or add objects. Produce a cohesive production paint-over, not a comparison/mockup.",
+  "edits": [
+    "Localized painted depth: sharp home/near props, softer lower-contrast distant path/foliage",
+    "Blue and coral cloth caps on existing honey jars; plum binding on ledger"
+  ],
+  "preserve": [
+    "Landmark positions and visual/input registration",
+    "Empty upper stock shelves",
+    "Honey/green dominant palette"
+  ],
+  "status": "In-engine viewed at 1280x800 and 960x600; bounded independent AI background review passed; Alan aesthetic acceptance pending",
+  "generation_count": 1,
+  "cash_purchase": 0,
+  "billed_cost": "unknown",
+  "output_sha256": "c10baa606be28aaf9eb8ac19744f2ddbd36a32e5182aaa3d71c642ca140813f3",
+  "output_size": [
+    1585,
+    992
+  ],
+  "generated_source": "/Users/alanthssss/.codex/generated_images/01a1c85d-cd60-7833-8a72-6cd132df3712/exec-8aa144ac-929d-49b4-92a5-91aaaf1685e9.png",
+  "normalization": "Byte-for-byte copy of generated PNG; existing mipmap/filter import retained"
+}

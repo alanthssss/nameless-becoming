@@ -1,0 +1,315 @@
+{
+	"checks": 69,
+	"classification": "positioned developer UI fixtures; viewport-injected atomic clicks, not OS/player validation",
+	"failures": [],
+	"input_trace": [
+		{
+			"action": "tree",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": true,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "tree",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": false,
+			"button_hovered": false,
+			"button_pressed": false,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "tree",
+			"pressed": false,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": true,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "shop",
+			"at": [
+				333.0,
+				280.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (232.0, 251.0), S: (202.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "shop",
+			"at": [
+				333.0,
+				280.0
+			],
+			"button_focus": false,
+			"button_hovered": false,
+			"button_pressed": false,
+			"button_rect": "[P: (232.0, 251.0), S: (202.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "shop",
+			"pressed": false,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "depart",
+			"at": [
+				1015.0,
+				270.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (934.0, 241.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "depart",
+			"at": [
+				1015.0,
+				270.0
+			],
+			"button_focus": false,
+			"button_hovered": false,
+			"button_pressed": false,
+			"button_rect": "[P: (934.0, 241.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "regions",
+			"pressed": false,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": false,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": false,
+			"stretch_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "",
+			"distance": 101.372680664062,
+			"event": "leave_station",
+			"held_wall_ms": 44,
+			"mode": "play",
+			"prompt_visible": false,
+			"window_size": "(1280, 800)"
+		},
+		{
+			"action": "tree",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "tree",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": false,
+			"button_hovered": false,
+			"button_pressed": false,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "tree",
+			"pressed": false,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "shop",
+			"at": [
+				333.0,
+				280.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (232.0, 251.0), S: (202.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "shop",
+			"at": [
+				333.0,
+				280.0
+			],
+			"button_focus": false,
+			"button_hovered": false,
+			"button_pressed": false,
+			"button_rect": "[P: (232.0, 251.0), S: (202.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "shop",
+			"pressed": false,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "depart",
+			"at": [
+				1015.0,
+				270.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (934.0, 241.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "depart",
+			"at": [
+				1015.0,
+				270.0
+			],
+			"button_focus": false,
+			"button_hovered": false,
+			"button_pressed": false,
+			"button_rect": "[P: (934.0, 241.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "regions",
+			"pressed": false,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": true,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": true,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "",
+			"at": [
+				735.0,
+				354.0
+			],
+			"button_focus": true,
+			"button_hovered": true,
+			"button_pressed": false,
+			"button_rect": "[P: (654.0, 325.0), S: (162.0, 58.0)]",
+			"final_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"mode": "play",
+			"pressed": false,
+			"stretch_transform": "[X: (0.75, 0.0), Y: (0.0, 0.75), O: (0.0, 0.0)]",
+			"viewport_rect": "[P: (0.0, 0.0), S: (1280.0, 800.0)]",
+			"window_focus": false,
+			"window_size": "(960, 600)"
+		},
+		{
+			"action": "",
+			"distance": 101.950622558594,
+			"event": "leave_station",
+			"held_wall_ms": 52,
+			"mode": "play",
+			"prompt_visible": false,
+			"window_size": "(960, 600)"
+		}
+	],
+	"pressed_visuals": "not captured by this probe; direct Button pressed-state assertions plus separate native observation required",
+	"timing": "--fixed-fps changes simulated frame delta, not OS focus/event delivery or wall-clock screenshot timing; no timing/product latency claims"
+}

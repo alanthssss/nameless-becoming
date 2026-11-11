@@ -43,14 +43,9 @@ static func painted_icon(c: CanvasItem, kind: String, p: Vector2, r: float, tint
 			painted_sprite(c,PAINTED,BEE,p,r,tint)
 			c.draw_arc(p+Vector2(0,-r*.12),r*.98,PI*1.12,PI*1.88,20,Color("91a574"),1.6,true)
 		_:
-			# Match the painted body and translucent wings used in the world view.
-			for side in [-1,1]:
-				var points := PackedVector2Array()
-				for i in 25:
-					var a := TAU*i/24.0
-					points.append(p+Vector2(side*r*.36,-r*.49)+Vector2(cos(a)*r*.32,sin(a)*r*.62).rotated(side*.5))
-				c.draw_colored_polygon(points,Color(.9,.94,.82,.82)*tint)
-				c.draw_polyline(points,Color("9eac85")*tint,1.2,true)
+			# Use the same painted material family for the wings and body. The old
+			# opaque procedural ovals flattened the portrait against the painted UI.
+			painted_sprite(c,RESOURCES,Rect2(641,777,538,290),p+Vector2(-r*.12,-r*.34),r*.98,tint)
 			painted_sprite(c,PAINTED,BEE,p+Vector2(0,r*.10),r*.88,tint)
 			if kind == "beat":
 				for side in [-1,1]:

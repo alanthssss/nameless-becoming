@@ -1,0 +1,36 @@
+{"area":"hub","event":"Left Mouse Button","mode":"title","pressed":true,"time":11.9000353333333}
+{"area":"hub","event":"Left Mouse Button","mode":"title","pressed":false,"time":11.9481834814814}
+{"area":"hub","event":"A","mode":"play","pressed":true,"time":23.2429586666668}
+{"area":"hub","event":"A","mode":"play","pressed":false,"time":24.2970050303032}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":true,"time":31.5556226666668}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":false,"time":31.6673402698414}
+{"area":"hub","event":"Escape","mode":"tree","pressed":true,"time":39.3167020000003}
+{"area":"hub","event":"Escape","mode":"play","pressed":false,"time":39.3167020000003}
+{"area":"hub","event":"E","mode":"play","pressed":true,"time":39.419299666667}
+{"area":"hub","event":"E","mode":"tree","pressed":false,"time":39.419299666667}
+{"area":"hub","event":"Escape","mode":"tree","pressed":true,"time":46.4745760000003}
+{"area":"hub","event":"Escape","mode":"play","pressed":false,"time":46.4745760000003}
+{"area":"hub","event":"A","mode":"play","pressed":true,"time":46.491242666667}
+{"area":"hub","event":"A","mode":"play","pressed":false,"time":48.3018871851856}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":true,"time":127.394428555556}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":false,"time":127.425174666667}
+{"area":"hub","event":"Escape","mode":"shop","pressed":true,"time":144.289859666666}
+{"area":"hub","event":"Escape","mode":"play","pressed":false,"time":144.289859666666}
+{"area":"hub","event":"E","mode":"play","pressed":true,"time":144.369067333333}
+{"area":"hub","event":"E","mode":"shop","pressed":false,"time":144.369067333333}
+{"area":"hub","event":"Escape","mode":"shop","pressed":true,"time":146.783368666666}
+{"area":"hub","event":"Escape","mode":"play","pressed":false,"time":146.783368666666}
+{"area":"hub","event":"D","mode":"play","pressed":true,"time":146.836487666666}
+{"area":"hub","event":"D","mode":"play","pressed":false,"time":149.600035333333}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":true,"time":158.450035333332}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":false,"time":158.478507666666}
+{"area":"hub","event":"Left Mouse Button","mode":"regions","pressed":true,"time":166.720073333332}
+{"area":"hub","event":"Left Mouse Button","mode":"regions","pressed":false,"time":166.780338363635}
+{"area":"hub","event":"Space","mode":"transition","pressed":true,"time":166.780338363635}
+{"area":"hub","event":"Space","mode":"transition","pressed":false,"time":166.780338363635}
+{"area":"pond","event":"D","mode":"play","pressed":true,"time":175.366702000001}
+{"area":"pond","event":"D","mode":"play","pressed":false,"time":175.924411333334}
+{"area":"pond","event":"Escape","mode":"play","pressed":true,"time":175.94246688889}
+{"area":"pond","event":"Escape","mode":"pause","pressed":false,"time":175.94246688889}
+{"area":"pond","event":"Left Mouse Button","mode":"pause","pressed":true,"time":186.1547972381}
+{"area":"pond","event":"Left Mouse Button","mode":"pause","pressed":false,"time":186.230392476195}

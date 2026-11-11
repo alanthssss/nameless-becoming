@@ -1,0 +1,153 @@
+{
+  "base_commit": "341fa4bfcb1197a2ef7b726d9fc2ed26717bf993",
+  "scope": "courtyard background, shop accents, shared HUD and three station interaction controls",
+  "fixture_checks": {
+    "final_native": {
+      "checks": 69,
+      "failures": 0,
+      "behavior_checks": 50,
+      "screenshots": 19
+    },
+    "headless_v2": {
+      "checks": 50,
+      "failures": 0
+    },
+    "legacy_ui": 74,
+    "demo_ui": 23,
+    "region_ui": 24
+  },
+  "manual": "CUA ordinary movement, growth click and E, shop click and E, departure click, pond HUD/pause/save-exit at 1280x800; labelled granted-growth fixture, departure click and meadow HUD/pause at 960x600. Not a full journey or new player trial.",
+  "failures_preserved": [
+    "v1 69/6: held-click screenshot wait allowed input/focus disruption; follow-on unconditional Esc polluted E checks; precise OS cause not established",
+    "v2 69/2: two process-frame movement taps did not reliably span a physics tick without fixed-fps; changed probe to physics-observed bounded hold",
+    "demo regression first call exit2: missing required capture-dir; rerun with documented arguments passed",
+    "first export attempt wrong preset name failed; corrected existing macOS Nectar Regions preset exported successfully"
+  ],
+  "raw_media_root": "/Users/alanthssss/LocalGames/courtyard-visual-review-20261111/evidence",
+  "export": "Debug export used only for developer verification; no new NH-C01–08 candidate or release claimed; prior 0.29 candidate retained",
+  "human_player_evidence": false,
+  "cost": {
+    "first_explicit_utc": "2026-11-11T02:12:14Z",
+    "earlier_locator_work": "not fully measured",
+    "purchase": 0,
+    "image_calls": 1,
+    "billed_cost": "unknown",
+    "active_and_historical_hours": "unknown",
+    "remaining_budget": "unverifiable; 200+40 control unchanged",
+    "automation": "PAUSED"
+  },
+  "artifacts": [
+    {
+      "path": "1280-events.jsonl",
+      "sha256": "b0c8f76b2d7dd1d1f6ed6dd4da69b8017c40c34a5e8b53eadbb13c36be4a7e05"
+    },
+    {
+      "path": "1280-frames.jsonl",
+      "sha256": "ac6b1594f2919194ae069dc11ed8e5e2eed04acaacd8fe99f11255cc885f091b"
+    },
+    {
+      "path": "1280-inputs.jsonl",
+      "sha256": "94c29466973ceac066b228a5deab312c5a1776c54808f72c19e64612ac6014e3"
+    },
+    {
+      "path": "960-fixture-events.jsonl",
+      "sha256": "c6e7b861407a65b255e183296886be875bfe8ccda57f4a6157b230c3e00e8b5a"
+    },
+    {
+      "path": "960-fixture-frames.jsonl",
+      "sha256": "64119cfb950146879ca37d57fcf01b1814466644ab93baebaad9fdef3bd60954"
+    },
+    {
+      "path": "960-fixture-inputs.jsonl",
+      "sha256": "1def1586959329e42f44e1d949065ff30983159955d779264df8602dbd1bd73a"
+    },
+    {
+      "path": "courtyard-ui-result.json",
+      "sha256": "fec90c7692f76f56197fba672fadf578c952165293dcab58446532c72645e1c9"
+    },
+    {
+      "path": "depart-normal-1280.png",
+      "sha256": "d564252cb0673c9c342f6292f35ddb26b3ed85a5bad6880a946070f1c9347b06"
+    },
+    {
+      "path": "growth-fixture.json",
+      "sha256": "d96deacc3320f11fa92d98cceeed7c49061fe7a27d18c4d2cb2f7034be152927"
+    },
+    {
+      "path": "growth-fixture.json.fixture.json",
+      "sha256": "c0c11e1aae7464dd0927d471759b64dcee41670e6123d3d0aed12d01da2ffdb0"
+    },
+    {
+      "path": "hud-low.png",
+      "sha256": "7ebc9685297e2562c2825ce6f86cf6f704bbaf4eecde95eb0b57672850a284fb"
+    },
+    {
+      "path": "manual-1280-play-hub.jpg",
+      "sha256": "d981ac673d67ae70d342cda077e51c2cede817661c39902033301a5d6e244a3e"
+    },
+    {
+      "path": "manual-1280-play-pond.jpg",
+      "sha256": "aaaeb71134cd1c4550d735df6764f3fdb234deb89692b396142e677a2b02eee6"
+    },
+    {
+      "path": "manual-1280-shop-hub.jpg",
+      "sha256": "af884cc5121f398b305e6af22c0b6a3dc31488a11a44ae0e24e972fb1f823066"
+    },
+    {
+      "path": "manual-1280-tree-hub.jpg",
+      "sha256": "47fa91db909ca2fd8a01f60d16771c78db499c6f079cc331a7fb0a58bb4b3494"
+    },
+    {
+      "path": "manual-960-fixture-play-hub.jpg",
+      "sha256": "be971eb541613b6debd59e898e6f29447d043fa53670c6158edd7bf247fe9a5b"
+    },
+    {
+      "path": "manual-960-fixture-play-meadow.jpg",
+      "sha256": "3a574a7fe732c582a6c8271efd0fa5c7923cf7a29867453413bd703b07428255"
+    },
+    {
+      "path": "manual-save.json",
+      "sha256": "9d0ca5a222750b84e52fd04ca422b440bb34a1452168d06d82dba885d075391f"
+    },
+    {
+      "path": "nectar_demo_ui_verify.gd-final.log",
+      "sha256": "9012f7a5d4abed159fd90cc77e7e4ea39233e90d96b98fa173ea0d83c28f5bd2"
+    },
+    {
+      "path": "nectar_demo_ui_verify.gd.log",
+      "sha256": "da76a36a586ec310ae98a6bf8844ab87166457610861a810027a91d273cbb93f"
+    },
+    {
+      "path": "nectar_harvest_ui_verify.gd.log",
+      "sha256": "9705d67c64ee0b0aa68ba87fbfc44dcf9102bca2ff896ecb641dc062c9d68e76"
+    },
+    {
+      "path": "probe-v1-failure.json",
+      "sha256": "ed5822dedf296dc51db648973ff5679fdf2689ae6094143d7aa8451277ac2a43"
+    },
+    {
+      "path": "probe-v2-failure.json",
+      "sha256": "bc9026f510fd965fc389fba95a5c16eb9f98aaae34e6f05a1ef36cf9c4e60393"
+    },
+    {
+      "path": "region_game-ui_verify.gd-final.log",
+      "sha256": "25bf01c46f7c275870e1b679a2e2b0b9ea10bf2725ad43dd62cec48188917cb5"
+    },
+    {
+      "path": "shop-normal-960.png",
+      "sha256": "ecea6f7959c56d5f85746fd537ecdd6fc43c067fd836128678dc1fef337a4733"
+    },
+    {
+      "path": "tree-focus-960.png",
+      "sha256": "478daa221f689a277ec8c567d23f06ee9ce3e8eb1155645957fcc06f4846dbbc"
+    },
+    {
+      "path": "tree-hover-1280.png",
+      "sha256": "1068759efb750b76c0652598e4513bef0521842f9186d479d16bb91368ef0fa4"
+    },
+    {
+      "path": "tree-normal-1280.png",
+      "sha256": "adf40966efebdd92573fb0bd1cb9793b9bdd891b8161bb1382554c638469f65e"
+    }
+  ]
+}

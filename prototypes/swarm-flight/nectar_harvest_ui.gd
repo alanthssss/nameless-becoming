@@ -14,6 +14,8 @@ var driver
 var font := SystemFont.new()
 var hud: Control
 var hud_status: PanelContainer
+var hub_action: Button
+var hub_action_kind := ""
 var menu_guide: Button
 var pond_info: Label
 var meadow_info: Label
@@ -336,6 +338,62 @@ func _build_hud() -> void:
 		pause.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
 	pause.tooltip_text = "暂停与操作说明 · Esc"
 	anchored(pause,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
+	_build_hub_action()
+
+func _build_hub_action() -> void:
+	# The station prompt is a real control: the key and mouse share one action.
+	hub_action = Button.new()
+	hub_action.name = "CourtyardInteraction"
+	hub_action.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	hub_action.focus_mode = Control.FOCUS_ALL
+	hub_action.add_theme_font_size_override("font_size",22)
+	for key in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
+		hub_action.add_theme_color_override(key,Color("4f3c25"))
+	for key in ["normal","hover","pressed"]:
+		var tint := Color("fff3cb") if key == "hover" else Color("dbc28f") if key == "pressed" else Color.WHITE
+		var paper := painted_style(HUD_PAPER,Rect2(Vector2.ZERO,HUD_PAPER.get_size()),tint,Vector2(20,12))
+		paper.content_margin_left = 58
+		hub_action.add_theme_stylebox_override(key,paper)
+	var focus := style(Color.TRANSPARENT,Color("80572d"),2,14)
+	focus.set_content_margin_all(0)
+	hub_action.add_theme_stylebox_override("focus",focus)
+	hub_action.pressed.connect(_activate_hub_action)
+	hud.add_child(hub_action)
+	var keycap := PanelContainer.new()
+	keycap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var key_style := style(Color("e5ce96"),Color("a57d45"),1,6)
+	key_style.set_content_margin_all(0)
+	keycap.add_theme_stylebox_override("panel",key_style)
+	hub_action.add_child(keycap)
+	anchored(keycap,Rect2(0,.5,0,0),Rect2(18,-15,29,30))
+	var key := text_line(keycap,"E",20,Color("624823"))
+	key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	key.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hub_action.hide()
+
+func _refresh_hub_action() -> void:
+	hub_action_kind = driver.model.interaction() if driver.mode == "play" and driver.model.area == "hub" else ""
+	hub_action.visible = hub_action_kind in ["shop","tree","depart"]
+	if not hub_action.visible:
+		if hub_action.has_focus(): hub_action.release_focus()
+		return
+	var definitions := {
+		"shop":{"at":Vector2(333,280),"text":"交付花蜜","width":202.0},
+		"tree":{"at":Vector2(735,354),"text":"成长","width":162.0},
+		"depart":{"at":Vector2(1015,270),"text":"出发","width":162.0}}
+	var entry: Dictionary = definitions[hub_action_kind]
+	hub_action.text = entry.text
+	hub_action.tooltip_text = "按 E 或点击"+entry.text
+	# Anchors follow the authored 1280×800 scene under its existing stretch policy.
+	anchored(hub_action,Rect2(entry.at/Vector2(1280,800),Vector2.ZERO),Rect2(-entry.width*.5,-29,entry.width,58))
+
+func _activate_hub_action() -> void:
+	# Recheck proximity and mode at activation; a stale/focused prompt cannot act remotely.
+	if driver.mode != "play" or driver.model.area != "hub" or driver.model.interaction() != hub_action_kind: return
+	match hub_action_kind:
+		"shop": driver.open_shop()
+		"tree": driver.open_tree()
+		"depart": driver.open_regions()
 
 func _build_shop() -> void:
 	shop = screen(self)
@@ -715,6 +773,7 @@ func tree_key(event: InputEventKey) -> bool:
 func refresh() -> void:
 	if driver == null or not is_instance_valid(board): return
 	var m = driver.model
+	_refresh_hub_action()
 	_number(bag_text,"%d / %d" % [m.cargo_total(),m.capacity()],m.cargo_total())
 	bag_bar.max_value = m.capacity()
 	bag_bar.value = m.cargo_total()
