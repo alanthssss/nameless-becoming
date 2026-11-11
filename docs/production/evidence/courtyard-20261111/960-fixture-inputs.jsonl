@@ -1,0 +1,15 @@
+{"area":"hub","event":"Command","mode":"title","pressed":true,"time":3.23298566666665}
+{"area":"hub","event":"Left Mouse Button","mode":"title","pressed":true,"time":27.0573232323231}
+{"area":"hub","event":"Left Mouse Button","mode":"title","pressed":false,"time":27.1070669999999}
+{"area":"hub","event":"D","mode":"play","pressed":true,"time":27.1447598888888}
+{"area":"hub","event":"D","mode":"play","pressed":false,"time":28.1980639999999}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":true,"time":39.1521119999997}
+{"area":"hub","event":"Left Mouse Button","mode":"play","pressed":false,"time":39.1944338888886}
+{"area":"hub","event":"Left Mouse Button","mode":"regions","pressed":true,"time":48.9061329999996}
+{"area":"hub","event":"Left Mouse Button","mode":"regions","pressed":false,"time":48.9834716666662}
+{"area":"hub","event":"Space","mode":"transition","pressed":true,"time":49.0043723333329}
+{"area":"hub","event":"Space","mode":"transition","pressed":false,"time":49.0043723333329}
+{"area":"meadow","event":"D","mode":"play","pressed":true,"time":49.0931826666662}
+{"area":"meadow","event":"D","mode":"play","pressed":false,"time":49.8166666666662}
+{"area":"meadow","event":"Escape","mode":"play","pressed":true,"time":57.7463369999993}
+{"area":"meadow","event":"Escape","mode":"pause","pressed":false,"time":57.7463369999993}

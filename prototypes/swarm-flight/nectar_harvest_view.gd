@@ -241,9 +241,7 @@ func _draw_hub() -> void:
 		var glint := lamp+Vector2(sin(clock*.7)*28,cos(clock*.7)*22)
 		draw_line(glint-Vector2(4,0),glint+Vector2(4,0),Color(1,.97,.78,.62),1.4,true)
 		draw_line(glint-Vector2(0,4),glint+Vector2(0,4),Color(1,.97,.78,.62),1.4,true)
-	if model.interaction()=="shop": _label(Vector2(333,280),"E  交付花蜜",true,160)
-	elif model.interaction()=="tree": _label(Vector2(735,354),"E  成长",true,130)
-	elif model.interaction()=="depart": _label(Vector2(1015,270),"E  出发",true,150)
+	# The courtyard station affordance is the clickable paper control in the HUD.
 	if model.completed:
 		for i in 3:
 			var pose: Dictionary = Dance.pose(fposmod(clock+i*.12,1.4),"waggle",i)

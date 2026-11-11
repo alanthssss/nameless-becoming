@@ -1,0 +1,221 @@
+{
+	"developer_fixture": true,
+	"human_evidence": false,
+	"profile": {
+		"area": "hub",
+		"burst_left": 0.0,
+		"cargo": {
+			"blue": 0,
+			"rose": 0
+		},
+		"charge": 0.0,
+		"charging": false,
+		"coins": 880,
+		"completed": false,
+		"creatures": [
+			{
+				"anchor": [
+					1300.0,
+					420.0
+				],
+				"face": [
+					-1.0,
+					0.0
+				],
+				"hits": 0,
+				"id": "mosquito_0",
+				"kind": "scout",
+				"pos": [
+					1300.0,
+					420.0
+				],
+				"region": 0,
+				"state": "gone",
+				"stun": 0.0,
+				"timer": 0.0
+			},
+			{
+				"anchor": [
+					2500.0,
+					350.0
+				],
+				"face": [
+					-1.0,
+					0.0
+				],
+				"hits": 0,
+				"id": "mosquito_1",
+				"kind": "guard",
+				"pos": [
+					2500.0,
+					350.0
+				],
+				"region": 1,
+				"state": "gone",
+				"stun": 0.0,
+				"timer": 0.0
+			},
+			{
+				"anchor": [
+					2980.0,
+					510.0
+				],
+				"face": [
+					-1.0,
+					0.0
+				],
+				"hits": 0,
+				"id": "mosquito_2",
+				"kind": "guard",
+				"pos": [
+					2980.0,
+					510.0
+				],
+				"region": 1,
+				"state": "gone",
+				"stun": 0.0,
+				"timer": 0.0
+			}
+		],
+		"drops": [],
+		"energy": 70.0,
+		"face": [
+			1.0,
+			0.0
+		],
+		"field_time": 0.0,
+		"flowers": [
+			{
+				"bloom": 1.0,
+				"id": "blue_0",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "blue_1",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "blue_2",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "blue_3",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "blue_4",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "blue_5",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "blue_6",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "rose_0",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "rose_1",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "rose_2",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "rose_3",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "rose_4",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "rose_5",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			},
+			{
+				"bloom": 1.0,
+				"id": "rose_6",
+				"progress": 0.0,
+				"regrow": 0.0,
+				"stock": 1
+			}
+		],
+		"hurt_left": 0.0,
+		"id": "nectar-harvest-v1",
+		"legacy_owned": [],
+		"materials": {
+			"fiber": 86,
+			"resin": 98
+		},
+		"owned": [
+			"gather1",
+			"bag1",
+			"wings1",
+			"gather2",
+			"reach",
+			"bag2",
+			"wings2",
+			"meadow"
+		],
+		"p": [
+			740.0,
+			485.0
+		],
+		"phase": "home",
+		"pulse_left": 0.0,
+		"rose_sold": 6,
+		"sold_total": 6,
+		"trip_index": 0,
+		"v": [
+			0.0,
+			0.0
+		],
+		"version": 5,
+		"visited_meadow": true
+	},
+	"purpose": "late growth UI purchases, two-region trips and completion; money/materials granted, prerequisite ranks purchased through validated model"
+}
