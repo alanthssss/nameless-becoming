@@ -19,9 +19,10 @@
   "manual": "CUA ordinary movement, growth click and E, shop click and E, departure click, pond HUD/pause/save-exit at 1280x800; labelled granted-growth fixture, departure click and meadow HUD/pause at 960x600. Not a full journey or new player trial.",
   "failures_preserved": [
     "v1 69/6: held-click screenshot wait allowed input/focus disruption; follow-on unconditional Esc polluted E checks; precise OS cause not established",
-    "v2 69/2: two process-frame movement taps did not reliably span a physics tick without fixed-fps; changed probe to physics-observed bounded hold",
+    "v2 69/2: two process-frame movement taps did not reliably produce displacement crossing the interaction radius; changed probe to a bounded sustained input until observed crossing; not a proven physics-tick root cause",
     "demo regression first call exit2: missing required capture-dir; rerun with documented arguments passed",
-    "first export attempt wrong preset name failed; corrected existing macOS Nectar Regions preset exported successfully"
+    "first export attempt wrong preset name failed; corrected existing macOS Nectar Regions preset exported successfully",
+    "CI42946240037 failed whitespace gate on trailing blank EOF in the empty demo invocation log; exact raw text and hash now encoded as JSON, no runtime or CI changes"
   ],
   "raw_media_root": "/Users/alanthssss/LocalGames/courtyard-visual-review-20261111/evidence",
   "export": "Debug export used only for developer verification; no new NH-C01–08 candidate or release claimed; prior 0.29 candidate retained",
@@ -114,8 +115,8 @@
       "sha256": "9012f7a5d4abed159fd90cc77e7e4ea39233e90d96b98fa173ea0d83c28f5bd2"
     },
     {
-      "path": "nectar_demo_ui_verify.gd.log",
-      "sha256": "da76a36a586ec310ae98a6bf8844ab87166457610861a810027a91d273cbb93f"
+      "path": "nectar_demo_ui_verify.gd.log.json",
+      "sha256": "a3854b1db9a05c17af52fb57759afcce6b8d6c659ee870b7eb51a7a8bdac4352"
     },
     {
       "path": "nectar_harvest_ui_verify.gd.log",
