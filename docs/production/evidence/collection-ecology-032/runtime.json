@@ -1,0 +1,109 @@
+{
+  "version": "0.32.0",
+  "runtime_commit": "82b9b544c9b7cd6b67ec094d5bee83153cf0b739",
+  "base": "1063167154ad0f5e583e26c3359aec94211816c5",
+  "godot": "4.6.2.stable.official",
+  "bundle": "com.alanthssss.pondfeedback",
+  "architecture": "x86_64 arm64",
+  "tracker": [
+    322,
+    349,
+    350,
+    351
+  ],
+  "binary_sha256": "965e83aaa960cd619f3e202101578bc06a0ec320f5d88fdb5696566c9850c91b",
+  "pck_sha256": "9d5ac74ee1ea8011d15eae02b2e6964ed5d1c46358997734dd72079e28795675",
+  "recorded_keyboard_routes": {
+    "pond": {
+      "source_frame": "frames/000073.jpg",
+      "source_recorded_size": [
+        960,
+        600
+      ],
+      "route_event_kinds": [
+        "depart",
+        "area_change",
+        "harvest",
+        "pulse",
+        "pulse",
+        "material_dropped",
+        "flower_empty",
+        "flower_fading",
+        "flower_fading",
+        "flower_empty",
+        "flower_fading",
+        "flower_fading",
+        "flower_fading",
+        "flower_fading",
+        "flower_fading",
+        "pulse_empty",
+        "material",
+        "material_empty",
+        "material_fading",
+        "material_fading",
+        "return",
+        "area_change",
+        "sell"
+      ],
+      "cargo": {
+        "blue": 0,
+        "rose": 0
+      },
+      "materials": {
+        "fiber": 1,
+        "resin": 0
+      },
+      "recorded_frames": 153,
+      "save_sha256": "f89e15393f714952b9d7cb4a9a992374c8b4118532bc49107828525f2f1937ff"
+    },
+    "meadow": {
+      "source_frame": "frames/000069.jpg",
+      "source_recorded_size": [
+        960,
+        600
+      ],
+      "route_event_kinds": [
+        "harvest",
+        "pulse",
+        "pulse",
+        "material_opened",
+        "flower_empty",
+        "flower_fading",
+        "flower_fading",
+        "flower_empty",
+        "flower_fading",
+        "flower_fading",
+        "flower_fading",
+        "flower_fading",
+        "flower_fading",
+        "material",
+        "material_empty",
+        "material_fading",
+        "material_fading",
+        "return",
+        "area_change",
+        "sell"
+      ],
+      "cargo": {
+        "blue": 0,
+        "rose": 0
+      },
+      "materials": {
+        "fiber": 8,
+        "resin": 1
+      },
+      "recorded_frames": 147,
+      "save_sha256": "1f86b1e44c44cccefa36f9ee07af15d63ab699271d6fdbc81e1cf75acd855fbd"
+    }
+  },
+  "evidence_type": "Developer-driven native keyboard routes, controlled flower-state screenshots. Meadow uses an unlocked 0.31 start. Independent player assessment still open.",
+  "docs_evidence_sha256": {
+    "flower-sequence.jpg": "0dc29591e57fd02e30836950353ddb41c5344b15959dc8767f26492f635a7092",
+    "pond-source.jpg": "13df89d65363090e9103bb8e9673a199939b474aa55c9f81f9417c5b0841a0d9",
+    "meadow-source.jpg": "019a7ad448343c2860cb6fdd73383be221eafb2fdfb2d947913a2af68b2406a2"
+  },
+  "videos": {
+    "紫花地往返.mp4": "0070a76994cd21509af3fb5d4a2cbdca05d7a52220903ad4887329bb4d3e5465",
+    "池岸往返.mp4": "64c6beeeb55b7a7eb22c6528220ec37a743644486a7cc8b4a1f5793ef8c034ed"
+  }
+}
