@@ -33,13 +33,23 @@ func _draw() -> void:
 
 func dress(coast: PackedVector2Array) -> void:
 	_shore_plants.clear()
-	# Clustered plants are independent objects, with their feet inside the shore.
-	var targets := [Vector2(350,290),Vector2(670,270),Vector2(1200,285),Vector2(1640,350),Vector2(1660,570),Vector2(1180,670),Vector2(1040,1000),Vector2(780,710),Vector2(400,650)]
+	# Small irregular groups and long open banks; roots follow the local inward
+	# normal rather than pointing at a remote route node across a concave bay.
+	var targets := [Vector2(330,305),Vector2(650,265),Vector2(1300,310),Vector2(1650,420),Vector2(1220,665),Vector2(1050,1000),Vector2(390,650)]
 	for index in targets.size():
 		var nearest := coast[0]
-		for point in coast:
-			if point.distance_squared_to(targets[index])<nearest.distance_squared_to(targets[index]): nearest=point
-		var center: Vector2 = model.field.layout.nodes[2].p if index<6 else model.field.layout.nodes[4].p
-		var foot := nearest.move_toward(center,42)
-		if not FieldLayout.walkable(model.field.layout,foot,18): continue
-		_shore_plants.append({"p":foot-Vector2(0,9),"normal":Vector2.UP,"size":1.15 if index%3==0 else .85,"kind":0 if index%2==0 else 2})
+		var tangent := Vector2.RIGHT
+		for i in coast.size():
+			var next := coast[(i+1)%coast.size()]
+			var point := Geometry2D.get_closest_point_to_segment(targets[index],coast[i],next)
+			if point.distance_squared_to(targets[index])<nearest.distance_squared_to(targets[index]):
+				nearest=point
+				tangent=(next-coast[i]).normalized()
+		var inward := tangent.orthogonal()
+		if not FieldLayout.walkable(model.field.layout,nearest+inward*38,20): inward=-inward
+		for j in 3 if index%2==0 else 2:
+			var foot := nearest+inward*(38.0+float(j%2)*13.0)+tangent*(float(j)-.7)*30.0
+			if not FieldLayout.walkable(model.field.layout,foot,24): continue
+			# Preserve the material/flower interaction silhouettes.
+			if foot.distance_to(Vector2(920,937))<68: continue
+			_shore_plants.append({"p":foot-Vector2(0,9),"normal":-inward,"size":.72 if j==0 else .48+float(index%2)*.10,"kind":0 if j==0 else 2})
