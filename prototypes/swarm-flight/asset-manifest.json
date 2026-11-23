@@ -1,5 +1,12 @@
 {
   "project": "Before the Rain / 雨来之前",
+  "application_icon": {
+    "path": "icon.png",
+    "size_px": [1024, 1024],
+    "source": "Built-in image_gen, 2026-11-23, issue #363. Character reference cropped from art/revision-atlas.png at (67, 158, 510, 456).",
+    "prompt": "Use case: logo-brand. A finished square macOS game icon, illustration for a hand-painted storybook garden adventure. The supplied reference is THIS game's hero. Art direct a memorable close-up of the SAME golden bumblebee flying toward the right, head turned slightly to the viewer. Keep the precise friendly face, expressive big ivory eyes with dark brown pupils, paired curved amber antennae, tiny nose, russet-red knotted neckerchief, toasted-brown band on golden abdomen. Add a pair of simple overlapping pearly, slightly translucent wings behind the back, like the petals of a white crocus. Compose a beautiful bold silhouette in three-quarter profile, upward diagonal. Behind it, ONE dark pine-green rounded-square tile with subtle layered teal brushwork, with a single curved sage leaf in one lower corner holding one small pale raindrop. Make bee face and scarf and wing shapes large enough to read in the Dock. Warm honey sunlight from upper left, handmade gouache, gentle imperfect painted edges, controlled values and very few details, distinctive polished indie game identity. Main bee fills about 75% of tile. Tile centered, covering 92% of square canvas width, transparent outer margin and transparent outside rounded corners. No letterforms, words, type, logos, badge rings, hexagons, frames, stickers or extruded borders, no scene/mockup. One single icon centered, 1:1.",
+    "processing": "Generated RGBA artwork reduced to 1024 × 1024 with macOS sips, retaining transparency. Shared by Godot, the macOS exporter and the nectar title menu."
+  },
   "revision": "0.9.3",
   "created": "2026-10-20",
   "direction": "Alan accepted the stage-05 visual direction and explicitly authorized completing remaining elements and applying the coherent art family to all sixteen levels (SF-R28). Original generated painted sprites combine with model-driven presentation. This is direction approval and rollout authorization, not whole-game experience, commercial quality or PVZ-parity acceptance.",
