@@ -3,6 +3,7 @@ extends "res://nectar_harvest_view.gd"
 ## The turf edge uses the same authored natural coast as field collision.
 const FieldLayout = preload("res://region_greybox/layout.gd")
 const FieldLife = preload("res://region_greybox/model.gd")
+const PlaceDressing = preload("res://region_game/landscape.gd")
 const GROUND_TILE: Texture2D = preload("res://art/region-ground.png")
 const WATER_TILE: Texture2D = preload("res://art/region-water.png")
 const TURF_SHADER := """shader_type canvas_item;
@@ -28,6 +29,8 @@ var _shore_plants: Array[Dictionary] = []
 var _grass_marks: Array[Dictionary] = []
 var _life_motes: Array[Dictionary] = []
 var _material_recoil := {}
+var _full_glow := 0.0
+var _landscape := {}
 
 func _ready() -> void:
 	super._ready()
@@ -39,6 +42,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if not presentation_active: return
+	_full_glow = maxf(0.0,_full_glow-delta)
 	for mote in _life_motes: mote.age += delta
 	_life_motes = _life_motes.filter(func(m: Dictionary) -> bool: return float(m.age) < float(m.duration))
 	for id in _material_recoil:
@@ -49,6 +53,7 @@ func nectar_event(event: Dictionary) -> void:
 	if area_key == "hub":
 		super.nectar_event(event)
 		return
+	if kind == "full": _full_glow = .85
 	var item: Dictionary = {}
 	var id := int(event.get("id", event.get("amount", -1)))
 	var material := kind.begins_with("material_")
@@ -170,6 +175,7 @@ func _prepare_field() -> void:
 		var at := bounds.position + Vector2(rng.randf()*bounds.size.x,rng.randf()*bounds.size.y)
 		if FieldLayout.walkable(field.layout,at,42):
 			_grass_marks.append({"p":at,"turn":rng.randf_range(-.6,.6),"size":rng.randf_range(.6,1.25)})
+	_landscape = PlaceDressing.build(field)
 
 func _close_to_resource(at: Vector2,radius: float) -> bool:
 	# Keep room for future unlocked sources too, without drawing their empty slots.
@@ -204,6 +210,8 @@ func _draw() -> void:
 	draw_set_transform(_world_offset)
 	_draw_region_floor()
 	var actors: Array[Dictionary] = []
+	for decoration in _landscape.get("actors",[]):
+		if _visible(decoration.p): actors.append({"kind":"landscape","y":decoration.p.y,"data":decoration})
 	for plant in _shore_plants:
 		if _visible(plant.p): actors.append({"kind":"shore","y":plant.p.y,"data":plant})
 	for flower in model.field.flowers:
@@ -223,6 +231,7 @@ func _draw() -> void:
 	actors.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y) < float(b.y))
 	for actor in actors:
 		match actor.kind:
+			"landscape": PlaceDressing.draw_actor(self,actor.data)
 			"shore": _draw_shore_plant(actor.data)
 			"flower": _draw_living_flower(actor.data)
 			"material": _draw_living_material(actor.data)
@@ -236,6 +245,7 @@ func _draw() -> void:
 	_draw_home_bearing()
 
 func _draw_region_floor() -> void:
+	PlaceDressing.draw_floor(self,_landscape)
 	var pond := area_key == "pond"
 	for mark in _grass_marks:
 		var at: Vector2 = mark.p
@@ -258,6 +268,9 @@ func _draw_region_floor() -> void:
 
 func _draw_distant_landmarks() -> void:
 	# Rooted silhouettes make near/middle/far readable without inventing a route.
+	# Pond landmarks now belong to the rooted, y-sorted place composition.
+	# The old fixed-offset reeds/fountain could float above deep open water.
+	if area_key == "pond": return
 	var nodes: Array = model.field.layout.nodes
 	for index in [1,2,3]:
 		# The meadow's short pocket goes north of its middle node; keep its
@@ -311,6 +324,9 @@ func _flower_visual_point(flower: Dictionary) -> Vector2:
 	var at: Vector2 = flower.p
 	if not reduced_motion and flower.phase != "empty":
 		at += Vector2(sin(clock*1.5+float(flower.id)*.7)*1.5,0)
+		if int(flower.id) in model.field._locked:
+			var pull := smoothstep(0.0,.85,float(flower.progress))
+			at += at.direction_to(model.p) * (pull*5.0)
 	return at
 
 func _draw_living_flower(flower: Dictionary) -> void:
@@ -342,7 +358,7 @@ func _draw_living_flower(flower: Dictionary) -> void:
 	var tint := Color("b8c58c") if phase == "bud" else Color.WHITE.lerp(Color("b6a483"),ratio*.72) if phase == "fading" else Color.WHITE
 	if model.p.y+33 < root.y and model.p.distance_to(at) < 65: tint.a = .58
 	var working: bool = int(flower.id) in model.field._locked
-	var tug := sin(clock*23)*.022 if working and not reduced_motion else 0.0
+	var tug := sin(clock*13)*.052 if working and not reduced_motion else 0.0
 	var head_size := .84+float(int(flower.id)%5)*.065
 	draw_set_transform(_world_offset+join,tug,Vector2(opening,.70+opening*.30)*head_size)
 	if purple:
@@ -370,7 +386,11 @@ func _draw_living_material(item: Dictionary) -> void:
 	var kind := "fiber" if area_key == "pond" else "resin"
 	if bool(item.dropped):
 		var fall := clampf(float(item.phase_time)/.35,0,1)
-		var lift := sin(fall*PI)*17
+		var lift := 0.0 if reduced_motion else sin(fall*PI)*17
+		var joint: Vector2 = item.anchor+Vector2(0,15)
+		ArtProps.stalk(self,joint,joint.lerp(root,.32)+Vector2(-2,0),joint.lerp(root,.7),root,3.4)
+		for side in [-1,1]:
+			ArtSprites.small_leaf(self,joint,joint+Vector2(side*20,-10),7)
 		_ground_shadow(at+Vector2(0,12),Vector2(18,5),.16)
 		var tint := Color.WHITE.lerp(Color("a9a082"),smoothstep(.65,1,ratio))
 		UIArt.painted_icon(self,kind,at+Vector2(0,-lift),18,tint)
@@ -502,9 +522,22 @@ func _draw_region_effects() -> void:
 	for mote in nectar_motes:
 		if mote.age < 0: continue
 		var t: float = clampf(mote.age/mote.duration,0,1)
-		var q: Vector2 = mote.from.lerp(model.p+Vector2(-7,7),t*t)
-		if mote.has("material"): UIArt.icon(self,mote.material,q,9*(1-t*.5))
-		else: draw_circle(q,3.1*(1-t*.35),Color("ffe9a1") if mote.gold else Color("d8f2df"))
+		var side := -1 if model.face.x >= 0 else 1
+		var pocket: Vector2 = model.p+Vector2(side*20,18)
+		var q: Vector2 = mote.from.lerp(pocket,smoothstep(0,1,t))
+		if not reduced_motion: q.y -= sin(t*PI)*26
+		if reduced_motion: continue
+		if mote.has("material"):
+			UIArt.icon(self,mote.material,q,14*(1-t*.30))
+		else:
+			var radius := 6.8*(1-t*.34)
+			draw_circle(q,radius+1,Color("94682c"),true,-1,true)
+			draw_circle(q,radius,Color("eca3ae") if mote.gold else Color("f7c655"),true,-1,true)
+			draw_circle(q-Vector2(1.4,1.6),radius*.32,Color("fff6cd"))
+			if t < .55:
+				for i in 4:
+					var tip: Vector2 = mote.from + Vector2.from_angle(TAU*i/4+.4)*(8+t*27)
+					draw_circle(tip,2.4*(1-t),Color("ffe4a0",1-t))
 	for mote in _life_motes:
 		var t: float = float(mote.age)/float(mote.duration)
 		for i in 4:
@@ -527,10 +560,14 @@ func _region_label(at: Vector2, words: String, active: bool) -> void:
 
 func _draw_home_bearing() -> void:
 	var entry: Vector2 = model.field.layout.nodes[0].p
-	if model.p.distance_to(entry)<330: return
+	if model.p.distance_to(entry)<330 and _full_glow <= 0: return
 	var at := get_viewport_rect().size-Vector2(112,50)
 	var direction: Vector2 = (entry-model.p).normalized()
 	var side := direction.orthogonal()
 	var centre := at-Vector2(48,0)
+	if _full_glow > 0:
+		var alpha := minf(_full_glow*3,1)
+		draw_circle(centre,13,Color("5b512e",alpha*.9),true,-1,true)
+		draw_arc(centre,13,0,TAU,28,Color("f9d979",alpha),2,true)
 	draw_polyline(PackedVector2Array([centre-direction*5-side*5,centre+direction*6,centre-direction*5+side*5]),Color("f5df9f"),2.5,true)
 	_region_label(at+Vector2(5,0),"回庭院",false)

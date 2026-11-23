@@ -208,5 +208,20 @@
       "model_version": "not returned by tool",
       "server_generation_id": "not returned by tool"
     }
-  ]
+  ],
+  "composition_20261123": {
+    "issue": 349,
+    "gdd": [
+      "8.1",
+      "12",
+      "13.9"
+    ],
+    "parent_issue": 322,
+    "scope": "Pond only: four authored places at actual route nodes, shared by region_game and compact pond_tilemap; violet keeps its original composition. Warm entry soil, green bend with rooted leaves, wet material bay with taller reed heads and shore-derived groups of floating fallen leaves, low rounded shore stones at far end.",
+    "sources": "Original PNG bytes unchanged. Leaves reuse revision-atlas leaf; low stones reuse the existing painted stone surface at garden-terrain (700,949)-(1150,984). Broad translucent irregular ground washes and rooted reed curves are runtime presentation geometry, not new art files or colliders. Water leaves reuse the same intact leaf atlas region at a flattened presentation scale, with local water shadows and broken ripple strokes; they are decorative fallen leaves, not rooted plants, walkable islands or new resources.",
+    "occlusion": "Decorative actors use ground-anchor y order; only silhouettes in front of the bee fade near overlap. All potential resource positions are reserved, including future growth. Fixed-offset floating pond reeds/fountain are replaced by actual rooted composition.",
+    "verification": "Development native two-size fixture and anchor/state checks; purple-field non-modification and compact-map inheritance checked. First reed base at 24px margin failed the 28px root-clearance assertion and was moved to 36px. Earlier weak composition and floating inherited landmarks were revised after review. Not independent player or aesthetic acceptance. Exact revision and final image hashes belong to batch receipt.",
+    "new_generation": false,
+    "new_purchase": false
+  }
 }

@@ -5,7 +5,10 @@ func _draw() -> void:
 	if model == null or model.field == null: return
 	_world_offset = -model.camera_offset
 	draw_set_transform(_world_offset)
+	PlaceDressing.draw_floor(self,_landscape)
 	var actors: Array[Dictionary] = []
+	for decoration in _landscape.get("actors",[]):
+		if _visible(decoration.p): actors.append({"kind":"landscape","y":decoration.p.y,"data":decoration})
 	for plant in _shore_plants:
 		if _visible(plant.p): actors.append({"kind":"shore","y":plant.p.y,"data":plant})
 	for flower in model.field.flowers:
@@ -20,6 +23,7 @@ func _draw() -> void:
 	actors.sort_custom(func(a,b): return float(a.y)<float(b.y))
 	for actor in actors:
 		match actor.kind:
+			"landscape": PlaceDressing.draw_actor(self,actor.data)
 			"shore": _draw_shore_plant(actor.data)
 			"flower": _draw_living_flower(actor.data)
 			"material": _draw_living_material(actor.data)
@@ -32,6 +36,7 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO)
 
 func dress(coast: PackedVector2Array) -> void:
+	_landscape = PlaceDressing.build(model.field,true)
 	_shore_plants.clear()
 	# Small irregular groups and long open banks; roots follow the local inward
 	# normal rather than pointing at a remote route node across a concave bay.

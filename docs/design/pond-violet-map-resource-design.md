@@ -4,7 +4,9 @@
 
 ## 2026-11-23：地图疏密、混合视角与关键互动反馈候选
 
-**状态：设计候选，未实施。** Alan反馈地图太空，询问是否沿用俯视并利用多重透视丰富景深，要求采集、售卖等关键环节有更精彩的动效。沿GDD[§8.1](swarm-flight-gdd.md#visual-production-rules)/§12/§13.9 → [M3](https://github.com/alanthssss/nameless-becoming/milestone/3) → [#322](https://github.com/alanthssss/nameless-becoming/issues/322)。本节由Codex提出并负责验证设计，Alan保留整体视觉与体验判断；归档不代表视角改制、全图重做或美术量产已获承诺。以下11月10日规则是历史设计与实验记录，当前运行规则以最新GDD与回执为准。
+**11月23日后续决定。** Alan已批准排期实施下文的池岸局部样段，执行与原生结果沿[制作规格 Now](solar-term-campaign-production-spec.md#production-now)及#322。以下为决定前的设计记录。
+
+ Alan反馈地图太空，询问是否沿用俯视并利用多重透视丰富景深，要求采集、售卖等关键环节有更精彩的动效。沿GDD[§8.1](swarm-flight-gdd.md#visual-production-rules)/§12/§13.9 → [M3](https://github.com/alanthssss/nameless-becoming/milestone/3) → [#322](https://github.com/alanthssss/nameless-becoming/issues/322)。本节由Codex提出并负责验证设计，Alan保留整体视觉与体验判断；归档不代表视角改制、全图重做或美术量产已获承诺。以下11月10日规则是历史设计与实验记录，当前运行规则以最新GDD与回执为准。
 
 ### 核查到的现状
 

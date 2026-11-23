@@ -534,6 +534,13 @@ func _draw_bag() -> void:
 	var scale := 1.55 if "bag2" in model.owned else 1.25 if "bag1" in model.owned else 1.0
 	# The same painted honey vessel as the HUD and shop, visibly tied to the bee.
 	var span := Vector2(18,20)*scale
+	if not reduced_motion:
+		for mote in nectar_motes:
+			if mote.has("material"): continue
+			var arrival := clampf((float(mote.age)/float(mote.duration)-.63)/.37,0,1)
+			if arrival > 0:
+				span *= 1.0+.30*sin(arrival*PI)
+				break
 	for offset in [-4,4]:
 		draw_line(model.p+Vector2(8*side,7+offset),p+Vector2(offset,-span.y*.36),Color("8a673b"),1.5,true)
 	var tone := Color.WHITE if model.cargo_total()>0 else Color(.68,.73,.59)

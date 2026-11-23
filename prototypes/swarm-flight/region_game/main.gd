@@ -11,9 +11,9 @@ func create_interface(): return RegionalUI.new()
 
 func _ready() -> void:
 	model = new_model()
-	saved_path = PROGRESS
+	saved_path = "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
 	super._ready()
-	get_window().title = "采蜜 Demo · 池岸与紫花地"
+	get_window().title = "池岸采售 · 0.30.0" if OS.has_feature("pond_feedback") else "采蜜 Demo · 池岸与紫花地"
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--record-dir="):
 			var recorder = preload("res://region_game/recorder.gd").new()
@@ -59,6 +59,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func consume_events(pending: Array) -> void:
 	super.consume_events(pending)
+	for event in pending:
+		if event.kind == "sell" and mode == "shop":
+			var side := -1.0 if model.face.x >= 0 else 1.0
+			ui.sale_flight.begin(event, model.p + Vector2(side*20,18), ui.shop_coins, reduced_motion)
+		elif event.kind == "full":
+			sound.play_event("ring",0)
 	if pending.is_empty() or evidence_log.is_empty(): return
 	var file := FileAccess.open(evidence_log,FileAccess.READ_WRITE if FileAccess.file_exists(evidence_log) else FileAccess.WRITE)
 	if file != null:
