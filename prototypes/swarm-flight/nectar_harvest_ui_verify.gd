@@ -59,14 +59,23 @@ func capture(name: String) -> void:
 	root.get_texture().get_image().save_png(output.path_join(name+".png"))
 
 func run() -> void:
+	var temp_dir := DirAccess.create_temp("nectar-ui-")
+	if temp_dir == null:
+		push_error("Could not create an isolated UI test directory")
+		quit(1)
+		return
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--capture-dir="): output=arg.trim_prefix("--capture-dir=")
 		if arg.begins_with("--progress-file="): DirAccess.make_dir_recursive_absolute(arg.trim_prefix("--progress-file=").get_base_dir())
 	if not output.is_empty(): DirAccess.make_dir_recursive_absolute(output)
 	game = Scene.instantiate()
+	# _ready() can still take an explicit fixture path supplied by the CI runner.
+	game.saved_path = temp_dir.get_current_dir().path_join("progress.json")
+	game.test_mode = true
 	root.add_child(game)
 	await frames(8)
 	check(game.mode == "title","fresh scene opens at title")
+	check(game.ui.menu_logo.is_visible_in_tree() and game.ui.menu_logo.texture.resource_path == ProjectSettings.get_setting("application/config/icon"),"title displays the application icon")
 	await capture("01-title")
 	await tap(KEY_ENTER)
 	check(game.mode == "play","focused title button starts with actual Enter input")
@@ -170,6 +179,7 @@ func run() -> void:
 	var old_cargo: int = game.model.cargo_total()
 	await tap(KEY_ESCAPE)
 	check(game.mode == "pause" and game.held.is_empty(),"escape saves pauses and releases input")
+	check(not game.ui.menu_logo.is_visible_in_tree(),"pause leaves room for its own heading")
 	var state: Dictionary = game.model.to_payload()
 	await create_timer(0.25).timeout
 	check(game.model.to_payload() == state,"paused state is frozen")
