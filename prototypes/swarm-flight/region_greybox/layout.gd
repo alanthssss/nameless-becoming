@@ -71,10 +71,25 @@ static func segment_distance(at: Vector2, a: Vector2, b: Vector2) -> float:
 	var t := clampf((at-a).dot(axis)/axis.length_squared(),0.0,1.0)
 	return at.distance_to(a+axis*t)
 
+static func _inside_regional_coast(coast: PackedVector2Array, at: Vector2) -> bool:
+	# A ray through a polygon vertex can make the native check reject an interior
+	# point. Count horizontal crossings with one endpoint included per edge.
+	var inside := false
+	var previous := coast[-1]
+	for point: Vector2 in coast:
+		if (previous.y > at.y) != (point.y > at.y):
+			var cross_x := previous.x+(at.y-previous.y)*(point.x-previous.x)/(point.y-previous.y)
+			if at.x < cross_x: inside = not inside
+		previous = point
+	return inside
+
 static func walkable(layout: Dictionary, at: Vector2, margin: float = BODY_RADIUS) -> bool:
 	if layout.has("coast"):
 		var coast: PackedVector2Array = layout.coast
-		if not at.is_finite() or coast.size()<3 or not Geometry2D.is_point_in_polygon(at,coast): return false
+		if not at.is_finite() or coast.size()<3: return false
+		if not Geometry2D.is_point_in_polygon(at,coast):
+			if layout.get("geometry_version")!=3 or not layout.bounds.has_point(at) or not _inside_regional_coast(coast,at):
+				return false
 		if margin>0.0:
 			for i in coast.size():
 				if segment_distance(at,coast[i],coast[(i+1)%coast.size()])<margin: return false

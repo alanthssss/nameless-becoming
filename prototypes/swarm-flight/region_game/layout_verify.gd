@@ -98,7 +98,11 @@ func verify(region: String) -> void:
 
 func _verify_west(region: String) -> void:
 	var field = Field.new()
-	field.configure(region,0,1)
+	field.configure(region,0,2)
+	if region=="violet":
+		# This real seed puts a flower on a native polygon-test ray through a vertex.
+		var eastern_flower: Vector2 = field.flowers[30].p
+		check(eastern_flower.x>2000 and Collision.walkable(field.layout,eastern_flower,55),region+" east flower remains reachable after the west outline changes")
 	var entry: Vector2 = field.p
 	for i in 100: field.step(.05,Vector2.LEFT,false)
 	var min_screen_x: float = field.p.x * Natural.FIELD_ZOOM
