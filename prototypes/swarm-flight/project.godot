@@ -5,10 +5,13 @@ config/name.nectar_mvp="采蜜 Demo"
 config/name.nectar_regions="采蜜 Demo · 池岸与紫花地"
 config/icon="res://icon.svg"
 run/main_scene="res://boot.tscn"
+run/main_scene.pond_tilemap="res://pond_tilemap/main.tscn"
+config/name.pond_tilemap="池岸 · TileMap手绘试做"
 config/features=PackedStringArray("4.6")
 config/use_custom_user_dir=true
 config/custom_user_dir_name="BeforeTheRain"
 config/custom_user_dir_name.nectar_regions="BeforeTheRain-Regions"
+config/custom_user_dir_name.pond_tilemap="BeforeTheRain-TileMapPreview"
 [display]
 window/size/viewport_width=1280
 window/size/viewport_height=800

@@ -1,0 +1,99 @@
+{
+  "schema": "pond-tilemap-preview-evidence/v1",
+  "date": "2026-11-23",
+  "baseline": "99bd643a7af235affb10df3fadb3edc4e08d2fbb",
+  "runtime_revision": "pending source freeze",
+  "engine": "4.6.2.stable.official.71f334935",
+  "screenshots": [
+    {
+      "file": "entry-1280.png",
+      "sha256": "590667293f7aa1b7165e619ad8fbf3fa5c55de0a9612e895e924dfe6230304d5",
+      "bytes": 1058205,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/entry-1280.png"
+    },
+    {
+      "file": "entry-960.png",
+      "sha256": "cdc4482760e0b95af13e39ae4100013ee360e5a57c1fc106f5f274bec716880f",
+      "bytes": 632464,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/entry-960.png"
+    },
+    {
+      "file": "far-1280.png",
+      "sha256": "5b007f317da7b19093e6abeb3b0ad8b447f775458c5b6a6f93cf448c004f84aa",
+      "bytes": 1032731,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/far-1280.png"
+    },
+    {
+      "file": "far-960.png",
+      "sha256": "3f75589b8ad206baacda751299f97690647e232a62c730b35246d41a8dfb0914",
+      "bytes": 619626,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/far-960.png"
+    },
+    {
+      "file": "fork-1280.png",
+      "sha256": "cac3c9e0c6423e4698910e3a72f0214150e00608cd159fcbc569734cf1433171",
+      "bytes": 1021894,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/fork-1280.png"
+    },
+    {
+      "file": "fork-960.png",
+      "sha256": "7a252a473d45cd7a7fa2a24b5295aee15fb338eaf5d54c1b0e2a5f3dd388f2df",
+      "bytes": 613410,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/fork-960.png"
+    },
+    {
+      "file": "pocket-1280.png",
+      "sha256": "0b209cd218c3fb453d5d93f9a66a14c379807eb91e3ea0c304ab930e1ac9d003",
+      "bytes": 959138,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/pocket-1280.png"
+    },
+    {
+      "file": "pocket-960.png",
+      "sha256": "61be83c54a50ac712ab5e564b02414c0d1596d2726b940ed089a9238cd7b7e43",
+      "bytes": 576337,
+      "local_path": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.0/screenshots/pocket-960.png"
+    }
+  ],
+  "source_art": "prototypes/swarm-flight/region_game/art-provenance.json",
+  "human_acceptance": false,
+  "new_art_generation": 0,
+  "new_purchase": 0,
+  "cua_result": {
+    "kind": "AI operating actual exported macOS application with ordinary keys",
+    "nectar_returned": 1,
+    "fiber_returned": 1,
+    "remaining_energy_display": 16,
+    "status": "returned",
+    "raw_evidence": "Codex conversation native screenshots; no continuous video recorded",
+    "first_q_attempt": "Wrong facing did not hit; turned toward seed pod, hit twice, moved closer, picked up and returned."
+  },
+  "limitations": [
+    "Native capture frames are developer-positioned fixtures, not continuous play.",
+    "Long straight shore segments still show modular form.",
+    "Single connected land only; fixed resources must be checked after tile edits.",
+    "Keeps current 0.29 water boundary; does not resolve historical free-flight-over-water design question."
+  ],
+  "verification": {
+    "checks": 42,
+    "failures": 0,
+    "default_entry": "headless smoke passed",
+    "exported_app": "headless smoke and CUA ordinary controls passed",
+    "independent_ai_review": "Two P2 fixed and reviewed; meaningful charged-pause test corrected to 0.45s; not human acceptance"
+  },
+  "runtime_source_sha256": {
+    "prototypes/swarm-flight/pond_tilemap/main.gd": "7bb340dba69e4f95da997181fd763d0f883d68840eca9302bb91429e90837d4c",
+    "prototypes/swarm-flight/pond_tilemap/main.tscn": "ecee172c7d3f866044a9615aece95b9b7d9d1f261c110e190c703e8d0a13bd00",
+    "prototypes/swarm-flight/pond_tilemap/shore.gdshader": "a87a34e7646a4594dd23e6771e97ced696562e13aa706ab61c8fe77177ed2f7d",
+    "prototypes/swarm-flight/pond_tilemap/shore_tiles.tres": "92fefe7afd9254f562c355bd9a40655987c7b9ed540db18ab95a1173321230bb",
+    "prototypes/swarm-flight/pond_tilemap/terrain.gd": "b4918096c934be1074e516b981003a4794eea8314a4523bf4358ab9d0e4db731",
+    "prototypes/swarm-flight/pond_tilemap/terrain.tscn": "503000280fa74d7bc81fc561c686cf8dfc37805d449d4d73f3dfe58907097dd5",
+    "prototypes/swarm-flight/pond_tilemap/view.gd": "34a8245e660649ad99ca43439490d817b85581ebe97bbc53023884bac241e52c"
+  },
+  "pack_files": [
+    {
+      "file": "Contents/Resources/池岸 · TileMap手绘试做.pck",
+      "sha256": "b34c39ef106777c137019ae351fec391a7c189820905055a890733d5a82d92a1",
+      "bytes": 48028624
+    }
+  ]
+}
