@@ -65,6 +65,7 @@ var detail_hint: Label
 var buy_button: Button
 var tree_back: Button
 var menu: Control
+var menu_logo: TextureRect
 var menu_title: Label
 var menu_body: Label
 var menu_primary: Button
@@ -571,8 +572,16 @@ func _build_menu() -> void:
 	panel.add_theme_stylebox_override("panel",painted_style(UIArt.JOURNAL,Rect2(35,48,715,900),Color.WHITE,Vector2(38,38)))
 	anchored(panel,Rect2(0,.5,0,0),Rect2(76,-286,440,572))
 	var v := column(panel,16)
-	menu_title = text_line(v,driver.DISPLAY_NAME,34)
-	menu_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var header := row(v,12)
+	header.alignment = BoxContainer.ALIGNMENT_CENTER
+	menu_logo = TextureRect.new()
+	menu_logo.texture = preload("res://icon.png")
+	menu_logo.custom_minimum_size = Vector2(64,64)
+	menu_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	menu_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	menu_logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header.add_child(menu_logo)
+	menu_title = text_line(header,driver.DISPLAY_NAME,34)
 	menu_body = text_line(v,"",20,INK,true)
 	menu_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	menu_primary = action(v,"开始采蜜",driver.start_game,true)
@@ -623,6 +632,7 @@ func show_mode(mode: String) -> void:
 	shop.visible = mode == "shop"
 	tree.visible = mode == "tree"
 	menu.visible = mode in ["title","pause","complete"]
+	menu_logo.visible = mode == "title"
 	regions.visible = mode == "regions"
 	transition_layer.visible = mode == "transition"
 	transition_hint.visible = mode == "transition"
