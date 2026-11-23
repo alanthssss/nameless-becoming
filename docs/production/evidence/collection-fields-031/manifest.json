@@ -1,0 +1,90 @@
+{
+  "version": "0.31.0",
+  "runtime_commit": "39ce439d4511a53bd66bf94b812c85697e775831",
+  "baseline": "56e208a60421abd3bd5cce1cb73295652d61273c",
+  "world_rect": [
+    0,
+    -100,
+    2680,
+    1550
+  ],
+  "comparison": {
+    "baseline": "0.30 native landmark fixture, capture seed 23, same camera position and reduced motion on both sides",
+    "size": [
+      960,
+      600
+    ],
+    "new_native_captures": 20,
+    "native_checks": 90
+  },
+  "keyboard_routes": {
+    "pond": {
+      "start": "fresh courtyard profile",
+      "sold": {
+        "blue": 1,
+        "rose": 0
+      },
+      "coins_received": 1,
+      "retained_material": {
+        "fiber": 1
+      },
+      "native_exports": true
+    },
+    "meadow": {
+      "start": "developer-granted purchase prerequisites; valid unlocked meadow entry profile",
+      "sold": {
+        "blue": 0,
+        "rose": 1
+      },
+      "coins_received": 3,
+      "retained_material": {
+        "resin": 1
+      },
+      "native_exports": true
+    }
+  },
+  "origin_of_art": "Built-in image_gen, 2 world paintings + 1 two-blossom sheet + 3 local clearance edits. Files and recipe under docs/art/collection-fields.",
+  "generation_calls": 6,
+  "purchases": 0,
+  "local_sha256": {
+    "直接试玩紫花地.command": "118ca4fe58fda5cf53ff227005e4abc3bf612d8c06e4d7e8c2f3bb5c829a8aff",
+    "开始试玩.command": "07fb769a462fe58d999b0b29539ead0f66f2f79711b647ba8ae302f27d5646d6",
+    "紫花地往返.mp4": "672689855837a4573d0da0f4aa51efed8a3592d0f199b7de24fe35b9b51b73b7",
+    "池岸往返.mp4": "c536db8a3ac4d23f13d0ebbb7e3945183a6f869e53f4a5b351e43d9ca284ecf4",
+    "两区同机位对照.jpg": "70c8d7a8453078adadb977b22fc0ec3b31892c86cf7d5b60c363f5e958b6f428",
+    "验证/紫花地起点.json": "390b527e104b64ba36f9dde0abdbbbe699f745c657fc3e407ed34ee572a5e537",
+    "采集花园.app/Contents/Info.plist": "e3f5cbc3c9c33c9ba1f1d0fe1b5cbaca322a6246476be84e512e0b0e4c78745b",
+    "采集花园.app/Contents/MacOS/采蜜 Demo · 池岸与紫花地": "965e83aaa960cd619f3e202101578bc06a0ec320f5d88fdb5696566c9850c91b",
+    "采集花园.app/Contents/Resources/采蜜 Demo · 池岸与紫花地.pck": "b4f06a8fe777302f14d2a815a3266dafb5bbb7289b74f6b5331e31297ac68784"
+  },
+  "evidence_sha256": {
+    "cold.log": "45d869227398762f5db1ff18b529655a3bc2ed37c81eef50423e0e359e35f831",
+    "comparison.jpg": "70c8d7a8453078adadb977b22fc0ec3b31892c86cf7d5b60c363f5e958b6f428",
+    "courtyard-and-fields.jpg": "8446359650de429b942d2a067f835ef17f2e612bf44939054f8fd1b8437e2bcf",
+    "crown-pixel-check.json": "e7283ff28fc07a2f40cab0cce7c03ddb3ac44a220efbd23ce17d65c67fbe6b8a",
+    "landscape.log": "1ea43fe07f4d1f0618bd9af873d72f55b73ea485c779119756e76fac42576fe2",
+    "meadow-events.jsonl": "4d40b9de10f8b18a002de6f7fdef32b88167cb90a4004f671add84d6ca99f93c",
+    "meadow-inputs.jsonl": "228ae2cb416c851fb5899a5c64d0da2d4b6b05fe1223c4bc5dd0ae016b62c538",
+    "meadow-pocket.jpg": "462eee9b1b12fcfafb92f429a963b19f3e0a139411f2dcb5f07e14ec316cb2c6",
+    "pack-meadow.log": "49fa8f760d63be1916355b3c7f5d00352a405f2f42895c662c475f7b66d0535e",
+    "pack-pond.log": "eaed7500a7fac4993e63ad1afac9c52d44d974e41b5412b970a84e7a517f17bb",
+    "pond-entry.jpg": "1523c3357319f640f10782d7fe23c1bec86c31b273209d9da72c524db1bb5f5f",
+    "pond-events.jsonl": "f5fa83b877a32005206daa2220509ec5f0de0d3464c52939e95d1d86b46c6ad7",
+    "pond-far.jpg": "051d3ac72f7a1828a82e60a4dd3fa8adac4f5d0681c157540c2f400f132e3adb",
+    "pond-inputs.jsonl": "05d99c026552dc31a71dfda9bee74b1c944c83c071273d214ec695170fe70c03",
+    "region-menu.log": "3fc04f6a319989672ed3df67441da98bf7d4762b0cb231e164e9db4272201e82"
+  },
+  "headless_regional": {
+    "feedback": 26,
+    "field": 32508,
+    "layout": 68,
+    "model": 52,
+    "ui": 24,
+    "tilemap": 60,
+    "docs": 14
+  },
+  "product_feedback": {
+    "0.30": "Alan reported modestly improved effects, no clear improvement in map density/depth, and inconsistent collection-zone art and details.",
+    "0.31": "Native developer-driven routes and visual verification. No independent player acceptance of 0.31 yet."
+  }
+}

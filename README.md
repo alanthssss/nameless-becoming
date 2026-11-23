@@ -1,5 +1,7 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
+**2026-11-23 · 采集花园 0.31.0。** 池岸与紫花地已按庭院画风重绘，可从原本的庭院灯球出发。池岸沿水光与芦穗找到材料湾，紫花地穿过树根拱口取树脂。[两版同机位实机对照](docs/production/evidence/collection-fields-031/comparison.jpg) · [Mac 试玩与验证](docs/production/region-greybox-receipt.md#painted-fields-031)。
+
 **2026-11-23 · 池岸采售 0.30.0。** 从庭院飞入池岸材料湾，采蜜取材后返铺交付。本机试玩与两尺寸原生画面见[同版回执](docs/production/region-greybox-receipt.md#pond-feedback-20261123)。
 
 **2026-11-23 · TileMapLayer 池岸自然化试做。** 独立一段缓弯主岸与纤维短岔，弱化格边并保持现有手绘配色/角色，可直接运行 `scripts/play_pond_tilemap.command`。[试做范围、证据与限制](docs/production/region-greybox-receipt.md#pond-shore-natural-20261123)；这是地图制作实验，正式两区/经济/用户存档保持，是否推广待实际效果判断。
