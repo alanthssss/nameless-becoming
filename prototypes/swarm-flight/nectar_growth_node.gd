@@ -10,6 +10,7 @@ var ui_font: Font
 var reduced_motion := false
 var rank_initialized := false
 var growth_tween: Tween
+var ink_bloom := 0.0
 
 func _ready() -> void:
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -31,6 +32,11 @@ func set_rank(value: int) -> void:
 	scale = Vector2(1.12,1.12)
 	growth_tween = create_tween()
 	growth_tween.tween_property(self,"scale",Vector2.ONE,.30).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	growth_tween.parallel().tween_method(_bloom,1.0,0.0,.48)
+
+func _bloom(value: float) -> void:
+	ink_bloom = value
+	queue_redraw()
 
 func _has_point(p: Vector2) -> bool:
 	return Rect2(3,3,size.x-6,size.y-6).has_point(p)
@@ -38,6 +44,11 @@ func _has_point(p: Vector2) -> bool:
 func _draw() -> void:
 	var center := Vector2(size.x/2,43)
 	var muted := state == "locked"
+	if ink_bloom > 0 and not reduced_motion:
+		var radius := lerpf(49,29,ink_bloom)
+		for i in 6:
+			var ray := Vector2.from_angle(TAU*i/6-.2)
+			draw_line(center+ray*radius,center+ray*(radius+6*ink_bloom),Color("bf842c",ink_bloom),2.5,true)
 	if selected or has_focus() or is_hovered():
 		# A loose double pencil oval, not a separate metallic/hexagonal widget.
 		var stroke := Color("a46c2f") if selected or has_focus() else Color("bcb07e")

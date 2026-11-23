@@ -1,7 +1,13 @@
 extends "res://nectar_harvest_ui.gd"
 
+const SaleFlight = preload("res://region_game/sale_flight.gd")
+var sale_flight
+
 func _ready() -> void:
 	super._ready()
+	sale_flight = SaleFlight.new()
+	shop.add_child(sale_flight)
+	sale_flight.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_reword(self)
 	energy_text.tooltip_text = "续航：庭院恢复，飞行、采蜜和振翅消耗"
 
@@ -12,7 +18,7 @@ func _reword(node: Node) -> void:
 		node.text = node.text.replace("花蜜在野外 18 秒后恢复","采空的花先收拢再长芽，初始20秒后盛开；花地成长可增加资源并加快再生")
 		node.text = node.text.replace("细雨增加消耗，叶棚下可避雨。","花丛不断生长和凋谢；成熟材料可振翅取下。")
 		node.text = node.text.replace(" · F 使用近道","")
-		node.text = node.text.replace("0.27.0","0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
+		node.text = node.text.replace("0.27.0","0.30.0" if OS.has_feature("pond_feedback") else "0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
 	for child in node.get_children(): _reword(child)
 
 func _requirements(id: String) -> String:
@@ -31,3 +37,8 @@ func refresh() -> void:
 		elif field.last_action == "材料已松落，靠近拾取": help_text.text = "材料已松落 · 靠近拾取"
 		elif driver.model.energy < driver.model.max_energy()*.25: help_text.text = "体力偏低 · 沿花路返回"
 		help_text.visible = not help_text.text.is_empty()
+
+func show_mode(mode: String) -> void:
+	if is_instance_valid(sale_flight) and mode != "shop":
+		sale_flight.stop()
+	super.show_mode(mode)

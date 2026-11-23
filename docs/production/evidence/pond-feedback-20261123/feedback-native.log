@@ -1,0 +1,13 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+Movie Maker mode enabled, recording movie in 1280×800 @ 60 FPS...
+KEYBOARD TRIP: harvested 1, returned, sold for 1; reload balance 1
+Feedback route and transaction checks: 30 passed
+--------------------------------------------------------------------------------
+Done recording movie at path: /tmp/pond-trip-motion-final.avi
+650 frames at 60 FPS (movie length: 00:00:10:50), recorded in 00:00:20 (50% of real-time speed).
+CPU render time: 2.88 seconds (average: 4.42 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 4.68 seconds (average: 7.20 ms/frame)
+--------------------------------------------------------------------------------
