@@ -150,3 +150,29 @@ Codex 本轮采用以下分流，保持现有 job 名称，便于识别检查结
 测试执行器增加 Python 标准库超时封装，macOS 没有 GNU timeout 时也能终止卡住的测试子进程组，并以 124 失败返回；成功标记与 SCRIPT ERROR 检查继续保留。路线测试运行模式只缩小选择范围，不放宽断言。原生性能／画面检查仍由每次相关绘制变更本地执行并归档，不能拿 headless 通关代替帧率证据。
 
 Codex 负责本轮分流、混合路径／未知路径／重命名两端测试，超时正常退出与失败退出验证，以及实际路线测试运行；本轮 PR 验证执行器的完整 Godot CI。下一检查点为全年入口接入：检查该批触发范围是否覆盖内容、存档、画面和性能，必要时调整分类；发现漏测依赖则拓宽相应路径，不恢复所有改动无差别重跑。既有单一 Now 仍在战役规格，未新增任务队列。
+
+<a id="engine-ai-authoring-20261123"></a>
+## 2026-11-23 · Godot、Xogot 与池岸制作方式评估
+
+**技术建议：继续用 Godot 交付 macOS Demo。值得试用 Xogot 的环节是让 Codex 看见编辑器、修改场景并就地验证。池岸更应优先验证的是换一位制作者能否快速改图。** 评估人 Codex。GDD §12.4–12.5、§13.2/13.9 → M4 → [#211](https://github.com/alanthssss/nameless-becoming/issues/211)。现行制作沿 M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322) 的庭院出发、材料湾采集、回铺售卖切片。下述结果是建议，产品和扩产决定由 Alan 在看到候选后作出。
+
+**引擎与 AI 工具。** 主线 09dc997 的实际工程使用 Godot 4.6 / GDScript，CI 锁定官方 4.6.2 并校验下载。现有 Codex 工作方式可以改脚本与场景文件、运行定向检查，也能用原生输入和截图核对导出的应用。这对验证存档、碰撞、导出漏资源很有价值。对移动花丛、改遮挡、看实际断点等视觉编辑，来回切换文件、运行程序和截图的成本更值得优化。[工程配置](../prototypes/swarm-flight/project.godot) · [CI](../.github/workflows/swarm-flight.yml) · [池岸原生回执](production/region-greybox-receipt.md#pond-shore-natural-20261123)
+
+| 对标 | 能解决什么 | 对本作的判断 |
+| --- | --- | --- |
+| Xogot for Mac | 面向 Godot 工程的 Mac 原生编辑器。可用内置助手，或由 Codex 通过配套技能和 `xo` 检查场景、运行项目、抓取编辑器或游戏截图。Beta 4 公布了结构化错误和 4.6/4.7 编辑器并存。 | 优先对照同一个 Codex 在两种编辑环境里改同一小段池岸。先确认可取得的 4.6 构建、具体补丁及保存兼容性，最后用原版 4.6.2 打开和导出。Xogot Connect 的收益在 iPhone/iPad 真机调试，目前的 macOS 候选可独立评估。[AI 集成](https://xogot.com/ai/) · [Mac 版本说明](https://blog.xogot.com/xogot-for-mac-beta-4/) · [Connect](https://xogot.com/connect/) |
+| 原版 Godot 加社区编辑器插件 | 社区 Godot AI Workbench 声明支持读取场景、输入、截图与调试信息，可在同一编辑器补充 AI 的现场观察。 | 若最值钱的能力只有抓图或定位节点，可与 Xogot 比较安装维护成本和对现有工程的改动量。插件兼容性也需实测。[资产库与发布者说明](https://godotengine.org/asset-library/asset/5353) |
+| Unity 2D / Build Automation | Tilemap 和精灵工作流配合按编辑器版本、平台与分支配置的云构建。 | 可借鉴关卡交给第二位作者编辑、同版分发给评审的体验。现有 CI 和 Mac 打包已能固定版本；迁移会涉及 GDScript、场景、着色器、导出及旧档回归。[Unity 2D](https://docs.unity3d.com/6000.1/Documentation/Manual/2d-game-creation-wokflow.html) · [构建配置](https://docs.unity.com/en-us/build-automation/basic-build-configuration/overview) |
+| Defold | Lua、设备热重载和轻量跨平台运行时。 | 若将来 Web 首包或低端设备帧时间成为硬约束，再用同场景、同设备测量收益和移植代价。当前优先改进内容编辑与辨路。[Defold](https://defold.com/product/) |
+
+**为什么晚用 TileMapLayer。** 11 月 9 日灰盒要比较近远路线、体力、天气与分岔，当时授权先验证空间。脚本参数和确定性几何方便批量走图；该投资留下了路线收益和简化多回环的依据。11 月 10 日开始两区手绘与可重复布局，正式实现仍由脚本合并形状、平滑并重采样岸线，且已经让显示与可走边界共享轮廓。此时出现了新的作者任务——局部改岸线、挪资源、交给他人复用。核查到的记录中，未见在这个转换点对照编辑器刷图与脚本改图的成本，也没有证据显示试用 TileMapLayer 后因技术限制淘汰。工具包的关卡设计技能提到了专用图块工具，本次核对的固定技能清单没有收录该专项。漏掉一次低成本比较，是比推断当时个人动机更可靠的解释。[灰盒与两区演进](production/region-greybox-receipt.md) · [脚本岸线](../prototypes/swarm-flight/region_game/layout.gd) · [Godot TileMapLayer 制作说明](https://docs.godotengine.org/en/stable/tutorials/2d/using_tilemaps.html)
+
+**可核算的代价。** 在正式两区已有脚本岸线后，又要为局部实验建两层地图、共享 TileSet、角点笔刷、编辑后通行和相应打包复验。首版长直岸线有拼块感，修订从 64px 调到 32px，并加连续曲线、同源碰撞及擦除后回归。两轮记录分别为 32 分 34 秒和 30 分 36 秒，共 **63 分 10 秒可观察墙钟**，包含实现、美术调整、返修、验证、CI 等待；后轮内有 295.5 秒连接等待。无法从这些数据计算“当初采用 TileMap 就能省”的主动工时。原手绘纹理保留，两版地图及构建证据均可复用。真正可减少的浪费是同一个高频编辑动作长期依赖程序员改几何，之后才再做作者工具；这项净代价需要对照测量。[首轮回执](production/region-greybox-receipt.md#pond-tilemap-20261123) · [岸线修订](production/region-greybox-receipt.md#pond-shore-natural-20261123) · [M3 的两轮时钟](https://github.com/alanthssss/nameless-becoming/milestone/3)
+
+**下一次怎样判断。**
+
+1. 在同源副本给出具体编辑要求，例如把材料湾入口向内收一格，移动一株花，保持主路通行。比较两种 *地图表示* 时固定用原版 Godot；比较两种 *AI 编辑环境* 时固定同一 TileMap 场景、任务和模型。分别记录主动编辑时间、等待、手工补救、无关文件改动和最终包是否达标。第二次用等难变体调换顺序，以减少熟悉任务造成的偏差。Codex 可在当前候选冻结后负责技术对照，能由另一位制作者仅凭工程说明复做，则更能支持推广。
+2. 按相同尺度看岔口，实际飞过最窄处、取材、返回。现有样板只支持单连通无孔地形，固定资源和入口不会随着刷格移动，重建脚本可覆盖手改。若第二处复用仍要改几何代码、找作者校准或重新修复不可达，优先解决这一步再复制。候选按原版引擎、匹配模板与同一输入复验。后续引擎补丁升级可独立验证导出、旧档、输入及画面，再决定采用。[样板编辑说明](../prototypes/swarm-flight/pond_tilemap/README.md) · [Godot 版本策略](https://docs.godotengine.org/en/stable/about/release_policy.html)
+3. 对其他高频修改也问“谁需要改第二次，用什么改”。例如花和纤维的**位置**适合可视化锚点，生长和收益仍由现有规则管；售卖成功可触发可复用动画场景，由作者调节卸货与入账的时序，成功和防重复入账继续走模型。只选确有重复编辑需求的一处试用。已有试玩安排可用同一候选观察首次玩家能否自行找到材料湾、看懂售卖、决定是否再出发，记录提示与卡点。规模扩大时才需要考虑 Steam Playtest 的分批发放能力。[资源模型](../prototypes/swarm-flight/region_game/field.gd) · [当前采售切片](https://github.com/alanthssss/nameless-becoming/issues/322) · [Steam Playtest](https://partner.steamgames.com/doc/features/playtest)
+
+本次使用仓库、既有交付记录与厂商文档，没有在本机实测 Xogot、另做引擎移植、性能测量或新增独立玩家样本。200＋40 小时预算的已用与可靠余额仍未知。评估依据可随编辑对照、目标平台要求或独立试玩结果更新。
