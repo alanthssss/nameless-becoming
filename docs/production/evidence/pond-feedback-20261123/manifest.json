@@ -1,0 +1,41 @@
+{
+  "runtime_commit": "9f20f27e747cc83ba84dae6365a7e990ebc9d6d1",
+  "base": "09dc99700d29dfc68945d86653533e0fa1e3f940",
+  "engine": "4.6.2.stable.official.71f334935",
+  "release_preset": "macOS Pond Feedback",
+  "version": "0.30.0",
+  "install_dir": "/Users/alanthssss/LocalGames/pond-feedback-0.30.0",
+  "packaged_keyboard": {
+    "normal_entry": true,
+    "capture": "960x600 native, targeted macOS key events, game recorder about 5 fps",
+    "route": "new game -> pond -> blue nectar -> fiber side bay -> return -> shop -> sell",
+    "nectar_sold": 1,
+    "coins_after": 1,
+    "retained_fiber": 1,
+    "energy_last_field_frame": 10.97,
+    "cold_resume": "launcher reopened same test profile and quit with exit 0"
+  },
+  "source_render": "1280x800 native 60 fps, scripted keyboard input for first trip. Separate subsequent boundary fixtures include seeded inventory. Movie cut before fixtures.",
+  "local_files_sha256": {
+    "开始试玩.command": "0d2e481050e7f687e975fd1bc9aa25a5576724584d3f889d807295cd31d9112c",
+    "池岸采售.app/Contents/MacOS/采蜜 Demo · 池岸与紫花地": "965e83aaa960cd619f3e202101578bc06a0ec320f5d88fdb5696566c9850c91b",
+    "池岸采售.app/Contents/Resources/采蜜 Demo · 池岸与紫花地.pck": "92b4016208ffa3a2ff94fd43e50f49b46ea6af306ea161ce6a671fce44739e90",
+    "池岸采售.app/Contents/Info.plist": "e4499589ec280e396867e9398af65dd48da7dab29bd483c3db424fffe26ce4d9",
+    "采蜜与交付.mp4": "7d9202dc479b94c23fde1aa086f707f6f767ca7992aa41d7363d0307a26808fd",
+    "材料湾往返.mp4": "d78d74b7e7efdc71b8fcd44377e32eff31919049e9ae12cc3833168dcaff89c7",
+    "材料湾.png": "6c65647ee46673b4d53b15323890e29566010f3075c1fade01df18e808aa5fbd"
+  },
+  "repository_evidence_sha256": {
+    "bay-960.jpg": "a198520e686efa54246d87b61768689fb528c2be0dc906ae8d774484772a7007",
+    "cold.log": "45d869227398762f5db1ff18b529655a3bc2ed37c81eef50423e0e359e35f831",
+    "events.jsonl": "1c110235f525dae1cf02a2e391a9e036e233a74767b8b86fe21f789a1ece5b7a",
+    "feedback-native.log": "1806145a7407e4910b87f264b60b0511a6ccf2c5288a3f19909e406cce5a193c",
+    "fork-1280.jpg": "39cb152666a2de0bf49f0b9465f3f5da122c922d5ebfe1bc28cad6301afc9d37",
+    "harvest.jpg": "beb81ff4de54a09464666d00af52f56adad6ce08ec9711575cb8a8162e5c0a76",
+    "inputs.jsonl": "f014a43e829858873b035d16915612248b77988d28442a3704f85fb05abf8b28",
+    "landscape.log": "1ec050ab5666694e928a2984eee0cc5c69592491ee9274396dcfd930e1ba0ffd",
+    "mac-keyboard.log": "c45483faca24484b7c9619bf28e1b3a8521baa89316d4e9ea70a1a0e26b661b9",
+    "sale.jpg": "0660c6b0fc44758d366400021c4685f817edea1cef5ab3bad5aa0670dd4e87c4"
+  },
+  "scope": "Local macOS prototype. No external player run, release signing or notarization."
+}

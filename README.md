@@ -1,5 +1,7 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
+**2026-11-23 · 池岸采售 0.30.0。** 从庭院飞入池岸材料湾，采蜜取材后返铺交付。本机试玩与两尺寸原生画面见[同版回执](docs/production/region-greybox-receipt.md#pond-feedback-20261123)。
+
 **2026-11-23 · TileMapLayer 池岸自然化试做。** 独立一段缓弯主岸与纤维短岔，弱化格边并保持现有手绘配色/角色，可直接运行 `scripts/play_pond_tilemap.command`。[试做范围、证据与限制](docs/production/region-greybox-receipt.md#pond-shore-natural-20261123)；这是地图制作实验，正式两区/经济/用户存档保持，是否推广待实际效果判断。
 
 **2026-11-07 · Demo 0.26采蜜与振翅动作验证中。** 本批落实稳定采蜜、方向单目标振翅及按住重复，明确既有成长效果；最终试玩包、原生观察和冷续验证尚在进行。[范围与验收回执](docs/production/nectar-demo-026-actions-receipt.md) · [唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)。未定地图／物种不在本批范围内，当前不代表候选已交付或用户接受。
