@@ -1,0 +1,15 @@
+# 池岸 TileMapLayer 试做
+
+独立制作实验，GDD §8.1/12/13.9 → M3 → #322 → #355–356。从仓库运行 `scripts/play_pond_tilemap.command`，或用 Godot 4.6.2 打开 `main.tscn`。正式默认入口不变。
+
+- WASD/方向键：连续飞行；E：采蜜/入口返回；Q：振翅取纤维；空格：蓄力后松开冲刺；Esc：暂停；R：重新开始。
+- 本片段不读取或写入游戏存档。花蜜/纤维仅本次预览有效；退出后重新开始。
+- 水域沿当前0.29作为活动边界。历史版本可越水的规则不在本实验中恢复；是否改变该边界另作玩法决定。
+
+`terrain.tscn`保存Water/Ground两个真实TileMapLayer，`shore_tiles.tres`保存共享的16种四角岸边组合。64px格负责形状；`shore.gdshader`按世界坐标每512px正常重复原草地/水面纹理，四角双线性混合使边缘连续。没有裁切、镜像、改色或生成新的源图。`TileData.corners`和固定modulate编码属于图块类型；采集/生命周期仍属于独立对象。
+
+在Godot打开terrain.tscn可编辑Ground格和角点Terrain笔刷。当前仅支持单块连通陆地，不含岛洞或分离岛屿；格变更在启动时重新生成同源碰撞轮廓。4px几何采样（非美术处理）与16px蜂身余量保留，场景不使用TileMap原生物理Body。编辑后必须检查固定资源、入口和路线节点仍在可达岸内；这些对象不会随刷格自动搬迁。不要改变图块modulate或镜像/旋转变体来改色，shader将它作为形状编码。
+
+`build.gd`是初始布局重建器，会覆盖本目录的terrain.tscn和shore_tiles.tres；**手绘格编辑后不要直接重建**。只调整地图应在编辑器保存scene；重建后需重做`verify.gd`与原生检查。源素材与既有许可/生成记录沿`../region_game/art-provenance.json`；仅复用，无新增采购/生成。
+
+验证命令：`Godot --headless --path prototypes/swarm-flight --script res://pond_tilemap/verify.gd`。`capture.gd`输出两尺寸定位截图，属于开发者夹具，不是连续真人试玩。Mac开发预览使用新增的`macOS Pond TileMap Preview`导出预设；首次选择场景导出曾漏带脚本依赖，最终配置导出完整资源并从实际.app复验。默认商业包/已有候选不被替换。

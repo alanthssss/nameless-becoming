@@ -1,0 +1,14 @@
+Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Preload file "res://region_game/model.gd" does not exist.
+          at: GDScript::reload (res://pond_tilemap/main.gd:3)
+SCRIPT ERROR: Parse Error: Preload file "res://region_game/field.gd" does not exist.
+          at: GDScript::reload (res://pond_tilemap/main.gd:4)
+SCRIPT ERROR: Parse Error: Preload file "res://pond_tilemap/view.gd" does not exist.
+          at: GDScript::reload (res://pond_tilemap/main.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://pond_tilemap/terrain.tscn" does not exist.
+          at: GDScript::reload (res://pond_tilemap/main.gd:6)
+SCRIPT ERROR: Parse Error: Preload file "res://pond_tilemap/terrain.gd" does not exist.
+          at: GDScript::reload (res://pond_tilemap/main.gd:7)
+ERROR: Failed to load script "res://pond_tilemap/main.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript.cpp:2907)
