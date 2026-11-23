@@ -53,6 +53,42 @@ func run() -> void:
 			if absf(coverage-.5)<.10: continue
 			if (coverage>.5)!=Layout.walkable(game.layout,at,0): disagreement+=1
 	check(disagreement==0,"ground and movement share cells across the whole slice")
+	# Ordinary held flight and a fast follow-up must stop at both sides of the
+	# narrowed bend, not only at the original entrance's northern bank.
+	for probe in [{"p":Terrain.FORK,"d":Vector2.UP},{"p":Vector2(576,448),"d":Vector2.DOWN},
+		{"p":Vector2(960,800),"d":Vector2.LEFT},{"p":Vector2(960,800),"d":Vector2.RIGHT}]:
+		game.restart()
+		game.model.field.p=probe.p
+		game.model._sync_field()
+		for i in 180: game.advance(1.0/60.0,probe.d)
+		check(Layout.walkable(game.layout,game.model.p),"continuous flight stops on the curved bank "+str(probe.d))
+		var blocked: Vector2=Layout.move(game.layout,game.model.p,probe.d*500)
+		check(blocked.distance_to(game.model.p)<8,"fast flight cannot cross the bent bank "+str(probe.d))
+		check(game.terrain.land_at(blocked)>=.5,"curved-bank stop is visibly on land")
+	var roots_safe := true
+	for plant in game.world._shore_plants:
+		roots_safe=roots_safe and Layout.walkable(game.layout,plant.p+Vector2(0,9),20)
+	check(roots_safe,"shore planting is rooted inside the curved bank")
+	# Public editor operation: erase a quad, save it, then reopen. Shared land
+	# corners may survive in neighbours, but no invisible walkable square may.
+	var ground: TileMapLayer=game.terrain.get_node("Ground")
+	var erased := Vector2i(30,16)
+	var original := ground.get_cell_atlas_coords(erased)
+	ground.erase_cell(erased)
+	var edited := PackedScene.new()
+	check(edited.pack(game.terrain)==OK,"edited terrain packs after erasing a cell")
+	var saved := "user://pond-erased-quad-check.tscn"
+	check(ResourceSaver.save(edited,saved)==OK,"erased-cell authoring state saves")
+	var reopened=load(saved).instantiate()
+	root.add_child(reopened)
+	var reopened_layout: Dictionary=reopened.build_layout()
+	check(reopened.get_node("Ground").get_cell_source_id(erased)>=0,"reopened erased cell restores render support")
+	check(reopened.mask_at(erased)==0,"restoring draw support adds no land corners")
+	var erased_center := (Vector2(erased)+Vector2(.5,.5))*Terrain.CELL
+	check((reopened.land_at(erased_center)>.5)==Layout.walkable(reopened_layout,erased_center,0),"saved shared-corner land agrees with reopened movement")
+	reopened.queue_free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(saved))
+	ground.set_cell(erased,0,original)
 	game.restart()
 	for i in 9: game.advance(.05,Vector2.ZERO,false,true)
 	check(game.model.field.charge>=.32,"pause regression starts with releasable charge")

@@ -1,7 +1,6 @@
 extends SceneTree
 ## Rebuild only the prototype's saved TileSet and TileMap scene.
 const Terrain = preload("res://pond_tilemap/terrain.gd")
-const Layout = preload("res://region_greybox/layout.gd")
 const GROUND = preload("res://art/region-ground.png")
 const WATER = preload("res://art/region-water.png")
 const SHORE = preload("res://pond_tilemap/shore.gdshader")
@@ -27,7 +26,6 @@ func _initialize() -> void:
 		var coord := Vector2i(mask%4,mask/4)
 		source.create_tile(coord)
 		var data := source.get_tile_data(coord,0)
-		data.modulate = Color(float(mask)/15.0,1,1,1)
 		data.set_custom_data("corners",mask)
 		data.terrain_set = 0
 		data.terrain = 0 if mask else -1
@@ -42,15 +40,16 @@ func _initialize() -> void:
 	for layer in [water,ground]:
 		scene.add_child(layer)
 		layer.owner = scene
-	for y in range(-5,24):
-		for x in range(-8,37):
+	for y in range(-10,48):
+		for x in range(-16,74):
 			var cell := Vector2i(x,y)
 			water.set_cell(cell,0,Vector2i.ZERO)
 			var mask := 0
 			var points := [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1)]
 			for i in 4:
 				if inside(Vector2((cell+points[i])*Terrain.CELL)): mask |= 1<<i
-			if mask: ground.set_cell(cell,0,Vector2i(mask%4,mask/4))
+			# Zero-mask cells provide draw coverage for the smoothed neighbouring rim.
+			ground.set_cell(cell,0,Vector2i(mask%4,mask/4))
 	var packed := PackedScene.new()
 	assert(packed.pack(scene)==OK)
 	assert(ResourceSaver.save(packed,"res://pond_tilemap/terrain.tscn")==OK)
@@ -59,10 +58,20 @@ func _initialize() -> void:
 	quit()
 
 func inside(at: Vector2) -> bool:
-	var points := Terrain.NODES
-	for edge in [Vector2i(0,1),Vector2i(1,2),Vector2i(2,3),Vector2i(2,4)]:
-		var width := 128.0 if edge.y==4 else 175.0+22.0*sin(at.x*.007)+12.0*sin(at.x*.014)
-		if Layout.segment_distance(at,points[edge.x],points[edge.y])<width: return true
+	# Gentle meander and independently changing shoulders, not straight capsules.
+	for x in range(192,1537,24):
+		var y := 492.0-34.0*sin((x-160)*.004)+18.0*sin((x-160)*.009)
+		var radius := 161.0+19.0*sin(x*.007+0.5)+10.0*sin(x*.016)
+		var delta := at-Vector2(x,y)
+		delta.y*=1.0 if delta.y<0 else 1.08+0.08*sin(x*.006)
+		if delta.length()<radius: return true
+	for y in range(520,905,16):
+		var t := (y-520.0)/384.0
+		var x := 960.0+28.0*sin(t*PI)-12.0*t
+		var width := 113.0+17.0*sin(t*PI*.9)
+		if at.distance_to(Vector2(x,y))<width: return true
+	# Offset bay bulge avoids a rectangular, symmetrical dead end.
+	if ((at-Vector2(969,907))/Vector2(145,112)).length()<1.0: return true
 	return false
 
 func make_layer(title: String,tiles: TileSet,water: bool) -> TileMapLayer:
@@ -73,6 +82,7 @@ func make_layer(title: String,tiles: TileSet,water: bool) -> TileMapLayer:
 	layer.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	layer.collision_enabled = false # Movement reads the same authored corner masks.
 	var material := ShaderMaterial.new()
+	material.resource_local_to_scene = true
 	material.shader = SHORE
 	material.set_shader_parameter("ground_paint",GROUND)
 	material.set_shader_parameter("water_paint",WATER)

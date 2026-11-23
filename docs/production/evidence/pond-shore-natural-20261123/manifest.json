@@ -1,0 +1,104 @@
+{
+  "schema": "pond-shore-natural-evidence/v1",
+  "version": "0.1.1",
+  "baseline": "10f06fab9c12705e3e63d478e02418752a3986eb",
+  "runtime_revision": "ab8afcf17c9dbd272637e508fb8f287b33c1813f",
+  "engine": "4.6.2.stable.official.71f334935",
+  "issues": [
+    355,
+    356
+  ],
+  "milestone": 3,
+  "source_sha256": {
+    "prototypes/swarm-flight/pond_tilemap/build.gd": "440054c0f4753d3e17cd291ea151a789fbd6d6350f56eb6dd509137a9da7ad20",
+    "prototypes/swarm-flight/pond_tilemap/capture.gd": "f2dc24005cb1f88d155094fbcef319a5d8869ae81a5864433c685e92e34db0e3",
+    "prototypes/swarm-flight/pond_tilemap/main.gd": "7bb340dba69e4f95da997181fd763d0f883d68840eca9302bb91429e90837d4c",
+    "prototypes/swarm-flight/pond_tilemap/main.tscn": "ecee172c7d3f866044a9615aece95b9b7d9d1f261c110e190c703e8d0a13bd00",
+    "prototypes/swarm-flight/pond_tilemap/shore.gdshader": "8179be23ef8ee731b39db032feef4430b9e50c09110cb7c71842e0e2133a8c68",
+    "prototypes/swarm-flight/pond_tilemap/shore_tiles.tres": "eb09e6229ed746552f1a891b941575e8e11f572b642727c2d6ea619c90c3d030",
+    "prototypes/swarm-flight/pond_tilemap/terrain.gd": "e97b484812fcbd9093dccc600b8b57a9a7eadf2e034c5f4fae6d9461ceaec433",
+    "prototypes/swarm-flight/pond_tilemap/terrain.tscn": "7d5a4fd4ce57109638e84b872eed7782217dd42e0fa6022198216532eade547f",
+    "prototypes/swarm-flight/pond_tilemap/verify.gd": "8efc6d49218aa87a0ebd4cccbea9acaf0e3c23972b1ae198add4222a25854926",
+    "prototypes/swarm-flight/pond_tilemap/view.gd": "6a6db83f33cc98e4d014179256f2d1b64a6e1b9b261c2406d3a6de0129b7bc7c"
+  },
+  "unchanged_source_art_sha256": {
+    "prototypes/swarm-flight/art/region-ground.png": "a28ce9e150ac449d1461dde2e3b892aec1c055336fff4b2f75fbcd8ed355bc66",
+    "prototypes/swarm-flight/art/region-water.png": "3c5668bbb30a3df9f5ce651d3fcbc022d1690d9c55c498253ccff7b4a8861fc5"
+  },
+  "screenshots": [
+    {
+      "file": "entry-1280.png",
+      "sha256": "7b0e091b4981a2c9e0ddf2c4119b3d7dde87d76aa0a97808867ecc184e78798c",
+      "bytes": 1104963
+    },
+    {
+      "file": "entry-960.png",
+      "sha256": "92d88093ee8e2da3097523130802e333a9aee3965a4d0ae1a016e703c771f88f",
+      "bytes": 654600
+    },
+    {
+      "file": "far-1280.png",
+      "sha256": "77613eb7ce01df6466da6847da9eb35e44e2ed1a9ab74cfddd600e59dc570c60",
+      "bytes": 1048448
+    },
+    {
+      "file": "far-960.png",
+      "sha256": "aef7566cff172dc610af172d45f33bfa0e6894cfe8729033267fa4aafc57489e",
+      "bytes": 626967
+    },
+    {
+      "file": "fork-1280.png",
+      "sha256": "99dead375c8fa7ed7fb29143fcd1047ee2c2a005276c6fbf69f6e21496a4a690",
+      "bytes": 1085229
+    },
+    {
+      "file": "fork-960.png",
+      "sha256": "37a166e738f817cc67b3311ed02f0844b9c04d29e12e0cbb4cba829f09ea9fe6",
+      "bytes": 649232
+    },
+    {
+      "file": "pocket-1280.png",
+      "sha256": "4fb9950c33968b92e661e6cbe2d75f0b62b798cb944a070c0263c1b5cf024650",
+      "bytes": 1024174
+    },
+    {
+      "file": "pocket-960.png",
+      "sha256": "68c37b1bce9a0c5142d79b5f9f803b8af24b05855c44a228828df9c0efbf335c",
+      "bytes": 613346
+    }
+  ],
+  "pack": {
+    "file": "PondTilemap.app/Contents/Resources/池岸 · TileMap手绘试做.pck",
+    "sha256": "5bfb584611990a47e224a4d0c392c520e76e24c68eb7bfc53d4ab516e25df06d",
+    "bytes": 48140224
+  },
+  "verification": {
+    "checks": 60,
+    "failures": 0,
+    "coverage": "ordinary main/fork/return, four curved banks held input/fast move, rooted plants, erase-save-reopen, pause/exhaustion/restart",
+    "native_views": "8 developer-positioned views at 1280x800 and 960x600, not a playthrough",
+    "actual_app": "CUA ordinary keys returned with 1 nectar, 1 fiber, displayed energy17; first attempt interrupted by tool reset, restarted final route",
+    "independent_ai": "8 screenshots and source diff reviewed; erased-quad P2 fixed and re-reviewed; no remaining P1/P2 in limited scope",
+    "exported_app_cold_smoke": "exit0, no script errors or leak warning"
+  },
+  "tool_failure": "CUA input_required failed, following read reset session and took 295.5 seconds. Interrupted route exhausted; not counted as completed. Final route restarted and visibly returned.",
+  "human_acceptance": false,
+  "limitations": [
+    "Single connected land, no holes/islands; fixed resource anchors and render bounds.",
+    "Corner Terrain brush edits shared source. Erasing a quad restores zero-mask drawing support; neighbouring land corners may remain.",
+    "Central grass coverage and shrub family are still repetitive; no full map rollout.",
+    "4px collision raster and narrow visual feather retain small edge tolerance."
+  ],
+  "cost": {
+    "start_utc": "2026-11-23 06:31:36 UTC",
+    "integration_end_utc": null,
+    "new_purchase": 0,
+    "new_image_generation": 0,
+    "active_billed_cumulative_remaining": "unknown",
+    "control_hours": "200+40 unchanged",
+    "automation": "PAUSED",
+    "known_external_tool_wait_seconds": 295.5,
+    "agent_intervals": "read-only initial review approx14:32; second14:38:40–14:39:56; fix re-review approx14:41; overlap root wall clock, not active/billed hours"
+  },
+  "local_preview": "/Users/alanthssss/LocalGames/pond-tilemap-preview-0.1.1"
+}
