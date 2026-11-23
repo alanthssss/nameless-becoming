@@ -65,8 +65,11 @@ func run() -> void:
 		view._update_crowns()
 		check(not crown.front.visible,"bee in front of crown remains unobstructed")
 		view.reduced_motion=true
-		for corner in [Vector2(0,-100),Vector2(0,650),Vector2(1400,-100),Vector2(1400,650)]:
-			check(View.PLATE_RECT.grow(.01).encloses(Rect2(corner,Vector2(1280,800))),"paint covers camera extremes")
+		var visible_size := View.MeadowLayout.VIEWPORT/View.MeadowLayout.FIELD_ZOOM
+		for extreme: Vector2 in [Vector2(-10000,-10000),Vector2(-10000,10000),Vector2(10000,-10000),Vector2(10000,10000)]:
+			model.p = extreme
+			model.update_camera()
+			check(View.PLATE_RECT.grow(.01).encloses(Rect2(model.camera_offset,visible_size)),"paint covers live zoomed camera extremes")
 		var shots: Array=[]
 		for index in [0,1,2,4,3]:
 			var key: String=["entry","bend","middle","far","bay"][index] if region=="pond" else "unchanged-%d"%index

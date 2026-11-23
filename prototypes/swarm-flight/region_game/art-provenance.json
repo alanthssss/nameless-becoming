@@ -250,5 +250,74 @@
       "collection-violet-bloom.webp": "26dd62ccb1bd58ab7700402e67a01eb0c75dd18ee692afafe186211afd033f66"
     },
     "acceptance": "0.30.0 map presentation rejected by Alan, who reported modest feedback improvement. 0.31.0 visual acceptance awaits his assessment."
+  },
+  "field_ecology_032": {
+    "issue": [
+      322,
+      349,
+      350,
+      351
+    ],
+    "date": "2026-11-23",
+    "tool": "OpenAI image generation, transparent RGBA; largest connected alpha component bounds plus 3px margin; production image uniformly downsampled and saved lossless WebP. Generated PNGs retained with the review package.",
+    "reference": "art/nectar-courtyard-oblique.png",
+    "prompts": {
+      "fiber": "A small production sprite for a storybook bee gathering game: hand painted in the exact visual vocabulary of the supplied garden, sunny upper-left honey-gold highlights, muted moss-shadows, warm organic brush edges, rounded subtly modeled material. True alpha transparent background. SINGLE isolated complete environmental object, three-quarter top-down side-faced garden perspective, entire silhouette bounded in frame with generous transparent margins, precise root/foot point bottom centre, no ground island, no background, no UI, no lettering, no letters, no diagram or glow or large drop shadow. Strong recognisable silhouette at 60–100 pixels. One small tussock of marsh grasses with a tall ochre buff OPEN, EMPTY CATTAIL SEED HUSK naturally attached to its curved stem, flanked by two lower slender dry stalks and 3 broad tapering sage blades bending left. Central seedhead's socket at x=.50 y=.34 of tight bounding box, rooted bottom center. Dry scored papery tawny husks open at the top reveal the inner bare stem. Absolutely NO white fluff, white seeds or flying pieces (loose harvestable tuft drawn separately in engine). Vary vertical heights, about square/taller than wide.",
+      "resin": "A small production sprite for a storybook bee gathering game: hand painted in the exact visual vocabulary of the supplied garden, sunny upper-left honey-gold highlights, muted moss-shadows, warm organic brush edges, rounded subtly modeled material. True alpha transparent background. SINGLE isolated complete environmental object, three-quarter top-down side-faced garden perspective, entire silhouette bounded in frame with generous transparent margins, precise root/foot point bottom centre, no ground island, no background, no UI, no lettering, no letters, no diagram or glow or large drop shadow. Strong recognisable silhouette at 60–100 pixels. One evocative miniature gnarled living alder stump about as wide as tall, ascending from 3 softly splayed rooted feet, a leftward broken branch, one small cluster of cool sage leaves on the opposite shoulder. Weathered ridged dark cinnamon bark with a visible PALE matte oval-vertical scar in front, centered x=.50 y=.40 of tight bounding box, framed by two raised peeling bark flaps. No amber resin beads, juice or leaking fluid, the harvestable amber bead is separate during play. A bark opening easy to recognize. Warm courtyard moss compressed around its foot, no rock or soil/clod under the roots.",
+      "sign": "A small production sprite for a storybook bee gathering game: hand painted in the exact visual vocabulary of the supplied garden, sunny upper-left honey-gold highlights, muted moss-shadows, warm organic brush edges, rounded subtly modeled material. True alpha transparent background. SINGLE isolated complete environmental object, three-quarter top-down side-faced garden perspective, entire silhouette bounded in frame with generous transparent margins, precise root/foot point bottom centre, no ground island, no background, no UI, no lettering, no letters, no diagram or glow or large drop shadow. Strong recognisable silhouette at 60–100 pixels. ONE low rustic waymarker hand-carved by a tiny bee, a small irregular honey-colored wooden LEFT-POINTING arrow slat lashed with fine grass twine to a single short slender dark twig stake. One very simple recessed beehive/skep emblem carved in the slat, tiny leaf at foot. Silhouette notably wider than post yet generally about square, gracefully asymmetric. Readable left point shape, bevel, restrained craftsmanship, natural wood grain. The leg is integral and enters the soil at bottom center. No text, no words, no platform, no full house picture, no bulky building, no square backboard."
+    },
+    "assets": {
+      "fiber": {
+        "output": "collection-fiber-source.webp",
+        "source": "/Users/alanthssss/.codex/generated_images/01a2073a-e2db-7fb2-8857-b67ac9b07c9a/exec-044f494f-3a6e-407f-b057-5f225cf36299.png",
+        "crop": [
+          103,
+          86,
+          814,
+          1299
+        ],
+        "size": [
+          176,
+          300
+        ],
+        "sha256": "99430c5ebe37bef11d109bdf84f80f1672b4850b36a2ed720fec3d994e4e9f79",
+        "source_in_repository": "docs/art/collection-fields/collection-fiber-source.png",
+        "source_sha256": "f4f27404680baf3453831c988afc5caff576ec7aa711e3b2dc2db1f8bbf50fc9"
+      },
+      "resin": {
+        "output": "collection-resin-source.webp",
+        "source": "/Users/alanthssss/.codex/generated_images/01a2073a-e2db-7fb2-8857-b67ac9b07c9a/exec-ec9eea6f-79f8-4778-a1f5-f07a23642b36.png",
+        "crop": [
+          59,
+          75,
+          1186,
+          1143
+        ],
+        "size": [
+          300,
+          284
+        ],
+        "sha256": "1322fcf32056686ed509a487b94fd40b29ad2ba76df3d941e93d27a827b9716b",
+        "source_in_repository": "docs/art/collection-fields/collection-resin-source.png",
+        "source_sha256": "37aae29c5fa5fcca1ad04fee6b6427dd9c8a407599945258e0adf565c900c21a"
+      },
+      "sign": {
+        "output": "collection-home-sign.webp",
+        "source": "/Users/alanthssss/.codex/generated_images/01a2073a-e2db-7fb2-8857-b67ac9b07c9a/exec-395c1e60-9b99-4524-a97f-3a742800b7b1.png",
+        "crop": [
+          259,
+          133,
+          989,
+          1112
+        ],
+        "size": [
+          224,
+          300
+        ],
+        "sha256": "84fe95e9ac45a94574dc6e24304630b85068b99be577b7b1977d149feb87a957",
+        "source_in_repository": "docs/art/collection-fields/collection-home-sign.png",
+        "source_sha256": "7f7c00751162d9162ffd428aac968ec19723fc7face7bb4a59316f46e9932de8"
+      }
+    }
   }
 }

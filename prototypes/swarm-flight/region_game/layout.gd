@@ -4,7 +4,14 @@ extends RefCounted
 const Skeleton = preload("res://region_greybox/layout.gd")
 const SPACING := 22.0
 
-static func build(region: String) -> Dictionary:
+const GROUND_SCALE := 1.10
+const FIELD_ZOOM := 0.91
+const WEST_SHORE := 32.0
+const WEST_JOIN := 190.0
+const VIEWPORT := Vector2(1280,800)
+const PLATE := Rect2(Vector2(0,-100)*GROUND_SCALE,Vector2(2680,1550)*GROUND_SCALE)
+
+static func build(region: String, expanded := true) -> Dictionary:
 	var layout: Dictionary = Skeleton.build(region)
 	var pieces: Array[PackedVector2Array] = []
 	for i in layout.paths.size():
@@ -54,6 +61,38 @@ static func build(region: String) -> Dictionary:
 		low = low.min(point)
 		high = high.max(point)
 	layout.bounds = Rect2(low-Vector2.ONE*70,high-low+Vector2.ONE*140)
+	return expand(layout) if expanded else layout
+
+static func expand(layout: Dictionary, frame_west := true) -> Dictionary:
+	for node in layout.nodes:
+		node.p *= GROUND_SCALE
+		node.radius *= GROUND_SCALE
+	for i in layout.paths.size():
+		var path: PackedVector2Array = layout.paths[i]
+		for j in path.size(): path[j] *= GROUND_SCALE
+		layout.paths[i] = path
+		layout.path_radii[i] *= GROUND_SCALE
+	for cluster in layout.clusters:
+		for i in cluster.anchors.size(): cluster.anchors[i] *= GROUND_SCALE
+	for item in layout.material_spawns: item.p *= GROUND_SCALE
+	for i in layout.coast.size(): layout.coast[i] *= GROUND_SCALE
+	layout.corridor_radius *= GROUND_SCALE
+	layout.bounds = Rect2(layout.bounds.position*GROUND_SCALE,layout.bounds.size*GROUND_SCALE)
+	if frame_west:
+		# Fit just the western curve beside the entrance into the painted frame.
+		# Keep its shape and its join to the original path, including the curved ends.
+		var original_left := INF
+		for point: Vector2 in layout.coast:
+			original_left = minf(original_left,point.x)
+		for i in layout.coast.size():
+			var point: Vector2 = layout.coast[i]
+			if point.x < WEST_JOIN:
+				point.x = remap(point.x,original_left,WEST_JOIN,WEST_SHORE,WEST_JOIN)
+				layout.coast[i] = point
+		var previous_end: Vector2 = layout.bounds.end
+		layout.bounds.position.x = WEST_SHORE-70.0*GROUND_SCALE
+		layout.bounds.end = previous_end
+		layout.geometry_version = 3
 	return layout
 
 static func _circle(at: Vector2,radius: float) -> PackedVector2Array:

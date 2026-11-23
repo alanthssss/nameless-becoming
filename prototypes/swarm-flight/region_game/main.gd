@@ -13,7 +13,7 @@ func _ready() -> void:
 	model = new_model()
 	saved_path = "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
 	super._ready()
-	get_window().title = "采集花园 · 0.31.0" if OS.has_feature("pond_feedback") else "采蜜 Demo · 池岸与紫花地"
+	get_window().title = "采集花园 · 0.32.0" if OS.has_feature("pond_feedback") else "采蜜 Demo · 池岸与紫花地"
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--record-dir="):
 			var recorder = preload("res://region_game/recorder.gd").new()
@@ -45,13 +45,12 @@ func _process(delta: float) -> void:
 	super._process(delta)
 
 func pulse_direction() -> Vector2:
-	return (mouse_aim+model.camera_offset-model.p).normalized() if mouse_pulse or mouse_pulse_requested else Vector2.ZERO
+	return (model.screen_to_field(mouse_aim)-model.p).normalized() if mouse_pulse or mouse_pulse_requested else Vector2.ZERO
 
 func has_material_hint() -> bool:
 	if model.field == null: return false
-	for item in model.field.materials:
-		if RegionalModel.Field.available(item) and not item.dropped and model.p.distance_to(item.p) <= model.pulse_radius() and model.field.clear_line(model.p,item.p): return true
-	return false
+	var item: Dictionary = model.field.material_for_hint()
+	return not item.is_empty() and RegionalModel.Field.available(item) and not item.dropped and not model.field.resin_open(item)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.physical_keycode == KEY_F: return
