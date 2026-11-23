@@ -1,6 +1,13 @@
 extends "res://region_game/view.gd"
 ## Reuse the existing hand-painted actors; TileMapLayer owns the floor.
 
+const PlaceDressing = preload("res://region_game/landscape.gd")
+var _landscape := {}
+var _shore_plants: Array[Dictionary] = []
+
+func _bloom_texture() -> Texture2D:
+	return null
+
 func _draw() -> void:
 	if model == null or model.field == null: return
 	_world_offset = -model.camera_offset
@@ -58,3 +65,23 @@ func dress(coast: PackedVector2Array) -> void:
 			# Preserve the material/flower interaction silhouettes.
 			if foot.distance_to(Vector2(920,937))<68: continue
 			_shore_plants.append({"p":foot-Vector2(0,9),"normal":-inward,"size":.72 if j==0 else .48+float(index%2)*.10,"kind":0 if j==0 else 2})
+
+func _draw_shore_plant(plant: Dictionary) -> void:
+	var at: Vector2 = plant.p
+	var scale: float = plant.size
+	var alpha := .32 if model.p.distance_to(at) < 85 else .82
+	if int(plant.kind) == 4:
+		# Small bank stones sit partly in the soil and mark the soft shoreline.
+		var stone := PackedVector2Array([at+Vector2(-19,5),at+Vector2(-16,-6),at+Vector2(-5,-12),at+Vector2(12,-9),at+Vector2(21,2),at+Vector2(12,8)])
+		_ground_shadow(at+Vector2(0,7),Vector2(23,6),.13)
+		draw_colored_polygon(stone,Color("a3a17a") if area_key == "pond" else Color("969a83"))
+		draw_polyline(PackedVector2Array([at+Vector2(-15,-5),at+Vector2(-5,-10),at+Vector2(11,-7)]),Color("dad0a1"),2,true)
+	elif int(plant.kind) == 0:
+		var span := Vector2(116,62)*scale
+		draw_texture_rect_region(THICKET,Rect2(at-Vector2(span.x*.5,span.y-8),span),Rect2(45,45,1680,755),Color(.86,.90,.76,alpha))
+	else:
+		var root := at+Vector2(0,9)
+		_ground_shadow(root,Vector2(21,5),.13)
+		for leaf in 3:
+			var tip := root+Vector2(float(leaf-1)*29,-22-float(leaf%2)*19)*scale
+			ArtSprites.small_leaf(self,root,tip,13*scale)

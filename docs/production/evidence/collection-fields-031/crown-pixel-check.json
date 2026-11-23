@@ -1,0 +1,55 @@
+{
+  "meadow": {
+    "camera": [
+      875.0,
+      -85.0
+    ],
+    "crown": {
+      "changed_over_3_of_255": 5980,
+      "mean_max_channel_8bit": 29.1290572498394,
+      "samples": 6625
+    },
+    "field_position": [
+      1515.0,
+      315.0
+    ],
+    "ground_control": {
+      "changed_over_3_of_255": 0,
+      "mean_max_channel_8bit": 0.0,
+      "samples": 1632
+    },
+    "sample_pixels": [
+      343,
+      83,
+      125,
+      53
+    ]
+  },
+  "passed": true,
+  "pond": {
+    "camera": [
+      515.0,
+      385.0
+    ],
+    "crown": {
+      "changed_over_3_of_255": 8624,
+      "mean_max_channel_8bit": 34.8395723331487,
+      "samples": 8976
+    },
+    "field_position": [
+      1155.0,
+      785.0
+    ],
+    "ground_control": {
+      "changed_over_3_of_255": 0,
+      "mean_max_channel_8bit": 0.0,
+      "samples": 1632
+    },
+    "sample_pixels": [
+      633,
+      338,
+      68,
+      132
+    ]
+  }
+}

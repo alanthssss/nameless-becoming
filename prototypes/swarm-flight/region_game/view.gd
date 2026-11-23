@@ -1,36 +1,34 @@
 extends "res://nectar_harvest_view.gd"
-## Painted presentation for the fixed collecting grounds. No simulation writes.
-## The turf edge uses the same authored natural coast as field collision.
-const FieldLayout = preload("res://region_greybox/layout.gd")
+## The terrain plates are registered to the same world coordinates as the
+## field coast. Only the raised tips of separate painted plants shift with
+## the camera; their contact shadows, roots and interaction points stay fixed.
 const FieldLife = preload("res://region_greybox/model.gd")
-const PlaceDressing = preload("res://region_game/landscape.gd")
-const GROUND_TILE: Texture2D = preload("res://art/region-ground.png")
-const WATER_TILE: Texture2D = preload("res://art/region-water.png")
-const TURF_SHADER := """shader_type canvas_item;
-render_mode unshaded;
-uniform vec4 ground_tint : source_color = vec4(1.0);
-uniform float opacity = 1.0;
-uniform float flow = 0.0;
-varying vec2 ground_point;
-void vertex() { ground_point = VERTEX; }
-void fragment() {
-    // Purpose-made object-free material tiles; one normal repeat every 512px.
-    vec2 uv = ground_point / 512.0 + vec2(flow,flow*0.21);
-    vec3 paint = texture(TEXTURE,uv).rgb;
-    COLOR = vec4(paint * ground_tint.rgb, opacity);
-}
-"""
-var _field_key := ""
-var _coast: PackedVector2Array = []
-var _turf: Polygon2D
-var _outside: Polygon2D
-var _soft_banks: Array[Polygon2D] = []
-var _shore_plants: Array[Dictionary] = []
-var _grass_marks: Array[Dictionary] = []
+const FieldLayout = preload("res://region_greybox/layout.gd")
+const POND_PLATE: Texture2D = preload("res://art/collection-pond.webp")
+const MEADOW_PLATE: Texture2D = preload("res://art/collection-meadow.webp")
+const PLATE_RECT := Rect2(0,-100,2680,1550)
+const POND_BLOOM: Texture2D = preload("res://art/collection-blue-bloom.webp")
+const MEADOW_BLOOM: Texture2D = preload("res://art/collection-violet-bloom.webp")
+const CROWN_SHADER = preload("res://region_game/painted_crown.gdshader")
+# Crown bounds on a 700 × 405 registration proof of each complete illustration.
+# These are the visible fronds, willow, bulrush and arch leaves already in
+# the picture; the lower edge of each local projection stays attached.
+const PROOF_SIZE := Vector2(700,405)
+const POND_CROWNS := [
+	Rect2(0,93,61,67), Rect2(273,111,59,51), Rect2(344,225,46,98),
+	Rect2(552,0,131,92), Rect2(0,274,109,109), Rect2(580,244,120,129),
+]
+const MEADOW_CROWNS := [
+	Rect2(0,135,46,76), Rect2(65,73,76,45), Rect2(328,25,84,40),
+	Rect2(465,112,74,55), Rect2(74,247,100,72), Rect2(228,283,140,91),
+	Rect2(575,289,116,75),
+]
+var _paint_root: Node2D
+var _painted_area := ""
+var _crowns: Array[Dictionary] = []
 var _life_motes: Array[Dictionary] = []
 var _material_recoil := {}
 var _full_glow := 0.0
-var _landscape := {}
 
 func _ready() -> void:
 	super._ready()
@@ -75,115 +73,70 @@ func nectar_event(event: Dictionary) -> void:
 	if kind in ["harvest", "material", "pulse", "pulse_empty", "buy", "unlock", "complete"]:
 		super.nectar_event(event)
 
-func _circle_polygon(at: Vector2, radius: float, count := 64) -> PackedVector2Array:
-	var result := PackedVector2Array()
-	for i in count: result.append(at + Vector2.from_angle(TAU * float(i) / float(count)) * radius)
-	return result
+func _prepare_paint() -> void:
+	if _painted_area == area_key: return
+	_painted_area = area_key
+	if is_instance_valid(_paint_root):
+		remove_child(_paint_root)
+		_paint_root.queue_free()
+	_crowns.clear()
+	_paint_root = Node2D.new()
+	add_child(_paint_root)
+	var texture := POND_PLATE if area_key == "pond" else MEADOW_PLATE
+	var picture := Sprite2D.new()
+	picture.texture = texture
+	picture.centered = false
+	picture.position = PLATE_RECT.position
+	picture.scale = PLATE_RECT.size/texture.get_size()
+	picture.z_index = -2
+	_paint_root.add_child(picture)
+	var placements := POND_CROWNS if area_key == "pond" else MEADOW_CROWNS
+	for proof: Rect2 in placements:
+		var uv := Rect2(proof.position/PROOF_SIZE,proof.size/PROOF_SIZE)
+		var rect := Rect2(PLATE_RECT.position+uv.position*PLATE_RECT.size,uv.size*PLATE_RECT.size)
+		var back := _crown_patch(texture,uv,rect,false)
+		var front := _crown_patch(texture,uv,rect,true)
+		_crowns.append({"rect":rect,"back":back,"front":front})
 
-func _capsule_polygon(a: Vector2, b: Vector2, radius: float) -> PackedVector2Array:
-	var result := PackedVector2Array()
-	var angle := (b - a).angle()
-	for i in 33: result.append(b + Vector2.from_angle(angle - PI * .5 + PI * float(i) / 32.0) * radius)
-	for i in 33: result.append(a + Vector2.from_angle(angle + PI * .5 + PI * float(i) / 32.0) * radius)
-	return result
-
-func _prepare_field() -> void:
-	var field = model.field
-	if _field_key == str(field.region): return
-	_field_key = str(field.region)
-	if field.layout.has("coast"):
-		# No separate visual smoothing: these exact vertices also stop the bee.
-		_coast = field.layout.coast.duplicate()
-	else:
-		var shapes: Array[PackedVector2Array] = []
-		for i in field.layout.paths.size():
-			var path: PackedVector2Array = field.layout.paths[i]
-			shapes.append(_capsule_polygon(path[0], path[1], float(field.layout.path_radii[i])))
-		for node in field.layout.nodes: shapes.append(_circle_polygon(node.p, float(node.radius)))
-		_coast = shapes[0]
-		for i in range(1, shapes.size()):
-			var merged: Array[PackedVector2Array] = Geometry2D.merge_polygons(_coast, shapes[i])
-			if not merged.is_empty(): _coast = merged[0]
-	if not is_instance_valid(_outside):
-		_outside = Polygon2D.new()
-		_outside.z_index = -3
-		_outside.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-		_outside.polygon = PackedVector2Array([Vector2(-6000,-6000),Vector2(8000,-6000),Vector2(8000,8000),Vector2(-6000,8000)])
-		add_child(_outside)
-	if not is_instance_valid(_turf):
-		_turf = Polygon2D.new()
-		_turf.z_index = -1
-		_turf.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-		_turf.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-		add_child(_turf)
-	var pond := _field_key == "pond"
-	_outside.color = Color.WHITE
-	_turf.polygon = _coast
-	_turf.texture = GROUND_TILE
-	var shader := Shader.new()
-	shader.code = TURF_SHADER
+func _crown_patch(texture: Texture2D, uv: Rect2, rect: Rect2, foreground: bool) -> Sprite2D:
+	var patch := Sprite2D.new()
+	patch.texture = texture
+	patch.centered = false
+	patch.region_enabled = true
+	patch.region_rect = Rect2(uv.position*texture.get_size(),uv.size*texture.get_size())
+	patch.scale = PLATE_RECT.size/texture.get_size()
+	patch.position = rect.position
+	patch.z_index = 1 if foreground else -1
 	var paint := ShaderMaterial.new()
-	paint.shader = shader
-	paint.set_shader_parameter("ground_tint", Color.WHITE if pond else Color("e2ebef"))
-	_turf.material = paint
-	for bank in _soft_banks: bank.queue_free()
-	_soft_banks.clear()
-	for width in [18.0,11.0,5.0]:
-		var outlines := Geometry2D.offset_polygon(_coast,width,Geometry2D.JOIN_ROUND)
-		if outlines.is_empty(): continue
-		var bank := Polygon2D.new()
-		bank.z_index = -2
-		bank.polygon = outlines[0]
-		bank.texture = _turf.texture
-		bank.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-		var bank_paint: ShaderMaterial = paint.duplicate()
-		bank_paint.set_shader_parameter("opacity",.20 if width>15 else .35 if width>8 else .60)
-		bank_paint.set_shader_parameter("ground_tint",Color("a99e68") if pond else Color("6b8353"))
-		bank.material = bank_paint
-		add_child(bank)
-		_soft_banks.append(bank)
-	_outside.texture = WATER_TILE if pond else GROUND_TILE
-	var outside_paint := ShaderMaterial.new()
-	outside_paint.shader = shader
-	outside_paint.set_shader_parameter("ground_tint",Color.WHITE if pond else Color("597757"))
-	_outside.material = outside_paint
-	_shore_plants.clear()
-	_grass_marks.clear()
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 349001 if pond else 349002
-	# Authored dense groups alternate with long open banks. Roots follow the
-	# actual coast, with irregular depth/spacing rather than a row of planters.
-	var groups: Array = [Vector2(130,480),Vector2(650,380),Vector2(1080,880),Vector2(1460,1240),Vector2(1870,380),Vector2(2390,690)] if pond else [Vector2(120,810),Vector2(700,970),Vector2(1080,420),Vector2(1420,80),Vector2(1820,990),Vector2(2370,860)]
-	for group in groups.size():
-		var nearest := 0
-		for i in _coast.size():
-			if _coast[i].distance_squared_to(groups[group])<_coast[nearest].distance_squared_to(groups[group]): nearest = i
-		var count := 5 if group%3 == 0 else 9 if group%3 == 1 else 7
-		for j in count:
-			var index := posmod(nearest+rng.randi_range(-4,4),_coast.size())
-			var at: Vector2 = _coast[index]
-			var tangent := (_coast[(index+1)%_coast.size()]-_coast[(index-1+_coast.size())%_coast.size()]).normalized()
-			var outward := tangent.orthogonal()
-			if FieldLayout.walkable(field.layout,at+outward*8,0): outward = -outward
-			var foot := at-outward*rng.randf_range(22,63)+tangent*rng.randf_range(-15,15)
-			if not FieldLayout.walkable(field.layout,foot,10) or _close_to_resource(foot,60): continue
-			if foot.distance_to(field.layout.nodes[0].p)<130: continue
-			var kind := 0 if j<2 else 4 if pond and j%3==0 else rng.randi_range(1,3)
-			_shore_plants.append({"p":foot-Vector2(0,9),"normal":outward,"size":rng.randf_range(.65,1.55),"kind":kind})
-	for i in 240:
-		var bounds: Rect2 = field.layout.bounds
-		var at := bounds.position + Vector2(rng.randf()*bounds.size.x,rng.randf()*bounds.size.y)
-		if FieldLayout.walkable(field.layout,at,42):
-			_grass_marks.append({"p":at,"turn":rng.randf_range(-.6,.6),"size":rng.randf_range(.6,1.25)})
-	_landscape = PlaceDressing.build(field)
+	paint.shader = CROWN_SHADER
+	paint.set_shader_parameter("center_uv",uv.get_center())
+	paint.set_shader_parameter("radii_uv",uv.size*.5)
+	paint.set_shader_parameter("foreground",foreground)
+	patch.material = paint
+	_paint_root.add_child(patch)
+	return patch
 
-func _close_to_resource(at: Vector2,radius: float) -> bool:
-	# Keep room for future unlocked sources too, without drawing their empty slots.
-	for flower in model.field.flowers:
-		if at.distance_to(flower.p)<radius: return true
-	for item in model.field.materials:
-		if at.distance_to(item.anchor)<radius: return true
-	return false
+func _canopy_offset(rect: Rect2) -> Vector2:
+	if reduced_motion: return Vector2.ZERO
+	var eye: Vector2 = model.camera_offset+Vector2(640,400)
+	var relative := ((rect.get_center()-eye)/Vector2(640,400)).clamp(-Vector2.ONE,Vector2.ONE)
+	return relative*Vector2(minf(29.0,rect.size.x*.12),minf(13.0,rect.size.y*.06))
+
+func _update_crowns() -> void:
+	var player_uv: Vector2 = (model.p-PLATE_RECT.position)/PLATE_RECT.size
+	var visible_world := Rect2(model.camera_offset,get_viewport_rect().size)
+	for crown in _crowns:
+		var rect: Rect2 = crown.rect
+		var back: Sprite2D = crown.back
+		var front: Sprite2D = crown.front
+		back.visible = visible_world.intersects(rect)
+		front.visible = back.visible and model.p.y+33.0<rect.end.y and rect.grow(55).has_point(model.p)
+		if not back.visible: continue
+		var shift := _canopy_offset(rect)/PLATE_RECT.size
+		back.material.set_shader_parameter("shift_uv",shift)
+		if front.visible:
+			front.material.set_shader_parameter("shift_uv",shift)
+			front.material.set_shader_parameter("player_uv",player_uv)
 
 func _visible(at: Vector2, padding := 130.0) -> bool:
 	return Rect2(model.camera_offset-Vector2.ONE*padding,get_viewport_rect().size+Vector2.ONE*padding*2).has_point(at)
@@ -191,34 +144,23 @@ func _visible(at: Vector2, padding := 130.0) -> bool:
 func _draw() -> void:
 	if model == null: return
 	if area_key == "hub":
-		if is_instance_valid(_turf): _turf.visible = false
-		if is_instance_valid(_outside): _outside.visible = false
-		for bank in _soft_banks: bank.visible = false
+		if is_instance_valid(_paint_root): _paint_root.hide()
 		super._draw()
 		return
 	if model.field == null: return
-	_prepare_field()
+	_prepare_paint()
 	_world_offset = -model.camera_offset
-	_turf.visible = true
-	_outside.visible = true
-	_turf.position = _world_offset
-	_outside.position = _world_offset
-	for bank in _soft_banks:
-		bank.visible = true
-		bank.position = _world_offset
-	if area_key == "pond": _outside.material.set_shader_parameter("flow",0.0 if reduced_motion else clock*.0015)
+	_paint_root.show()
+	_paint_root.position = _world_offset
+	_update_crowns()
 	draw_set_transform(_world_offset)
-	_draw_region_floor()
 	var actors: Array[Dictionary] = []
-	for decoration in _landscape.get("actors",[]):
-		if _visible(decoration.p): actors.append({"kind":"landscape","y":decoration.p.y,"data":decoration})
-	for plant in _shore_plants:
-		if _visible(plant.p): actors.append({"kind":"shore","y":plant.p.y,"data":plant})
 	for flower in model.field.flowers:
 		if not bool(flower.get("enabled",true)): continue
 		if _visible(flower.p):
-			_ground_shadow(_resource_root(flower),Vector2(18,5),.13)
-			actors.append({"kind":"flower","y":_resource_root(flower).y,"data":flower})
+			var foot := _resource_root(flower)
+			_ground_shadow(foot+Vector2(4,1),Vector2(20,5),.23)
+			actors.append({"kind":"flower","y":foot.y,"data":flower})
 	for item in model.field.materials:
 		if not bool(item.get("enabled",true)): continue
 		if _visible(item.p):
@@ -231,8 +173,6 @@ func _draw() -> void:
 	actors.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y) < float(b.y))
 	for actor in actors:
 		match actor.kind:
-			"landscape": PlaceDressing.draw_actor(self,actor.data)
-			"shore": _draw_shore_plant(actor.data)
 			"flower": _draw_living_flower(actor.data)
 			"material": _draw_living_material(actor.data)
 			"entry": _draw_entry(actor.p)
@@ -244,81 +184,12 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO)
 	_draw_home_bearing()
 
-func _draw_region_floor() -> void:
-	PlaceDressing.draw_floor(self,_landscape)
-	var pond := area_key == "pond"
-	for mark in _grass_marks:
-		var at: Vector2 = mark.p
-		if not _visible(at,20): continue
-		var tone := Color(.87,.87,.52,.24) if pond else Color(.73,.80,.57,.24)
-		for blade in 3:
-			var root := at+Vector2(float(blade-1)*4,0)
-			_curve(root,root+Vector2(-2,-4),root+Vector2(-6+blade*4,-8),root+Vector2(-7+blade*5,-11)*float(mark.size),tone,1.5)
-	# Quiet water and floor marks lie outside the collecting surface only.
-	var water_marks: Array[Vector2] = [Vector2(350,230),Vector2(990,290),Vector2(1790,180),Vector2(2280,1030),Vector2(850,1080)]
-	for i in water_marks.size():
-		var at: Vector2 = water_marks[i]
-		if not _visible(at,120) or FieldLayout.walkable(model.field.layout,at,-45): continue
-		if pond:
-			var drift := 0.0 if reduced_motion else sin(clock*.55+float(i)) * 9
-			_curve(at+Vector2(-65,drift),at+Vector2(-25,-5+drift),at+Vector2(24,5+drift),at+Vector2(68,drift),Color(.79,.91,.77,.21),2)
-		else:
-			_ellipse(at,Vector2(100,42),Color(.16,.27,.20,.22))
-	_draw_distant_landmarks()
-
-func _draw_distant_landmarks() -> void:
-	# Rooted silhouettes make near/middle/far readable without inventing a route.
-	# Pond landmarks now belong to the rooted, y-sorted place composition.
-	# The old fixed-offset reeds/fountain could float above deep open water.
-	if area_key == "pond": return
-	var nodes: Array = model.field.layout.nodes
-	for index in [1,2,3]:
-		# The meadow's short pocket goes north of its middle node; keep its
-		# landmark on the opposite bank so it cannot look like a blocked branch.
-		var bank := 340.0 if area_key == "meadow" and index == 2 else -315.0
-		var at: Vector2 = nodes[index].p+Vector2(10,bank)
-		if not _visible(at,210): continue
-		if area_key == "pond":
-			if index == 3:
-				var source := ArtProps.FOUNTAIN
-				draw_texture_rect_region(ArtProps.FLORA,Rect2(at-Vector2(60,85),Vector2(120,112)),source,Color(.70,.79,.68))
-			else:
-				for j in 5+index*2:
-					var foot := at+Vector2(float(j)*16-50,30+sin(float(j))*7)
-					var tip := foot+Vector2(sin(float(j))*14,-70-float(j%3)*22)
-					_curve(foot,foot+Vector2(0,-30),tip+Vector2(-6,15),tip,Color("6f8950"),3)
-					ArtSprites.small_leaf(self,foot+Vector2(0,-25),foot+Vector2(28,-48),9)
-		else:
-			var span := Vector2(180+index*35,100+index*15)
-			draw_texture_rect_region(THICKET,Rect2(at-Vector2(span.x*.5,span.y-25),span),Rect2(45,45,1680,755),Color(.76,.82,.84))
-			# Violet edge leaves form a distinct cool canopy, with roots outside the path.
-			for j in 3:
-				var foot := at+Vector2(float(j-1)*39,20)
-				ArtSprites.small_leaf(self,foot,foot+Vector2(-32,-42-float(j)*10),24)
-
-func _draw_shore_plant(plant: Dictionary) -> void:
-	var at: Vector2 = plant.p
-	var scale: float = plant.size
-	var alpha := .32 if model.p.distance_to(at) < 85 else .82
-	if int(plant.kind) == 4:
-		# Small bank stones sit partly in the soil and mark the soft shoreline.
-		var stone := PackedVector2Array([at+Vector2(-19,5),at+Vector2(-16,-6),at+Vector2(-5,-12),at+Vector2(12,-9),at+Vector2(21,2),at+Vector2(12,8)])
-		_ground_shadow(at+Vector2(0,7),Vector2(23,6),.13)
-		draw_colored_polygon(stone,Color("a3a17a") if area_key == "pond" else Color("969a83"))
-		draw_polyline(PackedVector2Array([at+Vector2(-15,-5),at+Vector2(-5,-10),at+Vector2(11,-7)]),Color("dad0a1"),2,true)
-	elif int(plant.kind) == 0:
-		var span := Vector2(116,62)*scale
-		draw_texture_rect_region(THICKET,Rect2(at-Vector2(span.x*.5,span.y-8),span),Rect2(45,45,1680,755),Color(.86,.90,.76,alpha))
-	else:
-		var root := at+Vector2(0,9)
-		_ground_shadow(root,Vector2(21,5),.13)
-		for leaf in 3:
-			var tip := root+Vector2(float(leaf-1)*29,-22-float(leaf%2)*19)*scale
-			ArtSprites.small_leaf(self,root,tip,13*scale)
+func _bloom_texture() -> Texture2D:
+	return MEADOW_BLOOM if area_key == "meadow" else POND_BLOOM
 
 func _resource_root(flower: Dictionary) -> Vector2:
 	var id := int(flower.id)
-	return flower.p+Vector2((30 if area_key == "meadow" else 0)+float(id%3-1)*5,37+float(id%4)*6)
+	return flower.p+Vector2(float(id%3-1)*5,39+float(id%4)*6)
 
 func _flower_visual_point(flower: Dictionary) -> Vector2:
 	var at: Vector2 = flower.p
@@ -342,30 +213,45 @@ func _draw_living_flower(flower: Dictionary) -> void:
 		return
 	var at := _flower_visual_point(flower)
 	var opening := .35+.65*ratio if phase == "bud" else 1.0-ratio*.28 if phase == "fading" else 1.0
-	var join := at+Vector2(30,15) if purple else at+Vector2(0,14)
+	var bloom := _bloom_texture()
+	var head_size := .88+float(int(flower.id)%5)*.055
+	var width := (58.0 if purple else 54.0)*head_size
+	var span := Vector2.ZERO
+	var join := at+Vector2(0,14)
+	if bloom != null:
+		span = bloom.get_size()*(width/bloom.get_width())
+		join = at+Vector2(0,span.y*.48)
+	elif purple:
+		join = at+Vector2(30,15)
 	if phase == "bud": join = root.lerp(join,.48+ratio*.52)
 	if phase == "fading": join += Vector2(3,ratio*8)
-	var bend := Vector2((4.0+float(int(flower.id)%3)*2.0)*(-1 if int(flower.id)%2 == 0 else 1),0)
+	var habit := sin(float(flower.id)*2.39996)
+	var bend := Vector2(8.0*habit,0)
 	var neck := join.lerp(root,.33)+bend
 	var lower := join.lerp(root,.70)+bend*.65
 	# Monotonic controls keep a short bud stem from folding through itself.
 	ArtProps.stalk(self,join,neck,lower,root,3.2)
 	for t in [.50,.78]:
 		var petiole: Vector2 = join.bezier_interpolate(neck,lower,root,t)
-		ArtSprites.small_leaf(self,petiole,petiole+Vector2(-21 if t<.6 else 20,-10),8)
-	ArtSprites.small_leaf(self,root,root+Vector2(-23,-7),10)
-	ArtSprites.small_leaf(self,root,root+Vector2(17,-12),9)
+		var reach := Vector2((-22.0 if t<.6 else 20.0)+habit*4.0,-12.0+habit*3.0)
+		ArtSprites.small_leaf(self,petiole,petiole+reach,8)
+	ArtSprites.small_leaf(self,root,root+Vector2(-23.0+habit*5.0,-7),10)
+	ArtSprites.small_leaf(self,root,root+Vector2(17,-12.0-habit*6.0),9)
 	var tint := Color("b8c58c") if phase == "bud" else Color.WHITE.lerp(Color("b6a483"),ratio*.72) if phase == "fading" else Color.WHITE
 	if model.p.y+33 < root.y and model.p.distance_to(at) < 65: tint.a = .58
 	var working: bool = int(flower.id) in model.field._locked
 	var tug := sin(clock*13)*.052 if working and not reduced_motion else 0.0
-	var head_size := .84+float(int(flower.id)%5)*.065
-	draw_set_transform(_world_offset+join,tug,Vector2(opening,.70+opening*.30)*head_size)
-	if purple:
+	var fold := Vector2(opening,.70+opening*.30)
+	if bloom != null:
+		draw_set_transform(_world_offset+join,tug+habit*.08,fold)
+		draw_texture_rect(bloom,Rect2(-span*Vector2(.5,.97),span),false,tint)
+	else:
+		draw_set_transform(_world_offset+join,tug+habit*.075,fold*head_size)
+	if bloom == null and purple:
 		var source := ArtProps.SNEEZE
 		var pivot := Vector2(771,431)
 		draw_texture_rect_region(ArtProps.FLORA,Rect2(Vector2(-30,-15)+(source.position-pivot)*.135,source.size*.135),source,tint)
-	else:
+	elif bloom == null:
 		draw_texture_rect_region(ArtSprites.ATLAS,Rect2(Vector2(0,-14)+(ArtSprites.FLOWER.position-ArtSprites.FLOWER_PIVOT)*.115,ArtSprites.FLOWER.size*.115),ArtSprites.FLOWER,tint)
 	draw_set_transform(_world_offset)
 	if phase in ["ripe","fading"]:
