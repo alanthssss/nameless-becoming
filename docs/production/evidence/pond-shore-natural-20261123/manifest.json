@@ -78,7 +78,8 @@
     "coverage": "ordinary main/fork/return, four curved banks held input/fast move, rooted plants, erase-save-reopen, pause/exhaustion/restart",
     "native_views": "8 developer-positioned views at 1280x800 and 960x600, not a playthrough",
     "actual_app": "CUA ordinary keys returned with 1 nectar, 1 fiber, displayed energy17; first attempt interrupted by tool reset, restarted final route",
-    "independent_ai": "8 screenshots and source diff reviewed; erased-quad P2 fixed and re-reviewed; no remaining P1/P2 in limited scope"
+    "independent_ai": "8 screenshots and source diff reviewed; erased-quad P2 fixed and re-reviewed; no remaining P1/P2 in limited scope",
+    "exported_app_cold_smoke": "exit0, no script errors or leak warning"
   },
   "tool_failure": "CUA input_required failed, following read reset session and took 295.5 seconds. Interrupted route exhausted; not counted as completed. Final route restarted and visibly returned.",
   "human_acceptance": false,
