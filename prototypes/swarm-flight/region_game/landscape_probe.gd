@@ -3,7 +3,6 @@ extends SceneTree
 ## No disk saves, no claim of a player-earned trip or aesthetic acceptance.
 const Model = preload("res://region_game/model.gd")
 const View = preload("res://region_game/view.gd")
-const Dressing = preload("res://region_game/landscape.gd")
 const Layout = preload("res://region_greybox/layout.gd")
 const TileScene = preload("res://pond_tilemap/main.tscn")
 var failures := 0
@@ -29,27 +28,50 @@ func run() -> void:
 		model.field.configure("pond" if region=="pond" else "violet",1,23)
 		model._sync_field()
 		var snapshot: Dictionary=model.field.snapshot()
-		var data: Dictionary=Dressing.build(model.field)
-		check(data.places.size()==(4 if region=="pond" else 0),"pond places; meadow not redressed "+region)
-		check(data.patches.size()==(4 if region=="pond" else 0),"pond washes; meadow not recolored "+region)
-		var roles := {}
-		for actor in data.actors:
-			roles[actor.place]=true
-			check(Layout.walkable(model.field.layout,actor.p,28),"root remains on actual land")
-		check(roles.size()==(4 if region=="pond" else 0),"pond composition; meadow preserved "+region)
-		check(model.field.snapshot()==snapshot,"dressing does not change field state")
-		for group in data.water:
-			check(not Layout.walkable(model.field.layout,group.p,0),"floating-leaf group stays in non-walkable water")
-		print(region+" composition: "+str(data.actors.size())+" actors; "+str(roles.keys()))
 		var view=View.new()
 		view.model=model
 		view.area_key=region
 		view.reduced_motion=true
 		root.add_child(view)
 		view.set_process(false)
-		var shots: Array=data.places.duplicate()
-		if region=="meadow":
-			for i in [0,1,4,3]: shots.append({"kind":"unchanged-%d"%i,"p":model.field.layout.nodes[i].p})
+		view._prepare_paint()
+		check(model.field.snapshot()==snapshot,"preparing painted field preserves resources and position")
+		check(View.POND_PLATE!=View.MEADOW_PLATE,"each field owns its painted landscape")
+		check(view._crowns.size()==(6 if region=="pond" else 7),"registered foliage landmarks for "+region)
+		var plate: Texture2D=View.POND_PLATE if region=="pond" else View.MEADOW_PLATE
+		var bloom: Texture2D=View.POND_BLOOM if region=="pond" else View.MEADOW_BLOOM
+		check(view._bloom_texture()==bloom and bloom.get_size().x>20,"each collection region uses its painted live bloom")
+		for crown in view._crowns:
+			var rect: Rect2=crown.rect
+			var back: Sprite2D=crown.back
+			var front: Sprite2D=crown.front
+			var uv := Rect2((rect.position-View.PLATE_RECT.position)/View.PLATE_RECT.size,rect.size/View.PLATE_RECT.size)
+			check(back.texture==plate and front.texture==plate and back.region_rect==front.region_rect,"both layers sample the identical registered painting")
+			check(back.region_rect.position.is_equal_approx(uv.position*plate.get_size()) and back.region_rect.size.is_equal_approx(uv.size*plate.get_size()),"crown maps to the exact world coordinates")
+			check(back.z_index<0 and front.z_index>0,"foliage can pass in front of or behind the bee")
+			check(view._canopy_offset(rect)==Vector2.ZERO,"reduced motion fixes every canopy")
+		var crown: Dictionary=view._crowns[2]
+		var rect: Rect2=crown.rect
+		view.reduced_motion=false
+		model.camera_offset=Vector2(0,-100)
+		var left: Vector2=view._canopy_offset(rect)
+		model.camera_offset=Vector2(1400,650)
+		check(left.distance_to(view._canopy_offset(rect))>3.0,"raised leaves shift with camera travel")
+		model.camera_offset=rect.get_center()-Vector2(640,400)
+		model.p=rect.get_center()
+		view._update_crowns()
+		check(crown.front.visible,"registered crown overlays bee when it passes behind")
+		model.p=Vector2(rect.get_center().x,rect.end.y+35.0)
+		view._update_crowns()
+		check(not crown.front.visible,"bee in front of crown remains unobstructed")
+		view.reduced_motion=true
+		for corner in [Vector2(0,-100),Vector2(0,650),Vector2(1400,-100),Vector2(1400,650)]:
+			check(View.PLATE_RECT.grow(.01).encloses(Rect2(corner,Vector2(1280,800))),"paint covers camera extremes")
+		var shots: Array=[]
+		for index in [0,1,2,4,3]:
+			var key: String=["entry","bend","middle","far","bay"][index] if region=="pond" else "unchanged-%d"%index
+			shots.append({"kind":key,"p":model.field.layout.nodes[index].p})
+		print(region+" painted field: "+str(view._crowns.size())+" registered foliage crowns")
 		for size in [Vector2i(1280,800),Vector2i(960,600)]:
 			root.size=size
 			for place in shots:
@@ -61,13 +83,6 @@ func run() -> void:
 				if not directory.is_empty() and DisplayServer.get_name()!="headless":
 					await RenderingServer.frame_post_draw
 					root.get_texture().get_image().save_png(directory.path_join("%s-%s-%d.png"%[region,place.kind,size.x]))
-		# Whole-silhouette retreat applies even if the bee is above the root.
-		if not data.actors.is_empty():
-			var actor: Dictionary=data.actors[0]
-			model.p=actor.p+Vector2(0,-65)*float(actor.size)
-			check(Dressing.actor_alpha(view,actor)<=.21,"foreground retreats around bee silhouette")
-			model.p=actor.p+Vector2(300,0)
-			check(Dressing.actor_alpha(view,actor)>.99,"foreground returns away from bee")
 		view.queue_free()
 		await process_frame
 	var tile=TileScene.instantiate()
@@ -75,6 +90,7 @@ func run() -> void:
 	tile.set_process(false)
 	tile.world.set_process(false)
 	var tile_data: Dictionary=tile.world._landscape
+	check(tile.world._bloom_texture()==null,"compact experiment retains its original flower family")
 	check(tile_data.places.size()==4 and tile_data.water.size()==3,"compact tilemap inherits four places and shore-derived water groups")
 	for actor in tile_data.actors:
 		check(Layout.walkable(tile.model.field.layout,actor.p,28),"compact scenery roots retain real-bank clearance")

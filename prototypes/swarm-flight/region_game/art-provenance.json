@@ -7,7 +7,7 @@
   ],
   "milestone": "M3",
   "parent_issue": 322,
-  "scope": "Current pond/violet collecting grounds and inherited courtyard; natural coast and sparse-to-grown resource display. No extra paths or weather.",
+  "scope": "0.31 official collecting regions with registered painted terrain and live blossoms. The earlier material tile and local dressing records below are version history and remain relevant to the isolated TileMap experiment.",
   "technical_frame": {
     "engine": "Godot 4",
     "design_viewport": [
@@ -223,5 +223,32 @@
     "verification": "Development native two-size fixture and anchor/state checks; purple-field non-modification and compact-map inheritance checked. First reed base at 24px margin failed the 28px root-clearance assertion and was moved to 36px. Earlier weak composition and floating inherited landmarks were revised after review. Not independent player or aesthetic acceptance. Exact revision and final image hashes belong to batch receipt.",
     "new_generation": false,
     "new_purchase": false
+  },
+  "painted_fields_031": {
+    "date": "2026-11-23",
+    "tracker": "M3/#322/#349/#351",
+    "design": "GDD §8.1/12/13.9",
+    "references": [
+      "art/nectar-courtyard-oblique.png",
+      "art/nectar-pond-oblique.png",
+      "art/nectar-meadow-oblique.png",
+      "real pond and violet coast geometry layout v2"
+    ],
+    "tool": "OpenAI built-in image_gen; 2 landscapes, 1 transparent blossom sheet, 3 localized edits to clear pocket and far-bank rooting surfaces. No third-party downloads or purchases.",
+    "sources": "docs/art/collection-fields in the repository contains the two final editable opaque source paintings, the original alpha sprite sheet, guides, prompts and registration recipe. Pocket replacements were feathered into only the original generation crop pond [700,480,1100,855] / meadow [730,5,1120,355] for clearance around material roots. Far pond rocks at [1260,385,1649,640] were lowered to support live flowers near the bank.",
+    "world_rect": [
+      0,
+      -100,
+      2680,
+      1550
+    ],
+    "world_contract": "Single painting per region aligned to its existing collision world; height cues use exposed bank faces, light, scale and registered leaves. Bee and flowers keep native coordinates. Resource heads use trimmed calyx to meet the live stem.",
+    "production_files": {
+      "collection-blue-bloom.webp": "9b27c0352a9bf1085b632d6eb3ccd2b28d9b3b8770357f023233db6d34038043",
+      "collection-meadow.webp": "6e8a6801819f38cfa28e0f59f7357befcfd5e47ac73170adb46536c666ead5d4",
+      "collection-pond.webp": "cd13d7f06976d4891868a11575bfc385e079824530ec36cacb167e049fe122e1",
+      "collection-violet-bloom.webp": "26dd62ccb1bd58ab7700402e67a01eb0c75dd18ee692afafe186211afd033f66"
+    },
+    "acceptance": "0.30.0 map presentation rejected by Alan, who reported modest feedback improvement. 0.31.0 visual acceptance awaits his assessment."
   }
 }
