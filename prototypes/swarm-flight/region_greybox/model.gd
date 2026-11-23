@@ -285,8 +285,14 @@ func _harvest(dt: float) -> void:
 		if float(f.progress) >= 0.99999:
 			cargo += 1
 			_event("nectar_picked", index)
-			_enter_phase(f,"empty",false)
+			_after_nectar_picked(f)
 			last_action = "花蜜 +1"
+
+func _after_nectar_picked(flower: Dictionary) -> void:
+	_enter_phase(flower,"empty",false)
+
+func _valid_flower_stock(flower: Dictionary) -> bool:
+	return flower.stock == (1 if available(flower) else 0)
 
 func _pulse(aim: Vector2) -> void:
 	if pulse_left > 0 or energy <= 2: return
@@ -370,7 +376,7 @@ func restore(data: Variant) -> bool:
 			if not f.has(key): return false
 		if f.p != candidate.flowers[i].p or f.id != i or f.band != candidate.flowers[i].band or f.node != candidate.flowers[i].node or f.cluster != candidate.flowers[i].cluster: return false
 		if not _valid_phase(f,false) or not _number(f.progress): return false
-		if f.progress < 0 or f.progress >= 1 or f.stock != (1 if available(f) else 0): return false
+		if f.progress < 0 or f.progress >= 1 or not _valid_flower_stock(f): return false
 		if not available(f) and f.progress != 0: return false
 	for i in data.materials.size():
 		var item: Variant = data.materials[i]

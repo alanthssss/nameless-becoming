@@ -4,6 +4,7 @@ extends "res://nectar_harvest_model.gd"
 ## has a separate, bounded binary snapshot inside this versioned JSON envelope.
 const Profile = preload("res://nectar_harvest_model.gd")
 const Field = preload("res://region_game/field.gd")
+const MeadowLayout = preload("res://region_game/layout.gd")
 const PROFILE_KEYS := ["coins","cargo","materials","owned","completed","trip_index","sold_total","rose_sold","visited_meadow"]
 var field
 var camera_offset := Vector2.ZERO
@@ -12,8 +13,10 @@ var return_requested := false
 
 func upgrade_defs() -> Array:
 	var definitions: Array = super.upgrade_defs().filter(func(d): return d.id != "shortcut")
-	definitions.append({"id":"supply1","name":"花地萌发","description":"花源 16 → 24 · 材料 3 → 4\n花再生 20 → 14 秒","cost":8,"fiber":1,"branch":2,"row":1,"requires":["gather1"]})
-	definitions.append({"id":"supply2","name":"花地繁盛","description":"花源 24 → 36 · 材料 4 → 6\n花再生 14 → 10 秒","cost":18,"fiber":3,"resin":1,"branch":2,"row":2,"requires":["supply1","meadow"]})
+	for upgrade in definitions:
+		if upgrade.id == "beat": upgrade.description = "较紧的种穗和树皮只需一次振翅"
+	definitions.append({"id":"supply1","name":"花地萌发","description":"花源 16 → 24 · 材料 3 → 4\n补蜜 20 → 14 秒","cost":8,"fiber":1,"branch":2,"row":1,"requires":["gather1"]})
+	definitions.append({"id":"supply2","name":"花地繁盛","description":"花源 24 → 36 · 材料 4 → 6\n补蜜 14 → 10 秒","cost":18,"fiber":3,"resin":1,"branch":2,"row":2,"requires":["supply1","meadow"]})
 	return definitions
 
 func resource_rank() -> int: return 2 if "supply2" in owned else 1 if "supply1" in owned else 0
@@ -32,9 +35,13 @@ func interaction() -> String:
 	return "home" if field != null and field.at_entry() else ""
 
 func update_camera() -> void:
-	camera_offset = Vector2.ZERO if at_home() else Vector2(clampf(p.x-640,0,1400),clampf(p.y-400,-100,650))
+	var visible_size := MeadowLayout.VIEWPORT / MeadowLayout.FIELD_ZOOM
+	camera_offset = Vector2.ZERO if at_home() else (p-visible_size*.5).clamp(MeadowLayout.PLATE.position,MeadowLayout.PLATE.end-visible_size)
 	camera_x = camera_offset.x
 	chapter.region = 1 if area == "meadow" else 0
+
+func screen_to_field(point: Vector2) -> Vector2:
+	return point if at_home() else camera_offset+point/MeadowLayout.FIELD_ZOOM
 
 func clear_controls() -> void:
 	super.clear_controls()
@@ -154,7 +161,9 @@ func step(delta: float,move: Vector2,collect: bool,space_held: bool,pulse_held: 
 func _translate_event(e: Dictionary) -> void:
 	var kind: String = e.kind
 	var at := p
-	if int(e.id) >= 0:
+	if e.has("world_target"):
+		at = e.world_target
+	elif int(e.id) >= 0:
 		at = field.flowers[e.id].p if kind.begins_with("flower_") or kind == "nectar_picked" else field.materials[e.id].p
 	if kind == "nectar_picked":
 		emit("harvest",at,1)
@@ -162,10 +171,14 @@ func _translate_event(e: Dictionary) -> void:
 	elif kind == "material_picked":
 		emit("material",at,1)
 		events[-1].type = "fiber" if area == "pond" else "resin"
+	elif kind == "pulse_empty":
+		emit("pulse_empty",p)
+		events[-1].direction = e.direction
 	elif kind == "material_hit":
 		emit("pulse",p,1)
 		events[-1].direction = face
 		events[-1].to = at
+		events[-1].source_id = e.id
 	elif kind not in ["returned","exhausted"]:
 		emit(kind,at,int(e.id))
 

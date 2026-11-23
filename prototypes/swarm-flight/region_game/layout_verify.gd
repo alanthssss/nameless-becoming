@@ -1,6 +1,7 @@
 extends SceneTree
 const Natural = preload("res://region_game/layout.gd")
 const Collision = preload("res://region_greybox/layout.gd")
+const Field = preload("res://region_game/field.gd")
 var checks := 0
 var failures: Array[String] = []
 
@@ -20,7 +21,10 @@ func verify(region: String) -> void:
 	var legacy: Dictionary = Collision.build(region)
 	var coast: PackedVector2Array = layout.coast
 	check(layout == Natural.build(region),region+" fixed authored shore, independent of visit seed")
-	check(layout.nodes == legacy.nodes and layout.edges == legacy.edges,region+" all five targets and four tree edges unchanged")
+	var targets_match: bool = layout.edges == legacy.edges
+	for i in layout.nodes.size():
+		targets_match = targets_match and layout.nodes[i].p.is_equal_approx(legacy.nodes[i].p * Natural.GROUND_SCALE)
+	check(targets_match,region+" five targets follow the enlarged four-edge route")
 	check(layout.edges == [Vector2i(0,1),Vector2i(1,2),Vector2i(2,3),Vector2i(2,4)],region+" one inward route and one short pocket, no loop")
 	check(not layout.has("weather") and not layout.has("shelters"),region+" no weather or alternate route states")
 	check(coast.size()>150 and not Geometry2D.triangulate_polygon(coast).is_empty(),region+" natural outline is renderable")
@@ -41,7 +45,7 @@ func verify(region: String) -> void:
 		boundary_ok = boundary_ok and Collision.walkable(layout,middle+inward*22,16)
 		boundary_ok = boundary_ok and layout.bounds.has_point(a)
 	check(boundary_ok,region+" exact displayed coast and 16px body margin agree on both sides")
-	check(max_segment<24,region+" boundary contains no long straight mesh spans")
+	check(max_segment<24*Natural.GROUND_SCALE,region+" boundary contains no long straight mesh spans")
 	var lane_ok := true
 	var main_length := 0.0
 	var widths: Array[float] = []
@@ -66,7 +70,7 @@ func verify(region: String) -> void:
 		for j in range(1,path.size()): at = Collision.move(layout,at,path[j]-at)
 		check(at.distance_to(path[-1])<.1,region+" swept body reaches target along main/pocket path")
 	check(lane_ok,region+" broad body-clear main lanes and pocket remain connected")
-	check(main_length>1900 and main_length<2200,region+" preserves useful inward travel distance")
+	check(main_length>1900*Natural.GROUND_SCALE and main_length<2200*Natural.GROUND_SCALE,region+" preserves useful inward travel distance")
 	var smallest := INF
 	var largest := 0.0
 	for width in widths:
@@ -88,8 +92,50 @@ func verify(region: String) -> void:
 	check(not Collision.walkable(layout,Vector2(-5000,-5000),-50),region+" optional polygon always rejects outside points")
 	# Old greybox data must continue down its original capsule path unchanged.
 	check(not legacy.has("coast") and Collision.walkable(legacy,entry) and not Collision.walkable(legacy,entry+Vector2(-400,0)),region+" old greybox layout keeps original collision contract")
+	_verify_west(region)
 	_verify_grid(layout,region)
 	print("REGIONAL_SHORE %s vertices=%d main_length=%.1f sampled_width=%.0f..%.0f" % [region,coast.size(),main_length,smallest,largest])
+
+func _verify_west(region: String) -> void:
+	var field = Field.new()
+	field.configure(region,0,1)
+	var entry: Vector2 = field.p
+	for i in 100: field.step(.05,Vector2.LEFT,false)
+	var min_screen_x: float = field.p.x * Natural.FIELD_ZOOM
+	check(min_screen_x>=36.0 and field.p.x<entry.x-100.0,region+" sustained westward flight keeps the full bee on the painted screen")
+	print("WEST_EDGE %s westmost_screen_x=%.2f after 5s left" % [region,min_screen_x])
+	for version in [1,2]:
+		var previous := Natural.build(region,false)
+		var old: Dictionary = field.snapshot()
+		if version == 1:
+			old.erase("space_version")
+			for flower in old.flowers: flower.p /= Natural.GROUND_SCALE
+			for item in old.materials:
+				item.anchor /= Natural.GROUND_SCALE
+				item.p = item.anchor
+		else:
+			old.space_version = 2
+			previous = Natural.expand(previous,false)
+		var previous_entry: Vector2 = previous.nodes[0].p
+		var westmost := Collision.move(previous,previous_entry,Vector2(-450,0))
+		old.p = westmost
+		var copy = Field.new()
+		var loaded: bool = copy.restore(old)
+		check(westmost.x<0 and loaded,region+" previously legal offscreen west coast migrates from space "+str(version))
+		if not loaded: continue
+		check(copy.p.x*Natural.FIELD_ZOOM>=36.0 and Collision.walkable(copy.layout,copy.p) and copy.p.distance_to(entry)>100 and old.p==westmost,region+" migration lands in visible near-west meadow without rewriting input")
+		check(copy.energy==field.energy and copy.flowers==field.flowers and copy.materials==field.materials,region+" west migration preserves trip progress and resources")
+		var latest: Dictionary = copy.snapshot()
+		var restored = Field.new()
+		check(restored.restore(latest) and restored.p==copy.p,region+" relocated save roundtrips exactly")
+		var intact := old.duplicate()
+		intact.p = previous_entry
+		check(restored.restore(intact) and restored.p.is_equal_approx(entry),region+" still-valid west entry retained in space "+str(version))
+		var corrupt := old.duplicate()
+		corrupt.p = Vector2(-5000,previous_entry.y)
+		check(not restored.restore(corrupt) and restored.p.is_equal_approx(entry),region+" impossible historical west location is rejected transactionally")
+		latest.p = westmost
+		check(not restored.restore(latest),region+" current profile cannot exploit migration to admit invalid positions")
 
 func _simple(points: PackedVector2Array) -> bool:
 	for i in points.size():

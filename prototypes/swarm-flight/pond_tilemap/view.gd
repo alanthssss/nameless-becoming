@@ -20,13 +20,14 @@ func _draw() -> void:
 		if _visible(plant.p): actors.append({"kind":"shore","y":plant.p.y,"data":plant})
 	for flower in model.field.flowers:
 		_ground_shadow(_resource_root(flower),Vector2(18,5),.13)
-		actors.append({"kind":"flower","y":_resource_root(flower).y,"data":flower})
+		actors.append({"kind":"flower","y":_flower_depth(flower),"data":flower})
 	for item in model.field.materials:
-		_ground_shadow(item.anchor+Vector2(0,47),Vector2(23,7),.17)
-		actors.append({"kind":"material","y":item.anchor.y+47,"data":item})
-	actors.append({"kind":"entry","y":model.field.layout.nodes[0].p.y+54,"p":model.field.layout.nodes[0].p})
-	_ground_shadow(model.p+Vector2(0,33),Vector2(22,7),.16)
-	actors.append({"kind":"player","y":model.p.y+33})
+		_ground_shadow(_material_root(item),Vector2(23,7),.17)
+		actors.append({"kind":"material","y":_material_depth(item),"data":item})
+		if item.dropped: actors.append({"kind":"material_drop","y":item.p.y+6,"data":item})
+	actors.append({"kind":"entry","y":model.field.layout.nodes[0].p.y+SIGN_FOOT.y,"p":model.field.layout.nodes[0].p})
+	_ground_shadow(model.p+BEE_FOOT,Vector2(16,5),.16)
+	actors.append({"kind":"player","y":model.p.y+BEE_FOOT.y})
 	actors.sort_custom(func(a,b): return float(a.y)<float(b.y))
 	for actor in actors:
 		match actor.kind:
@@ -34,6 +35,7 @@ func _draw() -> void:
 			"shore": _draw_shore_plant(actor.data)
 			"flower": _draw_living_flower(actor.data)
 			"material": _draw_living_material(actor.data)
+			"material_drop": _draw_material_drop(actor.data)
 			"entry": _draw_entry(actor.p)
 			"player":
 				_draw_working_bee()

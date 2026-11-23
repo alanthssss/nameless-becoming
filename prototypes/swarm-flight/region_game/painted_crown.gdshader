@@ -7,6 +7,7 @@ uniform vec2 center_uv;
 uniform vec2 radii_uv;
 uniform vec2 shift_uv;
 uniform vec2 player_uv;
+uniform vec2 world_size;
 uniform bool foreground = false;
 
 void fragment() {
@@ -15,7 +16,7 @@ void fragment() {
 	float elevation = 1.0 - smoothstep(-0.28, 0.90, local.y);
 	vec4 paint = texture(TEXTURE, UV - shift_uv * feather * elevation);
 	if (foreground) {
-		float distance_to_bee = length((UV - player_uv) * vec2(2680.0, 1550.0));
+		float distance_to_bee = length((UV - player_uv) * world_size);
 		paint.a *= feather * elevation * mix(0.17, 1.0, smoothstep(24.0, 70.0, distance_to_bee));
 	}
 	COLOR = paint;
