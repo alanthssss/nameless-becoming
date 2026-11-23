@@ -6,7 +6,11 @@ const FieldLife = preload("res://region_greybox/model.gd")
 const FieldLayout = preload("res://region_greybox/layout.gd")
 const POND_PLATE: Texture2D = preload("res://art/collection-pond.webp")
 const MEADOW_PLATE: Texture2D = preload("res://art/collection-meadow.webp")
-const PLATE_RECT := Rect2(0,-100,2680,1550)
+const MeadowLayout = preload("res://region_game/layout.gd")
+const PLATE_RECT := MeadowLayout.PLATE
+const FIELD_SIGN = preload("res://art/collection-home-sign.webp")
+const BEE_FOOT := Vector2(0,25)
+const SIGN_FOOT := Vector2(-67,24)
 const POND_BLOOM: Texture2D = preload("res://art/collection-blue-bloom.webp")
 const MEADOW_BLOOM: Texture2D = preload("res://art/collection-violet-bloom.webp")
 const CROWN_SHADER = preload("res://region_game/painted_crown.gdshader")
@@ -64,7 +68,7 @@ func nectar_event(event: Dictionary) -> void:
 		var target: Vector2 = event.get("to", model.p)
 		for candidate in model.field.materials:
 			if not bool(candidate.get("enabled",true)): continue
-			if candidate.p.distance_to(target)<8: _material_recoil[int(candidate.id)] = 0.24
+			if int(event.get("source_id",-1)) == candidate.id or candidate.p.distance_to(target)<8: _material_recoil[int(candidate.id)] = 0.24
 	if not item.is_empty() and (kind.ends_with("_bud") or kind.ends_with("_ripe") or kind.ends_with("_fading") or kind.ends_with("_empty")):
 		_life_motes.append({"p":item.p,"age":0.0,"duration":0.9,
 			"fall":kind.ends_with("_fading") or kind.ends_with("_empty"),
@@ -112,25 +116,27 @@ func _crown_patch(texture: Texture2D, uv: Rect2, rect: Rect2, foreground: bool) 
 	paint.set_shader_parameter("center_uv",uv.get_center())
 	paint.set_shader_parameter("radii_uv",uv.size*.5)
 	paint.set_shader_parameter("foreground",foreground)
+	paint.set_shader_parameter("world_size",PLATE_RECT.size)
 	patch.material = paint
 	_paint_root.add_child(patch)
 	return patch
 
 func _canopy_offset(rect: Rect2) -> Vector2:
 	if reduced_motion: return Vector2.ZERO
-	var eye: Vector2 = model.camera_offset+Vector2(640,400)
-	var relative := ((rect.get_center()-eye)/Vector2(640,400)).clamp(-Vector2.ONE,Vector2.ONE)
+	var half_view := MeadowLayout.VIEWPORT/(2.0*MeadowLayout.FIELD_ZOOM)
+	var eye: Vector2 = model.camera_offset+half_view
+	var relative := ((rect.get_center()-eye)/half_view).clamp(-Vector2.ONE,Vector2.ONE)
 	return relative*Vector2(minf(29.0,rect.size.x*.12),minf(13.0,rect.size.y*.06))
 
 func _update_crowns() -> void:
 	var player_uv: Vector2 = (model.p-PLATE_RECT.position)/PLATE_RECT.size
-	var visible_world := Rect2(model.camera_offset,get_viewport_rect().size)
+	var visible_world := Rect2(model.camera_offset,get_viewport_rect().size/MeadowLayout.FIELD_ZOOM)
 	for crown in _crowns:
 		var rect: Rect2 = crown.rect
 		var back: Sprite2D = crown.back
 		var front: Sprite2D = crown.front
 		back.visible = visible_world.intersects(rect)
-		front.visible = back.visible and model.p.y+33.0<rect.end.y and rect.grow(55).has_point(model.p)
+		front.visible = back.visible and model.p.y+BEE_FOOT.y<rect.end.y and rect.grow(55).has_point(model.p)
 		if not back.visible: continue
 		var shift := _canopy_offset(rect)/PLATE_RECT.size
 		back.material.set_shader_parameter("shift_uv",shift)
@@ -139,15 +145,17 @@ func _update_crowns() -> void:
 			front.material.set_shader_parameter("player_uv",player_uv)
 
 func _visible(at: Vector2, padding := 130.0) -> bool:
-	return Rect2(model.camera_offset-Vector2.ONE*padding,get_viewport_rect().size+Vector2.ONE*padding*2).has_point(at)
+	return Rect2(model.camera_offset-Vector2.ONE*padding,get_viewport_rect().size/scale+Vector2.ONE*padding*2).has_point(at)
 
 func _draw() -> void:
 	if model == null: return
 	if area_key == "hub":
+		scale = Vector2.ONE
 		if is_instance_valid(_paint_root): _paint_root.hide()
 		super._draw()
 		return
 	if model.field == null: return
+	scale = Vector2.ONE*MeadowLayout.FIELD_ZOOM
 	_prepare_paint()
 	_world_offset = -model.camera_offset
 	_paint_root.show()
@@ -160,28 +168,30 @@ func _draw() -> void:
 		if _visible(flower.p):
 			var foot := _resource_root(flower)
 			_ground_shadow(foot+Vector2(4,1),Vector2(20,5),.23)
-			actors.append({"kind":"flower","y":foot.y,"data":flower})
+			actors.append({"kind":"flower","y":_flower_depth(flower),"data":flower})
 	for item in model.field.materials:
 		if not bool(item.get("enabled",true)): continue
 		if _visible(item.p):
-			_ground_shadow(item.anchor+Vector2(0,47),Vector2(23,7),.17)
-			actors.append({"kind":"material","y":item.anchor.y+47,"data":item})
+			_ground_shadow(_material_root(item),Vector2(22,6),.17)
+			actors.append({"kind":"material","y":_material_depth(item),"data":item})
+			if item.dropped: actors.append({"kind":"material_drop","y":item.p.y+6,"data":item})
 	var entry: Vector2 = model.field.layout.nodes[0].p
-	actors.append({"kind":"entry","y":entry.y+54,"p":entry})
-	_ground_shadow(model.p+Vector2(0,33),Vector2(22,7),.16)
-	actors.append({"kind":"player","y":model.p.y+33})
+	actors.append({"kind":"entry","y":entry.y+SIGN_FOOT.y,"p":entry})
+	_ground_shadow(model.p+BEE_FOOT,Vector2(16,5),.16)
+	actors.append({"kind":"player","y":model.p.y+BEE_FOOT.y})
 	actors.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y) < float(b.y))
 	for actor in actors:
 		match actor.kind:
 			"flower": _draw_living_flower(actor.data)
 			"material": _draw_living_material(actor.data)
+			"material_drop": _draw_material_drop(actor.data)
 			"entry": _draw_entry(actor.p)
 			"player":
 				_draw_working_bee()
 				_draw_bag()
 	_draw_resource_feedback()
 	_draw_region_effects()
-	draw_set_transform(Vector2.ZERO)
+	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE/MeadowLayout.FIELD_ZOOM)
 	_draw_home_bearing()
 
 func _bloom_texture() -> Texture2D:
@@ -189,13 +199,20 @@ func _bloom_texture() -> Texture2D:
 
 func _resource_root(flower: Dictionary) -> Vector2:
 	var id := int(flower.id)
-	return flower.p+Vector2(float(id%3-1)*5,39+float(id%4)*6)
+	return flower.p+Vector2(float(id%3-1)*4,29+float((id*7)%6)*3.8+(5.0 if area_key=="meadow" else 0.0))
+
+func _flower_contact(flower: Dictionary) -> bool:
+	return collecting and int(flower.stock)>0 and int(flower.id) in model.field._locked
+
+func _flower_depth(flower: Dictionary) -> float:
+	var ground := _resource_root(flower).y
+	return minf(ground,model.p.y+BEE_FOOT.y-1) if _flower_contact(flower) else ground
 
 func _flower_visual_point(flower: Dictionary) -> Vector2:
 	var at: Vector2 = flower.p
 	if not reduced_motion and flower.phase != "empty":
 		at += Vector2(sin(clock*1.5+float(flower.id)*.7)*1.5,0)
-		if int(flower.id) in model.field._locked:
+		if _flower_contact(flower):
 			var pull := smoothstep(0.0,.85,float(flower.progress))
 			at += at.direction_to(model.p) * (pull*5.0)
 	return at
@@ -207,6 +224,9 @@ func _draw_living_flower(flower: Dictionary) -> void:
 	var ratio := FieldLife.phase_ratio(flower)
 	var purple := area_key == "meadow"
 	if phase == "empty":
+		var calyx := root+Vector2(5,-24.0+ratio*4)
+		ArtProps.stalk(self,calyx,calyx+Vector2(-6,4),root+Vector2(-3,-11),root,2.4)
+		_ellipse(calyx,Vector2(4.7,3.3),Color("ac9765"))
 		_ellipse(root,Vector2(13,4),Color("67724c"))
 		ArtSprites.small_leaf(self,root,root+Vector2(-13,-6),5)
 		ArtSprites.small_leaf(self,root,root+Vector2(12,-5-ratio*6),5+ratio*3)
@@ -214,8 +234,8 @@ func _draw_living_flower(flower: Dictionary) -> void:
 	var at := _flower_visual_point(flower)
 	var opening := .35+.65*ratio if phase == "bud" else 1.0-ratio*.28 if phase == "fading" else 1.0
 	var bloom := _bloom_texture()
-	var head_size := .88+float(int(flower.id)%5)*.055
-	var width := (58.0 if purple else 54.0)*head_size
+	var head_size := .82+float((int(flower.id)*7)%6)*.064
+	var width := (51.0 if purple else 46.0)*head_size
 	var span := Vector2.ZERO
 	var join := at+Vector2(0,14)
 	if bloom != null:
@@ -238,8 +258,8 @@ func _draw_living_flower(flower: Dictionary) -> void:
 	ArtSprites.small_leaf(self,root,root+Vector2(-23.0+habit*5.0,-7),10)
 	ArtSprites.small_leaf(self,root,root+Vector2(17,-12.0-habit*6.0),9)
 	var tint := Color("b8c58c") if phase == "bud" else Color.WHITE.lerp(Color("b6a483"),ratio*.72) if phase == "fading" else Color.WHITE
-	if model.p.y+33 < root.y and model.p.distance_to(at) < 65: tint.a = .58
-	var working: bool = int(flower.id) in model.field._locked
+	if not _flower_contact(flower) and model.p.y+BEE_FOOT.y < root.y and model.p.distance_to(at) < 46: tint.a = .75
+	var working := _flower_contact(flower)
 	var tug := sin(clock*13)*.052 if working and not reduced_motion else 0.0
 	var fold := Vector2(opening,.70+opening*.30)
 	if bloom != null:
@@ -254,7 +274,7 @@ func _draw_living_flower(flower: Dictionary) -> void:
 	elif bloom == null:
 		draw_texture_rect_region(ArtSprites.ATLAS,Rect2(Vector2(0,-14)+(ArtSprites.FLOWER.position-ArtSprites.FLOWER_PIVOT)*.115,ArtSprites.FLOWER.size*.115),ArtSprites.FLOWER,tint)
 	draw_set_transform(_world_offset)
-	if phase in ["ripe","fading"]:
+	if int(flower.stock)>0:
 		var nectar := at+Vector2(0,ratio*6 if phase == "fading" else 0)
 		draw_circle(nectar,6,Color(1,.88,.50,.20))
 		draw_circle(nectar,3.1,Color("ffe9a0"))
@@ -263,139 +283,253 @@ func _draw_living_flower(flower: Dictionary) -> void:
 		var fall := fposmod(clock*.65+float(flower.id)*.21,1.0)
 		_ellipse(at+Vector2(18+sin(fall*PI)*9,fall*43),Vector2(3,1.5),Color(.74,.59,.37,(1-fall)*.65))
 
+const FIBER_HOST: Texture2D = preload("res://art/collection-fiber-source.webp")
+const RESIN_HOST: Texture2D = preload("res://art/collection-resin-source.webp")
+const AMBER_DROP := Rect2(148,691,372,469)
+
+const FIBER_SOCKET := Vector2(.77,.16)
+const FIBER_FOOT := Vector2(.65,.99)
+const RESIN_SOCKET := Vector2(.50,.44)
+const RESIN_FOOT := Vector2(.51,.98)
+
+func _material_span(item: Dictionary) -> Vector2:
+	var fiber := area_key == "pond"
+	var texture := FIBER_HOST if fiber else RESIN_HOST
+	var size := texture.get_size() * (118.0/texture.get_height() if fiber else 126.0/texture.get_width())
+	var maturity := .84 if item.band == "near" else 1.10 if item.band == "far" else 1.0
+	return size*maturity
+
+func _material_root(item: Dictionary) -> Vector2:
+	var foot_offset := FIBER_FOOT-FIBER_SOCKET if area_key == "pond" else RESIN_FOOT-RESIN_SOCKET
+	return item.anchor + _material_span(item)*foot_offset
+
+func _material_depth(item: Dictionary) -> float:
+	var depth := _material_root(item).y
+	if model.field.drawing_resin_id == item.id:
+		return minf(depth,model.p.y+BEE_FOOT.y-1)
+	return depth
+
 func _draw_living_material(item: Dictionary) -> void:
 	if not bool(item.get("enabled",true)): return
-	var root: Vector2 = item.anchor+Vector2(0,47)
-	var at: Vector2 = item.p
-	var phase := str(item.phase)
+	var fiber := area_key == "pond"
+	var span := _material_span(item)
+	var body := Rect2(item.anchor-span*(FIBER_SOCKET if fiber else RESIN_SOCKET),span)
+	var covered: bool = _material_depth(item)>model.p.y+BEE_FOOT.y and body.grow(8).has_point(model.p)
+	var tint := Color(1,1,1,.58) if covered else Color.WHITE
+	draw_texture_rect(FIBER_HOST if fiber else RESIN_HOST,body,false,tint)
+	if item.dropped or item.phase == "empty": return
 	var ratio := FieldLife.phase_ratio(item)
-	var kind := "fiber" if area_key == "pond" else "resin"
-	if bool(item.dropped):
-		var fall := clampf(float(item.phase_time)/.35,0,1)
-		var lift := 0.0 if reduced_motion else sin(fall*PI)*17
-		var joint: Vector2 = item.anchor+Vector2(0,15)
-		ArtProps.stalk(self,joint,joint.lerp(root,.32)+Vector2(-2,0),joint.lerp(root,.7),root,3.4)
-		for side in [-1,1]:
-			ArtSprites.small_leaf(self,joint,joint+Vector2(side*20,-10),7)
-		_ground_shadow(at+Vector2(0,12),Vector2(18,5),.16)
-		var tint := Color.WHITE.lerp(Color("a9a082"),smoothstep(.65,1,ratio))
-		UIArt.painted_icon(self,kind,at+Vector2(0,-lift),18,tint)
-		draw_arc(at+Vector2(0,1),25,-PI*.5,-PI*.5+TAU*(1-ratio),40,Color("e9ca79"),2,true)
-		return
-	# Fibers emerge from a seed head; resin gathers on a rooted woody twig.
-	# Both retain a physical source while their collectible portion regenerates.
-	if kind == "fiber":
-		var join := at+Vector2(0,12)
-		ArtProps.stalk(self,join,join.lerp(root,.33)+Vector2(3,0),join.lerp(root,.70)+Vector2(-2,0),root,4.5)
-	else:
-		_curve(root,root+Vector2(-6,-15),at+Vector2(7,23),at+Vector2(0,-14),Color("735638"),8)
-		_curve(root+Vector2(-2,-3),root+Vector2(-8,-15),at+Vector2(4,23),at+Vector2(-2,-13),Color("b79a5d"),2)
-		_curve(root+Vector2(0,-18),root+Vector2(8,-24),root+Vector2(18,-31),root+Vector2(22,-34),Color("735638"),4)
-	for direction in [-1,1]:
-		ArtSprites.small_leaf(self,root+Vector2(0,-10),root+Vector2(29*direction,-24),13 if kind == "fiber" else 9)
-	if phase == "empty":
-		ArtSprites.small_leaf(self,root,root+Vector2(9,-12-ratio*7),7)
-		return
-	var scale := .3+ratio*.7 if phase == "bud" else 1-ratio*.18 if phase == "fading" else 1.0
+	var growth := .30+ratio*.70 if item.phase == "bud" else 1.0
+	var at: Vector2 = item.anchor
 	var recoil: float = float(_material_recoil.get(int(item.id),0.0))
-	if recoil > 0 and not reduced_motion: at += Vector2(sin(recoil*70)*5,0)
-	var color := Color.WHITE if phase == "ripe" else Color("beac88") if phase == "fading" else Color("b4c786")
-	var split := float(item.hits)*4
-	if kind == "fiber":
-		ArtSprites.small_leaf(self,at+Vector2(-split,13),at+Vector2(-28-split,-10)*scale,19*scale)
-		ArtSprites.small_leaf(self,at+Vector2(split,13),at+Vector2(28+split,-10)*scale,19*scale)
+	if recoil>0 and not reduced_motion: at.x += sin(recoil*72.0)*recoil*11.0
+	if fiber:
+		var spread := 1.16 if int(item.hits)>0 else .82
+		_seed_down(at,growth*span.y/108.0,spread,item.phase=="fading")
 	else:
-		_ellipse(at+Vector2(0,5),Vector2(14,19)*scale,Color("76583e"))
-		if int(item.hits)>0:
-			_curve(at+Vector2(-12,10),at+Vector2(-5,1),at+Vector2(4,13),at+Vector2(13,-2),Color("c5a467"),1.5)
-	UIArt.painted_icon(self,kind,at,17*scale,color)
-	if phase == "ripe": draw_circle(at+Vector2(-6,-8),2,Color("ffefae"))
+		var open: bool = model.field.resin_open(item)
+		var extent := (14.0 if open else 6.5 if int(item.hits)>0 else 4.5)*growth*span.y/104.0
+		extent *= 1.0-.56*float(item.get("resin_draw",0.0))/model.field.RESIN_SECONDS
+		var resin_tint := Color("d7a774") if item.phase=="fading" else Color.WHITE
+		# A narrow bark lip lifts away from the bead at the exposed seam.
+		var gap := 9.0 if open else 3.0 if int(item.hits)>0 else 0.0
+		var bark_foot := at+Vector2(-3,9)
+		var tip := at+Vector2(-4-gap,-9)
+		_curve(bark_foot,bark_foot+Vector2(-4,-5),tip+Vector2(2,4),tip,Color("795337"),3.2)
+		_curve(bark_foot,bark_foot+Vector2(-4,-4),tip+Vector2(2,4),tip,Color("bc975d"),1.1)
+		UIArt.painted_sprite(self,UIArt.RESOURCES,AMBER_DROP,at,extent,resin_tint)
+
+func _seed_down(at: Vector2, size: float, spread: float, weathered: bool) -> void:
+	var fiber_color := Color("d6c79f") if weathered else Color("f4e7bb")
+	var highlight := Color("e1d2ac") if weathered else Color("fff4d6")
+	for i in 7:
+		var t := float(i-3)/3.0
+		var root := at + Vector2(t*3.0,3.0+absf(t))*size
+		var tip := root + Vector2(t*16.0*spread,-(12.0-absf(t)*5.0)+sin(float(i)*2.2)*2.0)*size
+		_curve(root,root.lerp(tip,.25)+Vector2(t*2.0,0),root.lerp(tip,.72),tip,Color("bc9a62"),maxf(1.0,1.8*size))
+		var tuft := 3.5+float(i%3)
+		for j in 3:
+			var end := tip + Vector2((float(j)-1.0)*3.8+t*3.0,-tuft+absf(float(j)-1)*1.6)*size
+			draw_line(tip,end,highlight if j==1 else fiber_color,maxf(1.0,1.5*size),true)
+
+func _draw_material_drop(item: Dictionary) -> void:
+	var at: Vector2 = item.p
+	var travel := clampf(float(item.phase_time)/.35,0.0,1.0)
+	if not reduced_motion:
+		at = item.anchor.lerp(at,smoothstep(0,1,travel))
+		at.y -= sin(travel*PI)*13.0
+	_ground_shadow(item.p+Vector2(0,7),Vector2(13,4),.18)
+	if area_key == "pond":
+		_seed_down(at+Vector2(0,3),.95,1.22,FieldLife.phase_ratio(item)>.72)
+	else:
+		# Drops already loose in a 0.31 meadow save remain individually pickable.
+		UIArt.painted_icon(self,"resin",at,11)
+	if FieldLife.phase_ratio(item)>.68:
+		draw_arc(at,17,-PI*.5,-PI*.5+TAU*(1.0-FieldLife.phase_ratio(item)),28,Color("e3c383"),2,true)
 
 func _draw_entry(at: Vector2) -> void:
-	var foot := at+Vector2(-57,50)
-	ArtProps.stalk(self,foot+Vector2(0,-98),foot+Vector2(-2,-64),foot+Vector2(3,-22),foot,8)
-	_ground_shadow(foot,Vector2(30,8),.16)
-	UIArt.painted_sprite(self,HOME_SIGN,Rect2(210,215,1060,610),foot+Vector2(0,-74),66)
-	ArtSprites.small_leaf(self,foot+Vector2(0,-34),foot+Vector2(29,-55),12)
+	var foot := at+SIGN_FOOT
+	var span := FIELD_SIGN.get_size()*(81.0/FIELD_SIGN.get_height())
+	_ground_shadow(foot,Vector2(16,4),.16)
+	draw_texture_rect(FIELD_SIGN,Rect2(foot-span*Vector2(.53,.98),span),false)
 	if model.p.distance_to(at)<240:
-		_region_label(foot+Vector2(0,-121),"E  回庭院" if model.field.at_entry() else "庭院入口",true)
+		_region_label(foot+Vector2(0,-89),"E  回庭院" if model.field.at_entry() else "庭院入口",true)
 
-func _draw_working_bee() -> void:
-	if area_key == "hub":
-		super._draw_working_bee()
-		return
+func _field_bee_pose() -> Dictionary:
 	var field = model.field
 	var facing: Vector2 = field.face
 	var at: Vector2 = field.p
-	var scale := 1.02
-	var locked_flower: Dictionary = {}
+	var body_scale := .82
+	if field.drawing_resin_id >= 0:
+		var scar: Vector2 = field.materials[field.drawing_resin_id].anchor
+		var toward := at.direction_to(scar)
+		if not toward.is_zero_approx():
+			facing = toward
+			at += toward*minf(6.0,at.distance_to(scar))
 	for id in field._locked:
-		if bool(field.flowers[int(id)].get("enabled",true)):
-			locked_flower = field.flowers[int(id)]
-			break
-	if collecting and not locked_flower.is_empty():
-		var flower: Dictionary = locked_flower
-		facing = (flower.p-at).normalized()
-		at += facing*9
-		if not reduced_motion:
-			at += Vector2(sin(clock*24)*1.4,sin(clock*13)*1.7)
-			scale += sin(clock*19)*.015
-	if not reduced_motion and harvest_recoil > 0: at.y -= sin(harvest_recoil/.24*PI)*6
+		var flower: Dictionary = field.flowers[int(id)]
+		if not _flower_contact(flower): continue
+		var towards: Vector2 = at.direction_to(flower.p)
+		if not towards.is_zero_approx(): facing = towards
+		at += facing*minf(8.0,at.distance_to(flower.p))
+		if not reduced_motion: at.y += sin(clock*13)*1.1
+		break
+	if not reduced_motion and harvest_recoil > 0: at.y -= sin(harvest_recoil/.24*PI)*4
 	var push := 0.0
 	if float(field.pulse_flash) > 0:
 		facing = wing_direction
 		push = sin(clampf(float(field.pulse_flash)/.18,0,1)*PI)
 		if not reduced_motion:
-			at -= facing*push*4
-			scale += push*.05
-	_bee(at,scale,facing,1.0,false,0.0,"leader",push)
+			at -= facing*push*3
+			body_scale += push*.035
+	return {"p":at,"face":facing,"size":body_scale,"push":push}
+
+func _draw_working_bee() -> void:
+	if area_key == "hub":
+		super._draw_working_bee()
+		return
+	var pose := _field_bee_pose()
+	_bee(pose.p,pose.size,pose.face,1.0,false,0.0,"leader",pose.push)
+
+func _draw_bag() -> void:
+	if area_key == "hub":
+		super._draw_bag()
+		return
+	var pose := _field_bee_pose()
+	_draw_bag_at(pose.p,pose.face,pose.size)
 
 func _draw_resource_feedback() -> void:
-	var nearest_flower: Dictionary = {}
-	var flower_distance := 105.0
-	for flower in model.field.flowers:
+	var field = model.field
+	if field.departed and field.at_entry(): return
+	var focus := {}
+	var best := INF
+	var active_count := 0
+	for flower in field.flowers:
 		if not bool(flower.get("enabled",true)): continue
 		var at: Vector2 = flower.p
-		if not _visible(at): continue
-		var distance: float = model.p.distance_to(at)
-		if distance<flower_distance:
-			flower_distance = distance
-			nearest_flower = flower
-		var working: bool = int(flower.id) in model.field._locked
-		if working:
-			var fill := clampf(float(flower.progress),0,1)
-			draw_arc(at,22,-PI*.5,-PI*.5+TAU*maxf(.01,fill),36,Color("f5d383"),3,true)
+		var distance: float = field.p.distance_to(at)
+		if distance>field.stats.harvest_radius() or not field.clear_line(field.p,at): continue
+		if _flower_contact(flower):
+			_draw_nectar_status(flower,active_count==0)
+			active_count+=1
 			if not reduced_motion:
 				for i in 3:
 					var t := fposmod(clock*1.5+float(i)/3,1)
 					var q := at.lerp(model.p,t)+Vector2(0,-sin(t*PI)*7)
 					draw_circle(q,2,Color(1,.91,.59,.3+t*.5))
-	var closest: Dictionary = {}
-	var shortest := 155.0
-	for item in model.field.materials:
-		if not bool(item.get("enabled",true)): continue
-		var distance: float = model.p.distance_to(item.p)
-		if distance < shortest:
-			closest = item
-			shortest = distance
-	if closest.is_empty():
-		if not nearest_flower.is_empty():
-			var phase := str(nearest_flower.phase)
-			var words: String = {"bud":"花苞正在舒展","empty":"新芽正在生长","ripe":"E  采蜜","fading":"E  采蜜 · 花将谢"}[phase]
-			_region_label(nearest_flower.p+Vector2(0,-66),words,phase in ["ripe","fading"])
+		# On release the closest flower shows its own stock. While harvesting,
+		# the active locks above already identify the exact targets.
+		if distance<best:
+			best = distance
+			focus = flower
+	if active_count>0: return
+	var material: Dictionary = field.material_for_hint()
+	if not material.is_empty():
+		_draw_material_hint(material)
+	elif not focus.is_empty():
+		_draw_nectar_status(focus,true)
+
+func _nectar_caption(flower: Dictionary) -> String:
+	if _flower_contact(flower): return "采蜜中"
+	if flower.phase == "empty": return "花期已过"
+	if flower.phase == "bud": return "花苞渐开"
+	if flower.has("nectar_wait"): return "补蜜中" if flower.phase=="ripe" else "将谢 · 补蜜中"
+	if model.field.cargo >= model.field.capacity(): return "蜜囊已满"
+	return "按住 E / 左键" if flower.phase=="ripe" else "花将谢 · 按住 E"
+
+func _draw_nectar_status(flower: Dictionary, show_caption: bool) -> void:
+	var cap: String = _nectar_caption(flower) if show_caption else ""
+	var anchor: Vector2 = flower.p + Vector2(0,-45)
+	if flower.phase in ["empty","bud"]:
+		if show_caption: _region_label(anchor,cap,false)
 		return
-	var at: Vector2 = closest.p
-	if closest.dropped:
-		_region_label(at+Vector2(0,-39),"靠近拾取 · 即将消散" if FieldLife.phase_ratio(closest)>.70 else "靠近拾取",true)
-	elif closest.phase in ["ripe","fading"]:
-		var total := 2 if area_key == "pond" else 3
+	var glass := Color("3d493b")
+	var gold := Color("ffd175")
+	var cream := Color("fff0bf")
+	var radius := 16.0
+	var width := feedback_font.get_string_size(cap,HORIZONTAL_ALIGNMENT_LEFT,-1,18).x if not cap.is_empty() else 0.0
+	var icon := anchor - Vector2(width*.5,0)
+	# Clamp the entire flower-side mark to the visible field, including a long caption.
+	var bounds := get_viewport_rect().size/scale
+	icon.x = clampf(icon.x,model.camera_offset.x+radius+3,model.camera_offset.x+bounds.x-width-radius*2-4)
+	icon.y = clampf(icon.y,model.camera_offset.y+radius+5,model.camera_offset.y+bounds.y-radius-5)
+	draw_circle(icon,radius,glass,true,-1,true)
+	draw_arc(icon,radius-1,0,TAU,40,Color("bda777"),1.4,true)
+	var drop := PackedVector2Array()
+	for xy: Vector2 in [Vector2(0,-9),Vector2(2,-5),Vector2(5,-1),Vector2(6,2),Vector2(5.7,5),Vector2(4.5,7),Vector2(2,8.5),Vector2(0,9),Vector2(-2,8.5),Vector2(-4.5,7),Vector2(-5.7,5),Vector2(-6,2),Vector2(-5,-1),Vector2(-2,-5)]:
+		drop.append(icon+xy)
+	var fill: float = model.field.nectar_fill(flower)
+	if fill >= 1.0:
+		draw_colored_polygon(drop,gold)
+	elif fill > .025:
+		var top := icon.y+9.0-fill*18.0
+		var fluid := PackedVector2Array([Vector2(icon.x-8,top),Vector2(icon.x+8,top),icon+Vector2(8,10),icon+Vector2(-8,10)])
+		for liquid in Geometry2D.intersect_polygons(drop,fluid):
+			if not Geometry2D.triangulate_polygon(liquid).is_empty(): draw_colored_polygon(liquid,gold)
+	drop.append(drop[0])
+	draw_polyline(drop,cream,1.5,true)
+	if _flower_contact(flower):
+		draw_arc(icon,radius+2.5,-PI/2,-PI/2+TAU*maxf(.01,float(flower.progress)),40,cream,3,true)
+	if not cap.is_empty():
+		var baseline := icon + Vector2(radius+5,6)
+		draw_string_outline(feedback_font,baseline,cap,HORIZONTAL_ALIGNMENT_LEFT,-1,18,4,glass)
+		draw_string(feedback_font,baseline,cap,HORIZONTAL_ALIGNMENT_LEFT,-1,18,cream)
+
+func _draw_material_hint(item: Dictionary) -> void:
+	var field = model.field
+	var fiber := area_key=="pond"
+	var at: Vector2 = item.p
+	if item.dropped:
+		var title := "种绒 · 飞近拾取" if fiber else "树脂 · 飞近拾取"
+		_region_label(at+Vector2(0,-32),title+" · 将散" if FieldLife.phase_ratio(item)>.70 else title,true)
+		return
+	if not FieldLife.available(item):
+		var words := "种绒正在蓬松" if fiber else "裂口正在凝脂"
+		if item.phase=="empty": words="空种壳 · 待长新绒" if fiber else "空树皮 · 待凝脂"
+		_region_label(at+Vector2(0,-43),words,false)
+		return
+	if field.resin_open(item):
+		var close_enough: bool = model.p.distance_to(at)<=field.RESIN_REACH
+		var message := "贴近裂口收树脂"
+		if close_enough: message = "按住 E / 左键 · 收树脂"
+		if item.phase=="fading" and FieldLife.phase_ratio(item)>.60: message += " · 将干"
+		_region_label(at+Vector2(0,-48),message,true)
+		var fill: float = float(item.get("resin_draw",0.0))/field.RESIN_SECONDS
+		if field.drawing_resin_id==item.id:
+			var contact: Vector2 = model.p+Vector2(0,6)
+			var strand_start := at+Vector2(0,6)
+			_curve(strand_start,strand_start.lerp(contact,.35)+Vector2(0,5),strand_start.lerp(contact,.72)+Vector2(0,3),contact,Color("d7a34b"),1.5)
+		if fill>0:
+			draw_arc(at,20,-PI*.5,-PI*.5+TAU*fill,36,Color("f5bc62"),3,true)
+		return
+	var total: int = field.shell_strength(item)
+	var hits: int = item.hits
+	if total>1:
 		for i in total:
-			draw_circle(at+Vector2(float(i)*12-float(total-1)*6,-31),3.5,Color("edcf89") if i >= int(closest.hits) else Color("677653"))
-		_region_label(at+Vector2(0,-54),"Q  振翅 · 将谢" if closest.phase == "fading" else "Q  振翅取材",true)
-	else:
-		_region_label(at+Vector2(0,-34),"正在生长" if closest.phase == "bud" else "等待新生",false)
-		var ratio := FieldLife.phase_ratio(closest)
-		draw_arc(at,24,-PI*.5,-PI*.5+TAU*maxf(.01,ratio),36,Color(.84,.89,.65,.6),1.5,true)
+			draw_circle(at+Vector2(float(i)*11.0-5.5,-24),3.0,Color("b6a580") if i<hits else Color("ffdd90"))
+	var action := "振松种绒" if fiber else "掀松树皮"
+	if hits>0: action="再振落绒" if fiber else "再振开皮"
+	_region_label(at+Vector2(0,-48),"朝向种穗 Q · "+action if fiber else "朝向裂口 Q · "+action,true)
 
 func _draw_region_effects() -> void:
 	for ring in pulse_rings:
@@ -405,11 +539,11 @@ func _draw_region_effects() -> void:
 		for lane in [-1,0,1]:
 			var side: Vector2 = axis.orthogonal()*float(lane)*10
 			draw_line(front-axis*24+side,front+side*.65,Color(1,.95,.74,(1-t)*(.25 if ring.empty else .75)),2,true)
+	var pose := _field_bee_pose()
+	var pocket := _bag_position(pose.p,pose.face,pose.size)
 	for mote in nectar_motes:
 		if mote.age < 0: continue
 		var t: float = clampf(mote.age/mote.duration,0,1)
-		var side := -1 if model.face.x >= 0 else 1
-		var pocket: Vector2 = model.p+Vector2(side*20,18)
 		var q: Vector2 = mote.from.lerp(pocket,smoothstep(0,1,t))
 		if not reduced_motion: q.y -= sin(t*PI)*26
 		if reduced_motion: continue

@@ -528,12 +528,18 @@ func _draw_rain() -> void:
 		draw_line(Vector2(x,y),Vector2(x-5,end_y),Color(0.72,0.89,1,0.24),1.4,true)
 
 func _draw_bag() -> void:
+	_draw_bag_at(model.p,model.face,1.0)
+
+func _bag_position(origin: Vector2,facing: Vector2,body_scale: float) -> Vector2:
+	return origin+Vector2(-20 if facing.x>=0 else 20,18)*body_scale
+
+func _draw_bag_at(origin: Vector2,facing: Vector2,body_scale: float) -> void:
 	if model.cargo_total() <= 0 and "bag1" not in model.owned: return
-	var side := -1.0 if model.face.x>=0 else 1.0
-	var p: Vector2 = model.p+Vector2(20*side,18)
+	var side := -1.0 if facing.x>=0 else 1.0
+	var p: Vector2 = _bag_position(origin,facing,body_scale)
 	var scale := 1.55 if "bag2" in model.owned else 1.25 if "bag1" in model.owned else 1.0
 	# The same painted honey vessel as the HUD and shop, visibly tied to the bee.
-	var span := Vector2(18,20)*scale
+	var span := Vector2(18,20)*scale*body_scale
 	if not reduced_motion:
 		for mote in nectar_motes:
 			if mote.has("material"): continue
@@ -542,6 +548,6 @@ func _draw_bag() -> void:
 				span *= 1.0+.30*sin(arrival*PI)
 				break
 	for offset in [-4,4]:
-		draw_line(model.p+Vector2(8*side,7+offset),p+Vector2(offset,-span.y*.36),Color("8a673b"),1.5,true)
+		draw_line(origin+Vector2(8*side,7+offset)*body_scale,p+Vector2(offset,-span.y*.36),Color("8a673b"),1.5,true)
 	var tone := Color.WHITE if model.cargo_total()>0 else Color(.68,.73,.59)
 	draw_texture_rect_region(JAR_ART,Rect2(p-span*.5,span),JAR_SOURCE,tone)
