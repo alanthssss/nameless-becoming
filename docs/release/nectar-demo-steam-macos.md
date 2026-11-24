@@ -1,5 +1,25 @@
 # 采蜜与蜂舞 Demo：macOS / Steam 发行准备
 
+<a id="steam-readiness-032"></a>
+## 2026-11-24 · 0.32 发售前讨论
+
+**建议现在准备 Steamworks 入驻和本体「即将推出」页面。** 先由 Alan 确认发行主体、已有账户及应用额度，再决定是否支付应用费。公开试玩按首批 macOS 免费 Demo 准备。正式版按单机买断、24 关目标另做发售判断。产品与支出由 Alan 决定。本次评估沿 GDD §13.9 → [M3 / #322](https://github.com/alanthssss/nameless-becoming/issues/322) 和 [M4 / #211](https://github.com/alanthssss/nameless-becoming/issues/211)，实际制作顺序见[当前执行记录](../design/solar-term-campaign-production-spec.md#production-now)。
+
+| 哪一步 | 现有依据 | 下一次怎样判断 |
+|---|---|---|
+| 开发者入驻、游戏建档 | 上次确认首批 macOS、暂无 AppID。仓库有 SteamPipe 预览工具，未见后续后台回执 | Alan 在后台确认个人或公司主体、同名收款账户、身份与税务资料、现有应用额度。需新购时，本体 Steam Direct 费为 100 美元或当地等值金额。入驻后建本体，再关联独立 Demo AppID 和 macOS Depot。[Steam Direct](https://partner.steamgames.com/steamdirect/?l=schinese) |
+| 本体「即将推出」页面 | 已有中文草稿、AI 披露草稿和蜜蜂图标。开发包暂名「采蜜 Demo」，旧文案仍写紫花地细雨和叶间近道 | 对外中英文名由 Alan 定稿。Codex 依据同版实机重写文案，做商店封面、至少五张玩法截图，核对支持语言、素材权利及 AI 内容调查，再提交页面审核。[名称决定](https://github.com/alanthssss/nameless-becoming/issues/316) · [现行两区规格](../design/swarm-flight-gdd.md#nectar-steam-demo) · [商店图像](https://partner.steamgames.com/doc/store/assets/standard) · [内容调查](https://partner.steamgames.com/doc/gettingstarted/contentsurvey) |
+| 公开免费 Demo | 0.32 Mac 导出包已用普通键盘事件跑通池岸新档采蓝蜜、振翅接绒、返铺售卖与冷续。紫花地采紫蜜、取树脂及售卖使用已解锁旧档。Alan 认可上一版画风，初见蜜滴和材料的可读性仍待试玩 | 先让首次接触的玩家用新档走自然成长路线，观察何处需要讲解、升级后是否愿意再出门。发行包另取签名公证、承诺配置实测及 Steam 私有分支安装、更新与续档证据。先公开本体「即将推出」页，再开放通过审核的 Demo。首轮建议在本体页放下载按钮，另设 Demo 商店页时还须准备专属预告和至少五张 Demo 截图。[0.32 同版回执](../production/region-greybox-receipt.md#field-ecology-032) · [Valve 的 Demo 规则](https://partner.steamgames.com/doc/store/application/demos) · [macOS 要求](https://partner.steamgames.com/doc/store/application/platforms) |
+| 付费正式发售 | 24 关仍有内容、存档和跨系统覆盖待验收；累计投入及可用余量缺少可比数据 | Alan 在 #211 复核完整内容、独立玩家是否愿意继续及购买、预计剩余工时和价格，再定档期。发售前另验定价、全流程、旧档和更新回退，准备玩家反馈入口。[产品与产能检查点](https://github.com/alanthssss/nameless-becoming/issues/211) |
+
+商店第一组素材建议拍一趟可以复现的行程：从庭院出发，靠近花冠看蜜滴，去水边振下种绒，回蜜铺出售，再拍一次成长选择。紫花地贴近树皮收脂可另作一张。这样玩家能从画面看出这趟为何值得飞、回来能做什么。最终文字、图标和封面统一公开名称，首批支持范围按实机填写。
+
+排期要区分三件事。Valve 对新开发者最初几款游戏要求应用费支付后至少 21 天才可发售，正式版的「即将推出」页须公开至少两周。商店审核通常需 3–5 个工作日，另留修改时间。这些窗口各有起点，不能由本地试玩包日期推算具体发售日。[入驻时限](https://partner.steamgames.com/steamdirect/?l=schinese) · [审核与发布](https://partner.steamgames.com/doc/store/releasing)
+
+本轮核查使用 11 月 23 日的版本回执、GitHub 记录及 Valve 官方文档。没有新增实机或玩家测试、平台操作和现金支出。200＋40 小时控制线仍适用，可靠剩余工时未知。取得付款／平台回执、同版首玩结果或新的完整内容预测时，回到原 Issue 更新判断。
+
+## 2026-11-03 起的本地准备与旧版草稿
+
 2026-11-03；GDD §13.9 / M3 / [SD08 #295](https://github.com/alanthssss/nameless-becoming/issues/295)。本文件承接[SD-v1 制作规格](../design/nectar-steam-demo.md)，不是第二份执行队列。用户已确认**首批只做 macOS，目前没有 AppID**。状态：本地发行准备；尚未上传、未获 Valve 审核、没有 Steam 发布就绪声明。
 
 ## 已完成和仍未完成
@@ -19,7 +39,7 @@
 
 Demo 是关联本体的独立 AppID，拥有自己的构建与检查清单；在本体发行前开放 Demo，需要本体的 Coming Soon 页面。独立 Demo 商店页是可选项，若采用，文案与素材只展示 Demo 实有内容；官方要求该页提供预告和至少五张 Demo 截图。[Steam Demo 文档](https://partner.steamgames.com/doc/store/application/demos)
 
-## 商店草稿：冻结包验收后再提交
+## 0.23 历史商店草稿
 
 **工作名称**：雨来之前：采蜜与蜂舞 Demo。最终中英文名与商标/商店唯一性尚未锁定。
 
