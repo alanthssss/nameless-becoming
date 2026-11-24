@@ -1,5 +1,7 @@
 # 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
 
+**2026-11-24 · 首作聚焦采集、交手与成长。** 这是一款休闲单机游戏。先在已有池岸做出一次交手怎样带来收获、一次升级怎样改变下一趟飞法，再按试玩结果适度扩展。四季、二十四节气和冬季专属玩法留作可能的后作方向。0.32 的池岸接绒和紫花地取脂已有实机回执，新交互处于设计阶段。[首作范围](docs/design/swarm-flight-gdd.md#lean-nectar-first-game) · [当前执行位置](docs/design/solar-term-campaign-production-spec.md#production-now) · [0.32 实机回执](docs/production/region-greybox-receipt.md#field-ecology-032)
+
 **2026-11-23 · 采集花园 0.31.0。** 池岸与紫花地已按庭院画风重绘，可从原本的庭院灯球出发。池岸沿水光与芦穗找到材料湾，紫花地穿过树根拱口取树脂。[两版同机位实机对照](docs/production/evidence/collection-fields-031/comparison.jpg) · [Mac 试玩与验证](docs/production/region-greybox-receipt.md#painted-fields-031)。
 
 **2026-11-23 · 池岸采售 0.30.0。** 从庭院飞入池岸材料湾，采蜜取材后返铺交付。本机试玩与两尺寸原生画面见[同版回执](docs/production/region-greybox-receipt.md#pond-feedback-20261123)。
@@ -20,7 +22,7 @@
 
 **2026-11-01 · 池岸归途0.18.0候选收口快照。** Alan对0.17.0“元素堆在一起、没有设计和节奏”判0分，整体产品评审失败。授权重编已形成冻结运行版本`75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0`：从池边出发、选路穿雨、帮助邻居到回巢，完整主线已取得同版技术验证及独立AI无攻略探索证据，可选行动另按实际验证范围记录。最终包已完成双入口启动、保存、退出、冷续与存档隔离复验，可交整体产品判断；PR #263的集成收口由主任务完成，远端状态以原Issue回读为准。候选不等于Alan接受或MVP已修好。[本轮设计与证据边界](docs/design/swarm-flight-gdd.md#pond-journey-finish-plan) · [试玩与保存说明](prototypes/swarm-flight/README.md)。
 
-**当前产品边界。** 目标仍为24关；新池岸归途使用独立存档，原0.17包、旧档与获认可长关保留。独立AI探索已完成结尾，但不是真人试玩或趣味验收；历史82个源用途、7组组合的限定门禁也不能代签新版整段产品质量。累计成本、可靠剩余与完整内容产能仍未知，200＋40小时控制和10月29日检查点不重置，自动化暂停。动态下一动作只看[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)，产品/成本判断见[成熟度评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。以下“最新/当前”仅指各自历史日期。
+**2026-11-01 飞行战役范围快照。** 当时目标为24关；新池岸归途使用独立存档，原0.17包、旧档与获认可长关保留。独立AI探索已完成结尾，但不是真人试玩或趣味验收；历史82个源用途、7组组合的限定门禁也不能代签新版整段产品质量。累计成本、可靠剩余与完整内容产能仍未知，200＋40小时控制和10月29日检查点不重置，自动化暂停。动态下一动作只看[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)，产品/成本判断见[成熟度评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。以下“最新/当前”仅指各自历史日期。
 
 **2026-10-26 最新可玩：07→08样板0.14.0。** 两个07中后段改为借风开叶门及低廊中的再运用，保持路线长度和08顺畅节奏；旧16关仍保留。完整包位于`outputs/swarm-flight/2026-10-26-seven-action-development/试玩包/`，双击`开始试玩.command`。[本批决定与待验证项 SF-R40](docs/design/swarm-flight-game-20261020.md#seven-action-development-20261026) · [当前试玩说明](prototypes/swarm-flight/README.md)。以下旧版记录保留历史语境。
 
@@ -28,7 +30,7 @@
 
 **范围与制作责任：** 0.9.3保留补给纠正、冬季材质与统一美术，证据见outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json。本轮只交设计与生产交接。扩容不重置200＋40小时控制、历史投入和旧问题；原Beta／RC／有条件发售日期须按新范围重估，10月29日仍作为样板／范围／产能检查点。[商业范围更新](docs/design/commercial-product-requirements.md#finished-journey-scope)。
 
-一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
+**旧飞行战役定位。** 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
 **2026-08-31 评审更正：** 轻松、轻量不等于内容少或总时长短。撤回“与原规模冲突”及默认十二段／3～5 小时建议；原 360 事件／72 状态／18～24 小时制作目标和既有验证门禁继续有效，不代表内容已完成或成本已验证。主动操作、自动劳动与故事按共享事件讨论组合，不强制按类型二选一。具体依据、成本取样、Demo 与购买验证见[商业成品要求第 0 节](docs/design/commercial-product-requirements.md#0-2026-08-31--轻量故事与商业范围重新收束)；下方实现记录保留各自时点。
 
