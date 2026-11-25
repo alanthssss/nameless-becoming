@@ -5,6 +5,8 @@ const INK := Color("403126")
 const FieldStyle = preload("res://region_game/field_notes_style.gd")
 # Centre points on the painted inventory at its authored 960 x 600 scale.
 const RESOURCE_CENTERS := {"honey": Vector2(230,553), "fiber": Vector2(230,522), "resin": Vector2(117,553)}
+const INVENTORY_RECT := Rect2(16,497,332,87)
+const FULL_BADGE_RECT := Rect2(36,446,240,46)
 const ARRIVAL_TIME := 0.38
 const GLOW_TIME := 0.30
 var ui
@@ -43,6 +45,13 @@ func refresh() -> void:
 	set_process(visible and (not pickup_bursts.is_empty() or ui.energy_dial.is_processing()))
 	queue_redraw()
 
+func pickup_obstacles() -> Array[Rect2]:
+	var transform_to_screen := get_global_transform_with_canvas()
+	var areas: Array[Rect2] = [transform_to_screen * INVENTORY_RECT, pause_hit.get_global_rect()]
+	if ui.driver.model.cargo_total() >= ui.driver.model.capacity():
+		areas.append(transform_to_screen * FULL_BADGE_RECT)
+	return areas
+
 func show_pickups(events: Array[Dictionary]) -> void:
 	var groups := {}
 	for event in events:
@@ -70,7 +79,7 @@ func _number(at: Vector2, value: String, width: float, pixels: int, align := HOR
 func _draw() -> void:
 	if not ui or not ui.driver.model.field: return
 	var m = ui.driver.model
-	draw_texture_rect(backing,Rect2(16,497,332,87),false)
+	draw_texture_rect(backing,INVENTORY_RECT,false)
 	var centre := Vector2(62,539)
 	var ratio := clampf(m.energy/m.max_energy(),0,1)
 	var low: bool = m.energy_is_low()
@@ -84,7 +93,7 @@ func _draw() -> void:
 	for i in values.size():
 		_number(Vector2(161+(i%2)*113,528+floori(i/2.0)*31),values[i],48,15)
 	if m.cargo_total()>=m.capacity():
-		draw_texture_rect(full_badge,Rect2(36,446,240,46),false)
+		draw_texture_rect(full_badge,FULL_BADGE_RECT,false)
 	for burst in pickup_bursts:
 		_draw_pickup_burst(burst)
 

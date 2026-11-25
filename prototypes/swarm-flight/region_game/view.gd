@@ -743,6 +743,11 @@ func _draw_region_effects() -> void:
 func pickup_label_layout() -> Array[Rect2]:
 	var result: Array[Rect2] = []
 	var occupied: Array[Rect2] = _field_note_bounds.duplicate()
+	var bee_center: Vector2 = (model.p - model.camera_offset) * MeadowLayout.FIELD_ZOOM
+	occupied.append(Rect2(bee_center - Vector2(24, 22), Vector2(48, 44)))
+	var interface = get_parent().get("ui")
+	if is_instance_valid(interface) and is_instance_valid(interface.get("field_hud")):
+		occupied.append_array(interface.field_hud.pickup_obstacles())
 	var safe := get_viewport_rect().grow(-6)
 	for item in harvest_texts:
 		var extent := feedback_font.get_string_size(item.text, HORIZONTAL_ALIGNMENT_LEFT, -1, PICKUP_FONT_SIZE).ceil() + Vector2(10, 12)
