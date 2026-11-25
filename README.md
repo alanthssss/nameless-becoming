@@ -36,6 +36,7 @@
 
 后续游戏工作评审入口：[Alan 雨水试玩经验 R01–R13](docs/design/commercial-product-requirements.md#rain-playtest-review)，覆盖可读性、真实任务机会、资源语义、互助回应及验证入口；按适用项复核，不将修改完成等同玩家认可。
 
+- [Honey 通用界面设计图册](docs/production/evidence/field-notes-447/menu-study/Honey-通用界面审阅.pdf) · [本轮回执](docs/production/region-greybox-receipt.md#general-menu-review-447)。标题与暂停共用菜单，键位页同步 #452 实包。
 - [池岸与紫花地制作回执](docs/production/region-greybox-receipt.md)：无天气采集地图、资源生命周期、0.29两区循环，以及11月11日庭院虚实／陈列辅色／可点击提示／HUD画风修订的原生证据。
 
 ## 本轮整体试玩：雨水 · 把路走熟
