@@ -15,6 +15,7 @@ var font := SystemFont.new()
 var hud: Control
 var hud_status: PanelContainer
 var hub_action: Button
+var hub_action_key: Label
 var hub_action_kind := ""
 var menu_guide: Button
 var pond_info: Label
@@ -64,6 +65,9 @@ var buy_button: Button
 var tree_back: Button
 var menu: Control
 var menu_logo: TextureRect
+var menu_footer: Label
+var shop_footer: Label
+var pause_button: Button
 var menu_title: Label
 var menu_body: Label
 var menu_primary: Button
@@ -90,6 +94,7 @@ var transition_layer: ColorRect
 var transition_label: Label
 var transition_hint: Label
 var journal: Control
+var journal_controls: Label
 var journal_status: Label
 var journal_back: Button
 var settings: Control
@@ -331,12 +336,12 @@ func _build_hud() -> void:
 	help_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	help_text.add_theme_color_override("font_shadow_color",PAPER)
 	help_text.add_theme_constant_override("shadow_offset_y",1)
-	var pause := action(hud,"Ⅱ",driver.pause_game)
-	pause.custom_minimum_size = Vector2(56,56)
+	pause_button = action(hud,"Ⅱ",driver.pause_game)
+	pause_button.custom_minimum_size = Vector2(56,56)
 	for key in ["normal","hover","pressed","disabled"]:
-		pause.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
-	pause.tooltip_text = "暂停与操作说明 · Esc"
-	anchored(pause,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
+		pause_button.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
+	pause_button.tooltip_text = "暂停与操作说明 · Esc"
+	anchored(pause_button,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
 	_build_hub_action()
 
 func _build_hub_action() -> void:
@@ -365,9 +370,9 @@ func _build_hub_action() -> void:
 	keycap.add_theme_stylebox_override("panel",key_style)
 	hub_action.add_child(keycap)
 	anchored(keycap,Rect2(0,.5,0,0),Rect2(18,-15,29,30))
-	var key := text_line(keycap,"E",20,Color("624823"))
-	key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	key.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hub_action_key = text_line(keycap,"E",20,Color("624823"))
+	hub_action_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hub_action_key.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	hub_action.hide()
 
 func _refresh_hub_action() -> void:
@@ -415,7 +420,8 @@ func _build_shop() -> void:
 	spacer(v)
 	leave_button = action(v,"回到庭院",driver.close_shop)
 	tree_button = leave_button # Compatibility alias for the single return action.
-	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	shop_footer = text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071"))
+	shop_footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _build_regions() -> void:
 	regions = screen(self)
@@ -597,7 +603,8 @@ func _build_menu() -> void:
 	var bottom := row(v,12)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.27.0  ·  Esc 返回",16,Color("7d7a56")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	menu_footer = text_line(v,"Demo 0.27.0  ·  Esc 返回",16,Color("7d7a56"))
+	menu_footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
@@ -870,7 +877,7 @@ func _build_journal() -> void:
 		text_line(cv,entry[0],27)
 		text_line(cv,entry[1],21,Color("9a6c28"))
 		text_line(cv,entry[2],20,INK,true)
-	text_line(v,"按住 E / 左键采蜜 · Q / 右键振翅 · 空格蓄力冲刺。",19,INK,true)
+	journal_controls = text_line(v,"按住 E / 左键采蜜 · Q / 右键振翅 · 空格蓄力冲刺。",19,INK,true)
 	text_line(v,"花蜜在野外 18 秒后恢复，暂停时停止计时。续航耗尽损失一半花蜜，材料、金币与成长保留。",19,INK,true)
 	spacer(v)
 	journal_back = action(v,"返回",driver.close_journal,true)
@@ -892,12 +899,15 @@ func _build_settings() -> void:
 		driver.dance_style = "side_step" if driver.dance_style == "waggle" else "waggle"
 		driver.save_settings())
 	settings_sound = action(v,"",toggle_sound)
-	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
+	_add_settings_controls(v)
 	text_line(v,"关于 Demo",23)
 	text_line(v,"%s 0.27.0\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
 	text_line(v,"制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞为通信动作启发的幻想演绎；侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。",17,Color("687957"),true)
-	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
 	settings_back = action(v,"返回",driver.close_settings,true)
+
+func _add_settings_controls(v: Control) -> void:
+	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
+	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
 
 func refresh_settings() -> void:
 	if not is_instance_valid(settings_motion): return

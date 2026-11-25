@@ -1,6 +1,7 @@
 extends Control
 ## A camera for the paper map. Buttons use native Control coordinates underneath
 ## the same transform as the artwork, so zoom never changes hit testing or costs.
+signal input_used(event: InputEvent)
 signal magnification_changed(value: float)
 const MAX_ZOOM := 4.4
 const STEP := 1.28
@@ -228,6 +229,7 @@ func _node_at(at: Vector2) -> String:
 
 func _input(event: InputEvent) -> void:
 	if board == null or suspended or not is_visible_in_tree(): return
+	input_used.emit(event)
 	if event is InputEventMouse or event is InputEventGesture:
 		if _pointer(event): get_viewport().set_input_as_handled()
 	elif event is InputEventKey and event.pressed and not event.echo:
