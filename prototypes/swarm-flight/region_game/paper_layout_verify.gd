@@ -176,6 +176,10 @@ func check_menus() -> void:
 		await frames()
 		scan("bindings end "+device,controls)
 		controls._finish_capture()
+		for section in ["菜单","成长树","花湾"]:
+			controls.sections[section].pressed.emit()
+			await frames()
+			scan("fixed controls "+device+" "+section,controls)
 	ui.close_controls()
 	game.model.visited_meadow = false
 	await mode("journal")
