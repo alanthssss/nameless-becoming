@@ -278,7 +278,11 @@ func tree_key(event: InputEventKey) -> bool:
 			return true
 		var owner := get_viewport().gui_get_focus_owner()
 		if key in [KEY_ENTER,KEY_KP_ENTER,KEY_SPACE] and owner is Button and owner in conditions.links:
-			if not event.pressed:
+			# Opening a link moves focus to the map before the key is released.
+			# Only Enter also confirms a purchase there.
+			if key == KEY_SPACE:
+				if event.pressed and not event.echo: conditions.activate_link()
+			elif not event.pressed:
 				enter_held = false
 			elif not event.echo and not enter_held:
 				enter_held = true

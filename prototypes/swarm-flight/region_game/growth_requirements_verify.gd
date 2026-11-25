@@ -118,6 +118,19 @@ func run() -> void:
 	check(examined==75 and constraints_match,"all 75 pages render and every available next rank uses its actual purchase conditions")
 	await key(KEY_ESCAPE)
 	check(game.mode=="play","back at root closes journal")
+	# Use a valid fresh run for the actual persisted purchase.
+	game.restart_game()
+	m = game.model
+	m.coins = 78
+	m.p = m.HUB_TREE
+	await key(KEY_E)
+	board.select_rank("beat")
+	await key(KEY_F)
+	await key(KEY_SPACE)
+	check(board.inspect_data().id=="gather1" and m.coins==78,"Space follows a prerequisite without buying it")
+	await key(KEY_ENTER)
+	check("gather1" in m.owned and m.coins==74,"first deliberate Enter after the Space jump buys exactly one rank")
+	await key(KEY_ESCAPE)
 	game.queue_free()
 	# Even under fixed FPS the audio driver drains its stream buffers on wall time.
 	var drain_until := Time.get_ticks_msec()+350
