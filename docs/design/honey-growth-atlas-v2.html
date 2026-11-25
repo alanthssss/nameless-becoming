@@ -111,6 +111,11 @@ function size(){const box=map.getBoundingClientRect();W=Math.max(180,box.width);
 function applyCamera(){const sc=camera.s*fitScale;map.querySelector('#scene')?.setAttribute('transform','translate('+(W/2-camera.x*sc)+' '+(H/2-camera.y*sc)+') scale('+sc+')');$('zoom').value=Math.round(camera.s*100)+'%';map.querySelectorAll('.nodetext').forEach(t=>{const id=t.parentElement.dataset.cell;t.style.display=sc>.44||id===selected?'':'none';t.style.fontSize=(Math.max(11,Math.min(17,sc*14))/sc)+'px';const c=C[id];if(c.branch==='hub'){t.style.display='';t.setAttribute('y',id==='feast'?-34:40)}});}
 function clampPan(){const bounds=mapBounds();const cx=bounds.w*.65,cy=bounds.h*.62;camera.x=Math.max(-cx,Math.min(cx,camera.x));camera.y=Math.max(-cy,Math.min(cy,camera.y))}
 function center(id,zoom){const p=geometry[id];camera.x=p.x;camera.y=p.y;if(zoom)camera.s=Math.max(camera.s,Math.min(4,1.06/fitScale));clampPan();applyCamera()}
+function nodeInsideView(id){
+ const scale=camera.s*fitScale,p=geometry[id];
+ const dx=Math.abs(p.x-camera.x)*scale,dy=Math.abs(p.y-camera.y)*scale;
+ return dx+32*scale<=W/2 && dy+44*scale<=H/2;
+}
 function zoomBy(f,x=W/2,y=H/2){const s=camera.s,ns=Math.min(5,Math.max(.85,s*f));camera.x+=(x-W/2)*(1/s-1/ns)/fitScale;camera.y+=(y-H/2)*(1/s-1/ns)/fitScale;camera.s=ns;clampPan();applyCamera()}
 function choose(id,focus=false,rank=null){if(!C[id])return;selected=id;inspection=rank&&C[id].ranks.includes(rank)?rank:next(C[id])??C[id].ranks.at(-1);notice='';bought=null;discoveries=[];render();if(focus)center(id,true);persist()}
 function chips(ids){return ids.map(id=>'<button type="button" class="'+(S.owned.has(id)?'':'missing')+'" data-rank="'+id+'">'+(S.owned.has(id)?'✓ ':'')+escapeHTML(V[id]?.name??id)+'</button>').join('')}
@@ -157,8 +162,11 @@ function settings(){
 }
 function simulate(key){if(key==='pond'){S.wallet.coins+=6;S.wallet.fiber+=1;notice='模拟池岸归巢，交售得 6 金币，带回 1 纤维。'}else if(key==='visit'&&S.owned.has('meadow')&&!S.world.visited_meadow){S.world.visited_meadow=true;notice='模拟抵达紫花地。'}else if(key==='violet'&&S.world.visited_meadow){S.world.lifetime_violet_sold+=6;S.wallet.coins+=18+(S.owned.has('market')?4:0);S.wallet.resin+=1;notice='模拟紫花地归巢，已按当前口碑交售 6 份紫蜜，带回 1 树脂。'}else return;persist();render();settings()}
 function worldAction(id){const a=actionsData().find(x=>x.id===id);if(!a||!canAction(a)||S.world[stageKey(a)])return;S.world[stageKey(a)]=true;notice='庭院 · '+a.name+'已完成';persist();render();settings()}
-$('firstbasket').onclick=()=>{if(!S.owned.size&&!S.wallet.coins)simulate('pond')};$('buy').onclick=purchase;$('ranks').onclick=e=>{const id=e.target.closest('[data-inspect]')?.dataset.inspect;if(id)choose(selected,false,id)};
-$('conditions').onclick=e=>{const id=e.target.closest('[data-rank]')?.dataset.rank;if(id)choose(cellOf[id],true,id)};
+$('firstbasket').onclick=()=>{if(!S.owned.size&&!S.wallet.coins)simulate('pond')};$('buy').onclick=purchase;$('ranks').onclick=e=>{const id=e.target.closest('[data-inspect]')?.dataset.inspect;if(id){choose(selected,false,id);$('ranks').querySelector('[aria-pressed="true"]')?.focus({preventScroll:true})}};
+$('buy').addEventListener('keydown',event=>{
+ if(event.repeat&&(event.key==='Enter'||event.key===' '))event.preventDefault();
+});
+$('conditions').onclick=e=>{const id=e.target.closest('[data-rank]')?.dataset.rank;if(id){choose(cellOf[id],true,id);$('ranks').querySelector('[aria-pressed="true"]')?.focus({preventScroll:true})}};
 $('branches').onclick=e=>{const d=e.target.closest('[data-branch]')?.dataset.branch;if(!d)return;const cs=D.cells.filter(c=>c.branch===d);const target=cs.find(c=>c.stage===(S.world.lantern_lit?'late':S.world.sealed?'mid':'demo')&&state(c)==='open')||cs.find(c=>state(c)==='open')||cs[0];if(target)choose(target.id,true)};
 menu.onchange=()=>getPreset(menu.value);$('plus').onclick=()=>zoomBy(1.3);$('minus').onclick=()=>zoomBy(1/1.3);$('overview').onclick=()=>{camera={x:0,y:0,s:1};applyCamera()};$('home').onclick=()=>choose(C.reserve?'reserve':D.cells.find(c=>c.branch==='hub').id,true);
 $('world').onclick=()=>{settings();$('settings').showModal()};$('close').onclick=()=>$('settings').close();
@@ -173,6 +181,6 @@ function release(e,cancel=false){if(!pointers.has(e.pointerId))return;pointers.d
 map.onpointerup=e=>release(e);map.onpointercancel=e=>release(e,true);
 map.addEventListener('wheel',e=>{e.preventDefault();const p=loc(e);zoomBy(Math.exp(Math.max(-.5,Math.min(.5,-e.deltaY*.002))),p.x,p.y)},{passive:false});
 function neighbor(key){const v={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[key];const p=geometry[selected];let best=null,bestScore=Infinity;for(const [id,q] of Object.entries(geometry)){if(id===selected)continue;const dx=q.x-p.x,dy=q.y-p.y,f=dx*v[0]+dy*v[1],lat=Math.abs(dx*v[1]-dy*v[0]);if(f<=0||lat>f*1.52)continue;const score=Math.hypot(f,lat)+lat*.95;if(score<bestScore){best=id;bestScore=score}}return best}
-map.onkeydown=e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;let used=true;if(e.key.startsWith('Arrow')){const n=neighbor(e.key);if(n){choose(n);if(camera.s>1.2)center(n,false)}}else if(e.key==='+'||e.key==='=')zoomBy(1.3);else if(e.key==='-')zoomBy(1/1.3);else if(e.key==='Home')$('home').click();else if(e.key==='0')$('overview').click();else if(e.key==='Enter'||e.key===' '){const target=$('buy').disabled?$('ranks').querySelector('button[aria-pressed="true"]'):$('buy');target?.focus()}else used=false;if(used)e.preventDefault()};
+map.onkeydown=e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;let used=true;if(e.key.startsWith('Arrow')){const n=neighbor(e.key);if(n){choose(n);if(camera.s>1.2||!nodeInsideView(n))center(n,false)}}else if(e.key==='+'||e.key==='=')zoomBy(1.3);else if(e.key==='-')zoomBy(1/1.3);else if(e.key==='Home')$('home').click();else if(e.key==='0')$('overview').click();else if(e.key==='Enter'||e.key===' '){const target=$('buy').disabled?$('ranks').querySelector('button[aria-pressed="true"]'):$('buy');target?.focus()}else used=false;if(used)e.preventDefault()};
 const remembered=stored(store+'active');getPreset(D.presets.some(p=>p.id===remembered)?remembered:D.presets[0].id);new ResizeObserver(size).observe(map);
 </script></body></html>
