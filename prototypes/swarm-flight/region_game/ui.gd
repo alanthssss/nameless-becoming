@@ -18,6 +18,8 @@ var return_to_goal: Button
 var goal_history: Array[Dictionary] = []
 var bay_button: Button
 var bay_preview: Control
+var controls_page
+var controls_button: Button
 var menu_slots: Button
 var slots: Control
 var slot_list: VBoxContainer
@@ -27,6 +29,10 @@ const BAY_CELLS := ["petal_trace","garland","cascade"]
 
 func _ready() -> void:
 	super._ready()
+	controls_page = preload("res://region_game/controls_page.gd").new()
+	add_child(controls_page)
+	controls_page.setup(self)
+	driver.controls_changed.connect(_refresh_control_hints)
 	sale_flight = SaleFlight.new()
 	shop.add_child(sale_flight)
 	sale_flight.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -40,10 +46,10 @@ func transition_focus() -> Vector2:
 func _reword(node: Node) -> void:
 	if node is Label:
 		node.text = node.text.replace("每花 1 份 · 生物不会攻击。","花心带蜜光时，每朵可采一份。").replace("每花 1 份 · 可收集树脂。","留意木头裂口里的金色树脂。")
-		node.text = node.text.replace("振翅驱离小飞虫，拾取纤维。","朝种穗振翅（Q / 右键），飞近飘绒收纤维。")
+		node.text = node.text.replace("振翅驱离小飞虫，拾取纤维。","朝种穗振翅，飞近飘绒收纤维。")
 		node.text = node.text.replace("从灯球返回","从入口木牌返回")
 		node.text = node.text.replace("花蜜在野外 18 秒后恢复","花蜜采走后会慢慢补回，花朵继续自己的花期")
-		node.text = node.text.replace("细雨增加消耗，叶棚下可避雨。","朝裂口振翅掀皮，贴近按住 E / 左键收树脂。")
+		node.text = node.text.replace("细雨增加消耗，叶棚下可避雨。","朝裂口振翅掀皮，贴近并持续采集树脂。")
 		node.text = node.text.replace(" · F 使用近道","")
 		node.text = node.text.replace("0.27.0","0.32.7" if OS.has_feature("pond_feedback") else "0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
 	for child in node.get_children(): _reword(child)
@@ -81,12 +87,18 @@ func _detail() -> void:
 
 func _update_tree_footer(owner: Control) -> void:
 	if not is_instance_valid(conditions) or not tree.visible: return
+	var pad: bool = driver.input_device == "pad"
+	var select := "左摇杆选格" if pad else "方向键选格"
+	var jump := "L3" if pad else "F"
+	var accept := "A" if pad else "Enter"
 	if owner is Button and owner in conditions.links:
-		tree_footer.text = "F / L3 下一项 · Enter / A 查看条件"
-	elif not conditions.links.is_empty():
-		tree_footer.text = "方向选格 · F / L3 查条件" + (" · Enter / A 成长" if not buy_button.disabled else "")
-	else:
-		tree_footer.text = "滚轮缩放 · 拖动移图 · 方向选格" + (" · Enter / A 成长" if not buy_button.disabled else "")
+		tree_footer.text = "%s 下一项 · %s 查看条件" % [jump, accept]
+		return
+	var hints := PackedStringArray([select])
+	if not conditions.links.is_empty(): hints.append(jump + " 查条件")
+	else: hints.append("LT / RT 缩放" if pad else "滚轮缩放")
+	if not buy_button.disabled: hints.append(accept + " 成长")
+	tree_footer.text = " · ".join(hints)
 
 func follow_growth_rank(rank_id: String) -> void:
 	if driver.mode!="tree" or not board.ranks_by_id.has(rank_id): return
@@ -202,6 +214,9 @@ func show_mode(mode: String) -> void:
 	var leaving_slots := is_instance_valid(slots) and slots.visible
 	super.show_mode(mode)
 	if not was_reading and mode == "tree": growth_map.open_book(driver.saved_path)
+	if is_instance_valid(controls_page):
+		controls_page.visible = mode == "controls"
+	_refresh_control_hints()
 	if not is_instance_valid(slots): return
 	slots.visible = mode == "slots"
 	menu_slots.visible = mode in ["title","pause"]
@@ -209,8 +224,66 @@ func show_mode(mode: String) -> void:
 	if slots.visible:
 		_show_slots()
 	elif menu_slots.visible:
-		menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
+		if mode != "pause" or driver.save_blocked or driver.save_warning:
+			menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
 		if leaving_slots: menu_slots.grab_focus()
+
+func _add_settings_controls(parent: Control) -> void:
+	controls_button = action(parent, "操作说明与改键", _open_controls)
+
+func _open_controls() -> void:
+	if driver.mode != "settings": return
+	driver.release_controls()
+	driver.mode = "controls"
+	show_mode("controls")
+	controls_page.open(driver.input_device)
+
+func close_controls() -> void:
+	driver.mode = "settings"
+	show_mode("settings")
+	controls_button.grab_focus()
+
+func controls_input(event: InputEvent) -> bool:
+	return is_instance_valid(controls_page) and controls_page.handle_input(event)
+
+func _refresh_control_hints() -> void:
+	if not is_instance_valid(journal_controls): return
+	var collect: String = driver.control_hint("interact")
+	var pulse: String = driver.control_hint("pulse")
+	var dash: String = driver.control_hint("dash")
+	journal_controls.text = "按住 %s 采蜜，%s 振翅。按住 %s 蓄力，松开冲刺。" % [collect, pulse, dash]
+	transition_hint.text = "%s 跳过蜂舞" % dash
+	var pad: bool = driver.input_device == "pad"
+	var back := "B" if pad else "Esc"
+	region_back.text = "先留在这里  ·  " + back
+	shop_footer.text = "%s 返回庭院 · 交付立即结算" % back
+	pause_button.tooltip_text = "暂停与操作说明 · " + driver.control_hint("pause")
+	var shortcut := back + " 返回" if driver.mode == "pause" else ("A 确认" if pad else "Enter 确认")
+	menu_footer.text = menu_footer.text.get_slice("  ·  ",0) + "  ·  " + shortcut
+	if driver.mode == "pause" and not driver.save_blocked and not driver.save_warning:
+		menu_body.text = "%s\n\n按住 %s 采蜜\n%s 振翅 · %s 蓄力冲刺\n\n设置中可查看和修改按键。" % [driver.model.goal_text(), collect, pulse, dash]
+	if driver.mode == "pause" and driver.slots_enabled and not driver.save_blocked and not driver.save_warning:
+		menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
+	if driver.mode == "tree":
+		_update_tree_footer(get_viewport().gui_get_focus_owner())
+	if hub_action.visible:
+		_update_station_key()
+
+func _refresh_hub_action() -> void:
+	super._refresh_hub_action()
+	if hub_action.visible: _update_station_key()
+
+func _update_station_key() -> void:
+	var binding: String = driver.bindings.label("interact", "pad" if driver.input_device == "pad" else "key")
+	var short_label := binding.get_slice("（", 0)
+	var cap := hub_action_key.get_parent() as PanelContainer
+	var width := maxf(30, font.get_string_size(short_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x + 12)
+	cap.offset_right = cap.offset_left + width
+	hub_action_key.text = short_label
+	hub_action_key.add_theme_font_size_override("font_size", 18)
+	for state in ["normal", "hover", "pressed"]:
+		hub_action.get_theme_stylebox(state).content_margin_left = cap.offset_right + 10
+	hub_action.tooltip_text = "%s · %s" % [driver.control_hint("interact"), hub_action.text]
 
 func create_growth_board():
 	return preload("res://region_game/growth_catalog_board.gd").new()
@@ -241,6 +314,7 @@ func _build_tree() -> void:
 	growth_map = preload("res://region_game/growth_map_view.gd").new()
 	tree.add_child(growth_map)
 	anchored(growth_map,Rect2(0,0,.665,1),Rect2(86,148,-112,-317))
+	growth_map.input_used.connect(driver.track_device)
 	growth_map.attach(board)
 	detail_scroll = ScrollContainer.new()
 	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -361,6 +435,7 @@ func _input(event: InputEvent) -> void:
 	if driver == null or driver.mode != "tree" or not event is InputEventJoypadButton: return
 	var directions := {JOY_BUTTON_DPAD_UP:KEY_UP,JOY_BUTTON_DPAD_DOWN:KEY_DOWN,JOY_BUTTON_DPAD_LEFT:KEY_LEFT,JOY_BUTTON_DPAD_RIGHT:KEY_RIGHT}
 	if event.button_index not in directions and event.button_index not in [JOY_BUTTON_A,JOY_BUTTON_B,JOY_BUTTON_Y,JOY_BUTTON_X,JOY_BUTTON_LEFT_STICK]: return
+	driver.track_device(event)
 	get_viewport().set_input_as_handled()
 	if not event.pressed: return
 	if event.button_index in directions:

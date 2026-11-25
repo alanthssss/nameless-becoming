@@ -259,7 +259,7 @@ func _draw() -> void:
 	if model.p.distance_to(entry) < 240.0:
 		var label_at: Vector2 = entry + SIGN_FOOT + Vector2(0,-89)
 		if model.field.at_entry():
-			_return_badge(label_at,"E / 左键  回庭院")
+			_return_badge(label_at,_action_hint("interact") + "  回庭院")
 		else:
 			_region_label(label_at,"庭院入口",false)
 	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE/MeadowLayout.FIELD_ZOOM)
@@ -515,13 +515,18 @@ func _draw_resource_feedback() -> void:
 	elif not focus.is_empty():
 		_draw_nectar_status(focus,true)
 
+func _action_hint(action: String) -> String:
+	var driver := get_parent()
+	if driver != null and driver.has_method("control_hint"): return driver.control_hint(action)
+	return "E / 左键" if action == "interact" else "Q / 右键"
+
 func _nectar_caption(flower: Dictionary) -> String:
 	if _flower_contact(flower): return "采蜜中"
 	if flower.phase == "empty": return "花期已过"
 	if flower.phase == "bud": return "花苞渐开"
 	if flower.has("nectar_wait"): return "补蜜中" if flower.phase=="ripe" else "将谢 · 补蜜中"
 	if model.field.cargo >= model.field.capacity(): return "蜜囊已满"
-	return "按住 E / 左键" if flower.phase=="ripe" else "花将谢 · 按住 E"
+	return ("按住 " if flower.phase == "ripe" else "花将谢 · 按住 ") + _action_hint("interact")
 
 func _draw_nectar_status(flower: Dictionary, show_caption: bool) -> void:
 	var cap: String = _nectar_caption(flower) if show_caption else ""
@@ -577,7 +582,7 @@ func _draw_material_hint(item: Dictionary) -> void:
 	if field.resin_open(item):
 		var close_enough: bool = model.p.distance_to(at)<=field.RESIN_REACH
 		var message := "贴近裂口收树脂"
-		if close_enough: message = "按住 E / 左键 · 收树脂"
+		if close_enough: message = "按住 %s · 收树脂" % _action_hint("interact")
 		if item.phase=="fading" and FieldLife.phase_ratio(item)>.60: message += " · 将干"
 		_region_label(at+Vector2(0,-48),message,true)
 		var fill: float = float(item.get("resin_draw",0.0))/field.RESIN_SECONDS
@@ -595,7 +600,7 @@ func _draw_material_hint(item: Dictionary) -> void:
 			draw_circle(at+Vector2(float(i)*11.0-5.5,-24),3.0,Color("b6a580") if i<hits else Color("ffdd90"))
 	var action := "振松种绒取纤维" if fiber else "掀松树皮"
 	if hits>0: action="再振落绒" if fiber else "再振开皮"
-	_region_label(at+Vector2(0,-48),"朝向种穗 Q · "+action if fiber else "朝向裂口 Q · "+action,true)
+	_region_label(at+Vector2(0,-48),("朝向种穗 " if fiber else "朝向裂口 ") + _action_hint("pulse") + " · " + action,true)
 
 func _draw_region_effects() -> void:
 	for ring in pulse_rings:

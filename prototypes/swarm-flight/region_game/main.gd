@@ -4,6 +4,18 @@ const RegionalUI = preload("res://region_game/ui.gd")
 const HoneySound = preload("res://region_game/sound.gd")
 const RegionalView = preload("res://region_game/view.gd")
 const PROGRESS := "user://nectar_regions_v2.json"
+const Bindings = preload("res://region_game/control_bindings.gd")
+const STICK_DEADZONE := 0.22
+const MENU_PAD := {"ui_accept":JOY_BUTTON_A,"ui_cancel":JOY_BUTTON_B,"ui_up":JOY_BUTTON_DPAD_UP,"ui_down":JOY_BUTTON_DPAD_DOWN,"ui_left":JOY_BUTTON_DPAD_LEFT,"ui_right":JOY_BUTTON_DPAD_RIGHT}
+static var active_interfaces := 0
+static var installed_menu_events := {}
+signal controls_changed
+var bindings := Bindings.new()
+var input_device := "kbm"
+# The source includes the controller ID, so one release cannot cancel another hold.
+var stick_positions := {}
+var blocked_sticks := {}
+var pending_pulses := {}
 const SLOT_COUNT := 3
 var evidence_log := ""
 var active_slot := 1
@@ -45,10 +57,35 @@ func sound_for_event(event: Dictionary) -> String:
 	# Unlock accompanies the committed purchase and has no second confirmation.
 	return ""
 
+func _enter_tree() -> void:
+	active_interfaces += 1
+	if active_interfaces > 1: return
+	for action in MENU_PAD:
+		var button := InputEventJoypadButton.new()
+		button.device = -1 # Accept the player's controller even after reconnecting under a different ID.
+		button.button_index = MENU_PAD[action]
+		if not InputMap.action_has_event(action,button):
+			InputMap.action_add_event(action,button)
+			installed_menu_events[action] = button
+
+func _exit_tree() -> void:
+	active_interfaces -= 1
+	if active_interfaces > 0: return
+	for action in installed_menu_events:
+		InputMap.action_erase_event(action,installed_menu_events[action])
+	installed_menu_events.clear()
+
 func default_progress_path() -> String:
 	return "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
 
 func _ready() -> void:
+	var controls_file := ""
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--progress-file="): bindings.path = arg.trim_prefix("--progress-file=")+".controls.cfg"
+		if arg.begins_with("--controls-file="): controls_file = arg.trim_prefix("--controls-file=")
+	bindings.load_from(controls_file if not controls_file.is_empty() else bindings.path)
+	bindings.changed.connect(_bindings_changed)
+	Input.joy_connection_changed.connect(_joy_connection_changed)
 	model = new_model()
 	base_progress_path = default_progress_path()
 	for arg in OS.get_cmdline_user_args():
@@ -144,17 +181,10 @@ func choose_slot(id: int) -> void:
 
 func quit_game() -> void:
 	# Browsing from the title or a saved pause must never create an empty slot.
-	if slots_enabled and (mode in ["title","slots"] or (mode == "settings" and settings_return == "title")):
+	if slots_enabled and (mode in ["title","slots"] or (mode in ["settings","controls"] and settings_return == "title")):
 		finish_quit()
 		return
 	super.quit_game()
-
-func _input(event: InputEvent) -> void:
-	if mode == "slots" and event.is_action_pressed("ui_cancel"):
-		close_slots()
-		get_viewport().set_input_as_handled()
-		return
-	super._input(event)
 
 func read_progress(path: String) -> Dictionary:
 	var model_copy = new_model()
@@ -171,6 +201,7 @@ func read_progress(path: String) -> Dictionary:
 
 func _load_world() -> void:
 	if is_instance_valid(world):
+		release_controls()
 		remove_child(world)
 		world.queue_free()
 	world = RegionalView.new()
@@ -207,20 +238,155 @@ func has_material_hint() -> bool:
 	var item: Dictionary = model.field.material_for_hint()
 	return not item.is_empty() and RegionalModel.Field.available(item) and not item.dropped and not model.field.resin_open(item)
 
+func control_hint(action: String) -> String:
+	return bindings.hint(action,input_device)
+
+func departure_prompt() -> String:
+	return "靠近灯球，按 %s 出发" % control_hint("interact")
+
+func _bindings_changed() -> void:
+	if is_instance_valid(world): release_controls()
+	controls_changed.emit()
+	presentation_changed.emit()
+
+func track_device(event: InputEvent) -> void:
+	var device := input_device
+	if event is InputEventJoypadButton and event.pressed or event is InputEventJoypadMotion and absf(event.axis_value) > STICK_DEADZONE:
+		device = "pad"
+	elif event is InputEventKey and event.pressed or event is InputEventMouseButton and event.pressed or event is InputEventMouseMotion and event.relative.length_squared() > 1.0:
+		device = "kbm"
+	if device != input_device:
+		input_device = device
+		controls_changed.emit()
+		presentation_changed.emit()
+
+func _source(event: InputEvent) -> String:
+	return "%s:%d:%d" % [Bindings.slot_for(event),event.device,Bindings.code_for(event)]
+
+func _stick_motion(event: InputEventJoypadMotion) -> void:
+	var pos: Vector2 = stick_positions.get(event.device,Vector2.ZERO)
+	if event.axis == JOY_AXIS_LEFT_X: pos.x = event.axis_value
+	elif event.axis == JOY_AXIS_LEFT_Y: pos.y = event.axis_value
+	else: return
+	if pos.length() <= STICK_DEADZONE:
+		blocked_sticks.erase(event.device)
+	stick_positions[event.device] = pos
+	if mode != "play" and pos.length() > STICK_DEADZONE:
+		blocked_sticks[event.device] = true
+
+func flight_direction() -> Vector2:
+	var analog := Vector2.ZERO
+	for device in stick_positions:
+		if blocked_sticks.has(device): continue
+		var stick: Vector2 = stick_positions[device]
+		if stick.length_squared() > analog.length_squared(): analog = stick
+	var strength := clampf((analog.length()-STICK_DEADZONE)/(1.0-STICK_DEADZONE),0,1)
+	var actions := held.values()
+	var digital := Vector2(float("right" in actions)-float("left" in actions),float("down" in actions)-float("up" in actions))
+	return (digital + analog.normalized()*strength).limit_length()
+
+func step_flight(dt: float) -> bool:
+	var active := held.values()
+	var collecting: bool = "interact" in active and not model.at_home()
+	model.step(dt,flight_direction(),collecting,"dash" in active,"pulse" in active or pulse_requested,pulse_direction())
+	pending_pulses.clear()
+	return collecting
+
+func release_controls() -> void:
+	super.release_controls()
+	pending_pulses.clear()
+	for device in stick_positions:
+		if stick_positions[device].length() > STICK_DEADZONE: blocked_sticks[device] = true
+
+func _joy_connection_changed(device: int, connected: bool) -> void:
+	if connected: return
+	var prefix := "pad:%d:" % device
+	var lost_charge := false
+	for source in held.keys():
+		if source.begins_with(prefix):
+			lost_charge = lost_charge or held[source] == "dash"
+			held.erase(source)
+	for source in pending_pulses.keys():
+		if source.begins_with(prefix): pending_pulses.erase(source)
+	pulse_requested = not pending_pulses.is_empty()
+	if lost_charge and "dash" not in held.values(): model.clear_controls()
+	stick_positions.erase(device)
+	blocked_sticks.erase(device)
+	if input_device == "pad" and Input.get_connected_joypads().is_empty():
+		input_device = "kbm"
+		controls_changed.emit()
+		presentation_changed.emit()
+
+func _back() -> bool:
+	match mode:
+		"tree": close_tree()
+		"shop": close_shop()
+		"regions": close_regions()
+		"journal": close_journal()
+		"settings": close_settings()
+		"slots": close_slots()
+		"play": pause_game()
+		"pause","complete": start_game()
+		_: return false
+	return true
+
+func _input(event: InputEvent) -> void:
+	track_device(event)
+	if event is InputEventMouseMotion or event is InputEventMouseButton: mouse_aim = event.position
+	if event is InputEventJoypadMotion:
+		_stick_motion(event)
+	if not is_instance_valid(ui): return
+	if ui.has_method("controls_input") and ui.controls_input(event):
+		get_viewport().set_input_as_handled()
+		return
+	if mode == "controls": return
+	var slot := Bindings.slot_for(event)
+	var code := Bindings.code_for(event)
+	if slot.is_empty(): return
+	# Track releases before GUI hit-testing. A mouse can cross onto a HUD button while held.
+	if not event.is_pressed():
+		held.erase(_source(event))
+		if slot == "mouse":
+			var mouse_action := bindings.action_for(slot,code)
+			if mouse_action == "pulse": mouse_pulse = false
+			if mouse_action == "interact": mouse_collect = false
+	if event is InputEventKey and ui.tree_key(event):
+		get_viewport().set_input_as_handled()
+		return
+	if not event.is_pressed() or event.is_echo(): return
+	var action := bindings.action_for(slot,code)
+	if mode == "transition" and action == "dash":
+		transition_elapsed = Dance.SHORT_DURATION if transition_short else Dance.DURATION
+	elif (slot == "key" and code == KEY_ESCAPE) or (slot == "pad" and (code == JOY_BUTTON_START or (code == JOY_BUTTON_B and mode != "play"))):
+		if not _back(): return
+	elif action == "pause" and mode == "play":
+		_back()
+	elif action == "mute" and (mode == "play" or (slot == "key" and code == KEY_M)):
+		ui.toggle_sound()
+	else: return
+	get_viewport().set_input_as_handled()
+
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.physical_keycode == KEY_F: return
-	if mode == "play" and model.field != null and event.is_pressed() and not event.is_echo():
-		var use_key: bool = event is InputEventKey and (event.physical_keycode if event.physical_keycode != 0 else event.keycode) == KEY_E
-		var use_mouse: bool = event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT
-		if use_key or use_mouse:
-			if model.field.at_entry():
-				model.return_requested = false
-				request_transition("hub")
-				get_viewport().set_input_as_handled()
-				return
-			# A down/up between render frames still counts if movement enters the gate this frame.
-			model.entry_pressed = true
-	super._unhandled_input(event)
+	if mode != "play" or event.is_echo() or not event.is_pressed(): return
+	var slot := Bindings.slot_for(event)
+	var action := bindings.action_for(slot,Bindings.code_for(event))
+	if action.is_empty(): return
+	if action == "interact":
+		if use_station():
+			get_viewport().set_input_as_handled()
+			return
+		if model.field != null: model.entry_pressed = true
+	var source := _source(event)
+	held[source] = action
+	if action == "pulse":
+		pending_pulses[source] = true
+		pulse_requested = true
+		if slot == "mouse":
+			mouse_pulse = true
+			mouse_pulse_requested = true
+	elif action == "interact" and slot == "mouse":
+		mouse_collect = true
+	get_viewport().set_input_as_handled()
 
 func consume_events(pending: Array) -> void:
 	super.consume_events(pending)
