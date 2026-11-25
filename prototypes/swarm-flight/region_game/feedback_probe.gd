@@ -4,6 +4,7 @@ extends SceneTree
 const Game = preload("res://region_game/main.tscn")
 var game
 var held := {}
+var cues: Array[String] = []
 var checks := 0
 var output := ""
 var broken := false
@@ -64,6 +65,7 @@ func run() -> void:
 	if not output.is_empty(): DirAccess.make_dir_recursive_absolute(output)
 	game = Game.instantiate()
 	root.add_child(game)
+	game.sound.event_played.connect(func(cue: String): cues.append(cue))
 	await frames(8)
 	await tap(KEY_ENTER)
 	await tap(KEY_E)
@@ -89,6 +91,7 @@ func run() -> void:
 	if not check(game.model.cargo_total()==1,"one actual picked nectar"): return
 	await frames(10)
 	capture("harvest-drop")
+	if not check(cues.count("harvest")==1, "one confirmed nectar makes one drop sound"): return
 	if not check(game.world.nectar_motes.size()==1,"one corresponding droplet"): return
 	if not await fly(entry): return
 	await tap(KEY_E)
@@ -183,6 +186,7 @@ func run() -> void:
 	var full_count:=0
 	for event in game.event_log:
 		if event.kind=="full": full_count+=1
+	if not check(cues.count("full")==1 and cues.count("harvest")==2, "two simultaneous drops share a pickup sound and close the bag once"): return
 	if not check(full_count==1,"full cue fires once while bag stays full"): return
 	game.queue_free()
 	await frames(3)

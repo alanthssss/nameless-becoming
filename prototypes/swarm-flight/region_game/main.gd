@@ -1,6 +1,7 @@
 extends "res://nectar_harvest_main.gd"
 const RegionalModel = preload("res://region_game/model.gd")
 const RegionalUI = preload("res://region_game/ui.gd")
+const HoneySound = preload("res://region_game/sound.gd")
 const RegionalView = preload("res://region_game/view.gd")
 const PROGRESS := "user://nectar_regions_v2.json"
 var evidence_log := ""
@@ -8,6 +9,22 @@ var evidence_log := ""
 
 func new_model(): return RegionalModel.new()
 func create_interface(): return RegionalUI.new()
+func create_sound(): return HoneySound.new()
+
+func update_sound_context() -> void:
+	sound.set_honey_context(model.area, mode)
+
+func sound_for_event(event: Dictionary) -> String:
+	match event.kind:
+		"pulse", "pulse_empty": return "pulse"
+		"material_dropped": return "fiber_release"
+		"material_opened": return "resin_open"
+		"material": return event.type
+		"rescue": return "recover"
+		"harvest", "dash", "tap", "hurt", "sell", "full", "buy", "denied", "complete":
+			return event.kind
+	# Unlock accompanies the committed purchase and has no second confirmation.
+	return ""
 
 func _ready() -> void:
 	model = new_model()
@@ -95,8 +112,6 @@ func consume_events(pending: Array) -> void:
 			ui.sale_flight.begin(event, model.p + Vector2(side*20,18), ui.shop_coins, reduced_motion)
 		elif event.kind == "material" and event.type == "fiber":
 			message("纤维 +%d（现有 %d） · 可在庭院升级双翼" % [event.amount, model.materials.fiber], 3.0)
-		elif event.kind == "full":
-			sound.play_event("ring",0)
 	if pending.is_empty() or evidence_log.is_empty(): return
 	var file := FileAccess.open(evidence_log,FileAccess.READ_WRITE if FileAccess.file_exists(evidence_log) else FileAccess.WRITE)
 	if file != null:
