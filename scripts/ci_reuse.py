@@ -1,4 +1,4 @@
-"""Reuse certified prototype results only across a clean synchronization with main."""
+"""Reuse certified check results only across a clean synchronization with main."""
 from collections import Counter
 import json
 import os
@@ -10,6 +10,11 @@ import sys
 
 SHA = r"[0-9a-f]{40}"
 PROTOTYPES = ("swarm", "flower", "garden")
+BUILD_JOBS = {
+    "web": ("web", "Web build, tests and lint"),
+    "godot": ("godot", "Godot 4.6.2 tests"),
+    "web-candidate": ("export_game", "Clean Web game and site candidate"),
+}
 # Topic edits to any control invalidate reuse. Only the following routing and
 # document checks can change on main without changing how a prototype executes.
 ROUTING_FILES = (
@@ -25,6 +30,10 @@ SWARM_NONREGIONAL = {"core", "regressions", "samples", "samples-save", "migratio
 MARKER = re.compile(
     rf"Prototype evidence v1 PR (?P<number>[1-9][0-9]*) base (?P<base>{SHA}) tree (?P<tree>{SHA}) "
     r"swarm (?P<swarm>none|region|full) flower (?P<flower>true|false) garden (?P<garden>true|false)"
+)
+BUILD_MARKER = re.compile(
+    rf"Build evidence v1 PR (?P<number>[1-9][0-9]*) base (?P<base>{SHA}) tree (?P<tree>{SHA}) "
+    r"web (?P<web>true|false) godot (?P<godot>none|routes|full) export (?P<export_game>true|false)"
 )
 
 
@@ -50,6 +59,8 @@ def changed_paths(first, second, *pathspecs):
 
 
 def directly_passed(group, swarm_suite, passed_jobs):
+    if group in BUILD_JOBS:
+        return BUILD_JOBS[group][1] in passed_jobs
     if group in ("flower", "garden"):
         title = "Flower Step" if group == "flower" else "Garden Puzzles"
         return f"{title} / {title} rules and complete routes" in passed_jobs
@@ -85,8 +96,9 @@ def previous_evidence(api, repo, branch, before, number):
     if (gate["status"] != "completed" or gate["conclusion"] != "success"
             or gate["run_id"] != run_id or gate["run_attempt"] != attempt or gate["head_sha"] != before):
         return None
-    markers = [MARKER.fullmatch(step["name"]) for step in gate["steps"]
-               if step["status"] == "completed" and step["conclusion"] == "success"]
+    steps = [step["name"] for step in gate["steps"]
+             if step["status"] == "completed" and step["conclusion"] == "success"]
+    markers = [MARKER.fullmatch(name) for name in steps]
     matches = [marker for marker in markers if marker and marker["number"] == str(number)]
     if len(matches) != 1:
         return None
@@ -96,12 +108,41 @@ def previous_evidence(api, repo, branch, before, number):
         if counts[job["name"]] == 1 and job["status"] == "completed" and job["conclusion"] == "success"
         and job["run_id"] == run_id and job["run_attempt"] == attempt and job["head_sha"] == before
     }
-    return run_id, matches[0], passed_jobs
+    prior = matches[0]
+    builds = [BUILD_MARKER.fullmatch(name) for name in steps if name.startswith("Build evidence ")]
+    build = builds[0] if len(builds) == 1 else None
+    if build and any(build[field] != prior[field] for field in ("number", "base", "tree")):
+        build = None
+    return run_id, prior, passed_jobs, build
+
+
+def affected_builds(paths, impact):
+    """Add cross-job inputs to the ordinary first-run path classification."""
+    if not paths:
+        return set()
+    site = any(path.startswith(("app/", "src/", "public/", "build/", "worker/", "db/", "drizzle/", ".openai/"))
+               or ".config." in path.rsplit("/", 1)[-1]
+               or path.startswith("wrangler.") or path in ("tsconfig.json", "tests/rendered-html.test.mjs")
+               for path in paths)
+    engine = any(path.startswith("godot/") for path in paths)
+    # npm test builds the site and reads the material contracts and main engine.
+    # ESLint traverses JS/TS even when it lives in a prototype or a docs folder.
+    lint = any(path.lower().endswith((".js", ".jsx", ".cjs", ".mjs", ".ts", ".tsx", ".cts", ".mts"))
+               for path in paths)
+    affected = set()
+    if site or engine or lint or impact["web"] == "true" or impact["content"] == "true":
+        affected.add("web")
+    if engine or impact["godot"] == "true":
+        affected.add("godot")
+    if site or engine or impact["export_game"] == "true":
+        affected.add("web-candidate")
+    return affected
 
 
 def decide(event, repo, selected, api):
     fresh = (set(), None)
-    if event.get("action") != "synchronize" or not any(selected[p] == "true" for p in PROTOTYPES):
+    if event.get("action") != "synchronize" or not any(
+            selected.get(p) == "true" for p in (*PROTOTYPES, "web", "godot", "export_game")):
         return fresh
     pr = event["pull_request"]
     base, head, before = pr["base"]["sha"], pr["head"]["sha"], event.get("before", "")
@@ -133,7 +174,7 @@ def decide(event, repo, selected, api):
     evidence = previous_evidence(api, repo, pr["head"]["ref"], before, pr["number"])
     if not evidence:
         return fresh
-    run_id, prior, passed_jobs = evidence
+    run_id, prior, passed_jobs, build = evidence
     if not ancestor(prior["base"], base) or changed_paths(prior["base"], before, *CONTROL_PATHS):
         return fresh
     # Reconstruct what Actions checked out, which may differ from the old PR head.
@@ -149,6 +190,16 @@ def decide(event, repo, selected, api):
         flags = subprocess.check_output(["bash", "scripts/classify_ci_changes.sh"], input=payload)
         impact = dict(line.split("=", 1) for line in flags.decode().splitlines())
     reusable = set()
+    if build:
+        affected = affected_builds(paths, impact)
+        for group, (flag, _) in BUILD_JOBS.items():
+            if selected.get(flag) != "true" or group in affected:
+                continue
+            if group == "godot":
+                if build[flag] == "full" or build[flag] == selected["godot_suite"] == "routes":
+                    reusable.add(group)
+            elif build[flag] == "true":
+                reusable.add(group)
     for name in PROTOTYPES:
         if selected[name] != "true" or (paths and impact[name] != "false"):
             continue
@@ -192,7 +243,7 @@ def main():
             if "swarm-except-region" in groups:
                 print("Five Swarm Flight suites are covered by that result; region-greybox runs here.", file=summary)
         else:
-            print("No prototype results reused. Selected checks run on this revision.", file=summary)
+            print("No results reused. Selected checks run on this revision.", file=summary)
 
 
 if __name__ == "__main__":
