@@ -3,6 +3,7 @@ const Scene = preload("res://region_game/main.tscn")
 var game
 var checks := 0
 var failures := 0
+var cues: Array[String] = []
 func _initialize() -> void: call_deferred("run")
 func check(ok: bool,label: String) -> void:
 	checks += 1
@@ -26,12 +27,19 @@ func all_text(node: Node) -> String:
 func check_seed_pickup() -> void:
 	var field = game.model.field
 	var head: Dictionary = field.materials[0]
+	cues.clear()
+	field.p = head.anchor - Vector2(85,0)
+	game.model.step(.05, Vector2.ZERO, false, false, true, Vector2.LEFT)
+	await frames(2)
+	check(cues == ["pulse"], "missing the head plays only the wingbeat")
 	field.p = head.anchor - Vector2(85,0)
 	game.model.step(.05, Vector2.ZERO, false, false, true, Vector2.RIGHT)
 	await frames(2)
+	check(cues == ["pulse", "pulse", "fiber_release"], "real release plays wing then rustle, before collection")
 	check(head.dropped and game.model.materials.fiber == 0, "loosening a tuft does not credit fiber")
 	field.p = head.p
 	await frames(3)
+	check(cues.count("fiber") == 1, "catching the released fiber plays its pickup once")
 	check(game.model.materials.fiber == 1 and game.ui.fiber_text.text == "1", "caught tuft increments HUD inventory")
 	check(game.ui.toast_panel.visible and "纤维 +1（现有 1）" in game.ui.toast.text and "升级双翼" in game.ui.toast.text, "confirmed pickup explains quantity, stock and use")
 	field.p = field.layout.nodes[0].p
@@ -65,7 +73,14 @@ func check_shop_shelves() -> void:
 	game.ui.refresh()
 	game.ui.hub_action.pressed.emit()
 	check(game.mode == "shop" and not game.ui.sell_button.disabled, "second shelf opens delivery from visible button")
+	cues.clear()
+	game.save_blocked = true
 	game.sell_cargo()
+	check(cues.is_empty(), "uncommitted delivery stays silent")
+	game.save_blocked = false
+	game.sell_cargo()
+	game.sell_cargo()
+	check(cues == ["sell"], "one committed delivery rings once; empty sale stays quiet")
 	check(game.model.coins == 2 and game.model.cargo_total() == 0, "delivery credits carried honey once")
 	game.close_shop()
 	for point in [Vector2(310,240),Vector2(540,390),Vector2(150,480)]:
@@ -76,6 +91,7 @@ func check_shop_shelves() -> void:
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
+	game.sound.event_played.connect(func(cue: String): cues.append(cue))
 	await frames(6)
 	game.saved_path = OS.get_temp_dir().path_join("regional-ui-%d.json" % OS.get_process_id())
 	game.save_blocked = false
@@ -89,6 +105,7 @@ func run() -> void:
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.area == "pond" and game.mode == "play","skip commits destination once")
+	check(game.sound._area == "pond" and not game.sound._overlay, "pond music follows the committed area")
 	check(game.model.trip_index == 1,"exactly one departure")
 	check(game.world.area_key == "pond","world follows region")
 	await check_seed_pickup()
@@ -96,6 +113,7 @@ func run() -> void:
 	var before: Dictionary = game.model.to_payload()
 	game.pause_game()
 	await frames(30)
+	check(game.sound._area == "pond" and game.sound._overlay, "pause softens the score in place")
 	check(game.model.to_payload() == before,"pause freezes phases and input")
 	game.start_game()
 	game.saved_path = OS.get_temp_dir() # Explicit failed-write fixture.
@@ -126,17 +144,27 @@ func run() -> void:
 	await frames(4)
 	check(game.model.at_home(),"return transition")
 	await check_shop_shelves()
+	game.model.p = game.model.HUB_TREE
+	cues.clear()
+	await tap(KEY_E)
+	await tap(KEY_ENTER)
+	check(game.ui.buy_button.disabled and cues == ["book_open", "denied"], "pressing purchase with insufficient funds gives a quiet refusal")
+	await tap(KEY_ESCAPE)
+	check(cues.back() == "book_close", "closing the book turns the page once")
 	game.model.coins = 1000
 	game.model.materials = {"fiber":100,"resin":100}
 	game.model.p = game.model.HUB_TREE
 	await tap(KEY_E)
 	check(game.mode == "tree","growth interaction")
 	var paid: int = game.model.coins
+	cues.clear()
 	game.buy_upgrade("gather1")
+	check(cues == ["buy"], "paid upgrade has its own confirmation")
 	check("gather1" in game.model.owned and game.model.coins == paid-4,"real purchase commits")
 	game.buy_upgrade("gather1")
 	check(game.model.coins == paid-4,"duplicate cannot spend")
 	for id in ["bag1","wings1","meadow","supply1"]: game.buy_upgrade(id)
+	check(cues.count("buy") == 5 and not cues.has("unlock"), "area unlock never doubles a purchase jingle")
 	game.ui.refresh()
 	check(game.ui.board.buttons.supply.visible and "supply1" in game.model.owned,"resource growth appears and purchases")
 	check(not game.ui.board.buttons.shortcut.visible,"obsolete shortcut never exposed")
@@ -149,6 +177,16 @@ func run() -> void:
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.area == "meadow" and game.model.field.max_energy() == 50 and game.model.field.capacity() == 10,"incremental growth reaches actual field")
+	check(game.sound._area == "meadow", "purple field selects its leaf bed")
+	cues.clear()
+	var bark: Dictionary = game.model.field.materials[0]
+	game.model.field.p = bark.anchor - Vector2(45,0)
+	game.model.step(.05, Vector2.ZERO, false, false, true, Vector2.RIGHT)
+	await frames(2)
+	check(cues == ["pulse", "resin_open"], "opening bark has no sticky pickup yet")
+	for i in 22: game.model.step(.05, Vector2.ZERO, true, false)
+	await frames(2)
+	check(cues.count("resin") == 1, "pulling exposed resin to completion plays one pickup")
 	check(game.model.field.supply_rank == 1,"purchased abundance reaches the field")
 	game.pause_game()
 	check(game.persist(),"purple midtrip save")

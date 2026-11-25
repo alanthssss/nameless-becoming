@@ -1,6 +1,7 @@
 extends "res://nectar_harvest_ui.gd"
 
 const SaleFlight = preload("res://region_game/sale_flight.gd")
+var reading_book := false
 var sale_flight
 
 func _ready() -> void:
@@ -19,7 +20,7 @@ func _reword(node: Node) -> void:
 		node.text = node.text.replace("花蜜在野外 18 秒后恢复","花蜜采走后会慢慢补回，花朵继续自己的花期")
 		node.text = node.text.replace("细雨增加消耗，叶棚下可避雨。","朝裂口振翅掀皮，贴近按住 E / 左键收树脂。")
 		node.text = node.text.replace(" · F 使用近道","")
-		node.text = node.text.replace("0.27.0","0.32.1" if OS.has_feature("pond_feedback") else "0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
+		node.text = node.text.replace("0.27.0","0.32.2" if OS.has_feature("pond_feedback") else "0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
 	for child in node.get_children(): _reword(child)
 
 func _requirements(id: String) -> String:
@@ -51,7 +52,29 @@ func refresh() -> void:
 		elif driver.model.cargo_total()>=driver.model.capacity(): help_text.text = "蜜囊已满 · 仍可取材"
 		help_text.visible = not help_text.text.is_empty()
 
+func _buy_selected() -> void:
+	if not buy_button.disabled:
+		super._buy_selected()
+		return
+	if driver.mode != "tree": return
+	var id: String = board.next_id(board.selected)
+	if id.is_empty() or driver.model.can_buy(id): return
+	var now := Time.get_ticks_msec()
+	if now - last_purchase_msec < 350: return
+	last_purchase_msec = now
+	driver.sound.play_event("denied")
+	driver.message(driver.model.locked_reason(id), 3)
+
+func _purchase_button_input(event: InputEvent) -> void:
+	super._purchase_button_input(event)
+	if buy_button.disabled and event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not event.double_click:
+			_buy_selected()
+
 func show_mode(mode: String) -> void:
+	if reading_book != (mode == "tree"):
+		reading_book = mode == "tree"
+		driver.sound.play_event("book_open" if reading_book else "book_close")
 	if is_instance_valid(sale_flight) and mode != "shop":
 		sale_flight.stop()
 	super.show_mode(mode)
