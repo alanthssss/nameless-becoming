@@ -88,6 +88,8 @@ func _load_world() -> void:
 	move_child(world,0)
 	if is_instance_valid(ui): world.feedback_font = ui.font
 
+func plays_departure_dance() -> bool: return true
+
 func request_transition(destination: String,via := "gate") -> void:
 	if mode not in ["play","regions"]: return
 	var candidate = new_model()
@@ -97,8 +99,8 @@ func request_transition(destination: String,via := "gate") -> void:
 	release_controls()
 	transition_candidate = candidate
 	transition_target = destination
-	transition_elapsed = 0.0
 	transition_short = reduced_motion
+	transition_elapsed = 0.0 if transition_short or plays_departure_dance() else Dance.COMMIT - Dance.IRIS_CLOSE
 	transition_committed = false
 	pause_after_transition = false
 	mode = "transition"
@@ -121,7 +123,7 @@ func _advance_transition(dt: float) -> void:
 			return
 		transition_committed = true
 		_load_world()
-	var close_span := 0.18 if transition_short else 0.42
+	var close_span := Dance.SHORT_COMMIT if transition_short else Dance.IRIS_CLOSE
 	var hold_span := 0.0 if transition_short else 0.22
 	var alpha := clampf((transition_elapsed-(commit_time-close_span))/close_span,0,1) if not transition_committed else 1.0-maxf(0.0,transition_elapsed-commit_time-hold_span)/(duration-commit_time-hold_span)
 	ui.set_transition(clampf(alpha,0,1),area_name(transition_target))

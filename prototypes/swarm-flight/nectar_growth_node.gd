@@ -11,16 +11,52 @@ var reduced_motion := false
 var rank_initialized := false
 var growth_tween: Tween
 var ink_bloom := 0.0
+var gesture := 1.0
+# Positions in the 160 px painted cells, following the scent ribbon and the sunlit trail.
+const SCENT_PATH := [Vector2(34,98),Vector2(48,74),Vector2(65,70),Vector2(91,82),Vector2(119,75),Vector2(138,55),Vector2(134,36),Vector2(113,30)]
+const TRAIL_PATH := [Vector2(43,125),Vector2(69,114),Vector2(92,103),Vector2(83,97),Vector2(63,91),Vector2(58,87),Vector2(67,81),Vector2(95,75),Vector2(106,71),Vector2(101,67),Vector2(79,59)]
 
 func _ready() -> void:
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	focus_mode = Control.FOCUS_ALL
 	for name in ["normal","hover","pressed","focus","disabled"]:
 		add_theme_stylebox_override(name,StyleBoxEmpty.new())
 	mouse_entered.connect(queue_redraw)
 	mouse_exited.connect(queue_redraw)
-	focus_entered.connect(queue_redraw)
+	focus_entered.connect(_show_gesture)
+	set_process(false)
 	focus_exited.connect(queue_redraw)
+
+func _show_gesture() -> void:
+	queue_redraw()
+	if reduced_motion or kind not in ["reach","beat","wings"]: return
+	gesture = 0.0
+	set_process(true)
+
+func _process(delta: float) -> void:
+	if reduced_motion or not has_focus() or not is_visible_in_tree():
+		gesture = 1.0
+	else:
+		gesture = minf(1.0,gesture + delta / (.38 if kind == "beat" else .85))
+	set_process(gesture < 1.0)
+	queue_redraw()
+
+func _draw_journal_icon(center: Vector2, tint: Color) -> void:
+	const RADIUS := 31.0
+	var at := center
+	if kind == "beat":
+		at += Vector2(4,-2) * sin(gesture*PI) * (1.0-gesture)
+	Art.journal_icon(self,kind,at,RADIUS,tint)
+	if gesture >= 1.0 or kind not in ["reach","wings"]: return
+	var path: Array = SCENT_PATH if kind == "reach" else TRAIL_PATH
+	var progress := gesture*(path.size()-1)
+	var segment := mini(floori(progress),path.size()-2)
+	var sample: Vector2 = path[segment].lerp(path[segment+1],progress-segment)
+	var spark := center+(sample/80.0-Vector2.ONE)*RADIUS
+	var opacity := sin(gesture*PI)
+	draw_circle(spark,2.8,Color("bb772d",opacity),true,-1,true)
+	draw_circle(spark,1.8,Color("fff1a9",opacity),true,-1,true)
 
 func set_rank(value: int) -> void:
 	var grew := rank_initialized and value > rank
@@ -58,11 +94,7 @@ func _draw() -> void:
 			points.append(center+Vector2(cos(angle)*47,sin(angle)*42)+Vector2(sin(angle*3)*1.5,cos(angle*5)))
 		draw_polyline(points,Color(stroke,.18),7,true)
 		draw_polyline(points,stroke,1.7,true)
-	if kind == "supply":
-		for blossom in [[Vector2(-15,9),"gather"],[Vector2(15,9),"meadow"],[Vector2(0,-14),"gather"]]:
-			Art.painted_icon(self,blossom[1],center+blossom[0],18,Color("a9ad94") if muted else Color.WHITE)
-	else:
-		Art.painted_icon(self,kind,center,30,Color("a9ad94") if muted else Color.WHITE)
+	_draw_journal_icon(center,Color("a9ad94") if muted else Color.WHITE)
 	for i in max_rank:
 		var at := center+Vector2((i-(max_rank-1)*.5)*15,42)
 		draw_circle(at,4.5,Color("a77a32") if i < rank else Color("d9cbae"))

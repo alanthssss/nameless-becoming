@@ -9,6 +9,12 @@ const OPEN_FLOWER_AGE_RATE := 0.45
 const RESIN_REACH := 64.0
 const RESIN_SECONDS := 0.8
 const TUFT_DRIFT := 24.0
+# Pixel registration in a 970×561 proof of the entire pond painting, including the handle.
+const JAR_RECT := Rect2(RegionalLayout.PLATE.position + Vector2(93,161)/Vector2(970,561)*RegionalLayout.PLATE.size,
+		Vector2(64,79)/Vector2(970,561)*RegionalLayout.PLATE.size)
+# Largest flower in bloom, including rocking petals above and roots and leaves below.
+const FLOWER_FOOTPRINT := Rect2(-38,-42,76,99)
+
 var supply_rank := 0
 var drawing_resin_id := -1
 var _beat_shown := false
@@ -18,39 +24,70 @@ func configure(area: String,level: int,seed_value: int = 1) -> void:
 	drawing_resin_id = -1
 	_beat_shown = false
 	layout = RegionalLayout.build(region,false)
-	var rng := RandomNumberGenerator.new()
-	rng.seed = trip_seed*713+41
-	var placed: Array[Vector2] = []
+	var original := _seeded_flower_sites(layout,trip_seed)
 	for i in flowers.size():
+		flowers[i].p = original[i]*RegionalLayout.GROUND_SCALE
+		flowers[i].enabled = true
+	p *= RegionalLayout.GROUND_SCALE
+	for item in materials:
+		item.enabled = true
+		item.anchor *= RegionalLayout.GROUND_SCALE
+		item.p = item.anchor
+	layout = RegionalLayout.expand(layout)
+	if region == "pond": _clear_jar_flowers(flowers,layout)
+	supply_rank = 0
+	set_supply_rank(0)
+
+# Reproduce the original seeded layout before moving only sites that cover the painted pot.
+static func _seeded_flower_sites(coast: Dictionary,seed_value: int) -> Array[Vector2]:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value*713+41
+	var placed: Array[Vector2] = []
+	for i in Layout.CLUSTER_X.size()*3:
 		var cluster: int = i/3
 		var x: float = Layout.CLUSTER_X[cluster]
-		var edge_index := 0 if x <= layout.nodes[1].p.x else 1 if x <= layout.nodes[2].p.x else 2
-		var a: Vector2 = layout.nodes[edge_index].p
-		var b: Vector2 = layout.nodes[edge_index+1].p
+		var edge_index := 0 if x <= coast.nodes[1].p.x else 1 if x <= coast.nodes[2].p.x else 2
+		var a: Vector2 = coast.nodes[edge_index].p
+		var b: Vector2 = coast.nodes[edge_index+1].p
 		var center := a.lerp(b,(x-a.x)/(b.x-a.x))
 		var best := center
 		var best_gap := -1.0
 		for attempt in 80:
 			var candidate := center+Vector2(rng.randf_range(-76,76),rng.randf_range(-175,175))
-			if not Layout.walkable(layout,candidate,62): continue
+			if not Layout.walkable(coast,candidate,62): continue
 			var gap := INF
 			for other in placed: gap = minf(gap,candidate.distance_to(other))
 			if gap > best_gap:
 				best = candidate
 				best_gap = gap
 			if gap >= 112: break
-		flowers[i].p = best
-		flowers[i].enabled = true
 		placed.append(best)
-	p *= RegionalLayout.GROUND_SCALE
-	for flower in flowers: flower.p *= RegionalLayout.GROUND_SCALE
-	for item in materials:
-		item.enabled = true
-		item.anchor *= RegionalLayout.GROUND_SCALE
-		item.p = item.anchor
-	layout = RegionalLayout.expand(layout)
-	supply_rank = 0
-	set_supply_rank(0)
+	return placed
+
+static func _covers_jar(at: Vector2) -> bool:
+	return JAR_RECT.intersects(Rect2(at+FLOWER_FOOTPRINT.position,FLOWER_FOOTPRINT.size),true)
+
+static func _clear_jar_flowers(sites: Array,coast: Dictionary) -> void:
+	for flower in sites:
+		if _covers_jar(flower.p):
+			flower.p = _ground_near_jar(flower,sites,coast)
+
+static func _ground_near_jar(flower: Dictionary,sites: Array,coast: Dictionary) -> Vector2:
+	var best: Vector2 = coast.nodes[1].p
+	var best_gap := -1.0
+	for ring in range(1,11):
+		for spoke in 16:
+			var offset := Vector2.DOWN.rotated(spoke*TAU/16.0)*(ring*32.0)
+			var at: Vector2 = flower.p + offset
+			if _covers_jar(at) or at.distance_to(coast.nodes[0].p)<150.0: continue
+			var gap := INF
+			for other in sites:
+				if other != flower: gap = minf(gap,at.distance_squared_to(other.p))
+			if gap <= best_gap or not Layout.walkable(coast,at,62): continue
+			best = at
+			best_gap = gap
+			if gap >= 112.0*112.0: return at
+	return best
 
 static func active_flower(id: int,rank: int) -> bool:
 	return rank == 2 or id in INITIAL_SITES or (rank == 1 and id in MIDDLE_EXTRA)
@@ -246,7 +283,7 @@ func _harvest(dt: float) -> void:
 func snapshot() -> Dictionary:
 	var result := super.snapshot()
 	result.population_version = 1
-	result.space_version = 3
+	result.space_version = 4
 	result.supply_rank = supply_rank
 	return result
 
@@ -255,7 +292,8 @@ func restore(data: Variant) -> bool:
 	if not data.get("flowers") is Array or not data.get("materials") is Array: return false
 	for i in data.flowers.size():
 		var f = data.flowers[i]
-		if not f is Dictionary or not f.get("enabled") is bool or f.enabled != active_flower(i,int(data.supply_rank)): return false
+		if not f is Dictionary or not f.get("p") is Vector2: return false
+		if not f.get("enabled") is bool or f.enabled != active_flower(i,int(data.supply_rank)): return false
 		if f.has("nectar_wait") and (not _number(f.nectar_wait) or f.nectar_wait > NECTAR_SECONDS[int(data.supply_rank)]): return false
 		if not f.enabled and (f.get("phase") != "empty" or f.get("phase_time") != 0 or f.get("stock") != 0): return false
 	for i in data.materials.size():
@@ -267,7 +305,7 @@ func restore(data: Variant) -> bool:
 			if not item.get("hits") is int or not item.has("band") or item.hits < shell_strength(item): return false
 		if not item.enabled and (item.get("phase") != "empty" or item.get("phase_time") != 0 or item.get("taken") != false): return false
 	var version = data.get("space_version",1)
-	if version not in [1,2,3] or data.get("region") not in ["pond","violet"]: return false
+	if version not in [1,2,3,4] or data.get("region") not in ["pond","violet"]: return false
 	if not data.get("p") is Vector2 or not data.p.is_finite(): return false
 	var previous_position: Vector2 = data.p
 	if version == 1:
@@ -297,6 +335,15 @@ func restore(data: Variant) -> bool:
 			data = data.duplicate()
 			var entry: Vector2 = next_coast.nodes[0].p
 			data.p = Layout.move(next_coast,entry,data.p-entry,BODY)
+	if version < 4 and data.region == "pond" and data.flowers.any(func(f): return _covers_jar(f.p)):
+		if not data.get("trip_seed") is int or data.trip_seed < 1: return false
+		var coast := RegionalLayout.build("pond",false)
+		var original := _seeded_flower_sites(coast,data.trip_seed)
+		if data.flowers.size() != original.size(): return false
+		for i in original.size():
+			if data.flowers[i].p != original[i]*RegionalLayout.GROUND_SCALE: return false
+		data = data.duplicate(true)
+		_clear_jar_flowers(data.flowers,RegionalLayout.expand(coast))
 	if not super.restore(data): return false
 	supply_rank = int(data.supply_rank)
 	return true

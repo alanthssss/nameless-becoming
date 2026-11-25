@@ -118,17 +118,55 @@
       "post_processing": "None; byte-identical PNG. Runtime AtlasTexture crop(190,165,810,890), uniform icon scale and mipmaps.",
       "usage": "Shared resin symbol in HUD, growth prices, carried monster material, pickups and resource motes; old liquid resin icon no longer used.",
       "review_status": "Native preview pending; paired with explicit树脂 label inHUD"
+    },
+    {
+      "id": "nectar-journal-actions",
+      "version": 1,
+      "date": "2026-11-25",
+      "issue": 331,
+      "file": "nectar-journal-actions.png",
+      "sha256": "d3cead0f9ee1db42956c5d99ae2170d2102b1a0d2c222219521daa9e64e8d98a",
+      "source": "OpenAI built-in ImageGen; pre-generated artwork for Honey, one transparent atlas.",
+      "generated_source": "/Users/alanthssss/.codex/generated_images/01a21186-eac0-7630-af87-cc216287cf03/exec-d2024c6a-c9fa-481c-92be-06ca0fe99353.png",
+      "generated_sha256": "838b7d38c708b877bfb4cdacd0397d0c6ae6003301ea187c8cae045d5361ef78",
+      "brief": "Botanical gouache marginalia on transparent parchment space. Show each action through its effect. Bellflower and honey bead, ribbon of scent and pollen, gust scattering a seed, sunlit route across hills; leaf cup, paired bells, violet bloom, flourishing spray; fern arch, ringing coin, sealed honey jar. Warm light from upper left, colored silhouettes and open gutters.",
+      "layout": [
+        [
+          "gather",
+          "reach",
+          "beat",
+          "wings"
+        ],
+        [
+          "bag",
+          "twin",
+          "meadow",
+          "supply"
+        ],
+        [
+          "shortcut",
+          "market",
+          "reserve",
+          null
+        ]
+      ],
+      "post_processing": "Source RGBA 1448×1086. Row boundaries y=0,360,717,1086. Column cuts by row: [0,342,724,1075,1448], [0,362,716,1082,1448], [0,380,715,1082,1448]. Trim each brushmark to alpha>16 bounds plus 2 px, retain original alpha, fit within 148×148 using Lanczos, center on its 160×160 transparent cell. Empty last cell.",
+      "pixel_size": [
+        640,
+        480
+      ],
+      "usage": "Growth journal nodes and detail comparison. One-shot focus gestures on reach, beat and wings; reduced motion shows the still. HUD inventory retains painted resource icons."
     }
   ],
   "reused_assets": [
     {
       "file": "revision-atlas.png",
-      "usage": "growth icons reuse exact painted bee, flower and leaf atlas regions; small native pencil annotations",
+      "usage": "World flowers and whole HUD character portrait. Earlier growth node crops are superseded by nectar-journal-actions.",
       "provenance": "existing revision atlas records unchanged"
     },
     {
       "file": "nectar-honey-jar.png",
-      "usage": "growth capacity, sale and reserve icons reuse same painted jar",
+      "usage": "HUD inventory, sale feedback and world reserves. Journal capacity and reserve use nectar-journal-actions.",
       "provenance": "nectar-demo-provenance.json"
     },
     {
