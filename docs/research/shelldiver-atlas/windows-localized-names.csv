@@ -1,0 +1,242 @@
+atlas_id,windows_object,localization_key,verified_english_panel,chinese_name_with_stage
+R01C15,o_skill_flask_final,o_skill_flask_final,???,???
+R02C14,o_skill_alchemy_station_speed_02,o_skill_alchemy_station_speed,Alchemy Speed II,炼金速度 II
+R02C16,o_skill_alchemy_station_dc_02,o_skill_alchemy_station_dc,Extra Vial II,额外药瓶 II
+R03C14,o_skill_alchemy_station_speed_01,o_skill_alchemy_station_speed,Alchemy Speed I,炼金速度 I
+R03C16,o_skill_alchemy_station_dc_01,o_skill_alchemy_station_dc,Extra Vial I,额外药瓶 I
+R04C13,o_skill_transmutator_golden,o_skill_transmutator_golden,Golden Transmutation,黄金转化
+R04C15,o_skill_alchemy_station,o_skill_alchemy_station,Alchemy Station,炼金装置
+R04C17,o_skill_transmutator_speed_03,o_skill_transmutator_speed,Transmuter Speed III,转化速度 III
+R05C13,o_skill_transmutator_auto_output,o_skill_transmutator_auto_output,Transmuter Automation,转化自动输出
+R05C14,o_skill_transmutator_slots_02,o_skill_transmutator_slots,Transmuter Slots II,转化栏位 II
+R05C16,o_skill_transmutator_speed_02,o_skill_transmutator_speed,Transmuter Speed II,转化速度 II
+R05C17,o_skill_store_transmutate,o_skill_store_transmutate,Transmutation Discount,售卖转化
+R05C18,o_skill_store_speed_10,o_skill_store_speed,Store Speed X,商店速度 X
+R06C12,o_skill_faster_output_10,o_skill_faster_output,Output Speed X,输出速度 X
+R06C14,o_skill_transmutator_slots_01,o_skill_transmutator_slots,Transmuter Slots I,转化栏位 I
+R06C15,o_skill_jellyfish_transmutator,o_skill_jellyfish_transmutator,Jellyfish Transmuter,水母转化器
+R06C16,o_skill_transmutator_speed_01,o_skill_transmutator_speed,Transmuter Speed I,转化速度 I
+R06C17,o_skill_transmutator_sell,o_skill_transmutator_sell,Store Transmutation,转化售卖
+R06C18,o_skill_store_speed_08,o_skill_store_speed,Store Speed VIII,商店速度 VIII
+R07C09,o_skill_friendly_bubble_size_02,o_skill_friendly_bubble_size,Puffle Size II,泡泡伙伴体型 II
+R07C13,o_skill_faster_output_01,o_skill_faster_output,Output Speed I,输出速度 I
+R07C14,o_skill_store_extra_sell_chance,o_skill_store_extra_sell_chance,Store Upsell,商店加售
+R07C16,o_skill_store_speed_05,o_skill_store_speed,Store Speed V,商店速度 V
+R07C17,o_skill_store_speed_06,o_skill_store_speed,Store Speed VI,商店速度 VI
+R07C18,o_skill_store_speed_07,o_skill_store_speed,Store Speed VII,商店速度 VII
+R07C19,o_skill_agile_hands_10,o_skill_agile_hands,Agile Hands X,妙手生花 X
+R07C23,o_skill_robot_firerate_02,o_skill_robot_firerate,Robot Attack Speed II,机器人攻击速度 II
+R08C01,o_skill_scrap_final,o_skill_scrap_final,???,???
+R08C04,o_skill_bubble_firerate_03,o_skill_bubble_firerate,Bubble Attack Speed III,泡泡攻速 III
+R08C05,o_skill_bubble_damage_oxygen,o_skill_bubble_damage_oxygen,Bubble O2'd,泡泡氧能
+R08C06,o_skill_chain_bubble_number,o_skill_chain_bubble_number,Multibubble Number,多重泡泡数量
+R08C08,o_skill_friendly_bubble_size_01,o_skill_friendly_bubble_size,Puffle Size I,泡泡伙伴体型 I
+R08C10,o_skill_friendly_bubble_chance_02,o_skill_friendly_bubble_chance,Puffle II,泡泡伙伴 II
+R08C12,o_skill_slot_capacity_05,o_skill_slot_capacity,Shellslot Capacity V,贝壳栏位容量 V
+R08C13,o_skill_player_slots_05,o_skill_player_slots,Shellpack Slots V,背包栏位 V
+R08C14,o_skill_storage_auto_output,o_skill_storage_auto_output,Storage Automation,储藏自动输出
+R08C15,o_skill_cellphone,o_skill_cellphone,Shellphone,一键直达
+R08C16,o_skill_store_speed_03,o_skill_store_speed,Store Speed III,商店速度 III
+R08C17,o_skill_store_speed_04,o_skill_store_speed,Store Speed IV,商店速度 IV
+R08C18,o_skill_agile_hands_01,o_skill_agile_hands,Agile Hands I,妙手生花 I
+R08C19,o_skill_store_slots_04,o_skill_store_slots,Store Slots IV,商店栏位 IV
+R08C20,o_skill_plasma_overheat_damage_02,o_skill_plasma_overheat_damage,Plasma Overheat II,等离子过热 II
+R08C21,o_skill_plasma_lightning_damage_02,o_skill_plasma_lightning_damage,Plasma Lightning Damage II,等离子闪电伤害 II
+R08C22,o_skill_plasma_lightning_range,o_skill_plasma_lightning_range,Plasma Lightning Range,等离子闪电范围
+R08C24,o_skill_robot_firerate_01,o_skill_robot_firerate,Robot Attack Speed I,机器人攻击速度 I
+R08C25,o_skill_robot_damage_01,o_skill_robot_damage,Robot Damage I,机器人伤害 I
+R08C26,o_skill_plasma_damage_oxygen,o_skill_plasma_damage_oxygen,Plasma O2'd,等离子氧能
+R08C27,o_skill_plasma_firerate_03,o_skill_plasma_firerate,Plasma Attack Speed III,等离子攻击速度 III
+R08C29,o_skill_mushroom_final,o_skill_mushroom_final,???,???
+R09C01,o_skill_bubble_critical_damage_03,o_skill_bubble_critical_damage,Bubble Critical Damage III,泡泡暴击伤害 III
+R09C02,o_skill_bubble_damage_10,o_skill_bubble_damage,Bubble Damage X,泡泡伤害 X
+R09C04,o_skill_bubble_damage_08,o_skill_bubble_damage,Bubble Damage VIII,泡泡伤害 VIII
+R09C05,o_skill_chain_bubble,o_skill_chain_bubble,Multibubble Chance,多重泡泡几率
+R09C06,o_skill_bubble_speed_02,o_skill_bubble_speed,Bubble Speed II,泡泡速度 II
+R09C07,o_skill_bubble_firerate_02,o_skill_bubble_firerate,Bubble Attack Speed II,泡泡攻速 II
+R09C11,o_skill_friendly_bubble_damage_10,o_skill_friendly_bubble_damage,Puffle Damage X,泡泡伙伴伤害 X
+R09C12,o_skill_slot_capacity_04,o_skill_slot_capacity,Shellslot Capacity IV,贝壳栏位容量 IV
+R09C13,o_skill_player_slots_04,o_skill_player_slots,Shellpack Slots IV,背包栏位 IV
+R09C14,o_skill_storage_slots_02,o_skill_storage_slots,Storage Slots II,储藏栏位 II
+R09C16,o_skill_expedition_demand_01,o_skill_expedition_demand,Expedition Demand I,探险供需 I
+R09C17,o_skill_store_speed_02,o_skill_store_speed,Store Speed II,商店速度 II
+R09C18,o_skill_store_slots_03,o_skill_store_slots,Store Slots III,商店栏位 III
+R09C19,o_skill_global_chest,o_skill_global_chest,Bank Safe,银行保险箱
+R09C21,o_skill_plasma_lightning_damage_01,o_skill_plasma_lightning_damage,Plasma Lightning Damage I,等离子闪电伤害 I
+R09C22,o_skill_plasma_lightning_chance_02,o_skill_plasma_lightning_chance,Plasma Lightning Chance II,等离子闪电几率 II
+R09C23,o_skill_robot_lightning_01,o_skill_robot_lightning,Robot Overcharge I,机器人超载 I
+R09C24,o_skill_plasma_range_03,o_skill_plasma_range,Plasma Range III,等离子射程 III
+R09C25,o_skill_robot_number_01,o_skill_robot_number,Robot Ally I,机器人同伴 I
+R09C26,o_skill_plasma_damage_08,o_skill_plasma_damage,Plasma Damage VIII,等离子伤害 VIII
+R09C28,o_skill_plasma_damage_10,o_skill_plasma_damage,Plasma Damage X,等离子伤害 X
+R10C02,o_skill_bubble_critical_damage_02,o_skill_bubble_critical_damage,Bubble Critical Damage II,泡泡暴击伤害 II
+R10C03,o_skill_bubble_critical_damage_01,o_skill_bubble_critical_damage,Bubble Critical Damage I,泡泡暴击伤害 I
+R10C04,o_skill_bubble_size_10,o_skill_bubble_size,Bubble Size X,泡泡大小 X
+R10C05,o_skill_bubble_damage_07,o_skill_bubble_damage,Bubble Damage VII,泡泡伤害 VII
+R10C07,o_skill_bubble_damage_06,o_skill_bubble_damage,Bubble Damage VI,泡泡伤害 VI
+R10C08,o_skill_friendly_bubble_chance_01,o_skill_friendly_bubble_chance,Puffle I,泡泡伙伴 I
+R10C09,o_skill_friendly_bubble_damage_01,o_skill_friendly_bubble_damage,Puffle Damage I,泡泡伙伴伤害 I
+R10C10,o_skill_friendly_bubble_damage_02,o_skill_friendly_bubble_damage,Puffle Damage II,泡泡伙伴伤害 II
+R10C11,o_skill_bubble_doppel_02,o_skill_bubble_doppel,Doppel Bubble II,双生泡泡 II
+R10C12,o_skill_slot_capacity_03,o_skill_slot_capacity,Shellslot Capacity III,贝壳栏位容量 III
+R10C13,o_skill_player_slots_03,o_skill_player_slots,Shellpack Slots III,背包栏位 III
+R10C14,o_skill_storage_slots_01,o_skill_storage_slots,Storage Slots I,储藏栏位 I
+R10C15,o_skill_submarine_storage,o_skill_submarine_storage,Submarine Storage,潜艇储藏室
+R10C16,o_skill_store_speed_01,o_skill_store_speed,Store Speed I,商店速度 I
+R10C17,o_skill_store_slots_02,o_skill_store_slots,Store Slots II,商店栏位 II
+R10C18,o_skill_chest_speed_02,o_skill_chest_speed,Chest Speed II,宝箱速度 II
+R10C19,o_skill_plasma_overheat_damage_01,o_skill_plasma_overheat_damage,Plasma Overheat I,等离子过热 I
+R10C20,o_skill_plasma_overheat_speed,o_skill_plasma_overheat_speed,Hot Overheat,极速过热
+R10C21,o_skill_plasma_firerate_02,o_skill_plasma_firerate,Plasma Attack Speed II,等离子攻击速度 II
+R10C22,o_skill_plasma_lightning_chance_01,o_skill_plasma_lightning_chance,Plasma Lightning Chance I,等离子闪电几率 I
+R10C23,o_skill_plasma_damage_06,o_skill_plasma_damage,Plasma Damage VI,等离子伤害 VI
+R10C25,o_skill_plasma_damage_07,o_skill_plasma_damage,Plasma Damage VII,等离子伤害 VII
+R10C26,o_skill_plasma_ultra_charge,o_skill_plasma_ultra_charge,Ultra Plasma Charge,等离子极速充能
+R10C27,o_skill_plasma_range_04,o_skill_plasma_range,Plasma Range IV,等离子射程 IV
+R11C02,o_skill_bubble_critical_chance_10,o_skill_bubble_critical_chance,Bubble Critical Chance X,泡泡暴击率 X
+R11C03,o_skill_bubble_critical_chance_02,o_skill_bubble_critical_chance,Bubble Critical Chance II,泡泡暴击率 II
+R11C04,o_skill_bubble_critical_chance_01,o_skill_bubble_critical_chance,Bubble Critical Chance I,泡泡暴击率 I
+R11C05,o_skill_bubble_size_02,o_skill_bubble_size,Bubble Size II,泡泡大小 II
+R11C06,o_skill_bubble_smite_threshold,o_skill_bubble_smite_threshold,Extra Smite,额外惩击阈值
+R11C07,o_skill_bubble_smite,o_skill_bubble_smite,Bubble Smite,落井下石
+R11C08,o_skill_bubble_damage_05,o_skill_bubble_damage,Bubble Damage V,泡泡伤害 V
+R11C10,o_skill_bubble_damage_04,o_skill_bubble_damage,Bubble Damage IV,泡泡伤害 IV
+R11C12,o_skill_bubble_firerate_01,o_skill_bubble_firerate,Bubble Attack Speed I,泡泡攻速 I
+R11C13,o_skill_slot_capacity_02,o_skill_slot_capacity,Shellslot Capacity II,贝壳栏位容量 II
+R11C14,o_skill_player_slots_02,o_skill_player_slots,Shellpack Slots II,背包栏位 II
+R11C16,o_skill_store_slots_01,o_skill_store_slots,Store Slots I,商店栏位 I
+R11C17,o_skill_chest_speed_01,o_skill_chest_speed,Chest Speed I,宝箱速度 I
+R11C18,o_skill_plasma_firerate_01,o_skill_plasma_firerate,Plasma Attack Speed I,等离子攻击速度 I
+R11C19,o_skill_plasma_range_02,o_skill_plasma_range,Plasma Range II,等离子射程 II
+R11C20,o_skill_plasma_damage_04,o_skill_plasma_damage,Plasma Damage IV,等离子伤害 IV
+R11C22,o_skill_plasma_damage_05,o_skill_plasma_damage,Plasma Damage V,等离子伤害 V
+R11C23,o_skill_plasma_charge_02,o_skill_plasma_charge,Plasma Charge II,等离子充能 II
+R11C24,o_skill_plasma_explosion_chance_02,o_skill_plasma_explosion_chance,Plasma Overflow II,等离子溢出 II
+R11C26,o_skill_double_plasma,o_skill_double_plasma,Double Laser,双重激光
+R12C05,o_skill_bubble_execute_02,o_skill_bubble_execute,Hunter Bubbles II,猎手泡泡 II
+R12C07,o_skill_bubble_penetration_01,o_skill_bubble_penetration,Bubble Penetration I,泡泡穿透力 I
+R12C08,o_skill_bubble_first_strike_02,o_skill_bubble_first_strike,Bubble Strike II,泡泡首击 II
+R12C10,o_skill_bubble_first_strike_01,o_skill_bubble_first_strike,Bubble Strike I,泡泡首击 I
+R12C11,o_skill_bubble_damage_03,o_skill_bubble_damage,Bubble Damage III,泡泡伤害 III
+R12C13,o_skill_bubble_damage_02,o_skill_bubble_damage,Bubble Damage II,泡泡伤害 II
+R12C14,o_skill_slot_capacity_01,o_skill_slot_capacity,Shellslot Capacity I,贝壳栏位容量 I
+R12C15,o_skill_player_slots_01,o_skill_player_slots,Shellpack Slots I,背包栏位 I
+R12C16,o_skill_plasma_charge_01,o_skill_plasma_charge,Plasma Charge I,等离子充能 I
+R12C17,o_skill_plasma_damage_02,o_skill_plasma_damage,Plasma Damage II,等离子伤害 II
+R12C19,o_skill_plasma_damage_03,o_skill_plasma_damage,Plasma Damage III,等离子伤害 III
+R12C21,o_skill_plasma_explosion_chance_01,o_skill_plasma_explosion_chance,Plasma Overflow I,等离子溢出 I
+R12C23,o_skill_plasma_explosion_damage_01,o_skill_plasma_explosion_damage,Plasma Overflow Damage I,等离子溢出伤害 I
+R12C25,o_skill_plasma_explosion_damage_02,o_skill_plasma_explosion_damage,Plasma Overflow Damage II,等离子溢出伤害 II
+R13C06,o_skill_bubble_execute_01,o_skill_bubble_execute,Hunter Bubbles I,猎手泡泡 I
+R13C07,o_skill_bubble_penetration_02,o_skill_bubble_penetration,Bubble Penetration II,泡泡穿透力 II
+R13C09,o_skill_starfish_firerate_01,o_skill_starfish_firerate,Starfish Attack Speed I,海星攻击速度 I
+R13C11,o_skill_starfish_number_01,o_skill_starfish_number,Starfish Friend I,海星伙伴 I
+R13C12,o_skill_bubble_duration_01,o_skill_bubble_duration,Bubble Duration I,泡泡持续时间 I
+R13C13,o_skill_bubble_size_01,o_skill_bubble_size,Bubble Size I,泡泡大小 I
+R13C14,o_skill_bubble_damage_01,o_skill_bubble_damage,Bubble Damage I,泡泡伤害 I
+R13C15,o_skill_hammock,o_skill_hammock,Hammock Repair,吊床修理
+R13C16,o_skill_plasma_damage_01,o_skill_plasma_damage,Plasma Damage I,等离子伤害 I
+R13C17,o_skill_plasma_chain_number_01,o_skill_plasma_chain_number,Plasma Chain I,等离子链 I
+R13C19,o_skill_plasma_chain_number_02,o_skill_plasma_chain_number,Plasma Chain II,等离子链 II
+R13C22,o_skill_plasma_chain_number_03,o_skill_plasma_chain_number,Plasma Chain III,等离子链 III
+R13C24,o_skill_plasma_explosion_size,o_skill_plasma_explosion_size,Plasma Overflow Reach,等离子溢出范围
+R14C08,o_skill_starfish_firerate_02,o_skill_starfish_firerate,Starfish Attack Speed II,海星攻击速度 II
+R14C11,o_skill_starfish_damage_01,o_skill_starfish_damage,Starfish Damage I,海星伤害 I
+R14C12,o_skill_bubble_speed_01,o_skill_bubble_speed,Bubble Speed I,泡泡速度 I
+R14C13,o_skill_bubble_doppel_01,o_skill_bubble_doppel,Doppel Bubble I,双生泡泡 I
+R14C15,o_skill_submarine,o_skill_submarine,Submarine,潜艇
+R14C16,o_skill_plasma_tool,o_skill_plasma_tool,Plasma Gun,等离子枪
+R14C17,o_skill_plasma_range_01,o_skill_plasma_range,Plasma Range I,等离子射程 I
+R14C18,o_skill_plasma_chain_damage_01,o_skill_plasma_chain_damage,Plasma Chain Damage I,等离子链伤害 I
+R14C21,o_skill_plasma_chain_damage_02,o_skill_plasma_chain_damage,Plasma Chain Damage II,等离子链伤害 II
+R15C09,o_skill_starfish_number_02,o_skill_starfish_number,Starfish Friend II,海星伙伴 II
+R15C10,o_skill_starfish_damage_02,o_skill_starfish_damage,Starfish Damage II,海星伤害 II
+R15C11,o_skill_biodiversity_shallows,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性
+R15C14,o_skill_jellyfish_value_01,o_skill_jellyfish_value,Jellyfish Value I,水母价值 I
+R15C15,o_skill_jellyfish_insurance_01,o_skill_jellyfish_insurance,Shell Insurance I,未雨绸缪 I
+R15C16,o_skill_deep_breath,o_skill_deep_breath,Deep Breath,深呼吸
+R15C17,o_skill_plasma_tank_01,o_skill_plasma_tank,Plasma Tank I,等离子储罐 I
+R15C18,o_skill_plasma_reload_01,o_skill_plasma_reload,Plasma Gun Reload I,等离子枪装填 I
+R15C20,o_skill_plasma_reload_02,o_skill_plasma_reload,Plasma Gun Reload II,等离子枪装填 II
+R16C10,o_skill_biovalue_silver,o_skill_biovalue_silver,Biovalue Increase I,生物价值提升 I
+R16C13,o_skill_jellyfish_value_rare_01,o_skill_jellyfish_value_rare,Jellyfish Merchant I,水母商人 I
+R16C14,o_skill_movement_speed_01,o_skill_movement_speed,Light Feet I,凌波微步 I
+R16C15,o_skill_scrap_value,o_skill_scrap_value,Scrap Gatherer,垃圾收集者
+R16C16,o_skill_bubble_tank_01,o_skill_bubble_tank,Bubble Tank I,泡泡储罐 I
+R16C17,o_skill_oxygen_tank_01,o_skill_oxygen_tank,Oxygen Tank I,氧气罐 I
+R16C18,o_skill_plasma_capacity_01,o_skill_plasma_capacity,Plasma Capacity I,等离子容量 I
+R16C20,o_skill_plasma_tank_02,o_skill_plasma_tank,Plasma Tank II,等离子储罐 II
+R17C09,o_skill_biodiversity_glacial,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性
+R17C12,o_skill_jellyfish_value_02,o_skill_jellyfish_value,Jellyfish Value II,水母价值 II
+R17C13,o_skill_jellyfish_insurance_02,o_skill_jellyfish_insurance,Shell Insurance II,未雨绸缪 II
+R17C14,o_skill_scrap_value_rare,o_skill_scrap_value_rare,Scrap Master,垃圾大师
+R17C16,o_skill_bubble_reload_01,o_skill_bubble_reload,Bubble Gun Reload I,泡泡枪装填 I
+R17C17,o_skill_bubble_capacity_01,o_skill_bubble_capacity,Bubble Capacity I,泡泡容量 I
+R17C18,o_skill_oxygen_tank_02,o_skill_oxygen_tank,Oxygen Tank II,氧气罐 II
+R17C19,o_skill_submarine_recover,o_skill_submarine_recover,Submarine Bubble I,潜艇氧气泡 I
+R17C21,o_skill_plasma_capacity_02,o_skill_plasma_capacity,Plasma Capacity II,等离子容量 II
+R18C08,o_skill_biovalue_gold,o_skill_biovalue_gold,Biovalue Increase II,生物价值提升 II
+R18C11,o_skill_jellyfish_value_rare_02,o_skill_jellyfish_value_rare,Jellyfish Merchant II,水母商人 II
+R18C12,o_skill_movement_speed_02,o_skill_movement_speed,Light Feet II,凌波微步 II
+R18C13,o_skill_crystal_value,o_skill_crystal_value,Crystal Gatherer,水晶收集者
+R18C18,o_skill_submarine_recover_all,o_skill_submarine_recover_all,Submarine Bubble II,潜艇氧气泡 II
+R18C19,o_skill_oxygen_tank_03,o_skill_oxygen_tank,Oxygen Tank III,氧气罐 III
+R18C20,o_skill_oxygen_regen_amount_01,o_skill_oxygen_regen_amount,Oxygen Regen Amount I,氧气恢复量 I
+R18C22,o_skill_plasma_tank_03,o_skill_plasma_tank,Plasma Tank III,等离子储罐 III
+R18C23,o_skill_plasma_ultra_reload,o_skill_plasma_ultra_reload,Ultra Plasma Gun Reload,等离子枪极速装填
+R19C07,o_skill_biodiversity_swamp,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性
+R19C10,o_skill_jellyfish_value_03,o_skill_jellyfish_value,Jellyfish Value III,水母价值 III
+R19C11,o_skill_entity_arrival_01,o_skill_entity_arrival,Faster Waters I,急流海域 I
+R19C12,o_skill_crystal_value_rare,o_skill_crystal_value_rare,Crystal Master,水晶大师
+R19C14,o_skill_pickup_range_01,o_skill_pickup_range,Collectible Magnet I,触手可及 I
+R19C15,o_skill_scrap_increase,o_skill_scrap_increase,Scrap Increase,垃圾增生
+R19C16,o_skill_bubble_reload_02,o_skill_bubble_reload,Bubble Gun Reload II,泡泡枪装填 II
+R19C17,o_skill_bubble_tank_02,o_skill_bubble_tank,Bubble Tank II,泡泡储罐 II
+R19C19,o_skill_oxygen_catch_01,o_skill_oxygen_catch,Oxygen Catch I,氧气补给 I
+R19C20,o_skill_oxygen_tank_04,o_skill_oxygen_tank,Oxygen Tank IV,氧气罐 IV
+R19C21,o_skill_oxygen_regen_speed_01,o_skill_oxygen_regen_speed,Oxygen Regen Speed I,氧气恢复速度 I
+R20C05,o_skill_shock_resistance_10,o_skill_shock_resistance,Shock Resistance X,抗电击 X
+R20C06,o_skill_biovalue_rainbow,o_skill_biovalue_rainbow,Biovalue Increase X,生物价值提升 X
+R20C07,o_skill_shock_resistance_01,o_skill_shock_resistance,Shock Resistance I,抗电击 I
+R20C09,o_skill_jellyfish_value_rare_03,o_skill_jellyfish_value_rare,Jellyfish Merchant III,水母商人 III
+R20C10,o_skill_jellyfish_insurance_03,o_skill_jellyfish_insurance,Shell Insurance III,未雨绸缪 III
+R20C11,o_skill_mushroom_value,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者
+R20C18,o_skill_bubble_capacity_02,o_skill_bubble_capacity,Bubble Capacity II,泡泡容量 II
+R20C20,o_skill_oxygen_catch_02,o_skill_oxygen_catch,Oxygen Catch II,氧气补给 II
+R20C21,o_skill_oxygen_tank_05,o_skill_oxygen_tank,Oxygen Tank V,氧气罐 V
+R20C22,o_skill_oxygen_tank_extra_01,o_skill_oxygen_tank_extra,Oxygen Effectiveness I,氧气效率 I
+R20C24,o_skill_plasma_tank_10,o_skill_plasma_tank,Plasma Tank X,等离子储罐 X
+R21C05,o_skill_biodiversity_magma,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性
+R21C06,o_skill_shock_frequency,o_skill_shock_frequency,Calmer Waters,平静海域
+R21C08,o_skill_jellyfish_value_04,o_skill_jellyfish_value,Jellyfish Value IV,水母价值 IV
+R21C09,o_skill_movement_speed_10,o_skill_movement_speed,Light Feet X,凌波微步 X
+R21C10,o_skill_mushroom_value_rare,o_skill_mushroom_value_rare,Mushroom Master,蘑菇大师
+R21C12,o_skill_pickup_range_02,o_skill_pickup_range,Collectible Magnet II,触手可及 II
+R21C13,o_skill_crystal_increase,o_skill_crystal_increase,Crystal Increase,水晶增生
+R21C19,o_skill_bubble_tank_03,o_skill_bubble_tank,Bubble Tank III,泡泡储罐 III
+R21C21,o_skill_oxygen_regen_amount_02,o_skill_oxygen_regen_amount,Oxygen Regen Amount II,氧气恢复量 II
+R21C22,o_skill_oxygen_tank_06,o_skill_oxygen_tank,Oxygen Tank VI,氧气罐 VI
+R21C23,o_skill_resource_oxygen,o_skill_resource_oxygen,Resource Incentive,资源激励
+R22C06,o_skill_biovalue_amount_01,o_skill_biovalue_amount,Biovalue Multiplication I,生物价值倍增 I
+R22C07,o_skill_jellyfish_value_rare_04,o_skill_jellyfish_value_rare,Jellyfish Merchant IV,水母商人 IV
+R22C09,o_skill_obsidian_value,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者
+R22C19,o_skill_bubble_ultra_reload,o_skill_bubble_ultra_reload,Bubble Gun Ultra Reload,泡泡枪极速装填
+R22C22,o_skill_oxygen_regen_speed_02,o_skill_oxygen_regen_speed,Oxygen Regen Speed II,氧气恢复速度 II
+R22C23,o_skill_oxygen_tank_07,o_skill_oxygen_tank,Oxygen Tank VII,氧气罐 VII
+R22C24,o_skill_jellyfish_oxygen,o_skill_jellyfish_oxygen,Jellyfish Incentive,水母激励
+R23C06,o_skill_biovalue_amount_02,o_skill_biovalue_amount,Biovalue Multiplication II,生物价值倍增 II
+R23C07,o_skill_entity_spawn_10,o_skill_entity_spawn,Faster Waters X,急流海域 X
+R23C08,o_skill_obsidian_value_rare,o_skill_obsidian_value_rare,Obsidian Master,黑曜石大师
+R23C10,o_skill_pickup_range_03,o_skill_pickup_range,Collectible Magnet III,触手可及 III
+R23C11,o_skill_mushroom_increase,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生
+R23C21,o_skill_bubble_tank_10,o_skill_bubble_tank,Bubble Tank X,泡泡储罐 X
+R23C23,o_skill_oxygen_regen_amount_03,o_skill_oxygen_regen_amount,Oxygen Regen Amount III,氧气恢复量 III
+R23C24,o_skill_oxygen_tank_08,o_skill_oxygen_tank,Oxygen Tank VIII,氧气罐 VIII
+R24C06,o_skill_biovalue_amount_10,o_skill_biovalue_amount,Biovalue Multiplication X,生物价值倍增 X
+R24C23,o_skill_oxygen_tank_extra_02,o_skill_oxygen_tank_extra,Oxygen Effectiveness II,氧气效率 II
+R24C24,o_skill_oxygen_tank_10,o_skill_oxygen_tank,Oxygen Tank X,氧气罐 X
+R24C25,o_skill_oxygen_regen_speed_03,o_skill_oxygen_regen_speed,Oxygen Regen Speed III,氧气恢复速度 III
+R25C06,o_skill_obsidian_final,o_skill_obsidian_final,???,???
+R25C08,o_skill_pickup_range_10,o_skill_pickup_range,Collectible Magnet X,触手可及 X
+R25C09,o_skill_obsidian_increase,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生
+R25C24,o_skill_crystal_final,o_skill_crystal_final,???,???

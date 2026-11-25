@@ -1,0 +1,2046 @@
+{
+  "source_id": "S11",
+  "source_url": "https://www.youtube.com/watch?v=S7EaREatF4w",
+  "original_source_build": "unknown",
+  "evidence_class": "previously captured player video frames revisited 2026-11-24",
+  "scope": "以原片已归档30个有效批次中的792张连续取样图进行OCR检索并人工读图。两组广告批次排除。节点为可核实面板样本，不代表全树。分组为研究归类，不代表原图上的树枝。未把消费提示等同实际耗用，效果数值为当时面板；MAX时看到的总量往往包含其他节点。时码为约秒，附件以相对路径和SHA-256复核。",
+  "counts": {
+    "valid_frames_screened": 792,
+    "named_stage_nodes": 76,
+    "reference_frames": 115,
+    "reference_frames_outside_previous_86": 98
+  },
+  "media_root": "/Users/alanthssss/LocalGames/research/shelldiver/S11",
+  "nodes": [
+    {
+      "node": "Submarine",
+      "research_category": "出航",
+      "reading": "首次出现时免费；购买后显示 MAX，随后潜艇驶入村落港口。",
+      "frame_ids": [
+        "opening-world_016.jpg",
+        "opening-world_017.jpg",
+        "opening-world_019.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Gun",
+      "research_category": "采集工具",
+      "reading": "购买后面板显示已解锁激光工具，MAX。本帧无价格。",
+      "frame_ids": [
+        "trip3seq_016.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Damage I",
+      "research_category": "采集工具",
+      "reading": "0/10，激光伤害总加成 0%→15%，15贝。此帧仅浏览。",
+      "frame_ids": [
+        "trip3seq_001.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Damage I",
+      "research_category": "捕捉",
+      "reading": "每档伤害加成+5个百分点，1/10→4/10，对应总加成5%→20%，早期每次5贝。",
+      "frame_ids": [
+        "trip3seq_003.jpg",
+        "trip3seq_025.jpg",
+        "trip3seq_027.jpg",
+        "trip3seq_029.jpg"
+      ]
+    },
+    {
+      "node": "Jellyfish Value I",
+      "research_category": "商品",
+      "reading": "0/10，水母售价总加成0%→20%；5枚棕色齿轮材料。",
+      "frame_ids": [
+        "trip3seq_005.jpg"
+      ]
+    },
+    {
+      "node": "Deep Breath",
+      "research_category": "续航",
+      "reading": "1/3，每档氧气消耗再减10个百分点，面板10%→20%。这一帧成本数字偏暗。",
+      "frame_ids": [
+        "trip3seq_009.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Tank I",
+      "research_category": "续航",
+      "reading": "0/10时基础氧气100→110，1/10时110→120，各5贝；返回本节点仍可继续买。",
+      "frame_ids": [
+        "trip3seq_010.jpg",
+        "trip3seq_011.jpg",
+        "trip3seq_014.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Tank II",
+      "research_category": "续航",
+      "reading": "I级节点第一次投资后看到II级节点0/10；当时基础氧气110→190，+80。费用不足，未在此处买下。",
+      "frame_ids": [
+        "trip3seq_011.jpg",
+        "trip3seq_012.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Tank I",
+      "research_category": "采集工具",
+      "reading": "激光储备30→60，+30，红色贝壳价格。",
+      "frame_ids": [
+        "trip3seq_015.jpg"
+      ]
+    },
+    {
+      "node": "Shellpack Slots I",
+      "research_category": "随身/存储",
+      "reading": "随身库存1→2格，10贝，购后MAX。",
+      "frame_ids": [
+        "trip3seq_019.jpg",
+        "trip3seq_020.jpg"
+      ]
+    },
+    {
+      "node": "Store Slots I",
+      "research_category": "经营",
+      "reading": "货架1→2格，20枚棕色齿轮材料，发生购买。",
+      "frame_ids": [
+        "trip3seq_021.jpg",
+        "trip3seq_022.jpg",
+        "trip3seq_023.jpg"
+      ]
+    },
+    {
+      "node": "Shellslot Capacity I",
+      "research_category": "随身/存储",
+      "reading": "每一格的容量+2，早期面板4→6；后期查看已MAX。此项与总格数分开。",
+      "frame_ids": [
+        "trip3seq_024.jpg",
+        "ice-origin_003.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Damage III",
+      "research_category": "捕捉",
+      "reading": "0/10时伤害加成300%→380%，10红材料。后帧显示多档升级与进度变化；本项每档+80个百分点。",
+      "frame_ids": [
+        "ice-origin_001.jpg",
+        "ice-origin_002.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Charge I",
+      "research_category": "采集工具",
+      "reading": "5/5，充能速度每档+20个百分点，满档面板100%。",
+      "frame_ids": [
+        "ice-origin_005.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Attack Speed I",
+      "research_category": "采集工具",
+      "reading": "1/3时攻速10%→20%，2/3时20%→30%，两帧下一档都标3000贝。两帧间升了一级。",
+      "frame_ids": [
+        "ice-origin_006.jpg",
+        "ice-origin_008.jpg"
+      ]
+    },
+    {
+      "node": "Store Slots II",
+      "research_category": "经营",
+      "reading": "货架数+2，已MAX，当时面板总格数4。",
+      "frame_ids": [
+        "ice-origin_007.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Chain Damage I",
+      "research_category": "采集工具",
+      "reading": "3/5时连锁伤害加成120%→160%，下一档1500贝。",
+      "frame_ids": [
+        "ice-origin_009.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Overflow I",
+      "research_category": "采集工具",
+      "reading": "每档提高摧毁资源时触发溢出的概率10个百分点。1/4时10%→20%，10万贝；买后2/4时20%→30%，下一档100万贝。",
+      "frame_ids": [
+        "deep-ice_000.jpg",
+        "deep-ice_001.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Damage IV",
+      "research_category": "采集工具",
+      "reading": "0/10，激光伤害总加成1150%→1650%，10万贝。",
+      "frame_ids": [
+        "deep-ice_002.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Range II",
+      "research_category": "采集工具",
+      "reading": "激光射程加成+50个百分点，已MAX，面板总加成75%。",
+      "frame_ids": [
+        "deep-ice_003.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Strike I",
+      "research_category": "捕捉",
+      "reading": "0/4时首次气泡命中额外伤害乘数0.0→0.5，1000红材料；另段4/4 MAX，面板2.0。",
+      "frame_ids": [
+        "deep-ice_005.jpg",
+        "store-mid_034.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Damage IV",
+      "research_category": "捕捉",
+      "reading": "2/10，伤害总加成2300%→2900%，1000红材料。",
+      "frame_ids": [
+        "deep-ice_006.jpg"
+      ]
+    },
+    {
+      "node": "Doppel Bubble II",
+      "research_category": "捕捉",
+      "reading": "开枪时产生额外气泡的概率每档+20个百分点。0/3时40%→60%，1/3时60%→80%，两次报价均1250红材料。",
+      "frame_ids": [
+        "deep-ice_009.jpg",
+        "deep-ice_010.jpg",
+        "deep-ice_011.jpg"
+      ]
+    },
+    {
+      "node": "Starfish Friend I",
+      "research_category": "伙伴/供给",
+      "reading": "0/2时5000红材料，伙伴数0→1；后段2/2 MAX，2只海星，向附近水母发射气泡。",
+      "frame_ids": [
+        "deep-ice_012.jpg",
+        "convenience-tree_021.jpg"
+      ]
+    },
+    {
+      "node": "Shallows Biodiversity",
+      "research_category": "伙伴/供给",
+      "reading": "10/10 MAX；浅海水母出现率每档+25个百分点，面板总值250%。",
+      "frame_ids": [
+        "deep-ice_013.jpg"
+      ]
+    },
+    {
+      "node": "Faster Waters I",
+      "research_category": "伙伴/供给",
+      "reading": "水母和资源到来速度面板+250%，MAX。没有量出刷新间隔。",
+      "frame_ids": [
+        "deep-ice_014.jpg"
+      ]
+    },
+    {
+      "node": "Crystal Master",
+      "research_category": "伙伴/供给",
+      "reading": "晶石块晶体产量加成+500个百分点，买后面板合计1000%，同帧有购买反馈。",
+      "frame_ids": [
+        "deep-ice_015.jpg"
+      ]
+    },
+    {
+      "node": "Collectible Magnet II",
+      "research_category": "随身/存储",
+      "reading": "拾取范围加成25%→75%，1500红材料；资源不足，未买。",
+      "frame_ids": [
+        "deep-ice_016.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Tank III",
+      "research_category": "续航",
+      "reading": "第三阶段基础氧气节点，已MAX，面板基础氧气2200；右侧文字出画，未填每档增量。",
+      "frame_ids": [
+        "deep-ice_017.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Regen Speed I",
+      "research_category": "续航",
+      "reading": "氧气恢复速度每档+25个百分点，2/2后显示50%和MAX。",
+      "frame_ids": [
+        "swamp-depth-card_000.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Tank V",
+      "research_category": "续航",
+      "reading": "8/10时基础氧气12920→13760，100万贝；同段10/10时显示14600。",
+      "frame_ids": [
+        "swamp-depth-card_001.jpg",
+        "swamp-depth-card_006.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Effectiveness I",
+      "research_category": "续航",
+      "reading": "提高氧气上限百分比。0/5时0%→10%，2/5时20%→30%；3/5时30%→40%，这时下一档1600万贝。",
+      "frame_ids": [
+        "swamp-depth-card_002.jpg",
+        "swamp-depth-card_005.jpg",
+        "store-mid_027.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Tank VI",
+      "research_category": "续航",
+      "reading": "0/10，基础氧气14600→19600，5000万贝。此帧余额不足。",
+      "frame_ids": [
+        "swamp-depth-card_003.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Tank I",
+      "research_category": "捕捉",
+      "reading": "气泡储备+24，已MAX，当时面板总值108。",
+      "frame_ids": [
+        "swamp-depth-card_007.jpg"
+      ]
+    },
+    {
+      "node": "Mushroom Gatherer",
+      "research_category": "伙伴/供给",
+      "reading": "0/10，蘑菇块的蘑菇产量加成0%→35%，300万贝。",
+      "frame_ids": [
+        "swamp-depth-card_008.jpg"
+      ]
+    },
+    {
+      "node": "Jellyfish Value III",
+      "research_category": "商品",
+      "reading": "3/10时售价加成2320%→2560%，9/10时3760%→4000%，两帧下一档报价都为50浅蓝材料。期间节点升了六档。",
+      "frame_ids": [
+        "swamp-depth-card_009.jpg",
+        "swamp-depth-card_010.jpg"
+      ]
+    },
+    {
+      "node": "Store Speed V",
+      "research_category": "经营",
+      "reading": "4/4，售卖速度每档加成160000个百分点，面板总值689600%，MAX。",
+      "frame_ids": [
+        "store-mid_006.jpg"
+      ]
+    },
+    {
+      "node": "Store Speed VI",
+      "research_category": "经营",
+      "reading": "0/4时售速加成689600%→1189600%；3/4时2189600%→2689600%。两帧下一档均3000浅蓝材料。不能从面板直接推出单件出售秒数。",
+      "frame_ids": [
+        "store-mid_010.jpg",
+        "store-mid_011.jpg"
+      ]
+    },
+    {
+      "node": "Store Upsell",
+      "research_category": "经营",
+      "reading": "出售一只水母时有10%机会额外售出一只；1400浅蓝材料，购买后MAX。",
+      "frame_ids": [
+        "store-mid_007.jpg",
+        "store-mid_009.jpg"
+      ]
+    },
+    {
+      "node": "Store Slots III",
+      "research_category": "经营",
+      "reading": "货架4→6格，3000浅蓝材料；此时余额不足。",
+      "frame_ids": [
+        "store-mid_012.jpg"
+      ]
+    },
+    {
+      "node": "Hot Overheat",
+      "research_category": "采集工具",
+      "reading": "4/4，面板描述为激光枪更快过热，每档20%，合计80%，MAX。实际用途仍需操作验证。",
+      "frame_ids": [
+        "store-mid_013.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Lightning Chance I",
+      "research_category": "采集工具",
+      "reading": "1/4时闪电概率5%→10%，2.5亿贝。同一轮浏览先绿后红，另段4/4时总20%。",
+      "frame_ids": [
+        "store-mid_014.jpg",
+        "store-mid_024.jpg",
+        "late-village_005.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Overflow Damage I",
+      "research_category": "采集工具",
+      "reading": "溢出伤害加成0%→2500%，1.5亿贝；买后MAX。与触发溢出的概率分设。",
+      "frame_ids": [
+        "store-mid_015.jpg",
+        "store-mid_019.jpg",
+        "store-mid_020.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Damage V",
+      "research_category": "采集工具",
+      "reading": "10/10，每档激光伤害+1600个百分点；当时面板总加成22150%，MAX。",
+      "frame_ids": [
+        "store-mid_017.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Chain III",
+      "research_category": "采集工具",
+      "reading": "激光连锁数3→6，2.5亿贝；此处只浏览。",
+      "frame_ids": [
+        "store-mid_018.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Attack Speed II",
+      "research_category": "采集工具",
+      "reading": "0/5时攻速30%→45%，1/5时45%→60%，每次报价8000万贝；另段5/5时面板105%，MAX。",
+      "frame_ids": [
+        "store-mid_021.jpg",
+        "store-mid_025.jpg",
+        "late-village_004.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Charge II",
+      "research_category": "采集工具",
+      "reading": "5/5，每档激光充能速度+40个百分点，满档面板300%。",
+      "frame_ids": [
+        "store-mid_022.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Capacity II",
+      "research_category": "采集工具",
+      "reading": "激光弹夹容量+25，已MAX，当时面板70。",
+      "frame_ids": [
+        "store-mid_026.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Capacity II",
+      "research_category": "捕捉",
+      "reading": "气泡枪弹夹18→27发，1500浅蓝材料；买后MAX。",
+      "frame_ids": [
+        "store-mid_029.jpg",
+        "store-mid_030.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Tank II",
+      "research_category": "捕捉",
+      "reading": "气泡储备+48，已经MAX，当时面板108。储备与单次弹夹数量分设。",
+      "frame_ids": [
+        "store-mid_031.jpg"
+      ]
+    },
+    {
+      "node": "Mushroom Master",
+      "research_category": "伙伴/供给",
+      "reading": "蘑菇块产量额外+200个百分点，已MAX。",
+      "frame_ids": [
+        "store-mid_033.jpg"
+      ]
+    },
+    {
+      "node": "Shellpack Slots III",
+      "research_category": "随身/存储",
+      "reading": "随身库存格数+2，已MAX，当时面板总6格。",
+      "frame_ids": [
+        "store-mid_035.jpg"
+      ]
+    },
+    {
+      "node": "Collectible Magnet III",
+      "research_category": "随身/存储",
+      "reading": "拾取范围加成+75个百分点，已MAX，面板总值150%。",
+      "frame_ids": [
+        "convenience-tree_014.jpg"
+      ]
+    },
+    {
+      "node": "Jellyfish Merchant III",
+      "research_category": "商品",
+      "reading": "水母售价加成+2400个百分点，已MAX，面板总值6400%。",
+      "frame_ids": [
+        "convenience-tree_015.jpg"
+      ]
+    },
+    {
+      "node": "Jellyfish Value IV",
+      "research_category": "商品",
+      "reading": "0/10时售价总加成6400%→7080%，1/10时7080%→7760%；两帧报价均200紫材料。",
+      "frame_ids": [
+        "convenience-tree_016.jpg",
+        "convenience-tree_019.jpg"
+      ]
+    },
+    {
+      "node": "Biovalue Increase II",
+      "research_category": "伙伴/供给",
+      "reading": "提升金色水母出现率1.5个百分点；面板1.5%，MAX。",
+      "frame_ids": [
+        "convenience-tree_020.jpg"
+      ]
+    },
+    {
+      "node": "Puffle I",
+      "research_category": "伙伴/供给",
+      "reading": "3/3 MAX，增加 Puffle 出现概率，总12%。",
+      "frame_ids": [
+        "convenience-tree_022.jpg"
+      ]
+    },
+    {
+      "node": "Shellpack Slots V",
+      "research_category": "随身/存储",
+      "reading": "随身库存格数9→12，加3格，10万亿贝。",
+      "frame_ids": [
+        "convenience-tree_023.jpg"
+      ]
+    },
+    {
+      "node": "Storage Slots II",
+      "research_category": "随身/存储",
+      "reading": "仓储格数8→12，加4格，100亿贝。不同于随身格数。",
+      "frame_ids": [
+        "convenience-tree_024.jpg"
+      ]
+    },
+    {
+      "node": "Alchemy Station",
+      "research_category": "经营",
+      "reading": "设施将贝壳转成生命药瓶，解锁报价1万亿贝；面板红色，本段只浏览。这是设施解锁价。",
+      "frame_ids": [
+        "convenience-tree_025.jpg"
+      ]
+    },
+    {
+      "node": "Expedition Demand I",
+      "research_category": "经营",
+      "reading": "买后MAX，描述指出航期间店铺水母售速为5倍。实际离场售速未在本片段计时。",
+      "frame_ids": [
+        "convenience-tree_027.jpg"
+      ]
+    },
+    {
+      "node": "Plasma Lightning Chance II",
+      "research_category": "采集工具",
+      "reading": "闪电概率15%→45%，25万亿贝；此帧红色。",
+      "frame_ids": [
+        "convenience-tree_028.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Regen Speed II",
+      "research_category": "续航",
+      "reading": "2/2，氧气恢复速度每档+200个百分点，面板总加成450%，MAX。",
+      "frame_ids": [
+        "convenience-tree_030.jpg"
+      ]
+    },
+    {
+      "node": "Oxygen Regen Amount III",
+      "research_category": "续航",
+      "reading": "0/2，氧气恢复量1750→4250，3000亿贝；此帧红色。",
+      "frame_ids": [
+        "late-village_000.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Tank X",
+      "research_category": "捕捉",
+      "reading": "气泡储备204→816，2000紫材料，买后MAX。",
+      "frame_ids": [
+        "late-village_001.jpg",
+        "late-village_002.jpg"
+      ]
+    },
+    {
+      "node": "Store Speed VII",
+      "research_category": "经营",
+      "reading": "4/4，每档售速加成2500000个百分点，满档时面板12689600%。",
+      "frame_ids": [
+        "late-village_006.jpg"
+      ]
+    },
+    {
+      "node": "Transmuter Automation",
+      "research_category": "经营",
+      "reading": "已MAX，水母转换器自动把水母放入商店。此帧无价格/触发顺序。",
+      "frame_ids": [
+        "late-village_007.jpg"
+      ]
+    },
+    {
+      "node": "Puffle Size I",
+      "research_category": "伙伴/供给",
+      "reading": "已MAX，使 Puffle 尺寸达到125%。",
+      "frame_ids": [
+        "late-village_008.jpg"
+      ]
+    },
+    {
+      "node": "Multibubble Chance",
+      "research_category": "捕捉",
+      "reading": "0/5，造成气泡伤害时产生更多气泡的概率0%→4%，2000紫材料。触发时机不同于开枪时触发的 Doppel Bubble。",
+      "frame_ids": [
+        "late-village_009.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Size II",
+      "research_category": "捕捉",
+      "reading": "0/2时气泡大小加成50%→100%，2000紫材料；后段2/2时150%，MAX。",
+      "frame_ids": [
+        "late-village_010.jpg",
+        "magma-next_032.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Critical Chance I",
+      "research_category": "捕捉",
+      "reading": "0/10，气泡暴击概率0%→2%，2000紫材料。",
+      "frame_ids": [
+        "late-village_011.jpg"
+      ]
+    },
+    {
+      "node": "Bubble Penetration II",
+      "research_category": "捕捉",
+      "reading": "0/5时穿透加成50%→110%，1/5时110%→170%；均报价5000紫材料。",
+      "frame_ids": [
+        "late-village_013.jpg",
+        "magma-next_037.jpg"
+      ]
+    },
+    {
+      "node": "Obsidian Master",
+      "research_category": "伙伴/供给",
+      "reading": "黑曜石块产量加成40%→440%，5万亿贝；此帧处于树/村落叠化。",
+      "frame_ids": [
+        "late-village_014.jpg"
+      ]
+    },
+    {
+      "node": "Extra Smite",
+      "research_category": "捕捉",
+      "reading": "气泡 smite 触发阈值50%→75%，6500紫材料，买后MAX。单帧不能还原 smite 全机制。",
+      "frame_ids": [
+        "magma-next_033.jpg",
+        "magma-next_034.jpg"
+      ]
+    },
+    {
+      "node": "Hunter Bubbles I",
+      "research_category": "捕捉",
+      "reading": "生命≤10%的水母被直接捕获，30000紫材料，随后出现购买反馈与扣款。",
+      "frame_ids": [
+        "magma-next_035.jpg",
+        "magma-next_036.jpg"
+      ]
+    },
+    {
+      "node": "Hammock Repair",
+      "research_category": "终局",
+      "reading": "购买价10的16次方贝（10Q），购后MAX，随后以吊床休息收束。",
+      "frame_ids": [
+        "hammock-buy_008.jpg",
+        "hammock-buy_011.jpg",
+        "hammock-end_020.jpg"
+      ]
+    }
+  ],
+  "frames": {
+    "opening-world_016.jpg": {
+      "file": "round2-samples/opening-world_016.jpg",
+      "approx_second": 27,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=27s",
+      "batch": "round2-samples/opening-world.json",
+      "batch_window_seconds": [
+        4,
+        51
+      ],
+      "sha256": "df6295703feddbe19e42855f77fa20ffc53be9459eec33ef406dfe07495024ad",
+      "original_selected_id": "S11-C027"
+    },
+    "opening-world_017.jpg": {
+      "file": "round2-samples/opening-world_017.jpg",
+      "approx_second": 29,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=29s",
+      "batch": "round2-samples/opening-world.json",
+      "batch_window_seconds": [
+        4,
+        51
+      ],
+      "sha256": "57cef9efe9085172789790dc87c2c9d4475580fead06181c34234155708fb36f",
+      "original_selected_id": null
+    },
+    "opening-world_019.jpg": {
+      "file": "round2-samples/opening-world_019.jpg",
+      "approx_second": 32,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=32s",
+      "batch": "round2-samples/opening-world.json",
+      "batch_window_seconds": [
+        4,
+        51
+      ],
+      "sha256": "068bec66848fbc37be6fd75cffaf325e9479d5a4ae186d46f9a3eb4fe4c13f14",
+      "original_selected_id": null
+    },
+    "trip3seq_016.jpg": {
+      "file": "round2-samples/trip3seq_016.jpg",
+      "approx_second": 275,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=275s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "ecad74bf0444f4093dc2d3fd808cb724f5fcd8ea6c15346080782a174eea7698",
+      "original_selected_id": null
+    },
+    "trip3seq_001.jpg": {
+      "file": "round2-samples/trip3seq_001.jpg",
+      "approx_second": 262,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=262s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "d738a7970bdda2b928c2422cd67e67fd718dd53303d11c7853c13affe4c8aada",
+      "original_selected_id": null
+    },
+    "trip3seq_003.jpg": {
+      "file": "round2-samples/trip3seq_003.jpg",
+      "approx_second": 264,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=264s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "e773a64db23ba48dd5f1f1ca3861ebced1ae41ca0310a5bcdf83019fdcf2d92f",
+      "original_selected_id": null
+    },
+    "trip3seq_025.jpg": {
+      "file": "round2-samples/trip3seq_025.jpg",
+      "approx_second": 282,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=282s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "6f2a96b1ac86200101e8575cf738c7527269863ab636ac744715a48af241225c",
+      "original_selected_id": null
+    },
+    "trip3seq_027.jpg": {
+      "file": "round2-samples/trip3seq_027.jpg",
+      "approx_second": 284,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=284s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "d2b29d934a27506c5c7fe9fc254aee6cbb10f5afadf9606c7618bace7e161a37",
+      "original_selected_id": null
+    },
+    "trip3seq_029.jpg": {
+      "file": "round2-samples/trip3seq_029.jpg",
+      "approx_second": 286,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=286s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "8f17a91b2a630c24365ab03f2b1746695913bbfcc0d623dd30a997fc96c61ba9",
+      "original_selected_id": "S11-C034"
+    },
+    "trip3seq_005.jpg": {
+      "file": "round2-samples/trip3seq_005.jpg",
+      "approx_second": 265,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=265s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "ef794797b0a06dba6fcb75e9d9fe3b72c05a17f296d2d80c79c9e337efc99153",
+      "original_selected_id": null
+    },
+    "trip3seq_009.jpg": {
+      "file": "round2-samples/trip3seq_009.jpg",
+      "approx_second": 269,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=269s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "623e3b84476a1a0be9050e94a3c531be89781fb3be2bfbe5250bc16458197117",
+      "original_selected_id": null
+    },
+    "trip3seq_010.jpg": {
+      "file": "round2-samples/trip3seq_010.jpg",
+      "approx_second": 270,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=270s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "302eb1e37a0d7b90143fc13a3f3ef2b02dbbedf31b47bb80f53095b6d0674f80",
+      "original_selected_id": "S11-C030"
+    },
+    "trip3seq_011.jpg": {
+      "file": "round2-samples/trip3seq_011.jpg",
+      "approx_second": 270,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=270s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "b14a1a2a8639a27378bed213fdfafb76519c2057c0f9c4acafd4b2b9bce33236",
+      "original_selected_id": null
+    },
+    "trip3seq_014.jpg": {
+      "file": "round2-samples/trip3seq_014.jpg",
+      "approx_second": 273,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=273s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "6fedc5d307982cade62cfa91b4f18f6215d7e3aa6df3b8386e391f83b513554d",
+      "original_selected_id": "S11-C031"
+    },
+    "trip3seq_012.jpg": {
+      "file": "round2-samples/trip3seq_012.jpg",
+      "approx_second": 271,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=271s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "8aefd9320f62c1641dc9bf266b032514d91b98b9bfd6dbf82e384082f769fe83",
+      "original_selected_id": null
+    },
+    "trip3seq_015.jpg": {
+      "file": "round2-samples/trip3seq_015.jpg",
+      "approx_second": 274,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=274s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "8c54018bbd0e8fcc367a45e9cbb26d36fb5a902790fb87602de62f325ae40cbb",
+      "original_selected_id": null
+    },
+    "trip3seq_019.jpg": {
+      "file": "round2-samples/trip3seq_019.jpg",
+      "approx_second": 277,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=277s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "741f7159348a67037fea74fc1595d5a33e4fcfda19dace594f21c00e5b6ca140",
+      "original_selected_id": null
+    },
+    "trip3seq_020.jpg": {
+      "file": "round2-samples/trip3seq_020.jpg",
+      "approx_second": 278,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=278s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "fefc84afeb3304e33e34d0a6623858c8e7540ef6a969011fb84941612da01127",
+      "original_selected_id": "S11-C032"
+    },
+    "trip3seq_021.jpg": {
+      "file": "round2-samples/trip3seq_021.jpg",
+      "approx_second": 279,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=279s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "28c6f3ed1955bdfc31da02fd3b2183ce75a7e2f3519dfd6170280c733c5d151d",
+      "original_selected_id": null
+    },
+    "trip3seq_022.jpg": {
+      "file": "round2-samples/trip3seq_022.jpg",
+      "approx_second": 280,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=280s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "5bba9499fde448af03758cf304ce915b274f523a87863473994fddf87b92d66e",
+      "original_selected_id": null
+    },
+    "trip3seq_023.jpg": {
+      "file": "round2-samples/trip3seq_023.jpg",
+      "approx_second": 281,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=281s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "2d0e14432d0ee116081c7fb9a6d4b06cb145bd3140e65fdfad91a442784363c2",
+      "original_selected_id": "S11-C033"
+    },
+    "trip3seq_024.jpg": {
+      "file": "round2-samples/trip3seq_024.jpg",
+      "approx_second": 281,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=281s",
+      "batch": "round2-samples/trip3seq.json",
+      "batch_window_seconds": [
+        261,
+        286
+      ],
+      "sha256": "653361904ea1c6404cbdefd265e70476b88e7650bb70eb231c3a658fd5c4390f",
+      "original_selected_id": null
+    },
+    "ice-origin_003.jpg": {
+      "file": "round2-samples/ice-origin_003.jpg",
+      "approx_second": 1757,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1757s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "1b5881ff36cf122890d0161b989933998e55ce2f55fe3cd66a58c43d167ed24a",
+      "original_selected_id": null
+    },
+    "ice-origin_001.jpg": {
+      "file": "round2-samples/ice-origin_001.jpg",
+      "approx_second": 1754,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1754s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "9b0a3797b040f03d8144d58d516f6334b0f6efb0ee54f371456fe7879a6d58e5",
+      "original_selected_id": null
+    },
+    "ice-origin_002.jpg": {
+      "file": "round2-samples/ice-origin_002.jpg",
+      "approx_second": 1755,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1755s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "d19cb0a98a45ebf88627e8b0d5e574ee4c9f323b9a287617cf7da722a2e52d7c",
+      "original_selected_id": null
+    },
+    "ice-origin_005.jpg": {
+      "file": "round2-samples/ice-origin_005.jpg",
+      "approx_second": 1760,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1760s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "2d34ca8d3c8fb603b09d7b0ab84c00ea42ef298cb19f3812492dffba772b1be6",
+      "original_selected_id": null
+    },
+    "ice-origin_006.jpg": {
+      "file": "round2-samples/ice-origin_006.jpg",
+      "approx_second": 1761,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1761s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "b614a64f9dabaa059e3ca00fed8900fe2d43a33a8bf8c9dc88ee7ab7197a4fa2",
+      "original_selected_id": null
+    },
+    "ice-origin_008.jpg": {
+      "file": "round2-samples/ice-origin_008.jpg",
+      "approx_second": 1764,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1764s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "49b4aaa5132efb4d8ccd4ceaa552c1e51cf550b6add63db67c45b1e8332b6dc9",
+      "original_selected_id": null
+    },
+    "ice-origin_007.jpg": {
+      "file": "round2-samples/ice-origin_007.jpg",
+      "approx_second": 1763,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1763s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "b23bccb70fa8677517f53ed0ff991c91592cf8d9bebe10cc37df72eab28736ec",
+      "original_selected_id": null
+    },
+    "ice-origin_009.jpg": {
+      "file": "round2-samples/ice-origin_009.jpg",
+      "approx_second": 1766,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=1766s",
+      "batch": "round2-samples/ice-origin.json",
+      "batch_window_seconds": [
+        1752,
+        1778
+      ],
+      "sha256": "ba846fcddf4eeda9f9bb37e63b469475012a9b065cb96ce614c07d60723a01e0",
+      "original_selected_id": null
+    },
+    "deep-ice_000.jpg": {
+      "file": "round2-samples/deep-ice_000.jpg",
+      "approx_second": 3253,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3253s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "feec14a5b32fecfc6b37c36517ccfecad554c64ab2847cd083e4c9f825c6f7ac",
+      "original_selected_id": null
+    },
+    "deep-ice_001.jpg": {
+      "file": "round2-samples/deep-ice_001.jpg",
+      "approx_second": 3253,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3253s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "f53a2b88dabec703902225f52776f5b47ca30672a36513f82ca05b70b3ff0d6d",
+      "original_selected_id": null
+    },
+    "deep-ice_002.jpg": {
+      "file": "round2-samples/deep-ice_002.jpg",
+      "approx_second": 3255,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3255s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "f2704ee153a729f1796165245a370ad5f996f3ecc9d1662ed6fadfd628118ac7",
+      "original_selected_id": null
+    },
+    "deep-ice_003.jpg": {
+      "file": "round2-samples/deep-ice_003.jpg",
+      "approx_second": 3256,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3256s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "22854560198f6173bcc74633d5af4577ac429162693e68f451e5064a1164dda5",
+      "original_selected_id": null
+    },
+    "deep-ice_005.jpg": {
+      "file": "round2-samples/deep-ice_005.jpg",
+      "approx_second": 3259,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3259s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "f2bec07d726e5da46a50537267d171003ef007ce07f1090eb4e5714132907f2e",
+      "original_selected_id": null
+    },
+    "store-mid_034.jpg": {
+      "file": "round2-samples/store-mid_034.jpg",
+      "approx_second": 5943,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5943s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "532df14c1804dfe39d9aec61dac0ffee830e91f9c894a3d844d320997059d4be",
+      "original_selected_id": null
+    },
+    "deep-ice_006.jpg": {
+      "file": "round2-samples/deep-ice_006.jpg",
+      "approx_second": 3260,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3260s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "5a253940d3e53400f2aca91b88af073742428a4651bf5fcee5ec5d62055e1cee",
+      "original_selected_id": null
+    },
+    "deep-ice_009.jpg": {
+      "file": "round2-samples/deep-ice_009.jpg",
+      "approx_second": 3264,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3264s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "68837d46a34c044e5cbe320676bfee4455aa50fb3c87df595032042249e2508d",
+      "original_selected_id": null
+    },
+    "deep-ice_010.jpg": {
+      "file": "round2-samples/deep-ice_010.jpg",
+      "approx_second": 3266,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3266s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "b236bfb8acff537c8b2100fc62166068fe2f9b4af2405cae8e08b9067fdaaebf",
+      "original_selected_id": null
+    },
+    "deep-ice_011.jpg": {
+      "file": "round2-samples/deep-ice_011.jpg",
+      "approx_second": 3267,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3267s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "1aeec0f9ab6dbfc51062febdd14190780d7ef83641e53f980c3bfd3b911cef61",
+      "original_selected_id": null
+    },
+    "deep-ice_012.jpg": {
+      "file": "round2-samples/deep-ice_012.jpg",
+      "approx_second": 3268,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3268s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "9a0229a1681b21c5517670471d1d76879e2b85507d7f67faff00473374ac3748",
+      "original_selected_id": null
+    },
+    "convenience-tree_021.jpg": {
+      "file": "round2-samples/convenience-tree_021.jpg",
+      "approx_second": 7269,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7269s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "baa27bbf33e78e025b202085ccece9588c9fe31eb459ac21e487d9aa2fe5b24b",
+      "original_selected_id": "S11-C074"
+    },
+    "deep-ice_013.jpg": {
+      "file": "round2-samples/deep-ice_013.jpg",
+      "approx_second": 3270,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3270s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "742ed1c2b915680f5660c8ca0a0a951174b8e44df1dd85d39821ade50ee17d33",
+      "original_selected_id": "S11-C078"
+    },
+    "deep-ice_014.jpg": {
+      "file": "round2-samples/deep-ice_014.jpg",
+      "approx_second": 3271,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3271s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "f6fad4254f014a5290668eb6a045ed781f51c02c2d4dc39aad90b2bf9e1b6e5b",
+      "original_selected_id": "S11-C079"
+    },
+    "deep-ice_015.jpg": {
+      "file": "round2-samples/deep-ice_015.jpg",
+      "approx_second": 3272,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3272s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "1d92fa6ce8012fc54e7cabf742124141a63fb62ef7a218408d80ee320b10d3fc",
+      "original_selected_id": null
+    },
+    "deep-ice_016.jpg": {
+      "file": "round2-samples/deep-ice_016.jpg",
+      "approx_second": 3274,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3274s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "30f13d3d79f9f00d7e7a66b905c9aa0f5ac2e346766b85b94896f1cb575cc48a",
+      "original_selected_id": null
+    },
+    "deep-ice_017.jpg": {
+      "file": "round2-samples/deep-ice_017.jpg",
+      "approx_second": 3275,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=3275s",
+      "batch": "round2-samples/deep-ice.json",
+      "batch_window_seconds": [
+        3252,
+        3294
+      ],
+      "sha256": "ec9e38843f5d993f87cd0bbd33c4a3f0e7a962a158e858df45699804aa1bc02b",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_000.jpg": {
+      "file": "round2-samples/swamp-depth-card_000.jpg",
+      "approx_second": 5460,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5460s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "a9a6c4fbf23a09f9eaeafd0954aadd6769fca2d74f05a50102a7c49f63cb3148",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_001.jpg": {
+      "file": "round2-samples/swamp-depth-card_001.jpg",
+      "approx_second": 5461,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5461s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "ccf36e94c00e43b39f2ead93dd5b47660a87d0080a3e40a45544bbbabaf93dd0",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_006.jpg": {
+      "file": "round2-samples/swamp-depth-card_006.jpg",
+      "approx_second": 5467,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5467s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "75b638804a9f0538aeb6eff087726b1c9200ec179202af3f45d91cbe836a6239",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_002.jpg": {
+      "file": "round2-samples/swamp-depth-card_002.jpg",
+      "approx_second": 5462,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5462s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "a0b2cb7e99cb7b9f4358adbb2223257cba49d1f30a014588ad7674bc10466d49",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_005.jpg": {
+      "file": "round2-samples/swamp-depth-card_005.jpg",
+      "approx_second": 5466,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5466s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "7dd19a45ed9e0e59107e2cd56ef9e48071c3a722422510d545656a9ab2f64329",
+      "original_selected_id": null
+    },
+    "store-mid_027.jpg": {
+      "file": "round2-samples/store-mid_027.jpg",
+      "approx_second": 5936,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5936s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "460f21e89b24e6b03028f11af147c177032bb611167ab634a497950c387a280b",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_003.jpg": {
+      "file": "round2-samples/swamp-depth-card_003.jpg",
+      "approx_second": 5464,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5464s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "4ce64c82bd75791a3a91130372b4fe0fb07c30d02be1d177a1da66661416ef3d",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_007.jpg": {
+      "file": "round2-samples/swamp-depth-card_007.jpg",
+      "approx_second": 5468,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5468s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "95cfab6af631080fb4ff4cf7780383ae03df01940dcfa526f397feed0194a538",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_008.jpg": {
+      "file": "round2-samples/swamp-depth-card_008.jpg",
+      "approx_second": 5470,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5470s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "126e6776d763378b34f857f25e34df4bed0922f1cdaa2d0e9e61965b88070dd5",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_009.jpg": {
+      "file": "round2-samples/swamp-depth-card_009.jpg",
+      "approx_second": 5471,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5471s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "9118a0f5486fb6ac4e233373979f3a327dfbf038ebcd713a0baf169e7dcef4a5",
+      "original_selected_id": null
+    },
+    "swamp-depth-card_010.jpg": {
+      "file": "round2-samples/swamp-depth-card_010.jpg",
+      "approx_second": 5472,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5472s",
+      "batch": "round2-samples/swamp-depth-card.json",
+      "batch_window_seconds": [
+        5460,
+        5489
+      ],
+      "sha256": "cf29ff6e2f122909d141be73d5db057a41947611a0516ffc2375fc5ad00d3dbb",
+      "original_selected_id": null
+    },
+    "store-mid_006.jpg": {
+      "file": "round2-samples/store-mid_006.jpg",
+      "approx_second": 5913,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5913s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "1954fb34ce4b3b089488d2ecfe7e073184e136bf7409713075dfbcc68a10bb87",
+      "original_selected_id": null
+    },
+    "store-mid_010.jpg": {
+      "file": "round2-samples/store-mid_010.jpg",
+      "approx_second": 5917,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5917s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "9e2f03e35d5b3746ee2bcdb8ae2d3e8b388d5ca4446f375bd3cc9db2d3500ca6",
+      "original_selected_id": null
+    },
+    "store-mid_011.jpg": {
+      "file": "round2-samples/store-mid_011.jpg",
+      "approx_second": 5918,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5918s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "8567a0625bc25058ae554c6175fac344278546348a74b782d66cb597fcd5f218",
+      "original_selected_id": null
+    },
+    "store-mid_007.jpg": {
+      "file": "round2-samples/store-mid_007.jpg",
+      "approx_second": 5914,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5914s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "f3dc971d03946f74d52a2d75ba843bb26ee5d5b53579b7d28075faefa791a0a7",
+      "original_selected_id": "S11-C053"
+    },
+    "store-mid_009.jpg": {
+      "file": "round2-samples/store-mid_009.jpg",
+      "approx_second": 5916,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5916s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "41d04338600c160119a702ccb6966c2e4bd844c915cc9c4168d33fe123bcfc85",
+      "original_selected_id": "S11-C054"
+    },
+    "store-mid_012.jpg": {
+      "file": "round2-samples/store-mid_012.jpg",
+      "approx_second": 5919,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5919s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "5d62c403edd89d20a4b75bbf5f93cd23e2f728dbec8900df289fe80577d76ad6",
+      "original_selected_id": null
+    },
+    "store-mid_013.jpg": {
+      "file": "round2-samples/store-mid_013.jpg",
+      "approx_second": 5920,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5920s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "279ab3a98e50dc66242504b52f40be74a53a2ac94306a1a378c20a673e823673",
+      "original_selected_id": null
+    },
+    "store-mid_014.jpg": {
+      "file": "round2-samples/store-mid_014.jpg",
+      "approx_second": 5921,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5921s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "6180955b80d117a6c9290b0934731a09ab1d9cdc6be344b53c5c543f44c085bf",
+      "original_selected_id": null
+    },
+    "store-mid_024.jpg": {
+      "file": "round2-samples/store-mid_024.jpg",
+      "approx_second": 5932,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5932s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "860eecf13337ee0784b44072e8047a6ce39c29e01478b27f2a498417186b5fd3",
+      "original_selected_id": null
+    },
+    "late-village_005.jpg": {
+      "file": "round2-samples/late-village_005.jpg",
+      "approx_second": 8248,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8248s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "b8e5460afbabd86a1faf59f0b467719203e7d70e5b9917d5b410dd8472df9e9a",
+      "original_selected_id": null
+    },
+    "store-mid_015.jpg": {
+      "file": "round2-samples/store-mid_015.jpg",
+      "approx_second": 5923,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5923s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "176a8418ebe25cc4d75ad019821b891f066f67199f69214a090cf447a92c5b18",
+      "original_selected_id": null
+    },
+    "store-mid_019.jpg": {
+      "file": "round2-samples/store-mid_019.jpg",
+      "approx_second": 5927,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5927s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "b2e455c4a3436f6c7c0a794621ddb3a348b13dc48132d6b42615fbb1426cc2ff",
+      "original_selected_id": null
+    },
+    "store-mid_020.jpg": {
+      "file": "round2-samples/store-mid_020.jpg",
+      "approx_second": 5928,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5928s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "afe5c20de7e9efbed5bf6bf665fdc2e5cebaa3a893ca5e8264cb92027b824176",
+      "original_selected_id": null
+    },
+    "store-mid_017.jpg": {
+      "file": "round2-samples/store-mid_017.jpg",
+      "approx_second": 5925,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5925s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "e6734f1689541859d27d3aec68152fd106f6bda2009ee0c449d65702c02da387",
+      "original_selected_id": null
+    },
+    "store-mid_018.jpg": {
+      "file": "round2-samples/store-mid_018.jpg",
+      "approx_second": 5926,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5926s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "7a2faaaa88167c453478a2c5e0ac6639af4fc673fff1c35f732c56e41f97c2b6",
+      "original_selected_id": null
+    },
+    "store-mid_021.jpg": {
+      "file": "round2-samples/store-mid_021.jpg",
+      "approx_second": 5929,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5929s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "a4346d9e79a49d3d8b6b4b9f9f7c030dd064fdeca11792d9f545cf64ffbac60b",
+      "original_selected_id": null
+    },
+    "store-mid_025.jpg": {
+      "file": "round2-samples/store-mid_025.jpg",
+      "approx_second": 5934,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5934s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "3f2af12f1bef5bd35400141c3d140c3ecc3f778e875606da85def46a2185d8f3",
+      "original_selected_id": null
+    },
+    "late-village_004.jpg": {
+      "file": "round2-samples/late-village_004.jpg",
+      "approx_second": 8246,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8246s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "b4ca77012f1646fa54699f97a6e7f2559211cc36bc0d0e379a7bab37cab6ab24",
+      "original_selected_id": null
+    },
+    "store-mid_022.jpg": {
+      "file": "round2-samples/store-mid_022.jpg",
+      "approx_second": 5930,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5930s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "724581435674ade02e8fb953278eaa386632f24a7868e199cd21158675912561",
+      "original_selected_id": null
+    },
+    "store-mid_026.jpg": {
+      "file": "round2-samples/store-mid_026.jpg",
+      "approx_second": 5935,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5935s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "483fae34e27c37727dab196b0da7a31dd96576b26afa0ec36aeaec42564dd9d4",
+      "original_selected_id": null
+    },
+    "store-mid_029.jpg": {
+      "file": "round2-samples/store-mid_029.jpg",
+      "approx_second": 5938,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5938s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "14925a44498928ac25ab5426c96af7bc59eb0793176a1bdb2f9bdfb6503086bf",
+      "original_selected_id": null
+    },
+    "store-mid_030.jpg": {
+      "file": "round2-samples/store-mid_030.jpg",
+      "approx_second": 5939,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5939s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "3f6e50b2d85ea5b7d0aa257219e2837b600a4a4139c9f99e6b0b477380a0adf5",
+      "original_selected_id": null
+    },
+    "store-mid_031.jpg": {
+      "file": "round2-samples/store-mid_031.jpg",
+      "approx_second": 5940,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5940s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "09e845fd91dd4b8f97ab83616365ee3030d80c9a25010e582ad569d68aa444dd",
+      "original_selected_id": null
+    },
+    "store-mid_033.jpg": {
+      "file": "round2-samples/store-mid_033.jpg",
+      "approx_second": 5942,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5942s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "6dafc5166fcc6e6e759527e3db29d622d6d145d99c01c42233d50651f889ce80",
+      "original_selected_id": null
+    },
+    "store-mid_035.jpg": {
+      "file": "round2-samples/store-mid_035.jpg",
+      "approx_second": 5945,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=5945s",
+      "batch": "round2-samples/store-mid.json",
+      "batch_window_seconds": [
+        5906,
+        5945
+      ],
+      "sha256": "2273b37f65fc85cc9baf79fc8b80cf9a6510856f0d41c04d9b79e9a3eb333077",
+      "original_selected_id": null
+    },
+    "convenience-tree_014.jpg": {
+      "file": "round2-samples/convenience-tree_014.jpg",
+      "approx_second": 7260,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7260s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "c61a42eab150255b38e89a817abab29626f474e2d6e83a8f11ebda15a752916f",
+      "original_selected_id": null
+    },
+    "convenience-tree_015.jpg": {
+      "file": "round2-samples/convenience-tree_015.jpg",
+      "approx_second": 7262,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7262s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "ba5672a192ecbf7570983931a7012ccb473fdb94584c63e3c4875ce2f9833c6d",
+      "original_selected_id": null
+    },
+    "convenience-tree_016.jpg": {
+      "file": "round2-samples/convenience-tree_016.jpg",
+      "approx_second": 7263,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7263s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "176ef53e3c18e1e25519334fcc9876116529f281361942b382af42ef79770266",
+      "original_selected_id": null
+    },
+    "convenience-tree_019.jpg": {
+      "file": "round2-samples/convenience-tree_019.jpg",
+      "approx_second": 7267,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7267s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "c0ecdf1cd39f234a4a94e6b74a62fc6d6110895ff1888ba64969dc6cb3727f04",
+      "original_selected_id": null
+    },
+    "convenience-tree_020.jpg": {
+      "file": "round2-samples/convenience-tree_020.jpg",
+      "approx_second": 7268,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7268s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "6a71da4e41bd02ff8a0728dc3c35e0d7ed61dc31d28246e0fb712b3de027154c",
+      "original_selected_id": null
+    },
+    "convenience-tree_022.jpg": {
+      "file": "round2-samples/convenience-tree_022.jpg",
+      "approx_second": 7271,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7271s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "a60840b9e6c0b679f6bd5c13e9f7441505d356369b171ebd315c358943f75cfe",
+      "original_selected_id": null
+    },
+    "convenience-tree_023.jpg": {
+      "file": "round2-samples/convenience-tree_023.jpg",
+      "approx_second": 7272,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7272s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "24ed13eeb686407bd9168b5363eb5269b7a02dc232ebf396b5d9a613622c78c0",
+      "original_selected_id": null
+    },
+    "convenience-tree_024.jpg": {
+      "file": "round2-samples/convenience-tree_024.jpg",
+      "approx_second": 7273,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7273s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "87afc7dd7e689afcf64a811c05fb0b1499197987af2dac55b83e107ad866aa99",
+      "original_selected_id": "S11-C075"
+    },
+    "convenience-tree_025.jpg": {
+      "file": "round2-samples/convenience-tree_025.jpg",
+      "approx_second": 7275,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7275s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "414c81b126a23d368773ca2716295c65509d07a54ffe56a65629cb296c4ecf28",
+      "original_selected_id": "S11-C076"
+    },
+    "convenience-tree_027.jpg": {
+      "file": "round2-samples/convenience-tree_027.jpg",
+      "approx_second": 7277,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7277s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "a8d42393d7e91366124ab48ac1214c0307252d0d3525a0e44c539ffcce5640f5",
+      "original_selected_id": "S11-C077"
+    },
+    "convenience-tree_028.jpg": {
+      "file": "round2-samples/convenience-tree_028.jpg",
+      "approx_second": 7278,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7278s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "d2353e751e8525be2e3d29ca6d9129525da6536648a1652e9ac4001cd88951ef",
+      "original_selected_id": null
+    },
+    "convenience-tree_030.jpg": {
+      "file": "round2-samples/convenience-tree_030.jpg",
+      "approx_second": 7281,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=7281s",
+      "batch": "round2-samples/convenience-tree.json",
+      "batch_window_seconds": [
+        7242,
+        7290
+      ],
+      "sha256": "198288db61d909103db3f87eadf4702fcd2f4dd7d026800967a635a02654553a",
+      "original_selected_id": null
+    },
+    "late-village_000.jpg": {
+      "file": "round2-samples/late-village_000.jpg",
+      "approx_second": 8241,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8241s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "228cffdee422c65dacfe03e9451a99b7a655b18e6926cd32edee70606bb75255",
+      "original_selected_id": null
+    },
+    "late-village_001.jpg": {
+      "file": "round2-samples/late-village_001.jpg",
+      "approx_second": 8242,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8242s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "21dfd431e8cf584b48053d2e7d0052e40aca5de60fe5a6d7ca3c0aab650f7d45",
+      "original_selected_id": null
+    },
+    "late-village_002.jpg": {
+      "file": "round2-samples/late-village_002.jpg",
+      "approx_second": 8244,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8244s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "819c1ef908b149d884a94f27fb56011920e4fd1e3aceb9e8160944bed2b02248",
+      "original_selected_id": null
+    },
+    "late-village_006.jpg": {
+      "file": "round2-samples/late-village_006.jpg",
+      "approx_second": 8249,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8249s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "32bca401c71432405cd60b9c85542e53dc2f0ca3c3928a5d9c266c92da831fb8",
+      "original_selected_id": null
+    },
+    "late-village_007.jpg": {
+      "file": "round2-samples/late-village_007.jpg",
+      "approx_second": 8250,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8250s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "99c9aa7711dc26dff2c5e510f5936b4fab863a145f81777dd3d000d56a2ae445",
+      "original_selected_id": "S11-C071"
+    },
+    "late-village_008.jpg": {
+      "file": "round2-samples/late-village_008.jpg",
+      "approx_second": 8251,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8251s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "09f241f2602e1a083a4e3394549f8412abf30b05f938670f69d56b214f39bb90",
+      "original_selected_id": null
+    },
+    "late-village_009.jpg": {
+      "file": "round2-samples/late-village_009.jpg",
+      "approx_second": 8253,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8253s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "473aa31a8a2160aee56cb1fcab4d2cf26c67ba77f54154432001a56faad3f6ce",
+      "original_selected_id": null
+    },
+    "late-village_010.jpg": {
+      "file": "round2-samples/late-village_010.jpg",
+      "approx_second": 8254,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8254s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "a58bf2d6beab6a225ab55cfb27a1e4112ddc5b11f2bee4c30bf5e7d7f48369b2",
+      "original_selected_id": null
+    },
+    "magma-next_032.jpg": {
+      "file": "round2-samples/magma-next_032.jpg",
+      "approx_second": 9106,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=9106s",
+      "batch": "round2-samples/magma-next.json",
+      "batch_window_seconds": [
+        9079,
+        9111
+      ],
+      "sha256": "612cf1ebec370c847453b372d3da40e93de90d918316abbca3b87c5824a7b64b",
+      "original_selected_id": null
+    },
+    "late-village_011.jpg": {
+      "file": "round2-samples/late-village_011.jpg",
+      "approx_second": 8255,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8255s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "56a98c3cdc415a60fcdd78c9fe25da9054a03e7f7f038f94d869579c963a6ffd",
+      "original_selected_id": null
+    },
+    "late-village_013.jpg": {
+      "file": "round2-samples/late-village_013.jpg",
+      "approx_second": 8258,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8258s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "2fcd91e061f60db565fa9e4e217c956b0f4f90147e5ae606c8370ef2df1a5df2",
+      "original_selected_id": null
+    },
+    "magma-next_037.jpg": {
+      "file": "round2-samples/magma-next_037.jpg",
+      "approx_second": 9111,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=9111s",
+      "batch": "round2-samples/magma-next.json",
+      "batch_window_seconds": [
+        9079,
+        9111
+      ],
+      "sha256": "6916fcd8f7d32b3ee67ce1e362d49e1d48027b1b3fcd4bb1d83f1846728b3029",
+      "original_selected_id": null
+    },
+    "late-village_014.jpg": {
+      "file": "round2-samples/late-village_014.jpg",
+      "approx_second": 8259,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=8259s",
+      "batch": "round2-samples/late-village.json",
+      "batch_window_seconds": [
+        8241,
+        8272
+      ],
+      "sha256": "6b103ed659a70cb2ab6f64b73d7f381f4a7be8ac30a2650f4033709023ec11c1",
+      "original_selected_id": null
+    },
+    "magma-next_033.jpg": {
+      "file": "round2-samples/magma-next_033.jpg",
+      "approx_second": 9107,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=9107s",
+      "batch": "round2-samples/magma-next.json",
+      "batch_window_seconds": [
+        9079,
+        9111
+      ],
+      "sha256": "73703e84fe40d44a7bd1c76ad6f4aed84197ce1fa96ab7d09b187c4559701f77",
+      "original_selected_id": null
+    },
+    "magma-next_034.jpg": {
+      "file": "round2-samples/magma-next_034.jpg",
+      "approx_second": 9108,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=9108s",
+      "batch": "round2-samples/magma-next.json",
+      "batch_window_seconds": [
+        9079,
+        9111
+      ],
+      "sha256": "ab1021bd8aead7d6d08028557202c084a3574b2af69ead900b76cad3e774c317",
+      "original_selected_id": null
+    },
+    "magma-next_035.jpg": {
+      "file": "round2-samples/magma-next_035.jpg",
+      "approx_second": 9109,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=9109s",
+      "batch": "round2-samples/magma-next.json",
+      "batch_window_seconds": [
+        9079,
+        9111
+      ],
+      "sha256": "38b01601bd40ba3517d7d5951cced01becdf5513d84dd64116848b0ff39fcfd8",
+      "original_selected_id": null
+    },
+    "magma-next_036.jpg": {
+      "file": "round2-samples/magma-next_036.jpg",
+      "approx_second": 9110,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=9110s",
+      "batch": "round2-samples/magma-next.json",
+      "batch_window_seconds": [
+        9079,
+        9111
+      ],
+      "sha256": "6f50c31d1994b2d8cfb522be0afa12c1df3f31907e8bfdba6390d3ccd0609976",
+      "original_selected_id": null
+    },
+    "hammock-buy_008.jpg": {
+      "file": "round2-samples/hammock-buy_008.jpg",
+      "approx_second": 11652,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=11652s",
+      "batch": "round2-samples/hammock-buy.json",
+      "batch_window_seconds": [
+        11645,
+        11659
+      ],
+      "sha256": "92dc1953bf2d06fa59e8a7d34fd756b0086bd57b282c3004cdd8e0c6db53604d",
+      "original_selected_id": "S11-C066"
+    },
+    "hammock-buy_011.jpg": {
+      "file": "round2-samples/hammock-buy_011.jpg",
+      "approx_second": 11655,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=11655s",
+      "batch": "round2-samples/hammock-buy.json",
+      "batch_window_seconds": [
+        11645,
+        11659
+      ],
+      "sha256": "8cfc4faf21329c64d2c8d4d366bb588dd71c9db59a555f18f49b28d06aed8bde",
+      "original_selected_id": "S11-C067"
+    },
+    "hammock-end_020.jpg": {
+      "file": "round2-samples/hammock-end_020.jpg",
+      "approx_second": 11684,
+      "source": "https://www.youtube.com/watch?v=S7EaREatF4w&t=11684s",
+      "batch": "round2-samples/hammock-end.json",
+      "batch_window_seconds": [
+        11654,
+        11686
+      ],
+      "sha256": "c89032349f25bc7a71efed0ea42074bbc06b9474940ae9be7f6e0aa3aba1ae2a",
+      "original_selected_id": null
+    }
+  }
+}

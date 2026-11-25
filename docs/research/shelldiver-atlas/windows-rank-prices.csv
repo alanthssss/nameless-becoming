@@ -1,0 +1,801 @@
+atlas_id,object,name_en,name_zh,rank_to_buy,currency,price,per_rank_effect_kind,per_rank_effect_value,per_rank_effect_unit
+R01C15,o_skill_flask_final,???,???,1,生命药瓶,100,单档门槛,,
+R02C14,o_skill_alchemy_station_speed_02,Alchemy Speed II,炼金速度 II,1,黑曜石,150000,每档数值,400,%
+R02C14,o_skill_alchemy_station_speed_02,Alchemy Speed II,炼金速度 II,2,黑曜石,150000,每档数值,400,%
+R02C14,o_skill_alchemy_station_speed_02,Alchemy Speed II,炼金速度 II,3,黑曜石,150000,每档数值,400,%
+R02C14,o_skill_alchemy_station_speed_02,Alchemy Speed II,炼金速度 II,4,黑曜石,150000,每档数值,400,%
+R02C14,o_skill_alchemy_station_speed_02,Alchemy Speed II,炼金速度 II,5,黑曜石,150000,每档数值,400,%
+R02C16,o_skill_alchemy_station_dc_02,Extra Vial II,额外药瓶 II,1,黑曜石,500000,每档数值,12,%
+R02C16,o_skill_alchemy_station_dc_02,Extra Vial II,额外药瓶 II,2,黑曜石,500000,每档数值,12,%
+R02C16,o_skill_alchemy_station_dc_02,Extra Vial II,额外药瓶 II,3,黑曜石,500000,每档数值,12,%
+R02C16,o_skill_alchemy_station_dc_02,Extra Vial II,额外药瓶 II,4,黑曜石,500000,每档数值,12,%
+R02C16,o_skill_alchemy_station_dc_02,Extra Vial II,额外药瓶 II,5,黑曜石,500000,每档数值,12,%
+R03C14,o_skill_alchemy_station_speed_01,Alchemy Speed I,炼金速度 I,1,黑曜石,50000,每档数值,200,%
+R03C14,o_skill_alchemy_station_speed_01,Alchemy Speed I,炼金速度 I,2,黑曜石,50000,每档数值,200,%
+R03C14,o_skill_alchemy_station_speed_01,Alchemy Speed I,炼金速度 I,3,黑曜石,50000,每档数值,200,%
+R03C14,o_skill_alchemy_station_speed_01,Alchemy Speed I,炼金速度 I,4,黑曜石,50000,每档数值,200,%
+R03C14,o_skill_alchemy_station_speed_01,Alchemy Speed I,炼金速度 I,5,黑曜石,50000,每档数值,200,%
+R03C16,o_skill_alchemy_station_dc_01,Extra Vial I,额外药瓶 I,1,黑曜石,200000,每档数值,4,%
+R03C16,o_skill_alchemy_station_dc_01,Extra Vial I,额外药瓶 I,2,黑曜石,200000,每档数值,4,%
+R03C16,o_skill_alchemy_station_dc_01,Extra Vial I,额外药瓶 I,3,黑曜石,200000,每档数值,4,%
+R03C16,o_skill_alchemy_station_dc_01,Extra Vial I,额外药瓶 I,4,黑曜石,200000,每档数值,4,%
+R03C16,o_skill_alchemy_station_dc_01,Extra Vial I,额外药瓶 I,5,黑曜石,200000,每档数值,4,%
+R04C13,o_skill_transmutator_golden,Golden Transmutation,黄金转化,1,生命药瓶,4,功能开启,,
+R04C15,o_skill_alchemy_station,Alchemy Station,炼金装置,1,贝壳,1000000000000,功能开启,,
+R04C17,o_skill_transmutator_speed_03,Transmuter Speed III,转化速度 III,1,黑曜石,250000,每档数值,1500000,%
+R05C13,o_skill_transmutator_auto_output,Transmuter Automation,转化自动输出,1,黑曜石,1000,功能开启,,
+R05C14,o_skill_transmutator_slots_02,Transmuter Slots II,转化栏位 II,1,黑曜石,10000,每档数值,2,数量
+R05C16,o_skill_transmutator_speed_02,Transmuter Speed II,转化速度 II,1,黑曜石,20000,每档数值,40000,%
+R05C16,o_skill_transmutator_speed_02,Transmuter Speed II,转化速度 II,2,黑曜石,20000,每档数值,40000,%
+R05C16,o_skill_transmutator_speed_02,Transmuter Speed II,转化速度 II,3,黑曜石,20000,每档数值,40000,%
+R05C16,o_skill_transmutator_speed_02,Transmuter Speed II,转化速度 II,4,黑曜石,20000,每档数值,40000,%
+R05C16,o_skill_transmutator_speed_02,Transmuter Speed II,转化速度 II,5,黑曜石,20000,每档数值,40000,%
+R05C17,o_skill_store_transmutate,Transmutation Discount,售卖转化,1,黑曜石,50000,每档数值,85,%
+R05C18,o_skill_store_speed_10,Store Speed X,商店速度 X,1,黑曜石,100000,每档数值,10000000000,%
+R06C12,o_skill_faster_output_10,Output Speed X,输出速度 X,1,生命药瓶,8,每档数值,1500,%
+R06C14,o_skill_transmutator_slots_01,Transmuter Slots I,转化栏位 I,1,蘑菇,20000,每档数值,1,数量
+R06C15,o_skill_jellyfish_transmutator,Jellyfish Transmuter,水母转化器,1,蘑菇,20000,功能开启,,
+R06C16,o_skill_transmutator_speed_01,Transmuter Speed I,转化速度 I,1,黑曜石,500,每档数值,4000,%
+R06C16,o_skill_transmutator_speed_01,Transmuter Speed I,转化速度 I,2,黑曜石,500,每档数值,4000,%
+R06C16,o_skill_transmutator_speed_01,Transmuter Speed I,转化速度 I,3,黑曜石,500,每档数值,4000,%
+R06C16,o_skill_transmutator_speed_01,Transmuter Speed I,转化速度 I,4,黑曜石,500,每档数值,4000,%
+R06C16,o_skill_transmutator_speed_01,Transmuter Speed I,转化速度 I,5,黑曜石,500,每档数值,4000,%
+R06C17,o_skill_transmutator_sell,Store Transmutation,转化售卖,1,黑曜石,50000,每档数值,85,%
+R06C18,o_skill_store_speed_08,Store Speed VIII,商店速度 VIII,1,黑曜石,12000,每档数值,60000000,%
+R06C18,o_skill_store_speed_08,Store Speed VIII,商店速度 VIII,2,黑曜石,12000,每档数值,60000000,%
+R06C18,o_skill_store_speed_08,Store Speed VIII,商店速度 VIII,3,黑曜石,12000,每档数值,60000000,%
+R06C18,o_skill_store_speed_08,Store Speed VIII,商店速度 VIII,4,黑曜石,12000,每档数值,60000000,%
+R07C09,o_skill_friendly_bubble_size_02,Puffle Size II,泡泡伙伴体型 II,1,黑曜石,75000,设为目标值,200,基础范围的百分比
+R07C13,o_skill_faster_output_01,Output Speed I,输出速度 I,1,贝壳,3000000000000,每档数值,250,%
+R07C14,o_skill_store_extra_sell_chance,Store Upsell,商店加售,1,蘑菇,1400,每档数值,10,%
+R07C16,o_skill_store_speed_05,Store Speed V,商店速度 V,1,蘑菇,75,每档数值,160000,%
+R07C16,o_skill_store_speed_05,Store Speed V,商店速度 V,2,蘑菇,75,每档数值,160000,%
+R07C16,o_skill_store_speed_05,Store Speed V,商店速度 V,3,蘑菇,75,每档数值,160000,%
+R07C16,o_skill_store_speed_05,Store Speed V,商店速度 V,4,蘑菇,75,每档数值,160000,%
+R07C17,o_skill_store_speed_06,Store Speed VI,商店速度 VI,1,蘑菇,3000,每档数值,500000,%
+R07C17,o_skill_store_speed_06,Store Speed VI,商店速度 VI,2,蘑菇,3000,每档数值,500000,%
+R07C17,o_skill_store_speed_06,Store Speed VI,商店速度 VI,3,蘑菇,3000,每档数值,500000,%
+R07C17,o_skill_store_speed_06,Store Speed VI,商店速度 VI,4,蘑菇,3000,每档数值,500000,%
+R07C18,o_skill_store_speed_07,Store Speed VII,商店速度 VII,1,黑曜石,200,每档数值,2500000,%
+R07C18,o_skill_store_speed_07,Store Speed VII,商店速度 VII,2,黑曜石,200,每档数值,2500000,%
+R07C18,o_skill_store_speed_07,Store Speed VII,商店速度 VII,3,黑曜石,200,每档数值,2500000,%
+R07C18,o_skill_store_speed_07,Store Speed VII,商店速度 VII,4,黑曜石,200,每档数值,2500000,%
+R07C19,o_skill_agile_hands_10,Agile Hands X,妙手生花 X,1,生命药瓶,1,每档数值,920,%
+R07C23,o_skill_robot_firerate_02,Robot Attack Speed II,机器人攻击速度 II,1,贝壳,30000000000000,每档数值,250,%
+R08C01,o_skill_scrap_final,???,???,1,垃圾,10000,单档门槛,,
+R08C04,o_skill_bubble_firerate_03,Bubble Attack Speed III,泡泡攻速 III,1,黑曜石,40000,每档数值,25,%
+R08C04,o_skill_bubble_firerate_03,Bubble Attack Speed III,泡泡攻速 III,2,黑曜石,40000,每档数值,25,%
+R08C04,o_skill_bubble_firerate_03,Bubble Attack Speed III,泡泡攻速 III,3,黑曜石,40000,每档数值,25,%
+R08C04,o_skill_bubble_firerate_03,Bubble Attack Speed III,泡泡攻速 III,4,黑曜石,40000,每档数值,25,%
+R08C04,o_skill_bubble_firerate_03,Bubble Attack Speed III,泡泡攻速 III,5,黑曜石,40000,每档数值,25,%
+R08C05,o_skill_bubble_damage_oxygen,Bubble O2'd,泡泡氧能,1,生命药瓶,5,每档数值,2,%
+R08C06,o_skill_chain_bubble_number,Multibubble Number,多重泡泡数量,1,黑曜石,100000,每档数值,1,数量
+R08C08,o_skill_friendly_bubble_size_01,Puffle Size I,泡泡伙伴体型 I,1,蘑菇,4000,设为目标值,125,基础范围的百分比
+R08C10,o_skill_friendly_bubble_chance_02,Puffle II,泡泡伙伴 II,1,黑曜石,10000,每档数值,6,%
+R08C10,o_skill_friendly_bubble_chance_02,Puffle II,泡泡伙伴 II,2,黑曜石,50000,每档数值,6,%
+R08C12,o_skill_slot_capacity_05,Shellslot Capacity V,贝壳栏位容量 V,1,生命药瓶,5,每档数值,83,数量
+R08C13,o_skill_player_slots_05,Shellpack Slots V,背包栏位 V,1,贝壳,10000000000000,每档数值,3,数量
+R08C14,o_skill_storage_auto_output,Storage Automation,储藏自动输出,1,贝壳,1000000000000,功能开启,,
+R08C15,o_skill_cellphone,Shellphone,一键直达,1,水晶,10000,功能开启,,
+R08C16,o_skill_store_speed_03,Store Speed III,商店速度 III,1,水晶,20,每档数值,1500,%
+R08C16,o_skill_store_speed_03,Store Speed III,商店速度 III,2,水晶,20,每档数值,1500,%
+R08C16,o_skill_store_speed_03,Store Speed III,商店速度 III,3,水晶,20,每档数值,1500,%
+R08C16,o_skill_store_speed_03,Store Speed III,商店速度 III,4,水晶,20,每档数值,1500,%
+R08C16,o_skill_store_speed_03,Store Speed III,商店速度 III,5,水晶,20,每档数值,1500,%
+R08C17,o_skill_store_speed_04,Store Speed IV,商店速度 IV,1,水晶,2500,每档数值,10000,%
+R08C17,o_skill_store_speed_04,Store Speed IV,商店速度 IV,2,水晶,2500,每档数值,10000,%
+R08C17,o_skill_store_speed_04,Store Speed IV,商店速度 IV,3,水晶,2500,每档数值,10000,%
+R08C17,o_skill_store_speed_04,Store Speed IV,商店速度 IV,4,水晶,2500,每档数值,10000,%
+R08C18,o_skill_agile_hands_01,Agile Hands I,妙手生花 I,1,贝壳,5000000,每档数值,80,%
+R08C19,o_skill_store_slots_04,Store Slots IV,商店栏位 IV,1,蘑菇,10000,每档数值,2,数量
+R08C20,o_skill_plasma_overheat_damage_02,Plasma Overheat II,等离子过热 II,1,贝壳,350000000000,每档数值,0.5,额外伤害倍率
+R08C20,o_skill_plasma_overheat_damage_02,Plasma Overheat II,等离子过热 II,2,贝壳,350000000000,每档数值,0.5,额外伤害倍率
+R08C20,o_skill_plasma_overheat_damage_02,Plasma Overheat II,等离子过热 II,3,贝壳,350000000000,每档数值,0.5,额外伤害倍率
+R08C21,o_skill_plasma_lightning_damage_02,Plasma Lightning Damage II,等离子闪电伤害 II,1,贝壳,40000000000,每档数值,450,%
+R08C21,o_skill_plasma_lightning_damage_02,Plasma Lightning Damage II,等离子闪电伤害 II,2,贝壳,40000000000,每档数值,450,%
+R08C22,o_skill_plasma_lightning_range,Plasma Lightning Range,等离子闪电范围,1,贝壳,50000000000000,每档数值,150,%
+R08C24,o_skill_robot_firerate_01,Robot Attack Speed I,机器人攻击速度 I,1,贝壳,5000000000000,每档数值,100,%
+R08C25,o_skill_robot_damage_01,Robot Damage I,机器人伤害 I,1,贝壳,500000000000,每档数值,35,%
+R08C25,o_skill_robot_damage_01,Robot Damage I,机器人伤害 I,2,贝壳,1000000000000,每档数值,35,%
+R08C25,o_skill_robot_damage_01,Robot Damage I,机器人伤害 I,3,贝壳,1500000000000,每档数值,35,%
+R08C25,o_skill_robot_damage_01,Robot Damage I,机器人伤害 I,4,贝壳,2000000000000,每档数值,35,%
+R08C25,o_skill_robot_damage_01,Robot Damage I,机器人伤害 I,5,贝壳,2500000000000,每档数值,35,%
+R08C25,o_skill_robot_damage_01,Robot Damage I,机器人伤害 I,6,贝壳,3000000000000,每档数值,35,%
+R08C26,o_skill_plasma_damage_oxygen,Plasma O2'd,等离子氧能,1,生命药瓶,5,每档数值,2,%
+R08C27,o_skill_plasma_firerate_03,Plasma Attack Speed III,等离子攻击速度 III,1,生命药瓶,1,每档数值,25,%
+R08C27,o_skill_plasma_firerate_03,Plasma Attack Speed III,等离子攻击速度 III,2,生命药瓶,1,每档数值,25,%
+R08C27,o_skill_plasma_firerate_03,Plasma Attack Speed III,等离子攻击速度 III,3,生命药瓶,1,每档数值,25,%
+R08C27,o_skill_plasma_firerate_03,Plasma Attack Speed III,等离子攻击速度 III,4,生命药瓶,1,每档数值,25,%
+R08C27,o_skill_plasma_firerate_03,Plasma Attack Speed III,等离子攻击速度 III,5,生命药瓶,1,每档数值,25,%
+R08C29,o_skill_mushroom_final,???,???,1,蘑菇,150000,单档门槛,,
+R09C01,o_skill_bubble_critical_damage_03,Bubble Critical Damage III,泡泡暴击伤害 III,1,黑曜石,250000,每档数值,1000,%
+R09C01,o_skill_bubble_critical_damage_03,Bubble Critical Damage III,泡泡暴击伤害 III,2,黑曜石,250000,每档数值,1000,%
+R09C02,o_skill_bubble_damage_10,Bubble Damage X,泡泡伤害 X,1,生命药瓶,1,每档数值,999999,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,1,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,2,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,3,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,4,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,5,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,6,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,7,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,8,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,9,黑曜石,30000,每档数值,15000,%
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,10,黑曜石,30000,每档数值,15000,%
+R09C05,o_skill_chain_bubble,Multibubble Chance,多重泡泡几率,1,黑曜石,2000,每档数值,4,%
+R09C05,o_skill_chain_bubble,Multibubble Chance,多重泡泡几率,2,黑曜石,4000,每档数值,4,%
+R09C05,o_skill_chain_bubble,Multibubble Chance,多重泡泡几率,3,黑曜石,8000,每档数值,4,%
+R09C05,o_skill_chain_bubble,Multibubble Chance,多重泡泡几率,4,黑曜石,16000,每档数值,4,%
+R09C05,o_skill_chain_bubble,Multibubble Chance,多重泡泡几率,5,黑曜石,32000,每档数值,4,%
+R09C06,o_skill_bubble_speed_02,Bubble Speed II,泡泡速度 II,1,黑曜石,9000,每档数值,50,%
+R09C06,o_skill_bubble_speed_02,Bubble Speed II,泡泡速度 II,2,黑曜石,9000,每档数值,50,%
+R09C07,o_skill_bubble_firerate_02,Bubble Attack Speed II,泡泡攻速 II,1,蘑菇,4000,每档数值,20,%
+R09C07,o_skill_bubble_firerate_02,Bubble Attack Speed II,泡泡攻速 II,2,蘑菇,4000,每档数值,20,%
+R09C07,o_skill_bubble_firerate_02,Bubble Attack Speed II,泡泡攻速 II,3,蘑菇,4000,每档数值,20,%
+R09C07,o_skill_bubble_firerate_02,Bubble Attack Speed II,泡泡攻速 II,4,蘑菇,4000,每档数值,20,%
+R09C07,o_skill_bubble_firerate_02,Bubble Attack Speed II,泡泡攻速 II,5,蘑菇,4000,每档数值,20,%
+R09C11,o_skill_friendly_bubble_damage_10,Puffle Damage X,泡泡伙伴伤害 X,1,黑曜石,100000,每档数值,8000,%
+R09C12,o_skill_slot_capacity_04,Shellslot Capacity IV,贝壳栏位容量 IV,1,贝壳,4500000000000,每档数值,4,数量
+R09C13,o_skill_player_slots_04,Shellpack Slots IV,背包栏位 IV,1,贝壳,80000000,每档数值,3,数量
+R09C14,o_skill_storage_slots_02,Storage Slots II,储藏栏位 II,1,贝壳,10000000000,每档数值,4,数量
+R09C16,o_skill_expedition_demand_01,Expedition Demand I,探险供需 I,1,垃圾,1000,每档数值,5,倍率
+R09C17,o_skill_store_speed_02,Store Speed II,商店速度 II,1,垃圾,200,每档数值,400,%
+R09C17,o_skill_store_speed_02,Store Speed II,商店速度 II,2,垃圾,200,每档数值,400,%
+R09C17,o_skill_store_speed_02,Store Speed II,商店速度 II,3,垃圾,200,每档数值,400,%
+R09C17,o_skill_store_speed_02,Store Speed II,商店速度 II,4,垃圾,200,每档数值,400,%
+R09C18,o_skill_store_slots_03,Store Slots III,商店栏位 III,1,蘑菇,3000,每档数值,2,数量
+R09C19,o_skill_global_chest,Bank Safe,银行保险箱,1,生命药瓶,1,功能开启,,
+R09C21,o_skill_plasma_lightning_damage_01,Plasma Lightning Damage I,等离子闪电伤害 I,1,贝壳,300000000,每档数值,20,%
+R09C21,o_skill_plasma_lightning_damage_01,Plasma Lightning Damage I,等离子闪电伤害 I,2,贝壳,300000000,每档数值,20,%
+R09C21,o_skill_plasma_lightning_damage_01,Plasma Lightning Damage I,等离子闪电伤害 I,3,贝壳,300000000,每档数值,20,%
+R09C21,o_skill_plasma_lightning_damage_01,Plasma Lightning Damage I,等离子闪电伤害 I,4,贝壳,300000000,每档数值,20,%
+R09C21,o_skill_plasma_lightning_damage_01,Plasma Lightning Damage I,等离子闪电伤害 I,5,贝壳,300000000,每档数值,20,%
+R09C22,o_skill_plasma_lightning_chance_02,Plasma Lightning Chance II,等离子闪电几率 II,1,贝壳,25000000000000,每档数值,30,%
+R09C23,o_skill_robot_lightning_01,Robot Overcharge I,机器人超载 I,1,贝壳,100000000000000,功能开启,,
+R09C24,o_skill_plasma_range_03,Plasma Range III,等离子射程 III,1,贝壳,2500000000,每档数值,75,%
+R09C25,o_skill_robot_number_01,Robot Ally I,机器人同伴 I,1,贝壳,50000000000,每档数值,1,数量
+R09C25,o_skill_robot_number_01,Robot Ally I,机器人同伴 I,2,贝壳,500000000000,每档数值,1,数量
+R09C25,o_skill_robot_number_01,Robot Ally I,机器人同伴 I,3,贝壳,5000000000000,每档数值,1,数量
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,1,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,2,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,3,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,4,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,5,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,6,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,7,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,8,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,9,贝壳,2000000000000,每档数值,25000,%
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,10,贝壳,2000000000000,每档数值,25000,%
+R09C28,o_skill_plasma_damage_10,Plasma Damage X,等离子伤害 X,1,生命药瓶,1,每档数值,999999,%
+R10C02,o_skill_bubble_critical_damage_02,Bubble Critical Damage II,泡泡暴击伤害 II,1,黑曜石,20000,每档数值,200,%
+R10C02,o_skill_bubble_critical_damage_02,Bubble Critical Damage II,泡泡暴击伤害 II,2,黑曜石,20000,每档数值,200,%
+R10C03,o_skill_bubble_critical_damage_01,Bubble Critical Damage I,泡泡暴击伤害 I,1,黑曜石,8000,每档数值,75,%
+R10C03,o_skill_bubble_critical_damage_01,Bubble Critical Damage I,泡泡暴击伤害 I,2,黑曜石,8000,每档数值,75,%
+R10C03,o_skill_bubble_critical_damage_01,Bubble Critical Damage I,泡泡暴击伤害 I,3,黑曜石,8000,每档数值,75,%
+R10C03,o_skill_bubble_critical_damage_01,Bubble Critical Damage I,泡泡暴击伤害 I,4,黑曜石,8000,每档数值,75,%
+R10C04,o_skill_bubble_size_10,Bubble Size X,泡泡大小 X,1,生命药瓶,1,每档数值,100,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,1,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,2,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,3,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,4,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,5,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,6,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,7,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,8,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,9,黑曜石,300,每档数值,6500,%
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,10,黑曜石,300,每档数值,6500,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,1,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,2,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,3,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,4,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,5,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,6,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,7,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,8,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,9,蘑菇,3000,每档数值,2700,%
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,10,蘑菇,3000,每档数值,2700,%
+R10C08,o_skill_friendly_bubble_chance_01,Puffle I,泡泡伙伴 I,1,蘑菇,1000,每档数值,4,%
+R10C08,o_skill_friendly_bubble_chance_01,Puffle I,泡泡伙伴 I,2,蘑菇,2000,每档数值,4,%
+R10C08,o_skill_friendly_bubble_chance_01,Puffle I,泡泡伙伴 I,3,蘑菇,5000,每档数值,4,%
+R10C09,o_skill_friendly_bubble_damage_01,Puffle Damage I,泡泡伙伴伤害 I,1,黑曜石,500,每档数值,4000,%
+R10C10,o_skill_friendly_bubble_damage_02,Puffle Damage II,泡泡伙伴伤害 II,1,黑曜石,5000,每档数值,2000,%
+R10C11,o_skill_bubble_doppel_02,Doppel Bubble II,双生泡泡 II,1,水晶,1250,每档数值,20,%
+R10C11,o_skill_bubble_doppel_02,Doppel Bubble II,双生泡泡 II,2,水晶,1250,每档数值,20,%
+R10C11,o_skill_bubble_doppel_02,Doppel Bubble II,双生泡泡 II,3,水晶,1250,每档数值,20,%
+R10C12,o_skill_slot_capacity_03,Shellslot Capacity III,贝壳栏位容量 III,1,贝壳,1500000000,每档数值,3,数量
+R10C13,o_skill_player_slots_03,Shellpack Slots III,背包栏位 III,1,贝壳,25000000,每档数值,2,数量
+R10C14,o_skill_storage_slots_01,Storage Slots I,储藏栏位 I,1,贝壳,40000000,每档数值,4,数量
+R10C15,o_skill_submarine_storage,Submarine Storage,潜艇储藏室,1,贝壳,15000,功能开启,,
+R10C16,o_skill_store_speed_01,Store Speed I,商店速度 I,1,垃圾,10,每档数值,100,%
+R10C16,o_skill_store_speed_01,Store Speed I,商店速度 I,2,垃圾,10,每档数值,100,%
+R10C16,o_skill_store_speed_01,Store Speed I,商店速度 I,3,垃圾,10,每档数值,100,%
+R10C16,o_skill_store_speed_01,Store Speed I,商店速度 I,4,垃圾,10,每档数值,100,%
+R10C16,o_skill_store_speed_01,Store Speed I,商店速度 I,5,垃圾,10,每档数值,100,%
+R10C17,o_skill_store_slots_02,Store Slots II,商店栏位 II,1,垃圾,500,每档数值,2,数量
+R10C18,o_skill_chest_speed_02,Chest Speed II,宝箱速度 II,1,蘑菇,3000,每档数值,850,%
+R10C19,o_skill_plasma_overheat_damage_01,Plasma Overheat I,等离子过热 I,1,贝壳,150000,每档数值,0.1,额外伤害倍率
+R10C19,o_skill_plasma_overheat_damage_01,Plasma Overheat I,等离子过热 I,2,贝壳,150000,每档数值,0.1,额外伤害倍率
+R10C19,o_skill_plasma_overheat_damage_01,Plasma Overheat I,等离子过热 I,3,贝壳,150000,每档数值,0.1,额外伤害倍率
+R10C19,o_skill_plasma_overheat_damage_01,Plasma Overheat I,等离子过热 I,4,贝壳,150000,每档数值,0.1,额外伤害倍率
+R10C19,o_skill_plasma_overheat_damage_01,Plasma Overheat I,等离子过热 I,5,贝壳,150000,每档数值,0.1,额外伤害倍率
+R10C20,o_skill_plasma_overheat_speed,Hot Overheat,极速过热,1,贝壳,2500000,每档数值,20,%
+R10C20,o_skill_plasma_overheat_speed,Hot Overheat,极速过热,2,贝壳,2500000,每档数值,20,%
+R10C20,o_skill_plasma_overheat_speed,Hot Overheat,极速过热,3,贝壳,2500000,每档数值,20,%
+R10C20,o_skill_plasma_overheat_speed,Hot Overheat,极速过热,4,贝壳,2500000,每档数值,20,%
+R10C21,o_skill_plasma_firerate_02,Plasma Attack Speed II,等离子攻击速度 II,1,贝壳,80000000,每档数值,15,%
+R10C21,o_skill_plasma_firerate_02,Plasma Attack Speed II,等离子攻击速度 II,2,贝壳,80000000,每档数值,15,%
+R10C21,o_skill_plasma_firerate_02,Plasma Attack Speed II,等离子攻击速度 II,3,贝壳,80000000,每档数值,15,%
+R10C21,o_skill_plasma_firerate_02,Plasma Attack Speed II,等离子攻击速度 II,4,贝壳,80000000,每档数值,15,%
+R10C21,o_skill_plasma_firerate_02,Plasma Attack Speed II,等离子攻击速度 II,5,贝壳,80000000,每档数值,15,%
+R10C22,o_skill_plasma_lightning_chance_01,Plasma Lightning Chance I,等离子闪电几率 I,1,贝壳,50000000,每档数值,5,%
+R10C22,o_skill_plasma_lightning_chance_01,Plasma Lightning Chance I,等离子闪电几率 I,2,贝壳,250000000,每档数值,5,%
+R10C22,o_skill_plasma_lightning_chance_01,Plasma Lightning Chance I,等离子闪电几率 I,3,贝壳,1000000000,每档数值,5,%
+R10C22,o_skill_plasma_lightning_chance_01,Plasma Lightning Chance I,等离子闪电几率 I,4,贝壳,5000000000,每档数值,5,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,1,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,2,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,3,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,4,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,5,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,6,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,7,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,8,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,9,贝壳,600000000,每档数值,8000,%
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,10,贝壳,600000000,每档数值,8000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,1,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,2,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,3,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,4,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,5,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,6,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,7,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,8,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,9,贝壳,10000000000,每档数值,15000,%
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,10,贝壳,10000000000,每档数值,15000,%
+R10C26,o_skill_plasma_ultra_charge,Ultra Plasma Charge,等离子极速充能,1,生命药瓶,1,每档数值,700,%
+R10C27,o_skill_plasma_range_04,Plasma Range IV,等离子射程 IV,1,生命药瓶,2,每档数值,125,%
+R11C02,o_skill_bubble_critical_chance_10,Bubble Critical Chance X,泡泡暴击率 X,1,生命药瓶,1,每档数值,50,%
+R11C03,o_skill_bubble_critical_chance_02,Bubble Critical Chance II,泡泡暴击率 II,1,黑曜石,60000,每档数值,6,%
+R11C03,o_skill_bubble_critical_chance_02,Bubble Critical Chance II,泡泡暴击率 II,2,黑曜石,60000,每档数值,6,%
+R11C03,o_skill_bubble_critical_chance_02,Bubble Critical Chance II,泡泡暴击率 II,3,黑曜石,60000,每档数值,6,%
+R11C03,o_skill_bubble_critical_chance_02,Bubble Critical Chance II,泡泡暴击率 II,4,黑曜石,60000,每档数值,6,%
+R11C03,o_skill_bubble_critical_chance_02,Bubble Critical Chance II,泡泡暴击率 II,5,黑曜石,60000,每档数值,6,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,1,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,2,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,3,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,4,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,5,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,6,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,7,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,8,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,9,黑曜石,2000,每档数值,2,%
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,10,黑曜石,2000,每档数值,2,%
+R11C05,o_skill_bubble_size_02,Bubble Size II,泡泡大小 II,1,黑曜石,2000,每档数值,50,%
+R11C05,o_skill_bubble_size_02,Bubble Size II,泡泡大小 II,2,黑曜石,2000,每档数值,50,%
+R11C06,o_skill_bubble_smite_threshold,Extra Smite,额外惩击阈值,1,黑曜石,6500,每档数值,25,%
+R11C07,o_skill_bubble_smite,Bubble Smite,落井下石,1,蘑菇,1000,每档数值,0.5,额外伤害倍率
+R11C07,o_skill_bubble_smite,Bubble Smite,落井下石,2,蘑菇,1000,每档数值,0.5,额外伤害倍率
+R11C07,o_skill_bubble_smite,Bubble Smite,落井下石,3,蘑菇,1000,每档数值,0.5,额外伤害倍率
+R11C07,o_skill_bubble_smite,Bubble Smite,落井下石,4,蘑菇,1000,每档数值,0.5,额外伤害倍率
+R11C07,o_skill_bubble_smite,Bubble Smite,落井下石,5,蘑菇,1000,每档数值,0.5,额外伤害倍率
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,1,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,2,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,3,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,4,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,5,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,6,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,7,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,8,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,9,蘑菇,50,每档数值,1300,%
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,10,蘑菇,50,每档数值,1300,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,1,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,2,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,3,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,4,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,5,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,6,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,7,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,8,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,9,水晶,1000,每档数值,600,%
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,10,水晶,1000,每档数值,600,%
+R11C12,o_skill_bubble_firerate_01,Bubble Attack Speed I,泡泡攻速 I,1,垃圾,600,每档数值,5,%
+R11C12,o_skill_bubble_firerate_01,Bubble Attack Speed I,泡泡攻速 I,2,垃圾,600,每档数值,5,%
+R11C12,o_skill_bubble_firerate_01,Bubble Attack Speed I,泡泡攻速 I,3,垃圾,600,每档数值,5,%
+R11C12,o_skill_bubble_firerate_01,Bubble Attack Speed I,泡泡攻速 I,4,垃圾,600,每档数值,5,%
+R11C12,o_skill_bubble_firerate_01,Bubble Attack Speed I,泡泡攻速 I,5,垃圾,600,每档数值,5,%
+R11C13,o_skill_slot_capacity_02,Shellslot Capacity II,贝壳栏位容量 II,1,贝壳,1500,每档数值,3,数量
+R11C14,o_skill_player_slots_02,Shellpack Slots II,背包栏位 II,1,贝壳,500,每档数值,2,数量
+R11C16,o_skill_store_slots_01,Store Slots I,商店栏位 I,1,垃圾,20,每档数值,1,数量
+R11C17,o_skill_chest_speed_01,Chest Speed I,宝箱速度 I,1,垃圾,250,每档数值,250,%
+R11C18,o_skill_plasma_firerate_01,Plasma Attack Speed I,等离子攻击速度 I,1,贝壳,3000,每档数值,10,%
+R11C18,o_skill_plasma_firerate_01,Plasma Attack Speed I,等离子攻击速度 I,2,贝壳,3000,每档数值,10,%
+R11C18,o_skill_plasma_firerate_01,Plasma Attack Speed I,等离子攻击速度 I,3,贝壳,3000,每档数值,10,%
+R11C19,o_skill_plasma_range_02,Plasma Range II,等离子射程 II,1,贝壳,20000,每档数值,50,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,1,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,2,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,3,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,4,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,5,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,6,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,7,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,8,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,9,贝壳,100000,每档数值,500,%
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,10,贝壳,100000,每档数值,500,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,1,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,2,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,3,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,4,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,5,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,6,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,7,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,8,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,9,贝壳,2500000,每档数值,1600,%
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,10,贝壳,2500000,每档数值,1600,%
+R11C23,o_skill_plasma_charge_02,Plasma Charge II,等离子充能 II,1,贝壳,7500000,每档数值,40,%
+R11C23,o_skill_plasma_charge_02,Plasma Charge II,等离子充能 II,2,贝壳,7500000,每档数值,40,%
+R11C23,o_skill_plasma_charge_02,Plasma Charge II,等离子充能 II,3,贝壳,7500000,每档数值,40,%
+R11C23,o_skill_plasma_charge_02,Plasma Charge II,等离子充能 II,4,贝壳,7500000,每档数值,40,%
+R11C23,o_skill_plasma_charge_02,Plasma Charge II,等离子充能 II,5,贝壳,7500000,每档数值,40,%
+R11C24,o_skill_plasma_explosion_chance_02,Plasma Overflow II,等离子溢出 II,1,贝壳,500000000000,每档数值,20,%
+R11C24,o_skill_plasma_explosion_chance_02,Plasma Overflow II,等离子溢出 II,2,贝壳,5000000000000,每档数值,20,%
+R11C26,o_skill_double_plasma,Double Laser,双重激光,1,生命药瓶,10,功能开启,,
+R12C05,o_skill_bubble_execute_02,Hunter Bubbles II,猎手泡泡 II,1,黑曜石,150000,每档数值,25,%
+R12C07,o_skill_bubble_penetration_01,Bubble Penetration I,泡泡穿透力 I,1,蘑菇,600,每档数值,10,%
+R12C07,o_skill_bubble_penetration_01,Bubble Penetration I,泡泡穿透力 I,2,蘑菇,600,每档数值,10,%
+R12C07,o_skill_bubble_penetration_01,Bubble Penetration I,泡泡穿透力 I,3,蘑菇,600,每档数值,10,%
+R12C07,o_skill_bubble_penetration_01,Bubble Penetration I,泡泡穿透力 I,4,蘑菇,600,每档数值,10,%
+R12C07,o_skill_bubble_penetration_01,Bubble Penetration I,泡泡穿透力 I,5,蘑菇,600,每档数值,10,%
+R12C08,o_skill_bubble_first_strike_02,Bubble Strike II,泡泡首击 II,1,黑曜石,12000,每档数值,4,额外伤害倍率
+R12C08,o_skill_bubble_first_strike_02,Bubble Strike II,泡泡首击 II,2,黑曜石,20000,每档数值,4,额外伤害倍率
+R12C10,o_skill_bubble_first_strike_01,Bubble Strike I,泡泡首击 I,1,水晶,1000,每档数值,0.5,额外伤害倍率
+R12C10,o_skill_bubble_first_strike_01,Bubble Strike I,泡泡首击 I,2,水晶,5000,每档数值,0.5,额外伤害倍率
+R12C10,o_skill_bubble_first_strike_01,Bubble Strike I,泡泡首击 I,3,水晶,10000,每档数值,0.5,额外伤害倍率
+R12C10,o_skill_bubble_first_strike_01,Bubble Strike I,泡泡首击 I,4,水晶,15000,每档数值,0.5,额外伤害倍率
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,1,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,2,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,3,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,4,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,5,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,6,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,7,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,8,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,9,水晶,10,每档数值,80,%
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,10,水晶,10,每档数值,80,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,1,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,2,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,3,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,4,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,5,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,6,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,7,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,8,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,9,垃圾,250,每档数值,50,%
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,10,垃圾,250,每档数值,50,%
+R12C14,o_skill_slot_capacity_01,Shellslot Capacity I,贝壳栏位容量 I,1,贝壳,100,每档数值,2,数量
+R12C15,o_skill_player_slots_01,Shellpack Slots I,背包栏位 I,1,贝壳,10,每档数值,1,数量
+R12C16,o_skill_plasma_charge_01,Plasma Charge I,等离子充能 I,1,贝壳,25,每档数值,20,%
+R12C16,o_skill_plasma_charge_01,Plasma Charge I,等离子充能 I,2,贝壳,25,每档数值,20,%
+R12C16,o_skill_plasma_charge_01,Plasma Charge I,等离子充能 I,3,贝壳,25,每档数值,20,%
+R12C16,o_skill_plasma_charge_01,Plasma Charge I,等离子充能 I,4,贝壳,25,每档数值,20,%
+R12C16,o_skill_plasma_charge_01,Plasma Charge I,等离子充能 I,5,贝壳,25,每档数值,20,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,1,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,2,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,3,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,4,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,5,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,6,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,7,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,8,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,9,贝壳,250,每档数值,25,%
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,10,贝壳,250,每档数值,25,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,1,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,2,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,3,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,4,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,5,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,6,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,7,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,8,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,9,贝壳,6500,每档数值,75,%
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,10,贝壳,6500,每档数值,75,%
+R12C21,o_skill_plasma_explosion_chance_01,Plasma Overflow I,等离子溢出 I,1,贝壳,10000,每档数值,10,%
+R12C21,o_skill_plasma_explosion_chance_01,Plasma Overflow I,等离子溢出 I,2,贝壳,100000,每档数值,10,%
+R12C21,o_skill_plasma_explosion_chance_01,Plasma Overflow I,等离子溢出 I,3,贝壳,1000000,每档数值,10,%
+R12C21,o_skill_plasma_explosion_chance_01,Plasma Overflow I,等离子溢出 I,4,贝壳,10000000,每档数值,10,%
+R12C23,o_skill_plasma_explosion_damage_01,Plasma Overflow Damage I,等离子溢出伤害 I,1,贝壳,150000000,每档数值,2500,%
+R12C25,o_skill_plasma_explosion_damage_02,Plasma Overflow Damage II,等离子溢出伤害 II,1,生命药瓶,6,每档数值,37500,%
+R13C06,o_skill_bubble_execute_01,Hunter Bubbles I,猎手泡泡 I,1,黑曜石,30000,每档数值,10,%
+R13C07,o_skill_bubble_penetration_02,Bubble Penetration II,泡泡穿透力 II,1,黑曜石,5000,每档数值,60,%
+R13C07,o_skill_bubble_penetration_02,Bubble Penetration II,泡泡穿透力 II,2,黑曜石,5000,每档数值,60,%
+R13C07,o_skill_bubble_penetration_02,Bubble Penetration II,泡泡穿透力 II,3,黑曜石,5000,每档数值,60,%
+R13C07,o_skill_bubble_penetration_02,Bubble Penetration II,泡泡穿透力 II,4,黑曜石,5000,每档数值,60,%
+R13C07,o_skill_bubble_penetration_02,Bubble Penetration II,泡泡穿透力 II,5,黑曜石,5000,每档数值,60,%
+R13C09,o_skill_starfish_firerate_01,Starfish Attack Speed I,海星攻击速度 I,1,蘑菇,2000,每档数值,20,%
+R13C09,o_skill_starfish_firerate_01,Starfish Attack Speed I,海星攻击速度 I,2,蘑菇,2000,每档数值,20,%
+R13C09,o_skill_starfish_firerate_01,Starfish Attack Speed I,海星攻击速度 I,3,蘑菇,2000,每档数值,20,%
+R13C11,o_skill_starfish_number_01,Starfish Friend I,海星伙伴 I,1,水晶,5000,每档数值,1,数量
+R13C11,o_skill_starfish_number_01,Starfish Friend I,海星伙伴 I,2,水晶,15000,每档数值,1,数量
+R13C12,o_skill_bubble_duration_01,Bubble Duration I,泡泡持续时间 I,1,垃圾,100,每档数值,100,%
+R13C13,o_skill_bubble_size_01,Bubble Size I,泡泡大小 I,1,垃圾,50,每档数值,50,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,1,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,2,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,3,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,4,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,5,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,6,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,7,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,8,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,9,贝壳,5,每档数值,5,%
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,10,贝壳,5,每档数值,5,%
+R13C15,o_skill_hammock,Hammock Repair,吊床修理,1,贝壳,10000000000000000,功能开启,,
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,1,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,2,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,3,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,4,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,5,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,6,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,7,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,8,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,9,贝壳,15,每档数值,15,%
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,10,贝壳,15,每档数值,15,%
+R13C17,o_skill_plasma_chain_number_01,Plasma Chain I,等离子链 I,1,贝壳,300,每档数值,1,数量
+R13C19,o_skill_plasma_chain_number_02,Plasma Chain II,等离子链 II,1,贝壳,100000,每档数值,2,数量
+R13C22,o_skill_plasma_chain_number_03,Plasma Chain III,等离子链 III,1,贝壳,250000000,每档数值,3,数量
+R13C24,o_skill_plasma_explosion_size,Plasma Overflow Reach,等离子溢出范围,1,贝壳,20000000000000,设为目标值,160,基础范围的百分比
+R14C08,o_skill_starfish_firerate_02,Starfish Attack Speed II,海星攻击速度 II,1,黑曜石,15000,每档数值,75,%
+R14C08,o_skill_starfish_firerate_02,Starfish Attack Speed II,海星攻击速度 II,2,黑曜石,20000,每档数值,75,%
+R14C08,o_skill_starfish_firerate_02,Starfish Attack Speed II,海星攻击速度 II,3,黑曜石,25000,每档数值,75,%
+R14C11,o_skill_starfish_damage_01,Starfish Damage I,海星伤害 I,1,蘑菇,500,每档数值,500,%
+R14C11,o_skill_starfish_damage_01,Starfish Damage I,海星伤害 I,2,蘑菇,1000,每档数值,500,%
+R14C12,o_skill_bubble_speed_01,Bubble Speed I,泡泡速度 I,1,垃圾,200,每档数值,20,%
+R14C12,o_skill_bubble_speed_01,Bubble Speed I,泡泡速度 I,2,垃圾,200,每档数值,20,%
+R14C12,o_skill_bubble_speed_01,Bubble Speed I,泡泡速度 I,3,垃圾,200,每档数值,20,%
+R14C12,o_skill_bubble_speed_01,Bubble Speed I,泡泡速度 I,4,垃圾,200,每档数值,20,%
+R14C12,o_skill_bubble_speed_01,Bubble Speed I,泡泡速度 I,5,垃圾,200,每档数值,20,%
+R14C13,o_skill_bubble_doppel_01,Doppel Bubble I,双生泡泡 I,1,垃圾,100,每档数值,10,%
+R14C13,o_skill_bubble_doppel_01,Doppel Bubble I,双生泡泡 I,2,垃圾,100,每档数值,10,%
+R14C13,o_skill_bubble_doppel_01,Doppel Bubble I,双生泡泡 I,3,垃圾,100,每档数值,10,%
+R14C13,o_skill_bubble_doppel_01,Doppel Bubble I,双生泡泡 I,4,垃圾,100,每档数值,10,%
+R14C15,o_skill_submarine,Submarine,潜艇,1,免费,0,功能开启,,
+R14C16,o_skill_plasma_tool,Plasma Gun,等离子枪,1,贝壳,20,功能开启,,
+R14C17,o_skill_plasma_range_01,Plasma Range I,等离子射程 I,1,贝壳,50,每档数值,25,%
+R14C18,o_skill_plasma_chain_damage_01,Plasma Chain Damage I,等离子链伤害 I,1,贝壳,1500,每档数值,40,%
+R14C18,o_skill_plasma_chain_damage_01,Plasma Chain Damage I,等离子链伤害 I,2,贝壳,1500,每档数值,40,%
+R14C18,o_skill_plasma_chain_damage_01,Plasma Chain Damage I,等离子链伤害 I,3,贝壳,1500,每档数值,40,%
+R14C18,o_skill_plasma_chain_damage_01,Plasma Chain Damage I,等离子链伤害 I,4,贝壳,1500,每档数值,40,%
+R14C18,o_skill_plasma_chain_damage_01,Plasma Chain Damage I,等离子链伤害 I,5,贝壳,1500,每档数值,40,%
+R14C21,o_skill_plasma_chain_damage_02,Plasma Chain Damage II,等离子链伤害 II,1,贝壳,200000000,每档数值,14000,%
+R14C21,o_skill_plasma_chain_damage_02,Plasma Chain Damage II,等离子链伤害 II,2,贝壳,200000000,每档数值,14000,%
+R14C21,o_skill_plasma_chain_damage_02,Plasma Chain Damage II,等离子链伤害 II,3,贝壳,200000000,每档数值,14000,%
+R15C09,o_skill_starfish_number_02,Starfish Friend II,海星伙伴 II,1,黑曜石,50000,每档数值,1,数量
+R15C09,o_skill_starfish_number_02,Starfish Friend II,海星伙伴 II,2,黑曜石,100000,每档数值,1,数量
+R15C10,o_skill_starfish_damage_02,Starfish Damage II,海星伤害 II,1,黑曜石,15000,每档数值,8000,%
+R15C10,o_skill_starfish_damage_02,Starfish Damage II,海星伤害 II,2,黑曜石,150000,每档数值,8000,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,1,垃圾,5,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,2,垃圾,10,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,3,垃圾,15,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,4,垃圾,20,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,5,垃圾,25,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,6,垃圾,30,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,7,垃圾,35,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,8,垃圾,40,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,9,垃圾,45,每档数值,25,%
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,10,垃圾,50,每档数值,25,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,1,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,2,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,3,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,4,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,5,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,6,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,7,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,8,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,9,垃圾,5,每档数值,20,%
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,10,垃圾,5,每档数值,20,%
+R15C15,o_skill_jellyfish_insurance_01,Shell Insurance I,未雨绸缪 I,1,贝壳,15,每档数值,20,%
+R15C16,o_skill_deep_breath,Deep Breath,深呼吸,1,贝壳,10,每档数值,10,%
+R15C16,o_skill_deep_breath,Deep Breath,深呼吸,2,贝壳,100,每档数值,10,%
+R15C16,o_skill_deep_breath,Deep Breath,深呼吸,3,贝壳,1000,每档数值,10,%
+R15C17,o_skill_plasma_tank_01,Plasma Tank I,等离子储罐 I,1,贝壳,50,每档数值,30,数量
+R15C18,o_skill_plasma_reload_01,Plasma Gun Reload I,等离子枪装填 I,1,贝壳,500,每档数值,50,%
+R15C20,o_skill_plasma_reload_02,Plasma Gun Reload II,等离子枪装填 II,1,贝壳,75000000,每档数值,150,%
+R16C10,o_skill_biovalue_silver,Biovalue Increase I,生物价值提升 I,1,垃圾,2000,每档数值,3,%
+R16C13,o_skill_jellyfish_value_rare_01,Jellyfish Merchant I,水母商人 I,1,垃圾,300,每档数值,200,%
+R16C14,o_skill_movement_speed_01,Light Feet I,凌波微步 I,1,贝壳,2000,每档数值,5,%
+R16C14,o_skill_movement_speed_01,Light Feet I,凌波微步 I,2,贝壳,2000,每档数值,5,%
+R16C14,o_skill_movement_speed_01,Light Feet I,凌波微步 I,3,贝壳,2000,每档数值,5,%
+R16C14,o_skill_movement_speed_01,Light Feet I,凌波微步 I,4,贝壳,2000,每档数值,5,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,1,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,2,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,3,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,4,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,5,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,6,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,7,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,8,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,9,贝壳,25,每档数值,35,%
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,10,贝壳,25,每档数值,35,%
+R16C16,o_skill_bubble_tank_01,Bubble Tank I,泡泡储罐 I,1,垃圾,50,每档数值,24,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,1,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,2,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,3,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,4,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,5,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,6,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,7,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,8,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,9,贝壳,5,每档数值,10,数量
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,10,贝壳,5,每档数值,10,数量
+R16C18,o_skill_plasma_capacity_01,Plasma Capacity I,等离子容量 I,1,贝壳,100,每档数值,15,数量
+R16C20,o_skill_plasma_tank_02,Plasma Tank II,等离子储罐 II,1,贝壳,300,每档数值,60,数量
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,1,水晶,50,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,2,水晶,250,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,3,水晶,450,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,4,水晶,650,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,5,水晶,850,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,6,水晶,1050,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,7,水晶,1250,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,8,水晶,1400,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,9,水晶,1650,每档数值,25,%
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,10,水晶,1800,每档数值,25,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,1,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,2,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,3,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,4,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,5,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,6,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,7,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,8,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,9,水晶,25,每档数值,60,%
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,10,水晶,25,每档数值,60,%
+R17C13,o_skill_jellyfish_insurance_02,Shell Insurance II,未雨绸缪 II,1,贝壳,7500,每档数值,25,%
+R17C14,o_skill_scrap_value_rare,Scrap Master,垃圾大师,1,贝壳,300,每档数值,200,%
+R17C16,o_skill_bubble_reload_01,Bubble Gun Reload I,泡泡枪装填 I,1,垃圾,500,每档数值,50,%
+R17C17,o_skill_bubble_capacity_01,Bubble Capacity I,泡泡容量 I,1,垃圾,100,每档数值,6,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,1,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,2,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,3,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,4,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,5,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,6,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,7,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,8,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,9,贝壳,50,每档数值,80,数量
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,10,贝壳,50,每档数值,80,数量
+R17C19,o_skill_submarine_recover,Submarine Bubble I,潜艇氧气泡 I,1,贝壳,250000,近艇补氧,200,补给区域范围（内部距离单位）
+R17C21,o_skill_plasma_capacity_02,Plasma Capacity II,等离子容量 II,1,贝壳,1000000,每档数值,25,数量
+R18C08,o_skill_biovalue_gold,Biovalue Increase II,生物价值提升 II,1,水晶,10000,每档数值,1.5,%
+R18C11,o_skill_jellyfish_value_rare_02,Jellyfish Merchant II,水母商人 II,1,水晶,1500,每档数值,600,%
+R18C12,o_skill_movement_speed_02,Light Feet II,凌波微步 II,1,贝壳,150000000,每档数值,10,%
+R18C12,o_skill_movement_speed_02,Light Feet II,凌波微步 II,2,贝壳,150000000,每档数值,10,%
+R18C12,o_skill_movement_speed_02,Light Feet II,凌波微步 II,3,贝壳,150000000,每档数值,10,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,1,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,2,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,3,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,4,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,5,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,6,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,7,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,8,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,9,贝壳,5000,每档数值,50,%
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,10,贝壳,5000,每档数值,50,%
+R18C18,o_skill_submarine_recover_all,Submarine Bubble II,潜艇氧气泡 II,1,贝壳,1500000000000,额外开启两类补给,,
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,1,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,2,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,3,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,4,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,5,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,6,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,7,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,8,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,9,贝壳,2000,每档数值,120,数量
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,10,贝壳,2000,每档数值,120,数量
+R18C20,o_skill_oxygen_regen_amount_01,Oxygen Regen Amount I,氧气恢复量 I,1,贝壳,50000,每档数值,125,数量
+R18C20,o_skill_oxygen_regen_amount_01,Oxygen Regen Amount I,氧气恢复量 I,2,贝壳,50000,每档数值,125,数量
+R18C22,o_skill_plasma_tank_03,Plasma Tank III,等离子储罐 III,1,贝壳,15000000,每档数值,120,数量
+R18C23,o_skill_plasma_ultra_reload,Ultra Plasma Gun Reload,等离子枪极速装填,1,生命药瓶,1,每档数值,1000,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,1,蘑菇,250,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,2,蘑菇,500,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,3,蘑菇,750,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,4,蘑菇,1000,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,5,蘑菇,1250,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,6,蘑菇,1500,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,7,蘑菇,1750,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,8,蘑菇,2000,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,9,蘑菇,2250,每档数值,30,%
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,10,蘑菇,2500,每档数值,30,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,1,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,2,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,3,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,4,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,5,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,6,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,7,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,8,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,9,蘑菇,50,每档数值,240,%
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,10,蘑菇,50,每档数值,240,%
+R19C11,o_skill_entity_arrival_01,Faster Waters I,急流海域 I,1,贝壳,15000,每档数值,250,%
+R19C12,o_skill_crystal_value_rare,Crystal Master,水晶大师,1,贝壳,75000,每档数值,500,%
+R19C14,o_skill_pickup_range_01,Collectible Magnet I,触手可及 I,1,垃圾,750,每档数值,25,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,1,贝壳,5,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,2,贝壳,10,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,3,贝壳,15,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,4,贝壳,20,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,5,贝壳,25,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,6,贝壳,30,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,7,贝壳,35,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,8,贝壳,40,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,9,贝壳,45,每档数值,20,%
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,10,贝壳,50,每档数值,20,%
+R19C16,o_skill_bubble_reload_02,Bubble Gun Reload II,泡泡枪装填 II,1,蘑菇,4000,每档数值,150,%
+R19C17,o_skill_bubble_tank_02,Bubble Tank II,泡泡储罐 II,1,垃圾,800,每档数值,48,数量
+R19C19,o_skill_oxygen_catch_01,Oxygen Catch I,氧气补给 I,1,贝壳,80000,每档数值,80,数量
+R19C19,o_skill_oxygen_catch_01,Oxygen Catch I,氧气补给 I,2,贝壳,80000,每档数值,80,数量
+R19C19,o_skill_oxygen_catch_01,Oxygen Catch I,氧气补给 I,3,贝壳,80000,每档数值,80,数量
+R19C19,o_skill_oxygen_catch_01,Oxygen Catch I,氧气补给 I,4,贝壳,80000,每档数值,80,数量
+R19C19,o_skill_oxygen_catch_01,Oxygen Catch I,氧气补给 I,5,贝壳,80000,每档数值,80,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,1,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,2,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,3,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,4,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,5,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,6,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,7,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,8,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,9,贝壳,200000,每档数值,400,数量
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,10,贝壳,200000,每档数值,400,数量
+R19C21,o_skill_oxygen_regen_speed_01,Oxygen Regen Speed I,氧气恢复速度 I,1,贝壳,6500000,每档数值,25,%
+R19C21,o_skill_oxygen_regen_speed_01,Oxygen Regen Speed I,氧气恢复速度 I,2,贝壳,6500000,每档数值,25,%
+R20C05,o_skill_shock_resistance_10,Shock Resistance X,抗电击 X,1,生命药瓶,1,每档数值,99990,%
+R20C06,o_skill_biovalue_rainbow,Biovalue Increase X,生物价值提升 X,1,蘑菇,10000,每档数值,0.5,%
+R20C07,o_skill_shock_resistance_01,Shock Resistance I,抗电击 I,1,贝壳,250000000000,每档数值,150,%
+R20C09,o_skill_jellyfish_value_rare_03,Jellyfish Merchant III,水母商人 III,1,蘑菇,3500,每档数值,2400,%
+R20C10,o_skill_jellyfish_insurance_03,Shell Insurance III,未雨绸缪 III,1,贝壳,20000000000,每档数值,30,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,1,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,2,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,3,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,4,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,5,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,6,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,7,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,8,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,9,贝壳,3000000,每档数值,35,%
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,10,贝壳,3000000,每档数值,35,%
+R20C18,o_skill_bubble_capacity_02,Bubble Capacity II,泡泡容量 II,1,蘑菇,1500,每档数值,9,数量
+R20C20,o_skill_oxygen_catch_02,Oxygen Catch II,氧气补给 II,1,贝壳,800000000,每档数值,1000,数量
+R20C20,o_skill_oxygen_catch_02,Oxygen Catch II,氧气补给 II,2,贝壳,800000000,每档数值,1000,数量
+R20C20,o_skill_oxygen_catch_02,Oxygen Catch II,氧气补给 II,3,贝壳,800000000,每档数值,1000,数量
+R20C20,o_skill_oxygen_catch_02,Oxygen Catch II,氧气补给 II,4,贝壳,800000000,每档数值,1000,数量
+R20C20,o_skill_oxygen_catch_02,Oxygen Catch II,氧气补给 II,5,贝壳,800000000,每档数值,1000,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,1,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,2,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,3,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,4,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,5,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,6,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,7,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,8,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,9,贝壳,1000000,每档数值,840,数量
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,10,贝壳,1000000,每档数值,840,数量
+R20C22,o_skill_oxygen_tank_extra_01,Oxygen Effectiveness I,氧气效率 I,1,贝壳,16000000,每档数值,10,%
+R20C22,o_skill_oxygen_tank_extra_01,Oxygen Effectiveness I,氧气效率 I,2,贝壳,16000000,每档数值,10,%
+R20C22,o_skill_oxygen_tank_extra_01,Oxygen Effectiveness I,氧气效率 I,3,贝壳,16000000,每档数值,10,%
+R20C22,o_skill_oxygen_tank_extra_01,Oxygen Effectiveness I,氧气效率 I,4,贝壳,16000000,每档数值,10,%
+R20C22,o_skill_oxygen_tank_extra_01,Oxygen Effectiveness I,氧气效率 I,5,贝壳,16000000,每档数值,10,%
+R20C24,o_skill_plasma_tank_10,Plasma Tank X,等离子储罐 X,1,贝壳,90000000000,每档数值,720,数量
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,1,黑曜石,2500,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,2,黑曜石,5000,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,3,黑曜石,7500,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,4,黑曜石,10000,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,5,黑曜石,12500,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,6,黑曜石,15000,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,7,黑曜石,17500,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,8,黑曜石,20000,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,9,黑曜石,22500,每档数值,25,%
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,10,黑曜石,25000,每档数值,25,%
+R21C06,o_skill_shock_frequency,Calmer Waters,平静海域,1,贝壳,1000000000000,每档数值,500,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,1,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,2,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,3,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,4,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,5,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,6,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,7,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,8,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,9,黑曜石,200,每档数值,680,%
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,10,黑曜石,200,每档数值,680,%
+R21C09,o_skill_movement_speed_10,Light Feet X,凌波微步 X,1,生命药瓶,2,每档数值,100,%
+R21C10,o_skill_mushroom_value_rare,Mushroom Master,蘑菇大师,1,贝壳,180000000,每档数值,200,%
+R21C12,o_skill_pickup_range_02,Collectible Magnet II,触手可及 II,1,水晶,1500,每档数值,50,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,1,贝壳,3000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,2,贝壳,4000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,3,贝壳,5000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,4,贝壳,6000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,5,贝壳,7000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,6,贝壳,8000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,7,贝壳,9000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,8,贝壳,10000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,9,贝壳,11000,每档数值,20,%
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,10,贝壳,12000,每档数值,20,%
+R21C19,o_skill_bubble_tank_03,Bubble Tank III,泡泡储罐 III,1,蘑菇,5000,每档数值,96,数量
+R21C21,o_skill_oxygen_regen_amount_02,Oxygen Regen Amount II,氧气恢复量 II,1,贝壳,100000000,每档数值,750,数量
+R21C21,o_skill_oxygen_regen_amount_02,Oxygen Regen Amount II,氧气恢复量 II,2,贝壳,100000000,每档数值,750,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,1,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,2,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,3,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,4,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,5,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,6,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,7,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,8,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,9,贝壳,50000000,每档数值,5000,数量
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,10,贝壳,50000000,每档数值,5000,数量
+R21C23,o_skill_resource_oxygen,Resource Incentive,资源激励,1,贝壳,200000000000,永久成长,500,最大氧气/次
+R22C06,o_skill_biovalue_amount_01,Biovalue Multiplication I,生物价值倍增 I,1,黑曜石,40000,每档数值,1,数量
+R22C07,o_skill_jellyfish_value_rare_04,Jellyfish Merchant IV,水母商人 IV,1,黑曜石,15000,每档数值,11800,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,1,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,2,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,3,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,4,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,5,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,6,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,7,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,8,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,9,贝壳,40000000000,每档数值,40,%
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,10,贝壳,40000000000,每档数值,40,%
+R22C19,o_skill_bubble_ultra_reload,Bubble Gun Ultra Reload,泡泡枪极速装填,1,生命药瓶,1,每档数值,1000,%
+R22C22,o_skill_oxygen_regen_speed_02,Oxygen Regen Speed II,氧气恢复速度 II,1,贝壳,500000000,每档数值,200,%
+R22C22,o_skill_oxygen_regen_speed_02,Oxygen Regen Speed II,氧气恢复速度 II,2,贝壳,500000000,每档数值,200,%
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,1,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,2,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,3,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,4,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,5,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,6,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,7,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,8,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,9,贝壳,4000000000,每档数值,10000,数量
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,10,贝壳,4000000000,每档数值,10000,数量
+R22C24,o_skill_jellyfish_oxygen,Jellyfish Incentive,水母激励,1,黑曜石,6000,永久成长,250,最大氧气/次
+R23C06,o_skill_biovalue_amount_02,Biovalue Multiplication II,生物价值倍增 II,1,生命药瓶,5,每档数值,2,数量
+R23C07,o_skill_entity_spawn_10,Faster Waters X,急流海域 X,1,贝壳,10000000000000,每档数值,750,%
+R23C08,o_skill_obsidian_value_rare,Obsidian Master,黑曜石大师,1,贝壳,5000000000000,每档数值,400,%
+R23C10,o_skill_pickup_range_03,Collectible Magnet III,触手可及 III,1,蘑菇,4000,每档数值,75,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,1,贝壳,1000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,2,贝壳,5000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,3,贝壳,10000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,4,贝壳,15000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,5,贝壳,20000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,6,贝壳,25000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,7,贝壳,30000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,8,贝壳,35000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,9,贝壳,40000000,每档数值,20,%
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,10,贝壳,45000000,每档数值,20,%
+R23C21,o_skill_bubble_tank_10,Bubble Tank X,泡泡储罐 X,1,黑曜石,2000,每档数值,612,数量
+R23C23,o_skill_oxygen_regen_amount_03,Oxygen Regen Amount III,氧气恢复量 III,1,贝壳,300000000000,每档数值,2500,数量
+R23C23,o_skill_oxygen_regen_amount_03,Oxygen Regen Amount III,氧气恢复量 III,2,贝壳,300000000000,每档数值,2500,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,1,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,2,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,3,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,4,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,5,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,6,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,7,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,8,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,9,贝壳,800000000000,每档数值,80000,数量
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,10,贝壳,800000000000,每档数值,80000,数量
+R24C06,o_skill_biovalue_amount_10,Biovalue Multiplication X,生物价值倍增 X,1,生命药瓶,12,每档数值,12,数量
+R24C23,o_skill_oxygen_tank_extra_02,Oxygen Effectiveness II,氧气效率 II,1,贝壳,6000000000000,每档数值,75,%
+R24C23,o_skill_oxygen_tank_extra_02,Oxygen Effectiveness II,氧气效率 II,2,贝壳,6000000000000,每档数值,75,%
+R24C24,o_skill_oxygen_tank_10,Oxygen Tank X,氧气罐 X,1,生命药瓶,15,每档数值,9999999,数量
+R24C25,o_skill_oxygen_regen_speed_03,Oxygen Regen Speed III,氧气恢复速度 III,1,生命药瓶,1,每档数值,8000,%
+R25C06,o_skill_obsidian_final,???,???,1,黑曜石,2000000,单档门槛,,
+R25C08,o_skill_pickup_range_10,Collectible Magnet X,触手可及 X,1,生命药瓶,1,每档数值,9999,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,1,贝壳,10000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,2,贝壳,20000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,3,贝壳,30000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,4,贝壳,40000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,5,贝壳,50000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,6,贝壳,60000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,7,贝壳,70000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,8,贝壳,80000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,9,贝壳,90000000000,每档数值,20,%
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,10,贝壳,100000000000,每档数值,20,%
+R25C24,o_skill_crystal_final,???,???,1,水晶,100000,单档门槛,,
