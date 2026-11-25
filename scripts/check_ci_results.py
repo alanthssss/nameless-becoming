@@ -23,6 +23,9 @@ def validate(needs: dict, only: str | None = None) -> list[str]:
               if outputs.get(key) not in ('true', 'false')]
     if outputs.get('godot_suite') not in ('routes', 'full'):
         errors.append('Invalid or missing godot_suite')
+    allowed_swarm = ('full', 'region') if outputs.get('swarm') == 'true' else ('none',)
+    if outputs.get('swarm_suite') not in allowed_swarm:
+        errors.append('Invalid or missing swarm_suite for selected scope')
     if errors:
         return errors
     if outputs['export_game'] == 'true' and (outputs['web'] != 'true' or outputs['godot'] != 'true'):

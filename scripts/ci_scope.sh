@@ -30,5 +30,13 @@ else
   : > "$paths"
   git show --check --format= HEAD --
 fi
+if [[ -s "$paths" ]]; then
+  # Validate surviving records at the compared revision, even on a synthetic PR checkout.
+  git diff --name-only -z --no-renames --diff-filter=AMT "$diff_spec" -- docs/production/evidence |
+    python3 -B "$script_dir/check_ci_evidence.py" "$head"
+else
+  git ls-tree -r -z --name-only HEAD -- docs/production/evidence |
+    python3 -B "$script_dir/check_ci_evidence.py" HEAD
+fi
 bash "$script_dir/classify_ci_changes.sh" < "$paths"
 printf 'reason=%s\n' "$reason"

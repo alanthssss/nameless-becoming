@@ -4,19 +4,22 @@ set -euo pipefail
 # and both sides of renames. Unknown paths/history fail broad, never silently skip.
 count=0
 web=false; godot=false; export_game=false; suite=routes
-swarm=false; flower=false; garden=false; content=false
+swarm_suite=none; flower=false; garden=false; content=false
 full() {
   web=true; godot=true; export_game=true; suite=full
-  swarm=true; flower=true; garden=true; content=true
+  swarm_suite=full; flower=true; garden=true; content=true
 }
 while IFS= read -r -d '' path; do
   count=$((count + 1))
   case "$path" in
-    .github/workflows/quality.yml|scripts/classify_ci_changes.sh|scripts/ci_scope.sh|scripts/check_ci_results.py|scripts/lint_workflows.sh|tests/ci-scope.test.sh|tests/test_ci_routing.py)
+    .github/workflows/quality.yml|scripts/classify_ci_changes.sh|scripts/ci_scope.sh|scripts/check_ci_evidence.py|scripts/check_ci_results.py|scripts/lint_workflows.sh|tests/ci-scope.test.sh|tests/test_ci_routing.py)
       full ;;
+    prototypes/swarm-flight/region_game/*.gd|prototypes/swarm-flight/region_game/*.gd.uid)
+      # The regional suite exercises these scripts, including saves, UI and the pond preview.
+      if [[ "$swarm_suite" == none ]]; then swarm_suite=region; fi ;;
     prototypes/swarm-flight/*|.github/workflows/swarm-flight.yml|scripts/check_swarm_regressions.py|scripts/check_swarm_supply_regressions.py|tests/test_swarm_regressions.py|tools/check_delivery.py|tools/spring_review_gate.py|tools/package_spring_review.py|tests/test_delivery_gate.py|tests/test_spring_review_gate.py|tests/test_spring_package.py)
       # Evidence includes JSON fixtures loaded by leaf_canopy_verify.gd.
-      swarm=true ;;
+      swarm_suite=full ;;
     prototypes/flower-step/*|.github/workflows/flower-step.yml)
       flower=true ;;
     prototypes/garden-puzzles/*|.github/workflows/garden-puzzles.yml)
@@ -36,11 +39,16 @@ while IFS= read -r -d '' path; do
       content=true ;;
     src/*|app/*|public/*|tests/*.mjs|*.config.*|tsconfig.json|wrangler.*)
       web=true ;;
+    docs/production/evidence/*.png|docs/production/evidence/*.jpg|docs/production/evidence/*.jpeg|docs/production/evidence/*.webp|docs/production/evidence/*.log|docs/production/evidence/*.json|docs/production/evidence/*.jsonl|docs/production/honey-music/growth-journal-dizi-jianpu.pdf)
+      # Archived review outputs. ci_scope.sh validates changed structured receipts.
+      ;;
     *.md|*.mdx|*.markdown|*.MD|*.MDX|*.MARKDOWN)
       ;;
     *) full ;;
   esac
 done
 if [[ "$count" -eq 0 ]]; then full; fi
-printf 'web=%s\ngodot=%s\nexport_game=%s\ngodot_suite=%s\nswarm=%s\nflower=%s\ngarden=%s\ncontent=%s\n' \
-  "$web" "$godot" "$export_game" "$suite" "$swarm" "$flower" "$garden" "$content"
+swarm=false
+if [[ "$swarm_suite" != none ]]; then swarm=true; fi
+printf 'web=%s\ngodot=%s\nexport_game=%s\ngodot_suite=%s\nswarm=%s\nflower=%s\ngarden=%s\ncontent=%s\nswarm_suite=%s\n' \
+  "$web" "$godot" "$export_game" "$suite" "$swarm" "$flower" "$garden" "$content" "$swarm_suite"

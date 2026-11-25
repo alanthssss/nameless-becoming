@@ -210,7 +210,7 @@ npm run build
 npm run test
 ```
 
-自动 CI 统一由 **Quality gates** 接收 PR 与 `main` push，并根据 `scripts/classify_ci_changes.sh` 选择 Web、旧 Godot、导出或三个独立原型；普通说明文档只做轻量检查，被测试读取的 README／美术材料运行快速 Node 合同检查。CI 入口／分类器／总门禁改动、未知路径、缺失历史、手动完整运行和 merge queue 请求会扩大验证；不会把 CI 自身改动直接跳过。总门禁只接受已选任务成功和明确未选任务跳过。PR 新版本可取消旧检查，主线不同提交各自完成，防止后续文档提交取消尚未完成的代码验证。详细事件、输入映射、编辑 PR 的重跑取舍及证据见[CI 触发合同](docs/CI_PERFORMANCE_2026-11-01.md#trigger-contract)。
+自动 CI 统一由 **Quality gates** 接收 PR 与 `main` push，并根据 `scripts/classify_ci_changes.sh` 选择 Web、旧 Godot、导出或三个独立原型；普通说明文档只做轻量检查，被测试读取的 README／美术材料运行快速 Node 合同检查。CI 入口／分类器／总门禁改动、未知路径、缺失历史、手动完整运行和 merge queue 请求会扩大验证；不会把 CI 自身改动直接跳过。总门禁只接受已选任务成功和明确未选任务跳过。PR 新版本可取消旧检查，主线不同提交各自完成，防止后续文档提交取消尚未完成的代码验证。验收截图与简谱走轻量检查，区域脚本单独修改时只跑区域回归。具体触发条件和审查重点见[按改动选择检查](docs/CI_PERFORMANCE_2026-11-01.md#review-scope)。
 
 桌面候选包可在 GitHub 的 **Actions → Desktop client builds → Run workflow** 手动生成。`release_tag` 必须与 `package.json` 版本一致；流水线校验 Godot 编辑器与模板、运行测试、导出 macOS／Windows 并附带 SHA-256。默认只生成保留期有限的 artifacts，只有明确选择 `publish_prerelease` 才创建预发布版本。
 
@@ -237,7 +237,7 @@ npm run test
 按用途读取，避免把历史方案误当当前决定：
 
 - [采蜜小店抽象成长树MVP定稿与扩展方向](docs/design/nectar-growth-tree-mvp.md)：NH-GT-v1，9个付费显示节点/12次升级、前置与阶段收束、界面/旧档兼容及分步扩展；设计定稿待实施，0.19候选保持原规则。
-- [Swarm Flight CI 耗时分析与并行验证](docs/CI_PERFORMANCE_2026-11-01.md)：真实步骤耗时、保留全部回归的三组并行方案与远端验证入口。
+- [Swarm Flight CI 耗时分析与并行验证](docs/CI_PERFORMANCE_2026-11-01.md)：实际步骤耗时、按改动选择测试组的规则与远端验证入口。
 - [完整GDD元素总目录](docs/design/swarm-flight-element-catalog.md)：全作需求来源、元素族、必要状态与GitHub覆盖；族级起点不等于资产完成。
 - [《雨来之前》开发范式：稳定元素，再组合完整体验](docs/design/swarm-flight-production-paradigm.md)：**后续制作执行入口**；P0–P5阶段、G0–G5门禁、元素规范、十分钟工作段与交接，实际进度只见原Now。
 
