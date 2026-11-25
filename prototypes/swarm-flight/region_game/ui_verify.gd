@@ -57,7 +57,8 @@ func check_map_camera() -> void:
 	for pixels in [Vector2i(960,600),Vector2i(1280,800)]:
 		root.size = pixels
 		await frames(3)
-		check(view.clip_contents and is_equal_approx(view.magnification,1.0),"framed full tree at "+str(pixels))
+		await tap(KEY_HOME)
+		check(view.clip_contents and is_equal_approx(view.magnification,1.0),"full tree is always available at "+str(pixels))
 		var centers_match := true
 		for id in board.visible_ids():
 			if view._node_at(board.point(id)) != id: centers_match = false
@@ -121,10 +122,89 @@ func check_map_camera() -> void:
 		root.push_input(pan,true)
 		await frames(1)
 		check(is_equal_approx(view.magnification,1.7) and board.position.distance_to(before)>1,"magnify and pan gesture events move the map")
+		var remembered: Vector2 = board.position
+		var remembered_rank: String = board.inspect_data().id
 		await pad(JOY_BUTTON_B)
 		await tap(KEY_E)
-		check(game.mode=="tree" and board.position==Vector2.ZERO and is_equal_approx(view.magnification,1),"reopen journal in full view")
+		check(game.mode=="tree" and board.inspect_data().id==remembered_rank and board.position.is_equal_approx(remembered) and is_equal_approx(view.magnification,1.7),"reopen journal on remembered rank, zoom and pan")
 	check(game.model.to_payload()==starting_wallet,"browsing, zoom, drag, back and reopen cannot change the saved purchase state")
+	board.select_node("gather")
+
+func check_bookmark_rules() -> void:
+	var view = game.ui.growth_map
+	var board = game.ui.board
+	var original: String = game.saved_path
+	var base := original + ".book-test"
+	game.close_tree()
+	game.saved_path = base
+	var file := FileAccess.open(base+".growth-view.json",FileAccess.WRITE)
+	file.store_string("{truncated")
+	file.close()
+	game.open_tree()
+	check(view.magnification>=2.75 and board.buttons[board.selected].state=="ready","malformed view opens on an affordable live rank")
+	board.select_rank("cascade2")
+	view.center_selection(false)
+	var position: Vector2 = board.position
+	var neighbour := "cascade"
+	for id in board.visible_ids():
+		var pixel: Vector2 = position+board.point(id)*view.magnification
+		if id != "cascade" and Rect2(Vector2.ZERO,view.size).grow(-32).has_point(pixel):
+			neighbour = id
+			break
+	var hit: Vector2 = position+board.point(neighbour)*view.magnification
+	await map_pointer(view,hit,MOUSE_BUTTON_LEFT,true)
+	await map_pointer(view,hit,MOUSE_BUTTON_LEFT,false)
+	check(board.selected==neighbour and board.position.is_equal_approx(position),"pointer selects the visible neighbour without shifting the paper")
+	var old_motion: bool = board.reduced_motion
+	board.reduced_motion = true
+	await tap(KEY_DOWN)
+	var centered: Vector2 = view._bounded(view.size*.5-board.point(board.selected)*view.magnification)
+	check(board.position.is_equal_approx(centered),"direction navigation places the selected skill at the reading point immediately with reduced motion")
+	board.reduced_motion = old_motion
+	board.select_rank("cascade2")
+	view.zoom_at(1.18,view.size*.5)
+	view.center_selection(false)
+	view._pan(Vector2(14,12))
+	var snapshot: Dictionary = view.capture_view()
+	game.close_tree()
+	file = FileAccess.open(base+".growth-view.json",FileAccess.READ)
+	var saved: Dictionary = JSON.parse_string(file.get_as_text())
+	file.close()
+	check(saved.cell=="cascade" and saved.rank=="cascade2","separate slot preference records stable cell and rank IDs")
+	game.open_tree()
+	check(board.inspect_data().id==snapshot.rank and is_equal_approx(view.magnification,snapshot.zoom),"readback restores the selected future rank and chosen zoom")
+	var other: Dictionary = saved.duplicate()
+	other.zoom = 2.0
+	file = FileAccess.open(base+".growth-view.json",FileAccess.WRITE)
+	file.store_string(JSON.stringify(other,"",true,true))
+	file.close()
+	game.close_tree()
+	game.open_tree()
+	check(view.magnification==2.0,"closing an unchanged book preserves another instance's newer view")
+	await tap(KEY_HOME)
+	game.close_tree()
+	game.open_tree()
+	check(view.magnification==1.0 and board.inspect_data().id=="cascade2","explicit full overview remains the next opening view")
+	game.close_tree()
+	saved.cell="removed-from-catalog"
+	file = FileAccess.open(base+".growth-view.json",FileAccess.WRITE)
+	file.store_string(JSON.stringify(saved))
+	file.close()
+	game.open_tree()
+	check(view.magnification>=2.75 and board.entries.has(board.selected),"removed bookmarked skill uses a readable valid starting skill")
+	game.close_tree()
+	saved.cell="cascade"
+	saved.rank="removed-rank"
+	file = FileAccess.open(base+".growth-view.json",FileAccess.WRITE)
+	file.store_string(JSON.stringify(saved))
+	file.close()
+	game.open_tree()
+	check(board.selected=="cascade" and board.viewed_index()==0,"removed rank falls back to the bookmarked skill's current rank")
+	game.close_tree()
+	view.forget_book(base)
+	check(not FileAccess.file_exists(base+".growth-view.json"),"clearing a slot removes only its view preference")
+	game.saved_path = original
+	game.open_tree()
 	board.select_node("gather")
 
 func check_catalog_preview() -> void:
@@ -330,6 +410,7 @@ func run() -> void:
 	game.model.p = game.model.HUB_TREE
 	cues.clear()
 	await tap(KEY_E)
+	check(game.ui.growth_map.magnification>=2.75 and game.ui.board.selected=="gather","first book opens on a readable introductory skill")
 	await click_buy_button()
 	check(cues == ["book_open", "denied"], "clicking an unaffordable rank sounds once")
 	game.ui.last_denied_msec = -1000
@@ -348,6 +429,7 @@ func run() -> void:
 	await frames(5)
 	check(game.sound._book_tween == phrase,"browsing the growth map keeps the same solo")
 	await check_map_camera()
+	await check_bookmark_rules()
 	await check_catalog_preview()
 	var paid: int = game.model.coins
 	var board = game.ui.board

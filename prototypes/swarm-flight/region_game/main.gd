@@ -13,10 +13,16 @@ func create_sound(): return HoneySound.new()
 
 func finish_quit() -> void:
 	if is_queued_for_deletion(): return
+	ui.growth_map.close_book()
 	var tree := get_tree()
 	# Release the looping players while the audio driver can still process their stops.
 	queue_free()
 	tree.create_timer(0.25, true, false, true).timeout.connect(tree.quit)
+
+func restart_game() -> void:
+	var previous = model
+	super.restart_game()
+	if model != previous: ui.growth_map.forget_book(saved_path)
 
 func update_sound_context() -> void:
 	sound.set_honey_context(model.area, mode)
@@ -38,6 +44,7 @@ func _ready() -> void:
 	model = new_model()
 	saved_path = "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
 	super._ready()
+	if not has_save and not save_blocked: ui.growth_map.forget_book(saved_path)
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--record-dir="):
 			var recorder = preload("res://region_game/recorder.gd").new()

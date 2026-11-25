@@ -1,5 +1,6 @@
 extends "res://region_game/growth_board.gd"
 ## The live journal owns purchases; the field guide also shows future abilities.
+signal navigated()
 const Catalog := preload("res://region_game/growth_catalog_data.gd")
 const AtlasCell := preload("res://region_game/growth_catalog_cell.gd")
 const DIRECTIONS := ["gather","forage","carry","flight","bloom","trade"]
@@ -10,6 +11,7 @@ var ranks_by_id: Dictionary = {}
 var stage_names: Dictionary = {}
 var manual_rank := -1
 var map_zoom := 1.0
+var label_layout_key: Array = []
 
 func _init() -> void:
 	for cell in Catalog.DATA.cells:
@@ -94,12 +96,52 @@ func inspect_data() -> Dictionary:
 		entry = model.upgrade(r.id)
 		state = "owned" if r.id in model.owned else ("next" if idx == rank_of(selected) else "preview")
 	var prices: Dictionary = r.cost if planned else {"coins":entry.get("cost",0),"fiber":entry.get("fiber",0),"resin":entry.get("resin",0)}
-	var reqs := _rank_conditions(r,not planned,entry)
+	var reqs := _rank_conditions(r)
 	return {"id":r.id,"cell_id":cell.id,"name":r.name if planned else entry.get("name",r.name),
 		"cell_name":cell.name,"rank_index":idx,"rank_count":cell.ranks.size(),"branch":cell.branch,
 		"stage":cell.stage,"stage_name":stage_names[cell.stage],"state":state,"planned":planned,
 		"effect_text":r.effect_text if planned else str(entry.get("description","")),
 		"feedback":r.feedback if planned else "","requirements":reqs,"cost":prices}
+
+## Skill requirements shared by the detail panel and the map. World actions and
+## the wallet have no map position and are listed separately on the detail page.
+func prerequisite_groups(rank_id: String) -> Array[Dictionary]:
+	var groups: Array[Dictionary] = []
+	if model == null or not ranks_by_id.has(rank_id): return groups
+	var data: Dictionary = ranks_by_id[rank_id]
+	var all_ranks: Array = data.requires_all
+	var choices: Array = data.requires_any
+	var count: Dictionary = data.get("requires_count",{})
+	if entries[data.cell].stage == "demo":
+		all_ranks = model.upgrade(rank_id).get("requires",[]).duplicate()
+		choices = []
+		count = {}
+		match rank_id:
+			"wings1": choices = ["gather1","bag1"]
+			"meadow": count = {"minimum":3,"from_purchased_ranks":model.MEADOW_GROWTH_RANKS}
+			"reserve": all_ranks.append("twin")
+	for rank_key in all_ranks:
+		groups.append(_requirement_group([rank_key],1,false))
+	if not choices.is_empty():
+		groups.append(_requirement_group(choices,1,true))
+	if not count.is_empty():
+		groups.append(_requirement_group(count.from_purchased_ranks,count.minimum,true))
+	return groups
+
+func _requirement_group(ranks: Array, minimum: int, optional: bool) -> Dictionary:
+	var owned_count := 0
+	for rank_id in ranks:
+		if rank_id in model.owned: owned_count += 1
+	return {"ranks":ranks,"minimum":minimum,"owned_count":owned_count,
+		"optional":optional,"met":owned_count >= minimum}
+
+func select_rank(rank_id: String) -> void:
+	if model == null or not ranks_by_id.has(rank_id): return
+	var cell_id: String = ranks_by_id[rank_id].cell
+	var index: int = entries[cell_id].ranks.find(rank_id)
+	selected = cell_id
+	manual_rank = -1 if index == _base_index(cell_id) else index
+	select_node(cell_id)
 
 func _rank_names(ids: Array) -> String:
 	var names := PackedStringArray()
@@ -107,27 +149,19 @@ func _rank_names(ids: Array) -> String:
 		if ranks_by_id.has(id): names.append(str(ranks_by_id[id].name))
 	return "、".join(names)
 
-func _rank_conditions(row: Dictionary,live: bool,live_entry: Dictionary) -> String:
+func _rank_conditions(row: Dictionary) -> String:
 	var words := PackedStringArray()
-	if live:
-		var needs: Array = live_entry.get("requires",[])
-		if not needs.is_empty(): words.append("需要 "+_rank_names(needs))
-		match str(row.id):
-			"wings1": words.append("轻巧采蜜、舒展蜜囊任选一项")
-			"meadow": words.append("池岸基础成长累计 3 档")
-			"market": words.append("到过紫花地，并交售至少 1 份紫蜜")
-			"reserve": words.append("取得双簇采蜜，到过紫花地并交售至少 6 份紫蜜")
-	else:
-		var all_ranks: Array = row.get("requires_all",[])
-		var any_ranks: Array = row.get("requires_any",[])
-		if not all_ranks.is_empty(): words.append("需要 "+_rank_names(all_ranks))
-		if not any_ranks.is_empty(): words.append("任选 "+_rank_names(any_ranks))
-		var count: Dictionary = row.get("requires_count",{})
-		if not count.is_empty():
-			words.append("%d 项任选 %d 项：%s" % [count.from_purchased_ranks.size(),count.minimum,_rank_names(count.from_purchased_ranks)])
-		var world: Dictionary = row.get("requires_world",{})
-		if world.get("sealed",false): words.append("已在庭院封罐")
-		if world.get("lantern_lit",false): words.append("已点亮花径灯")
+	for group in prerequisite_groups(row.id):
+		var names := _rank_names(group.ranks)
+		if not group.optional: words.append("需要 "+names)
+		elif group.minimum == 1: words.append("任选一项："+names)
+		else: words.append("任选 %d 档：%s" % [group.minimum,names])
+	var world: Dictionary = row.get("requires_world",{})
+	if world.get("visited_meadow",false): words.append("探索紫花地")
+	if world.has("min_lifetime_violet_sold"):
+		words.append("交售至少 %d 份紫蜜" % world.min_lifetime_violet_sold)
+	if world.get("sealed",false): words.append("已在庭院封罐")
+	if world.get("lantern_lit",false): words.append("已点亮花径灯")
 	return " · ".join(words)
 
 func shift_rank(step: int) -> void:
@@ -137,6 +171,11 @@ func shift_rank(step: int) -> void:
 	manual_rank = -1 if target == _base_index(selected) else target
 	refresh(model)
 	selected_changed.emit(selected)
+
+func navigate(key: int, backwards := false) -> void:
+	var previous := selected
+	super.navigate(key,backwards)
+	if selected != previous: navigated.emit()
 
 func cycle_branch(step: int) -> void:
 	var start: int = DIRECTIONS.find(entries[selected].branch)
@@ -177,8 +216,9 @@ func refresh(next_model) -> void:
 		else:
 			var id: String = data.ranks[n]
 			node.state = "ready" if model.can_buy(id) else ("poor" if model.locked_reason(id).begins_with("还需") else "locked")
-		node.tooltip_text = "%s · %s" % [data.name,("后续开放" if future else "%d / %d" % [n,data.ranks.size()])]
+		node.tooltip_text = "%s · %s" % [data.name,node.state_caption()]
 		node.queue_redraw()
+	_layout_labels()
 	queue_redraw()
 
 func update_lod(value: float) -> void:
@@ -187,6 +227,7 @@ func update_lod(value: float) -> void:
 		if buttons.has(id):
 			buttons[id].zoom_lod = value
 			buttons[id].queue_redraw()
+	_layout_labels()
 	queue_redraw()
 
 func _radius() -> float:
@@ -207,8 +248,57 @@ func point(id: String) -> Vector2:
 
 func _layout() -> void:
 	for id in entries:
-		if buttons.has(id): buttons[id].position = point(id)-AtlasCell.CENTER
+		if buttons.has(id):
+			buttons[id].position = point(id)-AtlasCell.CENTER
+			buttons[id].layout_radius = clampf(_radius()*.047,6.0,10.6)
+	_layout_labels()
 	queue_redraw()
+
+func _layout_labels() -> void:
+	if not model or not font or not buttons.has(selected): return
+	var current := [size,map_zoom,selected,viewed_index(),model.owned.hash()]
+	if current==label_layout_key: return
+	label_layout_key = current
+	var obstacles: Array[Rect2] = []
+	var priority: Array = [selected]
+	var sources := selected_links()
+	priority.append_array(sources.keys())
+	for id in entries:
+		if not buttons.has(id): continue
+		var node = buttons[id]
+		var radius: float = maxf(12.0,node._radius()+1.0)
+		obstacles.append(Rect2(point(id)*map_zoom-Vector2.ONE*radius,Vector2.ONE*radius*2))
+		node.label_rect = Rect2()
+		if not node.planned and id not in priority: priority.append(id)
+	for id in entries:
+		if id not in priority: priority.append(id)
+	for id in priority:
+		if id!=selected and map_zoom<1.78: continue
+		var node = buttons[id]
+		var center := point(id)*map_zoom
+		var radius: float = node._radius()
+		var label := Vector2(ceilf(font.get_string_size(node.title,HORIZONTAL_ALIGNMENT_LEFT,-1,14).x)+6,18)
+		var gap := maxf(12.0,radius+1.0)+3.0
+		var offsets := [Vector2(-label.x*.5,gap),Vector2(-label.x*.5,-gap-label.y),
+			Vector2(gap,-label.y*.5),Vector2(-gap-label.x,-label.y*.5),
+			Vector2(-label.x*.1,gap),Vector2(-label.x*.9,gap),
+			Vector2(-label.x*.1,-gap-label.y),Vector2(-label.x*.9,-gap-label.y)]
+		var best := Rect2()
+		var min_overlap := INF
+		for offset: Vector2 in offsets:
+			var candidate := Rect2(center+offset,label)
+			var overlap := 0.0
+			for box in obstacles:
+				if box.has_point(candidate.get_center()): overlap += label.x*label.y
+				overlap += candidate.intersection(box).get_area()
+			if overlap < min_overlap:
+				best = candidate
+				min_overlap = overlap
+			if overlap==0: break
+		if min_overlap>0 and node.planned and id!=selected and not sources.has(id): continue
+		obstacles.append(best.grow(1))
+		node.label_rect = Rect2(best.position-center,best.size)
+		node.queue_redraw()
 
 func _draw() -> void:
 	if model == null: return
@@ -234,22 +324,62 @@ func _draw() -> void:
 		draw_string(font,at+Vector2(-40,5/map_zoom),SECTORS[i],HORIZONTAL_ALIGNMENT_CENTER,80,label_size,INK)
 	_draw_catalog_links()
 
-func _line(source: String,target: String,choice: bool,highlight: bool) -> void:
-	if source==target or not entries.has(source): return
-	var ray := (point(target)-point(source)).normalized()
-	var margin := clampf(10.6*map_zoom,10.6,31.0)/map_zoom
-	var a := point(source)+ray*margin
-	var b := point(target)-ray*margin
-	var line_color := Color("91692d") if highlight else Color("857b5868")
-	var width := (1.9 if highlight else 1.1)/map_zoom
-	if choice: draw_dashed_line(a,b,line_color,width,4/map_zoom,true,true)
-	else: draw_line(a,b,line_color,width,true)
-	if highlight:
-		var wing := ray.orthogonal()*3.0/map_zoom
-		draw_polyline(PackedVector2Array([b-ray*6.0/map_zoom+wing,b,b-ray*6.0/map_zoom-wing]),line_color,width,true)
+## A skill with two ranks may contribute two choices to a count gate, but it
+## has only one map position. Once the threshold is met, unused choices drop
+## out so they do not look like outstanding obligations.
+func selected_links() -> Dictionary:
+	var links := {}
+	for group in prerequisite_groups(_current_rank(selected).id):
+		for rank_id in group.ranks:
+			var source: String = ranks_by_id[rank_id].cell
+			if source == selected: continue
+			var learned: bool = rank_id in model.owned
+			if group.optional and group.met and not learned: continue
+			var link: Dictionary = links.get(source,{"optional":true,"met":true})
+			link.optional = link.optional and group.optional
+			link.met = link.met and learned
+			links[source] = link
+	return links
+
+func _draw_link_between(source: String, target: String, info: Dictionary) -> void:
+	if source == target: return
+	var delta := point(target)-point(source)
+	var ray := delta.normalized()
+	var radius: float = buttons[target]._radius()
+	var side := fposmod(ray.angle()+PI/6.0,PI/3.0)-PI/6.0
+	var margin := (radius*cos(PI/6.0)/cos(side)+2.5)/map_zoom
+	var start := point(source)+ray*margin
+	var end := point(target)-ray*margin
+	if delta.length() < margin*2: return
+	if info.is_empty():
+		draw_line(start,end,Color("756b573a"),1.0/map_zoom,true)
+		return
+	var hue := Color("3c623f") if info.met else Color("934522")
+	var length_px := start.distance_to(end)*map_zoom
+	var head := minf(13.0,length_px*.80)/map_zoom
+	var base := end-ray*head
+	var width := 2.9/map_zoom
+	if info.optional:
+		draw_dashed_line(start,base,hue,width,5.0/map_zoom,true,true)
+	else:
+		draw_line(start,base,hue,width,true)
+	var wing := ray.orthogonal()*head*.52
+	var triangle := PackedVector2Array([end,base+wing,base-wing])
+	draw_polyline(PackedVector2Array([end,base+wing,base-wing,end]),Color("fff3d1"),2.6/map_zoom,true)
+	draw_colored_polygon(triangle,hue)
+	if map_zoom < 1.78 or length_px < 48.0: return
+	# Ink seals make fulfilled and outstanding conditions distinct without colour.
+	var seal := start.lerp(base,.36)
+	var u := 1.0/map_zoom
+	draw_circle(seal,6.8*u,hue,true,-1,true)
+	var white := Color("fff5da")
+	if info.met:
+		draw_polyline(PackedVector2Array([seal+Vector2(-3.3,0)*u,seal+Vector2(-.9,2.7)*u,seal+Vector2(3.5,-2.8)*u]),white,1.6*u,true)
+	else:
+		draw_line(seal+Vector2.UP*3.6*u,seal+Vector2.DOWN*.7*u,white,1.7*u,true)
+		draw_circle(seal+Vector2.DOWN*3.1*u,1.0*u,white,true,-1,true)
 
 func _draw_catalog_links() -> void:
-	var active: Dictionary = _current_rank(selected)
 	for data in Catalog.DATA.cells:
 		if data.id == selected: continue
 		var first: Dictionary = ranks_by_id[data.ranks[0]]
@@ -258,21 +388,7 @@ func _draw_catalog_links() -> void:
 		for from_rank in needs:
 			var from_cell: String = ranks_by_id[from_rank].cell
 			if entries[from_cell].branch == data.branch:
-				_line(from_cell,data.id,false,false)
-	var required: Array = active.requires_all.duplicate()
-	var optional: Array = active.requires_any.duplicate()
-	if entries[selected].stage == "demo":
-		required = model.upgrade(active.id).get("requires",[]).duplicate()
-		optional.clear()
-		match str(active.id):
-			"wings1": optional = ["gather1","bag1"]
-			"meadow": optional = model.MEADOW_GROWTH_RANKS
-			"reserve": required.append("twin")
-	else:
-		optional.append_array(active.get("requires_count",{}).get("from_purchased_ranks",[]))
-	var seen := {}
-	for from_rank in required+optional:
-		var from_cell: String = ranks_by_id[from_rank].cell
-		if seen.has(from_cell): continue
-		seen[from_cell] = true
-		_line(from_cell,selected,from_rank in optional,true)
+				_draw_link_between(from_cell,data.id,{})
+	var links := selected_links()
+	for source in links:
+		_draw_link_between(source,selected,links[source])

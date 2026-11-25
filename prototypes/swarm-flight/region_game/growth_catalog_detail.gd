@@ -36,6 +36,29 @@ static func sync_rank_controls(ui) -> void:
 	bar.get_node("Next").disabled = data.rank_index+1>=data.rank_count
 	bar.get_node("Rank").text = "%s · 第 %d / %d 档" % [data.stage_name,data.rank_index+1,data.rank_count]
 
+static func add_cost_stock(ui) -> void:
+	var flow := HFlowContainer.new()
+	flow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	flow.add_theme_constant_override("h_separation",12)
+	flow.add_theme_constant_override("v_separation",0)
+	ui.detail_cost_row.add_child(flow)
+	for unit in ui.detail_costs:
+		var amount: Label = ui.detail_costs[unit]
+		var price: HBoxContainer = amount.get_parent()
+		price.reparent(flow,false)
+		price.get_child(0).custom_minimum_size = Vector2(25,25)
+		amount.add_theme_font_size_override("font_size",17)
+		ui.cost_stock[unit] = ui.text_line(price,"",16,INK)
+
+static func update_cost_stock(ui, rank: Dictionary) -> void:
+	for unit in ui.cost_stock:
+		var label: Label = ui.cost_stock[unit]
+		var key: String = "coins" if unit=="coin" else unit
+		var name: String = {"coins":"金币","fiber":"纤维","resin":"树脂"}[key]
+		var held: int = ui.driver.model.coins if key=="coins" else ui.driver.model.materials.get(key,0)
+		label.text = "%s · 持有 %d" % [name,held] if rank.state!="owned" else "%s · 已付" % name
+		label.add_theme_color_override("font_color",Color("803d23") if rank.state!="owned" and held<int(rank.cost.get(key,0)) else INK)
+
 static func update(ui,id: String) -> bool:
 	if not is_instance_valid(ui.board) or ui.board.model == null: return false
 	if not ui.board.has_method("inspect_data") or ui.board.selected != id: return false
