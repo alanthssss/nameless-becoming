@@ -14,6 +14,10 @@ const JAR_RECT := Rect2(RegionalLayout.PLATE.position + Vector2(93,161)/Vector2(
 		Vector2(64,79)/Vector2(970,561)*RegionalLayout.PLATE.size)
 # Largest flower in bloom, including rocking petals above and roots and leaves below.
 const FLOWER_FOOTPRINT := Rect2(-38,-42,76,99)
+const POND_SPACE_VERSION := 5
+const PLANT_CLEARANCE := 24.0
+# The ripe or shaken tuft spreads past the husk only above its socket.
+const FIBER_TUFT := Rect2(-32,-26,64,22)
 
 var supply_rank := 0
 var drawing_resin_id := -1
@@ -34,7 +38,10 @@ func configure(area: String,level: int,seed_value: int = 1) -> void:
 		item.anchor *= RegionalLayout.GROUND_SCALE
 		item.p = item.anchor
 	layout = RegionalLayout.expand(layout)
-	if region == "pond": _clear_jar_flowers(flowers,layout)
+	if region == "pond":
+		# Reproduce the 0.32.1 sites first. Only move flowers that still crowd a host.
+		_clear_pond_flowers(flowers,layout,[JAR_RECT])
+		_clear_pond_flowers(flowers,layout,_pond_obstacles(layout),32)
 	supply_rank = 0
 	set_supply_rank(0)
 
@@ -64,22 +71,37 @@ static func _seeded_flower_sites(coast: Dictionary,seed_value: int) -> Array[Vec
 		placed.append(best)
 	return placed
 
-static func _covers_jar(at: Vector2) -> bool:
-	return JAR_RECT.intersects(Rect2(at+FLOWER_FOOTPRINT.position,FLOWER_FOOTPRINT.size),true)
+static func _pond_obstacles(coast: Dictionary) -> Array[Rect2]:
+	var obstacles: Array[Rect2] = [JAR_RECT]
+	for spawn in coast.material_spawns:
+		var maturity := RegionalLayout.material_scale(spawn.band)
+		var span := RegionalLayout.FIBER_SPAN*maturity
+		obstacles.append(Rect2(spawn.p-span*RegionalLayout.FIBER_SOCKET,span).grow(PLANT_CLEARANCE))
+		obstacles.append(Rect2(spawn.p+FIBER_TUFT.position*maturity,FIBER_TUFT.size*maturity).grow(PLANT_CLEARANCE))
+	return obstacles
 
-static func _clear_jar_flowers(sites: Array,coast: Dictionary) -> void:
+static func _overlaps_obstacle(at: Vector2,obstacles: Array[Rect2]) -> bool:
+	var plant := Rect2(at+FLOWER_FOOTPRINT.position,FLOWER_FOOTPRINT.size)
+	for obstacle in obstacles:
+		if plant.intersects(obstacle,true): return true
+	return false
+
+static func _clear_pond_flowers(sites: Array,coast: Dictionary,obstacles: Array[Rect2],directions := 16) -> void:
 	for flower in sites:
-		if _covers_jar(flower.p):
-			flower.p = _ground_near_jar(flower,sites,coast)
+		if _overlaps_obstacle(flower.p,obstacles):
+			flower.p = _nearby_open_ground(flower,sites,coast,obstacles,directions)
 
-static func _ground_near_jar(flower: Dictionary,sites: Array,coast: Dictionary) -> Vector2:
+static func _nearby_open_ground(flower: Dictionary,sites: Array,coast: Dictionary,obstacles: Array[Rect2],directions: int) -> Vector2:
 	var best: Vector2 = coast.nodes[1].p
 	var best_gap := -1.0
-	for ring in range(1,11):
-		for spoke in 16:
-			var offset := Vector2.DOWN.rotated(spoke*TAU/16.0)*(ring*32.0)
+	# Expand beyond the local search only if every nearby candidate was obstructed.
+	var rings := ceili(coast.bounds.size.length()/32.0)
+	for ring in range(1,rings+1):
+		if ring > 10 and best_gap >= 0: break
+		for spoke in directions:
+			var offset := Vector2.DOWN.rotated(spoke*TAU/directions)*(ring*32.0)
 			var at: Vector2 = flower.p + offset
-			if _covers_jar(at) or at.distance_to(coast.nodes[0].p)<150.0: continue
+			if _overlaps_obstacle(at,obstacles) or at.distance_to(coast.nodes[0].p)<150.0: continue
 			var gap := INF
 			for other in sites:
 				if other != flower: gap = minf(gap,at.distance_squared_to(other.p))
@@ -283,7 +305,7 @@ func _harvest(dt: float) -> void:
 func snapshot() -> Dictionary:
 	var result := super.snapshot()
 	result.population_version = 1
-	result.space_version = 4
+	result.space_version = POND_SPACE_VERSION if region == "pond" else 4
 	result.supply_rank = supply_rank
 	return result
 
@@ -305,7 +327,7 @@ func restore(data: Variant) -> bool:
 			if not item.get("hits") is int or not item.has("band") or item.hits < shell_strength(item): return false
 		if not item.enabled and (item.get("phase") != "empty" or item.get("phase_time") != 0 or item.get("taken") != false): return false
 	var version = data.get("space_version",1)
-	if version not in [1,2,3,4] or data.get("region") not in ["pond","violet"]: return false
+	if version not in [1,2,3,4,POND_SPACE_VERSION] or data.get("region") not in ["pond","violet"]: return false
 	if not data.get("p") is Vector2 or not data.p.is_finite(): return false
 	var previous_position: Vector2 = data.p
 	if version == 1:
@@ -335,15 +357,21 @@ func restore(data: Variant) -> bool:
 			data = data.duplicate()
 			var entry: Vector2 = next_coast.nodes[0].p
 			data.p = Layout.move(next_coast,entry,data.p-entry,BODY)
-	if version < 4 and data.region == "pond" and data.flowers.any(func(f): return _covers_jar(f.p)):
+	if version < POND_SPACE_VERSION and data.region == "pond":
 		if not data.get("trip_seed") is int or data.trip_seed < 1: return false
 		var coast := RegionalLayout.build("pond",false)
 		var original := _seeded_flower_sites(coast,data.trip_seed)
 		if data.flowers.size() != original.size(): return false
+		var historical: Array[Dictionary] = []
 		for i in original.size():
-			if data.flowers[i].p != original[i]*RegionalLayout.GROUND_SCALE: return false
+			historical.append({"id":i,"p":original[i]*RegionalLayout.GROUND_SCALE})
+		coast = RegionalLayout.expand(coast)
+		if version == 4: _clear_pond_flowers(historical,coast,[JAR_RECT])
+		for i in historical.size():
+			if data.flowers[i].p != historical[i].p: return false
 		data = data.duplicate(true)
-		_clear_jar_flowers(data.flowers,RegionalLayout.expand(coast))
+		if version < 4: _clear_pond_flowers(data.flowers,coast,[JAR_RECT])
+		_clear_pond_flowers(data.flowers,coast,_pond_obstacles(coast),32)
 	if not super.restore(data): return false
 	supply_rank = int(data.supply_rank)
 	return true
