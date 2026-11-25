@@ -209,7 +209,9 @@ func step(delta: float, motion: Vector2, collect: bool, space_held: bool = false
 	p = Layout.move(layout, p, requested, BODY)
 	if p.distance_to(old + requested) > 0.1: collision_seconds += dt
 	distance += old.distance_to(p)
-	if p.distance_to(layout.nodes[0].p) > 220: departed = true
+	# Use the actual interaction boundary. The pre-step position also covers an
+	# older save just outside the gate that re-enters on its first resumed tick.
+	if old.distance_to(layout.nodes[0].p) > ENTRY_RADIUS: departed = true
 	var node: int = Layout.node_at(layout, p)
 	if node >= 0 and (visits.is_empty() or visits[-1] != node): visits.append(node)
 	energy -= dt * (1.0 if v.length() > 20 else 0.6)

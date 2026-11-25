@@ -104,6 +104,16 @@ func last_wing_at_gate() -> void:
 				damaged.merge(invalid,true)
 				arrival.field = Marshalls.raw_to_base64(var_to_bytes(damaged))
 				check(not clone.restore_payload(arrival) and clone.at_home(),region+" rejects forged pending arrival "+str(invalid.keys()))
+		var near_gate = approaching(region,130.0,.01)
+		near_gate.field.departed = false # Short trip or older save inside the outer departure marker.
+		near_gate.entry_pressed = true
+		near_gate.step(.05,Vector2.LEFT,false,false)
+		var resumed = Model.new()
+		check(near_gate.return_requested and resumed.restore_payload(near_gate.to_payload()) and resumed.return_requested,region+" short trip crosses the gate and saves a last-frame tap")
+		var leaving = approaching(region,0.0,5.0)
+		leaving.field.departed = false
+		leaving.step(.05,Vector2.RIGHT,true,false)
+		check(not leaving.return_requested,region+" holding collect on spawn does not turn the bee back")
 		for outside in [true,false]:
 			var m = approaching(region,150 if outside else 130,.01)
 			m.step(.05,Vector2.LEFT,outside,false)
