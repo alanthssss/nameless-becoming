@@ -72,18 +72,39 @@ jobs:
           steps.changes.outputs.flower == 'true' && steps.changes.outputs.garden == 'true'
         run: python3 -B -m unittest discover -s tests -p test_ci_reuse.py
 
-      - name: Check previous prototype results after synchronizing main
+      - name: Check previous results after synchronizing main
         id: reuse
         env:
           CI_SELECTION: ${{ toJSON(steps.changes.outputs) }}
           GH_TOKEN: ${{ github.token }}
         run: python3 -B scripts/ci_reuse.py
 
+      - name: Verify this checkout's build identity when reusing build checks
+        if: >-
+          contains(fromJSON(steps.reuse.outputs.reused), 'web') ||
+          contains(fromJSON(steps.reuse.outputs.reused), 'godot') ||
+          contains(fromJSON(steps.reuse.outputs.reused), 'web-candidate')
+        env:
+          NAMELESS_BUILD_INFO_PATH: ${{ runner.temp }}/ci-build-identity.json
+        run: |
+          node scripts/generate_build_provenance.mjs
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          stamp = json.loads(Path(os.environ["NAMELESS_BUILD_INFO_PATH"]).read_bytes())
+          checkout = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          version = json.loads(Path("package.json").read_bytes())["version"]
+          if checkout != os.environ["GITHUB_SHA"] or stamp != {
+              "schema_version": 1, "product_version": version, "commit": checkout, "dirty": False,
+          }:
+              raise SystemExit("Build identity does not match this clean checkout")
+          PY
+
   web:
     name: Web build, tests and lint
     timeout-minutes: 15
     needs: scope
-    if: ${{ needs.scope.outputs.web == 'true' }}
+    if: ${{ needs.scope.outputs.web == 'true' && !contains(fromJSON(needs.scope.outputs.reused), 'web') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -107,7 +128,7 @@ jobs:
   godot:
     name: Godot 4.6.2 tests
     needs: scope
-    if: ${{ needs.scope.outputs.godot == 'true' }}
+    if: ${{ needs.scope.outputs.godot == 'true' && !contains(fromJSON(needs.scope.outputs.reused), 'godot') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -142,7 +163,11 @@ jobs:
   web-candidate:
     name: Clean Web game and site candidate
     needs: [scope, web, godot]
-    if: ${{ always() && needs.scope.outputs.export_game == 'true' && needs.web.result == 'success' && needs.godot.result == 'success' }}
+    if: >-
+      always() && needs.scope.result == 'success' && needs.scope.outputs.export_game == 'true' &&
+      !contains(fromJSON(needs.scope.outputs.reused), 'web-candidate') &&
+      (needs.web.result == 'success' || (needs.web.result == 'skipped' && contains(fromJSON(needs.scope.outputs.reused), 'web'))) &&
+      (needs.godot.result == 'success' || (needs.godot.result == 'skipped' && contains(fromJSON(needs.scope.outputs.reused), 'godot')))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -232,6 +257,10 @@ jobs:
       - name: Prototype evidence v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.sha }} tree ${{ needs.scope.outputs.tested_tree }} swarm ${{ needs.scope.outputs.swarm_suite }} flower ${{ needs.scope.outputs.flower }} garden ${{ needs.scope.outputs.garden }}
         if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
         run: echo "Prototype results verified by the required gate."
+
+      - name: Build evidence v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.sha }} tree ${{ needs.scope.outputs.tested_tree }} web ${{ needs.scope.outputs.web }} godot ${{ needs.scope.outputs.godot == 'true' && needs.scope.outputs.godot_suite || 'none' }} export ${{ needs.scope.outputs.export_game }}
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
+        run: echo "Web, Godot and clean export coverage verified by the required gate."
 
   swarm-gate:
     # Keep the original top-level check name for existing check consumers.

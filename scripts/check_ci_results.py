@@ -9,6 +9,7 @@ import sys
 FLAGS = ('web', 'godot', 'export_game', 'swarm', 'flower', 'garden', 'content')
 JOBS = {'web': 'web', 'godot': 'godot', 'web-candidate': 'export_game',
         'swarm': 'swarm', 'flower': 'flower', 'garden': 'garden', 'content': 'content'}
+REUSABLE = ('web', 'godot', 'web-candidate', 'swarm', 'flower', 'garden', 'swarm-except-region')
 
 
 def validate(needs: dict, only: str | None = None) -> list[str]:
@@ -34,18 +35,17 @@ def validate(needs: dict, only: str | None = None) -> list[str]:
     try:
         reused = json.loads(outputs.get('reused', ''))
     except (TypeError, ValueError):
-        return ['Missing or invalid prototype reuse decision']
-    prototypes = ('swarm', 'flower', 'garden', 'swarm-except-region')
-    if (not isinstance(reused, list) or any(name not in prototypes for name in reused)
+        return ['Missing or invalid check reuse decision']
+    if (not isinstance(reused, list) or any(name not in REUSABLE for name in reused)
             or len(set(reused)) != len(reused)):
-        return ['Only selected prototype checks can be reused']
-    if any(outputs[name] != 'true' for name in reused if name != 'swarm-except-region'):
-        return ['Cannot reuse an unselected prototype']
+        return ['Invalid list of reused checks']
+    if any(outputs[JOBS[name]] != 'true' for name in reused if name != 'swarm-except-region'):
+        return ['Cannot reuse an unselected check']
     if 'swarm-except-region' in reused and (outputs['swarm_suite'] != 'full' or 'swarm' in reused):
         return ['Partial Swarm reuse requires the full scope and a fresh regional result']
     source = outputs.get('source_run')
     if not isinstance(source, str) or (reused and not re.fullmatch(r'[1-9][0-9]*', source)) or (not reused and source != 'none'):
-        return ['Invalid source run for prototype reuse']
+        return ['Invalid source run for check reuse']
     if only is not None and only not in JOBS:
         return ['Unknown check selector']
     for job, flag in JOBS.items():
@@ -71,7 +71,7 @@ def main() -> int:
         errors = validate(needs, args.only)
     except (KeyError, ValueError) as exc:
         errors = [f'Invalid dependency results: {exc}']
-    summary = '\n'.join(errors) if errors else 'Selected checks passed via execution or verified prototype reuse.'
+    summary = '\n'.join(errors) if errors else 'Selected checks passed via execution or verified reuse.'
     if not errors:
         outputs = needs['scope']['outputs']
         reused = [name for name in json.loads(outputs['reused']) if not args.only or args.only == name
