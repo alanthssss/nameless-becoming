@@ -263,6 +263,15 @@ func _layout_labels() -> void:
 	var priority: Array = [selected]
 	var sources := selected_links()
 	priority.append_array(sources.keys())
+	# Leave the arrowheads clear even when a caption moves above its hive.
+	for source in sources:
+		var path := _link_path(source,selected,true)
+		var tip: Vector2 = path[-1]*map_zoom
+		var tangent: Vector2 = (path[-1]-path[-2]).normalized()
+		var head_center := tip-tangent*5.5
+		obstacles.append(Rect2(head_center-Vector2(8,8),Vector2(16,16)))
+		if path.size()==3:
+			obstacles.append(Rect2(path[1]*map_zoom-Vector2(6,6),Vector2(12,12)))
 	for id in entries:
 		if not buttons.has(id): continue
 		var node = buttons[id]
@@ -341,35 +350,53 @@ func selected_links() -> Dictionary:
 			links[source] = link
 	return links
 
+func _hex_margin(direction: Vector2, radius: float) -> float:
+	var side := fposmod(direction.angle()+PI/6.0,PI/3.0)-PI/6.0
+	return (radius*cos(PI/6.0)/cos(side)+2.5)/map_zoom
+
+func _link_path(source: String, target: String, active: bool) -> PackedVector2Array:
+	var a := point(source)
+	var b := point(target)
+	var ray := (b-a).normalized()
+	var radius: float = buttons[target]._radius()
+	var margin := _hex_margin(ray,radius)
+	if active and (a.distance_to(b)-margin*2)*map_zoom<32.0:
+		# Neighbouring hexes may nearly touch. Take the short route around
+		# their rims so a shaft and a full arrowhead still fit between them.
+		var elbow := a.lerp(b,.5)+ray.orthogonal()*(radius+18.0)/map_zoom
+		var outgoing := a.direction_to(elbow)
+		var incoming := elbow.direction_to(b)
+		return PackedVector2Array([a+outgoing*_hex_margin(outgoing,radius),elbow,b-incoming*_hex_margin(incoming,radius)])
+	return PackedVector2Array([a+ray*margin,b-ray*margin])
+
 func _draw_link_between(source: String, target: String, info: Dictionary) -> void:
 	if source == target: return
-	var delta := point(target)-point(source)
-	var ray := delta.normalized()
-	var radius: float = buttons[target]._radius()
-	var side := fposmod(ray.angle()+PI/6.0,PI/3.0)-PI/6.0
-	var margin := (radius*cos(PI/6.0)/cos(side)+2.5)/map_zoom
-	var start := point(source)+ray*margin
-	var end := point(target)-ray*margin
-	if delta.length() < margin*2: return
+	var path := _link_path(source,target,not info.is_empty())
 	if info.is_empty():
-		draw_line(start,end,Color("756b573a"),1.0/map_zoom,true)
+		if (path[-1]-path[0]).dot(point(target)-point(source))>0:
+			draw_line(path[0],path[-1],Color("756b573a"),1.0/map_zoom,true)
 		return
 	var hue := Color("3c623f") if info.met else Color("934522")
-	var length_px := start.distance_to(end)*map_zoom
-	var head := minf(13.0,length_px*.80)/map_zoom
+	var end: Vector2 = path[-1]
+	var ray: Vector2 = path[-2].direction_to(end)
+	var last_length: float = path[-2].distance_to(end)
+	var head := minf(13.0/map_zoom,last_length*.8)
 	var base := end-ray*head
 	var width := 2.9/map_zoom
+	var shaft := path.duplicate()
+	shaft[-1] = base
 	if info.optional:
-		draw_dashed_line(start,base,hue,width,5.0/map_zoom,true,true)
+		for i in range(1,shaft.size()):
+			draw_dashed_line(shaft[i-1],shaft[i],hue,width,5.0/map_zoom,true,true)
 	else:
-		draw_line(start,base,hue,width,true)
+		draw_polyline(shaft,hue,width,true)
 	var wing := ray.orthogonal()*head*.52
 	var triangle := PackedVector2Array([end,base+wing,base-wing])
 	draw_polyline(PackedVector2Array([end,base+wing,base-wing,end]),Color("fff3d1"),2.6/map_zoom,true)
 	draw_colored_polygon(triangle,hue)
-	if map_zoom < 1.78 or length_px < 48.0: return
+	if map_zoom < 1.78 or (path.size()==2 and last_length*map_zoom<48.0): return
 	# Ink seals make fulfilled and outstanding conditions distinct without colour.
-	var seal := start.lerp(base,.36)
+	var seal: Vector2 = path[1] if path.size()==3 else path[0].lerp(base,.36)
 	var u := 1.0/map_zoom
 	draw_circle(seal,6.8*u,hue,true,-1,true)
 	var white := Color("fff5da")
