@@ -253,6 +253,13 @@ func _refresh_control_hints() -> void:
 	var dash: String = driver.control_hint("dash")
 	journal_controls.text = "按住 %s 采蜜，%s 振翅。按住 %s 蓄力，松开冲刺。" % [collect, pulse, dash]
 	transition_hint.text = "%s 跳过蜂舞" % dash
+	var pad: bool = driver.input_device == "pad"
+	var back := "B" if pad else "Esc"
+	region_back.text = "先留在这里  ·  " + back
+	shop_footer.text = "%s 返回庭院 · 交付立即结算" % back
+	pause_button.tooltip_text = "暂停与操作说明 · " + driver.control_hint("pause")
+	var shortcut := back + " 返回" if driver.mode == "pause" else ("A 确认" if pad else "Enter 确认")
+	menu_footer.text = menu_footer.text.get_slice("  ·  ",0) + "  ·  " + shortcut
 	if driver.mode == "pause" and not driver.save_blocked and not driver.save_warning:
 		menu_body.text = "%s\n\n按住 %s 采蜜\n%s 振翅 · %s 蓄力冲刺\n\n设置中可查看和修改按键。" % [driver.model.goal_text(), collect, pulse, dash]
 	if driver.mode == "pause" and driver.slots_enabled and not driver.save_blocked and not driver.save_warning:

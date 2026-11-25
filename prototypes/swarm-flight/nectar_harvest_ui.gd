@@ -65,6 +65,9 @@ var buy_button: Button
 var tree_back: Button
 var menu: Control
 var menu_logo: TextureRect
+var menu_footer: Label
+var shop_footer: Label
+var pause_button: Button
 var menu_title: Label
 var menu_body: Label
 var menu_primary: Button
@@ -333,12 +336,12 @@ func _build_hud() -> void:
 	help_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	help_text.add_theme_color_override("font_shadow_color",PAPER)
 	help_text.add_theme_constant_override("shadow_offset_y",1)
-	var pause := action(hud,"Ⅱ",driver.pause_game)
-	pause.custom_minimum_size = Vector2(56,56)
+	pause_button = action(hud,"Ⅱ",driver.pause_game)
+	pause_button.custom_minimum_size = Vector2(56,56)
 	for key in ["normal","hover","pressed","disabled"]:
-		pause.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
-	pause.tooltip_text = "暂停与操作说明 · Esc"
-	anchored(pause,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
+		pause_button.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
+	pause_button.tooltip_text = "暂停与操作说明 · Esc"
+	anchored(pause_button,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
 	_build_hub_action()
 
 func _build_hub_action() -> void:
@@ -417,7 +420,8 @@ func _build_shop() -> void:
 	spacer(v)
 	leave_button = action(v,"回到庭院",driver.close_shop)
 	tree_button = leave_button # Compatibility alias for the single return action.
-	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	shop_footer = text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071"))
+	shop_footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _build_regions() -> void:
 	regions = screen(self)
@@ -599,7 +603,8 @@ func _build_menu() -> void:
 	var bottom := row(v,12)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.27.0  ·  Esc 返回",16,Color("7d7a56")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	menu_footer = text_line(v,"Demo 0.27.0  ·  Esc 返回",16,Color("7d7a56"))
+	menu_footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
@@ -902,7 +907,7 @@ func _build_settings() -> void:
 
 func _add_settings_controls(v: Control) -> void:
 	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
-	text_line(v,"键鼠版",17,Color("687957"),true)
+	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
 
 func refresh_settings() -> void:
 	if not is_instance_valid(settings_motion): return
