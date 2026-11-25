@@ -11,6 +11,13 @@ func new_model(): return RegionalModel.new()
 func create_interface(): return RegionalUI.new()
 func create_sound(): return HoneySound.new()
 
+func finish_quit() -> void:
+	if is_queued_for_deletion(): return
+	var tree := get_tree()
+	# Release the looping players while the audio driver can still process their stops.
+	queue_free()
+	tree.create_timer(0.25, true, false, true).timeout.connect(tree.quit)
+
 func update_sound_context() -> void:
 	sound.set_honey_context(model.area, mode)
 

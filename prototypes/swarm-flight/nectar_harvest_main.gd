@@ -460,7 +460,7 @@ func restart_game() -> void:
 
 func quit_game() -> void:
 	release_controls()
-	if save_blocked or persist(): get_tree().quit()
+	if save_blocked or persist(): finish_quit()
 	else:
 		# A failed quit cancels presentation, preserving whichever stable area
 		# was last committed. Resuming must not retain an abandoned dance pose.
@@ -472,6 +472,9 @@ func quit_game() -> void:
 		world.dance_elapsed = -1.0
 		mode = "pause"
 		ui.show_mode(mode)
+
+func finish_quit() -> void:
+	get_tree().quit()
 
 func message(words: String,seconds := 3.0) -> void:
 	toast_text = words
