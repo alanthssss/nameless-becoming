@@ -1,4 +1,5 @@
 """Reuse certified prototype results only across a clean synchronization with main."""
+from collections import Counter
 import json
 import os
 from pathlib import Path
@@ -9,13 +10,18 @@ import sys
 
 SHA = r"[0-9a-f]{40}"
 PROTOTYPES = ("swarm", "flower", "garden")
-# These control how evidence is produced/verified or supply shared test tooling.
+# Topic edits to any control invalidate reuse. Only the following routing and
+# document checks can change on main without changing how a prototype executes.
+ROUTING_FILES = (
+    "scripts/classify_ci_changes.sh", "scripts/ci_scope.sh", "scripts/check_ci_evidence.py",
+    "tests/ci-scope.test.sh", "tests/test_ci_routing.py",
+)
 CONTROL_PATHS = (
-    ".github/actions", ".github/workflows/quality.yml", "scripts/ci_scope.sh", "scripts/ci_reuse.py",
-    "scripts/classify_ci_changes.sh", "scripts/check_ci_results.py", "scripts/check_ci_evidence.py",
-    "scripts/lint_workflows.sh", "tests/ci-scope.test.sh", ":(glob)tests/test_ci_*.py",
+    *ROUTING_FILES, ".github/actions", ".github/workflows/quality.yml", "scripts/ci_reuse.py",
+    "scripts/check_ci_results.py", "scripts/lint_workflows.sh", ":(glob)tests/test_ci_*.py",
     ".gitattributes", ".gitmodules", "package.json", "package-lock.json",
 )
+SWARM_NONREGIONAL = {"core", "regressions", "samples", "samples-save", "migrations"}
 MARKER = re.compile(
     rf"Prototype evidence v1 PR (?P<number>[1-9][0-9]*) base (?P<base>{SHA}) tree (?P<tree>{SHA}) "
     r"swarm (?P<swarm>none|region|full) flower (?P<flower>true|false) garden (?P<garden>true|false)"
@@ -36,8 +42,21 @@ def merge_tree(first, second):
     return git("merge-tree", "--write-tree", first, second).decode().strip()
 
 
-def controls_changed(first, second):
-    return bool(git("diff", "--name-only", "-z", first, second, "--", *CONTROL_PATHS))
+def changed_paths(first, second, *pathspecs):
+    # Disabling rename detection keeps both sides of moves, including moves
+    # between a routing file and a runtime input. Preserve arbitrary filenames.
+    paths = git("diff", "--name-only", "--no-renames", "-z", first, second, "--", *pathspecs)
+    return {os.fsdecode(path) for path in paths.split(b"\0") if path}
+
+
+def directly_passed(group, swarm_suite, passed_jobs):
+    if group in ("flower", "garden"):
+        title = "Flower Step" if group == "flower" else "Garden Puzzles"
+        return f"{title} / {title} rules and complete routes" in passed_jobs
+    suites = SWARM_NONREGIONAL if group == "swarm-except-region" else {"region-greybox"}
+    if group == "swarm" and swarm_suite == "full":
+        suites = suites | SWARM_NONREGIONAL
+    return all(f"Swarm Flight / Swarm Flight checks ({suite})" in passed_jobs for suite in suites)
 
 
 def previous_evidence(api, repo, branch, before, number):
@@ -55,7 +74,10 @@ def previous_evidence(api, repo, branch, before, number):
     run_id, attempt = run["id"], run["run_attempt"]
     if not all(type(n) is int and n > 0 for n in (run_id, attempt)):
         return None
-    jobs = api(f"{endpoint}/runs/{run_id}/attempts/{attempt}/jobs?per_page=100")["jobs"]
+    response = api(f"{endpoint}/runs/{run_id}/attempts/{attempt}/jobs?per_page=100")
+    jobs = response["jobs"]
+    if response["total_count"] != len(jobs):
+        return None  # Incomplete list cannot prove unique execution or a unique gate.
     gates = [job for job in jobs if job["name"] == "CI required checks"]
     if len(gates) != 1:
         return None
@@ -66,7 +88,15 @@ def previous_evidence(api, repo, branch, before, number):
     markers = [MARKER.fullmatch(step["name"]) for step in gate["steps"]
                if step["status"] == "completed" and step["conclusion"] == "success"]
     matches = [marker for marker in markers if marker and marker["number"] == str(number)]
-    return (run_id, matches[0]) if len(matches) == 1 else None
+    if len(matches) != 1:
+        return None
+    counts = Counter(job["name"] for job in jobs)
+    passed_jobs = {
+        job["name"] for job in jobs
+        if counts[job["name"]] == 1 and job["status"] == "completed" and job["conclusion"] == "success"
+        and job["run_id"] == run_id and job["run_attempt"] == attempt and job["head_sha"] == before
+    }
+    return run_id, matches[0], passed_jobs
 
 
 def decide(event, repo, selected, api):
@@ -93,7 +123,7 @@ def decide(event, repo, selected, api):
     current_tree = git("rev-parse", "HEAD^{tree}").decode().strip()
     if current_tree != git("rev-parse", f"{head}^{{tree}}").decode().strip():
         return fresh
-    if controls_changed(base, head):
+    if changed_paths(base, head, *CONTROL_PATHS):
         return fresh
     try:
         if merge_tree(before, base) != current_tree:
@@ -103,16 +133,20 @@ def decide(event, repo, selected, api):
     evidence = previous_evidence(api, repo, pr["head"]["ref"], before, pr["number"])
     if not evidence:
         return fresh
-    run_id, prior = evidence
-    if not ancestor(prior["base"], base) or controls_changed(prior["base"], before):
+    run_id, prior, passed_jobs = evidence
+    if not ancestor(prior["base"], base) or changed_paths(prior["base"], before, *CONTROL_PATHS):
         return fresh
     # Reconstruct what Actions checked out, which may differ from the old PR head.
-    if merge_tree(prior["base"], before) != prior["tree"] or controls_changed(prior["tree"], current_tree):
+    if merge_tree(prior["base"], before) != prior["tree"]:
         return fresh
-    paths = git("diff", "--name-only", "--no-renames", "-z", prior["tree"], current_tree, "--")
+    controls = changed_paths(prior["tree"], current_tree, *CONTROL_PATHS)
+    if controls.difference(ROUTING_FILES):
+        return fresh
+    paths = changed_paths(prior["tree"], current_tree) - controls
     impact = {}
     if paths:
-        flags = subprocess.check_output(["bash", "scripts/classify_ci_changes.sh"], input=paths)
+        payload = b"".join(os.fsencode(path) + b"\0" for path in sorted(paths))
+        flags = subprocess.check_output(["bash", "scripts/classify_ci_changes.sh"], input=payload)
         impact = dict(line.split("=", 1) for line in flags.decode().splitlines())
     reusable = set()
     for name in PROTOTYPES:
@@ -126,6 +160,10 @@ def decide(event, repo, selected, api):
     if (selected["swarm"] == "true" and prior["swarm"] == selected["swarm_suite"] == "full"
             and impact.get("swarm_suite") == "region"):
         reusable.add("swarm-except-region")
+    if controls:
+        # A new router can select work the old router never actually ran.
+        # A carried-forward group certificate alone does not establish this.
+        reusable = {name for name in reusable if directly_passed(name, selected["swarm_suite"], passed_jobs)}
     return (reusable, run_id) if reusable else fresh
 
 
