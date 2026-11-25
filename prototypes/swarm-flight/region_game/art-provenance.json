@@ -357,6 +357,7 @@
         ],
         "sha256": "0c51f077f50b3ba628b60979cbdfb7b8ce8b732c7955c8d62edb7dcb667bcc4e"
       }
-    ]
+    ],
+    "running_colour_after_review": "Fixed leaf-green frog and one red-and-ivory koi. Three vermilion patches are registered to the neutral fish texture by basin_pigment.gdshader; each courtyard instance draws the species only."
   }
 }
