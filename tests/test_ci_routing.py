@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -15,6 +16,17 @@ ROOT = Path(__file__).resolve().parents[1]
 FLAGS = ("web", "godot", "export_game", "swarm", "flower", "garden", "content")
 OUTPUT_KEYS = set(FLAGS) | {"godot_suite", "swarm_suite", "reason"}
 ZERO_SHA = "0" * 40
+
+
+class BuildInputTests(unittest.TestCase):
+    def test_tailwind_scans_only_the_site_directory(self):
+        # Web and the candidate can reuse previous builds after edits outside
+        # app/. Tailwind's default source discovery would scan the entire repo.
+        css = (ROOT / "app/globals.css").read_text()
+        css = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+        sources = re.findall(r"""@import\s+["']tailwindcss["']\s*([^;]*);""", css)
+        self.assertEqual(sources, ['source(".")'])
+        self.assertNotRegex(css, r"@source\b", "Audit CI build inputs before adding Tailwind scan roots")
 
 
 class GitScopeTests(unittest.TestCase):
@@ -401,7 +413,7 @@ class JobResultsTests(unittest.TestCase):
             needs["scope"]["outputs"]["swarm_suite"] = suite
             self.assertTrue(self.gate.validate(needs))
 
-    def test_only_certified_selected_prototypes_can_skip(self):
+    def test_only_certified_selected_jobs_can_skip(self):
         needs = job_results("swarm", "web")
         outputs = needs["scope"]["outputs"]
         outputs.update(reused='["swarm"]', source_run="123")
@@ -412,7 +424,7 @@ class JobResultsTests(unittest.TestCase):
             needs["swarm"]["result"] = result
             self.assertTrue(self.gate.validate(needs))
         needs["swarm"]["result"] = "skipped"
-        for listed, source in (("[]", ""), ('["flower"]', "123"), ('["web"]', "123"),
+        for listed, source in (("[]", ""), ('["flower"]', "123"), ('["content"]', "123"),
                                ('["swarm"]', ""), ('["swarm"]', "0"), ('["swarm"]', "-1"),
                                ('["swarm", "swarm"]', "123"), ("{}", ""), ("", "")):
             outputs.update(reused=listed, source_run=source)
@@ -421,6 +433,34 @@ class JobResultsTests(unittest.TestCase):
             fresh = job_results()
             del fresh["scope"]["outputs"][key]
             self.assertTrue(self.gate.validate(fresh))
+
+    def test_web_godot_and_candidate_can_be_run_or_reused_independently(self):
+        jobs = ("web", "godot", "web-candidate")
+        for reused in (jobs, ("web", "godot"), ("godot", "web-candidate"), ("web", "web-candidate"),
+                       ("web",), ("godot",), ("web-candidate",)):
+            with self.subTest(reused=reused):
+                needs = job_results("web", "godot", "export_game", "content")
+                needs["scope"]["outputs"].update(reused=json.dumps(reused), source_run="123")
+                for job in reused:
+                    needs[job]["result"] = "skipped"
+                self.assertEqual(needs["content"]["result"], "skipped")  # Covered by Web in either case.
+                self.assertEqual(self.gate.validate(needs), [])
+                for job in jobs:
+                    for wrong in ("failure", "cancelled", None, "success" if job in reused else "skipped"):
+                        invalid = copy.deepcopy(needs)
+                        if wrong is None:
+                            del invalid[job]
+                        else:
+                            invalid[job]["result"] = wrong
+                        self.assertTrue(self.gate.validate(invalid), (job, wrong))
+
+    def test_web_godot_and_candidate_must_be_selected_to_reuse(self):
+        for job, selected in (("web", ("godot",)), ("godot", ("web",)),
+                              ("web-candidate", ("web", "godot"))):
+            with self.subTest(job=job):
+                needs = job_results(*selected)
+                needs["scope"]["outputs"].update(reused=json.dumps([job]), source_run="123")
+                self.assertTrue(self.gate.validate(needs))
 
     def test_partial_swarm_reuse_requires_running_the_regional_job(self):
         needs = job_results("swarm")
