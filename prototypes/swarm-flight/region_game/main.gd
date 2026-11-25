@@ -468,7 +468,7 @@ func consume_events(pending: Array) -> void:
 			var side := -1.0 if model.face.x >= 0 else 1.0
 			ui.sale_flight.begin(event, model.p + Vector2(side*20,18), ui.shop_coins, reduced_motion)
 		elif event.kind in ["material","harvest"] and model.field != null:
-			var key: String = event.type if event.kind == "material" else "honey"
+			var key: String = event.type
 			pickup_gains[key] = pickup_gains.get(key, 0) + event.amount
 	if not pickup_gains.is_empty():
 		ui.field_hud.show_pickups(pickup_gains)

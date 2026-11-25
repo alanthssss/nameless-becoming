@@ -18,6 +18,9 @@ const FIELD_INK := Color("fff2d5")
 const FIELD_MUTED_INK := Color("e0e2cb")
 const FIELD_TEXT_SIZE := 20
 const FIELD_NOTE_SIZE := 18
+const BLUE_NECTAR := Color("b9edff")
+const VIOLET_NECTAR := Color("f0c7ff")
+const TWIN_PICKUP_DELAY := 0.13
 const FIELD_SIGN = preload("res://art/collection-home-sign.webp")
 const BEE_FOOT := Vector2(0,25)
 const SIGN_FOOT := Vector2(-67,24)
@@ -105,6 +108,9 @@ func nectar_event(event: Dictionary) -> void:
 	if area_key == "hub":
 		super.nectar_event(event)
 		return
+	if kind == "harvest":
+		_show_flower_pickup(event)
+		return
 	if kind == "full": _full_glow = .85
 	var item: Dictionary = {}
 	var id := int(event.get("id", event.get("amount", -1)))
@@ -124,8 +130,26 @@ func nectar_event(event: Dictionary) -> void:
 			"fall":kind.ends_with("_fading") or kind.ends_with("_empty"),
 			"color":Color("c39a67") if kind.ends_with("_empty") else Color("e3c87c") if kind.ends_with("_fading") else Color("dcebb5")})
 	# The controller converts collection/pulse events to the existing feedback contract.
-	if kind in ["harvest", "material", "pulse", "pulse_empty", "buy", "unlock", "complete"]:
+	if kind in ["material", "pulse", "pulse_empty", "buy", "unlock", "complete"]:
 		super.nectar_event(event)
+
+func _show_flower_pickup(event: Dictionary) -> void:
+	var origin: Vector2 = event.pos
+	var delay := 0.0
+	var offset_x := 0.0
+	for other in harvest_texts:
+		if other.get("field_time", -1.0) != model.field_time: continue
+		delay = TWIN_PICKUP_DELAY
+		var gap: Vector2 = origin - Vector2(other.p)
+		if absf(gap.x) < 40 and absf(gap.y) < 40:
+			offset_x = 19.0 if gap.x >= 0 else -19.0
+			other.offset_x = -offset_x
+		break
+	var color := VIOLET_NECTAR if event.type == "rose" else BLUE_NECTAR
+	harvest_recoil = .24
+	harvest_texts.append({"p": origin, "age": 0.0, "text": "+%d" % event.amount,
+		"field_time": model.field_time, "delay": delay, "offset_x": offset_x, "color": color})
+	nectar_motes.append({"from": origin, "age": -delay, "duration": .42, "color": color})
 
 func _prepare_paint() -> void:
 	if _painted_area == area_key: return
@@ -708,7 +732,7 @@ func _draw_region_effects() -> void:
 		else:
 			var radius := 6.8*(1-t*.34)
 			draw_circle(q,radius+1,Color("94682c"),true,-1,true)
-			draw_circle(q,radius,Color("eca3ae") if mote.gold else Color("f7c655"),true,-1,true)
+			draw_circle(q,radius,mote.get("color", Color("f7c655")),true,-1,true)
 			draw_circle(q-Vector2(1.4,1.6),radius*.32,Color("fff6cd"))
 			if t < .55:
 				for i in 4:
@@ -721,6 +745,19 @@ func _draw_region_effects() -> void:
 			var tone: Color = mote.color
 			tone.a = (1-t)*.65
 			_ellipse(at,Vector2(2.7,1.4),tone)
+	for item in harvest_texts:
+		if not item.has("field_time"): continue
+		var age: float = item.age if reduced_motion else item.age - item.delay
+		if age < 0: continue
+		var at: Vector2 = item.p + Vector2(item.offset_x, -24)
+		var ink: Color = item.color
+		if not reduced_motion:
+			at.y -= 21.0 * smoothstep(0.0, .55, age)
+			ink.a = 1.0 - smoothstep(.68, .98, item.age)
+		var start := Vector2(at.x-24, at.y).round()
+		draw_string_outline(feedback_font, start, item.text, HORIZONTAL_ALIGNMENT_CENTER, 48, 23, 4, Color("423643", ink.a))
+		draw_string(feedback_font, start, item.text, HORIZONTAL_ALIGNMENT_CENTER, 48, 23, ink)
+
 # The anchor and its tail stay in world coordinates as the camera moves.
 func _field_note(at: Vector2, words: String, active: bool, mark_width := 0, screen_space := false, action := "") -> Rect2:
 	var pixels := 22 if active else 19

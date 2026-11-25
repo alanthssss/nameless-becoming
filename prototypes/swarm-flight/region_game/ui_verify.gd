@@ -267,12 +267,21 @@ func check_twin_pickup() -> void:
 			flower.progress = .99
 		game.model._sync_field()
 		var before: int = game.model.cargo_total()
+		var text_count: int = game.world.harvest_texts.size()
 		press_key(KEY_E, true)
 		game._process(.05)
 		press_key(KEY_E, false)
 		check(game.model.cargo_total() == before + expected, "twin harvest only credits free slots")
-		check(game.ui.field_hud.receipt_left > 0 and game.ui.field_hud.receipt_gains == {"honey": expected},
+		check(game.ui.field_hud.receipt_left > 0 and game.ui.field_hud.receipt_gains == {"blue": expected},
 			"one nectar receipt reports only this harvest: +%d" % expected)
+		var marks: Array = game.world.harvest_texts.slice(text_count)
+		check(marks.size() == expected, "each credited flower contributes one +1 at its source")
+		for mark in marks:
+			check(mark.text == "+1" and mark.p in [field.flowers[0].p, field.flowers[3].p],
+				"flower feedback uses the actual amount and source")
+		if marks.size() == 2:
+			check(marks[0].p != marks[1].p and marks[0].delay < marks[1].delay
+				and marks[0].offset_x != marks[1].offset_x, "nearby twin gains remain separately legible")
 
 func check_seed_pickup() -> void:
 	var field = game.model.field

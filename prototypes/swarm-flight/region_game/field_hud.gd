@@ -2,12 +2,13 @@ extends Control
 const Art = preload("res://nectar_ui_art.gd")
 const Plate = preload("res://region_game/menu_plate.gd")
 const INK := Color("403126")
-const PICKUP_NAMES := {"fiber": "纤维", "resin": "树脂", "honey": "花蜜"}
+const PICKUP_NAMES := {"fiber": "纤维", "resin": "树脂", "blue": "蓝花蜜", "rose": "紫花蜜"}
 var ui
 var receipt_gains: Dictionary[String, int] = {}
 var receipt_left := 0.0
 var receipt_art := {
-	"honey": Plate.texture("pickup-honey"),
+	"blue": Plate.texture("pickup-honey"),
+	"rose": Plate.texture("pickup-honey"),
 	"fiber": Plate.texture("pickup-fiber"),
 	"resin": Plate.texture("pickup-resin"),
 }
@@ -83,7 +84,7 @@ func _draw() -> void:
 		var y := 395 if m.cargo_total() >= m.capacity() else 445
 		var x := 31
 		for key in receipt_gains:
-			draw_texture_rect(receipt_art[key], Rect2(x, y, 126, 52), false)
+			draw_texture_rect(receipt_art[key], Rect2(x, y, 138, 52), false)
 			var label := "%s +%d" % [PICKUP_NAMES[key], receipt_gains[key]]
-			_number(Vector2(x+46, y+31), label, 72, 18, HORIZONTAL_ALIGNMENT_LEFT)
-			x += 130
+			_number(Vector2(x+46, y+31), label, 84, 18, HORIZONTAL_ALIGNMENT_LEFT)
+			x += 142

@@ -88,7 +88,7 @@ def pill(x,y,width,label,keys=(),alert=False,pointer=True,arrow=None,hold=False,
     return ui.grp(max(8,min(952-width,x-width/2)),max(8,min(518,y)),b)
 
 def receipt(kind, gain):
-    d='M13 1 Q56 -2 107 2 Q121 3 120 15 L118 33 Q118 41 108 42 Q59 45 12 41 L0 24 Z'
+    d='M13 1 Q62 -2 119 2 Q133 3 132 15 L130 33 Q130 41 120 42 Q65 45 12 41 L0 24 Z'
     b=plaque(d)+ui.grp(12,9,icon(kind))+ui.txt(44,28,f'{kind} +{gain}',19,ui.INK,weight=700)
     return ui.grp(33,448,b)
 

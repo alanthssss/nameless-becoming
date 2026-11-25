@@ -122,7 +122,7 @@ if __name__ == "__main__":
         slug = {"花蜜":"honey","纤维":"fiber","树脂":"resin"}[kind]
         receipt = ET.fromstring(field.ui.svg(field.receipt(kind, 1),""))
         remove(receipt,lambda n: n.tag==SVG+"text")
-        render(receipt,"pickup-"+slug,(31,445,126,52))
+        render(receipt,"pickup-"+slug,(31,445,138,52))
     with tempfile.TemporaryDirectory() as folder:
         subprocess.run(["node",str(HERE/"plates.mjs"),folder],check=True)
         pages(Path(folder))
