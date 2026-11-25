@@ -224,15 +224,17 @@ func check_book() -> void:
 		scan("flower bay "+str(stage),ui.bay_preview)
 	ui._close_bay()
 
-func run() -> void:
+func check_size(pixels: Vector2i) -> void:
+	root.size = pixels
 	var directory := DirAccess.create_temp("honey-page-layout")
 	if directory == null:
-		quit(1)
+		expect(false,"create isolated progress directory")
 		return
 	game = LayoutGame.new()
 	game.directory = directory.get_current_dir()
 	root.add_child(game)
 	ui = game.ui
+	book_leaves.clear()
 	for node in ui.tree.get_children():
 		if node is TextureRect and node.texture is AtlasTexture and node.texture.atlas == Art.JOURNAL:
 			book_leaves.append(node)
@@ -242,25 +244,25 @@ func run() -> void:
 	for node in ui.get_children():
 		if node is Control: expect(node in known,"uncovered UI root "+str(node.get_class())+" "+str(node.name))
 	await frames()
-	for pixels in [Vector2i(1280,800),Vector2i(960,600)]:
-		root.size = pixels
-		game.model = game.new_model()
-		game.has_save = false
-		game.save_warning = false
-		var occupied = game.new_model()
-		occupied.coins = 1000000000
-		occupied.trip_index = 1000000000
-		expect(game.Save.write_payload(occupied.to_payload(),game.slot_path(2),game.new_model()),"write occupied slot fixture")
-		var corrupt := FileAccess.open(game.slot_path(3),FileAccess.WRITE)
-		corrupt.store_string("unreadable")
-		corrupt.close()
-		game.home_return_summary = ""
-		game.home_sale_summary = ""
-		await check_menus()
-		await check_courtyard()
-		await check_book()
+	var occupied = game.new_model()
+	occupied.coins = 1000000000
+	occupied.trip_index = 1000000000
+	expect(game.Save.write_payload(occupied.to_payload(),game.slot_path(2),game.new_model()),"write occupied slot fixture")
+	var corrupt := FileAccess.open(game.slot_path(3),FileAccess.WRITE)
+	corrupt.store_string("unreadable")
+	corrupt.close()
+	game.home_return_summary = ""
+	game.home_sale_summary = ""
+	await check_menus()
+	await check_courtyard()
+	await check_book()
 	game.queue_free()
 	await frames()
+
+func run() -> void:
+	# Include the supported minimum and letterboxing on wider and taller displays.
+	for pixels in [Vector2i(1280,800),Vector2i(960,600),Vector2i(1280,720),Vector2i(1024,768)]:
+		await check_size(pixels)
 	# The mixer uses real time even when the CI driver advances at fixed FPS.
 	var drain_until := Time.get_ticks_msec()+250
 	while Time.get_ticks_msec()<drain_until:
