@@ -135,6 +135,8 @@ func refresh() -> void:
 	pond_info.text = "蓝花蜜 · 每份 1 金币\n振松种穗，飞近收纤维 · 可织轻盈双翼。"
 	meadow_info.text = "紫花蜜 · 每份 3 金币\n"+("振开树皮，贴近收树脂 · 可修远行双翼。" if "meadow" in driver.model.owned else "在成长手册中开放这条花路。")
 	var field = driver.model.field
+	# Leave the foreground water bowl visible on the courtyard painting.
+	hud_status.position.x = 178.0 if driver.model.at_home() else 24.0
 	if field != null:
 		# Action prompts belong to the nearby flower, seed head, seam or sign.
 		# Reserve the lower HUD for a whole-trip constraint.
