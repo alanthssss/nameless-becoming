@@ -6,9 +6,12 @@ const Profile = preload("res://nectar_harvest_model.gd")
 const Field = preload("res://region_game/field.gd")
 const MeadowLayout = preload("res://region_game/layout.gd")
 const PROFILE_KEYS := ["coins","cargo","materials","owned","completed","trip_index","sold_total","rose_sold","visited_meadow"]
+static var _courtyard_paper := PackedVector2Array([Vector2(694,350),Vector2(925,350),Vector2(892,479),Vector2(632,469)])
 var field
 var camera_offset := Vector2.ZERO
 var last_trip := {}
+# Decorative ink for this courtyard visit, restored independently of the v2 economy save.
+var last_region := "pond"
 var return_requested := false
 var entry_pressed := false
 
@@ -32,7 +35,13 @@ func goal_text() -> String:
 func rain_exposed() -> bool: return false
 
 func interaction() -> String:
-	if at_home(): return super.interaction()
+	if at_home():
+		# Counter, sloped paper, and suspended lamp in the 1280 × 800 courtyard.
+		if Rect2(150,315,297,188).has_point(p) or p.distance_to(Vector2(300,505)) <= 88.0: return "shop"
+		if Geometry2D.is_point_in_polygon(p,_courtyard_paper) or p.distance_to(Vector2(775,480)) <= 92.0: return "tree"
+		var lamp := Geometry2D.get_closest_point_to_segment(p,Vector2(1011,352),HUB_DEPART)
+		if p.distance_to(lamp) <= 83.0: return "depart"
+		return ""
 	return "home" if field != null and field.at_entry() else ""
 
 func update_camera() -> void:

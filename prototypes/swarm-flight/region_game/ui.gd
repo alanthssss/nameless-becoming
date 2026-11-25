@@ -294,7 +294,10 @@ func _refresh_control_hints() -> void:
 
 func _refresh_hub_action() -> void:
 	super._refresh_hub_action()
-	if hub_action.visible: _update_station_key()
+	if not hub_action.visible: return
+	if hub_action_kind == "tree":
+		anchored(hub_action,Rect2(Vector2(781,304)/Vector2(1280,800),Vector2.ZERO),Rect2(-81,-29,162,58))
+	_update_station_key()
 
 func _update_station_key() -> void:
 	var binding: String = driver.bindings.label("interact", "pad" if driver.input_device == "pad" else "key")

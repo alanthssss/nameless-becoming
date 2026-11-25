@@ -32,11 +32,17 @@ func key(code: Key, down: bool) -> void:
 	e.pressed = down
 	root.push_input(e,true)
 
+func wait_for_entrance() -> void:
+	var deadline := Time.get_ticks_msec()+4000
+	while game.mode == "station_entry" and Time.get_ticks_msec() < deadline:
+		await process_frame
+
 func tap(code: Key) -> void:
 	key(code,true)
 	await frames(2)
 	key(code,false)
 	await frames(2)
+	await wait_for_entrance()
 
 func fly(at: Vector2) -> bool:
 	for i in 720:

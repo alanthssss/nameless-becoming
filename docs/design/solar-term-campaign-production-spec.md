@@ -342,6 +342,8 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
+**2026-11-26 · Honey 庭院实装。** M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿 [GDD §8.1](swarm-flight-gdd.md#visual-production-rules) 与[原庭院讨论 #427](https://github.com/alanthssss/nameless-becoming/issues/427)接入巢内庭院、花瓣杆秤和飞痕画笺。本次 Mac 试玩与开发验证集中记在 [#436](https://github.com/alanthssss/nameless-becoming/issues/436)，Alan 从可玩的庭院判断造型和转场。
+
 **Honey 操作设置。** 键鼠和手柄操作沿 M3/#322 的 [#407](https://github.com/alanthssss/nameless-becoming/issues/407) / [#408](https://github.com/alanthssss/nameless-becoming/issues/408) 接入。Mac 包、旧档接续与集成结果见 [#413](https://github.com/alanthssss/nameless-becoming/issues/413)。
 
 **2026-11-25 · Honey 的成长设计与反馈安排。** Alan 决定当前首作统一叫 Honey，本轮研究基线为 0.32。成长设计沿[首作范围](swarm-flight-gdd.md#lean-nectar-first-game)与 M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322) 继续，使用[已归档的正式版技能树研究](../research/shelldiver-skill-tree-study.md)及[池岸花湾](pond-violet-map-resource-design.md#nectar-wing-bay)对照下一趟飞法。当前按模型、规则与运行检查核实，Alan 可在方便时自行体验，本轮不安排真人试玩。Demo 上线后收集玩家自主购买、返程和重访反馈。庭院、花地与采售声音首版沿同一父项完成技术打样，见[0.32.2 试听与验包](../production/region-greybox-receipt.md#honey-sound-0322)。0.32.4 的春秋选曲、蜜铺舞曲、手册竹笛和转场沿同一父项复核，见[音乐音效清单](../production/region-greybox-receipt.md#honey-audio-0324)。重复测试可以从标题或暂停选择独立档位，原有采蜜进度位于存档 1。[M3 多存档验包](../production/region-greybox-receipt.md#honey-save-slots)。成长手册按实际停留时的听感改为 48 小节竹笛曲，暂停沿用地区曲，见[0.32.7 声音复核](../production/region-greybox-receipt.md#honey-audio-0327)。规模与成本沿 M4/[#211](https://github.com/alanthssss/nameless-becoming/issues/211) 复核。以下为历史检查点。

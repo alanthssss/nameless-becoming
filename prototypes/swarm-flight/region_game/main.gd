@@ -22,6 +22,9 @@ var active_slot := 1
 var slots_enabled := true
 var base_progress_path := ""
 var slots_return := "title"
+var ink_profile_id := 0
+const SHOP_ENTRY_SECONDS := 1.12
+const TREE_ENTRY_SECONDS := 0.95
 
 
 func new_model(): return RegionalModel.new()
@@ -200,6 +203,15 @@ func read_progress(path: String) -> Dictionary:
 	return {"ok":not payload.is_empty(),"payload":payload,"blocked":FileAccess.file_exists(path) and payload.is_empty()}
 
 func _load_world() -> void:
+	# A new slot or new game gets its own ink. Returning from the field keeps
+	# the active model and its live colour even if cosmetic storage is unavailable.
+	if ink_profile_id != model.get_instance_id():
+		ink_profile_id = model.get_instance_id()
+		var ink := ConfigFile.new()
+		if model.at_home() and model.trip_index > 0 and ink.load(saved_path+".courtyard.cfg") == OK:
+			var region = ink.get_value("ink","region","")
+			if region in ["pond","meadow"] and ink.get_value("ink","trip",-1) == model.trip_index:
+				model.last_region = region
 	if is_instance_valid(world):
 		release_controls()
 		remove_child(world)
@@ -218,9 +230,48 @@ func plays_departure_dance() -> bool:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	if mode == "station_entry":
+		world.presentation_active = true
+		var duration := SHOP_ENTRY_SECONDS if world.station_entry == "shop" else TREE_ENTRY_SECONDS
+		world.station_progress = minf(1.0,world.station_progress + minf(delta,0.1) / duration)
+		if world.station_progress >= 1.0: _finish_station_entry()
 	if mode == "play" and model.return_requested:
 		model.return_requested = false
 		request_transition("hub")
+
+func use_station() -> bool:
+	var target: String = model.interaction()
+	if target not in ["shop","tree"] or reduced_motion:
+		return super.use_station()
+	if mode != "play": return false
+	release_controls()
+	model.v = Vector2.ZERO
+	world.station_entry = target
+	world.station_progress = 0.0
+	mode = "station_entry"
+	ui.show_mode(mode)
+	return true
+
+func _finish_station_entry() -> void:
+	var target: String = world.station_entry
+	world.station_entry = ""
+	world.station_progress = 0.0
+	mode = "play"
+	if target == "shop": open_shop()
+	else: open_tree()
+	update_sound_context()
+
+func _cancel_station_entry() -> void:
+	world.station_entry = ""
+	world.station_progress = 0.0
+	mode = "play"
+	ui.show_mode(mode)
+	get_viewport().gui_release_focus()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and not test_mode and mode == "station_entry":
+		_cancel_station_entry()
+		pause_game()
 
 func _advance_transition(dt: float) -> void:
 	super._advance_transition(dt)
@@ -319,6 +370,7 @@ func _joy_connection_changed(device: int, connected: bool) -> void:
 
 func _back() -> bool:
 	match mode:
+		"station_entry": _cancel_station_entry()
 		"tree": close_tree()
 		"shop": close_shop()
 		"regions": close_regions()
@@ -391,7 +443,16 @@ func _unhandled_input(event: InputEvent) -> void:
 func consume_events(pending: Array) -> void:
 	super.consume_events(pending)
 	for event in pending:
-		if event.kind == "sell" and mode == "shop":
+		if event.kind == "area_change" and event.to == "hub" and event.from in ["pond","meadow"]:
+			model.last_region = event.from
+			var ink := ConfigFile.new()
+			ink.set_value("ink","trip",model.trip_index)
+			ink.set_value("ink","region",model.last_region)
+			var path := saved_path+".courtyard.cfg"
+			var temporary := "%s.%d.tmp" % [path,OS.get_process_id()]
+			if ink.save(temporary) == OK and DirAccess.rename_absolute(temporary,path) != OK:
+				DirAccess.remove_absolute(temporary)
+		elif event.kind == "sell" and mode == "shop":
 			var side := -1.0 if model.face.x >= 0 else 1.0
 			ui.sale_flight.begin(event, model.p + Vector2(side*20,18), ui.shop_coins, reduced_motion)
 		elif event.kind == "material" and event.type == "fiber":
