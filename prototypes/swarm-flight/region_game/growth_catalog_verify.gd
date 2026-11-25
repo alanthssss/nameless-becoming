@@ -102,3 +102,16 @@ func verify_wayfinding(board, model) -> void:
 	check(board.selected_links().size()==7 and board.selected_links().cascade.optional and not board.selected_links().reserve.optional,"the banquet displays six choices toward a two-of-six goal")
 	board.select_rank("not_a_rank")
 	check(board.selected=="feast","obsolete rank ids are ignored safely")
+	board.size = Vector2(525,283)
+	board.select_rank("reserve")
+	board.update_lod(1.78)
+	var hidden_previews := 0
+	for key in board.visible_ids():
+		var node = board.buttons[key]
+		if node._show_label():
+			var label_center: Vector2 = node.CENTER+node.label_rect.get_center()/board.map_zoom
+			check(node._has_point(label_center),"each visible label uses its painted box for hit testing")
+		else:
+			hidden_previews += 1
+			check(node.planned and not board.selected_links().has(key),"only secondary planned names yield when crowded")
+	check(hidden_previews>0 and board.buttons.reserve._show_label(),"the compact layout gives the actual goal and its prerequisites reading space")
