@@ -82,17 +82,27 @@ func default_progress_path() -> String:
 	return "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
 
 func _ready() -> void:
+	base_progress_path = default_progress_path()
+	var slot_dir := ""
 	var controls_file := ""
 	for arg in OS.get_cmdline_user_args():
-		if arg.begins_with("--progress-file="): bindings.path = arg.trim_prefix("--progress-file=")+".controls.cfg"
+		if arg.begins_with("--slot-dir="):
+			slot_dir = arg.trim_prefix("--slot-dir=")
+			if not slot_dir.is_absolute_path() or not DirAccess.dir_exists_absolute(slot_dir):
+				push_error("The requested slot directory must be an existing absolute path.")
+				get_tree().quit(2)
+				return
+		if arg.begins_with("--progress-file="):
+			slots_enabled = false
+			bindings.path = arg.trim_prefix("--progress-file=")+".controls.cfg"
 		if arg.begins_with("--controls-file="): controls_file = arg.trim_prefix("--controls-file=")
+	if slots_enabled and not slot_dir.is_empty():
+		base_progress_path = slot_dir.path_join(base_progress_path.get_file())
+		bindings.path = slot_dir.path_join(bindings.path.get_file())
 	bindings.load_from(controls_file if not controls_file.is_empty() else bindings.path)
 	bindings.changed.connect(_bindings_changed)
 	Input.joy_connection_changed.connect(_joy_connection_changed)
 	model = new_model()
-	base_progress_path = default_progress_path()
-	for arg in OS.get_cmdline_user_args():
-		if arg.begins_with("--progress-file="): slots_enabled = false
 	if slots_enabled:
 		var selection := ConfigFile.new()
 		if selection.load(base_progress_path+".slots.cfg") == OK:
