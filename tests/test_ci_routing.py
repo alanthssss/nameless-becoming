@@ -1,6 +1,8 @@
 """Exercise CI routing with real Git history and fail-closed job results."""
 import copy
+import hashlib
 import importlib.util
+import json
 import os
 from pathlib import Path
 import shutil
@@ -70,6 +72,14 @@ class GitScopeTests(unittest.TestCase):
     def pr(self, base, head):
         return self.scope(PR_BASE_SHA=base, PR_HEAD_SHA=head, CURRENT_SHA=head)
 
+    def assert_scope_error(self, message, event="pull_request", **values):
+        result = subprocess.run(["bash", "scripts/ci_scope.sh"], cwd=self.repo,
+                                env=dict(self.env, EVENT_NAME=event, **values),
+                                text=True, capture_output=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(message, result.stderr)
+        self.assertNotIn("web=", result.stdout)
+
     def assert_flags(self, output, *selected):
         for flag in FLAGS:
             self.assertEqual(output[flag], "true" if flag in selected else "false", flag)
@@ -101,20 +111,78 @@ class GitScopeTests(unittest.TestCase):
         self.write(events, '{"cost":NaN}\n')
         bad_number = self.commit("nonstandard JSON constant")
         for head, message in ((bad, receipt), (bad_line, "line 2"), (bad_number, "not a JSON number")):
-            env = dict(self.env, EVENT_NAME="pull_request", PR_BASE_SHA=self.base, PR_HEAD_SHA=head)
-            result = subprocess.run(["bash", "scripts/ci_scope.sh"], cwd=self.repo, env=env,
-                                    text=True, capture_output=True)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn(message, result.stderr)
-            self.assertNotIn("web=", result.stdout)
-        manual = subprocess.run(["bash", "scripts/ci_scope.sh"], cwd=self.repo,
-                                env=dict(self.env, EVENT_NAME="workflow_dispatch"),
-                                text=True, capture_output=True)
-        self.assertNotEqual(manual.returncode, 0)
-        self.assertIn("not a JSON number", manual.stderr)
+            self.assert_scope_error(message, PR_BASE_SHA=self.base, PR_HEAD_SHA=head)
+        self.assert_scope_error("not a JSON number", "workflow_dispatch")
         (self.repo / events).unlink()
         deleted = self.commit("remove archived events")
         self.assert_flags(self.pr(bad_line, deleted))
+
+    def test_document_records_outside_evidence_are_checked_when_moved_or_on_full_runs(self):
+        old = "docs/design/old.txt"
+        new = "docs/design/research.jsonl"
+        self.write(old, '{}\nnot JSON\n')
+        start = self.commit("draft text")
+        self.git("mv", old, new)
+        bad = self.commit("publish malformed records")
+        self.assert_scope_error("line 2", PR_BASE_SHA=start, PR_HEAD_SHA=bad)
+        self.assert_scope_error("line 2", "push", PUSH_BEFORE_SHA=ZERO_SHA, CURRENT_SHA=bad)
+        self.git("mv", new, old)
+        moved = self.commit("move out of JSON records")
+        self.pr(bad, moved)
+
+    def test_preview_manifest_and_images_are_checked_together_in_compared_tree(self):
+        folder = "docs/art/nectar-oblique-preview/"
+        photo, manifest = folder + "pond.png", folder + "manifest.json"
+        digest = hashlib.sha256(b"captured bytes\n").hexdigest()
+        self.write(photo, "captured bytes\n")
+        self.write(manifest, json.dumps({"screenshots": [{"file": "pond.png", "sha256": digest}]}))
+        good = self.commit("preview and its manifest")
+        self.write(photo, "changed bytes\n")
+        altered = self.commit("alter just the screenshot")
+        self.pr(self.base, good)  # Working checkout contains the later altered bytes.
+        self.assert_scope_error("SHA-256", PR_BASE_SHA=good, PR_HEAD_SHA=altered)
+        self.assert_scope_error("SHA-256", "workflow_dispatch")
+        self.write("docs/another-note.md", "unrelated")
+        unrelated = self.commit("an unrelated change")
+        self.pr(altered, unrelated)
+        (self.repo / photo).unlink()
+        deleted = self.commit("delete one declared image")
+        self.assert_scope_error("missing screenshot", PR_BASE_SHA=unrelated, PR_HEAD_SHA=deleted)
+        (self.repo / manifest).unlink()
+        self.pr(good, self.commit("remove entire archive"))
+
+    def test_preview_manifest_cannot_name_external_files_or_omit_images(self):
+        folder = "docs/art/nectar-oblique-preview/"
+        manifest = folder + "manifest.json"
+        self.write(folder + "pond.png", "image")
+        self.write("docs/art/outside.png", "image")
+        for filename in ("../outside.png", "/tmp/outside.png"):
+            self.write(manifest, json.dumps({"screenshots": [{"file": filename, "sha256": "x"}]}))
+            head = self.commit("invalid filename")
+            self.assert_scope_error("invalid or missing screenshot", PR_BASE_SHA=self.base, PR_HEAD_SHA=head)
+        self.write(manifest, '{"screenshots":[]}')
+        self.assert_scope_error("omits screenshots", PR_BASE_SHA=self.base,
+                                PR_HEAD_SHA=self.commit("unlisted screenshot"))
+        (self.repo / manifest).unlink()
+        self.assert_scope_error("manifest.json is missing", PR_BASE_SHA=self.base,
+                                PR_HEAD_SHA=self.commit("only the screenshot remains"))
+
+    def test_registered_regional_art_sources_select_swarm(self):
+        sources = set()
+
+        def collect_source(record):
+            if "source_in_repository" in record:
+                sources.add(record["source_in_repository"])
+            return record
+
+        provenance = ROOT / "prototypes/swarm-flight/region_game/art-provenance.json"
+        json.loads(provenance.read_bytes(), object_hook=collect_source)
+        self.assertTrue(sources, "No registered regional source images found")
+        for source in sorted(sources):
+            with self.subTest(source=source):
+                flags = subprocess.check_output(["bash", ROOT / "scripts/classify_ci_changes.sh"],
+                                                input=os.fsencode(source) + b"\0")
+                self.assertIn(b"swarm=true", flags.splitlines())
 
     def test_runtime_selects_its_prototype(self):
         self.write("prototypes/swarm-flight/game_model.gd")
@@ -149,6 +217,22 @@ class GitScopeTests(unittest.TestCase):
         for output in (self.pr(before, head), self.scope("push", PUSH_BEFORE_SHA=before, CURRENT_SHA=head)):
             self.assert_flags(output, "swarm")
             self.assertEqual(output["swarm_suite"], "region")
+
+    def test_moving_review_image_into_and_out_of_game_checks_the_runtime_path(self):
+        review = "docs/art/pond-study.jpg"
+        runtime = "prototypes/swarm-flight/art/basin-fish.webp"
+        self.write(review, "image bytes")
+        initial = self.commit("add review image")
+        (self.repo / runtime).parent.mkdir(parents=True)
+        self.git("mv", review, runtime)
+        in_game = self.commit("move image into the game")
+        self.git("mv", runtime, review)
+        archived = self.commit("move image out of the game")
+        self.assert_flags(self.pr(self.base, initial))
+        for old, new in ((initial, in_game), (in_game, archived)):
+            for result in (self.pr(old, new), self.scope("push", PUSH_BEFORE_SHA=old, CURRENT_SHA=new)):
+                self.assert_flags(result, "swarm")
+                self.assertEqual(result["swarm_suite"], "region")
 
     def test_large_changeset_keeps_runtime_after_documentation(self):
         for index in range(350):

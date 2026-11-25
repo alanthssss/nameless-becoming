@@ -55,6 +55,33 @@ check "$swarm" "$shared_view" "$regional_ui"
 check "$swarm" prototypes/swarm-flight/region_game/review-contract.json prototypes/swarm-flight/region_game/review-readme.txt
 check "$light" docs/production/evidence/trip/receipt.json
 check "$light" docs/production/evidence/trip/events.jsonl
+# Same file format, different consumers: discussion, regional game, shared game and site.
+discussion=docs/art/honey-courtyard-house-concepts-427.jpg
+raw_art=docs/art/honey-basin-visitors-429.png
+regional_fish=prototypes/swarm-flight/art/basin-fish.webp
+check "$light" "$discussion" docs/art/honey-basin-green-koi-native.jpg docs/art/discussion/new/plan.webp
+check "$light" docs/design/concepts/target.png docs/design/screenshots/menu.png docs/design/region-map-drafts/pond.svg
+check "$light" docs/design/region-map-drafts/pond.json docs/production/nectar-demo-024-evidence.json
+check "$light" docs/research/shelldiver-atlas/windows-route-costs.csv docs/research/shelldiver-evidence-ledger.json
+check "$light" docs/art/nectar-demo-art-review.json docs/art/nectar-oblique-preview/courtyard.png docs/art/nectar-oblique-preview/manifest.json
+check "$region" "$raw_art" docs/art/collection-fields/pond-source.png docs/art/collection-fields/pond-registration.json docs/art/collection-fields/register.py
+check "$region" prototypes/swarm-flight/art/region-water.png.import prototypes/swarm-flight/art/region-ground.png
+check "$region" "$regional_fish" "$regional_fish.import" prototypes/swarm-flight/region_game/basin_pigment.gdshader.uid
+check "$region" prototypes/swarm-flight/region_game/music/growth_journal_dizi.ogg.import prototypes/swarm-flight/region_game/hub_depth.svg
+check "$region" docs/design/honey-growth-tree-v2.json "$discussion"
+check "$region" "$discussion" "$regional_fish"  # Moving between runtime and documentation must retain coverage.
+check "$region" "$regional_fish" "$discussion"
+check "$swarm" "$regional_fish" prototypes/swarm-flight/art/honey-bee.png "$discussion"
+check "$flower" "$discussion" prototypes/flower-step/icon.png
+check "$garden" prototypes/garden-puzzles/tiles.png "$discussion"
+check "$web" "$discussion" public/demo.jpg
+check "$content" "$discussion" marketing/key-art/cover.png
+check "$shared" "$discussion" godot/assets/art/commercial/target.png scripts/commercial_audio_sources.json
+check "$legacy" godot/campaign.tscn godot/journey.tscn godot/bootstrap.tscn
+check "$full" docs/art/unclassified/new.png
+check "$full" docs/art/collection-fields/new-input.bin
+check "$full" docs/design/concepts/renderer.py
+check "$full" docs/research/shelldiver-atlas/nectar_choice.gd
 check "$full" docs/production/evidence/trip/new-tool.py
 check "$full" docs/production/other/native.png
 check "$full" "$regional_ui" scripts/unknown.sh
