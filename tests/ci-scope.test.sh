@@ -8,7 +8,9 @@ check() {
   [[ "$actual" == "$expected" ]] || { printf 'Unexpected CI scope: %s\n%s\n' "$*" "$actual"; exit 1; }
 }
 expected() {
-  printf 'web=%s\ngodot=%s\nexport_game=%s\ngodot_suite=%s\nswarm=%s\nflower=%s\ngarden=%s\ncontent=%s' "$@"
+  local swarm_suite=${9:-none}
+  if [[ "$5" == true && "$#" == 8 ]]; then swarm_suite=full; fi
+  printf 'web=%s\ngodot=%s\nexport_game=%s\ngodot_suite=%s\nswarm=%s\nflower=%s\ngarden=%s\ncontent=%s\nswarm_suite=%s' "${@:1:8}" "$swarm_suite"
 }
 light=$(expected false false false routes false false false false)
 content=$(expected false false false routes false false false true)
@@ -23,6 +25,7 @@ flower=$(expected false false false routes false true false false)
 garden=$(expected false false false routes false false true false)
 check "$light" 'docs/有 空格.md' docs/CI_PERFORMANCE_2026-11-01.md docs/a.mdx docs/UPPER.MD
 check "$content" README.md marketing/README.md docs/STEAM_NEXT_FEST_2026_PLAN.md docs/design/art-source-register.md
+check "$full" scripts/check_ci_evidence.py
 check "$full" .github/workflows/quality.yml
 check "$full" scripts/classify_ci_changes.sh tests/ci-scope.test.sh scripts/ci_scope.sh scripts/check_ci_results.py tests/test_ci_routing.py
 check "$flower" prototypes/flower-step/project.godot prototypes/flower-step/verify.gd .github/workflows/flower-step.yml
@@ -39,6 +42,21 @@ check "$engine" scripts/run_with_timeout.py godot/tests/smoke_test.gd
 check "$shared" godot/fonts/font.otf godot/scripts/player/bee_player.gd godot/assets/music/autumn_explore.wav godot/assets/audio/commercial/handoff.wav
 check "$web" src/app/page.tsx app/article.mdx tests/prepare-web-export.test.mjs
 check "$legacy" godot/project.godot scripts/prepare_web_export.mjs package.json
+region=$(expected false false false routes true false false false region)
+snapshot=docs/production/evidence/honey-stamina-419/native-dials.png
+regional_ui=prototypes/swarm-flight/region_game/ui.gd
+shared_view=prototypes/swarm-flight/world_view.gd
+check "$light" "$snapshot" docs/production/evidence/a/b/screenshot.jpeg docs/production/evidence/a/native.log docs/production/honey-music/growth-journal-dizi-jianpu.pdf
+check "$region" "$regional_ui" prototypes/swarm-flight/region_game/ui.gd.uid "$snapshot"
+check "$swarm" "$snapshot" "$regional_ui" "$shared_view"
+check "$swarm" "$shared_view" "$regional_ui"
+check "$swarm" prototypes/swarm-flight/region_game/review-contract.json prototypes/swarm-flight/region_game/review-readme.txt
+check "$light" docs/production/evidence/trip/receipt.json
+check "$light" docs/production/evidence/trip/events.jsonl
+check "$full" docs/production/evidence/trip/new-tool.py
+check "$full" docs/production/other/native.png
+check "$full" "$regional_ui" scripts/unknown.sh
+check "$full" scripts/unknown.sh "$regional_ui"
 check "$full" scripts/unknown.sh
 check "$full" prototypes/some-other-game/project.godot
 check "$full" godot/unknown.gd
