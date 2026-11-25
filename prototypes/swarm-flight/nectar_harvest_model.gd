@@ -117,9 +117,11 @@ func upgrade(id: String) -> Dictionary:
 func growth_count() -> int:
 	return _growth_count(owned)
 
+const MEADOW_GROWTH_RANKS := ["gather1","gather2","bag1","bag2","wings1","wings2","reach","twin"]
+
 static func _growth_count(ids: Array) -> int:
 	var count := 0
-	for id in ["gather1","gather2","bag1","bag2","wings1","wings2","reach","twin"]:
+	for id in MEADOW_GROWTH_RANKS:
 		if id in ids: count += 1
 	return count
 

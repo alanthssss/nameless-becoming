@@ -23,9 +23,23 @@ func _reword(node: Node) -> void:
 	for child in node.get_children(): _reword(child)
 
 func _requirements(id: String) -> String:
-	if id == "supply": return "先学会轻巧采蜜；第二级需开放紫花地。\n下一趟花源和材料增多，花朵补蜜更快。"
-	if id == "reserve": return "已经探索紫花地\n已交售紫蜜  %d / 6 份\n\n学会双簇采蜜" % mini(6,driver.model.rose_sold)
-	return super._requirements(id)
+	var m = driver.model
+	var next: String = board.next_id(id)
+	if next.is_empty(): return ""
+	var lines: Array[String] = []
+	var needed: Array = m.upgrade(next).requires.duplicate()
+	if next == "reserve": needed.append("twin")
+	for prerequisite in needed:
+		var name: String = m.upgrade(prerequisite).name
+		lines.append(("✓ " if prerequisite in m.owned else "需 ") + name)
+	match next:
+		"wings1": lines.append("轻巧采蜜、舒展蜜囊任选一项")
+		"meadow": lines.append("采蜜、蜜囊、双翼、触角、双簇合计 %d / 3 次；同格两级计两次。" % mini(3,m.growth_count()))
+		"market","reserve":
+			var goal := 6 if next == "reserve" else 1
+			lines.append(("✓ " if m.visited_meadow else "需 ") + "探索紫花地")
+			lines.append("已交售紫蜜 %d / %d 份" % [mini(m.rose_sold,goal),goal])
+	return "\n".join(lines)
 
 func _detail() -> void:
 	super._detail()
@@ -36,6 +50,25 @@ func _detail() -> void:
 	if is_instance_valid(board) and board.model!=null and board.selected=="supply" and board.rank_of("supply")==2:
 		detail_effect.text = "36 处花源 · 6 处材料\n补蜜 10 秒"
 		detail_effect.tooltip_text = "每朵花都有自己的花期"
+
+	if not is_instance_valid(board) or board.model == null: return
+	var rank_id: String = board.next_id(board.selected)
+	if rank_id.is_empty():
+		detail_hint.hide()
+		return
+	var entry: Dictionary = driver.model.upgrade(rank_id)
+	var lines: Array[String] = []
+	detail_title.text = entry.name
+	var condition := _requirements(board.selected)
+	if not detail_requirements.text.begins_with("还需"): detail_requirements.hide()
+	if not condition.is_empty():
+		lines.append(condition)
+	if entry.get("fiber",0)>driver.model.materials.fiber:
+		lines.append("纤维 · 池岸振开种穗，飞近接绒")
+	if entry.get("resin",0)>driver.model.materials.resin:
+		lines.append("树脂 · 紫花地振开树皮，贴近收取")
+	detail_hint.text = "\n".join(lines)
+	detail_hint.visible = not lines.is_empty()
 
 func refresh() -> void:
 	super.refresh()
@@ -55,3 +88,32 @@ func show_mode(mode: String) -> void:
 	if is_instance_valid(sale_flight) and mode != "shop":
 		sale_flight.stop()
 	super.show_mode(mode)
+
+func create_growth_board():
+	return preload("res://region_game/growth_board.gd").new()
+
+func _build_tree() -> void:
+	super._build_tree()
+	anchored(board,Rect2(0,0,.50,1),Rect2(76,165,-103,-291))
+	tree_footer.text = "实线 · 必需     虚线 · 任选或累计\n方向键 / 十字键 选格     Enter / A 成长     Esc / B 返回"
+	tree_footer.tooltip_text = "点选蜂房查看详情 · Tab 逐格翻阅"
+	anchored(tree_footer,Rect2(0,1,.5,0),Rect2(63,-117,-83,48))
+
+func _place_detail() -> void:
+	if not is_instance_valid(detail_card) or not tree.visible: return
+	var left := size.x*.54
+	detail_card.position = Vector2(left,183)
+	detail_card.size = Vector2(size.x*.915-left,detail_card.get_combined_minimum_size().y)
+
+func _input(event: InputEvent) -> void:
+	if driver == null or driver.mode != "tree" or not event is InputEventJoypadButton: return
+	var directions := {JOY_BUTTON_DPAD_UP:KEY_UP,JOY_BUTTON_DPAD_DOWN:KEY_DOWN,JOY_BUTTON_DPAD_LEFT:KEY_LEFT,JOY_BUTTON_DPAD_RIGHT:KEY_RIGHT}
+	if event.button_index not in directions and event.button_index not in [JOY_BUTTON_A,JOY_BUTTON_B]: return
+	get_viewport().set_input_as_handled()
+	if not event.pressed: return
+	if event.button_index in directions:
+		board.navigate(directions[event.button_index])
+	elif event.button_index == JOY_BUTTON_A:
+		_buy_selected()
+	else:
+		driver.close_tree()

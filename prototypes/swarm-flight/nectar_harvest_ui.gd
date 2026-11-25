@@ -473,6 +473,8 @@ func set_transition(alpha: float, words: String) -> void:
 	move_child(transition_layer,get_child_count()-1)
 	move_child(transition_hint,get_child_count()-1)
 
+func create_growth_board(): return Board.new()
+
 func _build_tree() -> void:
 	tree = screen(self)
 	shade(tree,Color("314d38d9"))
@@ -503,7 +505,7 @@ func _build_tree() -> void:
 	tree_back = action(header,"返回",driver.close_tree)
 	tree_back.size_flags_horizontal = Control.SIZE_SHRINK_END
 	tree_back.custom_minimum_size.x = 100
-	board = Board.new()
+	board = create_growth_board()
 	board.font = font
 	tree.add_child(board)
 	anchored(board,Rect2(0,0,.7,1),Rect2(70,180,-80,-300))

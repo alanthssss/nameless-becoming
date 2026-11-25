@@ -19,6 +19,14 @@ func tap(code: int) -> void:
 		event.pressed = pressed
 		root.push_input(event,true)
 		await frames(2)
+func pad(button: JoyButton) -> void:
+	for pressed in [true,false]:
+		var event := InputEventJoypadButton.new()
+		event.button_index = button
+		event.pressed = pressed
+		root.push_input(event,true)
+		await frames(2)
+
 func all_text(node: Node) -> String:
 	var result: String = node.text if node is Label or node is Button else ""
 	for child in node.get_children(): result += all_text(child)
@@ -132,7 +140,24 @@ func run() -> void:
 	await tap(KEY_E)
 	check(game.mode == "tree","growth interaction")
 	var paid: int = game.model.coins
-	game.buy_upgrade("gather1")
+	var board = game.ui.board
+	check(board.visible_ids().size() == 10 and not board.buttons.shortcut.visible,"all ten regional cells can be inspected from a fresh profile")
+	await pad(JOY_BUTTON_DPAD_RIGHT)
+	check(board.selected != "gather" and game.model.coins == paid,"direction selects a different cell without buying")
+	var visited := {}
+	for i in board.visible_ids().size():
+		visited[board.selected] = true
+		await tap(KEY_TAB)
+	check(visited.size() == 10,"Tab visits every cell, including distant locked goals")
+	board.select_node("twin")
+	check(game.ui.buy_button.disabled and game.ui.detail_costs.coin.text == "29","locked double harvest shows its current regional price")
+	await pad(JOY_BUTTON_A)
+	check(game.model.coins == paid and not "twin" in game.model.owned,"confirming a locked cell cannot charge")
+	await pad(JOY_BUTTON_B)
+	check(game.mode == "play","controller back returns from journal to garden")
+	await tap(KEY_E)
+	board.select_node("gather")
+	await pad(JOY_BUTTON_A)
 	check("gather1" in game.model.owned and game.model.coins == paid-4,"real purchase commits")
 	game.buy_upgrade("gather1")
 	check(game.model.coins == paid-4,"duplicate cannot spend")
