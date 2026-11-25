@@ -6,10 +6,17 @@ const SPACING := 22.0
 
 const GROUND_SCALE := 1.10
 const FIELD_ZOOM := 0.91
+# The painted 176×300 husk is registered at its seed socket. Both field
+# placement and drawing use this span, including the different host sizes.
+const FIBER_SOCKET := Vector2(.77,.16)
+const FIBER_SPAN := Vector2(176,300)*(118.0/300.0)
 const WEST_SHORE := 32.0
 const WEST_JOIN := 190.0
 const VIEWPORT := Vector2(1280,800)
 const PLATE := Rect2(Vector2(0,-100)*GROUND_SCALE,Vector2(2680,1550)*GROUND_SCALE)
+
+static func material_scale(band: String) -> float:
+	return .84 if band == "near" else 1.10 if band == "far" else 1.0
 
 static func build(region: String, expanded := true) -> Dictionary:
 	var layout: Dictionary = Skeleton.build(region)

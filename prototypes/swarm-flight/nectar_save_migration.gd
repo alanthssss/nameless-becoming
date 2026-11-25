@@ -23,26 +23,8 @@ static func load_progress(path: String) -> Dictionary:
 		return result
 	if not Model.whole(data.get("version"),1,4) or not model.restore_legacy_payload(data,int(data.version)):
 		return _block(result,"旧版采蜜进度未通过完整性检查")
-	# Write an exact rollback copy before replacing the original. Never replace a
-	# different existing backup, including one left by an earlier migration.
-	var backup := path+".v%d.bak" % int(data.version)
-	if FileAccess.file_exists(backup):
-		if FileAccess.get_file_as_bytes(backup) != original:
-			return _block(result,"已有旧版备份与当前进度不同，原进度保持不变")
-	else:
-		var temporary := backup+".tmp"
-		var output := FileAccess.open(temporary,FileAccess.WRITE)
-		if output == null: return _block(result,"旧版进度备份无法写入，尚未升级进度")
-		output.store_buffer(original)
-		output.flush()
-		var written := output.get_error() == OK
-		output.close()
-		if not written or FileAccess.get_file_as_bytes(temporary) != original:
-			DirAccess.remove_absolute(temporary)
-			return _block(result,"旧版进度备份校验失败，尚未升级进度")
-		if DirAccess.rename_absolute(temporary,backup) != OK:
-			DirAccess.remove_absolute(temporary)
-			return _block(result,"旧版进度备份无法完成，尚未升级进度")
+	var error := backup_original(path+".v%d.bak" % int(data.version),original)
+	if not error.is_empty(): return _block(result,error)
 	# A second running application must not have changed the old save while we prepared its
 	# backup. A failed write below leaves that original file intact.
 	if FileAccess.get_file_as_bytes(path) != original:
@@ -54,6 +36,27 @@ static func load_progress(path: String) -> Dictionary:
 	result.migrated = true
 	result.payload = migrated
 	return result
+
+# Keep the original bytes recoverable across migration and retries.
+static func backup_original(backup: String,original: PackedByteArray) -> String:
+	if FileAccess.file_exists(backup):
+		if FileAccess.get_file_as_bytes(backup) != original:
+			return "已有旧版备份与当前进度不同，原进度保持不变"
+	else:
+		var temporary := backup+".tmp"
+		var output := FileAccess.open(temporary,FileAccess.WRITE)
+		if output == null: return "旧版进度备份无法写入，尚未升级进度"
+		output.store_buffer(original)
+		output.flush()
+		var written := output.get_error() == OK
+		output.close()
+		if not written or FileAccess.get_file_as_bytes(temporary) != original:
+			DirAccess.remove_absolute(temporary)
+			return "旧版进度备份校验失败，尚未升级进度"
+		if DirAccess.rename_absolute(temporary,backup) != OK:
+			DirAccess.remove_absolute(temporary)
+			return "旧版进度备份无法完成，尚未升级进度"
+	return ""
 
 static func _block(result: Dictionary,message: String) -> Dictionary:
 	result.blocked = true

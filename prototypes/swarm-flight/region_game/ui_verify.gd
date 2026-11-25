@@ -73,12 +73,35 @@ func check_shop_shelves() -> void:
 		game.ui.refresh()
 		check(not game.ui.hub_action.visible, "shop prompt ends outside counter and shelves "+str(point))
 
+func check_pond_backup() -> void:
+	var previous = game.new_model()
+	previous.trip_index = 13
+	previous.transition_to("pond")
+	var data: Dictionary = previous.to_payload()
+	var state: Dictionary = bytes_to_var(Marshalls.base64_to_raw(data.field))
+	state.space_version = 3
+	var coast = previous.MeadowLayout.build("pond",false)
+	var sites = previous.Field._seeded_flower_sites(coast,14)
+	for i in sites.size(): state.flowers[i].p = sites[i]*previous.MeadowLayout.GROUND_SCALE
+	data.field = Marshalls.raw_to_base64(var_to_bytes(state))
+	var original := JSON.stringify(data,"  ",true,true)
+	var path := OS.get_temp_dir().path_join("regional-old-pond-%d.json" % OS.get_process_id())
+	var backup := path+".pond-"+original.sha256_text()+".bak"
+	var file := FileAccess.open(path,FileAccess.WRITE)
+	file.store_string(original)
+	file.close()
+	check(game.read_progress(path).ok and FileAccess.get_file_as_bytes(backup)==original.to_utf8_buffer(),"opening an older pond trip keeps a byte-exact rollback copy")
+	check(game.read_progress(path).ok and FileAccess.get_file_as_bytes(path)==original.to_utf8_buffer(),"reopening before the first save reuses the backup and retains the original")
+	DirAccess.remove_absolute(path)
+	DirAccess.remove_absolute(backup)
+
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
 	await frames(6)
 	game.saved_path = OS.get_temp_dir().path_join("regional-ui-%d.json" % OS.get_process_id())
 	game.save_blocked = false
+	check_pond_backup()
 	game.restart_game()
 	check(game.mode == "play" and game.model.at_home(),"new playable courtyard")
 	await tap(KEY_E)
