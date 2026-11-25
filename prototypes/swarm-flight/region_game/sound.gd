@@ -1,32 +1,26 @@
 extends "res://sound.gd"
-## Honey's garden theme. Two parts of the same waltz run on one continuous
-## phrase; visiting a field brings up the plucked part without resetting it.
+## Regional loops, a honey-shop dance, and a short flute phrase for reading the growth journal.
+const SPRING := preload("res://region_game/music/spring_explore.ogg")
+const AUTUMN := preload("res://region_game/music/autumn_explore.ogg")
+const SHOP_MUSIC := preload("res://region_game/music/honey_counter.ogg")
+const GrowthDizi := preload("res://region_game/growth_dizi.gd")
+const BOOK_DELAY := 0.65
+const BOOK_REPRISE_MSEC := 16000
 
-const BEAT := 0.60
-# Root, fifth, then two upper voices. Each row lasts one three-beat bar.
-const HARMONY := [
-	[43, 50, 59, 64], [42, 50, 57, 62], [40, 47, 55, 62], [36, 43, 52, 59],
-	[45, 52, 60, 64], [38, 45, 54, 60], [43, 50, 59, 64], [38, 45, 54, 62],
-]
-# Silence in a bar is part of the tune. [beat, MIDI note, length in beats]
-const MELODY := [
-	[[0.5,71,0.8],[1.5,74,1.25]], [[0.0,69,1.8]],
-	[[0.5,67,0.8],[1.5,71,0.6],[2.25,74,0.7]], [[0.0,76,1.8]],
-	[[0.0,72,1.3],[1.75,69,0.8]], [[0.5,66,0.9],[1.5,69,1.1]],
-	[[0.0,67,1.8]], [[2.25,69,0.6]],
-	[[0.5,71,0.8],[1.5,74,1.25]], [[0.0,78,1.65],[2.0,74,0.8]],
-	[[0.5,76,0.8],[1.5,74,0.6],[2.25,71,0.7]], [[0.0,67,1.5]],
-	[[0.5,69,0.8],[1.5,72,1.0]], [[0.0,74,1.3],[1.75,66,0.85]],
-	[[0.0,67,2.0]], [],
-]
 const FOLEY_DURATIONS := {
 	"harvest":0.20, "pulse":0.22, "fiber_release":0.19, "resin_open":0.26,
 	"fiber":0.15, "resin":0.21, "full":0.30, "denied":0.17,
-	"book_open":0.22, "book_close":0.19,
+	"book_open":0.22, "book_close":0.19, "depart_wind":0.38,
+	"shop_open":0.17, "shop_close":0.12,
 }
 
 var _area := ""
 var _overlay := false
+var _mode := ""
+var _book_phrase_active := false
+var _last_phrase_msec := -BOOK_REPRISE_MSEC
+var _book_tween: Tween
+var _flute: AudioStreamPlayer
 
 func _ready() -> void:
 	_rng.seed = 8753
@@ -45,62 +39,92 @@ func _ready() -> void:
 	for item in [["burst","dash"], ["spray","tap"], ["dew","harvest"], ["hit","hurt"],
 			["arrival_bell","sell"], ["ring","buy"], ["finish","complete"]]:
 		_samples[item[0]] = _samples[item[1]]
-	for part in _garden_score():
+	for part in [SPRING, AUTUMN, SHOP_MUSIC]:
 		var player := _player("Music")
 		player.stream = part
+		player.volume_linear = 0.0
 		_music.append(player)
 	for place in ["pond", "meadow"]:
 		var player := _player("Ambience")
 		player.stream = _field_air(place)
 		_ambience.append(player)
-	for player in _music + _ambience:
+	for player in _ambience:
 		player.volume_linear = 0.0
 		player.play()
+	_flute = _player("Music")
+	_flute.stream = GrowthDizi.make_phrase()
+	_flute.finished.connect(_finish_book_phrase)
 	set_muted(_muted)
 	set_honey_context("hub", "title")
-	# The inherited weather controller drives the earlier flight game.
-	# Honey's continuous stems are mixed only when its place or overlay changes.
 	set_process(false)
 
+func _exit_tree() -> void:
+	if is_instance_valid(_book_tween):
+		_book_tween.kill()
+	if is_instance_valid(_flute):
+		_flute.stop()
+		_flute.stream = null
+	super._exit_tree()
+
+func _start_book_phrase() -> void:
+	_last_phrase_msec = Time.get_ticks_msec()
+	_flute.volume_db = -2.0
+	_flute.play()
+
+func _finish_book_phrase() -> void:
+	_book_phrase_active = false
+	_mix_region()
+
+func _leave_book() -> void:
+	_book_phrase_active = false
+	if is_instance_valid(_book_tween):
+		_book_tween.kill()
+	if _flute.playing:
+		_book_tween = create_tween()
+		_book_tween.tween_property(_flute, "volume_linear", 0.0, 0.18)
+		_book_tween.tween_callback(_flute.stop)
+
 func set_honey_context(area: String, mode: String) -> void:
-	var overlay := mode not in ["play", "transition"]
-	if _music.is_empty() or (_area == area and _overlay == overlay):
+	if _music.is_empty() or (_area == area and _mode == mode):
 		return
+	if _mode == "tree" and mode != "tree":
+		_leave_book()
+	elif mode == "tree" and _mode != "tree" and Time.get_ticks_msec() - _last_phrase_msec >= BOOK_REPRISE_MSEC:
+		_book_phrase_active = true
+		_book_tween = create_tween()
+		_book_tween.tween_interval(BOOK_DELAY)
+		_book_tween.tween_callback(_start_book_phrase)
 	_area = area
-	_overlay = overlay
-	var field := area in ["pond", "meadow"]
-	var score_gain := 0.53 if overlay else 1.0
-	var air_gain := 0.48 if overlay else 1.0
+	_mode = mode
+	_overlay = mode not in ["play", "transition"]
+	_mix_region()
+
+func _mix_region() -> void:
 	if is_instance_valid(_crossfade):
 		_crossfade.kill()
 	_crossfade = create_tween().set_parallel(true)
 	_crossfade.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_crossfade.tween_property(_music[0], "volume_linear", score_gain * (0.78 if field else 1.0), 0.48)
-	_crossfade.tween_property(_music[1], "volume_linear", score_gain if field else 0.0, 0.8)
-	_crossfade.tween_property(_ambience[0], "volume_linear", air_gain if area == "pond" else 0.0, 0.65)
-	_crossfade.tween_property(_ambience[1], "volume_linear", air_gain if area == "meadow" else 0.0, 0.65)
+	var score_gain := 0.53 if _overlay else 1.0
+	var air_gain := 0.48 if _overlay else 1.0
+	var field := _area in ["pond", "meadow"]
+	var home_gain := score_gain if not field and _mode != "shop" and not _book_phrase_active else 0.0
+	var gains := [home_gain, score_gain * db_to_linear(-1.1) if field else 0.0, 0.90 if _mode == "shop" else 0.0]
+	for i in _music.size():
+		var player := _music[i]
+		var gain: float = gains[i]
+		if gain > 0.0 and not player.playing:
+			player.play()
+		_crossfade.tween_property(player, "volume_linear", gain, 0.52)
+	_crossfade.tween_property(_ambience[0], "volume_linear", air_gain if _area == "pond" else 0.0, 0.65)
+	_crossfade.tween_property(_ambience[1], "volume_linear", air_gain if _area == "meadow" else 0.0, 0.65)
+	_crossfade.chain().tween_callback(_stop_quiet_loops)
 
-func _garden_score() -> Array[AudioStreamWAV]:
-	var home := PackedFloat32Array()
-	var field := PackedFloat32Array()
-	home.resize(roundi(MELODY.size() * 3 * BEAT * RATE))
-	field.resize(home.size())
-	for bar in MELODY.size():
-		var start := bar * 3 * BEAT
-		var chord: Array = HARMONY[bar % HARMONY.size()]
-		_mix_instrument(home, start, 2.3 * BEAT, chord[0], 0.13, "bass")
-		_mix_instrument(home, start + BEAT, 1.45 * BEAT, chord[2], 0.065, "keys")
-		_mix_instrument(home, start + 1.06 * BEAT, 1.4 * BEAT, chord[3], 0.045, "keys")
-		for note in MELODY[bar]:
-			_mix_instrument(home, start + note[0] * BEAT, note[2] * BEAT, note[1], 0.19, "keys")
-		# An answering figure on the offbeats gives outdoor flight its lift.
-		_mix_instrument(field, start + 0.52 * BEAT, 0.8 * BEAT, chord[1], 0.15, "pluck")
-		_mix_instrument(field, start + 1.50 * BEAT, 0.65 * BEAT, chord[2], 0.13, "pluck")
-		if bar % 4 != 3:
-			_mix_instrument(field, start + 2.23 * BEAT, 0.72 * BEAT, chord[3], 0.11, "pluck")
-		if bar % 4 == 2:
-			_mix_drum(field, start + 2.75 * BEAT, 0.07, 0.056, "wood", bar)
-	return [_wav(home, true), _wav(field, true)]
+func _stop_quiet_loops() -> void:
+	for player in _music:
+		# The courtyard keeps its place under the shop and the book.
+		if player == _music[0] and _area == "hub": continue
+		if is_zero_approx(player.volume_linear):
+			player.stop()
 
 func _field_air(place: String) -> AudioStreamWAV:
 	var duration := 7.5
@@ -157,6 +181,13 @@ func _garden_foley(kind: String, duration: float) -> AudioStreamWAV:
 				tone = (sin(TAU * 294.0 * t) * 0.29 + sin(TAU * 440.0 * t) * 0.11) * exp(-15.0 * t)
 			"denied":
 				tone = (sin(TAU * 170.0 * t) * 0.22 + soft * 0.16) * exp(-27.0 * t)
+			"shop_open", "shop_close":
+				# A wood drawer slides, then touches the counter.
+				var knock := maxf(0.0, t - duration * 0.62)
+				var wood := sin(TAU * 275.0 * knock) * exp(-105.0 * knock) * 0.23
+				tone = soft * sin(PI * u) * 0.16 + wood * (1.0 if kind == "shop_open" else 0.7)
+			"depart_wind":
+				tone = (soft * 0.32 + (white - soft) * 0.11) * pow(sin(PI * u), 2.0)
 			"book_open":
 				tone = (white - soft) * 0.18 * pow(sin(PI * u), 1.5)
 			"book_close":

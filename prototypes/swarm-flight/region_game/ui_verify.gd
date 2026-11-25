@@ -222,6 +222,7 @@ func check_shop_shelves() -> void:
 	game.model.p = Vector2(260,330)
 	await tap(KEY_E)
 	check(game.mode == "shop" and game.ui.sell_button.disabled, "top shelf opens empty shop with E")
+	check(cues.back() == "shop_open" and game.sound._music[2].playing and game.sound.SHOP_MUSIC.loop, "opening the counter starts its own loop with a wood tap")
 	game.close_shop()
 	game.model.cargo.blue = 2
 	game.model.p = Vector2(438,372)
@@ -238,6 +239,7 @@ func check_shop_shelves() -> void:
 	check(cues == ["sell"], "one committed delivery rings once; empty sale stays quiet")
 	check(game.model.coins == 2 and game.model.cargo_total() == 0, "delivery credits carried honey once")
 	game.close_shop()
+	check(cues.back() == "shop_close","leaving the shop closes the drawer")
 	for point in [Vector2(310,240),Vector2(540,390),Vector2(150,480)]:
 		game.model.p = point
 		game.ui.refresh()
@@ -275,16 +277,19 @@ func run() -> void:
 	check_pond_backup()
 	game.restart_game()
 	check(game.mode == "play" and game.model.at_home(),"new playable courtyard")
+	check(game.sound._music[0].stream == game.sound.SPRING and game.sound.SPRING.loop and game.sound._music[0].playing,"courtyard starts the looping spring recording")
 	await tap(KEY_E)
 	check(game.mode == "regions","entry opens destination")
 	check(game.ui.meadow_button.disabled,"new profile cannot select purple")
+	cues.clear()
 	game.request_transition("pond")
 	check(is_zero_approx(game.transition_elapsed),"courtyard departure keeps its dance")
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.area == "pond" and game.mode == "play","skip commits destination once")
 	check(game.sound._area == "pond" and not game.sound._overlay, "pond music follows the committed area")
-	check(game.model.trip_index == 1,"exactly one departure")
+	check(game.sound._music[1].stream == game.sound.AUTUMN and game.sound.AUTUMN.loop and game.sound._music[1].playing and not game.sound._book_phrase_active,"pond starts the looping autumn recording without a flute cue")
+	check(cues.count("depart_wind") == 1 and game.model.trip_index == 1,"one committed departure gives one rush of air")
 	check(game.world.area_key == "pond","world follows region")
 	await check_seed_pickup()
 	check(game.persist(),"active field persisted")
@@ -320,7 +325,7 @@ func run() -> void:
 	root.push_input(gate_key,true)
 	await tap(KEY_SPACE)
 	await frames(4)
-	check(game.model.at_home(),"return transition")
+	check(game.model.at_home() and cues.count("arrival_bell") == 1,"one bell on the saved return")
 	await check_shop_shelves()
 	game.model.p = game.model.HUB_TREE
 	cues.clear()
@@ -337,7 +342,11 @@ func run() -> void:
 	game.model.materials = {"fiber":100,"resin":100}
 	game.model.p = game.model.HUB_TREE
 	await tap(KEY_E)
-	check(game.mode == "tree","growth interaction")
+	check(game.mode == "tree" and game.sound._book_phrase_active,"opening the growth book schedules its solo")
+	var phrase: Tween = game.sound._book_tween
+	game.ui.board.select_node("gather")
+	await frames(5)
+	check(game.sound._book_tween == phrase,"browsing the growth map keeps the same solo")
 	await check_map_camera()
 	await check_catalog_preview()
 	var paid: int = game.model.coins
@@ -374,11 +383,19 @@ func run() -> void:
 	game.close_tree()
 	game.model.p = game.model.HUB_DEPART
 	game.open_regions()
+	var working_save: String = game.saved_path
+	cues.clear()
+	game.saved_path = OS.get_temp_dir()
+	game.request_transition("meadow")
+	await tap(KEY_SPACE)
+	check(game.model.area == "hub" and not cues.has("depart_wind"),"failed meadow travel leaves the courtyard score alone")
+	game.saved_path = working_save
+	game.open_regions()
 	game.request_transition("meadow")
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.area == "meadow" and game.model.field.max_energy() == 50 and game.model.field.capacity() == 10,"incremental growth reaches actual field")
-	check(game.sound._area == "meadow", "purple field selects its leaf bed")
+	check(game.sound._area == "meadow" and not game.sound._book_phrase_active and game.sound._music[1].playing, "meadow plays the autumn score with its leaf bed")
 	cues.clear()
 	var bark: Dictionary = game.model.field.materials[0]
 	game.model.field.p = bark.anchor - Vector2(45,0)
@@ -401,6 +418,11 @@ func run() -> void:
 	gate_inputs()
 	game.queue_free()
 	await frames(3)
+	# The audio driver drains on wall time even with --fixed-fps.
+	var drain_until := Time.get_ticks_msec() + 350
+	while Time.get_ticks_msec() < drain_until:
+		OS.delay_msec(10)
+		await process_frame
 	print("Regional UI: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)
 

@@ -16,6 +16,7 @@ func update_sound_context() -> void:
 
 func sound_for_event(event: Dictionary) -> String:
 	match event.kind:
+		"depart": return "depart_wind"
 		"pulse", "pulse_empty": return "pulse"
 		"material_dropped": return "fiber_release"
 		"material_opened": return "resin_open"
