@@ -23,6 +23,7 @@ var bay_button: Button
 var bay_preview: Control
 var controls_page
 var controls_button: Button
+var pause_folio := preload("res://region_game/pause_folio.gd").new()
 var menu_slots: Button
 var slots: Control
 var slot_list: VBoxContainer
@@ -146,6 +147,8 @@ func refresh() -> void:
 
 func show_toast(words: String, seconds: float) -> void:
 	super.show_toast(words,seconds)
+	if pause_folio.visible and driver.save_warning:
+		pause_folio.update_state(driver, menu_footer.text.get_slice("  ·  ",0))
 	if driver.mode == "tree":
 		anchored(toast_panel,Rect2(.5,1,0,0),Rect2(-265,-120,530,44))
 
@@ -174,6 +177,8 @@ func _purchase_button_input(event: InputEvent) -> void:
 
 func _build_menu() -> void:
 	super._build_menu()
+	add_child(pause_folio)
+	pause_folio.setup(self)
 	if not driver.slots_enabled: return
 	menu_slots = action(menu_settings.get_parent(),"选择存档",driver.open_slots)
 	slots = screen(self)
@@ -217,6 +222,12 @@ func ask_restart() -> void:
 		restart_title.text = "在存档 %d 重新开始？" % driver.active_slot
 	super.ask_restart()
 
+func uses_shared_menu(mode: String) -> bool:
+	return mode in ["title","complete"]
+
+func active_menu() -> Control:
+	return pause_folio if pause_folio.visible else menu
+
 func show_mode(mode: String) -> void:
 	var was_reading := reading_book
 	if was_reading and mode != "tree":
@@ -231,7 +242,14 @@ func show_mode(mode: String) -> void:
 	if is_instance_valid(sale_flight) and mode != "shop":
 		sale_flight.stop()
 	var leaving_slots := is_instance_valid(slots) and slots.visible
+	var focus_target: Button = pause_folio.buttons[0]
+	if journal.visible: focus_target = pause_folio.buttons[1]
+	if leaving_slots: focus_target = pause_folio.buttons[2]
+	if settings.visible: focus_target = pause_folio.buttons[3]
+	pause_folio.visible = mode == "pause"
 	super.show_mode(mode)
+	if pause_folio.visible:
+		focus_target.grab_focus()
 	if not was_reading and mode == "tree":
 		growth_map.open_book(driver.saved_path)
 		_set_note(false)
@@ -242,13 +260,12 @@ func show_mode(mode: String) -> void:
 	_refresh_control_hints()
 	if not is_instance_valid(slots): return
 	slots.visible = mode == "slots"
-	menu_slots.visible = mode in ["title","pause"]
+	menu_slots.visible = mode == "title"
 	menu_quit.text = "退出游戏" if mode == "title" else "保存并退出"
 	if slots.visible:
 		_show_slots()
 	elif menu_slots.visible:
-		if mode != "pause" or driver.save_blocked or driver.save_warning:
-			menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
+		menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
 		if leaving_slots: menu_slots.grab_focus()
 
 func _add_settings_controls(parent: Control) -> void:
@@ -283,8 +300,6 @@ func _journal_return_text() -> String:
 
 func _refresh_control_hints() -> void:
 	if not is_instance_valid(journal_controls): return
-	var collect: String = driver.control_hint("interact")
-	var pulse: String = driver.control_hint("pulse")
 	var dash: String = driver.control_hint("dash")
 	_refresh_journal_hints()
 	transition_hint.text = "%s 跳过蜂舞" % dash
@@ -293,12 +308,10 @@ func _refresh_control_hints() -> void:
 	region_back.text = "先留在这里  ·  " + back
 	leave_button.tooltip_text = "%s 返回庭院" % back
 	pause_button.tooltip_text = "暂停与操作说明 · " + driver.control_hint("pause")
-	var shortcut := back + " 返回" if driver.mode == "pause" else ("A 确认" if pad else "Enter 确认")
-	menu_footer.text = menu_footer.text.get_slice("  ·  ",0) + "  ·  " + shortcut
-	if driver.mode == "pause" and not driver.save_blocked and not driver.save_warning:
-		menu_body.text = "%s\n\n按住 %s 采蜜\n%s 振翅 · %s 蓄力冲刺\n\n设置中可查看和修改按键。" % [driver.model.goal_text(), collect, pulse, dash]
-	if driver.mode == "pause" and driver.slots_enabled and not driver.save_blocked and not driver.save_warning:
-		menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
+	var build := menu_footer.text.get_slice("  ·  ",0)
+	menu_footer.text = build + ("  ·  A 确认" if pad else "  ·  Enter 确认")
+	if pause_folio.visible:
+		pause_folio.update_state(driver, build)
 	if driver.mode == "tree":
 		_update_tree_footer(get_viewport().gui_get_focus_owner())
 	if hub_action.visible:

@@ -804,11 +804,17 @@ func show_toast(words: String, seconds: float) -> void:
 	toast_panel.show()
 	toast_timer.start(minf(seconds,3.0) if words.length()<35 else seconds)
 
+func uses_shared_menu(mode: String) -> bool:
+	return mode in ["title","pause","complete"]
+
+func active_menu() -> Control:
+	return menu
+
 func show_mode(mode: String) -> void:
 	hud.visible = mode == "play"
 	shop.visible = mode == "shop"
 	tree.visible = mode == "tree"
-	menu.visible = mode in ["title","pause","complete"]
+	menu.visible = uses_shared_menu(mode)
 	menu_logo.visible = mode == "title"
 	regions.visible = mode == "regions"
 	transition_layer.visible = mode == "transition"
@@ -1034,13 +1040,13 @@ func ask_restart() -> void:
 	if restart_dialog.visible: return
 	restart_body.text = "当前存档无法读取。先备份原文件，再开始新的一轮。" if driver.save_blocked else "先备份当前进度，再开始新的一轮。"
 	restart_opener = get_viewport().gui_get_focus_owner()
-	menu.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_DISABLED
+	active_menu().focus_behavior_recursive = Control.FOCUS_BEHAVIOR_DISABLED
 	restart_dialog.show()
 	restart_cancel.grab_focus()
 
 func close_restart() -> void:
 	restart_dialog.hide()
-	menu.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_INHERITED
+	active_menu().focus_behavior_recursive = Control.FOCUS_BEHAVIOR_INHERITED
 	if is_instance_valid(restart_opener) and restart_opener.is_visible_in_tree():
 		restart_opener.grab_focus()
 	elif menu.visible:

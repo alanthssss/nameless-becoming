@@ -423,10 +423,10 @@ func run() -> void:
 	await frames(30)
 	check(game.sound._area == "pond" and game.sound._overlay, "pause softens the score in place")
 	check(game.model.to_payload() == before,"pause freezes phases and input")
-	game.ui.menu_restart.grab_focus()
+	game.ui.pause_folio.buttons[4].grab_focus()
 	await tap(KEY_ENTER)
 	await tap(KEY_ESCAPE)
-	check(game.mode == "pause" and root.gui_get_focus_owner() == game.ui.menu_restart and game.model.to_payload() == before,"Escape dismisses restart without resuming the outing")
+	check(game.mode == "pause" and root.gui_get_focus_owner() == game.ui.pause_folio.buttons[4] and game.model.to_payload() == before,"Escape dismisses restart without resuming the outing")
 	game.start_game()
 	game.saved_path = OS.get_temp_dir() # Explicit failed-write fixture.
 	game.model.field.departed = true
@@ -560,7 +560,7 @@ func run() -> void:
 	for size in [Vector2i(960,600),Vector2i(1280,800)]:
 		root.size = size
 		await frames(4)
-		check(game.ui.menu.visible,"pause available at "+str(size))
+		check(game.ui.pause_folio.is_visible_in_tree() and not game.ui.menu.visible,"pause available at "+str(size))
 	game.start_game()
 	game.model.field.p = game.model.field.layout.nodes[0].p
 	game.model._sync_field()
