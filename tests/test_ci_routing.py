@@ -228,6 +228,7 @@ def job_results(*selected):
     outputs = {flag: "true" if flag in selected else "false" for flag in FLAGS}
     outputs["godot_suite"] = "full" if "godot" in selected else "routes"
     outputs["swarm_suite"] = "full" if "swarm" in selected else "none"
+    outputs.update(reused="[]", source_run="none")
     needs = {"scope": {"result": "success", "outputs": outputs}}
     for job, flag in (
         ("web", "web"), ("godot", "godot"), ("web-candidate", "export_game"),
@@ -315,6 +316,42 @@ class JobResultsTests(unittest.TestCase):
             needs = job_results(*selected)
             needs["scope"]["outputs"]["swarm_suite"] = suite
             self.assertTrue(self.gate.validate(needs))
+
+    def test_only_certified_selected_prototypes_can_skip(self):
+        needs = job_results("swarm", "web")
+        outputs = needs["scope"]["outputs"]
+        outputs.update(reused='["swarm"]', source_run="123")
+        needs["swarm"]["result"] = "skipped"
+        self.assertEqual(self.gate.validate(needs), [])
+        self.assertEqual(self.gate.validate(needs, only="swarm"), [])
+        for result in ("failure", "cancelled", "success", None):
+            needs["swarm"]["result"] = result
+            self.assertTrue(self.gate.validate(needs))
+        needs["swarm"]["result"] = "skipped"
+        for listed, source in (("[]", ""), ('["flower"]', "123"), ('["web"]', "123"),
+                               ('["swarm"]', ""), ('["swarm"]', "0"), ('["swarm"]', "-1"),
+                               ('["swarm", "swarm"]', "123"), ("{}", ""), ("", "")):
+            outputs.update(reused=listed, source_run=source)
+            self.assertTrue(self.gate.validate(needs))
+        for key in ("reused", "source_run"):
+            fresh = job_results()
+            del fresh["scope"]["outputs"][key]
+            self.assertTrue(self.gate.validate(fresh))
+
+    def test_partial_swarm_reuse_requires_running_the_regional_job(self):
+        needs = job_results("swarm")
+        outputs = needs["scope"]["outputs"]
+        outputs.update(reused='["swarm-except-region"]', source_run="123")
+        self.assertEqual(self.gate.validate(needs), [])
+        for result in ("skipped", "failure", "cancelled"):
+            needs["swarm"]["result"] = result
+            self.assertTrue(self.gate.validate(needs))
+            self.assertTrue(self.gate.validate(needs, only="swarm"))
+        needs["swarm"]["result"] = "success"
+        outputs["swarm_suite"] = "region"
+        self.assertTrue(self.gate.validate(needs))
+        outputs.update(swarm_suite="full", reused='["swarm", "swarm-except-region"]')
+        self.assertTrue(self.gate.validate(needs))
 
     def test_malformed_dependency_payloads_are_rejected(self):
         for payload in (None, [], "success", {}):
