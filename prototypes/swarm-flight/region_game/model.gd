@@ -6,7 +6,7 @@ const Profile = preload("res://nectar_harvest_model.gd")
 const Field = preload("res://region_game/field.gd")
 const MeadowLayout = preload("res://region_game/layout.gd")
 const PROFILE_KEYS := ["coins","cargo","materials","owned","completed","trip_index","sold_total","rose_sold","visited_meadow"]
-static var _courtyard_paper := PackedVector2Array([Vector2(694,350),Vector2(925,350),Vector2(892,479),Vector2(632,469)])
+var _courtyard_paper := PackedVector2Array([Vector2(694,350),Vector2(925,350),Vector2(892,479),Vector2(632,469)])
 var field
 var camera_offset := Vector2.ZERO
 var last_trip := {}
