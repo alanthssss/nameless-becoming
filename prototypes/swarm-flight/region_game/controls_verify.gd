@@ -131,6 +131,13 @@ func run() -> void:
 	check(game.bindings.action_for("mouse",MOUSE_BUTTON_MIDDLE) == "pulse" and game.bindings.action_for("mouse",MOUSE_BUTTON_RIGHT).is_empty(), "replaces mouse binding independently")
 	await tap(KEY_ESCAPE)
 	check(game.mode == "settings" and root.gui_get_focus_owner() == game.ui.controls_button, "back restores opening control focus")
+	await press_pad(JOY_BUTTON_DPAD_DOWN)
+	await press_pad(JOY_BUTTON_A)
+	check(game.ui.settings_credits.is_visible_in_tree(), "controller opens the credits")
+	for i in 8:
+		await press_pad(JOY_BUTTON_DPAD_DOWN)
+	var credits_bottom: float = game.ui.settings_credits.get_global_rect().end.y
+	check(credits_bottom <= game.ui.settings_scroll.get_global_rect().end.y + 1, "controller can read the last credit line")
 	await tap(KEY_ESCAPE)
 	await tap(KEY_ENTER)
 	check(game.mode == "play" and game.model.at_home(), "start through title")
@@ -191,8 +198,7 @@ func run() -> void:
 	check(game.bindings.action_for("pad",JOY_BUTTON_Y) == "interact" and game.bindings.action_for("key",KEY_F) == "interact" and game.bindings.action_for("mouse",MOUSE_BUTTON_MIDDLE) == "pulse", "fresh game loads all three slots")
 	await click(game.ui.menu_settings)
 	await click(game.ui.controls_button)
-	var reset_button := page.find_children("*","Button",true,false).filter(func(b): return b.text == "恢复全部默认按键")[0] as Button
-	await click(reset_button)
+	await click(page.reset_button)
 	check(game.bindings.action_for("key",KEY_E) == "interact" and game.bindings.action_for("pad",JOY_BUTTON_A) == "interact" and game.bindings.action_for("mouse",MOUSE_BUTTON_RIGHT) == "pulse", "restore defaults resets every device")
 	await close_game()
 	print("Honey controls: %d checks, %d failures" % [checks,failures])

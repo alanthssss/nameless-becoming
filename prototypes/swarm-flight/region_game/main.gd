@@ -331,6 +331,7 @@ func _back() -> bool:
 	return true
 
 func _input(event: InputEvent) -> void:
+	if restart_has_input(event): return
 	track_device(event)
 	if event is InputEventMouseMotion or event is InputEventMouseButton: mouse_aim = event.position
 	if event is InputEventJoypadMotion:
