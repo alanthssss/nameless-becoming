@@ -1,6 +1,7 @@
 extends RefCounted
 ## Original motion curves. Waggle/alternating loops evoke bee communication;
 ## side-step is an extensible, project-authored anthropomorphic clip.
+const IRIS_CLOSE := 0.42
 const COMMIT := 1.55
 const DURATION := 2.25
 const SHORT_COMMIT := 0.18

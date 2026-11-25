@@ -500,7 +500,7 @@ func _draw_material_hint(item: Dictionary) -> void:
 	var fiber := area_key=="pond"
 	var at: Vector2 = item.p
 	if item.dropped:
-		var title := "种绒 · 飞近拾取" if fiber else "树脂 · 飞近拾取"
+		var title := "飞近种绒 · 收 1 份纤维" if fiber else "树脂 · 飞近拾取"
 		_region_label(at+Vector2(0,-32),title+" · 将散" if FieldLife.phase_ratio(item)>.70 else title,true)
 		return
 	if not FieldLife.available(item):
@@ -527,7 +527,7 @@ func _draw_material_hint(item: Dictionary) -> void:
 	if total>1:
 		for i in total:
 			draw_circle(at+Vector2(float(i)*11.0-5.5,-24),3.0,Color("b6a580") if i<hits else Color("ffdd90"))
-	var action := "振松种绒" if fiber else "掀松树皮"
+	var action := "振松种绒取纤维" if fiber else "掀松树皮"
 	if hits>0: action="再振落绒" if fiber else "再振开皮"
 	_region_label(at+Vector2(0,-48),"朝向种穗 Q · "+action if fiber else "朝向裂口 Q · "+action,true)
 
