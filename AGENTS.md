@@ -41,6 +41,12 @@
 - Verify in ascending cost: the smallest relevant test while editing, then freeze the code, then run the full required suite once. After a failure, rerun the failing slice first; repeat the full suite only after the slice is green.
 - At every handoff, state what is implemented, what was actually tested, what remains outside scope, and whether the PR was merged and cleaned up. Automated tests and developer self-test must not be described as player validation.
 
+## Art handoff and slow responses
+
+- When artwork is approved and implementation is in scope, start a fresh chat with a text handoff. Give the receiving chat the approved design decisions and a file path for each image it needs. Keep the images on disk so it can open a specific reference when needed. Leave the design chat and its image history out of the new chat.
+- Continue in the existing implementation worktree. Include its absolute path, branch and HEAD, the GDD section, milestone, issue and any PR. Summarize uncommitted and untracked work, checks already run, evidence paths, and the next unfinished acceptance step. Stop the outgoing chat and its agents from writing before the new chat takes over. Confirm the new chat has started in the intended worktree.
+- Investigate when several ordinary rounds take visibly longer than usual. For example, three consecutive waits over 30 seconds for the first model response warrant a look when the usual wait is a few seconds. Compare those waits with time spent in commands, tests, exports or CI. Check request size when logged and whether earlier images are being sent again. If accumulated chat history is causing the delay, use the same text handoff. If a tool or CI accounts for the wait, investigate that step.
+
 ## Workspace hygiene
 
 - At task start and final handoff, inspect `git status`, branch/HEAD, worktrees, upstream divergence and open PRs. The default checkout should rest on clean, current `main`; implement in a dedicated worktree.
