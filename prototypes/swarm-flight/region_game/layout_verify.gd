@@ -13,6 +13,7 @@ func check(ok: bool,label: String) -> void:
 
 func _initialize() -> void:
 	for region in ["pond","violet"]: verify(region)
+	_verify_pond_jar()
 	print("REGIONAL_LAYOUT checks=%d failures=%d" % [checks,failures.size()])
 	quit(0 if failures.is_empty() else 1)
 
@@ -140,6 +141,39 @@ func _verify_west(region: String) -> void:
 		check(not restored.restore(corrupt) and restored.p.is_equal_approx(entry),region+" impossible historical west location is rejected transactionally")
 		latest.p = westmost
 		check(not restored.restore(latest),region+" current profile cannot exploit migration to admit invalid positions")
+
+func _verify_pond_jar() -> void:
+	# Bounding box in world coordinates measured from the registered painting.
+	var jar := Rect2(282.64,379.31,194.51,240.10)
+	for seed_value in [1,2,5,8,16,32]:
+		var field = Field.new()
+		field.configure("pond",1,seed_value)
+		var all_clear := true
+		for flower in field.flowers:
+			var plant := Rect2(flower.p - Vector2(38,42),Vector2(76,99))
+			all_clear = all_clear and not jar.intersects(plant,true) and Collision.walkable(field.layout,flower.p,40)
+		check(all_clear,"all 36 flower sites clear the painted jar and remain reachable, seed "+str(seed_value))
+
+	# Recorded from the 0.32 package on trip 8. Site 0 is active from the start;
+	# site 2 becomes active at full growth. Check both against an in-flight save.
+	var current = Field.new()
+	current.configure("pond",1,8)
+	current.set_supply_rank(2)
+	current._after_nectar_picked(current.flowers[0])
+	var expected: Dictionary = current.snapshot()
+	var old := expected.duplicate(true)
+	old.space_version = 3
+	old.flowers[0].p = Vector2(483.095275879,607.839294434)
+	old.flowers[2].p = Vector2(358.928771973,614.980407715)
+	var original := old.duplicate(true)
+	var restored = Field.new()
+	check(restored.restore(old),"genuine 0.32 jar sites accepted on an active trip")
+	check(old == original and restored.snapshot() == expected,"move only the two obstructed sites, retaining stock/refill and the original save")
+	var corrupt := old.duplicate(true)
+	corrupt.flowers[2].p.x += 1
+	check(not restored.restore(corrupt) and restored.snapshot() == expected,"invalid old site cannot pass jar migration or change live state")
+	old.space_version = expected.space_version
+	check(not restored.restore(old),"current save must already use the corrected sites")
 
 func _simple(points: PackedVector2Array) -> bool:
 	for i in points.size():

@@ -37,6 +37,10 @@ func _load_world() -> void:
 	move_child(world,0)
 	if is_instance_valid(ui): world.feedback_font = ui.font
 
+func plays_departure_dance() -> bool:
+	# Only the courtyard view performs the pre-iris dance.
+	return model.at_home()
+
 func _process(delta: float) -> void:
 	if mode == "play" and model.return_requested:
 		model.return_requested = false
@@ -61,6 +65,8 @@ func consume_events(pending: Array) -> void:
 		if event.kind == "sell" and mode == "shop":
 			var side := -1.0 if model.face.x >= 0 else 1.0
 			ui.sale_flight.begin(event, model.p + Vector2(side*20,18), ui.shop_coins, reduced_motion)
+		elif event.kind == "material" and event.type == "fiber":
+			message("纤维 +%d（现有 %d） · 可在庭院升级双翼" % [event.amount, model.materials.fiber], 3.0)
 		elif event.kind == "full":
 			sound.play_event("ring",0)
 	if pending.is_empty() or evidence_log.is_empty(): return
