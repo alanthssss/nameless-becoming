@@ -15,6 +15,7 @@ var game: IsolatedGame
 var directory := OS.get_temp_dir().path_join("honey-slots-%s-%s" % [OS.get_process_id(),Time.get_ticks_usec()])
 var errors := 0
 var checks := 0
+var capture_dir := ""
 
 func _initialize() -> void:
 	call_deferred("run")
@@ -30,6 +31,7 @@ func boot() -> void:
 		game.free()
 	game = IsolatedGame.new()
 	game.test_path = directory.path_join("legacy.json")
+	game.bindings.path = directory.path_join("controls.cfg")
 	root.add_child(game)
 	game.set_process(false)
 
@@ -42,7 +44,119 @@ func tap(code: Key) -> void:
 		root.push_input(input,true)
 		await process_frame
 
+func pad(button: JoyButton) -> void:
+	for down in [true,false]:
+		var event := InputEventJoypadButton.new()
+		event.button_index = button
+		event.pressed = down
+		root.push_input(event,true)
+		await process_frame
+
+func click(button: Button) -> void:
+	var at := button.get_global_rect().get_center()
+	for down in [true,false]:
+		var event := InputEventMouseButton.new()
+		event.position = at
+		event.global_position = at
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = down
+		root.push_input(event,true)
+		await process_frame
+
+func visible_text(node: Node) -> String:
+	if node is CanvasItem and not node.is_visible_in_tree(): return ""
+	var words: String = node.text if node is Label or node is Button else ""
+	for child in node.get_children():
+		words += " " + visible_text(child)
+	return words
+
+func check_folio_sizes() -> void:
+	var folio = game.ui.pause_folio
+	for size_px in [Vector2i(1280,800),Vector2i(960,600)]:
+		root.size = size_px
+		for i in 5: await process_frame
+		var focused := root.gui_get_focus_owner()
+		check(folio.is_visible_in_tree() and focused == folio.buttons[0],"opening focus survives resize to "+str(size_px))
+		# On the 1583×993 approved folio the page's right edge is at 41%.
+		var page_side: Rect2 = game.ui.get_global_rect()
+		page_side.size.x *= 0.43
+		var targets: Array[Rect2] = []
+		var accessible := true
+		var separate := true
+		for button: Button in folio.buttons:
+			var bounds := button.get_global_rect()
+			accessible = accessible and button.is_visible_in_tree() and not button.disabled and bounds.has_area() and page_side.encloses(bounds)
+			for other in targets:
+				separate = separate and not bounds.intersects(other)
+			targets.append(bounds)
+		check(targets.size() == 6 and accessible and separate,"all six independent actions fit the left page at "+str(size_px))
+		if not capture_dir.is_empty():
+			await RenderingServer.frame_post_draw
+			var frame := root.get_texture().get_image()
+			var name := "%s-%dx%d.png" % [game.model.area,size_px.x,size_px.y]
+			check(frame.get_size() == size_px and frame.save_png(capture_dir.path_join(name)) == OK,"capture "+name)
+
+func check_courtyard_folio() -> void:
+	await tap(KEY_ESCAPE)
+	var folio = game.ui.pause_folio
+	var buttons: Array = folio.buttons
+	var words := visible_text(folio)
+	check(game.mode == "pause" and not game.ui.menu.visible and root.gui_get_focus_owner() == buttons[0],"Escape opens the folio on Continue")
+	for label in ["歇一会儿","继续这趟出行","花路手册","选择存档","设置","新的一轮","保存并退出","Esc"]:
+		check(label in words,"folio shows "+label)
+	check("存档2" in words.replace(" ","").replace("　",""),"the folio identifies the active second slot")
+	check(folio.status.text == game.model.goal_text(), "header shows the objective for the loaded profile")
+	check(folio.version.text == ("Demo 0.32.7" if OS.has_feature("pond_feedback") else "Demo 0.29.0"), "folio shows this build's version")
+	await check_folio_sizes()
+	await pad(JOY_BUTTON_DPAD_DOWN)
+	check(root.gui_get_focus_owner() == buttons[1] and "B" in visible_text(folio) and "Esc" not in visible_text(folio),"D-pad reaches the guide and switches the return hint")
+	await pad(JOY_BUTTON_A)
+	check(game.mode == "journal" and not folio.is_visible_in_tree(),"A opens the field guide")
+	await pad(JOY_BUTTON_B)
+	check(game.mode == "pause" and root.gui_get_focus_owner() == buttons[1],"B returns from the guide to its opener")
+	await tap(KEY_DOWN)
+	check(root.gui_get_focus_owner() == buttons[2],"down selects the slot browser")
+	await tap(KEY_ENTER)
+	check(game.mode == "slots" and root.gui_get_focus_owner() == game.ui.slot_buttons[2],"Enter opens the active slot")
+	await tap(KEY_ESCAPE)
+	check(game.mode == "pause" and root.gui_get_focus_owner() == buttons[2],"Escape returns to the slot opener")
+	await click(buttons[3])
+	check(game.mode == "settings","click opens settings")
+	await tap(KEY_ESCAPE)
+	check(game.mode == "pause" and root.gui_get_focus_owner() == buttons[3],"settings returns to its opener")
+	var prior: Dictionary = game.model.to_payload()
+	await pad(JOY_BUTTON_DPAD_DOWN)
+	await pad(JOY_BUTTON_A)
+	check(game.ui.restart_dialog.visible and root.gui_get_focus_owner() == game.ui.restart_cancel,"New Round opens on Cancel")
+	await pad(JOY_BUTTON_B)
+	check(not game.ui.restart_dialog.visible and root.gui_get_focus_owner() == buttons[4] and game.model.to_payload() == prior,"cancel preserves the outing and restores the restart focus")
+	await pad(JOY_BUTTON_DPAD_RIGHT)
+	check(root.gui_get_focus_owner() == buttons[5],"the right arrow reaches Save and Quit")
+	await click(buttons[0])
+	check(game.mode == "play" and not folio.is_visible_in_tree(),"click on Continue resumes the garden")
+
+func check_field_quit_and_resume() -> void:
+	await pad(JOY_BUTTON_START)
+	check(game.mode == "pause" and game.world.area_key == "pond","Start pauses the running field")
+	await check_folio_sizes()
+	# Change a fixture value after the pause autosave to distinguish the quit write.
+	game.model.coins += 4
+	var expected: Dictionary = game.model.to_payload()
+	await click(game.ui.pause_folio.buttons[5])
+	check(game.quit_requested,"Save and Quit finishes only after saving")
+	boot()
+	check(game.mode == "title" and game.active_slot == 1 and game.has_save,"cold driver opens the saved active slot")
+	await tap(KEY_ENTER)
+	check(game.mode == "play" and game.world.area_key == "pond" and game.model.to_payload() == expected,"cold Continue restores the field and the quit write")
+
 func run() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--capture-dir="): capture_dir = arg.trim_prefix("--capture-dir=")
+	if not capture_dir.is_empty():
+		if DisplayServer.get_name() == "headless" or DirAccess.make_dir_recursive_absolute(capture_dir) != OK:
+			printerr("A screenshot run requires a native window and a writable capture directory")
+			quit(2)
+			return
 	if DirAccess.make_dir_absolute(directory) != OK:
 		quit(1)
 		return
@@ -74,6 +188,7 @@ func run() -> void:
 	game.ui.slot_buttons[2].grab_focus()
 	await tap(KEY_ENTER)
 	check(game.active_slot == 2 and game.mode == "play" and game.model.at_home() and game.model.coins == 0,"keyboard starts a fresh second slot")
+	await check_courtyard_folio()
 	game.model.coins = 7
 	game.pause_game()
 	game.open_slots()
@@ -100,6 +215,7 @@ func run() -> void:
 	game.saved_path = directory.path_join("missing/unwritable")
 	game.open_slots()
 	check(game.mode == "pause" and game.model.coins == 7 and game.active_slot == 2,"failed save blocks switching and retains the running game")
+	check("保存失败" in game.ui.pause_folio.status.text, "failed switch leaves a persistent save warning on the folio")
 	game.saved_path = second
 	game.restart_game()
 	check(game.model.coins == 0 and FileAccess.get_file_as_bytes(first) == original and FileAccess.get_file_as_string(third) == "broken","restart only resets the selected slot")
@@ -113,6 +229,7 @@ func run() -> void:
 	game.open_slots()
 	game.choose_slot(1)
 	check(game.model.area == "pond" and game.model.coins == 19 and game.model.materials.fiber == 3 and game.model.trip_index == 1,"switch back restores the old outing and inventory")
+	await check_field_quit_and_resume()
 	game.free()
 	for filename in DirAccess.get_files_at(directory):
 		DirAccess.remove_absolute(directory.path_join(filename))
