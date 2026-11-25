@@ -87,15 +87,16 @@ def delivery(owned, area, scenario, outing, pair_stock):
         if 'order1' in owned and honey >= 5:
             bonus += 6 if 'order2' in owned else 4
             if 'counter1' in owned:
-                second_need, second_tip = (6, 6) if 'counter2' in owned else (4, 3)
-                if honey - 5 >= second_need:
-                    bonus += second_tip
+                if 'counter2' in owned and honey - 5 >= 6:
+                    bonus += 6
+                elif honey - 5 >= 4:
+                    bonus += 3
         if 'blend1' in owned:
             pair_stock[area] += honey
             if 'feastplate1' in owned:
-                threshold, tip = (8, 23) if 'feastplate2' in owned else (6, 15)
+                threshold, tip = (8, 23) if 'feastplate2' in owned and min(pair_stock) >= 8 else (6, 15)
             else:
-                threshold, tip = (6, 13) if 'blend2' in owned else (4, 8)
+                threshold, tip = (6, 13) if 'blend2' in owned and min(pair_stock) >= 6 else (4, 8)
             if min(pair_stock) >= threshold:
                 pair_stock[0] -= threshold
                 pair_stock[1] -= threshold

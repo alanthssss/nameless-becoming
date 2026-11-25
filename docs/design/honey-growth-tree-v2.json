@@ -1811,11 +1811,11 @@
         "sealed": true
       },
       "effect": {
-        "turn_deg": 95,
+        "turn_deg": 55,
         "refund_stamina": 3,
         "per_trip_cap": 3
       },
-      "effect_text": "在柳桩 60 单位内完成 95° 连续弯飞，返还 3 体力，每趟至多 3 根不同桩；同桩不能反复绕刷。",
+      "effect_text": "在柳桩 60 单位内完成 55° 连续弯飞，返还 3 体力，每趟至多 3 根不同桩；同桩不能反复绕刷。",
       "feedback": "绕过桩后叶尖沿转向依次抖动，体力格仅在出弯时点亮。"
     },
     {
@@ -2353,9 +2353,13 @@
       },
       "effect": {
         "sample_units": 3,
-        "future_bonus": 9
+        "future_bonus": 9,
+        "small_option": {
+          "sample_units": 2,
+          "future_bonus": 6
+        }
       },
-      "effect_text": "可从本篮另留 3 份同色样蜜，立即从可售货物扣除。下一趟交售另一色至少 4 份，样品单奖 9 币并结清；只留一单。",
+      "effect_text": "可从本篮另留 3 份同色样蜜，立即从可售货物扣除。下一趟交售另一色至少 4 份，样品单奖 9 币并结清；只留一单。 仍可选择第一档的小份规格。",
       "feedback": "柜台留下有颜色的实体小罐，达成或主动撤销时清走。"
     },
     {
@@ -2405,9 +2409,13 @@
       },
       "effect": {
         "each_color_units": 6,
-        "pair_bonus": 13
+        "pair_bonus": 13,
+        "small_option": {
+          "each_color_units": 4,
+          "pair_bonus": 8
+        }
       },
-      "effect_text": "分别正常交售至少 6 份蓝和 6 份紫后，柜台拼成一对并奖 13 币。两区可分趟完成，按实际售出积数，每次返巢至多配一对。",
+      "effect_text": "分别正常交售至少 6 份蓝和 6 份紫后，柜台拼成一对并奖 13 币。两区可分趟完成，按实际售出积数，每次返巢至多配一对。 仍可选择第一档的小份规格。",
       "feedback": "两支量管依次染色，配成时客人提走双色蜜，一次扣除对应进度。"
     },
     {
@@ -2459,9 +2467,13 @@
       },
       "effect": {
         "second_order_units": 6,
-        "second_order_bonus": 6
+        "second_order_bonus": 6,
+        "small_option": {
+          "second_order_units": 4,
+          "second_order_bonus": 3
+        }
       },
-      "effect_text": "接第一张单时可加第二桌，多留出 6 份同色蜜另得 6 币。先满足主单再用未分配的库存结副单，不能重复用一份蜜。",
+      "effect_text": "接第一张单时可加第二桌，多留出 6 份同色蜜另得 6 币。先满足主单再用未分配的库存结副单，不能重复用一份蜜。 仍可选择第一档的小份规格。",
       "feedback": "两张桌牌分别翻面；收据按主单、副单各自列出用量和小费。"
     },
     {
@@ -2514,9 +2526,13 @@
       },
       "effect": {
         "serving_units_each": 8,
-        "banquet_tip": 23
+        "banquet_tip": 23,
+        "small_option": {
+          "serving_units_each": 6,
+          "banquet_tip": 15
+        }
       },
-      "effect_text": "在柜台选择试菜单，分别交售两色各 8 份可得 23 币。试菜期间替代普通拼蜜，计数不重复；每次正常返巢至多上桌一盘。",
+      "effect_text": "在柜台选择试菜单，分别交售两色各 8 份可得 23 币。试菜期间替代普通拼蜜，计数不重复；每次正常返巢至多上桌一盘。 仍可选择第一档的小份规格。",
       "feedback": "双格托盘按真正成交的蜜量填满，桌上出现成品与标价小费。"
     },
     {
