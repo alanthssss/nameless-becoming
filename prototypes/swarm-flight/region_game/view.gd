@@ -2,6 +2,8 @@ extends "res://nectar_harvest_view.gd"
 ## The terrain plates are registered to the same world coordinates as the
 ## field coast. Leaf tips, reflections and dappled light move within their
 ## original paint. Roots, shores, interaction points and buildings stay fixed.
+const CourtyardStations = preload("res://region_game/courtyard_stations.gd")
+const COURTYARD_PLATE: Texture2D = preload("res://art/honey-inner-courtyard.webp")
 const BasinVisitor = preload("res://region_game/basin_visitor.gd")
 const EnergyDial = preload("res://nectar_energy_dial.gd")
 const FieldLife = preload("res://region_greybox/model.gd")
@@ -40,17 +42,19 @@ const MEADOW_CROWNS := [
 # painted water or sunlit ground, clear of the shore, buildings and stations.
 const HUB_PROOF := Vector2(700,438)
 const HUB_CROWNS := [
-	Rect2(0,18,49,93), Rect2(0,294,61,54), Rect2(484,239,115,72),
-	Rect2(534,381,129,57), Rect2(9,390,86,48),
+	Rect2(0,100,43,67), Rect2(19,269,41,56), Rect2(532,247,120,68),
+	Rect2(622,386,78,52), Rect2(5,390,86,48),
 ]
 const POND_REFLECTIONS := [
 	Rect2(45,41,169,56), Rect2(204,45,186,46), Rect2(399,44,136,54),
 	Rect2(77,272,154,69), Rect2(440,299,124,59),
 ]
-const HUB_LIGHT := [Rect2(84,297,147,50), Rect2(542,70,126,42)]
+const HUB_LIGHT := [Rect2(116,352,133,53), Rect2(596,147,86,52)]
 const MEADOW_LIGHT := [
 	Rect2(39,171,104,43), Rect2(172,173,126,52), Rect2(546,172,74,50),
 ]
+var station_entry := ""
+var station_progress := 0.0
 var basin_visitor: Sprite2D
 var _paint_root: Node2D
 var _painted_area := ""
@@ -119,7 +123,7 @@ func _prepare_paint() -> void:
 	_paint_root = Node2D.new()
 	add_child(_paint_root)
 	var home := area_key == "hub"
-	var texture := Landscape.COURTYARD if home else (POND_PLATE if area_key == "pond" else MEADOW_PLATE)
+	var texture := COURTYARD_PLATE if home else (POND_PLATE if area_key == "pond" else MEADOW_PLATE)
 	var frame := Rect2(Vector2.ZERO, MeadowLayout.VIEWPORT) if home else PLATE_RECT
 	var proof_size := HUB_PROOF if home else PROOF_SIZE
 	var picture := Sprite2D.new()
@@ -214,7 +218,6 @@ func _update_crowns() -> void:
 			surface.material.set_shader_parameter("seconds", clock)
 
 func _draw_background() -> void:
-	# The inherited courtyard draw still owns every station, actor and HUD cue.
 	_prepare_paint()
 	_update_crowns()
 
@@ -224,7 +227,7 @@ func _visible(at: Vector2, padding := 130.0) -> bool:
 func _draw() -> void:
 	if model == null: return
 	if area_key == "hub":
-		scale = Vector2.ONE
+		_frame_station()
 		super._draw()
 		return
 	if model.field == null: return
@@ -272,6 +275,70 @@ func _draw() -> void:
 			_region_label(label_at,"庭院入口",false)
 	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE/MeadowLayout.FIELD_ZOOM)
 	_draw_home_bearing()
+
+func _frame_station() -> void:
+	var zoom := 1.0
+	var focus := Vector2.ZERO
+	var framing := Vector2.ZERO
+	if not reduced_motion:
+		if station_entry == "tree":
+			var travel := smoothstep(.41,1.0,station_progress)
+			zoom += travel*1.47
+			focus = Vector2(786,407)
+			framing = (Vector2(640,400)-focus)*travel
+		elif station_entry == "shop":
+			var approach := smoothstep(.02,.38,station_progress)
+			zoom += .22*approach
+			focus = Vector2(288,449)
+	scale = Vector2.ONE*zoom
+	position = focus*(1.0-zoom)+framing
+
+func _draw_hub() -> void:
+	var shop_entry := station_entry == "shop"
+	var shop_t := station_progress if shop_entry else 0.0
+	var sheet_t := station_progress if station_entry == "tree" else 0.0
+	CourtyardStations.steelyard(self,shop_t,shop_entry)
+	CourtyardStations.sheet(self,model.last_region == "meadow",sheet_t)
+	# The counter's front shelf fills with sealed jars as the player sells.
+	var jars := mini(6,floori(float(model.sold_total)/6))
+	for i in jars:
+		CourtyardStations.goods(self,CourtyardStations.JAR,Vector2(212+i*29,354),.62)
+	if model.completed:
+		var reserve := Vector2(503,500)
+		_ground_shadow(reserve,Vector2(39,8),.20)
+		for i in 3:
+			var foot := reserve+Vector2((i-1)*24,abs(i-1)*3)
+			CourtyardStations.goods(self,CourtyardStations.JAR,foot-Vector2(0,15),.89)
+			UIArt.icon(self,"reserve",foot+Vector2(0,-13),5)
+		if model.p.distance_to(reserve)<240: _label(reserve+Vector2(0,-61),"蜂巢储备已封好",false,190)
+	_bee(Vector2(421,456),.53,Vector2.LEFT,1,false,1.7,"waiting")
+	_bee(Vector2(913,473),.49,Vector2.LEFT,1,false,2.9,"waiting")
+	if station_entry.is_empty():
+		_bee_shadow(model.p+Vector2(0,35),Vector2(22,7))
+	if not reduced_motion:
+		var lamp := Vector2(1011,356)
+		var glint := lamp+Vector2(sin(clock*.71)*26,cos(clock*.72)*26)
+		draw_line(glint-Vector2(4,0),glint+Vector2(4,0),Color(1,.97,.78,.65),1.3,true)
+		draw_line(glint-Vector2(0,4),glint+Vector2(0,4),Color(1,.97,.78,.65),1.3,true)
+	if model.completed:
+		for i in 3:
+			var pose: Dictionary = Dance.pose(fposmod(clock+i*.12,1.4),"waggle",i)
+			var base: Vector2 = model.HUB_DEPART+Vector2(-65+i*55,12)
+			_bee(base+(Vector2.ZERO if reduced_motion else pose.offset),.62,Vector2.RIGHT,1,false,float(i),"greet")
+
+func _draw_player() -> void:
+	if station_entry.is_empty() or reduced_motion:
+		super._draw_player()
+		return
+	var at := CourtyardStations.bee_position(station_entry,station_progress,model.p)
+	var next := CourtyardStations.bee_position(station_entry,minf(1.0,station_progress+.015),model.p)
+	var face := at.direction_to(next)
+	if station_entry == "shop" and station_progress > .45: face = Vector2.RIGHT
+	if face.is_zero_approx(): face = Vector2.LEFT
+	var size := lerpf(1.0,.65,smoothstep(.05,.33,station_progress))
+	if station_entry == "tree": size *= 1.0-.55*smoothstep(.65,.98,station_progress)
+	_bee(at,size,face,1.0,false,0.0,"depart",0.0,model.energy_stage())
+	_draw_bag_at(at,face,size)
 
 func _bloom_texture() -> Texture2D:
 	return MEADOW_BLOOM if area_key == "meadow" else POND_BLOOM

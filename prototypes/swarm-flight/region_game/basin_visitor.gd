@@ -6,9 +6,9 @@ const FROG: Texture2D = preload("res://art/basin-frog.webp")
 const PIGMENT = preload("res://region_game/basin_pigment.gdshader")
 # Measured against the 1280 × 800 courtyard plate. The swim path occupies
 # the clear water to the right of both stones; the frog sits on the nearer one.
-const SWIM_CENTER := Vector2(124, 678)
+const SWIM_CENTER := Vector2(126, 677)
 const SWIM_RADIUS := Vector2(14, 6)
-const FROG_FOOT := Vector2(88, 685)
+const FROG_FOOT := Vector2(88, 689)
 const LAP_SECONDS := 7.0
 const SWIM_SECONDS := 4.5
 

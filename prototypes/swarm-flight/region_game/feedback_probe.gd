@@ -1,4 +1,5 @@
 extends SceneTree
+const StationEntry = preload("res://region_game/station_entry_probe.gd")
 ## Exercise a new-profile field trip by viewport keyboard input. The later
 ## boundary cases explicitly seed cargo in an isolated developer fixture.
 const Game = preload("res://region_game/main.tscn")
@@ -37,6 +38,7 @@ func tap(code: Key) -> void:
 	await frames(2)
 	key(code,false)
 	await frames(2)
+	await StationEntry.settle(game)
 
 func fly(at: Vector2) -> bool:
 	for i in 720:
@@ -190,5 +192,10 @@ func run() -> void:
 	if not check(full_count==1,"full cue fires once while bag stays full"): return
 	game.queue_free()
 	await frames(3)
+	# The audio driver drains on wall time even under fixed simulation frames.
+	var drain_until := Time.get_ticks_msec() + 350
+	while Time.get_ticks_msec() < drain_until:
+		OS.delay_msec(10)
+		await process_frame
 	print("Feedback route and transaction checks: ",checks," passed")
 	quit(0)

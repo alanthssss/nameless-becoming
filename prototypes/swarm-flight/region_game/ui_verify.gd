@@ -1,4 +1,5 @@
 extends SceneTree
+const StationEntry = preload("res://region_game/station_entry_probe.gd")
 const Scene = preload("res://region_game/main.tscn")
 var game
 var checks := 0
@@ -20,6 +21,8 @@ func tap(code: int) -> void:
 		event.pressed = pressed
 		root.push_input(event,true)
 		await frames(2)
+	await StationEntry.settle(game)
+
 func pad(button: JoyButton) -> void:
 	for pressed in [true,false]:
 		var event := InputEventJoypadButton.new()
@@ -268,9 +271,26 @@ func check_seed_pickup() -> void:
 	field.v = Vector2.ZERO
 	await frames(2)
 
+func check_station_entrances() -> void:
+	for target in ["shop","tree"]:
+		game.model.p = Vector2(250,476) if target == "shop" else Vector2(875,410)
+		game.ui.refresh()
+		var wallet: Dictionary = game.model.to_payload()
+		game.ui.hub_action.pressed.emit()
+		check(game.mode == "station_entry" and game.world.station_entry == target, "painted landmark starts its own entrance")
+		await frames(6)
+		check(game.world.station_progress > 0.0 and not game.ui.shop.visible and not game.ui.tree.visible, "entrance moves before the menu is shown")
+		await tap(KEY_ESCAPE)
+		check(game.mode == "play" and game.world.station_entry.is_empty() and game.model.to_payload() == wallet, "cancel restores courtyard without a transaction")
+		game.reduced_motion = true
+		await tap(KEY_E)
+		check(game.mode == target, "reduced motion opens the same station immediately")
+		await tap(KEY_ESCAPE)
+		game.reduced_motion = false
+
 func check_shop_shelves() -> void:
 	# Start just outside the left post. Ordinary D input must reveal the action on the upper shelf.
-	game.model.p = Vector2(165,330)
+	game.model.p = Vector2(130,330)
 	game.ui.refresh()
 	var right := InputEventKey.new()
 	right.physical_keycode = KEY_D
@@ -295,6 +315,7 @@ func check_shop_shelves() -> void:
 	game.model.p = Vector2(438,372)
 	game.ui.refresh()
 	game.ui.hub_action.pressed.emit()
+	await StationEntry.settle(game)
 	check(game.mode == "shop" and not game.ui.sell_button.disabled, "second shelf opens delivery from visible button")
 	cues.clear()
 	game.save_blocked = true
@@ -307,7 +328,7 @@ func check_shop_shelves() -> void:
 	check(game.model.coins == 2 and game.model.cargo_total() == 0, "delivery credits carried honey once")
 	game.close_shop()
 	check(cues.back() == "shop_close","leaving the shop closes the drawer")
-	for point in [Vector2(310,240),Vector2(540,390),Vector2(150,480)]:
+	for point in [Vector2(310,240),Vector2(540,390),Vector2(130,480)]:
 		game.model.p = point
 		game.ui.refresh()
 		check(not game.ui.hub_action.visible, "shop prompt ends outside counter and shelves "+str(point))
@@ -434,6 +455,7 @@ func run() -> void:
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.at_home() and cues.count("arrival_bell") == 1,"one bell on the saved return")
+	await check_station_entrances()
 	await check_shop_shelves()
 	game.model.p = game.model.HUB_TREE
 	cues.clear()
@@ -539,6 +561,25 @@ func run() -> void:
 		root.size = size
 		await frames(4)
 		check(game.ui.menu.visible,"pause available at "+str(size))
+	game.start_game()
+	game.model.field.p = game.model.field.layout.nodes[0].p
+	game.model._sync_field()
+	game.request_transition("hub")
+	game._advance_transition(10.0)
+	check(game.model.at_home() and game.model.last_region == "meadow","return from violet changes courtyard ink")
+	var reload = game.new_model()
+	check(reload.restore_payload(game.read_progress(game.saved_path).payload),"existing v2 economy file loads after a colour change")
+	game.model = reload
+	game._load_world()
+	check(game.model.last_region == "meadow","cold load restores this slot's violet ink")
+	await check_station_entrances()
+	check(game.model.last_region == "meadow","browsing stations keeps the same ink")
+	game.model.p = game.model.HUB_DEPART
+	game.request_transition("pond")
+	game._advance_transition(10.0)
+	game.request_transition("hub")
+	game._advance_transition(10.0)
+	check(game.model.at_home() and game.model.last_region == "pond","next pond return restores teal ink")
 	gate_inputs()
 	game.queue_free()
 	await frames(3)

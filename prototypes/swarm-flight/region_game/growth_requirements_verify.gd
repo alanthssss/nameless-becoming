@@ -1,4 +1,5 @@
 extends SceneTree
+const StationEntry = preload("res://region_game/station_entry_probe.gd")
 ## The exact wallet and missing prerequisite in the reported journal screenshot.
 const Scene = preload("res://region_game/main.tscn")
 var game
@@ -57,6 +58,7 @@ func run() -> void:
 	m.rose_sold = 6
 	m.p = m.HUB_TREE
 	await key(KEY_E)
+	await StationEntry.settle(game)
 	check(game.mode=="tree" and not ui.skill_note.visible and not ui.tree_progress.visible and not ui.tree_footer.visible,"opening shows the map without a note, counters or instructions")
 	check(not ui.tree_fiber.get_parent().visible and not ui.tree_coins.get_parent().visible and not ui.tree_resin.get_parent().visible,"wallet stays out of the unselected map")
 	board.select_rank("reserve")
@@ -141,6 +143,7 @@ func run() -> void:
 	m.coins = 78
 	m.p = m.HUB_TREE
 	await key(KEY_E)
+	await StationEntry.settle(game)
 	board.select_rank("beat")
 	await key(KEY_F)
 	await key(KEY_SPACE)

@@ -461,10 +461,7 @@ func _refresh_hub_action() -> void:
 func _activate_hub_action() -> void:
 	# Recheck proximity and mode at activation; a stale/focused prompt cannot act remotely.
 	if driver.mode != "play" or driver.model.area != "hub" or driver.model.interaction() != hub_action_kind: return
-	match hub_action_kind:
-		"shop": driver.open_shop()
-		"tree": driver.open_tree()
-		"depart": driver.open_regions()
+	driver.use_station()
 
 func _shop_texture(source: Texture2D, region: Rect2) -> AtlasTexture:
 	var part := AtlasTexture.new()
