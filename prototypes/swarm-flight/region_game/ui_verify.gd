@@ -23,6 +23,56 @@ func all_text(node: Node) -> String:
 	var result: String = node.text if node is Label or node is Button else ""
 	for child in node.get_children(): result += all_text(child)
 	return result
+func check_seed_pickup() -> void:
+	var field = game.model.field
+	var head: Dictionary = field.materials[0]
+	field.p = head.anchor - Vector2(85,0)
+	game.model.step(.05, Vector2.ZERO, false, false, true, Vector2.RIGHT)
+	await frames(2)
+	check(head.dropped and game.model.materials.fiber == 0, "loosening a tuft does not credit fiber")
+	field.p = head.p
+	await frames(3)
+	check(game.model.materials.fiber == 1 and game.ui.fiber_text.text == "1", "caught tuft increments HUD inventory")
+	check(game.ui.toast_panel.visible and "纤维 +1（现有 1）" in game.ui.toast.text and "升级双翼" in game.ui.toast.text, "confirmed pickup explains quantity, stock and use")
+	field.p = field.layout.nodes[0].p
+	field.v = Vector2.ZERO
+	await frames(2)
+
+func check_shop_shelves() -> void:
+	# Start just outside the left post. Ordinary D input must reveal the action on the upper shelf.
+	game.model.p = Vector2(165,330)
+	game.ui.refresh()
+	var right := InputEventKey.new()
+	right.physical_keycode = KEY_D
+	right.pressed = true
+	root.push_input(right,true)
+	await frames(15)
+	right.pressed = false
+	root.push_input(right,true)
+	check(game.ui.hub_action.visible and game.ui.hub_action_kind == "shop", "flying to upper shelf reveals delivery")
+	game.model.v = Vector2.ZERO
+	for y in [330,372,440,490]:
+		for x in [195,310,438]:
+			game.model.p = Vector2(x,y)
+			game.ui.refresh()
+			check(game.ui.hub_action.visible and game.ui.hub_action.text == "交付花蜜", "prompt across shop shelf "+str(game.model.p))
+	game.model.p = Vector2(260,330)
+	await tap(KEY_E)
+	check(game.mode == "shop" and game.ui.sell_button.disabled, "top shelf opens empty shop with E")
+	game.close_shop()
+	game.model.cargo.blue = 2
+	game.model.p = Vector2(438,372)
+	game.ui.refresh()
+	game.ui.hub_action.pressed.emit()
+	check(game.mode == "shop" and not game.ui.sell_button.disabled, "second shelf opens delivery from visible button")
+	game.sell_cargo()
+	check(game.model.coins == 2 and game.model.cargo_total() == 0, "delivery credits carried honey once")
+	game.close_shop()
+	for point in [Vector2(310,240),Vector2(540,390),Vector2(150,480)]:
+		game.model.p = point
+		game.ui.refresh()
+		check(not game.ui.hub_action.visible, "shop prompt ends outside counter and shelves "+str(point))
+
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
@@ -35,11 +85,13 @@ func run() -> void:
 	check(game.mode == "regions","entry opens destination")
 	check(game.ui.meadow_button.disabled,"new profile cannot select purple")
 	game.request_transition("pond")
+	check(is_zero_approx(game.transition_elapsed),"courtyard departure keeps its dance")
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.area == "pond" and game.mode == "play","skip commits destination once")
 	check(game.model.trip_index == 1,"exactly one departure")
 	check(game.world.area_key == "pond","world follows region")
+	await check_seed_pickup()
 	check(game.persist(),"active field persisted")
 	var before: Dictionary = game.model.to_payload()
 	game.pause_game()
@@ -48,16 +100,32 @@ func run() -> void:
 	game.start_game()
 	game.saved_path = OS.get_temp_dir() # Explicit failed-write fixture.
 	game.model.field.departed = true
+	game.reduced_motion = true
 	game.model.return_requested = true
 	await frames(2)
+	check(game.transition_short,"reduced-motion return uses the short fade")
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.area == "pond" and game.mode == "play","failed save cannot leave field")
 	game.saved_path = OS.get_temp_dir().path_join("regional-ui-%d.json" % OS.get_process_id())
-	game.request_transition("hub")
+	game.reduced_motion = false
+	var gate_key := InputEventKey.new()
+	gate_key.physical_keycode = KEY_E
+	gate_key.pressed = true
+	root.push_input(gate_key,true)
+	check(game.mode == "transition" and not game.transition_short,"gate input starts the normal iris")
+	var iris: ShaderMaterial = game.ui.transition_layer.shade_material
+	var starting_radius: float = iris.get_shader_parameter("radius")
+	game._advance_transition(1.0/60.0)
+	var moving_radius: float = iris.get_shader_parameter("radius")
+	check(moving_radius < starting_radius - 1.0,"return iris visibly closes on the first frame")
+	check(game.model.area == "pond" and not game.transition_committed,"first response precedes save and scene change")
+	gate_key.pressed = false
+	root.push_input(gate_key,true)
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.at_home(),"return transition")
+	await check_shop_shelves()
 	game.model.coins = 1000
 	game.model.materials = {"fiber":100,"resin":100}
 	game.model.p = game.model.HUB_TREE
