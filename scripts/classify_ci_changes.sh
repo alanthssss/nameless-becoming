@@ -12,7 +12,7 @@ full() {
 while IFS= read -r -d '' path; do
   count=$((count + 1))
   case "$path" in
-    .github/workflows/quality.yml|scripts/classify_ci_changes.sh|scripts/ci_scope.sh|scripts/check_ci_evidence.py|scripts/check_ci_results.py|scripts/lint_workflows.sh|tests/ci-scope.test.sh|tests/test_ci_routing.py)
+    .github/workflows/quality.yml|scripts/classify_ci_changes.sh|scripts/ci_scope.sh|scripts/check_ci_evidence.py|scripts/check_ci_results.py|scripts/ci_reuse.py|scripts/lint_workflows.sh|tests/ci-scope.test.sh|tests/test_ci_routing.py|tests/test_ci_reuse.py)
       full ;;
     prototypes/swarm-flight/region_game/*.gd|prototypes/swarm-flight/region_game/*.gd.uid)
       # The regional suite exercises these scripts, including saves, UI and the pond preview.

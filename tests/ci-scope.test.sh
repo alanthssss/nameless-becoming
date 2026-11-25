@@ -25,6 +25,8 @@ flower=$(expected false false false routes false true false false)
 garden=$(expected false false false routes false false true false)
 check "$light" 'docs/有 空格.md' docs/CI_PERFORMANCE_2026-11-01.md docs/a.mdx docs/UPPER.MD
 check "$content" README.md marketing/README.md docs/STEAM_NEXT_FEST_2026_PLAN.md docs/design/art-source-register.md
+check "$full" scripts/ci_reuse.py
+check "$full" tests/test_ci_reuse.py
 check "$full" scripts/check_ci_evidence.py
 check "$full" .github/workflows/quality.yml
 check "$full" scripts/classify_ci_changes.sh tests/ci-scope.test.sh scripts/ci_scope.sh scripts/check_ci_results.py tests/test_ci_routing.py
