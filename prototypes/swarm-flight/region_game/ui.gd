@@ -1,6 +1,7 @@
 extends "res://nectar_harvest_ui.gd"
 
 const CatalogDetail = preload("res://region_game/growth_catalog_detail.gd")
+const GrowthRequirements = preload("res://region_game/growth_requirements.gd")
 const SaleFlight = preload("res://region_game/sale_flight.gd")
 var reading_book := false
 var at_counter := false
@@ -11,6 +12,10 @@ var zoom_readout: Label
 var zoom_out: Button
 var zoom_in: Button
 var detail_scroll: ScrollContainer
+var cost_stock := {}
+var conditions: GrowthRequirements
+var return_to_goal: Button
+var goal_history: Array[Dictionary] = []
 var bay_button: Button
 var bay_preview: Control
 const BAY_CELLS := ["petal_trace","garland","cascade"]
@@ -35,59 +40,63 @@ func _reword(node: Node) -> void:
 		node.text = node.text.replace("花蜜在野外 18 秒后恢复","花蜜采走后会慢慢补回，花朵继续自己的花期")
 		node.text = node.text.replace("细雨增加消耗，叶棚下可避雨。","朝裂口振翅掀皮，贴近按住 E / 左键收树脂。")
 		node.text = node.text.replace(" · F 使用近道","")
-		node.text = node.text.replace("0.27.0","0.32.4" if OS.has_feature("pond_feedback") else "0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
+		node.text = node.text.replace("0.27.0","0.32.5" if OS.has_feature("pond_feedback") else "0.29.0").replace("10 个成长节点（共 13 级）","10 个成长节点（共 14 级）")
 	for child in node.get_children(): _reword(child)
 
-func _requirements(id: String) -> String:
-	var m = driver.model
-	var next: String = board.next_id(id)
-	if next.is_empty(): return ""
-	var lines: Array[String] = []
-	var needed: Array = m.upgrade(next).requires.duplicate()
-	if next == "reserve": needed.append("twin")
-	for prerequisite in needed:
-		var name: String = m.upgrade(prerequisite).name
-		lines.append(("✓ " if prerequisite in m.owned else "需 ") + name)
-	match next:
-		"wings1": lines.append("轻巧采蜜、舒展蜜囊任选一项")
-		"meadow": lines.append("采蜜、蜜囊、双翼、触角、双簇合计 %d / 3 次；同格两级计两次。" % mini(3,m.growth_count()))
-		"market","reserve":
-			var goal := 6 if next == "reserve" else 1
-			lines.append(("✓ " if m.visited_meadow else "需 ") + "探索紫花地")
-			lines.append("已交售紫蜜 %d / %d 份" % [mini(m.rose_sold,goal),goal])
-	return "\n".join(lines)
+func _requirements(_id: String) -> String:
+	# The regional journal shows the interactive condition list on the right.
+	return ""
 
 func _detail() -> void:
+	if not is_instance_valid(board) or board.model == null: return
 	if is_instance_valid(bay_button):
 		bay_button.visible = board.selected in BAY_CELLS
-	if CatalogDetail.update(self,board.selected): return
-	super._detail()
-	if is_instance_valid(board) and board.model!=null and board.selected=="beat":
-		detail_effect.text = "厚壳 / 厚树皮 · 2 次 → 1 次" if board.rank_of("beat")==0 else "厚壳与厚树皮只需一次振翅"
-		detail_effect.tooltip_text = "近处的薄壳一次可开；岔路和远端较牢。树脂露出后仍需贴近收取。"
-
-	if is_instance_valid(board) and board.model!=null and board.selected=="supply" and board.rank_of("supply")==2:
-		detail_effect.text = "36 处花源 · 6 处材料\n补蜜 10 秒"
-		detail_effect.tooltip_text = "每朵花都有自己的花期"
-
-	if not is_instance_valid(board) or board.model == null: return
-	var rank_id: String = board.next_id(board.selected)
-	if rank_id.is_empty():
+	var rank: Dictionary = board.inspect_data()
+	if not CatalogDetail.update(self,board.selected):
+		super._detail()
+		detail_title.text = rank.name
+		if board.selected=="beat":
+			detail_effect.text = "厚壳 / 厚树皮 · 2 次 → 1 次"
+			detail_effect.tooltip_text = "近处的薄壳一次可开；岔路和远端较牢。树脂露出后仍需贴近收取。"
 		detail_hint.hide()
-		return
-	var entry: Dictionary = driver.model.upgrade(rank_id)
-	var lines: Array[String] = []
-	detail_title.text = entry.name
-	var condition := _requirements(board.selected)
-	if not detail_requirements.text.begins_with("还需"): detail_requirements.hide()
-	if not condition.is_empty():
-		lines.append(condition)
-	if entry.get("fiber",0)>driver.model.materials.fiber:
-		lines.append("纤维 · 池岸振开种穗，飞近接绒")
-	if entry.get("resin",0)>driver.model.materials.resin:
-		lines.append("树脂 · 紫花地振开树皮，贴近收取")
-	detail_hint.text = "\n".join(lines)
-	detail_hint.visible = not lines.is_empty()
+	detail_requirements.hide()
+	CatalogDetail.update_cost_stock(self,rank)
+	if not is_instance_valid(conditions): return
+	conditions.display(rank)
+	detail_card.tooltip_text = ""
+	if rank.state=="next" and buy_button.disabled:
+		var blockers := conditions.shown_rows.filter(func(item): return not item.met)
+		if not blockers.is_empty():
+			buy_button.text = "补足币材后成长" if blockers[0].kind=="cost" else "先完成上方条件"
+			buy_button.tooltip_text = blockers[0].text
+	return_to_goal.visible = not goal_history.is_empty()
+	if return_to_goal.visible:
+		return_to_goal.text = "← 返回「%s」" % goal_history.back().title
+	_update_tree_footer(get_viewport().gui_get_focus_owner())
+
+func _update_tree_footer(owner: Control) -> void:
+	if not is_instance_valid(conditions) or not tree.visible: return
+	if owner is Button and owner in conditions.links:
+		tree_footer.text = "F / L3 下一项 · Enter / A 查看条件"
+	elif not conditions.links.is_empty():
+		tree_footer.text = "方向选格 · F / L3 查条件" + (" · Enter / A 成长" if not buy_button.disabled else "")
+	else:
+		tree_footer.text = "滚轮缩放 · 拖动移图 · 方向选格" + (" · Enter / A 成长" if not buy_button.disabled else "")
+
+func follow_growth_rank(rank_id: String) -> void:
+	if driver.mode!="tree" or not board.ranks_by_id.has(rank_id): return
+	var current: Dictionary = board.inspect_data()
+	if current.id==rank_id: return
+	goal_history.append({"view":growth_map.capture_view(),"title":current.name})
+	board.select_rank(rank_id)
+	growth_map.center_selection()
+
+func back_growth_target() -> bool:
+	if goal_history.is_empty(): return false
+	var target: Dictionary = goal_history.pop_back()
+	growth_map.restore_view(target.view)
+	_detail()
+	return true
 
 func refresh() -> void:
 	super.refresh()
@@ -128,6 +137,10 @@ func _purchase_button_input(event: InputEvent) -> void:
 			_buy_selected()
 
 func show_mode(mode: String) -> void:
+	var was_reading := reading_book
+	if was_reading and mode != "tree":
+		growth_map.close_book()
+		goal_history.clear()
 	if at_counter != (mode == "shop"):
 		at_counter = mode == "shop"
 		driver.sound.play_event("shop_open" if at_counter else "shop_close")
@@ -137,6 +150,7 @@ func show_mode(mode: String) -> void:
 	if is_instance_valid(sale_flight) and mode != "shop":
 		sale_flight.stop()
 	super.show_mode(mode)
+	if not was_reading and mode == "tree": growth_map.open_book(driver.saved_path)
 
 func create_growth_board():
 	return preload("res://region_game/growth_catalog_board.gd").new()
@@ -175,6 +189,23 @@ func _build_tree() -> void:
 	detail_card.reparent(detail_scroll,false)
 	detail_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	CatalogDetail.add_rank_controls(self)
+	CatalogDetail.add_cost_stock(self)
+	var detail_column := detail_requirements.get_parent()
+	return_to_goal = action(detail_column,"",back_growth_target)
+	return_to_goal.custom_minimum_size.y = 30
+	return_to_goal.add_theme_font_size_override("font_size",16)
+	return_to_goal.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	return_to_goal.tooltip_text = "返回查看前置前的目标 · Esc / B"
+	return_to_goal.hide()
+	detail_column.move_child(return_to_goal,0)
+	conditions = GrowthRequirements.new()
+	conditions.name = "GrowthRequirements"
+	conditions.ui = self
+	conditions.add_theme_constant_override("separation",3)
+	detail_column.add_child(conditions)
+	detail_column.move_child(conditions,buy_button.get_index())
+	detail_scroll.follow_focus = true
+	get_viewport().gui_focus_changed.connect(_update_tree_footer)
 	bay_button = action(buy_button.get_parent(),"去花湾演示",_open_bay)
 	bay_button.tooltip_text = "试用这项成长 · P / 手柄 Y"
 	bay_button.visible = false
@@ -239,6 +270,24 @@ func _close_bay() -> void:
 func tree_key(event: InputEventKey) -> bool:
 	if driver.mode == "tree":
 		var key: int = event.physical_keycode if event.physical_keycode else event.keycode
+		if key == KEY_F:
+			if event.pressed and not event.echo: conditions.cycle_link(event.shift_pressed)
+			return true
+		if key==KEY_ESCAPE and not goal_history.is_empty():
+			if event.pressed and not event.echo: back_growth_target()
+			return true
+		var owner := get_viewport().gui_get_focus_owner()
+		if key in [KEY_ENTER,KEY_KP_ENTER,KEY_SPACE] and owner is Button and owner in conditions.links:
+			# Opening a link moves focus to the map before the key is released.
+			# Only Enter also confirms a purchase there.
+			if key == KEY_SPACE:
+				if event.pressed and not event.echo: conditions.activate_link()
+			elif not event.pressed:
+				enter_held = false
+			elif not event.echo and not enter_held:
+				enter_held = true
+				conditions.activate_link()
+			return true
 		if key in [KEY_BRACKETLEFT,KEY_PAGEUP,KEY_BRACKETRIGHT,KEY_PAGEDOWN]:
 			if event.pressed and not event.echo:
 				board.shift_rank(-1 if key in [KEY_BRACKETLEFT,KEY_PAGEUP] else 1)
@@ -251,17 +300,19 @@ func tree_key(event: InputEventKey) -> bool:
 func _input(event: InputEvent) -> void:
 	if driver == null or driver.mode != "tree" or not event is InputEventJoypadButton: return
 	var directions := {JOY_BUTTON_DPAD_UP:KEY_UP,JOY_BUTTON_DPAD_DOWN:KEY_DOWN,JOY_BUTTON_DPAD_LEFT:KEY_LEFT,JOY_BUTTON_DPAD_RIGHT:KEY_RIGHT}
-	if event.button_index not in directions and event.button_index not in [JOY_BUTTON_A,JOY_BUTTON_B,JOY_BUTTON_Y,JOY_BUTTON_X]: return
+	if event.button_index not in directions and event.button_index not in [JOY_BUTTON_A,JOY_BUTTON_B,JOY_BUTTON_Y,JOY_BUTTON_X,JOY_BUTTON_LEFT_STICK]: return
 	get_viewport().set_input_as_handled()
 	if not event.pressed: return
 	if event.button_index in directions:
 		board.navigate(directions[event.button_index])
 	elif event.button_index == JOY_BUTTON_A:
-		_buy_selected()
+		if not conditions.activate_link(): _buy_selected()
+	elif event.button_index == JOY_BUTTON_LEFT_STICK:
+		conditions.cycle_link(false)
 	elif event.button_index == JOY_BUTTON_X:
 		var rank: Dictionary = board.inspect_data()
 		board.shift_rank(1 if rank.rank_index+1<rank.rank_count else -rank.rank_index)
 	elif event.button_index == JOY_BUTTON_Y:
 		_open_bay()
-	else:
+	elif not back_growth_target():
 		driver.close_tree()

@@ -19,6 +19,11 @@ var stick_key := 0
 var repeat_left := 0.0
 var trigger_down := [false,false]
 var suspended := false
+var book_open := false
+var bookmark_path := ""
+var last_view: Dictionary = {}
+var saved_on_disk := false
+var previous_size := Vector2.ZERO
 
 func attach(map_board: Control) -> void:
 	clip_contents = true
@@ -26,7 +31,7 @@ func attach(map_board: Control) -> void:
 	board = map_board
 	board.reparent(self,false)
 	board.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-	board.selected_changed.connect(_follow)
+	board.navigated.connect(center_selection)
 	resized.connect(_fit_bounds)
 	visibility_changed.connect(_visibility)
 	get_window().focus_exited.connect(_clear_inputs)
@@ -36,7 +41,100 @@ func attach(map_board: Control) -> void:
 
 func _visibility() -> void:
 	_clear_inputs()
-	reset_view()
+
+func open_book(progress_path: String) -> void:
+	if book_open: return
+	book_open = true
+	var path := progress_path + ".growth-view.json"
+	if path != bookmark_path:
+		last_view = {}
+		bookmark_path = path
+		saved_on_disk = true
+	if saved_on_disk or last_view.is_empty():
+		last_view = _read_bookmark(path)
+		saved_on_disk = not last_view.is_empty()
+	if restore_view(last_view):
+		# Compare later edits to the transform as represented by this viewport.
+		last_view = capture_view()
+		return
+	last_view = {}
+	saved_on_disk = false
+	# The labels appear at 178%. Start with a readable neighbourhood on both window sizes.
+	var value := clampf(2.75 * 1280.0 / maxf(1.0,get_window().size.x),2.75,3.25)
+	_set_zoom(value)
+	# Once every live rank is owned, the sealed reserve is the closing landmark.
+	var first := "reserve"
+	for state in ["ready","poor","locked"]:
+		var found := false
+		for id in board.visible_ids():
+			if board.buttons[id].state == state:
+				first = id
+				found = true
+				break
+		if found: break
+	_select_current_rank(first)
+	center_selection(false)
+
+func _select_current_rank(id: String) -> void:
+	var ranks: Array = board.entries[id].ranks
+	board.select_rank(ranks[mini(board.rank_of(id),ranks.size()-1)])
+
+func close_book() -> void:
+	if not book_open: return
+	book_open = false
+	_clear_inputs()
+	var current := capture_view()
+	# A second copy that simply opened/closed the book need not overwrite another reader.
+	if saved_on_disk and current == last_view: return
+	last_view = current
+	saved_on_disk = _write_bookmark(bookmark_path,current)
+
+func forget_book(progress_path: String) -> void:
+	var path := progress_path+".growth-view.json"
+	if bookmark_path == path:
+		book_open = false
+		last_view = {}
+		saved_on_disk = false
+	if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
+
+static func _read_bookmark(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path): return {}
+	var file := FileAccess.open(path,FileAccess.READ)
+	if file == null or file.get_length() > 4096: return {}
+	var json := JSON.new()
+	if json.parse(file.get_as_text()) != OK or not json.data is Dictionary: return {}
+	return json.data
+
+static func _write_bookmark(path: String, value: Dictionary) -> bool:
+	var temporary := "%s.%d.tmp" % [path,OS.get_process_id()]
+	var file := FileAccess.open(temporary,FileAccess.WRITE)
+	if file == null: return false
+	var written := file.store_string(JSON.stringify(value,"",true,true))
+	file.close()
+	if written and DirAccess.rename_absolute(temporary,path) == OK: return true
+	DirAccess.remove_absolute(temporary)
+	return false
+
+func capture_view() -> Dictionary:
+	var center := _normalized_center(size)
+	return {"cell":str(board.selected),"rank":str(board.inspect_data().id),"zoom":magnification,
+		"x":center.x,"y":center.y}
+
+func restore_view(value: Dictionary) -> bool:
+	var id: Variant = value.get("cell")
+	if not id is String or not board.entries.has(id): return false
+	for key in ["zoom","x","y"]:
+		var n: Variant = value.get(key)
+		if not (n is float or n is int) or not is_finite(float(n)): return false
+	var rank: Variant = value.get("rank")
+	if rank is String and rank in board.entries[id].ranks:
+		board.select_rank(rank)
+	else:
+		_select_current_rank(id)
+	_stop_glide()
+	_set_zoom(clampf(float(value.zoom),1.0,MAX_ZOOM))
+	_move_center(Vector2(value.x,value.y).clamp(Vector2.ZERO,Vector2.ONE))
+	return true
 
 func suspend(value: bool) -> void:
 	suspended = value
@@ -56,8 +154,18 @@ func _clear_inputs() -> void:
 	set_process(false)
 
 func _fit_bounds() -> void:
+	var center := _normalized_center(previous_size)
+	_stop_glide()
 	board.size = size
-	board.position = _bounded(board.position)
+	previous_size = size
+	_move_center(center)
+
+func _normalized_center(extent: Vector2) -> Vector2:
+	if extent.x <= 0 or extent.y <= 0: return Vector2(.5,.5)
+	return (extent*.5-board.position)/(extent*magnification)
+
+func _move_center(center: Vector2) -> void:
+	board.position = _bounded(size*.5-center*size*magnification)
 
 func _bounded(origin: Vector2) -> Vector2:
 	return origin.clamp((size-size*magnification).min(Vector2.ZERO),Vector2.ZERO)
@@ -69,11 +177,14 @@ func _stop_glide() -> void:
 
 func reset_view() -> void:
 	_stop_glide()
-	magnification = 1.0
-	board.scale = Vector2.ONE
+	_set_zoom(1.0)
 	board.position = Vector2.ZERO
-	if board.has_method("update_lod"): board.update_lod(magnification)
-	magnification_changed.emit(magnification)
+
+func _set_zoom(value: float) -> void:
+	magnification = value
+	board.scale = Vector2.ONE*value
+	board.update_lod(value)
+	magnification_changed.emit(value)
 
 func zoom_at(factor: float, at: Vector2) -> void:
 	if not is_finite(factor) or factor <= 0: return
@@ -81,29 +192,22 @@ func zoom_at(factor: float, at: Vector2) -> void:
 	if is_equal_approx(value,magnification): return
 	_stop_glide()
 	var map_point: Vector2 = (at-board.position)/magnification
-	magnification = value
-	board.scale = Vector2.ONE*value
+	_set_zoom(value)
 	board.position = _bounded(at-map_point*value)
-	if board.has_method("update_lod"): board.update_lod(value)
-	magnification_changed.emit(value)
 
 func zoom_selected(factor: float) -> void:
 	var at: Vector2 = board.position+board.point(board.selected)*magnification
 	zoom_at(factor,at.clamp(Vector2.ZERO,size))
-	_follow(board.selected)
+	if not Rect2(Vector2.ZERO,size).has_point(at): center_selection()
 
 func _pan(amount: Vector2) -> void:
 	_stop_glide()
 	board.position = _bounded(board.position+amount)
 
-func _follow(id: String) -> void:
-	if magnification <= 1.0 or dragging: return
-	var local: Vector2 = board.position + board.point(id)*magnification
-	# Give both the illustration and its caption room inside the paper edge.
-	var inset := size.min(Vector2(175,170)*magnification)*.5
-	var target := _bounded(board.position+local.clamp(inset,size-inset)-local)
+func center_selection(animate := true) -> void:
+	var target := _bounded(size*.5-board.point(board.selected)*magnification)
 	_stop_glide()
-	if board.reduced_motion or target.distance_squared_to(board.position)<1.0:
+	if not animate or board.reduced_motion or target.distance_squared_to(board.position)<1.0:
 		board.position = target
 	else:
 		glide = create_tween()
