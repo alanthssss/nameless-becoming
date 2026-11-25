@@ -68,6 +68,8 @@ check "$region" "$raw_art" docs/art/collection-fields/pond-source.png docs/art/c
 check "$region" prototypes/swarm-flight/art/region-water.png.import prototypes/swarm-flight/art/region-ground.png
 check "$region" "$regional_fish" "$regional_fish.import" prototypes/swarm-flight/region_game/basin_pigment.gdshader.uid
 check "$region" prototypes/swarm-flight/region_game/music/growth_journal_dizi.ogg.import prototypes/swarm-flight/region_game/hub_depth.svg
+check "$region" tools/split_honey_courtyard.py prototypes/swarm-flight/art/honey-inner-courtyard.webp.import
+check "$region" prototypes/swarm-flight/art/honey-steelyard-goods.webp prototypes/swarm-flight/art/honey-flight-sheet-meadow.webp prototypes/swarm-flight/art/honey-flight-sheet-pond.webp
 check "$region" docs/design/honey-growth-tree-v2.json "$discussion"
 check "$region" "$discussion" "$regional_fish"  # Moving between runtime and documentation must retain coverage.
 check "$region" "$regional_fish" "$discussion"

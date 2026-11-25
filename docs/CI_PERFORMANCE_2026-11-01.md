@@ -77,7 +77,7 @@ PR 与 `main` push 都先校验差异、路由和工作流语法，最后由 `CI
 | `docs/art/` 直属的讨论图、`docs/art/discussion/`、`docs/design/concepts/` 和 `docs/design/screenshots/` 的配图 | 轻量；`docs/art/` 根目录已登记为游戏原稿的文件优先走对应原型 |
 | `docs/design/region-map-drafts/` 的设计图与节点 JSON、`docs/research/` 的研究图片和 CSV/JSON 数据、制作回执 | 轻量；文档 JSON/JSONL 要能解析，斜视角预览截图按归档清单核对 SHA-256 |
 | `docs/art/collection-fields/` 中用于制作的原画、配准数据和生成脚本，以及 `docs/art/honey-basin-visitors-429.png` | 区域回归。生成的花田、花朵、鱼与蛙贴图及其 Godot 导入设置也走区域回归 |
-| `region_game/` 的区域音乐、深度图和着色器，成长手册原生目录的设计数据 | 区域回归；共用蜂形图、原型入口、打包契约继续跑完整 Swarm |
+| `region_game/` 的区域音乐、深度图和着色器，庭院拆图脚本及其四张运行时纹理、成长手册原生目录的设计数据 | 区域回归；共用蜂形图、原型入口、打包契约继续跑完整 Swarm |
 | `marketing/` 商店图、`public/` 站点图、`godot/assets/` 主工程资产 | 分别验证文案与素材合同、Web、Web 加完整主 Godot；主工程导出入口另验 Web 导出 |
 
 增加游戏原稿时，在同一变更里登记读取方并补分类样例。新的纯讨论图可放入 `docs/art/discussion/`。其它未分类的美术子目录、程序和配置走原来的保守规则。跨目录移动同时考虑来源和去向。#428 只有五张讨论 JPG；#430 同时含鱼蛙原稿与运行时纹理，#431 同时含截图与区域着色器。三者的回放与实际运行记录见 [#432](https://github.com/alanthssss/nameless-becoming/issues/432)。

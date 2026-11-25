@@ -33,7 +33,8 @@ regional_resource() {
       return 0 ;;
     art/region-ground.png|art/region-water.png|art/basin-fish.webp|art/basin-frog.webp|\
       art/collection-pond.webp|art/collection-meadow.webp|art/collection-blue-bloom.webp|art/collection-violet-bloom.webp|\
-      art/collection-fiber-source.webp|art/collection-resin-source.webp|art/collection-home-sign.webp)
+      art/collection-fiber-source.webp|art/collection-resin-source.webp|art/collection-home-sign.webp|\
+      art/honey-inner-courtyard.webp|art/honey-steelyard-goods.webp|art/honey-flight-sheet-meadow.webp|art/honey-flight-sheet-pond.webp)
       return 0 ;;
   esac
   return 1
@@ -46,7 +47,7 @@ while IFS= read -r -d '' path; do
       full ;;
     docs/art/collection-fields/*-source.png|docs/art/collection-fields/collection-home-sign.png|\
       docs/art/collection-fields/*-registration.json|docs/art/collection-fields/register.py|docs/art/honey-basin-visitors-429.png|\
-      docs/design/honey-growth-tree-v2.json|tools/sync_honey_native_growth_catalog.py)
+      docs/design/honey-growth-tree-v2.json|tools/sync_honey_native_growth_catalog.py|tools/split_honey_courtyard.py)
       # Editable inputs of the regional runtime, even when kept alongside notes.
       if [[ "$swarm_suite" == none ]]; then swarm_suite=region; fi ;;
     prototypes/swarm-flight/README.md|prototypes/flower-step/README.md|prototypes/garden-puzzles/README.md)
