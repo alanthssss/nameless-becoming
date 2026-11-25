@@ -88,7 +88,7 @@ func _save(candidate: Dictionary) -> String:
 	changed.emit()
 	return ""
 
-func label(action: String, slot: String) -> String:
+func labels(action: String, slot: String) -> PackedStringArray:
 	var names := PackedStringArray()
 	for code in mapping.get(slot,{}).get(action,[]):
 		match slot:
@@ -97,6 +97,10 @@ func label(action: String, slot: String) -> String:
 				names.append(KEY_NAMES.get(code,OS.get_keycode_string(key if key else code)))
 			"mouse": names.append(MOUSE_NAMES[code])
 			"pad": names.append(PAD_NAMES[code] if code < PAD_NAMES.size() else "按钮 %d" % (code+1))
+	return names
+
+func label(action: String, slot: String) -> String:
+	var names := labels(action, slot)
 	return " / ".join(names) if not names.is_empty() else "—"
 
 func hint(action: String, device: String) -> String:
