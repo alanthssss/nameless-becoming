@@ -7,7 +7,10 @@ const RESOURCES: Texture2D = preload("res://art/nectar-resource-icons.png")
 const RESIN: Texture2D = preload("res://art/nectar-resin-chunks.png")
 const JAR: Texture2D = preload("res://art/nectar-honey-jar.png")
 const FLOWER := Rect2(638,100,571,596)
-const BEE := Rect2(67,158,510,456)
+const BEE: Texture2D = preload("res://art/honey-bee.png")
+const BODY := Rect2(0,0,512,512)
+const WINGS := Rect2(512,0,512,512)
+const WING_ROOT := Vector2(.40,.43)
 const JOURNAL_ACTIONS: Texture2D = preload("res://art/nectar-journal-actions.png")
 const CELL := Vector2(160,160)
 const JOURNAL_CELLS := {
@@ -23,6 +26,14 @@ static func journal_icon(c: CanvasItem, kind: String, p: Vector2, r: float, tint
 static func painted_sprite(c: CanvasItem, texture: Texture2D, source: Rect2, p: Vector2, extent: float, tint := Color.WHITE) -> void:
 	var span := source.size * (extent * 2.0 / maxf(source.size.x,source.size.y))
 	c.draw_texture_rect_region(texture,Rect2(p-span*.5,span),source,tint)
+
+# Both layers use the same square canvas. Keep the wing joint fixed when it folds.
+static func painted_bee(c: CanvasItem, rect: Rect2, wing_scale := 1.0, tint := Color.WHITE) -> void:
+	var wing_rect := rect
+	wing_rect.size *= Vector2(lerpf(1.10,1.0,wing_scale),wing_scale)
+	wing_rect.position += (rect.size-wing_rect.size)*WING_ROOT
+	c.draw_texture_rect_region(BEE,wing_rect,WINGS,tint)
+	c.draw_texture_rect_region(BEE,rect,BODY,tint)
 
 static func painted_icon(c: CanvasItem, kind: String, p: Vector2, r: float, tint := Color.WHITE) -> void:
 	match kind:
@@ -42,9 +53,7 @@ static func painted_icon(c: CanvasItem, kind: String, p: Vector2, r: float, tint
 			if JOURNAL_CELLS.has(kind):
 				journal_icon(c,kind,p,r,tint)
 				return
-			# Compose the whole character for the HUD portrait.
-			painted_sprite(c,RESOURCES,Rect2(641,777,538,290),p+Vector2(-r*.12,-r*.34),r*.98,tint)
-			painted_sprite(c,PAINTED,BEE,p+Vector2(0,r*.10),r*.88,tint)
+			painted_bee(c,Rect2(p-Vector2.ONE*r,Vector2.ONE*r*2.0),1.0,tint)
 
 static func icon(c: CanvasItem, kind: String, p: Vector2, r: float, _ink := Color("f5e9b7")) -> void:
 	if kind == "home":

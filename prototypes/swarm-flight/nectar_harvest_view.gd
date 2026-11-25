@@ -3,6 +3,8 @@ extends "res://world_view.gd"
 @export var area_key := "hub"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
 const UIArt = preload("res://nectar_ui_art.gd")
+# Eye positions and extents are registered to the portrait's square canvas.
+const BEE_EYES := [Rect2(.539,.396,.174,.178),Rect2(.782,.402,.052,.114)]
 const Dance = preload("res://nectar_dance.gd")
 const RouteMap = preload("res://nectar_map.gd")
 const HOME_SIGN: Texture2D = preload("res://art/nectar-home-sign.png")
@@ -445,6 +447,22 @@ func _working_bee_direction() -> Vector2:
 func _working_bee_position() -> Vector2:
 	# Lean towards the selected flower without moving the gameplay collider.
 	return model.p+_working_bee_direction()*12 if collecting else model.p
+
+func _draw_bee_art(alpha: float, wing_height: float, _rest: float, _dash: float, eyes_closed: bool, charge: float, trapped: bool, _wave_tip: Vector2) -> void:
+	var rect := Rect2(-34,-41,68,68)
+	var opening := remap(wing_height,3.0,28.0,.28,1.0)
+	UIArt.painted_bee(self,rect,opening,Color(1,1,1,alpha))
+	if eyes_closed:
+		var lid := Color(1.0,.75,.24,alpha)
+		var ink := Color(.25,.13,.045,alpha)
+		for eye: Rect2 in BEE_EYES:
+			var center := rect.position+rect.size*eye.get_center()
+			var radius := rect.size*eye.size*.5
+			_ellipse(center,radius,lid)
+			_curve(center-Vector2(radius.x,0),center+Vector2(-radius.x*.4,2),center+Vector2(radius.x*.5,2),center+Vector2(radius.x,0),ink,1.0)
+	elif charge>.1 or trapped:
+		var brow: Vector2 = rect.position+rect.size*Vector2(.625,.375)
+		draw_line(brow+Vector2(-3,2 if trapped else -1),brow+Vector2(3,-1 if trapped else charge*1.5),Color(.25,.13,.045,alpha),1.1,true)
 
 func _draw_working_bee() -> void:
 	var at := _working_bee_position()
