@@ -1,10 +1,10 @@
 extends ColorRect
 ## A focal iris closes over the real departure point; only its opaque middle
 ## covers the scene commit. The bee silhouette is built from our own atlas.
-const Art = preload("res://art_sprites.gd")
+const Art = preload("res://nectar_ui_art.gd")
 var silhouette: Node2D
-var wing_a: Polygon2D
-var wing_b: Polygon2D
+var bee: Node2D
+var wing_opening := 1.0
 var trail: Array[Polygon2D] = []
 var shade_material: ShaderMaterial
 
@@ -25,20 +25,14 @@ void fragment() {
 	material = shade_material
 	silhouette = Node2D.new()
 	add_child(silhouette)
-	wing_a = _wing(PackedVector2Array([Vector2(-5,-3),Vector2(-34,-46),Vector2(-47,-39),Vector2(-43,-17),Vector2(-12,4)]))
-	wing_b = _wing(PackedVector2Array([Vector2(0,-3),Vector2(-10,-55),Vector2(-27,-58),Vector2(-34,-39),Vector2(-10,5)]))
-	var body := Sprite2D.new()
-	body.texture = Art.ATLAS
-	body.region_enabled = true
-	body.region_rect = Art.BEE
-	body.scale = Vector2.ONE*(74.0/Art.BEE.size.x)
-	body.position = Vector2(4,-5)
+	bee = Node2D.new()
 	var white := Shader.new()
-	white.code = "shader_type canvas_item; void fragment(){ COLOR=vec4(vec3(1.0),texture(TEXTURE,UV).a); }"
+	white.code = "shader_type canvas_item; void fragment(){ COLOR.rgb = vec3(1.0); }"
 	var ink := ShaderMaterial.new()
 	ink.shader = white
-	body.material = ink
-	silhouette.add_child(body)
+	bee.material = ink
+	bee.draw.connect(_draw_silhouette)
+	silhouette.add_child(bee)
 	for i in 5:
 		var mote := Polygon2D.new()
 		var points := PackedVector2Array()
@@ -49,12 +43,8 @@ void fragment() {
 		trail.append(mote)
 	silhouette.hide()
 
-func _wing(points: PackedVector2Array) -> Polygon2D:
-	var wing := Polygon2D.new()
-	wing.polygon = points
-	wing.color = Color("fff7de")
-	silhouette.add_child(wing)
-	return wing
+func _draw_silhouette() -> void:
+	Art.painted_bee(bee,Rect2(-39,-49,84,84),wing_opening,Color.WHITE,false)
 
 func configure(alpha: float, focus: Vector2, reduced: bool, elapsed: float) -> void:
 	if shade_material == null: return
@@ -67,8 +57,8 @@ func configure(alpha: float, focus: Vector2, reduced: bool, elapsed: float) -> v
 	silhouette.visible = not reduced and alpha > 0.97
 	silhouette.position = size*.5+Vector2(sin(elapsed*5)*16,sin(elapsed*8)*4)
 	silhouette.modulate.a = clampf((alpha-.97)/.03,0,1)
-	wing_a.scale.y = .7+sin(elapsed*45)*.25
-	wing_b.scale.y = .8+cos(elapsed*45)*.2
+	wing_opening = .75+sin(elapsed*45)*.25
+	if silhouette.visible: bee.queue_redraw()
 
 	for i in trail.size():
 		var t := fposmod(elapsed*2+i*.2,1.0)

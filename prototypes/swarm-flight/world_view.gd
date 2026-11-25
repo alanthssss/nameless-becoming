@@ -740,12 +740,21 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 	var pitch := atan2(axis.y,absf(axis.x))*mirror
 	pitch = lerpf(pitch,0.0,rest)
 	draw_set_transform(_world_offset+p,pitch,stretch*Vector2(mirror,1.0)*size)
-	var ink := Color(INK,alpha)
-	var wing_color := Color(0.9,0.99,0.91,alpha*0.94)
 	var flutter := 0.5+0.5*sin(clock*(39.0 if charge>0.0 else 31.0)+seed_value*1.7)
 	var wing_height := lerpf(17.0+flutter*11.0,3.0,rest)
 	wing_height = lerpf(wing_height,8.0,dash)
 	wing_height = lerpf(wing_height,5.0,clampf(wing_push,0,1))
+	var blink := fposmod(clock+seed_value*0.61,4.6)<0.13
+	var wave_tip := Vector2.ZERO
+	if not trapped and (pose == "greet" or (pose == "leader" and _greeting > 0.0 and dash<0.5)):
+		var wave := sin((clock+seed_value*0.07)*17)*3.0
+		wave_tip = Vector2(23,9+wave)
+	_draw_bee_art(alpha,wing_height,rest,dash,blink or rest>0.72,charge,trapped,wave_tip)
+	draw_set_transform(_world_offset)
+
+func _draw_bee_art(alpha: float, wing_height: float, rest: float, dash: float, eyes_closed: bool, charge: float, trapped: bool, wave_tip: Vector2) -> void:
+	var ink := Color(INK,alpha)
+	var wing_color := Color(0.9,0.99,0.91,alpha*0.94)
 	# Unequal, rooted wings fold along the back at rest and sweep aft on a launch.
 	_silhouette([Vector2(0,-6),Vector2(-1,-wing_height-11),Vector2(-15,-wing_height-17),Vector2(-18,-wing_height-7),Vector2(-22,-wing_height+3),Vector2(-11,-5),Vector2(0,-6)],Color(0.77,0.92,0.84,alpha),ink,1.5)
 	_silhouette([Vector2(-4,-5),Vector2(-12,-wing_height-12),Vector2(-32,-wing_height-8),Vector2(-28,-wing_height+1),Vector2(-24,-3),Vector2(-13,-1),Vector2(-4,-5)],wing_color,ink,1.8)
@@ -754,12 +763,9 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 	var feet := lerpf(15.0,19.0,rest)-dash*5.0
 	for x in [-10.0,3.0]:
 		_curve(Vector2(x,8),Vector2(x-3,13),Vector2(x-5,feet),Vector2(x+1,feet),ink,1.8)
-	var blink := fposmod(clock+seed_value*0.61,4.6)<0.13
-	ArtSprites.bee_body(self,alpha,blink or rest>0.72,charge,trapped)
-	if not trapped and (pose == "greet" or (pose == "leader" and _greeting > 0.0 and dash<0.5)):
-		var wave := sin((clock+seed_value*0.07)*17)*3.0
-		_curve(Vector2(6,10),Vector2(14,18),Vector2(24,17),Vector2(23,9+wave),ink,2)
-	draw_set_transform(_world_offset)
+	ArtSprites.bee_body(self,alpha,eyes_closed,charge,trapped)
+	if wave_tip != Vector2.ZERO:
+		_curve(Vector2(6,10),Vector2(14,18),Vector2(24,17),wave_tip,ink,2)
 
 func feedback_caption_rect(feedback: Dictionary) -> Rect2:
 	var text_width := feedback_font.get_string_size(feedback.text,HORIZONTAL_ALIGNMENT_LEFT,-1,19).x
