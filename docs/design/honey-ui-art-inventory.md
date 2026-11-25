@@ -1,6 +1,6 @@
 # Honey 界面美术盘点
 
-2026-11-26 · Mac 地区游戏 · 当前主线 `757a67d`（花园手记已合入） · [GDD §8.1](swarm-flight-gdd.md#visual-production-rules) / [首作范围](swarm-flight-gdd.md#lean-nectar-first-game) → [M3](https://github.com/alanthssss/nameless-becoming/milestone/3) → [#322](https://github.com/alanthssss/nameless-becoming/issues/322) / [#333](https://github.com/alanthssss/nameless-becoming/issues/333)
+2026-11-26 · Mac 地区游戏 · 盘点基线 `757a67d`（花园手记已合入） · [GDD §8.1](swarm-flight-gdd.md#visual-production-rules) / [首作范围](swarm-flight-gdd.md#lean-nectar-first-game) → [M3](https://github.com/alanthssss/nameless-becoming/milestone/3) → [#322](https://github.com/alanthssss/nameless-becoming/issues/322) / [#333](https://github.com/alanthssss/nameless-becoming/issues/333)
 
 **建议先改两个地方。** 选档页里，玩家要选的三行档位是细框，最重的一块木牌却给了「返回」。重开信封里，「取消」和「备份并重新开始」又用了两块同样醒目的木牌。先让画面说明下一步会做什么、当前焦点在哪里，再把相近字号归到同一文字层级。蜜铺、图鉴、成长和设置已经各有容易认出的外形，值得保留。
 
@@ -20,7 +20,7 @@
 | 8 · 暂停 | 上一版 #443 与标题共用叶角纸。当前 #444 用细装订手记，大标题、深绿继续键、三项图标导航，重开和退出落底。 | **沿用 Alan 已选的花园手记。** 暂停首先回答「怎样接着飞」。保留右侧现场、大标题和醒目的继续键，子页返回能找到原入口。 |
 | 9 · 花路手册／花路见闻 | 暂停菜单里的查阅入口打开双页图鉴。左页地图和地区标签，右页花材标本、采法、售价及可展开的归途须知。 | 双页与中缝留下。入口与页标题可统一主名，或在页内保留「花路见闻」作副题，避免和可购买的「成长手册」混读。 |
 | 10 · 设置 | 铆钉木框、橄榄绿工具面、浅色图符。声音与简化动画是开关，蜂舞是互斥选择，关于在本页展开。 | 设置与键位共用工具箱外形，开关继续显示「开／关」。用填色表示已选，用外圈单独表示焦点，两者即使重合也应读得出来。 |
-| 11 · 键位设置 | 同一工具箱放宽。先选键鼠／手柄，再选飞行、菜单、成长树或花湾。飞行九行可改，其余为场景速查；另有等待、冲突及恢复默认反馈。 | 保留一屏表格。动作名左对齐，按键值按列对齐；只让正在监听的单元格突出，并把冲突原因放在同一阅读区。Alan 选定圆角、微凹的蜂蜡 Q 键帽作为母稿。[简化试稿](../production/evidence/honey-ui-inventory/controls-wax-q.png)沿用原字形和琥珀色前壁，收轻蜡面的笔触与高光。 |
+| 11 · 键位设置 | 同一工具箱放宽。先选键鼠／手柄，再选飞行、菜单、成长树或花湾。飞行九行可改，其余为场景速查；另有等待、冲突及恢复默认反馈。 | 保留一屏表格。动作名左对齐，按键值按列对齐；只让正在监听的单元格突出，并把冲突原因放在同一阅读区。Alan 定稿的[蜂蜡 Q 母稿](../production/evidence/honey-ui-inventory/controls-wax-q.png)现用于实际绑定。玩家把 Q 改到其他动作时，手绘字形随之移动。键鼠和手柄各有对应的固定操作速查。[Mac 试玩与两尺寸实机图](../production/region-greybox-receipt.md#honey-wax-keycaps) |
 | 12 · 储粮完成 | 买下成长项「备好花蜜」后出现。「花蜜，备好了」与标题共用左侧纸页和主按钮，提供重返花园的去向。 | 复用纸与字阶，给封罐成果一个专属标记，把「已完成什么」放在「再去花园转转」之前。普通售蜜仍在柜台给回执。 |
 | 13 · 备份并重开 | 居中蜡封信封，正文说明先备份，标题指明档位。「取消」先获焦，两项均为厚木牌。 | 信封作为有后果的独立确认。保留安全默认与明确的动作名，降低确认项平时的装饰重量，重点写清将影响哪一档。 |
 
