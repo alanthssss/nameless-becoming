@@ -135,7 +135,7 @@ one('complete','储粮完成','complete','封好的蜜罐标记储备完成。�
 one('feedback','菜单入口的操作反馈','feedback','常态、悬停、键盘焦点和按下共用物件与文字基线。')
 one('field-flower','池岸 · 靠近蓝花','field-flower','按住提示贴近花心。四种资源及续航集中在左下，暂停保持在右下。','原生场景底图上的设计稿')
 one('field-resin','紫花地 · 振翅掀皮','field-resin','当前设备为手柄。X 振翅，裂口打开且靠近后，按住 A 收树脂。','原生场景底图上的设计稿')
-one('field-pickup','池岸 · 纤维入囊','field-pickup','短签贴着背包显示本次所得及现有数量，给花和蜜蜂留出空间。','原生场景底图上的设计稿')
+one('field-pickup','池岸 · 纤维入囊','field-pickup','短签贴着背包显示本次所得，给花和蜜蜂留出空间。','原生场景底图上的设计稿')
 one('field-tired','紫花地 · 低体力返程','field-tired','箭头按蜂到入口的方向绘制；低体力还可从左下的弧长、蜂姿与 6 / 36 读出。','原生场景底图上的设计稿')
 begin('field-states','采集、容量与庭院入口','设计局部　／　原生机位')
 for i,(key,label,crop) in enumerate([

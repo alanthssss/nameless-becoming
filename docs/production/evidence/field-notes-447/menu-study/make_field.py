@@ -87,9 +87,9 @@ def pill(x,y,width,label,keys=(),alert=False,pointer=True,arrow=None,hold=False,
     b+=ui.txt(lead,26,label,16,ui.LIGHT,weight=600)
     return ui.grp(max(8,min(952-width,x-width/2)),max(8,min(518,y)),b)
 
-def receipt(a):
-    d='M13 1 Q98 -2 201 2 Q215 3 214 15 L212 33 Q212 41 202 42 Q105 45 12 41 L0 24 Z'
-    b=plaque(d)+ui.grp(12,9,icon('纤维'))+ui.txt(44,28,'纤维 +1',19,ui.INK,weight=700)+ui.txt(130,28,'现有 '+str(a['fiber']),15,ui.MUTED)
+def receipt(kind, gain):
+    d='M13 1 Q56 -2 107 2 Q121 3 120 15 L118 33 Q118 41 108 42 Q59 45 12 41 L0 24 Z'
+    b=plaque(d)+ui.grp(12,9,icon(kind))+ui.txt(44,28,f'{kind} +{gain}',19,ui.INK,weight=700)
     return ui.grp(33,448,b)
 
 def field_page(key,a,original):
@@ -110,7 +110,7 @@ def field_page(key,a,original):
     elif key=='open':
         b+=pill(x,y-89,188,'收树脂',('A（下）',),hold=True)
     elif key=='pickup':
-        b+=receipt(a)
+        b+=receipt('纤维',1)
     elif key=='full':
         b+=pill(x,y-81,118,'蜜囊已满',gauge=True)+pill(156,448,234,'蜜囊已满 · 仍可取材',pointer=False)
     elif low:

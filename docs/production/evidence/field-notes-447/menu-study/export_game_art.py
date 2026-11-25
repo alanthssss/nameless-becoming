@@ -120,11 +120,9 @@ if __name__ == "__main__":
     render(ET.fromstring(field.ui.svg(full,"")),"full-bag",(36,446,240,46))
     for kind in ["花蜜","纤维","树脂"]:
         slug = {"花蜜":"honey","纤维":"fiber","树脂":"resin"}[kind]
-        receipt = ET.fromstring(field.ui.svg(field.receipt({"fiber":0}),""))
+        receipt = ET.fromstring(field.ui.svg(field.receipt(kind, 1),""))
         remove(receipt,lambda n: n.tag==SVG+"text")
-        icon = next(n for n in receipt.iter(SVG+"image") if n.get("width")=="24")
-        icon.set(LINK,ET.fromstring(field.ui.svg(field.icon(kind),"")).find(SVG+"image").get(LINK))
-        render(receipt,"pickup-"+slug,(31,445,220,52))
+        render(receipt,"pickup-"+slug,(31,445,126,52))
     with tempfile.TemporaryDirectory() as folder:
         subprocess.run(["node",str(HERE/"plates.cjs"),folder],check=True)
         pages(Path(folder))

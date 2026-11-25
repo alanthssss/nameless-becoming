@@ -2,12 +2,15 @@ extends Control
 const Art = preload("res://nectar_ui_art.gd")
 const Plate = preload("res://region_game/menu_plate.gd")
 const INK := Color("403126")
+const PICKUP_NAMES := {"fiber": "纤维", "resin": "树脂", "honey": "花蜜"}
 var ui
-var receipt_name := ""
-var receipt_total := 0
-var receipt_gain := 0
+var receipt_gains: Dictionary[String, int] = {}
 var receipt_left := 0.0
-var receipt_art: Texture2D
+var receipt_art := {
+	"honey": Plate.texture("pickup-honey"),
+	"fiber": Plate.texture("pickup-fiber"),
+	"resin": Plate.texture("pickup-resin"),
+}
 var pause_hit := Button.new()
 var full_badge := Plate.texture("full-bag")
 var backing := Plate.texture("field-hud")
@@ -42,13 +45,8 @@ func refresh() -> void:
 	set_process(visible and (receipt_left>0 or ui.energy_dial.is_processing()))
 	queue_redraw()
 
-func pickup(event: Dictionary) -> void:
-	var material: bool = event.kind=="material"
-	var key: String = event.type if material else "honey"
-	receipt_name = {"fiber":"纤维","resin":"树脂","honey":"花蜜"}[key]
-	receipt_art = Plate.texture("pickup-"+key)
-	receipt_gain = event.amount
-	receipt_total = ui.driver.model.materials[key] if material else ui.driver.model.cargo_total()
+func show_pickups(gains: Dictionary[String, int]) -> void:
+	receipt_gains = gains
 	receipt_left = 1.6
 	set_process(true)
 	queue_redraw()
@@ -81,8 +79,11 @@ func _draw() -> void:
 		_number(Vector2(161+(i%2)*113,528+floori(i/2.0)*31),values[i],48,15)
 	if m.cargo_total()>=m.capacity():
 		draw_texture_rect(full_badge,Rect2(36,446,240,46),false)
-	if receipt_left>0 and receipt_art:
-		var y := 395 if m.cargo_total()>=m.capacity() else 445
-		draw_texture_rect(receipt_art,Rect2(31,y,220,52),false)
-		_number(Vector2(77,y+31),receipt_name+" +%d" % receipt_gain,86,18,HORIZONTAL_ALIGNMENT_LEFT)
-		_number(Vector2(159,y+31),"现有 %d" % receipt_total,81,15,HORIZONTAL_ALIGNMENT_LEFT)
+	if receipt_left > 0:
+		var y := 395 if m.cargo_total() >= m.capacity() else 445
+		var x := 31
+		for key in receipt_gains:
+			draw_texture_rect(receipt_art[key], Rect2(x, y, 126, 52), false)
+			var label := "%s +%d" % [PICKUP_NAMES[key], receipt_gains[key]]
+			_number(Vector2(x+46, y+31), label, 72, 18, HORIZONTAL_ALIGNMENT_LEFT)
+			x += 130

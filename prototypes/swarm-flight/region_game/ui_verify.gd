@@ -249,6 +249,31 @@ func all_text(node: Node) -> String:
 	var result: String = node.text if node is Label or node is Button else ""
 	for child in node.get_children(): result += all_text(child)
 	return result
+func check_twin_pickup() -> void:
+	var field = game.model.field
+	field.stats.owned.append("twin")
+	field.p = field.layout.nodes[1].p
+	field.v = Vector2.ZERO
+	field.cargo = field.capacity() - 3
+	game.model.cargo = {"blue": field.cargo, "rose": 0}
+	for expected in [2, 1]:
+		for id in [0, 3]:
+			var flower: Dictionary = field.flowers[id]
+			flower.p = field.p + Vector2(-16 if id == 0 else 16, 2)
+			flower.phase = "ripe"
+			flower.phase_time = 0.0
+			flower.erase("nectar_wait")
+			flower.stock = 1
+			flower.progress = .99
+		game.model._sync_field()
+		var before: int = game.model.cargo_total()
+		press_key(KEY_E, true)
+		game._process(.05)
+		press_key(KEY_E, false)
+		check(game.model.cargo_total() == before + expected, "twin harvest only credits free slots")
+		check(game.ui.field_hud.receipt_left > 0 and game.ui.field_hud.receipt_gains == {"honey": expected},
+			"one nectar receipt reports only this harvest: +%d" % expected)
+
 func check_seed_pickup() -> void:
 	var field = game.model.field
 	var head: Dictionary = field.materials[0]
@@ -267,7 +292,7 @@ func check_seed_pickup() -> void:
 	check(cues.count("fiber") == 1, "catching the released fiber plays its pickup once")
 	check(game.model.materials.fiber == 1 and game.ui.fiber_text.text == "1", "caught tuft increments HUD inventory")
 	var receipt = game.ui.field_hud
-	check(receipt.is_visible_in_tree() and receipt.receipt_left > 0 and receipt.receipt_name == "纤维" and receipt.receipt_gain == 1 and receipt.receipt_total == 1, "confirmed pickup shows the material, gain and current stock beside the bag")
+	check(receipt.is_visible_in_tree() and receipt.receipt_left > 0 and receipt.receipt_gains == {"fiber": 1}, "confirmed fiber pickup shows this gain beside the inventory")
 	field.p = field.layout.nodes[0].p
 	field.v = Vector2.ZERO
 	await frames(2)
@@ -552,6 +577,7 @@ func run() -> void:
 	for i in 22: game.model.step(.05, Vector2.ZERO, true, false)
 	await frames(2)
 	check(cues.count("resin") == 1, "pulling exposed resin to completion plays one pickup")
+	check(game.ui.field_hud.receipt_gains == {"resin": 1}, "resin receipt reports its own gain")
 	check(game.model.field.supply_rank == 1,"purchased abundance reaches the field")
 	game.pause_game()
 	check(game.persist(),"purple midtrip save")
@@ -582,6 +608,7 @@ func run() -> void:
 	game._advance_transition(10.0)
 	check(game.model.at_home() and game.model.last_region == "pond","next pond return restores teal ink")
 	gate_inputs()
+	check_twin_pickup()
 	game.queue_free()
 	await frames(3)
 	# The audio driver drains on wall time even with --fixed-fps.
