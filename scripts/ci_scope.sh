@@ -21,7 +21,9 @@ case "${EVENT_NAME:-}" in
 esac
 paths=$(mktemp)
 trap 'rm -f "$paths"' EXIT
+checked_revision=HEAD
 if [[ -n "$diff_spec" ]] && git diff --name-only -z --no-renames "$diff_spec" -- > "$paths"; then
+  checked_revision=$head
   git diff --check "$diff_spec" --
   if [[ ! -s "$paths" ]]; then reason=empty_diff_full; fi
 else
@@ -31,12 +33,10 @@ else
   git show --check --format= HEAD --
 fi
 if [[ -s "$paths" ]]; then
-  # Validate surviving records at the compared revision, even on a synthetic PR checkout.
-  git diff --name-only -z --no-renames --diff-filter=AMT "$diff_spec" -- docs/production/evidence |
-    python3 -B "$script_dir/check_ci_evidence.py" "$head"
+  # Include deletions and both sides of moves when checking archive membership.
+  python3 -B "$script_dir/check_ci_evidence.py" "$checked_revision" < "$paths"
 else
-  git ls-tree -r -z --name-only HEAD -- docs/production/evidence |
-    python3 -B "$script_dir/check_ci_evidence.py" HEAD
+  python3 -B "$script_dir/check_ci_evidence.py" "$checked_revision" --all
 fi
 bash "$script_dir/classify_ci_changes.sh" < "$paths"
 printf 'reason=%s\n' "$reason"
