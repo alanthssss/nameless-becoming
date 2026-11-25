@@ -9,11 +9,13 @@
 
 沿 M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) / [#447](https://github.com/alanthssss/nameless-becoming/issues/447)。Alan 问并排稿为何仍要分成两个菜单。Codex 提议启动和暂停共用一张菜单。下图只画一次，以游戏中打开、焦点停在「设置」为例。美术与布局待 Alan 判断。
 
-![共用菜单。双翼在左上，设置调节轮在第二行左侧，外圈表示输入焦点。](evidence/field-notes-447/shared-menu.webp)
+![共用菜单。向右飞的采蜜蜂在左上，设置调节轮在第二行左侧，外圈表示输入焦点。](evidence/field-notes-447/shared-menu.webp)
 
 [可编辑菜单层](evidence/field-notes-447/shared-menu.svg) · [最初的 13 处盘点](https://github.com/alanthssss/nameless-becoming/blob/fa2a254f77b9d59af14dd2599286fe20ccc349d8/docs/design/honey-ui-art-inventory.md)
 
 初代《植物大战僵尸》提供的参照是让玩家从物件轮廓读出操作。Honey 试用调节轮进设置、三格抽屉选档、折图查花路。共用项占固定位，名称用同一字形、大小和基线。输入焦点用一道包住物件和文字的连续外圈。从设置返回时回到原调节轮。主动作在有档时写「继续采蜜」，启动时读取当前档，暂停时恢复现场。首次出发可沿用「从蜂巢出发」。图中「花路手册」与「保存并退出」按暂停用途展示。
+
+Alan 指出「继续采蜜」上的独立双翅容易被看成拆下来的翅膀。修订稿改用[游戏角色原画](../../prototypes/swarm-flight/art/honey-bee.png)，按游戏飞行时的绘制顺序把翅根接在身体后方，保留朝右的脸、触角、脚与腹纹。677 × 819 菜单渲染逐像素对照，变化集中在左上图标范围，按钮文字和设置焦点都在原位。本次观测约 1 分钟，覆盖改图与对照，复用已有原画，新增采购 0。整页造型仍待 Alan 看稿。
 
 [上一次整页手记审阅](#field-notes-447)保留为历史。此次归档仅含独立菜单图和设计依据。早先的两份实包同档同机位比对已记录。庭院进店与成长入口、柜面和收据、成长图、技能签、花湾及直接进入后的受限提示共十组画面一致。在野外显示“蜜囊已满”后回庭院，旧草案的卖货写入失败和购买受限提示沿用了野外文字的颜色与垂直对齐。该轮提示实验已随 Alan 的设计讨论要求撤出工作树。
 
