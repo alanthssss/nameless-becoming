@@ -105,7 +105,7 @@ def inspect_build(build_dir, expected_version):
 
 def app_vdf(app_id, depot_id, root, output, version, preview):
     return ('"AppBuild"\n{\n'
-            f'  "AppID" "{app_id}"\n  "Desc" "Nectar macOS Demo {version}"\n'
+            f'  "AppID" "{app_id}"\n  "Desc" "Honey macOS Demo {version}"\n'
             f'  "ContentRoot" "{safe_text(root)}"\n  "BuildOutput" "{safe_text(output)}"\n'
             f'  "Preview" "{1 if preview else 0}"\n'
             f'  "Depots"\n  {{\n    "{depot_id}" "depot_macos.vdf"\n  }}\n}}\n')

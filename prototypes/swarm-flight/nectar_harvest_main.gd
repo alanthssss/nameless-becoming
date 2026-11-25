@@ -7,7 +7,7 @@ const Sound = preload("res://sound.gd")
 const Migration = preload("res://nectar_save_migration.gd")
 const Dance = preload("res://nectar_dance.gd")
 signal presentation_changed
-const DISPLAY_NAME := "采蜜 Demo"
+const DISPLAY_NAME := "Honey"
 const SAVE_PATH := "user://nectar_harvest_v1.json"
 var model = Model.new()
 var world

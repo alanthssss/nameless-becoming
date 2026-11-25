@@ -279,7 +279,7 @@ if [[ "$nectar_save" != /*/{SAVE_NAME} ]]; then
   print -u2 '测试路径须为绝对路径，并以 {SAVE_NAME} 结尾'; exit 2
 fi
 mkdir -p -- "$(dirname -- "$nectar_save")" "$PWD/日志"
-exec "$PWD/{app_name}/Contents/MacOS/{executable}" --log-file "$PWD/日志/采蜜小店.log" -- --{ENTRY} --progress-file="$nectar_save"
+exec "$PWD/{app_name}/Contents/MacOS/{executable}" --log-file "$PWD/日志/Honey.log" -- --{ENTRY} --progress-file="$nectar_save"
 '''
 
 def extract_export(export_zip, destination):
@@ -330,13 +330,13 @@ def package(export_zip, export_record, receipt, evidence_root, revision, output)
     if errors: raise ValueError('Nectar candidate blocked:\n- '+'\n- '.join(errors))
     output.parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='nectar-package-',dir=output.parent) as tmp:
-        stage = Path(tmp)/'采蜜与蜂舞-Demo'; stage.mkdir()
+        stage = Path(tmp)/'Honey'; stage.mkdir()
         app, executable, version = extract_export(export_zip,stage)
         command_body = launcher_text(app.name,executable)
         command_hash = hashlib.sha256(command_body.encode('utf-8')).hexdigest()
         if command_hash != export_record['launcher_sha256']:
             raise ValueError('Maintained launcher differs from the tested launcher')
-        command = stage/'开始采蜜小店.command'
+        command = stage/'开始 Honey.command'
         command.write_text(command_body,encoding='utf-8'); command.chmod(0o755)
         (stage/'先读我.txt').write_text(README.read_text(encoding='utf-8').replace('{version}',version),encoding='utf-8')
         (stage/'版本信息.json').write_text(json.dumps({

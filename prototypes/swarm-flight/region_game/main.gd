@@ -13,7 +13,6 @@ func _ready() -> void:
 	model = new_model()
 	saved_path = "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
 	super._ready()
-	get_window().title = "采集花园 · 0.32.0" if OS.has_feature("pond_feedback") else "采蜜 Demo · 池岸与紫花地"
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--record-dir="):
 			var recorder = preload("res://region_game/recorder.gd").new()
