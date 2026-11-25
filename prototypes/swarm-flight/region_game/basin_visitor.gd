@@ -1,11 +1,9 @@
 extends Sprite2D
-## A new regional view owns exactly one visit. These cosmetic rolls use a
-## separate generator so they never consume the field or reward RNG.
+## A new regional view owns exactly one visit. The species roll uses a
+## separate generator so it never consumes the field or reward RNG.
 const FISH: Texture2D = preload("res://art/basin-fish.webp")
 const FROG: Texture2D = preload("res://art/basin-frog.webp")
 const PIGMENT = preload("res://region_game/basin_pigment.gdshader")
-# Azure dragon, white tiger, vermilion bird, black tortoise, central earth.
-const COLOURS := [Color("158781"), Color("f2eee0"), Color("d65343"), Color("323e4b"), Color("d5a241")]
 # Measured against the 1280 × 800 courtyard plate. The swim path occupies
 # the clear water to the right of both stones; the frog sits on the nearer one.
 const SWIM_CENTER := Vector2(124, 678)
@@ -15,12 +13,10 @@ const LAP_SECONDS := 7.0
 const SWIM_SECONDS := 4.5
 
 var is_fish := false
-var palette_index := 0
 
 func _ready() -> void:
 	var visit := RandomNumberGenerator.new()
 	is_fish = visit.randi_range(0, 1) == 0
-	palette_index = visit.randi_range(0, COLOURS.size() - 1)
 	z_index = -1
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	material = ShaderMaterial.new()
@@ -29,7 +25,6 @@ func _ready() -> void:
 
 func apply_appearance() -> void:
 	texture = FISH if is_fish else FROG
-	material.set_shader_parameter("pigment", COLOURS[palette_index])
 	material.set_shader_parameter("submerged", is_fish)
 
 func pose(seconds: float, reduced: bool) -> void:
