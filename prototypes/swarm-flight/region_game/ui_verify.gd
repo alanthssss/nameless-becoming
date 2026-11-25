@@ -237,7 +237,97 @@ func run() -> void:
 		root.size = size
 		await frames(4)
 		check(game.ui.menu.visible,"pause available at "+str(size))
+	gate_inputs()
 	game.queue_free()
 	await frames(3)
 	print("Regional UI: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)
+
+func press_key(code: Key, pressed: bool) -> void:
+	var key := InputEventKey.new()
+	key.physical_keycode = code
+	key.keycode = code
+	key.pressed = pressed
+	root.push_input(key,true)
+
+func gate_input(mouse: bool, pressed: bool) -> void:
+	if not mouse:
+		press_key(KEY_E,pressed)
+		return
+	var click := InputEventMouseButton.new()
+	click.position = Vector2(480,340)
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = pressed
+	root.push_input(click,true)
+
+func commit_gate() -> void:
+	press_key(KEY_SPACE,true)
+	press_key(KEY_SPACE,false)
+	game._process(.001)
+
+func gate_inputs() -> void:
+	# Advance the ordinary scene deterministically around input edges.
+	game.set_process(false)
+	game.restart_game()
+	var writable: String = game.saved_path
+	for mouse in [false,true]:
+		for route in ["at gate","tap across","hold across"]:
+			check(game.model.transition_to("pond"),"set up native gate input")
+			game._load_world()
+			var field = game.model.field
+			field.departed = route != "at gate"
+			# A full bag isolates flight cost if the route seed puts a flower beside the gate.
+			var carried: int = game.model.capacity()
+			game.model.cargo.blue = carried
+			field.cargo = carried
+			if field.departed:
+				field.p = field.layout.nodes[0].p + Vector2.RIGHT * (149 if route == "hold across" else 130)
+				field.v = Vector2.LEFT * field.SPEED
+				field.energy = .11 if route == "hold across" else .01
+			game.model._sync_field()
+			game.model.update_camera()
+			var previous: int = game.event_log.filter(func(e):return e.kind=="return").size()
+			gate_input(mouse,true)
+			if route == "hold across":
+				press_key(KEY_A,true)
+				game._process(.1)
+				check(game.mode=="play" and not field.at_entry(),"holding outside gate cannot start return")
+				game._process(.05)
+				press_key(KEY_A,false)
+			gate_input(mouse,false)
+			game._process(.1)
+			check(game.mode=="transition" and game.transition_target=="hub","native keyboard/mouse return: "+route)
+			if mouse and route == "tap across":
+				game.saved_path = OS.get_temp_dir()
+				commit_gate()
+				game._process(.1)
+				check(game.mode=="play" and game.model.interaction()=="home" and game.model.energy==0 and game.model.cargo.blue==carried,"zero-energy arrival can retry a failed write")
+				game.saved_path = writable
+				gate_input(mouse,true)
+				gate_input(mouse,false)
+			gate_input(mouse,true)
+			gate_input(mouse,false)
+			commit_gate()
+			check(game.mode=="play" and game.model.at_home() and game.model.cargo.blue==carried and game.model.energy==game.model.max_energy(),"saved and restored full arrival by ordinary input")
+			check(game.event_log.filter(func(e):return e.kind=="return").size()==previous+1,"repeated native presses pay out once")
+			var restored = game.new_model()
+			check(restored.restore_payload(game.read_progress(writable).payload) and restored.at_home() and restored.cargo.blue==carried,"ordinary return persisted with cargo")
+	# A live bee can still fly after a failed return transaction.
+	game.model.transition_to("pond")
+	game._load_world()
+	var field = game.model.field
+	field.departed = true
+	field.p = field.layout.nodes[0].p + Vector2.RIGHT * 130
+	field.v = Vector2.LEFT * field.SPEED
+	game.model._sync_field()
+	gate_input(true,true)
+	game._process(.1)
+	gate_input(true,false)
+	game.saved_path = OS.get_temp_dir()
+	commit_gate()
+	var before: Vector2 = game.model.p
+	press_key(KEY_D,true)
+	game._process(.1)
+	press_key(KEY_D,false)
+	check(game.mode=="play" and game.model.field.phase=="active" and game.model.p.x>before.x,"failed return with stamina preserves flight controls")
+	game.saved_path = writable

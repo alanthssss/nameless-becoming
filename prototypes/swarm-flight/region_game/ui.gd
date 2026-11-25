@@ -13,6 +13,10 @@ func _ready() -> void:
 	_reword(self)
 	energy_text.tooltip_text = "续航：庭院恢复，飞行、采蜜和振翅消耗"
 
+func transition_focus() -> Vector2:
+	if driver.model.at_home(): return driver.model.p
+	return (driver.model.p - driver.model.camera_offset) * driver.model.MeadowLayout.FIELD_ZOOM
+
 func _reword(node: Node) -> void:
 	if node is Label:
 		node.text = node.text.replace("每花 1 份 · 生物不会攻击。","花心带蜜光时，每朵可采一份。").replace("每花 1 份 · 可收集树脂。","留意木头裂口里的金色树脂。")
@@ -49,8 +53,7 @@ func refresh() -> void:
 		# Action prompts belong to the nearby flower, seed head, seam or sign.
 		# Reserve the lower HUD for a whole-trip constraint.
 		help_text.text = ""
-		if driver.model.energy < driver.model.max_energy()*.25: help_text.text = "体力偏低 · 沿花路返回"
-		elif driver.model.cargo_total()>=driver.model.capacity(): help_text.text = "蜜囊已满 · 仍可取材"
+		if not driver.model.energy_is_low() and driver.model.cargo_total()>=driver.model.capacity(): help_text.text = "蜜囊已满 · 仍可取材"
 		help_text.visible = not help_text.text.is_empty()
 
 func _buy_selected() -> void:
