@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Honey · 池岸花湾</title>
+<style>
+:root{color-scheme:light;--paper:#faf7eb;--ink:#26382c;--muted:#596653;--line:#d4d4bc;--green:#31583f;--honey:#e5b947}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,"PingFang SC","Microsoft YaHei",sans-serif}main{max-width:1030px;margin:auto;padding:26px clamp(14px,4vw,46px) 50px}header,.stats,.tools,.stages,.prompt,.destinations{display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap}header{justify-content:space-between;margin-bottom:16px}h1{margin:0;font:600 clamp(28px,5vw,48px)/1.15 "Songti SC","Noto Serif CJK SC",serif}h2{margin:18px 0 6px;font-size:18px}a{color:var(--green)}a:focus-visible,button:focus-visible,canvas:focus-visible{outline:3px solid #b15b16;outline-offset:3px}p{margin:6px 0}.stages{gap:6px;margin:12px 0}button,select{font:inherit;color:var(--ink)}button{background:transparent;border:1px solid #9da991;border-radius:8px;padding:7px 12px;cursor:pointer}button[aria-pressed=true]{background:var(--green);color:#fff;border-color:var(--green)}button:disabled{opacity:.5;cursor:default}select{background:var(--paper);border:1px solid #9da991;border-radius:6px;padding:5px}figure{position:relative;margin:13px 0 8px;border-radius:12px;overflow:hidden;background:#304c39}canvas{width:100%;height:auto;display:block;touch-action:none}.stats{padding:8px 12px;gap:6px 20px;background:#20382c;color:#fff9e0;font-size:14px;font-variant-numeric:tabular-nums}.stats b{color:#ffe18c}.tools{gap:8px 12px}.destinations{gap:6px}.destinations button{min-width:42px;min-height:40px}.prompt{justify-content:space-between}small,.fine{color:var(--muted)}.log{min-height:1.65em;font-weight:550}.note{border-top:1px solid var(--line);padding-top:12px}kbd{font:inherit;color:var(--green)}@media(max-width:500px){main{padding:16px 12px}.stats{gap:4px 13px;font-size:13px}.stages button{padding:6px 8px}.destinations{gap:4px}.destinations button{min-width:36px;padding:6px 8px}.tools{align-items:start}}
+</style></head><body><main>
+<header><h1>池岸花湾</h1><a href="honey-growth-atlas-v2.html">返回成长树</a></header>
+<div class="stages" aria-label="对比成长阶段"><button type="button" data-stage="build" aria-pressed="false" hidden>我的串花组合</button><button type="button" data-stage="early" aria-pressed="true">起步 · 单采</button><button type="button" data-stage="mid" aria-pressed="false">中段 · 串花</button><button type="button" data-stage="late" aria-pressed="false">后段 · 花瀑</button></div>
+<p id="rule"></p>
+<figure><canvas id="bay" width="900" height="482" tabindex="0" aria-label="池岸八朵花，点击花心或用下方字母按钮飞往该花。持续采蜜时靠近花心会取得花蜜。"></canvas>
+<figcaption class="stats"><span>蜜囊 <b id="bag">0 / 10</b></span><span>亲手 <b id="manual">0</b></span><span>串花 <b id="garland">0</b></span><span>花瀑 <b id="cascade">0</b></span><span>花印 <b id="buds">—</b></span></figcaption></figure>
+<p class="log" id="event" role="status">从 A 花开始。</p>
+<div class="tools"><button id="hold" aria-pressed="false">持续采蜜</button><button id="restart">重置花湾</button><button id="sound" aria-pressed="false">花音</button><label>起始蜜囊 <select id="load"><option value="0">空囊</option><option value="6">已有 6 份</option><option value="8">已有 8 份</option></select></label></div>
+<div class="prompt"><h2>飞向花心</h2><small>同一花湾 · 八株各一份蜜</small></div>
+<div id="destinations" class="destinations" aria-label="选择下一朵花"></div>
+<p class="fine">打开「持续采蜜」，依次点 A、B、C 比较三档。也可按住花心拖向下一朵，或用方向键飞行、按住空格采蜜。松手可中断花瀑的连续手势。</p>
+<p class="note fine">从成长树进入，会带入实购的花粉引路、串花和落英花瀑档位。此处单独比较这三项，统一按手采 0.8 秒、蜜囊 10 份、每次手采一株计算。场内没有障碍，花蜜只结算一次。切换阶段会重新布置这八朵花。</p>
+</main><script>
+(() => {
+  'use strict';
+  const canvas=document.querySelector('#bay'),g=canvas.getContext('2d');
+  const W=900,H=482,cap=10,letters='ABCDEFGH';
+  const seed=[[136,263],[237,265],[333,247],[429,262],[526,246],[624,235],[717,215],[455,302]];
+  const art={pond:'../../prototypes/swarm-flight/art/collection-pond.webp',flower:'../../prototypes/swarm-flight/art/collection-blue-bloom.webp',bee:'../../godot/assets/art/commercial/worker_bee_topdown_v1.png'};
+  const images={};for(const [key,path] of Object.entries(art)){const im=new Image();im.src=path;images[key]=im}
+  const read=id=>document.getElementById(id),motion=matchMedia('(prefers-reduced-motion: reduce)');
+  const param=new URLSearchParams(location.search);
+  const fields=['trace','garland','cascade'],values=fields.map(k=>param.get(k));
+  const imported=values.every(v=>v!==null&&/^[0-2]$/.test(v))&&(!+values[1]||+values[0])&&(!+values[2]||+values[1]);
+  const configs={early:[0,0,0],mid:[1,1,0],late:[1,1,1],build:values.map(Number)};
+  const rule={early:'每次采一朵，蜜囊只增加实际采到的那一份。',mid:'花粉引路会标出下一朵；连续亲采三株，可顺势收下附近另一株的蜜。',late:'持续采蜜穿过三株，串花取到蜜后，花瀑还会沿飞行前方逐株接力，最多再跳两株。',build:'本次带入：'+['花粉引路','串花','落英花瀑'].map((s,i)=>s+' '+(['未学','Ⅰ','Ⅱ'][Number(values[i])]||'未学')).join(' · ')+'。'};
+  if(imported)document.querySelector('[data-stage=build]').hidden=false;
+  const keys=new Set();let stage=imported?'build':'early',flowers=[],bee,target,ledger,holding,sticky,space,pointer,session,history,mark,clock,cooldown,fx=[],last,sound=null,soundOn=false,budFlash=0;
+  const levels=()=>configs[stage];
+  const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  const sources=['manual','garland','cascade'];
+  const total=()=>ledger.start+sources.reduce((sum,key)=>sum+ledger[key],0);
+  function hud(){
+    read('bag').textContent=total()+' / '+cap;
+    for(const key of sources)read(key).textContent=ledger[key];
+    const filled=budFlash>clock?3:history.length;
+    read('buds').textContent=levels()[1]===0?'—':'●'.repeat(filled)+'○'.repeat(3-filled);
+    read('hold').setAttribute('aria-pressed',String(sticky));
+  }
+  function syncHold(){
+    const next=Boolean(sticky||space||pointer!==null);
+    if(next&&!holding)session++;
+    holding=next;hud();
+  }
+  function reset(){
+    flowers=seed.map(([x,y],i)=>({i,x,y,ripe:true,progress:0,markedOnce:false}));
+    bee={x:111,y:270,dx:1,dy:0};target=0;clock=0;cooldown=0;budFlash=0;history=[];mark=null;fx=[];session=0;
+    ledger={start:Number(read('load').value),manual:0,garland:0,cascade:0};
+    keys.clear();sticky=false;space=false;pointer=null;holding=false;read('rule').textContent=rule[stage];read('event').textContent='从 A 花开始。';hud();
+    for(const b of document.querySelectorAll('[data-stage]'))b.setAttribute('aria-pressed',String(b.dataset.stage===stage));
+    updateDestination();
+  }
+  function updateDestination(){
+    for(const b of read('destinations').children)b.setAttribute('aria-pressed',String(Number(b.dataset.index)===target));
+  }
+  function choose(i){target=i;updateDestination()}
+  function nearest(at,range,allow=()=>true){
+    return flowers.filter(f=>f.ripe&&distance(at,f)<=range&&allow(f)).sort((a,b)=>distance(at,a)-distance(at,b)||a.i-b.i)[0];
+  }
+  function add(f,kind,from,delay=0){
+    if(!f||!f.ripe||total()>=cap)return false;
+    f.ripe=false;f.progress=0;ledger[kind]++;fx.push({a:{x:from.x,y:from.y},b:f,kind,t:clock+delay});
+    return true;
+  }
+  function harvest(f){
+    const gained=[],kinds=[];const before=total();
+    if(!add(f,'manual',bee))return;
+    gained.push(f);kinds.push('亲采');
+    const [trace,garland,cascade]=levels(),gap=garland===2?5:4;
+    if(history.length&&clock-history[history.length-1].t>gap)history=[];
+    history.push({i:f.i,t:clock,session});history=history.slice(-3);
+    let tail=f;
+    const streak=garland>0&&history.length===3&&new Set(history.map(e=>e.i)).size===3;
+    if(streak){
+      for(let side=0;side<garland;side++){
+        const branch=nearest(f,garland===2?145:115);
+        if(!add(branch,'garland',f,.035*(side+1)))break;
+        gained.push(branch);kinds.push('串花');tail=branch;budFlash=clock+.4;
+      }
+      if(tail!==f){
+        const uninterrupted=history.every(e=>e.session===session);
+        if(cascade>0&&uninterrupted&&clock>=cooldown){
+          let jumps=0;
+          for(let hop=1;hop<=cascade+1;hop++){
+            const next=nearest(tail,cascade===2?150:120,n=>{
+              const d=distance(tail,n);
+              return d>0&&((n.x-tail.x)*bee.dx+(n.y-tail.y)*bee.dy)/d>=Math.cos(55*Math.PI/180);
+            });
+            if(!add(next,'cascade',tail,.045*(gained.length+1)))break;
+            gained.push(next);kinds.push('花瀑');tail=next;jumps++;
+          }
+          if(jumps)cooldown=clock+(cascade===2?8:10);
+        }
+      }
+      history=[];
+    }
+    if(trace>0){
+      const n=nearest(f,trace===2?150:110,n=>!n.markedOnce);
+      mark=n?{i:n.i,until:clock+4}:null;
+    }
+    if(sound&&soundOn&&sound.state==='running'){
+      gained.forEach((_,i)=>{
+        const t=sound.currentTime+.055*i,osc=sound.createOscillator(),gain=sound.createGain();
+        osc.type='sine';osc.frequency.value=[523.25,659.25,783.99,1046.5,1174.66,1318.51][i];gain.gain.setValueAtTime(.0002,t);
+        gain.gain.exponentialRampToValueAtTime(.065,t+.012);gain.gain.exponentialRampToValueAtTime(.0002,t+.16);
+        osc.connect(gain);gain.connect(sound.destination);osc.start(t);osc.stop(t+.17);osc.onended=()=>{osc.disconnect();gain.disconnect()};
+      });
+    }
+    read('event').textContent=gained.map((p,i)=>letters[p.i]+' '+kinds[i]).join(' → ')+'　实收 +'+(total()-before)+(total()===cap?' · 蜜囊已满':'');
+    hud();
+  }
+  function step(dt){
+    clock+=dt;if(mark&&clock>=mark.until)mark=null;
+    if(budFlash&&clock>=budFlash){budFlash=0;hud()}
+    if(history.length&&clock-history[history.length-1].t>(levels()[1]===2?5:4)){history=[];hud()}
+    let vx=Number(keys.has('ArrowRight')||keys.has('d'))-Number(keys.has('ArrowLeft')||keys.has('a'));
+    let vy=Number(keys.has('ArrowDown')||keys.has('s'))-Number(keys.has('ArrowUp')||keys.has('w'));
+    const manualMove=Boolean(vx||vy);
+    if(manualMove&&target!==null)choose(null);
+    let travel=242*dt;
+    if(!manualMove&&target!==null){
+      const dest=flowers[target];vx=dest.x-bee.x;vy=dest.y-bee.y;
+      travel=Math.min(travel,Math.hypot(vx,vy));
+    }
+    const dist=Math.hypot(vx,vy);
+    if(dist>.5){bee.dx=vx/dist;bee.dy=vy/dist;bee.x=Math.max(20,Math.min(W-20,bee.x+bee.dx*travel));bee.y=Math.max(20,Math.min(H-18,bee.y+bee.dy*travel))}
+    const f=target===null?nearest(bee,100):(flowers[target].ripe?flowers[target]:null);
+    if(holding&&f&&total()<cap&&distance(bee,f)<=100){
+      if(mark&&mark.i===f.i&&clock<mark.until&&!f.markedOnce){f.progress=Math.max(f.progress,levels()[0]===2 ? .4 : .25);f.markedOnce=true;mark=null}
+      f.progress+=dt/.8;
+      if(f.progress>=1)harvest(f);
+    }
+    fx=fx.filter(e=>clock-e.t<.95);
+  }
+  function img(key){const im=images[key];return im.complete&&im.naturalWidth?im:null}
+  function ellipse(x,y,rx,ry,c){g.fillStyle=c;g.beginPath();g.ellipse(x,y,rx,ry,0,0,2*Math.PI);g.fill()}
+  function draw(){
+    g.clearRect(0,0,W,H);
+    if(img('pond'))g.drawImage(images.pond,0,0,W,H);else{g.fillStyle='#688851';g.fillRect(0,0,W,H)}
+    g.fillStyle='rgba(25,49,32,.18)';g.fillRect(0,0,W,H);
+    for(const f of flowers){
+      const pulse=motion.matches?0:Math.sin(clock*2+f.i)*1.25;
+      if(target===f.i||mark?.i===f.i){g.strokeStyle=mark?.i===f.i?'#ffdc69':'#fff3af';g.lineWidth=2;g.beginPath();g.ellipse(f.x,f.y+1,29+pulse,22+pulse*.6,0,0,2*Math.PI);g.stroke()}
+      ellipse(f.x+2,f.y+17,19,6,'rgba(39,37,17,.23)');
+      g.save();g.globalAlpha=f.ripe?1:.65;if(!f.ripe)g.filter='saturate(.5)';if(img('flower'))g.drawImage(images.flower,f.x-22,f.y-21,44,44);else ellipse(f.x,f.y,18,18,'#aac6fa');g.restore();
+      ellipse(f.x,f.y,5,5,f.ripe?'#f8cf4f':'#654c2d');
+      g.fillStyle='#fff9d5';g.font='bold 15px system-ui';g.textAlign='center';g.strokeStyle='#354027';g.lineWidth=3;g.strokeText(letters[f.i],f.x,f.y+39);g.fillText(letters[f.i],f.x,f.y+39);
+      if(f.progress){g.strokeStyle='#ffe56a';g.lineWidth=4;g.beginPath();g.arc(f.x,f.y,22,-Math.PI/2,-Math.PI/2+Math.PI*2*f.progress);g.stroke()}
+    }
+    for(const e of fx){
+      const t=clock-e.t;if(t<0)continue;
+      const span=.11;const show=motion.matches?1:Math.min(1,t/span);
+      const dx=e.b.x-e.a.x,dy=e.b.y-e.a.y;
+      if(t<span+.15&&e.kind!=='manual'){g.save();g.globalAlpha=1-Math.max(0,t-span)/.15;g.strokeStyle=e.kind==='garland'?'#fff1aa':'#ffd54f';g.lineWidth=3;g.beginPath();g.moveTo(e.a.x,e.a.y);g.quadraticCurveTo(e.a.x+dx*show*.5,e.a.y+dy*show*.5-19*show,e.a.x+dx*show,e.a.y+dy*show);g.stroke();g.restore()}
+      if(t<.88){g.save();g.globalAlpha=Math.min(1,(.88-t)*4);g.textAlign='center';g.font='bold 17px system-ui';g.strokeStyle='#433c22';g.lineWidth=3;g.fillStyle='#ffed92';const h=motion.matches?0:12*t;g.strokeText('+1',e.b.x,e.b.y-25-h);g.fillText('+1',e.b.x,e.b.y-25-h);g.restore()}
+    }
+    ellipse(bee.x+2,bee.y+17,14,4,'rgba(26,29,13,.25)');
+    g.save();g.translate(bee.x,bee.y-(motion.matches?0:Math.sin(clock*8)*1.3));if(bee.dx<0)g.scale(-1,1);
+    if(img('bee'))g.drawImage(images.bee,-25,-20,50,40);else{ellipse(0,0,12,8,'#f2b643');ellipse(8,-6,6,7,'#f7edd1')}g.restore();
+  }
+  function frame(ts){const delta=last===undefined?0:Math.min(.05,(ts-last)/1000);last=ts;if(!document.hidden)step(delta);draw();requestAnimationFrame(frame)}
+  for(const [i,ch] of [...letters].entries()){const b=document.createElement('button');b.type='button';b.dataset.index=i;b.textContent=ch;b.setAttribute('aria-label','飞向 '+ch+' 花');b.onclick=()=>choose(i);read('destinations').append(b)}
+  for(const b of document.querySelectorAll('[data-stage]'))b.onclick=()=>{stage=b.dataset.stage;reset()};
+  read('restart').onclick=reset;read('load').onchange=reset;read('hold').onclick=()=>{sticky=!sticky;syncHold()};
+  read('sound').onclick=async()=>{
+    const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio){read('sound').textContent='此浏览器无花音';return}
+    try{if(!sound)sound=new Audio();if(!soundOn)await sound.resume();soundOn=!soundOn;read('sound').setAttribute('aria-pressed',String(soundOn))}
+    catch{read('sound').textContent='花音不可用'}
+  };
+  function pointerTarget(e){const r=canvas.getBoundingClientRect();const at={x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};const near=flowers.slice().sort((a,b)=>distance(a,at)-distance(b,at))[0];if(distance(near,at)<85)choose(near.i)}
+  canvas.onpointerdown=e=>{if(pointer!==null)return;pointer=e.pointerId;canvas.setPointerCapture(pointer);pointerTarget(e);syncHold();canvas.focus()};
+  canvas.onpointermove=e=>{if(e.pointerId===pointer)pointerTarget(e)};
+  canvas.onpointerup=canvas.onpointercancel=canvas.onlostpointercapture=e=>{if(e.pointerId===pointer){pointer=null;syncHold()}};
+  const moveKeys=['ArrowLeft','ArrowRight','ArrowDown','ArrowUp','a','d','s','w'];
+  canvas.onkeydown=e=>{if(moveKeys.includes(e.key)){keys.add(e.key);e.preventDefault()}if(e.code==='Space'){space=true;syncHold();e.preventDefault()}if(/^[1-8]$/.test(e.key))choose(Number(e.key)-1)};
+  window.addEventListener('keyup',e=>{keys.delete(e.key);if(e.code==='Space'){space=false;syncHold()}});
+  function pause(){keys.clear();space=false;pointer=null;sticky=false;syncHold();last=undefined}
+  window.addEventListener('blur',pause);document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});
+  reset();requestAnimationFrame(frame);
+})();
+</script></body></html>
