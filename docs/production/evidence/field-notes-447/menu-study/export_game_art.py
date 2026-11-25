@@ -124,5 +124,5 @@ if __name__ == "__main__":
         remove(receipt,lambda n: n.tag==SVG+"text")
         render(receipt,"pickup-"+slug,(31,445,126,52))
     with tempfile.TemporaryDirectory() as folder:
-        subprocess.run(["node",str(HERE/"plates.cjs"),folder],check=True)
+        subprocess.run(["node",str(HERE/"plates.mjs"),folder],check=True)
         pages(Path(folder))

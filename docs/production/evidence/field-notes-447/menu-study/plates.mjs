@@ -1,9 +1,12 @@
-/* Editable artwork for #447. Run with node plates.cjs OUTPUT to produce individual SVG menu layers. */
-const fs = require('node:fs')
-const path = require('node:path')
-const { execFileSync } = require('node:child_process')
-const art = path.resolve(__dirname, '../../../../../prototypes/swarm-flight/art')
-const shared = fs.readFileSync(path.resolve(__dirname,'../shared-menu.svg'),'utf8')
+/* Editable artwork for #447. Run with node plates.mjs OUTPUT to produce individual SVG menu layers. */
+import fs from 'node:fs'
+import path from 'node:path'
+import { execFileSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+
+const here = path.dirname(fileURLToPath(import.meta.url))
+const art = path.resolve(here, '../../../../../prototypes/swarm-flight/art')
+const shared = fs.readFileSync(path.resolve(here,'../shared-menu.svg'),'utf8')
 const out = process.argv[2]
 const cache = new Map()
 const paper = '#fcf1d5', dark = '#3c3128', muted = '#695940', teal = '#315850'
@@ -35,10 +38,6 @@ function bolt(x,y){return `<circle cx="${x}" cy="${y}" r="3.3" fill="url(#brass)
 function plaque(x,y,w,h){
   const contour=`M20 8 Q${w*.5} -2 ${w-21} 8 Q${w-3} 10 ${w-4} 32 L${w-2} ${h-34} Q${w-2} ${h-12} ${w-24} ${h-10} Q${w*.52} ${h+2} 23 ${h-9} Q2 ${h-11} 3 ${h-31} L4 31 Q4 11 20 8 Z`
   return g(x,y,1,g(0,4,1,p(contour,'#aa8754','#8e704a'))+p(contour,'url(#ceramic)','#c3a575',1.5)+bolt(16,29)+bolt(w-17,29)+bolt(16,h-31)+bolt(w-17,h-31))
-}
-function button(x,y,w,text,focus=false,small=false){
-  const height=small?35:44
-  return r(x,y+2,w,height,12,'#c6a478')+r(x,y,w,height,12,'url(#raised)','#b79b70')+(focus?r(x-4,y-4,w+8,height+8,15,'none',teal,2.7):'')+center(x+w/2,y+height*.69,text,small?16:20,dark,serif,650)
 }
 function back(x,y){return t(x,y,'‹  返回',17,muted,sans,500,'end')}
 function svg(title,body,width=960,height=600){

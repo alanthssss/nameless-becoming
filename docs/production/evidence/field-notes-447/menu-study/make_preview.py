@@ -54,7 +54,7 @@ def bitmap(entry):
 def build(source, output):
     with tempfile.TemporaryDirectory(prefix="honey-menu-review-") as temp:
         general = Path(temp)
-        subprocess.run(["node", str(HERE/"plates.cjs"), str(general)], check=True)
+        subprocess.run(["node", str(HERE/"plates.mjs"), str(general)], check=True)
         paths = {p.stem: p for p in general.glob("*.svg")}
         paths["pause"] = HERE.parent/"shared-menu.svg"
         required = ["settings", "settings-about", "settings-motion", "controls"]
