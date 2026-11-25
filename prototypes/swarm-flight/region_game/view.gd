@@ -13,14 +13,13 @@ const MEADOW_PLATE: Texture2D = preload("res://art/collection-meadow.webp")
 const MeadowLayout = preload("res://region_game/layout.gd")
 const PLATE_RECT := MeadowLayout.PLATE
 const Keycaps = preload("res://region_game/wax_keycaps.gd")
+const FieldNotesStyle = preload("res://region_game/field_notes_style.gd")
 const FIELD_PAPER := Color("39483ef5")
 const FIELD_INK := Color("fff2d5")
 const FIELD_MUTED_INK := Color("e0e2cb")
 const FIELD_TEXT_SIZE := 20
 const FIELD_NOTE_SIZE := 18
-const BLUE_NECTAR := Color("b9edff")
-const VIOLET_NECTAR := Color("f0c7ff")
-const TWIN_PICKUP_DELAY := 0.13
+const PICKUP_FONT_SIZE := 21
 const FIELD_SIGN = preload("res://art/collection-home-sign.webp")
 const BEE_FOOT := Vector2(0,25)
 const SIGN_FOOT := Vector2(-67,24)
@@ -74,6 +73,7 @@ var _material_recoil := {}
 var _full_glow := 0.0
 var prompt_surface := StyleBoxFlat.new()
 var prompt_screen := Rect2()
+var _field_note_bounds: Array[Rect2] = []
 
 func _ready() -> void:
 	super._ready()
@@ -108,8 +108,8 @@ func nectar_event(event: Dictionary) -> void:
 	if area_key == "hub":
 		super.nectar_event(event)
 		return
-	if kind == "harvest":
-		_show_flower_pickup(event)
+	if kind in ["harvest", "material"]:
+		_show_pickup(event)
 		return
 	if kind == "full": _full_glow = .85
 	var item: Dictionary = {}
@@ -130,26 +130,18 @@ func nectar_event(event: Dictionary) -> void:
 			"fall":kind.ends_with("_fading") or kind.ends_with("_empty"),
 			"color":Color("c39a67") if kind.ends_with("_empty") else Color("e3c87c") if kind.ends_with("_fading") else Color("dcebb5")})
 	# The controller converts collection/pulse events to the existing feedback contract.
-	if kind in ["material", "pulse", "pulse_empty", "buy", "unlock", "complete"]:
+	if kind in ["pulse", "pulse_empty", "buy", "unlock", "complete"]:
 		super.nectar_event(event)
 
-func _show_flower_pickup(event: Dictionary) -> void:
-	var origin: Vector2 = event.pos
-	var delay := 0.0
-	var offset_x := 0.0
-	for other in harvest_texts:
-		if other.get("field_time", -1.0) != model.field_time: continue
-		delay = TWIN_PICKUP_DELAY
-		var gap: Vector2 = origin - Vector2(other.p)
-		if absf(gap.x) < 40 and absf(gap.y) < 40:
-			offset_x = 19.0 if gap.x >= 0 else -19.0
-			other.offset_x = -offset_x
-		break
-	var color := VIOLET_NECTAR if event.type == "rose" else BLUE_NECTAR
-	harvest_recoil = .24
-	harvest_texts.append({"p": origin, "age": 0.0, "text": "+%d" % event.amount,
-		"field_time": model.field_time, "delay": delay, "offset_x": offset_x, "color": color})
-	nectar_motes.append({"from": origin, "age": -delay, "duration": .42, "color": color})
+func _show_pickup(event: Dictionary) -> void:
+	super.nectar_event(event)
+	var label := harvest_texts[-1]
+	label.text = "%s +%d" % [FieldNotesStyle.PICKUP_NAMES[event.type], event.amount]
+	label.color = FieldNotesStyle.PICKUP_COLORS[event.type]
+	if event.kind == "harvest":
+		var mote := nectar_motes[-1]
+		mote.from = event.pos
+		mote.color = label.color
 
 func _prepare_paint() -> void:
 	if _painted_area == area_key: return
@@ -304,6 +296,7 @@ func _draw() -> void:
 				_draw_working_bee()
 				_draw_bag()
 	prompt_screen = Rect2()
+	_field_note_bounds.clear()
 	_draw_resource_feedback()
 	_draw_region_effects()
 	if model.p.distance_to(entry) < 240.0:
@@ -314,6 +307,7 @@ func _draw() -> void:
 			_field_note(label_at,"庭院入口",false)
 	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE/MeadowLayout.FIELD_ZOOM)
 	_draw_home_bearing()
+	_draw_pickup_labels()
 
 func _frame_station() -> void:
 	var zoom := 1.0
@@ -745,18 +739,57 @@ func _draw_region_effects() -> void:
 			var tone: Color = mote.color
 			tone.a = (1-t)*.65
 			_ellipse(at,Vector2(2.7,1.4),tone)
+
+func pickup_label_layout() -> Array[Rect2]:
+	var result: Array[Rect2] = []
+	var occupied: Array[Rect2] = _field_note_bounds.duplicate()
+	var safe := get_viewport_rect().grow(-6)
 	for item in harvest_texts:
-		if not item.has("field_time"): continue
-		var age: float = item.age if reduced_motion else item.age - item.delay
-		if age < 0: continue
-		var at: Vector2 = item.p + Vector2(item.offset_x, -24)
+		var extent := feedback_font.get_string_size(item.text, HORIZONTAL_ALIGNMENT_LEFT, -1, PICKUP_FONT_SIZE).ceil() + Vector2(10, 12)
+		var origin: Vector2 = (item.p - model.camera_offset) * MeadowLayout.FIELD_ZOOM
+		var preferred := origin - Vector2(extent.x * .5, extent.y + 12)
+		var box := _place_pickup_label(preferred, extent, safe, occupied)
+		result.append(box)
+		occupied.append(box.grow(3))
+	return result
+
+func _place_pickup_label(preferred: Vector2, extent: Vector2, safe: Rect2, occupied: Array[Rect2]) -> Rect2:
+	var origin := preferred.round().clamp(safe.position, safe.end - extent)
+	# A label can sit against either edge of a prompt or a previous pickup.
+	var xs: Array[float] = [origin.x]
+	var ys: Array[float] = [origin.y]
+	for block in occupied:
+		xs.append(block.position.x - extent.x)
+		xs.append(block.end.x)
+		ys.append(block.position.y - extent.y)
+		ys.append(block.end.y)
+	var best := Rect2(origin, extent)
+	var best_score := INF
+	for x in xs:
+		for y in ys:
+			var candidate := Rect2(Vector2(x, y).clamp(safe.position, safe.end - extent), extent)
+			var delta := (candidate.position - origin) * Vector2(1.0, 2.7)
+			var score := delta.length_squared()
+			if score >= best_score: continue
+			if occupied.any(func(block: Rect2) -> bool: return candidate.intersects(block)): continue
+			if score == 0: return candidate
+			best = candidate
+			best_score = score
+	return best
+
+func _draw_pickup_labels() -> void:
+	if harvest_texts.is_empty(): return
+	var boxes := pickup_label_layout()
+	for i in harvest_texts.size():
+		var item := harvest_texts[i]
+		var box := boxes[i]
 		var ink: Color = item.color
+		var baseline := box.position + Vector2(0, 5 + feedback_font.get_ascent(PICKUP_FONT_SIZE))
 		if not reduced_motion:
-			at.y -= 21.0 * smoothstep(0.0, .55, age)
-			ink.a = 1.0 - smoothstep(.68, .98, item.age)
-		var start := Vector2(at.x-24, at.y).round()
-		draw_string_outline(feedback_font, start, item.text, HORIZONTAL_ALIGNMENT_CENTER, 48, 23, 4, Color("423643", ink.a))
-		draw_string(feedback_font, start, item.text, HORIZONTAL_ALIGNMENT_CENTER, 48, 23, ink)
+			baseline.y += 4 * (1.0 - smoothstep(0.0, .22, item.age))
+			ink.a = 1.0 - smoothstep(.72, 1.0, item.age)
+		draw_string_outline(feedback_font, baseline, item.text, HORIZONTAL_ALIGNMENT_CENTER, box.size.x, PICKUP_FONT_SIZE, 4, Color("423643", ink.a))
+		draw_string(feedback_font, baseline, item.text, HORIZONTAL_ALIGNMENT_CENTER, box.size.x, PICKUP_FONT_SIZE, ink)
 
 # The anchor and its tail stay in world coordinates as the camera moves.
 func _field_note(at: Vector2, words: String, active: bool, mark_width := 0, screen_space := false, action := "") -> Rect2:
@@ -798,6 +831,7 @@ func _field_note(at: Vector2, words: String, active: bool, mark_width := 0, scre
 		draw_colored_polygon(tip,prompt_surface.bg_color)
 		draw_polyline(tip,prompt_surface.border_color,1.8,true)
 		prompt_screen = Rect2((box.position-model.camera_offset)*scale,box.size*scale)
+	_field_note_bounds.append((box if screen_space else prompt_screen).grow(9))
 	var cursor := box.position.x+15+mark_width
 	var baseline := box.get_center().y+(feedback_font.get_ascent(pixels)-feedback_font.get_descent(pixels))/2
 	if not prefix.is_empty():

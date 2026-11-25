@@ -2,16 +2,13 @@ extends Control
 const Art = preload("res://nectar_ui_art.gd")
 const Plate = preload("res://region_game/menu_plate.gd")
 const INK := Color("403126")
-const PICKUP_NAMES := {"fiber": "纤维", "resin": "树脂", "blue": "蓝花蜜", "rose": "紫花蜜"}
+const FieldStyle = preload("res://region_game/field_notes_style.gd")
+# Centre points on the painted inventory at its authored 960 x 600 scale.
+const RESOURCE_CENTERS := {"honey": Vector2(230,553), "fiber": Vector2(230,522), "resin": Vector2(117,553)}
+const ARRIVAL_TIME := 0.38
+const GLOW_TIME := 0.30
 var ui
-var receipt_gains: Dictionary[String, int] = {}
-var receipt_left := 0.0
-var receipt_art := {
-	"blue": Plate.texture("pickup-honey"),
-	"rose": Plate.texture("pickup-honey"),
-	"fiber": Plate.texture("pickup-fiber"),
-	"resin": Plate.texture("pickup-resin"),
-}
+var pickup_bursts: Array[Dictionary] = []
 var pause_hit := Button.new()
 var full_badge := Plate.texture("full-bag")
 var backing := Plate.texture("field-hud")
@@ -42,19 +39,27 @@ func _fit() -> void:
 func refresh() -> void:
 	visible = ui.driver.model.field != null
 	pause_hit.tooltip_text = "暂停 · "+ui.driver.control_hint("pause")
-	if not visible: receipt_left=0
-	set_process(visible and (receipt_left>0 or ui.energy_dial.is_processing()))
+	if not visible: pickup_bursts.clear()
+	set_process(visible and (not pickup_bursts.is_empty() or ui.energy_dial.is_processing()))
 	queue_redraw()
 
-func show_pickups(gains: Dictionary[String, int]) -> void:
-	receipt_gains = gains
-	receipt_left = 1.6
+func show_pickups(events: Array[Dictionary]) -> void:
+	var groups := {}
+	for event in events:
+		var kind: String = event.type
+		var badge: String = "honey" if event.kind == "harvest" else kind
+		if not groups.has(badge): groups[badge] = []
+		for unit in event.amount: groups[badge].append(kind)
+	for badge in groups:
+		pickup_bursts.append({"badge": badge, "units": groups[badge], "age": 0.0})
 	set_process(true)
 	queue_redraw()
 
 func _process(dt: float) -> void:
-	receipt_left = maxf(0,receipt_left-dt)
-	set_process(receipt_left>0 or ui.energy_dial.is_processing())
+	for burst in pickup_bursts: burst.age += dt
+	while not pickup_bursts.is_empty() and pickup_bursts.front().age >= ARRIVAL_TIME + GLOW_TIME:
+		pickup_bursts.pop_front()
+	set_process(not pickup_bursts.is_empty() or ui.energy_dial.is_processing())
 	queue_redraw()
 
 func _number(at: Vector2, value: String, width: float, pixels: int, align := HORIZONTAL_ALIGNMENT_RIGHT) -> void:
@@ -80,11 +85,33 @@ func _draw() -> void:
 		_number(Vector2(161+(i%2)*113,528+floori(i/2.0)*31),values[i],48,15)
 	if m.cargo_total()>=m.capacity():
 		draw_texture_rect(full_badge,Rect2(36,446,240,46),false)
-	if receipt_left > 0:
-		var y := 395 if m.cargo_total() >= m.capacity() else 445
-		var x := 31
-		for key in receipt_gains:
-			draw_texture_rect(receipt_art[key], Rect2(x, y, 138, 52), false)
-			var label := "%s +%d" % [PICKUP_NAMES[key], receipt_gains[key]]
-			_number(Vector2(x+46, y+31), label, 84, 18, HORIZONTAL_ALIGNMENT_LEFT)
-			x += 142
+	for burst in pickup_bursts:
+		_draw_pickup_burst(burst)
+
+func _draw_pickup_burst(burst: Dictionary) -> void:
+	var center: Vector2 = RESOURCE_CENTERS[burst.badge]
+	var age: float = burst.age
+	if ui.driver.reduced_motion or age >= ARRIVAL_TIME:
+		var fade := smoothstep(ARRIVAL_TIME, ARRIVAL_TIME + GLOW_TIME, age)
+		var radius := 14.0 if ui.driver.reduced_motion else 14.0 + 4.0 * fade
+		draw_arc(center, radius, 0, TAU, 32, Color("ad7635", 0.85 * (1.0-fade)), 2.8, true)
+		draw_arc(center, radius, 0, TAU, 32, Color("fff1b4", 1.0-fade), 1.4, true)
+		return
+	var t := smoothstep(0.0, ARRIVAL_TIME, age)
+	var units: Array = burst.units
+	for i in units.size():
+		var kind: String = units[i]
+		var angle := PI * (0.12 + 0.76 * (i + 0.5) / units.size())
+		var side := -1.0 if burst.badge == "fiber" else 1.0
+		var start := center + Vector2(cos(angle)*31.0, side*sin(angle)*25.0)
+		var rim := center + Vector2(0,-6)
+		var bend := Vector2(start.x, minf(start.y, rim.y)-14)
+		var at := start.lerp(bend,t).lerp(bend.lerp(rim,t),t)
+		var size := lerpf(6.5, 3.5, t)
+		if burst.badge == "honey":
+			var fill: Color = FieldStyle.PICKUP_COLORS[kind]
+			draw_circle(at, size, Color("805f53"), true, -1, true)
+			draw_circle(at, size-1.2, fill, true, -1, true)
+			draw_circle(at-Vector2.ONE*size*.3, size*.28, Color("fff8dd"), true, -1, true)
+		else:
+			Art.painted_icon(self, kind, at, size)

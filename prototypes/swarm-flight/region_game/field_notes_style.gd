@@ -1,5 +1,10 @@
 extends RefCounted
 const BODY := 20
+const PICKUP_NAMES := {"blue": "蓝花蜜", "rose": "紫花蜜", "fiber": "纤维", "resin": "树脂"}
+const PICKUP_COLORS := {
+	"blue": Color("b9edff"), "rose": Color("f0c7ff"),
+	"fiber": Color("fff0bf"), "resin": Color("ffc47f"),
+}
 
 func field_caption(label: Label) -> void:
 	label.add_theme_font_size_override("font_size",BODY)
