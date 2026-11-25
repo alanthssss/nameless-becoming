@@ -290,6 +290,7 @@ npm run test
 
 ### Steam Demo 深化资料（SD-v1）
 
+- [《龟龟潜海记》技能树与《采蜜》0.32 对照](docs/research/shelldiver-skill-tree-study.md)（正式版位置图与购买证据、GX 逐级价表、池岸同预算路线实验）。
 - [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
 - [Shelldiver 完整实机研究：覆盖与续接记录](docs/research/shelldiver-fullplay-checkpoint.md)（10%额度检查点暂停、未完成；已保存[86张实机图证清单](docs/research/shelldiver-S11-captures.json)，含[地图/美术/交互研究方法与媒体归档](docs/research/shelldiver-fullplay-checkpoint.md#study-method)、实际时码和缺口）。
 - [Shelldiver 11月5日增量报告](docs/research/shelldiver-increment-2026-11-05.md)（第三趟购买、跨趟库存、400/500/700/800/1000米局部地图、经营便利和终局；新增61张图证，设计采用待Alan评议）。
