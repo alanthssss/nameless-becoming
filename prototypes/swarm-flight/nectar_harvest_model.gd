@@ -80,6 +80,7 @@ func emit(kind: String,where: Vector2,amount := 0) -> void:
 	events.append({"kind":kind,"pos":where,"amount":amount})
 
 func at_home() -> bool: return area == "hub"
+func energy_is_low() -> bool: return not at_home() and energy <= max_energy() * 0.25
 func cargo_total() -> int: return int(cargo.blue)+int(cargo.rose)
 func cargo_value() -> int:
 	var base := int(cargo.blue)+int(cargo.rose)*3

@@ -187,7 +187,7 @@ func _process(delta: float) -> void:
 		if autosave >= 4.0:
 			autosave = 0.0
 			persist()
-		if model.energy < model.max_energy()*0.27 and not low_energy_announced:
+		if model.energy_is_low() and not low_energy_announced:
 			low_energy_announced = true
 			message("体力偏低",4)
 		if model.at_home(): low_energy_announced = false
@@ -199,7 +199,7 @@ func _process(delta: float) -> void:
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
 func _hud_signature() -> String:
-	return str([int(ceil(model.energy)),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
+	return str([int(ceil(model.energy)),model.energy_is_low(),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
 
 func has_harvest_hint() -> bool:
 	if model.at_home() or model.cargo_total() >= model.capacity() or not model.interaction().is_empty(): return false
@@ -503,6 +503,7 @@ func consume_events(pending: Array) -> void:
 			persist()
 		elif kind == "full": message("蜜囊已满",2)
 		elif kind == "return":
+			sound.play_event("arrival_bell",0)
 			home_return_summary = "本次带回 · 蓝花蜜 %d · 紫花蜜 %d\n材料现有 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.materials.fiber,event.materials.resin]
 			home_sale_summary = ""
 			message("带回蓝花蜜 %d、紫花蜜 %d · 体力已补满" % [event.cargo.blue,event.cargo.rose],4)

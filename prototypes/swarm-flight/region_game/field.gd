@@ -273,10 +273,10 @@ func _pulse(aim: Vector2) -> void:
 	_event("material_dropped",selected.id)
 	last_action = "材料已松落，靠近拾取"
 
-func step(delta: float, motion: Vector2, collect: bool, space_held: bool = false, pulse: bool = false, aim := Vector2.ZERO) -> void:
+func step(delta: float, motion: Vector2, collect: bool, space_held: bool = false, pulse: bool = false, aim := Vector2.ZERO, entry_pressed := false) -> void:
 	drawing_resin_id = -1
 	if not pulse: _beat_shown = false
-	super.step(delta,motion,collect,space_held,pulse,aim)
+	super.step(delta,motion,collect,space_held,pulse,aim,entry_pressed)
 
 func _harvest(dt: float) -> void:
 	var source := nearby_material(RESIN_REACH,true)
@@ -309,7 +309,7 @@ func snapshot() -> Dictionary:
 	result.supply_rank = supply_rank
 	return result
 
-func restore(data: Variant) -> bool:
+func restore(data: Variant, allow_gate_arrival := false) -> bool:
 	if not data is Dictionary or data.get("population_version") != 1 or data.get("supply_rank") not in [0,1,2]: return false
 	if not data.get("flowers") is Array or not data.get("materials") is Array: return false
 	for i in data.flowers.size():
@@ -372,6 +372,6 @@ func restore(data: Variant) -> bool:
 		data = data.duplicate(true)
 		if version < 4: _clear_pond_flowers(data.flowers,coast,[JAR_RECT])
 		_clear_pond_flowers(data.flowers,coast,_pond_obstacles(coast),32)
-	if not super.restore(data): return false
+	if not super.restore(data,allow_gate_arrival): return false
 	supply_rank = int(data.supply_rank)
 	return true
