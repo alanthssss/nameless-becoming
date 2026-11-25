@@ -8,6 +8,8 @@ const Canopy = preload("res://leaf_canopy_geometry.gd")
 const RAIN_SHELTER := {"pos":Vector2(2760,660),"half_width":160.0}
 const WORLD_WIDTH := 3600.0
 const HUB_SHOP := Vector2(360,520)
+# Shelf and counter bounds on the 1280 × 800 courtyard painting, including the side posts.
+const HUB_SHOP_STALL := Rect2(174,292,292,242)
 const HUB_TREE := Vector2(740,485)
 const HUB_JOURNAL := Vector2(1110,440) # Historical probe identifier; no station interaction.
 const HUB_DEPART := Vector2(1015,490)
@@ -176,7 +178,8 @@ func clear_controls() -> void:
 
 func interaction() -> String:
 	if area == "hub":
-		for point in [{"p":HUB_SHOP,"action":"shop"},{"p":HUB_TREE,"action":"tree"},{"p":HUB_DEPART,"action":"depart"}]:
+		if HUB_SHOP_STALL.has_point(p) or p.distance_to(HUB_SHOP) <= 100.0: return "shop"
+		for point in [{"p":HUB_TREE,"action":"tree"},{"p":HUB_DEPART,"action":"depart"}]:
 			if p.distance_to(point.p) <= 100.0: return point.action
 	elif area == "pond":
 		if p.distance_to(POND_ENTRY) <= 70.0: return "home"
