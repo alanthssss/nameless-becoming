@@ -319,5 +319,58 @@
         "source_sha256": "7f7c00751162d9162ffd428aac968ec19723fc7face7bb4a59316f46e9932de8"
       }
     }
+  },
+  "courtyard_basin_visitors": {
+    "issue": 429,
+    "milestone": "M3",
+    "date": "2026-11-26",
+    "generator": "Built-in ImageGen, original transparent sprite sheet",
+    "prompt": "One warm neutral hand-painted fish facing right, oblique above, and one crouched frog with folded legs and readable eyes. Two detached, full-body sprites. Upper-left light, warm soft outline. No scenery, cast shadow, lettering or props. Read at 24–32 pixels.",
+    "source_in_repository": "docs/art/honey-basin-visitors-429.png",
+    "source_sha256": "0cb2d394f4ae575569210422515c09ab41658c4df580affab34a5f29d2ed1c5c",
+    "output": [
+      {
+        "file": "basin-fish.webp",
+        "source_crop": [
+          78,
+          282,
+          934,
+          612
+        ],
+        "dimensions": [
+          178,
+          90
+        ],
+        "sha256": "e8fa5fb88d2c7b272d237e57dc3ea89d8921612614b5bea3621184bee103c121"
+      },
+      {
+        "file": "basin-frog.webp",
+        "source_crop": [
+          1137,
+          181,
+          1707,
+          682
+        ],
+        "dimensions": [
+          173,
+          149
+        ],
+        "sha256": "0c51f077f50b3ba628b60979cbdfb7b8ce8b732c7955c8d62edb7dcb667bcc4e"
+      }
+    ],
+    "running_colour_after_review": "Fixed leaf-green frog and one red-and-ivory koi. Three vermilion patches are registered to the neutral fish texture by basin_pigment.gdshader; each courtyard instance draws the species only."
+  },
+  "illustrated_menus": {
+    "issue": 333,
+    "layout_regression_issue": 412,
+    "source": "Built-in image generation, approved visual proposal, 2026-11-25/26. Four original prop silhouettes extracted from one atlas with transparent edges. The separate bee wax seal uses the same warm upper-left lighting. All labels, stock values, bindings and buttons are live Godot controls.",
+    "assets": {
+      "honey-menu-book.webp": "53cb691e70e13ca58143d98cc5ff3c289f304e76e59afd1199f4185180a85c55",
+      "honey-menu-letter.webp": "15e298db74944fac69849f897fc42c772a52a6a0b6797ac49eb3828758168182",
+      "honey-menu-seal.webp": "a8ecf1e00a1715d16c8a130f599061aa073b9e020b8d008dcda5d3b88df04f52",
+      "honey-menu-settings.webp": "76d0224686eeafd0ec40b00683efd63937a9c7be7d6d8dd0dbe779687120bf27",
+      "honey-menu-shop.webp": "e0c606f072bfc9d460add1c95f92d2893008a96f4ffab26a4f60906a20ca3555"
+    },
+    "settings_symbols": "Five original interface symbols derived from the approved settings prototype, stored in art/honey-settings-symbols.svg."
   }
 }

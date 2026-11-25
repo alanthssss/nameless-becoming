@@ -135,6 +135,8 @@ func refresh() -> void:
 	pond_info.text = "蓝花蜜 · 每份 1 金币\n振松种穗，飞近收纤维 · 可织轻盈双翼。"
 	meadow_info.text = "紫花蜜 · 每份 3 金币\n"+("振开树皮，贴近收树脂 · 可修远行双翼。" if "meadow" in driver.model.owned else "在成长手册中开放这条花路。")
 	var field = driver.model.field
+	# Leave the foreground water bowl visible on the courtyard painting.
+	hud_status.position.x = 178.0 if driver.model.at_home() else 24.0
 	if field != null:
 		# Action prompts belong to the nearby flower, seed head, seam or sign.
 		# Reserve the lower HUD for a whole-trip constraint.
@@ -180,12 +182,12 @@ func _build_menu() -> void:
 	var center := CenterContainer.new()
 	slots.add_child(center)
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var page := card(center)
-	page.custom_minimum_size.x = 500
+	var page := reading_page(center,Vector2(84,62))
+	page.custom_minimum_size.x = 608
 	var content := column(page,16)
 	text_line(content,"选择存档",32).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	slot_list = column(content,8)
-	slots_back = action(content,"返回",driver.close_slots)
+	slots_back = action(content,"返回",driver.close_slots,true)
 
 func _show_slots() -> void:
 	var initial_focus: Button
@@ -194,6 +196,7 @@ func _show_slots() -> void:
 		if not slot_buttons.has(id):
 			var new_button := action(slot_list,"",driver.choose_slot.bind(id))
 			new_button.add_theme_stylebox_override("normal",style(Color("eedcab77"),Color("b7a575"),1,8))
+			new_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			slot_buttons[id] = new_button
 		var button: Button = slot_buttons[id]
 		var summary: String
@@ -211,8 +214,7 @@ func _show_slots() -> void:
 
 func ask_restart() -> void:
 	if driver.slots_enabled:
-		restart_dialog.title = "重新开始存档 %d" % driver.active_slot
-		restart_dialog.dialog_text = "备份存档 %d 的进度后，将在这个档位开始新的一轮。" % driver.active_slot
+		restart_title.text = "在存档 %d 重新开始？" % driver.active_slot
 	super.ask_restart()
 
 func show_mode(mode: String) -> void:
@@ -250,7 +252,10 @@ func show_mode(mode: String) -> void:
 		if leaving_slots: menu_slots.grab_focus()
 
 func _add_settings_controls(parent: Control) -> void:
-	controls_button = action(parent, "操作说明与改键", _open_controls)
+	var line := _setting_row(parent,"操作",3)
+	controls_button = action(line,"查看或改键",_open_controls)
+	controls_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	tool_button(controls_button)
 
 func _open_controls() -> void:
 	if driver.mode != "settings": return
@@ -267,17 +272,26 @@ func close_controls() -> void:
 func controls_input(event: InputEvent) -> bool:
 	return is_instance_valid(controls_page) and controls_page.handle_input(event)
 
+func _refresh_journal_hints() -> void:
+	var collect: String = driver.control_hint("interact")
+	var pulse: String = driver.control_hint("pulse")
+	journal_controls.text = ("靠近紫花，按住 %s。" if journal_meadow else "花心发亮时，按住 %s。") % collect
+	journal_material_hint.text = ("%s 掀开树皮，贴近后按住 %s。" % [pulse,collect]) if journal_meadow else ("%s 振翅，飞近飘绒。" % pulse)
+
+func _journal_return_text() -> String:
+	return "从入口木牌返程。续航耗尽会损失一半花蜜，材料、金币与成长保留。"
+
 func _refresh_control_hints() -> void:
 	if not is_instance_valid(journal_controls): return
 	var collect: String = driver.control_hint("interact")
 	var pulse: String = driver.control_hint("pulse")
 	var dash: String = driver.control_hint("dash")
-	journal_controls.text = "按住 %s 采蜜，%s 振翅。按住 %s 蓄力，松开冲刺。" % [collect, pulse, dash]
+	_refresh_journal_hints()
 	transition_hint.text = "%s 跳过蜂舞" % dash
 	var pad: bool = driver.input_device == "pad"
 	var back := "B" if pad else "Esc"
 	region_back.text = "先留在这里  ·  " + back
-	shop_footer.text = "%s 返回庭院 · 交付立即结算" % back
+	leave_button.tooltip_text = "%s 返回庭院" % back
 	pause_button.tooltip_text = "暂停与操作说明 · " + driver.control_hint("pause")
 	var shortcut := back + " 返回" if driver.mode == "pause" else ("A 确认" if pad else "Enter 确认")
 	menu_footer.text = menu_footer.text.get_slice("  ·  ",0) + "  ·  " + shortcut
