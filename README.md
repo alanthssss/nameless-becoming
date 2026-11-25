@@ -1,4 +1,4 @@
-# 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
+# Honey 与早期游戏原型
 
 **Honey · 当前首作。** 这是一款休闲单机游戏。玩家在池岸取蜜、接绒、与占花生物争出手的空档，再花收获改变下一趟的飞法。开发期间仅 Alan 可自行体验，本轮按规则与模型核验，Demo 上线后收集玩家反馈。四季、二十四节气和冬季专属玩法留作可能的后作方向。0.32 的池岸接绒和紫花地取脂已有实机回执，新交互处于设计阶段。[首作范围](docs/design/swarm-flight-gdd.md#lean-nectar-first-game) · [当前执行位置](docs/design/solar-term-campaign-production-spec.md#production-now) · [0.32 实机回执](docs/production/region-greybox-receipt.md#field-ecology-032)
 
@@ -73,6 +73,8 @@ macOS 可双击 `scripts/play_rain_route.command`；其它环境设置 `GODOT_BI
 [核心规则、30 项细节矩阵与当前执行状态](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。旧单屏版本被 Alan 否定后，已改为 3600×2100 连续地图、跟随镜头、线条平涂场景、完整蜜蜂朝向、区域降雨与叶下遮蔽。两条路线、水面自由飞越、载荷与建台使用真实规则；叶棚在蜂上方透明显示避雨，队伍总计六只（主角加五伙伴）；Alan 实玩后反馈“有点感觉了”，当前获得初步方向认可；开发者测试与这条反馈不代表完整产品验收。雨水现按 **三候 × 五天，共十五个游戏日** 推进，每天有可操作的工作：认路、建台、授粉、过叶尖滴水、清沟、叶台歇脚、撑叶护送和带队等。世界成果跨日保留，记事在当日实际完成后记录原雨水事件编号；这是原矩阵在新地图上的玩法转译，未宣称逐项复刻全部旧细节。独立日历存档与正式 Campaign 隔离，后者的章节入口尚未替换。10 月 19 日起上述脚本切到新的章节评审存档；旧 `rain_route_calendar_v1.json` 保留。
 
 ## 旧 Campaign：仍供商业标题与正式导出使用
+
+此原型曾使用「一会儿巢里见 · See You at the Hive」作为实现品牌。
 
 以下记录属于旧 Campaign 路径，其中“30 条／其余 330 条”不描述上方新四季 360 日的实现数量。新路线尚未接入商业标题与正式导出，下面的旧测试和试玩状态也不代表新版验收。当前评估见[成熟度与生产重量评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)。
 

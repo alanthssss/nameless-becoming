@@ -344,6 +344,8 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 **2026-11-25 · Honey 的成长设计与反馈安排。** Alan 决定当前首作统一叫 Honey，本轮研究基线为 0.32。成长设计沿[首作范围](swarm-flight-gdd.md#lean-nectar-first-game)与 M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322) 继续，使用[已归档的正式版技能树研究](../research/shelldiver-skill-tree-study.md)及[池岸花湾](pond-violet-map-resource-design.md#nectar-wing-bay)对照下一趟飞法。当前按模型、规则与运行检查核实，Alan 可在方便时自行体验，本轮不安排真人试玩。Demo 上线后收集玩家自主购买、返程和重访反馈。规模与成本沿 M4/[#211](https://github.com/alanthssss/nameless-becoming/issues/211) 复核。以下为历史检查点。
 
+**2026-11-24 · 首作范围与下一次可玩验证。** Alan 确认以休闲单机的采集、轻对抗及成长为首作核心，四季、节气和冬季玩法留作后续作品储备。[首作决定](swarm-flight-gdd.md#lean-nectar-first-game) → M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322)。当前可玩基线为 0.32，两区采售和植物取材已有开发回执。下一次制作聚焦[同一池岸花湾的成长前后](pond-violet-map-resource-design.md#nectar-wing-bay)，由 Codex 打样；试玩先看玩家能否读懂出手的结果，再看他自己赚到升级后如何改变飞线。首作扩展与已测成本沿 M4/[#211](https://github.com/alanthssss/nameless-becoming/issues/211)复核。样段、玩家体验与产品接受分别凭证据回写。
+
 **2026-11-23 · 花蜜与材料交互复核。** Alan 认可 0.31 的画风方向，并明确以现实关系为基础做交互艺术。沿 GDD §8.1/12/13.9 → M3/#322，#349 处理尺度，#350 处理花期、蜜量和非蜜材料，#351 验证旧档与原生两区。0.32 本机入口和 14 组元素核查见[版本回执](../production/region-greybox-receipt.md#field-ecology-032)和[设计记录](pond-violet-map-resource-design.md#field-ecology-032)。下个检查点由 Alan 试玩辨认近花蜜滴与两种材料的取法；技术收口由 Codex 回写原 Issue，M3 仍开放。以下为先前记录。
 
 **2026-11-23 · 两处采集地画风复核。** Alan对 0.30.0 的反馈是采售动效略有改善，地图疏密与景深看不出直观变化，收集区美术与整作割裂。沿 GDD §8.1/12/13.9 → M3/#322，#349 重绘两区与花冠，#351 负责原生对照及包验证。0.31.0 已可从最终 Mac 包走完两条取材与交付路线。下一检查点由 Alan 对照庭院试玩，判断是否能一眼分辨岔路、看出前后层次，以及花和蜜蜂是否属于同一世界。集成状态以原 Issue 读回为准。[画面及验证](../production/region-greybox-receipt.md#painted-fields-031)。以下为前次迭代记录。
