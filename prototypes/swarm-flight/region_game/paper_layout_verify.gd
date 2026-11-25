@@ -137,6 +137,21 @@ func check_menus() -> void:
 	await frames()
 	scan("settings end",ui.settings)
 	expect(ui.settings_back.get_global_rect()==back,"settings return moves with text")
+	ui._open_controls()
+	var controls = ui.controls_page
+	for device in ["kbm","pad"]:
+		controls.open(device)
+		controls.scroll.scroll_vertical = 0
+		await frames()
+		scan("bindings "+device,controls)
+		controls._listen("interact","key" if device=="kbm" else "pad")
+		await frames()
+		scan("waiting for binding "+device,controls)
+		controls.scroll.scroll_vertical = int(controls.scroll.get_v_scroll_bar().max_value)
+		await frames()
+		scan("bindings end "+device,controls)
+		controls._finish_capture()
+	ui.close_controls()
 	game.model.visited_meadow = false
 	await mode("journal")
 	scan("unvisited journal",ui.journal)
@@ -240,7 +255,7 @@ func check_size(pixels: Vector2i) -> void:
 			book_leaves.append(node)
 	expect(book_leaves.size()==2,"growth book has both painted leaves")
 	var known := [ui.hud,ui.shop,ui.tree,ui.regions,ui.menu,ui.settings,ui.slots,ui.journal,
-		ui.restart_dialog,ui.transition_layer,ui.transition_hint,ui.toast_panel]
+		ui.controls_page,ui.restart_dialog,ui.transition_layer,ui.transition_hint,ui.toast_panel]
 	for node in ui.get_children():
 		if node is Control: expect(node in known,"uncovered UI root "+str(node.get_class())+" "+str(node.name))
 	await frames()
