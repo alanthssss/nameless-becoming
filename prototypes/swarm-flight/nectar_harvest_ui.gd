@@ -32,8 +32,6 @@ var detail_costs := {}
 var detail_cost_row: HBoxContainer
 var hud_values := {}
 var hud_tweens := {}
-var energy_pulse: Tween
-var low_energy := false
 var trip_text: Label
 var goal_text: Label
 var help_text: Label
@@ -41,7 +39,7 @@ var toast: Label
 var toast_panel: PanelContainer
 var bag_bar: ProgressBar
 var energy_bar: ProgressBar
-var energy_dial: Control
+var energy_dial: EnergyDial
 var shop: Control
 var shop_coins: Label
 var shop_cargo: Label
@@ -467,8 +465,11 @@ func _build_transition() -> void:
 	transition_hint.hide()
 	transition_layer.hide()
 
+func transition_focus() -> Vector2:
+	return driver.model.p - Vector2(driver.model.camera_x, 0)
+
 func set_transition(alpha: float, words: String) -> void:
-	transition_layer.configure(alpha,driver.model.p-Vector2(driver.model.camera_x,0),driver.transition_short,driver.transition_elapsed)
+	transition_layer.configure(alpha,transition_focus(),driver.transition_short,driver.transition_elapsed)
 	transition_label.text = words
 	move_child(transition_layer,get_child_count()-1)
 	move_child(transition_hint,get_child_count()-1)
@@ -793,7 +794,7 @@ func refresh() -> void:
 	_number(coins_text,str(m.coins),m.coins)
 	_number(fiber_text,str(m.materials.fiber),m.materials.fiber)
 	_number(resin_text,str(m.materials.resin),m.materials.resin)
-	_energy_attention(m.energy < m.max_energy()*.25 and not m.at_home())
+	energy_dial.set_warning(driver.mode == "play" and m.energy_is_low(), driver.reduced_motion)
 	trip_text.text = driver.area_name(m.area)+(" · 安全生活区" if m.at_home() else " · 第 %d 趟" % maxi(1,m.trip_index))
 	goal_text.text = m.goal_text()
 	help_text.text = ""
@@ -913,21 +914,6 @@ func _number(label: Label, words: String, value: int) -> void:
 	tween.tween_property(label,"scale",Vector2.ONE,.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	hud_tweens[key] = tween
 
-func _energy_attention(warning: bool) -> void:
-	warning = warning and not driver.reduced_motion
-	if warning == low_energy: return
-	low_energy = warning
-	if energy_pulse: energy_pulse.kill()
-	energy_bar.modulate = Color.WHITE
-	energy_dial.modulate = Color.WHITE
-	energy_text.modulate = Color.WHITE
-	if warning:
-		energy_pulse = create_tween().set_loops()
-		energy_pulse.tween_property(energy_dial,"modulate",Color("efb678"),.6)
-		energy_pulse.tween_property(energy_dial,"modulate",Color.WHITE,.6)
-
 func _exit_tree() -> void:
-	if energy_pulse: energy_pulse.kill()
-	energy_pulse = null
 	for tween in hud_tweens.values(): tween.kill()
 	hud_tweens.clear()
