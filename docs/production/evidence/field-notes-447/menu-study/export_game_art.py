@@ -7,7 +7,7 @@ import make_field as field
 import tempfile
 import xml.etree.ElementTree as ET
 
-from PIL import Image
+from PIL import Image, ImageChops
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parents[4] / "prototypes/swarm-flight/art/honey-pages"
@@ -22,7 +22,7 @@ def remove(root, predicate):
         if predicate(child): root.remove(child)
         else: remove(child, predicate)
 
-def render(root, name, bounds=None):
+def raster(root, bounds=None):
     root = deepcopy(root)
     if bounds:
         x, y, w, h = bounds
@@ -30,8 +30,10 @@ def render(root, name, bounds=None):
         root.set("width", str(w))
         root.set("height", str(h))
     data = subprocess.check_output(["rsvg-convert", "-z", "1.5"], input=ET.tostring(root))
-    image = Image.open(BytesIO(data)).convert("RGBA")
-    image.save(OUT / (name + ".webp"), quality=94, method=4)
+    return Image.open(BytesIO(data)).convert("RGBA")
+
+def render(root, name, bounds=None):
+    raster(root,bounds).save(OUT / (name + ".webp"), quality=94, method=4)
 def outline(name, bounds, transform, contour, width=2.5):
     root = ET.Element(SVG+"svg")
     group = ET.SubElement(root,SVG+"g",{"transform":transform})
@@ -57,7 +59,13 @@ def shared_menu():
         group.append(item)
         bounds=(x-85,y-8,170,115)
         # The illustrations use multiply blending against this exact part of the plate.
-        render(shell,name,bounds)
+        image=raster(shell,bounds)
+        clean=raster(root,bounds)
+        diff=ImageChops.difference(image.convert("RGB"),clean.convert("RGB"))
+        red,green,blue=diff.split()
+        mask=ImageChops.lighter(ImageChops.lighter(red,green),blue).point(lambda v: 255 if v else 0)
+        image.putalpha(mask)
+        image.save(OUT/(name+".webp"),quality=94,method=4)
         focus = next(n for n in root.iter(SVG+"path") if n.get("stroke")=="#315850")
         contour=focus.get("d")
         if name=="fly":

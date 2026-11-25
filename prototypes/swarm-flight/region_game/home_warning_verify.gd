@@ -98,7 +98,10 @@ func run() -> void:
 	check(dial.energy_stage == 0 and model.energy_stage() == 0 and dial.paper_wash.gradient.colors[0] == rested_ink,"return restores the rested portrait and its cool wash")
 	await still("庭院-平安带回")
 	game.queue_free()
-	await process_frame
-	await process_frame
+	# The audio thread drains stopped streams on wall time, even with --fixed-fps.
+	var drain_until := Time.get_ticks_msec()+350
+	while Time.get_ticks_msec()<drain_until:
+		OS.delay_msec(10)
+		await process_frame
 	print("Home warning: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)
