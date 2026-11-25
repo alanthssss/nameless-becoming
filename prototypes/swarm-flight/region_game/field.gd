@@ -14,6 +14,7 @@ const JAR_RECT := Rect2(RegionalLayout.PLATE.position + Vector2(93,161)/Vector2(
 		Vector2(64,79)/Vector2(970,561)*RegionalLayout.PLATE.size)
 # Largest flower in bloom, including rocking petals above and roots and leaves below.
 const FLOWER_FOOTPRINT := Rect2(-38,-42,76,99)
+const POND_SPACE_VERSION := 5
 const PLANT_CLEARANCE := 24.0
 # The ripe or shaken tuft spreads past the husk only above its socket.
 const FIBER_TUFT := Rect2(-32,-26,64,22)
@@ -304,7 +305,7 @@ func _harvest(dt: float) -> void:
 func snapshot() -> Dictionary:
 	var result := super.snapshot()
 	result.population_version = 1
-	result.space_version = 5 if region == "pond" else 4
+	result.space_version = POND_SPACE_VERSION if region == "pond" else 4
 	result.supply_rank = supply_rank
 	return result
 
@@ -326,7 +327,7 @@ func restore(data: Variant) -> bool:
 			if not item.get("hits") is int or not item.has("band") or item.hits < shell_strength(item): return false
 		if not item.enabled and (item.get("phase") != "empty" or item.get("phase_time") != 0 or item.get("taken") != false): return false
 	var version = data.get("space_version",1)
-	if version not in [1,2,3,4,5] or data.get("region") not in ["pond","violet"]: return false
+	if version not in [1,2,3,4,POND_SPACE_VERSION] or data.get("region") not in ["pond","violet"]: return false
 	if not data.get("p") is Vector2 or not data.p.is_finite(): return false
 	var previous_position: Vector2 = data.p
 	if version == 1:
@@ -356,7 +357,7 @@ func restore(data: Variant) -> bool:
 			data = data.duplicate()
 			var entry: Vector2 = next_coast.nodes[0].p
 			data.p = Layout.move(next_coast,entry,data.p-entry,BODY)
-	if version < 5 and data.region == "pond":
+	if version < POND_SPACE_VERSION and data.region == "pond":
 		if not data.get("trip_seed") is int or data.trip_seed < 1: return false
 		var coast := RegionalLayout.build("pond",false)
 		var original := _seeded_flower_sites(coast,data.trip_seed)
