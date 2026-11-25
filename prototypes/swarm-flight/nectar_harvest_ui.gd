@@ -1219,7 +1219,7 @@ func _build_settings() -> void:
 		settings_about.text = "收起" if settings_credits.visible else "查看")
 	tool_button(settings_about)
 	settings_about.size_flags_horizontal = Control.SIZE_SHRINK_END
-	settings_credits = text_line(v,"%s 0.27.0\n制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞受蜜蜂通信启发，侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true,&"detail")
+	settings_credits = text_line(v,"%s 0.27.0\n制作　Alan\nGodot Engine（MIT）" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true,&"detail")
 	settings_credits.hide()
 	settings_about.gui_input.connect(_scroll_expanded_text.bind(settings_credits,settings_scroll))
 

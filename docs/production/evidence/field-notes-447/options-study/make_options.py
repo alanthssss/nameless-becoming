@@ -120,11 +120,10 @@ def option_page(about=False,reduced=False):
     b+=shape('M83 510 Q503 513 868 510','none','#bea277')+nav_button(82,524,114,'‹　返回')
     if about:
         b+=box(753,448,105,46,16,'none',JADE,2.6)
-        plate=shape('M9 2 Q134 -3 226 2 Q236 3 236 14 V322 Q236 333 224 334 Q111 340 10 334 Q0 333 0 323 V13 Q0 4 9 2 Z','url(#raised)','#b29465')
+        plate=shape('M9 2 Q134 -3 226 2 Q236 3 236 14 V144 Q236 155 224 156 Q111 162 10 156 Q0 155 0 145 V13 Q0 4 9 2 Z','url(#raised)','#b29465')
         plate+=txt(20,38,'Honey',32,INK,'start',True,700)+txt(20,67,'Demo 0.32.7',17,MUTED)
-        lines=['制作　Alan × Codex','Godot Engine（MIT）','画面含 AI 辅助生成的预制','美术，运行时不调用生成式 AI。','蜂舞取意于蜜蜂通信，','侧步摆肩为原创动作。','设计研究参考 Shelldiver，','未使用其图像、音乐或代码。']
-        for i,line in enumerate(lines):plate+=txt(15,104+i*27,line,15,INK)
-        b+=grp(59,124,plate)
+        plate+=txt(20,104,'制作　Alan',17,INK)+txt(20,133,'Godot Engine（MIT）',15,MUTED)
+        b+=grp(59,220,plate)
     return svg(b,'设置与关于' if about else '设置')
 
 ACTIONS=['向上飞','向下飞','向左飞','向右飞','互动 / 采集','振翅','蓄力冲刺','暂停','静音']

@@ -35,7 +35,7 @@ pdfmetrics.registerFont(TTFont('ReviewSans',args.font))
 page_w,page_h=960,656
 pdf=canvas.Canvas(str(args.output),pagesize=(page_w,page_h),pageCompression=1)
 pdf.setTitle('Honey · 通用界面设计审阅')
-pdf.setAuthor('Codex · Honey')
+pdf.setAuthor('Alan')
 pdf.setSubject('通用界面独立菜单层、交互状态及 #452 实机参照')
 pdf.setCreator('Honey UI art review')
 ink='#333b33'; muted='#626a5f'; ring='#bebcac'
@@ -117,7 +117,7 @@ for i,(name,title,detail) in enumerate([('controls-waiting','等待输入','输�
 finish('所有样例均对应同一格。恢复默认同时还原键鼠和手柄绑定。')
 one('pad','游戏手柄 · 飞行','controls-0-pad','手柄只列手柄按钮，九个动作维持相同顺序。')
 one('reference','键盘与鼠标 · 成长树速查','controls-2-kbm','固定操作给出所有备选输入。菜单、成长树、花湾各自有键鼠和手柄两种视图。')
-one('about','设置 · 关于','settings-about','关于就地展开。图稿保留制作署名、引擎许可和美术来源说明。')
+one('about','设置 · 关于','settings-about','关于在本页展开，显示游戏版本、制作人和引擎许可。')
 one('slots','选择存档','slots','挂牌上列档号和进度。「当前」织带与输入焦点分别标出正在使用和正在浏览的档。')
 one('restart','备份与重开','restart','重开页的线轴来自同一个菜单入口。标题指明当前档，默认焦点落在取消。')
 begin('title-states','同一菜单随存档变化')
