@@ -846,26 +846,29 @@ func show_mode(mode: String) -> void:
 		refresh()
 		board.select_node(board.selected)
 	elif menu.visible:
-		if mode == "title":
-			menu_title.text = driver.DISPLAY_NAME
-			menu_body.text = "在蜂舞广场选一条花路，带着花蜜回来。\n交付、成长，再去更远的地方。"
-			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
-		elif mode == "pause":
-			menu_title.text = "歇一会儿"
-			menu_body.text = driver.model.goal_text()+"\n\nWASD 飞行  ·  E 采蜜\nQ 振翅  ·  空格蓄力冲刺\n\n详细操作与花路，翻看手册。"
-			menu_primary.text = "继续这趟出行"
-		else:
-			menu_title.text = "花蜜，备好了"
-			menu_body.text = "Demo 的花蜜储备已完成。\n\n同伴们在蜂舞广场等你庆祝。\n花还开着，也可以继续探索和成长。"
-			menu_primary.text = "再去花园转转"
-		if driver.save_blocked:
-			menu_body.text = "这份采蜜进度暂时无法读取或升级。\n原文件仍保留。可备份后开始新的一轮。"
-			menu_primary.text = "备份并重新开始"
-		elif driver.save_warning:
-			menu_body.text = "保存暂时失败，当前进度仍在。\n请继续后重试，或检查保存位置。"
-		menu_restart.visible = driver.has_save or driver.save_blocked
-		menu_primary.grab_focus()
+		_show_menu(mode)
 	refresh()
+
+func _show_menu(mode: String) -> void:
+	if mode == "title":
+		menu_title.text = driver.DISPLAY_NAME
+		menu_body.text = "在蜂舞广场选一条花路，带着花蜜回来。\n交付、成长，再去更远的地方。"
+		menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
+	elif mode == "pause":
+		menu_title.text = "歇一会儿"
+		menu_body.text = driver.model.goal_text()+"\n\nWASD 飞行  ·  E 采蜜\nQ 振翅  ·  空格蓄力冲刺\n\n详细操作与花路，翻看手册。"
+		menu_primary.text = "继续这趟出行"
+	else:
+		menu_title.text = "花蜜，备好了"
+		menu_body.text = "Demo 的花蜜储备已完成。\n\n同伴们在蜂舞广场等你庆祝。\n花还开着，也可以继续探索和成长。"
+		menu_primary.text = "再去花园转转"
+	if driver.save_blocked:
+		menu_body.text = "这份采蜜进度暂时无法读取或升级。\n原文件仍保留。可备份后开始新的一轮。"
+		menu_primary.text = "备份并重新开始"
+	elif driver.save_warning:
+		menu_body.text = "保存暂时失败，当前进度仍在。\n请继续后重试，或检查保存位置。"
+	menu_restart.visible = driver.has_save or driver.save_blocked
+	menu_primary.grab_focus()
 
 func _selected(_id: String) -> void:
 	_detail()
@@ -990,6 +993,18 @@ func refresh() -> void:
 		elif driver.has_material_hint(): help_text.text = "Q  振翅"
 		elif m.cargo_total() >= m.capacity(): help_text.text = "蜜囊已满"
 	help_text.visible = not help_text.text.is_empty()
+	_refresh_regions()
+	if driver.mode == "shop": _refresh_shop()
+	board.reduced_motion = driver.reduced_motion
+	board.refresh(m)
+	tree_coins.text = str(m.coins)
+	tree_fiber.text = str(m.materials.fiber)
+	tree_resin.text = str(m.materials.resin)
+	tree_progress.text = "紫花地已开放" if "meadow" in m.owned else "花路成长 %d / 3" % mini(3,m.growth_count())
+	_detail()
+
+func _refresh_regions() -> void:
+	var m = driver.model
 	var from_hub: bool = m.area == "hub"
 	region_title.text = "这次去哪里？" if from_hub else "带着收获回去"
 	region_hint.text = "蜜囊 %d / %d · 续航 %d" % [m.cargo_total(),m.capacity(),m.max_energy()] if from_hub else "花蜜与材料随身带回。"
@@ -1004,14 +1019,6 @@ func refresh() -> void:
 	meadow_button.text = "紫花地 · 紫花蜜" if "meadow" in m.owned else "紫花地 · 尚未开放"
 	meadow_info.text = "每份 3 金币 · 局部细雨\n"+("穿雨或绕叶棚，取蜜与树脂。" if "meadow" in m.owned else "在成长手册中开放这条花路。")
 	home_button.visible = not from_hub
-	if driver.mode == "shop": _refresh_shop()
-	board.reduced_motion = driver.reduced_motion
-	board.refresh(m)
-	tree_coins.text = str(m.coins)
-	tree_fiber.text = str(m.materials.fiber)
-	tree_resin.text = str(m.materials.resin)
-	tree_progress.text = "紫花地已开放" if "meadow" in m.owned else "花路成长 %d / 3" % mini(3,m.growth_count())
-	_detail()
 
 func _build_restart_dialog() -> void:
 	restart_dialog = screen(self)
@@ -1099,7 +1106,7 @@ func _build_journal() -> void:
 	journal_controls = text_line(nectar,"",19,INK,true)
 	var worth := row(nectar,5)
 	hud_symbol(worth,"coin","金币")
-	journal_price = text_line(worth,"",18,Color("795a2e"))
+	journal_price = text_line(worth,"",18,Color("795a2e"),false)
 	var second := row(right,11)
 	journal_material_icon = HudIcon.new()
 	journal_material_icon.custom_minimum_size = Vector2(58,50)
@@ -1189,7 +1196,7 @@ func _build_settings() -> void:
 	anchored(p,Rect2(.5,.5,0,0),Rect2(-308,-285,616,570))
 	var page := column(p,15)
 	var header := row(page,12)
-	var title := text_line(header,"设置",34,TOOL_INK)
+	var title := text_line(header,"设置",34)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	settings_back = action(header,"←  返回",driver.close_settings)
 	tool_button(settings_back)
@@ -1219,7 +1226,7 @@ func _build_settings() -> void:
 		settings_about.text = "收起" if settings_credits.visible else "查看")
 	tool_button(settings_about)
 	settings_about.size_flags_horizontal = Control.SIZE_SHRINK_END
-	settings_credits = text_line(v,"%s 0.27.0\n制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞受蜜蜂通信启发，侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true)
+	settings_credits = text_line(v,"%s 0.27.0\n制作　Alan\nGodot Engine（MIT）" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true)
 	settings_credits.hide()
 	settings_about.gui_input.connect(_scroll_expanded_text.bind(settings_credits,settings_scroll))
 

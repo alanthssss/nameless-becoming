@@ -44,6 +44,9 @@ func clear_of_hardware(mark: Rect2, panel: PanelContainer) -> bool:
 	var face := panel.get_global_rect()
 	var r := Rect2((mark.position-face.position)/face.size,mark.size/face.size)
 	match panel.get_meta("material_kind"):
+		"field_notes":
+			# The bound spine occupies the first 48 canvas units. Leave the top and fore edges clear.
+			return face.grow_individual(-48,-28,-22,-24).grow(1).encloses(mark)
 		"book":
 			# The top sheets end above the layered fore edge on both pages.
 			return Rect2(.096,.075,.363,.655).encloses(r) or Rect2(.520,.075,.371,.655).encloses(r)
@@ -129,7 +132,7 @@ func mode(tag: String) -> void:
 func check_menus() -> void:
 	for tag in ["title","pause","complete"]:
 		await mode(tag)
-		scan(tag,ui.pause_folio if tag == "pause" else ui.menu)
+		scan(tag,ui.complete if tag == "complete" else ui.menu)
 	game.save_blocked = true
 	await mode("title")
 	scan("blocked save",ui.menu)
@@ -294,7 +297,7 @@ func check_size(pixels: Vector2i) -> void:
 		if node.get_script() == preload("res://region_game/growth_parchment.gd") and not node.small_note:
 			growth_paper = node
 	expect(is_instance_valid(growth_paper),"growth parchment present")
-	var known := [ui.hud,ui.shop,ui.tree,ui.regions,ui.menu,ui.pause_folio,ui.settings,ui.slots,ui.journal,
+	var known := [ui.hud,ui.shop,ui.tree,ui.regions,ui.menu,ui.complete,ui.settings,ui.slots,ui.journal,
 		ui.controls_page,ui.restart_dialog,ui.transition_layer,ui.transition_hint,ui.toast_panel]
 	for node in ui.get_children():
 		if node is Control: expect(node in known,"uncovered UI root "+str(node.get_class())+" "+str(node.name))

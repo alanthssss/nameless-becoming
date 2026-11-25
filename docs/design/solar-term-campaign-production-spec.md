@@ -342,6 +342,8 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
+**2026-11-26 · Honey 通用界面实装。** M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿用池岸采蜜、回庭院换取成长的整包检查点。Alan 定稿的标题与暂停菜单、各子页和两地采集提示已进入同一份 [Mac 试玩包与开发自测回执](../production/region-greybox-receipt.md#general-menu-review-447)。Alan 可从新档走一趟，并判断操作提示、储粮与成长的整体验收。成本复核沿 #211。
+
 **2026-11-26 · Honey 暂停页。** M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿 [#333](https://github.com/alanthssss/nameless-becoming/issues/333) 接入 Alan 定稿的「花园手记」。在[同版 Mac 试玩](../production/region-greybox-receipt.md#pause-folio-333)中，Alan 可从庭院和花地暂停，对照书页可读性与返回出行的手感。首作的池岸成长检查点仍沿同一父项推进。
 
 **2026-11-26 · Honey 庭院实装。** M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿 [GDD §8.1](swarm-flight-gdd.md#visual-production-rules) 与[原庭院讨论 #427](https://github.com/alanthssss/nameless-becoming/issues/427)接入巢内庭院、花瓣杆秤和飞痕画笺。本次[Mac 试玩回执](../production/region-greybox-receipt.md#honey-inner-courtyard-427)与开发验证集中记在 [#436](https://github.com/alanthssss/nameless-becoming/issues/436)，Alan 从可玩的庭院判断造型和转场。

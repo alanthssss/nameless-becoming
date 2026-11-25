@@ -466,8 +466,8 @@ func consume_events(pending: Array) -> void:
 		elif event.kind == "sell" and mode == "shop":
 			var side := -1.0 if model.face.x >= 0 else 1.0
 			ui.sale_flight.begin(event, model.p + Vector2(side*20,18), ui.shop_coins, reduced_motion)
-		elif event.kind == "material" and event.type == "fiber":
-			message("纤维 +%d（现有 %d） · 可在庭院升级双翼" % [event.amount, model.materials.fiber], 3.0)
+		elif event.kind in ["material","harvest"] and model.field != null:
+			ui.field_hud.pickup(event)
 	if pending.is_empty() or evidence_log.is_empty(): return
 	var file := FileAccess.open(evidence_log,FileAccess.READ_WRITE if FileAccess.file_exists(evidence_log) else FileAccess.WRITE)
 	if file != null:

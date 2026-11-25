@@ -1,8 +1,10 @@
-extends "res://nectar_harvest_ui.gd"
+extends "res://region_game/regional_pages.gd"
 
 const CatalogDetail = preload("res://region_game/growth_catalog_detail.gd")
 const GrowthRequirements = preload("res://region_game/growth_requirements.gd")
 const SaleFlight = preload("res://region_game/sale_flight.gd")
+var field_hud := preload("res://region_game/field_hud.gd").new()
+var notes := preload("res://region_game/field_notes_style.gd").new()
 var reading_book := false
 var at_counter := false
 var last_denied_msec := -1000
@@ -23,12 +25,6 @@ var bay_button: Button
 var bay_preview: Control
 var controls_page
 var controls_button: Button
-var pause_folio := preload("res://region_game/pause_folio.gd").new()
-var menu_slots: Button
-var slots: Control
-var slot_list: VBoxContainer
-var slot_buttons := {}
-var slots_back: Button
 const BAY_CELLS := ["petal_trace","garland","cascade"]
 
 func _ready() -> void:
@@ -43,6 +39,16 @@ func _ready() -> void:
 	_reword(self)
 	toast_timer.timeout.connect(func(): _update_tree_footer(get_viewport().gui_get_focus_owner()))
 	energy_text.tooltip_text = "续航：庭院恢复，飞行、采蜜和振翅消耗"
+
+func _build_hud() -> void:
+	super._build_hud()
+	hud.add_child(field_hud)
+	field_hud.setup(self)
+
+func _fit_caption(label: Label) -> void:
+	var width := label.get_theme_font("font").get_string_size(label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,notes.BODY).x + 34
+	label.offset_left = -width * .5
+	label.offset_right = width * .5
 
 func transition_focus() -> Vector2:
 	if driver.model.at_home(): return driver.model.p
@@ -133,22 +139,27 @@ func refresh() -> void:
 	super.refresh()
 	if driver == null or not is_instance_valid(board): return
 	tree_progress.hide()
-	pond_info.text = "蓝花蜜 · 每份 1 金币\n振松种穗，飞近收纤维 · 可织轻盈双翼。"
-	meadow_info.text = "紫花蜜 · 每份 3 金币\n"+("振开树皮，贴近收树脂 · 可修远行双翼。" if "meadow" in driver.model.owned else "在成长手册中开放这条花路。")
-	var field = driver.model.field
-	# Leave the foreground water bowl visible on the courtyard painting.
-	hud_status.position.x = 178.0 if driver.model.at_home() else 24.0
-	if field != null:
-		# Action prompts belong to the nearby flower, seed head, seam or sign.
-		# Reserve the lower HUD for a whole-trip constraint.
-		help_text.text = ""
-		if not driver.model.energy_is_low() and driver.model.cargo_total()>=driver.model.capacity(): help_text.text = "蜜囊已满 · 仍可取材"
-		help_text.visible = not help_text.text.is_empty()
+	var home: bool = driver.model.at_home()
+	hud_status.visible = home
+	hud_status.position.x = 178.0
+	pause_button.visible = home
+	field_hud.refresh()
+	if not home: help_text.hide()
 
 func show_toast(words: String, seconds: float) -> void:
+	var flying: bool = driver.mode == "play" and driver.model.field != null
+	if flying and words in ["体力偏低","蜜囊已满"]:
+		# The persistent sign by the bee already gives the warning and the way home.
+		return
 	super.show_toast(words,seconds)
-	if pause_folio.visible and driver.save_warning:
-		pause_folio.update_state(driver, menu_footer.text.get_slice("  ·  ",0))
+	toast.remove_theme_stylebox_override("normal")
+	toast.add_theme_constant_override("outline_size",3)
+	if flying:
+		notes.field_caption(toast)
+		var width := clampf(toast.get_theme_font("font").get_string_size(words,HORIZONTAL_ALIGNMENT_LEFT,-1,notes.BODY).x+40,150,550)
+		anchored(toast_panel,Rect2(.5,0,0,0),Rect2(-width/2,66,width,44))
+	if menu.visible and driver.save_warning:
+		menu_body.text = "保存失败，当前进度仍在。请检查保存位置。"
 	if driver.mode == "tree":
 		anchored(toast_panel,Rect2(.5,1,0,0),Rect2(-265,-120,530,44))
 
@@ -175,58 +186,9 @@ func _purchase_button_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not event.double_click:
 			_buy_selected()
 
-func _build_menu() -> void:
-	super._build_menu()
-	add_child(pause_folio)
-	pause_folio.setup(self)
-	if not driver.slots_enabled: return
-	menu_slots = action(menu_settings.get_parent(),"选择存档",driver.open_slots)
-	slots = screen(self)
-	slots.hide()
-	shade(slots,Color(.09,.20,.15,.48))
-	var center := CenterContainer.new()
-	slots.add_child(center)
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var page := reading_page(center,Vector2(84,62))
-	page.custom_minimum_size.x = 608
-	var content := column(page,16)
-	text_line(content,"选择存档",32).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	slot_list = column(content,8)
-	slots_back = action(content,"返回",driver.close_slots,true)
-
-func _show_slots() -> void:
-	var initial_focus: Button
-	for entry in driver.slot_rows():
-		var id: int = entry.id
-		if not slot_buttons.has(id):
-			var new_button := action(slot_list,"",driver.choose_slot.bind(id))
-			new_button.add_theme_stylebox_override("normal",style(Color("eedcab77"),Color("b7a575"),1,8))
-			new_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			slot_buttons[id] = new_button
-		var button: Button = slot_buttons[id]
-		var summary: String
-		match entry.status:
-			"occupied": summary = "%s　·　%d 金币　·　已出行 %d 趟" % [entry.area,entry.coins,entry.trip]
-			"empty": summary = "空档　·　开始新游戏"
-			_: summary = "无法读取"
-		button.text = "存档 %d%s\n%s" % [id,"（当前）" if id == driver.active_slot else "",summary]
-		button.disabled = entry.status == "blocked"
-		button.focus_mode = Control.FOCUS_NONE if button.disabled else Control.FOCUS_ALL
-		if not button.disabled and (initial_focus == null or id == driver.active_slot):
-			initial_focus = button
-	if initial_focus != null: initial_focus.grab_focus()
-	else: slots_back.grab_focus()
-
-func ask_restart() -> void:
-	if driver.slots_enabled:
-		restart_title.text = "在存档 %d 重新开始？" % driver.active_slot
-	super.ask_restart()
-
-func uses_shared_menu(mode: String) -> bool:
-	return mode in ["title","complete"]
-
-func active_menu() -> Control:
-	return pause_folio if pause_folio.visible else menu
+func refresh_settings() -> void:
+	super.refresh_settings()
+	if is_instance_valid(settings): settings.sync_motion()
 
 func show_mode(mode: String) -> void:
 	var was_reading := reading_book
@@ -242,14 +204,18 @@ func show_mode(mode: String) -> void:
 	if is_instance_valid(sale_flight) and mode != "shop":
 		sale_flight.stop()
 	var leaving_slots := is_instance_valid(slots) and slots.visible
-	var focus_target: Button = pause_folio.buttons[0]
-	if journal.visible: focus_target = pause_folio.buttons[1]
-	if leaving_slots: focus_target = pause_folio.buttons[2]
-	if settings.visible: focus_target = pause_folio.buttons[3]
-	pause_folio.visible = mode == "pause"
+	var from_settings := settings.visible
+	var from_guide := journal.visible
 	super.show_mode(mode)
-	if pause_folio.visible:
-		focus_target.grab_focus()
+	complete.visible = mode == "complete"
+	if complete.visible:
+		complete_cost.text = "已花费 %d 金币" % driver.model.upgrade("reserve").cost
+		if from_settings: complete_settings.grab_focus()
+		else: complete_primary.grab_focus()
+	if menu.visible:
+		if from_settings: menu_settings.grab_focus()
+		elif from_guide: menu_guide.grab_focus()
+		elif leaving_slots: menu_slots.grab_focus()
 	if not was_reading and mode == "tree":
 		growth_map.open_book(driver.saved_path)
 		_set_note(false)
@@ -260,19 +226,7 @@ func show_mode(mode: String) -> void:
 	_refresh_control_hints()
 	if not is_instance_valid(slots): return
 	slots.visible = mode == "slots"
-	menu_slots.visible = mode == "title"
-	menu_quit.text = "退出游戏" if mode == "title" else "保存并退出"
-	if slots.visible:
-		_show_slots()
-	elif menu_slots.visible:
-		menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
-		if leaving_slots: menu_slots.grab_focus()
-
-func _add_settings_controls(parent: Control) -> void:
-	var line := _setting_row(parent,"操作",3)
-	controls_button = action(line,"查看或改键",_open_controls)
-	controls_button.size_flags_horizontal = Control.SIZE_SHRINK_END
-	tool_button(controls_button)
+	if slots.visible: _show_slots()
 
 func _open_controls() -> void:
 	if driver.mode != "settings": return
@@ -303,15 +257,15 @@ func _refresh_control_hints() -> void:
 	var dash: String = driver.control_hint("dash")
 	_refresh_journal_hints()
 	transition_hint.text = "%s 跳过蜂舞" % dash
+	notes.field_caption(transition_hint)
+	_fit_caption(transition_hint)
 	var pad: bool = driver.input_device == "pad"
 	var back := "B" if pad else "Esc"
-	region_back.text = "先留在这里  ·  " + back
+	region_back.tooltip_text = back+" 返回"
 	leave_button.tooltip_text = "%s 返回庭院" % back
 	pause_button.tooltip_text = "暂停与操作说明 · " + driver.control_hint("pause")
-	var build := menu_footer.text.get_slice("  ·  ",0)
-	menu_footer.text = build + ("  ·  A 确认" if pad else "  ·  Enter 确认")
-	if pause_folio.visible:
-		pause_folio.update_state(driver, build)
+	menu_key.text = (back+"  返回") if driver.mode=="pause" else (("A" if pad else "Enter")+"  确认")
+	if slots_keys: slots_keys.text = ("A   选择档位                         B   返回" if pad else "Enter   选择档位                     Esc   返回")
 	if driver.mode == "tree":
 		_update_tree_footer(get_viewport().gui_get_focus_owner())
 	if hub_action.visible:
