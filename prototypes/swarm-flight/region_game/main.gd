@@ -39,7 +39,16 @@ func _ready() -> void:
 			add_child(recorder)
 
 func read_progress(path: String) -> Dictionary:
-	var payload := Save.read_payload(path,new_model())
+	var model_copy = new_model()
+	var payload := Save.read_payload(path,model_copy)
+	if model_copy.field != null and model_copy.field.region == "pond" and not payload.is_empty():
+		var previous: Dictionary = bytes_to_var(Marshalls.base64_to_raw(payload.field))
+		if previous.get("space_version",1) < RegionalModel.Field.POND_SPACE_VERSION:
+			var raw := FileAccess.get_file_as_bytes(path)
+			var source := raw.get_string_from_utf8()
+			var backup := path+".pond-"+source.sha256_text()+".bak"
+			if JSON.parse_string(source) != payload or not Migration.backup_original(backup,raw).is_empty():
+				return {"ok":false,"payload":{},"blocked":true}
 	return {"ok":not payload.is_empty(),"payload":payload,"blocked":FileAccess.file_exists(path) and payload.is_empty()}
 
 func _load_world() -> void:

@@ -14,6 +14,7 @@ func check(ok: bool,label: String) -> void:
 func _initialize() -> void:
 	for region in ["pond","violet"]: verify(region)
 	_verify_pond_jar()
+	_verify_pond_fiber()
 	print("REGIONAL_LAYOUT checks=%d failures=%d" % [checks,failures.size()])
 	quit(0 if failures.is_empty() else 1)
 
@@ -121,6 +122,10 @@ func _verify_west(region: String) -> void:
 		else:
 			old.space_version = 2
 			previous = Natural.expand(previous,false)
+		if region == "pond":
+			var old_sites := Field._seeded_flower_sites(Natural.build(region,false),old.trip_seed)
+			for i in old.flowers.size():
+				old.flowers[i].p = old_sites[i] if version == 1 else old_sites[i]*Natural.GROUND_SCALE
 		var previous_entry: Vector2 = previous.nodes[0].p
 		var westmost := Collision.move(previous,previous_entry,Vector2(-450,0))
 		old.p = westmost
@@ -163,17 +168,53 @@ func _verify_pond_jar() -> void:
 	var expected: Dictionary = current.snapshot()
 	var old := expected.duplicate(true)
 	old.space_version = 3
-	old.flowers[0].p = Vector2(483.095275879,607.839294434)
-	old.flowers[2].p = Vector2(358.928771973,614.980407715)
+	var old_sites := Field._seeded_flower_sites(Natural.build("pond",false),8)
+	for i in old_sites.size(): old.flowers[i].p = old_sites[i]*Natural.GROUND_SCALE
+	check(old.flowers[0].p == Vector2(483.095275879,607.839294434) and old.flowers[2].p == Vector2(358.928771973,614.980407715),"old jar sites match the recorded trip")
 	var original := old.duplicate(true)
 	var restored = Field.new()
 	check(restored.restore(old),"genuine 0.32 jar sites accepted on an active trip")
-	check(old == original and restored.snapshot() == expected,"move only the two obstructed sites, retaining stock/refill and the original save")
+	check(old == original and restored.snapshot() == expected,"migrate the obstructed sites, retaining stock/refill and the original save")
 	var corrupt := old.duplicate(true)
 	corrupt.flowers[2].p.x += 1
 	check(not restored.restore(corrupt) and restored.snapshot() == expected,"invalid old site cannot pass jar migration or change live state")
 	old.space_version = expected.space_version
 	check(not restored.restore(old),"current save must already use the corrected sites")
+
+func _verify_pond_fiber() -> void:
+	for seed_value in range(1,33):
+		var field = Field.new()
+		field.configure("pond",0,seed_value)
+		var clear := true
+		for item in field.materials:
+			var factor := .84 if item.band == "near" else 1.10 if item.band == "far" else 1.0
+			var size := Vector2(176.0/300.0,1)*118.0*factor
+			var husk := Rect2(item.anchor-size*Vector2(.77,.16),size)
+			for flower in field.flowers:
+				var plant := Rect2(flower.p-Vector2(38,42),Vector2(76,99))
+				clear = clear and not plant.intersects(husk.grow(24),true)
+		check(clear,"all 36 potential flowers clear all six fiber hosts with a visible gap on trip "+str(seed_value))
+
+	var current = Field.new()
+	current.configure("pond",0,14)
+	current._after_nectar_picked(current.flowers[6])
+	var expected: Dictionary = current.snapshot()
+	var old := expected.duplicate(true)
+	old.space_version = 4
+	# The six affected sites in a saved 0.32.1 trip. The other 30 retain their positions.
+	var former := {6:Vector2(786.4613,550.1464),15:Vector2(1343.399,811.52924),
+		17:Vector2(1419.937,940.563),32:Vector2(2372.1885,464.5553),
+		33:Vector2(2505.2288,658.2838),35:Vector2(2513.545,781.5939)}
+	for id in former: old.flowers[id].p = former[id]
+	var host: Vector2 = current.materials[0].anchor
+	check(old.flowers[6].p.distance_to(host)<34 and current.flowers[6].p.x<host.x and current.flowers[6].p.distance_to(host)>120,"trip 14 left flower stays on the left with room to see the seed head")
+	check(current.flowers[8].p.is_equal_approx(Vector2(897.2338,613.0558)),"trip 14 right blue flower keeps its spot")
+	var restored = Field.new()
+	var original := old.duplicate(true)
+	check(restored.restore(old) and restored.snapshot()==expected and old==original,"0.32.1 resumes with the six corrected sites and the same harvest state")
+	old.flowers[6].p.x += 1
+	check(not restored.restore(old) and restored.snapshot()==expected,"a shifted legacy position is rejected without changing play")
+	check(restored.restore(expected) and restored.snapshot()==expected,"the corrected in-flight save round-trips exactly")
 
 func _simple(points: PackedVector2Array) -> bool:
 	for i in points.size():
