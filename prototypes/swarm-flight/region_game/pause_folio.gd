@@ -32,11 +32,12 @@ func _label(parent: Control, words: String, pixels: int, box: Rect2) -> Label:
 
 func _rule(parent: Control, box: Rect2) -> void:
 	var line := ColorRect.new()
-	line.color = Color("#a384518c")
+	line.color = Color("#a384517a")
 	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(line)
 	line.position = box.position
-	line.size = box.size
+	# Two canvas units keep pale ink visible at 75% window scale.
+	line.size = box.size.max(Vector2(2, 2))
 
 func _wash(fill: Color, edge: Color, thickness: int, radius: int) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

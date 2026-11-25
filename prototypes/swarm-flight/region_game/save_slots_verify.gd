@@ -24,7 +24,8 @@ func check(ok: bool, label: String) -> void:
 	checks += 1
 	if not ok:
 		errors += 1
-		printerr("FAIL ",label)
+		printerr("FAIL ",label," mode=",game.mode," device=",game.input_device,
+				" focus=",root.gui_get_focus_owner()," pointer=",root.get_mouse_position())
 
 func boot() -> void:
 	if is_instance_valid(game):
@@ -54,6 +55,10 @@ func pad(button: JoyButton) -> void:
 
 func click(button: Button) -> void:
 	var at := button.get_global_rect().get_center()
+	var movement := InputEventMouseMotion.new()
+	movement.position = at
+	movement.global_position = at
+	root.push_input(movement,true)
 	for down in [true,false]:
 		var event := InputEventMouseButton.new()
 		event.position = at
