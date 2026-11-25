@@ -4,6 +4,24 @@
 
 > 最新修订与结果见本文末尾[庭院视觉反馈修订](#courtyard-feedback-20261111)。下文早期版本属于历史证据。
 
+<a id="honey-wax-keycaps"></a>
+## Honey · 工具箱里的蜂蜡键帽（2026-11-26）
+
+Alan 在 [#445 美术盘点](https://github.com/alanthssss/nameless-becoming/pull/445)定稿 Q 并授权实装。打开「设置 → 查看或改键」，飞行九行读取每个动作保存的键盘、鼠标和手柄绑定。每个输入有自己的键帽，正在监听的槽位显示「等待输入…」，冲突时显示原因。菜单、成长树和花湾页签提供固定操作速查。依据为 GDD §8.1／§13.9 和 M3 [#322 开工记录](https://github.com/alanthssss/nameless-becoming/issues/322#issuecomment-7173528530)。
+
+[定稿原件](evidence/honey-ui-inventory/controls-wax-q.png) SHA-256 为 `3520397b6acccb34274fcae2cc6700b62ae5897398cb348d4e0c8079bd4898f2`。[无字母稿](evidence/honey-ui-inventory/controls-wax-blank.png)由定稿去字得到。两稿取同一裁框（左 72、上 102，1080 × 1080），缩为 32 × 32；游戏用九宫格保留蜡边，按标签宽度伸长。只有当前标签是 Q 才使用定稿字形。
+
+| 开发者实机检查 | 实际结果 |
+| --- | --- |
+| 标题、暂停与两种窗口 | 从标题和庭院暂停进入设置，以键鼠和 Godot 手柄事件切换两种设备及四个分类，返回后焦点回到「查看或改键」。960×600 与 1280×800 均检查了完整表格边界。[键鼠九行](evidence/honey-ui-inventory/flight-kbm-960x600.webp) · [暂停进入后的手柄焦点](evidence/honey-ui-inventory/focus-pad-1280x800.webp) |
+| 动作、改键与异常 | 71 项改键回归通过。包含按住采集、振翅、冲刺、冲突后取消、替换鼠标中键、冷读配置与恢复默认。将振翅改为 PageDown、静音改为 Q，手绘 Q 跟随静音。另查方向键双绑定、斜杠键和未绑定槽。[冲突保留现场](evidence/honey-ui-inventory/conflict-960x600.webp) · [Q 改到静音](evidence/honey-ui-inventory/rebound-1280x800.webp) |
+| 固定操作速查 | 成长树列出换档、缩放、全图的可用快捷键；花湾分别标明选花、按住采蜜、阶段与返回。两个设备、两个窗口的可见键名逐项通过边界检查。[成长树键鼠](evidence/honey-ui-inventory/growth-kbm-960x600.webp) · [花湾手柄](evidence/honey-ui-inventory/bay-pad-1280x800.webp) |
+| 最终 Mac 包 | Godot 4.6.2 从 `3d44647edd593d2452a059c2ed7683dc12ae7a25` 导出，Universal、ad-hoc 严格验签通过。PCK SHA-256 为 `4ec3fab40e0ee242c4f76630a004c85f011dc41ab86a07ed29dc47961e6d14d9`。同一启动器经 macOS 键盘事件从标题改振翅为 R，冷启再恢复 Q，读回磁盘设置，并比对原有 8 个进度及配置文件哈希。排版 792 状态／14,184 个文字控件、地区 UI 195、模型 232、档位 53、旧 Demo UI 27 项均通过；旧 Demo 退出时仍有前版已有的 ObjectDB 回收警告。 |
+
+**试玩入口。** 双击 `~/LocalGames/Honey-蜂蜡键帽-3d44647/开始试玩.command` 即可使用包旁独立档位。原生 PNG 和验证日志放在同目录的「验证」。手柄覆盖来自 Godot 按钮和摇杆事件；未接实体手柄，尚无独立玩家体验结果。
+
+**成本与后续。** 11 月 26 日北京时间 04:19 开始，至 04:27 覆盖实装、定向验证、导出及本机验包。纹理协作 04:19:50–04:22:00，独立复核约 58 秒，两段与主任务重叠。墙钟包含工具等待；未发生新采购，图像工具、CI 账单与主动工时未取得分项数据。继续沿用 200＋40 小时控制线，历史累计和可靠剩余未知。Codex 在 [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 回写最终 CI 和集成时点；M3 池岸成长检查点与 [#211 成本复核](https://github.com/alanthssss/nameless-becoming/issues/211) 继续保留。
+
 <a id="pause-folio-333"></a>
 ## Honey · 花园手记暂停页（2026-11-26）
 
