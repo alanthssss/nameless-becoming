@@ -96,12 +96,54 @@ func check_sections() -> void:
 		var last: Control = page.reference.get_child(-1)
 		check(page.scroll.get_global_rect().encloses(last.get_global_rect()), "last shortcut visible from section tab: " + title)
 	await click(page.tabs.kbm)
-	var captions: Array = page.reference.find_children("*", "Label", true, false).map(func(label): return label.text)
-	check("按住 E / 空格" in captions and "按住 A（下）" not in captions, "switching device updates the open reference")
+	var harvest: Control = page.reference.get_child(2)
+	var captions: Array = harvest.find_children("*", "Label", true, false).map(func(label): return label.text)
+	check(captions == ["采蜜", "按住", "E", "或", "空格"], "switching device shows the two fixed harvest inputs with their hold instruction")
 	await click(page.sections["飞行"])
 	check(page.scroll.get_global_rect().encloses(page.rows.mute.mouse.get_global_rect()) and has_only_single_lines(), "all keyboard and mouse bindings fit on entry")
 	await click(page.tabs.pad)
 	check(page.flight.is_visible_in_tree() and not page.reference.visible and has_only_single_lines(), "flight table has no guide paragraphs")
+
+func check_reference_bounds() -> void:
+	for device in ["kbm", "pad"]:
+		await click(page.tabs[device])
+		for title in ["菜单", "成长树", "花湾"]:
+			await click(page.sections[title])
+			var viewport_rect: Rect2 = page.scroll.get_global_rect()
+			var all_visible := true
+			for caption: Label in page.reference.find_children("*", "Label", true, false):
+				all_visible = all_visible and viewport_rect.grow(1).encloses(caption.get_global_rect())
+			check(all_visible, "%s %s %s fits every fixed keycap" % [root.size, device, title])
+	await click(page.sections["飞行"])
+	await click(page.tabs.pad)
+
+func check_live_keycaps() -> void:
+	await click(page.tabs.kbm)
+	var up = page._keycaps(page.rows.up.key)
+	check(up.get_child_count() == 3 and up.get_child(0).text == "W" and up.get_child(2).text == "↑", "movement alternatives have separate caps")
+	var pulse = page._keycaps(page.rows.pulse.key)
+	var original_q = pulse.get_child(0).get_theme_stylebox("normal").texture
+	check(original_q == pulse.PAINTED_Q and page.rows.up.mouse.text == "未绑定", "default Q uses approved artwork and empty slots remain editable")
+	await click(page.rows.pulse.key)
+	check(not pulse.visible and page.rows.pulse.key.text == "等待输入…", "capture replaces only the active keycap")
+	await tap(KEY_M)
+	check(not pulse.visible and page.rows.pulse.key.text == "请换一个键", "conflict keeps the active cell distinct")
+	await tap(KEY_ESCAPE)
+	check(pulse.visible and pulse.get_child(0).text == "Q", "cancel restores the painted Q")
+	await click(page.rows.pulse.key)
+	await tap(KEY_PAGEDOWN)
+	var long_cap: Label = pulse.get_child(0)
+	check(long_cap.text == game.bindings.label("pulse","key") and long_cap.get_theme_stylebox("normal").texture == pulse.WAX, "remapping Q to PageDown uses the live key name on blank wax")
+	check(page.rows.pulse.key.get_global_rect().encloses(long_cap.get_global_rect()), "long keycap fits the editable slot")
+	await click(page.rows.mute.key)
+	await tap(KEY_Q)
+	var moved_q = page._keycaps(page.rows.mute.key).get_child(0)
+	check(moved_q.text == "Q" and moved_q.get_theme_stylebox("normal").texture == original_q, "painted Q follows its new action")
+	await click(page.rows.mute.key)
+	await tap(KEY_SLASH)
+	check(page._keycaps(page.rows.mute.key).get_child_count() == 1, "slash remains a single input")
+	await click(page.reset_button)
+	await click(page.tabs.pad)
 
 func run() -> void:
 	# Game saves and bindings must both be isolated when this script is run by hand.
@@ -128,7 +170,9 @@ func run() -> void:
 		await frames(3)
 		check(page.scroll.size.y > 170 and page.scroll.get_h_scroll_bar().max_value <= page.scroll.size.x + 1, "rows fit width at " + str(pixels))
 		check(page.scroll.get_global_rect().encloses(page.rows.mute.pad.get_global_rect()) and has_only_single_lines(), "all pad bindings fit on entry at " + str(pixels))
+		await check_reference_bounds()
 	await check_sections()
+	await check_live_keycaps()
 	for i in 10:
 		if root.gui_get_focus_owner() == page.rows.interact.pad: break
 		await press_pad(JOY_BUTTON_DPAD_DOWN)

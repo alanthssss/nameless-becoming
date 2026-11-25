@@ -1,27 +1,29 @@
 extends Control
 ## Each section shows the controls used in one part of the game.
+const WaxKeycaps := preload("res://region_game/wax_keycaps.gd")
 const SHORTCUTS := {
 	"菜单": [
-		["选择选项", "方向键 / Tab", "十字键"],
-		["确认", "Enter / 鼠标左键", "A（下）"],
+		["选择选项", "方向键 / Tab / Shift+Tab", "十字键"],
+		["确认", "Enter / 小键盘回车 / 空格 / 鼠标左键", "A（下）"],
 		["返回", "Esc", "B（右）"],
 	],
 	"成长树": [
-		["选择技能", "方向键", "左摇杆 / 十字键"],
-		["查看 / 购买", "Enter", "A（下）"],
+		["选择技能", "方向键 / Tab / Shift+Tab / 鼠标左键", "左摇杆 / 十字键"],
+		["查看 / 购买", "Enter / 小键盘回车", "A（下）"],
 		["展开 / 收起技能签", "I", "视图键（Back）"],
-		["查看前置", "F", "按下左摇杆"],
-		["切换档次", "[ / ]", "X（左）"],
+		["查看前置", "F / Shift+F", "按下左摇杆"],
+		["切换档次", "[ / ] / PageUp / PageDown", "X（左）"],
 		["试用花湾", "P", "Y（上）"],
-		["平移地图", "拖动空白处", "右摇杆"],
-		["缩放", "滚轮 / + / −", "LT / RT"],
-		["查看全图", "Home", "按下右摇杆"],
+		["平移地图", "鼠标左键拖动 / 双指滑动", "右摇杆"],
+		["缩放", "滚轮 / + / = / − / 捏合", "LT / RT / LB / RB"],
+		["查看全图", "Home / 0", "按下右摇杆"],
+		["返回", "Esc", "B（右）"],
 	],
 	"花湾": [
-		["选择花朵", "1–8 / ← →", "十字键 ← →"],
-		["采蜜", "按住 E / 空格", "按住 A（下）"],
-		["指向花朵采蜜", "按住鼠标左键", ""],
-		["切换阶段", "点击阶段选单", "RB"],
+		["选择花朵", "1–8 / ← / →", "十字键← / 十字键→"],
+		["采蜜", "E / 空格", "A（下）", "按住", "按住"],
+		["指向花朵采蜜", "鼠标左键", "", "按住"],
+		["切换阶段", "鼠标左键", "RB", "点阶段选单"],
 		["返回", "Esc", "B（右）"],
 	],
 }
@@ -69,7 +71,7 @@ func setup(interface: Control) -> void:
 	content.add_child(scroll)
 	flight = ui.column(scroll, 1)
 	flight.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	reference = ui.column(scroll, 4)
+	reference = ui.column(scroll, 1)
 	reference.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var header: HBoxContainer = ui.row(flight, 8)
 	_row_label(header, "动作")
@@ -83,12 +85,22 @@ func setup(interface: Control) -> void:
 		_row_label(line, bindings.TITLES[id])
 		rows[id] = {}
 		for slot in ["key","mouse","pad"]:
-			var button: Button = ui.action(line, "", _listen.bind(id, slot))
+			var cell := PanelContainer.new()
+			cell.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+			cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			line.add_child(cell)
+			var button: Button = ui.action(cell, "", _listen.bind(id, slot))
 			ui.tool_button(button)
-			button.custom_minimum_size.y = 31
+			button.custom_minimum_size.y = WaxKeycaps.HEIGHT
 			button.focus_entered.connect(_show_hint.bind(id, slot))
 			button.add_theme_font_size_override("font_size",18)
 			rows[id][slot] = button
+			var strip := WaxKeycaps.new()
+			strip.name = "Keycaps"
+			strip.alignment = FlowContainer.ALIGNMENT_CENTER
+			cell.add_child(strip)
+			button.button_down.connect(strip.depress.bind(true))
+			button.button_up.connect(strip.depress.bind(false))
 	status = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
 	var footer: HBoxContainer = ui.row(content, 16)
 	reset_button = ui.action(footer,"恢复默认按键",_reset)
@@ -149,23 +161,36 @@ func _select_section(title: String) -> void:
 			if binding.is_empty(): continue
 			var line: HBoxContainer = ui.row(reference, 8)
 			_row_label(line, shortcut[0])
-			ui.text_line(line, binding, 18, ui.TOOL_INK)
+			var strip := WaxKeycaps.new()
+			line.add_child(strip)
+			var note_index := 4 if device == "pad" else 3
+			strip.display(binding.split(" / "), shortcut[note_index] if shortcut.size() > note_index else "")
 
 func refresh_table() -> void:
 	for slot in headings:
 		headings[slot].visible = (slot == "pad") == (device == "pad")
 		for id in rows:
 			var button: Button = rows[id][slot]
-			button.visible = headings[slot].visible
-			button.text = bindings.label(id, slot)
+			button.get_parent().visible = headings[slot].visible
+			var names: PackedStringArray = bindings.labels(id, slot)
+			var strip := _keycaps(button)
+			strip.display(names)
+			strip.visible = not names.is_empty()
+			button.text = "未绑定" if names.is_empty() else ""
+			var current := button.text if names.is_empty() else " / ".join(names)
+			button.accessibility_name = "%s · %s · %s" % [bindings.TITLES[id], headings[slot].text, current]
 			button.tooltip_text = _binding_hint(id, slot)
+
+func _keycaps(button: Button) -> WaxKeycaps:
+	return button.get_parent().get_node("Keycaps")
 
 func _binding_hint(id: String, slot: String) -> String:
 	match id:
 		"interact": return "点按互动，按住采蜜"
 		"pulse": return "朝指针振翅，按住连发" if slot == "mouse" else "朝蜂头振翅，按住连发"
 		"dash": return "按住蓄力，松开冲刺。蜂舞中点按跳过"
-	if slot == "pad" and id in bindings.STICK_HINTS: return "也可用左摇杆飞行"
+	if slot == "pad" and id in bindings.STICK_HINTS: return "%s 也可飞行（固定）" % bindings.STICK_HINTS[id]
+	if id == "pause": return "%s 始终可暂停" % ("Start" if slot == "pad" else "Esc")
 	return REBIND_HINT
 
 func _show_hint(id: String, slot: String) -> void:
@@ -175,10 +200,26 @@ func _listen(id: String, slot: String) -> void:
 	pending_action = id
 	pending_slot = slot
 	var kind: String = {"key":"键盘键", "mouse":"鼠标按钮", "pad":"手柄按钮"}[slot]
-	rows[id][slot].text = "等待输入…"
+	_keycaps(rows[id][slot]).hide()
+	_capture_message("等待输入…", false)
 	status.text = "为「%s」按下新的%s。Esc 或手柄 B 取消。" % [bindings.TITLES[id], kind]
 
+func _capture_message(words: String, rejected: bool) -> void:
+	var button: Button = rows[pending_action][pending_slot]
+	button.text = words
+	button.accessibility_name = "%s · %s" % [bindings.TITLES[pending_action], words]
+	var box: StyleBoxFlat = button.get_theme_stylebox("normal").duplicate()
+	box.bg_color = Color("78442c") if rejected else Color("5f5d35")
+	box.border_color = Color("ffc594") if rejected else Color("ffe2a0")
+	box.set_border_width_all(2)
+	for state in ["normal", "hover", "pressed"]:
+		button.add_theme_stylebox_override(state, box)
+
 func _finish_capture() -> void:
+	if not pending_action.is_empty():
+		var button: Button = rows[pending_action][pending_slot]
+		ui.tool_button(button)
+		button.custom_minimum_size.y = WaxKeycaps.HEIGHT
 	pending_action = ""
 	pending_slot = ""
 	captured = null
@@ -209,6 +250,7 @@ func handle_input(event: InputEvent) -> bool:
 		return true
 	var error: String = bindings.rebind(pending_action, pending_slot, event)
 	if not error.is_empty():
+		_capture_message("请换一个键", true)
 		status.text = error + "　Esc / B 取消。"
 		return true
 	var label: String = bindings.label(pending_action, pending_slot)
