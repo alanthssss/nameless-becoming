@@ -75,8 +75,7 @@ def delivery(owned, area, scenario, outing, pair_stock):
         honey = sent + protected + (carried - protected) // 2
     else:
         honey = carried + deposited
-    hosts = scenario['hosts']
-    material = hosts
+    material = scenario.get('pond_hosts', scenario['hosts']) if area == 0 else scenario['hosts']
     if 'split_seam1' in owned:
         # The first encountered host is double-seamed; the timed pull/pickup succeeds.
         material += 1
@@ -112,6 +111,7 @@ def simulate(route, ranks, actions, scenario):
     spending = wallet.copy()
     world = initial()
     trips = 0
+    pond_trips = 0
     rescues = 0
     milestones = {}
     pair_stock = [0, 0]
@@ -138,6 +138,7 @@ def simulate(route, ranks, actions, scenario):
             else:
                 area = int('meadow' in owned)
             trips += 1
+            pond_trips += int(area == 0)
             assert not area or 'meadow' in owned
             gain, violet, rescue = delivery(owned, area, scenario, trips, pair_stock)
             rescues += rescue
@@ -152,7 +153,7 @@ def simulate(route, ranks, actions, scenario):
             assert wallet[unit] >= 0 and wallet[unit] == income[unit] - spending[unit]
         owned.add(key)
     assert world['feast_open']
-    return dict(outings=trips, rescues=rescues, milestones=milestones, income=income,
+    return dict(outings=trips, pond_outings=pond_trips, rescues=rescues, milestones=milestones, income=income,
                 spent=spending, remaining=wallet)
 
 
@@ -216,10 +217,44 @@ def verify(data, original):
     return result
 
 
+def fiber_audit(data):
+    """Vary pond supply alone, then try a fiber waiver on four skill introductions."""
+    ranks = {rank['id']: rank for rank in data['ranks']}
+    actions = {action['id']: action for action in data['world_actions']}
+    # These actions teach timing, flight or taking an order. Keep every other price
+    # and prerequisite, including the fiber used to build the bags and baskets.
+    waivers = ('petal_trace1', 'forecast1', 'glide1', 'order1')
+    trial = ranks.copy()
+    for key in waivers:
+        trial[key] = dict(ranks[key], cost=dict(ranks[key]['cost'], fiber=0))
+    result = {}
+    for route in data['routes']:
+        cases = {}
+        result[route['id']] = cases
+        for hosts in (1, 2, 3):
+            scenario = dict(SCENARIOS['regular'], pond_hosts=hosts)
+            for prices, table in [('draft', ranks), ('four_waivers', trial)]:
+                outcome = simulate(route['steps'], table, actions, scenario)
+                cases[f'{prices}_pond_{hosts}'] = {
+                    'milestones': outcome['milestones'],
+                    'pond_outings': outcome['pond_outings'],
+                    'fiber_spent': outcome['spent']['fiber'],
+                    'remaining': outcome['remaining'],
+                }
+                if prices == 'draft':
+                    assert outcome['spent'] == route['cost']
+    return result
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data',type=Path,default=ROOT/'docs/design/honey-growth-tree-v2.json')
     parser.add_argument('--baseline',type=Path,default=ROOT/'docs/design/honey-growth-tree-v1.json')
+    parser.add_argument('--fiber-audit', action='store_true',
+                        help='Compare pond yields and optional skill prices at fixed blue/violet supply')
     args = parser.parse_args()
-    result = verify(json.loads(args.data.read_text()), json.loads(args.baseline.read_text()))
+    data = json.loads(args.data.read_text())
+    result = verify(data, json.loads(args.baseline.read_text()))
+    if args.fiber_audit:
+        result = fiber_audit(data)
     print(json.dumps(result,ensure_ascii=False,indent=2))
