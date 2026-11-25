@@ -105,13 +105,14 @@ func verify_wayfinding(board, model) -> void:
 	board.size = Vector2(525,283)
 	board.select_rank("reserve")
 	board.update_lod(1.78)
-	var hidden_previews := 0
+	var named := 0
+	var neighbours: Dictionary = board.selected_links()
 	for key in board.visible_ids():
 		var node = board.buttons[key]
+		check(node._show_label()==(key==board.selected or neighbours.has(key)),"only the selection and its prerequisites stay named")
+		check(node._has_point(node.CENTER) and node.tooltip_text.contains(node.title),"every drawing can be selected and identified on hover")
 		if node._show_label():
+			named += 1
 			var label_center: Vector2 = node.CENTER+node.label_rect.get_center()/board.map_zoom
 			check(node._has_point(label_center),"each visible label uses its painted box for hit testing")
-		else:
-			hidden_previews += 1
-			check(node.planned and not board.selected_links().has(key),"only secondary planned names yield when crowded")
-	check(hidden_previews>0 and board.buttons.reserve._show_label(),"the compact layout gives the actual goal and its prerequisites reading space")
+	check(named==3,"the reserve shows its own name and both dependency names")

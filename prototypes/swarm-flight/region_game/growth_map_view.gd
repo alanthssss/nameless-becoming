@@ -2,10 +2,13 @@ extends Control
 ## A camera for the paper map. Buttons use native Control coordinates underneath
 ## the same transform as the artwork, so zoom never changes hit testing or costs.
 signal magnification_changed(value: float)
+signal blank_clicked
+signal overview_requested
 const MAX_ZOOM := 4.4
 const STEP := 1.28
 const DEAD_ZONE := .40
 var board
+var detail_overlay: Control
 var magnification := 1.0
 var dragging := false
 var pressed_map := false
@@ -179,6 +182,7 @@ func reset_view() -> void:
 	_stop_glide()
 	_set_zoom(1.0)
 	board.position = Vector2.ZERO
+	overview_requested.emit()
 
 func _set_zoom(value: float) -> void:
 	magnification = value
@@ -249,24 +253,33 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadMotion and _axis(event):
 		get_viewport().set_input_as_handled()
 
+func _over_detail(viewport_pos: Vector2) -> bool:
+	if not is_instance_valid(detail_overlay) or not detail_overlay.is_visible_in_tree(): return false
+	var local := detail_overlay.get_global_transform_with_canvas().affine_inverse()*viewport_pos
+	return Rect2(Vector2.ZERO,detail_overlay.size).has_point(local)
+
 func _pointer(event: InputEvent) -> bool:
 	var at: Vector2 = get_global_transform_with_canvas().affine_inverse()*event.position
+	var on_map := Rect2(Vector2.ZERO,size).has_point(at)
 	if pressed_map:
 		if event is InputEventMouseMotion:
-			if not dragging and magnification>1 and at.distance_to(press_at)>=5:
-				dragging = true
-			if dragging:
+			if at.distance_to(press_at)>=5: dragging = true
+			if dragging and magnification>1:
 				_pan(at-last_pointer)
 				last_pointer = at
 			return true
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-			pressed_map = false
-			var clicked := not dragging and not press_node.is_empty() and at.distance_to(press_at)<5
+		if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and not event.pressed:
+			var clicked := not dragging and at.distance_to(press_at)<5
 			dragging = false
-			if clicked and Rect2(Vector2.ZERO,size).has_point(at) and _node_at(at)==press_node:
-				board.select_node(press_node)
+			pressed_map = false
+			if clicked and on_map and not _over_detail(event.position):
+				var released_node := _node_at(at)
+				if released_node==press_node:
+					if released_node.is_empty(): blank_clicked.emit()
+					else: board.select_node(released_node)
+			press_node = ""
 			return true
-	if not Rect2(Vector2.ZERO,size).has_point(at): return false
+	if not on_map or _over_detail(event.position): return false
 	if event is InputEventMagnifyGesture:
 		zoom_at(event.factor,at)
 		return true
