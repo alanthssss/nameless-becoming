@@ -1,11 +1,10 @@
 extends "res://sound.gd"
-## Regional loops, a honey-shop dance, and a short flute phrase for reading the growth journal.
+## Regional loops, a honey-shop dance, and the flute score for the growth journal.
 const SPRING := preload("res://region_game/music/spring_explore.ogg")
 const AUTUMN := preload("res://region_game/music/autumn_explore.ogg")
 const SHOP_MUSIC := preload("res://region_game/music/honey_counter.ogg")
-const GrowthDizi := preload("res://region_game/growth_dizi.gd")
+const JOURNAL_MUSIC := preload("res://region_game/music/growth_journal_dizi.ogg")
 const BOOK_DELAY := 0.65
-const BOOK_REPRISE_MSEC := 16000
 
 const FOLEY_DURATIONS := {
 	"harvest":0.20, "pulse":0.22, "fiber_release":0.19, "resin_open":0.26,
@@ -17,10 +16,9 @@ const FOLEY_DURATIONS := {
 var _area := ""
 var _overlay := false
 var _mode := ""
-var _book_phrase_active := false
-var _last_phrase_msec := -BOOK_REPRISE_MSEC
 var _book_tween: Tween
 var _flute: AudioStreamPlayer
+var _book_position := 0.0
 
 func _ready() -> void:
 	_rng.seed = 8753
@@ -52,8 +50,7 @@ func _ready() -> void:
 		player.volume_linear = 0.0
 		player.play()
 	_flute = _player("Music")
-	_flute.stream = GrowthDizi.make_phrase()
-	_flute.finished.connect(_finish_book_phrase)
+	_flute.stream = JOURNAL_MUSIC
 	set_muted(_muted)
 	set_honey_context("hub", "title")
 	set_process(false)
@@ -66,34 +63,34 @@ func _exit_tree() -> void:
 		_flute.stream = null
 	super._exit_tree()
 
-func _start_book_phrase() -> void:
-	_last_phrase_msec = Time.get_ticks_msec()
+func _start_book_music() -> void:
 	_flute.volume_db = -2.0
-	_flute.play()
+	_flute.play(_book_position)
 
-func _finish_book_phrase() -> void:
-	_book_phrase_active = false
-	_mix_region()
+func _stop_book_music() -> void:
+	_book_position = fposmod(_flute.get_playback_position(), JOURNAL_MUSIC.get_length())
+	_flute.stop()
 
-func _leave_book() -> void:
-	_book_phrase_active = false
+func _set_book_open(opened: bool) -> void:
 	if is_instance_valid(_book_tween):
 		_book_tween.kill()
-	if _flute.playing:
-		_book_tween = create_tween()
+	if not opened and not _flute.playing: return
+	_book_tween = create_tween()
+	if not opened:
 		_book_tween.tween_property(_flute, "volume_linear", 0.0, 0.18)
-		_book_tween.tween_callback(_flute.stop)
+		_book_tween.tween_callback(_stop_book_music)
+	elif _flute.playing:
+		# Reopening during the closing fade keeps the same note.
+		_book_tween.tween_property(_flute, "volume_linear", db_to_linear(-2.0), 0.18)
+	else:
+		_book_tween.tween_interval(BOOK_DELAY)
+		_book_tween.tween_callback(_start_book_music)
 
 func set_honey_context(area: String, mode: String) -> void:
 	if _music.is_empty() or (_area == area and _mode == mode):
 		return
-	if _mode == "tree" and mode != "tree":
-		_leave_book()
-	elif mode == "tree" and _mode != "tree" and Time.get_ticks_msec() - _last_phrase_msec >= BOOK_REPRISE_MSEC:
-		_book_phrase_active = true
-		_book_tween = create_tween()
-		_book_tween.tween_interval(BOOK_DELAY)
-		_book_tween.tween_callback(_start_book_phrase)
+	if (mode == "tree") != (_mode == "tree"):
+		_set_book_open(mode == "tree")
 	_area = area
 	_mode = mode
 	_overlay = mode not in ["play", "transition"]
@@ -107,7 +104,7 @@ func _mix_region() -> void:
 	var score_gain := 0.53 if _overlay else 1.0
 	var air_gain := 0.48 if _overlay else 1.0
 	var field := _area in ["pond", "meadow"]
-	var home_gain := score_gain if not field and _mode != "shop" and not _book_phrase_active else 0.0
+	var home_gain := score_gain if not field and _mode not in ["shop", "tree"] else 0.0
 	var gains := [home_gain, score_gain * db_to_linear(-1.1) if field else 0.0, 0.90 if _mode == "shop" else 0.0]
 	for i in _music.size():
 		var player := _music[i]

@@ -405,7 +405,7 @@ func run() -> void:
 	await frames(4)
 	check(game.model.area == "pond" and game.mode == "play","skip commits destination once")
 	check(game.sound._area == "pond" and not game.sound._overlay, "pond music follows the committed area")
-	check(game.sound._music[1].stream == game.sound.AUTUMN and game.sound.AUTUMN.loop and game.sound._music[1].playing and not game.sound._book_phrase_active,"pond starts the looping autumn recording without a flute cue")
+	check(game.sound._music[1].stream == game.sound.AUTUMN and game.sound.AUTUMN.loop and game.sound._music[1].playing and not game.sound._flute.playing,"pond starts the looping autumn recording without a flute cue")
 	check(cues.count("depart_wind") == 1 and game.model.trip_index == 1,"one committed departure gives one rush of air")
 	check(game.world.area_key == "pond","world follows region")
 	await check_seed_pickup()
@@ -464,11 +464,22 @@ func run() -> void:
 	game.model.materials = {"fiber":100,"resin":100}
 	game.model.p = game.model.HUB_TREE
 	await tap(KEY_E)
-	check(game.mode == "tree" and game.sound._book_phrase_active,"opening the growth book schedules its solo")
-	var phrase: Tween = game.sound._book_tween
+	await frames(48)
+	var flute: AudioStreamOggVorbis = game.sound._flute.stream
+	check(game.mode == "tree" and game.sound._flute.playing and flute.loop and flute.get_length() >= 90.0,"the book plays the full-length flute score on loop")
+	check(is_zero_approx(game.sound._music[0].volume_linear),"the courtyard stays silent while reading")
+	var phrase = game.sound._flute.get_stream_playback()
 	game.ui.board.select_node("gather")
 	await frames(5)
-	check(game.sound._book_tween == phrase,"browsing the growth map keeps the same solo")
+	check(game.sound._flute.get_stream_playback() == phrase,"browsing the growth map keeps the same solo")
+	phrase = null
+	game.sound._flute.seek(22.0)
+	await frames(3)
+	await tap(KEY_ESCAPE)
+	await frames(16)
+	await tap(KEY_E)
+	await frames(48)
+	check(game.sound._flute.playing and game.sound._flute.get_playback_position() >= 21.0,"reopening after a full fade returns to the current passage")
 	await check_map_camera()
 	await check_bookmark_rules()
 	await check_catalog_preview()
@@ -518,7 +529,8 @@ func run() -> void:
 	await tap(KEY_SPACE)
 	await frames(4)
 	check(game.model.area == "meadow" and game.model.field.max_energy() == 50 and game.model.field.capacity() == 10,"incremental growth reaches actual field")
-	check(game.sound._area == "meadow" and not game.sound._book_phrase_active and game.sound._music[1].playing, "meadow plays the autumn score with its leaf bed")
+	await frames(12) # Let a rapid book-to-map transition finish its closing fade.
+	check(game.sound._area == "meadow" and not game.sound._flute.playing and game.sound._music[1].playing, "meadow plays the autumn score with its leaf bed")
 	cues.clear()
 	var bark: Dictionary = game.model.field.materials[0]
 	game.model.field.p = bark.anchor - Vector2(45,0)
