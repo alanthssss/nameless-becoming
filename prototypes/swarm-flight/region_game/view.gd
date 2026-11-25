@@ -14,6 +14,12 @@ const BEE_FOOT := Vector2(0,25)
 const SIGN_FOOT := Vector2(-67,24)
 const POND_BLOOM: Texture2D = preload("res://art/collection-blue-bloom.webp")
 const MEADOW_BLOOM: Texture2D = preload("res://art/collection-violet-bloom.webp")
+const PLATE_SHADER = preload("res://region_game/painted_plate.gdshader")
+const DEPTH_MAPS := {
+	"hub": preload("res://region_game/hub_depth.svg"),
+	"pond": preload("res://region_game/pond_depth.svg"),
+	"meadow": preload("res://region_game/meadow_depth.svg"),
+}
 const SURFACE_SHADER = preload("res://region_game/painted_surface.gdshader")
 const CROWN_SHADER = preload("res://region_game/painted_crown.gdshader")
 # Crown bounds on a 700 × 405 registration proof of each complete illustration.
@@ -114,6 +120,7 @@ func _prepare_paint() -> void:
 	picture.position = frame.position
 	picture.scale = frame.size/texture.get_size()
 	picture.z_index = -2
+	picture.material = _paint_material(PLATE_SHADER, texture)
 	_paint_root.add_child(picture)
 	var placements := HUB_CROWNS if home else (POND_CROWNS if area_key == "pond" else MEADOW_CROWNS)
 	for proof: Rect2 in placements:
@@ -137,6 +144,13 @@ func _prepare_paint() -> void:
 		patch.material.set_shader_parameter("water", water)
 		_surfaces.append(patch)
 
+func _paint_material(shader: Shader, texture: Texture2D) -> ShaderMaterial:
+	var paint := ShaderMaterial.new()
+	paint.shader = shader
+	paint.set_shader_parameter("plate_art", texture)
+	paint.set_shader_parameter("depth_map", DEPTH_MAPS[area_key])
+	return paint
+
 func _paint_patch(texture: Texture2D, uv: Rect2, frame: Rect2, shader: Shader) -> Sprite2D:
 	var patch := Sprite2D.new()
 	patch.texture = texture
@@ -146,8 +160,7 @@ func _paint_patch(texture: Texture2D, uv: Rect2, frame: Rect2, shader: Shader) -
 	patch.scale = frame.size/texture.get_size()
 	patch.position = frame.position+uv.position*frame.size
 	patch.z_index = -1
-	var paint := ShaderMaterial.new()
-	paint.shader = shader
+	var paint := _paint_material(shader, texture)
 	paint.set_shader_parameter("center_uv", uv.get_center())
 	paint.set_shader_parameter("radii_uv", uv.size*.5)
 	paint.set_shader_parameter("world_size", frame.size)

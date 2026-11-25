@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="810" viewBox="0 0 700 405">
+  <!-- Data for painted_depth.gdshaderinc in the original art coordinates. -->
+  <defs>
+    <radialGradient id="preserve">
+      <stop offset="0" stop-color="#000080"/>
+      <stop offset=".55" stop-color="#000080" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#000080" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="quiet">
+      <stop offset="0" stop-color="#00ff80"/>
+      <stop offset=".55" stop-color="#00ff80" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#00ff80" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="form">
+      <stop offset="0" stop-color="#ff0080"/>
+      <stop offset=".55" stop-color="#ff0080" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#ff0080" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="700" height="405" fill="#004880"/>
+  <g id="deep-wood">
+    <ellipse cx="272" cy="51" rx="154" ry="65" fill="url(#quiet)" opacity="0.91"/>
+    <ellipse cx="517" cy="57" rx="157" ry="64" fill="url(#quiet)" opacity="0.86"/>
+    <ellipse cx="188" cy="297" rx="142" ry="61" fill="url(#quiet)" opacity="0.65"/>
+    <ellipse cx="489" cy="339" rx="143" ry="89" fill="url(#quiet)" opacity="0.79"/>
+    <ellipse cx="672" cy="222" rx="66" ry="121" fill="url(#quiet)" opacity="0.72"/>
+  </g>
+  <g id="flying-lane">
+    <ellipse cx="123" cy="175" rx="93" ry="53" fill="url(#quiet)" opacity="0.76"/>
+    <ellipse cx="299" cy="204" rx="158" ry="61" fill="url(#quiet)" opacity="0.82"/>
+    <ellipse cx="519" cy="221" rx="118" ry="58" fill="url(#quiet)" opacity="0.78"/>
+  </g>
+  <g id="roots-and-leaf-clumps">
+    <ellipse cx="69" cy="118" rx="84" ry="59" fill="url(#form)" opacity="0.98"/>
+    <ellipse cx="134" cy="132" rx="47" ry="28" fill="url(#form)" opacity="0.76"/>
+    <ellipse cx="382" cy="80" rx="70" ry="65" fill="url(#form)" opacity="0.93"/>
+    <ellipse cx="525" cy="149" rx="46" ry="40" fill="url(#form)" opacity="0.9"/>
+    <ellipse cx="46" cy="222" rx="56" ry="37" fill="url(#form)" opacity="0.9"/>
+    <ellipse cx="105" cy="344" rx="93" ry="73" fill="url(#form)" opacity="0.93"/>
+    <ellipse cx="324" cy="321" rx="100" ry="71" fill="url(#form)" opacity="0.86"/>
+    <ellipse cx="618" cy="361" rx="93" ry="58" fill="url(#form)" opacity="0.85"/>
+    <ellipse cx="216" cy="165" rx="39" ry="28" fill="url(#form)" opacity="0.84"/>
+    <ellipse cx="671" cy="98" rx="93" ry="58" fill="url(#form)" opacity="0.68"/>
+  </g>
+<!-- A few strokes following the load-bearing fork and wood grain. -->
+<g id="forked-root" transform="translate(0 60) scale(.25)" fill="none" stroke-linecap="round">
+  <path d="M32 307 C43 278 56 251 76 231 S113 191 138 174" stroke="#ec002a" stroke-width="4.4" opacity=".74"/>
+  <path d="M74 226 C96 200 108 191 124 181" stroke="#e600dd" stroke-width="3.6" opacity=".68"/>
+  <path d="M335 213 C356 220 376 228 396 237 M430 249 C454 254 469 262 486 274" stroke="#e300dc" stroke-width="3.6" opacity=".68"/>
+  <path d="M360 255 C383 269 413 279 444 286 M482 302 C500 314 519 330 531 346" stroke="#ec0028" stroke-width="4.4" opacity=".70"/>
+</g>
+</svg>

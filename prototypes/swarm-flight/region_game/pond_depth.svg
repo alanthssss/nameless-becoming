@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="810" viewBox="0 0 700 405">
+  <!-- Data for painted_depth.gdshaderinc in the original art coordinates. -->
+  <defs>
+    <radialGradient id="preserve">
+      <stop offset="0" stop-color="#000080"/>
+      <stop offset=".55" stop-color="#000080" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#000080" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="quiet">
+      <stop offset="0" stop-color="#00ff80"/>
+      <stop offset=".55" stop-color="#00ff80" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#00ff80" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="form">
+      <stop offset="0" stop-color="#ff0080"/>
+      <stop offset=".55" stop-color="#ff0080" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#ff0080" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="700" height="405" fill="#005880"/>
+  <g id="distant-bank-and-water">
+    <ellipse cx="302" cy="28" rx="267" ry="43" fill="url(#quiet)" opacity="0.9"/>
+    <ellipse cx="477" cy="71" rx="216" ry="65" fill="url(#quiet)" opacity="0.72"/>
+    <ellipse cx="132" cy="63" rx="119" ry="56" fill="url(#quiet)" opacity="0.74"/>
+    <ellipse cx="172" cy="319" rx="135" ry="78" fill="url(#quiet)" opacity="0.66"/>
+    <ellipse cx="504" cy="325" rx="100" ry="73" fill="url(#quiet)" opacity="0.63"/>
+  </g>
+  <g id="flying-lane">
+    <ellipse cx="155" cy="194" rx="108" ry="64" fill="url(#quiet)" opacity="0.78"/>
+    <ellipse cx="375" cy="194" rx="194" ry="72" fill="url(#quiet)" opacity="0.85"/>
+    <ellipse cx="591" cy="179" rx="91" ry="56" fill="url(#quiet)" opacity="0.73"/>
+  </g>
+  <g id="bank-landmarks">
+    <ellipse cx="88" cy="144" rx="59" ry="58" fill="url(#form)" opacity="0.96"/>
+    <ellipse cx="243" cy="125" rx="71" ry="38" fill="url(#form)" opacity="0.56"/>
+    <ellipse cx="579" cy="115" rx="80" ry="65" fill="url(#form)" opacity="0.84"/>
+    <ellipse cx="321" cy="140" rx="29" ry="26" fill="url(#form)" opacity="0.92"/>
+    <ellipse cx="371" cy="280" rx="32" ry="67" fill="url(#form)" opacity="0.8"/>
+    <ellipse cx="270" cy="306" rx="62" ry="28" fill="url(#form)" opacity="0.79"/>
+    <ellipse cx="58" cy="324" rx="91" ry="72" fill="url(#form)" opacity="0.9"/>
+    <ellipse cx="646" cy="326" rx="98" ry="80" fill="url(#form)" opacity="0.92"/>
+    <ellipse cx="590" cy="40" rx="58" ry="58" fill="url(#form)" opacity="0.73"/>
+  </g>
+<!-- Glazed rim and the inner turn of the handle, with unpainted breaks. -->
+<g id="clay-jug" transform="translate(15 88) scale(.25)" fill="none" stroke-linecap="round">
+  <path d="M257 135 C269 124 284 122 301 121 M308 121 C321 121 332 124 336 129" stroke="#ed00df" stroke-width="3.7" opacity=".78"/>
+  <path d="M264 144 C282 151 316 144 330 136" stroke="#ec0021" stroke-width="4.8" opacity=".78"/>
+  <path d="M215 206 C216 189 224 173 236 169 C243 166 248 167 253 170" stroke="#e900d8" stroke-width="3.5" opacity=".74"/>
+  <path d="M230 217 C229 208 233 192 240 188 M246 230 C243 237 239 242 234 246" stroke="#ef0023" stroke-width="4.4" opacity=".68"/>
+</g>
+</svg>
