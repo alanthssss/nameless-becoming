@@ -242,19 +242,6 @@ func check_catalog_preview() -> void:
 	board.select_node("gather")
 
 
-func click_buy_button() -> void:
-	var centre: Vector2 = game.ui.buy_button.get_global_rect().get_center()
-	var motion := InputEventMouseMotion.new()
-	motion.position = centre
-	root.push_input(motion, true)
-	for pressed in [true, false]:
-		var click := InputEventMouseButton.new()
-		click.button_index = MOUSE_BUTTON_LEFT
-		click.position = centre
-		click.pressed = pressed
-		root.push_input(click, true)
-		await frames(2)
-
 func all_text(node: Node) -> String:
 	var result: String = node.text if node is Label or node is Button else ""
 	for child in node.get_children(): result += all_text(child)
@@ -411,12 +398,14 @@ func run() -> void:
 	cues.clear()
 	await tap(KEY_E)
 	check(game.ui.growth_map.magnification>=2.75 and game.ui.board.selected=="gather","first book opens on a readable introductory skill")
-	await click_buy_button()
-	check(cues == ["book_open", "denied"], "clicking an unaffordable rank sounds once")
+	check(not game.ui.buy_button.visible and game.ui.conditions.shown_rows.any(func(r): return r.kind=="cost"),"unaffordable rank shows how to earn the missing resource")
+	check(cues == ["book_open"], "opening an unaffordable page only sounds the book")
 	game.ui.last_denied_msec = -1000
 	cues.clear()
 	await tap(KEY_ENTER)
-	check(game.ui.buy_button.disabled and cues == ["denied"], "pressing purchase with insufficient funds gives a quiet refusal")
+	check(game.ui.skill_note.visible and cues.is_empty(),"first confirm opens the selected note safely")
+	await tap(KEY_ENTER)
+	check(game.ui.buy_button.disabled and cues == ["denied"], "confirming an inspected unaffordable rank gives a quiet refusal")
 	await tap(KEY_ESCAPE)
 	check(cues.back() == "book_close", "closing the book turns the page once")
 	game.model.coins = 1000

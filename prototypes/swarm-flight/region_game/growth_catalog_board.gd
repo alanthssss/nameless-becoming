@@ -5,7 +5,7 @@ const Catalog := preload("res://region_game/growth_catalog_data.gd")
 const AtlasCell := preload("res://region_game/growth_catalog_cell.gd")
 const DIRECTIONS := ["gather","forage","carry","flight","bloom","trade"]
 const ICONS := ["gather","beat","bag","wings","supply","market","reserve"]
-const SECTOR_TINTS := [Color("b9c97f"),Color("d2ac79"),Color("dfa379"),Color("8dbab2"),Color("a9bb7f"),Color("bd9db0")]
+const OVERVIEW_LINK_LIMIT := 1.65
 var entries: Dictionary = {}
 var ranks_by_id: Dictionary = {}
 var stage_names: Dictionary = {}
@@ -266,6 +266,9 @@ func _layout_labels() -> void:
 	# Leave the arrowheads clear even when a caption moves above its hive.
 	for source in sources:
 		var path := _link_path(source,selected,true)
+		var start := path[0]*map_zoom
+		var departure := start.move_toward(path[1]*map_zoom,19.0)
+		obstacles.append(Rect2(start,Vector2.ZERO).expand(departure).grow(3.0))
 		var tip: Vector2 = path[-1]*map_zoom
 		var tangent: Vector2 = (path[-1]-path[-2]).normalized()
 		var head_center := tip-tangent*5.5
@@ -278,11 +281,8 @@ func _layout_labels() -> void:
 		var radius: float = maxf(12.0,node._radius()+1.0)
 		obstacles.append(Rect2(point(id)*map_zoom-Vector2.ONE*radius,Vector2.ONE*radius*2))
 		node.label_rect = Rect2()
-		if not node.planned and id not in priority: priority.append(id)
-	for id in entries:
-		if id not in priority: priority.append(id)
 	for id in priority:
-		if id!=selected and map_zoom<1.78: continue
+		if id!=selected and map_zoom<OVERVIEW_LINK_LIMIT: continue
 		var node = buttons[id]
 		var center := point(id)*map_zoom
 		var radius: float = node._radius()
@@ -304,7 +304,6 @@ func _layout_labels() -> void:
 				best = candidate
 				min_overlap = overlap
 			if overlap==0: break
-		if min_overlap>0 and node.planned and id!=selected and not sources.has(id): continue
 		obstacles.append(best.grow(1))
 		node.label_rect = Rect2(best.position-center,best.size)
 		node.queue_redraw()
@@ -313,22 +312,8 @@ func _draw() -> void:
 	if model == null: return
 	var center := size*.5
 	var radius := _radius()
-	var tips := PackedVector2Array()
-	for i in 6: tips.append(center+Vector2.from_angle(i*TAU/6-PI/2)*radius)
-	var dividers := [0.42,0.72,1.0]
 	for i in 6:
-		var v := tips[i]
-		var prev := v.lerp(tips[posmod(i-1,6)],.5)
-		var next := v.lerp(tips[(i+1)%6],.5)
-		draw_colored_polygon(PackedVector2Array([center,prev,v,next]),Color(SECTOR_TINTS[i],.16))
-	for divider in dividers:
-		var loop := PackedVector2Array()
-		for v in tips: loop.append(center+(v-center)*divider)
-		loop.append(loop[0])
-		draw_polyline(loop,Color("9687638a"),1.0/map_zoom,true)
-	for i in 6:
-		var ray := tips[i]-center
-		var at := center+ray*1.075
+		var at := center+Vector2.from_angle(i*TAU/6-PI/2)*radius*1.075
 		var label_size := maxi(8,roundi(15.0/map_zoom))
 		draw_string(font,at+Vector2(-40,5/map_zoom),SECTORS[i],HORIZONTAL_ALIGNMENT_CENTER,80,label_size,INK)
 	_draw_catalog_links()
@@ -369,44 +354,157 @@ func _link_path(source: String, target: String, active: bool) -> PackedVector2Ar
 		return PackedVector2Array([a+outgoing*_hex_margin(outgoing,radius),elbow,b-incoming*_hex_margin(incoming,radius)])
 	return PackedVector2Array([a+ray*margin,b-ray*margin])
 
+## Keep the nib on the original arrival tangent so arrows still meet the
+## correct hex face. Close pairs round their existing routing elbow.
+func _ink_curve(path: PackedVector2Array, lean: float) -> PackedVector2Array:
+	var curve := PackedVector2Array([path[0]])
+	for i in range(1,path.size()):
+		var a := path[i-1]
+		var b := path[i]
+		var chord := b-a
+		var bend := chord.normalized().orthogonal()*minf(chord.length()*.13,8.0/map_zoom)*lean
+		var c1 := a+chord*.32+bend
+		var c2 := b-chord*.30
+		if path.size()==3:
+			var through := path[0].direction_to(path[2])*chord.length()*.28
+			if i==1: c2 = b-through
+			else: c1 = a+through
+		for step in range(1,13):
+			curve.append(a.bezier_interpolate(c1,c2,b,step/12.0))
+	return curve
+
+func _nearby_icons(curve: PackedVector2Array, source: String, target: String, margin: float) -> PackedVector2Array:
+	var bounds := Rect2(curve[0],Vector2.ZERO)
+	for p in curve: bounds = bounds.expand(p)
+	bounds = bounds.grow(margin)
+	var nearby := PackedVector2Array()
+	for id in entries:
+		if id==source or id==target: continue
+		var at := point(id)
+		if bounds.has_point(at): nearby.append(at)
+	return nearby
+
+func _clearance(curve: PackedVector2Array, nearby: PackedVector2Array) -> float:
+	var closest := INF
+	for at in nearby:
+		for i in range(1,curve.size()):
+			var near := Geometry2D.get_closest_point_to_segment(at,curve[i-1],curve[i])
+			closest = minf(closest,at.distance_squared_to(near))
+	return sqrt(closest)
+
+## Bend long routes around unrelated drawings. Ease to zero at both
+## ends so the two anchors and the nib direction stay on their hex faces.
+func _route_clear(curve: PackedVector2Array, nearby: PackedVector2Array, margin: float) -> PackedVector2Array:
+	var best := curve
+	var best_gap := _clearance(curve,nearby)
+	if best_gap>=margin: return best
+	var normal := curve[0].direction_to(curve[-1]).orthogonal()
+	var limit := minf(2.0*margin,curve[0].distance_to(curve[-1])*.44)
+	for amount in [.35,-.35,.65,-.65,1.0,-1.0]:
+		var candidate := curve.duplicate()
+		for i in range(1,curve.size()-1):
+			var t := float(i)/(curve.size()-1)
+			candidate[i] += normal*limit*float(amount)*pow(sin(PI*t),3)
+		var clearance := _clearance(candidate,nearby)
+		if clearance>best_gap:
+			best_gap = clearance
+			best = candidate
+		if best_gap>=margin: break
+	return best
+
+## A continuous path uses one anti-aliased polyline per visible dash,
+## including its bends. Gaps reserve bare paper for status marks.
+func _draw_ink_span(curve: PackedVector2Array, distances: PackedFloat32Array, start: float, end: float, hue: Color) -> void:
+	if end-start<.1/map_zoom: return
+	var stroke := PackedVector2Array()
+	for i in range(1,curve.size()):
+		if distances[i-1]>=end: break
+		if distances[i]<=start: continue
+		var length := distances[i]-distances[i-1]
+		if stroke.is_empty():
+			var t := clampf((start-distances[i-1])/length,0,1)
+			stroke.append(curve[i-1].lerp(curve[i],t))
+		var t := clampf((end-distances[i-1])/length,0,1)
+		stroke.append(curve[i-1].lerp(curve[i],t))
+	if stroke.size()>1: draw_polyline(stroke,hue,1.85/map_zoom,true)
+
+func _draw_ink_shaft(curve: PackedVector2Array, hue: Color, optional: bool, mark_index: int, head: float, nearby: PackedVector2Array, margin: float) -> void:
+	var u := 1.0/map_zoom
+	var distances := PackedFloat32Array([0.0])
+	for i in range(1,curve.size()):
+		distances.append(distances[-1]+curve[i-1].distance_to(curve[i]))
+	var end := distances[-1]-head*.48
+	var gaps: Array[Vector2] = []
+	if mark_index>=0:
+		gaps.append(Vector2(distances[mark_index]-6*u,distances[mark_index]+6*u))
+	# Crowded routes can pass behind another drawing. Clip each such
+	# crossing to the paper around that drawing, including curved segments.
+	for at in nearby:
+		for i in range(1,curve.size()):
+			var a := curve[i-1]
+			var length := distances[i]-distances[i-1]
+			if length<=0: continue
+			var tangent := a.direction_to(curve[i])
+			var projected := (at-a).dot(tangent)
+			var perpendicular := absf((at-a).cross(tangent))
+			if perpendicular>=margin: continue
+			var half := sqrt(margin*margin-perpendicular*perpendicular)
+			var enter := maxf(0.0,projected-half)
+			var leave := minf(length,projected+half)
+			if leave>enter: gaps.append(Vector2(distances[i-1]+enter,distances[i-1]+leave))
+	gaps.sort_custom(func(a: Vector2,b: Vector2) -> bool: return a.x<b.x)
+	gaps.append(Vector2(end,end))
+	var cursor := 0.0
+	for gap in gaps:
+		var stop := minf(gap.x,end)
+		while cursor<stop:
+			var dash_end := minf(cursor+6.5*u,stop) if optional else stop
+			_draw_ink_span(curve,distances,cursor,dash_end,hue)
+			cursor = dash_end+3.5*u if optional else dash_end
+		cursor = maxf(cursor,gap.y)
+		if cursor>=end: break
+
 func _draw_link_between(source: String, target: String, info: Dictionary) -> void:
 	if source == target: return
 	var path := _link_path(source,target,not info.is_empty())
+	var lean := .8 if (source+target).hash()%2==0 else -.8
 	if info.is_empty():
 		if (path[-1]-path[0]).dot(point(target)-point(source))>0:
-			draw_line(path[0],path[-1],Color("756b573a"),1.0/map_zoom,true)
+			draw_polyline(_ink_curve(path,lean),Color("796e575e"),1.05/map_zoom,true)
 		return
 	var hue := Color("3c623f") if info.met else Color("934522")
-	var end: Vector2 = path[-1]
-	var ray: Vector2 = path[-2].direction_to(end)
-	var last_length: float = path[-2].distance_to(end)
-	var head := minf(13.0/map_zoom,last_length*.8)
-	var base := end-ray*head
-	var width := 2.9/map_zoom
-	var shaft := path.duplicate()
-	shaft[-1] = base
-	if info.optional:
-		for i in range(1,shaft.size()):
-			draw_dashed_line(shaft[i-1],shaft[i],hue,width,5.0/map_zoom,true,true)
-	else:
-		draw_polyline(shaft,hue,width,true)
-	var wing := ray.orthogonal()*head*.52
-	var triangle := PackedVector2Array([end,base+wing,base-wing])
-	draw_polyline(PackedVector2Array([end,base+wing,base-wing,end]),Color("fff3d1"),2.6/map_zoom,true)
-	draw_colored_polygon(triangle,hue)
-	if map_zoom < 1.78 or (path.size()==2 and last_length*map_zoom<48.0): return
-	# Ink seals make fulfilled and outstanding conditions distinct without colour.
-	var seal: Vector2 = path[1] if path.size()==3 else path[0].lerp(base,.36)
 	var u := 1.0/map_zoom
-	draw_circle(seal,6.8*u,hue,true,-1,true)
-	var white := Color("fff5da")
+	var end := path[-1]
+	var ray := path[-2].direction_to(end)
+	var last_length := path[-2].distance_to(end)
+	var head := minf(10.5*u,last_length*.7)
+	if head<2*u: return
+	var curve := _ink_curve(path,lean)
+	var clearance: float = (buttons[target]._radius()+2.0)*u
+	var nearby := _nearby_icons(curve,source,target,clearance*3.0)
+	if path.size()==2: curve = _route_clear(curve,nearby,clearance)
+	var mark_index := -1
+	if map_zoom>=1.78 and (path.size()==3 or last_length*map_zoom>=32.0):
+		mark_index = roundi((curve.size()-1)*(.5 if path.size()==3 else .375))
+	if mark_index>=0:
+		for at in nearby:
+			if at.distance_to(curve[mark_index])<clearance+5.0*u:
+				mark_index = -1
+				break
+	_draw_ink_shaft(curve,hue,info.optional,mark_index,head,nearby,clearance)
+	# Stop the stroke beneath the nib so its rounded cap cannot blunt the tip.
+	var base := end-ray*head
+	var wing := ray.orthogonal()*head*.43
+	draw_colored_polygon(PackedVector2Array([end,base+wing,base+ray*head*.27,base-wing*.91]),hue)
+	if mark_index<0: return
+	var mark := curve[mark_index]
 	if info.met:
-		draw_polyline(PackedVector2Array([seal+Vector2(-3.3,0)*u,seal+Vector2(-.9,2.7)*u,seal+Vector2(3.5,-2.8)*u]),white,1.6*u,true)
+		draw_polyline(PackedVector2Array([mark+Vector2(-4.2,-.5)*u,mark+Vector2(-1.3,2.9)*u,mark+Vector2(4.1,-3.5)*u]),hue,2.0*u,true)
 	else:
-		draw_line(seal+Vector2.UP*3.6*u,seal+Vector2.DOWN*.7*u,white,1.7*u,true)
-		draw_circle(seal+Vector2.DOWN*3.1*u,1.0*u,white,true,-1,true)
+		draw_line(mark+Vector2(.2,-4.0)*u,mark+Vector2(-.2,.6)*u,hue,2.1*u,true)
+		draw_circle(mark+Vector2(-.3,3.8)*u,1.2*u,hue,true,-1,true)
 
-func _draw_catalog_links() -> void:
+func _draw_overview_links() -> void:
 	for data in Catalog.DATA.cells:
 		if data.id == selected: continue
 		var first: Dictionary = ranks_by_id[data.ranks[0]]
@@ -416,6 +514,9 @@ func _draw_catalog_links() -> void:
 			var from_cell: String = ranks_by_id[from_rank].cell
 			if entries[from_cell].branch == data.branch:
 				_draw_link_between(from_cell,data.id,{})
+
+func _draw_catalog_links() -> void:
+	if map_zoom<OVERVIEW_LINK_LIMIT: _draw_overview_links()
 	var links := selected_links()
 	for source in links:
 		_draw_link_between(source,selected,links[source])
