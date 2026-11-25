@@ -25,6 +25,11 @@
 
 **落实。** [池岸交互设计](pond-violet-map-resource-design.md#nectar-wing-bay)区分 0.32 已有规则与本次打样提议。[唯一 Now](solar-term-campaign-production-spec.md#production-now)沿 M3/#322 承接体验，M4/#211 承接范围、成本与后续取舍。下列旧战役设计、成品合同及对应证据按其原版本保存，供复用和后作评估；新首作交付另按实际覆盖复核。
 
+<a id="honey-stamina-growth"></a>
+### 蜜蜂的体力与续航成长
+
+**Alan 确定按百分比读精神状态。** 场上蜜蜂、体力圆章里的姿态和底色共用当前体力占这只蜂有效上限的比例。野外剩四分之一时给返程提示。升级后同样的表情可以代表更多可用体力；玩家仍能从圆弧和点数看出余量。六态的界线、龟龟的氧气设计，以及双翼和风路怎样改变一趟采集，见[续航成长对照](nectar-steam-demo.md#honey-stamina-growth)。[M3 成长手册 #373](https://github.com/alanthssss/nameless-becoming/issues/373)
+
 ### 以下为历版飞行战役和采蜜 Demo 的设计记录
 
 版本：1.1 · 世界元素与玩法发展修订 · 2026-10-26
