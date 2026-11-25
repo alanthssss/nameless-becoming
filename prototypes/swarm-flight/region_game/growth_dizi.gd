@@ -34,6 +34,10 @@ static func make_phrase() -> AudioStreamWAV:
 	stream.mix_rate = RATE
 	stream.format = AudioStreamWAV.FORMAT_16_BITS
 	stream.data = pcm
+	# Keep the final note's room tail and a short breath before the next pickup.
+	stream.loop_begin = 0
+	stream.loop_end = dry.size()
+	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	return stream
 
 static func _render_note(dry: PackedFloat32Array, note: Array, noise: RandomNumberGenerator) -> void:
