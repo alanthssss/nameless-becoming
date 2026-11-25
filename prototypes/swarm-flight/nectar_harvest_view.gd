@@ -337,7 +337,7 @@ func _stage(p: Vector2, size: float, active: bool) -> void:
 func _draw_dance() -> void:
 	var group: int = mini(3,model.growth_count())
 	var pose: Dictionary = Dance.pose(dance_elapsed,dance_style)
-	_bee(model.p+pose.offset,1.02,pose.face,1,false,0,"dance")
+	_bee(model.p+pose.offset,1.02,pose.face,1,false,0,"dance",0.0,model.energy_stage())
 	for i in group:
 		var follower: Dictionary = Dance.pose(dance_elapsed,dance_style,i+1)
 		var at: Vector2 = model.p+Vector2(-58-(i%2)*44,22+(i/2)*25)+follower.offset
@@ -451,10 +451,11 @@ func _working_bee_position() -> Vector2:
 	# Lean towards the selected flower without moving the gameplay collider.
 	return model.p+_working_bee_direction()*12 if collecting else model.p
 
-func _draw_bee_art(alpha: float, wing_height: float, _rest: float, _dash: float, eyes_closed: bool, charge: float, trapped: bool, _wave_tip: Vector2) -> void:
+func _draw_bee_art(alpha: float, wing_height: float, _rest: float, _dash: float, eyes_closed: bool, charge: float, trapped: bool, _wave_tip: Vector2, energy_stage: int) -> void:
 	var rect := Rect2(-34,-41,68,68)
 	var opening := remap(wing_height,3.0,28.0,.28,1.0)
-	UIArt.painted_bee(self,rect,opening,Color(1,1,1,alpha))
+	UIArt.painted_bee(self,rect,opening,Color(1,1,1,alpha),true,energy_stage)
+	if energy_stage > 0: return # Tired poses have their own painted eyelids and brow.
 	if eyes_closed:
 		var lid := Color(1.0,.75,.24,alpha)
 		var ink := Color(.25,.13,.045,alpha)
@@ -484,7 +485,7 @@ func _draw_working_bee() -> void:
 		at -= facing*sin(model.pulse_action_left/.18*PI)*5
 		size += sin(model.pulse_action_left/.18*PI)*.08
 	var push: float = sin(model.pulse_action_left/.18*PI) if not reduced_motion else 0.0
-	_bee(at,size,facing,1.0,false,0.0,"leader",push)
+	_bee(at,size,facing,1.0,false,0.0,"leader",push,model.energy_stage())
 
 func _draw_materials() -> void:
 	for drop in model.drops:

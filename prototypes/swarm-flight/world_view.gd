@@ -715,7 +715,7 @@ func _ending_weather(cam: float) -> void:
 		var y := fposmod(float(i) * 67.3 + clock * 390.0, 880.0) - 40.0
 		draw_line(Vector2(x, y), Vector2(x - 8, y + 25), Color(0.77, 0.91, 0.98, 0.29), 1.0, true)
 
-func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, seed_value: float, pose := "leader", wing_push := 0.0) -> void:
+func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, seed_value: float, pose := "leader", wing_push := 0.0, energy_stage := -1) -> void:
 	var axis := face.normalized() if not face.is_zero_approx() else Vector2.RIGHT
 	var charge := 0.0
 	var dash := 0.0
@@ -749,10 +749,10 @@ func _bee(p: Vector2, size: float, face: Vector2, alpha: float, trapped: bool, s
 	if not trapped and (pose == "greet" or (pose == "leader" and _greeting > 0.0 and dash<0.5)):
 		var wave := sin((clock+seed_value*0.07)*17)*3.0
 		wave_tip = Vector2(23,9+wave)
-	_draw_bee_art(alpha,wing_height,rest,dash,blink or rest>0.72,charge,trapped,wave_tip)
+	_draw_bee_art(alpha,wing_height,rest,dash,blink or rest>0.72,charge,trapped,wave_tip,energy_stage)
 	draw_set_transform(_world_offset)
 
-func _draw_bee_art(alpha: float, wing_height: float, rest: float, dash: float, eyes_closed: bool, charge: float, trapped: bool, wave_tip: Vector2) -> void:
+func _draw_bee_art(alpha: float, wing_height: float, rest: float, dash: float, eyes_closed: bool, charge: float, trapped: bool, wave_tip: Vector2, _energy_stage: int) -> void:
 	var ink := Color(INK,alpha)
 	var wing_color := Color(0.9,0.99,0.91,alpha*0.94)
 	# Unequal, rooted wings fold along the back at rest and sweep aft on a launch.

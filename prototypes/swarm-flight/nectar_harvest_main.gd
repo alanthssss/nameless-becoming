@@ -207,7 +207,7 @@ func update_sound_context() -> void:
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
 func _hud_signature() -> String:
-	return str([int(ceil(model.energy)),model.energy_is_low(),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
+	return str([int(ceil(model.energy)),model.energy_stage(),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
 
 func has_harvest_hint() -> bool:
 	if model.at_home() or model.cargo_total() >= model.capacity() or not model.interaction().is_empty(): return false

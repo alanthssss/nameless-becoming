@@ -475,7 +475,7 @@ func _draw_working_bee() -> void:
 		super._draw_working_bee()
 		return
 	var pose := _field_bee_pose()
-	_bee(pose.p,pose.size,pose.face,1.0,false,0.0,"leader",pose.push)
+	_bee(pose.p,pose.size,pose.face,1.0,false,0.0,"leader",pose.push,model.energy_stage())
 
 func _draw_bag() -> void:
 	if area_key == "hub":

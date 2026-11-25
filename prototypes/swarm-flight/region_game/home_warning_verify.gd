@@ -40,6 +40,27 @@ func run() -> void:
 	var entry: Vector2 = field.layout.nodes[0].p
 	field.p = field.layout.nodes[1].p
 	field.departed = true
+	# An upgrade makes several cutoffs fractional. The model, dial and paper
+	# must cross on that actual value, even when the rounded number stays put.
+	var limits := [5.0/6.0,2.0/3.0,.5,.25,.125]
+	var inks := {}
+	var rested_ink: Color = dial.paper_wash.gradient.colors[0]
+	for i in limits.size():
+		var cutoff: float = model.max_energy()*float(limits[i])
+		field.energy = cutoff+.001
+		model._sync_field()
+		game.ui.refresh()
+		check(dial.energy_stage == i and model.energy_stage() == i,"above portrait cutoff %d" % i)
+		inks[dial.paper_wash.gradient.colors[0]] = true
+		field.energy = cutoff
+		model._sync_field()
+		check(model.energy_stage() == i+1,"exact boundary uses lower portrait %d" % i)
+		field.energy = cutoff+.001
+		model._sync_field()
+		game._process(.02)
+		check(dial.energy_stage == i+1 and model.energy_stage() == i+1,"actor and HUD advance together at cutoff %d" % i)
+	inks[dial.paper_wash.gradient.colors[0]] = true
+	check(inks.size() == 6,"each of the six portraits has a different paper wash")
 	field.energy = 12.51
 	model._sync_field()
 	model.update_camera()
@@ -74,6 +95,7 @@ func run() -> void:
 	check(focus.is_equal_approx((field.p - model.camera_offset) * model.MeadowLayout.FIELD_ZOOM),"iris is centred on the bee at the sign")
 	game._advance_transition(3.0)
 	check(model.at_home() and model.energy == model.max_energy() and not dial.warning,"safe arrival restores energy and leaves the HUD calm")
+	check(dial.energy_stage == 0 and model.energy_stage() == 0 and dial.paper_wash.gradient.colors[0] == rested_ink,"return restores the rested portrait and its cool wash")
 	await still("庭院-平安带回")
 	game.queue_free()
 	await process_frame

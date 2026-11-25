@@ -290,6 +290,7 @@ func _build_hud() -> void:
 	cluster.add_child(paper)
 	paper.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	energy_bar = bar(cluster,Color("85bc65"))
+	energy_bar.step = 0.0
 	energy_bar.hide() # Range source for the circular indicator, still refreshed centrally.
 	energy_dial = EnergyDial.new()
 	energy_dial.source = energy_bar
@@ -803,6 +804,7 @@ func refresh() -> void:
 	energy_text.text = "%d / %d" % [int(ceil(m.energy)),int(m.max_energy())]
 	energy_bar.max_value = m.max_energy()
 	energy_bar.value = m.energy
+	energy_dial.set_energy_stage(m.energy_stage())
 	_number(coins_text,str(m.coins),m.coins)
 	_number(fiber_text,str(m.materials.fiber),m.materials.fiber)
 	_number(resin_text,str(m.materials.resin),m.materials.resin)
