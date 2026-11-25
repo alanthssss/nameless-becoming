@@ -2,6 +2,9 @@ extends Control
 ## Painted bee portrait; a narrow honey-coloured ink arc carries live stamina.
 const Art = preload("res://nectar_ui_art.gd")
 const PULSE_SECONDS := 1.2
+const INKS := [Color("849ba4"),Color("909aa8"),Color("9c92a4"),Color("a78e9a"),Color("b48982"),Color("b67a6a")]
+const LINEN := Color("d5c9b4")
+var energy_stage := 0
 var source: Range
 var warning := false
 var pulse_time := 0.0
@@ -10,7 +13,7 @@ var paper_wash := GradientTexture2D.new()
 func _ready() -> void:
 	var wash := Gradient.new()
 	wash.offsets = PackedFloat32Array([0.0,.43,.79,.95,1.0])
-	wash.colors = PackedColorArray([Color("849ba4e0"),Color("99a9adcc"),Color("bcc0b9b6"),Color("d5c9b479"),Color("d5c9b400")])
+	wash.colors = _wash_colors()
 	paper_wash.gradient = wash
 	paper_wash.width = 96
 	paper_wash.height = 96
@@ -20,6 +23,16 @@ func _ready() -> void:
 	set_process(false)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if source: source.value_changed.connect(_value_changed)
+
+func _wash_colors() -> PackedColorArray:
+	var ink: Color = INKS[energy_stage]
+	return PackedColorArray([Color(ink,.88),Color(ink.lerp(LINEN,.26),.80),Color(ink.lerp(LINEN,.66),.71),Color(LINEN,.47),Color(LINEN,0)])
+
+func set_energy_stage(value: int) -> void:
+	if value == energy_stage: return
+	energy_stage = value
+	paper_wash.gradient.colors = _wash_colors()
+	queue_redraw()
 
 func set_warning(active: bool, reduced_motion: bool) -> void:
 	var animate := active and not reduced_motion
@@ -54,4 +67,4 @@ func _draw() -> void:
 		draw_arc(at,radius,0,TAU,96,Color("864027"),6.5,true)
 		draw_arc(at,radius,0,TAU,96,Color("b85c32").lerp(Color("ffe29a"),strength),4.2,true)
 	# Use the whole bee assembly, including both wings, rather than its body atlas.
-	Art.painted_icon(self,"bee",at+Vector2(0,-1),31)
+	Art.painted_bee(self,Rect2(at+Vector2(-31,-32),Vector2(62,62)),1.0,Color.WHITE,true,energy_stage)

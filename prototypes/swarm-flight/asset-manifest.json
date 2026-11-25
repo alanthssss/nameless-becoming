@@ -17,6 +17,29 @@
     "prompt": "Keep the right-facing icon bee, honey-coloured fur, single dark brown band, soft ivory wings and amber-tipped antennae. Remove the red scarf and restore the golden chest. Give the bee a purposeful forward gaze and a slight smile. Pose three distinctly readable near-side thoracic legs: an open hook reaching forward, a folded middle leg and a swept-back hind leg with a broader pollen basket. Keep the opposite three occluded; preserve clear spaces between the feet at a 55-pixel display size. Transparent background.",
     "usage": "Honey flight, stamina portrait, growth preview and transition. The gameplay jar remains a separate attachment."
   },
+  "honey_energy_poses": {
+    "path": "art/honey-energy-poses.png",
+    "source": "Built-in image_gen, 2026-11-25, #419. Five local face paintovers reference the existing #410 Honey master; retain one identity and the original visible three-leg count.",
+    "layout": "768 × 512 RGBA; six registered body-only 256-square cells, three across. Separate original ivory wings use the common wing root.",
+    "states": [
+      "抖擞",
+      "轻快",
+      "专注",
+      "吃力",
+      "疲倦",
+      "强撑"
+    ],
+    "prompt": "Retain the golden three-quarter bee and its exact face placement. Paint only brows, eyes and mouth for easy flight, focus, pacing with a breath, tired and last reserves. Opposite-side legs stay occluded. No costume, tear or alarm glyphs.",
+    "processing": "Feather the painted face details onto the original body; progressively lower the flexible antennae and tuck feet. Neutral and low-state silhouettes preserve their common pivot. Other bees and the application icon use the base art.",
+    "source_sha256": [
+      "4d6694805a516537418766bb0f7940c10beee0ed291b054c86bd3e57ad5271fc",
+      "c94ab3188e09d9c4d146746e90afa64d1eb799094b45832953336e82b4e508e5",
+      "6682bde951a9475a97db730f62a0c2b5dbb6491768b184bb07eab0e2c7aea43c",
+      "403d3782355c57f3252a04bfe3ca2d72547eba7fb9d906aef0fa630e194c0d3f",
+      "12cac9b4f7248d0712aa1052310bdb460863fe1b4f4b2c65f30d39062418c71e",
+      "058b92ebf19fa0c8777a963d4fd956749042cbf4ec50373587cd76cdfb273489"
+    ]
+  },
   "revision": "0.9.3",
   "created": "2026-10-20",
   "direction": "Alan accepted the stage-05 visual direction and explicitly authorized completing remaining elements and applying the coherent art family to all sixteen levels (SF-R28). Original generated painted sprites combine with model-driven presentation. This is direction approval and rollout authorization, not whole-game experience, commercial quality or PVZ-parity acceptance.",
