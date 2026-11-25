@@ -1,13 +1,42 @@
 extends Control
-## The flight bindings and fixed menu shortcuts are presented in the same place.
+## Each section shows the controls used in one part of the game.
+const SHORTCUTS := {
+	"菜单": [
+		["选择选项", "方向键 / Tab", "十字键"],
+		["确认", "Enter / 鼠标左键", "A（下）"],
+		["返回", "Esc", "B（右）"],
+	],
+	"成长树": [
+		["选择技能", "方向键", "左摇杆 / 十字键"],
+		["查看 / 购买", "Enter", "A（下）"],
+		["展开 / 收起技能签", "I", "视图键（Back）"],
+		["查看前置", "F", "按下左摇杆"],
+		["切换档次", "[ / ]", "X（左）"],
+		["试用花湾", "P", "Y（上）"],
+		["平移地图", "拖动空白处", "右摇杆"],
+		["缩放", "鼠标滚轮", "LT / RT"],
+		["查看全图", "Home", "按下右摇杆"],
+	],
+	"花湾": [
+		["选择花朵", "1–8 / ← →", "十字键 ← →"],
+		["采蜜", "按住 E / 空格", "按住 A（下）"],
+		["指向花朵采蜜", "按住鼠标左键", ""],
+		["切换阶段", "点击阶段选单", "RB"],
+		["返回", "Esc", "B（右）"],
+	],
+}
+const REBIND_HINT := "选择要修改的按键"
+
 var ui
 var bindings
 var device := "kbm"
 var rows := {}
 var tabs := {}
 var headings := {}
-var flight_note: Label
-var notes: Label
+var section := "飞行"
+var sections := {}
+var flight: VBoxContainer
+var reference: VBoxContainer
 var status: Label
 var reset_button: Button
 var scroll: ScrollContainer
@@ -22,49 +51,63 @@ func setup(interface: Control) -> void:
 	ui.shade(self, Color("173d35cf"))
 	var page: PanelContainer = ui.material_panel(self,"settings",Vector4(166,72,176,126))
 	ui.anchored(page, Rect2(.5,.5,0,0), Rect2(-455,-366,910,732))
-	var content: VBoxContainer = ui.column(page, 8)
-	ui.text_line(content, "操作说明与改键", 30, ui.TOOL_INK).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var tab_bar: HBoxContainer = ui.row(content, 14)
-	var group := ButtonGroup.new()
+	var content: VBoxContainer = ui.column(page, 4)
+	ui.text_line(content, "键位设置", 28, ui.TOOL_INK).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var tab_bar: HBoxContainer = ui.row(content, 12)
+	var device_group := ButtonGroup.new()
 	for id in ["kbm","pad"]:
-		var tab: Button = ui.action(tab_bar, "键盘和鼠标" if id == "kbm" else "游戏手柄", _select_device.bind(id))
-		tab.toggle_mode = true
-		tab.button_group = group
-		ui.tool_button(tab)
-		tabs[id] = tab
-	flight_note = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
+		var title := "键盘和鼠标" if id == "kbm" else "游戏手柄"
+		tabs[id] = _tab(tab_bar, title, device_group, _select_device.bind(id))
+	var section_bar: HBoxContainer = ui.row(content, 6)
+	var section_group := ButtonGroup.new()
+	for title in ["飞行", "菜单", "成长树", "花湾"]:
+		sections[title] = _tab(section_bar, title, section_group, _select_section.bind(title))
 	scroll = ScrollContainer.new()
 	scroll.follow_focus = true
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.add_child(scroll)
-	var list: VBoxContainer = ui.column(scroll, 4)
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var header: HBoxContainer = ui.row(list, 8)
-	_row_label(header, "飞行与采集")
+	flight = ui.column(scroll, 1)
+	flight.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	reference = ui.column(scroll, 4)
+	reference.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var header: HBoxContainer = ui.row(flight, 8)
+	_row_label(header, "动作")
 	for slot in ["key","mouse","pad"]:
 		var title: Label = ui.text_line(header, {"key":"键盘","mouse":"鼠标","pad":"手柄按钮"}[slot], 17, ui.TOOL_INK)
 		title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		headings[slot] = title
 	for id in bindings.ACTIONS:
-		var line: HBoxContainer = ui.row(list, 8)
+		var line: HBoxContainer = ui.row(flight, 8)
 		_row_label(line, bindings.TITLES[id])
 		rows[id] = {}
 		for slot in ["key","mouse","pad"]:
 			var button: Button = ui.action(line, "", _listen.bind(id, slot))
 			ui.tool_button(button)
-			button.custom_minimum_size.y = 39
+			button.custom_minimum_size.y = 31
+			button.focus_entered.connect(_show_hint.bind(id, slot))
 			button.add_theme_font_size_override("font_size",18)
 			rows[id][slot] = button
-	notes = ui.text_line(list, "", 18, ui.TOOL_SECONDARY, true)
-	notes.focus_mode = Control.FOCUS_ALL
 	status = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
 	var footer: HBoxContainer = ui.row(content, 16)
 	reset_button = ui.action(footer,"恢复默认按键",_reset)
 	ui.tool_button(reset_button)
 	ui.tool_button(ui.action(footer, "返回设置", ui.close_controls))
 	hide()
+
+func _tab(bar: HBoxContainer, title: String, group: ButtonGroup, select: Callable) -> Button:
+	var button: Button = ui.action(bar, title, select)
+	button.toggle_mode = true
+	button.button_group = group
+	ui.tool_button(button)
+	button.custom_minimum_size.y = 34
+	button.add_theme_font_size_override("font_size",18)
+	if button.get_index() > 0:
+		var previous := bar.get_child(button.get_index() - 1) as Button
+		previous.focus_neighbor_right = previous.get_path_to(button)
+		button.focus_neighbor_left = button.get_path_to(previous)
+	return button
 
 func _row_label(line: Control, words: String) -> void:
 	var label: Label = ui.text_line(line, words, 18, ui.TOOL_INK)
@@ -73,15 +116,40 @@ func _row_label(line: Control, words: String) -> void:
 
 func open(preferred: String) -> void:
 	_finish_capture()
+	section = "飞行"
 	_select_device(preferred)
 	tabs[device].grab_focus()
 
 func _select_device(id: String) -> void:
 	device = id
 	for tab_id in tabs: tabs[tab_id].set_pressed_no_signal(tab_id == id)
-	status.text = "点选按键即可修改飞行操作。菜单与成长树的固定操作见下方。"
-	scroll.scroll_vertical = 0
 	refresh_table()
+	_select_section(section)
+
+func _select_section(title: String) -> void:
+	section = title
+	for name_text in sections: sections[name_text].set_pressed_no_signal(name_text == section)
+	for tab: Button in tabs.values():
+		tab.focus_neighbor_bottom = tab.get_path_to(sections[section])
+	flight.visible = section == "飞行"
+	reference.visible = not flight.visible
+	reset_button.visible = flight.visible
+	status.visible = flight.visible
+	status.text = REBIND_HINT
+	scroll.scroll_vertical = 0
+	for child in reference.get_children():
+		reference.remove_child(child)
+		child.queue_free()
+	if reference.visible:
+		var header: HBoxContainer = ui.row(reference, 8)
+		_row_label(header, "动作")
+		ui.text_line(header, "固定按键", 17, ui.TOOL_SECONDARY)
+		for shortcut in SHORTCUTS[section]:
+			var binding: String = shortcut[2] if device == "pad" else shortcut[1]
+			if binding.is_empty(): continue
+			var line: HBoxContainer = ui.row(reference, 8)
+			_row_label(line, shortcut[0])
+			ui.text_line(line, binding, 18, ui.TOOL_INK)
 
 func refresh_table() -> void:
 	for slot in headings:
@@ -90,13 +158,18 @@ func refresh_table() -> void:
 			var button: Button = rows[id][slot]
 			button.visible = headings[slot].visible
 			button.text = bindings.label(id, slot)
-			button.tooltip_text = "%s · %s" % [bindings.TITLES[id], button.text]
-	var direction := "左摇杆飞行，振翅朝蜂头。" if device == "pad" else "键盘振翅朝蜂头，鼠标振翅朝指针。"
-	flight_note.text = direction + "点按与设施交互，按住采蜜。振翅可连发，冲刺按住蓄力、松开发动。"
-	if device == "pad":
-		notes.text = "左摇杆飞行，振翅朝蜜蜂面向。蜂舞中按冲刺键跳过。\n菜单用十字键选项、A（下）确认、B（右）返回。\n成长树用左摇杆或十字键选格，A 查看或购买，视图键收签，L3 查看前置，X 换档，Y 试用花湾。右摇杆移图，LT / RT 缩放，按下右摇杆看全图。\n花湾演示用十字键左右选花，按住 A 采蜜，RB 换阶段，B 返回。"
-	else:
-		notes.text = "鼠标振翅朝指针，键盘振翅朝蜜蜂面向。蜂舞中按冲刺键跳过。\n菜单可点击，也可用方向键或 Tab 选项、Enter 确认、Esc 返回。\n成长树用方向键选格，Enter 查看或购买，I 收签，F 查看前置，[ / ] 换档，P 试用花湾。滚轮缩放、拖空白移图，Home 看全图。\n花湾演示用 1–8 或左右方向键选花，按住 E 或空格采蜜，也可按住鼠标左键指向花朵。"
+			button.tooltip_text = _binding_hint(id, slot)
+
+func _binding_hint(id: String, slot: String) -> String:
+	match id:
+		"interact": return "点按互动，按住采蜜"
+		"pulse": return "朝指针振翅，按住连发" if slot == "mouse" else "朝蜂头振翅，按住连发"
+		"dash": return "按住蓄力，松开冲刺。蜂舞中点按跳过"
+	if slot == "pad" and id in bindings.STICK_HINTS: return "也可用左摇杆飞行"
+	return REBIND_HINT
+
+func _show_hint(id: String, slot: String) -> void:
+	if pending_action.is_empty(): status.text = _binding_hint(id, slot)
 
 func _listen(id: String, slot: String) -> void:
 	pending_action = id

@@ -78,6 +78,31 @@ func close_game() -> void:
 		OS.delay_msec(10)
 		await process_frame
 
+func has_only_single_lines() -> bool:
+	for label in page.find_children("*", "Label", true, false):
+		if label.is_visible_in_tree() and label.get_line_count() > 1:
+			return false
+	return true
+
+func check_sections() -> void:
+	# Start from the device tab. The fixed tables must work with just the D-pad.
+	await press_pad(JOY_BUTTON_DPAD_DOWN)
+	for title in ["菜单","成长树","花湾"]:
+		await press_pad(JOY_BUTTON_DPAD_RIGHT)
+		check(root.gui_get_focus_owner() == page.sections[title], "D-pad reaches " + title)
+		await press_pad(JOY_BUTTON_A)
+		check(page.section == title and page.reference.is_visible_in_tree() and not page.flight.visible, "only selected reference is visible: " + title)
+		check(has_only_single_lines() and not page.reset_button.visible, "fixed shortcuts are single lines and read-only: " + title)
+		var last: Control = page.reference.get_child(-1)
+		check(page.scroll.get_global_rect().encloses(last.get_global_rect()), "last shortcut visible from section tab: " + title)
+	await click(page.tabs.kbm)
+	var captions: Array = page.reference.find_children("*", "Label", true, false).map(func(label): return label.text)
+	check("按住 E / 空格" in captions and "按住 A（下）" not in captions, "switching device updates the open reference")
+	await click(page.sections["飞行"])
+	check(page.scroll.get_global_rect().encloses(page.rows.mute.mouse.get_global_rect()) and has_only_single_lines(), "all keyboard and mouse bindings fit on entry")
+	await click(page.tabs.pad)
+	check(page.flight.is_visible_in_tree() and not page.reference.visible and has_only_single_lines(), "flight table has no guide paragraphs")
+
 func run() -> void:
 	# Game saves and bindings must both be isolated when this script is run by hand.
 	if not Array(OS.get_cmdline_user_args()).any(func(s): return s.begins_with("--progress-file=")):
@@ -102,6 +127,8 @@ func run() -> void:
 		root.size = pixels
 		await frames(3)
 		check(page.scroll.size.y > 170 and page.scroll.get_h_scroll_bar().max_value <= page.scroll.size.x + 1, "rows fit width at " + str(pixels))
+		check(page.scroll.get_global_rect().encloses(page.rows.mute.pad.get_global_rect()) and has_only_single_lines(), "all pad bindings fit on entry at " + str(pixels))
+	await check_sections()
 	for i in 10:
 		if root.gui_get_focus_owner() == page.rows.interact.pad: break
 		await press_pad(JOY_BUTTON_DPAD_DOWN)

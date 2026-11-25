@@ -20,6 +20,13 @@ Godot 4.6.2 `macOS Pond Feedback` 从 `91c1598d311d191384a33234a185bd10e07716d5`
 
 北京时间 02:47 至 03:08 的观测覆盖实装、两次主线同步、导出与本机复核，包含工具等待和并行工作。后续 CI 与集成时间在 [PR #438](https://github.com/alanthssss/nameless-becoming/pull/438) 留痕。沿用既有画稿，新增采购 0，主动工时、计费、历史累计与可靠余量未知。维持 200＋40 小时控制线，M3/#322 与成本检查点 #211 继续开放。Alan 可据此包判断造型、交互节奏与整体观感。[整包验证 #436](https://github.com/alanthssss/nameless-becoming/issues/436)
 
+<a id="honey-controls-408-sections"></a>
+## Honey · 键位设置分区（2026-11-26）
+
+Alan 截图中的旧页在键鼠和手柄的绑定表末尾都堆了六行说明，表头还重复振翅方向。此次沿 M3 / #322 / #408 改为先看飞行：九个动作与当前绑定在一屏内显示。菜单、成长树、花湾分别点开查阅。选择飞行按键时才提示振翅朝向或按住与松开的用法。
+
+开发复核从标题和暂停进入设置，检查改键、冲突、取消、保存与恢复。在 1280×800 和 960×600 原生窗口逐项切换两种设备、四个分区，末行完整、无需滚动。手柄通过 Godot 输入事件驱动。本机 Mac 包为 `~/LocalGames/Honey-键位设置-408/Honey.app`，同目录的“验证”保存原生图。工时与集成回执沿[原操作设置工单](https://github.com/alanthssss/nameless-becoming/issues/408)。
+
 <a id="honey-controls"></a>
 ## Honey · 键鼠和手柄操作（2026-11-25）
 
