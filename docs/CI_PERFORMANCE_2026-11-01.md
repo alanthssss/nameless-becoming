@@ -49,7 +49,26 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 <a id="trigger-contract"></a>
 ## 第二轮：触发条件、实际依赖与放行合同
 
-用户随后要求仔细分析和优化触发条件，仍沿用 #238 / #239；首轮并行数据保持历史有效。本节为当前触发规则，替代首轮各原型单独用 `paths` 过滤的入口。Codex负责有限工程决定及验证，不改产品Now、玩法或发布范围。
+用户随后要求仔细分析和优化触发条件，仍沿用 #238 / #239；首轮并行数据保持历史有效。本节记录入口与事件规则。当前文件分类和审查范围见下方[按改动选择检查](#review-scope)。Codex负责有限工程决定及验证，不改产品Now、玩法或发布范围。
+
+<a id="review-scope"></a>
+### 按改动选择检查 · 2026-11-25
+
+PR 与 `main` push 都先校验差异、路由和工作流语法，最后由 `CI required checks` 汇总。逐文件取并集，移动文件按旧、新两处用途判断。下表用于选检查和审查改动，复核人可直接在运行的 **Change scope and lightweight CI checks** 摘要看到选择结果。图像观感、谱面与试玩结论由提交的资料支持。
+
+| 改动 | 自动检查 | 审查重点 |
+| --- | --- | --- |
+| 普通 Markdown、`docs/production/evidence/` 的 PNG、JPG/JPEG、WebP、日志，已归档的《花间慢行》简谱 PDF | 轻量检查 | 核对图像、日志或谱面与本次说明、对应游戏版本是否一致；外观改动看实际尺寸对照 |
+| 同一证据目录的 JSON 回执、JSONL 事件记录 | 对新增或修改的 JSON 解析，对 JSONL 逐行解析，格式错误阻止通过 | 核实内容和来源；项目内的旧档测试输入仍走原型回归 |
+| README、marketing 或路由列明的素材／文案合同输入 | 两组 Node 文案与材料测试；已选 Web 时由 Web 覆盖 | 核对对外表述、素材登记 |
+| 只改 `prototypes/swarm-flight/region_game/` 下的 GDScript 或其 UID | 仅 `region-greybox` 一组，覆盖区域模型、UI、操作、存档位、成长手册和依赖区域代码的池岸 TileMap | 按实际受影响的玩法、存档兼容或画面对照复核 |
+| Swarm 共用代码、游戏素材、配置、打包契约、历史测试输入或 Swarm 工作流 | 完整六组 Swarm；与局部区域改动混合时扩大到六组 | 共用绘制和入口要看多处调用；存档变更核对旧档与冷续；打包契约由 core 的打包测试读取 |
+| Flower Step 或 Garden Puzzles | 只跑改到的原型 | 核对该原型规则和完整路线 |
+| 站点代码、主 Godot 或两者共用的资源 | 站点代码跑 Web；Godot 路线输入跑路线测试；主工程共享素材、脚本跑 Web 与完整 Godot | 核对受影响的入口与资源 |
+| 主工程导出配置、入口、打包脚本或 npm 依赖清单 | Web、完整 Godot 及 clean Web 导出验证 | 核对导出的内容和启动页；桌面包另由手动工作流生成 |
+| 总工作流、分类器、门禁及其测试、未知路径或无法确定差异，手动完整运行或合并组 | 全仓检查 | 核对路由和各组结果，尤其是缺失或意外跳过的检查 |
+
+例：按原始文件清单重放，简谱 #418 只走轻量检查；手册 #417 选一个区域组；体力条 #420 与图标 #416 都修改了共用 `world_view.gd`，各选六组 Swarm。#414 改了 Swarm 工作流和制作规格，选六组 Swarm 加文案合同。以上是路由回放，历史运行耗时仍按原规则记录。新增跨目录读取者时，在同一 PR 更新分类与回归样例。[变更与验证 #421](https://github.com/alanthssss/nameless-becoming/issues/421)
 
 ### 已证实问题与预防措施
 
@@ -78,9 +97,9 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 | 单个原型workflow_dispatch | 该原型完整测试 | 保留诊断入口；不能代替PR所需检查的真实pull_request运行 |
 | Desktop client builds手动 | 原有版本校验、双平台构建及其现有门禁 | 未改：publish默认false，仅显式选择且main才能发布；自动CI不会调用它 |
 
-同名手动原型工作流不再另接PR/push，避免Quality调用之外再跑一遍。三个原型的原测试jobs逐字段保留，Swarm继续三组并行。reusable内部检查在UI中带调用方前缀，Quality顶层另保留旧 `Swarm Flight rules and complete routes` 名称；综合检查为 `CI required checks`，现已设为main的必需检查并绑定GitHub Actions来源，见[服务器保护](#server-protection)。以后修改检查名或来源时必须同步远端设置并读回，不能用分支名或本地文档代替启用。
+同名手动原型工作流不再另接PR/push，避免Quality调用之外再跑一遍。Swarm 按选择的范围并行运行测试组。reusable内部检查在UI中带调用方前缀，Quality顶层另保留旧 `Swarm Flight rules and complete routes` 名称；综合检查为 `CI required checks`，现已设为main的必需检查并绑定GitHub Actions来源，见[服务器保护](#server-protection)。以后修改检查名或来源时必须同步远端设置并读回，不能用分支名或本地文档代替启用。
 
-### 路径与失败边界
+### 2026-11-01 路径与失败边界
 
 - 普通 `docs/*.md` 等说明：scope和两个结果门禁；README、marketing、现有材料allowlist为content例外。
 - `prototypes/swarm-flight/**`及其风/供给/交付/spring工具与测试：只选Swarm；Flower/Garden各选对应原型。**不整目录排除review-evidence**：叶棚测试确实读取其中旧存档JSON。
@@ -89,7 +108,7 @@ Codex 根据上述实测将原 workflow 分为三个独立 runner，所有现有
 - 变更路径用Git完整本地差异、NUL分隔和`--no-renames`，不依赖截断文件清单；换行、空格和跨目录重命名不会伪造或漏掉路径。空白错误让scope失败。
 - 总门禁先要求scope成功，所有布尔输出严格为`true`/`false`、suite合法；已选检查必须success，未选检查必须skipped。缺结果、取消、失败、意外跳过/意外执行、导出前置不满足一律拒绝。content已被Web覆盖时才明确允许跳过。
 
-本轮没有进一步按函数或素材名拆Swarm三组：源码/保存/绘制互相依赖，当前证据不足以安全减少组数。保留main安全复跑；使用cache、缩短模拟时间、跳过mutation baseline均不是本轮提速手段。
+2026-11-01 首轮没有进一步按函数或素材名拆 Swarm 三组：源码/保存/绘制互相依赖，当前证据不足以安全减少组数。保留main安全复跑；使用cache、缩短模拟时间、跳过mutation baseline均不是本轮提速手段。
 
 ### 验证与取舍
 

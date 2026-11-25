@@ -11,7 +11,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 FLAGS = ("web", "godot", "export_game", "swarm", "flower", "garden", "content")
-OUTPUT_KEYS = set(FLAGS) | {"godot_suite", "reason"}
+OUTPUT_KEYS = set(FLAGS) | {"godot_suite", "swarm_suite", "reason"}
 ZERO_SHA = "0" * 40
 
 
@@ -29,7 +29,7 @@ class GitScopeTests(unittest.TestCase):
         self.git("config", "user.email", "ci-routing@example.invalid")
         self.git("config", "core.hooksPath", os.devnull)
         (self.repo / "scripts").mkdir()
-        for name in ("classify_ci_changes.sh", "ci_scope.sh"):
+        for name in ("classify_ci_changes.sh", "ci_scope.sh", "check_ci_evidence.py"):
             shutil.copyfile(ROOT / "scripts" / name, self.repo / "scripts" / name)
         self.base = self.commit("base")
 
@@ -86,6 +86,36 @@ class GitScopeTests(unittest.TestCase):
         readme = self.commit("readme content contract")
         self.assert_flags(self.pr(docs, readme), "content")
 
+    def test_evidence_is_validated_at_head_only_for_changed_surviving_records(self):
+        receipt = "docs/production/evidence/receipt.json"
+        events = "docs/production/evidence/with spaces/events.jsonl"
+        self.write(receipt, '{"version":1}\n')
+        self.write(events, '{}\n{"event":"finish"}\n')
+        good = self.commit("valid evidence")
+        self.write(receipt, "not JSON\n")
+        bad = self.commit("broken receipt")
+        self.assert_flags(self.pr(self.base, good))  # checkout now contains the broken receipt
+        self.write(receipt, '{}\n')
+        self.write(events, '{}\nbroken\n')
+        bad_line = self.commit("broken event")
+        self.write(events, '{"cost":NaN}\n')
+        bad_number = self.commit("nonstandard JSON constant")
+        for head, message in ((bad, receipt), (bad_line, "line 2"), (bad_number, "not a JSON number")):
+            env = dict(self.env, EVENT_NAME="pull_request", PR_BASE_SHA=self.base, PR_HEAD_SHA=head)
+            result = subprocess.run(["bash", "scripts/ci_scope.sh"], cwd=self.repo, env=env,
+                                    text=True, capture_output=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(message, result.stderr)
+            self.assertNotIn("web=", result.stdout)
+        manual = subprocess.run(["bash", "scripts/ci_scope.sh"], cwd=self.repo,
+                                env=dict(self.env, EVENT_NAME="workflow_dispatch"),
+                                text=True, capture_output=True)
+        self.assertNotEqual(manual.returncode, 0)
+        self.assertIn("not a JSON number", manual.stderr)
+        (self.repo / events).unlink()
+        deleted = self.commit("remove archived events")
+        self.assert_flags(self.pr(bad_line, deleted))
+
     def test_runtime_selects_its_prototype(self):
         self.write("prototypes/swarm-flight/game_model.gd")
         head = self.commit("swarm runtime")
@@ -107,6 +137,18 @@ class GitScopeTests(unittest.TestCase):
         self.git("mv", old, new)
         head = self.commit("move between prototypes")
         self.assert_flags(self.pr(before, head), "flower", "garden")
+
+    def test_move_regional_script_to_archived_log_still_checks_runtime(self):
+        old = "prototypes/swarm-flight/region_game/controls.gd"
+        new = "docs/production/evidence/controls/retired.log"
+        self.write(old)
+        before = self.commit("regional script")
+        (self.repo / new).parent.mkdir(parents=True)
+        self.git("mv", old, new)
+        head = self.commit("archive regional script")
+        for output in (self.pr(before, head), self.scope("push", PUSH_BEFORE_SHA=before, CURRENT_SHA=head)):
+            self.assert_flags(output, "swarm")
+            self.assertEqual(output["swarm_suite"], "region")
 
     def test_large_changeset_keeps_runtime_after_documentation(self):
         for index in range(350):
@@ -177,7 +219,7 @@ class GitScopeTests(unittest.TestCase):
         unrelated = self.commit("unrelated root")
         # Restore the helper scripts without adding them to either history.
         (self.repo / "scripts").mkdir()
-        for name in ("classify_ci_changes.sh", "ci_scope.sh"):
+        for name in ("classify_ci_changes.sh", "ci_scope.sh", "check_ci_evidence.py"):
             shutil.copyfile(ROOT / "scripts" / name, self.repo / "scripts" / name)
         self.assert_full(self.pr(self.base, unrelated))
 
@@ -185,6 +227,7 @@ class GitScopeTests(unittest.TestCase):
 def job_results(*selected):
     outputs = {flag: "true" if flag in selected else "false" for flag in FLAGS}
     outputs["godot_suite"] = "full" if "godot" in selected else "routes"
+    outputs["swarm_suite"] = "full" if "swarm" in selected else "none"
     needs = {"scope": {"result": "success", "outputs": outputs}}
     for job, flag in (
         ("web", "web"), ("godot", "godot"), ("web-candidate", "export_game"),
@@ -247,7 +290,7 @@ class JobResultsTests(unittest.TestCase):
                 self.assertTrue(self.gate.validate(needs))
 
     def test_scope_requires_every_output_and_strict_booleans(self):
-        for flag in (*FLAGS, "godot_suite"):
+        for flag in (*FLAGS, "godot_suite", "swarm_suite"):
             with self.subTest(missing=flag):
                 needs = job_results()
                 del needs["scope"]["outputs"][flag]
@@ -261,6 +304,17 @@ class JobResultsTests(unittest.TestCase):
         needs = job_results()
         needs["scope"]["outputs"]["godot_suite"] = "unknown"
         self.assertTrue(self.gate.validate(needs))
+
+    def test_regional_selection_requires_a_successful_swarm_job(self):
+        needs = job_results("swarm")
+        needs["scope"]["outputs"]["swarm_suite"] = "region"
+        self.assertEqual(self.gate.validate(needs), [])
+        needs["swarm"]["result"] = "skipped"
+        self.assertTrue(self.gate.validate(needs))
+        for selected, suite in (((), "region"), (("swarm",), "none"), (("swarm",), "typo")):
+            needs = job_results(*selected)
+            needs["scope"]["outputs"]["swarm_suite"] = suite
+            self.assertTrue(self.gate.validate(needs))
 
     def test_malformed_dependency_payloads_are_rejected(self):
         for payload in (None, [], "success", {}):

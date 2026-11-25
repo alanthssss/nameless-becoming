@@ -2,6 +2,11 @@ name: Swarm Flight prototype
 
 on:
   workflow_call:
+    inputs:
+      suite:
+        description: Regional runtime checks or the complete Swarm Flight suite
+        type: string
+        default: full
   workflow_dispatch:
 
 permissions:
@@ -17,7 +22,7 @@ jobs:
       # Keep collecting all suites when another suite fails.
       fail-fast: false
       matrix:
-        suite: [core, regressions, samples, samples-save, migrations, region-greybox]
+        suite: ${{ fromJSON(inputs.suite == 'region' && '["region-greybox"]' || '["core","regressions","samples","samples-save","migrations","region-greybox"]') }}
     env:
       GODOT_RELEASE: 4.6.2-stable
       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
