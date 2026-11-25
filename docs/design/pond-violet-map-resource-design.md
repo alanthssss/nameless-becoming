@@ -36,6 +36,10 @@ Alan 随后授权制作第一版。0.32.2 的地点编配、采售音效、声�
 
 **0.32.4 试听方向。** Alan 认可把以前试听过的《春野探索》放在庭院、《秋野探索》放在田野，希望成长树能听到武侠风的笛子，蜜铺另有一首带舞曲动感的赚钱小曲。春秋选曲沿[秋野盲听 #76](https://github.com/alanthssss/nameless-becoming/issues/76)与[实机听感 #78](https://github.com/alanthssss/nameless-becoming/issues/78)。成长手册用翻纸引出四小节竹笛，给第二小节留一拍换气。蜜铺以蜜罐、木台和低音写自己的节奏。Codex 将用户记作 “danzakurodu” 的参考理解为 Don Omar 与 Lucenzo 的《Danza Kuduro》。原作只作为舞动感参考，本版重写旋律、节奏与音色。[参考曲](https://www.lucenzo.fr/videos/danza-kuduro) · [试玩音乐音效清单](../production/region-greybox-receipt.md#honey-audio-0324)
 
+**0.32.6 试玩反馈。** Alan 希望在成长树里一直听笛子。手册打开后以四小节为一圈，留出末音气口，选格和购买时继续演奏，合本时接回庭院。暂停通常只是暂时放下操作，Codex 建议沿用所在地点的曲子和环境，让它们轻下来，继续时回到原来的响度。若 Alan 觉得长时间暂停仍然扰人，再评估静置后的淡出。[原生验证](../production/region-greybox-receipt.md#honey-audio-0326)
+
+**0.32.7 长曲。** Alan 在成长树停留后反馈，反复听同一个八秒开头已经令人不适。四小节原句保留为《花间慢行》的引子，全曲写到 48 小节。长线低音和弱拍短答接过引子，中后段逐渐打开音区，末段收回开头的动机。读图、查条件和购买继续演奏，在同一次游戏中合本再开接续上次的位置。暂停仍保留所在地点的轻声配乐。[本版试听与回执](../production/region-greybox-receipt.md#honey-audio-0327)
+
 <a id="field-ecology-032"></a>
 ## 0.32.0 花开着，蜜有多有少
 
