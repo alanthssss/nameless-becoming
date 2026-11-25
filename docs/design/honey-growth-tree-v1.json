@@ -1,0 +1,327 @@
+{
+  "design": "Honey 成长手册 v1",
+  "status": "design_candidate",
+  "base_game": "0.32",
+  "purchase_place": "hub_growth_book",
+  "price_units": [
+    "coins",
+    "fiber",
+    "resin"
+  ],
+  "base_stats": {
+    "coins": 0,
+    "fiber": 0,
+    "resin": 0,
+    "capacity": 6,
+    "stamina_cap": 36,
+    "seconds_per_nectar": 1.8,
+    "harvest_radius_px": 100,
+    "wing_radius_px": 150,
+    "simultaneous_flowers": 1,
+    "flower_sites_per_region": 16,
+    "material_sites_per_region": 3,
+    "nectar_refill_s": 20,
+    "empty_material_to_ripe_s": 44
+  },
+  "ranks": [
+    {
+      "id": "gather1",
+      "cell": "gather",
+      "name": "轻巧采蜜",
+      "cost": {
+        "coins": 4,
+        "fiber": 0,
+        "resin": 0
+      },
+      "requires_all": [],
+      "requires_any": [],
+      "effect": {
+        "seconds_per_nectar": 1.2
+      }
+    },
+    {
+      "id": "gather2",
+      "cell": "gather",
+      "name": "熟练采蜜",
+      "cost": {
+        "coins": 11,
+        "fiber": 2,
+        "resin": 0
+      },
+      "requires_all": [
+        "gather1"
+      ],
+      "requires_any": [],
+      "effect": {
+        "seconds_per_nectar": 0.8
+      }
+    },
+    {
+      "id": "reach",
+      "cell": "reach",
+      "name": "花香触角",
+      "cost": {
+        "coins": 16,
+        "fiber": 3,
+        "resin": 0
+      },
+      "requires_all": [
+        "gather1"
+      ],
+      "requires_any": [],
+      "effect": {
+        "harvest_radius_px": 155,
+        "wing_radius_px": 205
+      }
+    },
+    {
+      "id": "beat",
+      "cell": "beat",
+      "name": "利落振翅",
+      "cost": {
+        "coins": 8,
+        "fiber": 2,
+        "resin": 0
+      },
+      "requires_all": [
+        "gather1"
+      ],
+      "requires_any": [],
+      "effect": {
+        "firm_source_hits": 1,
+        "max_secondary_ripe_seedheads_after_gnat": 1,
+        "secondary_reach_from_first_px": 60,
+        "secondary_half_angle_deg": 20,
+        "requires_clear_line_of_sight": true
+      }
+    },
+    {
+      "id": "twin",
+      "cell": "twin",
+      "name": "双簇采蜜",
+      "cost": {
+        "coins": 19,
+        "fiber": 0,
+        "resin": 3
+      },
+      "requires_all": [
+        "gather2",
+        "reach",
+        "meadow"
+      ],
+      "requires_any": [],
+      "effect": {
+        "simultaneous_flowers": 2
+      }
+    },
+    {
+      "id": "bag1",
+      "cell": "bag",
+      "name": "舒展蜜囊",
+      "cost": {
+        "coins": 6,
+        "fiber": 0,
+        "resin": 0
+      },
+      "requires_all": [],
+      "requires_any": [],
+      "effect": {
+        "capacity": 10
+      }
+    },
+    {
+      "id": "bag2",
+      "cell": "bag",
+      "name": "丰收蜜囊",
+      "cost": {
+        "coins": 19,
+        "fiber": 3,
+        "resin": 0
+      },
+      "requires_all": [
+        "bag1"
+      ],
+      "requires_any": [],
+      "effect": {
+        "capacity": 16
+      }
+    },
+    {
+      "id": "wings1",
+      "cell": "wings",
+      "name": "轻盈双翼",
+      "cost": {
+        "coins": 9,
+        "fiber": 2,
+        "resin": 0
+      },
+      "requires_all": [],
+      "requires_any": [
+        "gather1",
+        "bag1"
+      ],
+      "effect": {
+        "stamina_cap": 50
+      }
+    },
+    {
+      "id": "wings2",
+      "cell": "wings",
+      "name": "远行双翼",
+      "cost": {
+        "coins": 29,
+        "fiber": 4,
+        "resin": 2
+      },
+      "requires_all": [
+        "wings1",
+        "meadow"
+      ],
+      "requires_any": [],
+      "effect": {
+        "stamina_cap": 70
+      }
+    },
+    {
+      "id": "supply1",
+      "cell": "supply",
+      "name": "花地萌发",
+      "cost": {
+        "coins": 8,
+        "fiber": 1,
+        "resin": 0
+      },
+      "requires_all": [
+        "gather1"
+      ],
+      "requires_any": [],
+      "effect": {
+        "flower_sites_per_region": 24,
+        "material_sites_per_region": 4,
+        "nectar_refill_s": 14,
+        "empty_material_to_ripe_s": 30.8
+      }
+    },
+    {
+      "id": "supply2",
+      "cell": "supply",
+      "name": "花地繁盛",
+      "cost": {
+        "coins": 30,
+        "fiber": 3,
+        "resin": 2
+      },
+      "requires_all": [
+        "supply1",
+        "meadow"
+      ],
+      "requires_any": [],
+      "effect": {
+        "flower_sites_per_region": 36,
+        "material_sites_per_region": 6,
+        "nectar_refill_s": 10,
+        "empty_material_to_ripe_s": 22
+      }
+    },
+    {
+      "id": "meadow",
+      "cell": "meadow",
+      "name": "开往紫花地",
+      "cost": {
+        "coins": 30,
+        "fiber": 0,
+        "resin": 0
+      },
+      "requires_all": [],
+      "requires_any": [],
+      "requires_count": {
+        "minimum": 3,
+        "from_purchased_ranks": [
+          "gather1",
+          "gather2",
+          "reach",
+          "beat",
+          "bag1",
+          "bag2",
+          "wings1",
+          "supply1"
+        ]
+      },
+      "effect": {
+        "open_destination": "meadow"
+      }
+    },
+    {
+      "id": "market",
+      "cell": "market",
+      "name": "好口碑",
+      "cost": {
+        "coins": 12,
+        "fiber": 0,
+        "resin": 0
+      },
+      "requires_all": [
+        "meadow"
+      ],
+      "requires_any": [],
+      "requires_world": {
+        "visited_meadow": true,
+        "min_lifetime_violet_sold": 1
+      },
+      "effect": {
+        "sale_bonus_fraction": [
+          1,
+          4
+        ],
+        "rounding": "floor_per_basket"
+      }
+    },
+    {
+      "id": "reserve",
+      "cell": "reserve",
+      "name": "备好花蜜",
+      "cost": {
+        "coins": 60,
+        "fiber": 0,
+        "resin": 0
+      },
+      "requires_all": [
+        "meadow"
+      ],
+      "requires_any": [
+        "twin",
+        "wings2",
+        "supply2"
+      ],
+      "requires_world": {
+        "visited_meadow": true,
+        "min_lifetime_violet_sold": 6
+      },
+      "effect": {
+        "reserve_state": "funded"
+      }
+    }
+  ],
+  "finish": {
+    "from": "funded",
+    "location": "hub_reserve_jar",
+    "interaction": "interact",
+    "to": "sealed",
+    "additional_cost": {
+      "coins": 0,
+      "fiber": 0,
+      "resin": 0
+    }
+  },
+  "wing_rules": {
+    "primary_target": "nearest_in_forward_sector_with_line_of_sight",
+    "tie_break": [
+      "material_first",
+      "stable_source_id"
+    ],
+    "hit_stamina_cost": 2,
+    "empty_swing_stamina_cost": 0,
+    "repeat_interval_s": 0.55,
+    "gnat_releases_flower_s": 2.2
+  }
+}
