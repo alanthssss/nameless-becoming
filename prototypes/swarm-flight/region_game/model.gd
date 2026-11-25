@@ -10,6 +10,7 @@ var field
 var camera_offset := Vector2.ZERO
 var last_trip := {}
 var return_requested := false
+var entry_pressed := false
 
 func upgrade_defs() -> Array:
 	var definitions: Array = super.upgrade_defs().filter(func(d): return d.id != "shortcut")
@@ -45,6 +46,7 @@ func screen_to_field(point: Vector2) -> Vector2:
 
 func clear_controls() -> void:
 	super.clear_controls()
+	entry_pressed = false
 	if field != null:
 		field.charge = 0.0
 		field.charging = false
@@ -86,6 +88,7 @@ func transition_to(destination: String,via: String = "gate") -> bool:
 	return true
 
 func _return_home() -> void:
+	return_requested = false
 	field = null
 	area = "hub"
 	phase = "home"
@@ -128,7 +131,9 @@ func step(delta: float,move: Vector2,collect: bool,space_held: bool,pulse_held: 
 		super.step(delta,move,collect,space_held,pulse_held,aim)
 		update_camera()
 		return
-	if not is_finite(delta) or delta <= 0: return
+	if field.phase != "active" or not is_finite(delta) or delta <= 0: return
+	var pressed_this_frame := entry_pressed
+	entry_pressed = false
 	var remaining := minf(delta,0.1)
 	while remaining > 0.00001 and field != null:
 		var dt := minf(remaining,0.05)
@@ -137,7 +142,7 @@ func step(delta: float,move: Vector2,collect: bool,space_held: bool,pulse_held: 
 		var before_material: int = field.material_count
 		var before_event: int = field.events.size()
 		var before_burst: float = field.burst_left
-		field.step(dt,move,collect,space_held,pulse_held,aim)
+		field.step(dt,move,collect,space_held,pulse_held,aim,pressed_this_frame)
 		cargo["blue" if area == "pond" else "rose"] += field.cargo-before_cargo
 		materials["fiber" if area == "pond" else "resin"] += field.material_count-before_material
 		_sync_field()
@@ -154,8 +159,8 @@ func step(delta: float,move: Vector2,collect: bool,space_held: bool,pulse_held: 
 			flowers = flower_layout(trip_index)
 			creatures = Encounters.layout(trip_index)
 		elif field.phase == "returned":
-			field.phase = "active"
 			return_requested = true
+			break
 	update_camera()
 
 func _translate_event(e: Dictionary) -> void:
@@ -224,7 +229,7 @@ func restore_payload(data) -> bool:
 	if not data.field.is_empty():
 		var decoded = bytes_to_var(Marshalls.base64_to_raw(data.field))
 		next_field = Field.new()
-		if not next_field.restore(decoded) or next_field.supply_rank != expected_rank: return false
+		if not next_field.restore(decoded,true) or next_field.supply_rank != expected_rank: return false
 		if next_field.region == "violet" and ("meadow" not in next_profile.owned or not next_profile.visited_meadow): return false
 		if next_profile.trip_index < 1 or next_field.trip_seed != next_profile.trip_index: return false
 		if next_field.cargo != next_profile.cargo_total() or next_field.energy > next_profile.max_energy(): return false
@@ -251,7 +256,8 @@ func restore_payload(data) -> bool:
 		area = "pond" if field.region == "pond" else "meadow"
 		phase = "field"
 		_sync_field()
-	return_requested = false
+	return_requested = field != null and field.phase == "returned"
+	entry_pressed = false
 	events.clear()
 	_full_announced = cargo_total() >= capacity()
 	update_camera()

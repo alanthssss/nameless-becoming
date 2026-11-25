@@ -4,6 +4,7 @@ const Layout = preload("res://region_greybox/layout.gd")
 const Harvest = preload("res://nectar_harvest_model.gd")
 const SPEED := 230.0
 const BODY := 16.0
+const ENTRY_RADIUS := 125.0
 var layout: Dictionary
 var stats: RefCounted
 var region := "pond"
@@ -171,14 +172,14 @@ func target_nearby(radius: float = 250.0) -> bool:
 
 func capacity() -> int: return stats.capacity()
 func max_energy() -> float: return stats.max_energy()
-func at_entry() -> bool: return p.distance_to(layout.nodes[0].p) <= 125.0
+func at_entry() -> bool: return p.distance_to(layout.nodes[0].p) <= ENTRY_RADIUS
 func clear_line(a: Vector2, b: Vector2) -> bool:
 	var steps := maxi(1, ceili(a.distance_to(b) / 8.0))
 	for i in steps + 1:
 		if not Layout.walkable(layout, a.lerp(b, float(i) / steps), 0.0): return false
 	return true
 
-func step(delta: float, motion: Vector2, collect: bool, space_held: bool = false, pulse: bool = false, aim := Vector2.ZERO) -> void:
+func step(delta: float, motion: Vector2, collect: bool, space_held: bool = false, pulse: bool = false, aim := Vector2.ZERO, entry_pressed := false) -> void:
 	if phase != "active" or not is_finite(delta) or delta <= 0 or not motion.is_finite(): return
 	var dt := minf(delta, 0.05)
 	motion = motion.limit_length(1.0)
@@ -216,11 +217,12 @@ func step(delta: float, motion: Vector2, collect: bool, space_held: bool = false
 		_empty_flight += dt
 		longest_empty_flight = maxf(longest_empty_flight, _empty_flight)
 	else: _empty_flight = 0.0
+	# Movement has landed. A requested return on this tick wins the tie with exhaustion.
+	if (collect or entry_pressed) and departed and at_entry():
+		finish("returned")
+		return
 	if energy <= 0:
 		finish("exhausted")
-		return
-	if collect and departed and at_entry():
-		finish("returned")
 		return
 	var harvest_before := harvest_seconds
 	var material_before := material_count
@@ -354,18 +356,19 @@ func snapshot() -> Dictionary:
 	for key in SNAPSHOT_KEYS: data[key] = get(key)
 	return data.duplicate(true)
 
-func restore(data: Variant) -> bool:
+func restore(data: Variant, allow_gate_arrival := false) -> bool:
 	if not data is Dictionary or data.get("version") != 3: return false
 	for key in SNAPSHOT_KEYS:
 		if not data.has(key): return false
-	if data.region not in ["pond","violet"] or data.growth not in [0,1] or data.phase != "active": return false
+	var arrived: bool = allow_gate_arrival and data.phase == "returned"
+	if data.region not in ["pond","violet"] or data.growth not in [0,1] or (data.phase != "active" and not arrived): return false
 	if not data.trip_seed is int or data.trip_seed < 1: return false
 	var candidate: RefCounted = get_script().new()
 	candidate.configure(data.region, data.growth, data.trip_seed)
 	if not data.p is Vector2 or not data.p.is_finite() or not Layout.walkable(candidate.layout, data.p): return false
 	for key in ["energy","elapsed","distance","longest_empty_flight","_empty_flight","longest_actionless_flight","_actionless_flight","harvest_seconds","collision_seconds","pulse_left","pulse_flash","charge","burst_left","_next_sample"]:
 		if not (data[key] is float or data[key] is int) or not is_finite(float(data[key])) or float(data[key]) < 0: return false
-	if data.energy > candidate.max_energy() or data.energy <= 0: return false
+	if data.energy > candidate.max_energy() or (data.energy == 0 and not arrived): return false
 	if not data.cargo is int or data.cargo < 0 or data.cargo > candidate.capacity(): return false
 	if not data.material_count is int or data.material_count < 0: return false
 	if not data.flowers is Array or data.flowers.size() != 36 or not data.materials is Array or data.materials.size() != 6: return false
@@ -400,6 +403,7 @@ func restore(data: Variant) -> bool:
 	for id in data._locked:
 		if not id is int or id < 0 or id >= 36: return false
 	if not data.charging is bool or not data.departed is bool or not data.last_action is String: return false
+	if arrived and (not data.departed or data.v != Vector2.ZERO or data.p.distance_to(candidate.layout.nodes[0].p) > ENTRY_RADIUS): return false
 	configure(data.region, data.growth, data.trip_seed)
 	for key in SNAPSHOT_KEYS:
 		if get(key) is Array: get(key).assign(data[key].duplicate(true))

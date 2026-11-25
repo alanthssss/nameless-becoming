@@ -2,6 +2,7 @@ extends "res://nectar_harvest_view.gd"
 ## The terrain plates are registered to the same world coordinates as the
 ## field coast. Only the raised tips of separate painted plants shift with
 ## the camera; their contact shadows, roots and interaction points stay fixed.
+const EnergyDial = preload("res://nectar_energy_dial.gd")
 const FieldLife = preload("res://region_greybox/model.gd")
 const FieldLayout = preload("res://region_greybox/layout.gd")
 const POND_PLATE: Texture2D = preload("res://art/collection-pond.webp")
@@ -191,6 +192,12 @@ func _draw() -> void:
 				_draw_bag()
 	_draw_resource_feedback()
 	_draw_region_effects()
+	if model.p.distance_to(entry) < 240.0:
+		var label_at: Vector2 = entry + SIGN_FOOT + Vector2(0,-89)
+		if model.field.at_entry():
+			_return_badge(label_at,"E / 左键  回庭院")
+		else:
+			_region_label(label_at,"庭院入口",false)
 	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE/MeadowLayout.FIELD_ZOOM)
 	_draw_home_bearing()
 
@@ -372,8 +379,6 @@ func _draw_entry(at: Vector2) -> void:
 	var span := FIELD_SIGN.get_size()*(81.0/FIELD_SIGN.get_height())
 	_ground_shadow(foot,Vector2(16,4),.16)
 	draw_texture_rect(FIELD_SIGN,Rect2(foot-span*Vector2(.53,.98),span),false)
-	if model.p.distance_to(at)<240:
-		_region_label(foot+Vector2(0,-89),"E  回庭院" if model.field.at_entry() else "庭院入口",true)
 
 func _field_bee_pose() -> Dictionary:
 	var field = model.field
@@ -578,11 +583,37 @@ func _region_label(at: Vector2, words: String, active: bool) -> void:
 	draw_string_outline(feedback_font,baseline,words,HORIZONTAL_ALIGNMENT_LEFT,-1,17,4,Color("304a37e8"))
 	draw_string(feedback_font,baseline,words,HORIZONTAL_ALIGNMENT_LEFT,-1,17,Color("ffedbd") if active else Color("dce5c0"))
 
+# A dark backing keeps the return action legible against both water and sunlit grass.
+func _return_badge(at: Vector2, words: String, direction := Vector2.ZERO) -> void:
+	if feedback_font == null: return
+	var has_arrow := not direction.is_zero_approx()
+	var width := feedback_font.get_string_size(words,HORIZONTAL_ALIGNMENT_LEFT,-1,19).x
+	var arrow_space := 27.0 if has_arrow else 0.0
+	var half_span := (width + arrow_space) * 0.5
+	var paper := Color("493924")
+	draw_rect(Rect2(at-Vector2(half_span,16),Vector2(half_span*2,32)),paper)
+	for x in [-half_span,half_span]:
+		draw_circle(at+Vector2(x,0),16,paper,true,-1,true)
+	var left := at - Vector2(half_span,0)
+	if has_arrow:
+		var centre := left + Vector2(6,0)
+		var strength := 1.0 if reduced_motion else (1.0+cos(model.field.elapsed*TAU/EnergyDial.PULSE_SECONDS))*.5
+		draw_circle(centre,11,Color("cc783d").lerp(Color("ffe29a"),strength),true,-1,true)
+		var side := direction.orthogonal()
+		draw_polyline(PackedVector2Array([centre-direction*4-side*5,centre+direction*5,centre-direction*4+side*5]),paper,2.8,true)
+	draw_string(feedback_font,left+Vector2(arrow_space,6),words,HORIZONTAL_ALIGNMENT_LEFT,-1,19,Color("fff0c7"))
+
 func _draw_home_bearing() -> void:
 	var entry: Vector2 = model.field.layout.nodes[0].p
+	var direction: Vector2 = (entry-model.p).normalized()
+	if model.energy_is_low():
+		if model.field.at_entry(): return
+		var bee: Vector2 = (model.p - model.camera_offset) * MeadowLayout.FIELD_ZOOM
+		var badge_at := (bee + Vector2(0,-64)).clamp(Vector2(110,26),get_viewport_rect().size-Vector2(110,26))
+		_return_badge(badge_at,"体力低 · 回庭院",direction)
+		return
 	if model.p.distance_to(entry)<330 and _full_glow <= 0: return
 	var at := get_viewport_rect().size-Vector2(112,50)
-	var direction: Vector2 = (entry-model.p).normalized()
 	var side := direction.orthogonal()
 	var centre := at-Vector2(48,0)
 	if _full_glow > 0:

@@ -42,10 +42,18 @@ func plays_departure_dance() -> bool:
 	return model.at_home()
 
 func _process(delta: float) -> void:
+	super._process(delta)
 	if mode == "play" and model.return_requested:
 		model.return_requested = false
 		request_transition("hub")
-	super._process(delta)
+
+func _advance_transition(dt: float) -> void:
+	super._advance_transition(dt)
+	if transition_target == "hub" and not transition_committed and mode in ["play","pause"]:
+		# A failed write leaves a live outing playable. At zero, keep the earned
+		# arrival at the gate so another press can retry without losing the cargo.
+		if model.field != null and model.field.phase == "returned" and model.energy > 0.0:
+			model.field.phase = "active"
 
 func pulse_direction() -> Vector2:
 	return (model.screen_to_field(mouse_aim)-model.p).normalized() if mouse_pulse or mouse_pulse_requested else Vector2.ZERO
@@ -57,6 +65,17 @@ func has_material_hint() -> bool:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.physical_keycode == KEY_F: return
+	if mode == "play" and model.field != null and event.is_pressed() and not event.is_echo():
+		var use_key: bool = event is InputEventKey and (event.physical_keycode if event.physical_keycode != 0 else event.keycode) == KEY_E
+		var use_mouse: bool = event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT
+		if use_key or use_mouse:
+			if model.field.at_entry():
+				model.return_requested = false
+				request_transition("hub")
+				get_viewport().set_input_as_handled()
+				return
+			# A down/up between render frames still counts if movement enters the gate this frame.
+			model.entry_pressed = true
 	super._unhandled_input(event)
 
 func consume_events(pending: Array) -> void:
