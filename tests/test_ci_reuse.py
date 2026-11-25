@@ -16,6 +16,13 @@ SPEC.loader.exec_module(ci_reuse)
 REPO = "owner/game"
 REGION = "prototypes/swarm-flight/region_game/menu.gd"
 FLOWER = "prototypes/flower-step/route.gd"
+SWARM_SUITES = ("core", "regressions", "samples", "samples-save", "migrations", "region-greybox")
+FLOWER_JOB = "Flower Step / Flower Step rules and complete routes"
+GARDEN_JOB = "Garden Puzzles / Garden Puzzles rules and complete routes"
+
+
+def swarm_job(suite):
+    return f"Swarm Flight / Swarm Flight checks ({suite})"
 
 
 class PrototypeReuseTests(unittest.TestCase):
@@ -78,10 +85,15 @@ class PrototypeReuseTests(unittest.TestCase):
         self.job["steps"][0]["name"] = self.marker(swarm=previous_scope, garden="true")
         self.selected.update(swarm_suite="full", garden="true")
 
-    def sync(self, path="docs/production/receipt.md", *, method="merge", additional_files=()):
+    def record_jobs(self, *names):
+        for name in names:
+            self.jobs.append(dict(name=name, run_id=self.run["id"], run_attempt=self.run["run_attempt"],
+                                  head_sha=self.before, status="completed", conclusion="success"))
+
+    def sync(self, path="docs/production/receipt.md", *, method="merge", additional_files=(), contents=None):
         self.git("checkout", "-q", "main")
         for changed in (path, *additional_files):
-            self.write(changed, "upstream edit")
+            self.write(changed, (contents or {}).get(changed, "upstream edit"))
         latest = self.commit("advance main")
         self.git("checkout", "-q", "topic")
         if method == "rebase":
@@ -166,6 +178,78 @@ class PrototypeReuseTests(unittest.TestCase):
     def test_shared_ci_change_blocks_all_reuse(self):
         event = self.sync(".github/workflows/quality.yml")
         self.assertEqual(self.decide(event), (set(), None))
+
+    def test_438_sync_of_routing_and_readme_reuses_six_executed_swarm_jobs(self):
+        self.full_swarm_and_garden_change()
+        self.selected.update(flower="false", garden="false")
+        self.record_jobs(*(swarm_job(s) for s in SWARM_SUITES))
+        classifier = "scripts/classify_ci_changes.sh"
+        event = self.sync(classifier, contents={classifier: Path(classifier).read_text() + "\n# New routing"},
+                          additional_files=("scripts/check_ci_evidence.py", "scripts/ci_scope.sh",
+                                            "tests/ci-scope.test.sh", "tests/test_ci_routing.py",
+                                            "README.md", "docs/CI_PERFORMANCE_2026-11-01.md"))
+        self.assertEqual(self.decide(event), ({"swarm"}, 101))
+        for job in tuple(self.jobs[1:]):
+            with self.subTest(missing=job["name"]):
+                self.jobs.remove(job)
+                self.assertNotIn("swarm", self.decide(event)[0])
+                self.jobs.append(job)
+
+    def test_routing_sync_requires_unique_successful_jobs_from_the_certified_attempt(self):
+        self.record_jobs(FLOWER_JOB)
+        flower_only = list(self.jobs)
+        self.record_jobs(swarm_job("region-greybox"))
+        regional = self.jobs[-1]
+        event = self.sync("scripts/ci_scope.sh")
+        self.assertEqual(self.decide(event), ({"swarm", "flower"}, 101))
+
+        def truncated_jobs(path):
+            response = self.api(path)
+            if "jobs" in response:
+                response["total_count"] += 1
+            return response
+
+        self.assertEqual(self.decide(event, truncated_jobs), (set(), None))
+        for overrides in ({"status": "in_progress"}, {"conclusion": "failure"}, {"conclusion": "skipped"},
+                          {"run_id": 202}, {"run_attempt": 1}, {"head_sha": self.base},
+                          {"name": "Swarm Flight rules and complete routes"}):
+            with self.subTest(overrides=overrides):
+                self.jobs = [*flower_only, dict(regional, **overrides)]
+                self.assertEqual(self.decide(event), ({"flower"}, 101))
+        self.jobs = [*flower_only, regional, regional.copy()]
+        self.assertEqual(self.decide(event), ({"flower"}, 101))
+        self.jobs = [self.job]  # A gate inherited through an earlier reuse is insufficient here.
+        self.assertEqual(self.decide(event), (set(), None))
+
+    def test_routing_and_regional_change_can_reuse_only_the_five_executed_unaffected_suites(self):
+        self.full_swarm_and_garden_change()
+        nonregional = [swarm_job(s) for s in SWARM_SUITES if s != "region-greybox"]
+        self.record_jobs(*nonregional, FLOWER_JOB, GARDEN_JOB)
+        event = self.sync("tests/test_ci_routing.py",
+                          additional_files=("prototypes/swarm-flight/region_game/inventory.gd",))
+        self.assertEqual(self.decide(event), ({"swarm-except-region", "flower", "garden"}, 101))
+        self.jobs = [job for job in self.jobs if job["name"] not in (swarm_job("samples-save"), FLOWER_JOB)]
+        self.assertEqual(self.decide(event), ({"garden"}, 101))
+
+    def test_routing_and_shared_game_input_still_rerun_swarm(self):
+        self.full_swarm_and_garden_change()
+        self.record_jobs(*(swarm_job(s) for s in SWARM_SUITES), FLOWER_JOB, GARDEN_JOB)
+        event = self.sync("scripts/ci_scope.sh", additional_files=("prototypes/swarm-flight/world_view.gd",))
+        self.assertEqual(self.decide(event), ({"flower", "garden"}, 101))
+
+    def test_changes_to_the_required_gate_still_block_reuse_alongside_routing_changes(self):
+        self.record_jobs(swarm_job("region-greybox"), FLOWER_JOB)
+        event = self.sync("scripts/check_ci_results.py", additional_files=("scripts/ci_scope.sh",))
+        self.assertEqual(self.decide(event), (set(), None))
+
+    def test_routing_changes_carried_by_the_pr_still_block_reuse(self):
+        self.write("scripts/ci_scope.sh", "the topic changes the selector")
+        self.before = self.commit("edit routing on the topic")
+        self.tree = self.git("rev-parse", "HEAD^{tree}")
+        self.run["head_sha"] = self.job["head_sha"] = self.before
+        self.job["steps"][0]["name"] = self.marker()
+        self.record_jobs(swarm_job("region-greybox"), FLOWER_JOB)
+        self.assertEqual(self.decide(self.sync("tests/test_ci_routing.py")), (set(), None))
 
     def test_old_region_success_cannot_cover_full_swarm_or_an_unrun_domain(self):
         event = self.sync()
