@@ -287,17 +287,14 @@ const FIBER_HOST: Texture2D = preload("res://art/collection-fiber-source.webp")
 const RESIN_HOST: Texture2D = preload("res://art/collection-resin-source.webp")
 const AMBER_DROP := Rect2(148,691,372,469)
 
-const FIBER_SOCKET := Vector2(.77,.16)
+const FIBER_SOCKET := MeadowLayout.FIBER_SOCKET
 const FIBER_FOOT := Vector2(.65,.99)
 const RESIN_SOCKET := Vector2(.50,.44)
 const RESIN_FOOT := Vector2(.51,.98)
 
 func _material_span(item: Dictionary) -> Vector2:
-	var fiber := area_key == "pond"
-	var texture := FIBER_HOST if fiber else RESIN_HOST
-	var size := texture.get_size() * (118.0/texture.get_height() if fiber else 126.0/texture.get_width())
-	var maturity := .84 if item.band == "near" else 1.10 if item.band == "far" else 1.0
-	return size*maturity
+	var size := MeadowLayout.FIBER_SPAN if area_key == "pond" else RESIN_HOST.get_size()*(126.0/RESIN_HOST.get_width())
+	return size*MeadowLayout.material_scale(item.band)
 
 func _material_root(item: Dictionary) -> Vector2:
 	var foot_offset := FIBER_FOOT-FIBER_SOCKET if area_key == "pond" else RESIN_FOOT-RESIN_SOCKET
