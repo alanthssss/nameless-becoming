@@ -1,7 +1,7 @@
 extends "res://nectar_harvest_view.gd"
 ## The terrain plates are registered to the same world coordinates as the
-## field coast. Only the raised tips of separate painted plants shift with
-## the camera; their contact shadows, roots and interaction points stay fixed.
+## field coast. Leaf tips, reflections and dappled light move within their
+## original paint. Roots, shores, interaction points and buildings stay fixed.
 const FieldLife = preload("res://region_greybox/model.gd")
 const FieldLayout = preload("res://region_greybox/layout.gd")
 const POND_PLATE: Texture2D = preload("res://art/collection-pond.webp")
@@ -13,23 +13,40 @@ const BEE_FOOT := Vector2(0,25)
 const SIGN_FOOT := Vector2(-67,24)
 const POND_BLOOM: Texture2D = preload("res://art/collection-blue-bloom.webp")
 const MEADOW_BLOOM: Texture2D = preload("res://art/collection-violet-bloom.webp")
+const SURFACE_SHADER = preload("res://region_game/painted_surface.gdshader")
 const CROWN_SHADER = preload("res://region_game/painted_crown.gdshader")
 # Crown bounds on a 700 × 405 registration proof of each complete illustration.
 # These are the visible fronds, willow, bulrush and arch leaves already in
-# the picture; the lower edge of each local projection stays attached.
+# the picture. Standing stems and hanging branches have opposite attachments.
 const PROOF_SIZE := Vector2(700,405)
 const POND_CROWNS := [
-	Rect2(0,93,61,67), Rect2(273,111,59,51), Rect2(344,225,46,98),
-	Rect2(552,0,131,92), Rect2(0,274,109,109), Rect2(580,244,120,129),
+	Rect2(104,113,49,36), Rect2(302,121,50,38), Rect2(344,225,46,98),
+	Rect2(549,0,77,76), Rect2(0,274,109,109), Rect2(580,244,120,129),
 ]
 const MEADOW_CROWNS := [
-	Rect2(0,135,46,76), Rect2(65,73,76,45), Rect2(328,25,84,40),
-	Rect2(465,112,74,55), Rect2(74,247,100,72), Rect2(228,283,140,91),
+	Rect2(11,205,45,33), Rect2(193,152,46,28), Rect2(231,0,84,40),
+	Rect2(499,130,53,40), Rect2(75,276,72,36), Rect2(228,283,140,91),
 	Rect2(575,289,116,75),
+]
+# Regions are measured on the full illustrations. Surface masks stay inside
+# painted water or sunlit ground, clear of the shore, buildings and stations.
+const HUB_PROOF := Vector2(700,438)
+const HUB_CROWNS := [
+	Rect2(0,18,49,93), Rect2(0,294,61,54), Rect2(484,239,115,72),
+	Rect2(534,381,129,57), Rect2(9,390,86,48),
+]
+const POND_REFLECTIONS := [
+	Rect2(45,41,169,56), Rect2(204,45,186,46), Rect2(399,44,136,54),
+	Rect2(77,272,154,69), Rect2(440,299,124,59),
+]
+const HUB_LIGHT := [Rect2(84,297,147,50), Rect2(542,70,126,42)]
+const MEADOW_LIGHT := [
+	Rect2(39,171,104,43), Rect2(172,173,126,52), Rect2(546,172,74,50),
 ]
 var _paint_root: Node2D
 var _painted_area := ""
 var _crowns: Array[Dictionary] = []
+var _surfaces: Array[Sprite2D] = []
 var _life_motes: Array[Dictionary] = []
 var _material_recoil := {}
 var _full_glow := 0.0
@@ -86,63 +103,98 @@ func _prepare_paint() -> void:
 	_crowns.clear()
 	_paint_root = Node2D.new()
 	add_child(_paint_root)
-	var texture := POND_PLATE if area_key == "pond" else MEADOW_PLATE
+	var home := area_key == "hub"
+	var texture := Landscape.COURTYARD if home else (POND_PLATE if area_key == "pond" else MEADOW_PLATE)
+	var frame := Rect2(Vector2.ZERO, MeadowLayout.VIEWPORT) if home else PLATE_RECT
+	var proof_size := HUB_PROOF if home else PROOF_SIZE
 	var picture := Sprite2D.new()
 	picture.texture = texture
 	picture.centered = false
-	picture.position = PLATE_RECT.position
-	picture.scale = PLATE_RECT.size/texture.get_size()
+	picture.position = frame.position
+	picture.scale = frame.size/texture.get_size()
 	picture.z_index = -2
 	_paint_root.add_child(picture)
-	var placements := POND_CROWNS if area_key == "pond" else MEADOW_CROWNS
+	var placements := HUB_CROWNS if home else (POND_CROWNS if area_key == "pond" else MEADOW_CROWNS)
 	for proof: Rect2 in placements:
-		var uv := Rect2(proof.position/PROOF_SIZE,proof.size/PROOF_SIZE)
-		var rect := Rect2(PLATE_RECT.position+uv.position*PLATE_RECT.size,uv.size*PLATE_RECT.size)
-		var back := _crown_patch(texture,uv,rect,false)
-		var front := _crown_patch(texture,uv,rect,true)
-		_crowns.append({"rect":rect,"back":back,"front":front})
+		var uv := Rect2(proof.position/proof_size, proof.size/proof_size)
+		var back := _paint_patch(texture, uv, frame, CROWN_SHADER)
+		var hangs := (home and proof == HUB_CROWNS[0]) or (area_key == "pond" and proof == POND_CROWNS[3]) or (area_key == "meadow" and proof == MEADOW_CROWNS[2])
+		back.material.set_shader_parameter("hanging", hangs)
+		var front: Sprite2D
+		if not home:
+			front = _paint_patch(texture, uv, frame, CROWN_SHADER)
+			front.z_index = 1
+			front.material.set_shader_parameter("foreground", true)
+			front.material.set_shader_parameter("hanging", hangs)
+		_crowns.append({"rect":Rect2(back.position, uv.size*frame.size), "back":back, "front":front})
+	_surfaces.clear()
+	var water := area_key == "pond"
+	var surfaces := POND_REFLECTIONS if water else (HUB_LIGHT if home else MEADOW_LIGHT)
+	for proof: Rect2 in surfaces:
+		var uv := Rect2(proof.position/proof_size, proof.size/proof_size)
+		var patch := _paint_patch(texture, uv, frame, SURFACE_SHADER)
+		patch.material.set_shader_parameter("water", water)
+		_surfaces.append(patch)
 
-func _crown_patch(texture: Texture2D, uv: Rect2, rect: Rect2, foreground: bool) -> Sprite2D:
+func _paint_patch(texture: Texture2D, uv: Rect2, frame: Rect2, shader: Shader) -> Sprite2D:
 	var patch := Sprite2D.new()
 	patch.texture = texture
 	patch.centered = false
 	patch.region_enabled = true
-	patch.region_rect = Rect2(uv.position*texture.get_size(),uv.size*texture.get_size())
-	patch.scale = PLATE_RECT.size/texture.get_size()
-	patch.position = rect.position
-	patch.z_index = 1 if foreground else -1
+	patch.region_rect = Rect2(uv.position*texture.get_size(), uv.size*texture.get_size())
+	patch.scale = frame.size/texture.get_size()
+	patch.position = frame.position+uv.position*frame.size
+	patch.z_index = -1
 	var paint := ShaderMaterial.new()
-	paint.shader = CROWN_SHADER
-	paint.set_shader_parameter("center_uv",uv.get_center())
-	paint.set_shader_parameter("radii_uv",uv.size*.5)
-	paint.set_shader_parameter("foreground",foreground)
-	paint.set_shader_parameter("world_size",PLATE_RECT.size)
+	paint.shader = shader
+	paint.set_shader_parameter("center_uv", uv.get_center())
+	paint.set_shader_parameter("radii_uv", uv.size*.5)
+	paint.set_shader_parameter("world_size", frame.size)
 	patch.material = paint
 	_paint_root.add_child(patch)
 	return patch
 
 func _canopy_offset(rect: Rect2) -> Vector2:
 	if reduced_motion: return Vector2.ZERO
+	var at := rect.get_center()
+	# A travelling gust leads into a smaller, quicker rustle at exposed tips.
+	var phase := at.x*.003 + at.y*.0017
+	var gust := sin(clock*1.34-phase) * (.71 + .29*sin(clock*.68-phase*.48))
+	var rustle := sin(clock*2.43-phase*1.7)
+	var reach := clampf(rect.size.y*.041, 2.1, 11.5)
+	var breeze := Vector2(gust+.28*rustle, .19*rustle) * reach
+	if area_key == "hub": return breeze
 	var half_view := MeadowLayout.VIEWPORT/(2.0*MeadowLayout.FIELD_ZOOM)
 	var eye: Vector2 = model.camera_offset+half_view
-	var relative := ((rect.get_center()-eye)/half_view).clamp(-Vector2.ONE,Vector2.ONE)
-	return relative*Vector2(minf(29.0,rect.size.x*.12),minf(13.0,rect.size.y*.06))
+	var relative := ((at-eye)/half_view).clamp(-Vector2.ONE,Vector2.ONE)
+	return breeze + relative*Vector2(minf(29.0,rect.size.x*.12),minf(13.0,rect.size.y*.06))
 
 func _update_crowns() -> void:
-	var player_uv: Vector2 = (model.p-PLATE_RECT.position)/PLATE_RECT.size
-	var visible_world := Rect2(model.camera_offset,get_viewport_rect().size/MeadowLayout.FIELD_ZOOM)
+	var home := area_key == "hub"
+	var frame := Rect2(Vector2.ZERO, MeadowLayout.VIEWPORT) if home else PLATE_RECT
+	var visible_world := frame if home else Rect2(model.camera_offset,get_viewport_rect().size/MeadowLayout.FIELD_ZOOM)
 	for crown in _crowns:
 		var rect: Rect2 = crown.rect
 		var back: Sprite2D = crown.back
 		var front: Sprite2D = crown.front
 		back.visible = visible_world.intersects(rect)
-		front.visible = back.visible and model.p.y+BEE_FOOT.y<rect.end.y and rect.grow(55).has_point(model.p)
+		if front:
+			front.visible = back.visible and model.p.y+BEE_FOOT.y<rect.end.y and rect.grow(55).has_point(model.p)
 		if not back.visible: continue
-		var shift := _canopy_offset(rect)/PLATE_RECT.size
+		var shift := _canopy_offset(rect)/frame.size
 		back.material.set_shader_parameter("shift_uv",shift)
-		if front.visible:
+		if front and front.visible:
 			front.material.set_shader_parameter("shift_uv",shift)
-			front.material.set_shader_parameter("player_uv",player_uv)
+			front.material.set_shader_parameter("player_uv",(model.p-frame.position)/frame.size)
+	for surface in _surfaces:
+		surface.visible = not reduced_motion and visible_world.intersects(Rect2(surface.position, surface.region_rect.size*surface.scale))
+		if surface.visible:
+			surface.material.set_shader_parameter("seconds", clock)
+
+func _draw_background() -> void:
+	# The inherited courtyard draw still owns every station, actor and HUD cue.
+	_prepare_paint()
+	_update_crowns()
 
 func _visible(at: Vector2, padding := 130.0) -> bool:
 	return Rect2(model.camera_offset-Vector2.ONE*padding,get_viewport_rect().size/scale+Vector2.ONE*padding*2).has_point(at)
@@ -151,7 +203,6 @@ func _draw() -> void:
 	if model == null: return
 	if area_key == "hub":
 		scale = Vector2.ONE
-		if is_instance_valid(_paint_root): _paint_root.hide()
 		super._draw()
 		return
 	if model.field == null: return
