@@ -17,6 +17,10 @@
 
 **落实。** [池岸交互设计](pond-violet-map-resource-design.md#nectar-wing-bay)区分 0.32 已有规则与本次打样提议。[唯一 Now](solar-term-campaign-production-spec.md#production-now)沿 M3/#322 承接体验，M4/#211 承接范围、成本与后续取舍。下列旧战役设计、成品合同及对应证据按其原版本保存，供复用和后作评估；新首作交付另按实际覆盖复核。
 
+**成长系统设计稿。** [Honey 成长手册 v1](honey-growth-tree-v1.md)给出 10 格 14 档、紫花地的开图条件与三条回巢封罐路线。0.32 的既有行为和候选的余风、价格与收尾分别标明。候选沿 [M3 / #373](https://github.com/alanthssss/nameless-becoming/issues/373) 复核。
+
+**中后期制作候选。** Alan 认可六角方向并要求增加完整游戏的成长深度。[中后期成长设计](honey-growth-tree-v2.md)涵盖首罐、花径灯与庭院蜜宴；[六角蜂巢](honey-growth-atlas-v2.html)可浏览全树、逐档购买。[池岸花湾](honey-flower-bay-v2.html)单独核实相同花位的手动采集和连锁实得。运行手册与扩展候选分别沿 [#388](https://github.com/alanthssss/nameless-becoming/issues/388) 和 [#389](https://github.com/alanthssss/nameless-becoming/issues/389) 复核。
+
 ### 以下为历版飞行战役和采蜜 Demo 的设计记录
 
 版本：1.1 · 世界元素与玩法发展修订 · 2026-10-26
