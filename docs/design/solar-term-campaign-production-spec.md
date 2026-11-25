@@ -342,7 +342,7 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
-**2026-11-26 · Honey 庭院实装。** M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿 [GDD §8.1](swarm-flight-gdd.md#visual-production-rules) 与[原庭院讨论 #427](https://github.com/alanthssss/nameless-becoming/issues/427)接入巢内庭院、花瓣杆秤和飞痕画笺。本次 Mac 试玩与开发验证集中记在 [#436](https://github.com/alanthssss/nameless-becoming/issues/436)，Alan 从可玩的庭院判断造型和转场。
+**2026-11-26 · Honey 庭院实装。** M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿 [GDD §8.1](swarm-flight-gdd.md#visual-production-rules) 与[原庭院讨论 #427](https://github.com/alanthssss/nameless-becoming/issues/427)接入巢内庭院、花瓣杆秤和飞痕画笺。本次[Mac 试玩回执](../production/region-greybox-receipt.md#honey-inner-courtyard-427)与开发验证集中记在 [#436](https://github.com/alanthssss/nameless-becoming/issues/436)，Alan 从可玩的庭院判断造型和转场。
 
 **Honey 操作设置。** 键鼠和手柄操作沿 M3/#322 的 [#407](https://github.com/alanthssss/nameless-becoming/issues/407) / [#408](https://github.com/alanthssss/nameless-becoming/issues/408) 接入。Mac 包、旧档接续与集成结果见 [#413](https://github.com/alanthssss/nameless-becoming/issues/413)。
 

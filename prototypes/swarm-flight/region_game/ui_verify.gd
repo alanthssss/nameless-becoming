@@ -1,4 +1,5 @@
 extends SceneTree
+const StationEntry = preload("res://region_game/station_entry_probe.gd")
 const Scene = preload("res://region_game/main.tscn")
 var game
 var checks := 0
@@ -12,11 +13,6 @@ func check(ok: bool,label: String) -> void:
 		printerr("FAIL "+label)
 func frames(count: int) -> void:
 	for i in count: await process_frame
-func wait_for_entrance() -> void:
-	var deadline := Time.get_ticks_msec()+4000
-	while game.mode == "station_entry" and Time.get_ticks_msec() < deadline:
-		await process_frame
-
 func tap(code: int) -> void:
 	for pressed in [true,false]:
 		var event := InputEventKey.new()
@@ -25,7 +21,7 @@ func tap(code: int) -> void:
 		event.pressed = pressed
 		root.push_input(event,true)
 		await frames(2)
-	await wait_for_entrance()
+	await StationEntry.settle(game)
 
 func pad(button: JoyButton) -> void:
 	for pressed in [true,false]:
@@ -319,7 +315,7 @@ func check_shop_shelves() -> void:
 	game.model.p = Vector2(438,372)
 	game.ui.refresh()
 	game.ui.hub_action.pressed.emit()
-	await wait_for_entrance()
+	await StationEntry.settle(game)
 	check(game.mode == "shop" and not game.ui.sell_button.disabled, "second shelf opens delivery from visible button")
 	cues.clear()
 	game.save_blocked = true
