@@ -105,6 +105,14 @@ PR 与 `main` push 都先校验差异、路由和工作流语法，最后由 `CI
 
 手账 #417 同步笛谱 #418 是实际历史例子，两次测试树只差简谱 PDF 和制作回执。新规则会对具备凭证的同类同步复用区域回归。旧运行没有这个凭证，历史实耗保留。[实施记录 #424](https://github.com/alanthssss/nameless-becoming/issues/424)
 
+#### 怎样核对一次同步实际省了多少
+
+从同步后 `CI required checks` 的日志读取 `reused` 和 `source_run`，在来源 attempt 的门禁中核对 PR 号、实际集成树与覆盖。GitHub 也会把未选中的作业显示成 skipped；只有出现在复用清单中且能追溯到来源的检查才计入节省。工作流从创建到结束是合并等待时间，每个实际执行作业从开始到结束的时长之和是 runner 占用，两者都含本次运行的调度差异，账单另行核算。
+
+#444 随 #442 定稿同步时，两个测试树都是 `5da49ed4`。当时新运行沿用了六组 Swarm、Flower 和 Garden，Web 用时 1 分 33 秒，主 Godot 用时 2 分 12 秒，两者结束后才开始的 Web 导出又用 1 分 38 秒。整轮从 6 分 30 秒降到 4 分 45 秒，runner 合计从 29 分 43 秒降到 6 分 36 秒。[原运行](https://github.com/alanthssss/nameless-becoming/actions/runs/45688917382) · [原型复用运行](https://github.com/alanthssss/nameless-becoming/actions/runs/45690000191)
+
+新版门禁还记录 Web 是否通过、主 Godot 的 routes／full 范围与干净导出的验证结果。需要重跑导出时，上游可以分别实跑或复用已有成功凭证。沿用旧验证时，范围检查仍会为当前 checkout 生成并核对提交 SHA、产品版本与工作树状态。日常导出作业结束后不保存下载包；需要交付的构建仍由对应提交的打包流程产生。现场计时及各次运行链接保存在[同一验收工单](https://github.com/alanthssss/nameless-becoming/issues/424)。
+
 ### 已证实问题与预防措施
 
 | 原问题 | 证据/后果 | 修正 |
