@@ -1,23 +1,33 @@
 extends "res://sound.gd"
-## Honey's garden theme. Two parts of the same waltz run on one continuous
-## phrase; visiting a field brings up the plucked part without resetting it.
-
-const BEAT := 0.60
-# Root, fifth, then two upper voices. Each row lasts one three-beat bar.
+## Honey's courtyard tune: two short taps on one pitch, a lower landing, then air.
+## The field answers with fragments over the same bass and twelve-bar form.
+const BEAT := 0.625
+const BEATS_PER_BAR := 4
+# Bass, lower chord tone, upper chord tone.
 const HARMONY := [
-	[43, 50, 59, 64], [42, 50, 57, 62], [40, 47, 55, 62], [36, 43, 52, 59],
-	[45, 52, 60, 64], [38, 45, 54, 60], [43, 50, 59, 64], [38, 45, 54, 62],
+	[41, 57, 62], [43, 58, 65], [40, 55, 62], [41, 57, 60],
+	[46, 57, 62], [45, 55, 60], [43, 53, 58], [48, 58, 64],
+	[41, 57, 62], [38, 53, 60], [46, 55, 62], [41, 57, 60],
 ]
-# Silence in a bar is part of the tune. [beat, MIDI note, length in beats]
-const MELODY := [
-	[[0.5,71,0.8],[1.5,74,1.25]], [[0.0,69,1.8]],
-	[[0.5,67,0.8],[1.5,71,0.6],[2.25,74,0.7]], [[0.0,76,1.8]],
-	[[0.0,72,1.3],[1.75,69,0.8]], [[0.5,66,0.9],[1.5,69,1.1]],
-	[[0.0,67,1.8]], [[2.25,69,0.6]],
-	[[0.5,71,0.8],[1.5,74,1.25]], [[0.0,78,1.65],[2.0,74,0.8]],
-	[[0.5,76,0.8],[1.5,74,0.6],[2.25,71,0.7]], [[0.0,67,1.5]],
-	[[0.5,69,0.8],[1.5,72,1.0]], [[0.0,74,1.3],[1.75,66,0.85]],
-	[[0.0,67,2.0]], [],
+# Notes are [onset in beats, MIDI pitch, duration in beats].
+const COURTYARD := [
+	[[0.0,69,0.20], [0.38,69,0.20], [1.25,65,1.05]],
+	[[0.75,67,0.38], [1.50,70,0.60], [2.75,67,0.55]],
+	[[0.0,64,0.20], [0.38,64,0.20], [1.25,62,0.75], [3.0,67,0.36]],
+	[[0.25,65,1.35]],
+	[[1.50,62,0.36], [2.25,69,0.65]], [[0.50,67,0.75]],
+	[[1.25,65,0.40], [2.0,62,0.90]], [],
+	[[0.0,69,0.20], [0.38,69,0.20], [1.25,65,0.85], [3.0,67,0.35]],
+	[[0.75,69,0.38], [1.50,72,0.55], [2.75,69,0.55]],
+	[[0.0,67,0.20], [0.38,67,0.20], [1.25,62,0.75]],
+	[[0.25,65,1.35]],
+]
+const FIELD_ANSWERS := [
+	[[0.0,69,0.18], [0.38,69,0.16]], [[1.25,65,0.55]],
+	[], [[2.0,60,0.20], [2.38,60,0.18]],
+	[[0.75,62,0.42]], [], [[1.50,65,0.35], [2.25,62,0.55]], [],
+	[[0.0,69,0.18], [0.38,69,0.16]], [[1.25,65,0.55], [3.0,62,0.25]],
+	[], [[0.25,65,0.75]],
 ]
 const FOLEY_DURATIONS := {
 	"harvest":0.20, "pulse":0.22, "fiber_release":0.19, "resin_open":0.26,
@@ -66,41 +76,52 @@ func set_honey_context(area: String, mode: String) -> void:
 	var overlay := mode not in ["play", "transition"]
 	if _music.is_empty() or (_area == area and _overlay == overlay):
 		return
+	var first_mix := _area.is_empty()
 	_area = area
 	_overlay = overlay
 	var field := area in ["pond", "meadow"]
 	var score_gain := 0.53 if overlay else 1.0
 	var air_gain := 0.48 if overlay else 1.0
+	if first_mix:
+		_music[0].volume_linear = score_gain
+		_music[1].volume_linear = score_gain if not field else 0.0
+		_music[2].volume_linear = score_gain if field else 0.0
+		_ambience[0].volume_linear = air_gain if area == "pond" else 0.0
+		_ambience[1].volume_linear = air_gain if area == "meadow" else 0.0
+		return
 	if is_instance_valid(_crossfade):
 		_crossfade.kill()
 	_crossfade = create_tween().set_parallel(true)
 	_crossfade.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_crossfade.tween_property(_music[0], "volume_linear", score_gain * (0.78 if field else 1.0), 0.48)
-	_crossfade.tween_property(_music[1], "volume_linear", score_gain if field else 0.0, 0.8)
+	_crossfade.tween_property(_music[0], "volume_linear", score_gain, 0.48)
+	_crossfade.tween_property(_music[1], "volume_linear", 0.0 if field else score_gain, 0.8)
+	_crossfade.tween_property(_music[2], "volume_linear", score_gain if field else 0.0, 0.8)
 	_crossfade.tween_property(_ambience[0], "volume_linear", air_gain if area == "pond" else 0.0, 0.65)
 	_crossfade.tween_property(_ambience[1], "volume_linear", air_gain if area == "meadow" else 0.0, 0.65)
 
 func _garden_score() -> Array[AudioStreamWAV]:
+	var backing := PackedFloat32Array()
 	var home := PackedFloat32Array()
 	var field := PackedFloat32Array()
-	home.resize(roundi(MELODY.size() * 3 * BEAT * RATE))
-	field.resize(home.size())
-	for bar in MELODY.size():
-		var start := bar * 3 * BEAT
-		var chord: Array = HARMONY[bar % HARMONY.size()]
-		_mix_instrument(home, start, 2.3 * BEAT, chord[0], 0.13, "bass")
-		_mix_instrument(home, start + BEAT, 1.45 * BEAT, chord[2], 0.065, "keys")
-		_mix_instrument(home, start + 1.06 * BEAT, 1.4 * BEAT, chord[3], 0.045, "keys")
-		for note in MELODY[bar]:
-			_mix_instrument(home, start + note[0] * BEAT, note[2] * BEAT, note[1], 0.19, "keys")
-		# An answering figure on the offbeats gives outdoor flight its lift.
-		_mix_instrument(field, start + 0.52 * BEAT, 0.8 * BEAT, chord[1], 0.15, "pluck")
-		_mix_instrument(field, start + 1.50 * BEAT, 0.65 * BEAT, chord[2], 0.13, "pluck")
-		if bar % 4 != 3:
-			_mix_instrument(field, start + 2.23 * BEAT, 0.72 * BEAT, chord[3], 0.11, "pluck")
-		if bar % 4 == 2:
-			_mix_drum(field, start + 2.75 * BEAT, 0.07, 0.056, "wood", bar)
-	return [_wav(home, true), _wav(field, true)]
+	backing.resize(roundi(HARMONY.size() * BEATS_PER_BAR * BEAT * RATE))
+	home.resize(backing.size())
+	field.resize(backing.size())
+	for bar in HARMONY.size():
+		var start := bar * BEATS_PER_BAR * BEAT
+		var chord: Array = HARMONY[bar]
+		# Leave the opening taps, and their return in bar nine, unaccompanied.
+		var bass_beat := 1.25 if bar in [0, 8] else 0.0
+		_mix_instrument(backing, start + bass_beat * BEAT, 1.20 * BEAT, chord[0], 0.135, "bass")
+		_mix_instrument(backing, start + 2.5 * BEAT, 0.54 * BEAT, chord[1], 0.062, "pluck")
+		_mix_instrument(backing, start + 2.54 * BEAT, 0.68 * BEAT, chord[2], 0.046, "keys")
+		for note in COURTYARD[bar]:
+			var voice := "mallet" if note[2] <= 0.40 else "keys"
+			_mix_instrument(home, start + note[0] * BEAT, note[2] * BEAT, note[1], 0.22, voice)
+		for note in FIELD_ANSWERS[bar]:
+			_mix_instrument(field, start + note[0] * BEAT, note[2] * BEAT, note[1], 0.19, "pluck")
+		if bar % 4 in [0, 2]:
+			_mix_drum(field, start + 1.75 * BEAT, 0.065, 0.050, "wood", bar)
+	return [_wav(backing, true), _wav(home, true), _wav(field, true)]
 
 func _field_air(place: String) -> AudioStreamWAV:
 	var duration := 7.5
