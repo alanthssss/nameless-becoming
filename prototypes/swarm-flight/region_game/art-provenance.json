@@ -359,5 +359,18 @@
       }
     ],
     "running_colour_after_review": "Fixed leaf-green frog and one red-and-ivory koi. Three vermilion patches are registered to the neutral fish texture by basin_pigment.gdshader; each courtyard instance draws the species only."
+  },
+  "illustrated_menus": {
+    "issue": 333,
+    "layout_regression_issue": 412,
+    "source": "Built-in image generation, approved visual proposal, 2026-11-25/26. Four original prop silhouettes extracted from one atlas with transparent edges. The separate bee wax seal uses the same warm upper-left lighting. All labels, stock values, bindings and buttons are live Godot controls.",
+    "assets": {
+      "honey-menu-book.webp": "53cb691e70e13ca58143d98cc5ff3c289f304e76e59afd1199f4185180a85c55",
+      "honey-menu-letter.webp": "15e298db74944fac69849f897fc42c772a52a6a0b6797ac49eb3828758168182",
+      "honey-menu-seal.webp": "a8ecf1e00a1715d16c8a130f599061aa073b9e020b8d008dcda5d3b88df04f52",
+      "honey-menu-settings.webp": "76d0224686eeafd0ec40b00683efd63937a9c7be7d6d8dd0dbe779687120bf27",
+      "honey-menu-shop.webp": "e0c606f072bfc9d460add1c95f92d2893008a96f4ffab26a4f60906a20ca3555"
+    },
+    "settings_symbols": "Five original interface symbols derived from the approved settings prototype, stored in art/honey-settings-symbols.svg."
   }
 }

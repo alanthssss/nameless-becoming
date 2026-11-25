@@ -186,6 +186,9 @@ func check_menus() -> void:
 	ui.journal_regions[1].pressed.emit()
 	await frames()
 	scan("meadow journal",ui.journal)
+	ui.journal_return_notes.show()
+	await frames()
+	scan("field return rules open",ui.journal)
 
 func check_courtyard() -> void:
 	game.model.coins = 1000000000
