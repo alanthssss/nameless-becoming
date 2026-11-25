@@ -132,7 +132,7 @@ func mode(tag: String) -> void:
 func check_menus() -> void:
 	for tag in ["title","pause","complete"]:
 		await mode(tag)
-		scan(tag,ui.pause_folio if tag == "pause" else ui.menu)
+		scan(tag,ui.complete if tag == "complete" else ui.menu)
 	game.save_blocked = true
 	await mode("title")
 	scan("blocked save",ui.menu)
@@ -297,7 +297,7 @@ func check_size(pixels: Vector2i) -> void:
 		if node.get_script() == preload("res://region_game/growth_parchment.gd") and not node.small_note:
 			growth_paper = node
 	expect(is_instance_valid(growth_paper),"growth parchment present")
-	var known := [ui.hud,ui.shop,ui.tree,ui.regions,ui.menu,ui.pause_folio,ui.settings,ui.slots,ui.journal,
+	var known := [ui.hud,ui.shop,ui.tree,ui.regions,ui.menu,ui.complete,ui.settings,ui.slots,ui.journal,
 		ui.controls_page,ui.restart_dialog,ui.transition_layer,ui.transition_hint,ui.toast_panel]
 	for node in ui.get_children():
 		if node is Control: expect(node in known,"uncovered UI root "+str(node.get_class())+" "+str(node.name))

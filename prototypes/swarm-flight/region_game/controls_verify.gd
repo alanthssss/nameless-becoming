@@ -88,7 +88,7 @@ func check_sections() -> void:
 	# Start from the device tab. The fixed tables must work with just the D-pad.
 	await press_pad(JOY_BUTTON_DPAD_DOWN)
 	for title in ["菜单","成长树","花湾"]:
-		await press_pad(JOY_BUTTON_DPAD_RIGHT)
+		await press_pad(JOY_BUTTON_DPAD_DOWN)
 		check(root.gui_get_focus_owner() == page.sections[title], "D-pad reaches " + title)
 		await press_pad(JOY_BUTTON_A)
 		check(page.section == title and page.reference.is_visible_in_tree() and not page.flight.visible, "only selected reference is visible: " + title)
@@ -96,12 +96,70 @@ func check_sections() -> void:
 		var last: Control = page.reference.get_child(-1)
 		check(page.scroll.get_global_rect().encloses(last.get_global_rect()), "last shortcut visible from section tab: " + title)
 	await click(page.tabs.kbm)
-	var captions: Array = page.reference.find_children("*", "Label", true, false).map(func(label): return label.text)
-	check("按住 E / 空格" in captions and "按住 A（下）" not in captions, "switching device updates the open reference")
+	var harvest: Control = page.reference.get_child(2)
+	var captions: Array = harvest.find_children("*", "Label", true, false).map(func(label): return label.text)
+	check(captions == ["采蜜", "E", "或", "空格", "按住"], "switching device shows the two fixed harvest inputs with their hold instruction")
 	await click(page.sections["飞行"])
 	check(page.scroll.get_global_rect().encloses(page.rows.mute.mouse.get_global_rect()) and has_only_single_lines(), "all keyboard and mouse bindings fit on entry")
 	await click(page.tabs.pad)
 	check(page.flight.is_visible_in_tree() and not page.reference.visible and has_only_single_lines(), "flight table has no guide paragraphs")
+
+func check_reference_bounds() -> void:
+	for device in ["kbm", "pad"]:
+		await click(page.tabs[device])
+		for title in ["菜单", "成长树", "花湾"]:
+			await click(page.sections[title])
+			var viewport_rect: Rect2 = page.scroll.get_global_rect()
+			var all_visible := true
+			var all_aligned := true
+			var header = page.reference.get_child(0)
+			for i in range(1,page.reference.get_child_count()):
+				var row = page.reference.get_child(i)
+				var first_cap = row.get_child(1).get_child(0)
+				all_aligned = all_aligned and is_equal_approx(row.get_child(0).global_position.x,header.get_child(0).global_position.x)
+				all_aligned = all_aligned and is_equal_approx(first_cap.global_position.x,header.get_child(1).global_position.x)
+			check(all_aligned,"%s %s %s starts actions and first caps at their own headings" % [root.size,device,title])
+			for caption: Label in page.reference.find_children("*", "Label", true, false):
+				all_visible = all_visible and viewport_rect.grow(1).encloses(caption.get_global_rect())
+			check(all_visible, "%s %s %s fits every fixed keycap" % [root.size, device, title])
+	await click(page.sections["飞行"])
+	await click(page.tabs.pad)
+
+func check_live_keycaps() -> void:
+	await click(page.tabs.kbm)
+	var aligned := true
+	for slot in ["key","mouse"]:
+		for action in game.bindings.ACTIONS:
+			var button: Button = page.rows[action][slot]
+			var caps = page._keycaps(button)
+			var left: float = caps.get_child(0).global_position.x if caps.visible else button.global_position.x + button.get_global_transform().x.x * button.get_theme_stylebox("normal").content_margin_left
+			aligned = aligned and is_equal_approx(left,page.headings[slot].global_position.x)
+	check(aligned,"every live keyboard/mouse cap or empty slot starts on its own heading")
+	var up = page._keycaps(page.rows.up.key)
+	check(up.get_child_count() == 3 and up.get_child(0).text == "W" and up.get_child(2).text == "↑", "movement alternatives have separate caps")
+	var pulse = page._keycaps(page.rows.pulse.key)
+	var original_q = pulse.get_child(0).get_theme_stylebox("normal").texture
+	check(original_q == pulse.PAINTED_Q and page.rows.up.mouse.text == "未绑定", "default Q uses approved artwork and empty slots remain editable")
+	await click(page.rows.pulse.key)
+	check(not pulse.visible and page.rows.pulse.key.text == "等待输入…", "capture replaces only the active keycap")
+	await tap(KEY_M)
+	check(not pulse.visible and page.rows.pulse.key.text == "请换一个键", "conflict keeps the active cell distinct")
+	await tap(KEY_ESCAPE)
+	check(pulse.visible and pulse.get_child(0).text == "Q", "cancel restores the painted Q")
+	await click(page.rows.pulse.key)
+	await tap(KEY_PAGEDOWN)
+	var long_cap: Label = pulse.get_child(0)
+	check(long_cap.text == game.bindings.label("pulse","key") and long_cap.get_theme_stylebox("normal").texture == pulse.WAX, "remapping Q to PageDown uses the live key name on blank wax")
+	check(page.rows.pulse.key.get_global_rect().encloses(long_cap.get_global_rect()), "long keycap fits the editable slot")
+	await click(page.rows.mute.key)
+	await tap(KEY_Q)
+	var moved_q = page._keycaps(page.rows.mute.key).get_child(0)
+	check(moved_q.text == "Q" and moved_q.get_theme_stylebox("normal").texture == original_q, "painted Q follows its new action")
+	await click(page.rows.mute.key)
+	await tap(KEY_SLASH)
+	check(page._keycaps(page.rows.mute.key).get_child_count() == 1, "slash remains a single input")
+	await click(page.reset_button)
+	await click(page.tabs.pad)
 
 func run() -> void:
 	# Game saves and bindings must both be isolated when this script is run by hand.
@@ -128,7 +186,11 @@ func run() -> void:
 		await frames(3)
 		check(page.scroll.size.y > 170 and page.scroll.get_h_scroll_bar().max_value <= page.scroll.size.x + 1, "rows fit width at " + str(pixels))
 		check(page.scroll.get_global_rect().encloses(page.rows.mute.pad.get_global_rect()) and has_only_single_lines(), "all pad bindings fit on entry at " + str(pixels))
+		await check_reference_bounds()
 	await check_sections()
+	await check_live_keycaps()
+	await press_pad(JOY_BUTTON_DPAD_DOWN) # device to the active context
+	await press_pad(JOY_BUTTON_DPAD_RIGHT) # context rail into the binding register
 	for i in 10:
 		if root.gui_get_focus_owner() == page.rows.interact.pad: break
 		await press_pad(JOY_BUTTON_DPAD_DOWN)
@@ -166,6 +228,8 @@ func run() -> void:
 	var credits_bottom: float = game.ui.settings_credits.get_global_rect().end.y
 	check(credits_bottom <= game.ui.settings_scroll.get_global_rect().end.y + 1, "controller can read the last credit line")
 	await tap(KEY_ESCAPE)
+	check(game.mode == "title" and root.gui_get_focus_owner() == game.ui.menu_settings,"settings restores its title opener")
+	await tap(KEY_UP)
 	await tap(KEY_ENTER)
 	check(game.mode == "play" and game.model.at_home(), "start through title")
 	await tap(KEY_E)
@@ -216,12 +280,12 @@ func run() -> void:
 	await frames(3)
 	check(game.event_log.any(func(e): return e.kind == "dash"), "hold then release shoulder button dashes")
 	await press_pad(JOY_BUTTON_START)
-	check(game.mode == "pause" and root.gui_get_focus_owner() == game.ui.pause_folio.buttons[0], "Start opens the folio on Continue")
-	await press_pad(JOY_BUTTON_DPAD_DOWN)
+	check(game.mode == "pause" and root.gui_get_focus_owner() == game.ui.menu_primary, "Start opens the shared menu on Continue")
+	await press_pad(JOY_BUTTON_DPAD_RIGHT)
 	await press_pad(JOY_BUTTON_A)
 	check(game.mode == "journal" and "Y" in game.ui.journal_controls.text, "guide shows the rebound controller action")
 	await press_pad(JOY_BUTTON_B)
-	await click(game.ui.pause_folio.buttons[3])
+	await click(game.ui.menu_settings)
 	await click(game.ui.controls_button)
 	check(game.mode == "controls", "pause settings reaches the same binding table")
 	await close_game()

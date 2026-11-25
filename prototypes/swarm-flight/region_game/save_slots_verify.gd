@@ -76,19 +76,19 @@ func visible_text(node: Node) -> String:
 	return words
 
 func check_folio_sizes() -> void:
-	var folio = game.ui.pause_folio
+	var folio: Control = game.ui.menu
 	for size_px in [Vector2i(1280,800),Vector2i(960,600)]:
 		root.size = size_px
 		for i in 5: await process_frame
 		var focused := root.gui_get_focus_owner()
-		check(folio.is_visible_in_tree() and focused == folio.buttons[0],"opening focus survives resize to "+str(size_px))
-		# On the 1583×993 approved folio the page's right edge is at 41%.
+		check(folio.is_visible_in_tree() and focused == game.ui.menu_primary,"opening focus survives resize to "+str(size_px))
+		# The shared 451-unit menu sits on the left of the 960-unit drawing.
 		var page_side: Rect2 = game.ui.get_global_rect()
-		page_side.size.x *= 0.43
+		page_side.size.x *= 0.49
 		var targets: Array[Rect2] = []
 		var accessible := true
 		var separate := true
-		for button: Button in folio.buttons:
+		for button: Button in [game.ui.menu_primary,game.ui.menu_guide,game.ui.menu_slots,game.ui.menu_settings,game.ui.menu_restart,game.ui.menu_quit]:
 			var bounds := button.get_global_rect()
 			accessible = accessible and button.is_visible_in_tree() and not button.disabled and bounds.has_area() and page_side.encloses(bounds)
 			for other in targets:
@@ -103,17 +103,17 @@ func check_folio_sizes() -> void:
 
 func check_courtyard_folio() -> void:
 	await tap(KEY_ESCAPE)
-	var folio = game.ui.pause_folio
-	var buttons: Array = folio.buttons
+	var folio: Control = game.ui.menu
+	var buttons := [game.ui.menu_primary,game.ui.menu_guide,game.ui.menu_slots,game.ui.menu_settings,game.ui.menu_restart,game.ui.menu_quit]
 	var words := visible_text(folio)
-	check(game.mode == "pause" and not game.ui.menu.visible and root.gui_get_focus_owner() == buttons[0],"Escape opens the folio on Continue")
-	for label in ["歇一会儿","继续这趟出行","花路手册","选择存档","设置","新的一轮","保存并退出","Esc"]:
+	check(game.mode == "pause" and game.ui.menu.visible and root.gui_get_focus_owner() == buttons[0],"Escape opens the folio on Continue")
+	for label in ["Honey","继续采蜜","花路手册","选择存档","设置","新的一轮","保存并退出","Esc"]:
 		check(label in words,"folio shows "+label)
 	check("存档2" in words.replace(" ","").replace("　",""),"the folio identifies the active second slot")
-	check(folio.status.text == game.model.goal_text(), "header shows the objective for the loaded profile")
-	check(folio.version.text == ("Demo 0.32.7" if OS.has_feature("pond_feedback") else "Demo 0.29.0"), "folio shows this build's version")
+	check(game.ui.menu_body.text == game.model.goal_text(), "header shows the objective for the loaded profile")
+	check(game.ui.menu_footer.text == ("Demo 0.32.7" if OS.has_feature("pond_feedback") else "Demo 0.29.0"), "folio shows this build's version")
 	await check_folio_sizes()
-	await pad(JOY_BUTTON_DPAD_DOWN)
+	await pad(JOY_BUTTON_DPAD_RIGHT)
 	check(root.gui_get_focus_owner() == buttons[1] and "B" in visible_text(folio) and "Esc" not in visible_text(folio),"D-pad reaches the guide and switches the return hint")
 	await pad(JOY_BUTTON_A)
 	check(game.mode == "journal" and not folio.is_visible_in_tree(),"A opens the field guide")
@@ -147,7 +147,7 @@ func check_field_quit_and_resume() -> void:
 	# Change a fixture value after the pause autosave to distinguish the quit write.
 	game.model.coins += 4
 	var expected: Dictionary = game.model.to_payload()
-	await click(game.ui.pause_folio.buttons[5])
+	await click(game.ui.menu_quit)
 	check(game.quit_requested,"Save and Quit finishes only after saving")
 	boot()
 	check(game.mode == "title" and game.active_slot == 1 and game.has_save,"cold driver opens the saved active slot")
@@ -220,7 +220,7 @@ func run() -> void:
 	game.saved_path = directory.path_join("missing/unwritable")
 	game.open_slots()
 	check(game.mode == "pause" and game.model.coins == 7 and game.active_slot == 2,"failed save blocks switching and retains the running game")
-	check("保存失败" in game.ui.pause_folio.status.text, "failed switch leaves a persistent save warning on the folio")
+	check("保存失败" in game.ui.menu_body.text, "failed switch leaves a persistent save warning on the folio")
 	game.saved_path = second
 	game.restart_game()
 	check(game.model.coins == 0 and FileAccess.get_file_as_bytes(first) == original and FileAccess.get_file_as_string(third) == "broken","restart only resets the selected slot")

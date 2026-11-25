@@ -12,8 +12,7 @@ const POND_PLATE: Texture2D = preload("res://art/collection-pond.webp")
 const MEADOW_PLATE: Texture2D = preload("res://art/collection-meadow.webp")
 const MeadowLayout = preload("res://region_game/layout.gd")
 const PLATE_RECT := MeadowLayout.PLATE
-# The field notes sample clean paper from the journal. Small quantities can
-# float briefly, while instructions stay readable against changing foliage.
+const Keycaps = preload("res://region_game/wax_keycaps.gd")
 const FIELD_PAPER := Color("39483ef5")
 const FIELD_INK := Color("fff2d5")
 const FIELD_MUTED_INK := Color("e0e2cb")
@@ -70,9 +69,17 @@ var _surfaces: Array[Sprite2D] = []
 var _life_motes: Array[Dictionary] = []
 var _material_recoil := {}
 var _full_glow := 0.0
+var prompt_surface := StyleBoxFlat.new()
+var prompt_screen := Rect2()
 
 func _ready() -> void:
 	super._ready()
+	prompt_surface.set_corner_radius_all(14)
+	prompt_surface.set_border_width_all(2)
+	prompt_surface.border_color = Color("d9bf8d")
+	prompt_surface.shadow_color = Color("433a2bd0")
+	prompt_surface.shadow_size = 2
+	prompt_surface.shadow_offset = Vector2(0,2)
 	if area_key == "hub":
 		basin_visitor = BasinVisitor.new()
 		add_child(basin_visitor)
@@ -272,12 +279,13 @@ func _draw() -> void:
 			"player":
 				_draw_working_bee()
 				_draw_bag()
+	prompt_screen = Rect2()
 	_draw_resource_feedback()
 	_draw_region_effects()
 	if model.p.distance_to(entry) < 240.0:
-		var label_at: Vector2 = entry + SIGN_FOOT + Vector2(0,-89)
+		var label_at: Vector2 = entry + SIGN_FOOT + Vector2(0,-132)
 		if model.field.at_entry():
-			_field_note(label_at, "%s  回庭院" % _action_hint("interact"), true)
+			_field_note(label_at, "%s  回庭院" % _action_hint("interact"), true,0,false,"interact")
 		else:
 			_field_note(label_at,"庭院入口",false)
 	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE/MeadowLayout.FIELD_ZOOM)
@@ -612,7 +620,7 @@ func _nectar_caption(flower: Dictionary) -> String:
 
 func _draw_nectar_status(flower: Dictionary, show_caption: bool) -> void:
 	var cap: String = _nectar_caption(flower) if show_caption else ""
-	var anchor: Vector2 = flower.p + Vector2(0,-45)
+	var anchor: Vector2 = _flower_visual_point(flower) + Vector2(0,-94)
 	if flower.phase in ["empty","bud"]:
 		if show_caption: _field_note(anchor,cap,false)
 		return
@@ -623,7 +631,7 @@ func _draw_nectar_status(flower: Dictionary, show_caption: bool) -> void:
 	var icon := anchor
 	if not cap.is_empty():
 		var can_work: bool = int(flower.stock) > 0 and model.field.cargo < model.field.capacity()
-		var tag := _field_note(anchor, cap, can_work, 35)
+		var tag := _field_note(anchor, cap, can_work, 42, false, "interact" if cap.contains("按住") else "")
 		icon = Vector2(tag.position.x + 21, tag.get_center().y)
 	draw_circle(icon,radius,glass,true,-1,true)
 	draw_arc(icon,radius-1,0,TAU,40,Color("bda777"),1.4,true)
@@ -661,7 +669,7 @@ func _draw_material_hint(item: Dictionary) -> void:
 		var message := "贴近裂口收树脂"
 		if close_enough: message = "按住 %s  收树脂" % _action_hint("interact")
 		if item.phase=="fading" and FieldLife.phase_ratio(item)>.60: message += " · 将干"
-		_field_note(at+Vector2(0,-48),message,true)
+		_field_note(at+Vector2(0,-99),message,true,0,false,"interact" if close_enough else "")
 		var fill: float = float(item.get("resin_draw",0.0))/field.RESIN_SECONDS
 		if field.drawing_resin_id==item.id:
 			var contact: Vector2 = model.p+Vector2(0,6)
@@ -677,7 +685,7 @@ func _draw_material_hint(item: Dictionary) -> void:
 			draw_circle(at+Vector2(float(i)*11.0-5.5,-24),3.0,Color("b6a580") if i<hits else Color("ffdd90"))
 	var action := "朝种穗振翅取绒" if fiber else "朝裂口振翅掀皮"
 	if hits > 0: action = "再振一次落绒" if fiber else "再振一次开皮"
-	_field_note(at + Vector2(0,-48), "%s  %s" % [_action_hint("pulse"), action], true)
+	_field_note(at + Vector2(0,-99), "%s  %s" % [_action_hint("pulse"), action], true,0,false,"pulse")
 
 func _draw_region_effects() -> void:
 	for ring in pulse_rings:
@@ -713,39 +721,61 @@ func _draw_region_effects() -> void:
 			var tone: Color = mote.color
 			tone.a = (1-t)*.65
 			_ellipse(at,Vector2(2.7,1.4),tone)
-	for item in harvest_texts:
-		var opacity := 1.0 - float(item.age)
-		var at: Vector2 = item.p + Vector2(13, -33 - float(item.age) * 25)
-		draw_string_outline(feedback_font, at, item.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-			FIELD_NOTE_SIZE, 3, Color(FIELD_PAPER, opacity))
-		draw_string(feedback_font, at, item.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-			FIELD_NOTE_SIZE, Color(FIELD_INK, opacity))
-
-# A short cut of ink-washed paper. The left inset can hold a nectar gauge or
-# a bearing. Only the nearest resource displays words, even when several fill.
-func _field_note(at: Vector2, words: String, active: bool, mark_width := 0, screen_space := false) -> Rect2:
-	var pixels := FIELD_TEXT_SIZE if active else FIELD_NOTE_SIZE
-	var text_width := ceilf(feedback_font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, pixels).x)
-	var extent := Vector2(text_width + mark_width + 22, 36 if active or mark_width > 0 else 30)
-	var bounds := get_viewport_rect()
+# The anchor and its tail stay in world coordinates as the camera moves.
+func _field_note(at: Vector2, words: String, active: bool, mark_width := 0, screen_space := false, action := "") -> Rect2:
+	var pixels := 22 if active else 19
+	var keys := PackedStringArray()
+	var prefix := ""
+	var driver := get_parent()
+	if not action.is_empty() and driver and driver.has_method("control_hint"):
+		var hint := _action_hint(action)
+		var split := words.find(hint)
+		if split >= 0:
+			prefix = words.left(split)
+			words = words.substr(split+hint.length()).strip_edges()
+			for slot in (["pad"] if driver.input_device=="pad" else ["key","mouse"]):
+				keys.append_array(driver.bindings.labels(action,slot))
+			if keys.is_empty(): keys.append("未绑定")
+	var key_widths := PackedFloat32Array()
+	var key_space := 0.0
+	for key in keys:
+		var width := maxf(36,feedback_font.get_string_size(key,HORIZONTAL_ALIGNMENT_LEFT,-1,19).x+15)
+		key_widths.append(width)
+		key_space += width+5
+	key_space += maxi(0,keys.size()-1)*25
+	var prefix_width := feedback_font.get_string_size(prefix,HORIZONTAL_ALIGNMENT_LEFT,-1,pixels).x
+	var text_width := feedback_font.get_string_size(words,HORIZONTAL_ALIGNMENT_LEFT,-1,pixels).x
+	var extent := Vector2(ceilf(text_width+mark_width+prefix_width+key_space+31),48 if active else 39)
+	var bounds := get_viewport_rect() if screen_space else Rect2(model.camera_offset,get_viewport_rect().size/scale)
+	var center := at.clamp(bounds.position+extent/2+Vector2(5,5),bounds.end-extent/2-Vector2(5,13))
+	var box := Rect2((center-extent/2).round(),extent)
+	if not screen_space and box.grow(10).intersects(Rect2(model.p-Vector2(24,20),Vector2(48,40))):
+		box.position.y = maxf(bounds.position.y+5,model.p.y-32-extent.y)
+	if screen_space and box.intersects(prompt_screen.grow(7)):
+		box.position.y = clampf(prompt_screen.end.y+12,5,bounds.end.y-extent.y-5)
+	prompt_surface.bg_color = Color("793e2b") if screen_space and model.energy_is_low() else (Color("35594e") if active else Color("3f5147"))
+	draw_style_box(prompt_surface,box)
 	if not screen_space:
-		bounds = Rect2(model.camera_offset, bounds.size / scale)
-	var center := at.clamp(bounds.position + extent / 2 + Vector2(4,4), bounds.end - extent / 2 - Vector2(4,4))
-	var box := Rect2((center - extent / 2).round(), extent)
-	var left := box.position
-	var right := box.end
-	var edge := PackedVector2Array([
-		left + Vector2(4,0), Vector2(right.x - 3,left.y), Vector2(right.x,left.y + 3),
-		right - Vector2(0,3), right - Vector2(4,0), Vector2(left.x + 2,right.y),
-		Vector2(left.x,right.y - 3), left + Vector2(0,3)])
-	var uv := PackedVector2Array()
-	for corner in edge:
-		uv.append((Vector2(170,270) + corner - left) / UIArt.JOURNAL.get_size())
-	draw_colored_polygon(edge, FIELD_PAPER if active else Color(FIELD_PAPER, .82), uv, UIArt.JOURNAL)
-	var baseline := Vector2(left.x + 11 + mark_width, box.get_center().y
-		+ (feedback_font.get_ascent(pixels) - feedback_font.get_descent(pixels)) / 2).round()
-	draw_string(feedback_font, baseline, words, HORIZONTAL_ALIGNMENT_LEFT, -1, pixels,
-		FIELD_INK if active else FIELD_MUTED_INK)
+		var x := clampf(at.x,box.position.x+15,box.end.x-15)
+		var tip := PackedVector2Array([Vector2(x-9,box.end.y-2),Vector2(x,box.end.y+9),Vector2(x+9,box.end.y-2)])
+		draw_colored_polygon(tip,prompt_surface.bg_color)
+		draw_polyline(tip,prompt_surface.border_color,1.8,true)
+		prompt_screen = Rect2((box.position-model.camera_offset)*scale,box.size*scale)
+	var cursor := box.position.x+15+mark_width
+	var baseline := box.get_center().y+(feedback_font.get_ascent(pixels)-feedback_font.get_descent(pixels))/2
+	if not prefix.is_empty():
+		draw_string(feedback_font,Vector2(cursor,baseline),prefix,HORIZONTAL_ALIGNMENT_LEFT,-1,pixels,FIELD_INK)
+		cursor += prefix_width
+	for i in keys.size():
+		if i:
+			draw_string(feedback_font,Vector2(cursor,baseline),"或",HORIZONTAL_ALIGNMENT_LEFT,-1,17,FIELD_MUTED_INK)
+			cursor+=25
+		var cap := Rect2(cursor,box.get_center().y-18,key_widths[i],37)
+		draw_style_box(Keycaps.q_face if keys[i]=="Q" else Keycaps.blank_face,cap)
+		if keys[i]!="Q":
+			draw_string(feedback_font,Vector2(cursor,baseline-2),keys[i],HORIZONTAL_ALIGNMENT_CENTER,cap.size.x,19,Keycaps.INK)
+		cursor+=cap.size.x+5
+	draw_string(feedback_font,Vector2(cursor,baseline),words,HORIZONTAL_ALIGNMENT_LEFT,-1,pixels,FIELD_INK)
 	return box
 
 func _draw_home_bearing() -> void:
@@ -754,13 +784,14 @@ func _draw_home_bearing() -> void:
 	if model.energy_is_low():
 		if model.field.at_entry(): return
 		var bee: Vector2 = (model.p - model.camera_offset) * MeadowLayout.FIELD_ZOOM
-		var badge_at := (bee + Vector2(0,-64)).clamp(Vector2(110,26),get_viewport_rect().size-Vector2(110,26))
+		var badge_at := (bee + Vector2(0,-118)).clamp(Vector2(110,26),get_viewport_rect().size-Vector2(110,26))
 		var badge := _field_note(badge_at, "体力低 · 回庭院", true, 27, true)
 		var centre := Vector2(badge.position.x + 18, badge.get_center().y)
 		var strength := 1.0 if reduced_motion else (1.0 + cos(model.field.elapsed * TAU / EnergyDial.PULSE_SECONDS)) * .5
-		draw_circle(centre, 10, Color("cc783d").lerp(Color("ffe29a"), strength), true, -1, true)
+		var gold := Color("ebc58c").lerp(Color("ffe8a4"), strength)
 		var side := direction.orthogonal()
-		draw_polyline(PackedVector2Array([centre-direction*4-side*5,centre+direction*5,centre-direction*4+side*5]), FIELD_PAPER, 2.8, true)
+		draw_line(centre-direction*10,centre+direction*9,gold,4,true)
+		draw_colored_polygon(PackedVector2Array([centre+direction*13,centre+direction*2+side*8,centre+direction*2-side*8]),gold)
 		return
 	if model.p.distance_to(entry)<330 and _full_glow <= 0: return
 	var at := get_viewport_rect().size - Vector2(141, 52)

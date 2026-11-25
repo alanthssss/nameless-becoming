@@ -266,7 +266,8 @@ func check_seed_pickup() -> void:
 	await frames(3)
 	check(cues.count("fiber") == 1, "catching the released fiber plays its pickup once")
 	check(game.model.materials.fiber == 1 and game.ui.fiber_text.text == "1", "caught tuft increments HUD inventory")
-	check(game.ui.toast_panel.visible and "纤维 +1（现有 1）" in game.ui.toast.text and "升级双翼" in game.ui.toast.text, "confirmed pickup explains quantity, stock and use")
+	var receipt = game.ui.field_hud
+	check(receipt.is_visible_in_tree() and receipt.receipt_left > 0 and receipt.receipt_name == "纤维" and receipt.receipt_gain == 1 and receipt.receipt_total == 1, "confirmed pickup shows the material, gain and current stock beside the bag")
 	field.p = field.layout.nodes[0].p
 	field.v = Vector2.ZERO
 	await frames(2)
@@ -423,10 +424,10 @@ func run() -> void:
 	await frames(30)
 	check(game.sound._area == "pond" and game.sound._overlay, "pause softens the score in place")
 	check(game.model.to_payload() == before,"pause freezes phases and input")
-	game.ui.pause_folio.buttons[4].grab_focus()
+	game.ui.menu_restart.grab_focus()
 	await tap(KEY_ENTER)
 	await tap(KEY_ESCAPE)
-	check(game.mode == "pause" and root.gui_get_focus_owner() == game.ui.pause_folio.buttons[4] and game.model.to_payload() == before,"Escape dismisses restart without resuming the outing")
+	check(game.mode == "pause" and root.gui_get_focus_owner() == game.ui.menu_restart and game.model.to_payload() == before,"Escape dismisses restart without resuming the outing")
 	game.start_game()
 	game.saved_path = OS.get_temp_dir() # Explicit failed-write fixture.
 	game.model.field.departed = true
@@ -560,7 +561,7 @@ func run() -> void:
 	for size in [Vector2i(960,600),Vector2i(1280,800)]:
 		root.size = size
 		await frames(4)
-		check(game.ui.pause_folio.is_visible_in_tree() and not game.ui.menu.visible,"pause available at "+str(size))
+		check(game.ui.menu.is_visible_in_tree() and game.ui.menu_guide.is_visible_in_tree(),"pause available at "+str(size))
 	game.start_game()
 	game.model.field.p = game.model.field.layout.nodes[0].p
 	game.model._sync_field()
