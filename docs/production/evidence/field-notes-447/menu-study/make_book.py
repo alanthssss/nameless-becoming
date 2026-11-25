@@ -3,6 +3,8 @@ import argparse
 from io import BytesIO
 from pathlib import Path
 from subprocess import run
+import sys
+import shutil
 from PIL import Image
 from reportlab import rl_config
 from reportlab.lib.colors import HexColor
@@ -16,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('output', type=Path)
 parser.add_argument('work', type=Path)
 parser.add_argument('key_screens', type=Path, help='Original #452 Mac screenshots directory')
-parser.add_argument('field_screens', type=Path, help='Original #451 Mac screenshots directory')
+parser.add_argument('field_screens', type=Path, nargs='?', help='Earlier field references, retained for older invocations')
 parser.add_argument('--font', default='/System/Library/Fonts/Supplemental/Arial Unicode.ttf')
 args = parser.parse_args()
 here = Path(__file__).resolve().parent
@@ -24,7 +26,10 @@ study = here.parent
 work = args.work
 work.mkdir(parents=True, exist_ok=True)
 run(['node', str(here/'plates.cjs'), str(work)], check=True)
-for src in [*work.glob('*.svg'), study/'shared-menu.svg', study/'options-study'/'settings.svg',study/'options-study'/'controls.svg']:
+run([sys.executable, '-B', str(study/'options-study'/'make_options.py'), str(work)], check=True)
+run([sys.executable, '-B', str(here/'make_field.py'), str(here/'field-plates'), str(work)], check=True)
+shutil.copyfile(study/'shared-menu.svg', work/'shared-menu.svg')
+for src in sorted(work.glob('*.svg')):
     run(['rsvg-convert','-z','1.5',str(src),'-o',str(work/(src.stem+'.png'))],check=True)
 pdfmetrics.registerFont(TTFont('ReviewSans',args.font))
 page_w,page_h=960,656
@@ -81,70 +86,67 @@ def nav(x,y,title,dest):
     text(x,y,title,16,'#315850')
     pdf.linkRect(title,dest,(x,page_h-y-4,x+pdfmetrics.stringWidth(title,'ReviewSans',16),page_h-y+17),relative=0,thickness=0)
 
-begin('menu','共用菜单','Honey　·　通用界面美术审阅　·　2026.11.26')
-plate('shared-menu',34,73,445,519)
-text(522,116,'启动和暂停用同一张菜单',23)
-text(522,155,'有档时「继续采蜜」读取当前档，暂停时接着飞。',15)
-text(522,183,'首次出发显示「从蜂巢出发」。',15)
-text(522,211,'存档无法读取时，先进入备份确认。',15)
-line(521,238,901,238)
-text(522,278,'这一册',19)
+begin('menu','共用菜单','Honey　·　通用界面设计')
+plate('shared-menu',25,78,478,506)
+text(528,127,'启动与暂停',26)
+text(529,167,'有档可继续，出行时可从这里回到现场。',16)
+line(525,191,919,191)
 for x,y,label,dest in [
-    (522,318,'选档','slots'),(704,318,'备份与重开','restart'),
-    (522,360,'选择花路','routes'),(704,360,'花路手册','guide'),
-    (522,402,'设置','settings'),(704,402,'键位设置 · #452','controls'),
-    (522,444,'储粮完成','complete'),(704,444,'焦点与返回','feedback'),
-    (522,486,'野外提示 · #448','field')]:
+    (528,230,'设置与蜂舞','settings'),(708,230,'键位设置','controls'),
+    (528,278,'选择存档','slots'),(708,278,'备份与重开','restart'),
+    (528,326,'选择花路','routes'),(708,326,'花路手册','guide'),
+    (528,374,'储粮完成','complete'),(708,374,'野外操作','field-flower'),
+    (528,422,'拾取与满囊','field-pickup'),(708,422,'低体力返程','field-tired')]:
     nav(x,y,label,dest)
-text(522,558,'当前认可项：飞行蜂原画及左上背景柔影。',15,muted)
-finish('左侧为暂停示例，输入焦点停在「设置」。点右侧目录可直接跳页。')
-one('controls','键位设置',excerpt(load('controls'),960,(0,0,960,600)),
-    '键鼠飞行九行同屏。每个备选键各有一枚蜡帽，外圈标出正在浏览的单元格。','设计稿　／　同步主线 #452')
-begin('control-states','改键时的反馈','设计稿　／　同步主线 #452')
-plate(excerpt(load('controls'),960,(0,608,960,951)),35,125,890,370)
-text(56,115,'等待、冲突和恢复结果沿用同一反馈位置。',18)
-text(58,548,'飞行绑定可修改。菜单、成长树和花湾按当前设备显示固定速查。',18)
-finish('相同操作的其他键用「或」分开。冲突时给出占用动作，取消后回到原单元格。')
-one('native-controls','新版键位设置 · Mac 实机',Image.open(args.key_screens/'flight-kbm-960x600.png'),
-    '2026-11-26 的 #452 实包原图，960 × 600。用于对照上两页的键帽、分栏及底部按钮。','原始实机截图　／　#452')
-one('settings','设置与关于','settings',
-    '声音与简化动画直接写开或关。摆尾回环已选，浏览外圈在侧步摆肩。关于就在本页展开。')
-one('slots','选择存档','slots',
-    '存档 1 有「当前」标记。浏览外圈在空的存档 2，存档 3 写明无法读取。示例资源为排版样本。')
-one('restart','备份与重开','restart',
-    '标题指明影响存档 1。默认焦点在取消，确认项写全「备份并重新开始」。取消后回到打开确认的入口。')
-begin('title-states','主菜单随存档变化','同一菜单的局部状态')
-for n,(key,title) in enumerate([('title','已有进度'),('new','首次出发'),('blocked','进度无法读取')]):
-    y=88+n*155
-    text(51,y+61,title,19)
-    plate(excerpt(load(key),451,(36,78,415,239)),218,y,684,147)
-    if n<2:line(50,y+149,908,y+149)
-finish('三个局部取自同一布局。进度无法读取时先进入确认，先备份原文件，再开始新的一轮。')
-one('routes','选择花路','routes',
-    '两张卡按地貌、地名、蜜价与材料顺序阅读。锁定地点保留地貌，说明要在哪里解锁。')
-one('routes-open','花路解锁后','routes-open',
-    '开放后紫花地在原位写出树脂采法，焦点可以移到整张卡。')
-one('guide','花路手册 · 池岸','guide',
-    '地区标签、地图在左，标本、采法与售价在右。可翻到紫花地或展开归途须知。')
-one('guide-open','花路手册 · 紫花地','guide-violet',
-    '归途须知在右页就地展开，保留当前地区和浏览焦点。')
-one('complete','储粮完成','complete',
-    '先读「花蜜，备好了」，再决定是否重返花园。设置、重开、退出复用菜单里的整枚入口。')
-begin('feedback','操作状态与返回')
-plate('feedback',15,62,930,428)
-for y,line_text in [(481,'选择存档 → 返回 → 原菜单的「选择存档」'),
-                    (512,'花路手册 → 返回 → 暂停菜单的「花路手册」'),
-                    (543,'键位设置 → 返回设置 →「查看或改键」'),
-                    (574,'新的一轮 → 取消 → 原菜单的「新的一轮」')]:
-    text(125,y,line_text,16)
-finish('浅底悬停，连续外圈表示键盘或手柄焦点，压下时座沿缩短。这里展示设计行为。')
-one('field','池岸与紫花地的提示','field',
-    '采集动作贴资源，拾取只报本次数量，低体力同时给方向和文字。按键文字随设备和绑定更新。','野外独立叠层色样　／　#448')
-begin('native-field','野外提示的现场参照','旧审阅包实机　／　#448')
-for y,filename,label in [(81,'14-pond.png','池岸花丛'),(337,'14-meadow.png','紫花地')]:
-    plate(Image.open(args.field_screens/filename),70,y,544,244)
-    text(636,y+96,label,23)
-    if 'pond' in filename:text(636,y+132,'蓝花、种穗与庭院入口',15,muted)
-    else:text(636,y+132,'紫花、树皮裂口与庭院入口',15,muted)
-finish('两张完整窗口均直接取自 #451 的 960 × 600 取样，用来核对复杂底色，不代表新稿已经实装。')
+text(529,531,'左图为暂停时聚焦「设置」的样子。',15,muted)
+finish('共用菜单保留小蜂原画，左上翼后的柔影落在底板上。')
+one('settings','设置','settings','摇柄音乐盒配开关。两种蜂舞各有舞迹，勾表示已选，外圈表示当前浏览位置。')
+one('controls','键位设置 · 飞行','controls','按设备分栏，按场景换左签。可单独修改鼠标、键盘或手柄的绑定，焦点环包住整格。')
+begin('states','振翅改键','设计状态　／　#452')
+for i,(name,title,detail) in enumerate([('controls-waiting','等待输入','输入目标还在原格。'),
+                                        ('controls-conflict','输入已占用','提示哪个操作占用了键。'),
+                                        ('controls-saved','已保存','新键显示在振翅这一行。'),
+                                        ('controls-cancel','已取消','原来的 Q 键仍在。')]):
+    y=92+i*122
+    text(42,y+23,title,20)
+    text(42,y+51,detail,14,muted)
+    im=load(name)
+    plate(excerpt(im,960,(311,333,879,377)),260,y,637,51)
+    plate(excerpt(im,960,(320,487,880,519)),261,y+53,630,36)
+    line(40,y+98,918,y+98)
+finish('所有样例均对应同一格。恢复默认同时还原键鼠和手柄绑定。')
+one('pad','游戏手柄 · 飞行','controls-0-pad','手柄只列手柄按钮，九个动作维持相同顺序。')
+one('reference','键盘与鼠标 · 成长树速查','controls-2-kbm','固定操作给出所有备选输入。菜单、成长树、花湾各自有键鼠和手柄两种视图。')
+one('about','设置 · 关于','settings-about','关于就地展开。图稿保留制作署名、引擎许可和美术来源说明。')
+one('slots','选择存档','slots','挂牌上列档号和进度。「当前」织带与输入焦点分别标出正在使用和正在浏览的档。')
+one('restart','备份与重开','restart','重开页的线轴来自同一个菜单入口。标题指明当前档，默认焦点落在取消。')
+begin('title-states','同一菜单随存档变化')
+for n,(key,title) in enumerate([('title','已有进度'),('new','首次出发'),('blocked','无法读取')]):
+    y=83+n*160
+    text(50,y+69,title,20)
+    plate(excerpt(load(key),451,(29,80,419,240)),218,y,702,155)
+    if n<2:line(50,y+155,908,y+155)
+finish('首次可直接出发。有档时继续；读档失败时由备份确认承接。')
+one('routes','选择花路','routes','两地从同一张折地图上出发。紫花地尚未开放时，保留地貌、蜜价与解锁说明。')
+one('routes-open','选择花路 · 紫花地已开放','routes-open','开放后可选紫花地出发，原位置给出掀皮与采树脂的办法。')
+one('guide','花路手册 · 池岸','guide','放大镜标出当前地点。右页在蓝花和种穗旁直接给出对应操作。')
+one('guide-open','花路手册 · 紫花地','guide-violet','换地区同时换地图与标本，归途须知在原页展开。')
+one('complete','储粮完成','complete','封好的蜜罐标记储备完成。可以再去花园、打开设置、开始新的一轮或保存并退出。')
+one('feedback','菜单入口的操作反馈','feedback','常态、悬停、键盘焦点和按下共用物件与文字基线。')
+one('field-flower','池岸 · 靠近蓝花','field-flower','按住提示贴近花心。四种资源及续航集中在左下，暂停保持在右下。','原生场景底图上的设计稿')
+one('field-resin','紫花地 · 振翅掀皮','field-resin','当前设备为手柄。X 振翅，裂口打开且靠近后，按住 A 收树脂。','原生场景底图上的设计稿')
+one('field-pickup','池岸 · 纤维入囊','field-pickup','短签贴着背包显示本次所得及现有数量，给花和蜜蜂留出空间。','原生场景底图上的设计稿')
+one('field-tired','紫花地 · 低体力返程','field-tired','箭头按蜂到入口的方向绘制；低体力还可从左下的弧长、蜂姿与 6 / 36 读出。','原生场景底图上的设计稿')
+begin('field-states','采集、容量与庭院入口','设计局部　／　原生机位')
+for i,(key,label,crop) in enumerate([
+        ('field-gathering','采蜜进行中',(196,161,501,336)),
+        ('field-full','蜜囊已满',(0,422,353,598)),
+        ('field-open','树皮已掀开',(353,184,675,362)),
+        ('field-return','从木牌回庭院',(0,173,303,351))]):
+    x=38+(i%2)*453;y=78+(i//2)*250
+    text(x+10,y+23,label,18)
+    plate(excerpt(load(key),960,crop),x+4,y+34,424,198)
+finish('动作、拾取与容量各有固定位置；键帽对应当前设备和绑定。')
+one('native-controls','键位操作参照 · Mac 实机',Image.open(args.key_screens/'flight-kbm-960x600.png'),
+    '主线 #452 的实际窗口，用于核对两类设备、四个场景、九行飞行绑定和蜂蜡键帽。','既有版本　／　实机原图')
 pdf.save()
