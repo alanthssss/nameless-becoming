@@ -4,6 +4,17 @@
 
 > 最新修订与结果见本文末尾[庭院视觉反馈修订](#courtyard-feedback-20261111)。下文早期版本属于历史证据。
 
+<a id="field-notes-447"></a>
+## Honey 通用界面 · 整页手记审阅版（2026-11-26）
+
+Alan 指定把本轮范围收在通用页面和野外文字，庭院、蜜铺、技能纸及其花湾演示沿现状。此前盘点所提的独立工具箱、信封和厚框路线卡由同一套装订手记取代。暂停作为材质参照。此次交付供 Alan 看整页；设计定稿后沿原工作树开实装聊天。GDD §8.1 → M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) → [通用页面 #447](https://github.com/alanthssss/nameless-becoming/issues/447) / [野外文字 #448](https://github.com/alanthssss/nameless-becoming/issues/448)，接[原界面盘点 #445](https://github.com/alanthssss/nameless-becoming/pull/445)。
+
+标题、选档、储粮完成、出发选路、花路手册、设置与确认共用纸纹、布脊和棕墨。宋体标题 40、条目名 24、正文 20、注释 17，均为逻辑画布单位。出发页把两地排在同页，图取自现版池岸与紫花地，下面依次是地名、蜜价、采法或解锁说明。手册留给地图和标本，提示按需展开。野外靠近花、材料或返庭边界才出现对应的短签，低体力时直接给返程方向。[出发与图鉴前后对照](evidence/field-notes-447/routes.webp) · [标题与选档](evidence/field-notes-447/menus.webp) · [设置与确认](evidence/field-notes-447/settings.webp)
+
+Godot 4.6.2，macOS Pond Feedback 调试导出，PCK SHA-256 为 `278734c900948a370635fb2f74301f2dd98ca19f8ebe09e5dac30f12687ca3a1`。包旁启动器位于 `~/LocalGames/Honey-通用界面手记审阅-447/开始试玩.command`，使用包旁独立目录。已完成 ad-hoc 签名和严格校验。实际导出 PCK 在 960×600 与 1280×800 两种窗口逐页取样；档位、收获和完成状态包含隔离夹具。排版回归 792 状态／13,848 次文本检查，地区 UI 195 项、设置 50 项、档位 53 项、模型 232 项通过。原生低体力与返程 30 项通过；无头对应探针与限帧强退的启动烟测退出时出现 Godot 资源回收日志，正常原生取图与返程探针顺利退出。本轮依据为开发者实机观察，整页审美留待 Alan 判断。
+
+本轮复用已有手绘素材，新增采购 0。执行与验证并行，未将墙钟折算为计费或累计工时；200＋40 小时控制与里程碑验收沿原记录。
+
 <a id="pause-folio-333"></a>
 ## Honey · 花园手记暂停页（2026-11-26）
 

@@ -52,7 +52,8 @@ func setup(interface: Control) -> void:
 	var page: PanelContainer = ui.material_panel(self,"settings",Vector4(166,72,176,126))
 	ui.anchored(page, Rect2(.5,.5,0,0), Rect2(-455,-366,910,732))
 	var content: VBoxContainer = ui.column(page, 4)
-	ui.text_line(content, "键位设置", 28, ui.TOOL_INK).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ui.text_line(content,"键位设置",ui.notes.DISPLAY,ui.notes.INK,false,&"heading")
+	ui.notes.rule(content)
 	var tab_bar: HBoxContainer = ui.row(content, 12)
 	var device_group := ButtonGroup.new()
 	for id in ["kbm","pad"]:
@@ -74,7 +75,7 @@ func setup(interface: Control) -> void:
 	var header: HBoxContainer = ui.row(flight, 8)
 	_row_label(header, "动作")
 	for slot in ["key","mouse","pad"]:
-		var title: Label = ui.text_line(header, {"key":"键盘","mouse":"鼠标","pad":"手柄按钮"}[slot], 17, ui.TOOL_INK)
+		var title: Label = ui.text_line(header, {"key":"键盘","mouse":"鼠标","pad":"手柄按钮"}[slot], 17,ui.notes.SECONDARY,false,&"detail")
 		title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		headings[slot] = title
@@ -85,11 +86,11 @@ func setup(interface: Control) -> void:
 		for slot in ["key","mouse","pad"]:
 			var button: Button = ui.action(line, "", _listen.bind(id, slot))
 			ui.tool_button(button)
+			button.add_theme_font_size_override("font_size",ui.notes.DETAIL)
 			button.custom_minimum_size.y = 31
 			button.focus_entered.connect(_show_hint.bind(id, slot))
-			button.add_theme_font_size_override("font_size",18)
 			rows[id][slot] = button
-	status = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
+	status = ui.text_line(content, "", 18, ui.TOOL_SECONDARY,true,&"detail")
 	var footer: HBoxContainer = ui.row(content, 16)
 	reset_button = ui.action(footer,"恢复默认按键",_reset)
 	ui.tool_button(reset_button)
@@ -102,7 +103,7 @@ func _tab(bar: HBoxContainer, title: String, group: ButtonGroup, select: Callabl
 	button.button_group = group
 	ui.tool_button(button)
 	button.custom_minimum_size.y = 34
-	button.add_theme_font_size_override("font_size",18)
+	button.add_theme_font_size_override("font_size",ui.notes.DETAIL)
 	if button.get_index() > 0:
 		var previous := bar.get_child(button.get_index() - 1) as Button
 		previous.focus_neighbor_right = previous.get_path_to(button)
@@ -110,7 +111,7 @@ func _tab(bar: HBoxContainer, title: String, group: ButtonGroup, select: Callabl
 	return button
 
 func _row_label(line: Control, words: String) -> void:
-	var label: Label = ui.text_line(line, words, 18, ui.TOOL_INK)
+	var label: Label = ui.text_line(line, words,ui.notes.DETAIL,ui.notes.INK,false,&"detail")
 	label.custom_minimum_size.x = 180
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
@@ -143,13 +144,13 @@ func _select_section(title: String) -> void:
 	if reference.visible:
 		var header: HBoxContainer = ui.row(reference, 8)
 		_row_label(header, "动作")
-		ui.text_line(header, "固定按键", 17, ui.TOOL_SECONDARY)
+		ui.text_line(header, "固定按键", 17, ui.TOOL_SECONDARY,false,&"detail")
 		for shortcut in SHORTCUTS[section]:
 			var binding: String = shortcut[2] if device == "pad" else shortcut[1]
 			if binding.is_empty(): continue
 			var line: HBoxContainer = ui.row(reference, 8)
 			_row_label(line, shortcut[0])
-			ui.text_line(line, binding, 18, ui.TOOL_INK)
+			ui.text_line(line, binding,ui.notes.DETAIL,ui.notes.INK,false,&"detail")
 
 func refresh_table() -> void:
 	for slot in headings:

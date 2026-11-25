@@ -44,6 +44,9 @@ func clear_of_hardware(mark: Rect2, panel: PanelContainer) -> bool:
 	var face := panel.get_global_rect()
 	var r := Rect2((mark.position-face.position)/face.size,mark.size/face.size)
 	match panel.get_meta("material_kind"):
+		"field_notes":
+			# The bound spine occupies the first 48 canvas units. Leave the top and fore edges clear.
+			return face.grow_individual(-48,-28,-22,-24).grow(1).encloses(mark)
 		"book":
 			# The top sheets end above the layered fore edge on both pages.
 			return Rect2(.096,.075,.363,.655).encloses(r) or Rect2(.520,.075,.371,.655).encloses(r)

@@ -278,7 +278,7 @@ func row(parent: Node, gap := 12) -> HBoxContainer:
 	parent.add_child(h)
 	return h
 
-func text_line(parent: Node, words: String, pixels := 20, tint := INK, wrap := false) -> Label:
+func text_line(parent: Node, words: String, pixels := 20, tint := INK, wrap := false, _role: StringName = &"body") -> Label:
 	var l := Label.new()
 	l.text = words
 	l.add_theme_font_size_override("font_size",pixels)
@@ -1023,7 +1023,7 @@ func _build_restart_dialog() -> void:
 	page.custom_minimum_size = Vector2(570,295)
 	var content := column(page,12)
 	content.alignment = BoxContainer.ALIGNMENT_CENTER
-	restart_title = text_line(content,"重新开始采蜜？",29)
+	restart_title = text_line(content,"重新开始采蜜？",29,INK,false,&"heading")
 	restart_body = text_line(content,"先备份当前进度，再开始新的一轮。",18,INK,true)
 	var buttons := row(content,12)
 	restart_cancel = action(buttons,"取消",close_restart,true)
@@ -1074,7 +1074,7 @@ func _build_journal() -> void:
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var right := column(spread,7)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_line(left,"花路见闻",34)
+	text_line(left,"花路见闻",34,INK,false,&"heading")
 	var tabs := row(left,8)
 	var group := ButtonGroup.new()
 	for meadow: bool in [false,true]:
@@ -1087,7 +1087,7 @@ func _build_journal() -> void:
 		journal_regions.append(tab)
 	journal_landscape = picture(left,preload("res://art/nectar-pond-oblique.png"),160)
 	journal_landscape.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	journal_status = text_line(left,"",16,Color("5d694d"),true)
+	journal_status = text_line(left,"",16,Color("5d694d"),true,&"detail")
 	journal_back = action(right,"←  返回",driver.close_journal)
 	journal_back.size_flags_horizontal = Control.SIZE_SHRINK_END
 	journal_back.custom_minimum_size.x = 96
@@ -1095,23 +1095,23 @@ func _build_journal() -> void:
 	journal_flower = material_icon(first,preload("res://art/collection-blue-bloom.webp"),Vector2(58,64))
 	var nectar := column(first,4)
 	nectar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	journal_flower_name = text_line(nectar,"",26)
+	journal_flower_name = text_line(nectar,"",26,INK,false,&"section")
 	journal_controls = text_line(nectar,"",19,INK,true)
 	var worth := row(nectar,5)
 	hud_symbol(worth,"coin","金币")
-	journal_price = text_line(worth,"",18,Color("795a2e"))
+	journal_price = text_line(worth,"",18,Color("795a2e"),false,&"detail")
 	var second := row(right,11)
 	journal_material_icon = HudIcon.new()
 	journal_material_icon.custom_minimum_size = Vector2(58,50)
 	second.add_child(journal_material_icon)
 	var material := column(second,4)
 	material.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	journal_material_name = text_line(material,"",26)
+	journal_material_name = text_line(material,"",26,INK,false,&"section")
 	journal_material_hint = text_line(material,"",19,INK,true)
 	var notes := action(right,"归途须知  ＋",func(): journal_return_notes.visible = not journal_return_notes.visible)
 	notes.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	notes.custom_minimum_size.y = 40
-	journal_return_notes = text_line(right,_journal_return_text(),16,Color("546246"),true)
+	journal_return_notes = text_line(right,_journal_return_text(),16,Color("546246"),true,&"detail")
 	journal_return_notes.hide()
 	journal_return_notes.visibility_changed.connect(func():
 		notes.text = "归途须知  −" if journal_return_notes.visible else "归途须知  ＋")
@@ -1189,7 +1189,7 @@ func _build_settings() -> void:
 	anchored(p,Rect2(.5,.5,0,0),Rect2(-308,-285,616,570))
 	var page := column(p,15)
 	var header := row(page,12)
-	var title := text_line(header,"设置",34,TOOL_INK)
+	var title := text_line(header,"设置",34,TOOL_INK,false,&"heading")
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	settings_back = action(header,"←  返回",driver.close_settings)
 	tool_button(settings_back)
@@ -1219,7 +1219,7 @@ func _build_settings() -> void:
 		settings_about.text = "收起" if settings_credits.visible else "查看")
 	tool_button(settings_about)
 	settings_about.size_flags_horizontal = Control.SIZE_SHRINK_END
-	settings_credits = text_line(v,"%s 0.27.0\n制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞受蜜蜂通信启发，侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true)
+	settings_credits = text_line(v,"%s 0.27.0\n制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞受蜜蜂通信启发，侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true,&"detail")
 	settings_credits.hide()
 	settings_about.gui_input.connect(_scroll_expanded_text.bind(settings_credits,settings_scroll))
 
