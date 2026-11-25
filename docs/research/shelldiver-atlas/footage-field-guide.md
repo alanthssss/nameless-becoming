@@ -1,13 +1,13 @@
 ## S11 原始画面重读
 
-这批数据来自 Zhain Gaming 的《Shelldiver》玩家录像，片长 3:16:07，来源为 https://www.youtube.com/watch?v=S7EaREatF4w 。视频构建号未知。复读对象是先前已保存的连续取样，不增加原录像的已看时长。30 个有正常主片起止时码的批次共有 792 张原始图。先按画面文字检索，再人工核看面板、币种图标、相邻帧与关键模糊数值。两组混入广告的既有排除批次没有用于数据。76 个具名阶段节点来自 11 批有相应画面的窗口。可还原可见状态和部分购买过程。当前材料不能单独还原其他玩家购买顺序、实际触发概率或完整前置。
+这批数据来自 Zhain Gaming 的《Shelldiver》玩家录像，片长 3:16:07，来源为 https://www.youtube.com/watch?v=S7EaREatF4w 。视频构建号未知。复读对象是先前已保存的连续取样，不增加原录像的已看时长。30 个有正常主片起止时码的批次共有 792 张原始图。先按画面文字检索，再逐图核读面板、币种图标、相邻帧与关键模糊数值。两组混入广告的既有排除批次没有用于数据。76 个具名阶段节点来自 11 批有相应画面的窗口。可还原可见状态和部分购买过程。当前材料不能单独还原其他玩家购买顺序、实际触发概率或完整前置。
 
 ### 字段
 
 - verified-panels.json 的 source_id 和 source_url 指向原录像。original_source_build 标记构建号。counts 分别给出本批检索图数、具名节点数、引用帧数及上次 86 张精选以外的引用帧数。
 - nodes 按完整英文面板名去重，罗马数字保留为不同阶段节点。同一节点内多个等级算一个节点。research_category 是研究归类，reading 是本次画面中的中文事实摘录，frame_ids 指向 frames 的键。
 - frames 的 file 相对本机 media_root。approx_second 用主片批次起点加截图墙钟区间中点估为整秒，并以该批次经核起止区间为限；多个相邻图有时落同一估计整秒，应按文件序号定位。source 是相应观看链接，batch 和 batch_window_seconds 可反查时序。sha256 对应原始 JPG，original_selected_id 为已有 86 图中的编号或空。
-- verified-panels.csv 是一节点一行的概览。sampled-quotes.csv 是 45 个具名节点的 56 个可复核报价状态，每行只计一次“该等级/状态的下一次报价”。第 0/10 档展示的是第一笔购买的费用。observed_node_rank_or_state 为当前档位，current_display_value、next_display_value 与 displayed_measure 是当时面板中的当前/下一数值及单位。非数值的设施效果留空。cost_quantity 为给定 cost_unit 的整数报价。每行有对应的截图文件名、哈希、近似时码。未纳入的价格不能视作免费，已满或未付得起的状态不当作已经付款。
+- sampled-quotes.csv 是 45 个具名节点的 56 个可复核报价状态，每行只计一次“该等级/状态的下一次报价”。第 0/10 档展示的是第一笔购买的费用。observed_node_rank_or_state 为当前档位，current_display_value、next_display_value 与 displayed_measure 是当时面板中的当前/下一数值及单位。非数值的设施效果留空。cost_quantity 为给定 cost_unit 的整数报价。每行有对应的截图文件名、哈希、近似时码。未纳入的价格不能视作免费，已满或未付得起的状态不当作已经付款。
 
 ### 新旧证据的差别
 

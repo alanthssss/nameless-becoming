@@ -1,242 +1,242 @@
-atlas_id,x_grid_from_hammock,y_grid_from_hammock_down,S07_x_px_approx,S07_y_px_approx,english_name_if_located,name_evidence,position_evidence
-R01C15,0,-12,1275,182,,,top confirmed by 3607432223; S07 HUD obstructs
-R02C14,-1,-11,1224,234,,,S07 and 3607432223
-R02C16,1,-11,1326,234,,,S07 and 3607432223
-R03C14,-1,-10,1224,285,,,S07 and 3607432223
-R03C16,1,-10,1326,285,,,S07 and 3607432223
-R04C13,-2,-9,1173,336,,,S07 and 3607432223
-R04C15,0,-9,1275,336,,,S07 and 3607432223
-R04C17,2,-9,1377,336,,,S07 and 3607432223
-R05C13,-2,-8,1173,387,,,S07 and 3607432223
-R05C14,-1,-8,1224,387,,,S07 and 3607432223
-R05C16,1,-8,1326,387,,,S07 and 3607432223
-R05C17,2,-8,1377,387,,,S07 and 3607432223
-R05C18,3,-8,1429,387,,,S07 and 3607432223
-R06C12,-3,-7,1121,438,,,S07 and 3607432223
-R06C14,-1,-7,1224,438,,,S07 and 3607432223
-R06C15,0,-7,1275,438,,,S07 and 3607432223
-R06C16,1,-7,1326,438,,,S07 and 3607432223
-R06C17,2,-7,1377,438,,,S07 and 3607432223
-R06C18,3,-7,1429,438,,,S07 and 3607432223
-R07C09,-6,-6,968,490,,,S07 and 3607432223
-R07C13,-2,-6,1173,490,,,S07 and 3607432223
-R07C14,-1,-6,1224,490,,,S07 and 3607432223
-R07C16,1,-6,1326,490,,,S07 and 3607432223
-R07C17,2,-6,1377,490,,,S07 and 3607432223
-R07C18,3,-6,1429,490,,,S07 and 3607432223
-R07C19,4,-6,1480,490,,,S07 and 3607432223
-R07C23,8,-6,1685,490,,,S07 and 3607432223
-R08C01,-14,-5,558,541,,,S07 and 3607432223
-R08C04,-11,-5,712,541,,,S07 and 3607432223
-R08C05,-10,-5,763,541,,,S07 and 3607432223
-R08C06,-9,-5,814,541,,,S07 and 3607432223
-R08C08,-7,-5,917,541,,,S07 and 3607432223
-R08C10,-5,-5,1019,541,,,S07 and 3607432223
-R08C12,-3,-5,1121,541,,,S07 and 3607432223
-R08C13,-2,-5,1173,541,,,S07 and 3607432223
-R08C14,-1,-5,1224,541,,,S07 and 3607432223
-R08C15,0,-5,1275,541,,,S07 and 3607432223
-R08C16,1,-5,1326,541,,,S07 and 3607432223
-R08C17,2,-5,1377,541,,,S07 and 3607432223
-R08C18,3,-5,1429,541,,,S07 and 3607432223
-R08C19,4,-5,1480,541,,,S07 and 3607432223
-R08C20,5,-5,1531,541,,,S07 and 3607432223
-R08C21,6,-5,1582,541,,,S07 and 3607432223
-R08C22,7,-5,1633,541,,,S07 and 3607432223
-R08C24,9,-5,1736,541,,,S07 and 3607432223
-R08C25,10,-5,1787,541,,,S07 and 3607432223
-R08C26,11,-5,1838,541,,,S07 and 3607432223
-R08C27,12,-5,1889,541,,,S07 and 3607432223
-R08C29,14,-5,1992,541,,,S07 and 3607432223
-R09C01,-14,-4,558,592,,,S07 and 3607432223
-R09C02,-13,-4,609,592,,,S07 and 3607432223
-R09C04,-11,-4,712,592,,,S07 and 3607432223
-R09C05,-10,-4,763,592,,,S07 and 3607432223
-R09C06,-9,-4,814,592,,,S07 and 3607432223
-R09C07,-8,-4,865,592,,,S07 and 3607432223
-R09C11,-4,-4,1070,592,,,S07 and 3607432223
-R09C12,-3,-4,1121,592,,,S07 and 3607432223
-R09C13,-2,-4,1173,592,,,S07 and 3607432223
-R09C14,-1,-4,1224,592,,,S07 and 3607432223
-R09C16,1,-4,1326,592,,,S07 and 3607432223
-R09C17,2,-4,1377,592,,,S07 and 3607432223
-R09C18,3,-4,1429,592,,,S07 and 3607432223
-R09C19,4,-4,1480,592,,,S07 and 3607432223
-R09C21,6,-4,1582,592,,,S07 and 3607432223
-R09C22,7,-4,1633,592,,,S07 and 3607432223
-R09C23,8,-4,1685,592,,,S07 and 3607432223
-R09C24,9,-4,1736,592,,,S07 and 3607432223
-R09C25,10,-4,1787,592,,,S07 and 3607432223
-R09C26,11,-4,1838,592,,,S07 and 3607432223
-R09C28,13,-4,1941,592,,,S07 and 3607432223
-R10C02,-13,-3,609,643,,,S07 and 3607432223
-R10C03,-12,-3,661,643,,,S07 and 3607432223
-R10C04,-11,-3,712,643,,,S07 and 3607432223
-R10C05,-10,-3,763,643,,,S07 and 3607432223
-R10C07,-8,-3,865,643,,,S07 and 3607432223
-R10C08,-7,-3,917,643,,,S07 and 3607432223
-R10C09,-6,-3,968,643,,,S07 and 3607432223
-R10C10,-5,-3,1019,643,,,S07 and 3607432223
-R10C11,-4,-3,1070,643,,,S07 and 3607432223
-R10C12,-3,-3,1121,643,,,S07 and 3607432223
-R10C13,-2,-3,1173,643,,,S07 and 3607432223
-R10C14,-1,-3,1224,643,,,S07 and 3607432223
-R10C15,0,-3,1275,643,,,S07 and 3607432223
-R10C16,1,-3,1326,643,,,S07 and 3607432223
-R10C17,2,-3,1377,643,,,S07 and 3607432223
-R10C18,3,-3,1429,643,,,S07 and 3607432223
-R10C19,4,-3,1480,643,,,S07 and 3607432223
-R10C20,5,-3,1531,643,,,S07 and 3607432223
-R10C21,6,-3,1582,643,,,S07 and 3607432223
-R10C22,7,-3,1633,643,,,S07 and 3607432223
-R10C23,8,-3,1685,643,,,S07 and 3607432223
-R10C25,10,-3,1787,643,,,S07 and 3607432223
-R10C26,11,-3,1838,643,,,S07 and 3607432223
-R10C27,12,-3,1889,643,,,S07 and 3607432223
-R11C02,-13,-2,609,694,,,S07 and 3607432223
-R11C03,-12,-2,661,694,,,S07 and 3607432223
-R11C04,-11,-2,712,694,,,S07 and 3607432223
-R11C05,-10,-2,763,694,,,S07 and 3607432223
-R11C06,-9,-2,814,694,,,S07 and 3607432223
-R11C07,-8,-2,865,694,,,S07 and 3607432223
-R11C08,-7,-2,917,694,,,S07 and 3607432223
-R11C10,-5,-2,1019,694,,,S07 and 3607432223
-R11C12,-3,-2,1121,694,,,S07 and 3607432223
-R11C13,-2,-2,1173,694,,,S07 and 3607432223
-R11C14,-1,-2,1224,694,,,S07 and 3607432223
-R11C16,1,-2,1326,694,Store Slots I,"S11 trip3seq_021,022; S11-C033; anchor Shellpack Slots I",S07 and 3607432223
-R11C17,2,-2,1377,694,,,S07 and 3607432223
-R11C18,3,-2,1429,694,,,S07 and 3607432223
-R11C19,4,-2,1480,694,,,S07 and 3607432223
-R11C20,5,-2,1531,694,,,S07 and 3607432223
-R11C22,7,-2,1633,694,,,S07 and 3607432223
-R11C23,8,-2,1685,694,,,S07 and 3607432223
-R11C24,9,-2,1736,694,,,S07 and 3607432223
-R11C26,11,-2,1838,694,,,S07 and 3607432223
-R12C05,-10,-1,763,746,,,S07 and 3607432223
-R12C07,-8,-1,865,746,,,S07 and 3607432223
-R12C08,-7,-1,917,746,,,S07 and 3607432223
-R12C10,-5,-1,1019,746,,,S07 and 3607432223
-R12C11,-4,-1,1070,746,,,S07 and 3607432223
-R12C13,-2,-1,1173,746,,,S07 and 3607432223
-R12C14,-1,-1,1224,746,,,S07 and 3607432223
-R12C15,0,-1,1275,746,Shellpack Slots I,S11-C032; anchor Submarine,S07 and 3607432223
-R12C16,1,-1,1326,746,,,S07 and 3607432223
-R12C17,2,-1,1377,746,,,S07 and 3607432223
-R12C19,4,-1,1480,746,,,S07 and 3607432223
-R12C21,6,-1,1582,746,,,S07 and 3607432223
-R12C23,8,-1,1685,746,,,S07 and 3607432223
-R12C25,10,-1,1787,746,,,S07 and 3607432223
-R13C06,-9,0,814,797,,,S07 and 3607432223
-R13C07,-8,0,865,797,,,S07 and 3607432223
-R13C09,-6,0,968,797,,,S07 and 3607432223
-R13C11,-4,0,1070,797,,,S07 and 3607432223
-R13C12,-3,0,1121,797,,,S07 and 3607432223
-R13C13,-2,0,1173,797,,,S07 and 3607432223
-R13C14,-1,0,1224,797,Bubble Damage I,S11-C034; anchor Submarine,S07 and 3607432223
-R13C15,0,0,1275,797,Hammock Repair,"S11-C066,C067 / ENMA 3650782668",S07 and 3607432223
-R13C16,1,0,1326,797,,,S07 and 3607432223
-R13C17,2,0,1377,797,,,S07 and 3607432223
-R13C19,4,0,1480,797,,,S07 and 3607432223
-R13C22,7,0,1633,797,,,S07 and 3607432223
-R13C24,9,0,1736,797,,,S07 and 3607432223
-R14C08,-7,1,917,848,,,S07 and 3607432223
-R14C11,-4,1,1070,848,,,S07 and 3607432223
-R14C12,-3,1,1121,848,,,S07 and 3607432223
-R14C13,-2,1,1173,848,,,S07 and 3607432223
-R14C15,0,1,1275,848,Submarine,S11-C027; S11-C066,S07 and 3607432223
-R14C16,1,1,1326,848,,,S07 and 3607432223
-R14C17,2,1,1377,848,,,S07 and 3607432223
-R14C18,3,1,1429,848,,,S07 and 3607432223
-R14C21,6,1,1582,848,,,S07 and 3607432223
-R15C09,-6,2,968,899,,,S07 and 3607432223
-R15C10,-5,2,1019,899,,,S07 and 3607432223
-R15C11,-4,2,1070,899,,,S07 and 3607432223
-R15C14,-1,2,1224,899,,,S07 and 3607432223
-R15C15,0,2,1275,899,,,S07 and 3607432223
-R15C16,1,2,1326,899,,,S07 and 3607432223
-R15C17,2,2,1377,899,,,S07 and 3607432223
-R15C18,3,2,1429,899,,,S07 and 3607432223
-R15C20,5,2,1531,899,,,S07 and 3607432223
-R16C10,-5,3,1019,950,,,S07 and 3607432223
-R16C13,-2,3,1173,950,,,S07 and 3607432223
-R16C14,-1,3,1224,950,,,S07 and 3607432223
-R16C15,0,3,1275,950,,,S07 and 3607432223
-R16C16,1,3,1326,950,,,S07 and 3607432223
-R16C17,2,3,1377,950,Oxygen Tank I,"S11-C030,C031; anchor Submarine",S07 and 3607432223
-R16C18,3,3,1429,950,,,S07 and 3607432223
-R16C20,5,3,1531,950,,,S07 and 3607432223
-R17C09,-6,4,968,1002,,,S07 and 3607432223
-R17C12,-3,4,1121,1002,,,S07 and 3607432223
-R17C13,-2,4,1173,1002,,,S07 and 3607432223
-R17C14,-1,4,1224,1002,,,S07 and 3607432223
-R17C16,1,4,1326,1002,,,S07 and 3607432223
-R17C17,2,4,1377,1002,,,S07 and 3607432223
-R17C18,3,4,1429,1002,Oxygen Tank II,S11 trip3seq_012; anchor Oxygen Tank I,S07 and 3607432223
-R17C19,4,4,1480,1002,,,S07 and 3607432223
-R17C21,6,4,1582,1002,,,S07 and 3607432223
-R18C08,-7,5,917,1053,,,S07 and 3607432223
-R18C11,-4,5,1070,1053,,,S07 and 3607432223
-R18C12,-3,5,1121,1053,,,S07 and 3607432223
-R18C13,-2,5,1173,1053,,,S07 and 3607432223
-R18C18,3,5,1429,1053,,,S07 and 3607432223
-R18C19,4,5,1480,1053,,,S07 and 3607432223
-R18C20,5,5,1531,1053,,,S07 and 3607432223
-R18C22,7,5,1633,1053,,,S07 and 3607432223
-R18C23,8,5,1685,1053,,,S07 and 3607432223
-R19C07,-8,6,865,1104,,,S07 and 3607432223
-R19C10,-5,6,1019,1104,,,S07 and 3607432223
-R19C11,-4,6,1070,1104,,,S07 and 3607432223
-R19C12,-3,6,1121,1104,,,S07 and 3607432223
-R19C14,-1,6,1224,1104,,,S07 and 3607432223
-R19C15,0,6,1275,1104,,,S07 and 3607432223
-R19C16,1,6,1326,1104,,,S07 and 3607432223
-R19C17,2,6,1377,1104,,,S07 and 3607432223
-R19C19,4,6,1480,1104,,,S07 and 3607432223
-R19C20,5,6,1531,1104,,,S07 and 3607432223
-R19C21,6,6,1582,1104,,,S07 and 3607432223
-R20C05,-10,7,763,1155,,,S07 and 3607432223
-R20C06,-9,7,814,1155,,,S07 and 3607432223
-R20C07,-8,7,865,1155,,,S07 and 3607432223
-R20C09,-6,7,968,1155,,,S07 and 3607432223
-R20C10,-5,7,1019,1155,,,S07 and 3607432223
-R20C11,-4,7,1070,1155,,,S07 and 3607432223
-R20C18,3,7,1429,1155,,,S07 and 3607432223
-R20C20,5,7,1531,1155,,,S07 and 3607432223
-R20C21,6,7,1582,1155,,,S07 and 3607432223
-R20C22,7,7,1633,1155,,,S07 and 3607432223
-R20C24,9,7,1736,1155,,,S07 and 3607432223
-R21C05,-10,8,763,1206,,,S07 and 3607432223
-R21C06,-9,8,814,1206,,,S07 and 3607432223
-R21C08,-7,8,917,1206,,,S07 and 3607432223
-R21C09,-6,8,968,1206,,,S07 and 3607432223
-R21C10,-5,8,1019,1206,,,S07 and 3607432223
-R21C12,-3,8,1121,1206,,,S07 and 3607432223
-R21C13,-2,8,1173,1206,,,S07 and 3607432223
-R21C19,4,8,1480,1206,,,S07 and 3607432223
-R21C21,6,8,1582,1206,,,S07 and 3607432223
-R21C22,7,8,1633,1206,,,S07 and 3607432223
-R21C23,8,8,1685,1206,,,S07 and 3607432223
-R22C06,-9,9,814,1258,,,S07 and 3607432223
-R22C07,-8,9,865,1258,,,S07 and 3607432223
-R22C09,-6,9,968,1258,,,S07 and 3607432223
-R22C19,4,9,1480,1258,,,S07 and 3607432223
-R22C22,7,9,1633,1258,,,S07 and 3607432223
-R22C23,8,9,1685,1258,,,S07 and 3607432223
-R22C24,9,9,1736,1258,,,S07 and 3607432223
-R23C06,-9,10,814,1309,,,S07 and 3607432223
-R23C07,-8,10,865,1309,,,S07 and 3607432223
-R23C08,-7,10,917,1309,,,S07 and 3607432223
-R23C10,-5,10,1019,1309,,,S07 and 3607432223
-R23C11,-4,10,1070,1309,,,S07 and 3607432223
-R23C21,6,10,1582,1309,,,S07 and 3607432223
-R23C23,8,10,1685,1309,,,S07 and 3607432223
-R23C24,9,10,1736,1309,,,S07 and 3607432223
-R24C06,-9,11,814,1360,,,S07 and 3607432223
-R24C23,8,11,1685,1360,,,S07 and 3607432223
-R24C24,9,11,1736,1360,,,S07 and 3607432223
-R24C25,10,11,1787,1360,,,S07 and 3607432223
-R25C06,-9,12,814,1411,,,S07 and 3607432223
-R25C08,-7,12,917,1411,,,S07 and 3607432223
-R25C09,-6,12,968,1411,,,S07 and 3607432223
-R25C24,9,12,1736,1411,,,S07 and 3607432223
+atlas_id,x_grid_from_hammock,y_grid_from_hammock_down,S07_x_px_approx,S07_y_px_approx,english_name_if_located,name_evidence,position_evidence,panel_title_type,source_time_seconds_approx,source_video_url
+R01C15,0,-12,1275,182,???,dense-full/d2685-081.jpg,top confirmed by 3607432223; S07 HUD obstructs,repeated_placeholder,11225.367,https://www.youtube.com/watch?v=S7EaREatF4w&t=11225s
+R02C14,-1,-11,1224,234,Alchemy Speed II,dense-full/d2506-105.jpg,S07 and 3607432223,named,10474.867,https://www.youtube.com/watch?v=S7EaREatF4w&t=10474s
+R02C16,1,-11,1326,234,Extra Vial II,rap/2698.jpg,S07 and 3607432223,named,11276.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=11276s
+R03C14,-1,-10,1224,285,Alchemy Speed I,dense-full/d2470-057.jpg,S07 and 3607432223,named,10320.6,https://www.youtube.com/watch?v=S7EaREatF4w&t=10320s
+R03C16,1,-10,1326,285,Extra Vial I,dense-full/d2684-113.jpg,S07 and 3607432223,named,11222.267,https://www.youtube.com/watch?v=S7EaREatF4w&t=11222s
+R04C13,-2,-9,1173,336,Golden Transmutation,dense-full/d2684-073.jpg,S07 and 3607432223,named,11220.933,https://www.youtube.com/watch?v=S7EaREatF4w&t=11220s
+R04C15,0,-9,1275,336,Alchemy Station,convenience-tree_025.jpg,S07 and 3607432223,named,7275,https://www.youtube.com/watch?v=S7EaREatF4w&t=7275s
+R04C17,2,-9,1377,336,Transmuter Speed III,rap/2470.jpg,S07 and 3607432223,named,10318.733,https://www.youtube.com/watch?v=S7EaREatF4w&t=10318s
+R05C13,-2,-8,1173,387,Transmuter Automation,late-village_007.jpg,S07 and 3607432223,named,8250,https://www.youtube.com/watch?v=S7EaREatF4w&t=8250s
+R05C14,-1,-8,1224,387,Transmuter Slots II,rap/1742.jpg,S07 and 3607432223,named,7274.533,https://www.youtube.com/watch?v=S7EaREatF4w&t=7274s
+R05C16,1,-8,1326,387,Transmuter Speed II,rap/2416.jpg,S07 and 3607432223,named,10087.367,https://www.youtube.com/watch?v=S7EaREatF4w&t=10087s
+R05C17,2,-8,1377,387,Transmutation Discount,rap/2100.jpg,S07 and 3607432223,named,8767.567,https://www.youtube.com/watch?v=S7EaREatF4w&t=8767s
+R05C18,3,-8,1429,387,Store Speed X,dense-full/d2438-049.jpg,S07 and 3607432223,named,10184.567,https://www.youtube.com/watch?v=S7EaREatF4w&t=10184s
+R06C12,-3,-7,1121,438,Output Speed X,rap/2684.jpg,S07 and 3607432223,named,11218.533,https://www.youtube.com/watch?v=S7EaREatF4w&t=11218s
+R06C14,-1,-7,1224,438,Transmuter Slots I,dense-full/d1543-065.jpg,S07 and 3607432223,named,6442.767,https://www.youtube.com/watch?v=S7EaREatF4w&t=6442s
+R06C15,0,-7,1275,438,Jellyfish Transmuter,rap/1515.jpg,S07 and 3607432223,named,6324.933,https://www.youtube.com/watch?v=S7EaREatF4w&t=6324s
+R06C16,1,-7,1326,438,Transmuter Speed I,rap/2686.jpg,S07 and 3607432223,named,11226.867,https://www.youtube.com/watch?v=S7EaREatF4w&t=11226s
+R06C17,2,-7,1377,438,Store Transmutation,rap/2415.jpg,S07 and 3607432223,named,10083.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=10083s
+R06C18,3,-7,1429,438,Store Speed VIII,dense-full/d2100-041.jpg,S07 and 3607432223,named,8768.9,https://www.youtube.com/watch?v=S7EaREatF4w&t=8768s
+R07C09,-6,-6,968,490,Puffle Size II,dense-full/d2412-105.jpg,S07 and 3607432223,named,10074.167,https://www.youtube.com/watch?v=S7EaREatF4w&t=10074s
+R07C13,-2,-6,1173,490,Output Speed I,rap/2153.jpg,S07 and 3607432223,named,8987.833,https://www.youtube.com/watch?v=S7EaREatF4w&t=8987s
+R07C14,-1,-6,1224,490,Store Upsell,store-mid_007.jpg,S07 and 3607432223,named,5914,https://www.youtube.com/watch?v=S7EaREatF4w&t=5914s
+R07C16,1,-6,1326,490,Store Speed V,store-mid_006.jpg,S07 and 3607432223,named,5913,https://www.youtube.com/watch?v=S7EaREatF4w&t=5913s
+R07C17,2,-6,1377,490,Store Speed VI,store-mid_010.jpg,S07 and 3607432223,named,5917,https://www.youtube.com/watch?v=S7EaREatF4w&t=5917s
+R07C18,3,-6,1429,490,Store Speed VII,late-village_006.jpg,S07 and 3607432223,named,8249,https://www.youtube.com/watch?v=S7EaREatF4w&t=8249s
+R07C19,4,-6,1480,490,Agile Hands X,dense-full/d2439-009.jpg,S07 and 3607432223,named,10187.4,https://www.youtube.com/watch?v=S7EaREatF4w&t=10187s
+R07C23,8,-6,1685,490,Robot Attack Speed II,rap/2508.jpg,S07 and 3607432223,named,10479.733,https://www.youtube.com/watch?v=S7EaREatF4w&t=10479s
+R08C01,-14,-5,558,541,???,dense-full/d2505-033.jpg,S07 and 3607432223,repeated_placeholder,10468.3,https://www.youtube.com/watch?v=S7EaREatF4w&t=10468s
+R08C04,-11,-5,712,541,Bubble Attack Speed III,dense-full/d2337-073.jpg,S07 and 3607432223,named,9755.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=9755s
+R08C05,-10,-5,763,541,Bubble O2'd,rap/2506.jpg,S07 and 3607432223,named,10471.4,https://www.youtube.com/watch?v=S7EaREatF4w&t=10471s
+R08C06,-9,-5,814,541,Multibubble Number,dense-full/d2412-049.jpg,S07 and 3607432223,named,10072.3,https://www.youtube.com/watch?v=S7EaREatF4w&t=10072s
+R08C08,-7,-5,917,541,Puffle Size I,late-village_008.jpg,S07 and 3607432223,named,8251,https://www.youtube.com/watch?v=S7EaREatF4w&t=8251s
+R08C10,-5,-5,1019,541,Puffle II,dense-full/d2413-073.jpg,S07 and 3607432223,named,10077.267,https://www.youtube.com/watch?v=S7EaREatF4w&t=10077s
+R08C12,-3,-5,1121,541,Shellslot Capacity V,rap/2259.jpg,S07 and 3607432223,named,9430.667,https://www.youtube.com/watch?v=S7EaREatF4w&t=9430s
+R08C13,-2,-5,1173,541,Shellpack Slots V,convenience-tree_023.jpg,S07 and 3607432223,named,7272,https://www.youtube.com/watch?v=S7EaREatF4w&t=7272s
+R08C14,-1,-5,1224,541,Storage Automation,dense-full/d1790-057.jpg,S07 and 3607432223,named,7478.067,https://www.youtube.com/watch?v=S7EaREatF4w&t=7478s
+R08C15,0,-5,1275,541,Shellphone,rap/2031.jpg,S07 and 3607432223,named,8478.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=8478s
+R08C16,1,-5,1326,541,Store Speed III,rap/2209.jpg,S07 and 3607432223,named,9221.167,https://www.youtube.com/watch?v=S7EaREatF4w&t=9221s
+R08C17,2,-5,1377,541,Store Speed IV,rap/1480.jpg,S07 and 3607432223,named,6179.1,https://www.youtube.com/watch?v=S7EaREatF4w&t=6179s
+R08C18,3,-5,1429,541,Agile Hands I,rap/1102.jpg,S07 and 3607432223,named,4601.133,https://www.youtube.com/watch?v=S7EaREatF4w&t=4601s
+R08C19,4,-5,1480,541,Store Slots IV,dense-full/d1514-025.jpg,S07 and 3607432223,named,6321.567,https://www.youtube.com/watch?v=S7EaREatF4w&t=6321s
+R08C20,5,-5,1531,541,Plasma Overheat II,dense-full/d2100-105.jpg,S07 and 3607432223,named,8771.033,https://www.youtube.com/watch?v=S7EaREatF4w&t=8771s
+R08C21,6,-5,1582,541,Plasma Lightning Damage II,rap/1666.jpg,S07 and 3607432223,named,6954.6,https://www.youtube.com/watch?v=S7EaREatF4w&t=6954s
+R08C22,7,-5,1633,541,Plasma Lightning Range,dense-full/d2440-025.jpg,S07 and 3607432223,named,10192.1,https://www.youtube.com/watch?v=S7EaREatF4w&t=10192s
+R08C24,9,-5,1736,541,Robot Attack Speed I,rap/2292.jpg,S07 and 3607432223,named,9568.167,https://www.youtube.com/watch?v=S7EaREatF4w&t=9568s
+R08C25,10,-5,1787,541,Robot Damage I,rap/2312.jpg,S07 and 3607432223,named,9649.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=9649s
+R08C26,11,-5,1838,541,Plasma O2'd,rap/2513.jpg,S07 and 3607432223,named,10500.567,https://www.youtube.com/watch?v=S7EaREatF4w&t=10500s
+R08C27,12,-5,1889,541,Plasma Attack Speed III,rap/2733.jpg,S07 and 3607432223,named,11422.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=11422s
+R08C29,14,-5,1992,541,???,dense-full/d2686-097.jpg,S07 and 3607432223,repeated_placeholder,11230.067,https://www.youtube.com/watch?v=S7EaREatF4w&t=11230s
+R09C01,-14,-4,558,592,Bubble Critical Damage III,dense-full/d2377-033.jpg,S07 and 3607432223,named,9925.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=9925s
+R09C02,-13,-4,609,592,Bubble Damage X,rap/2290.jpg,S07 and 3607432223,named,9559.833,https://www.youtube.com/watch?v=S7EaREatF4w&t=9559s
+R09C04,-11,-4,712,592,Bubble Damage VIII,rap/2337.jpg,S07 and 3607432223,named,9753.4,https://www.youtube.com/watch?v=S7EaREatF4w&t=9753s
+R09C05,-10,-4,763,592,Multibubble Chance,late-village_009.jpg,S07 and 3607432223,named,8253,https://www.youtube.com/watch?v=S7EaREatF4w&t=8253s
+R09C06,-9,-4,814,592,Bubble Speed II,dense-full/d1958-113.jpg,S07 and 3607432223,named,8178.033,https://www.youtube.com/watch?v=S7EaREatF4w&t=8178s
+R09C07,-8,-4,865,592,Bubble Attack Speed II,rap/1791.jpg,S07 and 3607432223,named,7480.367,https://www.youtube.com/watch?v=S7EaREatF4w&t=7480s
+R09C11,-4,-4,1070,592,Puffle Damage X,dense-full/d2414-049.jpg,S07 and 3607432223,named,10080.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=10080s
+R09C12,-3,-4,1121,592,Shellslot Capacity IV,dense-full/d2185-057.jpg,S07 and 3607432223,named,9123.033,https://www.youtube.com/watch?v=S7EaREatF4w&t=9123s
+R09C13,-2,-4,1173,592,Shellpack Slots IV,dense-full/d1479-073.jpg,S07 and 3607432223,named,6177.333,https://www.youtube.com/watch?v=S7EaREatF4w&t=6177s
+R09C14,-1,-4,1224,592,Storage Slots II,convenience-tree_024.jpg,S07 and 3607432223,named,7273,https://www.youtube.com/watch?v=S7EaREatF4w&t=7273s
+R09C16,1,-4,1326,592,Expedition Demand I,convenience-tree_027.jpg,S07 and 3607432223,named,7277,https://www.youtube.com/watch?v=S7EaREatF4w&t=7277s
+R09C17,2,-4,1377,592,Store Speed II,rap/0714.jpg,S07 and 3607432223,named,2975.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=2975s
+R09C18,3,-4,1429,592,Store Slots III,store-mid_012.jpg,S07 and 3607432223,named,5919,https://www.youtube.com/watch?v=S7EaREatF4w&t=5919s
+R09C19,4,-4,1480,592,Bank Safe,dense-full/d2509-081.jpg,S07 and 3607432223,named,10486.567,https://www.youtube.com/watch?v=S7EaREatF4w&t=10486s
+R09C21,6,-4,1582,592,Plasma Lightning Damage I,rap/1622.jpg,S07 and 3607432223,named,6771.267,https://www.youtube.com/watch?v=S7EaREatF4w&t=6771s
+R09C22,7,-4,1633,592,Plasma Lightning Chance II,convenience-tree_028.jpg,S07 and 3607432223,named,7278,https://www.youtube.com/watch?v=S7EaREatF4w&t=7278s
+R09C23,8,-4,1685,592,Robot Overcharge I,dense-full/d2440-105.jpg,S07 and 3607432223,named,10194.767,https://www.youtube.com/watch?v=S7EaREatF4w&t=10194s
+R09C24,9,-4,1736,592,Plasma Range III,rap/2261.jpg,S07 and 3607432223,named,9439.0,https://www.youtube.com/watch?v=S7EaREatF4w&t=9439s
+R09C25,10,-4,1787,592,Robot Ally I,rap/2228.jpg,S07 and 3607432223,named,9300.133,https://www.youtube.com/watch?v=S7EaREatF4w&t=9300s
+R09C26,11,-4,1838,592,Plasma Damage VIII,dense-full/d2282-121.jpg,S07 and 3607432223,named,9530.5,https://www.youtube.com/watch?v=S7EaREatF4w&t=9530s
+R09C28,13,-4,1941,592,Plasma Damage X,dense-full/d2742-001.jpg,S07 and 3607432223,named,11460.133,https://www.youtube.com/watch?v=S7EaREatF4w&t=11460s
+R10C02,-13,-3,609,643,Bubble Critical Damage II,rap/2377.jpg,S07 and 3607432223,named,9924.133,https://www.youtube.com/watch?v=S7EaREatF4w&t=9924s
+R10C03,-12,-3,661,643,Bubble Critical Damage I,dense-full/d2148-041.jpg,S07 and 3607432223,named,8968.9,https://www.youtube.com/watch?v=S7EaREatF4w&t=8968s
+R10C04,-11,-3,712,643,Bubble Size X,rap/2187.jpg,S07 and 3607432223,named,9129.5,https://www.youtube.com/watch?v=S7EaREatF4w&t=9129s
+R10C05,-10,-3,763,643,Bubble Damage VII,dense-full/d1781-001.jpg,S07 and 3607432223,named,7439.0,https://www.youtube.com/watch?v=S7EaREatF4w&t=7439s
+R10C07,-8,-3,865,643,Bubble Damage VI,rap/1665.jpg,S07 and 3607432223,named,6950.433,https://www.youtube.com/watch?v=S7EaREatF4w&t=6950s
+R10C08,-7,-3,917,643,Puffle I,convenience-tree_022.jpg,S07 and 3607432223,named,7271,https://www.youtube.com/watch?v=S7EaREatF4w&t=7271s
+R10C09,-6,-3,968,643,Puffle Damage I,rap/1664.jpg,S07 and 3607432223,named,6946.267,https://www.youtube.com/watch?v=S7EaREatF4w&t=6946s
+R10C10,-5,-3,1019,643,Puffle Damage II,rap/2414.jpg,S07 and 3607432223,named,10079.033,https://www.youtube.com/watch?v=S7EaREatF4w&t=10079s
+R10C11,-4,-3,1070,643,Doppel Bubble II,deep-ice_009.jpg,S07 and 3607432223,named,3264,https://www.youtube.com/watch?v=S7EaREatF4w&t=3264s
+R10C12,-3,-3,1121,643,Shellslot Capacity III,rap/1752.jpg,S07 and 3607432223,named,7318.167,https://www.youtube.com/watch?v=S7EaREatF4w&t=7318s
+R10C13,-2,-3,1173,643,Shellpack Slots III,store-mid_035.jpg,S07 and 3607432223,named,5945,https://www.youtube.com/watch?v=S7EaREatF4w&t=5945s
+R10C14,-1,-3,1224,643,Storage Slots I,dense-full/d0917-025.jpg,S07 and 3607432223,named,3821.4,https://www.youtube.com/watch?v=S7EaREatF4w&t=3821s
+R10C15,0,-3,1275,643,Submarine Storage,dense-full/d0595-097.jpg,S07 and 3607432223,named,2482.833,https://www.youtube.com/watch?v=S7EaREatF4w&t=2482s
+R10C16,1,-3,1326,643,Store Speed I,rap/1197.jpg,S07 and 3607432223,named,4996.767,https://www.youtube.com/watch?v=S7EaREatF4w&t=4996s
+R10C17,2,-3,1377,643,Store Slots II,ice-origin_007.jpg,S07 and 3607432223,named,1763,https://www.youtube.com/watch?v=S7EaREatF4w&t=1763s
+R10C18,3,-3,1429,643,Chest Speed II,rap/1358.jpg,S07 and 3607432223,named,5668.7,https://www.youtube.com/watch?v=S7EaREatF4w&t=5668s
+R10C19,4,-3,1480,643,Plasma Overheat I,rap/1935.jpg,S07 and 3607432223,named,8078.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=8078s
+R10C20,5,-3,1531,643,Hot Overheat,store-mid_013.jpg,S07 and 3607432223,named,5920,https://www.youtube.com/watch?v=S7EaREatF4w&t=5920s
+R10C21,6,-3,1582,643,Plasma Attack Speed II,late-village_004.jpg,S07 and 3607432223,named,8246,https://www.youtube.com/watch?v=S7EaREatF4w&t=8246s
+R10C22,7,-3,1633,643,Plasma Lightning Chance I,late-village_005.jpg,S07 and 3607432223,named,8248,https://www.youtube.com/watch?v=S7EaREatF4w&t=8248s
+R10C23,8,-3,1685,643,Plasma Damage VI,rap/2106.jpg,S07 and 3607432223,named,8792.567,https://www.youtube.com/watch?v=S7EaREatF4w&t=8792s
+R10C25,10,-3,1787,643,Plasma Damage VII,rap/1836.jpg,S07 and 3607432223,named,7667.867,https://www.youtube.com/watch?v=S7EaREatF4w&t=7667s
+R10C26,11,-3,1838,643,Ultra Plasma Charge,dense-full/d2696-089.jpg,S07 and 3607432223,named,11271.4,https://www.youtube.com/watch?v=S7EaREatF4w&t=11271s
+R10C27,12,-3,1889,643,Plasma Range IV,rap/2469.jpg,S07 and 3607432223,named,10314.567,https://www.youtube.com/watch?v=S7EaREatF4w&t=10314s
+R11C02,-13,-2,609,694,Bubble Critical Chance X,dense-full/d2353-105.jpg,S07 and 3607432223,named,9824.9,https://www.youtube.com/watch?v=S7EaREatF4w&t=9824s
+R11C03,-12,-2,661,694,Bubble Critical Chance II,rap/2410.jpg,S07 and 3607432223,named,10062.367,https://www.youtube.com/watch?v=S7EaREatF4w&t=10062s
+R11C04,-11,-2,712,694,Bubble Critical Chance I,late-village_011.jpg,S07 and 3607432223,named,8255,https://www.youtube.com/watch?v=S7EaREatF4w&t=8255s
+R11C05,-10,-2,763,694,Bubble Size II,late-village_010.jpg,S07 and 3607432223,named,8254,https://www.youtube.com/watch?v=S7EaREatF4w&t=8254s
+R11C06,-9,-2,814,694,Extra Smite,magma-next_033.jpg,S07 and 3607432223,named,9107,https://www.youtube.com/watch?v=S7EaREatF4w&t=9107s
+R11C07,-8,-2,865,694,Bubble Smite,rap/1550.jpg,S07 and 3607432223,named,6469.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=6469s
+R11C08,-7,-2,917,694,Bubble Damage V,rap/2230.jpg,S07 and 3607432223,named,9308.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=9308s
+R11C10,-5,-2,1019,694,Bubble Damage IV,deep-ice_006.jpg,S07 and 3607432223,named,3260,https://www.youtube.com/watch?v=S7EaREatF4w&t=3260s
+R11C12,-3,-2,1121,694,Bubble Attack Speed I,rap/2229.jpg,S07 and 3607432223,named,9304.3,https://www.youtube.com/watch?v=S7EaREatF4w&t=9304s
+R11C13,-2,-2,1173,694,Shellslot Capacity II,dense-full/d0321-121.jpg,S07 and 3607432223,named,1342.533,https://www.youtube.com/watch?v=S7EaREatF4w&t=1342s
+R11C14,-1,-2,1224,694,Shellpack Slots II,rap/1834.jpg,S07 and 3607432223,named,7659.533,https://www.youtube.com/watch?v=S7EaREatF4w&t=7659s
+R11C16,1,-2,1326,694,Store Slots I,trip3seq_022.jpg,S07 and 3607432223,named,280,https://www.youtube.com/watch?v=S7EaREatF4w&t=280s
+R11C17,2,-2,1377,694,Chest Speed I,rap/0283.jpg,S07 and 3607432223,named,1180.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=1180s
+R11C18,3,-2,1429,694,Plasma Attack Speed I,ice-origin_006.jpg,S07 and 3607432223,named,1761,https://www.youtube.com/watch?v=S7EaREatF4w&t=1761s
+R11C19,4,-2,1480,694,Plasma Range II,deep-ice_003.jpg,S07 and 3607432223,named,3256,https://www.youtube.com/watch?v=S7EaREatF4w&t=3256s
+R11C20,5,-2,1531,694,Plasma Damage IV,deep-ice_002.jpg,S07 and 3607432223,named,3255,https://www.youtube.com/watch?v=S7EaREatF4w&t=3255s
+R11C22,7,-2,1633,694,Plasma Damage V,store-mid_017.jpg,S07 and 3607432223,named,5925,https://www.youtube.com/watch?v=S7EaREatF4w&t=5925s
+R11C23,8,-2,1685,694,Plasma Charge II,store-mid_022.jpg,S07 and 3607432223,named,5930,https://www.youtube.com/watch?v=S7EaREatF4w&t=5930s
+R11C24,9,-2,1736,694,Plasma Overflow II,dense-full/d1635-073.jpg,S07 and 3607432223,named,6827.833,https://www.youtube.com/watch?v=S7EaREatF4w&t=6827s
+R11C26,11,-2,1838,694,Double Laser,dense-full/d2741-097.jpg,S07 and 3607432223,named,11459.167,https://www.youtube.com/watch?v=S7EaREatF4w&t=11459s
+R12C05,-10,-1,763,746,Hunter Bubbles II,rap/2409.jpg,S07 and 3607432223,named,10058.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=10058s
+R12C07,-8,-1,865,746,Bubble Penetration I,rap/2683.jpg,S07 and 3607432223,named,11214.367,https://www.youtube.com/watch?v=S7EaREatF4w&t=11214s
+R12C08,-7,-1,917,746,Bubble Strike II,rap/2598.jpg,S07 and 3607432223,named,10860.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=10860s
+R12C10,-5,-1,1019,746,Bubble Strike I,store-mid_034.jpg,S07 and 3607432223,named,5943,https://www.youtube.com/watch?v=S7EaREatF4w&t=5943s
+R12C11,-4,-1,1070,746,Bubble Damage III,ice-origin_001.jpg,S07 and 3607432223,named,1754,https://www.youtube.com/watch?v=S7EaREatF4w&t=1754s
+R12C13,-2,-1,1173,746,Bubble Damage II,rap/1128.jpg,S07 and 3607432223,named,4709.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=4709s
+R12C14,-1,-1,1224,746,Shellslot Capacity I,ice-origin_003.jpg,S07 and 3607432223,named,1757,https://www.youtube.com/watch?v=S7EaREatF4w&t=1757s
+R12C15,0,-1,1275,746,Shellpack Slots I,trip3seq_019.jpg,S07 and 3607432223,named,277,https://www.youtube.com/watch?v=S7EaREatF4w&t=277s
+R12C16,1,-1,1326,746,Plasma Charge I,ice-origin_005.jpg,S07 and 3607432223,named,1760,https://www.youtube.com/watch?v=S7EaREatF4w&t=1760s
+R12C17,2,-1,1377,746,Plasma Damage II,rap/0403.jpg,S07 and 3607432223,named,1679.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=1679s
+R12C19,4,-1,1480,746,Plasma Damage III,rap/0712.jpg,S07 and 3607432223,named,2967.133,https://www.youtube.com/watch?v=S7EaREatF4w&t=2967s
+R12C21,6,-1,1582,746,Plasma Overflow I,deep-ice_000.jpg,S07 and 3607432223,named,3253,https://www.youtube.com/watch?v=S7EaREatF4w&t=3253s
+R12C23,8,-1,1685,746,Plasma Overflow Damage I,store-mid_019.jpg,S07 and 3607432223,named,5927,https://www.youtube.com/watch?v=S7EaREatF4w&t=5927s
+R12C25,10,-1,1787,746,Plasma Overflow Damage II,rap/2018.jpg,S07 and 3607432223,named,8424.3,https://www.youtube.com/watch?v=S7EaREatF4w&t=8424s
+R13C06,-9,0,814,797,Hunter Bubbles I,magma-next_035.jpg,S07 and 3607432223,named,9109,https://www.youtube.com/watch?v=S7EaREatF4w&t=9109s
+R13C07,-8,0,865,797,Bubble Penetration II,late-village_013.jpg,S07 and 3607432223,named,8258,https://www.youtube.com/watch?v=S7EaREatF4w&t=8258s
+R13C09,-6,0,968,797,Starfish Attack Speed I,rap/1581.jpg,S07 and 3607432223,named,6598.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=6598s
+R13C11,-4,0,1070,797,Starfish Friend I,convenience-tree_021.jpg,S07 and 3607432223,named,7269,https://www.youtube.com/watch?v=S7EaREatF4w&t=7269s
+R13C12,-3,0,1121,797,Bubble Duration I,rap/0319.jpg,S07 and 3607432223,named,1330.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=1330s
+R13C13,-2,0,1173,797,Bubble Size I,rap/0595.jpg,S07 and 3607432223,named,2479.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=2479s
+R13C14,-1,0,1224,797,Bubble Damage I,trip3seq_027.jpg,S07 and 3607432223,named,284,https://www.youtube.com/watch?v=S7EaREatF4w&t=284s
+R13C15,0,0,1275,797,Hammock Repair,hammock-buy_008.jpg,S07 and 3607432223,named,11652,https://www.youtube.com/watch?v=S7EaREatF4w&t=11652s
+R13C16,1,0,1326,797,Plasma Damage I,trip3seq_001.jpg,S07 and 3607432223,named,262,https://www.youtube.com/watch?v=S7EaREatF4w&t=262s
+R13C17,2,0,1377,797,Plasma Chain I,rap/0295.jpg,S07 and 3607432223,named,1230.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=1230s
+R13C19,4,0,1480,797,Plasma Chain II,rap/0974.jpg,S07 and 3607432223,named,4060.267,https://www.youtube.com/watch?v=S7EaREatF4w&t=4060s
+R13C22,7,0,1633,797,Plasma Chain III,store-mid_018.jpg,S07 and 3607432223,named,5926,https://www.youtube.com/watch?v=S7EaREatF4w&t=5926s
+R13C24,9,0,1736,797,Plasma Overflow Reach,rap/2316.jpg,S07 and 3607432223,named,9665.9,https://www.youtube.com/watch?v=S7EaREatF4w&t=9665s
+R14C08,-7,1,917,848,Starfish Attack Speed II,rap/1706.jpg,S07 and 3607432223,named,7124.533,https://www.youtube.com/watch?v=S7EaREatF4w&t=7124s
+R14C11,-4,1,1070,848,Starfish Damage I,rap/1361.jpg,S07 and 3607432223,named,5681.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=5681s
+R14C12,-3,1,1121,848,Bubble Speed I,rap/0320.jpg,S07 and 3607432223,named,1334.367,https://www.youtube.com/watch?v=S7EaREatF4w&t=1334s
+R14C13,-2,1,1173,848,Doppel Bubble I,rap/0969.jpg,S07 and 3607432223,named,4037.267,https://www.youtube.com/watch?v=S7EaREatF4w&t=4037s
+R14C15,0,1,1275,848,Submarine,opening-world_017.jpg,S07 and 3607432223,named,29,https://www.youtube.com/watch?v=S7EaREatF4w&t=29s
+R14C16,1,1,1326,848,Plasma Gun,trip3seq_016.jpg,S07 and 3607432223,named,275,https://www.youtube.com/watch?v=S7EaREatF4w&t=275s
+R14C17,2,1,1377,848,Plasma Range I,rap/0261.jpg,S07 and 3607432223,named,1087.5,https://www.youtube.com/watch?v=S7EaREatF4w&t=1087s
+R14C18,3,1,1429,848,Plasma Chain Damage I,ice-origin_009.jpg,S07 and 3607432223,named,1766,https://www.youtube.com/watch?v=S7EaREatF4w&t=1766s
+R14C21,6,1,1582,848,Plasma Chain Damage II,rap/1513.jpg,S07 and 3607432223,named,6316.6,https://www.youtube.com/watch?v=S7EaREatF4w&t=6316s
+R15C09,-6,2,968,899,Starfish Friend II,rap/2287.jpg,S07 and 3607432223,named,9547.333,https://www.youtube.com/watch?v=S7EaREatF4w&t=9547s
+R15C10,-5,2,1019,899,Starfish Damage II,rap/2125.jpg,S07 and 3607432223,named,8871.733,https://www.youtube.com/watch?v=S7EaREatF4w&t=8871s
+R15C11,-4,2,1070,899,Shallows Biodiversity,deep-ice_013.jpg,S07 and 3607432223,named,3270,https://www.youtube.com/watch?v=S7EaREatF4w&t=3270s
+R15C14,-1,2,1224,899,Jellyfish Value I,trip3seq_005.jpg,S07 and 3607432223,named,265,https://www.youtube.com/watch?v=S7EaREatF4w&t=265s
+R15C15,0,2,1275,899,Shell Insurance I,dense-full/d2464-009.jpg,S07 and 3607432223,named,10292.7,https://www.youtube.com/watch?v=S7EaREatF4w&t=10292s
+R15C16,1,2,1326,899,Deep Breath,trip3seq_009.jpg,S07 and 3607432223,named,269,https://www.youtube.com/watch?v=S7EaREatF4w&t=269s
+R15C17,2,2,1377,899,Plasma Tank I,trip3seq_015.jpg,S07 and 3607432223,named,274,https://www.youtube.com/watch?v=S7EaREatF4w&t=274s
+R15C18,3,2,1429,899,Plasma Gun Reload I,rap/0565.jpg,S07 and 3607432223,named,2354.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=2354s
+R15C20,5,2,1531,899,Plasma Gun Reload II,rap/0975.jpg,S07 and 3607432223,named,4064.433,https://www.youtube.com/watch?v=S7EaREatF4w&t=4064s
+R16C10,-5,3,1019,950,Biovalue Increase I,rap/0506.jpg,S07 and 3607432223,named,2108.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=2108s
+R16C13,-2,3,1173,950,Jellyfish Merchant I,rap/0657.jpg,S07 and 3607432223,named,2737.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=2737s
+R16C14,-1,3,1224,950,Light Feet I,rap/0480.jpg,S07 and 3607432223,named,2000.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=2000s
+R16C15,0,3,1275,950,Scrap Gatherer,rap/0540.jpg,S07 and 3607432223,named,2250.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=2250s
+R16C16,1,3,1326,950,Bubble Tank I,swamp-depth-card_007.jpg,S07 and 3607432223,named,5468,https://www.youtube.com/watch?v=S7EaREatF4w&t=5468s
+R16C17,2,3,1377,950,Oxygen Tank I,trip3seq_014.jpg,S07 and 3607432223,named,273,https://www.youtube.com/watch?v=S7EaREatF4w&t=273s
+R16C18,3,3,1429,950,Plasma Capacity I,rap/0260.jpg,S07 and 3607432223,named,1083.333,https://www.youtube.com/watch?v=S7EaREatF4w&t=1083s
+R16C20,5,3,1531,950,Plasma Tank II,dense-full/d0292-105.jpg,S07 and 3607432223,named,1221.167,https://www.youtube.com/watch?v=S7EaREatF4w&t=1221s
+R17C09,-6,4,968,1002,Glacial Biodiversity,rap/0655.jpg,S07 and 3607432223,named,2729.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=2729s
+R17C12,-3,4,1121,1002,Jellyfish Value II,rap/0254.jpg,S07 and 3607432223,named,1058.333,https://www.youtube.com/watch?v=S7EaREatF4w&t=1058s
+R17C13,-2,4,1173,1002,Shell Insurance II,rap/0656.jpg,S07 and 3607432223,named,2733.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=2733s
+R17C14,-1,4,1224,1002,Scrap Master,rap/2463.jpg,S07 and 3607432223,named,10288.267,https://www.youtube.com/watch?v=S7EaREatF4w&t=10288s
+R17C16,1,4,1326,1002,Bubble Gun Reload I,rap/0916.jpg,S07 and 3607432223,named,3816.433,https://www.youtube.com/watch?v=S7EaREatF4w&t=3816s
+R17C17,2,4,1377,1002,Bubble Capacity I,rap/0888.jpg,S07 and 3607432223,named,3699.767,https://www.youtube.com/watch?v=S7EaREatF4w&t=3699s
+R17C18,3,4,1429,1002,Oxygen Tank II,trip3seq_012.jpg,S07 and 3607432223,named,271,https://www.youtube.com/watch?v=S7EaREatF4w&t=271s
+R17C19,4,4,1480,1002,Submarine Bubble I,rap/0745.jpg,S07 and 3607432223,named,3104.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=3104s
+R17C21,6,4,1582,1002,Plasma Capacity II,store-mid_026.jpg,S07 and 3607432223,named,5935,https://www.youtube.com/watch?v=S7EaREatF4w&t=5935s
+R18C08,-7,5,917,1053,Biovalue Increase II,convenience-tree_020.jpg,S07 and 3607432223,named,7268,https://www.youtube.com/watch?v=S7EaREatF4w&t=7268s
+R18C11,-4,5,1070,1053,Jellyfish Merchant II,rap/0785.jpg,S07 and 3607432223,named,3271.3,https://www.youtube.com/watch?v=S7EaREatF4w&t=3271s
+R18C12,-3,5,1121,1053,Light Feet II,dense-full/d0785-113.jpg,S07 and 3607432223,named,3275.033,https://www.youtube.com/watch?v=S7EaREatF4w&t=3275s
+R18C13,-2,5,1173,1053,Crystal Gatherer,rap/0786.jpg,S07 and 3607432223,named,3275.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=3275s
+R18C18,3,5,1429,1053,Submarine Bubble II,rap/1064.jpg,S07 and 3607432223,named,4442.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=4442s
+R18C19,4,5,1480,1053,Oxygen Tank III,deep-ice_017.jpg,S07 and 3607432223,named,3275,https://www.youtube.com/watch?v=S7EaREatF4w&t=3275s
+R18C20,5,5,1531,1053,Oxygen Regen Amount I,rap/0637.jpg,S07 and 3607432223,named,2654.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=2654s
+R18C22,7,5,1633,1053,Plasma Tank III,rap/2553.jpg,S07 and 3607432223,named,10672.7,https://www.youtube.com/watch?v=S7EaREatF4w&t=10672s
+R18C23,8,5,1685,1053,Ultra Plasma Gun Reload,rap/1784.jpg,S07 and 3607432223,named,7451.5,https://www.youtube.com/watch?v=S7EaREatF4w&t=7451s
+R19C07,-8,6,865,1104,Swamp Biodiversity,dense-full/d1548-041.jpg,S07 and 3607432223,named,6462.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=6462s
+R19C10,-5,6,1019,1104,Jellyfish Value III,swamp-depth-card_010.jpg,S07 and 3607432223,named,5472,https://www.youtube.com/watch?v=S7EaREatF4w&t=5472s
+R19C11,-4,6,1070,1104,Faster Waters I,deep-ice_014.jpg,S07 and 3607432223,named,3271,https://www.youtube.com/watch?v=S7EaREatF4w&t=3271s
+R19C12,-3,6,1121,1104,Crystal Master,deep-ice_015.jpg,S07 and 3607432223,named,3272,https://www.youtube.com/watch?v=S7EaREatF4w&t=3272s
+R19C14,-1,6,1224,1104,Collectible Magnet I,rap/2462.jpg,S07 and 3607432223,named,10284.1,https://www.youtube.com/watch?v=S7EaREatF4w&t=10284s
+R19C15,0,6,1275,1104,Scrap Increase,rap/2444.jpg,S07 and 3607432223,named,10207.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=10207s
+R19C16,1,6,1326,1104,Bubble Gun Reload II,rap/1936.jpg,S07 and 3607432223,named,8082.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=8082s
+R19C17,2,6,1377,1104,Bubble Tank II,store-mid_031.jpg,S07 and 3607432223,named,5940,https://www.youtube.com/watch?v=S7EaREatF4w&t=5940s
+R19C19,4,6,1480,1104,Oxygen Catch I,rap/0744.jpg,S07 and 3607432223,named,3100.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=3100s
+R19C20,5,6,1531,1104,Oxygen Tank IV,rap/0866.jpg,S07 and 3607432223,named,3608.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=3608s
+R19C21,6,6,1582,1104,Oxygen Regen Speed I,swamp-depth-card_000.jpg,S07 and 3607432223,named,5460,https://www.youtube.com/watch?v=S7EaREatF4w&t=5460s
+R20C05,-10,7,763,1155,Shock Resistance X,dense-full/d2491-073.jpg,S07 and 3607432223,named,10408.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=10408s
+R20C06,-9,7,814,1155,Biovalue Increase X,dense-full/d1549-025.jpg,S07 and 3607432223,named,6466.433,https://www.youtube.com/watch?v=S7EaREatF4w&t=6466s
+R20C07,-8,7,865,1155,Shock Resistance I,rap/2188.jpg,S07 and 3607432223,named,9133.667,https://www.youtube.com/watch?v=S7EaREatF4w&t=9133s
+R20C09,-6,7,968,1155,Jellyfish Merchant III,convenience-tree_015.jpg,S07 and 3607432223,named,7262,https://www.youtube.com/watch?v=S7EaREatF4w&t=7262s
+R20C10,-5,7,1019,1155,Shell Insurance III,dense-full/d1709-073.jpg,S07 and 3607432223,named,7139.433,https://www.youtube.com/watch?v=S7EaREatF4w&t=7139s
+R20C11,-4,7,1070,1155,Mushroom Gatherer,swamp-depth-card_008.jpg,S07 and 3607432223,named,5470,https://www.youtube.com/watch?v=S7EaREatF4w&t=5470s
+R20C18,3,7,1429,1155,Bubble Capacity II,store-mid_029.jpg,S07 and 3607432223,named,5938,https://www.youtube.com/watch?v=S7EaREatF4w&t=5938s
+R20C20,5,7,1531,1155,Oxygen Catch II,dense-full/d1039-153.jpg,S07 and 3607432223,named,4342.067,https://www.youtube.com/watch?v=S7EaREatF4w&t=4342s
+R20C21,6,7,1582,1155,Oxygen Tank V,swamp-depth-card_001.jpg,S07 and 3607432223,named,5461,https://www.youtube.com/watch?v=S7EaREatF4w&t=5461s
+R20C22,7,7,1633,1155,Oxygen Effectiveness I,swamp-depth-card_002.jpg,S07 and 3607432223,named,5462,https://www.youtube.com/watch?v=S7EaREatF4w&t=5462s
+R20C24,9,7,1736,1155,Plasma Tank X,dense-full/d1959-097.jpg,S07 and 3607432223,named,8181.667,https://www.youtube.com/watch?v=S7EaREatF4w&t=8181s
+R21C05,-10,8,763,1206,Magma Biodiversity,rap/1997.jpg,S07 and 3607432223,named,8336.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=8336s
+R21C06,-9,8,814,1206,Calmer Waters,rap/2189.jpg,S07 and 3607432223,named,9137.833,https://www.youtube.com/watch?v=S7EaREatF4w&t=9137s
+R21C08,-7,8,917,1206,Jellyfish Value IV,convenience-tree_019.jpg,S07 and 3607432223,named,7267,https://www.youtube.com/watch?v=S7EaREatF4w&t=7267s
+R21C09,-6,8,968,1206,Light Feet X,rap/2498.jpg,S07 and 3607432223,named,10435.4,https://www.youtube.com/watch?v=S7EaREatF4w&t=10435s
+R21C10,-5,8,1019,1206,Mushroom Master,rap/2208.jpg;rap/2285.jpg;rap/2497.jpg,S07 and 3607432223,named,9217.0,https://www.youtube.com/watch?v=S7EaREatF4w&t=9217s
+R21C12,-3,8,1121,1206,Collectible Magnet II,deep-ice_016.jpg,S07 and 3607432223,named,3274,https://www.youtube.com/watch?v=S7EaREatF4w&t=3274s
+R21C13,-2,8,1173,1206,Crystal Increase,rap/0594.jpg,S07 and 3607432223,named,2475.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=2475s
+R21C19,4,8,1480,1206,Bubble Tank III,rap/1617.jpg,S07 and 3607432223,named,6748.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=6748s
+R21C21,6,8,1582,1206,Oxygen Regen Amount II,rap/1702.jpg,S07 and 3607432223,named,7107.867,https://www.youtube.com/watch?v=S7EaREatF4w&t=7107s
+R21C22,7,8,1633,1206,Oxygen Tank VI,swamp-depth-card_003.jpg,S07 and 3607432223,named,5464,https://www.youtube.com/watch?v=S7EaREatF4w&t=5464s
+R21C23,8,8,1685,1206,Resource Incentive,rap/2256.jpg,S07 and 3607432223,named,9418.167,https://www.youtube.com/watch?v=S7EaREatF4w&t=9418s
+R22C06,-9,9,814,1258,Biovalue Multiplication I,dense-full/d2285-033.jpg,S07 and 3607432223,named,9540.067,https://www.youtube.com/watch?v=S7EaREatF4w&t=9540s
+R22C07,-8,9,865,1258,Jellyfish Merchant IV,rap/2055.jpg,S07 and 3607432223,named,8578.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=8578s
+R22C09,-6,9,968,1258,Obsidian Gatherer,rap/1956.jpg,S07 and 3607432223,named,8165.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=8165s
+R22C19,4,9,1480,1258,Bubble Gun Ultra Reload,dense-full/d1707-113.jpg,S07 and 3607432223,named,7132.433,https://www.youtube.com/watch?v=S7EaREatF4w&t=7132s
+R22C22,7,9,1633,1258,Oxygen Regen Speed II,convenience-tree_030.jpg,S07 and 3607432223,named,7281,https://www.youtube.com/watch?v=S7EaREatF4w&t=7281s
+R22C23,8,9,1685,1258,Oxygen Tank VII,rap/1824.jpg,S07 and 3607432223,named,7617.867,https://www.youtube.com/watch?v=S7EaREatF4w&t=7617s
+R22C24,9,9,1736,1258,Jellyfish Incentive,rap/2284.jpg,S07 and 3607432223,named,9534.833,https://www.youtube.com/watch?v=S7EaREatF4w&t=9534s
+R23C06,-9,10,814,1309,Biovalue Multiplication II,dense-full/d2682-057.jpg,S07 and 3607432223,named,11212.067,https://www.youtube.com/watch?v=S7EaREatF4w&t=11212s
+R23C07,-8,10,865,1309,Faster Waters X,rap/2602.jpg,S07 and 3607432223,named,10876.867,https://www.youtube.com/watch?v=S7EaREatF4w&t=10876s
+R23C08,-7,10,917,1309,Obsidian Master,rap/2232.jpg;rap/2460.jpg,S07 and 3607432223,named,9316.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=9316s
+R23C10,-5,10,1019,1309,Collectible Magnet III,convenience-tree_014.jpg,S07 and 3607432223,named,7260,https://www.youtube.com/watch?v=S7EaREatF4w&t=7260s
+R23C11,-4,10,1070,1309,Mushroom Increase,rap/1616.jpg,S07 and 3607432223,named,6744.8,https://www.youtube.com/watch?v=S7EaREatF4w&t=6744s
+R23C21,6,10,1582,1309,Bubble Tank X,late-village_001.jpg,S07 and 3607432223,named,8242,https://www.youtube.com/watch?v=S7EaREatF4w&t=8242s
+R23C23,8,10,1685,1309,Oxygen Regen Amount III,late-village_000.jpg,S07 and 3607432223,named,8241,https://www.youtube.com/watch?v=S7EaREatF4w&t=8241s
+R23C24,9,10,1736,1309,Oxygen Tank VIII,rap/2741.jpg,S07 and 3607432223,named,11455.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=11455s
+R24C06,-9,11,814,1360,Biovalue Multiplication X,rap/2665.jpg,S07 and 3607432223,named,11139.367,https://www.youtube.com/watch?v=S7EaREatF4w&t=11139s
+R24C23,8,11,1685,1360,Oxygen Effectiveness II,dense-full/d2318-049.jpg,S07 and 3607432223,named,9675.833,https://www.youtube.com/watch?v=S7EaREatF4w&t=9675s
+R24C24,9,11,1736,1360,Oxygen Tank X,rap/2738.jpg,S07 and 3607432223,named,11443.467,https://www.youtube.com/watch?v=S7EaREatF4w&t=11443s
+R24C25,10,11,1787,1360,Oxygen Regen Speed III,dense-full/d2740-049.jpg,S07 and 3607432223,named,11453.4,https://www.youtube.com/watch?v=S7EaREatF4w&t=11453s
+R25C06,-9,12,814,1411,???,dense-full/d2661-089.jpg,S07 and 3607432223,repeated_placeholder,11125.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=11125s
+R25C08,-7,12,917,1411,Collectible Magnet X,dense-full/d2736-033.jpg,S07 and 3607432223,named,11436.2,https://www.youtube.com/watch?v=S7EaREatF4w&t=11436s
+R25C09,-6,12,968,1411,Obsidian Increase,rap/2026.jpg,S07 and 3607432223,named,8457.633,https://www.youtube.com/watch?v=S7EaREatF4w&t=8457s
+R25C24,9,12,1736,1411,???,dense-full/d2737-081.jpg,S07 and 3607432223,repeated_placeholder,11441.967,https://www.youtube.com/watch?v=S7EaREatF4w&t=11441s

@@ -157,7 +157,7 @@
     {
       "node": "Plasma Chain Damage I",
       "research_category": "采集工具",
-      "reading": "3/5时连锁伤害加成120%→160%，下一档2500贝。",
+      "reading": "3/5时连锁伤害加成120%→160%，下一档1500贝。",
       "frame_ids": [
         "ice-origin_009.jpg"
       ]

@@ -1,0 +1,242 @@
+atlas_id,panel_title,object_name,object_index,room_instance_id,room_x,room_y,object_parent,object_sprite,room_instance_record_offset_hex
+R01C15,???,o_skill_flask_final,304,100403,1536,768,par_skill,s_skill_flask_final,0x9940C
+R02C14,Alchemy Speed II,o_skill_alchemy_station_speed_02,224,100366,1472,832,par_skill,s_skill_alchemy_station_speed_02,0x95D7C
+R02C16,Extra Vial II,o_skill_alchemy_station_dc_02,222,100367,1600,832,par_skill,s_skill_alchemy_station_double_chance_02,0x95DAC
+R03C14,Alchemy Speed I,o_skill_alchemy_station_speed_01,223,100364,1472,896,par_skill,s_skill_alchemy_station_speed_01,0x95D1C
+R03C16,Extra Vial I,o_skill_alchemy_station_dc_01,221,100365,1600,896,par_skill,s_skill_alchemy_station_double_chance_01,0x95D4C
+R04C13,Golden Transmutation,o_skill_transmutator_golden,481,100357,1408,960,par_skill,s_skill_transmutator_golden,0x95BCC
+R04C15,Alchemy Station,o_skill_alchemy_station,226,100363,1536,960,par_skill,s_skill_alchemy_station,0x95CEC
+R04C17,Transmuter Speed III,o_skill_transmutator_speed_03,487,100362,1664,960,par_skill,s_skill_transmutator_speed_03,0x95CBC
+R05C13,Transmuter Automation,o_skill_transmutator_auto_output,479,100361,1408,1024,par_skill,s_skill_transmutator_auto_output,0x95C8C
+R05C14,Transmuter Slots II,o_skill_transmutator_slots_02,484,100358,1472,1024,par_skill,s_skill_transmutator_slots_02,0x95BFC
+R05C16,Transmuter Speed II,o_skill_transmutator_speed_02,486,100360,1600,1024,par_skill,s_skill_transmutator_speed_02,0x95C5C
+R05C17,Transmutation Discount,o_skill_store_transmutate,474,100425,1664,1024,par_skill,s_skill_store_transmutate_01,0x98D4C
+R05C18,Store Speed X,o_skill_store_speed_10,473,100410,1728,1024,par_skill,s_skill_store_speed_10,0x98CEC
+R06C12,Output Speed X,o_skill_faster_output_10,303,100434,1344,1088,par_skill,s_skill_auto_output_speed_10,0x9865C
+R06C14,Transmuter Slots I,o_skill_transmutator_slots_01,483,100355,1472,1088,par_skill,s_skill_transmutator_slots_01,0x95B6C
+R06C15,Jellyfish Transmuter,o_skill_jellyfish_transmutator,319,100354,1536,1088,par_skill,s_skill_jellyfish_transmutator,0x95B3C
+R06C16,Transmuter Speed I,o_skill_transmutator_speed_01,485,100356,1600,1088,par_skill,s_skill_transmutator_speed_01,0x95B9C
+R06C17,Store Transmutation,o_skill_transmutator_sell,482,100420,1664,1088,par_skill,s_skill_transmutator_sell_01,0x98D1C
+R06C18,Store Speed VIII,o_skill_store_speed_08,472,100409,1728,1088,par_skill,s_skill_store_speed_08,0x98CBC
+R07C09,Puffle Size II,o_skill_friendly_bubble_size_02,311,100411,1152,1152,par_skill,s_skill_friendly_bubble_size_02,0x9805C
+R07C13,Output Speed I,o_skill_faster_output_01,302,100372,1408,1152,par_skill,s_skill_auto_output_speed_01,0x95E0C
+R07C14,Store Upsell,o_skill_store_extra_sell_chance,455,100380,1472,1152,par_skill,s_skill_store_extra_sell,0x98B9C
+R07C16,Store Speed V,o_skill_store_speed_05,469,100370,1600,1152,par_skill,s_skill_store_speed_05,0x98C2C
+R07C17,Store Speed VI,o_skill_store_speed_06,470,100371,1664,1152,par_skill,s_skill_store_speed_06,0x98C5C
+R07C18,Store Speed VII,o_skill_store_speed_07,471,100408,1728,1152,par_skill,s_skill_store_speed_07,0x98C8C
+R07C19,Agile Hands X,o_skill_agile_hands_10,220,100426,1792,1152,par_skill,s_skill_agile_hands_10,0x98D7C
+R07C23,Robot Attack Speed II,o_skill_robot_firerate_02,429,100377,2048,1152,par_skill,s_skill_robot_firerate_03,0x95EFC
+R08C01,???,o_skill_scrap_final,433,100401,640,1216,par_skill,s_skill_scrap_final,0x97D5C
+R08C04,Bubble Attack Speed III,o_skill_bubble_firerate_03,267,100287,832,1216,par_skill,s_skill_bubble_firerate_03,0x94F6C
+R08C05,Bubble O2'd,o_skill_bubble_damage_oxygen,258,100382,896,1216,par_skill,s_skill_bubble_oxygen_damage,0x9628C
+R08C06,Multibubble Number,o_skill_chain_bubble_number,288,100275,960,1216,par_skill,s_skill_chain_bubble_number_02,0x9613C
+R08C08,Puffle Size I,o_skill_friendly_bubble_size_01,310,100270,1088,1216,par_skill,s_skill_friendly_bubble_size_01,0x94DBC
+R08C10,Puffle II,o_skill_friendly_bubble_chance_02,306,100417,1216,1216,par_skill,s_skill_friendly_bubble_chance_02,0x9826C
+R08C12,Shellslot Capacity V,o_skill_slot_capacity_05,445,100418,1344,1216,par_skill,s_skill_player_slot_capacity_05,0x9829C
+R08C13,Shellpack Slots V,o_skill_player_slots_05,425,100241,1408,1216,par_skill,s_skill_player_slots_05,0x94B4C
+R08C14,Storage Automation,o_skill_storage_auto_output,452,100359,1472,1216,par_skill,s_skill_storage_auto_output,0x95C2C
+R08C15,Shellphone,o_skill_cellphone,287,100368,1536,1216,par_skill,s_skill_player_shellphone,0x95DDC
+R08C16,Store Speed III,o_skill_store_speed_03,467,100244,1600,1216,par_skill,s_skill_store_speed_03,0x98A4C
+R08C17,Store Speed IV,o_skill_store_speed_04,468,100369,1664,1216,par_skill,s_skill_store_speed_04,0x98BFC
+R08C18,Agile Hands I,o_skill_agile_hands_01,219,100245,1728,1216,par_skill,s_skill_agile_hands_01,0x98BCC
+R08C19,Store Slots IV,o_skill_store_slots_04,464,100236,1792,1216,par_skill,s_skill_store_slots_05,0x98B3C
+R08C20,Plasma Overheat II,o_skill_plasma_overheat_damage_02,401,100427,1856,1216,par_skill,s_skill_overheat_damage_10,0x9847C
+R08C21,Plasma Lightning Damage II,o_skill_plasma_lightning_damage_02,398,100396,1920,1216,par_skill,s_skill_plasma_lightning_damage_02,0x978DC
+R08C22,Plasma Lightning Range,o_skill_plasma_lightning_range,399,100423,1984,1216,par_skill,s_skill_plasma_lightning_range,0x983BC
+R08C24,Robot Attack Speed I,o_skill_robot_firerate_01,428,100376,2112,1216,par_skill,s_skill_robot_firerate_01,0x95E9C
+R08C25,Robot Damage I,o_skill_robot_damage_01,427,100375,2176,1216,par_skill,s_skill_robot_damage_01,0x95E6C
+R08C26,Plasma O2'd,o_skill_plasma_damage_oxygen,386,100383,2240,1216,par_skill,s_skill_plasma_oxygen_damage,0x962BC
+R08C27,Plasma Attack Speed III,o_skill_plasma_firerate_03,394,100304,2304,1216,par_skill,s_skill_plasma_firerate_03,0x9511C
+R08C29,???,o_skill_mushroom_final,332,100402,2432,1216,par_skill,s_skill_mushroom_final,0x97D8C
+R09C01,Bubble Critical Damage III,o_skill_bubble_critical_damage_03,248,100286,640,1280,par_skill,s_skill_bubble_critical_damage_03,0x94F3C
+R09C02,Bubble Damage X,o_skill_bubble_damage_10,257,100415,704,1280,par_skill,s_skill_bubble_damage_10,0x9814C
+R09C04,Bubble Damage VIII,o_skill_bubble_damage_08,256,100390,832,1280,par_skill,s_skill_bubble_damage_08,0x967FC
+R09C05,Multibubble Chance,o_skill_chain_bubble,289,100274,896,1280,par_skill,s_skill_chain_bubble_chance_01,0x9610C
+R09C06,Bubble Speed II,o_skill_bubble_speed_02,281,100373,960,1280,par_skill,s_skill_bubble_speed_02,0x9601C
+R09C07,Bubble Attack Speed II,o_skill_bubble_firerate_02,266,100277,1024,1280,par_skill,s_skill_bubble_firerate_02,0x9619C
+R09C11,Puffle Damage X,o_skill_friendly_bubble_damage_10,309,100438,1280,1280,par_skill,s_skill_friendly_bubble_damage_03,0x994FC
+R09C12,Shellslot Capacity IV,o_skill_slot_capacity_04,444,100350,1344,1280,par_skill,s_skill_player_slot_capacity_03,0x95A7C
+R09C13,Shellpack Slots IV,o_skill_player_slots_04,424,100240,1408,1280,par_skill,s_skill_player_slots_04,0x94B1C
+R09C14,Storage Slots II,o_skill_storage_slots_02,454,100353,1472,1280,par_skill,s_skill_storage_slots_02,0x95B0C
+R09C16,Expedition Demand I,o_skill_expedition_demand_01,301,100264,1600,1280,par_skill,s_skill_expedition_demand_01,0x98A7C
+R09C17,Store Speed II,o_skill_store_speed_02,466,100243,1664,1280,par_skill,s_skill_store_speed_02,0x98AAC
+R09C18,Store Slots III,o_skill_store_slots_03,463,100235,1728,1280,par_skill,s_skill_store_slots_04,0x98B0C
+R09C19,Bank Safe,o_skill_global_chest,312,100348,1792,1280,par_skill,s_skill_global_chest,0x95A1C
+R09C21,Plasma Lightning Damage I,o_skill_plasma_lightning_damage_01,397,100395,1920,1280,par_skill,s_skill_plasma_lightning_damage_01,0x978AC
+R09C22,Plasma Lightning Chance II,o_skill_plasma_lightning_chance_02,396,100394,1984,1280,par_skill,s_skill_plasma_lightning_chance_02,0x9787C
+R09C23,Robot Overcharge I,o_skill_robot_lightning_01,431,100378,2048,1280,par_skill,s_skill_robot_lightning,0x95ECC
+R09C24,Plasma Range III,o_skill_plasma_range_03,405,100292,2112,1280,par_skill,s_skill_plasma_range_03,0x95FEC
+R09C25,Robot Ally I,o_skill_robot_number_01,432,100374,2176,1280,par_skill,s_skill_robot_number_01,0x95E3C
+R09C26,Plasma Damage VIII,o_skill_plasma_damage_08,384,100398,2240,1280,par_skill,s_skill_plasma_damage_08,0x97A2C
+R09C28,Plasma Damage X,o_skill_plasma_damage_10,385,100416,2368,1280,par_skill,s_skill_plasma_damage_10,0x981AC
+R10C02,Bubble Critical Damage II,o_skill_bubble_critical_damage_02,247,100284,704,1344,par_skill,s_skill_bubble_critical_damage_02,0x94EDC
+R10C03,Bubble Critical Damage I,o_skill_bubble_critical_damage_01,246,100283,768,1344,par_skill,s_skill_bubble_critical_damage_01,0x94EAC
+R10C04,Bubble Size X,o_skill_bubble_size_10,276,100430,832,1344,par_skill,s_skill_bubble_size_03,0x9856C
+R10C05,Bubble Damage VII,o_skill_bubble_damage_07,255,100389,896,1344,par_skill,s_skill_bubble_damage_07,0x967CC
+R10C07,Bubble Damage VI,o_skill_bubble_damage_06,254,100280,1024,1344,par_skill,s_skill_bubble_damage_06,0x95FBC
+R10C08,Puffle I,o_skill_friendly_bubble_chance_01,305,100269,1088,1344,par_skill,s_skill_friendly_bubble_chance_01,0x94D8C
+R10C09,Puffle Damage I,o_skill_friendly_bubble_damage_01,307,100271,1152,1344,par_skill,s_skill_friendly_bubble_damage_01,0x94DEC
+R10C10,Puffle Damage II,o_skill_friendly_bubble_damage_02,308,100437,1216,1344,par_skill,s_skill_friendly_bubble_damage_02,0x994CC
+R10C11,Doppel Bubble II,o_skill_bubble_doppel_02,260,100268,1280,1344,par_skill,s_skill_bubble_doppel_02,0x94D5C
+R10C12,Shellslot Capacity III,o_skill_slot_capacity_03,443,100263,1344,1344,par_skill,s_skill_player_slot_capacity_04,0x94B7C
+R10C13,Shellpack Slots III,o_skill_player_slots_03,423,100239,1408,1344,par_skill,s_skill_player_slots_03,0x94AEC
+R10C14,Storage Slots I,o_skill_storage_slots_01,453,100352,1472,1344,par_skill,s_skill_storage_slots_01,0x95ADC
+R10C15,Submarine Storage,o_skill_submarine_storage,477,100351,1536,1344,par_skill,s_skill_submarine_storage,0x95AAC
+R10C16,Store Speed I,o_skill_store_speed_01,465,100242,1600,1344,par_skill,s_skill_store_speed_01,0x98ADC
+R10C17,Store Slots II,o_skill_store_slots_02,462,100234,1664,1344,par_skill,s_skill_store_slots_02,0x946CC
+R10C18,Chest Speed II,o_skill_chest_speed_02,291,100349,1728,1344,par_skill,s_skill_chest_speed_02,0x95A4C
+R10C19,Plasma Overheat I,o_skill_plasma_overheat_damage_01,400,100404,1792,1344,par_skill,s_skill_overheat_damage_01,0x97E7C
+R10C20,Hot Overheat,o_skill_plasma_overheat_speed,402,100405,1856,1344,par_skill,s_skill_overheat_speed_01,0x97EAC
+R10C21,Plasma Attack Speed II,o_skill_plasma_firerate_02,393,100303,1920,1344,par_skill,s_skill_plasma_firerate_02,0x950EC
+R10C22,Plasma Lightning Chance I,o_skill_plasma_lightning_chance_01,395,100393,1984,1344,par_skill,s_skill_plasma_lightning_chance_01,0x9784C
+R10C23,Plasma Damage VI,o_skill_plasma_damage_06,382,100295,2048,1344,par_skill,s_skill_plasma_damage_06,0x9502C
+R10C25,Plasma Damage VII,o_skill_plasma_damage_07,383,100397,2176,1344,par_skill,s_skill_plasma_damage_07,0x979FC
+R10C26,Ultra Plasma Charge,o_skill_plasma_ultra_charge,414,100296,2240,1344,par_skill,s_skill_plasma_charge_03,0x9505C
+R10C27,Plasma Range IV,o_skill_plasma_range_04,406,100298,2304,1344,par_skill,s_skill_plasma_range_04,0x950BC
+R11C02,Bubble Critical Chance X,o_skill_bubble_critical_chance_10,245,100436,704,1408,par_skill,s_skill_bubble_critical_chance_03,0x9943C
+R11C03,Bubble Critical Chance II,o_skill_bubble_critical_chance_02,244,100282,768,1408,par_skill,s_skill_bubble_critical_chance_02,0x94E7C
+R11C04,Bubble Critical Chance I,o_skill_bubble_critical_chance_01,243,100281,832,1408,par_skill,s_skill_bubble_critical_chance_01,0x94E4C
+R11C05,Bubble Size II,o_skill_bubble_size_02,275,100256,896,1408,par_skill,s_skill_bubble_size_02,0x9604C
+R11C06,Extra Smite,o_skill_bubble_smite_threshold,278,100407,960,1408,par_skill,s_skill_bubble_smite_threshold_01,0x97FFC
+R11C07,Bubble Smite,o_skill_bubble_smite,279,100288,1024,1408,par_skill,s_skill_bubble_smite_01,0x94F9C
+R11C08,Bubble Damage V,o_skill_bubble_damage_05,253,100279,1088,1408,par_skill,s_skill_bubble_damage_05,0x94E1C
+R11C10,Bubble Damage IV,o_skill_bubble_damage_04,252,100272,1216,1408,par_skill,s_skill_bubble_damage_04,0x960AC
+R11C12,Bubble Attack Speed I,o_skill_bubble_firerate_01,265,100255,1344,1408,par_skill,s_skill_bubble_firerate_01,0x94BAC
+R11C13,Shellslot Capacity II,o_skill_slot_capacity_02,442,100262,1408,1408,par_skill,s_skill_player_slot_capacity_02,0x94A2C
+R11C14,Shellpack Slots II,o_skill_player_slots_02,422,100238,1472,1408,par_skill,s_skill_player_slots_02,0x9472C
+R11C16,Store Slots I,o_skill_store_slots_01,461,100233,1600,1408,par_skill,s_skill_store_slots_01,0x98B6C
+R11C17,Chest Speed I,o_skill_chest_speed_01,290,100247,1664,1408,par_skill,s_skill_chest_speed_01,0x9478C
+R11C18,Plasma Attack Speed I,o_skill_plasma_firerate_01,392,100252,1728,1408,par_skill,s_skill_plasma_firerate_01,0x9484C
+R11C19,Plasma Range II,o_skill_plasma_range_02,404,100267,1792,1408,par_skill,s_skill_plasma_range_02,0x94D2C
+R11C20,Plasma Damage IV,o_skill_plasma_damage_04,380,100293,1856,1408,par_skill,s_skill_plasma_damage_04,0x94FCC
+R11C22,Plasma Damage V,o_skill_plasma_damage_05,381,100294,1984,1408,par_skill,s_skill_plasma_damage_05,0x94FFC
+R11C23,Plasma Charge II,o_skill_plasma_charge_02,376,100297,2048,1408,par_skill,s_skill_plasma_charge_02,0x9508C
+R11C24,Plasma Overflow II,o_skill_plasma_explosion_chance_02,388,100300,2112,1408,par_skill,s_skill_plasma_explosion_chance_02,0x9775C
+R11C26,Double Laser,o_skill_double_plasma,298,100379,2240,1408,par_skill,s_skill_double_plasma,0x9622C
+R12C05,Hunter Bubbles II,o_skill_bubble_execute_02,264,100406,896,1472,par_skill,s_skill_bubble_execute_02,0x97F9C
+R12C07,Bubble Penetration I,o_skill_bubble_penetration_01,270,100257,1024,1472,par_skill,s_skill_bubble_penetration_01,0x9607C
+R12C08,Bubble Strike II,o_skill_bubble_first_strike_02,269,100278,1088,1472,par_skill,s_skill_bubble_strike_03,0x961CC
+R12C10,Bubble Strike I,o_skill_bubble_first_strike_01,268,100273,1216,1472,par_skill,s_skill_bubble_strike_01,0x960DC
+R12C11,Bubble Damage III,o_skill_bubble_damage_03,251,100213,1280,1472,par_skill,s_skill_bubble_damage_03,0x943FC
+R12C13,Bubble Damage II,o_skill_bubble_damage_02,250,100212,1408,1472,par_skill,s_skill_bubble_damage_02,0x943CC
+R12C14,Shellslot Capacity I,o_skill_slot_capacity_01,441,100261,1472,1472,par_skill,s_skill_player_slot_capacity_01,0x949FC
+R12C15,Shellpack Slots I,o_skill_player_slots_01,421,100237,1536,1472,par_skill,s_skill_player_slots_01,0x946FC
+R12C16,Plasma Charge I,o_skill_plasma_charge_01,375,100246,1600,1472,par_skill,s_skill_plasma_charge_01,0x9475C
+R12C17,Plasma Damage II,o_skill_plasma_damage_02,378,100217,1664,1472,par_skill,s_skill_plasma_damage_02,0x9448C
+R12C19,Plasma Damage III,o_skill_plasma_damage_03,379,100218,1792,1472,par_skill,s_skill_plasma_damage_03,0x944BC
+R12C21,Plasma Overflow I,o_skill_plasma_explosion_chance_01,387,100299,1920,1472,par_skill,s_skill_plasma_explosion_chance_01,0x961FC
+R12C23,Plasma Overflow Damage I,o_skill_plasma_explosion_damage_01,389,100302,2048,1472,par_skill,s_skill_plasma_explosion_damage_01,0x977BC
+R12C25,Plasma Overflow Damage II,o_skill_plasma_explosion_damage_02,390,100424,2176,1472,par_skill,s_skill_plasma_explosion_damage_02,0x9841C
+R13C06,Hunter Bubbles I,o_skill_bubble_execute_01,263,100285,960,1536,par_skill,s_skill_bubble_execute_01,0x94F0C
+R13C07,Bubble Penetration II,o_skill_bubble_penetration_02,271,100276,1024,1536,par_skill,s_skill_bubble_penetration_02,0x9616C
+R13C09,Starfish Attack Speed I,o_skill_starfish_firerate_01,448,100290,1152,1536,par_skill,s_skill_starfish_firerate_01,0x95F5C
+R13C11,Starfish Friend I,o_skill_starfish_number_01,450,100289,1280,1536,par_skill,s_skill_starfish_number_01,0x95F2C
+R13C12,Bubble Duration I,o_skill_bubble_duration_01,262,100254,1344,1536,par_skill,s_skill_bubble_duration,0x948AC
+R13C13,Bubble Size I,o_skill_bubble_size_01,274,100209,1408,1536,par_skill,s_skill_bubble_size_01,0x9433C
+R13C14,Bubble Damage I,o_skill_bubble_damage_01,249,100211,1472,1536,par_skill,s_skill_bubble_damage_01,0x9439C
+R13C15,Hammock Repair,o_skill_hammock,313,100199,1536,1536,par_skill,s_skill_hammock,0x940FC
+R13C16,Plasma Damage I,o_skill_plasma_damage_01,377,100216,1600,1536,par_skill,s_skill_plasma_damage_01,0x9445C
+R13C17,Plasma Chain I,o_skill_plasma_chain_number_01,372,100258,1664,1536,par_skill,s_skill_plasma_chain_number_01,0x9496C
+R13C19,Plasma Chain II,o_skill_plasma_chain_number_02,373,100259,1792,1536,par_skill,s_skill_plasma_chain_number_02,0x9499C
+R13C22,Plasma Chain III,o_skill_plasma_chain_number_03,374,100391,1984,1536,par_skill,s_skill_plasma_chain_number_03,0x9769C
+R13C24,Plasma Overflow Reach,o_skill_plasma_explosion_size,391,100301,2112,1536,par_skill,s_skill_plasma_explosion_range_01,0x9778C
+R14C08,Starfish Attack Speed II,o_skill_starfish_firerate_02,449,100387,1088,1600,par_skill,s_skill_starfish_firerate_02,0x9637C
+R14C11,Starfish Damage I,o_skill_starfish_damage_01,446,100291,1280,1600,par_skill,s_skill_starfish_damage_01,0x95F8C
+R14C12,Bubble Speed I,o_skill_bubble_speed_01,280,100248,1344,1600,par_skill,s_skill_bubble_speed_01,0x947BC
+R14C13,Doppel Bubble I,o_skill_bubble_doppel_01,259,100215,1408,1600,par_skill,s_skill_bubble_doppel_01,0x94BDC
+R14C15,Submarine,o_skill_submarine,478,100200,1536,1600,par_skill,s_skill_submarine,0x9412C
+R14C16,Plasma Gun,o_skill_plasma_tool,413,100214,1600,1600,par_skill,s_skill_plasma_tool,0x9442C
+R14C17,Plasma Range I,o_skill_plasma_range_01,403,100219,1664,1600,par_skill,s_skill_plasma_range_01,0x944EC
+R14C18,Plasma Chain Damage I,o_skill_plasma_chain_damage_01,367,100260,1728,1600,par_skill,s_skill_plasma_chain_damage_01,0x949CC
+R14C21,Plasma Chain Damage II,o_skill_plasma_chain_damage_02,368,100392,1920,1600,par_skill,s_skill_plasma_chain_damage_04,0x976CC
+R15C09,Starfish Friend II,o_skill_starfish_number_02,451,100386,1152,1664,par_skill,s_skill_starfish_number_02,0x9634C
+R15C10,Starfish Damage II,o_skill_starfish_damage_02,447,100388,1216,1664,par_skill,s_skill_starfish_damage_02,0x963AC
+R15C11,Shallows Biodiversity,o_skill_biodiversity_shallows,231,100223,1280,1664,par_skill,s_skill_biodiversity_01,0x945DC
+R15C14,Jellyfish Value I,o_skill_jellyfish_value_01,320,100220,1472,1664,par_skill,s_skill_jellyfish_value_01,0x9454C
+R15C15,Shell Insurance I,o_skill_jellyfish_insurance_01,315,100221,1536,1664,par_skill,s_skill_jellyfish_insurance_01,0x9457C
+R15C16,Deep Breath,o_skill_deep_breath,296,100210,1600,1664,par_skill,s_skill_deep_breath,0x9436C
+R15C17,Plasma Tank I,o_skill_plasma_tank_01,409,100203,1664,1664,par_skill,s_skill_plasma_tank_01,0x941BC
+R15C18,Plasma Gun Reload I,o_skill_plasma_reload_01,407,100208,1728,1664,par_skill,s_skill_plasma_reload_01,0x9430C
+R15C20,Plasma Gun Reload II,o_skill_plasma_reload_02,408,100312,1856,1664,par_skill,s_skill_plasma_reload_02,0x952CC
+R16C10,Biovalue Increase I,o_skill_biovalue_silver,238,100335,1216,1728,par_skill,s_skill_biovalue_silver,0x957AC
+R16C13,Jellyfish Merchant I,o_skill_jellyfish_value_rare_01,324,100229,1408,1728,par_skill,s_skill_jellyfish_value_rare_01,0x9466C
+R16C14,Light Feet I,o_skill_movement_speed_01,328,100249,1472,1728,par_skill,s_skill_movement_speed_01,0x947EC
+R16C15,Scrap Gatherer,o_skill_scrap_value,436,100227,1536,1728,par_skill,s_skill_scrap_value,0x9463C
+R16C16,Bubble Tank I,o_skill_bubble_tank_01,282,100204,1600,1728,par_skill,s_skill_bubble_tank_01,0x9418C
+R16C17,Oxygen Tank I,o_skill_oxygen_tank_01,348,100201,1664,1728,par_skill,s_skill_oxygen_tank_01,0x9415C
+R16C18,Plasma Capacity I,o_skill_plasma_capacity_01,363,100206,1728,1728,par_skill,s_skill_plasma_capacity_01,0x942AC
+R16C20,Plasma Tank II,o_skill_plasma_tank_02,410,100266,1856,1728,par_skill,s_skill_plasma_tank_02,0x94ABC
+R17C09,Glacial Biodiversity,o_skill_biodiversity_glacial,229,100224,1152,1792,par_skill,s_skill_biodiversity_02,0x94C6C
+R17C12,Jellyfish Value II,o_skill_jellyfish_value_02,321,100328,1344,1792,par_skill,s_skill_jellyfish_value_02,0x9565C
+R17C13,Shell Insurance II,o_skill_jellyfish_insurance_02,316,100222,1408,1792,par_skill,s_skill_jellyfish_insurance_02,0x945AC
+R17C14,Scrap Master,o_skill_scrap_value_rare,435,100231,1472,1792,par_skill,s_skill_scrap_value_rare,0x9469C
+R17C16,Bubble Gun Reload I,o_skill_bubble_reload_01,272,100207,1600,1792,par_skill,s_skill_bubble_reload_01,0x942DC
+R17C17,Bubble Capacity I,o_skill_bubble_capacity_01,239,100205,1664,1792,par_skill,s_skill_bubble_capacity_01,0x9427C
+R17C18,Oxygen Tank II,o_skill_oxygen_tank_02,349,100202,1728,1792,par_skill,s_skill_oxygen_tank_02,0x9421C
+R17C19,Submarine Bubble I,o_skill_submarine_recover,476,100314,1792,1792,par_skill,s_skill_submarine_recover,0x9532C
+R17C21,Plasma Capacity II,o_skill_plasma_capacity_02,364,100414,1920,1792,par_skill,s_skill_plasma_capacity_04,0x9811C
+R18C08,Biovalue Increase II,o_skill_biovalue_gold,236,100337,1088,1856,par_skill,s_skill_biovalue_golden,0x9580C
+R18C11,Jellyfish Merchant II,o_skill_jellyfish_value_rare_02,325,100230,1280,1856,par_skill,s_skill_jellyfish_value_rare_02,0x94CFC
+R18C12,Light Feet II,o_skill_movement_speed_02,329,100250,1344,1856,par_skill,s_skill_movement_speed_02,0x9481C
+R18C13,Crystal Gatherer,o_skill_crystal_value,295,100228,1408,1856,par_skill,s_skill_crystal_value,0x94CCC
+R18C18,Submarine Bubble II,o_skill_submarine_recover_all,475,100315,1728,1856,par_skill,s_skill_submarine_recover_plus,0x9535C
+R18C19,Oxygen Tank III,o_skill_oxygen_tank_03,350,100305,1792,1856,par_skill,s_skill_oxygen_tank_03,0x9514C
+R18C20,Oxygen Regen Amount I,o_skill_oxygen_regen_amount_01,342,100317,1856,1856,par_skill,s_skill_oxygen_regen_01,0x9544C
+R18C22,Plasma Tank III,o_skill_plasma_tank_03,411,100308,1984,1856,par_skill,s_skill_plasma_tank_03,0x9520C
+R18C23,Ultra Plasma Gun Reload,o_skill_plasma_ultra_reload,415,100313,2048,1856,par_skill,s_skill_plasma_reload_03,0x952FC
+R19C07,Swamp Biodiversity,o_skill_biodiversity_swamp,232,100333,1024,1920,par_skill,s_skill_biodiversity_03,0x9574C
+R19C10,Jellyfish Value III,o_skill_jellyfish_value_03,322,100329,1216,1920,par_skill,s_skill_jellyfish_value_03,0x9568C
+R19C11,Faster Waters I,o_skill_entity_arrival_01,299,100251,1280,1920,par_skill,s_skill_entity_arrival_01,0x94C3C
+R19C12,Crystal Master,o_skill_crystal_value_rare,294,100232,1344,1920,par_skill,s_skill_crystal_value_rare,0x94C0C
+R19C14,Collectible Magnet I,o_skill_pickup_range_01,359,100253,1472,1920,par_skill,s_skill_pickup_range_01,0x9487C
+R19C15,Scrap Increase,o_skill_scrap_increase,434,100225,1536,1920,par_skill,s_skill_scrap_increase,0x9460C
+R19C16,Bubble Gun Reload II,o_skill_bubble_reload_02,273,100311,1600,1920,par_skill,s_skill_bubble_reload_02,0x9529C
+R19C17,Bubble Tank II,o_skill_bubble_tank_02,283,100265,1664,1920,par_skill,s_skill_bubble_tank_02,0x94A8C
+R19C19,Oxygen Catch I,o_skill_oxygen_catch_01,340,100316,1792,1920,par_skill,s_skill_oxygen_catch_01,0x953EC
+R19C20,Oxygen Tank IV,o_skill_oxygen_tank_04,351,100306,1856,1920,par_skill,s_skill_oxygen_tank_04,0x9517C
+R19C21,Oxygen Regen Speed I,o_skill_oxygen_regen_speed_01,345,100318,1920,1920,par_skill,s_skill_oxygen_regen_speed_01,0x9547C
+R20C05,Shock Resistance X,o_skill_shock_resistance_10,439,100429,896,1984,par_skill,s_skill_shock_resistance_10,0x9850C
+R20C06,Biovalue Increase X,o_skill_biovalue_rainbow,237,100336,960,1984,par_skill,s_skill_biovalue_rainbow,0x957DC
+R20C07,Shock Resistance I,o_skill_shock_resistance_01,438,100428,1024,1984,par_skill,s_skill_shock_resistance_01,0x984DC
+R20C09,Jellyfish Merchant III,o_skill_jellyfish_value_rare_03,326,100331,1152,1984,par_skill,s_skill_jellyfish_value_rare_03,0x956EC
+R20C10,Shell Insurance III,o_skill_jellyfish_insurance_03,317,100327,1216,1984,par_skill,s_skill_jellyfish_insurance_03,0x9562C
+R20C11,Mushroom Gatherer,o_skill_mushroom_value,335,100343,1280,1984,par_skill,s_skill_mushroom_value,0x9592C
+R20C18,Bubble Capacity II,o_skill_bubble_capacity_02,240,100413,1728,1984,par_skill,s_skill_bubble_capacity_04,0x980EC
+R20C20,Oxygen Catch II,o_skill_oxygen_catch_02,341,100326,1856,1984,par_skill,s_skill_oxygen_catch_02,0x955FC
+R20C21,Oxygen Tank V,o_skill_oxygen_tank_05,352,100307,1920,1984,par_skill,s_skill_oxygen_tank_05,0x951AC
+R20C22,Oxygen Effectiveness I,o_skill_oxygen_tank_extra_01,357,100381,1984,1984,par_skill,s_skill_oxygen_extra_tank_01,0x9625C
+R20C24,Plasma Tank X,o_skill_plasma_tank_10,412,100422,2112,1984,par_skill,s_skill_plasma_tank_04,0x9835C
+R21C05,Magma Biodiversity,o_skill_biodiversity_magma,230,100334,896,2048,par_skill,s_skill_biodiversity_04,0x9577C
+R21C06,Calmer Waters,o_skill_shock_frequency,437,100341,960,2048,par_skill,s_skill_shock_frequency,0x958CC
+R21C08,Jellyfish Value IV,o_skill_jellyfish_value_04,323,100330,1088,2048,par_skill,s_skill_jellyfish_value_04,0x956BC
+R21C09,Light Feet X,o_skill_movement_speed_10,330,100419,1152,2048,par_skill,s_skill_movement_speed_03,0x982FC
+R21C10,Mushroom Master,o_skill_mushroom_value_rare,334,100344,1216,2048,par_skill,s_skill_mushroom_value_rare,0x9595C
+R21C12,Collectible Magnet II,o_skill_pickup_range_02,360,100345,1344,2048,par_skill,s_skill_pickup_range_02,0x9598C
+R21C13,Crystal Increase,o_skill_crystal_increase,293,100226,1408,2048,par_skill,s_skill_crystal_increase,0x94C9C
+R21C19,Bubble Tank III,o_skill_bubble_tank_03,284,100309,1792,2048,par_skill,s_skill_bubble_tank_03,0x9523C
+R21C21,Oxygen Regen Amount II,o_skill_oxygen_regen_amount_02,343,100319,1920,2048,par_skill,s_skill_oxygen_regen_02,0x954AC
+R21C22,Oxygen Tank VI,o_skill_oxygen_tank_06,353,100321,1984,2048,par_skill,s_skill_oxygen_tank_06,0x9550C
+R21C23,Resource Incentive,o_skill_resource_oxygen,426,100384,2048,2048,par_skill,s_skill_resource_oxygen,0x962EC
+R22C06,Biovalue Multiplication I,o_skill_biovalue_amount_01,233,100412,960,2112,par_skill,s_skill_biovalue_amount_01,0x9808C
+R22C07,Jellyfish Merchant IV,o_skill_jellyfish_value_rare_04,327,100332,1024,2112,par_skill,s_skill_jellyfish_value_rare_04,0x9571C
+R22C09,Obsidian Gatherer,o_skill_obsidian_value,339,100339,1152,2112,par_skill,s_skill_obsidian_value,0x9586C
+R22C19,Bubble Gun Ultra Reload,o_skill_bubble_ultra_reload,286,100310,1792,2112,par_skill,s_skill_bubble_reload_03,0x9526C
+R22C22,Oxygen Regen Speed II,o_skill_oxygen_regen_speed_02,346,100320,1984,2112,par_skill,s_skill_oxygen_regen_speed_02,0x954DC
+R22C23,Oxygen Tank VII,o_skill_oxygen_tank_07,354,100322,2048,2112,par_skill,s_skill_oxygen_tank_07,0x9553C
+R22C24,Jellyfish Incentive,o_skill_jellyfish_oxygen,318,100385,2112,2112,par_skill,s_skill_jellyfish_oxygen,0x9631C
+R23C06,Biovalue Multiplication II,o_skill_biovalue_amount_02,234,100433,960,2176,par_skill,s_skill_biovalue_amount_02,0x9862C
+R23C07,Faster Waters X,o_skill_entity_spawn_10,300,100347,1024,2176,par_skill,s_skill_entity_arrival_02,0x959EC
+R23C08,Obsidian Master,o_skill_obsidian_value_rare,338,100340,1088,2176,par_skill,s_skill_obsidian_value_rare,0x9589C
+R23C10,Collectible Magnet III,o_skill_pickup_range_03,361,100439,1216,2176,par_skill,s_skill_pickup_range_03,0x99A0C
+R23C11,Mushroom Increase,o_skill_mushroom_increase,333,100342,1280,2176,par_skill,s_skill_mushroom_increase,0x958FC
+R23C21,Bubble Tank X,o_skill_bubble_tank_10,285,100421,1920,2176,par_skill,s_skill_bubble_tank_04,0x9832C
+R23C23,Oxygen Regen Amount III,o_skill_oxygen_regen_amount_03,344,100324,2048,2176,par_skill,s_skill_oxygen_regen_03,0x9559C
+R23C24,Oxygen Tank VIII,o_skill_oxygen_tank_08,355,100323,2112,2176,par_skill,s_skill_oxygen_tank_08,0x9556C
+R24C06,Biovalue Multiplication X,o_skill_biovalue_amount_10,235,100435,960,2240,par_skill,s_skill_biovalue_amount_10,0x986BC
+R24C23,Oxygen Effectiveness II,o_skill_oxygen_tank_extra_02,358,100432,2048,2240,par_skill,s_skill_oxygen_extra_tank_10,0x985FC
+R24C24,Oxygen Tank X,o_skill_oxygen_tank_10,356,100431,2112,2240,par_skill,s_skill_oxygen_tank_10,0x985CC
+R24C25,Oxygen Regen Speed III,o_skill_oxygen_regen_speed_03,347,100325,2176,2240,par_skill,s_skill_oxygen_regen_speed_03,0x955CC
+R25C06,???,o_skill_obsidian_final,336,100399,960,2304,par_skill,s_skill_obsidian_final,0x97CFC
+R25C08,Collectible Magnet X,o_skill_pickup_range_10,362,100346,1088,2304,par_skill,s_skill_pickup_range_10,0x959BC
+R25C09,Obsidian Increase,o_skill_obsidian_increase,337,100338,1152,2304,par_skill,s_skill_obsidian_increase,0x9583C
+R25C24,???,o_skill_crystal_final,292,100400,2112,2304,par_skill,s_skill_crystal_final,0x97D2C
