@@ -126,5 +126,5 @@ if __name__ == "__main__":
         icon.set(LINK,ET.fromstring(field.ui.svg(field.icon(kind),"")).find(SVG+"image").get(LINK))
         render(receipt,"pickup-"+slug,(31,445,220,52))
     with tempfile.TemporaryDirectory() as folder:
-        subprocess.run(["node",str(HERE/"plates.cjs"),folder],check=True)
+        subprocess.run(["node",str(HERE/"plates.mjs"),folder],check=True)
         pages(Path(folder))

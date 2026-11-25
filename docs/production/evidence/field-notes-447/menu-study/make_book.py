@@ -25,7 +25,7 @@ here = Path(__file__).resolve().parent
 study = here.parent
 work = args.work
 work.mkdir(parents=True, exist_ok=True)
-run(['node', str(here/'plates.cjs'), str(work)], check=True)
+run(['node', str(here/'plates.mjs'), str(work)], check=True)
 run([sys.executable, '-B', str(study/'options-study'/'make_options.py'), str(work)], check=True)
 run([sys.executable, '-B', str(here/'make_field.py'), str(here/'field-plates'), str(work)], check=True)
 shutil.copyfile(study/'shared-menu.svg', work/'shared-menu.svg')
