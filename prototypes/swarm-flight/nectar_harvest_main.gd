@@ -229,7 +229,16 @@ func pulse_direction() -> Vector2:
 	# Resolve keyboard facing after this frame's movement; mouse aim remains explicit.
 	return Vector2.ZERO
 
+func restart_has_input(event: InputEvent) -> bool:
+	if is_instance_valid(ui) and is_instance_valid(ui.restart_dialog) and ui.restart_dialog.visible:
+		if event.is_action_pressed("ui_cancel"):
+			ui.close_restart()
+			get_viewport().set_input_as_handled()
+		return true
+	return false
+
 func _input(event: InputEvent) -> void:
+	if restart_has_input(event): return
 	if event is InputEventMouseMotion: mouse_aim = event.position
 	if event is InputEventKey and is_instance_valid(ui) and ui.tree_key(event):
 		get_viewport().set_input_as_handled()
@@ -523,7 +532,8 @@ func consume_events(pending: Array) -> void:
 		if kind == "sell":
 			var delivered: Dictionary = event.cargo
 			home_sale_summary = "已交付 · 蓝花蜜 %d · 紫花蜜 %d\n获得 %d 金币" % [delivered.blue,delivered.rose,event.amount]
-			message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
+			if mode == "shop": ui.show_shop_payment(event.amount)
+			else: message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
 		elif kind == "rescue":
 			home_return_summary = "救援带回 · 蓝花蜜 %d · 紫花蜜 %d\n损失 · 蓝花蜜 %d · 紫花蜜 %d\n材料保留 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.lost.blue,event.lost.rose,event.materials.fiber,event.materials.resin]
 			home_sale_summary = ""

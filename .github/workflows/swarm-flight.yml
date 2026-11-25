@@ -277,6 +277,9 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error|FAIL " "$RUNNER_TEMP/region-game-model.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --fixed-fps 60 --script res://region_game/ui_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/region-game-empty.json" 2>&1 | tee "$RUNNER_TEMP/region-game-ui.log"
           ! grep -E "SCRIPT ERROR|ERROR:|SHADER ERROR|Parse Error|FAIL " "$RUNNER_TEMP/region-game-ui.log"
+          "$GODOT_BIN" --headless --fixed-fps 60 --path prototypes/swarm-flight --script res://region_game/paper_layout_verify.gd 2>&1 | tee "$RUNNER_TEMP/honey-page-layout.log"
+          grep -q '^HONEY PAGE LAYOUT: .* 0 failures$' "$RUNNER_TEMP/honey-page-layout.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|^FAIL ' "$RUNNER_TEMP/honey-page-layout.log"; then exit 1; fi
           "$GODOT_BIN" --headless --fixed-fps 60 --path prototypes/swarm-flight --script res://region_game/controls_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/honey-controls.json" 2>&1 | tee "$RUNNER_TEMP/honey-controls.log"
           grep -q '^Honey controls: .* checks, 0 failures$' "$RUNNER_TEMP/honey-controls.log"
           if grep -E 'SCRIPT ERROR|ERROR:|FAIL ' "$RUNNER_TEMP/honey-controls.log"; then exit 1; fi
