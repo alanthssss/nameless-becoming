@@ -44,7 +44,7 @@ void fragment() {
 	silhouette.hide()
 
 func _draw_silhouette() -> void:
-	Art.painted_bee(bee,Rect2(-39,-49,84,84),wing_opening)
+	Art.painted_bee(bee,Rect2(-39,-49,84,84),wing_opening,Color.WHITE,false)
 
 func configure(alpha: float, focus: Vector2, reduced: bool, elapsed: float) -> void:
 	if shade_material == null: return

@@ -4,7 +4,7 @@ extends "res://world_view.gd"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
 const UIArt = preload("res://nectar_ui_art.gd")
 # Eye positions and extents are registered to the portrait's square canvas.
-const BEE_EYES := [Rect2(.539,.396,.174,.178),Rect2(.782,.402,.052,.114)]
+const BEE_EYES := [Rect2(.539,.387,.182,.182),Rect2(.783,.388,.056,.106)]
 const Dance = preload("res://nectar_dance.gd")
 const RouteMap = preload("res://nectar_map.gd")
 const HOME_SIGN: Texture2D = preload("res://art/nectar-home-sign.png")
@@ -157,6 +157,9 @@ func _ground_shadow(p: Vector2, radius: Vector2, opacity := .14) -> void:
 		draw_colored_polygon(points,Color(.16,.27,.15,opacity*.32))
 	draw_set_transform(_world_offset)
 
+func _bee_shadow(foot: Vector2, radius: Vector2) -> void:
+	_ground_shadow(foot+Vector2(2,1),radius,.26)
+
 func _draw_player() -> void:
 	if dance_elapsed >= 0.0 and not reduced_motion:
 		_draw_dance()
@@ -193,7 +196,7 @@ func _draw_field_scene() -> void:
 		items.append({"kind":"creature","y":creature.pos.y+30,"data":creature})
 	for creature in departing_creatures:
 		items.append({"kind":"creature","y":creature.pos.y+30,"data":creature})
-	_ground_shadow(model.p+Vector2(0,35),Vector2(22,7),.15)
+	_bee_shadow(model.p+Vector2(0,35),Vector2(22,7))
 	items.append({"kind":"player","y":model.p.y+35})
 	items.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y)<float(b.y))
 	for item in items:
@@ -236,7 +239,7 @@ func _draw_hub() -> void:
 		if model.p.distance_to(reserve)<240: _label(reserve+Vector2(0,-68),"蜂巢储备已封好",false,190)
 	_bee(Vector2(414,476),0.65,Vector2.LEFT,1,false,1.7,"waiting")
 	_bee(Vector2(788,467),0.58,Vector2.LEFT,1,false,2.9,"waiting")
-	_ground_shadow(model.p+Vector2(0,35),Vector2(22,7),.12)
+	_bee_shadow(model.p+Vector2(0,35),Vector2(22,7))
 	var lamp := Vector2(1011,357)
 	if not reduced_motion:
 		for i in 3:
@@ -461,7 +464,7 @@ func _draw_bee_art(alpha: float, wing_height: float, _rest: float, _dash: float,
 			_ellipse(center,radius,lid)
 			_curve(center-Vector2(radius.x,0),center+Vector2(-radius.x*.4,2),center+Vector2(radius.x*.5,2),center+Vector2(radius.x,0),ink,1.0)
 	elif charge>.1 or trapped:
-		var brow: Vector2 = rect.position+rect.size*Vector2(.625,.375)
+		var brow: Vector2 = rect.position+rect.size*Vector2(.630,.367)
 		draw_line(brow+Vector2(-3,2 if trapped else -1),brow+Vector2(3,-1 if trapped else charge*1.5),Color(.25,.13,.045,alpha),1.1,true)
 
 func _draw_working_bee() -> void:

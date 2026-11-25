@@ -13,8 +13,8 @@
   "honey_character": {
     "path": "art/honey-bee.png",
     "layout": "1024 × 512 RGBA; two registered 512-square cells: body with feet at left, paired wings at right. The foreground chest overlaps the wing root.",
-    "source": "Built-in image_gen edits from the #363 app icon. Master SHA-256: 5893c86fe128f6487e174ac8eca6d09fd8b409d00baaac5c9d7d39cc24476a02. Background SHA-256: 6ce6275cbf1c6600deb2641b0c73624c81c63e541c82d7d1ec9a8c4525e204e3.",
-    "prompt": "Keep the right-facing icon bee, honey-coloured fur, single dark brown band, soft ivory wings and amber-tipped antennae. Remove the red scarf and restore the golden chest. Show exactly three small tapered articulated legs on the near side, with the opposite three completely behind the body. Transparent background.",
+    "source": "Built-in image_gen edits from the #363 app icon. Master SHA-256: 999d43653570d97dcca1eb79f3337476864f21a9fed02302a892321ed6244479. Background SHA-256: 6ce6275cbf1c6600deb2641b0c73624c81c63e541c82d7d1ec9a8c4525e204e3.",
+    "prompt": "Keep the right-facing icon bee, honey-coloured fur, single dark brown band, soft ivory wings and amber-tipped antennae. Remove the red scarf and restore the golden chest. Give the bee a purposeful forward gaze and a slight smile. Pose three distinctly readable near-side thoracic legs: an open hook reaching forward, a folded middle leg and a swept-back hind leg with a broader pollen basket. Keep the opposite three occluded; preserve clear spaces between the feet at a 55-pixel display size. Transparent background.",
     "usage": "Honey flight, stamina portrait, growth preview and transition. The gameplay jar remains a separate attachment."
   },
   "revision": "0.9.3",

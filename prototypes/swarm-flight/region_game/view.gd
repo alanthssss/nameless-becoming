@@ -242,7 +242,7 @@ func _draw() -> void:
 			if item.dropped: actors.append({"kind":"material_drop","y":item.p.y+6,"data":item})
 	var entry: Vector2 = model.field.layout.nodes[0].p
 	actors.append({"kind":"entry","y":entry.y+SIGN_FOOT.y,"p":entry})
-	_ground_shadow(model.p+BEE_FOOT,Vector2(16,5),.16)
+	_bee_shadow(model.p+BEE_FOOT,Vector2(16,5))
 	actors.append({"kind":"player","y":model.p.y+BEE_FOOT.y})
 	actors.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y) < float(b.y))
 	for actor in actors:

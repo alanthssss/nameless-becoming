@@ -10,7 +10,8 @@ const FLOWER := Rect2(638,100,571,596)
 const BEE: Texture2D = preload("res://art/honey-bee.png")
 const BODY := Rect2(0,0,512,512)
 const WINGS := Rect2(512,0,512,512)
-const WING_ROOT := Vector2(.40,.43)
+const WING_ROOT := Vector2(.39,.435)
+static var bee_texture := CanvasTexture.new()
 const JOURNAL_ACTIONS: Texture2D = preload("res://art/nectar-journal-actions.png")
 const CELL := Vector2(160,160)
 const JOURNAL_CELLS := {
@@ -27,13 +28,29 @@ static func painted_sprite(c: CanvasItem, texture: Texture2D, source: Rect2, p: 
 	var span := source.size * (extent * 2.0 / maxf(source.size.x,source.size.y))
 	c.draw_texture_rect_region(texture,Rect2(p-span*.5,span),source,tint)
 
+# The atlas has mipmaps. Select them on this texture alone, including in world
+# views that also paint full-resolution scenery on the same CanvasItem.
+static func _bee_layers(c: CanvasItem, body: Rect2, wings: Rect2, offset: Vector2, color: Color) -> void:
+	c.draw_texture_rect_region(bee_texture,Rect2(wings.position+offset,wings.size),WINGS,color)
+	c.draw_texture_rect_region(bee_texture,Rect2(body.position+offset,body.size),BODY,color)
+
 # Both layers use the same square canvas. Keep the wing joint fixed when it folds.
-static func painted_bee(c: CanvasItem, rect: Rect2, wing_scale := 1.0, tint := Color.WHITE) -> void:
+static func painted_bee(c: CanvasItem, rect: Rect2, wing_scale := 1.0, tint := Color.WHITE, shaded := true) -> void:
+	if bee_texture.diffuse_texture == null:
+		bee_texture.diffuse_texture = BEE
+		bee_texture.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	var wing_rect := rect
 	wing_rect.size *= Vector2(lerpf(1.10,1.0,wing_scale),wing_scale)
 	wing_rect.position += (rect.size-wing_rect.size)*WING_ROOT
-	c.draw_texture_rect_region(BEE,wing_rect,WINGS,tint)
-	c.draw_texture_rect_region(BEE,rect,BODY,tint)
+	if shaded:
+		# A narrow burnt-umber edge on the shadow side separates the wings and
+		# cheek from the scenery. Each impression follows the moving silhouette.
+		var edge := rect.size.x/58.0
+		_bee_layers(c,rect,wing_rect,Vector2(1.08,1.25)*edge,Color(.105,.078,.063,.88)*tint)
+		_bee_layers(c,rect,wing_rect,Vector2(-.80,.45)*edge,Color(.17,.12,.087,.72)*tint)
+		_bee_layers(c,rect,wing_rect,Vector2(-.60,-1.18)*edge,Color(.21,.16,.11,.80)*tint)
+		_bee_layers(c,rect,wing_rect,Vector2(-.29,-.57)*edge,Color(1.5,1.18,.84,.74)*tint)
+	_bee_layers(c,rect,wing_rect,Vector2.ZERO,tint)
 
 static func painted_icon(c: CanvasItem, kind: String, p: Vector2, r: float, tint := Color.WHITE) -> void:
 	match kind:
