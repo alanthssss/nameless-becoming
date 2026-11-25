@@ -20,7 +20,7 @@ func setup(interface: Control) -> void:
 	bindings = ui.driver.bindings
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.shade(self, Color("173d35cf"))
-	var page: PanelContainer = ui.material_panel(self,"settings",Vector4(115,78,115,100))
+	var page: PanelContainer = ui.material_panel(self,"settings",Vector4(166,72,176,126))
 	ui.anchored(page, Rect2(.5,.5,0,0), Rect2(-455,-366,910,732))
 	var content: VBoxContainer = ui.column(page, 8)
 	ui.text_line(content, "操作说明与改键", 30, ui.TOOL_INK).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

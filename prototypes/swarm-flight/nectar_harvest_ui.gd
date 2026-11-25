@@ -476,7 +476,7 @@ func _shop_texture(source: Texture2D, region: Rect2) -> AtlasTexture:
 func _build_shop() -> void:
 	shop = screen(self)
 	shade(shop,Color(.08,.17,.12,.23))
-	var panel := material_panel(shop,"shop",Vector4(91,145,91,84))
+	var panel := material_panel(shop,"shop",Vector4(91,145,91,106))
 	anchored(panel,Rect2(1,.5,0,0),Rect2(-625,-279,555,558))
 	var page := column(panel,6)
 	var heading := row(page,4)
@@ -1064,7 +1064,7 @@ func toggle_sound() -> void:
 func _build_journal() -> void:
 	journal = screen(self)
 	shade(journal,Color("183c33db"))
-	var book := material_panel(journal,"book",Vector4(84,58,90,68))
+	var book := material_panel(journal,"book",Vector4(112,58,124,118))
 	anchored(book,Rect2(.5,.5,0,0),Rect2(-532,-298,1064,596))
 	var spread := row(book,96)
 	var left := column(spread,16)
@@ -1182,7 +1182,7 @@ func _setting_switch(parent: Control, caption: String, symbol: int, callback: Ca
 func _build_settings() -> void:
 	settings = screen(self)
 	shade(settings,Color("183c33db"))
-	var p := material_panel(settings,"settings",Vector4(66,67,66,81))
+	var p := material_panel(settings,"settings",Vector4(112,62,118,102))
 	anchored(p,Rect2(.5,.5,0,0),Rect2(-308,-285,616,570))
 	var page := column(p,15)
 	var header := row(page,12)
