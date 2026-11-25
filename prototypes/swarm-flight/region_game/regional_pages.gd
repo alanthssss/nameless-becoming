@@ -129,7 +129,6 @@ func _build_regions() -> void:
 	region_back = page.button("‹  先留在这里",Rect2(84,498,178,45),driver.close_regions)
 
 func _refresh_regions() -> void:
-	if not regions.visible: return
 	var m = driver.model
 	var home: bool = m.at_home()
 	var locked: bool = "meadow" not in m.owned
