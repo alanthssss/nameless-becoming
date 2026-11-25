@@ -191,8 +191,7 @@ func run() -> void:
 	check(game.bindings.action_for("pad",JOY_BUTTON_Y) == "interact" and game.bindings.action_for("key",KEY_F) == "interact" and game.bindings.action_for("mouse",MOUSE_BUTTON_MIDDLE) == "pulse", "fresh game loads all three slots")
 	await click(game.ui.menu_settings)
 	await click(game.ui.controls_button)
-	var reset_button := page.find_children("*","Button",true,false).filter(func(b): return b.text == "恢复全部默认按键")[0] as Button
-	await click(reset_button)
+	await click(page.reset_button)
 	check(game.bindings.action_for("key",KEY_E) == "interact" and game.bindings.action_for("pad",JOY_BUTTON_A) == "interact" and game.bindings.action_for("mouse",MOUSE_BUTTON_RIGHT) == "pulse", "restore defaults resets every device")
 	await close_game()
 	print("Honey controls: %d checks, %d failures" % [checks,failures])

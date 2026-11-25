@@ -2,6 +2,7 @@ extends "res://nectar_harvest_view.gd"
 ## The terrain plates are registered to the same world coordinates as the
 ## field coast. Leaf tips, reflections and dappled light move within their
 ## original paint. Roots, shores, interaction points and buildings stay fixed.
+const BasinVisitor = preload("res://region_game/basin_visitor.gd")
 const EnergyDial = preload("res://nectar_energy_dial.gd")
 const FieldLife = preload("res://region_greybox/model.gd")
 const FieldLayout = preload("res://region_greybox/layout.gd")
@@ -50,6 +51,7 @@ const HUB_LIGHT := [Rect2(84,297,147,50), Rect2(542,70,126,42)]
 const MEADOW_LIGHT := [
 	Rect2(39,171,104,43), Rect2(172,173,126,52), Rect2(546,172,74,50),
 ]
+var basin_visitor: Sprite2D
 var _paint_root: Node2D
 var _painted_area := ""
 var _crowns: Array[Dictionary] = []
@@ -60,6 +62,10 @@ var _full_glow := 0.0
 
 func _ready() -> void:
 	super._ready()
+	if area_key == "hub":
+		basin_visitor = BasinVisitor.new()
+		add_child(basin_visitor)
+		basin_visitor.pose(0.0, reduced_motion)
 	if feedback_font == null:
 		var face_font := SystemFont.new()
 		face_font.font_names = PackedStringArray(["PingFang SC", "Noto Sans CJK SC", "sans-serif"])
@@ -67,6 +73,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	if basin_visitor != null:
+		basin_visitor.pose(clock, reduced_motion)
 	if not presentation_active: return
 	_full_glow = maxf(0.0,_full_glow-delta)
 	for mote in _life_motes: mote.age += delta
@@ -242,7 +250,7 @@ func _draw() -> void:
 			if item.dropped: actors.append({"kind":"material_drop","y":item.p.y+6,"data":item})
 	var entry: Vector2 = model.field.layout.nodes[0].p
 	actors.append({"kind":"entry","y":entry.y+SIGN_FOOT.y,"p":entry})
-	_ground_shadow(model.p+BEE_FOOT,Vector2(16,5),.16)
+	_bee_shadow(model.p+BEE_FOOT,Vector2(16,5))
 	actors.append({"kind":"player","y":model.p.y+BEE_FOOT.y})
 	actors.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y) < float(b.y))
 	for actor in actors:
@@ -475,7 +483,7 @@ func _draw_working_bee() -> void:
 		super._draw_working_bee()
 		return
 	var pose := _field_bee_pose()
-	_bee(pose.p,pose.size,pose.face,1.0,false,0.0,"leader",pose.push)
+	_bee(pose.p,pose.size,pose.face,1.0,false,0.0,"leader",pose.push,model.energy_stage())
 
 func _draw_bag() -> void:
 	if area_key == "hub":

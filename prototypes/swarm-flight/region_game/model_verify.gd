@@ -1,5 +1,9 @@
 extends SceneTree
 const Model = preload("res://region_game/model.gd")
+
+class FutureWingProfile extends Model:
+	func max_energy() -> float: return 120.0
+
 var checks := 0
 var failures := 0
 func check(ok: bool, label: String) -> void:
@@ -9,6 +13,7 @@ func check(ok: bool, label: String) -> void:
 		printerr("FAIL "+label)
 func _initialize() -> void:
 	last_wing_at_gate()
+	energy_stages_after_growth()
 	var m = Model.new()
 	check(m.upgrade_defs().size() == 14 and not m.can_buy("shortcut"),"only useful growth is purchasable")
 	check(not m.transition_to("meadow"),"meadow locked")
@@ -66,6 +71,31 @@ func _initialize() -> void:
 	check(not m.buy("reserve"),"no duplicate spend")
 	print("Regional model: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)
+
+func energy_stages_after_growth() -> void:
+	var model = Model.new()
+	model.coins = 100
+	model.materials = {"fiber": 6, "resin": 2}
+	check(model.buy("gather1"), "prepare wing purchases")
+	check_energy_boundaries(model, 36)
+	check(model.buy("wings1"), "buy first wing for stamina stages")
+	check_energy_boundaries(model, 50)
+	check(model.buy("wings2"), "buy second wing for stamina stages")
+	check_energy_boundaries(model, 70)
+	check_energy_boundaries(FutureWingProfile.new(), 120)
+
+func check_energy_boundaries(model, expected_max: int) -> void:
+	var limits := [5.0/6.0, 2.0/3.0, 0.5, 0.25, 0.125]
+	check(model.transition_to("pond") and model.energy == expected_max, "full on departure at %d" % expected_max)
+	for i in limits.size():
+		var boundary: float = expected_max * limits[i]
+		for offset: float in [-0.0001, 0.0, 0.0001]:
+			model.field.energy = boundary + offset
+			model._sync_field()
+			var label := "max %d, cutoff %d, offset %.4f" % [expected_max, i, offset]
+			check(model.energy_stage() == (i if offset > 0 else i + 1), "portrait " + label)
+			check(model.energy_is_low() == (model.energy <= expected_max * 0.25), "return cue " + label)
+	check(model.transition_to("hub") and model.energy == expected_max and model.energy_stage() == 0 and not model.energy_is_low(), "rested at home at %d" % expected_max)
 
 func approaching(region: String, radius: float, remaining: float):
 	var m = Model.new()

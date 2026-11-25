@@ -3,7 +3,7 @@ extends Control
 signal closed
 
 const Bay = preload("res://region_game/honey_growth_bay_model.gd")
-const Art = preload("res://art_sprites.gd")
+const Art = preload("res://nectar_ui_art.gd")
 const POND: Texture2D = preload("res://art/collection-pond.webp")
 const FLOWER: Texture2D = preload("res://art/collection-blue-bloom.webp")
 const STAGES := ["初章 · 亲采","中期 · 串花","后期 · 花瀑","满档 · 连锁"]
@@ -306,8 +306,8 @@ func _draw_field() -> void:
 			plot.draw_line(event.from,event.from.lerp(point,amount),color,3.8,true)
 		plot.draw_string_outline(page_font,point+Vector2(5,-30),"+1",HORIZONTAL_ALIGNMENT_LEFT,-1,19,4,Color("#324135"))
 		plot.draw_string(page_font,point+Vector2(5,-30),"+1",HORIZONTAL_ALIGNMENT_LEFT,-1,19,color)
-	var sprite_size := Vector2(46,41)
+	var sprite_size := Vector2(46,46)
 	# Use the same field transform for the bee as for the flowers.
 	plot.draw_set_transform(_view_origin()+(bay.bee+Vector2(1,-16))*zoom,0,Vector2((-1 if bay.facing.x<0 else 1)*zoom,zoom))
-	plot.draw_texture_rect_region(Art.ATLAS,Rect2(-sprite_size*.5,sprite_size),Art.BEE)
+	Art.painted_bee(plot,Rect2(-sprite_size*.5,sprite_size))
 	plot.draw_set_transform(Vector2.ZERO,0,Vector2.ONE)

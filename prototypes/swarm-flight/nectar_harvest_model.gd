@@ -5,6 +5,8 @@ const LegacyV4 = preload("res://nectar_legacy_model_v4.gd")
 const Encounters = preload("res://nectar_encounters.gd")
 const Map = preload("res://nectar_map.gd")
 const Canopy = preload("res://leaf_canopy_geometry.gd")
+# Lower limits for the first five portraits; the final portrait includes zero.
+const ENERGY_STAGE_LIMITS := [5.0/6.0,2.0/3.0,.5,.25,.125]
 const RAIN_SHELTER := {"pos":Vector2(2760,660),"half_width":160.0}
 const WORLD_WIDTH := 3600.0
 const HUB_SHOP := Vector2(360,520)
@@ -81,6 +83,13 @@ func emit(kind: String,where: Vector2,amount := 0) -> void:
 
 func at_home() -> bool: return area == "hub"
 func energy_is_low() -> bool: return not at_home() and energy <= max_energy() * 0.25
+
+func energy_stage() -> int:
+	var capacity := max_energy()
+	for i in ENERGY_STAGE_LIMITS.size():
+		if energy > capacity*float(ENERGY_STAGE_LIMITS[i]): return i
+	return ENERGY_STAGE_LIMITS.size()
+
 func cargo_total() -> int: return int(cargo.blue)+int(cargo.rose)
 func cargo_value() -> int:
 	var base := int(cargo.blue)+int(cargo.rose)*3

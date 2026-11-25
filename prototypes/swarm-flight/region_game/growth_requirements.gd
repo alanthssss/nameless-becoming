@@ -8,6 +8,8 @@ const RESOURCE_SOURCES := {"coins":"回庭院交售花蜜","fiber":"在池岸振
 var ui
 var links: Array[Button] = []
 var open_group := ""
+var show_completed := false
+var show_remaining := false
 var shown_rank := ""
 var shown_rows: Array = []
 
@@ -56,7 +58,10 @@ static func rows_for(board, rank_id: String) -> Array:
 func display(rank: Dictionary) -> void:
 	var rows: Array = [] if rank.state=="owned" else rows_for(ui.board,rank.id)
 	if rank.id==shown_rank and rows==shown_rows: return
-	if rank.id!=shown_rank: open_group = ""
+	if rank.id!=shown_rank:
+		open_group = ""
+		show_completed = false
+		show_remaining = false
 	shown_rows = rows
 	shown_rank = rank.id
 	_render()
@@ -69,25 +74,31 @@ func _render() -> void:
 	visible = not shown_rows.is_empty()
 	if not visible: return
 	var missing: int = shown_rows.filter(func(item): return not item.met).size()
-	var previous_section := ""
-	for item in shown_rows:
-		var section := "met" if item.met else "missing"
-		if previous_section != section:
-			var count := shown_rows.size()-missing if item.met else missing
-			var title := "已满足 %d 项" % count if item.met else "待完成 %d 项" % count
-			var heading: Label = ui.text_line(self,title,16,READY_INK if item.met else MISSING_INK)
-			heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		previous_section = section
-		_add_row(item)
+	if missing:
+		_add_row(shown_rows[0])
+	if missing>1:
+		_fold("其余 %d 项待办" % (missing-1),"remaining",show_remaining)
+		if show_remaining:
+			for item in shown_rows.slice(1,missing): _add_row(item)
+	var completed := shown_rows.size()-missing
+	if completed:
+		_fold("已满足 %d 项" % completed,"completed",show_completed)
+		if show_completed:
+			for item in shown_rows.slice(missing): _add_row(item)
+
+func _fold(caption: String, key: String, expanded: bool) -> void:
+	var button := _link(("▾  " if expanded else "▸  ")+caption,INK,_toggle.bind(key),"收起" if expanded else "展开查看")
+	button.set_meta("group",key)
+	button.add_theme_font_size_override("font_size",15)
 
 func _add_row(item: Dictionary) -> void:
-	var mark := "✓ " if item.met else "◇ "
+	var mark := "✓  " if item.met else ""
 	var ink := READY_INK if item.met else MISSING_INK
 	var ids: Array = item.targets
 	if ids.is_empty():
 		ui.text_line(self,mark+item.text,16,ink,true)
 	elif ids.size()==1:
-		_link(mark+("已学 " if item.met else "先学 ")+item.text+"  →",ink,ui.follow_growth_rank.bind(ids[0]),"在树上查看"+rank_name(ui.board,ids[0]))
+		_link((mark+"已学 "+item.text if item.met else "去学「"+str(item.text)+"」")+"  →",ink,ui.follow_growth_rank.bind(ids[0]),"在树上查看"+rank_name(ui.board,ids[0]))
 	else:
 		var key := str(ids[0])
 		var expanded := open_group==key
@@ -106,13 +117,16 @@ func _link(words: String, ink: Color, callback: Callable, hint: String) -> Butto
 	b.add_theme_font_size_override("font_size",16)
 	for setting in ["font_color","font_focus_color","font_hover_color","font_pressed_color"]:
 		b.add_theme_color_override(setting,ink)
-	b.add_theme_stylebox_override("normal",ui.style(Color("f9eac486"),Color("bfa379"),1,4))
+	b.accessibility_description = hint
 	b.tooltip_text = hint
 	links.append(b)
 	return b
 
 func _toggle(key: String) -> void:
-	open_group = "" if open_group==key else key
+	match key:
+		"completed": show_completed = not show_completed
+		"remaining": show_remaining = not show_remaining
+		_: open_group = "" if open_group==key else key
 	_render()
 	for link in links:
 		if link.get_meta("group","")==key:

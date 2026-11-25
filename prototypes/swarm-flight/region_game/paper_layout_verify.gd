@@ -18,7 +18,7 @@ var states := 0
 var failures := {}
 var printed := {}
 var checked_text := 0
-var book_leaves: Array[TextureRect] = []
+var growth_paper: Control
 
 func _initialize() -> void:
 	call_deferred("run")
@@ -39,6 +39,21 @@ func on_paper(ink: Rect2, panel: Rect2, atlas: Rect2) -> bool:
 	if mark.get_center().x > 768.0: mark.position.x = 1536.0-mark.end.x
 	return PAPER.encloses(mark) and not mark.intersects(TOP_LEAVES) and not mark.intersects(LOWER_LEAVES)
 
+# Fractions measured on the illustrated faces, independently of container padding.
+func clear_of_hardware(mark: Rect2, panel: PanelContainer) -> bool:
+	var face := panel.get_global_rect()
+	var r := Rect2((mark.position-face.position)/face.size,mark.size/face.size)
+	match panel.get_meta("material_kind"):
+		"book":
+			return Rect2(.096,.075,.363,.745).encloses(r) or Rect2(.520,.075,.371,.745).encloses(r)
+		"shop":
+			return Rect2(.124,.176,.739,.673).encloses(r) and not r.intersects(Rect2(0,0,.244,.245)) and not r.intersects(Rect2(.71,0,.1,.25))
+		"settings":
+			return Rect2(.091,.065,.818,.768).encloses(r) and not r.intersects(Rect2(.096,.066,.079,.094)) and not r.intersects(Rect2(.821,.066,.085,.094)) and not r.intersects(Rect2(.09,.707,.076,.10)) and not r.intersects(Rect2(.815,.707,.09,.12))
+		"letter":
+			return Rect2(.053,.08,.87,.825).encloses(r) and not r.intersects(Rect2(.762,.626,.208,.342))
+	return false
+
 func visible_ink(control: Control, box: Rect2) -> Rect2:
 	var parent := control.get_parent()
 	while parent is Control:
@@ -51,18 +66,22 @@ func inspect_mark(control: Control, ink: Rect2, page: PanelContainer, atlas: Rec
 	if not visible.has_area(): return
 	var label := str(control.text).strip_edges().replace("\n"," ").left(17)
 	expect(Rect2(Vector2.ZERO,ui.size).grow(1).encloses(visible),"outside screen: "+label)
-	if page:
+	if page and page.has_meta("material_kind"):
+		expect(clear_of_hardware(visible,page),"on illustrated frame: "+label)
+	elif page:
 		expect(on_paper(visible,page.get_global_rect(),atlas),"on painted border: "+label)
 	elif ui.tree.is_ancestor_of(control):
-		var side := 0 if visible.get_center().x < book_leaves[1].global_position.x else 1
-		var leaf: TextureRect = book_leaves[side]
-		expect(on_paper(visible,leaf.get_global_rect(),leaf.texture.region),"on growth book border: "+label)
+		var backing: Control = ui.skill_note if ui.skill_note.is_ancestor_of(control) else growth_paper
+		expect(backing.get_global_rect().grow(-2).encloses(visible),"outside the growth parchment: "+label)
 
 func inspect(node: Node, page: PanelContainer = null, atlas := Rect2()) -> void:
 	if node is CanvasItem and not node.is_visible_in_tree(): return
 	if node is PanelContainer:
 		var bg: StyleBox = node.get_theme_stylebox("panel")
-		if bg is StyleBoxTexture and bg.texture is AtlasTexture and bg.texture.atlas == Art.JOURNAL:
+		if node.has_meta("material_kind"):
+			page = node
+			expect(Rect2(Vector2.ZERO,ui.size).grow(1).encloses(page.get_global_rect()),"whole illustrated panel outside screen")
+		elif bg is StyleBoxTexture and bg.texture is AtlasTexture and bg.texture.atlas == Art.JOURNAL:
 			page = node
 			atlas = bg.texture.region
 			expect(Rect2(Vector2.ZERO,ui.size).grow(1).encloses(page.get_global_rect()),"whole paper outside screen")
@@ -72,9 +91,11 @@ func inspect(node: Node, page: PanelContainer = null, atlas := Rect2()) -> void:
 			if node.text[i].strip_edges().is_empty(): continue
 			var ink: Rect2 = node.get_character_bounds(i)
 			if ink.has_area(): inspect_mark(node,node.get_global_transform()*ink,page,atlas)
-	elif node is VScrollBar and ui.tree.is_ancestor_of(node):
-		var leaf: TextureRect = book_leaves[1]
-		expect(on_paper(node.get_global_rect(),leaf.get_global_rect(),leaf.texture.region),"growth scrollbar on frame")
+	elif node is VScrollBar:
+		if page and page.has_meta("material_kind"):
+			expect(clear_of_hardware(node.get_global_rect(),page),"scroll track on illustrated frame")
+		elif ui.skill_note.is_ancestor_of(node):
+			expect(ui.skill_note.get_global_rect().encloses(node.get_global_rect()),"track outside growth note")
 	elif node is Button and not node.text.is_empty():
 		checked_text += 1
 		var font: Font = node.get_theme_font("font")
@@ -132,6 +153,9 @@ func check_menus() -> void:
 	game.reduced_motion = true
 	ui.refresh_settings()
 	scan("alternate setting captions",ui.settings)
+	ui.settings_about.pressed.emit()
+	await frames()
+	scan("settings credits",ui.settings)
 	game.reduced_motion = false
 	ui.settings_scroll.scroll_vertical = int(ui.settings_scroll.get_v_scroll_bar().max_value)
 	await frames()
@@ -159,6 +183,9 @@ func check_menus() -> void:
 	game.model.rose_sold = 35
 	await mode("journal")
 	scan("visited journal",ui.journal)
+	ui.journal_regions[1].pressed.emit()
+	await frames()
+	scan("meadow journal",ui.journal)
 
 func check_courtyard() -> void:
 	game.model.coins = 1000000000
@@ -192,6 +219,10 @@ func check_courtyard() -> void:
 	game.model.cargo = {"blue":0,"rose":0}
 	await mode("shop")
 	scan("shop rescue and sale receipt",ui.shop)
+	ui.shop_receipt.button_pressed = true
+	ui._toggle_shop_receipt()
+	await frames()
+	scan("receipt expanded",ui.shop)
 	ui.shop_scroll.scroll_vertical = int(ui.shop_scroll.get_v_scroll_bar().max_value)
 	await frames()
 	scan("shop end of receipt",ui.shop)
@@ -205,6 +236,7 @@ func check_book() -> void:
 	await mode("tree")
 	for rank in ui.board.ranks_by_id:
 		ui.board.select_rank(rank)
+		ui._reveal_note()
 		await frames(2)
 		scan("growth "+rank,ui.tree)
 		var scroll: ScrollContainer = ui.detail_scroll
@@ -249,11 +281,11 @@ func check_size(pixels: Vector2i) -> void:
 	game.directory = directory.get_current_dir()
 	root.add_child(game)
 	ui = game.ui
-	book_leaves.clear()
+	growth_paper = null
 	for node in ui.tree.get_children():
-		if node is TextureRect and node.texture is AtlasTexture and node.texture.atlas == Art.JOURNAL:
-			book_leaves.append(node)
-	expect(book_leaves.size()==2,"growth book has both painted leaves")
+		if node.get_script() == preload("res://region_game/growth_parchment.gd") and not node.small_note:
+			growth_paper = node
+	expect(is_instance_valid(growth_paper),"growth parchment present")
 	var known := [ui.hud,ui.shop,ui.tree,ui.regions,ui.menu,ui.settings,ui.slots,ui.journal,
 		ui.controls_page,ui.restart_dialog,ui.transition_layer,ui.transition_hint,ui.toast_panel]
 	for node in ui.get_children():

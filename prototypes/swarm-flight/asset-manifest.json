@@ -2,10 +2,43 @@
   "project": "Before the Rain / 雨来之前",
   "application_icon": {
     "path": "icon.png",
-    "size_px": [1024, 1024],
-    "source": "Built-in image_gen, 2026-11-23, issue #363. Character reference cropped from art/revision-atlas.png at (67, 158, 510, 456).",
-    "prompt": "Use case: logo-brand. A finished square macOS game icon, illustration for a hand-painted storybook garden adventure. The supplied reference is THIS game's hero. Art direct a memorable close-up of the SAME golden bumblebee flying toward the right, head turned slightly to the viewer. Keep the precise friendly face, expressive big ivory eyes with dark brown pupils, paired curved amber antennae, tiny nose, russet-red knotted neckerchief, toasted-brown band on golden abdomen. Add a pair of simple overlapping pearly, slightly translucent wings behind the back, like the petals of a white crocus. Compose a beautiful bold silhouette in three-quarter profile, upward diagonal. Behind it, ONE dark pine-green rounded-square tile with subtle layered teal brushwork, with a single curved sage leaf in one lower corner holding one small pale raindrop. Make bee face and scarf and wing shapes large enough to read in the Dock. Warm honey sunlight from upper left, handmade gouache, gentle imperfect painted edges, controlled values and very few details, distinctive polished indie game identity. Main bee fills about 75% of tile. Tile centered, covering 92% of square canvas width, transparent outer margin and transparent outside rounded corners. No letterforms, words, type, logos, badge rings, hexagons, frames, stickers or extruded borders, no scene/mockup. One single icon centered, 1:1.",
-    "processing": "Generated RGBA artwork reduced to 1024 × 1024 with macOS sips, retaining transparency. Shared by Godot, the macOS exporter and the nectar title menu."
+    "size_px": [
+      1024,
+      1024
+    ],
+    "source": "Built-in image_gen, 2026-11-25, #410. Edited the #363 icon into a transparent scarf-free character and a separate garden tile. The #419 revision uses the same three open leg silhouettes as the field bee and stamina portrait.",
+    "prompt": "Preserve the rounded green tile, upper-left sunlight, painted foliage and dew. Restore the area beneath the original bee, then composite the same transparent Honey character used in the game.",
+    "processing": "Original 1254-square character and tile composited at source resolution, resized to 1024 square for Godot, macOS and the title menu."
+  },
+  "honey_character": {
+    "path": "art/honey-bee.png",
+    "layout": "1024 × 512 RGBA; two registered 512-square cells: body with feet at left, paired wings at right. The foreground chest overlaps the wing root.",
+    "source": "Built-in image_gen edits from the #363 app icon. Master SHA-256: 999d43653570d97dcca1eb79f3337476864f21a9fed02302a892321ed6244479. New #419 leg painting SHA-256: f93513a5485a88a73536dc56acd2964faffc508d0721d19dbbde1b9d17be0786. Background SHA-256: 6ce6275cbf1c6600deb2641b0c73624c81c63e541c82d7d1ec9a8c4525e204e3.",
+    "prompt": "Keep the right-facing icon bee, honey-coloured fur, single dark brown band, soft ivory wings and amber-tipped antennae. Remove the red scarf and restore the golden chest. Give the bee a purposeful forward gaze and a slight smile. Pose three distinctly readable near-side thoracic legs: a forward bent foreleg, a middle leg flexed down under the chest, and a trailing hind leg carrying a golden pollen pellet on the shin. Keep the opposite three occluded; preserve clear spaces between the feet at a 55-pixel display size. Transparent background.",
+    "usage": "Honey flight, stamina portrait, growth preview and transition. The gameplay jar remains a separate attachment."
+  },
+  "honey_energy_poses": {
+    "path": "art/honey-energy-poses.png",
+    "source": "Built-in image_gen, 2026-11-25, #419. Five local face paintovers reference the existing #410 Honey master; retain one identity and the original visible three-leg count.",
+    "layout": "768 × 512 RGBA; six registered body-only 256-square cells, three across. Separate original ivory wings use the common wing root.",
+    "states": [
+      "抖擞",
+      "轻快",
+      "专注",
+      "吃力",
+      "疲倦",
+      "强撑"
+    ],
+    "prompt": "Retain the golden three-quarter bee and its exact face placement. Paint only brows, eyes and mouth for easy flight, focus, pacing with a breath, tired and last reserves. Opposite-side legs stay occluded. No costume, tear or alarm glyphs.",
+    "processing": "Feather the painted expressions onto the original body and progressively lower the antennae. Register the revised lower body under all six expressions. Leave clear air beneath the chin and between the three bent legs at both play sizes. Use the same hind-leg pollen silhouette on the field bee and application icon.",
+    "source_sha256": [
+      "4d6694805a516537418766bb0f7940c10beee0ed291b054c86bd3e57ad5271fc",
+      "c94ab3188e09d9c4d146746e90afa64d1eb799094b45832953336e82b4e508e5",
+      "6682bde951a9475a97db730f62a0c2b5dbb6491768b184bb07eab0e2c7aea43c",
+      "403d3782355c57f3252a04bfe3ca2d72547eba7fb9d906aef0fa630e194c0d3f",
+      "12cac9b4f7248d0712aa1052310bdb460863fe1b4f4b2c65f30d39062418c71e",
+      "058b92ebf19fa0c8777a963d4fd956749042cbf4ec50373587cd76cdfb273489"
+    ]
   },
   "revision": "0.9.3",
   "created": "2026-10-20",

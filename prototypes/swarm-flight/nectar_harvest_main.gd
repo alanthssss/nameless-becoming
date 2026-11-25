@@ -207,7 +207,7 @@ func update_sound_context() -> void:
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
 func _hud_signature() -> String:
-	return str([int(ceil(model.energy)),model.energy_is_low(),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
+	return str([int(ceil(model.energy)),model.energy_stage(),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
 
 func has_harvest_hint() -> bool:
 	if model.at_home() or model.cargo_total() >= model.capacity() or not model.interaction().is_empty(): return false
@@ -532,7 +532,8 @@ func consume_events(pending: Array) -> void:
 		if kind == "sell":
 			var delivered: Dictionary = event.cargo
 			home_sale_summary = "已交付 · 蓝花蜜 %d · 紫花蜜 %d\n获得 %d 金币" % [delivered.blue,delivered.rose,event.amount]
-			message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
+			if mode == "shop": ui.show_shop_payment(event.amount)
+			else: message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
 		elif kind == "rescue":
 			home_return_summary = "救援带回 · 蓝花蜜 %d · 紫花蜜 %d\n损失 · 蓝花蜜 %d · 紫花蜜 %d\n材料保留 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.lost.blue,event.lost.rose,event.materials.fiber,event.materials.resin]
 			home_sale_summary = ""

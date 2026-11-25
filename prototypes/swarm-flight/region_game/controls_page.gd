@@ -9,6 +9,7 @@ var headings := {}
 var flight_note: Label
 var notes: Label
 var status: Label
+var reset_button: Button
 var scroll: ScrollContainer
 var pending_action := ""
 var pending_slot := ""
@@ -19,21 +20,19 @@ func setup(interface: Control) -> void:
 	bindings = ui.driver.bindings
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.shade(self, Color("173d35cf"))
-	var page: PanelContainer = ui.reading_page(self,Vector2(110,68))
+	var page: PanelContainer = ui.material_panel(self,"settings",Vector4(115,78,115,100))
 	ui.anchored(page, Rect2(.5,.5,0,0), Rect2(-455,-366,910,732))
 	var content: VBoxContainer = ui.column(page, 8)
-	ui.text_line(content, "操作说明与改键", 30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ui.text_line(content, "操作说明与改键", 30, ui.TOOL_INK).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var tab_bar: HBoxContainer = ui.row(content, 14)
 	var group := ButtonGroup.new()
 	for id in ["kbm","pad"]:
 		var tab: Button = ui.action(tab_bar, "键盘和鼠标" if id == "kbm" else "游戏手柄", _select_device.bind(id))
 		tab.toggle_mode = true
 		tab.button_group = group
-		tab.add_theme_stylebox_override("pressed", ui.style(Color("466548"), Color("435e40"), 1, 8))
-		tab.add_theme_color_override("font_pressed_color", Color("fff4ce"))
-		tab.add_theme_color_override("font_hover_pressed_color", Color("fff4ce"))
+		ui.tool_button(tab)
 		tabs[id] = tab
-	flight_note = ui.text_line(content, "", 18, ui.INK, true)
+	flight_note = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
 	scroll = ScrollContainer.new()
 	scroll.follow_focus = true
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -44,7 +43,7 @@ func setup(interface: Control) -> void:
 	var header: HBoxContainer = ui.row(list, 8)
 	_row_label(header, "飞行与采集")
 	for slot in ["key","mouse","pad"]:
-		var title: Label = ui.text_line(header, {"key":"键盘","mouse":"鼠标","pad":"手柄按钮"}[slot], 17)
+		var title: Label = ui.text_line(header, {"key":"键盘","mouse":"鼠标","pad":"手柄按钮"}[slot], 17, ui.TOOL_INK)
 		title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		headings[slot] = title
@@ -54,25 +53,21 @@ func setup(interface: Control) -> void:
 		rows[id] = {}
 		for slot in ["key","mouse","pad"]:
 			var button: Button = ui.action(line, "", _listen.bind(id, slot))
+			ui.tool_button(button)
 			button.custom_minimum_size.y = 39
-			button.add_theme_font_size_override("font_size", 18)
-			button.add_theme_stylebox_override("normal", ui.style(Color("f4e7c0a0"), Color("bda97b"), 1, 7))
-			for state in ["normal", "hover", "pressed", "focus"]:
-				var box := button.get_theme_stylebox(state).duplicate() as StyleBox
-				box.content_margin_top = 3
-				box.content_margin_bottom = 3
-				button.add_theme_stylebox_override(state,box)
+			button.add_theme_font_size_override("font_size",18)
 			rows[id][slot] = button
-	notes = ui.text_line(list, "", 18, ui.INK, true)
+	notes = ui.text_line(list, "", 18, ui.TOOL_SECONDARY, true)
 	notes.focus_mode = Control.FOCUS_ALL
-	status = ui.text_line(content, "", 18, ui.INK, true)
+	status = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
 	var footer: HBoxContainer = ui.row(content, 16)
-	ui.action(footer, "恢复全部默认按键", _reset)
-	ui.action(footer, "返回设置", ui.close_controls)
+	reset_button = ui.action(footer,"恢复默认按键",_reset)
+	ui.tool_button(reset_button)
+	ui.tool_button(ui.action(footer, "返回设置", ui.close_controls))
 	hide()
 
 func _row_label(line: Control, words: String) -> void:
-	var label: Label = ui.text_line(line, words, 18)
+	var label: Label = ui.text_line(line, words, 18, ui.TOOL_INK)
 	label.custom_minimum_size.x = 180
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
@@ -99,9 +94,9 @@ func refresh_table() -> void:
 	var direction := "左摇杆飞行，振翅朝蜂头。" if device == "pad" else "键盘振翅朝蜂头，鼠标振翅朝指针。"
 	flight_note.text = direction + "点按与设施交互，按住采蜜。振翅可连发，冲刺按住蓄力、松开发动。"
 	if device == "pad":
-		notes.text = "左摇杆飞行，振翅朝蜜蜂面向。蜂舞中按冲刺键跳过。\n菜单用十字键选项、A（下）确认、B（右）返回。\n成长树用左摇杆或十字键选格，A 购买，L3 查看前置，X 换档，Y 试用花湾。右摇杆移图，LT / RT 缩放，按下右摇杆看全图。\n花湾演示用十字键左右选花，按住 A 采蜜，RB 换阶段，B 返回。"
+		notes.text = "左摇杆飞行，振翅朝蜜蜂面向。蜂舞中按冲刺键跳过。\n菜单用十字键选项、A（下）确认、B（右）返回。\n成长树用左摇杆或十字键选格，A 查看或购买，视图键收签，L3 查看前置，X 换档，Y 试用花湾。右摇杆移图，LT / RT 缩放，按下右摇杆看全图。\n花湾演示用十字键左右选花，按住 A 采蜜，RB 换阶段，B 返回。"
 	else:
-		notes.text = "鼠标振翅朝指针，键盘振翅朝蜜蜂面向。蜂舞中按冲刺键跳过。\n菜单可点击，也可用方向键或 Tab 选项、Enter 确认、Esc 返回。\n成长树用方向键选格，Enter 购买，F 查看前置，[ / ] 换档，P 试用花湾。滚轮缩放、拖空白移图，Home 看全图。\n花湾演示用 1–8 或左右方向键选花，按住 E 或空格采蜜，也可按住鼠标左键指向花朵。"
+		notes.text = "鼠标振翅朝指针，键盘振翅朝蜜蜂面向。蜂舞中按冲刺键跳过。\n菜单可点击，也可用方向键或 Tab 选项、Enter 确认、Esc 返回。\n成长树用方向键选格，Enter 查看或购买，I 收签，F 查看前置，[ / ] 换档，P 试用花湾。滚轮缩放、拖空白移图，Home 看全图。\n花湾演示用 1–8 或左右方向键选花，按住 E 或空格采蜜，也可按住鼠标左键指向花朵。"
 
 func _listen(id: String, slot: String) -> void:
 	pending_action = id

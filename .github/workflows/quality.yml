@@ -22,15 +22,22 @@ permissions:
 
 jobs:
   scope:
+    permissions:
+      contents: read
+      actions: read
     name: Change scope and lightweight CI checks
     timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
+      reused: ${{ steps.reuse.outputs.reused }}
+      source_run: ${{ steps.reuse.outputs.source_run }}
+      tested_tree: ${{ steps.reuse.outputs.tested_tree }}
       web: ${{ steps.changes.outputs.web }}
       godot: ${{ steps.changes.outputs.godot }}
       export_game: ${{ steps.changes.outputs.export_game }}
       godot_suite: ${{ steps.changes.outputs.godot_suite }}
       swarm: ${{ steps.changes.outputs.swarm }}
+      swarm_suite: ${{ steps.changes.outputs.swarm_suite }}
       flower: ${{ steps.changes.outputs.flower }}
       garden: ${{ steps.changes.outputs.garden }}
       content: ${{ steps.changes.outputs.content }}
@@ -57,6 +64,20 @@ jobs:
           classified=$(bash scripts/ci_scope.sh)
           printf '%s\n' "$classified" >> "$GITHUB_OUTPUT"
           printf 'Selected checks:\n```\n%s\n```\n' "$classified" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Test synchronization and reuse contracts on full CI runs
+        # Routing changes, unknown inputs and manual full checks select all four.
+        if: >-
+          steps.changes.outputs.export_game == 'true' && steps.changes.outputs.swarm == 'true' &&
+          steps.changes.outputs.flower == 'true' && steps.changes.outputs.garden == 'true'
+        run: python3 -B -m unittest discover -s tests -p test_ci_reuse.py
+
+      - name: Check previous prototype results after synchronizing main
+        id: reuse
+        env:
+          CI_SELECTION: ${{ toJSON(steps.changes.outputs) }}
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -B scripts/ci_reuse.py
 
   web:
     name: Web build, tests and lint
@@ -177,19 +198,21 @@ jobs:
   swarm:
     name: Swarm Flight
     needs: scope
-    if: ${{ needs.scope.outputs.swarm == 'true' }}
+    if: ${{ needs.scope.outputs.swarm == 'true' && !contains(fromJSON(needs.scope.outputs.reused), 'swarm') }}
     uses: ./.github/workflows/swarm-flight.yml
+    with:
+      suite: ${{ contains(fromJSON(needs.scope.outputs.reused), 'swarm-except-region') && 'region' || needs.scope.outputs.swarm_suite }}
 
   flower:
     name: Flower Step
     needs: scope
-    if: ${{ needs.scope.outputs.flower == 'true' }}
+    if: ${{ needs.scope.outputs.flower == 'true' && !contains(fromJSON(needs.scope.outputs.reused), 'flower') }}
     uses: ./.github/workflows/flower-step.yml
 
   garden:
     name: Garden Puzzles
     needs: scope
-    if: ${{ needs.scope.outputs.garden == 'true' }}
+    if: ${{ needs.scope.outputs.garden == 'true' && !contains(fromJSON(needs.scope.outputs.reused), 'garden') }}
     uses: ./.github/workflows/garden-puzzles.yml
 
   required:
@@ -204,6 +227,11 @@ jobs:
         env:
           CI_NEEDS: ${{ toJSON(needs) }}
         run: python3 -B scripts/check_ci_results.py
+
+      # Immutable job metadata identifies the real integrated tree and certified coverage.
+      - name: Prototype evidence v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.sha }} tree ${{ needs.scope.outputs.tested_tree }} swarm ${{ needs.scope.outputs.swarm_suite }} flower ${{ needs.scope.outputs.flower }} garden ${{ needs.scope.outputs.garden }}
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
+        run: echo "Prototype results verified by the required gate."
 
   swarm-gate:
     # Keep the original top-level check name for existing check consumers.
