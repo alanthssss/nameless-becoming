@@ -82,10 +82,13 @@ func nectar_event(event: Dictionary) -> void:
 		for i in 20:
 			nectar_motes.append({"from":model.p+Vector2(_rng.randf_range(-100,100),_rng.randf_range(-100,50)),"age":-_rng.randf_range(0,0.3),"duration":0.8,"gold":true})
 
+func _draw_background() -> void:
+	Landscape.background(self,area_key)
+
 func _draw() -> void:
 	if model == null: return
 	draw_set_transform(Vector2.ZERO)
-	Landscape.background(self,area_key)
+	_draw_background()
 	_world_offset = Vector2(-model.camera_x,0)
 	draw_set_transform(_world_offset)
 	Landscape.terrain(self,area_key,model.camera_x,clock)
