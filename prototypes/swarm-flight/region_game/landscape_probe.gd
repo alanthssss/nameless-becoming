@@ -14,6 +14,13 @@ func check(ok: bool,label: String) -> void:
 		failures+=1
 		printerr("FAIL "+label)
 func check_ambient(view) -> void:
+	# If wind or water samples a different plate/mask, the rectangular patch
+	# reappears over the graded base whenever that layer becomes visible.
+	for sprite: Sprite2D in view._paint_root.get_children():
+		check(sprite.material.get_shader_parameter("plate_art")==sprite.texture,
+			"paint remains registered to the same illustration")
+		check(sprite.material.get_shader_parameter("depth_map")==View.DEPTH_MAPS[view.area_key],
+			"static and moving paint share the scene's depth map")
 	# A stationary camera must still show the breeze. Switching accessibility
 	# settings mid-frame must restore the original paint in the same view.
 	var rect: Rect2 = view._crowns[0].rect

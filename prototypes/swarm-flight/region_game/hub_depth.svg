@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="876" viewBox="0 0 700 438">
+  <!-- Data for painted_depth.gdshaderinc in the original art coordinates. -->
+  <defs>
+    <radialGradient id="preserve">
+      <stop offset="0" stop-color="#000080"/>
+      <stop offset=".55" stop-color="#000080" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#000080" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="quiet">
+      <stop offset="0" stop-color="#00ff80"/>
+      <stop offset=".55" stop-color="#00ff80" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#00ff80" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="form">
+      <stop offset="0" stop-color="#ff0080"/>
+      <stop offset=".55" stop-color="#ff0080" stop-opacity=".94"/>
+      <stop offset="1" stop-color="#ff0080" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="700" height="438" fill="#000080"/>
+  <g id="back-garden">
+    <ellipse cx="608" cy="82" rx="168" ry="133" fill="url(#quiet)" opacity="0.88"/>
+    <ellipse cx="72" cy="39" rx="77" ry="69" fill="url(#quiet)" opacity="0.48"/>
+  </g>
+  <g id="courtyard-floor">
+    <ellipse cx="272" cy="370" rx="236" ry="86" fill="url(#quiet)" opacity="0.72"/>
+    <ellipse cx="578" cy="350" rx="128" ry="62" fill="url(#quiet)" opacity="0.64"/>
+  </g>
+  <g id="leaves-and-stone">
+    <ellipse cx="553" cy="268" rx="88" ry="57" fill="url(#form)" opacity="0.95"/>
+    <ellipse cx="59" cy="366" rx="51" ry="31" fill="url(#form)" opacity="0.82"/>
+    <ellipse cx="114" cy="152" rx="85" ry="73" fill="url(#form)" opacity="0.48"/>
+    <ellipse cx="86" cy="412" rx="110" ry="44" fill="url(#form)" opacity="0.74"/>
+    <ellipse cx="634" cy="404" rx="98" ry="63" fill="url(#form)" opacity="0.78"/>
+    <ellipse cx="28" cy="73" rx="36" ry="72" fill="url(#form)" opacity="0.58"/>
+    <ellipse cx="369" cy="326" rx="53" ry="24" fill="url(#form)" opacity="0.66"/>
+  </g>
+  <g id="station-surfaces">
+    <ellipse cx="167" cy="225" rx="85" ry="62" fill="url(#preserve)" opacity="1"/>
+    <ellipse cx="304" cy="202" rx="95" ry="89" fill="url(#preserve)" opacity="1"/>
+    <ellipse cx="406" cy="218" rx="63" ry="47" fill="url(#preserve)" opacity="1"/>
+    <ellipse cx="553" cy="191" rx="32" ry="46" fill="url(#preserve)" opacity="1"/>
+  </g>
+<!-- The large leaf curls toward the light; break the line before the tip. -->
+<g id="leaf-terrace" transform="translate(475 218) scale(.25)" fill="none" stroke-linecap="round">
+  <path d="M96 346 C122 306 180 268 242 235 S350 183 410 169" stroke="#ef00d8" stroke-width="3.8" opacity=".72"/>
+  <path d="M104 335 C131 300 158 280 185 264" stroke="#e70035" stroke-width="3.1" opacity=".48"/>
+  <path d="M148 320 C182 314 212 314 244 318 M279 324 C341 328 393 319 448 308" stroke="#d40024" stroke-width="4.4" opacity=".64"/>
+  <path d="M498 272 C514 260 529 242 537 224" stroke="#d40032" stroke-width="4.4" opacity=".48"/>
+</g>
+  <!-- Wide, low-value plane changes suggest two distant stepping stones. -->
+  <g id="far-stepping-stones">
+    <path d="M618 178 Q631 171 647 171 Q663 172 674 178 Q656 175 647 175 Q631 175 620 180Z" fill="#00d4af" opacity=".65"/>
+    <path d="M622 183 Q646 189 671 182 Q664 188 651 188 Q634 189 622 185Z" fill="#00d455" opacity=".65"/>
+    <path d="M624 140 Q636 134 648 135 Q658 135 666 140 Q653 137 644 138Z" fill="#00d4ab" opacity=".48"/>
+    <path d="M627 144 Q646 149 666 142 Q660 148 648 149 Q636 148 627 146Z" fill="#00d45b" opacity=".50"/>
+  </g>
+</svg>
