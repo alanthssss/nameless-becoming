@@ -20,6 +20,11 @@ var bay_button: Button
 var bay_preview: Control
 var controls_page
 var controls_button: Button
+var menu_slots: Button
+var slots: Control
+var slot_list: VBoxContainer
+var slot_buttons := {}
+var slots_back: Button
 const BAY_CELLS := ["petal_trace","garland","cascade"]
 
 func _ready() -> void:
@@ -148,6 +153,51 @@ func _purchase_button_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not event.double_click:
 			_buy_selected()
 
+func _build_menu() -> void:
+	super._build_menu()
+	if not driver.slots_enabled: return
+	menu_slots = action(menu_settings.get_parent(),"选择存档",driver.open_slots)
+	slots = screen(self)
+	slots.hide()
+	shade(slots,Color(.09,.20,.15,.48))
+	var center := CenterContainer.new()
+	slots.add_child(center)
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var page := card(center)
+	page.custom_minimum_size.x = 500
+	var content := column(page,16)
+	text_line(content,"选择存档",32).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	slot_list = column(content,8)
+	slots_back = action(content,"返回",driver.close_slots)
+
+func _show_slots() -> void:
+	var initial_focus: Button
+	for entry in driver.slot_rows():
+		var id: int = entry.id
+		if not slot_buttons.has(id):
+			var new_button := action(slot_list,"",driver.choose_slot.bind(id))
+			new_button.add_theme_stylebox_override("normal",style(Color("eedcab77"),Color("b7a575"),1,8))
+			slot_buttons[id] = new_button
+		var button: Button = slot_buttons[id]
+		var summary: String
+		match entry.status:
+			"occupied": summary = "%s　·　%d 金币　·　已出行 %d 趟" % [entry.area,entry.coins,entry.trip]
+			"empty": summary = "空档　·　开始新游戏"
+			_: summary = "无法读取"
+		button.text = "存档 %d%s\n%s" % [id,"（当前）" if id == driver.active_slot else "",summary]
+		button.disabled = entry.status == "blocked"
+		button.focus_mode = Control.FOCUS_NONE if button.disabled else Control.FOCUS_ALL
+		if not button.disabled and (initial_focus == null or id == driver.active_slot):
+			initial_focus = button
+	if initial_focus != null: initial_focus.grab_focus()
+	else: slots_back.grab_focus()
+
+func ask_restart() -> void:
+	if driver.slots_enabled:
+		restart_dialog.title = "重新开始存档 %d" % driver.active_slot
+		restart_dialog.dialog_text = "备份存档 %d 的进度后，将在这个档位开始新的一轮。" % driver.active_slot
+	super.ask_restart()
+
 func show_mode(mode: String) -> void:
 	var was_reading := reading_book
 	if was_reading and mode != "tree":
@@ -161,11 +211,22 @@ func show_mode(mode: String) -> void:
 		driver.sound.play_event("book_open" if reading_book else "book_close")
 	if is_instance_valid(sale_flight) and mode != "shop":
 		sale_flight.stop()
+	var leaving_slots := is_instance_valid(slots) and slots.visible
 	super.show_mode(mode)
 	if not was_reading and mode == "tree": growth_map.open_book(driver.saved_path)
 	if is_instance_valid(controls_page):
 		controls_page.visible = mode == "controls"
 	_refresh_control_hints()
+	if not is_instance_valid(slots): return
+	slots.visible = mode == "slots"
+	menu_slots.visible = mode in ["title","pause"]
+	menu_quit.text = "退出游戏" if mode == "title" else "保存并退出"
+	if slots.visible:
+		_show_slots()
+	elif menu_slots.visible:
+		if mode != "pause" or driver.save_blocked or driver.save_warning:
+			menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
+		if leaving_slots: menu_slots.grab_focus()
 
 func _add_settings_controls(parent: Control) -> void:
 	controls_button = action(parent, "操作说明与改键", _open_controls)
@@ -194,6 +255,8 @@ func _refresh_control_hints() -> void:
 	transition_hint.text = "%s 跳过蜂舞" % dash
 	if driver.mode == "pause" and not driver.save_blocked and not driver.save_warning:
 		menu_body.text = "%s\n\n按住 %s 采蜜\n%s 振翅 · %s 蓄力冲刺\n\n设置中可查看和修改按键。" % [driver.model.goal_text(), collect, pulse, dash]
+	if driver.mode == "pause" and driver.slots_enabled and not driver.save_blocked and not driver.save_warning:
+		menu_body.text = "当前 · 存档 %d\n%s" % [driver.active_slot,menu_body.text]
 	if driver.mode == "tree":
 		_update_tree_footer(get_viewport().gui_get_focus_owner())
 	if hub_action.visible:

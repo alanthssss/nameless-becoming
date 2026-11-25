@@ -16,7 +16,12 @@ var input_device := "kbm"
 var stick_positions := {}
 var blocked_sticks := {}
 var pending_pulses := {}
+const SLOT_COUNT := 3
 var evidence_log := ""
+var active_slot := 1
+var slots_enabled := true
+var base_progress_path := ""
+var slots_return := "title"
 
 
 func new_model(): return RegionalModel.new()
@@ -70,6 +75,9 @@ func _exit_tree() -> void:
 		InputMap.action_erase_event(action,installed_menu_events[action])
 	installed_menu_events.clear()
 
+func default_progress_path() -> String:
+	return "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
+
 func _ready() -> void:
 	var controls_file := ""
 	for arg in OS.get_cmdline_user_args():
@@ -79,7 +87,15 @@ func _ready() -> void:
 	bindings.changed.connect(_bindings_changed)
 	Input.joy_connection_changed.connect(_joy_connection_changed)
 	model = new_model()
-	saved_path = "user://pond_feedback_preview_v1.json" if OS.has_feature("pond_feedback") else PROGRESS
+	base_progress_path = default_progress_path()
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--progress-file="): slots_enabled = false
+	if slots_enabled:
+		var selection := ConfigFile.new()
+		if selection.load(base_progress_path+".slots.cfg") == OK:
+			var last: Variant = selection.get_value("slots","last",1)
+			if last is int and last >= 1 and last <= SLOT_COUNT: active_slot = last
+	saved_path = slot_path(active_slot)
 	super._ready()
 	if not has_save and not save_blocked: ui.growth_map.forget_book(saved_path)
 	for arg in OS.get_cmdline_user_args():
@@ -89,6 +105,86 @@ func _ready() -> void:
 			recorder.directory = arg.trim_prefix("--record-dir=")
 			evidence_log = recorder.directory.path_join("events.jsonl")
 			add_child(recorder)
+
+func slot_path(id: int) -> String:
+	if id == 1: return base_progress_path
+	return base_progress_path.get_basename()+".slot%d.json" % id
+
+func settings_path() -> String:
+	if slots_enabled: return base_progress_path+".settings.cfg"
+	return super.settings_path()
+
+func slot_rows() -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	for id in range(1,SLOT_COUNT+1):
+		var path := slot_path(id)
+		var row := {"id":id,"status":"empty","area":"","coins":0,"trip":0}
+		if FileAccess.file_exists(path):
+			var preview = new_model()
+			if Save.read_payload(path,preview).is_empty():
+				row.status = "blocked"
+			else:
+				row.merge({"status":"occupied","area":area_name(preview.area),"coins":preview.coins,"trip":preview.trip_index},true)
+		rows.append(row)
+	return rows
+
+func open_slots() -> void:
+	if not slots_enabled or mode not in ["title","pause"]: return
+	if mode == "pause" and not persist(): return
+	slots_return = mode
+	mode = "slots"
+	ui.show_mode(mode)
+
+func close_slots() -> void:
+	if mode != "slots": return
+	mode = slots_return
+	ui.show_mode(mode)
+
+func choose_slot(id: int) -> void:
+	if mode != "slots" or id < 1 or id > SLOT_COUNT: return
+	var path := slot_path(id)
+	var loaded := read_progress(path)
+	var next = new_model()
+	if loaded.blocked or (loaded.ok and not next.restore_payload(loaded.payload)):
+		message("存档 %d 暂时无法读取，请选择其他档位。" % id,4)
+		return
+	if not loaded.ok and not Save.write_payload(next.to_payload(),path,new_model()):
+		message("无法建立存档 %d，请检查保存位置后重试。" % id,4)
+		return
+	var selection_saved := true
+	if active_slot != id:
+		var selection := ConfigFile.new()
+		selection.set_value("slots","last",id)
+		var pref := base_progress_path+".slots.cfg"
+		var temporary := "%s.%d.tmp" % [pref,OS.get_process_id()]
+		selection_saved = selection.save(temporary) == OK and DirAccess.rename_absolute(temporary,pref) == OK
+		if not selection_saved and FileAccess.file_exists(temporary): DirAccess.remove_absolute(temporary)
+	release_controls()
+	active_slot = id
+	saved_path = path
+	if not loaded.ok: ui.growth_map.forget_book(path)
+	model = next
+	model.clear_controls()
+	has_save = true
+	save_blocked = false
+	save_warning = false
+	home_return_summary = ""
+	home_sale_summary = ""
+	autosave = 0.0
+	played_seconds = 0.0
+	low_energy_announced = false
+	event_log.clear()
+	toast_left = 0.0
+	_load_world()
+	start_game()
+	if not selection_saved: message("档位已打开。下次启动请手动选择存档 %d。" % id,4)
+
+func quit_game() -> void:
+	# Browsing from the title or a saved pause must never create an empty slot.
+	if slots_enabled and (mode in ["title","slots"] or (mode in ["settings","controls"] and settings_return == "title")):
+		finish_quit()
+		return
+	super.quit_game()
 
 func read_progress(path: String) -> Dictionary:
 	var model_copy = new_model()
@@ -228,6 +324,7 @@ func _back() -> bool:
 		"regions": close_regions()
 		"journal": close_journal()
 		"settings": close_settings()
+		"slots": close_slots()
 		"play": pause_game()
 		"pause","complete": start_game()
 		_: return false

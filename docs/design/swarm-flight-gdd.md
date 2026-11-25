@@ -17,6 +17,8 @@
 
 **更新后继续采蜜。** 玩家通过普通入口打开调整版，选择「继续采蜜」就能接着上一版玩。已经买下的成长、开放的紫花地、金币、背包和出行进度都要保留。macOS 0.32 系列沿用 `~/Library/Application Support/BeforeTheRain-Regions/pond_feedback_preview_v1.json`。以后若需变更位置或格式，游戏自动迁移并保留可恢复的原档。指定地点的演示入口使用独立副本，交付时明确标作预览。
 
+**多次游玩（2026-11-25）。** 标题和暂停菜单提供三个独立档位。存档 1 直接沿用上述原文件。选空档从庭院开始，选已有档回到那一趟的地点、背包和成长，打开游戏默认续上最近选择的档位。暂停换档先保存当前出行；重新开始会标明档号，确认后备份这一档的旧进度。指定单文件的演示和测试继续使用各自的路径。[M3 多存档 #405](https://github.com/alanthssss/nameless-becoming/issues/405)
+
 每次交付调整版，用上一版玩家进度的副本，在隔离的用户目录从实际交付包普通启动。核对「继续采蜜」、成长和资源，进入已解锁的花地，保存退出，再次启动后核对所在区域与进度。普通入口只在接续通过后交付；检查结果记入当次交付记录。[M3 存档接续验收](https://github.com/alanthssss/nameless-becoming/issues/385)
 
 **落实。** [池岸交互设计](pond-violet-map-resource-design.md#nectar-wing-bay)区分 0.32 已有规则与本次打样提议。[唯一 Now](solar-term-campaign-production-spec.md#production-now)沿 M3/#322 承接体验，M4/#211 承接范围、成本与后续取舍。下列旧战役设计、成品合同及对应证据按其原版本保存，供复用和后作评估；新首作交付另按实际覆盖复核。

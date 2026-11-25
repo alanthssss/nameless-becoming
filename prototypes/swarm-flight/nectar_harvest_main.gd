@@ -343,9 +343,12 @@ func close_settings() -> void:
 	mode = settings_return
 	ui.show_mode(mode)
 
+func settings_path() -> String:
+	return saved_path+".settings.cfg"
+
 func load_settings() -> void:
 	var config := ConfigFile.new()
-	if config.load(saved_path+".settings.cfg") != OK: return
+	if config.load(settings_path()) != OK: return
 	var motion: Variant = config.get_value("presentation","reduced_motion",false)
 	var muted: Variant = config.get_value("presentation","muted",false)
 	reduced_motion = motion is bool and motion
@@ -359,7 +362,7 @@ func save_settings() -> void:
 	config.set_value("presentation","reduced_motion",reduced_motion)
 	config.set_value("presentation","muted",ui.muted)
 	config.set_value("presentation","dance_style",dance_style)
-	if config.save(saved_path+".settings.cfg") != OK: message("设置暂时未保存，本次仍生效。",3)
+	if config.save(settings_path()) != OK: message("设置暂时未保存，本次仍生效。",3)
 	world.reduced_motion = reduced_motion
 	ui.refresh_settings()
 
