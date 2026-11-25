@@ -151,12 +151,12 @@ func _build_menu() -> void:
 	var center := CenterContainer.new()
 	slots.add_child(center)
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var page := card(center)
-	page.custom_minimum_size.x = 500
+	var page := reading_page(center,Vector2(84,62))
+	page.custom_minimum_size.x = 608
 	var content := column(page,16)
 	text_line(content,"选择存档",32).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	slot_list = column(content,8)
-	slots_back = action(content,"返回",driver.close_slots)
+	slots_back = action(content,"返回",driver.close_slots,true)
 
 func _show_slots() -> void:
 	var initial_focus: Button
@@ -165,6 +165,7 @@ func _show_slots() -> void:
 		if not slot_buttons.has(id):
 			var new_button := action(slot_list,"",driver.choose_slot.bind(id))
 			new_button.add_theme_stylebox_override("normal",style(Color("eedcab77"),Color("b7a575"),1,8))
+			new_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			slot_buttons[id] = new_button
 		var button: Button = slot_buttons[id]
 		var summary: String
@@ -182,8 +183,8 @@ func _show_slots() -> void:
 
 func ask_restart() -> void:
 	if driver.slots_enabled:
-		restart_dialog.title = "重新开始存档 %d" % driver.active_slot
-		restart_dialog.dialog_text = "备份存档 %d 的进度后，将在这个档位开始新的一轮。" % driver.active_slot
+		restart_title.text = "重新开始存档 %d" % driver.active_slot
+		restart_body.text = "备份存档 %d 的进度后，将在这个档位开始新的一轮。" % driver.active_slot
 	super.ask_restart()
 
 func show_mode(mode: String) -> void:
@@ -245,7 +246,7 @@ func _build_tree() -> void:
 	detail_scroll = ScrollContainer.new()
 	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	tree.add_child(detail_scroll)
-	anchored(detail_scroll,Rect2(.665,0,.335,1),Rect2(12,157,-61,-272))
+	anchored(detail_scroll,Rect2(.665,0,.335,1),Rect2(12,157,-82,-308))
 	detail_card.reparent(detail_scroll,false)
 	detail_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	CatalogDetail.add_rank_controls(self)

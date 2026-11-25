@@ -41,6 +41,7 @@ var bag_bar: ProgressBar
 var energy_bar: ProgressBar
 var energy_dial: EnergyDial
 var shop: Control
+var shop_scroll: ScrollContainer
 var shop_coins: Label
 var shop_cargo: Label
 var shop_story: Label
@@ -69,6 +70,8 @@ var menu_body: Label
 var menu_primary: Button
 var menu_restart: Button
 var menu_quit: Button
+var restart_title: Label
+var restart_body: Label
 var restart_dialog: Control
 var restart_cancel: Button
 var restart_opener: Control
@@ -205,6 +208,17 @@ func column(parent: Node, gap := 12) -> VBoxContainer:
 	v.add_theme_constant_override("separation",gap)
 	parent.add_child(v)
 	return v
+
+func scroll_column(page: VBoxContainer, scroll: ScrollContainer, gap: int) -> VBoxContainer:
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
+	page.add_child(scroll)
+	var gutter := MarginContainer.new()
+	gutter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	gutter.add_theme_constant_override("margin_right",12)
+	scroll.add_child(gutter)
+	return column(gutter,gap)
 
 func row(parent: Node, gap := 12) -> HBoxContainer:
 	var h := HBoxContainer.new()
@@ -402,22 +416,23 @@ func _activate_hub_action() -> void:
 func _build_shop() -> void:
 	shop = screen(self)
 	shade(shop,Color(.08,.17,.12,.23))
-	var p := reading_page(shop,Vector2(72,58))
+	var p := reading_page(shop,Vector2(72,64))
 	anchored(p,Rect2(1,.5,0,0),Rect2(-585,-360,550,720))
 	var v := column(p,9)
 	text_line(v,"庭院蜜铺 · 收购员",17,Color("7b895f")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_line(v,"这一趟，收获不错。",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	shop_story = text_line(v,"带回花蜜，就能换取下一次成长。",19,Color("768064"),true)
-	shop_recap = text_line(v,"",18,INK,true)
+	shop_scroll = ScrollContainer.new()
+	var body := scroll_column(v,shop_scroll,9)
+	shop_story = text_line(body,"带回花蜜，就能换取下一次成长。",19,Color("768064"),true)
+	shop_recap = text_line(body,"",18,INK,true)
 	shop_recap.hide()
-	var cargo_card := card(v,Color("e5e8d0"),Color("bec8a5"))
+	var cargo_card := card(body,Color("e5e8d0"),Color("bec8a5"))
 	cargo_card.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
 	var cargo_v := column(cargo_card,12)
 	shop_cargo = text_line(cargo_v,"",22)
 	shop_value = text_line(cargo_v,"",27,Color("9a6c28"))
-	sell_button = action(v,"全部交付",driver.sell_cargo,true)
-	shop_coins = text_line(v,"",19,Color("718160"))
-	spacer(v)
+	sell_button = action(body,"全部交付",driver.sell_cargo,true)
+	shop_coins = text_line(body,"",19,Color("718160"))
 	leave_button = action(v,"回到庭院",driver.close_shop)
 	leave_button.custom_minimum_size.x = 200
 	leave_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -439,14 +454,14 @@ func _build_regions() -> void:
 	pond_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	pond_card.custom_minimum_size.x = 435
 	var pv := column(pond_card,12)
-	picture(pv,preload("res://art/nectar-pond-oblique.png"),210)
+	picture(pv,preload("res://art/nectar-pond-oblique.png"),192)
 	pond_button = action(pv,"池岸花丛",func(): driver.request_transition("pond"),true)
 	pond_info = text_line(pv,"每花 1 份 · 每份 1 金币 · 晴",18,INK,true)
 	var meadow_card := reading_page(region_cards,Vector2(65,62))
 	meadow_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	meadow_card.custom_minimum_size.x = 435
 	var mv := column(meadow_card,12)
-	region_meadow_art = picture(mv,preload("res://art/nectar-meadow-oblique.png"),210)
+	region_meadow_art = picture(mv,preload("res://art/nectar-meadow-oblique.png"),192)
 	meadow_button = action(mv,"紫花地",func(): driver.request_transition("meadow"),true)
 	meadow_info = text_line(mv,"每花 1 份 · 每份 3 金币 · 局部细雨",18,INK,true)
 	home_button = action(mv,"回到蜂巢庭院",func(): driver.request_transition("hub"),true)
@@ -496,26 +511,28 @@ func _build_tree() -> void:
 	tree = screen(self)
 	shade(tree,Color("314d38d9"))
 	add_growth_paper()
-	var header := row(tree,18)
-	anchored(header,Rect2(0,0,1,0),Rect2(120,78,-200,66))
-	var titles := column(header,2)
+	var header := column(tree,1)
+	anchored(header,Rect2(0,0,.665,0),Rect2(178,68,-212,78))
+	var titles := row(header,16)
+	titles.alignment = BoxContainer.ALIGNMENT_BEGIN
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	text_line(titles,"成长手册",30,INK)
 	tree_progress = text_line(titles,"",16,Color("798054"))
-	var balance := row(header,5)
+	tree_progress.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var wallet := row(header,18)
+	var balance := row(wallet,5)
 	hud_symbol(balance,"coin","金币")
 	tree_coins = text_line(balance,"",23,INK)
 	tree_coins.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	for kind in ["fiber","resin"]:
-		var resource := row(header,4)
+		var resource := row(wallet,4)
 		hud_symbol(resource,kind,"纤维" if kind == "fiber" else "树脂")
 		var count := text_line(resource,"0",21,INK)
 		count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		if kind == "fiber": tree_fiber = count
 		else: tree_resin = count
-	tree_back = action(header,"返回",driver.close_tree)
-	tree_back.size_flags_horizontal = Control.SIZE_SHRINK_END
-	tree_back.custom_minimum_size.x = 100
+	tree_back = action(tree,"返回",driver.close_tree)
+	anchored(tree_back,Rect2(1,0,0,0),Rect2(-218,80,112,52))
 	board = create_growth_board()
 	board.font = font
 	tree.add_child(board)
@@ -669,6 +686,7 @@ func show_mode(mode: String) -> void:
 		refresh()
 		if not sell_button.disabled: sell_button.grab_focus()
 		else: leave_button.grab_focus()
+		shop_scroll.set_deferred("scroll_vertical",0)
 	elif mode == "tree":
 		refresh()
 		board.select_node(board.selected)
@@ -855,11 +873,12 @@ func _build_restart_dialog() -> void:
 	var center := CenterContainer.new()
 	restart_dialog.add_child(center)
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var page := reading_page(center,Vector2(78,38))
+	var page := reading_page(center,Vector2(78,44))
 	page.custom_minimum_size.x = 560
 	var content := column(page,20)
-	text_line(content,"重新开始采蜜？",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	text_line(content,"当前采蜜进度会先备份，再开始新的一轮。\n旧的池岸归途进度会保留。",20,INK,true)
+	restart_title = text_line(content,"重新开始采蜜？",30)
+	restart_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	restart_body = text_line(content,"当前采蜜进度会先备份，再开始新的一轮。\n旧的池岸归途进度会保留。",20,INK,true)
 	var buttons := row(content,20)
 	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
 	restart_cancel = action(buttons,"取消",close_restart)
@@ -929,15 +948,7 @@ func _build_settings() -> void:
 	var page := column(p,12)
 	text_line(page,"设置与旅途说明",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	settings_scroll = ScrollContainer.new()
-	settings_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	settings_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	settings_scroll.follow_focus = true
-	page.add_child(settings_scroll)
-	var gutter := MarginContainer.new()
-	gutter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	gutter.add_theme_constant_override("margin_right",12)
-	settings_scroll.add_child(gutter)
-	var v := column(gutter,14)
+	var v := scroll_column(page,settings_scroll,14)
 	settings_motion = action(v,"",func():
 		driver.reduced_motion = not driver.reduced_motion
 		driver.save_settings())
@@ -953,10 +964,11 @@ func _build_settings() -> void:
 	settings_back = action(page,"返回",driver.close_settings,true)
 
 func _shortcut_input(event: InputEvent) -> void:
-	if not settings.visible: return
+	var scroll := settings_scroll if settings.visible else shop_scroll
+	if not scroll.is_visible_in_tree(): return
 	var direction := int(event.is_action_pressed("ui_page_down",true)) - int(event.is_action_pressed("ui_page_up",true))
-	if direction:
-		settings_scroll.scroll_vertical += direction * roundi(settings_scroll.get_v_scroll_bar().page)
+	if direction != 0:
+		scroll.scroll_vertical += direction * roundi(scroll.get_v_scroll_bar().page)
 		get_viewport().set_input_as_handled()
 
 func refresh_settings() -> void:
