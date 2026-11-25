@@ -27,6 +27,136 @@ func pad(button: JoyButton) -> void:
 		root.push_input(event,true)
 		await frames(2)
 
+func map_pointer(view: Control, local: Vector2, button: MouseButton, down: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.position = view.get_global_transform_with_canvas()*local
+	event.button_index = button
+	event.pressed = down
+	root.push_input(event,true)
+	await frames(1)
+
+func map_drag(view: Control, local: Vector2) -> void:
+	var event := InputEventMouseMotion.new()
+	event.position = view.get_global_transform_with_canvas()*local
+	event.button_mask = MOUSE_BUTTON_MASK_LEFT
+	root.push_input(event,true)
+	await frames(1)
+
+func axis(code: JoyAxis, value: float) -> void:
+	var event := InputEventJoypadMotion.new()
+	event.axis = code
+	event.axis_value = value
+	root.push_input(event,true)
+	await frames(2)
+
+func check_map_camera() -> void:
+	var view = game.ui.growth_map
+	var board = game.ui.board
+	var starting_wallet: Dictionary = game.model.to_payload()
+	for pixels in [Vector2i(960,600),Vector2i(1280,800)]:
+		root.size = pixels
+		await frames(3)
+		check(view.clip_contents and is_equal_approx(view.magnification,1.0),"framed full tree at "+str(pixels))
+		var centers_match := true
+		for id in board.visible_ids():
+			if view._node_at(board.point(id)) != id: centers_match = false
+		check(centers_match,"every illustrated cell center selects its own cell at "+str(pixels))
+		var detail: Vector2 = game.ui.detail_card.global_position
+		var at: Vector2 = view.size*Vector2(.64,.46)
+		await map_pointer(view,at,MOUSE_BUTTON_WHEEL_UP,true)
+		await map_pointer(view,at,MOUSE_BUTTON_WHEEL_UP,false)
+		check(view.magnification>1.0 and (board.position+at*view.magnification).distance_to(at)<1,"wheel preserves map location under pointer")
+		await map_pointer(view,at,MOUSE_BUTTON_WHEEL_UP,true)
+		await map_pointer(view,at,MOUSE_BUTTON_WHEEL_UP,false)
+		var before: Vector2 = board.position
+		var empty: Vector2 = view.size*Vector2(.17,.94)
+		await map_pointer(view,empty,MOUSE_BUTTON_LEFT,true)
+		await map_drag(view,empty+Vector2(48,-38))
+		await map_pointer(view,empty+Vector2(48,-38),MOUSE_BUTTON_LEFT,false)
+		check(before.distance_to(board.position)>25 and game.ui.detail_card.global_position==detail,"drag pans paper; facing detail stays fixed")
+		await tap(KEY_HOME)
+		var gather: Vector2 = board.point("gather")
+		await map_pointer(view,gather,MOUSE_BUTTON_LEFT,true)
+		await map_pointer(view,gather,MOUSE_BUTTON_LEFT,false)
+		check(board.selected=="gather","map release selects a cell without paying")
+		await tap(KEY_EQUAL)
+		await tap(KEY_EQUAL)
+		await tap(KEY_EQUAL)
+		await tap(KEY_EQUAL)
+		for j in 8: await tap(KEY_DOWN)
+		await frames(18)
+		var focused: Vector2 = board.position+board.point(board.selected)*view.magnification
+		check(board.selected!="gather" and Rect2(Vector2.ZERO,view.size).grow(-46).has_point(focused),"zoomed camera follows keyboard selection into readable margin")
+		var prior: String = board.selected
+		await map_pointer(view,focused,MOUSE_BUTTON_LEFT,true)
+		await map_drag(view,focused+Vector2(45,-33))
+		await map_pointer(view,focused+Vector2(45,-33),MOUSE_BUTTON_LEFT,false)
+		check(board.selected==prior,"dragging an illustration preserves the selection")
+		await tap(KEY_0)
+		await axis(JOY_AXIS_TRIGGER_RIGHT,.85)
+		var triggered: float = view.magnification
+		await axis(JOY_AXIS_TRIGGER_RIGHT,.95)
+		await axis(JOY_AXIS_TRIGGER_RIGHT,0.0)
+		check(triggered>1.0 and is_equal_approx(view.magnification,triggered),"held trigger zooms once")
+		before = board.position
+		await axis(JOY_AXIS_RIGHT_X,1.0)
+		await frames(7)
+		await axis(JOY_AXIS_RIGHT_X,0.0)
+		check(board.position.x<before.x,"right stick pans the viewport")
+		await axis(JOY_AXIS_LEFT_Y,-1.0)
+		await axis(JOY_AXIS_LEFT_Y,0.0)
+		check(board.selected!=prior,"left stick navigates the nodes")
+		await pad(JOY_BUTTON_RIGHT_STICK)
+		check(is_equal_approx(view.magnification,1.0) and board.position==Vector2.ZERO,"controller resets full view")
+		var pinch := InputEventMagnifyGesture.new()
+		pinch.position = view.get_global_transform_with_canvas()*at
+		pinch.factor = 1.7
+		root.push_input(pinch,true)
+		await frames(1)
+		before=board.position
+		var pan := InputEventPanGesture.new()
+		pan.position=pinch.position
+		pan.delta=Vector2(-1,1)
+		root.push_input(pan,true)
+		await frames(1)
+		check(is_equal_approx(view.magnification,1.7) and board.position.distance_to(before)>1,"magnify and pan gesture events move the map")
+		await pad(JOY_BUTTON_B)
+		await tap(KEY_E)
+		check(game.mode=="tree" and board.position==Vector2.ZERO and is_equal_approx(view.magnification,1),"reopen journal in full view")
+	check(game.model.to_payload()==starting_wallet,"browsing, zoom, drag, back and reopen cannot change the saved purchase state")
+	board.select_node("gather")
+
+func check_catalog_preview() -> void:
+	var board = game.ui.board
+	var view = game.ui.growth_map
+	var saved: Dictionary = game.model.to_payload()
+	board.select_node("cascade")
+	await tap(KEY_PAGEDOWN)
+	var rank: Dictionary = board.inspect_data()
+	check(rank.id=="cascade2" and rank.planned and game.ui.buy_button.disabled and game.ui.bay_button.visible,"late second rank describes its price and opens a demo")
+	await pad(JOY_BUTTON_A)
+	await tap(KEY_ENTER)
+	check(saved==game.model.to_payload(),"confirm never buys an unavailable rank")
+	await pad(JOY_BUTTON_X)
+	check(board.inspect_data().id=="cascade1","pad switches the fixed detail page to the first rank")
+	await tap(KEY_EQUAL)
+	await frames(15)
+	var at: Vector2 = board.position
+	var zoom: float = view.magnification
+	await pad(JOY_BUTTON_Y)
+	check(game.mode=="growth_preview" and is_instance_valid(game.ui.bay_preview),"the selected cascade opens a native flower bay")
+	await tap(KEY_4)
+	await tap(KEY_EQUAL)
+	await tap(KEY_ESCAPE)
+	check(game.mode=="tree" and not is_instance_valid(game.ui.bay_preview),"Escape dismisses only the flower bay")
+	check(board.selected=="cascade" and board.inspect_data().id=="cascade1" and at.is_equal_approx(board.position) and is_equal_approx(view.magnification,zoom),"return restores the exact selected rank and camera transform")
+	check(saved==game.model.to_payload(),"playing the flower bay leaves the regional progress unchanged")
+	await tap(KEY_P)
+	await pad(JOY_BUTTON_B)
+	check(game.mode=="tree" and not is_instance_valid(game.ui.bay_preview),"keyboard shortcut opens and pad B returns to the same journal")
+	await tap(KEY_HOME)
+	board.select_node("gather")
+
 func all_text(node: Node) -> String:
 	var result: String = node.text if node is Label or node is Button else ""
 	for child in node.get_children(): result += all_text(child)
@@ -162,16 +292,18 @@ func run() -> void:
 	game.model.p = game.model.HUB_TREE
 	await tap(KEY_E)
 	check(game.mode == "tree","growth interaction")
+	await check_map_camera()
+	await check_catalog_preview()
 	var paid: int = game.model.coins
 	var board = game.ui.board
-	check(board.visible_ids().size() == 10 and not board.buttons.shortcut.visible,"all ten regional cells can be inspected from a fresh profile")
+	check(board.visible_ids().size() == 41 and not board.buttons.shortcut.visible,"all 41 regional cells can be inspected from a fresh profile")
 	await pad(JOY_BUTTON_DPAD_RIGHT)
 	check(board.selected != "gather" and game.model.coins == paid,"direction selects a different cell without buying")
 	var visited := {}
 	for i in board.visible_ids().size():
 		visited[board.selected] = true
 		await tap(KEY_TAB)
-	check(visited.size() == 10,"Tab visits every cell, including distant locked goals")
+	check(visited.size() == 41,"Tab visits every cell, including distant locked goals")
 	board.select_node("twin")
 	check(game.ui.buy_button.disabled and game.ui.detail_costs.coin.text == "29","locked double harvest shows its current regional price")
 	await pad(JOY_BUTTON_A)
