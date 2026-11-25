@@ -48,6 +48,7 @@ var home_sale_summary := ""
 func new_model(): return Model.new()
 func read_progress(path: String) -> Dictionary: return Migration.load_progress(path)
 func create_interface(): return Interface.new()
+func create_sound(): return Sound.new()
 
 func _ready() -> void:
 	get_window().title = DISPLAY_NAME
@@ -65,7 +66,7 @@ func _ready() -> void:
 		save_blocked = true
 	model.update_camera()
 	_load_world()
-	sound = Sound.new()
+	sound = create_sound()
 	add_child(sound)
 	ui = create_interface()
 	ui.driver = self
@@ -195,6 +196,9 @@ func _process(delta: float) -> void:
 	else:
 		world.collecting = false
 	world.presentation_active = mode in ["play","shop","tree","regions","journal","transition","complete"]
+	update_sound_context()
+
+func update_sound_context() -> void:
 	if is_instance_valid(sound):
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
@@ -397,6 +401,7 @@ func buy_upgrade(id: String) -> void:
 	var candidate = new_model()
 	if not candidate.restore_payload(model.to_payload()): return
 	if not candidate.buy(id):
+		play_action_sound({"kind":"denied"})
 		message(model.locked_reason(id),3)
 		return
 	var definition: Dictionary = candidate.upgrade(id)
@@ -473,30 +478,38 @@ func message(words: String,seconds := 3.0) -> void:
 	toast_left = seconds
 	if is_instance_valid(ui) and is_instance_valid(ui.toast_timer): ui.show_toast(words,seconds)
 
+func sound_for_event(event: Dictionary) -> String:
+	match event.kind:
+		"harvest", "material": return "dew"
+		"dash", "pulse": return "burst"
+		"tap": return "spray"
+		"hurt": return "hit"
+		"sell": return "arrival_bell"
+		"buy", "unlock": return "ring"
+		"complete": return "finish"
+		"rescue": return "recover"
+	return ""
+
+func play_action_sound(event: Dictionary) -> void:
+	var cue := sound_for_event(event)
+	if cue.is_empty(): return
+	if event.kind == "harvest":
+		if sound_cooldown > 0: return
+		sound_cooldown = 0.13
+	sound.play_event(cue, 0)
+
 func consume_events(pending: Array) -> void:
 	for event in pending:
 		world.nectar_event(event)
 		var kind: String = event.kind
 		event_log.append({"kind":kind,"area":model.area,"detail":event.duplicate(true),"time":played_seconds,"trip":model.trip_index,"coins":model.coins,"cargo":model.cargo_total(),"materials":model.materials.duplicate(),"energy":model.energy,"owned":model.owned.duplicate()})
 		if event_log.size() > 2048: event_log.pop_front()
-		if kind == "harvest":
-			if sound_cooldown <= 0:
-				sound.play_event("dew",0)
-				sound_cooldown = 0.13
-		elif kind == "dash": sound.play_event("burst",0)
-		elif kind == "pulse": sound.play_event("burst",0)
-		elif kind == "tap": sound.play_event("spray",0)
-		elif kind == "material": sound.play_event("dew",0)
-		elif kind == "hurt": sound.play_event("hit",0)
-		elif kind == "sell":
-			sound.play_event("arrival_bell",0)
+		play_action_sound(event)
+		if kind == "sell":
 			var delivered: Dictionary = event.cargo
 			home_sale_summary = "已交付 · 蓝花蜜 %d · 紫花蜜 %d\n获得 %d 金币" % [delivered.blue,delivered.rose,event.amount]
 			message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
-		elif kind in ["buy","unlock"]: sound.play_event("ring",0)
-		elif kind == "complete": sound.play_event("finish",0)
 		elif kind == "rescue":
-			sound.play_event("recover",0)
 			home_return_summary = "救援带回 · 蓝花蜜 %d · 紫花蜜 %d\n损失 · 蓝花蜜 %d · 紫花蜜 %d\n材料保留 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.lost.blue,event.lost.rose,event.materials.fiber,event.materials.resin]
 			home_sale_summary = ""
 			message("同伴送回 · 蓝蜜保留 %d、损失 %d\n紫蜜保留 %d、损失 %d · 材料保留" % [event.cargo.blue,event.lost.blue,event.cargo.rose,event.lost.rose],5)
