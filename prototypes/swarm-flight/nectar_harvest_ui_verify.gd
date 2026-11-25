@@ -197,7 +197,7 @@ func run() -> void:
 	await tap(KEY_E)
 	check(game.mode == "shop","home E opens shop instead of harvesting")
 	await capture("04-first-shop")
-	check(game.ui.shop_story.size.x <= 464.1,"shop story fits the sale panel")
+	check(game.ui.shop_goods.size.x <= 464.1 and game.ui.shop_goods.visible,"two honey jars fit the counter")
 	await click(game.ui.sell_button)
 	check(game.model.cargo_total() == 0 and game.model.coins == old_cargo,"sell commits exact visible cargo value")
 	await click(game.ui.tree_button)

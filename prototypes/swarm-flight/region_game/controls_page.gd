@@ -9,6 +9,7 @@ var headings := {}
 var flight_note: Label
 var notes: Label
 var status: Label
+var reset_button: Button
 var scroll: ScrollContainer
 var pending_action := ""
 var pending_slot := ""
@@ -19,27 +20,19 @@ func setup(interface: Control) -> void:
 	bindings = ui.driver.bindings
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.shade(self, Color("173d35cf"))
-	var page: PanelContainer = ui.card(self)
+	var page: PanelContainer = ui.material_panel(self,"settings",Vector4(166,72,176,126))
 	ui.anchored(page, Rect2(.5,.5,0,0), Rect2(-455,-366,910,732))
-	var paper := page.get_theme_stylebox("panel").duplicate() as StyleBox
-	paper.content_margin_left = maxf(paper.content_margin_left, 75)
-	paper.content_margin_right = maxf(paper.content_margin_right, 48)
-	paper.content_margin_top = maxf(paper.content_margin_top, 36)
-	paper.content_margin_bottom = maxf(paper.content_margin_bottom, 40)
-	page.add_theme_stylebox_override("panel", paper)
 	var content: VBoxContainer = ui.column(page, 8)
-	ui.text_line(content, "操作说明与改键", 30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ui.text_line(content, "操作说明与改键", 30, ui.TOOL_INK).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var tab_bar: HBoxContainer = ui.row(content, 14)
 	var group := ButtonGroup.new()
 	for id in ["kbm","pad"]:
 		var tab: Button = ui.action(tab_bar, "键盘和鼠标" if id == "kbm" else "游戏手柄", _select_device.bind(id))
 		tab.toggle_mode = true
 		tab.button_group = group
-		tab.add_theme_stylebox_override("pressed", ui.style(Color("466548"), Color("435e40"), 1, 8))
-		tab.add_theme_color_override("font_pressed_color", Color("fff4ce"))
-		tab.add_theme_color_override("font_hover_pressed_color", Color("fff4ce"))
+		ui.tool_button(tab)
 		tabs[id] = tab
-	flight_note = ui.text_line(content, "", 18, ui.INK, true)
+	flight_note = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
 	scroll = ScrollContainer.new()
 	scroll.follow_focus = true
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -50,7 +43,7 @@ func setup(interface: Control) -> void:
 	var header: HBoxContainer = ui.row(list, 8)
 	_row_label(header, "飞行与采集")
 	for slot in ["key","mouse","pad"]:
-		var title: Label = ui.text_line(header, {"key":"键盘","mouse":"鼠标","pad":"手柄按钮"}[slot], 17)
+		var title: Label = ui.text_line(header, {"key":"键盘","mouse":"鼠标","pad":"手柄按钮"}[slot], 17, ui.TOOL_INK)
 		title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		headings[slot] = title
@@ -60,25 +53,21 @@ func setup(interface: Control) -> void:
 		rows[id] = {}
 		for slot in ["key","mouse","pad"]:
 			var button: Button = ui.action(line, "", _listen.bind(id, slot))
+			ui.tool_button(button)
 			button.custom_minimum_size.y = 39
-			button.add_theme_font_size_override("font_size", 18)
-			button.add_theme_stylebox_override("normal", ui.style(Color("f4e7c0a0"), Color("bda97b"), 1, 7))
-			for state in ["normal", "hover", "pressed", "focus"]:
-				var box := button.get_theme_stylebox(state).duplicate() as StyleBox
-				box.content_margin_top = 3
-				box.content_margin_bottom = 3
-				button.add_theme_stylebox_override(state,box)
+			button.add_theme_font_size_override("font_size",18)
 			rows[id][slot] = button
-	notes = ui.text_line(list, "", 18, ui.INK, true)
+	notes = ui.text_line(list, "", 18, ui.TOOL_SECONDARY, true)
 	notes.focus_mode = Control.FOCUS_ALL
-	status = ui.text_line(content, "", 18, ui.INK, true)
+	status = ui.text_line(content, "", 18, ui.TOOL_SECONDARY, true)
 	var footer: HBoxContainer = ui.row(content, 16)
-	ui.action(footer, "恢复全部默认按键", _reset)
-	ui.action(footer, "返回设置", ui.close_controls)
+	reset_button = ui.action(footer,"恢复默认按键",_reset)
+	ui.tool_button(reset_button)
+	ui.tool_button(ui.action(footer, "返回设置", ui.close_controls))
 	hide()
 
 func _row_label(line: Control, words: String) -> void:
-	var label: Label = ui.text_line(line, words, 18)
+	var label: Label = ui.text_line(line, words, 18, ui.TOOL_INK)
 	label.custom_minimum_size.x = 180
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 

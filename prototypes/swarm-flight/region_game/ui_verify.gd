@@ -355,6 +355,43 @@ func check_pond_backup() -> void:
 	DirAccess.remove_absolute(path)
 	DirAccess.remove_absolute(backup)
 
+func check_restart_confirmation() -> void:
+	# This unreadable fixture reaches the same confirmation from the title's primary action.
+	var original := "old honey progress"
+	var file := FileAccess.open(game.saved_path,FileAccess.WRITE)
+	file.store_string(original)
+	file.close()
+	game.save_blocked = true
+	game.ui.show_mode("title")
+	await tap(KEY_ENTER)
+	check(game.ui.restart_dialog.visible and root.gui_get_focus_owner() == game.ui.restart_cancel,"restart opens with cancel focused")
+	await tap(KEY_TAB)
+	var confirm := root.gui_get_focus_owner() as Button
+	check(confirm != null and confirm.text == "备份并重新开始","Tab reaches the explicit restart action")
+	await tap(KEY_TAB)
+	check(root.gui_get_focus_owner() == game.ui.restart_cancel,"Tab stays inside the paper dialog")
+	var was_muted: bool = game.ui.muted
+	await tap(KEY_M)
+	var settings: Button = game.ui.menu_settings
+	await map_pointer(settings,settings.size*.5,MOUSE_BUTTON_LEFT,true)
+	await map_pointer(settings,settings.size*.5,MOUSE_BUTTON_LEFT,false)
+	check(game.ui.muted == was_muted and game.mode == "title" and game.ui.restart_dialog.visible,"modal blocks menu clicks and global shortcuts")
+	await tap(KEY_ESCAPE)
+	check(not game.ui.restart_dialog.visible and root.gui_get_focus_owner() == game.ui.menu_primary,"Escape returns focus to the blocked-save opener")
+	game.ui.menu_restart.grab_focus()
+	await tap(KEY_ENTER)
+	await tap(KEY_ENTER)
+	check(not game.ui.restart_dialog.visible and root.gui_get_focus_owner() == game.ui.menu_restart and FileAccess.get_file_as_string(game.saved_path) == original,"default Enter cancels and retains progress")
+	await tap(KEY_ENTER)
+	await tap(KEY_TAB)
+	await tap(KEY_ENTER)
+	var base: String = game.saved_path.get_base_dir()
+	var backups: Array[String] = []
+	for name in DirAccess.get_files_at(base):
+		if name.begins_with(game.saved_path.get_file()+".backup-"): backups.append(base.path_join(name))
+	check(game.mode == "play" and not game.ui.restart_dialog.visible and backups.size() == 1 and FileAccess.get_file_as_string(backups[0]) == original,"explicit confirmation backs up the old file exactly once before restarting")
+	for path in backups: DirAccess.remove_absolute(path)
+
 func run() -> void:
 	game = Scene.instantiate()
 	root.add_child(game)
@@ -363,7 +400,7 @@ func run() -> void:
 	game.saved_path = OS.get_temp_dir().path_join("regional-ui-%d.json" % OS.get_process_id())
 	game.save_blocked = false
 	check_pond_backup()
-	game.restart_game()
+	await check_restart_confirmation()
 	check(game.mode == "play" and game.model.at_home(),"new playable courtyard")
 	check(game.sound._music[0].stream == game.sound.SPRING and game.sound.SPRING.loop and game.sound._music[0].playing,"courtyard starts the looping spring recording")
 	await tap(KEY_E)
@@ -386,6 +423,10 @@ func run() -> void:
 	await frames(30)
 	check(game.sound._area == "pond" and game.sound._overlay, "pause softens the score in place")
 	check(game.model.to_payload() == before,"pause freezes phases and input")
+	game.ui.menu_restart.grab_focus()
+	await tap(KEY_ENTER)
+	await tap(KEY_ESCAPE)
+	check(game.mode == "pause" and root.gui_get_focus_owner() == game.ui.menu_restart and game.model.to_payload() == before,"Escape dismisses restart without resuming the outing")
 	game.start_game()
 	game.saved_path = OS.get_temp_dir() # Explicit failed-write fixture.
 	game.model.field.departed = true
