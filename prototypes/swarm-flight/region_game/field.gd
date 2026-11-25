@@ -262,7 +262,7 @@ func _pulse(aim: Vector2) -> void:
 		return
 	if region == "violet":
 		_event("material_opened",selected.id)
-		last_action = "树脂已露出，贴近按住 E 收取"
+		last_action = "树脂已露出，贴近并持续采集"
 		return
 	selected.dropped = true
 	selected.phase = "fading"

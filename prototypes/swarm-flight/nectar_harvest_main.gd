@@ -164,9 +164,7 @@ func _process(delta: float) -> void:
 	if mode == "play":
 		var old_hud := _hud_signature()
 		played_seconds += dt
-		var move := Vector2(float(down(KEY_D) or down(KEY_RIGHT))-float(down(KEY_A) or down(KEY_LEFT)),float(down(KEY_S) or down(KEY_DOWN))-float(down(KEY_W) or down(KEY_UP))).limit_length()
-		var collecting: bool = (down(KEY_E) or mouse_collect) and not model.at_home()
-		model.step(dt,move,collecting,down(KEY_SPACE),down(KEY_Q) or mouse_pulse or pulse_requested,pulse_direction())
+		var collecting := step_flight(dt)
 		world.aim_direction = model.pulse_direction(pulse_direction())
 		# One-frame presses preserve quick taps, without buffering behind cooldowns.
 		pulse_requested = false
@@ -197,6 +195,12 @@ func _process(delta: float) -> void:
 		world.collecting = false
 	world.presentation_active = mode in ["play","shop","tree","regions","journal","transition","complete"]
 	update_sound_context()
+
+func step_flight(dt: float) -> bool:
+	var move := Vector2(float(down(KEY_D) or down(KEY_RIGHT))-float(down(KEY_A) or down(KEY_LEFT)),float(down(KEY_S) or down(KEY_DOWN))-float(down(KEY_W) or down(KEY_UP))).limit_length()
+	var collecting: bool = (down(KEY_E) or mouse_collect) and not model.at_home()
+	model.step(dt,move,collecting,down(KEY_SPACE),down(KEY_Q) or mouse_pulse or pulse_requested,pulse_direction())
+	return collecting
 
 func update_sound_context() -> void:
 	if is_instance_valid(sound):
@@ -256,20 +260,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		var key: Key = event.physical_keycode if event.physical_keycode != 0 else event.keycode
 		if event.echo: return
-		if key == KEY_E and event.pressed:
-			var action: String = model.interaction()
-			if not action.is_empty():
-				match action:
-					"shop": open_shop()
-					"tree": open_tree()
-					"journal": open_journal()
-					"depart", "pond": open_regions()
-					"home": request_transition("hub")
-					"meadow":
-						if "meadow" in model.owned: request_transition("meadow")
-						else: message("紫花地尚未开放 · 在庭院成长台查看条件",4)
-				get_viewport().set_input_as_handled()
-				return
+		if key == KEY_E and event.pressed and use_station():
+			get_viewport().set_input_as_handled()
+			return
 		if key == KEY_Q:
 			if event.pressed:
 				held[key] = true
@@ -290,6 +283,20 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		mouse_collect = event.pressed
 
+func use_station() -> bool:
+	var action: String = model.interaction()
+	match action:
+		"shop": open_shop()
+		"tree": open_tree()
+		"journal": open_journal()
+		"depart", "pond": open_regions()
+		"home": request_transition("hub")
+		"meadow":
+			if "meadow" in model.owned: request_transition("meadow")
+			else: message("紫花地尚未开放 · 在庭院成长台查看条件",4)
+		_: return false
+	return true
+
 func release_controls() -> void:
 	held.clear()
 	mouse_collect = false
@@ -308,7 +315,9 @@ func start_game() -> void:
 	mode = "play"
 	ui.show_mode(mode)
 	get_viewport().gui_release_focus()
-	if model.trip_index == 0: message("靠近灯球，按 E 出发",3)
+	if model.trip_index == 0: message(departure_prompt(),3)
+
+func departure_prompt() -> String: return "靠近灯球，按 E 出发"
 
 func open_journal() -> void:
 	if mode != "pause": return
