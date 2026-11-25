@@ -139,16 +139,24 @@ def context_tab(x,y,label,selected):
     if selected:b+=dot(15,17,3.2,'#f2c373')
     return grp(x,y,b+txt(82,24,label,19,LIGHT if selected else INK,'middle',True,650))
 
-def caps(center,y,items,h=31):
-    sizes=[max(32,12+sum(9 if ord(c)<128 else 15 for c in k)) for k in items]
-    if not sizes:return cap(center,y,'',h=h)
+def caps(left,y,items,h=31,note=''):
+    if not any(items):
+        underline=shape(f'M{left} {y+h-4} h54','none','#b9a687',1,'stroke-dasharray="2 3"')
+        return underline+txt(left,y+h*.67,'未绑定',15,MUTED)
+
     gap=24
-    x=center-(sum(sizes)+(len(sizes)-1)*gap)/2
-    b=''
-    for i,(name,w) in enumerate(zip(items,sizes)):
-        b+=cap(x+w/2,y,name,w,h); x+=w
-        if i<len(items)-1: b+=txt(x+gap/2,y+h*.67,'或',13,MUTED,'middle'); x+=gap
-    return b
+    x=left
+    result=''
+    for i,name in enumerate(items):
+        if i:
+            result+=txt(x+gap/2,y+h*.67,'或',13,MUTED,'middle')
+            x+=gap
+        width=max(32,12+sum(9 if ord(c)<128 else 15 for c in name))
+        result+=cap(x+width/2,y,name,width,h)
+        x+=width
+    if note:
+        result+=txt(x+14,y+h*.67,note,14,MUTED)
+    return result
 
 def bindings_page(section='飞行',pad=False,state='normal'):
     b=frame()+rail()+txt(77,78,'键位设置',38,INK,'start',True,700)
@@ -157,38 +165,37 @@ def bindings_page(section='飞行',pad=False,state='normal'):
     b+=nav_button(472,49,173,'键盘和鼠标',not pad)+nav_button(662,49,169,'游戏手柄',pad)
     b+=shape('M318 107 Q580 103 879 108','none','#ac905e',1.5)
     flight=section=='飞行'
-    b+=txt(330,139,'动作',16,MUTED)
-    if flight:
-        if not pad:b+=txt(568,139,'键盘',16,MUTED,'middle')+txt(776,139,'鼠标',16,MUTED,'middle')
-        else:b+=txt(665,139,'手柄按钮',16,MUTED,'middle')
-    else:b+=txt(666,139,'固定按键',16,MUTED,'middle')
+    action_left,keys_left,mouse_left=330,500,714
+    b+=txt(action_left,139,'动作',16,MUTED)
+    key_heading=('手柄按钮' if pad else '键盘') if flight else '固定按键'
+    b+=txt(keys_left,139,key_heading,16,MUTED)
+    if flight and not pad:
+        b+=txt(mouse_left,139,'鼠标',16,MUTED)
     b+=shape('M321 151 H873','none','#d0b68a')
     if flight:
         for i,action in enumerate(ACTIONS):
             y=153+i*37
             if i==5 and state!='reset':
                 b+=box(317,y+1,559,35,8,'#e4dec2')+shape(f'M317 {y+7}q-9 10 0 22 l7 -11 z',JADE)
-            b+=txt(334,y+25,action,18,INK,weight=600 if i==5 else 450)
+            b+=txt(action_left,y+25,action,18,INK,weight=600 if i==5 else 450)
             if i==5 and state!='reset':
-                cx=665 if pad else 568
                 edge='#995336' if state=='conflict' else JADE
-                b+=box(cx-76,y+1,152,34,9,'#f4e1b9' if state=='waiting' else '#f3d3b4' if state=='conflict' else 'none',edge,2.7)
+                b+=box(keys_left-8,y+1,152,34,9,'#f4e1b9' if state=='waiting' else '#f3d3b4' if state=='conflict' else 'none',edge,2.7)
             if i==5 and state in ['waiting','conflict']:
-                b+=txt(cx,y+25,'等待输入…' if state=='waiting' else '请换一个键',17,INK,'middle',weight=650)
-            elif pad: b+=cap(665,y+3,PAD[i])
-            else:b+=caps(568,y+3,['J'] if i==5 and state=='saved' else KEYS[i])
-            if not pad:b+=cap(776,y+3,MOUSE[i])
+                b+=txt(keys_left,y+25,'等待输入…' if state=='waiting' else '请换一个键',17,INK,weight=650)
+            elif pad: b+=caps(keys_left,y+3,[PAD[i]])
+            else:b+=caps(keys_left,y+3,['J'] if i==5 and state=='saved' else KEYS[i])
+            if not pad:b+=caps(mouse_left,y+3,[MOUSE[i]])
             b+=shape(f'M325 {y+36} H873','none','#d5c098',.8)
     else:
         listed=[row for row in SHORTCUTS[section] if row[2 if pad else 1]]
         step=min(49,330//len(listed))
         for i,row in enumerate(listed):
             y=154+i*step
-            b+=txt(330,y+23,row[0],17)
+            b+=txt(action_left,y+23,row[0],17)
             names=row[2 if pad else 1].split(' / ')
             note=row[4 if pad else 3] if len(row)>(4 if pad else 3) else ''
-            if note:b+=txt(515,y+23,note,14,MUTED)
-            b+=caps(681 if note else 666,y+2,names,min(31,step-3))
+            b+=caps(keys_left,y+2,names,min(31,step-3),note)
             b+=shape(f'M325 {y+step-1} H873','none','#d5c098',.8)
     notes={'normal':'朝蜂头振翅，按住连发','waiting':'为「振翅」按下新的键。Esc 或手柄 B 取消。','conflict':'此键已用于「静音」。请换一个键，或按 Esc 取消。','reset':'已恢复键鼠和手柄的默认按键。','saved':'已保存 · 振翅　J','cancel':'已取消，原按键保留。'}
     if flight:b+=txt(326,513,notes[state],16,'#8f452f' if state=='conflict' else MUTED)
