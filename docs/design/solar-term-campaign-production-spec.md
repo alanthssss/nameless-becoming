@@ -342,7 +342,7 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
-**2026-11-26 · Honey 通用界面实装。** M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿用池岸采蜜、回庭院换取成长的整包检查点。Alan 定稿的标题与暂停菜单、各子页和两地采集提示已进入同一份 [Mac 试玩包与开发自测回执](../production/region-greybox-receipt.md#general-menu-review-447)。Alan 可从新档走一趟，并判断操作提示、储粮与成长的整体验收。成本复核沿 #211。
+**2026-11-26 · Honey 通用界面实装。** M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿用池岸采蜜、回庭院换取成长的整包检查点。Alan 定稿的标题与暂停菜单、各子页和两地采集提示已进入同一份 [Mac 试玩包与开发自测回执](../production/region-greybox-receipt.md#general-menu-review-447)。Alan 可从新档走一趟，并判断操作提示、储粮与成长的整体验收。野外收获已按实玩反馈修订，双采与材料入袋的[同版试玩与复核](../production/region-greybox-receipt.md#per-source-pickup)沿本次 M3 检查点。成本复核沿 #211。
 
 **2026-11-26 · Honey 暂停页。** M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿 [#333](https://github.com/alanthssss/nameless-becoming/issues/333) 接入 Alan 定稿的「花园手记」。在[同版 Mac 试玩](../production/region-greybox-receipt.md#pause-folio-333)中，Alan 可从庭院和花地暂停，对照书页可读性与返回出行的手感。首作的池岸成长检查点仍沿同一父项推进。
 
