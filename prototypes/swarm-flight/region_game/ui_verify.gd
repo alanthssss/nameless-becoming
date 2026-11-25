@@ -20,6 +20,19 @@ func tap(code: int) -> void:
 		event.pressed = pressed
 		root.push_input(event,true)
 		await frames(2)
+func click_buy_button() -> void:
+	var centre: Vector2 = game.ui.buy_button.get_global_rect().get_center()
+	var motion := InputEventMouseMotion.new()
+	motion.position = centre
+	root.push_input(motion, true)
+	for pressed in [true, false]:
+		var click := InputEventMouseButton.new()
+		click.button_index = MOUSE_BUTTON_LEFT
+		click.position = centre
+		click.pressed = pressed
+		root.push_input(click, true)
+		await frames(2)
+
 func all_text(node: Node) -> String:
 	var result: String = node.text if node is Label or node is Button else ""
 	for child in node.get_children(): result += all_text(child)
@@ -147,8 +160,12 @@ func run() -> void:
 	game.model.p = game.model.HUB_TREE
 	cues.clear()
 	await tap(KEY_E)
+	await click_buy_button()
+	check(cues == ["book_open", "denied"], "clicking an unaffordable rank sounds once")
+	game.ui.last_denied_msec = -1000
+	cues.clear()
 	await tap(KEY_ENTER)
-	check(game.ui.buy_button.disabled and cues == ["book_open", "denied"], "pressing purchase with insufficient funds gives a quiet refusal")
+	check(game.ui.buy_button.disabled and cues == ["denied"], "pressing purchase with insufficient funds gives a quiet refusal")
 	await tap(KEY_ESCAPE)
 	check(cues.back() == "book_close", "closing the book turns the page once")
 	game.model.coins = 1000
@@ -158,7 +175,7 @@ func run() -> void:
 	check(game.mode == "tree","growth interaction")
 	var paid: int = game.model.coins
 	cues.clear()
-	game.buy_upgrade("gather1")
+	await tap(KEY_ENTER)
 	check(cues == ["buy"], "paid upgrade has its own confirmation")
 	check("gather1" in game.model.owned and game.model.coins == paid-4,"real purchase commits")
 	game.buy_upgrade("gather1")

@@ -2,6 +2,7 @@ extends "res://nectar_harvest_ui.gd"
 
 const SaleFlight = preload("res://region_game/sale_flight.gd")
 var reading_book := false
+var last_denied_msec := -1000
 var sale_flight
 
 func _ready() -> void:
@@ -60,8 +61,8 @@ func _buy_selected() -> void:
 	var id: String = board.next_id(board.selected)
 	if id.is_empty() or driver.model.can_buy(id): return
 	var now := Time.get_ticks_msec()
-	if now - last_purchase_msec < 350: return
-	last_purchase_msec = now
+	if now - last_denied_msec < 350: return
+	last_denied_msec = now
 	driver.sound.play_event("denied")
 	driver.message(driver.model.locked_reason(id), 3)
 
