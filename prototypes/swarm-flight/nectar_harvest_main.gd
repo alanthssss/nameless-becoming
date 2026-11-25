@@ -226,6 +226,11 @@ func pulse_direction() -> Vector2:
 	return Vector2.ZERO
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(ui) and is_instance_valid(ui.restart_dialog) and ui.restart_dialog.visible:
+		if event.is_action_pressed("ui_cancel"):
+			ui.close_restart()
+			get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseMotion: mouse_aim = event.position
 	if event is InputEventKey and is_instance_valid(ui) and ui.tree_key(event):
 		get_viewport().set_input_as_handled()

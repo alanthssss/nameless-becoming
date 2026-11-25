@@ -69,7 +69,9 @@ var menu_body: Label
 var menu_primary: Button
 var menu_restart: Button
 var menu_quit: Button
-var restart_dialog: ConfirmationDialog
+var restart_dialog: Control
+var restart_cancel: Button
+var restart_opener: Control
 var muted := false
 var enter_held := false
 var purchase_double_click := false
@@ -93,6 +95,7 @@ var journal: Control
 var journal_status: Label
 var journal_back: Button
 var settings: Control
+var settings_scroll: ScrollContainer
 var settings_motion: Button
 var settings_dance: Button
 var settings_sound: Button
@@ -117,13 +120,7 @@ func _ready() -> void:
 	_build_journal()
 	_build_settings()
 	_build_toast()
-	restart_dialog = ConfirmationDialog.new()
-	restart_dialog.title = "重新开始采蜜"
-	restart_dialog.dialog_text = "当前采蜜进度会备份，再开始新的一轮。\n旧的池岸归途进度不会改变。"
-	restart_dialog.ok_button_text = "备份并重新开始"
-	restart_dialog.cancel_button_text = "取消"
-	restart_dialog.confirmed.connect(driver.restart_game)
-	add_child(restart_dialog)
+	_build_restart_dialog()
 	if driver.has_signal("presentation_changed"): driver.presentation_changed.connect(refresh)
 
 func style(fill: Color, edge := Color("81957a"), thickness := 1, radius := 14) -> StyleBoxFlat:
@@ -159,6 +156,14 @@ func card(parent: Node, fill := PAPER, edge := Color("81957a")) -> PanelContaine
 	else:
 		# Field HUD stays compact/translucent; its icons use the painted material set.
 		p.add_theme_stylebox_override("panel",style(fill,edge))
+	parent.add_child(p)
+	return p
+
+# The left leaf of the painted spread runs from the outer cover to the binding.
+# Each reading layout reserves room for its scaled frame, including both leaf sprays.
+func reading_page(parent: Node, inset: Vector2) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel",painted_style(UIArt.JOURNAL,Rect2(6,12,762,990),Color.WHITE,inset))
 	parent.add_child(p)
 	return p
 
@@ -397,9 +402,9 @@ func _activate_hub_action() -> void:
 func _build_shop() -> void:
 	shop = screen(self)
 	shade(shop,Color(.08,.17,.12,.23))
-	var p := card(shop,PAPER,Color("a7a77c"))
-	anchored(p,Rect2(1,.5,0,0),Rect2(-535,-350,500,700))
-	var v := column(p,12)
+	var p := reading_page(shop,Vector2(72,58))
+	anchored(p,Rect2(1,.5,0,0),Rect2(-585,-360,550,720))
+	var v := column(p,9)
 	text_line(v,"庭院蜜铺 · 收购员",17,Color("7b895f")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_line(v,"这一趟，收获不错。",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	shop_story = text_line(v,"带回花蜜，就能换取下一次成长。",19,Color("768064"),true)
@@ -414,6 +419,8 @@ func _build_shop() -> void:
 	shop_coins = text_line(v,"",19,Color("718160"))
 	spacer(v)
 	leave_button = action(v,"回到庭院",driver.close_shop)
+	leave_button.custom_minimum_size.x = 200
+	leave_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	tree_button = leave_button # Compatibility alias for the single return action.
 	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -421,21 +428,21 @@ func _build_regions() -> void:
 	regions = screen(self)
 	shade(regions,Color("193c329c"))
 	var v := column(regions,14)
-	anchored(v,Rect2(.5,.5,0,0),Rect2(-450,-310,900,620))
+	anchored(v,Rect2(.5,.5,0,0),Rect2(-500,-320,1000,640))
 	region_title = text_line(v,"这次去哪里？",32,PAPER)
 	region_title.add_theme_color_override("font_shadow_color",INK)
 	region_title.add_theme_constant_override("shadow_offset_y",2)
 	region_hint = text_line(v,"",19,PAPER,true)
 	region_cards = row(v,22)
 	region_cards.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var pond_card := card(region_cards)
+	var pond_card := reading_page(region_cards,Vector2(65,62))
 	pond_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	pond_card.custom_minimum_size.x = 435
 	var pv := column(pond_card,12)
 	picture(pv,preload("res://art/nectar-pond-oblique.png"),210)
 	pond_button = action(pv,"池岸花丛",func(): driver.request_transition("pond"),true)
 	pond_info = text_line(pv,"每花 1 份 · 每份 1 金币 · 晴",18,INK,true)
-	var meadow_card := card(region_cards)
+	var meadow_card := reading_page(region_cards,Vector2(65,62))
 	meadow_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	meadow_card.custom_minimum_size.x = 435
 	var mv := column(meadow_card,12)
@@ -651,6 +658,7 @@ func show_mode(mode: String) -> void:
 	if mode == "settings":
 		refresh_settings()
 		settings_motion.grab_focus()
+		settings_scroll.set_deferred("scroll_vertical",0)
 	if mode == "regions":
 		refresh()
 		pond_button.grab_focus()
@@ -841,8 +849,49 @@ func refresh() -> void:
 	tree_progress.text = "紫花地已开放" if "meadow" in m.owned else "花路成长 %d / 3" % mini(3,m.growth_count())
 	_detail()
 
+func _build_restart_dialog() -> void:
+	restart_dialog = screen(self)
+	shade(restart_dialog,Color("173d35cc"))
+	var center := CenterContainer.new()
+	restart_dialog.add_child(center)
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var page := reading_page(center,Vector2(78,38))
+	page.custom_minimum_size.x = 560
+	var content := column(page,20)
+	text_line(content,"重新开始采蜜？",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_line(content,"当前采蜜进度会先备份，再开始新的一轮。\n旧的池岸归途进度会保留。",20,INK,true)
+	var buttons := row(content,20)
+	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
+	restart_cancel = action(buttons,"取消",close_restart)
+	restart_cancel.custom_minimum_size.x = 124
+	restart_cancel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var confirm := action(buttons,"备份并重新开始",_confirm_restart,true)
+	confirm.custom_minimum_size.x = 220
+	var focus_ring := style(Color.TRANSPARENT,INK,3,8)
+	restart_cancel.add_theme_stylebox_override("focus",focus_ring)
+	confirm.add_theme_stylebox_override("focus",focus_ring)
+	restart_dialog.hide()
+
 func ask_restart() -> void:
-	restart_dialog.popup_centered(Vector2i(540,220))
+	if restart_dialog.visible: return
+	restart_opener = get_viewport().gui_get_focus_owner()
+	menu.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_DISABLED
+	restart_dialog.show()
+	restart_cancel.grab_focus()
+
+func close_restart() -> void:
+	restart_dialog.hide()
+	menu.focus_behavior_recursive = Control.FOCUS_BEHAVIOR_INHERITED
+	if is_instance_valid(restart_opener) and restart_opener.is_visible_in_tree():
+		restart_opener.grab_focus()
+	elif menu.visible:
+		menu_primary.grab_focus()
+	restart_opener = null
+
+func _confirm_restart() -> void:
+	if not restart_dialog.visible: return
+	close_restart()
+	driver.restart_game()
 
 func toggle_sound() -> void:
 	muted = not muted
@@ -853,8 +902,8 @@ func toggle_sound() -> void:
 func _build_journal() -> void:
 	journal = screen(self)
 	shade(journal,Color("173d35d9"))
-	var p := card(journal)
-	anchored(p,Rect2(.5,.5,0,0),Rect2(-480,-315,960,630))
+	var p := reading_page(journal,Vector2(116,62))
+	anchored(p,Rect2(.5,.5,0,0),Rect2(-528,-310,1056,620))
 	var v := column(p,14)
 	text_line(v,"花路见闻",32).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	journal_status = text_line(v,"",18,Color("7b895f"))
@@ -862,11 +911,8 @@ func _build_journal() -> void:
 	for entry in [
 		["池岸花丛","蓝花蜜 · 每份 1 金币","每花 1 份 · 生物不会攻击。\n振翅驱离小飞虫，拾取纤维。\n采够了即可从灯球返回。"],
 		["紫花地","紫花蜜 · 每份 3 金币","在成长书屋开放后出发。\n每花 1 份 · 可收集树脂。\n细雨增加消耗，叶棚下可避雨。"]]:
-		var c := card(h,Color("e7e9cf"))
-		c.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
-		c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		c.custom_minimum_size.x = 430
-		var cv := column(c,14)
+		var cv := column(h,14)
+		cv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		text_line(cv,entry[0],27)
 		text_line(cv,entry[1],21,Color("9a6c28"))
 		text_line(cv,entry[2],20,INK,true)
@@ -878,13 +924,20 @@ func _build_journal() -> void:
 func _build_settings() -> void:
 	settings = screen(self)
 	shade(settings,Color("173d35ee"))
-	var p := card(settings)
-	anchored(p,Rect2(.5,.5,0,0),Rect2(-350,-340,700,680))
-	var scroll := ScrollContainer.new()
-	p.add_child(scroll)
-	var v := column(scroll,14)
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_line(v,"设置与旅途说明",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var p := reading_page(settings,Vector2(88,65))
+	anchored(p,Rect2(.5,.5,0,0),Rect2(-380,-340,760,680))
+	var page := column(p,12)
+	text_line(page,"设置与旅途说明",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	settings_scroll = ScrollContainer.new()
+	settings_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	settings_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	settings_scroll.follow_focus = true
+	page.add_child(settings_scroll)
+	var gutter := MarginContainer.new()
+	gutter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	gutter.add_theme_constant_override("margin_right",12)
+	settings_scroll.add_child(gutter)
+	var v := column(gutter,14)
 	settings_motion = action(v,"",func():
 		driver.reduced_motion = not driver.reduced_motion
 		driver.save_settings())
@@ -897,7 +950,14 @@ func _build_settings() -> void:
 	text_line(v,"%s 0.27.0\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
 	text_line(v,"制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞为通信动作启发的幻想演绎；侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。",17,Color("687957"),true)
 	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
-	settings_back = action(v,"返回",driver.close_settings,true)
+	settings_back = action(page,"返回",driver.close_settings,true)
+
+func _shortcut_input(event: InputEvent) -> void:
+	if not settings.visible: return
+	var direction := int(event.is_action_pressed("ui_page_down",true)) - int(event.is_action_pressed("ui_page_up",true))
+	if direction:
+		settings_scroll.scroll_vertical += direction * roundi(settings_scroll.get_v_scroll_bar().page)
+		get_viewport().set_input_as_handled()
 
 func refresh_settings() -> void:
 	if not is_instance_valid(settings_motion): return
