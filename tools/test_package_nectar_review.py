@@ -102,16 +102,16 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(result['sha256'],tool.digest(self.output))
         with zipfile.ZipFile(self.output) as archive:
             names = archive.namelist()
-            self.assertTrue(all(name.startswith('采蜜与蜂舞-Demo/') for name in names))
+            self.assertTrue(all(name.startswith('Honey/') for name in names))
             commands = [name for name in names if name.endswith('.command')]
-            self.assertEqual(commands,['采蜜与蜂舞-Demo/开始采蜜小店.command'])
+            self.assertEqual(commands,['Honey/开始 Honey.command'])
             self.assertEqual(archive.read(commands[0]).decode(),tool.launcher_text(APP,EXE))
             self.assertTrue(archive.getinfo(commands[0]).external_attr >> 16 & 0o111)
-            self.assertEqual(archive.getinfo('采蜜与蜂舞-Demo/'+APP+'/Contents/Resources/synthetic.pck').external_attr >> 16 & 0o777,0o640)
+            self.assertEqual(archive.getinfo('Honey/'+APP+'/Contents/Resources/synthetic.pck').external_attr >> 16 & 0o777,0o640)
             self.assertFalse(any('/存档/' in name or '/日志/' in name or 'NH-C' in name for name in names))
-            notes = archive.read('采蜜与蜂舞-Demo/先读我.txt').decode()
+            notes = archive.read('Honey/先读我.txt').decode()
             self.assertIn('不代表 Alan、外部玩家、美术专家或 Steam 已经接受',notes)
-            metadata = json.loads(archive.read('采蜜与蜂舞-Demo/版本信息.json'))
+            metadata = json.loads(archive.read('Honey/版本信息.json'))
             self.assertIs(metadata['human_accepted'],False)
             self.assertIs(metadata['full_game_completed'],False)
             self.assertEqual(metadata['launcher_sha256'],self.export_record['launcher_sha256'])
@@ -128,7 +128,7 @@ class PackageTests(unittest.TestCase):
         self.assertIn('const SAVE_PATH := "user://'+tool.SAVE_NAME+'"',main)
         stage = self.root/'default launch fixture'; stage.mkdir()
         tool.extract_export(self.export,stage)
-        command = stage/'开始采蜜小店.command'; command.write_text(tool.launcher_text(APP,EXE)); command.chmod(0o755)
+        command = stage/'开始 Honey.command'; command.write_text(tool.launcher_text(APP,EXE)); command.chmod(0o755)
         # Exercise the actual command with no override, but prevent its mkdir
         # from touching any real user profile. The synthetic binary only records args.
         helpers = self.root/'test helpers'; helpers.mkdir()
@@ -145,7 +145,7 @@ class PackageTests(unittest.TestCase):
     def test_exact_launcher_runs_expected_binary_and_only_explicit_isolated_override(self):
         stage = self.root/'launch fixture'; stage.mkdir()
         tool.extract_export(self.export,stage)
-        command = stage/'开始采蜜小店.command'; command.write_text(tool.launcher_text(APP,EXE)); command.chmod(0o755)
+        command = stage/'开始 Honey.command'; command.write_text(tool.launcher_text(APP,EXE)); command.chmod(0o755)
         args_file = self.root/'observed-args.txt'; env = dict(os.environ,NECTAR_TEST_ARGS=str(args_file))
         save = self.root/'test isolated'/tool.SAVE_NAME
         subprocess.run([str(command),'--progress-file='+str(save)],env=env,check=True)
