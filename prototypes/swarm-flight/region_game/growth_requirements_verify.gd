@@ -57,15 +57,26 @@ func run() -> void:
 	m.rose_sold = 6
 	m.p = m.HUB_TREE
 	await key(KEY_E)
-	check(game.mode=="tree","ordinary E opens courtyard book")
+	check(game.mode=="tree" and not ui.skill_note.visible and not ui.tree_progress.visible and not ui.tree_footer.visible,"opening shows the map without a note, counters or instructions")
+	check(not ui.tree_fiber.get_parent().visible and not ui.tree_coins.get_parent().visible and not ui.tree_resin.get_parent().visible,"wallet stays out of the unselected map")
 	board.select_rank("reserve")
 	await process_frame
+	await key(KEY_I)
+	check(not ui.skill_note.visible,"I dismisses the selected note")
+	await pad(JOY_BUTTON_BACK)
+	check(ui.skill_note.visible and ui.tree_coins.get_parent().visible and not ui.tree_fiber.get_parent().visible,"controller reopens just the note and its relevant currency")
 	var condition = ui.conditions
 	var rows: Array = condition.shown_rows
 	check(rows.size()==4 and rows[0].targets==["twin"] and not rows[0].met,"single missing skill leads the reserve list")
 	check(rows.slice(1).all(func(r): return r.met),"open, visit and six sold have distinct completed states")
-	check(ui.buy_button.disabled and ui.buy_button.text=="先完成上方条件" and ui.detail_costs.coin.text=="60","sufficient gold never masks the missing skill")
-	check(ui.cost_stock.coin.text=="金币 · 持有 78","the actual reserve price and current holdings appear together")
+	check(ui.buy_button.disabled and not ui.buy_button.visible and ui.detail_costs.coin.text=="60","sufficient gold never masks the missing skill")
+	check(ui.cost_stock.coin.text=="金币" and "持有 78" in ui.cost_stock.coin.get_parent().tooltip_text,"the actual reserve price and current holdings appear together")
+	check(not ui.detail_level.visible and not ui.detail_title.get_parent().get_parent().get_node("CatalogRankPicker").visible,"single-rank page omits both redundant counters")
+	check(condition.links.size()==2 and condition.links[1].get_meta("group","")=="completed","reserve initially offers its one action and completed disclosure")
+	await click(condition.links[1])
+	check(condition.show_completed and condition.links.any(func(b): return "开往紫花地" in b.text),"pointer reveals completed links")
+	await key(KEY_ENTER)
+	check(not condition.show_completed and condition.links.size()==2,"folding preserves focus and keyboard activation")
 	var wallet: Dictionary = m.to_payload().duplicate(true)
 	var origin: Dictionary = ui.growth_map.capture_view()
 	var link: Button = condition.links[0]
@@ -74,9 +85,15 @@ func run() -> void:
 	check(board.inspect_data().id=="twin" and ui.return_to_goal.visible and "备好花蜜" in ui.return_to_goal.text,"pointer opens the exact dependency with named way back")
 	var twin_requirements: Array = condition.shown_rows
 	check(twin_requirements.any(func(r): return r.targets==["gather2"] and "第 2 档" in r.text),"multi-rank dependency identifies exact second rank")
-	check(ui.cost_stock.resin.text=="树脂 · 持有 1" and ui.detail_costs.resin.text=="3","multi-material price and stock label")
+	check(ui.cost_stock.resin.text=="树脂" and "持有 1" in ui.cost_stock.resin.get_parent().tooltip_text and ui.detail_costs.resin.text=="3","multi-material price and stock label")
 	check(twin_requirements.any(func(r): return r.kind=="cost" and "还差 2 树脂" in r.text),"three resin recipe and one resin held explain the deficit")
-	await key(KEY_F)
+	check(not condition.show_remaining and condition.links.any(func(b): return b.get_meta("group","")=="remaining"),"other outstanding work collapses behind an actionable summary")
+	await pad(JOY_BUTTON_LEFT_STICK)
+	await pad(JOY_BUTTON_LEFT_STICK)
+	await pad(JOY_BUTTON_A)
+	check(condition.show_remaining,"controller opens remaining requirements")
+	await pad(JOY_BUTTON_A)
+	condition.links[0].grab_focus()
 	await key(KEY_ENTER)
 	check(board.inspect_data().id=="gather2","keyboard follows second-rank prerequisite")
 	await key(KEY_ESCAPE)

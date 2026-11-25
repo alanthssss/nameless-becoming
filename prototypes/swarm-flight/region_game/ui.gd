@@ -12,6 +12,9 @@ var zoom_readout: Label
 var zoom_out: Button
 var zoom_in: Button
 var detail_scroll: ScrollContainer
+var skill_note: Control
+var note_open := false
+var controls_hint: Button
 var cost_stock := {}
 var conditions: GrowthRequirements
 var return_to_goal: Button
@@ -37,6 +40,7 @@ func _ready() -> void:
 	shop.add_child(sale_flight)
 	sale_flight.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_reword(self)
+	toast_timer.timeout.connect(func(): _update_tree_footer(get_viewport().gui_get_focus_owner()))
 	energy_text.tooltip_text = "续航：庭院恢复，飞行、采蜜和振翅消耗"
 
 func transition_focus() -> Vector2:
@@ -66,6 +70,8 @@ func _detail() -> void:
 	if not CatalogDetail.update(self,board.selected):
 		super._detail()
 		detail_title.text = rank.name
+		if board.selected=="reserve":
+			detail_effect.text = "封存花蜜，备作雨前口粮。"
 		if board.selected=="beat":
 			detail_effect.text = "厚壳 / 厚树皮 · 2 次 → 1 次"
 			detail_effect.tooltip_text = "近处的薄壳一次可开；岔路和远端较牢。树脂露出后仍需贴近收取。"
@@ -75,36 +81,38 @@ func _detail() -> void:
 	if not is_instance_valid(conditions): return
 	conditions.display(rank)
 	detail_card.tooltip_text = ""
-	if rank.state=="next" and buy_button.disabled:
-		var blockers := conditions.shown_rows.filter(func(item): return not item.met)
-		if not blockers.is_empty():
-			buy_button.text = "补足币材后成长" if blockers[0].kind=="cost" else "先完成上方条件"
-			buy_button.tooltip_text = blockers[0].text
+	_update_note_wallet()
+	detail_level.text = {"owned":"已学会","planned":"后续预览","preview":"尚未学到"}.get(str(rank.state),"")
+	detail_level.visible = not detail_level.text.is_empty()
+	detail_hint.hide()
+	detail_cost_row.visible = rank.state!="owned"
+	buy_button.visible = not buy_button.disabled
+	if buy_button.visible:
+		buy_button.tooltip_text = "购买这一档成长"
 	return_to_goal.visible = not goal_history.is_empty()
 	if return_to_goal.visible:
 		return_to_goal.text = "← 返回「%s」" % goal_history.back().title
 	_update_tree_footer(get_viewport().gui_get_focus_owner())
 
 func _update_tree_footer(owner: Control) -> void:
-	if not is_instance_valid(conditions) or not tree.visible: return
-	var pad: bool = driver.input_device == "pad"
-	var select := "左摇杆选格" if pad else "方向键选格"
-	var jump := "L3" if pad else "F"
-	var accept := "A" if pad else "Enter"
+	if not is_instance_valid(controls_hint) or not tree.visible: return
+	tree_footer.visible = controls_hint.button_pressed
+	var pad: bool = driver.input_device=="pad"
 	if owner is Button and owner in conditions.links:
-		tree_footer.text = "%s 下一项 · %s 查看条件" % [jump, accept]
-		return
-	var hints := PackedStringArray([select])
-	if not conditions.links.is_empty(): hints.append(jump + " 查条件")
-	else: hints.append("LT / RT 缩放" if pad else "滚轮缩放")
-	if not buy_button.disabled: hints.append(accept + " 成长")
-	tree_footer.text = " · ".join(hints)
+		tree_footer.text = "L3 下一项 · A 查看 · B 返回" if pad else "F 下一项 · Enter 查看 · Esc 返回"
+	elif not skill_note.visible:
+		tree_footer.text = "左摇杆选格 · A 查看 · LT / RT 缩放" if pad else "点选技能 · 拖动移图 · 滚轮缩放"
+	else:
+		tree_footer.text = "L3 查条件 · 视图键收签" if pad else "F 查条件 · I 收签"
+		if not buy_button.disabled: tree_footer.text += " · A 成长" if pad else " · Enter 成长"
 
 func follow_growth_rank(rank_id: String) -> void:
 	if driver.mode!="tree" or not board.ranks_by_id.has(rank_id): return
 	var current: Dictionary = board.inspect_data()
 	if current.id==rank_id: return
-	goal_history.append({"view":growth_map.capture_view(),"title":current.name})
+	goal_history.append({"view":growth_map.capture_view(),"title":current.name,
+		"completed":conditions.show_completed,"remaining":conditions.show_remaining,
+		"group":conditions.open_group,"scroll":detail_scroll.scroll_vertical})
 	board.select_rank(rank_id)
 	growth_map.center_selection()
 
@@ -112,13 +120,18 @@ func back_growth_target() -> bool:
 	if goal_history.is_empty(): return false
 	var target: Dictionary = goal_history.pop_back()
 	growth_map.restore_view(target.view)
+	conditions.show_completed = target.completed
+	conditions.show_remaining = target.remaining
+	conditions.open_group = target.group
+	conditions._render()
 	_detail()
+	detail_scroll.set_deferred("scroll_vertical",target.scroll)
 	return true
 
 func refresh() -> void:
 	super.refresh()
 	if driver == null or not is_instance_valid(board): return
-	tree_progress.text = "六向 41 格 · 75 档　|　" + tree_progress.text
+	tree_progress.hide()
 	pond_info.text = "蓝花蜜 · 每份 1 金币\n振松种穗，飞近收纤维 · 可织轻盈双翼。"
 	meadow_info.text = "紫花蜜 · 每份 3 金币\n"+("振开树皮，贴近收树脂 · 可修远行双翼。" if "meadow" in driver.model.owned else "在成长手册中开放这条花路。")
 	var field = driver.model.field
@@ -132,9 +145,13 @@ func refresh() -> void:
 func show_toast(words: String, seconds: float) -> void:
 	super.show_toast(words,seconds)
 	if driver.mode == "tree":
-		anchored(toast_panel,Rect2(0,1,.665,0),Rect2(75,-120,-97,44))
+		anchored(toast_panel,Rect2(.5,1,0,0),Rect2(-265,-120,530,44))
 
 func _buy_selected() -> void:
+	if driver.mode=="tree" and (not note_open or not skill_note.visible):
+		growth_map.center_selection(false)
+		_set_note(true)
+		return
 	if not buy_button.disabled:
 		super._buy_selected()
 		return
@@ -213,7 +230,11 @@ func show_mode(mode: String) -> void:
 		sale_flight.stop()
 	var leaving_slots := is_instance_valid(slots) and slots.visible
 	super.show_mode(mode)
-	if not was_reading and mode == "tree": growth_map.open_book(driver.saved_path)
+	if not was_reading and mode == "tree":
+		growth_map.open_book(driver.saved_path)
+		_set_note(false)
+		controls_hint.button_pressed = false
+		tree_footer.hide()
 	if is_instance_valid(controls_page):
 		controls_page.visible = mode == "controls"
 	_refresh_control_hints()
@@ -289,39 +310,41 @@ func create_growth_board():
 	return preload("res://region_game/growth_catalog_board.gd").new()
 
 func add_growth_paper() -> void:
-	# Compose the existing painted spread at its actual map/detail split.
-	# The centre binding stays between the map and the entry at every scale.
-	var pages := preload("res://art/nectar-growth-journal.png")
-	var half := Vector2(pages.get_width()*.5,pages.get_height())
-	for side in 2:
-		var atlas := AtlasTexture.new()
-		atlas.atlas = pages
-		atlas.region = Rect2(Vector2(side*half.x,0),half)
-		atlas.filter_clip = true
-		var art := TextureRect.new()
-		art.texture = atlas
-		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		art.stretch_mode = TextureRect.STRETCH_SCALE
-		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		tree.add_child(art)
-		if side == 0:
-			anchored(art,Rect2(0,0,.665,1),Rect2(10,12,-10,-24))
-		else:
-			anchored(art,Rect2(.665,0,.335,1),Rect2(0,12,-10,-24))
+	var sheet := preload("res://region_game/growth_parchment.gd").new()
+	tree.add_child(sheet)
+	anchored(sheet,Rect2(0,0,1,1),Rect2(16,14,-32,-28))
 
 func _build_tree() -> void:
 	super._build_tree()
 	growth_map = preload("res://region_game/growth_map_view.gd").new()
 	tree.add_child(growth_map)
-	anchored(growth_map,Rect2(0,0,.665,1),Rect2(86,148,-112,-317))
+	anchored(growth_map,Rect2(0,0,1,1),Rect2(68,110,-136,-224))
 	growth_map.input_used.connect(driver.track_device)
 	growth_map.attach(board)
+	var header: HBoxContainer = tree_back.get_parent()
+	anchored(header,Rect2(0,0,1,0),Rect2(78,48,-156,48))
+	tree_progress.hide()
+	skill_note = preload("res://region_game/growth_parchment.gd").new()
+	skill_note.name = "SkillNote"
+	skill_note.small_note = true
+	skill_note.mouse_filter = Control.MOUSE_FILTER_STOP
+	tree.add_child(skill_note)
+	growth_map.detail_overlay = skill_note
+	growth_map.blank_clicked.connect(_set_note.bind(false))
+	growth_map.overview_requested.connect(_set_note.bind(false))
+	board.item_rect_changed.connect(_place_detail)
+	growth_map.resized.connect(_place_detail)
 	detail_scroll = ScrollContainer.new()
 	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	tree.add_child(detail_scroll)
-	anchored(detail_scroll,Rect2(.665,0,.335,1),Rect2(12,157,-61,-272))
+	skill_note.add_child(detail_scroll)
+	detail_scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	detail_card.reparent(detail_scroll,false)
 	detail_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var close := action(detail_title.get_parent(),"×",_set_note.bind(false))
+	close.custom_minimum_size = Vector2(30,32)
+	close.size_flags_horizontal = Control.SIZE_SHRINK_END
+	close.tooltip_text = "收起技能说明"
+	close.accessibility_name = close.tooltip_text
 	CatalogDetail.add_rank_controls(self)
 	CatalogDetail.add_cost_stock(self)
 	var detail_column := detail_requirements.get_parent()
@@ -335,17 +358,17 @@ func _build_tree() -> void:
 	conditions = GrowthRequirements.new()
 	conditions.name = "GrowthRequirements"
 	conditions.ui = self
-	conditions.add_theme_constant_override("separation",3)
+	conditions.add_theme_constant_override("separation",4)
 	detail_column.add_child(conditions)
-	detail_column.move_child(conditions,buy_button.get_index())
+	detail_column.move_child(conditions,buy_button.get_index()+1)
 	detail_scroll.follow_focus = true
 	get_viewport().gui_focus_changed.connect(_update_tree_footer)
 	bay_button = action(buy_button.get_parent(),"去花湾演示",_open_bay)
 	bay_button.tooltip_text = "试用这项成长 · P / 手柄 Y"
 	bay_button.visible = false
 	var tools := row(tree,8)
-	tools.alignment = BoxContainer.ALIGNMENT_CENTER
-	anchored(tools,Rect2(0,1,.665,0),Rect2(80,-159,-100,37))
+	tools.alignment = BoxContainer.ALIGNMENT_BEGIN
+	anchored(tools,Rect2(0,1,0,0),Rect2(76,-94,300,40))
 	zoom_out = _map_button(tools,"−","缩小 · 减号 / LT",func(): growth_map.zoom_selected(1.0/growth_map.STEP))
 	zoom_readout = text_line(tools,"100%",17,INK)
 	zoom_readout.custom_minimum_size.x = 51
@@ -355,18 +378,21 @@ func _build_tree() -> void:
 	_map_button(tools,"全图","看全图 · Home / 按下右摇杆",growth_map.reset_view)
 	growth_map.magnification_changed.connect(_show_zoom)
 	_show_zoom(growth_map.magnification)
-	tree_footer.text = "滚轮缩放 · 拖空白移图 · 方向选格 · Enter / A 成长"
-	tree_footer.tooltip_text = "左摇杆选格 · 右摇杆移图 · LT / RT 缩放 · [ ] / X 换档 · Esc / B 返回"
-	anchored(tree_footer,Rect2(0,1,.665,0),Rect2(75,-119,-97,25))
+	controls_hint = _map_button(tools,"?","查看操作",func(): _update_tree_footer(get_viewport().gui_get_focus_owner()))
+	controls_hint.toggle_mode = true
+	controls_hint.accessibility_name = "查看操作"
+	tree_footer.text = "点技能查看 · 拖动移图 · 滚轮缩放 · F / L3 查条件 · Enter / A 确认"
+	tree_footer.tooltip_text = "I / 手柄视图键 收起或查看 · [ ] / X 换档 · Esc / B 返回"
+	tree_footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	anchored(tree_footer,Rect2(0,1,1,0),Rect2(394,-92,-472,36))
+	tree_footer.hide()
+	_set_note(false)
 
 func _map_button(parent: Control, label: String, hint: String, callback: Callable) -> Button:
 	var b := action(parent,label,callback)
 	b.custom_minimum_size = Vector2(46,36)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	b.tooltip_text = hint
-	var frame := style(Color("f7e4b496"),Color("b6935a"),1,6)
-	frame.set_content_margin_all(4)
-	b.add_theme_stylebox_override("normal",frame)
 	return b
 
 func _show_zoom(value: float) -> void:
@@ -375,12 +401,51 @@ func _show_zoom(value: float) -> void:
 	zoom_in.disabled = is_equal_approx(value,growth_map.MAX_ZOOM)
 
 func _place_detail() -> void:
-	# The right column is laid out by its scroll container.
-	pass
+	if not is_instance_valid(skill_note) or not is_instance_valid(detail_scroll) or not note_open or not board.model: return
+	var bounds := Rect2(growth_map.position,growth_map.size)
+	var point: Vector2 = bounds.position+board.position+board.point(board.selected)*growth_map.magnification
+	skill_note.visible = bounds.has_point(point)
+	if not skill_note.visible: return
+	var width := minf(316.0,bounds.size.x-24.0)
+	var height := minf(detail_card.get_combined_minimum_size().y+4.0,bounds.size.y-10.0)
+	var right := point.x+84.0
+	var x := right if right+width<=bounds.end.x else point.x-84.0-width
+	skill_note.size = Vector2(width,height)
+	skill_note.position = Vector2(clampf(x,bounds.position.x,bounds.end.x-width),
+		clampf(point.y-48.0,bounds.position.y,bounds.end.y-height))
+
+func _set_note(visible_: bool) -> void:
+	if not is_instance_valid(skill_note): return
+	note_open = visible_
+	if visible_:
+		_place_detail()
+	else:
+		var owner := get_viewport().gui_get_focus_owner()
+		if owner!=null and skill_note.is_ancestor_of(owner):
+			board.buttons[board.selected].grab_focus()
+		skill_note.hide()
+	_update_note_wallet()
+
+func _update_note_wallet() -> void:
+	var costs := {}
+	if note_open and is_instance_valid(board) and board.model:
+		var rank: Dictionary = board.inspect_data()
+		if rank.state!="owned": costs = rank.cost
+	tree_coins.get_parent().visible = costs.get("coins",0)>0
+	tree_fiber.get_parent().visible = costs.get("fiber",0)>0
+	tree_resin.get_parent().visible = costs.get("resin",0)>0
+
+func _reveal_note() -> void:
+	var at: Vector2 = board.position+board.point(board.selected)*growth_map.magnification
+	if not Rect2(Vector2.ZERO,growth_map.size).has_point(at):
+		growth_map.center_selection(false)
+	_set_note(true)
 
 func _selected(id: String) -> void:
 	super._selected(id)
-	if is_instance_valid(detail_scroll): detail_scroll.scroll_vertical = 0
+	if is_instance_valid(detail_scroll):
+		detail_scroll.scroll_vertical = 0
+		_set_note(true)
 
 func _open_bay() -> void:
 	if driver.mode != "tree" or board.selected not in BAY_CELLS or is_instance_valid(bay_preview): return
@@ -404,8 +469,15 @@ func _close_bay() -> void:
 func tree_key(event: InputEventKey) -> bool:
 	if driver.mode == "tree":
 		var key: int = event.physical_keycode if event.physical_keycode else event.keycode
-		if key == KEY_F:
-			if event.pressed and not event.echo: conditions.cycle_link(event.shift_pressed)
+		if key==KEY_I:
+			if event.pressed and not event.echo:
+				if skill_note.visible: _set_note(false)
+				else: _reveal_note()
+			return true
+		if key==KEY_F:
+			if event.pressed and not event.echo:
+				_reveal_note()
+				conditions.cycle_link(event.shift_pressed)
 			return true
 		if key==KEY_ESCAPE and not goal_history.is_empty():
 			if event.pressed and not event.echo: back_growth_target()
@@ -434,7 +506,7 @@ func tree_key(event: InputEventKey) -> bool:
 func _input(event: InputEvent) -> void:
 	if driver == null or driver.mode != "tree" or not event is InputEventJoypadButton: return
 	var directions := {JOY_BUTTON_DPAD_UP:KEY_UP,JOY_BUTTON_DPAD_DOWN:KEY_DOWN,JOY_BUTTON_DPAD_LEFT:KEY_LEFT,JOY_BUTTON_DPAD_RIGHT:KEY_RIGHT}
-	if event.button_index not in directions and event.button_index not in [JOY_BUTTON_A,JOY_BUTTON_B,JOY_BUTTON_Y,JOY_BUTTON_X,JOY_BUTTON_LEFT_STICK]: return
+	if event.button_index not in directions and event.button_index not in [JOY_BUTTON_A,JOY_BUTTON_B,JOY_BUTTON_Y,JOY_BUTTON_X,JOY_BUTTON_LEFT_STICK,JOY_BUTTON_BACK]: return
 	driver.track_device(event)
 	get_viewport().set_input_as_handled()
 	if not event.pressed: return
@@ -442,7 +514,11 @@ func _input(event: InputEvent) -> void:
 		board.navigate(directions[event.button_index])
 	elif event.button_index == JOY_BUTTON_A:
 		if not conditions.activate_link(): _buy_selected()
+	elif event.button_index == JOY_BUTTON_BACK:
+		if skill_note.visible: _set_note(false)
+		else: _reveal_note()
 	elif event.button_index == JOY_BUTTON_LEFT_STICK:
+		_reveal_note()
 		conditions.cycle_link(false)
 	elif event.button_index == JOY_BUTTON_X:
 		var rank: Dictionary = board.inspect_data()

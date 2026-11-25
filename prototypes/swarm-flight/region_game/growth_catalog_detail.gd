@@ -18,7 +18,7 @@ static func add_rank_controls(ui) -> void:
 	var next: Button = ui.action(bar,"下一档",func(): ui.board.shift_rank(1))
 	next.name = "Next"
 	for button in [prev,next]:
-		button.custom_minimum_size = Vector2(78,29)
+		button.custom_minimum_size = Vector2(66,29)
 		button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		button.add_theme_font_size_override("font_size",16)
 	prev.tooltip_text = "查看上一档"
@@ -30,11 +30,12 @@ static func sync_rank_controls(ui) -> void:
 	if bar == null: return
 	var data: Dictionary = ui.board.inspect_data()
 	var multi: bool = data.rank_count > 1
+	bar.visible = multi
 	bar.get_node("Previous").visible = multi
 	bar.get_node("Next").visible = multi
 	bar.get_node("Previous").disabled = data.rank_index<=0
 	bar.get_node("Next").disabled = data.rank_index+1>=data.rank_count
-	bar.get_node("Rank").text = "%s · 第 %d / %d 档" % [data.stage_name,data.rank_index+1,data.rank_count]
+	bar.get_node("Rank").text = "第 %d / %d 档" % [data.rank_index+1,data.rank_count]
 
 static func add_cost_stock(ui) -> void:
 	var flow := HFlowContainer.new()
@@ -56,7 +57,12 @@ static func update_cost_stock(ui, rank: Dictionary) -> void:
 		var key: String = "coins" if unit=="coin" else unit
 		var name: String = {"coins":"金币","fiber":"纤维","resin":"树脂"}[key]
 		var held: int = ui.driver.model.coins if key=="coins" else ui.driver.model.materials.get(key,0)
-		label.text = "%s · 持有 %d" % [name,held] if rank.state!="owned" else "%s · 已付" % name
+		label.text = name
+		var price: int = rank.cost.get(key,0)
+		var group: Control = label.get_parent()
+		group.mouse_filter = Control.MOUSE_FILTER_PASS
+		group.tooltip_text = "需要 %d %s，持有 %d" % [price,name,held]
+		group.accessibility_description = group.tooltip_text
 		label.add_theme_color_override("font_color",Color("803d23") if rank.state!="owned" and held<int(rank.cost.get(key,0)) else INK)
 
 static func update(ui,id: String) -> bool:
@@ -65,7 +71,7 @@ static func update(ui,id: String) -> bool:
 	var data: Dictionary = ui.board.inspect_data()
 	sync_rank_controls(ui)
 	if data.state == "next":
-		ui.detail_effect.add_theme_font_size_override("font_size",24)
+		ui.detail_effect.add_theme_font_size_override("font_size",19)
 		return false
 	ui.detail_effect.add_theme_font_size_override("font_size",18)
 	ui.detail_title.text = data.name
