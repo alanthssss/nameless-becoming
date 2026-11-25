@@ -1,9 +1,9 @@
 extends "res://sound.gd"
-## Regional loops, a honey-shop dance, and a looping flute phrase for reading the growth journal.
+## Regional loops, a honey-shop dance, and the flute score for the growth journal.
 const SPRING := preload("res://region_game/music/spring_explore.ogg")
 const AUTUMN := preload("res://region_game/music/autumn_explore.ogg")
 const SHOP_MUSIC := preload("res://region_game/music/honey_counter.ogg")
-const GrowthDizi := preload("res://region_game/growth_dizi.gd")
+const JOURNAL_MUSIC := preload("res://region_game/music/growth_journal_dizi.ogg")
 const BOOK_DELAY := 0.65
 
 const FOLEY_DURATIONS := {
@@ -18,6 +18,7 @@ var _overlay := false
 var _mode := ""
 var _book_tween: Tween
 var _flute: AudioStreamPlayer
+var _book_position := 0.0
 
 func _ready() -> void:
 	_rng.seed = 8753
@@ -49,7 +50,7 @@ func _ready() -> void:
 		player.volume_linear = 0.0
 		player.play()
 	_flute = _player("Music")
-	_flute.stream = GrowthDizi.make_phrase()
+	_flute.stream = JOURNAL_MUSIC
 	set_muted(_muted)
 	set_honey_context("hub", "title")
 	set_process(false)
@@ -62,9 +63,13 @@ func _exit_tree() -> void:
 		_flute.stream = null
 	super._exit_tree()
 
-func _start_book_phrase() -> void:
+func _start_book_music() -> void:
 	_flute.volume_db = -2.0
-	_flute.play()
+	_flute.play(_book_position)
+
+func _stop_book_music() -> void:
+	_book_position = fposmod(_flute.get_playback_position(), JOURNAL_MUSIC.get_length())
+	_flute.stop()
 
 func _set_book_open(opened: bool) -> void:
 	if is_instance_valid(_book_tween):
@@ -73,13 +78,13 @@ func _set_book_open(opened: bool) -> void:
 	_book_tween = create_tween()
 	if not opened:
 		_book_tween.tween_property(_flute, "volume_linear", 0.0, 0.18)
-		_book_tween.tween_callback(_flute.stop)
+		_book_tween.tween_callback(_stop_book_music)
 	elif _flute.playing:
 		# Reopening during the closing fade keeps the same note.
 		_book_tween.tween_property(_flute, "volume_linear", db_to_linear(-2.0), 0.18)
 	else:
 		_book_tween.tween_interval(BOOK_DELAY)
-		_book_tween.tween_callback(_start_book_phrase)
+		_book_tween.tween_callback(_start_book_music)
 
 func set_honey_context(area: String, mode: String) -> void:
 	if _music.is_empty() or (_area == area and _mode == mode):

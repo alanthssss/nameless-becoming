@@ -424,14 +424,21 @@ func run() -> void:
 	game.model.p = game.model.HUB_TREE
 	await tap(KEY_E)
 	await frames(48)
-	var flute: AudioStreamWAV = game.sound._flute.stream
-	check(game.mode == "tree" and game.sound._flute.playing and flute.loop_mode == AudioStreamWAV.LOOP_FORWARD and flute.loop_end == flute.data.size() / 2,"the book loops the full flute performance including the final breath")
+	var flute: AudioStreamOggVorbis = game.sound._flute.stream
+	check(game.mode == "tree" and game.sound._flute.playing and flute.loop and flute.get_length() >= 90.0,"the book plays the full-length flute score on loop")
 	check(is_zero_approx(game.sound._music[0].volume_linear),"the courtyard stays silent while reading")
 	var phrase = game.sound._flute.get_stream_playback()
 	game.ui.board.select_node("gather")
 	await frames(5)
 	check(game.sound._flute.get_stream_playback() == phrase,"browsing the growth map keeps the same solo")
 	phrase = null
+	game.sound._flute.seek(22.0)
+	await frames(3)
+	await tap(KEY_ESCAPE)
+	await frames(16)
+	await tap(KEY_E)
+	await frames(48)
+	check(game.sound._flute.playing and game.sound._flute.get_playback_position() >= 21.0,"reopening after a full fade returns to the current passage")
 	await check_map_camera()
 	await check_bookmark_rules()
 	await check_catalog_preview()
