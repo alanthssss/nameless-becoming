@@ -249,6 +249,52 @@ func all_text(node: Node) -> String:
 	var result: String = node.text if node is Label or node is Button else ""
 	for child in node.get_children(): result += all_text(child)
 	return result
+func check_twin_pickup() -> void:
+	var field = game.model.field
+	field.stats.owned.append("twin")
+	field.p = field.layout.nodes[1].p
+	field.v = Vector2.ZERO
+	field.cargo = field.capacity() - 3
+	game.model.cargo = {"blue": field.cargo, "rose": 0}
+	for expected in [2, 1]:
+		for id in [0, 3]:
+			var flower: Dictionary = field.flowers[id]
+			flower.p = field.p + Vector2(-16 if id == 0 else 16, 2)
+			flower.phase = "ripe"
+			flower.phase_time = 0.0
+			flower.erase("nectar_wait")
+			flower.stock = 1
+			flower.progress = .99
+		game.model._sync_field()
+		var before: int = game.model.cargo_total()
+		var text_count: int = game.world.harvest_texts.size()
+		press_key(KEY_E, true)
+		game._process(.05)
+		press_key(KEY_E, false)
+		check(game.model.cargo_total() == before + expected, "twin harvest only credits free slots")
+		var arrival: Dictionary = game.ui.field_hud.pickup_bursts.back()
+		check(arrival.badge == "honey" and arrival.units.count("blue") == expected, "only the credited drops travel to the honey jar")
+		var marks: Array = game.world.harvest_texts.slice(text_count)
+		check(marks.size() == expected, "each credited flower contributes one +1 at its source")
+		for mark in marks:
+			check(mark.text == "蓝花蜜 +1" and mark.p in [field.flowers[0].p, field.flowers[3].p],
+				"flower feedback uses the actual amount and source")
+		if marks.size() == 2:
+			check(marks[0].p != marks[1].p and marks[0].age == marks[1].age,
+				"both flower gains begin together at distinct sources")
+	# Exercise presentation capacity without granting a new harvest upgrade.
+	game.world.harvest_texts.clear()
+	var corner: Vector2 = game.model.camera_offset
+	for kind in ["blue", "rose", "fiber", "resin"]:
+		var event := {"kind": "harvest" if kind in ["blue", "rose"] else "material", "type": kind, "amount": 1, "pos": corner}
+		game.world.nectar_event(event)
+	var layout: Array[Rect2] = game.world.pickup_label_layout()
+	check(layout.size() == 4, "four simultaneous pickup labels survive a shared source")
+	for i in layout.size():
+		check(game.world.get_viewport_rect().encloses(layout[i]), "gain label stays on screen")
+		for j in i:
+			check(not layout[i].intersects(layout[j]), "gain labels at the same corner do not overlap")
+
 func check_seed_pickup() -> void:
 	var field = game.model.field
 	var head: Dictionary = field.materials[0]
@@ -261,13 +307,13 @@ func check_seed_pickup() -> void:
 	game.model.step(.05, Vector2.ZERO, false, false, true, Vector2.RIGHT)
 	await frames(2)
 	check(cues == ["pulse", "pulse", "fiber_release"], "real release plays wing then rustle, before collection")
-	check(head.dropped and game.model.materials.fiber == 0, "loosening a tuft does not credit fiber")
+	check(head.dropped and game.model.materials.fiber == 0 and game.ui.field_hud.pickup_bursts.is_empty() and game.world.harvest_texts.is_empty(), "loosening a tuft does not announce a pickup")
 	field.p = head.p
 	await frames(3)
 	check(cues.count("fiber") == 1, "catching the released fiber plays its pickup once")
 	check(game.model.materials.fiber == 1 and game.ui.fiber_text.text == "1", "caught tuft increments HUD inventory")
-	var receipt = game.ui.field_hud
-	check(receipt.is_visible_in_tree() and receipt.receipt_left > 0 and receipt.receipt_name == "纤维" and receipt.receipt_gain == 1 and receipt.receipt_total == 1, "confirmed pickup shows the material, gain and current stock beside the bag")
+	check(game.world.harvest_texts.back().text == "纤维 +1" and game.ui.field_hud.pickup_bursts.back().units == ["fiber"],
+		"caught fiber labels the source and lights the fiber slot")
 	field.p = field.layout.nodes[0].p
 	field.v = Vector2.ZERO
 	await frames(2)
@@ -548,10 +594,12 @@ func run() -> void:
 	game.model.field.p = bark.anchor - Vector2(45,0)
 	game.model.step(.05, Vector2.ZERO, false, false, true, Vector2.RIGHT)
 	await frames(2)
-	check(cues == ["pulse", "resin_open"], "opening bark has no sticky pickup yet")
+	check(cues == ["pulse", "resin_open"] and game.world.harvest_texts.is_empty() and game.ui.field_hud.pickup_bursts.is_empty(), "opening bark has no pickup feedback yet")
 	for i in 22: game.model.step(.05, Vector2.ZERO, true, false)
 	await frames(2)
 	check(cues.count("resin") == 1, "pulling exposed resin to completion plays one pickup")
+	check(game.world.harvest_texts.back().text == "树脂 +1" and game.ui.field_hud.pickup_bursts.back().units == ["resin"],
+		"collected resin labels the source and lights the resin slot")
 	check(game.model.field.supply_rank == 1,"purchased abundance reaches the field")
 	game.pause_game()
 	check(game.persist(),"purple midtrip save")
@@ -582,6 +630,7 @@ func run() -> void:
 	game._advance_transition(10.0)
 	check(game.model.at_home() and game.model.last_region == "pond","next pond return restores teal ink")
 	gate_inputs()
+	check_twin_pickup()
 	game.queue_free()
 	await frames(3)
 	# The audio driver drains on wall time even with --fixed-fps.

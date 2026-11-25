@@ -2,12 +2,15 @@ extends Control
 const Art = preload("res://nectar_ui_art.gd")
 const Plate = preload("res://region_game/menu_plate.gd")
 const INK := Color("403126")
+const FieldStyle = preload("res://region_game/field_notes_style.gd")
+# Centre points on the painted inventory at its authored 960 x 600 scale.
+const RESOURCE_CENTERS := {"honey": Vector2(230,553), "fiber": Vector2(230,522), "resin": Vector2(117,553)}
+const INVENTORY_RECT := Rect2(16,497,332,87)
+const FULL_BADGE_RECT := Rect2(36,446,240,46)
+const ARRIVAL_TIME := 0.38
+const GLOW_TIME := 0.30
 var ui
-var receipt_name := ""
-var receipt_total := 0
-var receipt_gain := 0
-var receipt_left := 0.0
-var receipt_art: Texture2D
+var pickup_bursts: Array[Dictionary] = []
 var pause_hit := Button.new()
 var full_badge := Plate.texture("full-bag")
 var backing := Plate.texture("field-hud")
@@ -38,24 +41,34 @@ func _fit() -> void:
 func refresh() -> void:
 	visible = ui.driver.model.field != null
 	pause_hit.tooltip_text = "暂停 · "+ui.driver.control_hint("pause")
-	if not visible: receipt_left=0
-	set_process(visible and (receipt_left>0 or ui.energy_dial.is_processing()))
+	if not visible: pickup_bursts.clear()
+	set_process(visible and (not pickup_bursts.is_empty() or ui.energy_dial.is_processing()))
 	queue_redraw()
 
-func pickup(event: Dictionary) -> void:
-	var material: bool = event.kind=="material"
-	var key: String = event.type if material else "honey"
-	receipt_name = {"fiber":"纤维","resin":"树脂","honey":"花蜜"}[key]
-	receipt_art = Plate.texture("pickup-"+key)
-	receipt_gain = event.amount
-	receipt_total = ui.driver.model.materials[key] if material else ui.driver.model.cargo_total()
-	receipt_left = 1.6
+func pickup_obstacles() -> Array[Rect2]:
+	var transform_to_screen := get_global_transform_with_canvas()
+	var areas: Array[Rect2] = [transform_to_screen * INVENTORY_RECT, pause_hit.get_global_rect()]
+	if ui.driver.model.cargo_total() >= ui.driver.model.capacity():
+		areas.append(transform_to_screen * FULL_BADGE_RECT)
+	return areas
+
+func show_pickups(events: Array[Dictionary]) -> void:
+	var groups := {}
+	for event in events:
+		var kind: String = event.type
+		var badge: String = "honey" if event.kind == "harvest" else kind
+		if not groups.has(badge): groups[badge] = []
+		for unit in event.amount: groups[badge].append(kind)
+	for badge in groups:
+		pickup_bursts.append({"badge": badge, "units": groups[badge], "age": 0.0})
 	set_process(true)
 	queue_redraw()
 
 func _process(dt: float) -> void:
-	receipt_left = maxf(0,receipt_left-dt)
-	set_process(receipt_left>0 or ui.energy_dial.is_processing())
+	for burst in pickup_bursts: burst.age += dt
+	while not pickup_bursts.is_empty() and pickup_bursts.front().age >= ARRIVAL_TIME + GLOW_TIME:
+		pickup_bursts.pop_front()
+	set_process(not pickup_bursts.is_empty() or ui.energy_dial.is_processing())
 	queue_redraw()
 
 func _number(at: Vector2, value: String, width: float, pixels: int, align := HORIZONTAL_ALIGNMENT_RIGHT) -> void:
@@ -66,7 +79,7 @@ func _number(at: Vector2, value: String, width: float, pixels: int, align := HOR
 func _draw() -> void:
 	if not ui or not ui.driver.model.field: return
 	var m = ui.driver.model
-	draw_texture_rect(backing,Rect2(16,497,332,87),false)
+	draw_texture_rect(backing,INVENTORY_RECT,false)
 	var centre := Vector2(62,539)
 	var ratio := clampf(m.energy/m.max_energy(),0,1)
 	var low: bool = m.energy_is_low()
@@ -80,9 +93,34 @@ func _draw() -> void:
 	for i in values.size():
 		_number(Vector2(161+(i%2)*113,528+floori(i/2.0)*31),values[i],48,15)
 	if m.cargo_total()>=m.capacity():
-		draw_texture_rect(full_badge,Rect2(36,446,240,46),false)
-	if receipt_left>0 and receipt_art:
-		var y := 395 if m.cargo_total()>=m.capacity() else 445
-		draw_texture_rect(receipt_art,Rect2(31,y,220,52),false)
-		_number(Vector2(77,y+31),receipt_name+" +%d" % receipt_gain,86,18,HORIZONTAL_ALIGNMENT_LEFT)
-		_number(Vector2(159,y+31),"现有 %d" % receipt_total,81,15,HORIZONTAL_ALIGNMENT_LEFT)
+		draw_texture_rect(full_badge,FULL_BADGE_RECT,false)
+	for burst in pickup_bursts:
+		_draw_pickup_burst(burst)
+
+func _draw_pickup_burst(burst: Dictionary) -> void:
+	var center: Vector2 = RESOURCE_CENTERS[burst.badge]
+	var age: float = burst.age
+	if ui.driver.reduced_motion or age >= ARRIVAL_TIME:
+		var fade := smoothstep(ARRIVAL_TIME, ARRIVAL_TIME + GLOW_TIME, age)
+		var radius := 14.0 if ui.driver.reduced_motion else 14.0 + 4.0 * fade
+		draw_arc(center, radius, 0, TAU, 32, Color("ad7635", 0.85 * (1.0-fade)), 2.8, true)
+		draw_arc(center, radius, 0, TAU, 32, Color("fff1b4", 1.0-fade), 1.4, true)
+		return
+	var t := smoothstep(0.0, ARRIVAL_TIME, age)
+	var units: Array = burst.units
+	for i in units.size():
+		var kind: String = units[i]
+		var angle := PI * (0.12 + 0.76 * (i + 0.5) / units.size())
+		var side := -1.0 if burst.badge == "fiber" else 1.0
+		var start := center + Vector2(cos(angle)*31.0, side*sin(angle)*25.0)
+		var rim := center + Vector2(0,-6)
+		var bend := Vector2(start.x, minf(start.y, rim.y)-14)
+		var at := start.lerp(bend,t).lerp(bend.lerp(rim,t),t)
+		var size := lerpf(6.5, 3.5, t)
+		if burst.badge == "honey":
+			var fill: Color = FieldStyle.PICKUP_COLORS[kind]
+			draw_circle(at, size, Color("805f53"), true, -1, true)
+			draw_circle(at, size-1.2, fill, true, -1, true)
+			draw_circle(at-Vector2.ONE*size*.3, size*.28, Color("fff8dd"), true, -1, true)
+		else:
+			Art.painted_icon(self, kind, at, size)

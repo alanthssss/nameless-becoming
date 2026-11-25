@@ -453,6 +453,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func consume_events(pending: Array) -> void:
 	super.consume_events(pending)
+	var pickups: Array[Dictionary] = []
 	for event in pending:
 		if event.kind == "area_change" and event.to == "hub" and event.from in ["pond","meadow"]:
 			model.last_region = event.from
@@ -466,8 +467,10 @@ func consume_events(pending: Array) -> void:
 		elif event.kind == "sell" and mode == "shop":
 			var side := -1.0 if model.face.x >= 0 else 1.0
 			ui.sale_flight.begin(event, model.p + Vector2(side*20,18), ui.shop_coins, reduced_motion)
-		elif event.kind in ["material","harvest"] and model.field != null:
-			ui.field_hud.pickup(event)
+		elif event.kind in ["harvest", "material"] and model.field != null:
+			pickups.append(event)
+	if not pickups.is_empty():
+		ui.field_hud.show_pickups(pickups)
 	if pending.is_empty() or evidence_log.is_empty(): return
 	var file := FileAccess.open(evidence_log,FileAccess.READ_WRITE if FileAccess.file_exists(evidence_log) else FileAccess.WRITE)
 	if file != null:
