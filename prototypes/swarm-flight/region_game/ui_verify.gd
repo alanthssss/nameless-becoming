@@ -198,8 +198,10 @@ func gate_inputs() -> void:
 			game._load_world()
 			var field = game.model.field
 			field.departed = route != "at gate"
-			game.model.cargo.blue = 3
-			field.cargo = 3
+			# A full bag isolates flight cost if the route seed puts a flower beside the gate.
+			var carried: int = game.model.capacity()
+			game.model.cargo.blue = carried
+			field.cargo = carried
 			if field.departed:
 				field.p = field.layout.nodes[0].p + Vector2.RIGHT * (149 if route == "hold across" else 130)
 				field.v = Vector2.LEFT * field.SPEED
@@ -221,17 +223,17 @@ func gate_inputs() -> void:
 				game.saved_path = OS.get_temp_dir()
 				commit_gate()
 				game._process(.1)
-				check(game.mode=="play" and game.model.interaction()=="home" and game.model.energy==0 and game.model.cargo.blue==3,"zero-energy arrival can retry a failed write")
+				check(game.mode=="play" and game.model.interaction()=="home" and game.model.energy==0 and game.model.cargo.blue==carried,"zero-energy arrival can retry a failed write")
 				game.saved_path = writable
 				gate_input(mouse,true)
 				gate_input(mouse,false)
 			gate_input(mouse,true)
 			gate_input(mouse,false)
 			commit_gate()
-			check(game.mode=="play" and game.model.at_home() and game.model.cargo.blue==3 and game.model.energy==game.model.max_energy(),"saved and restored full arrival by ordinary input")
+			check(game.mode=="play" and game.model.at_home() and game.model.cargo.blue==carried and game.model.energy==game.model.max_energy(),"saved and restored full arrival by ordinary input")
 			check(game.event_log.filter(func(e):return e.kind=="return").size()==previous+1,"repeated native presses pay out once")
 			var restored = game.new_model()
-			check(restored.restore_payload(game.read_progress(writable).payload) and restored.at_home() and restored.cargo.blue==3,"ordinary return persisted with cargo")
+			check(restored.restore_payload(game.read_progress(writable).payload) and restored.at_home() and restored.cargo.blue==carried,"ordinary return persisted with cargo")
 	# A live bee can still fly after a failed return transaction.
 	game.model.transition_to("pond")
 	game._load_world()
