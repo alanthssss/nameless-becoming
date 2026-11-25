@@ -45,7 +45,8 @@ func clear_of_hardware(mark: Rect2, panel: PanelContainer) -> bool:
 	var r := Rect2((mark.position-face.position)/face.size,mark.size/face.size)
 	match panel.get_meta("material_kind"):
 		"book":
-			return Rect2(.096,.075,.363,.745).encloses(r) or Rect2(.520,.075,.371,.745).encloses(r)
+			# The top sheets end above the layered fore edge on both pages.
+			return Rect2(.096,.075,.363,.655).encloses(r) or Rect2(.520,.075,.371,.655).encloses(r)
 		"shop":
 			return Rect2(.124,.176,.739,.673).encloses(r) and not r.intersects(Rect2(0,0,.244,.245)) and not r.intersects(Rect2(.71,0,.1,.25))
 		"settings":

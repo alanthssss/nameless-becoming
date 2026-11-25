@@ -532,7 +532,7 @@ func _build_shop() -> void:
 	actions.alignment = BoxContainer.ALIGNMENT_CENTER
 	shop_receipt = action(actions,"查看回执",_toggle_shop_receipt)
 	shop_receipt.toggle_mode = true
-	shop_receipt.gui_input.connect(_scroll_shop_receipt)
+	shop_receipt.gui_input.connect(_scroll_expanded_text.bind(shop_recap,shop_scroll))
 	leave_button = action(actions,"← 回庭院",driver.close_shop)
 	for button in [shop_receipt,leave_button]:
 		button.custom_minimum_size = Vector2(124,40)
@@ -548,13 +548,13 @@ func _toggle_shop_receipt() -> void:
 	shop_receipt.text = "收起回执" if shop_recap.visible else "查看回执"
 	shop_scroll.set_deferred("scroll_vertical",0)
 
-func _scroll_shop_receipt(event: InputEvent) -> void:
-	if not shop_recap.is_visible_in_tree(): return
+func _scroll_expanded_text(event: InputEvent, detail: Control, scroll: ScrollContainer) -> void:
+	if not detail.is_visible_in_tree(): return
 	var direction := int(event.is_action_pressed("ui_down",true)) - int(event.is_action_pressed("ui_up",true))
 	if direction == 0: return
-	var before := shop_scroll.scroll_vertical
-	shop_scroll.scroll_vertical += direction * 42
-	if shop_scroll.scroll_vertical != before: shop_receipt.accept_event()
+	var before := scroll.scroll_vertical
+	scroll.scroll_vertical += direction * 42
+	if scroll.scroll_vertical != before: scroll.accept_event()
 
 func _refresh_shop() -> void:
 	var model = driver.model
@@ -1064,12 +1064,12 @@ func toggle_sound() -> void:
 func _build_journal() -> void:
 	journal = screen(self)
 	shade(journal,Color("183c33db"))
-	var book := material_panel(journal,"book",Vector4(112,58,124,118))
+	var book := material_panel(journal,"book",Vector4(112,58,124,166))
 	anchored(book,Rect2(.5,.5,0,0),Rect2(-532,-298,1064,596))
 	var spread := row(book,96)
-	var left := column(spread,16)
+	var left := column(spread,12)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var right := column(spread,12)
+	var right := column(spread,7)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	text_line(left,"花路见闻",34)
 	var tabs := row(left,8)
@@ -1082,7 +1082,7 @@ func _build_journal() -> void:
 		tab.add_theme_color_override("font_pressed_color",Color("fff0c7"))
 		tab.add_theme_color_override("font_hover_pressed_color",Color("fff0c7"))
 		journal_regions.append(tab)
-	journal_landscape = picture(left,preload("res://art/nectar-pond-oblique.png"),182)
+	journal_landscape = picture(left,preload("res://art/nectar-pond-oblique.png"),160)
 	journal_landscape.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	journal_status = text_line(left,"",16,Color("5d694d"),true)
 	journal_back = action(right,"←  返回",driver.close_journal)
@@ -1218,6 +1218,7 @@ func _build_settings() -> void:
 	settings_about.size_flags_horizontal = Control.SIZE_SHRINK_END
 	settings_credits = text_line(v,"%s 0.27.0\n制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞受蜜蜂通信启发，侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true)
 	settings_credits.hide()
+	settings_about.gui_input.connect(_scroll_expanded_text.bind(settings_credits,settings_scroll))
 
 func _shortcut_input(event: InputEvent) -> void:
 	var scroll := settings_scroll if settings.visible else shop_scroll

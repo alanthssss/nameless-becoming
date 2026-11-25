@@ -432,6 +432,15 @@ Mac 试玩入口为 `~/LocalGames/Honey-0.32.2-sound/开始试玩.command`。以
 
 本次使用已有引擎、导出模板和素材，未新增采购。实做、检查与候包交叠，缺少完整主支任务工时与 API 计费记录；累计投入和 200＋40 小时控制线的剩余额度仍待 M4/#211 复核。可继续使用本包做独立周目测试，产品反馈沿 #322 收集。
 
+<a id="honey-wax-menus"></a>
+### 2026-11-26 · Honey 蜂蜡菜单
+
+蜜铺交付后，柜台盖上蜡印，可以展开本次交付的数量和收入。花路图鉴左页切换池岸与紫花地，右页给出采集动作、售价和可展开的归途说明。设置工具箱收纳开关、键位与制作署名。重开信封显示选中的档号和备份后果，首先选中「取消」，Esc 回到发起按钮。沿 GDD §8.1 / §13.9 和 M3 / #322 复核。[菜单工单 #333](https://github.com/alanthssss/nameless-becoming/issues/333) · [布局回归 #412](https://github.com/alanthssss/nameless-becoming/issues/412)
+
+960×600 原生窗口中，开发者按 E 进入蜜铺，用 Enter 交付 3 份蓝花蜜和 2 份紫花蜜，到账 9 金币，再展开和收起回执。图鉴两页末行避开了下方层叠的纸边。「关于」展开后，键盘可按 Page Down，手柄十字键可向下滚到署名最后一个字。四页隔离输入检查共 27 项，通过 27 项。手柄使用模拟输入事件。[展开的交付回执](evidence/honey-menu-paper/960-wax-receipt.webp) · [展开归途须知的双页图鉴](evidence/honey-menu-paper/960-wax-journal.webp)
+
+Godot 4.6.2 在 1280×800、960×600、1280×720 和 1024×768 共复核 768 个状态、13,272 次文本控件，零失败。原 CI 在相同状态报告 284 次压边失败。复核按实际原画收紧了图鉴可写区域，并加入手柄阅读署名末行的回归。旧采蜜 UI 按 CI 的实时计时参数复核，主线、前次提交和留白修正各通过 101 项。额外使用固定帧率会缩短场景计时器相对于购买防连点所用真实时钟的等待，主线和修正均重现相同的 16 项失败。[原失败日志](https://github.com/alanthssss/nameless-becoming/actions/runs/45673628976/job/139415912478) · [本版导出、CI 与工单回执](https://github.com/alanthssss/nameless-becoming/pull/415)
+
 <a id="honey-menu-paper"></a>
 ### 2026-11-25 · 菜单文字与手绘纸页
 
