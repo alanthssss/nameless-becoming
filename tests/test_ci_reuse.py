@@ -1,4 +1,4 @@
-"""Exercise prototype check reuse against real Git merges and rebases."""
+"""Exercise check reuse against real Git merges and rebases."""
 import copy
 import importlib.util
 import os
@@ -19,6 +19,8 @@ FLOWER = "prototypes/flower-step/route.gd"
 SWARM_SUITES = ("core", "regressions", "samples", "samples-save", "migrations", "region-greybox")
 FLOWER_JOB = "Flower Step / Flower Step rules and complete routes"
 GARDEN_JOB = "Garden Puzzles / Garden Puzzles rules and complete routes"
+BUILD_JOBS = {"web": "Web build, tests and lint", "godot": "Godot 4.6.2 tests",
+              "web-candidate": "Clean Web game and site candidate"}
 
 
 def swarm_job(suite):
@@ -54,7 +56,8 @@ class PrototypeReuseTests(unittest.TestCase):
                         head_sha=self.before, status="completed", conclusion="success",
                         steps=[dict(number=2, name=self.marker(), status="completed", conclusion="success")])
         self.jobs = [self.job]
-        self.selected = dict(swarm="true", swarm_suite="region", flower="true", garden="false")
+        self.selected = dict(swarm="true", swarm_suite="region", flower="true", garden="false",
+                             web="false", godot="false", godot_suite="routes", export_game="false")
 
     @staticmethod
     def git(*args, check=True):
@@ -75,6 +78,15 @@ class PrototypeReuseTests(unittest.TestCase):
     def marker(self, *, base=None, tree=None, number=12, swarm="region", flower="true", garden="false"):
         return (f"Prototype evidence v1 PR {number} base {base or self.base} tree {tree or self.tree} "
                 f"swarm {swarm} flower {flower} garden {garden}")
+
+    def build_marker(self, *, base=None, tree=None, number=12, web="true", godot="full", export="true"):
+        return (f"Build evidence v1 PR {number} base {base or self.base} tree {tree or self.tree} "
+                f"web {web} godot {godot} export {export}")
+
+    def select_builds(self):
+        self.selected.update(swarm="false", swarm_suite="none", flower="false", web="true",
+                             godot="true", godot_suite="full", export_game="true")
+        self.job["steps"].append(dict(name=self.build_marker(), status="completed", conclusion="success"))
 
     def full_swarm_and_garden_change(self, previous_scope="full"):
         self.write("prototypes/swarm-flight/main.gd", "a shared swarm change")
@@ -135,6 +147,92 @@ class PrototypeReuseTests(unittest.TestCase):
         latest = event["pull_request"]["base"]["sha"]
         self.git("rebase", "-q", latest)
         self.assertEqual(self.decide(self.checkout_integration(latest)), ({"swarm", "flower"}, 101))
+
+    def test_same_tree_after_main_adopts_topic_input_reuses_all_three_build_checks(self):
+        self.select_builds()
+        self.record_jobs(*BUILD_JOBS.values())
+        event = self.sync(FLOWER, contents={FLOWER: "new route"})
+        self.assertEqual(self.tree, self.git("rev-parse", "HEAD^{tree}"))
+        self.assertEqual(self.decide(event), (set(BUILD_JOBS), 101))
+
+    def test_changed_inputs_invalidate_only_the_build_checks_that_consume_them(self):
+        self.select_builds()
+        self.record_jobs(*BUILD_JOBS.values())
+        for path, reusable in (
+            ("docs/ci-notes.md", set(BUILD_JOBS)),
+            ("prototypes/flower-step/menu.gd", set(BUILD_JOBS)),
+            ("README.md", {"godot", "web-candidate"}),
+            ("app/page.tsx", {"godot"}),
+            ("docs/design/year-play-matrix.md", {"web", "web-candidate"}),
+            ("godot/assets/art/commercial/flower.png", set()),
+            ("unclassified.input", set()),
+        ):
+            with self.subTest(path=path):
+                self.git("checkout", "-q", "--detach", self.before)
+                self.git("branch", "-f", "main", self.base)
+                self.git("branch", "-f", "topic", self.before)
+                self.assertEqual(self.decide(self.sync(path)), (reusable, 101 if reusable else None))
+
+    def test_prototype_javascript_is_still_an_input_to_web_lint(self):
+        self.select_builds()
+        groups, _ = self.decide(self.sync("prototypes/swarm-flight/lesson.js"))
+        self.assertNotIn("web", groups)
+        self.assertIn("godot", groups)
+
+    def test_build_marker_must_match_the_gate_and_describe_requested_coverage(self):
+        self.select_builds()
+        self.record_jobs(*BUILD_JOBS.values())
+        event = self.sync()
+        step = self.job["steps"][-1]
+        for marker in (self.build_marker(base=self.before), self.build_marker(tree=self.base),
+                       self.build_marker(number=99), self.build_marker(godot="typo")):
+            with self.subTest(marker=marker):
+                step["name"] = marker
+                self.assertEqual(self.decide(event), (set(), None))
+        step["name"] = self.build_marker()
+        step["conclusion"] = "skipped"
+        self.assertEqual(self.decide(event), (set(), None))
+        step["conclusion"] = "success"
+        self.job["steps"].append(step.copy())
+        self.assertEqual(self.decide(event), (set(), None))
+        self.job["steps"] = self.job["steps"][:1]  # Existing prototype-only evidence.
+        self.selected.update(flower="true")
+        self.assertEqual(self.decide(event), ({"flower"}, 101))
+
+    def test_routes_do_not_certify_full_godot_and_unselected_builds_have_no_coverage(self):
+        self.select_builds()
+        event = self.sync()
+        self.job["steps"][-1]["name"] = self.build_marker(godot="routes", export="false")
+        self.assertEqual(self.decide(event), ({"web"}, 101))
+        self.selected.update(godot_suite="routes", export_game="false")
+        self.assertEqual(self.decide(event), ({"web", "godot"}, 101))
+        self.job["steps"][-1]["name"] = self.build_marker(web="false", godot="full", export="false")
+        self.assertEqual(self.decide(event), ({"godot"}, 101))
+
+    def test_routing_upgrade_requires_direct_job_success_for_each_build_check(self):
+        self.select_builds()
+        self.record_jobs(BUILD_JOBS["web"], BUILD_JOBS["web-candidate"])
+        event = self.sync("scripts/ci_scope.sh")
+        self.assertEqual(self.decide(event), ({"web", "web-candidate"}, 101))
+        self.jobs[-1]["conclusion"] = "skipped"
+        self.assertEqual(self.decide(event), ({"web"}, 101))
+
+    def test_second_sync_reuses_coverage_that_combines_a_fresh_run_and_inherited_checks(self):
+        self.select_builds()
+        self.record_jobs(*BUILD_JOBS.values())
+        first = self.sync("README.md")
+        self.assertEqual(self.decide(first), ({"godot", "web-candidate"}, 101))
+        # Model the first sync's successful gate. Web ran (README); Godot and
+        # the candidate were covered by evidence from the immediately prior run.
+        old_base = first["pull_request"]["base"]["sha"]
+        self.before = first["pull_request"]["head"]["sha"]
+        self.tree = self.git("rev-parse", "HEAD^{tree}")
+        self.run["head_sha"] = self.job["head_sha"] = self.before
+        self.job["steps"][0]["name"] = self.marker(base=old_base, swarm="none", flower="false")
+        self.job["steps"][1]["name"] = self.build_marker(base=old_base)
+        self.jobs = [self.job]
+        self.record_jobs(BUILD_JOBS["web"])
+        self.assertEqual(self.decide(self.sync("docs/ci-observation.md")), (set(BUILD_JOBS), 101))
 
     def test_main_change_in_same_domain_different_file_still_runs_affected_domain(self):
         event = self.sync("prototypes/swarm-flight/region_game/inventory.gd")
