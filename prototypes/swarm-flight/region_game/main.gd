@@ -278,10 +278,6 @@ func _cancel_station_entry() -> void:
 	ui.show_mode(mode)
 	get_viewport().gui_release_focus()
 
-func close_shop() -> void:
-	if mode == "shop": world.leave_shop_counter()
-	super.close_shop()
-
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and not test_mode and mode == "station_entry":
 		_cancel_station_entry()
