@@ -74,7 +74,7 @@ jobs:
                   deadline = time.monotonic() + 45
                   while time.monotonic() < deadline and native.poll() is None:
                       report = log.read_text(encoding="utf-8", errors="replace") if log.exists() else ""
-                      if all(name in report for name in ("honey-menu-seal.webp", "honey-pages/guide.webp")):
+                      if all(name in report for name in ("honey-menu-seal.webp", "honey-settings-symbols.svg")):
                           break
                       time.sleep(0.25)
                   else:
