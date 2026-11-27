@@ -47,6 +47,7 @@ jobs:
           import hashlib
           import os
           import subprocess
+          import time
           from pathlib import Path
           root = Path.cwd()
           temp = Path(os.environ["RUNNER_TEMP"])
@@ -65,11 +66,27 @@ jobs:
               return report
           run(editor, "import", "--path", game, "--import")
           run(editor, "export", "--path", game, "--export-release", "Windows Honey Demo", exe)
-          native = run(exe, "native", "--verbose", "--quit-after", "45")
-          # Release exports remap scene paths and can omit the console banner.
-          # These assets belong to the Honey UI reached through the default entry.
-          if not all(asset in native for asset in ("honey-menu-seal.webp", "honey-pages/guide.webp")):
-              raise RuntimeError(native[-8000:])
+          # Observe a live default boot. Godot's --quit-after bypasses the game's
+          # normal audio cleanup; the fresh/cold runs below use the player's quit path.
+          log = temp / "honey-native.log"
+          with subprocess.Popen([str(exe), "--headless", "--verbose", "--max-fps", "60", "--log-file", str(log)], cwd=out) as native:
+              try:
+                  deadline = time.monotonic() + 45
+                  while time.monotonic() < deadline and native.poll() is None:
+                      report = log.read_text(encoding="utf-8", errors="replace") if log.exists() else ""
+                      if all(name in report for name in ("honey-menu-seal.webp", "honey-pages/guide.webp")):
+                          break
+                      time.sleep(0.25)
+                  else:
+                      raise RuntimeError("Windows title failed to load: " + (log.read_text(errors="replace")[-4000:] if log.exists() else "no log"))
+                  time.sleep(1)
+                  report = log.read_text(encoding="utf-8", errors="replace")
+                  if native.poll() is not None or "ERROR:" in report:
+                      raise RuntimeError("Windows title did not remain active: " + report[-4000:])
+              finally:
+                  if native.poll() is None:
+                      native.terminate()
+                  native.wait(timeout=15)
           slots = temp / "honey-slots"
           slots.mkdir()
           for phase in ("fresh", "cold"):
