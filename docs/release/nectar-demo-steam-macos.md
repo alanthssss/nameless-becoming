@@ -1,22 +1,19 @@
-# 采蜜与蜂舞 Demo：macOS / Steam 发行准备
+# Honey · macOS Demo 的 Steam 发行准备
 
 <a id="steam-readiness-032"></a>
-## 2026-11-24 · 0.32 发售前讨论
+## 2026-11-27 · 现在是否适合发 Demo
 
-**建议现在准备 Steamworks 入驻和本体「即将推出」页面。** 先由 Alan 确认发行主体、已有账户及应用额度，再决定是否支付应用费。公开试玩按首批 macOS 免费 Demo 准备。正式版按单机买断、24 关目标另做发售判断。产品与支出由 Alan 决定。本次评估沿 GDD §13.9 → [M3 / #322](https://github.com/alanthssss/nameless-becoming/issues/322) 和 [M4 / #211](https://github.com/alanthssss/nameless-becoming/issues/211)，实际制作顺序见[当前执行记录](../design/solar-term-campaign-production-spec.md#production-now)。
+**建议用当前两片花地的内容准备首个公开 Mac Demo。** 从庭院到池岸，玩家能采蓝蜜、振翅接纤维，带着剩余体力回家卖蜜。扩大蜜囊后可以多带一批，学会双簇采蜜后一次能收两朵，去紫花地还能贴树皮拉取树脂。蜂巢储备给试玩一个明确的收尾。Alan 自己从已有进度玩到了这个目标，存档把首次完成限定在第 21 至 35 趟。陌生玩家第一次是否看懂取材、升级后是否愿意再飞，按已定安排在上线后收反馈。首通分钟数仍未知。[实际进度与开发验证](../production/region-greybox-receipt.md#一份实际主档怎样走到蜂巢储备) · [首作范围与反馈安排](../design/swarm-flight-gdd.md#lean-nectar-first-game)
 
-| 哪一步 | 现有依据 | 下一次怎样判断 |
-|---|---|---|
-| 开发者入驻、游戏建档 | 上次确认首批 macOS、暂无 AppID。仓库有 SteamPipe 预览工具，未见后续后台回执 | Alan 在后台确认个人或公司主体、同名收款账户、身份与税务资料、现有应用额度。需新购时，本体 Steam Direct 费为 100 美元或当地等值金额。入驻后建本体，再关联独立 Demo AppID 和 macOS Depot。[Steam Direct](https://partner.steamgames.com/steamdirect/?l=schinese) |
-| 本体「即将推出」页面 | 已有中文草稿、AI 披露草稿和蜜蜂图标。开发包暂名「采蜜 Demo」，旧文案仍写紫花地细雨和叶间近道 | 对外中英文名由 Alan 定稿。Codex 依据同版实机重写文案，做商店封面、至少五张玩法截图，核对支持语言、素材权利及 AI 内容调查，再提交页面审核。[名称决定](https://github.com/alanthssss/nameless-becoming/issues/316) · [现行两区规格](../design/swarm-flight-gdd.md#nectar-steam-demo) · [商店图像](https://partner.steamgames.com/doc/store/assets/standard) · [内容调查](https://partner.steamgames.com/doc/gettingstarted/contentsurvey) |
-| 公开免费 Demo | 0.32 Mac 导出包已用普通键盘事件跑通池岸新档采蓝蜜、振翅接绒、返铺售卖与冷续。紫花地采紫蜜、取树脂及售卖使用已解锁旧档。Alan 认可上一版画风，初见蜜滴和材料的可读性仍待试玩 | 先让首次接触的玩家用新档走自然成长路线，观察何处需要讲解、升级后是否愿意再出门。发行包另取签名公证、承诺配置实测及 Steam 私有分支安装、更新与续档证据。先公开本体「即将推出」页，再开放通过审核的 Demo。首轮建议在本体页放下载按钮，另设 Demo 商店页时还须准备专属预告和至少五张 Demo 截图。[0.32 同版回执](../production/region-greybox-receipt.md#field-ecology-032) · [Valve 的 Demo 规则](https://partner.steamgames.com/doc/store/application/demos) · [macOS 要求](https://partner.steamgames.com/doc/store/application/platforms) |
-| 付费正式发售 | 24 关仍有内容、存档和跨系统覆盖待验收；累计投入及可用余量缺少可比数据 | Alan 在 #211 复核完整内容、独立玩家是否愿意继续及购买、预计剩余工时和价格，再定档期。发售前另验定价、全流程、旧档和更新回退，准备玩家反馈入口。[产品与产能检查点](https://github.com/alanthssss/nameless-becoming/issues/211) |
+Valve 允许开发者自行决定 Demo 的范围和长度。它看重玩家能否体验到代表正式游戏品质的核心玩法，并由此判断是否还想继续。Honey 的内容判断主要看第一趟能否独立完成、一次成长能否被感受到。第三张地图和完整成长树都可留到正式版。公开材料应展示池岸、紫花地、采售、成长与储备。旧稿里的雨、叶间近道和仍在提议中的争花小蚊均应从这次 Demo 的宣传中移除。[Valve 的 Demo 指南](https://partner.steamgames.com/doc/store/application/demos) · [两区运行规则](../../prototypes/swarm-flight/region_game/model.gd)
 
-商店第一组素材建议拍一趟可以复现的行程：从庭院出发，靠近花冠看蜜滴，去水边振下种绒，回蜜铺出售，再拍一次成长选择。紫花地贴近树皮收脂可另作一张。这样玩家能从画面看出这趟为何值得飞、回来能做什么。最终文字、图标和封面统一公开名称，首批支持范围按实机填写。
+| 公开下载前 | 当前证据与下一项验收 |
+| --- | --- |
+| Steam 商店 | 上次项目记录为尚无 AppID。本次未访问发行后台，项目记录里缺本体与关联 Demo AppID、公开的本体「即将推出」页和审核回执。Alan 核实发行主体及后台状态后，可先走本体页下载按钮，用同版实机截图、核实过的语言和系统要求更新材料，按实际随包的 AI 辅助内容填写调查。独立 Demo 页可选，采用时需 Demo 专属预告和至少五张实机截图。[Demo 设置与公开方式](https://partner.steamgames.com/doc/store/application/demos) · [内容调查](https://partner.steamgames.com/doc/gettingstarted/contentsurvey) |
+| Mac 发行包 | 最近的单绳秤砣版来自 `abb9c0c`，PCK 摘要与构建回执一致。可执行文件含 arm64 和 x86_64，两者均为 64 位。本机完整性检查通过，签名为 ad hoc、没有 Team ID，Gatekeeper 评估拒绝且包上没有公证票据。新发 Steam Mac 应用须经 Apple 公证。Codex 在可用的签名身份下用 Developer ID 生成发行包，验公证回执及 Gatekeeper，并核实商店承诺的配置。[构建回执](../production/region-greybox-receipt.md#shop-stone-top-cord) · [Valve 的 macOS 要求](https://partner.steamgames.com/doc/store/application/platforms) |
+| Steam 客户端和审核 | 用关联 Demo AppID 上传这份发行包。Codex 在 Steam 私有分支从干净安装启动，实际采卖、买升级、退出再继续，并核实更新后保留进度。商店资料和构建按后台清单送审。Valve 审核通过、本体页已公开显示「即将推出」后，由 Alan 决定开放下载并重新发布本体页以展示按钮。[Valve 审核](https://partner.steamgames.com/doc/store/review_process) · [客户端测试与发布](https://partner.steamgames.com/doc/store/application/demos) |
 
-排期要区分三件事。Valve 对新开发者最初几款游戏要求应用费支付后至少 21 天才可发售，正式版的「即将推出」页须公开至少两周。商店审核通常需 3–5 个工作日，另留修改时间。这些窗口各有起点，不能由本地试玩包日期推算具体发售日。[入驻时限](https://partner.steamgames.com/steamdirect/?l=schinese) · [审核与发布](https://partner.steamgames.com/doc/store/releasing)
-
-本轮核查使用 11 月 23 日的版本回执、GitHub 记录及 Valve 官方文档。没有新增实机或玩家测试、平台操作和现金支出。200＋40 小时控制线仍适用，可靠剩余工时未知。取得付款／平台回执、同版首玩结果或新的完整内容预测时，回到原 Issue 更新判断。
+本轮继续以 macOS、简体中文和现有玩法准备发行。公开日期与费用由 Alan 决定。下一次核实时间是取得后台 AppID 或可公证构建时，制作状态沿 [M3 / #322](https://github.com/alanthssss/nameless-becoming/issues/322)。北京时间 15:02:52 至 15:04:39 查阅规则、版本与发行证据，约两分钟墙钟，含并行实包核查，PR 集成另计。新增采购与平台付款为零，历史累计与剩余工时仍无法核实，沿用 200＋40 小时控制线与 [#211 成本复核](https://github.com/alanthssss/nameless-becoming/issues/211)。
 
 ## 2026-11-03 起的本地准备与旧版草稿
 
