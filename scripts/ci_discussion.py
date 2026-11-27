@@ -114,10 +114,19 @@ def prior_text_result(event, checkout, current_run, get=api):
         return None
     pr = event["pull_request"]
     head, base = pr["head"], pr["base"]
-    runs = get(f"actions/workflows/quality.yml/runs?event=pull_request&head_sha={head['sha']}&per_page=2")["workflow_runs"]
-    if len(runs) != 2 or runs[0]["id"] != current_run:
+    history = get(f"actions/workflows/quality.yml/runs?event=pull_request&head_sha={head['sha']}&per_page=100")
+    runs = history["workflow_runs"]
+    if history["total_count"] != len(runs) or not any(run["id"] == current_run for run in runs):
         return None
-    previous = runs[1]
+    others = [run for run in runs if run["id"] != current_run]
+    if not others or any(run["status"] != "completed" for run in others):
+        return None
+    # Re-running an old validation updates its attempt without changing its creation order.
+    latest = max(run["updated_at"] for run in others)
+    candidates = [run for run in others if run["updated_at"] == latest]
+    if len(candidates) != 1:
+        return None
+    previous = candidates[0]
     if (previous["status"] != "completed" or previous["conclusion"] not in ("success", "failure")
             or previous["head_sha"] != head["sha"] or previous["head_branch"] != head["ref"]
             or previous["head_repository"]["full_name"] != head["repo"]["full_name"]):

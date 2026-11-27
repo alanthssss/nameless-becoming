@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # New PR commits supersede old PR checks. Main commits are independent:
-  # a docs-only push must not cancel tests required by the previous push.
-  group: quality-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+  # Text edits cannot cancel or displace a pending validation for a different head or base.
+  # New code commits still supersede obsolete runs for the same PR.
+  group: quality-${{ github.event_name }}-${{ (github.event.action == 'edited' && !github.event.changes.base && (github.event.changes.title || github.event.changes.body)) && format('text-{0}-{1}-{2}-{3}', github.event.pull_request.number, github.event.pull_request.head.sha, github.base_ref, github.event.pull_request.base.sha) || github.event.pull_request.number || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' && (github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)) }}
 
 permissions:

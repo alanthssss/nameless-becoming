@@ -90,15 +90,15 @@ class TextEditTests(unittest.TestCase):
         self.pr = dict(number=31, head=dict(sha=HEAD, ref="topic", repo={"full_name": "a/game"}),
                        base=dict(sha=BASE, ref="main"))
         self.event = dict(action="edited", changes={"body": {}}, pull_request=self.pr)
-        self.prior = dict(status="completed", conclusion="success", head_sha=HEAD, head_branch="topic",
+        self.prior = dict(updated_at="2026-11-27T12:00:00Z", status="completed", conclusion="success", head_sha=HEAD, head_branch="topic",
                           head_repository={"full_name": "a/game"}, id=10, run_attempt=2)
         self.gate = dict(name="CI required checks", status="completed", conclusion="success", run_id=10,
                          run_attempt=2, head_sha=HEAD, steps=[dict(
                              name=f"Gate outcome v1 PR 31 base main {BASE} merge {MERGE}", conclusion="success")])
         self.jobs = {"jobs": [self.gate], "total_count": 1}
         self.runs = [{"id": 11}, self.prior]
-        self.data = {f"actions/workflows/quality.yml/runs?event=pull_request&head_sha={HEAD}&per_page=2":
-                     {"workflow_runs": self.runs}, "actions/runs/10/attempts/2/jobs?per_page=100": self.jobs}
+        self.data = {f"actions/workflows/quality.yml/runs?event=pull_request&head_sha={HEAD}&per_page=100":
+                     {"workflow_runs": self.runs, "total_count": 2}, "actions/runs/10/attempts/2/jobs?per_page=100": self.jobs}
 
     def lookup(self):
         return discussion.prior_text_result(self.event, MERGE, 11, self.data.__getitem__)
@@ -108,6 +108,16 @@ class TextEditTests(unittest.TestCase):
         self.prior["conclusion"] = self.gate["conclusion"] = "failure"
         self.assertEqual(self.lookup(), "failure")
         self.prior["conclusion"] = "cancelled"
+        self.assertIsNone(self.lookup())
+
+    def test_newer_failed_retry_of_an_older_run_supersedes_an_inherited_pass(self):
+        failed = dict(self.prior, id=8, updated_at="2026-11-27T13:00:00Z", conclusion="failure")
+        gate = dict(self.gate, run_id=8, conclusion="failure")
+        self.runs.append(failed)
+        next(value for value in self.data.values() if "workflow_runs" in value)["total_count"] = 3
+        self.data["actions/runs/8/attempts/2/jobs?per_page=100"] = {"total_count": 1, "jobs": [gate]}
+        self.assertEqual(self.lookup(), "failure")
+        failed["updated_at"] = self.prior["updated_at"]
         self.assertIsNone(self.lookup())
 
     def test_retarget_and_unknown_edits_reclassify(self):
