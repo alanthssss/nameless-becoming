@@ -45,7 +45,7 @@ static func cat_swing(elapsed: float, reduced: bool) -> float:
 	# A tap from the right pushes the stone left first. Each return is smaller.
 	return .74 * sin(10.0 * age) * exp(-2.45 * age) * (1.0 - smoothstep(1.35, 1.75, age))
 
-static func shop_cat(v: Node2D, elapsed: float, tracking: float, reduced: bool) -> void:
+static func _draw_shop_cat(v: Node2D, elapsed: float, tracking: float, reduced: bool) -> void:
 	var pose := cat_pose(elapsed, reduced)
 	v._ground_shadow(CAT_FOOT + Vector2(10, 0), Vector2(25, 4), .34)
 	# Keep the paws planted while the head follows the sliding stone.
@@ -81,8 +81,9 @@ static func _draw_counterweight(v: Node2D, hook: Vector2, stone: Vector2, swing:
 	v.draw_polyline(end, HEMP, 1.5, true)
 	v.draw_set_transform(Vector2.ZERO)
 
-static func steelyard(v: Node2D, t: float, entering: bool, swing: float) -> void:
+static func steelyard(v: Node2D, t: float, entering: bool, cat_elapsed: float, reduced: bool) -> void:
 	var angle := inclination(t)
+	var swing := cat_swing(cat_elapsed, reduced)
 	var pan_hook := PIVOT + Vector2(PAN_ARM,0).rotated(angle)
 	var pan := pan_hook + Vector2(0, 41)
 	var weight := weight_hook(t)
@@ -110,6 +111,8 @@ static func steelyard(v: Node2D, t: float, entering: bool, swing: float) -> void
 		v.draw_line(pan_hook+Vector2(0,2),rim,Color("ead7ac"),1.2,true)
 	goods(v, PAN, pan)
 	v.draw_line(pan_hook+Vector2(0,3),pan+Vector2(0,4),Color("dbc297"),1.15,true)
+	# The beam runs behind the cat. Its hanging weight passes in front of her paws.
+	_draw_shop_cat(v, cat_elapsed, t, reduced)
 	_draw_counterweight(v, weight, stone, swing)
 	if entering:
 		var drop := smoothstep(.09, .36, t)

@@ -342,9 +342,7 @@ func _draw_hub() -> void:
 	var shop_entry := station_entry == "shop"
 	var shop_t := station_progress if shop_entry else 0.0
 	var sheet_t := station_progress if station_entry == "tree" else 0.0
-	var swing := CourtyardStations.cat_swing(shop_cat_elapsed, reduced_motion)
-	CourtyardStations.steelyard(self, shop_t, shop_entry, swing)
-	CourtyardStations.shop_cat(self, shop_cat_elapsed, shop_t, reduced_motion)
+	CourtyardStations.steelyard(self, shop_t, shop_entry, shop_cat_elapsed, reduced_motion)
 	CourtyardStations.sheet(self,model.last_region == "meadow",sheet_t)
 	# The counter's front shelf fills with sealed jars as the player sells.
 	var jars := mini(6,floori(float(model.sold_total)/6))
