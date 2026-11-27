@@ -2,8 +2,7 @@ name: Quality gates
 
 on:
   pull_request:
-    # Include retargeting. Other PR edits conservatively rerun the same scope;
-    # a skipped same-SHA check must not overwrite an earlier failed gate.
+    # Retargeting is an edit too. Text-only edits get no runner or required status.
     types: [opened, synchronize, reopened, edited]
   push:
     branches: [main]
@@ -14,7 +13,7 @@ on:
 concurrency:
   # New PR commits supersede old PR checks. Main commits are independent:
   # a docs-only push must not cancel tests required by the previous push.
-  group: quality-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+  group: quality-${{ github.event_name }}-${{ (github.event.action == 'edited' && !github.event.changes.base && (github.event.changes.title || github.event.changes.body)) && github.run_id || github.event.pull_request.number || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -22,6 +21,7 @@ permissions:
 
 jobs:
   scope:
+    if: github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)
     permissions:
       contents: read
       actions: read
@@ -29,6 +29,7 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
+      discussion: ${{ steps.discussion.outputs.handled }}
       reused: ${{ steps.reuse.outputs.reused }}
       source_run: ${{ steps.reuse.outputs.source_run }}
       tested_tree: ${{ steps.reuse.outputs.tested_tree }}
@@ -42,11 +43,29 @@ jobs:
       garden: ${{ steps.changes.outputs.garden }}
       content: ${{ steps.changes.outputs.content }}
     steps:
+      - name: Check discussion documents without checking out the repository
+        id: discussion
+        if: github.event_name == 'pull_request' || github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECKER_REV: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          # Changes to the checker must first pass the previous revision's routing.
+          script="$RUNNER_TEMP/ci_discussion.py"
+          if gh api -H 'Accept: application/vnd.github.raw+json' \
+              "repos/$GITHUB_REPOSITORY/contents/scripts/ci_discussion.py?ref=$CHECKER_REV" > "$script"; then
+            python3 -B "$script"
+          else
+            echo 'Using checkout because the discussion checker is unavailable.'
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.discussion.outputs.handled != 'true'
         with:
           fetch-depth: 0
       - name: Classify changes and check whitespace
         id: changes
+        if: steps.discussion.outputs.handled != 'true'
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -60,6 +79,7 @@ jobs:
           bash -n scripts/classify_ci_changes.sh scripts/ci_scope.sh scripts/lint_workflows.sh
           bash tests/ci-scope.test.sh
           python3 -B -m unittest discover -s tests -p test_ci_routing.py
+          python3 -B -m unittest discover -s tests -p test_ci_discussion.py
           bash scripts/lint_workflows.sh
           classified=$(bash scripts/ci_scope.sh)
           printf '%s\n' "$classified" >> "$GITHUB_OUTPUT"
@@ -74,6 +94,7 @@ jobs:
 
       - name: Check previous results after synchronizing main
         id: reuse
+        if: steps.discussion.outputs.handled != 'true'
         env:
           CI_SELECTION: ${{ toJSON(steps.changes.outputs) }}
           GH_TOKEN: ${{ github.token }}
@@ -81,9 +102,10 @@ jobs:
 
       - name: Verify this checkout's build identity when reusing build checks
         if: >-
+          steps.discussion.outputs.handled != 'true' && (
           contains(fromJSON(steps.reuse.outputs.reused), 'web') ||
           contains(fromJSON(steps.reuse.outputs.reused), 'godot') ||
-          contains(fromJSON(steps.reuse.outputs.reused), 'web-candidate')
+          contains(fromJSON(steps.reuse.outputs.reused), 'web-candidate'))
         env:
           NAMELESS_BUILD_INFO_PATH: ${{ runner.temp }}/ci-build-identity.json
         run: |
@@ -241,32 +263,43 @@ jobs:
     uses: ./.github/workflows/garden-puzzles.yml
 
   required:
-    name: CI required checks
+    name: ${{ (github.event.action == 'edited' && !github.event.changes.base && (github.event.changes.title || github.event.changes.body)) && 'PR text edit' || 'CI required checks' }}
     needs: [scope, web, godot, web-candidate, content, swarm, flower, garden]
-    if: ${{ always() }}
+    if: ${{ always() && (github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)) }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
+      - name: Verify the discussion check succeeded and all suites were skipped
+        if: needs.scope.outputs.discussion == 'true'
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          jq -e 'keys == ["content", "flower", "garden", "godot", "scope", "swarm", "web", "web-candidate"]
+            and .scope.result == "success"
+            and (del(.scope) | all(.[]; .result == "skipped"))' <<< "$RESULTS"
+
       - uses: actions/checkout@v4
+        if: needs.scope.outputs.discussion != 'true'
       - name: Require success for every selected check
+        if: needs.scope.outputs.discussion != 'true'
         env:
           CI_NEEDS: ${{ toJSON(needs) }}
         run: python3 -B scripts/check_ci_results.py
 
       # Immutable job metadata identifies the real integrated tree and certified coverage.
       - name: Prototype evidence v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.sha }} tree ${{ needs.scope.outputs.tested_tree }} swarm ${{ needs.scope.outputs.swarm_suite }} flower ${{ needs.scope.outputs.flower }} garden ${{ needs.scope.outputs.garden }}
-        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ needs.scope.outputs.discussion != 'true' && github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
         run: echo "Prototype results verified by the required gate."
 
       - name: Build evidence v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.sha }} tree ${{ needs.scope.outputs.tested_tree }} web ${{ needs.scope.outputs.web }} godot ${{ needs.scope.outputs.godot == 'true' && needs.scope.outputs.godot_suite || 'none' }} export ${{ needs.scope.outputs.export_game }}
-        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ needs.scope.outputs.discussion != 'true' && github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
         run: echo "Web, Godot and clean export coverage verified by the required gate."
 
   swarm-gate:
     # Keep the original top-level check name for existing check consumers.
-    name: Swarm Flight rules and complete routes
+    name: ${{ (github.event.action == 'edited' && !github.event.changes.base && (github.event.changes.title || github.event.changes.body)) && 'PR text edit (Swarm Flight)' || 'Swarm Flight rules and complete routes' }}
     needs: [scope, swarm]
-    if: ${{ always() }}
+    if: ${{ always() && needs.scope.outputs.discussion != 'true' && (github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)) }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
