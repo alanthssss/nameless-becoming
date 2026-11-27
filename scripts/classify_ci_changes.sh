@@ -43,7 +43,7 @@ regional_resource() {
 while IFS= read -r -d '' path; do
   count=$((count + 1))
   case "$path" in
-    .github/workflows/quality.yml|scripts/classify_ci_changes.sh|scripts/ci_scope.sh|scripts/check_ci_evidence.py|scripts/check_ci_results.py|scripts/ci_reuse.py|scripts/lint_workflows.sh|tests/ci-scope.test.sh|tests/test_ci_routing.py|tests/test_ci_reuse.py)
+    .github/workflows/quality.yml|scripts/classify_ci_changes.sh|scripts/ci_scope.sh|scripts/ci_discussion.py|tests/test_ci_discussion.py|scripts/check_ci_evidence.py|scripts/check_ci_results.py|scripts/ci_reuse.py|scripts/lint_workflows.sh|tests/ci-scope.test.sh|tests/test_ci_routing.py|tests/test_ci_reuse.py)
       full ;;
     docs/art/collection-fields/*-source.png|docs/art/collection-fields/collection-home-sign.png|\
       docs/art/collection-fields/*-registration.json|docs/art/collection-fields/register.py|docs/art/honey-basin-visitors-429.png|\

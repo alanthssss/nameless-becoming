@@ -22,7 +22,7 @@ ROUTING_FILES = (
     "tests/ci-scope.test.sh", "tests/test_ci_routing.py",
 )
 CONTROL_PATHS = (
-    *ROUTING_FILES, ".github/actions", ".github/workflows/quality.yml", "scripts/ci_reuse.py",
+    *ROUTING_FILES, "scripts/ci_discussion.py", "tests/test_ci_discussion.py", ".github/actions", ".github/workflows/quality.yml", "scripts/ci_reuse.py",
     "scripts/check_ci_results.py", "scripts/lint_workflows.sh", ":(glob)tests/test_ci_*.py",
     ".gitattributes", ".gitmodules", "package.json", "package-lock.json",
 )
