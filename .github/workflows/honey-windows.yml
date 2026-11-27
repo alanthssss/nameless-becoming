@@ -1,0 +1,75 @@
+name: Honey Windows package
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/honey-windows.yml'
+      - 'prototypes/swarm-flight/export_presets.cfg'
+      - 'tools/honey_steam_smoke.gd'
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /prototypes/swarm-flight/
+            !/prototypes/swarm-flight/review-evidence/
+            /tools/honey_steam_smoke.gd
+      - name: Install verified Godot 4.6.2 editor and Windows release template
+        shell: pwsh
+        run: |
+          $base = 'https://github.com/godotengine/godot/releases/download/4.6.2-stable'
+          $archives = @{
+            'Godot_v4.6.2-stable_win64.exe.zip' = '14293422efb54b24a51f79d4cb55ab4001ef3d936e064a6c8af32e1f984024be'
+            'Godot_v4.6.2-stable_export_templates.tpz' = '942366dc4e27e7686a99da4d3cfb1b8ae8d3eb9444f6d8217eef16245b599ef2'
+          }
+          Set-Location $env:RUNNER_TEMP
+          foreach ($name in $archives.Keys) {
+            curl.exe -fsSL --retry 2 "$base/$name" -o $name
+            if ($LASTEXITCODE -ne 0 -or (Get-FileHash $name).Hash -ne $archives[$name]) { throw "Download/hash failed for $name" }
+          }
+          Expand-Archive Godot_v4.6.2-stable_win64.exe.zip editor
+          $dest = "$env:APPDATA/Godot/export_templates/4.6.2.stable"
+          7z e -y Godot_v4.6.2-stable_export_templates.tpz templates/windows_release_x86_64.exe templates/version.txt "-o$dest"
+          if ($LASTEXITCODE -ne 0) { throw 'Could not extract the template' }
+      - name: Export, boot the Windows executable, save and continue from the exported pack
+        shell: python
+        run: |
+          import hashlib
+          import os
+          import subprocess
+          from pathlib import Path
+          root = Path.cwd()
+          temp = Path(os.environ["RUNNER_TEMP"])
+          editor = next((temp / "editor").rglob("*console.exe"))
+          game = root / "prototypes/swarm-flight"
+          out = temp / "honey"
+          out.mkdir()
+          exe = out / "Honey.exe"
+          pck = out / "Honey.pck"
+          def run(binary, label, *args):
+              log = temp / f"honey-{label}.log"
+              result = subprocess.run([str(binary), "--headless", "--audio-driver", "Dummy", "--log-file", str(log), *map(str,args)], cwd=out, timeout=240)
+              report = log.read_text(encoding="utf-8", errors="replace")
+              if result.returncode or "SCRIPT ERROR:" in report or "ERROR:" in report:
+                  raise RuntimeError(report[-10000:])
+              return report
+          run(editor, "import", "--path", game, "--import")
+          run(editor, "export", "--path", game, "--export-release", "Windows Honey Demo", exe)
+          native = run(exe, "native", "--verbose", "--quit-after", "45")
+          if "region_game/main.tscn" not in native or "Godot Engine v4.6.2" not in native:
+              raise RuntimeError(native[-8000:])
+          slots = temp / "honey-slots"
+          slots.mkdir()
+          for phase in ("fresh", "cold"):
+              text = run(editor, phase, "--max-fps", "60", "--quit-after", "600", "--main-pack", pck, "--script", root / "tools/honey_steam_smoke.gd", "--", "--slot-dir=" + slots.as_posix(), "--" + phase)
+              if "HONEY_STEAM_SMOKE_OK " + phase not in text:
+                  raise RuntimeError(text[-8000:])
+          for path in (exe, pck):
+              print(path.name, path.stat().st_size, hashlib.file_digest(path.open("rb"), "sha256").hexdigest())
