@@ -1,4 +1,5 @@
 extends SceneTree
+const StationEntry = preload("res://region_game/station_entry_probe.gd")
 ## Positioned developer UI fixtures, not player or first-discovery evidence.
 const Scene = preload("res://region_game/main.tscn")
 var game
@@ -100,12 +101,13 @@ func run() -> void:
 			check(game.mode == "play" and not game.mouse_collect,"press is consumed without collecting or premature activation")
 			check(b.is_pressed(),"mouse down reaches actual station Button")
 			_push_mouse(click_at,false)
-			await frames(2)
+			await StationEntry.settle(game)
 			check(game.mode == station.mode,"release opens "+station.mode)
 			check(not game.ui.hud.visible and not game.mouse_collect,"station hides flight HUD and releases controls")
 			# E is a separate assertion, not a consequence of a successful click.
 			if game.mode != "play": await tap(KEY_ESCAPE)
 			await tap(KEY_E)
+			await StationEntry.settle(game)
 			check(game.mode == station.mode,"E remains equivalent for "+station.kind)
 			if game.mode != "play": await tap(KEY_ESCAPE)
 		game.model.p = game.model.HUB_TREE
@@ -119,12 +121,13 @@ func run() -> void:
 		check(game.mode == "play","stale prompt cannot interact outside station radius")
 		game.ui.refresh()
 		check(not game.ui.hub_action.visible,"away from stations hides affordance")
-		game.model.p = game.model.HUB_TREE+Vector2(-99,0)
+		game.model.p = Vector2(686,480)
 		game.model.v = Vector2.ZERO
 		game.ui.refresh()
 		# Render frames can be shorter than a physics tick without --fixed-fps.
 		# Hold ordinary input until observed movement crosses the station radius,
 		# with a real monotonic deadline rather than assuming two frames move it.
+		check(game.model.interaction() == "tree","begin just inside the painted station")
 		var movement_start := Time.get_ticks_msec()
 		_push_key(KEY_A,true)
 		while game.model.interaction() == "tree" and Time.get_ticks_msec()-movement_start < 1000:
@@ -142,6 +145,7 @@ func run() -> void:
 	game.ui.refresh()
 	game.ui.hub_action.grab_focus()
 	await tap(KEY_ENTER)
+	await StationEntry.settle(game)
 	check(game.mode == "tree","focused station opens with Enter")
 	game.close_tree()
 	game.set_process(false) # Freeze this labelled low-stamina UI fixture in the restoring courtyard.
@@ -155,4 +159,8 @@ func run() -> void:
 	print("COURTYARD UI VERIFIED ",checks," / ",failures.size())
 	game.queue_free()
 	await frames(3)
+	var drain_until := Time.get_ticks_msec() + 350
+	while Time.get_ticks_msec() < drain_until:
+		OS.delay_msec(10)
+		await process_frame
 	quit(0 if failures.is_empty() else 1)

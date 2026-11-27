@@ -7,6 +7,9 @@ var current_value := 1.0
 var next_value := 1.0
 var phase := 0.0
 
+func _ready() -> void:
+	if preview: texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+
 func _process(delta: float) -> void:
 	if not preview or not is_visible_in_tree() or reduced_motion: return
 	phase += delta
@@ -23,7 +26,7 @@ func _draw() -> void:
 		var y := 10.0+i*25.0
 		var value := current_value if i == 0 else next_value
 		var tint := Color("a0b39b") if i == 0 else Color("d5ab4e")
-		Art.icon(self,kind,Vector2(13,y),10,tint)
+		Art.journal_icon(self,kind,Vector2(13,y),11)
 		draw_line(Vector2(start,y),Vector2(start+width,y),Color("d4d9bf"),5,true)
 		var fill: float = value/maxf(limit,.01)
 		if kind == "gather": fill = .58 if reduced_motion else fposmod(phase,maxf(.1,value))/maxf(.1,value)

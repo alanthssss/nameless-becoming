@@ -13,6 +13,38 @@ func check(ok: bool,label: String) -> void:
 	if not ok:
 		failures+=1
 		printerr("FAIL "+label)
+func check_ambient(view) -> void:
+	# If wind or water samples a different plate/mask, the rectangular patch
+	# reappears over the graded base whenever that layer becomes visible.
+	for sprite: Sprite2D in view._paint_root.get_children():
+		check(sprite.material.get_shader_parameter("plate_art")==sprite.texture,
+			"paint remains registered to the same illustration")
+		check(sprite.material.get_shader_parameter("depth_map")==View.DEPTH_MAPS[view.area_key],
+			"static and moving paint share the scene's depth map")
+	# A stationary camera must still show the breeze. Switching accessibility
+	# settings mid-frame must restore the original paint in the same view.
+	var rect: Rect2 = view._crowns[0].rect
+	view.clock = 0.0
+	view.reduced_motion = false
+	var initial: Vector2 = view._canopy_offset(rect)
+	var travel := 0.0
+	for step in range(1, 7):
+		view.clock = float(step)*.5
+		travel = maxf(travel, initial.distance_to(view._canopy_offset(rect)))
+	check(travel > 1.0, "visible breeze at rest in "+view.area_key)
+	view._update_crowns()
+	var visible_surface := false
+	for surface in view._surfaces:
+		if surface.visible:
+			visible_surface = true
+			check(surface.material.get_shader_parameter("seconds")==view.clock,"surface follows presentation time")
+	check(visible_surface, "ambient surface in the starting view of "+view.area_key)
+	view.reduced_motion = true
+	view._update_crowns()
+	check(view._canopy_offset(rect)==Vector2.ZERO, "no ambient deflection with reduced motion")
+	for surface in view._surfaces:
+		check(not surface.visible, "reduced motion restores the painted surface")
+
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -20,6 +52,15 @@ func run() -> void:
 	if not directory.is_empty(): DirAccess.make_dir_recursive_absolute(directory)
 	root.content_scale_size=Vector2i(1280,800)
 	root.content_scale_mode=Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	var hub := View.new()
+	hub.model = Model.new()
+	hub.area_key = "hub"
+	root.add_child(hub)
+	hub.set_process(false)
+	hub._prepare_paint()
+	check_ambient(hub)
+	hub.queue_free()
+	await process_frame
 	for region in ["pond","meadow"]:
 		var model=Model.new()
 		model.area=region
@@ -35,6 +76,7 @@ func run() -> void:
 		root.add_child(view)
 		view.set_process(false)
 		view._prepare_paint()
+		check_ambient(view)
 		check(model.field.snapshot()==snapshot,"preparing painted field preserves resources and position")
 		check(View.POND_PLATE!=View.MEADOW_PLATE,"each field owns its painted landscape")
 		check(view._crowns.size()==(6 if region=="pond" else 7),"registered foliage landmarks for "+region)

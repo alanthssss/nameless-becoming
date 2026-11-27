@@ -197,7 +197,7 @@ func run() -> void:
 	await tap(KEY_E)
 	check(game.mode == "shop","home E opens shop instead of harvesting")
 	await capture("04-first-shop")
-	check(game.ui.shop_story.size.x <= 464.1,"shop story fits the sale panel")
+	check(game.ui.shop_goods.size.x <= 464.1 and game.ui.shop_goods.visible,"two honey jars fit the counter")
 	await click(game.ui.sell_button)
 	check(game.model.cargo_total() == 0 and game.model.coins == old_cargo,"sell commits exact visible cargo value")
 	await click(game.ui.tree_button)
@@ -206,6 +206,14 @@ func run() -> void:
 	await frames(2)
 	await tap(KEY_E)
 	check(game.mode == "tree" and not game.ui.shop.visible and not game.ui.hud.visible,"growth is a dedicated screen")
+	var art = preload("res://nectar_ui_art.gd")
+	var cells: Array = []
+	for node in game.ui.board.NODES:
+		check(art.JOURNAL_CELLS.has(node.id),"journal has an illustration for "+node.id)
+		if art.JOURNAL_CELLS.has(node.id):
+			var cell: Vector2 = art.JOURNAL_CELLS[node.id]
+			check(cell not in cells,"journal skill has its own illustration: "+node.id)
+			cells.append(cell)
 	check(game.ui.board.visible_ids() == ["gather","bag","meadow","reserve"],"fresh tree reveals two choices and two landmarks")
 	await capture("05-initial-tree")
 	var initial_coins: int = game.model.coins
@@ -234,6 +242,17 @@ func run() -> void:
 	check(not game.ui.enter_held and game.held.is_empty(),"focus loss clears tree confirmation and movement state")
 	await frames(2)
 	check(game.ui.board.buttons.reach.visible and game.ui.board.buttons.wings.visible,"first purchase reveals relevant next choices")
+	await click(game.ui.board.buttons.beat)
+	check(game.ui.board.buttons.beat.is_processing(),"focusing the gust starts its short impulse")
+	await click(game.ui.board.buttons.wings)
+	check(not game.ui.board.buttons.beat.is_processing(),"leaving the gust settles it")
+	game.reduced_motion = true
+	game.ui.refresh()
+	await click(game.ui.board.buttons.reach)
+	check(not game.ui.board.buttons.reach.is_processing(),"reduced motion keeps the scent illustration still")
+	game.reduced_motion = false
+	game.ui.refresh()
+	await click(game.ui.board.buttons.gather)
 	check(not game.ui.board.buttons.twin.visible,"double gather stays concealed until reach is found")
 	check("1.2 → 0.8" in game.ui.detail_effect.text,"detail advances to the next rank")
 	await tap(KEY_ENTER)

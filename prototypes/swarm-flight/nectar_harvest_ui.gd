@@ -15,6 +15,7 @@ var font := SystemFont.new()
 var hud: Control
 var hud_status: PanelContainer
 var hub_action: Button
+var hub_action_key: Label
 var hub_action_kind := ""
 var menu_guide: Button
 var pond_info: Label
@@ -32,8 +33,6 @@ var detail_costs := {}
 var detail_cost_row: HBoxContainer
 var hud_values := {}
 var hud_tweens := {}
-var energy_pulse: Tween
-var low_energy := false
 var trip_text: Label
 var goal_text: Label
 var help_text: Label
@@ -41,11 +40,18 @@ var toast: Label
 var toast_panel: PanelContainer
 var bag_bar: ProgressBar
 var energy_bar: ProgressBar
-var energy_dial: Control
+var energy_dial: EnergyDial
 var shop: Control
+var shop_scroll: ScrollContainer
 var shop_coins: Label
-var shop_cargo: Label
-var shop_story: Label
+var shop_goods: VBoxContainer
+var shop_counts := {}
+var shop_jars := {}
+var shop_receipt: Button
+var shop_result: HBoxContainer
+var shop_stamp: TextureRect
+var shop_last_gain := 0
+var stamp_tween: Tween
 var shop_recap: Label
 var shop_value: Label
 var sell_button: Button
@@ -66,17 +72,22 @@ var buy_button: Button
 var tree_back: Button
 var menu: Control
 var menu_logo: TextureRect
+var menu_footer: Label
+var pause_button: Button
 var menu_title: Label
 var menu_body: Label
 var menu_primary: Button
 var menu_restart: Button
 var menu_quit: Button
-var restart_dialog: ConfirmationDialog
+var restart_title: Label
+var restart_body: Label
+var restart_dialog: Control
+var restart_cancel: Button
+var restart_opener: Control
 var muted := false
 var enter_held := false
 var purchase_double_click := false
 var last_purchase_msec := -1000
-var shop_cache := ""
 var toast_timer: Timer
 var regions: Control
 var region_title: Label
@@ -92,10 +103,25 @@ var transition_layer: ColorRect
 var transition_label: Label
 var transition_hint: Label
 var journal: Control
+var journal_controls: Label
+var journal_material_hint: Label
+var journal_landscape: TextureRect
+var journal_flower: TextureRect
+var journal_material_icon
+var journal_flower_name: Label
+var journal_material_name: Label
+var journal_price: Label
+var journal_regions: Array[Button] = []
+var journal_meadow := false
+var journal_return_notes: Label
 var journal_status: Label
 var journal_back: Button
 var settings: Control
+var settings_scroll: ScrollContainer
 var settings_motion: Button
+var settings_waggle: Button
+var settings_about: Button
+var settings_credits: Label
 var settings_dance: Button
 var settings_sound: Button
 var settings_back: Button
@@ -119,13 +145,7 @@ func _ready() -> void:
 	_build_journal()
 	_build_settings()
 	_build_toast()
-	restart_dialog = ConfirmationDialog.new()
-	restart_dialog.title = "重新开始采蜜"
-	restart_dialog.dialog_text = "当前采蜜进度会备份，再开始新的一轮。\n旧的池岸归途进度不会改变。"
-	restart_dialog.ok_button_text = "备份并重新开始"
-	restart_dialog.cancel_button_text = "取消"
-	restart_dialog.confirmed.connect(driver.restart_game)
-	add_child(restart_dialog)
+	_build_restart_dialog()
 	if driver.has_signal("presentation_changed"): driver.presentation_changed.connect(refresh)
 
 func style(fill: Color, edge := Color("81957a"), thickness := 1, radius := 14) -> StyleBoxFlat:
@@ -163,6 +183,44 @@ func card(parent: Node, fill := PAPER, edge := Color("81957a")) -> PanelContaine
 		p.add_theme_stylebox_override("panel",style(fill,edge))
 	parent.add_child(p)
 	return p
+
+# The left leaf of the painted spread runs from the outer cover to the binding.
+# Each reading layout reserves room for its scaled frame, including both leaf sprays.
+func reading_page(parent: Node, inset: Vector2) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel",painted_style(UIArt.JOURNAL,Rect2(6,12,762,990),Color.WHITE,inset))
+	parent.add_child(p)
+	return p
+
+const MATERIAL_FRAMES := {
+	"shop": preload("res://art/honey-menu-shop.webp"),
+	"book": preload("res://art/honey-menu-book.webp"),
+	"settings": preload("res://art/honey-menu-settings.webp"),
+	"letter": preload("res://art/honey-menu-letter.webp")
+}
+
+func material_panel(parent: Node, kind: String, insets: Vector4) -> PanelContainer:
+	var panel := PanelContainer.new()
+	var surface := StyleBoxTexture.new()
+	surface.texture = MATERIAL_FRAMES[kind]
+	surface.content_margin_left = insets.x
+	surface.content_margin_top = insets.y
+	surface.content_margin_right = insets.z
+	surface.content_margin_bottom = insets.w
+	panel.add_theme_stylebox_override("panel",surface)
+	panel.set_meta("material_kind",kind)
+	parent.add_child(panel)
+	return panel
+
+func material_icon(parent: Node, texture: Texture2D, extent: Vector2) -> TextureRect:
+	var icon := TextureRect.new()
+	icon.texture = texture
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = extent
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(icon)
+	return icon
 
 func picture(parent: Node, texture: Texture2D, height: float) -> TextureRect:
 	var art := TextureRect.new()
@@ -202,6 +260,17 @@ func column(parent: Node, gap := 12) -> VBoxContainer:
 	v.add_theme_constant_override("separation",gap)
 	parent.add_child(v)
 	return v
+
+func scroll_column(page: VBoxContainer, scroll: ScrollContainer, gap: int) -> VBoxContainer:
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
+	page.add_child(scroll)
+	var gutter := MarginContainer.new()
+	gutter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	gutter.add_theme_constant_override("margin_right",12)
+	scroll.add_child(gutter)
+	return column(gutter,gap)
 
 func row(parent: Node, gap := 12) -> HBoxContainer:
 	var h := HBoxContainer.new()
@@ -287,6 +356,7 @@ func _build_hud() -> void:
 	cluster.add_child(paper)
 	paper.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	energy_bar = bar(cluster,Color("85bc65"))
+	energy_bar.step = 0.0
 	energy_bar.hide() # Range source for the circular indicator, still refreshed centrally.
 	energy_dial = EnergyDial.new()
 	energy_dial.source = energy_bar
@@ -333,12 +403,12 @@ func _build_hud() -> void:
 	help_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	help_text.add_theme_color_override("font_shadow_color",PAPER)
 	help_text.add_theme_constant_override("shadow_offset_y",1)
-	var pause := action(hud,"Ⅱ",driver.pause_game)
-	pause.custom_minimum_size = Vector2(56,56)
+	pause_button = action(hud,"Ⅱ",driver.pause_game)
+	pause_button.custom_minimum_size = Vector2(56,56)
 	for key in ["normal","hover","pressed","disabled"]:
-		pause.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
-	pause.tooltip_text = "暂停与操作说明 · Esc"
-	anchored(pause,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
+		pause_button.add_theme_stylebox_override(key,style(Color("f1dfb5"),Color("8c754a"),1,28))
+	pause_button.tooltip_text = "暂停与操作说明 · Esc"
+	anchored(pause_button,Rect2(1,1,0,0),Rect2(-80,-80,56,56))
 	_build_hub_action()
 
 func _build_hub_action() -> void:
@@ -367,9 +437,9 @@ func _build_hub_action() -> void:
 	keycap.add_theme_stylebox_override("panel",key_style)
 	hub_action.add_child(keycap)
 	anchored(keycap,Rect2(0,.5,0,0),Rect2(18,-15,29,30))
-	var key := text_line(keycap,"E",20,Color("624823"))
-	key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	key.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hub_action_key = text_line(keycap,"E",20,Color("624823"))
+	hub_action_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hub_action_key.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	hub_action.hide()
 
 func _refresh_hub_action() -> void:
@@ -391,57 +461,155 @@ func _refresh_hub_action() -> void:
 func _activate_hub_action() -> void:
 	# Recheck proximity and mode at activation; a stale/focused prompt cannot act remotely.
 	if driver.mode != "play" or driver.model.area != "hub" or driver.model.interaction() != hub_action_kind: return
-	match hub_action_kind:
-		"shop": driver.open_shop()
-		"tree": driver.open_tree()
-		"depart": driver.open_regions()
+	driver.use_station()
+
+func _shop_texture(source: Texture2D, region: Rect2) -> AtlasTexture:
+	var part := AtlasTexture.new()
+	part.atlas = source
+	part.region = region
+	part.filter_clip = true
+	return part
 
 func _build_shop() -> void:
 	shop = screen(self)
 	shade(shop,Color(.08,.17,.12,.23))
-	var p := card(shop,PAPER,Color("a7a77c"))
-	anchored(p,Rect2(1,.5,0,0),Rect2(-535,-350,500,700))
-	var v := column(p,12)
-	text_line(v,"庭院蜜铺 · 收购员",17,Color("7b895f")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	text_line(v,"这一趟，收获不错。",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	shop_story = text_line(v,"带回花蜜，就能换取下一次成长。",19,Color("768064"),true)
-	shop_recap = text_line(v,"",18,INK,true)
+	var panel := material_panel(shop,"shop",Vector4(91,145,91,106))
+	anchored(panel,Rect2(1,.5,0,0),Rect2(-625,-279,555,558))
+	var page := column(panel,6)
+	var heading := row(page,4)
+	heading.alignment = BoxContainer.ALIGNMENT_CENTER
+	var title := text_line(heading,"庭院蜜铺",30,Color("fff0bf"))
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var coin := _shop_texture(UIArt.RESOURCES,Rect2(100,120,455,465))
+	material_icon(heading,coin,Vector2(26,26))
+	shop_coins = text_line(heading,"",22,Color("ffe2a0"))
+	shop_coins.tooltip_text = "当前金币"
+	shop_scroll = ScrollContainer.new()
+	var body := scroll_column(page,shop_scroll,4)
+	shop_goods = column(body,0)
+	var specimens := row(shop_goods,8)
+	var jar := _shop_texture(UIArt.JAR,Rect2(225,240,800,790))
+	var stock := [{"id":"blue","name":"蓝花蜜","flower":preload("res://art/collection-blue-bloom.webp")},
+		{"id":"rose","name":"紫花蜜","flower":preload("res://art/collection-violet-bloom.webp")}]
+	for item in stock:
+		var holder := CenterContainer.new()
+		holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		specimens.add_child(holder)
+		var sample := Control.new()
+		sample.custom_minimum_size = Vector2(116,83)
+		holder.add_child(sample)
+		shop_jars[item.id] = sample
+		var bottle := material_icon(sample,jar,Vector2(90,78))
+		bottle.position = Vector2(4,5)
+		var bloom := material_icon(sample,item.flower,Vector2(45,46))
+		bloom.position = Vector2(68,38)
+	var slat := material_icon(shop_goods,_shop_texture(preload("res://art/nectar-honey-shop.png"),Rect2(249,607,735,53)),Vector2(0,10))
+	slat.stretch_mode = TextureRect.STRETCH_SCALE
+	slat.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var tags := row(shop_goods,8)
+	for item in stock:
+		var tag := column(tags,0)
+		tag.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		text_line(tag,item.name,17,Color("fff0c4")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var count := text_line(tag,"",22,Color("ffde94"))
+		count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		shop_counts[item.id] = count
+	shop_recap = text_line(body,"",18,Color("fff0c4"),true)
 	shop_recap.hide()
-	var cargo_card := card(v,Color("e5e8d0"),Color("bec8a5"))
-	cargo_card.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
-	var cargo_v := column(cargo_card,12)
-	shop_cargo = text_line(cargo_v,"",22)
-	shop_value = text_line(cargo_v,"",27,Color("9a6c28"))
-	sell_button = action(v,"全部交付",driver.sell_cargo,true)
-	shop_coins = text_line(v,"",19,Color("718160"))
-	spacer(v)
-	leave_button = action(v,"回到庭院",driver.close_shop)
-	tree_button = leave_button # Compatibility alias for the single return action.
-	text_line(v,"Esc 返回庭院 · 交付立即结算",16,Color("839071")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sell_button = action(page,"全部交付",driver.sell_cargo,true)
+	sell_button.custom_minimum_size = Vector2(310,52)
+	var seal := material_icon(sell_button,preload("res://art/honey-menu-seal.webp"),Vector2(58,58))
+	seal.position = Vector2(-6,-3)
+	shop_result = row(page,6)
+	shop_result.alignment = BoxContainer.ALIGNMENT_CENTER
+	shop_result.custom_minimum_size.y = 52
+	shop_stamp = material_icon(shop_result,preload("res://art/honey-menu-seal.webp"),Vector2(52,52))
+	shop_value = text_line(shop_result,"",21,Color("ffe2a0"))
+	var actions := row(page,8)
+	actions.alignment = BoxContainer.ALIGNMENT_CENTER
+	shop_receipt = action(actions,"查看回执",_toggle_shop_receipt)
+	shop_receipt.toggle_mode = true
+	shop_receipt.gui_input.connect(_scroll_expanded_text.bind(shop_recap,shop_scroll))
+	leave_button = action(actions,"← 回庭院",driver.close_shop)
+	for button in [shop_receipt,leave_button]:
+		button.custom_minimum_size = Vector2(124,40)
+		button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		button.add_theme_font_size_override("font_size",17)
+		for shade_name in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
+			button.add_theme_color_override(shade_name,Color("fff0bf"))
+	tree_button = leave_button
+
+func _toggle_shop_receipt() -> void:
+	shop_recap.visible = shop_receipt.button_pressed
+	shop_goods.visible = not shop_recap.visible
+	shop_receipt.text = "收起回执" if shop_recap.visible else "查看回执"
+	shop_scroll.set_deferred("scroll_vertical",0)
+
+func _scroll_expanded_text(event: InputEvent, detail: Control, scroll: ScrollContainer) -> void:
+	if not detail.is_visible_in_tree(): return
+	var direction := int(event.is_action_pressed("ui_down",true)) - int(event.is_action_pressed("ui_up",true))
+	if direction == 0: return
+	var before := scroll.scroll_vertical
+	scroll.scroll_vertical += direction * 42
+	if scroll.scroll_vertical != before: scroll.accept_event()
+
+func _refresh_shop() -> void:
+	var model = driver.model
+	var stocked: bool = model.cargo_total() > 0
+	var paid: bool = not stocked and not driver.home_sale_summary.is_empty()
+	shop_coins.text = str(model.coins)
+	for kind in shop_counts:
+		shop_counts[kind].text = "%d 份" % model.cargo[kind]
+		shop_jars[kind].modulate.a = 0.0 if paid else 0.37 if not stocked else 1.0
+	sell_button.text = "全部交付   +%d 金币" % model.cargo_value()
+	sell_button.disabled = not stocked
+	sell_button.visible = stocked
+	shop_result.visible = not stocked
+	shop_stamp.visible = paid
+	shop_value.text = "蜜囊空空"
+	if paid:
+		shop_value.text = "已交付　+%d 金币" % shop_last_gain if shop_last_gain > 0 else "已交付"
+	shop_recap.text = "\n".join([driver.home_return_summary,driver.home_sale_summary]).strip_edges()
+	shop_receipt.visible = not shop_recap.text.is_empty()
+
+func show_shop_payment(gain: int) -> void:
+	shop_last_gain = gain
+	_refresh_shop()
+	leave_button.grab_focus()
+	if stamp_tween: stamp_tween.kill()
+	shop_stamp.pivot_offset = shop_stamp.custom_minimum_size*.5
+	shop_stamp.scale = Vector2.ONE
+	shop_stamp.rotation = 0
+	if driver.reduced_motion: return
+	shop_stamp.scale = Vector2(1.3,1.3)
+	shop_stamp.rotation = -.18
+	stamp_tween = create_tween().set_parallel(true)
+	stamp_tween.tween_property(shop_stamp,"scale",Vector2.ONE,.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	stamp_tween.tween_property(shop_stamp,"rotation",0,.25)
 
 func _build_regions() -> void:
 	regions = screen(self)
 	shade(regions,Color("193c329c"))
 	var v := column(regions,14)
-	anchored(v,Rect2(.5,.5,0,0),Rect2(-450,-310,900,620))
+	anchored(v,Rect2(.5,.5,0,0),Rect2(-500,-320,1000,640))
 	region_title = text_line(v,"这次去哪里？",32,PAPER)
 	region_title.add_theme_color_override("font_shadow_color",INK)
 	region_title.add_theme_constant_override("shadow_offset_y",2)
 	region_hint = text_line(v,"",19,PAPER,true)
 	region_cards = row(v,22)
 	region_cards.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var pond_card := card(region_cards)
+	var pond_card := reading_page(region_cards,Vector2(65,62))
 	pond_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	pond_card.custom_minimum_size.x = 435
 	var pv := column(pond_card,12)
-	picture(pv,preload("res://art/nectar-pond-oblique.png"),210)
+	picture(pv,preload("res://art/nectar-pond-oblique.png"),192)
 	pond_button = action(pv,"池岸花丛",func(): driver.request_transition("pond"),true)
 	pond_info = text_line(pv,"每花 1 份 · 每份 1 金币 · 晴",18,INK,true)
-	var meadow_card := card(region_cards)
+	var meadow_card := reading_page(region_cards,Vector2(65,62))
 	meadow_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	meadow_card.custom_minimum_size.x = 435
 	var mv := column(meadow_card,12)
-	region_meadow_art = picture(mv,preload("res://art/nectar-meadow-oblique.png"),210)
+	region_meadow_art = picture(mv,preload("res://art/nectar-meadow-oblique.png"),192)
 	meadow_button = action(mv,"紫花地",func(): driver.request_transition("meadow"),true)
 	meadow_info = text_line(mv,"每花 1 份 · 每份 3 金币 · 局部细雨",18,INK,true)
 	home_button = action(mv,"回到蜂巢庭院",func(): driver.request_transition("hub"),true)
@@ -467,15 +635,18 @@ func _build_transition() -> void:
 	transition_hint.hide()
 	transition_layer.hide()
 
+func transition_focus() -> Vector2:
+	return driver.model.p - Vector2(driver.model.camera_x, 0)
+
 func set_transition(alpha: float, words: String) -> void:
-	transition_layer.configure(alpha,driver.model.p-Vector2(driver.model.camera_x,0),driver.transition_short,driver.transition_elapsed)
+	transition_layer.configure(alpha,transition_focus(),driver.transition_short,driver.transition_elapsed)
 	transition_label.text = words
 	move_child(transition_layer,get_child_count()-1)
 	move_child(transition_hint,get_child_count()-1)
 
-func _build_tree() -> void:
-	tree = screen(self)
-	shade(tree,Color("314d38d9"))
+func create_growth_board(): return Board.new()
+
+func add_growth_paper() -> void:
 	var journal_art := TextureRect.new()
 	journal_art.texture = preload("res://art/nectar-growth-journal.png")
 	journal_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -483,6 +654,11 @@ func _build_tree() -> void:
 	journal_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tree.add_child(journal_art)
 	anchored(journal_art,Rect2(0,0,1,1),Rect2(10,12,-20,-24))
+
+func _build_tree() -> void:
+	tree = screen(self)
+	shade(tree,Color("314d38d9"))
+	add_growth_paper()
 	var header := row(tree,18)
 	anchored(header,Rect2(0,0,1,0),Rect2(120,78,-200,66))
 	var titles := column(header,2)
@@ -503,7 +679,7 @@ func _build_tree() -> void:
 	tree_back = action(header,"返回",driver.close_tree)
 	tree_back.size_flags_horizontal = Control.SIZE_SHRINK_END
 	tree_back.custom_minimum_size.x = 100
-	board = Board.new()
+	board = create_growth_board()
 	board.font = font
 	tree.add_child(board)
 	anchored(board,Rect2(0,0,.7,1),Rect2(70,180,-80,-300))
@@ -591,7 +767,8 @@ func _build_menu() -> void:
 	var bottom := row(v,12)
 	menu_restart = action(bottom,"新的一轮",ask_restart)
 	menu_quit = action(bottom,"保存并退出",driver.quit_game)
-	text_line(v,"Demo 0.27.0  ·  Esc 返回",16,Color("7d7a56")).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	menu_footer = text_line(v,"Demo 0.27.0  ·  Esc 返回",16,Color("7d7a56"))
+	menu_footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _build_toast() -> void:
 	toast_panel = card(self,Color("204438f2"),Color("b2ac70"))
@@ -627,11 +804,17 @@ func show_toast(words: String, seconds: float) -> void:
 	toast_panel.show()
 	toast_timer.start(minf(seconds,3.0) if words.length()<35 else seconds)
 
+func uses_shared_menu(mode: String) -> bool:
+	return mode in ["title","pause","complete"]
+
+func active_menu() -> Control:
+	return menu
+
 func show_mode(mode: String) -> void:
 	hud.visible = mode == "play"
 	shop.visible = mode == "shop"
 	tree.visible = mode == "tree"
-	menu.visible = mode in ["title","pause","complete"]
+	menu.visible = uses_shared_menu(mode)
 	menu_logo.visible = mode == "title"
 	regions.visible = mode == "regions"
 	transition_layer.visible = mode == "transition"
@@ -641,44 +824,51 @@ func show_mode(mode: String) -> void:
 	menu_guide.visible = mode == "pause"
 	if mode == "journal":
 		journal_status.text = "紫花地已记录 · 已交付紫蜜 %d 份" % driver.model.rose_sold if driver.model.visited_meadow else "池岸已备好 · 紫花地待探索"
-		journal_back.grab_focus()
+		_select_journal_region(journal_meadow)
+		journal_regions[int(journal_meadow)].grab_focus()
 	if mode == "settings":
 		refresh_settings()
-		settings_motion.grab_focus()
+		settings_sound.grab_focus()
+		settings_scroll.set_deferred("scroll_vertical",0)
 	if mode == "regions":
 		refresh()
 		pond_button.grab_focus()
 	enter_held = false
-	shop_cache = ""
 	toast_panel.hide()
 	if mode == "shop":
+		shop_receipt.set_pressed_no_signal(false)
+		_toggle_shop_receipt()
 		refresh()
 		if not sell_button.disabled: sell_button.grab_focus()
 		else: leave_button.grab_focus()
+		shop_scroll.set_deferred("scroll_vertical",0)
 	elif mode == "tree":
 		refresh()
 		board.select_node(board.selected)
 	elif menu.visible:
-		if mode == "title":
-			menu_title.text = driver.DISPLAY_NAME
-			menu_body.text = "在蜂舞广场选一条花路，带着花蜜回来。\n交付、成长，再去更远的地方。"
-			menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
-		elif mode == "pause":
-			menu_title.text = "歇一会儿"
-			menu_body.text = driver.model.goal_text()+"\n\nWASD 飞行  ·  E 采蜜\nQ 振翅  ·  空格蓄力冲刺\n\n详细操作与花路，翻看手册。"
-			menu_primary.text = "继续这趟出行"
-		else:
-			menu_title.text = "花蜜，备好了"
-			menu_body.text = "Demo 的花蜜储备已完成。\n\n同伴们在蜂舞广场等你庆祝。\n花还开着，也可以继续探索和成长。"
-			menu_primary.text = "再去花园转转"
-		if driver.save_blocked:
-			menu_body.text = "这份采蜜进度暂时无法读取或升级。\n原文件仍保留。可备份后开始新的一轮。"
-			menu_primary.text = "备份并重新开始"
-		elif driver.save_warning:
-			menu_body.text = "保存暂时失败，当前进度仍在。\n请继续后重试，或检查保存位置。"
-		menu_restart.visible = driver.has_save or driver.save_blocked
-		menu_primary.grab_focus()
+		_show_menu(mode)
 	refresh()
+
+func _show_menu(mode: String) -> void:
+	if mode == "title":
+		menu_title.text = driver.DISPLAY_NAME
+		menu_body.text = "在蜂舞广场选一条花路，带着花蜜回来。\n交付、成长，再去更远的地方。"
+		menu_primary.text = "继续采蜜" if driver.has_save else "从蜂巢出发"
+	elif mode == "pause":
+		menu_title.text = "歇一会儿"
+		menu_body.text = driver.model.goal_text()+"\n\nWASD 飞行  ·  E 采蜜\nQ 振翅  ·  空格蓄力冲刺\n\n详细操作与花路，翻看手册。"
+		menu_primary.text = "继续这趟出行"
+	else:
+		menu_title.text = "花蜜，备好了"
+		menu_body.text = "Demo 的花蜜储备已完成。\n\n同伴们在蜂舞广场等你庆祝。\n花还开着，也可以继续探索和成长。"
+		menu_primary.text = "再去花园转转"
+	if driver.save_blocked:
+		menu_body.text = "这份采蜜进度暂时无法读取或升级。\n原文件仍保留。可备份后开始新的一轮。"
+		menu_primary.text = "备份并重新开始"
+	elif driver.save_warning:
+		menu_body.text = "保存暂时失败，当前进度仍在。\n请继续后重试，或检查保存位置。"
+	menu_restart.visible = driver.has_save or driver.save_blocked
+	menu_primary.grab_focus()
 
 func _selected(_id: String) -> void:
 	_detail()
@@ -790,10 +980,11 @@ func refresh() -> void:
 	energy_text.text = "%d / %d" % [int(ceil(m.energy)),int(m.max_energy())]
 	energy_bar.max_value = m.max_energy()
 	energy_bar.value = m.energy
+	energy_dial.set_energy_stage(m.energy_stage())
 	_number(coins_text,str(m.coins),m.coins)
 	_number(fiber_text,str(m.materials.fiber),m.materials.fiber)
 	_number(resin_text,str(m.materials.resin),m.materials.resin)
-	_energy_attention(m.energy < m.max_energy()*.25 and not m.at_home())
+	energy_dial.set_warning(driver.mode == "play" and m.energy_is_low(), driver.reduced_motion)
 	trip_text.text = driver.area_name(m.area)+(" · 安全生活区" if m.at_home() else " · 第 %d 趟" % maxi(1,m.trip_index))
 	goal_text.text = m.goal_text()
 	help_text.text = ""
@@ -802,6 +993,18 @@ func refresh() -> void:
 		elif driver.has_material_hint(): help_text.text = "Q  振翅"
 		elif m.cargo_total() >= m.capacity(): help_text.text = "蜜囊已满"
 	help_text.visible = not help_text.text.is_empty()
+	_refresh_regions()
+	if driver.mode == "shop": _refresh_shop()
+	board.reduced_motion = driver.reduced_motion
+	board.refresh(m)
+	tree_coins.text = str(m.coins)
+	tree_fiber.text = str(m.materials.fiber)
+	tree_resin.text = str(m.materials.resin)
+	tree_progress.text = "紫花地已开放" if "meadow" in m.owned else "花路成长 %d / 3" % mini(3,m.growth_count())
+	_detail()
+
+func _refresh_regions() -> void:
+	var m = driver.model
 	var from_hub: bool = m.area == "hub"
 	region_title.text = "这次去哪里？" if from_hub else "带着收获回去"
 	region_hint.text = "蜜囊 %d / %d · 续航 %d" % [m.cargo_total(),m.capacity(),m.max_energy()] if from_hub else "花蜜与材料随身带回。"
@@ -816,27 +1019,51 @@ func refresh() -> void:
 	meadow_button.text = "紫花地 · 紫花蜜" if "meadow" in m.owned else "紫花地 · 尚未开放"
 	meadow_info.text = "每份 3 金币 · 局部细雨\n"+("穿雨或绕叶棚，取蜜与树脂。" if "meadow" in m.owned else "在成长手册中开放这条花路。")
 	home_button.visible = not from_hub
-	shop_coins.text = "当前金币  %d" % m.coins
-	shop_recap.text = "\n".join([driver.home_return_summary,driver.home_sale_summary]).strip_edges()
-	shop_recap.visible = not shop_recap.text.is_empty()
-	shop_cargo.text = "蓝花蜜    %d 份\n紫花蜜    %d 份" % [m.cargo.blue,m.cargo.rose]
-	shop_value.text = "本趟可售  %d 金币" % m.cargo_value()
-	sell_button.text = "全部交付  +%d 金币" % m.cargo_value() if m.cargo_total() else "花蜜已交付"
-	sell_button.disabled = m.cargo_total() == 0
-	if m.completed: shop_story.text = "雨前的储备已经够了。\n同伴们在蜂舞广场等你庆祝，花园仍欢迎你。"
-	elif m.rose_sold > 0: shop_story.text = "货架上也有紫花蜜了。\n这一趟改善采集、出行，还是先留钱备粮？"
-	elif m.sold_total > 0: shop_story.text = "你带回的花蜜已摆上货架。\n去书屋挑一项成长，再从广场出发吧。"
-	else: shop_story.text = "雨来前，我们一起备好花蜜。\n第一趟蓝花蜜可以换来采集或蜜囊成长。"
-	board.reduced_motion = driver.reduced_motion
-	board.refresh(m)
-	tree_coins.text = str(m.coins)
-	tree_fiber.text = str(m.materials.fiber)
-	tree_resin.text = str(m.materials.resin)
-	tree_progress.text = "紫花地已开放" if "meadow" in m.owned else "花路成长 %d / 3" % mini(3,m.growth_count())
-	_detail()
+
+func _build_restart_dialog() -> void:
+	restart_dialog = screen(self)
+	shade(restart_dialog,Color("173d35cc"))
+	var center := CenterContainer.new()
+	restart_dialog.add_child(center)
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var page := material_panel(center,"letter",Vector4(58,48,98,63))
+	page.custom_minimum_size = Vector2(570,295)
+	var content := column(page,12)
+	content.alignment = BoxContainer.ALIGNMENT_CENTER
+	restart_title = text_line(content,"重新开始采蜜？",29)
+	restart_body = text_line(content,"先备份当前进度，再开始新的一轮。",18,INK,true)
+	var buttons := row(content,12)
+	restart_cancel = action(buttons,"取消",close_restart,true)
+	restart_cancel.custom_minimum_size.x = 124
+	restart_cancel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var confirm := action(buttons,"备份并重新开始",_confirm_restart,true)
+	confirm.custom_minimum_size.x = 220
+	var focus_ring := style(Color.TRANSPARENT,INK,3,8)
+	restart_cancel.add_theme_stylebox_override("focus",focus_ring)
+	confirm.add_theme_stylebox_override("focus",focus_ring)
+	restart_dialog.hide()
 
 func ask_restart() -> void:
-	restart_dialog.popup_centered(Vector2i(540,220))
+	if restart_dialog.visible: return
+	restart_body.text = "当前存档无法读取。先备份原文件，再开始新的一轮。" if driver.save_blocked else "先备份当前进度，再开始新的一轮。"
+	restart_opener = get_viewport().gui_get_focus_owner()
+	active_menu().focus_behavior_recursive = Control.FOCUS_BEHAVIOR_DISABLED
+	restart_dialog.show()
+	restart_cancel.grab_focus()
+
+func close_restart() -> void:
+	restart_dialog.hide()
+	active_menu().focus_behavior_recursive = Control.FOCUS_BEHAVIOR_INHERITED
+	if is_instance_valid(restart_opener) and restart_opener.is_visible_in_tree():
+		restart_opener.grab_focus()
+	elif menu.visible:
+		menu_primary.grab_focus()
+	restart_opener = null
+
+func _confirm_restart() -> void:
+	if not restart_dialog.visible: return
+	close_restart()
+	driver.restart_game()
 
 func toggle_sound() -> void:
 	muted = not muted
@@ -846,59 +1073,190 @@ func toggle_sound() -> void:
 
 func _build_journal() -> void:
 	journal = screen(self)
-	shade(journal,Color("173d35d9"))
-	var p := card(journal)
-	anchored(p,Rect2(.5,.5,0,0),Rect2(-480,-315,960,630))
-	var v := column(p,14)
-	text_line(v,"花路见闻",32).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	journal_status = text_line(v,"",18,Color("7b895f"))
-	var h := row(v,18)
-	for entry in [
-		["池岸花丛","蓝花蜜 · 每份 1 金币","每花 1 份 · 生物不会攻击。\n振翅驱离小飞虫，拾取纤维。\n采够了即可从灯球返回。"],
-		["紫花地","紫花蜜 · 每份 3 金币","在成长书屋开放后出发。\n每花 1 份 · 可收集树脂。\n细雨增加消耗，叶棚下可避雨。"]]:
-		var c := card(h,Color("e7e9cf"))
-		c.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
-		c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		c.custom_minimum_size.x = 430
-		var cv := column(c,14)
-		text_line(cv,entry[0],27)
-		text_line(cv,entry[1],21,Color("9a6c28"))
-		text_line(cv,entry[2],20,INK,true)
-	text_line(v,"按住 E / 左键采蜜 · Q / 右键振翅 · 空格蓄力冲刺。",19,INK,true)
-	text_line(v,"花蜜在野外 18 秒后恢复，暂停时停止计时。续航耗尽损失一半花蜜，材料、金币与成长保留。",19,INK,true)
-	spacer(v)
-	journal_back = action(v,"返回",driver.close_journal,true)
+	shade(journal,Color("183c33db"))
+	var book := material_panel(journal,"book",Vector4(112,58,124,166))
+	anchored(book,Rect2(.5,.5,0,0),Rect2(-532,-298,1064,596))
+	var spread := row(book,96)
+	var left := column(spread,12)
+	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var right := column(spread,7)
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text_line(left,"花路见闻",34)
+	var tabs := row(left,8)
+	var group := ButtonGroup.new()
+	for meadow: bool in [false,true]:
+		var tab := action(tabs,"紫花地" if meadow else "池岸花丛",_select_journal_region.bind(meadow))
+		tab.toggle_mode = true
+		tab.button_group = group
+		tab.add_theme_stylebox_override("pressed",style(Color("506342"),Color("5f724c"),1,10))
+		tab.add_theme_color_override("font_pressed_color",Color("fff0c7"))
+		tab.add_theme_color_override("font_hover_pressed_color",Color("fff0c7"))
+		journal_regions.append(tab)
+	journal_landscape = picture(left,preload("res://art/nectar-pond-oblique.png"),160)
+	journal_landscape.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	journal_status = text_line(left,"",16,Color("5d694d"),true)
+	journal_back = action(right,"←  返回",driver.close_journal)
+	journal_back.size_flags_horizontal = Control.SIZE_SHRINK_END
+	journal_back.custom_minimum_size.x = 96
+	var first := row(right,11)
+	journal_flower = material_icon(first,preload("res://art/collection-blue-bloom.webp"),Vector2(58,64))
+	var nectar := column(first,4)
+	nectar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	journal_flower_name = text_line(nectar,"",26)
+	journal_controls = text_line(nectar,"",19,INK,true)
+	var worth := row(nectar,5)
+	hud_symbol(worth,"coin","金币")
+	journal_price = text_line(worth,"",18,Color("795a2e"),false)
+	var second := row(right,11)
+	journal_material_icon = HudIcon.new()
+	journal_material_icon.custom_minimum_size = Vector2(58,50)
+	second.add_child(journal_material_icon)
+	var material := column(second,4)
+	material.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	journal_material_name = text_line(material,"",26)
+	journal_material_hint = text_line(material,"",19,INK,true)
+	var notes := action(right,"归途须知  ＋",func(): journal_return_notes.visible = not journal_return_notes.visible)
+	notes.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	notes.custom_minimum_size.y = 40
+	journal_return_notes = text_line(right,_journal_return_text(),16,Color("546246"),true)
+	journal_return_notes.hide()
+	journal_return_notes.visibility_changed.connect(func():
+		notes.text = "归途须知  −" if journal_return_notes.visible else "归途须知  ＋")
+	_select_journal_region(false)
+
+func _select_journal_region(meadow: bool) -> void:
+	journal_meadow = meadow
+	for i in journal_regions.size(): journal_regions[i].set_pressed_no_signal(i == int(meadow))
+	journal_landscape.texture = preload("res://art/nectar-meadow-oblique.png") if meadow else preload("res://art/nectar-pond-oblique.png")
+	journal_flower.texture = preload("res://art/collection-violet-bloom.webp") if meadow else preload("res://art/collection-blue-bloom.webp")
+	journal_flower_name.text = "紫花蜜" if meadow else "蓝花蜜"
+	journal_material_name.text = "树脂" if meadow else "纤维"
+	journal_material_icon.kind = "resin" if meadow else "fiber"
+	journal_material_icon.queue_redraw()
+	journal_price.text = "每份 3 金币" if meadow else "每份 1 金币"
+	_refresh_journal_hints()
+
+func _refresh_journal_hints() -> void:
+	journal_controls.text = "靠近紫花，按住 E 或左键采蜜。" if journal_meadow else "花心发亮时，按住 E 或左键采蜜。"
+	journal_material_hint.text = "在紫花地收集树脂，留意细雨，叶棚下可避雨。" if journal_meadow else "振翅驱离小飞虫，拾取纤维。"
+
+func _journal_return_text() -> String:
+	return "从灯球返回。续航耗尽会损失一半花蜜，材料、金币与成长保留。"
+
+const TOOL_INK := Color("fff2cf")
+const TOOL_SECONDARY := Color("f1e4bf")
+
+func tool_button(button: Button) -> void:
+	for key in ["font_color","font_hover_color","font_pressed_color","font_hover_pressed_color","font_focus_color"]:
+		button.add_theme_color_override(key,TOOL_INK)
+	button.add_theme_color_override("font_disabled_color",Color("d2cfad"))
+	for key in ["normal","hover","pressed","hover_pressed","disabled","focus"]:
+		var fill := Color("384b35")
+		if key in ["hover","pressed","hover_pressed"]: fill = Color("4a613f")
+		if key == "disabled": fill = Color("48543e")
+		if button.toggle_mode and key in ["pressed","hover_pressed"]:
+			fill = Color("e8cb87")
+			button.add_theme_color_override("font_"+key+"_color",Color("33432d"))
+		var box := style(Color.TRANSPARENT if key == "focus" else fill,Color("ffe2a0") if key == "focus" else Color("a99a64"),3 if key == "focus" else 1,9)
+		box.content_margin_left = 10
+		box.content_margin_right = 10
+		box.content_margin_top = 3
+		box.content_margin_bottom = 3
+		button.add_theme_stylebox_override(key,box)
+	button.custom_minimum_size.y = 42
+
+func _setting_row(parent: Control, title: String, symbol: int) -> HBoxContainer:
+	var line := row(parent,10)
+	var icon := AtlasTexture.new()
+	icon.atlas = preload("res://art/honey-settings-symbols.svg")
+	icon.region = Rect2(symbol*32,0,32,32)
+	icon.filter_clip = true
+	material_icon(line,icon,Vector2(28,28))
+	var label := text_line(line,title,21,TOOL_INK)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return line
+
+func _setting_switch(parent: Control, caption: String, symbol: int, callback: Callable) -> CheckButton:
+	var line := _setting_row(parent,caption,symbol)
+	var button := CheckButton.new()
+	line.add_child(button)
+	tool_button(button)
+	button.custom_minimum_size.x = 95
+	button.add_theme_font_size_override("font_size",19)
+	button.tooltip_text = caption
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	button.pressed.connect(callback)
+	return button
 
 func _build_settings() -> void:
 	settings = screen(self)
-	shade(settings,Color("173d35ee"))
-	var p := card(settings)
-	anchored(p,Rect2(.5,.5,0,0),Rect2(-350,-340,700,680))
-	var scroll := ScrollContainer.new()
-	p.add_child(scroll)
-	var v := column(scroll,14)
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_line(v,"设置与旅途说明",30).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	settings_motion = action(v,"",func():
+	shade(settings,Color("183c33db"))
+	var p := material_panel(settings,"settings",Vector4(112,62,118,102))
+	anchored(p,Rect2(.5,.5,0,0),Rect2(-308,-285,616,570))
+	var page := column(p,15)
+	var header := row(page,12)
+	var title := text_line(header,"设置",34)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	settings_back = action(header,"←  返回",driver.close_settings)
+	tool_button(settings_back)
+	settings_back.size_flags_horizontal = Control.SIZE_SHRINK_END
+	settings_scroll = ScrollContainer.new()
+	var v := scroll_column(page,settings_scroll,12)
+	settings_sound = _setting_switch(v,"声音",0,toggle_sound)
+	settings_motion = _setting_switch(v,"简化动画",1,func():
 		driver.reduced_motion = not driver.reduced_motion
 		driver.save_settings())
-	settings_dance = action(v,"",func():
-		driver.dance_style = "side_step" if driver.dance_style == "waggle" else "waggle"
-		driver.save_settings())
-	settings_sound = action(v,"",toggle_sound)
-	text_line(v,"WASD / 方向键飞行 · E 交互，花丛中按住 E 或鼠标采蜜\nQ / 右键振翅（2 续航） · 空格蓄力冲刺 · F 使用近道 · M 静音 · Esc 暂停\n成长图：方向键、Tab 选节点，Enter 确认一级；蜂舞中空格跳过。",18,INK,true)
-	text_line(v,"关于 Demo",23)
-	text_line(v,"%s 0.27.0\n一处庭院、两片花地、两种材料、10 个成长节点（共 13 级）。\n完成花蜜储备后仍可继续探索。进度自动保存，菜单可保存退出。" % driver.DISPLAY_NAME,18,INK,true)
-	text_line(v,"制作：Alan × Codex · Godot Engine（MIT）\n画面含 AI 辅助生成的预制美术，运行时不调用生成式 AI。\n蜂舞为通信动作启发的幻想演绎；侧步摆肩为项目原创动作。\n设计研究参考 Shelldiver，未使用其图像、音乐或代码。",17,Color("687957"),true)
-	text_line(v,"键鼠版 · macOS 候选构建；手柄支持与 Steam 平台功能尚未完成。",17,Color("687957"),true)
-	settings_back = action(v,"返回",driver.close_settings,true)
+	var dance := _setting_row(v,"蜂舞",2)
+	var group := ButtonGroup.new()
+	for mode: String in ["waggle","side_step"]:
+		var choice := action(dance,"摆尾回环" if mode == "waggle" else "侧步摆肩",func():
+			driver.dance_style = mode
+			driver.save_settings())
+		choice.size_flags_horizontal = Control.SIZE_SHRINK_END
+		choice.toggle_mode = true
+		choice.button_group = group
+		tool_button(choice)
+		if mode == "waggle": settings_waggle = choice
+		else: settings_dance = choice
+	_add_settings_controls(v)
+	var about := _setting_row(v,"关于",4)
+	settings_about = action(about,"查看",func():
+		settings_credits.visible = not settings_credits.visible
+		settings_about.text = "收起" if settings_credits.visible else "查看")
+	tool_button(settings_about)
+	settings_about.size_flags_horizontal = Control.SIZE_SHRINK_END
+	settings_credits = text_line(v,"%s 0.27.0\n制作　Alan\nGodot Engine（MIT）" % driver.DISPLAY_NAME,16,TOOL_SECONDARY,true)
+	settings_credits.hide()
+	settings_about.gui_input.connect(_scroll_expanded_text.bind(settings_credits,settings_scroll))
+
+func _shortcut_input(event: InputEvent) -> void:
+	var scroll := settings_scroll if settings.visible else shop_scroll
+	if not scroll.is_visible_in_tree(): return
+	var direction := int(event.is_action_pressed("ui_page_down",true)) - int(event.is_action_pressed("ui_page_up",true))
+	if direction != 0:
+		scroll.scroll_vertical += direction * roundi(scroll.get_v_scroll_bar().page)
+		get_viewport().set_input_as_handled()
+
+func _add_settings_controls(v: Control) -> void:
+	var line := _setting_row(v,"操作",3)
+	var guide := text_line(v,"WASD / 方向键飞行 · E 交互、采蜜\nQ / 右键振翅 · 空格蓄力冲刺 · M 静音 · Esc 暂停\n成长图中用方向键或 Tab 选节点，Enter 确认一级。",17,TOOL_SECONDARY,true)
+	guide.hide()
+	var open := action(line,"查看键位",func(): guide.visible = not guide.visible)
+	open.size_flags_horizontal = Control.SIZE_SHRINK_END
+	tool_button(open)
+	guide.visibility_changed.connect(func(): open.text = "收起键位" if guide.visible else "查看键位")
 
 func refresh_settings() -> void:
 	if not is_instance_valid(settings_motion): return
-	settings_motion.text = "简化动画：开启 · 短淡变，关闭灯束与群舞" if driver.reduced_motion else "简化动画：关闭 · 完整蜂舞与柔光"
-	settings_dance.text = "舞蹈：侧步摆肩 · 原创拟人小组合" if driver.dance_style == "side_step" else "舞蹈：摆尾回环 · 蜜蜂通信启发"
+	settings_motion.text = "开" if driver.reduced_motion else "关"
+	settings_motion.set_pressed_no_signal(driver.reduced_motion)
+	settings_sound.text = "关" if muted else "开"
+	settings_sound.set_pressed_no_signal(not muted)
 	settings_dance.disabled = driver.reduced_motion
-	settings_sound.text = "声音：关闭" if muted else "声音：开启"
+	settings_waggle.disabled = driver.reduced_motion
+	settings_dance.set_pressed_no_signal(driver.dance_style == "side_step")
+	settings_waggle.set_pressed_no_signal(driver.dance_style == "waggle")
 
 func _number(label: Label, words: String, value: int) -> void:
 	var key := label.get_instance_id()
@@ -913,21 +1271,6 @@ func _number(label: Label, words: String, value: int) -> void:
 	tween.tween_property(label,"scale",Vector2.ONE,.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	hud_tweens[key] = tween
 
-func _energy_attention(warning: bool) -> void:
-	warning = warning and not driver.reduced_motion
-	if warning == low_energy: return
-	low_energy = warning
-	if energy_pulse: energy_pulse.kill()
-	energy_bar.modulate = Color.WHITE
-	energy_dial.modulate = Color.WHITE
-	energy_text.modulate = Color.WHITE
-	if warning:
-		energy_pulse = create_tween().set_loops()
-		energy_pulse.tween_property(energy_dial,"modulate",Color("efb678"),.6)
-		energy_pulse.tween_property(energy_dial,"modulate",Color.WHITE,.6)
-
 func _exit_tree() -> void:
-	if energy_pulse: energy_pulse.kill()
-	energy_pulse = null
 	for tween in hud_tweens.values(): tween.kill()
 	hud_tweens.clear()

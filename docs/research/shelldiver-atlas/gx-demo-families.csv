@@ -1,0 +1,59 @@
+key,name_en,name_zh_gx,function_zh,category_zh
+o_skill_submarine,Submarine,潜艇,开放潜水出航,功能与目标
+o_skill_plasma_tool,Plasma Gun,等离子枪,开放拆解环境材料的工具,功能与目标
+o_skill_hammock,Hammock Repair,吊床修理,修好吊床后可休息,功能与目标
+o_skill_movement_speed,Light Feet,轻盈的脚步,提高移动速度,出航与携带
+o_skill_jellyfish_insurance,Shell Insurance,贝壳保险,缺氧时减少水母及材料损失,出航与携带
+o_skill_player_slots,Shellpack Slots,壳牌插槽,增加随身库存格数,出航与携带
+o_skill_player_slot_capacity,Shellpack Capacity,壳牌容量,增加每个随身格的堆叠容量,出航与携带
+o_skill_agile_hands,Agile Hands,敏捷之手,缩短水母上架过程,交货与售卖
+o_skill_chest_speed,Chest Speed,宝箱速度,加快领取售卖所得,交货与售卖
+o_skill_jellyfish_value,Jellyfish Value,水母的价值,提高单只水母的售价,交货与售卖
+o_skill_jellyfish_value_rare,Jellyfish Merchant,水母商人,提高单只水母的售价,交货与售卖
+o_skill_store_speed,Store Speed,商店速度,加快在架水母售出,交货与售卖
+o_skill_store_slots,Store Slots,商店插槽,增加货架格数,交货与售卖
+o_skill_store_slot_capacity,Store Capacity,商店容量,提高每个货架格的堆叠容量,交货与售卖
+o_skill_pickup_range,Collectible Magnet,收藏磁铁,扩大拾取范围,出航与携带
+o_skill_entity_arrival,Faster Waters,更快的水,加快水母与材料抵达,地区供给
+o_skill_biodiversity_shallows,Shallows Biodiversity,浅滩生物多样性,提高浅海水母的出现率,地区供给
+o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,提高冰海水母的出现率,地区供给
+o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,提高沼泽水母的出现率,地区供给
+o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,提高岩浆区水母的出现率,地区供给
+o_skill_scrap_increase,Scrap Increase,碎片增加,提高废料出现率,地区供给
+o_skill_scrap_value,Scrap Gatherer,碎片收集者,提高每块来源掉落的废料数量,地区供给
+o_skill_scrap_value_rare,Scrap Master,碎片大师,提高每块来源掉落的废料数量,地区供给
+o_skill_crystal_increase,Crystal Increase,水晶增加,提高晶体出现率,地区供给
+o_skill_crystal_value,Crystal Gatherer,水晶收集者,提高每块来源掉落的晶体数量,地区供给
+o_skill_crystal_value_rare,Crystal Master,水晶大师,提高每块来源掉落的晶体数量,地区供给
+o_skill_mushroom_increase,Mushroom Increase,蘑菇增加,提高蘑菇出现率,地区供给
+o_skill_mushroom_value,Mushroom Gatherer,蘑菇采集者,提高每块来源掉落的蘑菇数量,地区供给
+o_skill_mushroom_value_rare,Mushroom Master,蘑菇大师,提高每块来源掉落的蘑菇数量,地区供给
+o_skill_obsidian_increase,Obsidian Increase,黑曜石增加,提高黑曜石出现率,地区供给
+o_skill_obsidian_value,Obsidian Gatherer,黑曜石采集者,提高每块来源掉落的黑曜石数量,地区供给
+o_skill_obsidian_value_rare,Obsidian Master,黑曜石大师,提高每块来源掉落的黑曜石数量,地区供给
+o_skill_deep_breath,Deep Breath,深呼吸,减轻氧气消耗,出航与携带
+o_skill_oxygen_tank,Oxygen Tank,氧气罐,提高氧气上限,出航与携带
+o_skill_bubble_tank,Bubble Tank,泡泡罐,增大气泡储罐,气泡捕获工具
+o_skill_bubble_capacity,Bubble Capacity,泡泡容量,扩大气泡枪的单匣容量,气泡捕获工具
+o_skill_bubble_reload,Bubble Gun Reload,泡泡枪装填,加快气泡枪换弹,气泡捕获工具
+o_skill_bubble_ultra_reload,Bubble Gun Ultra Reload,泡泡枪超级装填,加快气泡枪换弹,气泡捕获工具
+o_skill_bubble_damage,Bubble Damage,泡泡伤害,提高单次气泡伤害,气泡捕获工具
+o_skill_bubble_firerate,Bubble Attack Speed,泡泡攻击速度,缩短连续气泡发射之间的等待,气泡捕获工具
+o_skill_bubble_duration,Bubble Duration,泡泡持续时间,延长气泡持续时间,气泡捕获工具
+o_skill_bubble_penetration,Bubble Penetration,泡泡渗透,提高穿透能力,气泡捕获工具
+o_skill_bubble_speed,Bubble Speed,泡泡速度,加快气泡飞行,气泡捕获工具
+o_skill_bubble_size,Bubble Size,泡泡大小,增大气泡尺寸,气泡捕获工具
+o_skill_bubble_doppel,Doppel Bubble,双泡泡,增加发射额外气泡的几率,气泡捕获工具
+o_skill_bubble_critical_chance,Bubble Critical Chance,泡泡暴击几率,提高气泡暴击率,气泡捕获工具
+o_skill_bubble_critical_damage,Bubble Critical Damage,泡泡暴击伤害,提高气泡暴击伤害,气泡捕获工具
+o_skill_plasma_tank,Plasma Tank,等离子罐,增大等离子储罐,等离子取材工具
+o_skill_plasma_capacity,Plasma Capacity,等离子容量,扩大等离子枪的单匣容量,等离子取材工具
+o_skill_plasma_reload,Plasma Gun Reload,等离子枪重新装填,加快等离子枪换弹,等离子取材工具
+o_skill_plasma_ultra_reload,Ultra Plasma Gun Reload,超级等离子枪装填,加快等离子枪换弹,等离子取材工具
+o_skill_plasma_charge,Plasma Charge,等离子电荷,加快等离子枪蓄力,等离子取材工具
+o_skill_plasma_ultra_charge,Ultra Plasma Charge,超级等离子充电,加快等离子枪蓄力,等离子取材工具
+o_skill_plasma_damage,Plasma Damage,等离子伤害,提高等离子伤害,等离子取材工具
+o_skill_plasma_firerate,Plasma Attack Speed,等离子攻击速度,加快等离子攻击,等离子取材工具
+o_skill_plasma_range,Plasma Range,等离子射程,扩大激光作用距离,等离子取材工具
+o_skill_plasma_chain_number,Plasma Chain,等离子链,增加等离子连锁次数,等离子取材工具
+o_skill_plasma_chain_damage,Plasma Chain Damage,等离子链伤害,提高连锁伤害,等离子取材工具

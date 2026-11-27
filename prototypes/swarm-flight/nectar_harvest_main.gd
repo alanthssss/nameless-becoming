@@ -7,7 +7,7 @@ const Sound = preload("res://sound.gd")
 const Migration = preload("res://nectar_save_migration.gd")
 const Dance = preload("res://nectar_dance.gd")
 signal presentation_changed
-const DISPLAY_NAME := "采蜜 Demo"
+const DISPLAY_NAME := "Honey"
 const SAVE_PATH := "user://nectar_harvest_v1.json"
 var model = Model.new()
 var world
@@ -48,6 +48,7 @@ var home_sale_summary := ""
 func new_model(): return Model.new()
 func read_progress(path: String) -> Dictionary: return Migration.load_progress(path)
 func create_interface(): return Interface.new()
+func create_sound(): return Sound.new()
 
 func _ready() -> void:
 	get_window().title = DISPLAY_NAME
@@ -65,7 +66,7 @@ func _ready() -> void:
 		save_blocked = true
 	model.update_camera()
 	_load_world()
-	sound = Sound.new()
+	sound = create_sound()
 	add_child(sound)
 	ui = create_interface()
 	ui.driver = self
@@ -88,6 +89,8 @@ func _load_world() -> void:
 	move_child(world,0)
 	if is_instance_valid(ui): world.feedback_font = ui.font
 
+func plays_departure_dance() -> bool: return true
+
 func request_transition(destination: String,via := "gate") -> void:
 	if mode not in ["play","regions"]: return
 	var candidate = new_model()
@@ -97,8 +100,8 @@ func request_transition(destination: String,via := "gate") -> void:
 	release_controls()
 	transition_candidate = candidate
 	transition_target = destination
-	transition_elapsed = 0.0
 	transition_short = reduced_motion
+	transition_elapsed = 0.0 if transition_short or plays_departure_dance() else Dance.COMMIT - Dance.IRIS_CLOSE
 	transition_committed = false
 	pause_after_transition = false
 	mode = "transition"
@@ -121,7 +124,7 @@ func _advance_transition(dt: float) -> void:
 			return
 		transition_committed = true
 		_load_world()
-	var close_span := 0.18 if transition_short else 0.42
+	var close_span := Dance.SHORT_COMMIT if transition_short else Dance.IRIS_CLOSE
 	var hold_span := 0.0 if transition_short else 0.22
 	var alpha := clampf((transition_elapsed-(commit_time-close_span))/close_span,0,1) if not transition_committed else 1.0-maxf(0.0,transition_elapsed-commit_time-hold_span)/(duration-commit_time-hold_span)
 	ui.set_transition(clampf(alpha,0,1),area_name(transition_target))
@@ -161,9 +164,7 @@ func _process(delta: float) -> void:
 	if mode == "play":
 		var old_hud := _hud_signature()
 		played_seconds += dt
-		var move := Vector2(float(down(KEY_D) or down(KEY_RIGHT))-float(down(KEY_A) or down(KEY_LEFT)),float(down(KEY_S) or down(KEY_DOWN))-float(down(KEY_W) or down(KEY_UP))).limit_length()
-		var collecting: bool = (down(KEY_E) or mouse_collect) and not model.at_home()
-		model.step(dt,move,collecting,down(KEY_SPACE),down(KEY_Q) or mouse_pulse or pulse_requested,pulse_direction())
+		var collecting := step_flight(dt)
 		world.aim_direction = model.pulse_direction(pulse_direction())
 		# One-frame presses preserve quick taps, without buffering behind cooldowns.
 		pulse_requested = false
@@ -185,7 +186,7 @@ func _process(delta: float) -> void:
 		if autosave >= 4.0:
 			autosave = 0.0
 			persist()
-		if model.energy < model.max_energy()*0.27 and not low_energy_announced:
+		if model.energy_is_low() and not low_energy_announced:
 			low_energy_announced = true
 			message("体力偏低",4)
 		if model.at_home(): low_energy_announced = false
@@ -193,11 +194,20 @@ func _process(delta: float) -> void:
 	else:
 		world.collecting = false
 	world.presentation_active = mode in ["play","shop","tree","regions","journal","transition","complete"]
+	update_sound_context()
+
+func step_flight(dt: float) -> bool:
+	var move := Vector2(float(down(KEY_D) or down(KEY_RIGHT))-float(down(KEY_A) or down(KEY_LEFT)),float(down(KEY_S) or down(KEY_DOWN))-float(down(KEY_W) or down(KEY_UP))).limit_length()
+	var collecting: bool = (down(KEY_E) or mouse_collect) and not model.at_home()
+	model.step(dt,move,collecting,down(KEY_SPACE),down(KEY_Q) or mouse_pulse or pulse_requested,pulse_direction())
+	return collecting
+
+func update_sound_context() -> void:
 	if is_instance_valid(sound):
 		sound.set_pond_context(model.rain_exposed(),false,false,mode in ["title","pause"],true)
 
 func _hud_signature() -> String:
-	return str([int(ceil(model.energy)),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
+	return str([int(ceil(model.energy)),model.energy_stage(),model.cargo,model.materials,model.coins,model.owned,model.phase,model.area,model.interaction(),model.at_home(),int(ceil(model.hurt_left)),model.rain_exposed(),model.trip_index,model.rose_sold,has_harvest_hint(),has_material_hint()])
 
 func has_harvest_hint() -> bool:
 	if model.at_home() or model.cargo_total() >= model.capacity() or not model.interaction().is_empty(): return false
@@ -219,7 +229,16 @@ func pulse_direction() -> Vector2:
 	# Resolve keyboard facing after this frame's movement; mouse aim remains explicit.
 	return Vector2.ZERO
 
+func restart_has_input(event: InputEvent) -> bool:
+	if is_instance_valid(ui) and is_instance_valid(ui.restart_dialog) and ui.restart_dialog.visible:
+		if event.is_action_pressed("ui_cancel"):
+			ui.close_restart()
+			get_viewport().set_input_as_handled()
+		return true
+	return false
+
 func _input(event: InputEvent) -> void:
+	if restart_has_input(event): return
 	if event is InputEventMouseMotion: mouse_aim = event.position
 	if event is InputEventKey and is_instance_valid(ui) and ui.tree_key(event):
 		get_viewport().set_input_as_handled()
@@ -250,20 +269,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		var key: Key = event.physical_keycode if event.physical_keycode != 0 else event.keycode
 		if event.echo: return
-		if key == KEY_E and event.pressed:
-			var action: String = model.interaction()
-			if not action.is_empty():
-				match action:
-					"shop": open_shop()
-					"tree": open_tree()
-					"journal": open_journal()
-					"depart", "pond": open_regions()
-					"home": request_transition("hub")
-					"meadow":
-						if "meadow" in model.owned: request_transition("meadow")
-						else: message("紫花地尚未开放 · 在庭院成长台查看条件",4)
-				get_viewport().set_input_as_handled()
-				return
+		if key == KEY_E and event.pressed and use_station():
+			get_viewport().set_input_as_handled()
+			return
 		if key == KEY_Q:
 			if event.pressed:
 				held[key] = true
@@ -284,6 +292,20 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		mouse_collect = event.pressed
 
+func use_station() -> bool:
+	var action: String = model.interaction()
+	match action:
+		"shop": open_shop()
+		"tree": open_tree()
+		"journal": open_journal()
+		"depart", "pond": open_regions()
+		"home": request_transition("hub")
+		"meadow":
+			if "meadow" in model.owned: request_transition("meadow")
+			else: message("紫花地尚未开放 · 在庭院成长台查看条件",4)
+		_: return false
+	return true
+
 func release_controls() -> void:
 	held.clear()
 	mouse_collect = false
@@ -302,7 +324,9 @@ func start_game() -> void:
 	mode = "play"
 	ui.show_mode(mode)
 	get_viewport().gui_release_focus()
-	if model.trip_index == 0: message("靠近灯球，按 E 出发",3)
+	if model.trip_index == 0: message(departure_prompt(),3)
+
+func departure_prompt() -> String: return "靠近灯球，按 E 出发"
 
 func open_journal() -> void:
 	if mode != "pause": return
@@ -328,9 +352,12 @@ func close_settings() -> void:
 	mode = settings_return
 	ui.show_mode(mode)
 
+func settings_path() -> String:
+	return saved_path+".settings.cfg"
+
 func load_settings() -> void:
 	var config := ConfigFile.new()
-	if config.load(saved_path+".settings.cfg") != OK: return
+	if config.load(settings_path()) != OK: return
 	var motion: Variant = config.get_value("presentation","reduced_motion",false)
 	var muted: Variant = config.get_value("presentation","muted",false)
 	reduced_motion = motion is bool and motion
@@ -344,7 +371,7 @@ func save_settings() -> void:
 	config.set_value("presentation","reduced_motion",reduced_motion)
 	config.set_value("presentation","muted",ui.muted)
 	config.set_value("presentation","dance_style",dance_style)
-	if config.save(saved_path+".settings.cfg") != OK: message("设置暂时未保存，本次仍生效。",3)
+	if config.save(settings_path()) != OK: message("设置暂时未保存，本次仍生效。",3)
 	world.reduced_motion = reduced_motion
 	ui.refresh_settings()
 
@@ -395,6 +422,7 @@ func buy_upgrade(id: String) -> void:
 	var candidate = new_model()
 	if not candidate.restore_payload(model.to_payload()): return
 	if not candidate.buy(id):
+		play_action_sound({"kind":"denied"})
 		message(model.locked_reason(id),3)
 		return
 	var definition: Dictionary = candidate.upgrade(id)
@@ -453,7 +481,7 @@ func restart_game() -> void:
 
 func quit_game() -> void:
 	release_controls()
-	if save_blocked or persist(): get_tree().quit()
+	if save_blocked or persist(): finish_quit()
 	else:
 		# A failed quit cancels presentation, preserving whichever stable area
 		# was last committed. Resuming must not retain an abandoned dance pose.
@@ -466,10 +494,33 @@ func quit_game() -> void:
 		mode = "pause"
 		ui.show_mode(mode)
 
+func finish_quit() -> void:
+	get_tree().quit()
+
 func message(words: String,seconds := 3.0) -> void:
 	toast_text = words
 	toast_left = seconds
 	if is_instance_valid(ui) and is_instance_valid(ui.toast_timer): ui.show_toast(words,seconds)
+
+func sound_for_event(event: Dictionary) -> String:
+	match event.kind:
+		"harvest", "material": return "dew"
+		"dash", "pulse": return "burst"
+		"tap": return "spray"
+		"hurt": return "hit"
+		"sell": return "arrival_bell"
+		"buy", "unlock": return "ring"
+		"complete": return "finish"
+		"rescue": return "recover"
+	return ""
+
+func play_action_sound(event: Dictionary) -> void:
+	var cue := sound_for_event(event)
+	if cue.is_empty(): return
+	if event.kind == "harvest":
+		if sound_cooldown > 0: return
+		sound_cooldown = 0.13
+	sound.play_event(cue, 0)
 
 func consume_events(pending: Array) -> void:
 	for event in pending:
@@ -477,30 +528,20 @@ func consume_events(pending: Array) -> void:
 		var kind: String = event.kind
 		event_log.append({"kind":kind,"area":model.area,"detail":event.duplicate(true),"time":played_seconds,"trip":model.trip_index,"coins":model.coins,"cargo":model.cargo_total(),"materials":model.materials.duplicate(),"energy":model.energy,"owned":model.owned.duplicate()})
 		if event_log.size() > 2048: event_log.pop_front()
-		if kind == "harvest":
-			if sound_cooldown <= 0:
-				sound.play_event("dew",0)
-				sound_cooldown = 0.13
-		elif kind == "dash": sound.play_event("burst",0)
-		elif kind == "pulse": sound.play_event("burst",0)
-		elif kind == "tap": sound.play_event("spray",0)
-		elif kind == "material": sound.play_event("dew",0)
-		elif kind == "hurt": sound.play_event("hit",0)
-		elif kind == "sell":
-			sound.play_event("arrival_bell",0)
+		play_action_sound(event)
+		if kind == "sell":
 			var delivered: Dictionary = event.cargo
 			home_sale_summary = "已交付 · 蓝花蜜 %d · 紫花蜜 %d\n获得 %d 金币" % [delivered.blue,delivered.rose,event.amount]
-			message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
-		elif kind in ["buy","unlock"]: sound.play_event("ring",0)
-		elif kind == "complete": sound.play_event("finish",0)
+			if mode == "shop": ui.show_shop_payment(event.amount)
+			else: message("交付蓝花蜜 %d、紫花蜜 %d · 获得 %d 金币" % [delivered.blue,delivered.rose,event.amount],4)
 		elif kind == "rescue":
-			sound.play_event("recover",0)
 			home_return_summary = "救援带回 · 蓝花蜜 %d · 紫花蜜 %d\n损失 · 蓝花蜜 %d · 紫花蜜 %d\n材料保留 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.lost.blue,event.lost.rose,event.materials.fiber,event.materials.resin]
 			home_sale_summary = ""
 			message("同伴送回 · 蓝蜜保留 %d、损失 %d\n紫蜜保留 %d、损失 %d · 材料保留" % [event.cargo.blue,event.lost.blue,event.cargo.rose,event.lost.rose],5)
 			persist()
 		elif kind == "full": message("蜜囊已满",2)
 		elif kind == "return":
+			sound.play_event("arrival_bell",0)
 			home_return_summary = "本次带回 · 蓝花蜜 %d · 紫花蜜 %d\n材料现有 · 纤维 %d · 树脂 %d" % [event.cargo.blue,event.cargo.rose,event.materials.fiber,event.materials.resin]
 			home_sale_summary = ""
 			message("带回蓝花蜜 %d、紫花蜜 %d · 体力已补满" % [event.cargo.blue,event.cargo.rose],4)

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="876" viewBox="0 0 700 438">
+  <!-- Registered to the #427 inner courtyard. Strokes and station sprites
+       retain the source pigment; the distant path and floor recede. -->
+  <defs>
+    <radialGradient id="quiet">
+      <stop stop-color="#00ff80"/><stop offset=".55" stop-color="#00ff80" stop-opacity=".86"/>
+      <stop offset="1" stop-color="#00ff80" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="relief">
+      <stop stop-color="#ff0080"/><stop offset=".55" stop-color="#ff0080" stop-opacity=".86"/>
+      <stop offset="1" stop-color="#ff0080" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="700" height="438" fill="#000080"/>
+  <g fill="url(#quiet)">
+    <ellipse cx="628" cy="169" rx="100" ry="91"/>
+    <ellipse cx="534" cy="98" rx="85" ry="62"/>
+    <ellipse cx="333" cy="364" rx="259" ry="89" opacity=".58"/>
+  </g>
+  <g fill="url(#relief)">
+    <ellipse cx="152" cy="144" rx="88" ry="29" opacity=".75"/>
+    <ellipse cx="435" cy="144" rx="64" ry="35" opacity=".74"/>
+    <ellipse cx="609" cy="290" rx="102" ry="48"/>
+    <ellipse cx="26" cy="406" rx="73" ry="39" opacity=".90"/>
+    <ellipse cx="651" cy="412" rx="82" ry="42" opacity=".90"/>
+  </g>
+</svg>

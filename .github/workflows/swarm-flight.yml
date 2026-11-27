@@ -2,6 +2,11 @@ name: Swarm Flight prototype
 
 on:
   workflow_call:
+    inputs:
+      suite:
+        description: Regional runtime checks or the complete Swarm Flight suite
+        type: string
+        default: full
   workflow_dispatch:
 
 permissions:
@@ -17,7 +22,7 @@ jobs:
       # Keep collecting all suites when another suite fails.
       fail-fast: false
       matrix:
-        suite: [core, regressions, samples, samples-save, migrations, region-greybox]
+        suite: ${{ fromJSON(inputs.suite == 'region' && '["region-greybox"]' || '["core","regressions","samples","samples-save","migrations","region-greybox"]') }}
     env:
       GODOT_RELEASE: 4.6.2-stable
       GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
@@ -272,6 +277,23 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error|FAIL " "$RUNNER_TEMP/region-game-model.log"
           "$GODOT_BIN" --headless --path prototypes/swarm-flight --fixed-fps 60 --script res://region_game/ui_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/region-game-empty.json" 2>&1 | tee "$RUNNER_TEMP/region-game-ui.log"
           ! grep -E "SCRIPT ERROR|ERROR:|SHADER ERROR|Parse Error|FAIL " "$RUNNER_TEMP/region-game-ui.log"
+          "$GODOT_BIN" --headless --fixed-fps 60 --path prototypes/swarm-flight --script res://region_game/paper_layout_verify.gd 2>&1 | tee "$RUNNER_TEMP/honey-page-layout.log"
+          grep -q '^HONEY PAGE LAYOUT: .* 0 failures$' "$RUNNER_TEMP/honey-page-layout.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|^FAIL ' "$RUNNER_TEMP/honey-page-layout.log"; then exit 1; fi
+          "$GODOT_BIN" --headless --fixed-fps 60 --path prototypes/swarm-flight --script res://region_game/controls_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/honey-controls.json" 2>&1 | tee "$RUNNER_TEMP/honey-controls.log"
+          grep -q '^Honey controls: .* checks, 0 failures$' "$RUNNER_TEMP/honey-controls.log"
+          if grep -E 'SCRIPT ERROR|ERROR:|FAIL ' "$RUNNER_TEMP/honey-controls.log"; then exit 1; fi
+          "$GODOT_BIN" --headless --fixed-fps 60 --path prototypes/swarm-flight --script res://region_game/save_slots_verify.gd -- --nectar-qa 2>&1 | tee "$RUNNER_TEMP/region-save-slots.log"
+          grep -q '^Honey save slots: .* checks, 0 failures$' "$RUNNER_TEMP/region-save-slots.log"
+          "$GODOT_BIN" --headless --fixed-fps 60 --path prototypes/swarm-flight --script res://region_game/home_warning_verify.gd -- --nectar-qa --progress-file="$RUNNER_TEMP/home-warning-start.json" 2>&1 | tee "$RUNNER_TEMP/home-warning.log"
+          grep -q '^Home warning: .* checks, 0 failures$' "$RUNNER_TEMP/home-warning.log"
+          for suite in growth_catalog growth_requirements; do
+            log="$RUNNER_TEMP/${suite}.log"
+            "$GODOT_BIN" --headless --fixed-fps 60 --path prototypes/swarm-flight --script "res://region_game/${suite}_verify.gd" -- --nectar-qa --progress-file="$RUNNER_TEMP/${suite}-empty.json" 2>&1 | tee "$log"
+            if grep -E 'SCRIPT ERROR|ERROR:|Parse Error|^FAIL ' "$log"; then exit 1; fi
+          done
+          grep -q 'failures: 0$' "$RUNNER_TEMP/growth_catalog.log"
+          grep -q '^Growth requirement navigation: .* checks, 0 failures$' "$RUNNER_TEMP/growth_requirements.log"
       - name: Verify isolated pond TileMap preview
         if: matrix.suite == 'region-greybox'
         env:

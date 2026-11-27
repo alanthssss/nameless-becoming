@@ -3,6 +3,8 @@ extends "res://world_view.gd"
 @export var area_key := "hub"
 const CREATURE_ATLAS: Texture2D = preload("res://art/sign-keeper.png")
 const UIArt = preload("res://nectar_ui_art.gd")
+# Eye positions and extents are registered to the portrait's square canvas.
+const BEE_EYES := [Rect2(.539,.387,.182,.182),Rect2(.783,.388,.056,.106)]
 const Dance = preload("res://nectar_dance.gd")
 const RouteMap = preload("res://nectar_map.gd")
 const HOME_SIGN: Texture2D = preload("res://art/nectar-home-sign.png")
@@ -82,10 +84,13 @@ func nectar_event(event: Dictionary) -> void:
 		for i in 20:
 			nectar_motes.append({"from":model.p+Vector2(_rng.randf_range(-100,100),_rng.randf_range(-100,50)),"age":-_rng.randf_range(0,0.3),"duration":0.8,"gold":true})
 
+func _draw_background() -> void:
+	Landscape.background(self,area_key)
+
 func _draw() -> void:
 	if model == null: return
 	draw_set_transform(Vector2.ZERO)
-	Landscape.background(self,area_key)
+	_draw_background()
 	_world_offset = Vector2(-model.camera_x,0)
 	draw_set_transform(_world_offset)
 	Landscape.terrain(self,area_key,model.camera_x,clock)
@@ -152,6 +157,9 @@ func _ground_shadow(p: Vector2, radius: Vector2, opacity := .14) -> void:
 		draw_colored_polygon(points,Color(.16,.27,.15,opacity*.32))
 	draw_set_transform(_world_offset)
 
+func _bee_shadow(foot: Vector2, radius: Vector2) -> void:
+	_ground_shadow(foot+Vector2(2,1),radius,.26)
+
 func _draw_player() -> void:
 	if dance_elapsed >= 0.0 and not reduced_motion:
 		_draw_dance()
@@ -188,7 +196,7 @@ func _draw_field_scene() -> void:
 		items.append({"kind":"creature","y":creature.pos.y+30,"data":creature})
 	for creature in departing_creatures:
 		items.append({"kind":"creature","y":creature.pos.y+30,"data":creature})
-	_ground_shadow(model.p+Vector2(0,35),Vector2(22,7),.15)
+	_bee_shadow(model.p+Vector2(0,35),Vector2(22,7))
 	items.append({"kind":"player","y":model.p.y+35})
 	items.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.y)<float(b.y))
 	for item in items:
@@ -231,7 +239,7 @@ func _draw_hub() -> void:
 		if model.p.distance_to(reserve)<240: _label(reserve+Vector2(0,-68),"蜂巢储备已封好",false,190)
 	_bee(Vector2(414,476),0.65,Vector2.LEFT,1,false,1.7,"waiting")
 	_bee(Vector2(788,467),0.58,Vector2.LEFT,1,false,2.9,"waiting")
-	_ground_shadow(model.p+Vector2(0,35),Vector2(22,7),.12)
+	_bee_shadow(model.p+Vector2(0,35),Vector2(22,7))
 	var lamp := Vector2(1011,357)
 	if not reduced_motion:
 		for i in 3:
@@ -329,7 +337,7 @@ func _stage(p: Vector2, size: float, active: bool) -> void:
 func _draw_dance() -> void:
 	var group: int = mini(3,model.growth_count())
 	var pose: Dictionary = Dance.pose(dance_elapsed,dance_style)
-	_bee(model.p+pose.offset,1.02,pose.face,1,false,0,"dance")
+	_bee(model.p+pose.offset,1.02,pose.face,1,false,0,"dance",0.0,model.energy_stage())
 	for i in group:
 		var follower: Dictionary = Dance.pose(dance_elapsed,dance_style,i+1)
 		var at: Vector2 = model.p+Vector2(-58-(i%2)*44,22+(i/2)*25)+follower.offset
@@ -443,6 +451,23 @@ func _working_bee_position() -> Vector2:
 	# Lean towards the selected flower without moving the gameplay collider.
 	return model.p+_working_bee_direction()*12 if collecting else model.p
 
+func _draw_bee_art(alpha: float, wing_height: float, _rest: float, _dash: float, eyes_closed: bool, charge: float, trapped: bool, _wave_tip: Vector2, energy_stage: int) -> void:
+	var rect := Rect2(-34,-41,68,68)
+	var opening := remap(wing_height,3.0,28.0,.28,1.0)
+	UIArt.painted_bee(self,rect,opening,Color(1,1,1,alpha),true,energy_stage)
+	if energy_stage > 0: return # Tired poses have their own painted eyelids and brow.
+	if eyes_closed:
+		var lid := Color(1.0,.75,.24,alpha)
+		var ink := Color(.25,.13,.045,alpha)
+		for eye: Rect2 in BEE_EYES:
+			var center := rect.position+rect.size*eye.get_center()
+			var radius := rect.size*eye.size*.5
+			_ellipse(center,radius,lid)
+			_curve(center-Vector2(radius.x,0),center+Vector2(-radius.x*.4,2),center+Vector2(radius.x*.5,2),center+Vector2(radius.x,0),ink,1.0)
+	elif charge>.1 or trapped:
+		var brow: Vector2 = rect.position+rect.size*Vector2(.630,.367)
+		draw_line(brow+Vector2(-3,2 if trapped else -1),brow+Vector2(3,-1 if trapped else charge*1.5),Color(.25,.13,.045,alpha),1.1,true)
+
 func _draw_working_bee() -> void:
 	var at := _working_bee_position()
 	var facing := _working_bee_direction()
@@ -460,7 +485,7 @@ func _draw_working_bee() -> void:
 		at -= facing*sin(model.pulse_action_left/.18*PI)*5
 		size += sin(model.pulse_action_left/.18*PI)*.08
 	var push: float = sin(model.pulse_action_left/.18*PI) if not reduced_motion else 0.0
-	_bee(at,size,facing,1.0,false,0.0,"leader",push)
+	_bee(at,size,facing,1.0,false,0.0,"leader",push,model.energy_stage())
 
 func _draw_materials() -> void:
 	for drop in model.drops:

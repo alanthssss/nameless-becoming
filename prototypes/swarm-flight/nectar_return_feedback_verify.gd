@@ -80,7 +80,10 @@ func run() -> void:
 		check("一半" not in game.toast_text,"odd rescue avoids inaccurate half-total claim")
 		game.model.p = Model.HUB_SHOP
 		game.open_shop()
-		check(game.ui.shop_recap.visible,"shop reopens the current rescue result")
+		check(game.ui.shop_receipt.visible and not game.ui.shop_recap.visible,"shop offers the current rescue receipt on demand")
+		game.ui.shop_receipt.button_pressed = true
+		game.ui._toggle_shop_receipt()
+		check(game.ui.shop_recap.visible and not game.ui.shop_goods.visible,"opening the receipt replaces the jars with the full recap")
 		var remembered: String = game.home_return_summary
 		game.sell_cargo()
 		check(game.home_return_summary == remembered,"sale preserves witnessed rescue result")
@@ -88,10 +91,12 @@ func run() -> void:
 		game.close_shop()
 		game.model.p = Model.HUB_SHOP
 		game.open_shop()
-		check(game.ui.shop_recap.text.contains(remembered),"same-visit shop reopening preserves recap")
+		check(game.ui.shop_recap.text.contains(remembered) and not game.ui.shop_recap.visible,"same-visit shop reopening preserves the collapsed receipt")
+		game.ui.shop_receipt.button_pressed = true
+		game.ui._toggle_shop_receipt()
 		await process_frame
 		await process_frame
-		check(game.ui.shop_recap.get_global_rect().end.y < game.ui.leave_button.get_global_rect().position.y,"recap fits above shop exit at small size")
+		check(game.ui.shop_scroll.get_global_rect().end.y < game.ui.leave_button.get_global_rect().position.y,"the scrollable receipt stays above the shop exit at small size")
 		check(game.ui.leave_button.get_global_rect().end.y <= game.ui.size.y,"small-size shop action stays inside viewport")
 
 	var model = grown_model()

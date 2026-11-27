@@ -1,0 +1,242 @@
+atlas_id,object,name_en,name_zh,rank_cap,currency,prices_in_purchase_order,raw_parameter_name,raw_parameter_value,panel_step_if_observed,per_rank_effect_kind,per_rank_effect_value,per_rank_effect_unit,effect_zh
+R01C15,o_skill_flask_final,???,???,1,生命药瓶,100,,,,单档门槛,,,支付对应材料并取得该等级，作为后续连接的条件。此节点的专属购买回调没有属性写入。
+R02C14,o_skill_alchemy_station_speed_02,Alchemy Speed II,炼金速度 II,5,黑曜石,"150000,150000,150000,150000,150000",bonus,4,400%,每档数值,400,%,提高炼金站把贝壳加工成生命药瓶的速度。
+R02C16,o_skill_alchemy_station_dc_02,Extra Vial II,额外药瓶 II,5,黑曜石,"500000,500000,500000,500000,500000",bonus,12,12%,每档数值,12,%,每次制成生命药瓶时，有概率获得双倍瓶数。
+R03C14,o_skill_alchemy_station_speed_01,Alchemy Speed I,炼金速度 I,5,黑曜石,"50000,50000,50000,50000,50000",bonus,2,200%,每档数值,200,%,提高炼金站把贝壳加工成生命药瓶的速度。
+R03C16,o_skill_alchemy_station_dc_01,Extra Vial I,额外药瓶 I,5,黑曜石,"200000,200000,200000,200000,200000",bonus,4,4%,每档数值,4,%,每次制成生命药瓶时，有概率获得双倍瓶数。
+R04C13,o_skill_transmutator_golden,Golden Transmutation,黄金转化,1,生命药瓶,4,,,,功能开启,,,让转化器将水母加工成金色水母。
+R04C15,o_skill_alchemy_station,Alchemy Station,炼金装置,1,贝壳,1000000000000,,,,功能开启,,,建成炼金站，把贝壳换成生命药瓶。
+R04C17,o_skill_transmutator_speed_03,Transmuter Speed III,转化速度 III,1,黑曜石,250000,bonus,15000,1500000%,每档数值,1500000,%,提高转化器加工水母的速度。
+R05C13,o_skill_transmutator_auto_output,Transmuter Automation,转化自动输出,1,黑曜石,1000,,,,功能开启,,,转化器自动把水母送到店铺。
+R05C14,o_skill_transmutator_slots_02,Transmuter Slots II,转化栏位 II,1,黑曜石,10000,bonus,2,2,每档数值,2,数量,增加转化器可放入水母的格子数。
+R05C16,o_skill_transmutator_speed_02,Transmuter Speed II,转化速度 II,5,黑曜石,"20000,20000,20000,20000,20000",bonus,400,40000%,每档数值,40000,%,提高转化器加工水母的速度。
+R05C17,o_skill_store_transmutate,Transmutation Discount,售卖转化,1,黑曜石,50000,bonus,85,85%,每档数值,85,%,每卖出一只水母，有概率使转化器中的一只水母完成加工。
+R05C18,o_skill_store_speed_10,Store Speed X,商店速度 X,1,黑曜石,100000,bonus,100000000,10000000000%,每档数值,10000000000,%,提高店铺卖出水母的速度。
+R06C12,o_skill_faster_output_10,Output Speed X,输出速度 X,1,生命药瓶,8,bonus,15,1500%,每档数值,1500,%,加快设施向外送出水母的速度。
+R06C14,o_skill_transmutator_slots_01,Transmuter Slots I,转化栏位 I,1,蘑菇,20000,bonus,1,1,每档数值,1,数量,增加转化器可放入水母的格子数。
+R06C15,o_skill_jellyfish_transmutator,Jellyfish Transmuter,水母转化器,1,蘑菇,20000,,,,功能开启,,,建成水母转化器，加工水母以提高其价值。
+R06C16,o_skill_transmutator_speed_01,Transmuter Speed I,转化速度 I,5,黑曜石,"500,500,500,500,500",bonus,40,4000%,每档数值,4000,%,提高转化器加工水母的速度。
+R06C17,o_skill_transmutator_sell,Store Transmutation,转化售卖,1,黑曜石,50000,bonus,85,85%,每档数值,85,%,每转化一只水母，有概率从商店额外卖出一只。
+R06C18,o_skill_store_speed_08,Store Speed VIII,商店速度 VIII,4,黑曜石,"12000,12000,12000,12000",bonus,600000,60000000%,每档数值,60000000,%,提高店铺卖出水母的速度。
+R07C09,o_skill_friendly_bubble_size_02,Puffle Size II,泡泡伙伴体型 II,1,黑曜石,75000,my_bubble_range,200,至200%,设为目标值,200,基础范围的百分比,增大 Puffle 的体积。
+R07C13,o_skill_faster_output_01,Output Speed I,输出速度 I,1,贝壳,3000000000000,bonus,2.5,250%,每档数值,250,%,加快设施向外送出水母的速度。
+R07C14,o_skill_store_extra_sell_chance,Store Upsell,商店加售,1,蘑菇,1400,bonus,10,10%,每档数值,10,%,每卖出一只水母，有概率再卖出一只。
+R07C16,o_skill_store_speed_05,Store Speed V,商店速度 V,4,蘑菇,"75,75,75,75",bonus,1600,160000%,每档数值,160000,%,提高店铺卖出水母的速度。
+R07C17,o_skill_store_speed_06,Store Speed VI,商店速度 VI,4,蘑菇,"3000,3000,3000,3000",bonus,5000,500000%,每档数值,500000,%,提高店铺卖出水母的速度。
+R07C18,o_skill_store_speed_07,Store Speed VII,商店速度 VII,4,黑曜石,"200,200,200,200",bonus,25000,2500000%,每档数值,2500000,%,提高店铺卖出水母的速度。
+R07C19,o_skill_agile_hands_10,Agile Hands X,妙手生花 X,1,生命药瓶,1,bonus,9.2,920%,每档数值,920,%,加快把水母放到店铺货架上的动作。
+R07C23,o_skill_robot_firerate_02,Robot Attack Speed II,机器人攻击速度 II,1,贝壳,30000000000000,bonus,2.5,250%,每档数值,250,%,提高机器人的攻击速度。
+R08C01,o_skill_scrap_final,???,???,1,垃圾,10000,,,,单档门槛,,,支付对应材料并取得该等级，作为后续连接的条件。此节点的专属购买回调没有属性写入。
+R08C04,o_skill_bubble_firerate_03,Bubble Attack Speed III,泡泡攻速 III,5,黑曜石,"40000,40000,40000,40000,40000",bonus,0.25,25%,每档数值,25,%,提高气泡枪的射击频率。
+R08C05,o_skill_bubble_damage_oxygen,Bubble O2'd,泡泡氧能,1,生命药瓶,5,bonus,0.02,2.00%,每档数值,2,%,最大氧气量按比例计入气泡伤害加成。卡片另列当前加成。
+R08C06,o_skill_chain_bubble_number,Multibubble Number,多重泡泡数量,1,黑曜石,100000,bonus,1,1,每档数值,1,数量,增加 Multibubble 触发时产生的气泡数量。
+R08C08,o_skill_friendly_bubble_size_01,Puffle Size I,泡泡伙伴体型 I,1,蘑菇,4000,my_bubble_range,125,至125%,设为目标值,125,基础范围的百分比,增大 Puffle 的体积。
+R08C10,o_skill_friendly_bubble_chance_02,Puffle II,泡泡伙伴 II,2,黑曜石,"10000,50000",bonus,6,6%,每档数值,6,%,提高 Puffle 的出现概率。此卡没有解释由哪一种玩家动作触发。
+R08C12,o_skill_slot_capacity_05,Shellslot Capacity V,贝壳栏位容量 V,1,生命药瓶,5,bonus,83,83,每档数值,83,数量,提高每格的可堆叠数量。
+R08C13,o_skill_player_slots_05,Shellpack Slots V,背包栏位 V,1,贝壳,10000000000000,bonus,3,3,每档数值,3,数量,增加随身物品栏的格子数。
+R08C14,o_skill_storage_auto_output,Storage Automation,储藏自动输出,1,贝壳,1000000000000,,,,功能开启,,,潜艇仓库自动把水母送进转化器。
+R08C15,o_skill_cellphone,Shellphone,一键直达,1,水晶,10000,,,,功能开启,,,在岛上任意地点按上方向即可打开技能树。
+R08C16,o_skill_store_speed_03,Store Speed III,商店速度 III,5,水晶,"20,20,20,20,20",bonus,15,1500%,每档数值,1500,%,提高店铺卖出水母的速度。
+R08C17,o_skill_store_speed_04,Store Speed IV,商店速度 IV,4,水晶,"2500,2500,2500,2500",bonus,100,10000%,每档数值,10000,%,提高店铺卖出水母的速度。
+R08C18,o_skill_agile_hands_01,Agile Hands I,妙手生花 I,1,贝壳,5000000,bonus,0.8,80%,每档数值,80,%,加快把水母放到店铺货架上的动作。
+R08C19,o_skill_store_slots_04,Store Slots IV,商店栏位 IV,1,蘑菇,10000,bonus,2,2,每档数值,2,数量,增加店铺货架格数。
+R08C20,o_skill_plasma_overheat_damage_02,Plasma Overheat II,等离子过热 II,3,贝壳,"350000000000,350000000000,350000000000",bonus,0.5,0.5,每档数值,0.5,额外伤害倍率,等离子枪达到过热后获得额外伤害倍率。
+R08C21,o_skill_plasma_lightning_damage_02,Plasma Lightning Damage II,等离子闪电伤害 II,2,贝壳,"40000000000,40000000000",bonus,4.5,450%,每档数值,450,%,提高闪电效果的伤害。
+R08C22,o_skill_plasma_lightning_range,Plasma Lightning Range,等离子闪电范围,1,贝壳,50000000000000,bonus,1.5,150%,每档数值,150,%,扩大闪电的作用范围。
+R08C24,o_skill_robot_firerate_01,Robot Attack Speed I,机器人攻击速度 I,1,贝壳,5000000000000,bonus,1,100%,每档数值,100,%,提高机器人的攻击速度。
+R08C25,o_skill_robot_damage_01,Robot Damage I,机器人伤害 I,6,贝壳,"500000000000,1000000000000,1500000000000,2000000000000,2500000000000,3000000000000",bonus,0.35,35%,每档数值,35,%,提高机器人的基础伤害。
+R08C26,o_skill_plasma_damage_oxygen,Plasma O2'd,等离子氧能,1,生命药瓶,5,bonus,0.02,2.00%,每档数值,2,%,最大氧气量按比例计入等离子伤害加成，卡片另列当前加成。
+R08C27,o_skill_plasma_firerate_03,Plasma Attack Speed III,等离子攻击速度 III,5,生命药瓶,"1,1,1,1,1",bonus,0.25,25%,每档数值,25,%,提高等离子枪的攻击速度。
+R08C29,o_skill_mushroom_final,???,???,1,蘑菇,150000,,,,单档门槛,,,支付对应材料并取得该等级，作为后续连接的条件。此节点的专属购买回调没有属性写入。
+R09C01,o_skill_bubble_critical_damage_03,Bubble Critical Damage III,泡泡暴击伤害 III,2,黑曜石,"250000,250000",bonus,10,1000%,每档数值,1000,%,暴击发生时，提高这次气泡的伤害。
+R09C02,o_skill_bubble_damage_10,Bubble Damage X,泡泡伤害 X,1,生命药瓶,1,bonus,9999.99,999999%,每档数值,999999,%,提高气泡伤害。
+R09C04,o_skill_bubble_damage_08,Bubble Damage VIII,泡泡伤害 VIII,10,黑曜石,"30000,30000,30000,30000,30000,30000,30000,30000,30000,30000",bonus,150,15000%,每档数值,15000,%,提高气泡伤害。
+R09C05,o_skill_chain_bubble,Multibubble Chance,多重泡泡几率,5,黑曜石,"2000,4000,8000,16000,32000",bonus,4,4%,每档数值,4,%,气泡打出伤害时，有概率产生额外的气泡。
+R09C06,o_skill_bubble_speed_02,Bubble Speed II,泡泡速度 II,2,黑曜石,"9000,9000",bonus,0.5,50%,每档数值,50,%,提高发射后气泡的移动速度。
+R09C07,o_skill_bubble_firerate_02,Bubble Attack Speed II,泡泡攻速 II,5,蘑菇,"4000,4000,4000,4000,4000",bonus,0.2,20%,每档数值,20,%,提高气泡枪的射击频率。
+R09C11,o_skill_friendly_bubble_damage_10,Puffle Damage X,泡泡伙伴伤害 X,1,黑曜石,100000,bonus,80,8000%,每档数值,8000,%,提高 Puffle 造成的伤害。
+R09C12,o_skill_slot_capacity_04,Shellslot Capacity IV,贝壳栏位容量 IV,1,贝壳,4500000000000,bonus,4,4,每档数值,4,数量,提高每格的可堆叠数量。
+R09C13,o_skill_player_slots_04,Shellpack Slots IV,背包栏位 IV,1,贝壳,80000000,bonus,3,3,每档数值,3,数量,增加随身物品栏的格子数。
+R09C14,o_skill_storage_slots_02,Storage Slots II,储藏栏位 II,1,贝壳,10000000000,bonus,4,4,每档数值,4,数量,增加仓库的格子数。
+R09C16,o_skill_expedition_demand_01,Expedition Demand I,探险供需 I,1,垃圾,1000,bonus,5,5×,每档数值,5,倍率,玩家在外远征期间，店铺加快出售已有水母。
+R09C17,o_skill_store_speed_02,Store Speed II,商店速度 II,4,垃圾,"200,200,200,200",bonus,4,400%,每档数值,400,%,提高店铺卖出水母的速度。
+R09C18,o_skill_store_slots_03,Store Slots III,商店栏位 III,1,蘑菇,3000,bonus,2,,每档数值,2,数量,增加店铺货架格数。
+R09C19,o_skill_global_chest,Bank Safe,银行保险箱,1,生命药瓶,1,,,,功能开启,,,购买时可以直接花掉宝箱里的贝壳，省去先领款的往返。
+R09C21,o_skill_plasma_lightning_damage_01,Plasma Lightning Damage I,等离子闪电伤害 I,5,贝壳,"300000000,300000000,300000000,300000000,300000000",bonus,0.2,20%,每档数值,20,%,提高闪电效果的伤害。
+R09C22,o_skill_plasma_lightning_chance_02,Plasma Lightning Chance II,等离子闪电几率 II,1,贝壳,25000000000000,bonus,30,30%,每档数值,30,%,提高触发等离子闪电的概率。
+R09C23,o_skill_robot_lightning_01,Robot Overcharge I,机器人超载 I,1,贝壳,100000000000000,,,,功能开启,,,让机器人的攻击也能触发闪电。
+R09C24,o_skill_plasma_range_03,Plasma Range III,等离子射程 III,1,贝壳,2500000000,bonus,0.75,75%,每档数值,75,%,延长激光射程。
+R09C25,o_skill_robot_number_01,Robot Ally I,机器人同伴 I,3,贝壳,"50000000000,500000000000,5000000000000",bonus,1,1,每档数值,1,数量,建造向附近资源射出弹体的机器人。
+R09C26,o_skill_plasma_damage_08,Plasma Damage VIII,等离子伤害 VIII,10,贝壳,"2000000000000,2000000000000,2000000000000,2000000000000,2000000000000,2000000000000,2000000000000,2000000000000,2000000000000,2000000000000",bonus,250,25000%,每档数值,25000,%,提高等离子伤害。
+R09C28,o_skill_plasma_damage_10,Plasma Damage X,等离子伤害 X,1,生命药瓶,1,bonus,9999.99,999999%,每档数值,999999,%,提高等离子伤害。
+R10C02,o_skill_bubble_critical_damage_02,Bubble Critical Damage II,泡泡暴击伤害 II,2,黑曜石,"20000,20000",bonus,2,200%,每档数值,200,%,暴击发生时，提高这次气泡的伤害。
+R10C03,o_skill_bubble_critical_damage_01,Bubble Critical Damage I,泡泡暴击伤害 I,4,黑曜石,"8000,8000,8000,8000",bonus,0.75,75%,每档数值,75,%,暴击发生时，提高这次气泡的伤害。
+R10C04,o_skill_bubble_size_10,Bubble Size X,泡泡大小 X,1,生命药瓶,1,bonus,1,100%,每档数值,100,%,增大气泡体积。
+R10C05,o_skill_bubble_damage_07,Bubble Damage VII,泡泡伤害 VII,10,黑曜石,"300,300,300,300,300,300,300,300,300,300",bonus,65,6500%,每档数值,6500,%,提高气泡伤害。
+R10C07,o_skill_bubble_damage_06,Bubble Damage VI,泡泡伤害 VI,10,蘑菇,"3000,3000,3000,3000,3000,3000,3000,3000,3000,3000",bonus,27,2700%,每档数值,2700,%,提高气泡伤害。
+R10C08,o_skill_friendly_bubble_chance_01,Puffle I,泡泡伙伴 I,3,蘑菇,"1000,2000,5000",bonus,4,4%,每档数值,4,%,提高 Puffle 的出现概率。此卡没有解释由哪一种玩家动作触发。
+R10C09,o_skill_friendly_bubble_damage_01,Puffle Damage I,泡泡伙伴伤害 I,1,黑曜石,500,bonus,40,4000%,每档数值,4000,%,提高 Puffle 造成的伤害。
+R10C10,o_skill_friendly_bubble_damage_02,Puffle Damage II,泡泡伙伴伤害 II,1,黑曜石,5000,bonus,20,2000%,每档数值,2000,%,提高 Puffle 造成的伤害。
+R10C11,o_skill_bubble_doppel_02,Doppel Bubble II,双生泡泡 II,3,水晶,"1250,1250,1250",bonus,20,,每档数值,20,%,每次使用气泡枪有概率额外产生一颗气泡。
+R10C12,o_skill_slot_capacity_03,Shellslot Capacity III,贝壳栏位容量 III,1,贝壳,1500000000,bonus,3,3,每档数值,3,数量,提高每格的可堆叠数量。
+R10C13,o_skill_player_slots_03,Shellpack Slots III,背包栏位 III,1,贝壳,25000000,bonus,2,2,每档数值,2,数量,增加随身物品栏的格子数。
+R10C14,o_skill_storage_slots_01,Storage Slots I,储藏栏位 I,1,贝壳,40000000,bonus,4,4,每档数值,4,数量,增加仓库的格子数。
+R10C15,o_skill_submarine_storage,Submarine Storage,潜艇储藏室,1,贝壳,15000,,,,功能开启,,,解锁浮动仓库，远征途中即可把水母存进去。
+R10C16,o_skill_store_speed_01,Store Speed I,商店速度 I,5,垃圾,"10,10,10,10,10",bonus,1,100%,每档数值,100,%,提高店铺卖出水母的速度。
+R10C17,o_skill_store_slots_02,Store Slots II,商店栏位 II,1,垃圾,500,bonus,2,2,每档数值,2,数量,增加店铺货架格数。
+R10C18,o_skill_chest_speed_02,Chest Speed II,宝箱速度 II,1,蘑菇,3000,bonus,8.5,850%,每档数值,850,%,加快从宝箱领出贝壳的动作。
+R10C19,o_skill_plasma_overheat_damage_01,Plasma Overheat I,等离子过热 I,5,贝壳,"150000,150000,150000,150000,150000",bonus,0.1,0.1,每档数值,0.1,额外伤害倍率,等离子枪达到过热后获得额外伤害倍率。
+R10C20,o_skill_plasma_overheat_speed,Hot Overheat,极速过热,4,贝壳,"2500000,2500000,2500000,2500000",bonus,0.2,20%,每档数值,20,%,使等离子枪更快达到过热。可与过热时追加伤害的 Plasma Overheat 配合。
+R10C21,o_skill_plasma_firerate_02,Plasma Attack Speed II,等离子攻击速度 II,5,贝壳,"80000000,80000000,80000000,80000000,80000000",bonus,0.15,15%,每档数值,15,%,提高等离子枪的攻击速度。
+R10C22,o_skill_plasma_lightning_chance_01,Plasma Lightning Chance I,等离子闪电几率 I,4,贝壳,"50000000,250000000,1000000000,5000000000",bonus,5,5%,每档数值,5,%,提高触发等离子闪电的概率。
+R10C23,o_skill_plasma_damage_06,Plasma Damage VI,等离子伤害 VI,10,贝壳,"600000000,600000000,600000000,600000000,600000000,600000000,600000000,600000000,600000000,600000000",bonus,80,8000%,每档数值,8000,%,提高等离子伤害。
+R10C25,o_skill_plasma_damage_07,Plasma Damage VII,等离子伤害 VII,10,贝壳,"10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000",bonus,150,15000%,每档数值,15000,%,提高等离子伤害。
+R10C26,o_skill_plasma_ultra_charge,Ultra Plasma Charge,等离子极速充能,1,生命药瓶,1,bonus,7,700%,每档数值,700,%,进一步提高等离子枪的蓄力速度。
+R10C27,o_skill_plasma_range_04,Plasma Range IV,等离子射程 IV,1,生命药瓶,2,bonus,1.25,125%,每档数值,125,%,延长激光射程。
+R11C02,o_skill_bubble_critical_chance_10,Bubble Critical Chance X,泡泡暴击率 X,1,生命药瓶,1,bonus,50,50%,每档数值,50,%,提高气泡造成暴击的概率。
+R11C03,o_skill_bubble_critical_chance_02,Bubble Critical Chance II,泡泡暴击率 II,5,黑曜石,"60000,60000,60000,60000,60000",bonus,6,6%,每档数值,6,%,提高气泡造成暴击的概率。
+R11C04,o_skill_bubble_critical_chance_01,Bubble Critical Chance I,泡泡暴击率 I,10,黑曜石,"2000,2000,2000,2000,2000,2000,2000,2000,2000,2000",bonus,2,2%,每档数值,2,%,提高气泡造成暴击的概率。
+R11C05,o_skill_bubble_size_02,Bubble Size II,泡泡大小 II,2,黑曜石,"2000,2000",bonus,0.5,50%,每档数值,50,%,增大气泡体积。
+R11C06,o_skill_bubble_smite_threshold,Extra Smite,额外惩击阈值,1,黑曜石,6500,bonus,0.25,25%,每档数值,25,%,抬高 Bubble Smite 的血量触发线，让额外伤害更早生效。
+R11C07,o_skill_bubble_smite,Bubble Smite,落井下石,5,蘑菇,"1000,1000,1000,1000,1000",bonus,0.5,0.5,每档数值,0.5,额外伤害倍率,水母生命降到门槛及以下时，气泡取得额外伤害倍率。
+R11C08,o_skill_bubble_damage_05,Bubble Damage V,泡泡伤害 V,10,蘑菇,"50,50,50,50,50,50,50,50,50,50",bonus,13,1300%,每档数值,1300,%,提高气泡伤害。
+R11C10,o_skill_bubble_damage_04,Bubble Damage IV,泡泡伤害 IV,10,水晶,"1000,1000,1000,1000,1000,1000,1000,1000,1000,1000",bonus,6,600%,每档数值,600,%,提高气泡伤害。
+R11C12,o_skill_bubble_firerate_01,Bubble Attack Speed I,泡泡攻速 I,5,垃圾,"600,600,600,600,600",bonus,0.05,5%,每档数值,5,%,提高气泡枪的射击频率。
+R11C13,o_skill_slot_capacity_02,Shellslot Capacity II,贝壳栏位容量 II,1,贝壳,1500,bonus,3,3,每档数值,3,数量,提高每格的可堆叠数量。
+R11C14,o_skill_player_slots_02,Shellpack Slots II,背包栏位 II,1,贝壳,500,bonus,2,2,每档数值,2,数量,增加随身物品栏的格子数。
+R11C16,o_skill_store_slots_01,Store Slots I,商店栏位 I,1,垃圾,20,bonus,1,,每档数值,1,数量,增加店铺货架格数。
+R11C17,o_skill_chest_speed_01,Chest Speed I,宝箱速度 I,1,垃圾,250,bonus,2.5,250%,每档数值,250,%,加快从宝箱领出贝壳的动作。
+R11C18,o_skill_plasma_firerate_01,Plasma Attack Speed I,等离子攻击速度 I,3,贝壳,"3000,3000,3000",bonus,0.1,10%,每档数值,10,%,提高等离子枪的攻击速度。
+R11C19,o_skill_plasma_range_02,Plasma Range II,等离子射程 II,1,贝壳,20000,bonus,0.5,50%,每档数值,50,%,延长激光射程。
+R11C20,o_skill_plasma_damage_04,Plasma Damage IV,等离子伤害 IV,10,贝壳,"100000,100000,100000,100000,100000,100000,100000,100000,100000,100000",bonus,5,500%,每档数值,500,%,提高等离子伤害。
+R11C22,o_skill_plasma_damage_05,Plasma Damage V,等离子伤害 V,10,贝壳,"2500000,2500000,2500000,2500000,2500000,2500000,2500000,2500000,2500000,2500000",bonus,16,1600%,每档数值,1600,%,提高等离子伤害。
+R11C23,o_skill_plasma_charge_02,Plasma Charge II,等离子充能 II,5,贝壳,"7500000,7500000,7500000,7500000,7500000",bonus,0.4,40%,每档数值,40,%,提高等离子枪的蓄力速度。
+R11C24,o_skill_plasma_explosion_chance_02,Plasma Overflow II,等离子溢出 II,2,贝壳,"500000000000,5000000000000",bonus,20,20%,每档数值,20,%,摧毁资源时，有概率触发等离子溢出。
+R11C26,o_skill_double_plasma,Double Laser,双重激光,1,生命药瓶,10,,,,功能开启,,,开火时同时发射两束等离子激光。
+R12C05,o_skill_bubble_execute_02,Hunter Bubbles II,猎手泡泡 II,1,黑曜石,150000,bonus,0.25,25%,每档数值,25,%,水母生命降到门槛及以下时立即捕获。
+R12C07,o_skill_bubble_penetration_01,Bubble Penetration I,泡泡穿透力 I,5,蘑菇,"600,600,600,600,600",bonus,0.1,10%,每档数值,10,%,提高气泡的穿透能力，卡片没有说明可穿过几个目标。
+R12C08,o_skill_bubble_first_strike_02,Bubble Strike II,泡泡首击 II,2,黑曜石,"12000,20000",bonus,4,4.0,每档数值,4,额外伤害倍率,第一下气泡命中具有额外伤害倍率。卡片没有说明首次命中的重置条件。
+R12C10,o_skill_bubble_first_strike_01,Bubble Strike I,泡泡首击 I,4,水晶,"1000,5000,10000,15000",bonus,0.5,0.5,每档数值,0.5,额外伤害倍率,第一下气泡命中具有额外伤害倍率。卡片没有说明首次命中的重置条件。
+R12C11,o_skill_bubble_damage_03,Bubble Damage III,泡泡伤害 III,10,水晶,"10,10,10,10,10,10,10,10,10,10",bonus,0.8,,每档数值,80,%,提高气泡伤害。
+R12C13,o_skill_bubble_damage_02,Bubble Damage II,泡泡伤害 II,10,垃圾,"250,250,250,250,250,250,250,250,250,250",bonus,0.5,50%,每档数值,50,%,提高气泡伤害。
+R12C14,o_skill_slot_capacity_01,Shellslot Capacity I,贝壳栏位容量 I,1,贝壳,100,bonus,2,2,每档数值,2,数量,提高每格的可堆叠数量。
+R12C15,o_skill_player_slots_01,Shellpack Slots I,背包栏位 I,1,贝壳,10,bonus,1,,每档数值,1,数量,增加随身物品栏的格子数。
+R12C16,o_skill_plasma_charge_01,Plasma Charge I,等离子充能 I,5,贝壳,"25,25,25,25,25",bonus,0.2,20%,每档数值,20,%,提高等离子枪的蓄力速度。
+R12C17,o_skill_plasma_damage_02,Plasma Damage II,等离子伤害 II,10,贝壳,"250,250,250,250,250,250,250,250,250,250",bonus,0.25,25%,每档数值,25,%,提高等离子伤害。
+R12C19,o_skill_plasma_damage_03,Plasma Damage III,等离子伤害 III,10,贝壳,"6500,6500,6500,6500,6500,6500,6500,6500,6500,6500",bonus,0.75,75%,每档数值,75,%,提高等离子伤害。
+R12C21,o_skill_plasma_explosion_chance_01,Plasma Overflow I,等离子溢出 I,4,贝壳,"10000,100000,1000000,10000000",bonus,10,10%,每档数值,10,%,摧毁资源时，有概率触发等离子溢出。
+R12C23,o_skill_plasma_explosion_damage_01,Plasma Overflow Damage I,等离子溢出伤害 I,1,贝壳,150000000,bonus,25,2500%,每档数值,2500,%,提高等离子溢出的伤害。
+R12C25,o_skill_plasma_explosion_damage_02,Plasma Overflow Damage II,等离子溢出伤害 II,1,生命药瓶,6,bonus,375,37500%,每档数值,37500,%,提高等离子溢出的伤害。
+R13C06,o_skill_bubble_execute_01,Hunter Bubbles I,猎手泡泡 I,1,黑曜石,30000,bonus,0.1,10%,每档数值,10,%,水母生命降到门槛及以下时立即捕获。
+R13C07,o_skill_bubble_penetration_02,Bubble Penetration II,泡泡穿透力 II,5,黑曜石,"5000,5000,5000,5000,5000",bonus,0.6,60%,每档数值,60,%,提高气泡的穿透能力，卡片没有说明可穿过几个目标。
+R13C09,o_skill_starfish_firerate_01,Starfish Attack Speed I,海星攻击速度 I,3,蘑菇,"2000,2000,2000",bonus,0.2,20%,每档数值,20,%,提高海星的攻击速度。
+R13C11,o_skill_starfish_number_01,Starfish Friend I,海星伙伴 I,2,水晶,"5000,15000",bonus,1,1,每档数值,1,数量,召唤向附近水母发射气泡的海星。
+R13C12,o_skill_bubble_duration_01,Bubble Duration I,泡泡持续时间 I,1,垃圾,100,bonus,1,100%,每档数值,100,%,延长已发射气泡存在的时间。
+R13C13,o_skill_bubble_size_01,Bubble Size I,泡泡大小 I,1,垃圾,50,bonus,0.5,50%,每档数值,50,%,增大气泡体积。
+R13C14,o_skill_bubble_damage_01,Bubble Damage I,泡泡伤害 I,10,贝壳,"5,5,5,5,5,5,5,5,5,5",bonus,0.05,,每档数值,5,%,提高气泡伤害。
+R13C15,o_skill_hammock,Hammock Repair,吊床修理,1,贝壳,10000000000000000,,,,功能开启,,,修好岛上的吊床。到现场使用后，角色休息并进入制作人员名单。
+R13C16,o_skill_plasma_damage_01,Plasma Damage I,等离子伤害 I,10,贝壳,"15,15,15,15,15,15,15,15,15,15",bonus,0.15,15%,每档数值,15,%,提高等离子伤害。
+R13C17,o_skill_plasma_chain_number_01,Plasma Chain I,等离子链 I,1,贝壳,300,bonus,1,1,每档数值,1,数量,增加等离子可连锁的次数。
+R13C19,o_skill_plasma_chain_number_02,Plasma Chain II,等离子链 II,1,贝壳,100000,bonus,2,2,每档数值,2,数量,增加等离子可连锁的次数。
+R13C22,o_skill_plasma_chain_number_03,Plasma Chain III,等离子链 III,1,贝壳,250000000,bonus,3,3,每档数值,3,数量,增加等离子可连锁的次数。
+R13C24,o_skill_plasma_explosion_size,Plasma Overflow Reach,等离子溢出范围,1,贝壳,20000000000000,my_plasma_range,128,至160%,设为目标值,160,基础范围的百分比,增大等离子溢出的作用范围。
+R14C08,o_skill_starfish_firerate_02,Starfish Attack Speed II,海星攻击速度 II,3,黑曜石,"15000,20000,25000",bonus,0.75,75%,每档数值,75,%,提高海星的攻击速度。
+R14C11,o_skill_starfish_damage_01,Starfish Damage I,海星伤害 I,2,蘑菇,"500,1000",bonus,5,500%,每档数值,500,%,提高海星的基础伤害。
+R14C12,o_skill_bubble_speed_01,Bubble Speed I,泡泡速度 I,5,垃圾,"200,200,200,200,200",bonus,0.2,20%,每档数值,20,%,提高发射后气泡的移动速度。
+R14C13,o_skill_bubble_doppel_01,Doppel Bubble I,双生泡泡 I,4,垃圾,"100,100,100,100",bonus,10,10%,每档数值,10,%,每次使用气泡枪有概率额外产生一颗气泡。
+R14C15,o_skill_submarine,Submarine,潜艇,1,免费,0,,,,功能开启,,,开启潜水。
+R14C16,o_skill_plasma_tool,Plasma Gun,等离子枪,1,贝壳,20,,,,功能开启,,,解锁等离子枪。
+R14C17,o_skill_plasma_range_01,Plasma Range I,等离子射程 I,1,贝壳,50,bonus,0.25,25%,每档数值,25,%,延长激光射程。
+R14C18,o_skill_plasma_chain_damage_01,Plasma Chain Damage I,等离子链伤害 I,5,贝壳,"1500,1500,1500,1500,1500",bonus,0.4,40%,每档数值,40,%,提高等离子连锁的伤害。
+R14C21,o_skill_plasma_chain_damage_02,Plasma Chain Damage II,等离子链伤害 II,3,贝壳,"200000000,200000000,200000000",bonus,140,14000%,每档数值,14000,%,提高等离子连锁的伤害。
+R15C09,o_skill_starfish_number_02,Starfish Friend II,海星伙伴 II,2,黑曜石,"50000,100000",bonus,1,1,每档数值,1,数量,召唤向附近水母发射气泡的海星。
+R15C10,o_skill_starfish_damage_02,Starfish Damage II,海星伤害 II,2,黑曜石,"15000,150000",bonus,80,8000%,每档数值,8000,%,提高海星的基础伤害。
+R15C11,o_skill_biodiversity_shallows,Shallows Biodiversity,浅海生物多样性,10,垃圾,"5,10,15,20,25,30,35,40,45,50",bonus,0.25,25%,每档数值,25,%,提高海洋浅滩水母的出现率。
+R15C14,o_skill_jellyfish_value_01,Jellyfish Value I,水母价值 I,10,垃圾,"5,5,5,5,5,5,5,5,5,5",bonus,0.2,20%,每档数值,20,%,提高水母的贝壳售价。
+R15C15,o_skill_jellyfish_insurance_01,Shell Insurance I,未雨绸缪 I,1,贝壳,15,bonus,-0.2,20%,每档数值,20,%,玩家窒息时，少损失一部分水母和资源。
+R15C16,o_skill_deep_breath,Deep Breath,深呼吸,3,贝壳,"10,100,1000",bonus,0.1,10%,每档数值,10,%,减少潜水时的氧气消耗。
+R15C17,o_skill_plasma_tank_01,Plasma Tank I,等离子储罐 I,1,贝壳,50,bonus,30,30,每档数值,30,数量,扩大等离子储罐，与弹匣容量分开升级。
+R15C18,o_skill_plasma_reload_01,Plasma Gun Reload I,等离子枪装填 I,1,贝壳,500,bonus,0.5,50%,每档数值,50,%,提高等离子枪的装填速度。
+R15C20,o_skill_plasma_reload_02,Plasma Gun Reload II,等离子枪装填 II,1,贝壳,75000000,bonus,1.5,150%,每档数值,150,%,提高等离子枪的装填速度。
+R16C10,o_skill_biovalue_silver,Biovalue Increase I,生物价值提升 I,1,垃圾,2000,bonus,3,3%,每档数值,3,%,提高银色水母的生成概率。
+R16C13,o_skill_jellyfish_value_rare_01,Jellyfish Merchant I,水母商人 I,1,垃圾,300,bonus,2,200%,每档数值,200,%,同样的水母卖出后获得更多贝壳。
+R16C14,o_skill_movement_speed_01,Light Feet I,凌波微步 I,4,贝壳,"2000,2000,2000,2000",bonus,0.05,5%,每档数值,5,%,提高移动速度。
+R16C15,o_skill_scrap_value,Scrap Gatherer,垃圾收集者,10,贝壳,"25,25,25,25,25,25,25,25,25,25",bonus,0.35,35%,每档数值,35,%,每个废料资源块掉落更多废料。
+R16C16,o_skill_bubble_tank_01,Bubble Tank I,泡泡储罐 I,1,垃圾,50,bonus,24,24,每档数值,24,数量,扩大气泡储罐，增加可供弹匣使用的气泡储备。
+R16C17,o_skill_oxygen_tank_01,Oxygen Tank I,氧气罐 I,10,贝壳,"5,5,5,5,5,5,5,5,5,5",bonus,10,,每档数值,10,数量,增加基础氧气量。
+R16C18,o_skill_plasma_capacity_01,Plasma Capacity I,等离子容量 I,1,贝壳,100,bonus,15,15,每档数值,15,数量,增加等离子枪的弹匣容量。
+R16C20,o_skill_plasma_tank_02,Plasma Tank II,等离子储罐 II,1,贝壳,300,bonus,60,60,每档数值,60,数量,扩大等离子储罐，与弹匣容量分开升级。
+R17C09,o_skill_biodiversity_glacial,Glacial Biodiversity,冰川生物多样性,10,水晶,"50,250,450,650,850,1050,1250,1400,1650,1800",bonus,0.25,25%,每档数值,25,%,提高冰川深处水母的出现率。
+R17C12,o_skill_jellyfish_value_02,Jellyfish Value II,水母价值 II,10,水晶,"25,25,25,25,25,25,25,25,25,25",bonus,0.6,60%,每档数值,60,%,提高水母的贝壳售价。
+R17C13,o_skill_jellyfish_insurance_02,Shell Insurance II,未雨绸缪 II,1,贝壳,7500,bonus,-0.25,25%,每档数值,25,%,玩家窒息时，少损失一部分水母和资源。
+R17C14,o_skill_scrap_value_rare,Scrap Master,垃圾大师,1,贝壳,300,bonus,2,200%,每档数值,200,%,进一步增加每个废料资源块的掉落量。
+R17C16,o_skill_bubble_reload_01,Bubble Gun Reload I,泡泡枪装填 I,1,垃圾,500,bonus,0.5,50%,每档数值,50,%,提高气泡枪的装填速度。
+R17C17,o_skill_bubble_capacity_01,Bubble Capacity I,泡泡容量 I,1,垃圾,100,bonus,6,6,每档数值,6,数量,增加一次装填后可发射的气泡弹数。
+R17C18,o_skill_oxygen_tank_02,Oxygen Tank II,氧气罐 II,10,贝壳,"50,50,50,50,50,50,50,50,50,50",bonus,80,80,每档数值,80,数量,增加基础氧气量。
+R17C19,o_skill_submarine_recover,Submarine Bubble I,潜艇氧气泡 I,1,贝壳,250000,bonus,200,,近艇补氧,200,补给区域范围（内部距离单位）,靠近潜艇时补氧。
+R17C21,o_skill_plasma_capacity_02,Plasma Capacity II,等离子容量 II,1,贝壳,1000000,bonus,25,25,每档数值,25,数量,增加等离子枪的弹匣容量。
+R18C08,o_skill_biovalue_gold,Biovalue Increase II,生物价值提升 II,1,水晶,10000,bonus,1.5,1.5%,每档数值,1.5,%,提高金色水母的生成概率。
+R18C11,o_skill_jellyfish_value_rare_02,Jellyfish Merchant II,水母商人 II,1,水晶,1500,bonus,6,600%,每档数值,600,%,同样的水母卖出后获得更多贝壳。
+R18C12,o_skill_movement_speed_02,Light Feet II,凌波微步 II,3,贝壳,"150000000,150000000,150000000",bonus,0.1,10%,每档数值,10,%,提高移动速度。
+R18C13,o_skill_crystal_value,Crystal Gatherer,水晶收集者,10,贝壳,"5000,5000,5000,5000,5000,5000,5000,5000,5000,5000",bonus,0.5,50%,每档数值,50,%,每个水晶资源块掉落更多水晶。
+R18C18,o_skill_submarine_recover_all,Submarine Bubble II,潜艇氧气泡 II,1,贝壳,1500000000000,,,,额外开启两类补给,,,近艇时，在补氧基础上也补充气泡储罐与等离子储罐。
+R18C19,o_skill_oxygen_tank_03,Oxygen Tank III,氧气罐 III,10,贝壳,"2000,2000,2000,2000,2000,2000,2000,2000,2000,2000",bonus,120,120,每档数值,120,数量,增加基础氧气量。
+R18C20,o_skill_oxygen_regen_amount_01,Oxygen Regen Amount I,氧气恢复量 I,2,贝壳,"50000,50000",bonus,125,125,每档数值,125,数量,增加氧气回复量。
+R18C22,o_skill_plasma_tank_03,Plasma Tank III,等离子储罐 III,1,贝壳,15000000,bonus,120,120,每档数值,120,数量,扩大等离子储罐，与弹匣容量分开升级。
+R18C23,o_skill_plasma_ultra_reload,Ultra Plasma Gun Reload,等离子枪极速装填,1,生命药瓶,1,bonus,10,1000%,每档数值,1000,%,进一步提高等离子枪的装填速度。
+R19C07,o_skill_biodiversity_swamp,Swamp Biodiversity,沼泽生物多样性,10,蘑菇,"250,500,750,1000,1250,1500,1750,2000,2250,2500",bonus,0.3,30%,每档数值,30,%,提高沼泽水域水母的出现率。
+R19C10,o_skill_jellyfish_value_03,Jellyfish Value III,水母价值 III,10,蘑菇,"50,50,50,50,50,50,50,50,50,50",bonus,2.4,240%,每档数值,240,%,提高水母的贝壳售价。
+R19C11,o_skill_entity_arrival_01,Faster Waters I,急流海域 I,1,贝壳,15000,bonus,2.5,250%,每档数值,250,%,加快水母与资源到达。
+R19C12,o_skill_crystal_value_rare,Crystal Master,水晶大师,1,贝壳,75000,bonus,5,500%,每档数值,500,%,进一步增加每个水晶资源块的掉落量。
+R19C14,o_skill_pickup_range_01,Collectible Magnet I,触手可及 I,1,垃圾,750,bonus,0.25,25%,每档数值,25,%,扩大掉落物能够被拾取的范围。
+R19C15,o_skill_scrap_increase,Scrap Increase,垃圾增生,10,贝壳,"5,10,15,20,25,30,35,40,45,50",bonus,0.2,20%,每档数值,20,%,提高废料的出现率。
+R19C16,o_skill_bubble_reload_02,Bubble Gun Reload II,泡泡枪装填 II,1,蘑菇,4000,bonus,1.5,150%,每档数值,150,%,提高气泡枪的装填速度。
+R19C17,o_skill_bubble_tank_02,Bubble Tank II,泡泡储罐 II,1,垃圾,800,bonus,48,48,每档数值,48,数量,扩大气泡储罐，增加可供弹匣使用的气泡储备。
+R19C19,o_skill_oxygen_catch_01,Oxygen Catch I,氧气补给 I,5,贝壳,"80000,80000,80000,80000,80000",bonus,80,80,每档数值,80,数量,捕获水母的当下回复氧气。
+R19C20,o_skill_oxygen_tank_04,Oxygen Tank IV,氧气罐 IV,10,贝壳,"200000,200000,200000,200000,200000,200000,200000,200000,200000,200000",bonus,400,400,每档数值,400,数量,增加基础氧气量。
+R19C21,o_skill_oxygen_regen_speed_01,Oxygen Regen Speed I,氧气恢复速度 I,2,贝壳,"6500000,6500000",bonus,0.25,25%,每档数值,25,%,提高氧气回复速度。
+R20C05,o_skill_shock_resistance_10,Shock Resistance X,抗电击 X,1,生命药瓶,1,bonus,999.9,99990%,每档数值,99990,%,提高抗电击能力。卡片没有说明抵消哪项数值。
+R20C06,o_skill_biovalue_rainbow,Biovalue Increase X,生物价值提升 X,1,蘑菇,10000,bonus,0.5,0.5%,每档数值,0.5,%,提高彩虹水母的生成概率。
+R20C07,o_skill_shock_resistance_01,Shock Resistance I,抗电击 I,1,贝壳,250000000000,bonus,1.5,150%,每档数值,150,%,提高抗电击能力。卡片没有说明抵消哪项数值。
+R20C09,o_skill_jellyfish_value_rare_03,Jellyfish Merchant III,水母商人 III,1,蘑菇,3500,bonus,24,2400%,每档数值,2400,%,同样的水母卖出后获得更多贝壳。
+R20C10,o_skill_jellyfish_insurance_03,Shell Insurance III,未雨绸缪 III,1,贝壳,20000000000,bonus,-0.3,30%,每档数值,30,%,玩家窒息时，少损失一部分水母和资源。
+R20C11,o_skill_mushroom_value,Mushroom Gatherer,蘑菇收集者,10,贝壳,"3000000,3000000,3000000,3000000,3000000,3000000,3000000,3000000,3000000,3000000",bonus,0.35,35%,每档数值,35,%,每个蘑菇资源块掉落更多蘑菇。
+R20C18,o_skill_bubble_capacity_02,Bubble Capacity II,泡泡容量 II,1,蘑菇,1500,bonus,9,9,每档数值,9,数量,增加一次装填后可发射的气泡弹数。
+R20C20,o_skill_oxygen_catch_02,Oxygen Catch II,氧气补给 II,5,贝壳,"800000000,800000000,800000000,800000000,800000000",bonus,1000,1000,每档数值,1000,数量,捕获水母的当下回复氧气。
+R20C21,o_skill_oxygen_tank_05,Oxygen Tank V,氧气罐 V,10,贝壳,"1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000",bonus,840,840,每档数值,840,数量,增加基础氧气量。
+R20C22,o_skill_oxygen_tank_extra_01,Oxygen Effectiveness I,氧气效率 I,5,贝壳,"16000000,16000000,16000000,16000000,16000000",bonus,0.1,10%,每档数值,10,%,按百分比提高最大氧气量。
+R20C24,o_skill_plasma_tank_10,Plasma Tank X,等离子储罐 X,1,贝壳,90000000000,bonus,720,720,每档数值,720,数量,扩大等离子储罐，与弹匣容量分开升级。
+R21C05,o_skill_biodiversity_magma,Magma Biodiversity,岩浆生物多样性,10,黑曜石,"2500,5000,7500,10000,12500,15000,17500,20000,22500,25000",bonus,0.25,25%,每档数值,25,%,提高岩浆深渊水母的出现率。
+R21C06,o_skill_shock_frequency,Calmer Waters,平静海域,1,贝壳,1000000000000,bonus,5,500%,每档数值,500,%,使岩浆水母发动攻击的频率下降。
+R21C08,o_skill_jellyfish_value_04,Jellyfish Value IV,水母价值 IV,10,黑曜石,"200,200,200,200,200,200,200,200,200,200",bonus,6.8,680%,每档数值,680,%,提高水母的贝壳售价。
+R21C09,o_skill_movement_speed_10,Light Feet X,凌波微步 X,1,生命药瓶,2,bonus,1,100%,每档数值,100,%,提高移动速度。
+R21C10,o_skill_mushroom_value_rare,Mushroom Master,蘑菇大师,1,贝壳,180000000,bonus,2,200%,每档数值,200,%,进一步增加每个蘑菇资源块的掉落量。
+R21C12,o_skill_pickup_range_02,Collectible Magnet II,触手可及 II,1,水晶,1500,bonus,0.5,50%,每档数值,50,%,扩大掉落物能够被拾取的范围。
+R21C13,o_skill_crystal_increase,Crystal Increase,水晶增生,10,贝壳,"3000,4000,5000,6000,7000,8000,9000,10000,11000,12000",bonus,0.2,20%,每档数值,20,%,提高水晶的出现率。
+R21C19,o_skill_bubble_tank_03,Bubble Tank III,泡泡储罐 III,1,蘑菇,5000,bonus,96,96,每档数值,96,数量,扩大气泡储罐，增加可供弹匣使用的气泡储备。
+R21C21,o_skill_oxygen_regen_amount_02,Oxygen Regen Amount II,氧气恢复量 II,2,贝壳,"100000000,100000000",bonus,750,750,每档数值,750,数量,增加氧气回复量。
+R21C22,o_skill_oxygen_tank_06,Oxygen Tank VI,氧气罐 VI,10,贝壳,"50000000,50000000,50000000,50000000,50000000,50000000,50000000,50000000,50000000,50000000",bonus,5000,5000,每档数值,5000,数量,增加基础氧气量。
+R21C23,o_skill_resource_oxygen,Resource Incentive,资源激励,1,贝壳,200000000000,bonus,500,,永久成长,500,最大氧气/次,每摧毁一个资源块，永久增加最大氧气量。
+R22C06,o_skill_biovalue_amount_01,Biovalue Multiplication I,生物价值倍增 I,1,黑曜石,40000,bonus,1,1,每档数值,1,数量,每收集一只水母，额外获得水母。各阶段增加的只数不同。
+R22C07,o_skill_jellyfish_value_rare_04,Jellyfish Merchant IV,水母商人 IV,1,黑曜石,15000,bonus,118,11800%,每档数值,11800,%,同样的水母卖出后获得更多贝壳。
+R22C09,o_skill_obsidian_value,Obsidian Gatherer,黑曜石收集者,10,贝壳,"40000000000,40000000000,40000000000,40000000000,40000000000,40000000000,40000000000,40000000000,40000000000,40000000000",bonus,0.4,40%,每档数值,40,%,每个黑曜石资源块掉落更多黑曜石。
+R22C19,o_skill_bubble_ultra_reload,Bubble Gun Ultra Reload,泡泡枪极速装填,1,生命药瓶,1,bonus,10,1000%,每档数值,1000,%,进一步提高气泡枪的装填速度。
+R22C22,o_skill_oxygen_regen_speed_02,Oxygen Regen Speed II,氧气恢复速度 II,2,贝壳,"500000000,500000000",bonus,2,200%,每档数值,200,%,提高氧气回复速度。
+R22C23,o_skill_oxygen_tank_07,Oxygen Tank VII,氧气罐 VII,10,贝壳,"4000000000,4000000000,4000000000,4000000000,4000000000,4000000000,4000000000,4000000000,4000000000,4000000000",bonus,10000,10000,每档数值,10000,数量,增加基础氧气量。
+R22C24,o_skill_jellyfish_oxygen,Jellyfish Incentive,水母激励,1,黑曜石,6000,bonus,250,,永久成长,250,最大氧气/次,每收集一只水母，永久增加最大氧气量。
+R23C06,o_skill_biovalue_amount_02,Biovalue Multiplication II,生物价值倍增 II,1,生命药瓶,5,bonus,2,2,每档数值,2,数量,每收集一只水母，额外获得水母。各阶段增加的只数不同。
+R23C07,o_skill_entity_spawn_10,Faster Waters X,急流海域 X,1,贝壳,10000000000000,bonus,7.5,750%,每档数值,750,%,加快水母与资源到达，X 的卡片还写明提高生成速度。
+R23C08,o_skill_obsidian_value_rare,Obsidian Master,黑曜石大师,1,贝壳,5000000000000,bonus,4,400%,每档数值,400,%,进一步增加每个黑曜石资源块的掉落量。
+R23C10,o_skill_pickup_range_03,Collectible Magnet III,触手可及 III,1,蘑菇,4000,bonus,0.75,75%,每档数值,75,%,扩大掉落物能够被拾取的范围。
+R23C11,o_skill_mushroom_increase,Mushroom Increase,蘑菇增生,10,贝壳,"1000000,5000000,10000000,15000000,20000000,25000000,30000000,35000000,40000000,45000000",bonus,0.2,20%,每档数值,20,%,提高蘑菇的出现率。
+R23C21,o_skill_bubble_tank_10,Bubble Tank X,泡泡储罐 X,1,黑曜石,2000,bonus,612,612,每档数值,612,数量,扩大气泡储罐，增加可供弹匣使用的气泡储备。
+R23C23,o_skill_oxygen_regen_amount_03,Oxygen Regen Amount III,氧气恢复量 III,2,贝壳,"300000000000,300000000000",bonus,2500,2500,每档数值,2500,数量,增加氧气回复量。
+R23C24,o_skill_oxygen_tank_08,Oxygen Tank VIII,氧气罐 VIII,10,贝壳,"800000000000,800000000000,800000000000,800000000000,800000000000,800000000000,800000000000,800000000000,800000000000,800000000000",bonus,80000,80000,每档数值,80000,数量,增加基础氧气量。
+R24C06,o_skill_biovalue_amount_10,Biovalue Multiplication X,生物价值倍增 X,1,生命药瓶,12,bonus,12,12,每档数值,12,数量,每收集一只水母，额外获得水母。各阶段增加的只数不同。
+R24C23,o_skill_oxygen_tank_extra_02,Oxygen Effectiveness II,氧气效率 II,2,贝壳,"6000000000000,6000000000000",bonus,0.75,75%,每档数值,75,%,按百分比提高最大氧气量。
+R24C24,o_skill_oxygen_tank_10,Oxygen Tank X,氧气罐 X,1,生命药瓶,15,bonus,9999999,9999999,每档数值,9999999,数量,增加基础氧气量。
+R24C25,o_skill_oxygen_regen_speed_03,Oxygen Regen Speed III,氧气恢复速度 III,1,生命药瓶,1,bonus,80,8000%,每档数值,8000,%,提高氧气回复速度。
+R25C06,o_skill_obsidian_final,???,???,1,黑曜石,2000000,,,,单档门槛,,,支付对应材料并取得该等级，作为后续连接的条件。此节点的专属购买回调没有属性写入。
+R25C08,o_skill_pickup_range_10,Collectible Magnet X,触手可及 X,1,生命药瓶,1,bonus,99.99,9999%,每档数值,9999,%,扩大掉落物能够被拾取的范围。
+R25C09,o_skill_obsidian_increase,Obsidian Increase,黑曜石增生,10,贝壳,"10000000000,20000000000,30000000000,40000000000,50000000000,60000000000,70000000000,80000000000,90000000000,100000000000",bonus,0.2,20%,每档数值,20,%,提高黑曜石的出现率。
+R25C24,o_skill_crystal_final,???,???,1,水晶,100000,,,,单档门槛,,,支付对应材料并取得该等级，作为后续连接的条件。此节点的专属购买回调没有属性写入。

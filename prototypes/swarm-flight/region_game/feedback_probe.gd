@@ -1,9 +1,11 @@
 extends SceneTree
+const StationEntry = preload("res://region_game/station_entry_probe.gd")
 ## Exercise a new-profile field trip by viewport keyboard input. The later
 ## boundary cases explicitly seed cargo in an isolated developer fixture.
 const Game = preload("res://region_game/main.tscn")
 var game
 var held := {}
+var cues: Array[String] = []
 var checks := 0
 var output := ""
 var broken := false
@@ -36,6 +38,7 @@ func tap(code: Key) -> void:
 	await frames(2)
 	key(code,false)
 	await frames(2)
+	await StationEntry.settle(game)
 
 func fly(at: Vector2) -> bool:
 	for i in 720:
@@ -64,6 +67,7 @@ func run() -> void:
 	if not output.is_empty(): DirAccess.make_dir_recursive_absolute(output)
 	game = Game.instantiate()
 	root.add_child(game)
+	game.sound.event_played.connect(func(cue: String): cues.append(cue))
 	await frames(8)
 	await tap(KEY_ENTER)
 	await tap(KEY_E)
@@ -89,6 +93,7 @@ func run() -> void:
 	if not check(game.model.cargo_total()==1,"one actual picked nectar"): return
 	await frames(10)
 	capture("harvest-drop")
+	if not check(cues.count("harvest")==1, "one confirmed nectar makes one drop sound"): return
 	if not check(game.world.nectar_motes.size()==1,"one corresponding droplet"): return
 	if not await fly(entry): return
 	await tap(KEY_E)
@@ -183,8 +188,14 @@ func run() -> void:
 	var full_count:=0
 	for event in game.event_log:
 		if event.kind=="full": full_count+=1
+	if not check(cues.count("full")==1 and cues.count("harvest")==2, "two simultaneous drops share a pickup sound and close the bag once"): return
 	if not check(full_count==1,"full cue fires once while bag stays full"): return
 	game.queue_free()
 	await frames(3)
+	# The audio driver drains on wall time even under fixed simulation frames.
+	var drain_until := Time.get_ticks_msec() + 350
+	while Time.get_ticks_msec() < drain_until:
+		OS.delay_msec(10)
+		await process_frame
 	print("Feedback route and transaction checks: ",checks," passed")
 	quit(0)

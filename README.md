@@ -1,4 +1,6 @@
-# 一会儿巢里见 · See You at the Hive（当前实现品牌，产品名重评中）
+# Honey 与早期游戏原型
+
+**Honey · 当前首作。** 这是一款休闲单机游戏。玩家在池岸取蜜、接绒、与占花生物争出手的空档，再花收获改变下一趟的飞法。开发期间仅 Alan 可自行体验，本轮按规则与模型核验，Demo 上线后收集玩家反馈。四季、二十四节气和冬季专属玩法留作可能的后作方向。0.32 的池岸接绒和紫花地取脂已有实机回执，新交互处于设计阶段。[首作范围](docs/design/swarm-flight-gdd.md#lean-nectar-first-game) · [当前执行位置](docs/design/solar-term-campaign-production-spec.md#production-now) · [0.32 实机回执](docs/production/region-greybox-receipt.md#field-ecology-032)
 
 **2026-11-23 · 采集花园 0.31.0。** 池岸与紫花地已按庭院画风重绘，可从原本的庭院灯球出发。池岸沿水光与芦穗找到材料湾，紫花地穿过树根拱口取树脂。[两版同机位实机对照](docs/production/evidence/collection-fields-031/comparison.jpg) · [Mac 试玩与验证](docs/production/region-greybox-receipt.md#painted-fields-031)。
 
@@ -20,7 +22,7 @@
 
 **2026-11-01 · 池岸归途0.18.0候选收口快照。** Alan对0.17.0“元素堆在一起、没有设计和节奏”判0分，整体产品评审失败。授权重编已形成冻结运行版本`75b6bda6142a36e4daa973c5f38d29e8c7f3e4b0`：从池边出发、选路穿雨、帮助邻居到回巢，完整主线已取得同版技术验证及独立AI无攻略探索证据，可选行动另按实际验证范围记录。最终包已完成双入口启动、保存、退出、冷续与存档隔离复验，可交整体产品判断；PR #263的集成收口由主任务完成，远端状态以原Issue回读为准。候选不等于Alan接受或MVP已修好。[本轮设计与证据边界](docs/design/swarm-flight-gdd.md#pond-journey-finish-plan) · [试玩与保存说明](prototypes/swarm-flight/README.md)。
 
-**当前产品边界。** 目标仍为24关；新池岸归途使用独立存档，原0.17包、旧档与获认可长关保留。独立AI探索已完成结尾，但不是真人试玩或趣味验收；历史82个源用途、7组组合的限定门禁也不能代签新版整段产品质量。累计成本、可靠剩余与完整内容产能仍未知，200＋40小时控制和10月29日检查点不重置，自动化暂停。动态下一动作只看[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)，产品/成本判断见[成熟度评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。以下“最新/当前”仅指各自历史日期。
+**2026-11-01 飞行战役范围快照。** 当时目标为24关；新池岸归途使用独立存档，原0.17包、旧档与获认可长关保留。独立AI探索已完成结尾，但不是真人试玩或趣味验收；历史82个源用途、7组组合的限定门禁也不能代签新版整段产品质量。累计成本、可靠剩余与完整内容产能仍未知，200＋40小时控制和10月29日检查点不重置，自动化暂停。动态下一动作只看[唯一Now](docs/design/solar-term-campaign-production-spec.md#production-now)，产品/成本判断见[成熟度评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)，目标与结果以[GitHub里程碑](https://github.com/alanthssss/nameless-becoming/milestones)为准。以下“最新/当前”仅指各自历史日期。
 
 **2026-10-26 最新可玩：07→08样板0.14.0。** 两个07中后段改为借风开叶门及低廊中的再运用，保持路线长度和08顺畅节奏；旧16关仍保留。完整包位于`outputs/swarm-flight/2026-10-26-seven-action-development/试玩包/`，双击`开始试玩.command`。[本批决定与待验证项 SF-R40](docs/design/swarm-flight-game-20261020.md#seven-action-development-20261026) · [当前试玩说明](prototypes/swarm-flight/README.md)。以下旧版记录保留历史语境。
 
@@ -28,12 +30,13 @@
 
 **范围与制作责任：** 0.9.3保留补给纠正、冬季材质与统一美术，证据见outputs/swarm-flight/2026-10-23-winter-plants/build-receipt.json。本轮只交设计与生产交接。扩容不重置200＋40小时控制、历史投入和旧问题；原Beta／RC／有条件发售日期须按新范围重估，10月29日仍作为样板／范围／产能检查点。[商业范围更新](docs/design/commercial-product-requirements.md#finished-journey-scope)。
 
-一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
+**旧飞行战役定位。** 一款以蜜蜂生态、四季邻里劳动和二十四节气为背景的温暖单机 2D 飞行动作冒险；轻剧情与轻环境解谜负责情境，路线、时机、载荷和协作负责主要游玩。不做攻击击杀或硬核战斗 ARPG。目前处于**商业游戏制作中**，不是可售卖成品。
 
 **2026-08-31 评审更正：** 轻松、轻量不等于内容少或总时长短。撤回“与原规模冲突”及默认十二段／3～5 小时建议；原 360 事件／72 状态／18～24 小时制作目标和既有验证门禁继续有效，不代表内容已完成或成本已验证。主动操作、自动劳动与故事按共享事件讨论组合，不强制按类型二选一。具体依据、成本取样、Demo 与购买验证见[商业成品要求第 0 节](docs/design/commercial-product-requirements.md#0-2026-08-31--轻量故事与商业范围重新收束)；下方实现记录保留各自时点。
 
 后续游戏工作评审入口：[Alan 雨水试玩经验 R01–R13](docs/design/commercial-product-requirements.md#rain-playtest-review)，覆盖可读性、真实任务机会、资源语义、互助回应及验证入口；按适用项复核，不将修改完成等同玩家认可。
 
+- [Honey 通用界面 Mac 试玩与实机回执](docs/production/region-greybox-receipt.md#general-menu-review-447) · [定稿图册](docs/production/evidence/field-notes-447/menu-study/Honey-通用界面审阅.pdf)。标题和暂停共用菜单，野外操作签随当前按键、采集目标和回庭方向变化。
 - [池岸与紫花地制作回执](docs/production/region-greybox-receipt.md)：无天气采集地图、资源生命周期、0.29两区循环，以及11月11日庭院虚实／陈列辅色／可点击提示／HUD画风修订的原生证据。
 
 ## 本轮整体试玩：雨水 · 把路走熟
@@ -71,6 +74,8 @@ macOS 可双击 `scripts/play_rain_route.command`；其它环境设置 `GODOT_BI
 [核心规则、30 项细节矩阵与当前执行状态](docs/design/solar-term-campaign-production-spec.md#011-2026-09-09-核心循环实验与矩阵细化)。旧单屏版本被 Alan 否定后，已改为 3600×2100 连续地图、跟随镜头、线条平涂场景、完整蜜蜂朝向、区域降雨与叶下遮蔽。两条路线、水面自由飞越、载荷与建台使用真实规则；叶棚在蜂上方透明显示避雨，队伍总计六只（主角加五伙伴）；Alan 实玩后反馈“有点感觉了”，当前获得初步方向认可；开发者测试与这条反馈不代表完整产品验收。雨水现按 **三候 × 五天，共十五个游戏日** 推进，每天有可操作的工作：认路、建台、授粉、过叶尖滴水、清沟、叶台歇脚、撑叶护送和带队等。世界成果跨日保留，记事在当日实际完成后记录原雨水事件编号；这是原矩阵在新地图上的玩法转译，未宣称逐项复刻全部旧细节。独立日历存档与正式 Campaign 隔离，后者的章节入口尚未替换。10 月 19 日起上述脚本切到新的章节评审存档；旧 `rain_route_calendar_v1.json` 保留。
 
 ## 旧 Campaign：仍供商业标题与正式导出使用
+
+此原型曾使用「一会儿巢里见 · See You at the Hive」作为实现品牌。
 
 以下记录属于旧 Campaign 路径，其中“30 条／其余 330 条”不描述上方新四季 360 日的实现数量。新路线尚未接入商业标题与正式导出，下面的旧测试和试玩状态也不代表新版验收。当前评估见[成熟度与生产重量评估](docs/GAME_MATURITY_AND_PRODUCTION_ASSESSMENT.md)。
 
@@ -206,7 +211,7 @@ npm run build
 npm run test
 ```
 
-自动 CI 统一由 **Quality gates** 接收 PR 与 `main` push，并根据 `scripts/classify_ci_changes.sh` 选择 Web、旧 Godot、导出或三个独立原型；普通说明文档只做轻量检查，被测试读取的 README／美术材料运行快速 Node 合同检查。CI 入口／分类器／总门禁改动、未知路径、缺失历史、手动完整运行和 merge queue 请求会扩大验证；不会把 CI 自身改动直接跳过。总门禁只接受已选任务成功和明确未选任务跳过。PR 新版本可取消旧检查，主线不同提交各自完成，防止后续文档提交取消尚未完成的代码验证。详细事件、输入映射、编辑 PR 的重跑取舍及证据见[CI 触发合同](docs/CI_PERFORMANCE_2026-11-01.md#trigger-contract)。
+自动 CI 统一由 **Quality gates** 接收 PR 与 `main` push，并根据 `scripts/classify_ci_changes.sh` 选择 Web、旧 Godot、导出或三个独立原型；普通说明文档只做轻量检查，被测试读取的 README／美术材料运行快速 Node 合同检查。CI 入口／分类器／总门禁改动、未知路径、缺失历史、手动完整运行和 merge queue 请求会扩大验证；不会把 CI 自身改动直接跳过。总门禁只接受已选任务成功和明确未选任务跳过。PR 新版本可取消旧检查，主线不同提交各自完成，防止后续文档提交取消尚未完成的代码验证。讨论图、验收截图与简谱走轻量检查；区域脚本及仅由区域使用的原稿、纹理与音乐走区域回归。具体触发条件和审查重点见[按改动选择检查](docs/CI_PERFORMANCE_2026-11-01.md#review-scope)。多个 PR 同步主线时，可按[测试输入与上次成功凭证](docs/CI_PERFORMANCE_2026-11-01.md#main-sync-reuse)复用独立原型、Web、主 Godot 和干净 Web 导出的验证结果。
 
 桌面候选包可在 GitHub 的 **Actions → Desktop client builds → Run workflow** 手动生成。`release_tag` 必须与 `package.json` 版本一致；流水线校验 Godot 编辑器与模板、运行测试、导出 macOS／Windows 并附带 SHA-256。默认只生成保留期有限的 artifacts，只有明确选择 `publish_prerelease` 才创建预发布版本。
 
@@ -233,7 +238,7 @@ npm run test
 按用途读取，避免把历史方案误当当前决定：
 
 - [采蜜小店抽象成长树MVP定稿与扩展方向](docs/design/nectar-growth-tree-mvp.md)：NH-GT-v1，9个付费显示节点/12次升级、前置与阶段收束、界面/旧档兼容及分步扩展；设计定稿待实施，0.19候选保持原规则。
-- [Swarm Flight CI 耗时分析与并行验证](docs/CI_PERFORMANCE_2026-11-01.md)：真实步骤耗时、保留全部回归的三组并行方案与远端验证入口。
+- [Swarm Flight CI 耗时分析与并行验证](docs/CI_PERFORMANCE_2026-11-01.md)：实际步骤耗时、按改动选择测试组的规则与远端验证入口。
 - [完整GDD元素总目录](docs/design/swarm-flight-element-catalog.md)：全作需求来源、元素族、必要状态与GitHub覆盖；族级起点不等于资产完成。
 - [《雨来之前》开发范式：稳定元素，再组合完整体验](docs/design/swarm-flight-production-paradigm.md)：**后续制作执行入口**；P0–P5阶段、G0–G5门禁、元素规范、十分钟工作段与交接，实际进度只见原Now。
 
@@ -288,6 +293,7 @@ npm run test
 
 ### Steam Demo 深化资料（SD-v1）
 
+- [《龟龟潜海记》技能树与 Honey 0.32 对照](docs/research/shelldiver-skill-tree-study.md)（正式版位置图与购买证据、GX 逐级价表、池岸同预算路线实验）。
 - [Shelldiver 系统研究与数值对照](docs/research/shelldiver-systems-deep-dive.md)（来源/推导/未知分列）。
 - [Shelldiver 完整实机研究：覆盖与续接记录](docs/research/shelldiver-fullplay-checkpoint.md)（10%额度检查点暂停、未完成；已保存[86张实机图证清单](docs/research/shelldiver-S11-captures.json)，含[地图/美术/交互研究方法与媒体归档](docs/research/shelldiver-fullplay-checkpoint.md#study-method)、实际时码和缺口）。
 - [Shelldiver 11月5日增量报告](docs/research/shelldiver-increment-2026-11-05.md)（第三趟购买、跨趟库存、400/500/700/800/1000米局部地图、经营便利和终局；新增61张图证，设计采用待Alan评议）。

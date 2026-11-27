@@ -5,9 +5,13 @@ const LegacyV4 = preload("res://nectar_legacy_model_v4.gd")
 const Encounters = preload("res://nectar_encounters.gd")
 const Map = preload("res://nectar_map.gd")
 const Canopy = preload("res://leaf_canopy_geometry.gd")
+# Lower limits for the first five portraits; the final portrait includes zero.
+const ENERGY_STAGE_LIMITS := [5.0/6.0,2.0/3.0,.5,.25,.125]
 const RAIN_SHELTER := {"pos":Vector2(2760,660),"half_width":160.0}
 const WORLD_WIDTH := 3600.0
 const HUB_SHOP := Vector2(360,520)
+# Shelf and counter bounds on the 1280 × 800 courtyard painting, including the side posts.
+const HUB_SHOP_STALL := Rect2(174,292,292,242)
 const HUB_TREE := Vector2(740,485)
 const HUB_JOURNAL := Vector2(1110,440) # Historical probe identifier; no station interaction.
 const HUB_DEPART := Vector2(1015,490)
@@ -78,6 +82,14 @@ func emit(kind: String,where: Vector2,amount := 0) -> void:
 	events.append({"kind":kind,"pos":where,"amount":amount})
 
 func at_home() -> bool: return area == "hub"
+func energy_is_low() -> bool: return not at_home() and energy <= max_energy() * 0.25
+
+func energy_stage() -> int:
+	var capacity := max_energy()
+	for i in ENERGY_STAGE_LIMITS.size():
+		if energy > capacity*float(ENERGY_STAGE_LIMITS[i]): return i
+	return ENERGY_STAGE_LIMITS.size()
+
 func cargo_total() -> int: return int(cargo.blue)+int(cargo.rose)
 func cargo_value() -> int:
 	var base := int(cargo.blue)+int(cargo.rose)*3
@@ -115,9 +127,11 @@ func upgrade(id: String) -> Dictionary:
 func growth_count() -> int:
 	return _growth_count(owned)
 
+const MEADOW_GROWTH_RANKS := ["gather1","gather2","bag1","bag2","wings1","wings2","reach","twin"]
+
 static func _growth_count(ids: Array) -> int:
 	var count := 0
-	for id in ["gather1","gather2","bag1","bag2","wings1","wings2","reach","twin"]:
+	for id in MEADOW_GROWTH_RANKS:
 		if id in ids: count += 1
 	return count
 
@@ -176,7 +190,8 @@ func clear_controls() -> void:
 
 func interaction() -> String:
 	if area == "hub":
-		for point in [{"p":HUB_SHOP,"action":"shop"},{"p":HUB_TREE,"action":"tree"},{"p":HUB_DEPART,"action":"depart"}]:
+		if HUB_SHOP_STALL.has_point(p) or p.distance_to(HUB_SHOP) <= 100.0: return "shop"
+		for point in [{"p":HUB_TREE,"action":"tree"},{"p":HUB_DEPART,"action":"depart"}]:
 			if p.distance_to(point.p) <= 100.0: return point.action
 	elif area == "pond":
 		if p.distance_to(POND_ENTRY) <= 70.0: return "home"

@@ -1,0 +1,57 @@
+node,research_category,observed_node_rank_or_state,current_display_value,next_display_value,displayed_measure,cost_unit,cost_quantity,approx_source_link,reference_frame,sha256
+Submarine,出航,未购,,,可出航,无,0,https://www.youtube.com/watch?v=S7EaREatF4w&t=27s,opening-world_016.jpg,df6295703feddbe19e42855f77fa20ffc53be9459eec33ef406dfe07495024ad
+Plasma Damage I,采集工具,0/10,0,15,激光伤害总加成%,贝壳,15,https://www.youtube.com/watch?v=S7EaREatF4w&t=262s,trip3seq_001.jpg,d738a7970bdda2b928c2422cd67e67fd718dd53303d11c7853c13affe4c8aada
+Bubble Damage I,捕捉,1/10,5,10,气泡伤害总加成%,贝壳,5,https://www.youtube.com/watch?v=S7EaREatF4w&t=264s,trip3seq_003.jpg,e773a64db23ba48dd5f1f1ca3861ebced1ae41ca0310a5bcdf83019fdcf2d92f
+Bubble Damage I,捕捉,3/10,15,20,气泡伤害总加成%,贝壳,5,https://www.youtube.com/watch?v=S7EaREatF4w&t=284s,trip3seq_027.jpg,d2b29d934a27506c5c7fe9fc254aee6cbb10f5afadf9606c7618bace7e161a37
+Jellyfish Value I,商品,0/10,0,20,商品售价总加成%,棕齿轮,5,https://www.youtube.com/watch?v=S7EaREatF4w&t=265s,trip3seq_005.jpg,ef794797b0a06dba6fcb75e9d9fe3b72c05a17f296d2d80c79c9e337efc99153
+Oxygen Tank I,续航,0/10,100,110,基础氧气,贝壳,5,https://www.youtube.com/watch?v=S7EaREatF4w&t=270s,trip3seq_010.jpg,302eb1e37a0d7b90143fc13a3f3ef2b02dbbedf31b47bb80f53095b6d0674f80
+Oxygen Tank I,续航,1/10,110,120,基础氧气,贝壳,5,https://www.youtube.com/watch?v=S7EaREatF4w&t=270s,trip3seq_011.jpg,b14a1a2a8639a27378bed213fdfafb76519c2057c0f9c4acafd4b2b9bce33236
+Oxygen Tank I,续航,2/10,120,130,基础氧气,贝壳,5,https://www.youtube.com/watch?v=S7EaREatF4w&t=273s,trip3seq_014.jpg,6fedc5d307982cade62cfa91b4f18f6215d7e3aa6df3b8386e391f83b513554d
+Shellpack Slots I,随身/存储,未购,1,2,随身格,贝壳,10,https://www.youtube.com/watch?v=S7EaREatF4w&t=277s,trip3seq_019.jpg,741f7159348a67037fea74fc1595d5a33e4fcfda19dace594f21c00e5b6ca140
+Store Slots I,经营,未购,1,2,货架格,棕齿轮,20,https://www.youtube.com/watch?v=S7EaREatF4w&t=280s,trip3seq_022.jpg,5bba9499fde448af03758cf304ce915b274f523a87863473994fddf87b92d66e
+Bubble Damage III,捕捉,0/10,300,380,气泡伤害总加成%,红材料,10,https://www.youtube.com/watch?v=S7EaREatF4w&t=1754s,ice-origin_001.jpg,9b0a3797b040f03d8144d58d516f6334b0f6efb0ee54f371456fe7879a6d58e5
+Plasma Attack Speed I,采集工具,1/3,10,20,激光攻速总加成%,贝壳,3000,https://www.youtube.com/watch?v=S7EaREatF4w&t=1761s,ice-origin_006.jpg,b614a64f9dabaa059e3ca00fed8900fe2d43a33a8bf8c9dc88ee7ab7197a4fa2
+Plasma Attack Speed I,采集工具,2/3,20,30,激光攻速总加成%,贝壳,3000,https://www.youtube.com/watch?v=S7EaREatF4w&t=1764s,ice-origin_008.jpg,49b4aaa5132efb4d8ccd4ceaa552c1e51cf550b6add63db67c45b1e8332b6dc9
+Plasma Chain Damage I,采集工具,3/5,120,160,连锁伤害总加成%,贝壳,1500,https://www.youtube.com/watch?v=S7EaREatF4w&t=1766s,ice-origin_009.jpg,ba846fcddf4eeda9f9bb37e63b469475012a9b065cb96ce614c07d60723a01e0
+Plasma Overflow I,采集工具,1/4,10,20,触发概率%,贝壳,100000,https://www.youtube.com/watch?v=S7EaREatF4w&t=3253s,deep-ice_000.jpg,feec14a5b32fecfc6b37c36517ccfecad554c64ab2847cd083e4c9f825c6f7ac
+Plasma Overflow I,采集工具,2/4,20,30,触发概率%,贝壳,1000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=3253s,deep-ice_001.jpg,f53a2b88dabec703902225f52776f5b47ca30672a36513f82ca05b70b3ff0d6d
+Plasma Damage IV,采集工具,0/10,1150,1650,激光伤害总加成%,贝壳,100000,https://www.youtube.com/watch?v=S7EaREatF4w&t=3255s,deep-ice_002.jpg,f2704ee153a729f1796165245a370ad5f996f3ecc9d1662ed6fadfd628118ac7
+Bubble Strike I,捕捉,0/4,0,0.5,首发额外伤害乘数,红材料,1000,https://www.youtube.com/watch?v=S7EaREatF4w&t=3259s,deep-ice_005.jpg,f2bec07d726e5da46a50537267d171003ef007ce07f1090eb4e5714132907f2e
+Bubble Damage IV,捕捉,2/10,2300,2900,气泡伤害总加成%,红材料,1000,https://www.youtube.com/watch?v=S7EaREatF4w&t=3260s,deep-ice_006.jpg,5a253940d3e53400f2aca91b88af073742428a4651bf5fcee5ec5d62055e1cee
+Doppel Bubble II,捕捉,0/3,40,60,开枪额外气泡概率%,红材料,1250,https://www.youtube.com/watch?v=S7EaREatF4w&t=3264s,deep-ice_009.jpg,68837d46a34c044e5cbe320676bfee4455aa50fb3c87df595032042249e2508d
+Doppel Bubble II,捕捉,1/3,60,80,开枪额外气泡概率%,红材料,1250,https://www.youtube.com/watch?v=S7EaREatF4w&t=3267s,deep-ice_011.jpg,1aeec0f9ab6dbfc51062febdd14190780d7ef83641e53f980c3bfd3b911cef61
+Starfish Friend I,伙伴/供给,0/2,0,1,海星只数,红材料,5000,https://www.youtube.com/watch?v=S7EaREatF4w&t=3268s,deep-ice_012.jpg,9a0229a1681b21c5517670471d1d76879e2b85507d7f67faff00473374ac3748
+Collectible Magnet II,随身/存储,未购,25,75,拾取范围总加成%,红材料,1500,https://www.youtube.com/watch?v=S7EaREatF4w&t=3274s,deep-ice_016.jpg,30f13d3d79f9f00d7e7a66b905c9aa0f5ac2e346766b85b94896f1cb575cc48a
+Oxygen Tank V,续航,8/10,12920,13760,基础氧气,贝壳,1000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5461s,swamp-depth-card_001.jpg,ccf36e94c00e43b39f2ead93dd5b47660a87d0080a3e40a45544bbbabaf93dd0
+Oxygen Effectiveness I,续航,3/5,30,40,氧气上限总加成%,贝壳,16000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5936s,store-mid_027.jpg,460f21e89b24e6b03028f11af147c177032bb611167ab634a497950c387a280b
+Oxygen Tank VI,续航,0/10,14600,19600,基础氧气,贝壳,50000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5464s,swamp-depth-card_003.jpg,4ce64c82bd75791a3a91130372b4fe0fb07c30d02be1d177a1da66661416ef3d
+Mushroom Gatherer,伙伴/供给,0/10,0,35,蘑菇产量总加成%,贝壳,3000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5470s,swamp-depth-card_008.jpg,126e6776d763378b34f857f25e34df4bed0922f1cdaa2d0e9e61965b88070dd5
+Jellyfish Value III,商品,3/10,2320,2560,商品售价总加成%,浅蓝材料,50,https://www.youtube.com/watch?v=S7EaREatF4w&t=5471s,swamp-depth-card_009.jpg,9118a0f5486fb6ac4e233373979f3a327dfbf038ebcd713a0baf169e7dcef4a5
+Jellyfish Value III,商品,9/10,3760,4000,商品售价总加成%,浅蓝材料,50,https://www.youtube.com/watch?v=S7EaREatF4w&t=5472s,swamp-depth-card_010.jpg,cf29ff6e2f122909d141be73d5db057a41947611a0516ffc2375fc5ad00d3dbb
+Store Speed VI,经营,0/4,689600,1189600,售卖速度总加成%,浅蓝材料,3000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5917s,store-mid_010.jpg,9e2f03e35d5b3746ee2bcdb8ae2d3e8b388d5ca4446f375bd3cc9db2d3500ca6
+Store Speed VI,经营,3/4,2189600,2689600,售卖速度总加成%,浅蓝材料,3000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5918s,store-mid_011.jpg,8567a0625bc25058ae554c6175fac344278546348a74b782d66cb597fcd5f218
+Store Upsell,经营,未购,0,10,额外卖一只的概率%,浅蓝材料,1400,https://www.youtube.com/watch?v=S7EaREatF4w&t=5914s,store-mid_007.jpg,f3dc971d03946f74d52a2d75ba843bb26ee5d5b53579b7d28075faefa791a0a7
+Store Slots III,经营,未购,4,6,货架格,浅蓝材料,3000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5919s,store-mid_012.jpg,5d62c403edd89d20a4b75bbf5f93cd23e2f728dbec8900df289fe80577d76ad6
+Plasma Lightning Chance I,采集工具,1/4,5,10,激光闪电概率%,贝壳,250000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5921s,store-mid_014.jpg,6180955b80d117a6c9290b0934731a09ab1d9cdc6be344b53c5c543f44c085bf
+Plasma Overflow Damage I,采集工具,未购,0,2500,激光溢出伤害总加成%,贝壳,150000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5927s,store-mid_019.jpg,b2e455c4a3436f6c7c0a794621ddb3a348b13dc48132d6b42615fbb1426cc2ff
+Plasma Chain III,采集工具,未购,3,6,激光连锁目标数,贝壳,250000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5926s,store-mid_018.jpg,7a2faaaa88167c453478a2c5e0ac6639af4fc673fff1c35f732c56e41f97c2b6
+Plasma Attack Speed II,采集工具,0/5,30,45,激光攻速总加成%,贝壳,80000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5929s,store-mid_021.jpg,a4346d9e79a49d3d8b6b4b9f9f7c030dd064fdeca11792d9f545cf64ffbac60b
+Plasma Attack Speed II,采集工具,1/5,45,60,激光攻速总加成%,贝壳,80000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=5934s,store-mid_025.jpg,3f2af12f1bef5bd35400141c3d140c3ecc3f778e875606da85def46a2185d8f3
+Bubble Capacity II,捕捉,未购,18,27,气泡枪弹夹,浅蓝材料,1500,https://www.youtube.com/watch?v=S7EaREatF4w&t=5938s,store-mid_029.jpg,14925a44498928ac25ab5426c96af7bc59eb0793176a1bdb2f9bdfb6503086bf
+Jellyfish Value IV,商品,0/10,6400,7080,商品售价总加成%,紫材料,200,https://www.youtube.com/watch?v=S7EaREatF4w&t=7263s,convenience-tree_016.jpg,176ef53e3c18e1e25519334fcc9876116529f281361942b382af42ef79770266
+Jellyfish Value IV,商品,1/10,7080,7760,商品售价总加成%,紫材料,200,https://www.youtube.com/watch?v=S7EaREatF4w&t=7267s,convenience-tree_019.jpg,c0ecdf1cd39f234a4a94e6b74a62fc6d6110895ff1888ba64969dc6cb3727f04
+Shellpack Slots V,随身/存储,未购,9,12,随身格,贝壳,10000000000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=7272s,convenience-tree_023.jpg,24ed13eeb686407bd9168b5363eb5269b7a02dc232ebf396b5d9a613622c78c0
+Storage Slots II,随身/存储,未购,8,12,仓储格,贝壳,10000000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=7273s,convenience-tree_024.jpg,87afc7dd7e689afcf64a811c05fb0b1499197987af2dac55b83e107ad866aa99
+Alchemy Station,经营,未购,,,炼金设施,贝壳,1000000000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=7275s,convenience-tree_025.jpg,414c81b126a23d368773ca2716295c65509d07a54ffe56a65629cb296c4ecf28
+Plasma Lightning Chance II,采集工具,未购,15,45,激光闪电概率%,贝壳,25000000000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=7278s,convenience-tree_028.jpg,d2353e751e8525be2e3d29ca6d9129525da6536648a1652e9ac4001cd88951ef
+Oxygen Regen Amount III,续航,0/2,1750,4250,氧气恢复量,贝壳,300000000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=8241s,late-village_000.jpg,228cffdee422c65dacfe03e9451a99b7a655b18e6926cd32edee70606bb75255
+Bubble Tank X,捕捉,未购,204,816,气泡储备,紫材料,2000,https://www.youtube.com/watch?v=S7EaREatF4w&t=8242s,late-village_001.jpg,21dfd431e8cf584b48053d2e7d0052e40aca5de60fe5a6d7ca3c0aab650f7d45
+Multibubble Chance,捕捉,0/5,0,4,造成伤害时生成额外气泡的概率%,紫材料,2000,https://www.youtube.com/watch?v=S7EaREatF4w&t=8253s,late-village_009.jpg,473aa31a8a2160aee56cb1fcab4d2cf26c67ba77f54154432001a56faad3f6ce
+Bubble Size II,捕捉,0/2,50,100,气泡大小总加成%,紫材料,2000,https://www.youtube.com/watch?v=S7EaREatF4w&t=8254s,late-village_010.jpg,a58bf2d6beab6a225ab55cfb27a1e4112ddc5b11f2bee4c30bf5e7d7f48369b2
+Bubble Critical Chance I,捕捉,0/10,0,2,暴击概率%,紫材料,2000,https://www.youtube.com/watch?v=S7EaREatF4w&t=8255s,late-village_011.jpg,56a98c3cdc415a60fcdd78c9fe25da9054a03e7f7f038f94d869579c963a6ffd
+Bubble Penetration II,捕捉,0/5,50,110,气泡穿透总加成%,紫材料,5000,https://www.youtube.com/watch?v=S7EaREatF4w&t=8258s,late-village_013.jpg,2fcd91e061f60db565fa9e4e217c956b0f4f90147e5ae606c8370ef2df1a5df2
+Bubble Penetration II,捕捉,1/5,110,170,气泡穿透总加成%,紫材料,5000,https://www.youtube.com/watch?v=S7EaREatF4w&t=9111s,magma-next_037.jpg,6916fcd8f7d32b3ee67ce1e362d49e1d48027b1b3fcd4bb1d83f1846728b3029
+Obsidian Master,伙伴/供给,未购,40,440,黑曜石产量总加成%,贝壳,5000000000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=8259s,late-village_014.jpg,6b103ed659a70cb2ab6f64b73d7f381f4a7be8ac30a2650f4033709023ec11c1
+Extra Smite,捕捉,未购,50,75,气泡smite触发阈值%,紫材料,6500,https://www.youtube.com/watch?v=S7EaREatF4w&t=9107s,magma-next_033.jpg,73703e84fe40d44a7bd1c76ad6f4aed84197ce1fa96ab7d09b187c4559701f77
+Hunter Bubbles I,捕捉,未购,0,10,直接捕获的目标生命阈值%,紫材料,30000,https://www.youtube.com/watch?v=S7EaREatF4w&t=9109s,magma-next_035.jpg,38b01601bd40ba3517d7d5951cced01becdf5513d84dd64116848b0ff39fcfd8
+Hammock Repair,终局,未购,,,吊床修复,贝壳,10000000000000000,https://www.youtube.com/watch?v=S7EaREatF4w&t=11652s,hammock-buy_008.jpg,92dc1953bf2d06fa59e8a7d34fd756b0086bd57b282c3004cdd8e0c6db53604d
