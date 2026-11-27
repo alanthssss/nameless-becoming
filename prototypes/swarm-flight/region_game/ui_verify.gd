@@ -1,5 +1,6 @@
 extends SceneTree
 const StationEntry = preload("res://region_game/station_entry_probe.gd")
+const Stations = preload("res://region_game/courtyard_stations.gd")
 const Scene = preload("res://region_game/main.tscn")
 var game
 var checks := 0
@@ -358,6 +359,7 @@ func check_shop_shelves() -> void:
 	check(game.mode == "shop" and game.ui.sell_button.disabled, "top shelf opens empty shop with E")
 	check(cues.back() == "shop_open" and game.sound._music[2].playing and game.sound.SHOP_MUSIC.loop, "opening the counter starts its own loop with a wood tap")
 	game.close_shop()
+	check(game.world.shop_cat_elapsed == Stations.CAT_SETTLED, "empty visit leaves the cat seated")
 	game.model.cargo.blue = 2
 	game.model.p = Vector2(438,372)
 	game.ui.refresh()
@@ -368,13 +370,32 @@ func check_shop_shelves() -> void:
 	game.save_blocked = true
 	game.sell_cargo()
 	check(cues.is_empty(), "uncommitted delivery stays silent")
+	game.close_shop()
+	check(game.world.shop_cat_elapsed == Stations.CAT_SETTLED, "failed sale cannot trigger a paw tap")
+	game.open_shop()
+	cues.clear()
 	game.save_blocked = false
 	game.sell_cargo()
 	game.sell_cargo()
 	check(cues == ["sell"], "one committed delivery rings once; empty sale stays quiet")
 	check(game.model.coins == 2 and game.model.cargo_total() == 0, "delivery credits carried honey once")
+	await frames(8)
+	check(game.world.shop_cat_elapsed == Stations.CAT_SETTLED, "cat waits while the shop covers the counter")
 	game.close_shop()
 	check(cues.back() == "shop_close","leaving the shop closes the drawer")
+	check(is_zero_approx(game.world.shop_cat_elapsed), "committed sale starts the cat's one-shot on close")
+	await frames(45)
+	var age: float = game.world.shop_cat_elapsed
+	check(Stations.cat_pose(age, false) == 2 and is_zero_approx(Stations.cat_swing(age, false)), "the paw reaches the stone before it swings")
+	await frames(9)
+	age = game.world.shop_cat_elapsed
+	check(Stations.cat_swing(age, false) > 0.0, "cat pushes the stone to its left")
+	check(Stations.cat_pose(age, true) == 2 and is_zero_approx(Stations.cat_swing(age, true)), "reduced motion shows a held touch and a still weight")
+	await frames(120)
+	check(game.world.shop_cat_elapsed == Stations.CAT_SETTLED and Stations.cat_pose(Stations.CAT_SETTLED, false) == 0, "cat sits back down and the weight settles")
+	game.open_shop()
+	game.close_shop()
+	check(game.world.shop_cat_elapsed == Stations.CAT_SETTLED, "reopening after payment does not replay the tap")
 	for point in [Vector2(310,240),Vector2(540,390),Vector2(130,480)]:
 		game.model.p = point
 		game.ui.refresh()
