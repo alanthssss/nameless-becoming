@@ -6,6 +6,9 @@ on:
       - '.github/workflows/honey-windows.yml'
       - 'prototypes/swarm-flight/export_presets.cfg'
       - 'tools/honey_steam_smoke.gd'
+      - 'prototypes/swarm-flight/project.godot'
+      - 'prototypes/swarm-flight/boot.*'
+      - 'prototypes/swarm-flight/region_game/**'
 permissions:
   contents: read
 
@@ -63,7 +66,9 @@ jobs:
           run(editor, "import", "--path", game, "--import")
           run(editor, "export", "--path", game, "--export-release", "Windows Honey Demo", exe)
           native = run(exe, "native", "--verbose", "--quit-after", "45")
-          if "region_game/main.tscn" not in native or "Godot Engine v4.6.2" not in native:
+          # Release exports remap scene paths and can omit the console banner.
+          # These assets belong to the Honey UI reached through the default entry.
+          if not all(asset in native for asset in ("honey-menu-seal.webp", "honey-pages/guide.webp")):
               raise RuntimeError(native[-8000:])
           slots = temp / "honey-slots"
           slots.mkdir()
@@ -72,4 +77,4 @@ jobs:
               if "HONEY_STEAM_SMOKE_OK " + phase not in text:
                   raise RuntimeError(text[-8000:])
           for path in (exe, pck):
-              print(path.name, path.stat().st_size, hashlib.file_digest(path.open("rb"), "sha256").hexdigest())
+              print(path.name, path.stat().st_size, hashlib.sha256(path.read_bytes()).hexdigest())
