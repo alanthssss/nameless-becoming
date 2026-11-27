@@ -10,7 +10,7 @@ import sys
 import tempfile
 
 
-class WhitespaceError(ValueError):
+class RejectedChange(ValueError):
     pass
 
 
@@ -103,8 +103,38 @@ def check(base, head, checkout, *, push=False, get=api):
                 target.write_bytes(blob(item["sha"]))
         result = subprocess.run(["git", "diff", "--no-index", "--check", "old", "new"], cwd=root)
         if result.returncode not in (0, 1):  # --no-index also sets --exit-code for clean differences.
-            raise WhitespaceError("Discussion document whitespace check failed")
+            raise RejectedChange("Discussion document whitespace check failed")
     return True
+
+
+def prior_text_result(event, checkout, current_run, get=api):
+    """Return the last gate's result only when it checked this exact PR comparison."""
+    if (event.get("action") != "edited"
+            or not event.get("changes") or event["changes"].keys() - {"title", "body"}):
+        return None
+    pr = event["pull_request"]
+    head, base = pr["head"], pr["base"]
+    runs = get(f"actions/workflows/quality.yml/runs?event=pull_request&head_sha={head['sha']}&per_page=2")["workflow_runs"]
+    if len(runs) != 2 or runs[0]["id"] != current_run:
+        return None
+    previous = runs[1]
+    if (previous["status"] != "completed" or previous["conclusion"] not in ("success", "failure")
+            or previous["head_sha"] != head["sha"] or previous["head_branch"] != head["ref"]
+            or previous["head_repository"]["full_name"] != head["repo"]["full_name"]):
+        return None
+    run_id, attempt = previous["id"], previous["run_attempt"]
+    result = get(f"actions/runs/{run_id}/attempts/{attempt}/jobs?per_page=100")
+    gates = [job for job in result["jobs"] if job["name"] == "CI required checks"]
+    if result["total_count"] != len(result["jobs"]) or len(gates) != 1:
+        return None
+    gate = gates[0]
+    marker = f"Gate outcome v1 PR {pr['number']} base {base['ref']} {base['sha']} merge {checkout}"
+    if (gate["run_id"] != run_id or gate["run_attempt"] != attempt or gate["head_sha"] != head["sha"]
+            or gate["status"] != "completed" or gate["conclusion"] != previous["conclusion"]
+            or not any(step["name"] == marker and step["conclusion"] == "success" for step in gate["steps"])):
+        return None
+    print(f"PR text edit carries forward the {gate['conclusion']} from run {run_id}.")
+    return gate["conclusion"]
 
 
 def main():
@@ -117,8 +147,14 @@ def main():
         else:
             pr = event["pull_request"]
             base, head = pr["base"]["sha"], pr["head"]["sha"]
-        matched = check(base, head, os.environ["GITHUB_SHA"], push=push)
-    except WhitespaceError as error:
+        checkout = os.environ["GITHUB_SHA"]
+        prior = None
+        if not push and os.environ["GITHUB_RUN_ATTEMPT"] == "1":
+            prior = prior_text_result(event, checkout, int(os.environ["GITHUB_RUN_ID"]))
+        if prior == "failure":
+            raise RejectedChange("The previous gate failed for this same comparison.")
+        matched = prior == "success" or check(base, head, checkout, push=push)
+    except RejectedChange as error:
         print(error, file=sys.stderr)
         matched, success = True, False
     except (OSError, subprocess.SubprocessError, ValueError, TypeError, KeyError) as error:
@@ -129,7 +165,7 @@ def main():
     if not success:
         sys.exit(1)
     if matched:
-        print("Discussion documents passed git diff --check without a repository checkout.")
+        print("Lightweight check completed without a repository checkout.")
 
 
 if __name__ == "__main__":

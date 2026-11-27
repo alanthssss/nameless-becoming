@@ -58,7 +58,7 @@ class DiscussionTests(unittest.TestCase):
         for contents in (b"after  \n", b"after\n\n", b"<<<<<<< HEAD\n"):
             self.note("design/notes.md", b"before\n", contents)
             self.compare["files"][0]["patch"] = ""
-            with self.assertRaises(discussion.WhitespaceError):
+            with self.assertRaises(discussion.RejectedChange):
                 self.verify()
 
     def test_runtime_inputs_mixed_renamed_preview_and_large_comparisons_use_checkout(self):
@@ -83,3 +83,46 @@ class DiscussionTests(unittest.TestCase):
             self.verify()
         self.compare["merge_base_commit"]["sha"] = "d" * 40
         self.assertFalse(self.verify(push=True))
+
+
+class TextEditTests(unittest.TestCase):
+    def setUp(self):
+        self.pr = dict(number=31, head=dict(sha=HEAD, ref="topic", repo={"full_name": "a/game"}),
+                       base=dict(sha=BASE, ref="main"))
+        self.event = dict(action="edited", changes={"body": {}}, pull_request=self.pr)
+        self.prior = dict(status="completed", conclusion="success", head_sha=HEAD, head_branch="topic",
+                          head_repository={"full_name": "a/game"}, id=10, run_attempt=2)
+        self.gate = dict(name="CI required checks", status="completed", conclusion="success", run_id=10,
+                         run_attempt=2, head_sha=HEAD, steps=[dict(
+                             name=f"Gate outcome v1 PR 31 base main {BASE} merge {MERGE}", conclusion="success")])
+        self.jobs = {"jobs": [self.gate], "total_count": 1}
+        self.runs = [{"id": 11}, self.prior]
+        self.data = {f"actions/workflows/quality.yml/runs?event=pull_request&head_sha={HEAD}&per_page=2":
+                     {"workflow_runs": self.runs}, "actions/runs/10/attempts/2/jobs?per_page=100": self.jobs}
+
+    def lookup(self):
+        return discussion.prior_text_result(self.event, MERGE, 11, self.data.__getitem__)
+
+    def test_exact_outcome_is_carried_forward_including_failure(self):
+        self.assertEqual(self.lookup(), "success")
+        self.prior["conclusion"] = self.gate["conclusion"] = "failure"
+        self.assertEqual(self.lookup(), "failure")
+        self.prior["conclusion"] = "cancelled"
+        self.assertIsNone(self.lookup())
+
+    def test_retarget_and_unknown_edits_reclassify(self):
+        for changes in ({}, {"base": {}, "title": {}}, {"other": {}}):
+            self.event["changes"] = changes
+            self.assertIsNone(self.lookup())
+
+    def test_incomplete_or_different_evidence_reclassifies(self):
+        self.assertIsNone(discussion.prior_text_result(self.event, HEAD, 11, self.data.__getitem__))
+        self.assertIsNone(discussion.prior_text_result(self.event, MERGE, 12, self.data.__getitem__))
+        for data, key, value in ((self.prior, "status", "in_progress"), (self.prior, "head_branch", "other"),
+                                 (self.gate, "run_attempt", 1), (self.gate, "head_sha", MERGE),
+                                 (self.gate, "steps", []), (self.jobs, "total_count", 2)):
+            with self.subTest(key=key):
+                old = data[key]
+                data[key] = value
+                self.assertIsNone(self.lookup())
+                data[key] = old

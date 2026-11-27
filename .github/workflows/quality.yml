@@ -2,7 +2,7 @@ name: Quality gates
 
 on:
   pull_request:
-    # Retargeting is an edit too. Text-only edits get no runner or required status.
+    # Keep the protected status current for edits, including retargeting.
     types: [opened, synchronize, reopened, edited]
   push:
     branches: [main]
@@ -13,15 +13,14 @@ on:
 concurrency:
   # New PR commits supersede old PR checks. Main commits are independent:
   # a docs-only push must not cancel tests required by the previous push.
-  group: quality-${{ github.event_name }}-${{ (github.event.action == 'edited' && !github.event.changes.base && (github.event.changes.title || github.event.changes.body)) && github.run_id || github.event.pull_request.number || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: quality-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && (github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)) }}
 
 permissions:
   contents: read
 
 jobs:
   scope:
-    if: github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)
     permissions:
       contents: read
       actions: read
@@ -29,7 +28,7 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
-      discussion: ${{ steps.discussion.outputs.handled }}
+      lightweight: ${{ steps.discussion.outputs.handled }}
       reused: ${{ steps.reuse.outputs.reused }}
       source_run: ${{ steps.reuse.outputs.source_run }}
       tested_tree: ${{ steps.reuse.outputs.tested_tree }}
@@ -43,7 +42,7 @@ jobs:
       garden: ${{ steps.changes.outputs.garden }}
       content: ${{ steps.changes.outputs.content }}
     steps:
-      - name: Check discussion documents without checking out the repository
+      - name: Check previous results or discussion documents without checkout
         id: discussion
         if: github.event_name == 'pull_request' || github.event_name == 'push'
         env:
@@ -263,14 +262,14 @@ jobs:
     uses: ./.github/workflows/garden-puzzles.yml
 
   required:
-    name: ${{ (github.event.action == 'edited' && !github.event.changes.base && (github.event.changes.title || github.event.changes.body)) && 'PR text edit' || 'CI required checks' }}
+    name: CI required checks
     needs: [scope, web, godot, web-candidate, content, swarm, flower, garden]
-    if: ${{ always() && (github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)) }}
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - name: Verify the discussion check succeeded and all suites were skipped
-        if: needs.scope.outputs.discussion == 'true'
+      - name: Verify the lightweight check succeeded and all suites were skipped
+        if: needs.scope.outputs.lightweight == 'true'
         env:
           RESULTS: ${{ toJSON(needs) }}
         run: |
@@ -279,27 +278,31 @@ jobs:
             and (del(.scope) | all(.[]; .result == "skipped"))' <<< "$RESULTS"
 
       - uses: actions/checkout@v4
-        if: needs.scope.outputs.discussion != 'true'
+        if: needs.scope.outputs.lightweight != 'true'
       - name: Require success for every selected check
-        if: needs.scope.outputs.discussion != 'true'
+        if: needs.scope.outputs.lightweight != 'true'
         env:
           CI_NEEDS: ${{ toJSON(needs) }}
         run: python3 -B scripts/check_ci_results.py
 
       # Immutable job metadata identifies the real integrated tree and certified coverage.
       - name: Prototype evidence v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.sha }} tree ${{ needs.scope.outputs.tested_tree }} swarm ${{ needs.scope.outputs.swarm_suite }} flower ${{ needs.scope.outputs.flower }} garden ${{ needs.scope.outputs.garden }}
-        if: ${{ needs.scope.outputs.discussion != 'true' && github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ needs.scope.outputs.lightweight != 'true' && github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
         run: echo "Prototype results verified by the required gate."
 
       - name: Build evidence v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.sha }} tree ${{ needs.scope.outputs.tested_tree }} web ${{ needs.scope.outputs.web }} godot ${{ needs.scope.outputs.godot == 'true' && needs.scope.outputs.godot_suite || 'none' }} export ${{ needs.scope.outputs.export_game }}
-        if: ${{ needs.scope.outputs.discussion != 'true' && github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ needs.scope.outputs.lightweight != 'true' && github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository }}
         run: echo "Web, Godot and clean export coverage verified by the required gate."
+
+      - name: Gate outcome v1 PR ${{ github.event.pull_request.number }} base ${{ github.event.pull_request.base.ref }} ${{ github.event.pull_request.base.sha }} merge ${{ github.sha }}
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        run: echo "Record the exact comparison for subsequent PR text edits."
 
   swarm-gate:
     # Keep the original top-level check name for existing check consumers.
-    name: ${{ (github.event.action == 'edited' && !github.event.changes.base && (github.event.changes.title || github.event.changes.body)) && 'PR text edit (Swarm Flight)' || 'Swarm Flight rules and complete routes' }}
+    name: Swarm Flight rules and complete routes
     needs: [scope, swarm]
-    if: ${{ always() && needs.scope.outputs.discussion != 'true' && (github.event.action != 'edited' || github.event.changes.base || !(github.event.changes.title || github.event.changes.body)) }}
+    if: ${{ always() && needs.scope.outputs.lightweight != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
