@@ -2,7 +2,15 @@
 
 2026-11-09；GDD§8.1/13.9 → M3 → 父[#322](https://github.com/alanthssss/nameless-becoming/issues/322)，实施#338／#339，验证交付#340。Alan授权把两张内部图做成可玩灰盒，先验证空间与出行，不细化美术、不追加研究。设计输入为[两区内部图](../design/pond-violet-interior-maps.md)，源图提交bcf38cc；运行基线ea4db61。
 
-> 最新修订与结果见本文末尾[庭院视觉反馈修订](#courtyard-feedback-20261111)。下文早期版本属于历史证据。
+> 11 月 11 日的[庭院视觉反馈修订](#courtyard-feedback-20261111)保留了当时的版本与实测结果。
+
+## 2026-11-27 · Honey 试玩版完整度
+
+按 11 月 24 日确定的[首作范围](../design/swarm-flight-gdd.md#lean-nectar-first-game)，Codex 判断 Honey 0.32.7 已是相对完整的内部 Mac Demo。玩家能从庭院飞往池岸，采蓝花蜜、振松种穗并接住纤维，趁体力尚有余量回家。卖蜜所得和材料可以用来买成长，例如双簇采蜜让下一趟贴近两朵花时一次收两份。成长也能开放紫花地，增加采紫蜜和贴树皮拉取树脂的去处。买下储粮后有明确的完成页，途中可以保存、退出再继续。
+
+这个判断来自分段实包证据。开发者从新档走过[池岸采售](#field-ecology-032)，紫花地采售用了预先解锁的档。[双花入袋](#per-source-pickup)用了成长档，[储粮收尾与冷启动](#general-menu-review-447)用了后期档。本次另核对最新 Mac 包的 PCK 摘要、本机签名，并用空的隔离档位目录无头启动。Alan 此前已亲手指出双采只报一次的问题。现有记录仍缺这版从新档自然买到成长、重访花湾直至储粮的一段连续实玩。首作轻对抗中的[小蚊争花和余风振穗](../design/pond-violet-map-resource-design.md#nectar-wing-bay)仍属打样提议。
+
+沿[M3 整包检查点](../design/solar-term-campaign-production-spec.md#production-now)，Alan 下次自行开新档时，可以比较买成长前后在同一片花湾如何采蜜，观察自己是否主动换了飞线，还想不想再出门。独立玩家反馈依既定安排在 Demo 上线后收集。发布决定仍由 Alan 作出。此次核对从北京时间 14:41 开始，至 14:43 约两分钟墙钟，覆盖查证、隔离启动和评估，集成另计。新增采购与平台付款为零，主动及计费工时、历史累计和可靠剩余未知。200＋40 小时控制线与 [#211 成本复核](https://github.com/alanthssss/nameless-becoming/issues/211)继续适用。
 
 <a id="per-source-pickup"></a>
 ## 每份花蜜和材料的收获反馈（2026-11-26）
