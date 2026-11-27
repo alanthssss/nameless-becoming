@@ -63,6 +63,8 @@ const MEADOW_LIGHT := [
 ]
 var station_entry := ""
 var station_progress := 0.0
+var shop_cat_elapsed := CourtyardStations.CAT_SETTLED
+var _sale_at_counter := false
 var basin_visitor: Sprite2D
 var _paint_root: Node2D
 var _painted_area := ""
@@ -97,15 +99,25 @@ func _process(delta: float) -> void:
 	if basin_visitor != null:
 		basin_visitor.pose(clock, reduced_motion)
 	if not presentation_active: return
+	if shop_cat_elapsed < CourtyardStations.CAT_SETTLED:
+		if station_entry.is_empty():
+			shop_cat_elapsed = minf(shop_cat_elapsed + delta, CourtyardStations.CAT_SETTLED)
+		else:
+			shop_cat_elapsed = CourtyardStations.CAT_SETTLED
 	_full_glow = maxf(0.0,_full_glow-delta)
 	for mote in _life_motes: mote.age += delta
 	_life_motes = _life_motes.filter(func(m: Dictionary) -> bool: return float(m.age) < float(m.duration))
 	for id in _material_recoil:
 		_material_recoil[id] = maxf(0.0, float(_material_recoil[id]) - delta)
 
+func leave_shop_counter() -> void:
+	shop_cat_elapsed = 0.0 if _sale_at_counter else CourtyardStations.CAT_SETTLED
+	_sale_at_counter = false
+
 func nectar_event(event: Dictionary) -> void:
 	var kind := str(event.get("kind", ""))
 	if area_key == "hub":
+		if kind == "sell": _sale_at_counter = true
 		super.nectar_event(event)
 		return
 	if kind in ["harvest", "material"]:
@@ -330,7 +342,7 @@ func _draw_hub() -> void:
 	var shop_entry := station_entry == "shop"
 	var shop_t := station_progress if shop_entry else 0.0
 	var sheet_t := station_progress if station_entry == "tree" else 0.0
-	CourtyardStations.steelyard(self,shop_t,shop_entry)
+	CourtyardStations.steelyard(self, shop_t, shop_entry, shop_cat_elapsed, reduced_motion)
 	CourtyardStations.sheet(self,model.last_region == "meadow",sheet_t)
 	# The counter's front shelf fills with sealed jars as the player sells.
 	var jars := mini(6,floori(float(model.sold_total)/6))
@@ -344,7 +356,8 @@ func _draw_hub() -> void:
 			CourtyardStations.goods(self,CourtyardStations.JAR,foot-Vector2(0,15),.89)
 			UIArt.icon(self,"reserve",foot+Vector2(0,-13),5)
 		if model.p.distance_to(reserve)<240: _label(reserve+Vector2(0,-61),"蜂巢储备已封好",false,190)
-	_bee(Vector2(421,456),.53,Vector2.LEFT,1,false,1.7,"waiting")
+	var sees_cat := shop_cat_elapsed >= 1.06 and shop_cat_elapsed < CourtyardStations.CAT_SETTLED
+	_bee(Vector2(452,437),.53,Vector2.LEFT if sees_cat else Vector2.RIGHT,1,false,1.7,"waiting")
 	_bee(Vector2(913,473),.49,Vector2.LEFT,1,false,2.9,"waiting")
 	if station_entry.is_empty():
 		_bee_shadow(model.p+Vector2(0,35),Vector2(22,7))

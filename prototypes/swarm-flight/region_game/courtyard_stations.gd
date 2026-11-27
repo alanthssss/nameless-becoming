@@ -1,6 +1,7 @@
 extends RefCounted
 ## Registered to the 1280 × 800 #427 inner-courtyard painting.
 const GOODS: Texture2D = preload("res://art/honey-steelyard-goods.webp")
+const SHOP_CAT: Texture2D = preload("res://art/honey-shop-golden-cat.webp")
 const POND_SHEET: Texture2D = preload("res://art/honey-flight-sheet-pond.webp")
 const MEADOW_SHEET: Texture2D = preload("res://art/honey-flight-sheet-meadow.webp")
 const PIVOT := Vector2(280, 434)
@@ -9,6 +10,10 @@ const SHEET_FRAME := Rect2(640, 347, 280, 127)
 const PAN := Rect2(0, 0, 58, 30)
 const STONE := Rect2(65, 0, 30, 30)
 const STONE_DROP := Vector2(0, 29)
+const HITCH_BASE := Vector2(-1, 8)
+const CAT_FOOT := Vector2(397, 487)
+const CAT_TAP := 0.70
+const CAT_SETTLED := 2.45
 const FIBER := Rect2(104, 0, 30, 29)
 const JAR := Rect2(145, 0, 41, 35)
 
@@ -27,7 +32,29 @@ static func goods(v: Node2D, source: Rect2, center: Vector2, size := 1.0) -> voi
 	var span := source.size * size
 	v.draw_texture_rect_region(GOODS, Rect2(center-span*.5, span), source)
 
-static func _draw_counterweight(v: Node2D, hook: Vector2) -> void:
+static func cat_pose(elapsed: float, reduced: bool) -> int:
+	if elapsed >= CAT_TAP and elapsed < CAT_TAP + (.44 if reduced else .15): return 2
+	if not reduced and ((elapsed >= .43 and elapsed < CAT_TAP) or
+			(elapsed >= CAT_TAP + .15 and elapsed < 1.06)): return 1
+	return 0
+
+static func cat_swing(elapsed: float, reduced: bool) -> float:
+	# Hold contact for two frames at 30 fps before the paw releases the stone.
+	var age := elapsed - (CAT_TAP + .075)
+	if reduced or age <= 0.0 or elapsed >= CAT_SETTLED: return 0.0
+	# A tap from the right pushes the stone left first. Each return is smaller.
+	return .74 * sin(10.0 * age) * exp(-2.45 * age) * (1.0 - smoothstep(1.35, 1.75, age))
+
+static func _draw_shop_cat(v: Node2D, elapsed: float, tracking: float, reduced: bool) -> void:
+	var pose := cat_pose(elapsed, reduced)
+	v._ground_shadow(CAT_FOOT + Vector2(10, 0), Vector2(25, 4), .34)
+	# Keep the paws planted while the head follows the sliding stone.
+	var lean := 0.0 if reduced else .048 * smoothstep(.28, .77, tracking)
+	v.draw_set_transform_matrix(Transform2D(Vector2.RIGHT, Vector2(-lean, 1), CAT_FOOT))
+	v.draw_texture_rect_region(SHOP_CAT, Rect2(-48, -90, 96, 96), Rect2(pose * 96, 0, 96, 96))
+	v.draw_set_transform(Vector2.ZERO)
+
+static func _draw_counterweight(v: Node2D, hook: Vector2, stone: Vector2, swing: float) -> void:
 	const HEMP_SHADE := Color("#705636")
 	const HEMP := Color("#c09b68")
 	const HEMP_LIGHT := Color("#e2c593")
@@ -40,9 +67,10 @@ static func _draw_counterweight(v: Node2D, hook: Vector2) -> void:
 	v.draw_line(Vector2(-2.6,2), Vector2(-2.6,-2), HEMP_LIGHT, 1.1, true)
 	# The same cord disappears into a bore just below the top of the stone.
 	# Draw its return behind the stone, leaving both flanks and the heel bare.
-	v.draw_line(Vector2(-1,8), STONE_DROP + Vector2(1,-10), HEMP_SHADE, 2.8, true)
-	v.draw_line(Vector2(-1.4,8), STONE_DROP + Vector2(.5,-10), HEMP, 1.5, true)
-	v.draw_set_transform(hook + STONE_DROP)
+	v.draw_set_transform(hook + HITCH_BASE, swing)
+	v.draw_line(Vector2.ZERO, STONE_DROP - HITCH_BASE + Vector2(1,-10), HEMP_SHADE, 2.8, true)
+	v.draw_line(Vector2(-.4,0), STONE_DROP - HITCH_BASE + Vector2(.5,-10), HEMP, 1.5, true)
+	v.draw_set_transform(stone, swing)
 	goods(v, STONE, Vector2.ZERO)
 	var eye := Vector2(0,-8)
 	v.draw_arc(eye, 2.4, .05 * PI, .95 * PI, 8, Color("#b6a46d"), 1.1, true)
@@ -53,12 +81,13 @@ static func _draw_counterweight(v: Node2D, hook: Vector2) -> void:
 	v.draw_polyline(end, HEMP, 1.5, true)
 	v.draw_set_transform(Vector2.ZERO)
 
-static func steelyard(v: Node2D, t: float, entering: bool) -> void:
+static func steelyard(v: Node2D, t: float, entering: bool, cat_elapsed: float, reduced: bool) -> void:
 	var angle := inclination(t)
+	var swing := cat_swing(cat_elapsed, reduced)
 	var pan_hook := PIVOT + Vector2(PAN_ARM,0).rotated(angle)
 	var pan := pan_hook + Vector2(0, 41)
 	var weight := weight_hook(t)
-	var stone := weight + STONE_DROP
+	var stone := weight + HITCH_BASE + (STONE_DROP - HITCH_BASE).rotated(swing)
 	v._ground_shadow(pan+Vector2(3,17), Vector2(30,4), .22)
 	v._ground_shadow(stone+Vector2(2,16), Vector2(16,3), .18)
 
@@ -82,7 +111,9 @@ static func steelyard(v: Node2D, t: float, entering: bool) -> void:
 		v.draw_line(pan_hook+Vector2(0,2),rim,Color("ead7ac"),1.2,true)
 	goods(v, PAN, pan)
 	v.draw_line(pan_hook+Vector2(0,3),pan+Vector2(0,4),Color("dbc297"),1.15,true)
-	_draw_counterweight(v, weight)
+	# The beam runs behind the cat. Its hanging weight passes in front of her paws.
+	_draw_shop_cat(v, cat_elapsed, t, reduced)
+	_draw_counterweight(v, weight, stone, swing)
 	if entering:
 		var drop := smoothstep(.09, .36, t)
 		var at := Vector2(234,390).lerp(pan+Vector2(2,-7),drop)
