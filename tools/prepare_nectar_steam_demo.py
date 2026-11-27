@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Prepare a strictly scoped macOS SteamPipe snapshot. Never invokes Steam or signs.
+"""Prepare a single-platform Honey SteamPipe snapshot. Never invokes Steam or signs.
 
-Without confirmed IDs, writes a non-uploadable JSON plan only. With IDs, defaults
+Without IDs, stages local content and a manifest, with no executable VDF. With IDs, defaults
 to a Preview VDF. An upload VDF requires the separate --emit-upload-vdf flag.
 This local tool cannot authenticate ownership or association of supplied IDs.
 """
 import argparse
 import hashlib
 import json
+import mmap
 from pathlib import Path
 import plistlib
 import re
@@ -36,7 +37,7 @@ def positive_id(value):
 
 
 def safe_text(value):
-    value = str(value)
+    value = value.as_posix() if isinstance(value, Path) else str(value)
     if any(ord(c) < 32 or c in '"\\*?[]' for c in value):
         raise ValueError('Unsafe VDF path/text: control, quote, backslash or wildcard')
     return value
@@ -69,7 +70,32 @@ def inventory(root):
     return rows
 
 
-def inspect_build(build_dir, expected_version):
+def inspect_windows(root, expected_version):
+    rows = inventory(root)
+    expected = {'Honey.exe', 'Honey.pck', 'licenses/Godot-LICENSE.txt',
+                'licenses/Godot-COPYRIGHT.txt'}
+    if {row['path'] for row in rows} != expected or any(not row['bytes'] for row in rows):
+        raise ValueError('Windows depot needs Honey.exe, Honey.pck and the two Godot license notices')
+    binary = root / 'Honey.exe'
+    with binary.open('rb') as handle, mmap.mmap(handle.fileno(), 0, access=mmap.ACCESS_READ) as image:
+        pe = int.from_bytes(image[60:64], 'little')
+        if (image[:2] != b'MZ' or image[pe:pe+6] != b'PE\0\0\x64\x86'
+                or image[pe+24:pe+26] != b'\x0b\x02'):
+            raise ValueError('Expected Windows x86-64 PE32+ executable')
+        key = 'ProductVersion\0'.encode('utf-16le')
+        index = image.rfind(key)
+        # The version-resource string value starts on a DWORD boundary.
+        start = (index + len(key) + 3) & ~3
+        version = (expected_version + '.0\0').encode('utf-16le')
+        if index < 0 or image[start:start+len(version)] != version:
+            raise ValueError('Windows product version differs from --expected-version')
+    with (root / 'Honey.pck').open('rb') as handle:
+        if handle.read(4) != b'GDPC':
+            raise ValueError('Expected a Godot resource pack')
+    return root, binary, rows, {'launch_executable': 'Honey.exe'}
+
+
+def inspect_build(build_dir, expected_version, platform='macos'):
     raw = Path(build_dir).expanduser()
     if raw.is_symlink():
         raise ValueError('Build directory must not be a symlink')
@@ -78,6 +104,8 @@ def inspect_build(build_dir, expected_version):
         raise ValueError('Build directory does not exist')
     if not expected_version or not re.fullmatch(r'\d+\.\d+\.\d+', expected_version):
         raise ValueError('--expected-version is required for a build (e.g. the actual export version)')
+    if platform == 'windows':
+        return inspect_windows(root, expected_version)
     children = list(root.iterdir())
     if len(children) != 1 or children[0].suffix != '.app' or not children[0].is_dir():
         raise ValueError('Build directory must contain exactly ONE .app and nothing else; do not use outputs/')
@@ -100,22 +128,25 @@ def inspect_build(build_dir, expected_version):
         raise ValueError('Missing bundle identifier')
     if not any(p.is_file() and p.stat().st_size for p in (app / 'Contents/Resources').glob('*.pck')):
         raise ValueError('Missing nonempty Godot PCK in Contents/Resources')
-    return root, app, rows, info
+    return root, app, rows, {'bundle': app.name, 'bundle_identifier': info['CFBundleIdentifier'],
+                             'launch_executable': binary.relative_to(root).as_posix()}
 
 
-def app_vdf(app_id, depot_id, root, output, version, preview):
+def app_vdf(app_id, depot_id, root, output, version, preview, platform='macos'):
+    label = {'macos': 'macOS', 'windows': 'Windows x64'}[platform]
     return ('"AppBuild"\n{\n'
-            f'  "AppID" "{app_id}"\n  "Desc" "Honey macOS Demo {version}"\n'
+            f'  "AppID" "{app_id}"\n  "Desc" "Honey {label} Demo {version}"\n'
             f'  "ContentRoot" "{safe_text(root)}"\n  "BuildOutput" "{safe_text(output)}"\n'
             f'  "Preview" "{1 if preview else 0}"\n'
-            f'  "Depots"\n  {{\n    "{depot_id}" "depot_macos.vdf"\n  }}\n}}\n')
+            f'  "Depots"\n  {{\n    "{depot_id}" "depot_{platform}.vdf"\n  }}\n}}\n')
 
 
 def depot_vdf(depot_id, rows):
     mappings = []
     for row in rows:
         rel = safe_text(row['path'])
-        destination = Path(rel).parent.as_posix() + '/'
+        parent = Path(rel).parent.as_posix()
+        destination = '.' if parent == '.' else parent + '/'
         mappings.append('  "FileMapping"\n  {\n'
                         f'    "LocalPath" "{rel}"\n    "DepotPath" "{destination}"\n'
                         '    "Recursive" "0"\n  }')
@@ -123,10 +154,12 @@ def depot_vdf(depot_id, rows):
 
 
 def prepare(output, build_dir=None, expected_version=None, app_id=None, depot_id=None,
-            ids_confirmed=False, emit_upload_vdf=False):
+            ids_confirmed=False, emit_upload_vdf=False, platform='macos'):
+    if platform not in {'macos', 'windows'}:
+        raise ValueError('Unknown platform')
     app_id, depot_id = positive_id(app_id), positive_id(depot_id)
     if bool(app_id) != bool(depot_id):
-        raise ValueError('Supply both real Demo AppID and macOS DepotID, or neither')
+        raise ValueError('Supply both real Demo AppID and platform DepotID, or neither')
     if (app_id and not ids_confirmed) or (ids_confirmed and not app_id):
         raise ValueError('--ids-confirmed requires both IDs copied from your Steamworks configuration')
     if emit_upload_vdf and not (app_id and depot_id and ids_confirmed and build_dir):
@@ -139,19 +172,21 @@ def prepare(output, build_dir=None, expected_version=None, app_id=None, depot_id
     out.parent.mkdir(parents=True, exist_ok=True)
     out = out.parent.resolve() / out.name
     safe_text(out)
-    checked = inspect_build(build_dir, expected_version) if build_dir else None
+    checked = inspect_build(build_dir, expected_version, platform) if build_dir else None
     if checked:
         source = checked[0]
         if out == source or out.is_relative_to(source) or source.is_relative_to(out):
             raise ValueError('Output and source build must be separate trees')
-    report = {'schema_version': 1, 'app_id': app_id, 'depot_id': depot_id,
+    report = {'schema_version': 1, 'platform': platform, 'app_id': app_id, 'depot_id': depot_id,
               'id_provenance': 'operator_confirmed_not_authenticated' if app_id else 'missing',
               'version': expected_version, 'upload_vdf_generated': bool(emit_upload_vdf),
               'uploaded': False, 'steam_release_ready': False,
               'signing_verified': False, 'notarization_verified': False,
               'blockers': ['Steam ownership/configuration and branch installation not checked',
-                           'Signing/notarization and Valve review must be verified separately'],
+                           'Valve review must be verified separately'],
               'files': []}
+    if platform == 'macos':
+        report['blockers'].append('Developer ID signing and notarization must be verified separately')
     if not app_id:
         report['blockers'].insert(0, 'No Demo AppID/DepotID: no executable VDF generated')
     with tempfile.TemporaryDirectory(prefix='.nectar-steam-stage-', dir=out.parent) as tmp:
@@ -159,26 +194,23 @@ def prepare(output, build_dir=None, expected_version=None, app_id=None, depot_id
         stage.mkdir()
         if checked:
             content = stage / 'content'
-            content.mkdir()
-            shutil.copytree(checked[1], content / checked[1].name)
+            shutil.copytree(checked[0], content, symlinks=True)
             rows = inventory(content)
             if rows != checked[2]:
                 raise ValueError('Build changed during snapshot; regenerate from a frozen export')
             report['files'] = rows
-            report['bundle'] = checked[1].name
-            report['bundle_identifier'] = checked[3]['CFBundleIdentifier']
-            report['launch_executable'] = f"{checked[1].name}/Contents/MacOS/{checked[3]['CFBundleExecutable']}"
+            report.update(checked[3])
             report['pck_scope_note'] = 'Opaque PCK contents require the existing export/packager evidence gate'
         if app_id:
             scripts = stage / 'scripts'
             scripts.mkdir()
-            (scripts / 'depot_macos.vdf').write_text(depot_vdf(depot_id, report['files']), encoding='utf-8')
+            (scripts / f'depot_{platform}.vdf').write_text(depot_vdf(depot_id, report['files']), encoding='utf-8')
             for filename, preview in [('app_preview.vdf', True)] + ([('app_upload.vdf', False)] if emit_upload_vdf else []):
-                (scripts / filename).write_text(app_vdf(app_id, depot_id, out/'content', out/'steampipe-cache', expected_version, preview), encoding='utf-8')
+                (scripts / filename).write_text(app_vdf(app_id, depot_id, out/'content', out/'steampipe-cache', expected_version, preview, platform), encoding='utf-8')
         else:
             (stage / 'NOT_UPLOADABLE.txt').write_text(
                 'NOT UPLOADABLE / 不可上传\nNo AppBuild or fake IDs are present.\n'
-                'Obtain the actual Demo AppID and its macOS DepotID; provide a clean single-app build directory.\n', encoding='utf-8')
+                'Obtain the actual Demo AppID and its platform DepotID; provide a clean platform build directory.\n', encoding='utf-8')
         (stage / 'manifest.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
         if out.exists():
             raise ValueError('Output appeared during preparation; refusing overwrite')
@@ -193,16 +225,19 @@ def verify(prepared):
     if actual != report['files']:
         raise ValueError('Content differs from frozen manifest (added, removed, modified or permission-changed file)')
     if report['app_id']:
-        expected_names = {'depot_macos.vdf', 'app_preview.vdf'}
+        platform = report.get('platform', 'macos')
+        if platform not in {'macos', 'windows'}:
+            raise ValueError('Unknown platform in manifest')
+        expected_names = {f'depot_{platform}.vdf', 'app_preview.vdf'}
         if report['upload_vdf_generated']:
             expected_names.add('app_upload.vdf')
         if {p.name for p in (root/'scripts').iterdir()} != expected_names:
             raise ValueError('Unexpected build script; do not add upload scripts to a preview snapshot')
         expected = depot_vdf(positive_id(report['depot_id']), actual)
-        if (root/'scripts/depot_macos.vdf').read_text(encoding='utf-8') != expected:
+        if (root/'scripts'/f'depot_{platform}.vdf').read_text(encoding='utf-8') != expected:
             raise ValueError('Depot mapping differs from explicit manifest')
         for filename, preview in [('app_preview.vdf', True)] + ([('app_upload.vdf', False)] if report['upload_vdf_generated'] else []):
-            expected = app_vdf(positive_id(report['app_id']), report['depot_id'], root/'content', root/'steampipe-cache', report['version'], preview)
+            expected = app_vdf(positive_id(report['app_id']), report['depot_id'], root/'content', root/'steampipe-cache', report['version'], preview, platform)
             if (root/'scripts'/filename).read_text(encoding='utf-8') != expected:
                 raise ValueError('App VDF differs from safe generated configuration')
     elif list(root.rglob('*.vdf')):
@@ -213,6 +248,7 @@ def verify(prepared):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--platform', choices=('macos', 'windows'), default='macos')
     parser.add_argument('--build-dir', type=Path)
     parser.add_argument('--expected-version')
     parser.add_argument('--app-id')
@@ -230,7 +266,7 @@ def main():
             if not args.output:
                 parser.error('--output is required')
             result = prepare(args.output, args.build_dir, args.expected_version, args.app_id,
-                             args.depot_id, args.ids_confirmed, args.emit_upload_vdf)
+                             args.depot_id, args.ids_confirmed, args.emit_upload_vdf, args.platform)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except (ValueError, OSError, plistlib.InvalidFileException, KeyError) as exc:
         parser.exit(2, f'Preparation blocked: {exc}\n')

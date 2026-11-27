@@ -342,6 +342,8 @@ Alan 指出蜜蜂本来就天天、时时回蜂巢，把“归巢”抬成专有
 
 <a id="production-now"></a>
 
+**2026-11-27 · Honey 0.32.7 进入 Steam Demo 准备。** Alan 采用现有两区内容，Windows x64 为首批，简体中文界面配中英商店说明，Mac 包独立处理 Developer ID 和公证。沿 M3/[#322](https://github.com/alanthssss/nameless-becoming/issues/322)，下一检查点为在 Alan 的 Windows 电脑上完成一趟采售与冷启动，再以真实 Demo AppID 在 Steam 私有分支安装、更新和读回旧档。Codex 负责本地构建和资料，Alan 负责发行账号与实机。公开日期待后台审核。成本沿 [#211](https://github.com/alanthssss/nameless-becoming/issues/211)。[发行交接与商店材料](../release/nectar-demo-steam-macos.md#steam-readiness-032)
+
 **2026-11-26 · Honey 通用界面实装。** M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿用池岸采蜜、回庭院换取成长的整包检查点。Alan 定稿的标题与暂停菜单、各子页和两地采集提示已进入同一份 [Mac 试玩包与开发自测回执](../production/region-greybox-receipt.md#general-menu-review-447)。Alan 可从新档走一趟，并判断操作提示、储粮与成长的整体验收。野外收获已按实玩反馈修订，双采与材料入袋的[同版试玩与复核](../production/region-greybox-receipt.md#per-source-pickup)沿本次 M3 检查点。成本复核沿 #211。
 
 **2026-11-26 · Honey 暂停页。** M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 沿 [#333](https://github.com/alanthssss/nameless-becoming/issues/333) 接入 Alan 定稿的「花园手记」。在[同版 Mac 试玩](../production/region-greybox-receipt.md#pause-folio-333)中，Alan 可从庭院和花地暂停，对照书页可读性与返回出行的手感。首作的池岸成长检查点仍沿同一父项推进。
