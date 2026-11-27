@@ -140,6 +140,15 @@ Alan 在 [#445 美术盘点](https://github.com/alanthssss/nameless-becoming/pul
 
 **成本与下一检查点。** 北京时间 03:37–03:48 的墙钟覆盖工作树接续、实装、独立验证、导出、接入新改键表和复测，包含并行工作与工具等待。未新增采购。历史主动投入、计费分摊、累计和可靠剩余工时均未知，继续沿用 200＋40 小时控制线与 [#211](https://github.com/alanthssss/nameless-becoming/issues/211) 成本检查。Codex 在本批完成集成并将实际 CI 与收尾时间回写 [#333](https://github.com/alanthssss/nameless-becoming/issues/333)；M3 / [#322](https://github.com/alanthssss/nameless-becoming/issues/322) 继续按原检查点推进。
 
+<a id="shop-stone-top-cord"></a>
+## 蜜铺青石砣改为单绳顶吊（2026-11-27）
+
+Alan 喜欢现有花瓣杆秤，指定去掉青石两侧的绑绳。Codex 在原画石顶补了小孔，让麻绳从杆上滑套垂入孔内。庭院静置、盘端下沉、蜂拨砣和秤平几个姿态共用同一挂点。旧绳兜见下节的 11 月 26 日回执。[GDD §8.1](../design/swarm-flight-gdd.md#visual-production-rules)
+
+本机试玩入口为 `~/LocalGames/Honey-商铺单绳秤砣-abb9c0c/开始试玩.command`。Godot 4.6.2 从 `abb9c0c` 导出通用 Mac 包，本机签名校验通过，PCK SHA-256 为 `bc522955db9aebaaa5a0b804d702e55236f434ae60780cd578b0eed02002cb3a`。开发者以隔离空档从标题进入庭院，用 A 飞到柜台、E 开铺、Esc 返回。1280×800 和 960×600 的原生窗口都完成此路线。群晖 `Drive/游戏归档/采蜜/试玩录像/Honey-0.32.7/20261127-商铺青石砣-1439` 内有前后对照、两种尺寸原帧及 `实包1280/单绳秤砣开铺.mp4`（8.77 秒，30 fps，无声）。首次脚本取样停在标题，采用实包键盘输入后取得上述录像。地区 UI 按仓库规定的固定 60 fps 和 QA 参数通过 217 项。
+
+**投入与复查。** 北京时间 14:39:48 开始，到 14:47 约 7 分钟墙钟，覆盖原图核对、实现、导出和双尺寸复核；短暂的只读协作与主任务重叠，CI 和清理另计。本批新增采购及平台付款为零，计费与主动工时、历史累计及可用余量仍无法核实。沿用 200＋40 小时控制线，由 Codex 在 [#211](https://github.com/alanthssss/nameless-becoming/issues/211) 整包成本检查点复核。此次为内部视觉修订，继续 M3 / #322，待 Alan 下次整包试玩看单绳的实际观感。
+
 <a id="honey-inner-courtyard-427"></a>
 ## Honey · 巢内庭院、花瓣杆秤与飞痕画笺（2026-11-26）
 
