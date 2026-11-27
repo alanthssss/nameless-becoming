@@ -8,6 +8,7 @@ const PAN_ARM := -33.0
 const SHEET_FRAME := Rect2(640, 347, 280, 127)
 const PAN := Rect2(0, 0, 58, 30)
 const STONE := Rect2(65, 0, 30, 30)
+const STONE_DROP := Vector2(0, 29)
 const FIBER := Rect2(104, 0, 30, 29)
 const JAR := Rect2(145, 0, 41, 35)
 
@@ -26,12 +27,38 @@ static func goods(v: Node2D, source: Rect2, center: Vector2, size := 1.0) -> voi
 	var span := source.size * size
 	v.draw_texture_rect_region(GOODS, Rect2(center-span*.5, span), source)
 
+static func _draw_counterweight(v: Node2D, hook: Vector2) -> void:
+	const HEMP_SHADE := Color("#705636")
+	const HEMP := Color("#c09b68")
+	const HEMP_LIGHT := Color("#e2c593")
+	v.draw_set_transform(hook)
+	# The hitch wraps over the beam. Its two ends come together below it.
+	var hitch := PackedVector2Array([Vector2(-1,9), Vector2(-3,4), Vector2(-3,-2),
+		Vector2(-1,-3.5), Vector2(2,-3.3), Vector2(3,1), Vector2(2,5), Vector2(-1,9)])
+	v.draw_polyline(hitch, HEMP_SHADE, 3.0, true)
+	v.draw_polyline(hitch, HEMP, 1.6, true)
+	v.draw_line(Vector2(-2.6,2), Vector2(-2.6,-2), HEMP_LIGHT, 1.1, true)
+	# The same cord disappears into a bore just below the top of the stone.
+	# Draw its return behind the stone, leaving both flanks and the heel bare.
+	v.draw_line(Vector2(-1,8), STONE_DROP + Vector2(1,-10), HEMP_SHADE, 2.8, true)
+	v.draw_line(Vector2(-1.4,8), STONE_DROP + Vector2(.5,-10), HEMP, 1.5, true)
+	v.draw_set_transform(hook + STONE_DROP)
+	goods(v, STONE, Vector2.ZERO)
+	var eye := Vector2(0,-8)
+	v.draw_arc(eye, 2.4, .05 * PI, .95 * PI, 8, Color("#b6a46d"), 1.1, true)
+	v.draw_circle(eye, 2.0, Color("#493e2b"), true, -1, true)
+	var end := PackedVector2Array([Vector2(-.7,-17), Vector2(-1.6,-13),
+		Vector2(-1.3,-10), eye])
+	v.draw_polyline(end, HEMP_SHADE, 2.7, true)
+	v.draw_polyline(end, HEMP, 1.5, true)
+	v.draw_set_transform(Vector2.ZERO)
+
 static func steelyard(v: Node2D, t: float, entering: bool) -> void:
 	var angle := inclination(t)
 	var pan_hook := PIVOT + Vector2(PAN_ARM,0).rotated(angle)
 	var pan := pan_hook + Vector2(0, 41)
 	var weight := weight_hook(t)
-	var stone := weight + Vector2(0, 29)
+	var stone := weight + STONE_DROP
 	v._ground_shadow(pan+Vector2(3,17), Vector2(30,4), .22)
 	v._ground_shadow(stone+Vector2(2,16), Vector2(16,3), .18)
 
@@ -47,7 +74,7 @@ static func steelyard(v: Node2D, t: float, entering: bool) -> void:
 	for tick in range(12,125,7):
 		v.draw_line(Vector2(tick,-.8),Vector2(tick,2.4 if tick%3 == 0 else 1.1),Color("f0d598"),1.0,true)
 	v.draw_set_transform(Vector2.ZERO)
-	for hook: Vector2 in [pan_hook, PIVOT, weight]:
+	for hook: Vector2 in [pan_hook, PIVOT]:
 		v.draw_arc(hook, 2.8, 0, TAU, 12, Color("d8bc81"), 1.3, true)
 	for side in [-1,1]:
 		var rim := pan + Vector2(side*21,-4)
@@ -55,15 +82,7 @@ static func steelyard(v: Node2D, t: float, entering: bool) -> void:
 		v.draw_line(pan_hook+Vector2(0,2),rim,Color("ead7ac"),1.2,true)
 	goods(v, PAN, pan)
 	v.draw_line(pan_hook+Vector2(0,3),pan+Vector2(0,4),Color("dbc297"),1.15,true)
-	v.draw_line(weight+Vector2(0,2),stone-Vector2(0,11),Color("bb9466"),2.1,true)
-	goods(v, STONE, stone)
-	# Three bound cords cradle the stone. The outside loops meet beneath it.
-	for width in [10.0, 3.0, -8.0]:
-		var sling := PackedVector2Array([stone+Vector2(0,-13),stone+Vector2(width,-5),
-			stone+Vector2(width*.97,5),stone+Vector2(width*.55,10),stone+Vector2(0,13)])
-		v.draw_polyline(sling,Color("6b5539"),2.3,true)
-		v.draw_polyline(sling,Color("c7a879"),1.25,true)
-	v.draw_arc(stone+Vector2(0,-13), 2.4, 0, TAU, 10, Color("d4b583"), 1.3, true)
+	_draw_counterweight(v, weight)
 	if entering:
 		var drop := smoothstep(.09, .36, t)
 		var at := Vector2(234,390).lerp(pan+Vector2(2,-7),drop)
