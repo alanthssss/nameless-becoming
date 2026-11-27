@@ -38,6 +38,44 @@ class PrepareSteamDemoTests(unittest.TestCase):
         # Deliberately synthetic IDs exercise validation; no generated fixture is retained.
         return self.prepare(app_id='123456', depot_id='123457', ids_confirmed=True, **kwargs)
 
+    def make_windows_fixture(self):
+        root = self.root / 'windows'
+        (root / 'licenses').mkdir(parents=True)
+        image = bytearray(128)
+        image[:2] = b'MZ'
+        image[60:64] = (64).to_bytes(4, 'little')
+        image[64:70] = b'PE\0\0\x64\x86'
+        image[88:90] = b'\x0b\x02'
+        image.extend('ProductVersion\0'.encode('utf-16le'))
+        image.extend(bytes(-len(image) % 4))
+        image.extend('0.22.0.0\0'.encode('utf-16le'))
+        (root / 'Honey.exe').write_bytes(image)
+        (root / 'Honey.pck').write_bytes(b'GDPCsynthetic fixture')
+        for name in ('Godot-LICENSE.txt', 'Godot-COPYRIGHT.txt'):
+            (root / 'licenses' / name).write_text('synthetic notice')
+        return root
+
+    def test_windows_depot_paths_and_launch(self):
+        root = self.make_windows_fixture()
+        report = self.identified(build_dir=root, platform='windows')
+        self.assertEqual(report['launch_executable'], 'Honey.exe')
+        self.assertEqual(tool.verify(self.out)['files'], 4)
+        self.assertIn('"depot_windows.vdf"', (self.out/'scripts/app_preview.vdf').read_text())
+        depot = (self.out/'scripts/depot_windows.vdf').read_text()
+        self.assertIn('"LocalPath" "Honey.pck"', depot)
+        self.assertIn('"DepotPath" "licenses/"', depot)
+
+    def test_windows_rejects_stale_or_mixed_content(self):
+        root = self.make_windows_fixture()
+        with self.assertRaisesRegex(ValueError, 'product version'):
+            self.prepare(build_dir=root, platform='windows', expected_version='0.23.0')
+        (root/'Honey.pck').write_bytes(b'wrong pack')
+        with self.assertRaisesRegex(ValueError, 'resource pack'):
+            self.prepare(build_dir=root, platform='windows')
+        (root/'Old.exe').write_bytes(b'old')
+        with self.assertRaisesRegex(ValueError, 'Windows depot'):
+            self.prepare(build_dir=root, platform='windows')
+
     def test_no_ids_produces_no_vdf_and_explicit_blocker(self):
         report = self.prepare()
         self.assertFalse(report['steam_release_ready'])

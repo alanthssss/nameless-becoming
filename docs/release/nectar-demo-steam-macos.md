@@ -1,6 +1,58 @@
-# 采蜜与蜂舞 Demo：macOS / Steam 发行准备
+# Honey · Steam Demo 发行准备
 
-2026-11-03；GDD §13.9 / M3 / [SD08 #295](https://github.com/alanthssss/nameless-becoming/issues/295)。本文件承接[SD-v1 制作规格](../design/nectar-steam-demo.md)，不是第二份执行队列。用户已确认**首批只做 macOS，目前没有 AppID**。状态：本地发行准备；尚未上传、未获 Valve 审核、没有 Steam 发布就绪声明。
+<a id="steam-readiness-032"></a>
+## 2026-11-27 · Windows 首发，macOS 可独立补发
+
+Alan 决定用当前 Honey 0.32.7 准备 Steam Demo，日常 Steam 和首轮玩家机验收均在 Windows。Codex 以 Windows x64 为首发平台，保留同版 Mac 发行准备。Valve 2026 年 10 月自愿参与的硬件调查中，Windows 占 93.70%，macOS 占 2.35%。本体商店页先提供 Demo 下载按钮，独立 Demo 页可选。[Valve 调查](https://store.steampowered.com/hwsurvey/Steam-Hardware-Software-Survey-Welcome-to-Steam?l=english&pubDate=20260817) · [Steam Demo 设置](https://partner.steamgames.com/doc/store/application/demos)
+
+**内容够准备公开试玩。** 当前游戏源 `abb9c0c`。两片花地串起采蜜、归途、交售和成长。学会双簇采蜜后，靠近的两朵花可以同趟收两份。蜂巢储备给这段成长一个收尾。Alan 的实存档把首次完成限定在第 21 至 35 趟，首次完成分钟数、陌生玩家的完成分布仍未知。开发验证用了新档和隔离的成长档。公开下载后沿 M3 收集独立玩家的首次购买、返程和重访反馈。[存档与游玩证据](../production/region-greybox-receipt.md#一份实际主档怎样走到蜂巢储备) · [首作范围](../design/swarm-flight-gdd.md#lean-nectar-first-game)
+
+**交付物。** 群晖 `Drive/游戏归档/采蜜/试玩包/Honey-Steam-0.32.7-20261127-Windows首测/` 存放 Windows 试玩 ZIP 与商店材料。ZIP 完整解压到本地后启动 `Honey.exe`，同目录保留 `Honey.pck` 与引擎许可。商店图含本体与 Demo 各四种商店胶囊和四种库资产、客户端图标及七张实际运行截图。同版 24.90 秒、含原声的 1080p 预告草案保存在群晖 `Drive/游戏归档/采蜜/试玩录像/Honey-0.32.7/20261127-Steam实机预告-abb9c0c-1712/Honey-Demo-实机预告-1080p.mp4`。公开截图来自冻结的 Mac PCK，使用独立进度复现采集、交售与升级。图像和本地构建可在制作机的 `~/LocalGames/Honey-Steam-Demo-abb9c0c-20261127` 核对。Windows 私有分支实际安装、显示／音频、最低配置及 Valve 审核仍待验证。[同批构建核验](../production/region-greybox-receipt.md#steam-windows-0327)
+
+### Steamworks 账号持有人的操作
+
+1. 登录发行后台。若尚未入驻，用发行主体完成协议、身份、收款和税务资料，按后台提示处理本体应用额度。创建或找到本体 **Honey**。个人敏感资料和支付信息留在后台。[Steamworks 入驻](https://partner.steamgames.com/doc/gettingstarted/onboarding)
+2. 在本体应用主页打开 **All associated packages, DLC, demos and tools → Add Demo**，名称填 **Honey Demo**。记下本体 AppID、Demo AppID、Demo 的 Windows DepotID。把这三个编号交给 Codex 即可配好 SteamPipe 预览，后台登录和 Steam Guard 由账号持有人在本机完成。[创建关联 Demo](https://partner.steamgames.com/doc/store/application/demos)
+3. 在 Demo 的 SteamPipe 设置中确认 depot 并将它纳入开发测试包和 Demo 的授权包。首发只有一个 PC depot 时可按 Valve 指引保留 All OSes；添加 Mac depot 时分别设 Windows 和 macOS 过滤，防止串包；在 Installation 的启动项填 `Honey.exe`，选择 Windows。保存并发布配置。填写本体中英商店字段、上传对应素材和内容调查，后台分别核对本体和 Demo 的关联。[SteamPipe 上传与测试](https://partner.steamgames.com/doc/sdk/uploading)
+4. 取得后台配置后，用 Demo AppID 先预览清单，再将构建放入私有测试分支。在 Alan 的 Windows Steam 库中从空目录下载，核对中文、显示和声音，完成一次采蜜、回家卖蜜、升级、退出再继续；再通过 Steam 更新并读回旧档。记录 BuildID、机器配置和结果。直接运行 ZIP 适合现在试玩，Steam 安装与更新另有实测记录。[Steam 分支](https://partner.steamgames.com/doc/store/application/branches)
+5. 按后台清单分别提交商店和构建审核。待本体的「即将推出」页公开且 Demo 审核通过，由 Alan 决定开放时间。在本体商店 **Special Settings → Associated Demos** 确认关联并保存发布，实际访问商店核实下载按钮。若另开 Demo 独立商店页，使用专属预告和至少五张 Demo 实机截图。[Valve 审核](https://partner.steamgames.com/doc/store/review_process) · [Demo 页与下载按钮](https://partner.steamgames.com/doc/store/application/demos)
+
+### 苹果账号的操作可排在 Windows 之后
+
+现有 Mac 包含 arm64 与 x86_64，使用 ad hoc 签名。制作机有效 Developer ID Application 身份数为 0，Gatekeeper 拒绝，包上尚无公证票据。准备发布 Mac 版时，Apple Developer Program 账户持有人在 Xcode 的 Accounts → Manage Certificates 或开发者后台创建 **Developer ID Application**，确保制作机的登录钥匙串拥有证书及其私钥。在本机用 `xcrun notarytool store-credentials HoneyNotary` 存储公证凭据。交接只需告知本机身份与 profile 已就绪。Codex 可据此对副本签名、公证、装订票据和复核 Gatekeeper，再准备单独的 Mac depot。Mac 商店平台标记等该包和 Steam 客户端测试完成后再开启。[Apple Developer ID](https://developer.apple.com/developer-id/) · [Valve macOS 要求](https://partner.steamgames.com/doc/store/application/platforms)
+
+## 商店文案
+
+**本体名称** Honey。**试玩版名称** Honey Demo。
+
+**游戏内支持** 简体中文界面，单人、键盘和鼠标。商店提供简体中文与英文说明。简中版先发，英文界面等实际需求与翻译预算清楚后再排期。[Steam 的商店与游戏语言设置](https://partner.steamgames.com/doc/store/localization)
+
+| 字段 | 简体中文 | English |
+| --- | --- | --- |
+| 本体短述 | 当一只小蜜蜂，从庭院飞往池岸采蜜。看准两朵花之间的距离，留好回家的体力，把这一趟的收获换成更大的蜜囊或双簇采蜜的本领。 | Fly from your courtyard to the pond as a little honeybee. Pick a route between blossoms and save enough energy for the flight home. Sell your nectar for a bigger nectar sac, or learn to gather from two flowers at once. |
+| Demo 短述 | 飞进蓝花丛，振松种穗接住纤维，带着花蜜回庭院。用卖蜜所得升级，试试一次采两朵，再到紫花地取树脂，为蜂巢备好储粮。 | Gather blue nectar, shake seeds loose for fiber, and fly home to sell your haul. Try gathering from two blooms at once, then head to the violet field for resin and stock your hive. The demo interface is in Simplified Chinese. |
+| 本体简介 | 池岸上，选一条能让你满载归来的花路。飞近盛开的花，停下来采蜜；掠过种穗时振一下翅，再转身接住飘下来的纤维。回庭院，把花蜜卖给蜜铺，把金币和材料花在自己最想要的成长上。蜜囊变大，就可以多飞几朵才回家；学会双簇采蜜，两朵相邻的花就值得专门拐一个弯。 | Choose a trail of flowers that will get you home with a full nectar sac. Hover by a blossom to gather, or beat your wings beside a seed head and turn to catch the drifting fiber. Back in the courtyard, sell your nectar and spend your coins and materials. A bigger sac lets you visit more flowers before heading home. Once you can gather from two at a time, a pair of close blooms is worth a detour. |
+| Demo 简介 | 从蜂巢庭院出发，到池岸采蓝蜜、接纤维，回家卖掉花蜜，买下第一项成长。你可以再飞一次熟悉的花路，比较升级前后的收获，也可以攒下材料开通紫花地，贴着树皮取树脂。备好蜂巢储粮会见到试玩的阶段收尾。游戏支持本地存档，可以分几次玩完。 | Set out from the hive courtyard to collect blue nectar and fiber by the pond. Sell your nectar, choose your first upgrade, then fly the same route again to feel what changed. Save up to reach the violet field, where you can draw resin from bark. Stocking the hive brings the demo to its milestone. Local saves let you return to your trip across sessions. The game interface is in Simplified Chinese. |
+
+**内容调查草稿。** 部分角色、环境和界面图像使用生成式 AI 辅助制作，部分文字使用 AI 辅助起草。素材经开发者筛选、调整和整合后作为固定内容随游戏交付。本版玩法在本地运行。提交人须按最终随包内容核对音频、文字、图像来源，以及页面图像的使用权，按实际情况填写预生成与实时生成两栏。音乐登记包含工程既有的春秋两曲、重谱的蜜铺曲，以及预渲染的合成竹笛独奏。[随包音频记录](../production/region-greybox-receipt.md#honey-audio-0327)
+
+游戏支持项先勾选已验证的简体中文界面与单人。最低硬件配置应取自有记录的 Windows 玩家机测试。[Steam 内容调查](https://partner.steamgames.com/doc/gettingstarted/contentsurvey) · [Steam 商店文案审核](https://partner.steamgames.com/doc/store/review_process)
+
+### 本轮 SteamPipe 交接
+
+本地工作区的 `SteamPipe-Windows` 有四个已验摘要的 depot 文件和清单，`SteamPipe-Mac` 保留独立 Mac 内测快照。工具保持 macOS 的原调用方式。Windows 的 `--build-dir` 指向含 Honey.exe、Honey.pck 与两份引擎许可的平铺目录。取到真实 ID 后，可用以下方式生成清单和 Preview VDF。使用全新的输出目录。通过私有 Steam 安装、更新和读档前，发行状态仍在准备中。[生成器](../../tools/prepare_nectar_steam_demo.py) · [SteamPipe](https://partner.steamgames.com/doc/sdk/uploading)
+
+```sh
+python3 tools/prepare_nectar_steam_demo.py --platform windows \
+  --expected-version 0.32.7 --build-dir "$HONEY_WINDOWS_BUILD" \
+  --app-id "$HONEY_DEMO_APP_ID" --depot-id "$HONEY_WINDOWS_DEPOT_ID" \
+  --ids-confirmed --output "$HONEY_PREVIEW_DIR"
+python3 tools/prepare_nectar_steam_demo.py --verify "$HONEY_PREVIEW_DIR"
+```
+
+## 2026-11-03 起的本地准备与旧版草稿
+
+2026-11-03；GDD §13.9 / M3 / [SD08 #295](https://github.com/alanthssss/nameless-becoming/issues/295)。本文件承接[SD-v1 制作规格](../design/nectar-steam-demo.md)，不是第二份执行队列。当时按 macOS 单平台、暂无 AppID 准备。2026-11-27 起以上方 Windows 首发记录为准。状态：本地发行准备；尚未上传、未获 Valve 审核、没有 Steam 发布就绪声明。
 
 ## 已完成和仍未完成
 
@@ -19,7 +71,7 @@
 
 Demo 是关联本体的独立 AppID，拥有自己的构建与检查清单；在本体发行前开放 Demo，需要本体的 Coming Soon 页面。独立 Demo 商店页是可选项，若采用，文案与素材只展示 Demo 实有内容；官方要求该页提供预告和至少五张 Demo 截图。[Steam Demo 文档](https://partner.steamgames.com/doc/store/application/demos)
 
-## 商店草稿：冻结包验收后再提交
+## 0.23 历史商店草稿
 
 **工作名称**：雨来之前：采蜜与蜂舞 Demo。最终中英文名与商标/商店唯一性尚未锁定。
 
